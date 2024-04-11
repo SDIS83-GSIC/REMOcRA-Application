@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - POSTGRES_USER=${POSTGRES_DB_USERNAME:-remocra}
+      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD:-remocra}
+      - POSTGRES_DB=remocra
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - ${DOSSIER_BDD:-./.docker/postgresql_data}:/var/lib/postgresql/data
+    network_mode: host
+
+  keycloak:
+    image: docker-registry.priv.atolcd.com/keycloak/base:24
+    user: "${UID:-1000}:${GID:-1000}"
+    command: [ "start-dev" ]
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=kcadmin
+      - KEYCLOAK_ADMIN_PASSWORD=kcadmin
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ./.docker/keycloak:/opt/keycloak/data
+
+  keycloak-config:
+    image: docker-registry.priv.atolcd.com/keycloak/base:24
+    command: [ "keycloak-config-cli" ]
+    environment:
+      # configuration de keycloak-config-cli (https://gerrit.priv.atolcd.com/plugins/gitiles/atolcd/docker#keycloak_base)
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_ADMIN=kcadmin
+      - KEYCLOAK_ADMIN_PASSWORD=kcadmin
+      - IMPORT_FILES_LOCATIONS=/config/prod/*.json,/config/dev/*.json
+      # configuration du realm "remocra"
+      - CLIENT_SECRET=remocra
+      - REMOCRA_URL=http://localhost:8881
+    volumes:
+      - ./keycloak/src/conf:/config:ro
+
+  maildev:
+    image: maildev/maildev:latest
+    ports:
+      - "1025:1025"
+      - "1080:1080"

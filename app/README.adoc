@@ -1,0 +1,25 @@
+= Application
+
+Ce projet contient le code serveur (écrit en Kotlin)
+
+== Tâches gradle CLI
+
+L'application se connecte par défaut à la base de données locale (`jdbc:postgresql:remocra`, utilisateur `remocra`, mot de passe `remocra`).
+
+La configuration peut être surchargée avec un fichier `local.conf` placé à la racine du projet,
+ou par des propriétés (`-P`) : toutes les propriétés dont le nom commence par `remocra.` sont automatiquement passées en _system properties_ à l'application.
+
+De même, Log4J est configuré de base par le fichier `log4j2.xml` dans `src/main/resources`, il est possible de le modifier au besoin ou de passer un autre fichier via la propriété système `log4j2.configurationFile`.
+
+=== Configuration
+
+
+=== Lancer le serveur
+
+[source]
+----
+./gradlew :app:run
+----
+
+L'application est accessible directement sur http://localhost:8881/.
+Le frontend devra avoir été préalablement buildé, ou Parcel lancé en mode _watch_.

@@ -1,0 +1,34 @@
+package remocra.json
+
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.guava.GuavaModule
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.google.inject.Binder
+import com.google.inject.Module
+import com.google.inject.Provides
+import com.google.inject.Singleton
+import remocra.web.registerResource
+
+object JsonModule : Module {
+    override fun configure(binder: Binder) {
+        binder.registerResource<JacksonJsonProvider>()
+    }
+
+    @Provides
+    @Singleton
+    fun provideObjectMapper(): ObjectMapper =
+        jacksonObjectMapper()
+            .registerModule(Jdk8Module())
+            .registerModule(JavaTimeModule())
+            .registerModule(GuavaModule())
+            .registerModule(CustomTypeJsonModule())
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+}

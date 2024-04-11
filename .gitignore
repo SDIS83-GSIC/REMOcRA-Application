@@ -1,0 +1,9 @@
+.gradle
+build/
+!**/src/**/build/
+app/dist
+
+/.env
+/local.conf
+/log4j-dev.xml
+node_modules/

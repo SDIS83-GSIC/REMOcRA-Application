@@ -1,0 +1,87 @@
+<configuration>
+  <jdbc>
+    <driver>org.postgresql.Driver</driver>
+    <url>${db.url}</url>
+    <user>${db.user}</user>
+    <password>${db.password}</password>
+  </jdbc>
+  <generator>
+    <name>org.jooq.codegen.KotlinGenerator</name>
+    <database>
+      <name>org.jooq.meta.postgres.PostgresDatabase</name>
+      <schemata>
+        <schema>
+          <inputSchema>remocra</inputSchema>
+        </schema>
+      </schemata>
+      <excludes>flyway_schema_history|flyway_data_history|pgp_armor_headers</excludes>
+      <includeRoutines>false</includeRoutines>
+      <forcedTypes>
+        <forcedType>
+          <userType>com.google.common.collect.Range&lt;java.time.OffsetDateTime&gt;</userType>
+          <binding>remocra.db.jooq.bindings.PostgresTSTZRangeBinding</binding>
+          <types>TSTZRANGE</types>
+        </forcedType>
+      </forcedTypes>
+    </database>
+    <generate>
+      <records>false</records>
+      <pojos>true</pojos>
+      <immutablePojos>true</immutablePojos>
+      <javaTimeTypes>true</javaTimeTypes>
+      <generatedAnnotation>true</generatedAnnotation>
+      <nullableAnnotation>true</nullableAnnotation>
+      <nullableAnnotationType>org.checkerframework.checker.nullness.qual.Nullable</nullableAnnotationType>
+      <nonnullAnnotation>true</nonnullAnnotation>
+      <nonnullAnnotationType>org.checkerframework.checker.nullness.qual.NonNull</nonnullAnnotationType>
+      <implicitJoinPathsAsKotlinProperties>true</implicitJoinPathsAsKotlinProperties>
+      <!--  Workaround for Kotlin generating setX() setters instead of setIsX() in byte code for mutable properties called
+            <code>isX</code>. Default is true. -->
+      <kotlinSetterJvmNameAnnotationsOnIsPrefix>true</kotlinSetterJvmNameAnnotationsOnIsPrefix>
+      <!-- Generate POJOs as data classes, when using the KotlinGenerator. Default is true. -->
+      <pojosAsKotlinDataClasses>true</pojosAsKotlinDataClasses>
+
+      <!-- Generate non-nullable types on POJO attributes, where column is not null. Default is false. -->
+      <kotlinNotNullPojoAttributes>true</kotlinNotNullPojoAttributes>
+
+      <!-- Generate non-nullable types on Record attributes, where column is not null. Default is false. -->
+      <kotlinNotNullRecordAttributes>true</kotlinNotNullRecordAttributes>
+
+      <!-- Generate non-nullable types on interface attributes, where column is not null. Default is false. -->
+      <kotlinNotNullInterfaceAttributes>true</kotlinNotNullInterfaceAttributes>
+      <!-- Generate defaulted nullable POJO attributes. Default is true. -->
+      <kotlinDefaultedNullablePojoAttributes>false</kotlinDefaultedNullablePojoAttributes>
+
+      <!-- Generate defaulted nullable Record attributes. Default is true. -->
+      <kotlinDefaultedNullableRecordAttributes>false</kotlinDefaultedNullableRecordAttributes>
+
+    </generate>
+    <strategy>
+      <matchers>
+        <tables>
+          <table>
+            <!-- Préfixe les tables de jointure dans les noms de classes -->
+            <expression>^l_(.*)$</expression>
+            <tableClass>
+              <expression>Lien_$1</expression>
+              <transform>PASCAL</transform>
+            </tableClass>
+            <recordClass>
+              <expression>$1</expression>
+              <transform>PASCAL</transform>
+            </recordClass>
+            <pojoClass>
+              <expression>$1</expression>
+              <transform>PASCAL</transform>
+            </pojoClass>
+          </table>
+        </tables>
+      </matchers>
+    </strategy>
+    <target>
+      <packageName>remocra.db.jooq</packageName>
+      <directory>${outputdir}</directory>
+      <encoding>UTF-8</encoding>
+    </target>
+  </generator>
+</configuration>

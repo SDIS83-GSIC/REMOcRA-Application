@@ -1,0 +1,11 @@
+{
+  "presets": [],
+  "plugins": [
+    [
+      "inline-react-svg",
+      {
+        "svgo": false
+      }
+    ]
+  ]
+}

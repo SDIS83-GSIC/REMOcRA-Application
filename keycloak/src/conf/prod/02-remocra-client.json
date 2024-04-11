@@ -1,0 +1,27 @@
+{
+  "realm": "remocra",
+  "enabled": true,
+  "clients": [
+    {
+      "enabled": true,
+      "protocol": "openid-connect",
+      "clientId": "remocra",
+      "secret": "$(env:CLIENT_SECRET)",
+      "clientAuthenticatorType": "client-secret",
+      "publicClient": false,
+      "directAccessGrantsEnabled" : false,
+      "baseUrl": "$(env:REMOCRA_URL)",
+      "redirectUris": [
+        "$(env:REMOCRA_URL)/callback"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "groups",
+        "email"
+      ]
+    }
+  ]
+}

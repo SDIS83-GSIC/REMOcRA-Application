@@ -1,0 +1,5 @@
+# Un-ignore configuration files
+!.*.js
+# Gradle
+build/
+

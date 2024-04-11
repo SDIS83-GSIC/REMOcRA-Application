@@ -1,0 +1,18 @@
+{
+  "realm": "remocra",
+  "users": [
+    {
+      "username": "remocra",
+      "enabled": true,
+      "email": "remocra@atolcd.com",
+      "firstName": "REMOcRA",
+      "lastName" : "REMOcRA",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin"
+        }
+      ]
+    }
+  ]
+}

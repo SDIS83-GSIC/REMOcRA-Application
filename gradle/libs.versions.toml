@@ -1,0 +1,66 @@
+[versions]
+flyway = "10.1.0"
+forbiddenapis = "3.6"
+jooq = "3.19.3"
+
+# Versions utilisées par build-logic
+javaToolchain = "21"
+ktlint = "0.49.0"
+
+[libraries]
+log4j-bom = "org.apache.logging.log4j:log4j-bom:2.22.1"
+log4j-core = { module = "org.apache.logging.log4j:log4j-core"}
+log4j-jul = { module = "org.apache.logging.log4j:log4j-jul" }
+guice-bom = "com.google.inject:guice-bom:7.0.0"
+jetty-bom ="org.eclipse.jetty:jetty-bom:11.0.19"
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet" }
+jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets" }
+junit-bom = "org.junit:junit-bom:5.10.1"
+forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
+
+kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
+kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
+kotlin-reflect = "org.jetbrains.kotlin:kotlin-reflect:1.9.22"
+
+disruptor = "com.lmax:disruptor:4.0.0"
+slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "1.7.36" } }
+log4j-slf4jImpl = { module = "org.apache.logging.log4j:log4j-slf4j-impl" }
+typesafe = "com.typesafe:config:1.4.3"
+postgresql = "org.postgresql:postgresql:42.7.1"
+hikaricp = "com.zaxxer:HikariCP:5.1.0"
+guava = "com.google.guava:guava:33.0.0-jre"
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+picocli = "info.picocli:picocli:4.7.5"
+
+resteasy-core = { module = "org.jboss.resteasy:resteasy-core"}
+resteasy-core-spi = { module =  "org.jboss.resteasy:resteasy-core-spi"}
+resteasy-multipart-provider = { module = "org.jboss.resteasy:resteasy-multipart-provider"}
+resteasy-bom = "org.jboss.resteasy:resteasy-bom:6.2.7.Final"
+
+jooq-kotlin = { module = "org.jooq:jooq-kotlin", version.ref = "jooq" }
+jooq-codegen = { module = "org.jooq:jooq-codegen", version.ref = "jooq" }
+
+jackson-jakarta-rs-json-provider = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider:2.9.6"
+jackson-module-kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2"
+jackson-datatype-guava = "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.16.1"
+jackson-datatype-jdk8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.16.1"
+jackson-datatype-jsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1"
+jackson-dataformat-csv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.16.1"
+
+junit-jupiter-api = "org.junit.jupiter:junit-jupiter-api:5.10.1"
+junit-jupiter-engine = "org.junit.jupiter:junit-jupiter-engine:5.10.1"
+
+pac4j-oidc = "org.pac4j:pac4j-oidc:6.0.1"
+jakartaee-pac4j = "org.pac4j:jakartaee-pac4j:8.0.0"
+pac4j-jakartaee = "org.pac4j:pac4j-jakartaee:6.0.1"
+
+[plugins]
+cyclonedx = "org.cyclonedx.bom:1.6.1"
+errorprone = "net.ltgt.errorprone:2.0.2"
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
+loggingCapabilities = "dev.jacomet.logging-capabilities:0.10.0"
+nullaway = "net.ltgt.nullaway:1.3.0"
+spotless = "com.diffplug.spotless:6.25.0"
+kotlin = "org.jetbrains.kotlin.jvm:1.9.20"

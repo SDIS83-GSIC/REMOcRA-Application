@@ -1,0 +1,41 @@
+= Base de données (DB)
+
+Ce projet gère le schéma de la base de données, sous la forme de
+
+ * migrations Flyway
+ * code Kotlin généré par jOOQ
+
+== Mettre à jour le schéma de la base de données
+
+[source]
+----
+./gradlew :db:flywayMigrate
+----
+
+La base de données par défaut est `jdbc:postgresql:remocra` (utilisateur `remocra`, mot de passe `remocra`),
+mais peut être configuré avec les propriétés `db.url`, `db.user` et `db.password` respectivement.
+Les propriétés sont passées à Gradle sur la ligne de commande:
+
+[source]
+----
+./gradlew :db:flywayMigrate -Pdb.url=jdbc:postgresql://serveur/remocra -Pdb.user=remocra -Pdb.password=…
+----
+
+De manière similaire :
+
+`:db:flywayValidate`:: permet de valider le schéma d'une base de données par rapport aux scripts de migration
+`:db:flywayClean`:: permet remettre à zéro une base de données (avant un `:db:flywayMigrate` pour recréer le schéma)
+`:db:flywayInfo`:: indique les détails des migrations appliquées à une base de données
+`:db:flywayMigrateData`:: joue les scripts de migration spécifiques à l'ajout de données (scripts SQL dans `src/data`) ; il n'est pas prévu que ces scripts soient exécutés sur les serveurs (scripts non packagés), ces scripts sont là pour avoir un jeu de données pour le développement.
+
+== Régénérer le mapping des classes par rapport à la base de données
+
+[source]
+----
+./gradlew :db:jooq
+----
+
+Ceci lancera également la migration Flyway (tâche `:db:flywayMigrate`)
+pour s'assurer que le code Kotlin généré correspond aux scripts de migration.
+
+La connexion à la base de données est configurable de la même façon que pour les tâches Flyway.

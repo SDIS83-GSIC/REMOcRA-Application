@@ -1,0 +1,8 @@
+{
+  "realm": "remocra",
+  "smtpServer": {
+    "host": "maildev",
+    "port": 1025,
+    "from": "keycloak@localhost"
+  }
+}

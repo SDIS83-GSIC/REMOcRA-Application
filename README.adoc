@@ -1,0 +1,40 @@
+= REMOcRA
+
+== Modules
+
+link:db/README.adoc[`db`]:: contient les scripts SQL de migration Flyway pour gérer le schéma de la base de données,
+   et le code Kotlin généré par jOOQ issu de ce schéma.
++
+L'application ne gère pas elle-même la migration de schéma,
+celle-ci est effectuée indépendamment.
+L'application doit par contre vérifier la version du schéma au démarrage.
+
+== Gradle
+
+Le build est piloté par https://www.gradle.org[Gradle], avec des scripts écrits en Kotlin.
+
+Toutes les commandes doivent être lancées depuis le répertoire racine du projet (celui dans lequel se trouve ce fichier).
+
+
+Les tâches les plus courantes sont :
+
+`./gradlew assemble`:: Compile et _assemble_ le code (créer les JARs) ; ou `./gradlew :db:assemble` pour n'assembler que le module `db`.
+`./gradlew check`:: Vérifie le code : compile, lance les tests, vérifie le formattage du code, etc mais pas shellcheck.
+`./gradlew shellcheck`:: Vérifie le code shell, ce n'est pas dans la tâche `check` car elle ne fonctionne pas sur Jenkins (ca essaie de lancer une commande `docker run …`)
+`./gradlew build`:: Équivalent à lancer les deux précédentes tâches.
+`./gradlew spotlessApply`:: Reformatte le code (**sauf** le code frontend)
+
+D'autres tâches spécifiques à chaque module sont documentées dans leur `README.adoc` respectif.
+
+== Docker Compose
+
+Les services nécessaires pour développer sont gérés par Docker Compose :
+
+`db`:: un serveur PostgreSQL (base de données `remocra`, utilisateur `remocra`, mot de passe `remocra`)
++
+Les données sont stockées dans un répertoire `docker/postgresql_data` par défaut.
+Une variable d'environnement $DOSSIER_BDD peut être utilisée pour spécifie un autre emplacement.
+Les permissions sont définies par défaut à l'utilisateur d'UID 1000 et GID 1000.
+Ces permissions peuvent être configurées en définissant les variables d'environnement `$UID` et `$GID`,
+ou de façon moins intrusive _via_ un https://docs.docker.com/compose/env-file/[fichier d'environnement `.env`]
+(ce fichier peut également définir https://docs.docker.com/compose/reference/envvars/#compose_project_name[`COMPOSE_PROJECT_NAME`], utilisé comme préfixe des noms des conteneurs)

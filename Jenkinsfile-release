@@ -1,0 +1,82 @@
+library 'atolcd-jenkins'
+
+pipeline {
+  options {
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+  }
+  parameters {
+    string(name: 'REMOCRA_VERSION', defaultValue: '', description: 'Tag à builder')
+  }
+  agent any
+  stages {
+    stage('Build Gradle') {
+        steps {
+          withSidecarContainers(
+            pg: [ imageName: 'postgres', imageVersion: '16', args: '-e "POSTGRES_DB=remocra" -e "POSTGRES_USER=remocra" -e "POSTGRES_PASSWORD=remocra"' ]
+          ) {
+            gradleInsideDocker(imageVersion: '8.6-jdk21') {
+              sh '''
+                gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                '''
+            }
+          }
+        }
+    }
+    stage('Build frontend') {
+      steps {
+        nodejsInsideDocker() {
+          dir(path: 'frontend/') {
+            sh '''
+                npm install
+                npm run lint
+                npm run build
+              '''
+          }
+        }
+      }
+      post {
+        always {
+          dir (path: 'frontend/') {
+            sh '''
+              rm -rf node_modules/
+              '''
+          }
+        }
+      }
+    }
+    stage('Build docker remocra') {
+      steps {
+        dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3:${REMOCRA_VERSION}",
+          dockerfile: 'docker/Dockerfile')
+        dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",
+            buildDir: 'keycloak'
+      }
+    }
+      stage ('Generate application SBOM') {
+        steps {
+          nodejsInsideDocker {
+            sh 'cd frontend/ && npm sbom --sbom-format cyclonedx --omit dev --sbom-type application --package-lock-only true > npm-sbom.json'
+          }
+        }
+      }
+      stage ('Publish SBOM') {
+        steps {
+           smartDependencyTrackPublisher name: 'SDIS 83',
+             version: params.REMOCRA_VERSION,
+             bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/bom.json'],
+             classifier: 'APPLICATION',
+             hierarchical: true
+         }
+       }
+    }
+  post {
+    always {
+      sh '''
+        git checkout -- .
+        git clean -f -d -x -e .m2/ -e .cache/npm/
+        '''
+    }
+  }
+}
