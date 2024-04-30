@@ -17,6 +17,8 @@ pipeline {
           ) {
             gradleInsideDocker(imageVersion: '8.6-jdk21') {
               sh '''
+                gradle --stacktrace build
+                gradle --stacktrace cyclonedxBom
                 gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 '''
@@ -49,7 +51,9 @@ pipeline {
     stage('Build docker remocra') {
       steps {
         dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3:${REMOCRA_VERSION}",
-          dockerfile: 'docker/Dockerfile')
+          dockerfile: 'docker/Dockerfile') { imageId ->
+               dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+             }
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",
             buildDir: 'keycloak'
       }

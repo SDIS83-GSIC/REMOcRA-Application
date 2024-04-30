@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id("local.kotlin-base")
     kotlin("jvm")
@@ -90,13 +88,6 @@ object Props {
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"
 
 tasks {
-    processResources {
-        val versionProperties = mapOf("appVersion" to (project.findProperty("ospackageVersion")?.toString() ?: "dev"))
-        inputs.property("versionProperties", versionProperties)
-        filesMatching("reference.conf") {
-            filter<ReplaceTokens>("tokens" to versionProperties)
-        }
-    }
     test {
         useJUnitPlatform {
             excludeTags("postgres")
