@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./components/App/AppProvider.tsx";
 import "./App.module.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 /**
  * Ce fichier est le point d'entrée pour la partie authentifiée du site. Le userInfo ne doit jamais être nul.
