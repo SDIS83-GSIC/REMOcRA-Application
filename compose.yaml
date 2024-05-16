@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: postgis/postgis:16-3.4-alpine
     user: "${UID:-1000}:${GID:-1000}"
     environment:
       - POSTGRES_USER=${POSTGRES_DB_USERNAME:-remocra}
