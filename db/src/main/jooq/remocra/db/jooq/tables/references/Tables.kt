@@ -3,11 +3,60 @@
  */
 package remocra.db.jooq.tables.references
 
+import remocra.db.jooq.tables.Api
+import remocra.db.jooq.tables.Commune
+import remocra.db.jooq.tables.Diametre
+import remocra.db.jooq.tables.Domaine
+import remocra.db.jooq.tables.Gestionnaire
 import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LieuDit
 import remocra.db.jooq.tables.LogLine
+import remocra.db.jooq.tables.MarquePibi
+import remocra.db.jooq.tables.Materiau
+import remocra.db.jooq.tables.ModelePibi
+import remocra.db.jooq.tables.Nature
+import remocra.db.jooq.tables.NatureDeci
+import remocra.db.jooq.tables.Niveau
+import remocra.db.jooq.tables.Organisme
 import remocra.db.jooq.tables.Parametre
+import remocra.db.jooq.tables.Pei
+import remocra.db.jooq.tables.Pena
+import remocra.db.jooq.tables.Pibi
+import remocra.db.jooq.tables.ProfilOrganisme
+import remocra.db.jooq.tables.Reservoir
+import remocra.db.jooq.tables.Site
 import remocra.db.jooq.tables.Task
+import remocra.db.jooq.tables.TypeCanalisation
+import remocra.db.jooq.tables.TypeOrganisme
+import remocra.db.jooq.tables.TypeReseau
 import remocra.db.jooq.tables.Utilisateur
+import remocra.db.jooq.tables.Voie
+import remocra.db.jooq.tables.ZoneIntegration
+
+/**
+ * The table <code>remocra.api</code>.
+ */
+val API: Api = Api.API
+
+/**
+ * The table <code>remocra.commune</code>.
+ */
+val COMMUNE: Commune = Commune.COMMUNE
+
+/**
+ * The table <code>remocra.diametre</code>.
+ */
+val DIAMETRE: Diametre = Diametre.DIAMETRE
+
+/**
+ * The table <code>remocra.domaine</code>.
+ */
+val DOMAINE: Domaine = Domaine.DOMAINE
+
+/**
+ * The table <code>remocra.gestionnaire</code>.
+ */
+val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
 
 /**
  * The table <code>remocra.job</code>.
@@ -15,9 +64,49 @@ import remocra.db.jooq.tables.Utilisateur
 val JOB: Job = Job.JOB
 
 /**
+ * The table <code>remocra.lieu_dit</code>.
+ */
+val LIEU_DIT: LieuDit = LieuDit.LIEU_DIT
+
+/**
  * The table <code>remocra.log_line</code>.
  */
 val LOG_LINE: LogLine = LogLine.LOG_LINE
+
+/**
+ * The table <code>remocra.marque_pibi</code>.
+ */
+val MARQUE_PIBI: MarquePibi = MarquePibi.MARQUE_PIBI
+
+/**
+ * The table <code>remocra.materiau</code>.
+ */
+val MATERIAU: Materiau = Materiau.MATERIAU
+
+/**
+ * The table <code>remocra.modele_pibi</code>.
+ */
+val MODELE_PIBI: ModelePibi = ModelePibi.MODELE_PIBI
+
+/**
+ * The table <code>remocra.nature</code>.
+ */
+val NATURE: Nature = Nature.NATURE
+
+/**
+ * The table <code>remocra.nature_deci</code>.
+ */
+val NATURE_DECI: NatureDeci = NatureDeci.NATURE_DECI
+
+/**
+ * The table <code>remocra.niveau</code>.
+ */
+val NIVEAU: Niveau = Niveau.NIVEAU
+
+/**
+ * The table <code>remocra.organisme</code>.
+ */
+val ORGANISME: Organisme = Organisme.ORGANISME
 
 /**
  * The table <code>remocra.parametre</code>.
@@ -25,11 +114,66 @@ val LOG_LINE: LogLine = LogLine.LOG_LINE
 val PARAMETRE: Parametre = Parametre.PARAMETRE
 
 /**
+ * The table <code>remocra.pei</code>.
+ */
+val PEI: Pei = Pei.PEI
+
+/**
+ * The table <code>remocra.pena</code>.
+ */
+val PENA: Pena = Pena.PENA
+
+/**
+ * The table <code>remocra.pibi</code>.
+ */
+val PIBI: Pibi = Pibi.PIBI
+
+/**
+ * The table <code>remocra.profil_organisme</code>.
+ */
+val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
+
+/**
+ * The table <code>remocra.reservoir</code>.
+ */
+val RESERVOIR: Reservoir = Reservoir.RESERVOIR
+
+/**
+ * The table <code>remocra.site</code>.
+ */
+val SITE: Site = Site.SITE
+
+/**
  * The table <code>remocra.task</code>.
  */
 val TASK: Task = Task.TASK
 
 /**
+ * The table <code>remocra.type_canalisation</code>.
+ */
+val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
+
+/**
+ * The table <code>remocra.type_organisme</code>.
+ */
+val TYPE_ORGANISME: TypeOrganisme = TypeOrganisme.TYPE_ORGANISME
+
+/**
+ * The table <code>remocra.type_reseau</code>.
+ */
+val TYPE_RESEAU: TypeReseau = TypeReseau.TYPE_RESEAU
+
+/**
  * The table <code>remocra.utilisateur</code>.
  */
 val UTILISATEUR: Utilisateur = Utilisateur.UTILISATEUR
+
+/**
+ * The table <code>remocra.voie</code>.
+ */
+val VOIE: Voie = Voie.VOIE
+
+/**
+ * The table <code>remocra.zone_integration</code>.
+ */
+val ZONE_INTEGRATION: ZoneIntegration = ZoneIntegration.ZONE_INTEGRATION

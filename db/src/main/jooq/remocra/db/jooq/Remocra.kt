@@ -6,11 +6,35 @@ package remocra.db.jooq
 import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
+import remocra.db.jooq.tables.Api
+import remocra.db.jooq.tables.Commune
+import remocra.db.jooq.tables.Diametre
+import remocra.db.jooq.tables.Domaine
+import remocra.db.jooq.tables.Gestionnaire
 import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LieuDit
 import remocra.db.jooq.tables.LogLine
+import remocra.db.jooq.tables.MarquePibi
+import remocra.db.jooq.tables.Materiau
+import remocra.db.jooq.tables.ModelePibi
+import remocra.db.jooq.tables.Nature
+import remocra.db.jooq.tables.NatureDeci
+import remocra.db.jooq.tables.Niveau
+import remocra.db.jooq.tables.Organisme
 import remocra.db.jooq.tables.Parametre
+import remocra.db.jooq.tables.Pei
+import remocra.db.jooq.tables.Pena
+import remocra.db.jooq.tables.Pibi
+import remocra.db.jooq.tables.ProfilOrganisme
+import remocra.db.jooq.tables.Reservoir
+import remocra.db.jooq.tables.Site
 import remocra.db.jooq.tables.Task
+import remocra.db.jooq.tables.TypeCanalisation
+import remocra.db.jooq.tables.TypeOrganisme
+import remocra.db.jooq.tables.TypeReseau
 import remocra.db.jooq.tables.Utilisateur
+import remocra.db.jooq.tables.Voie
+import remocra.db.jooq.tables.ZoneIntegration
 import javax.annotation.processing.Generated
 import kotlin.collections.List
 
@@ -35,9 +59,39 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     }
 
     /**
+     * The table <code>remocra.api</code>.
+     */
+    val API: Api get() = Api.API
+
+    /**
+     * The table <code>remocra.commune</code>.
+     */
+    val COMMUNE: Commune get() = Commune.COMMUNE
+
+    /**
+     * The table <code>remocra.diametre</code>.
+     */
+    val DIAMETRE: Diametre get() = Diametre.DIAMETRE
+
+    /**
+     * The table <code>remocra.domaine</code>.
+     */
+    val DOMAINE: Domaine get() = Domaine.DOMAINE
+
+    /**
+     * The table <code>remocra.gestionnaire</code>.
+     */
+    val GESTIONNAIRE: Gestionnaire get() = Gestionnaire.GESTIONNAIRE
+
+    /**
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.lieu_dit</code>.
+     */
+    val LIEU_DIT: LieuDit get() = LieuDit.LIEU_DIT
 
     /**
      * The table <code>remocra.log_line</code>.
@@ -45,9 +99,74 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val LOG_LINE: LogLine get() = LogLine.LOG_LINE
 
     /**
+     * The table <code>remocra.marque_pibi</code>.
+     */
+    val MARQUE_PIBI: MarquePibi get() = MarquePibi.MARQUE_PIBI
+
+    /**
+     * The table <code>remocra.materiau</code>.
+     */
+    val MATERIAU: Materiau get() = Materiau.MATERIAU
+
+    /**
+     * The table <code>remocra.modele_pibi</code>.
+     */
+    val MODELE_PIBI: ModelePibi get() = ModelePibi.MODELE_PIBI
+
+    /**
+     * The table <code>remocra.nature</code>.
+     */
+    val NATURE: Nature get() = Nature.NATURE
+
+    /**
+     * The table <code>remocra.nature_deci</code>.
+     */
+    val NATURE_DECI: NatureDeci get() = NatureDeci.NATURE_DECI
+
+    /**
+     * The table <code>remocra.niveau</code>.
+     */
+    val NIVEAU: Niveau get() = Niveau.NIVEAU
+
+    /**
+     * The table <code>remocra.organisme</code>.
+     */
+    val ORGANISME: Organisme get() = Organisme.ORGANISME
+
+    /**
      * The table <code>remocra.parametre</code>.
      */
     val PARAMETRE: Parametre get() = Parametre.PARAMETRE
+
+    /**
+     * The table <code>remocra.pei</code>.
+     */
+    val PEI: Pei get() = Pei.PEI
+
+    /**
+     * The table <code>remocra.pena</code>.
+     */
+    val PENA: Pena get() = Pena.PENA
+
+    /**
+     * The table <code>remocra.pibi</code>.
+     */
+    val PIBI: Pibi get() = Pibi.PIBI
+
+    /**
+     * The table <code>remocra.profil_organisme</code>.
+     */
+    val PROFIL_ORGANISME: ProfilOrganisme get() = ProfilOrganisme.PROFIL_ORGANISME
+
+    /**
+     * The table <code>remocra.reservoir</code>.
+     */
+    val RESERVOIR: Reservoir get() = Reservoir.RESERVOIR
+
+    /**
+     * The table <code>remocra.site</code>.
+     */
+    val SITE: Site get() = Site.SITE
 
     /**
      * The table <code>remocra.task</code>.
@@ -55,17 +174,66 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TASK: Task get() = Task.TASK
 
     /**
+     * The table <code>remocra.type_canalisation</code>.
+     */
+    val TYPE_CANALISATION: TypeCanalisation get() = TypeCanalisation.TYPE_CANALISATION
+
+    /**
+     * The table <code>remocra.type_organisme</code>.
+     */
+    val TYPE_ORGANISME: TypeOrganisme get() = TypeOrganisme.TYPE_ORGANISME
+
+    /**
+     * The table <code>remocra.type_reseau</code>.
+     */
+    val TYPE_RESEAU: TypeReseau get() = TypeReseau.TYPE_RESEAU
+
+    /**
      * The table <code>remocra.utilisateur</code>.
      */
     val UTILISATEUR: Utilisateur get() = Utilisateur.UTILISATEUR
 
+    /**
+     * The table <code>remocra.voie</code>.
+     */
+    val VOIE: Voie get() = Voie.VOIE
+
+    /**
+     * The table <code>remocra.zone_integration</code>.
+     */
+    val ZONE_INTEGRATION: ZoneIntegration get() = ZoneIntegration.ZONE_INTEGRATION
+
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        Api.API,
+        Commune.COMMUNE,
+        Diametre.DIAMETRE,
+        Domaine.DOMAINE,
+        Gestionnaire.GESTIONNAIRE,
         Job.JOB,
+        LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,
+        MarquePibi.MARQUE_PIBI,
+        Materiau.MATERIAU,
+        ModelePibi.MODELE_PIBI,
+        Nature.NATURE,
+        NatureDeci.NATURE_DECI,
+        Niveau.NIVEAU,
+        Organisme.ORGANISME,
         Parametre.PARAMETRE,
+        Pei.PEI,
+        Pena.PENA,
+        Pibi.PIBI,
+        ProfilOrganisme.PROFIL_ORGANISME,
+        Reservoir.RESERVOIR,
+        Site.SITE,
         Task.TASK,
+        TypeCanalisation.TYPE_CANALISATION,
+        TypeOrganisme.TYPE_ORGANISME,
+        TypeReseau.TYPE_RESEAU,
         Utilisateur.UTILISATEUR,
+        Voie.VOIE,
+        ZoneIntegration.ZONE_INTEGRATION,
     )
 }
