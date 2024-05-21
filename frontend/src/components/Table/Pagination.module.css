@@ -1,0 +1,151 @@
+@value cssPrimary, cssBlueDark, cssGrayDark, cssGrayLight, cssWhite from "../../variable.module.css";
+
+@value flexBasisForCenterPaginationBlock: 250px;
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  width: 100%;
+}
+
+.resultsDisplayed {
+  flex-basis: flexBasisForCenterPaginationBlock;
+  font-style: italic;
+  color: cssBlueDark;
+}
+
+.paginationBlock {
+  list-style: none;
+  padding-left: 0;
+  font-size: 18px;
+}
+.pageSizeOptions {
+  flex-basis: flexBasisForCenterPaginationBlock;
+  display: flex;
+  flex-direction: row-reverse;
+  font-style: italic;
+}
+
+.paginationBlock ul {
+  display: flex;
+  list-style: none;
+}
+
+.navigate {
+  border-radius: 64px;
+  border: 2px solid cssPrimary;
+  padding: 6px 12px;
+  color: cssPrimary;
+  cursor: pointer;
+}
+
+.navigate:hover {
+  border-radius: 64px;
+  background-color: cssPrimary;
+  padding: 6px 12px;
+  color: cssWhite;
+  cursor: pointer;
+}
+
+.navigateDisable {
+  border-radius: 64px;
+  border: 2px solid cssGrayLight;
+  padding: 6px 12px;
+}
+
+.center {
+  text-align: center;
+}
+
+.pointille {
+  vertical-align: text-top;
+  color: cssGrayLight;
+  letter-spacing: 0.2rem;
+}
+
+.linkA {
+  text-decoration: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: cssBlueDark;
+}
+
+.paginationBlock ul .linkA.active {
+  color: cssPrimary;
+}
+
+.paginationBlock ul .linkA.disabled:not(.active) {
+  color: cssGrayLight;
+  cursor: not-allowed;
+}
+
+.paginationBlock ul .linkA:hover.disabled:not(.active) {
+  background-color: inherit;
+}
+
+.paginationLabel {
+  display: flex;
+  align-items: center;
+}
+
+.itemPerPage {
+  min-width: 120px;
+  max-width: 25%;
+  flex: 1 1 25%;
+  font-family: Quicksand, sans-serif;
+  outline: none !important;
+  border: none !important;
+}
+
+.itemPerPage :global(.select__single-value) {
+  color: cssBlueDark;
+}
+
+.itemPerPage :global(.select__single-value),
+.itemPerPage :global(.select__option) {
+  display: inline-flex;
+  align-items: center;
+}
+
+.itemPerPage :global(.select__control) {
+  color: cssBlueDark;
+  padding: 4px;
+  border: none !important;
+  border-radius: 10px;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.itemPerPage :global(.select__input) {
+  color: cssBlueDark;
+  font-weight: inherit;
+}
+
+.itemPerPage :global(.select__indicator-separator) {
+  background-color: cssBlueDark;
+}
+
+.itemPerPage :global(.select__indicator) {
+  color: cssBlueDark !important;
+}
+
+.itemPerPage :global(.select__option) {
+  color: cssGrayDark;
+  font-weight: 400;
+  font-family: Quicksand, sans-serif;
+  transition: cssTransition;
+}
+
+.itemPerPage :global(.select__option--is-focused) {
+  color: cssBlueDark;
+  background-color: cssPrimary;
+}
+
+.itemPerPage :global(.select__option--is-selected) {
+  color: cssBlueDark;
+  background-color: cssPrimary;
+}

@@ -20,6 +20,11 @@ module.exports = {
 
   plugins: ["compat", "react", "react-hooks", "@typescript-eslint"],
   settings: {
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
     react: {
       version: require("react/package.json").version,
     },
