@@ -11,7 +11,7 @@ import remocra.keycloak.KeycloakToken
 import remocra.keycloak.representations.UserRepresentation
 import java.util.UUID
 
-class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtilisateurTaskParameters>() {
+class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtilisateurTaskParameters, SchedulableTaskResults>() {
 
     companion object {
         const val MAX_RESULTS = 100
@@ -25,7 +25,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
 
     @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
 
-    override fun execute(parameters: SynchroUtilisateurTaskParameters?) {
+    override fun execute(parameters: SynchroUtilisateurTaskParameters?): SchedulableTaskResults? {
         var i = 0
         var fini = false
 
@@ -55,7 +55,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                         .execute()
                 if (!usersKeycloak.isSuccessful) {
                     logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la récupération des utilisateurs de keycloak : ${usersKeycloak.errorBody()}")
-                    return
+                    return null
                 }
 
                 if (usersKeycloak.body()?.size == 0 || usersKeycloak.body() == null) {
@@ -110,7 +110,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                 }
             } catch (e: IOException) {
                 logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la synchronisation des utilisateurs : ${e.message}")
-                return
+                return null
             }
             i += MAX_RESULTS
         }
@@ -131,6 +131,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
             keycloakClient.clientId,
             keycloakClient.clientSecret,
         ).execute()
+        return null
     }
 
     override fun checkParameters(parameters: SynchroUtilisateurTaskParameters?) {
@@ -144,9 +145,8 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
         return SynchroUtilisateurTaskParameters::class.java
     }
 
-    override fun getDestinatairesFromType(typeDestinataire: String): Set<String> {
-        // TODO : pour l'instant, on ne notifie pas, à voir si on souhaite notifier plus tard les administrateurs
-        return setOf()
+    override fun notifySpecific(executionResults: SchedulableTaskResults?, notificationRaw: NotificationRaw) {
+        // TODO: Pas de notification pour le moment
     }
 }
 

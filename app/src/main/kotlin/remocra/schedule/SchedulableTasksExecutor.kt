@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.log.LogManagerFactory
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
+import remocra.tasks.SchedulableTaskResults
 import java.text.ParseException
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -19,7 +20,7 @@ import java.util.Locale
 class SchedulableTasksExecutor
 @Inject
 constructor(
-    private var tasks: Set<SchedulableTask<out SchedulableTaskParameters>>,
+    private var tasks: Set<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>,
     private val logManagerFactory: LogManagerFactory,
     private val parametresProvider: Provider<ParametresData>,
 ) {
@@ -46,7 +47,7 @@ constructor(
         }
     }
 
-    private fun SchedulableTask<out SchedulableTaskParameters>.schedule(scheduleTime: CronExpression) {
+    private fun SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>.schedule(scheduleTime: CronExpression) {
         this.launch {
             val now = Date()
             val nextExecution = scheduleTime.getNextValidTimeAfter(now) ?: return@launch
@@ -57,7 +58,7 @@ constructor(
         }
     }
 
-    private fun getTaskInfo(task: SchedulableTask<out SchedulableTaskParameters>): Task? {
+    private fun getTaskInfo(task: SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>): Task? {
         return parametresProvider.get().mapTasksInfo[task.getType()]
     }
 }

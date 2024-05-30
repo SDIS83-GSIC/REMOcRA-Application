@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
+import com.google.inject.Provider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.eventbus.EventBus
 import remocra.eventbus.notification.NotificationEvent
 import remocra.log.LogManager
+import remocra.usecase.tasks.TaskUseCase
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -26,7 +28,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * Classe de base des tâches, correspondant à la définition d'un travail à effectuer sous forme de
  * [Job]
  */
-abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
+abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
 
     @Inject
     private lateinit var jobRepository: JobRepository
@@ -43,16 +45,19 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
     protected lateinit var logManager: LogManager
 
     @Inject
-    lateinit var parametresData: ParametresData
+    lateinit var parametresProvider: Provider<ParametresData>
 
     @Inject
     lateinit var eventBus: EventBus
+
+    @Inject
+    lateinit var taskUseCase: TaskUseCase
 
     /**
      * Méthode exécutant le code de la tâche à proprement parler.
      * Doit être fait de manière bloquante, pas d'appels asynchrones, car la notification est faite dans la foulée
      */
-    protected abstract fun execute(parameters: T?)
+    protected abstract fun execute(parameters: T?): U?
 
     /** Environnements autorisés à exécuter la tâche : par défaut, tous. A overrider au besoin */
     open fun getAuthorizedEnvironments(): Collection<Environment> = Environment.entries
@@ -75,10 +80,10 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
      * Marquée comme open pour pouvoir l'overrider en cas de besoin
      */
     open fun isActif(): Boolean {
-        if (parametresData.mapTasksInfo[getType()] == null) {
+        if (parametresProvider.get().mapTasksInfo[getType()] == null) {
             return false
         }
-        return parametresData.mapTasksInfo[getType()]!!.taskActif!!
+        return parametresProvider.get().mapTasksInfo[getType()]!!.taskActif!!
     }
 
     abstract fun getTaskParametersClass(): Class<T>
@@ -96,14 +101,14 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         }
 
         val taskParameters = parameters
-            ?: objectMapper.readValue(parametresData.mapTasksInfo[getType()]!!.taskParametres!!.data(), getTaskParametersClass())
+            ?: objectMapper.readValue(parametresProvider.get().mapTasksInfo[getType()]!!.taskParametres!!.data(), getTaskParametersClass())
 
         // Insertion du job en base
         val result =
             transactionManager.transactionResult {
                 jobRepository.createJob(
                     logManager.idJob,
-                    parametresData.mapTasksInfo[getType()]!!.taskId,
+                    parametresProvider.get().mapTasksInfo[getType()]!!.taskId,
                     taskParameters?.let { JSONB.valueOf(objectMapper.writeValueAsString(it)) },
                 )
             }
@@ -118,8 +123,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
             launch {
                 try {
                     checkParameters(taskParameters)
-                    execute(taskParameters)
-                    notify(taskParameters, logManager.idJob)
+                    notify(taskParameters, execute(taskParameters), logManager.idJob)
                 } catch (e: Exception) {
                     if (latestJob != null) {
                         transactionManager.transactionResult {
@@ -143,24 +147,28 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
     }
 
     /**
+     * Méthode permettant de convertir un type abstrait de destinataire en liste concrète d'adresses mail à notifier lors de l'exécution d'un job. <br />
+     * Chaque tâche devra s'adapter aux types concernés
+     */
+    abstract fun notifySpecific(executionResults: U?, notificationRaw: NotificationRaw)
+
+    /**
      * Fonction permettant de gérer les notifications en fonction des paramètres de la tâche, appliqués aux paramètres du job. <br />
      * La tâche propose un comportement par défaut pour la notification, qui peut être overridé au besoin, d'où l'existence de la propriété parameters.notification ; si elle est vide, on utilise le comportement par défaut
      */
-    open fun notify(parameters: T?, idJob: UUID) {
+    open fun notify(parameters: T?, executionResults: U?, idJob: UUID) {
         // Si les paramètres de notification sont définis dans *parameters*, on est sur un override, il prime sur le reste
         if (parameters?.notification != null) {
             eventBus.post(NotificationEvent(parameters.notification!!, idJob))
         } else {
-            val jsonNotif = parametresData.mapTasksInfo[getType()]!!.taskNotification?.data()
+            val jsonNotif = parametresProvider.get().mapTasksInfo[getType()]!!.taskNotification?.data()
             try {
                 if (jsonNotif == null) {
                     return
                 }
 
                 val notifications = objectMapper.readValue<NotificationRaw>(jsonNotif)
-                notifications.typeDestinataire.forEach {
-                    eventBus.post(NotificationEvent(NotificationMail(destinataires = getDestinatairesFromType(it), objet = notifications.objet, corps = notifications.corps), idJob))
-                }
+                notifySpecific(executionResults, notifications)
             } catch (jpe: JsonProcessingException) {
                 logManager.error("Erreur lors de l'interprétation des paramètres de notification : ${jpe.message}")
             } catch (jme: JsonMappingException) {
@@ -168,12 +176,6 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
             }
         }
     }
-
-    /**
-     * Méthode permettant de convertir un type abstrait de destinataire en liste concrète d'adresses mail à notifier lors de l'exécution d'un job. <br />
-     * Chaque tâche devra s'adapter aux types concernés
-     */
-    abstract fun getDestinatairesFromType(typeDestinataire: String): Set<String>
 
     fun stop(): Boolean {
         if (!job.isActive) {
@@ -215,6 +217,11 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
 }
 
 /**
+ * Résultats d'une tâche.
+ */
+open class JobResults()
+
+/**
  * Paramètres d'une tâche.
  */
 open class TaskParameters(
@@ -232,8 +239,15 @@ data class NotificationMail(val destinataires: Set<String>, val objet: String, v
     }
 }
 
+data class TypeDestinataire(
+    val contactOrganisme: Set<String>,
+    val contactGestionnaire: Boolean,
+    val utilisateurOrganisme: Set<String>,
+    val saisieLibre: Set<String>,
+)
+
 /**
  * Classe permattant de stocker dans une [remocra.db.jooq.remocra.tables.pojos.Task] les critères abstraits pour une future notification par mail.
  * Ces critères seront ensuite transformés en données concrètes lors de l'exécution d'un job.
  */
-data class NotificationRaw(val typeDestinataire: Set<String>, val objet: String, val corps: String)
+data class NotificationRaw(val typeDestinataire: TypeDestinataire, val objet: String, val corps: String)
