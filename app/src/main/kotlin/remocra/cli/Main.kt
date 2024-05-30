@@ -86,7 +86,7 @@ class Main : Runnable {
         val config = init()
         val serve =
             Guice.createInjector(
-                AppModule(),
+                AppModule.create(config.getConfig("remocra.app")),
                 WebModule,
                 JsonModule,
                 AuthnModule.create(config.getConfig("remocra.authn")),

@@ -7,12 +7,15 @@ import org.jooq.Record
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
+import remocra.db.jooq.tables.Parametre
 import remocra.db.jooq.tables.Utilisateur
 
 // -------------------------------------------------------------------------
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
+val PARAMETRE_PARAMETRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAMETRE, DSL.name("parametre_parametre_code_key"), arrayOf(Parametre.PARAMETRE.CODE), true)
+val PARAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAMETRE, DSL.name("parametre_pkey"), arrayOf(Parametre.PARAMETRE.ID), true)
 val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.ID), true)
 val UTILISATEUR_UTILISATEUR_EMAIL_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_email_key"), arrayOf(Utilisateur.UTILISATEUR.EMAIL), true)
 val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_username_key"), arrayOf(Utilisateur.UTILISATEUR.USERNAME), true)

@@ -3,7 +3,13 @@
  */
 package remocra.db.jooq.tables.references
 
+import remocra.db.jooq.tables.Parametre
 import remocra.db.jooq.tables.Utilisateur
+
+/**
+ * The table <code>remocra.parametre</code>.
+ */
+val PARAMETRE: Parametre = Parametre.PARAMETRE
 
 /**
  * The table <code>remocra.utilisateur</code>.

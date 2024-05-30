@@ -6,6 +6,7 @@ package remocra.db.jooq
 import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
+import remocra.db.jooq.tables.Parametre
 import remocra.db.jooq.tables.Utilisateur
 import javax.annotation.processing.Generated
 import kotlin.collections.List
@@ -31,6 +32,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     }
 
     /**
+     * The table <code>remocra.parametre</code>.
+     */
+    val PARAMETRE: Parametre get() = Parametre.PARAMETRE
+
+    /**
      * The table <code>remocra.utilisateur</code>.
      */
     val UTILISATEUR: Utilisateur get() = Utilisateur.UTILISATEUR
@@ -38,6 +44,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        Parametre.PARAMETRE,
         Utilisateur.UTILISATEUR,
     )
 }
