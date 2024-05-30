@@ -36,6 +36,8 @@ val jooqCodegen: Configuration by configurations.creating
 
 dependencies {
     api(libs.jooq.kotlin)
+    api(libs.jooq.codegen)
+
     api(libs.guava)
 
     runtimeOnly(libs.postgresql)
@@ -71,6 +73,7 @@ tasks {
             project.delete(jooqOutputDir)
         }
         classpath = jooqCodegen
+        classpath += sourceSets["main"].runtimeClasspath
         mainClass = "org.jooq.codegen.GenerationTool"
         systemProperties = mapOf(
             "db.url" to dbUrl,

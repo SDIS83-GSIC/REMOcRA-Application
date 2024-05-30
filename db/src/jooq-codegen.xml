@@ -7,6 +7,9 @@
   </jdbc>
   <generator>
     <name>org.jooq.codegen.KotlinGenerator</name>
+    <strategy>
+      <name>remocra.db.jooq.codegen.RemocraGeneratorStrategy</name>
+    </strategy>
     <database>
       <name>org.jooq.meta.postgres.PostgresDatabase</name>
       <schemata>
