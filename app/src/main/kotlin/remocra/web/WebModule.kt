@@ -7,6 +7,7 @@ import remocra.RemocraModule
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.web.admin.AdminModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
@@ -33,6 +34,7 @@ object WebModule : RemocraModule() {
         install(NomenclatureModule)
         install(AppSettingsModule)
         install(DocumentModule)
+        install(AdminModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }
 

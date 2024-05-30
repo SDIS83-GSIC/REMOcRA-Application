@@ -1,5 +1,6 @@
 package remocra.app
 
+import com.google.common.eventbus.Subscribe
 import com.google.inject.Provider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -7,6 +8,8 @@ import remocra.data.ParametresData
 import remocra.db.ParametreRepository
 import remocra.db.TaskRepository
 import remocra.db.jooq.remocra.tables.pojos.Parametre
+import remocra.eventbus.EventListener
+import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.schedule.SchedulableTasksExecutor
 import remocra.web.admin.getBooleanOrNull
 import remocra.web.admin.getDoubleOrNull
@@ -21,7 +24,7 @@ constructor(
     private val parametreRepository: ParametreRepository,
     private val taskRepository: TaskRepository,
     private val schedulableTasksExecutor: SchedulableTasksExecutor,
-) : Provider<ParametresData> {
+) : Provider<ParametresData>, EventListener<ParametresModifiedEvent> {
     private lateinit var parametres: ParametresData
     override fun get(): ParametresData {
         if (!this::parametres.isInitialized) {
@@ -84,5 +87,10 @@ constructor(
      * */
     fun getParametreString(key: String): String? {
         return get().mapParametres.getStringOrNull(key)
+    }
+
+    @Subscribe
+    override fun onEvent(event: ParametresModifiedEvent) {
+        reloadParametres()
     }
 }

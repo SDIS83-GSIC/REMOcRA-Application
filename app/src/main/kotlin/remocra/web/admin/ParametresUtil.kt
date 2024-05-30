@@ -1,5 +1,6 @@
 package remocra.web.admin
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import remocra.db.jooq.remocra.enums.TypeParametre
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 
@@ -106,4 +107,16 @@ fun Map<String, Parametre>.getString(key: String): String {
     }
 
     return param.parametreValeur!!
+}
+
+@Suppress("UNCHECKED_CAST")
+fun Map<String, Parametre>.getListOfString(key: String, objectMapper: ObjectMapper): List<String>? {
+    val paramString = getStringOrNull(key) ?: return null
+    return objectMapper.readValue(paramString, List::class.java) as List<String>
+}
+
+@Suppress("UNCHECKED_CAST")
+fun Map<String, Parametre>.getListOfInt(key: String, objectMapper: ObjectMapper): List<Int>? {
+    val paramString = getStringOrNull(key) ?: return null
+    return objectMapper.readValue(paramString, List::class.java) as List<Int>
 }

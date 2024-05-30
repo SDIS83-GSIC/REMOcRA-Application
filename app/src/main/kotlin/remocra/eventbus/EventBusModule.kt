@@ -6,6 +6,7 @@ import com.google.inject.Singleton
 import com.typesafe.config.Config
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
+import remocra.app.ParametresProvider
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.tracabilite.TracabiliteEventListener
 import remocra.getStringOrNull
@@ -18,6 +19,7 @@ class EventBusModule(private val settings: MailSettings) : RemocraModule() {
         multibinder.apply {
             addBinding().to<NotificationEventListener>()
             addBinding().to<TracabiliteEventListener<*>>()
+            addBinding().to<ParametresProvider>()
         }
 
         bind<EventBus>().to<EventBusImpl>().`in`(Singleton::class.java)
