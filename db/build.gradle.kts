@@ -30,6 +30,7 @@ flyway {
     user = dbUser
     password = dbPassword
     schemas = flywayConf.getProperty("flyway.schemas").split(',').toTypedArray()
+    cleanDisabled = flywayConf.getProperty("flyway.cleanDisabled").toBoolean()
 }
 
 val jooqCodegen: Configuration by configurations.creating
