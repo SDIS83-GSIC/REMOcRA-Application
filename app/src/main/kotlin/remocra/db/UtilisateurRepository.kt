@@ -9,7 +9,7 @@ import java.util.UUID
 class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
     fun getUtilisateurById(idUtilisateur: UUID): Utilisateur? =
         dsl.selectFrom(UTILISATEUR)
-            .where(UTILISATEUR.UTILISATEUR_ID.eq(idUtilisateur))
+            .where(UTILISATEUR.ID.eq(idUtilisateur))
             .fetchOneInto()
 
     private fun insertUtilisateur(
@@ -20,12 +20,12 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
         username: String,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
-            .set(UTILISATEUR.UTILISATEUR_ID, id)
-            .set(UTILISATEUR.UTILISATEUR_NOM, nom)
-            .set(UTILISATEUR.UTILISATEUR_PRENOM, prenom)
-            .set(UTILISATEUR.UTILISATEUR_EMAIL, email)
-            .set(UTILISATEUR.UTILISATEUR_USERNAME, username)
-            .onConflict(UTILISATEUR.UTILISATEUR_USERNAME)
+            .set(UTILISATEUR.ID, id)
+            .set(UTILISATEUR.NOM, nom)
+            .set(UTILISATEUR.PRENOM, prenom)
+            .set(UTILISATEUR.EMAIL, email)
+            .set(UTILISATEUR.USERNAME, username)
+            .onConflict(UTILISATEUR.USERNAME)
             .doNothing()
             .returning()
             .fetchSingleInto()

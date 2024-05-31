@@ -78,27 +78,27 @@ open class Utilisateur(
     /**
      * The column <code>remocra.utilisateur.utilisateur_id</code>.
      */
-    val UTILISATEUR_ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_id"), SQLDataType.UUID.nullable(false), this, "")
+    val ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_email</code>.
      */
-    val UTILISATEUR_EMAIL: TableField<Record, String?> = createField(DSL.name("utilisateur_email"), SQLDataType.CLOB.nullable(false), this, "")
+    val EMAIL: TableField<Record, String?> = createField(DSL.name("utilisateur_email"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_nom</code>.
      */
-    val UTILISATEUR_NOM: TableField<Record, String?> = createField(DSL.name("utilisateur_nom"), SQLDataType.CLOB.nullable(false), this, "")
+    val NOM: TableField<Record, String?> = createField(DSL.name("utilisateur_nom"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_prenom</code>.
      */
-    val UTILISATEUR_PRENOM: TableField<Record, String?> = createField(DSL.name("utilisateur_prenom"), SQLDataType.CLOB.nullable(false), this, "")
+    val PRENOM: TableField<Record, String?> = createField(DSL.name("utilisateur_prenom"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_username</code>.
      */
-    val UTILISATEUR_USERNAME: TableField<Record, String?> = createField(DSL.name("utilisateur_username"), SQLDataType.CLOB.nullable(false), this, "")
+    val USERNAME: TableField<Record, String?> = createField(DSL.name("utilisateur_username"), SQLDataType.CLOB.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

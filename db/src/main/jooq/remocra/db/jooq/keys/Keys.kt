@@ -13,6 +13,6 @@ import remocra.db.jooq.tables.Utilisateur
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
-val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.UTILISATEUR_ID), true)
-val UTILISATEUR_UTILISATEUR_EMAIL_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_email_key"), arrayOf(Utilisateur.UTILISATEUR.UTILISATEUR_EMAIL), true)
-val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_username_key"), arrayOf(Utilisateur.UTILISATEUR.UTILISATEUR_USERNAME), true)
+val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.ID), true)
+val UTILISATEUR_UTILISATEUR_EMAIL_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_email_key"), arrayOf(Utilisateur.UTILISATEUR.EMAIL), true)
+val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_username_key"), arrayOf(Utilisateur.UTILISATEUR.USERNAME), true)
