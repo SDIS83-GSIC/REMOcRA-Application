@@ -6,7 +6,10 @@ package remocra.db.jooq
 import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
+import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LogLine
 import remocra.db.jooq.tables.Parametre
+import remocra.db.jooq.tables.Task
 import remocra.db.jooq.tables.Utilisateur
 import javax.annotation.processing.Generated
 import kotlin.collections.List
@@ -32,9 +35,24 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     }
 
     /**
+     * The table <code>remocra.job</code>.
+     */
+    val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.log_line</code>.
+     */
+    val LOG_LINE: LogLine get() = LogLine.LOG_LINE
+
+    /**
      * The table <code>remocra.parametre</code>.
      */
     val PARAMETRE: Parametre get() = Parametre.PARAMETRE
+
+    /**
+     * The table <code>remocra.task</code>.
+     */
+    val TASK: Task get() = Task.TASK
 
     /**
      * The table <code>remocra.utilisateur</code>.
@@ -44,7 +62,10 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        Job.JOB,
+        LogLine.LOG_LINE,
         Parametre.PARAMETRE,
+        Task.TASK,
         Utilisateur.UTILISATEUR,
     )
 }

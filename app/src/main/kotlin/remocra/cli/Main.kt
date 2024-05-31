@@ -15,6 +15,7 @@ import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
 import remocra.keycloak.KeycloakModule
+import remocra.schedule.ScheduleModule
 import remocra.web.WebModule
 import kotlin.system.exitProcess
 
@@ -96,6 +97,7 @@ class Main : Runnable {
                 HealthModule.create(config.getConfig("remocra.health")),
                 HttpServerModule.create(config.getConfig("remocra.http")),
                 DatabaseModule.create(config.getConfig("remocra.database")),
+                ScheduleModule,
             )
                 .getInstance(Serve::class.java)
         serve.start()

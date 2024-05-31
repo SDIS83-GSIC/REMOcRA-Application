@@ -3,13 +3,31 @@
  */
 package remocra.db.jooq.tables.references
 
+import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LogLine
 import remocra.db.jooq.tables.Parametre
+import remocra.db.jooq.tables.Task
 import remocra.db.jooq.tables.Utilisateur
+
+/**
+ * The table <code>remocra.job</code>.
+ */
+val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.log_line</code>.
+ */
+val LOG_LINE: LogLine = LogLine.LOG_LINE
 
 /**
  * The table <code>remocra.parametre</code>.
  */
 val PARAMETRE: Parametre = Parametre.PARAMETRE
+
+/**
+ * The table <code>remocra.task</code>.
+ */
+val TASK: Task = Task.TASK
 
 /**
  * The table <code>remocra.utilisateur</code>.

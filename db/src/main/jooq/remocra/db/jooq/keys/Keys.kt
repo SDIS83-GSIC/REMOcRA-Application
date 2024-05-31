@@ -3,19 +3,34 @@
  */
 package remocra.db.jooq.keys
 
+import org.jooq.ForeignKey
 import org.jooq.Record
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
+import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LogLine
 import remocra.db.jooq.tables.Parametre
+import remocra.db.jooq.tables.Task
 import remocra.db.jooq.tables.Utilisateur
 
 // -------------------------------------------------------------------------
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
+val JOB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Job.JOB, DSL.name("job_pkey"), arrayOf(Job.JOB.ID), true)
+val LOG_LINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LogLine.LOG_LINE, DSL.name("log_line_pkey"), arrayOf(LogLine.LOG_LINE.ID), true)
 val PARAMETRE_PARAMETRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAMETRE, DSL.name("parametre_parametre_code_key"), arrayOf(Parametre.PARAMETRE.CODE), true)
 val PARAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAMETRE, DSL.name("parametre_pkey"), arrayOf(Parametre.PARAMETRE.ID), true)
+val TASK_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_pkey"), arrayOf(Task.TASK.ID), true)
+val TASK_TASK_TYPE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_task_type_key"), arrayOf(Task.TASK.TYPE), true)
 val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.ID), true)
 val UTILISATEUR_UTILISATEUR_EMAIL_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_email_key"), arrayOf(Utilisateur.UTILISATEUR.EMAIL), true)
 val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_username_key"), arrayOf(Utilisateur.UTILISATEUR.USERNAME), true)
+
+// -------------------------------------------------------------------------
+// FOREIGN KEY definitions
+// -------------------------------------------------------------------------
+
+val JOB__JOB_JOB_TASK_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_task_id_fkey"), arrayOf(Job.JOB.TASK_ID), remocra.db.jooq.keys.TASK_PKEY, arrayOf(Task.TASK.ID), true)
+val LOG_LINE__LOG_LINE_LOG_LINE_JOB_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LogLine.LOG_LINE, DSL.name("log_line_log_line_job_id_fkey"), arrayOf(LogLine.LOG_LINE.JOB_ID), remocra.db.jooq.keys.JOB_PKEY, arrayOf(Job.JOB.ID), true)
