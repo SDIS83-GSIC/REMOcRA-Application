@@ -91,7 +91,7 @@ class Main : Runnable {
                 AppModule.create(config.getConfig("remocra.app")),
                 WebModule,
                 JsonModule,
-                EventBusModule,
+                EventBusModule.create(config.getConfig("remocra.mail")),
                 AuthnModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 HealthModule.create(config.getConfig("remocra.health")),

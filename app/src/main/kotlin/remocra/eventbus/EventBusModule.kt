@@ -3,17 +3,33 @@ package remocra.eventbus
 import com.google.common.eventbus.AsyncEventBus
 import com.google.inject.Provides
 import com.google.inject.Singleton
+import com.typesafe.config.Config
 import dev.misfitlabs.kotlinguice4.KotlinModule
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.eventbus.notification.NotificationEventListener
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-object EventBusModule : KotlinModule() {
+class EventBusModule(private val settings: MailSettings) : KotlinModule() {
     override fun configure() {
         val multibinder = KotlinMultibinder.newSetBinder<EventListener<*>>(kotlinBinder)
         multibinder.addBinding().to<NotificationEventListener>()
         bind<EventBus>().to<EventBusImpl>().`in`(Singleton::class.java)
+        bind(MailSettings::class.java).toInstance(settings)
+    }
+
+    companion object {
+        fun create(config: Config) =
+            EventBusModule(
+                MailSettings(
+                    from = config.getString("from"),
+                    smtpUrl = config.getString("smtp-url"),
+                    smtpPort = config.getInt("smtp-port"),
+                    smtpUser = config.getString("smtp-user"),
+                    smtpPassword = config.getString("smtp-password"),
+                    urlSite = config.getString("url-site"),
+                ),
+            )
     }
 
     @Provides
@@ -28,3 +44,5 @@ object EventBusModule : KotlinModule() {
         return AsyncEventBus(executor)
     }
 }
+
+data class MailSettings(val from: String, val smtpUrl: String, val smtpPort: Int, val smtpUser: String?, val smtpPassword: String?, val urlSite: String)
