@@ -55,6 +55,8 @@ pac4j-oidc = "org.pac4j:pac4j-oidc:6.0.1"
 jakartaee-pac4j = "org.pac4j:jakartaee-pac4j:8.0.0"
 pac4j-jakartaee = "org.pac4j:pac4j-jakartaee:6.0.1"
 
+commons-email = "org.apache.commons:commons-email:1.6.0"
+
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"
 errorprone = "net.ltgt.errorprone:2.0.2"

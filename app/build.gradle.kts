@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.picocli)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlin.reflect)
+    implementation(libs.commons.email)
 
     // Dependency Injection
     implementation(libs.guice.bom)
