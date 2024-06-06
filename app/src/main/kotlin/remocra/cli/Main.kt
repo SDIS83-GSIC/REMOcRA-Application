@@ -10,6 +10,7 @@ import picocli.CommandLine.Command
 import remocra.app.AppModule
 import remocra.authn.AuthnModule
 import remocra.db.DatabaseModule
+import remocra.eventbus.EventBusModule
 import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
@@ -89,6 +90,7 @@ class Main : Runnable {
                 AppModule.create(config.getConfig("remocra.app")),
                 WebModule,
                 JsonModule,
+                EventBusModule,
                 AuthnModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 HealthModule.create(config.getConfig("remocra.health")),
