@@ -29,6 +29,7 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.Remocra
 import remocra.db.jooq.enums.Disponibilite
 import remocra.db.jooq.enums.TypePei
+import remocra.db.jooq.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
 import remocra.db.jooq.keys.PEI_PEI_NUMERO_COMPLET_KEY
 import remocra.db.jooq.keys.PEI_PKEY
 import remocra.db.jooq.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
@@ -46,8 +47,11 @@ import remocra.db.jooq.keys.PEI__PEI_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.keys.PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY
 import remocra.db.jooq.keys.PENA__PENA_PENA_ID_FKEY
 import remocra.db.jooq.keys.PIBI__PIBI_PIBI_ID_FKEY
+import remocra.db.jooq.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
+import remocra.db.jooq.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.tables.Commune.CommunePath
 import remocra.db.jooq.tables.Domaine.DomainePath
+import remocra.db.jooq.tables.LPeiAnomalie.LPeiAnomaliePath
 import remocra.db.jooq.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.tables.Nature.NaturePath
 import remocra.db.jooq.tables.NatureDeci.NatureDeciPath
@@ -56,6 +60,7 @@ import remocra.db.jooq.tables.Organisme.OrganismePath
 import remocra.db.jooq.tables.Pena.PenaPath
 import remocra.db.jooq.tables.Pibi.PibiPath
 import remocra.db.jooq.tables.Site.SitePath
+import remocra.db.jooq.tables.Visite.VisitePath
 import remocra.db.jooq.tables.Voie.VoiePath
 import remocra.db.jooq.tables.ZoneIntegration.ZoneIntegrationPath
 import java.util.UUID
@@ -486,6 +491,23 @@ open class Pei(
     val peiPeiMaintenanceDeciIdFkey: OrganismePath
         get(): OrganismePath = peiPeiMaintenanceDeciIdFkey()
 
+    private lateinit var _lPeiAnomalie: LPeiAnomaliePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_pei_anomalie</code> table
+     */
+    fun lPeiAnomalie(): LPeiAnomaliePath {
+        if (!this::_lPeiAnomalie.isInitialized) {
+            _lPeiAnomalie = LPeiAnomaliePath(this, null, L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _lPeiAnomalie
+    }
+
+    val lPeiAnomalie: LPeiAnomaliePath
+        get(): LPeiAnomaliePath = lPeiAnomalie()
+
     private lateinit var _pena: PenaPath
 
     /**
@@ -517,6 +539,30 @@ open class Pei(
 
     val pibi: PibiPath
         get(): PibiPath = pibi()
+
+    private lateinit var _visite: VisitePath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.visite</code>
+     * table
+     */
+    fun visite(): VisitePath {
+        if (!this::_visite.isInitialized) {
+            _visite = VisitePath(this, null, VISITE__VISITE_VISITE_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _visite
+    }
+
+    val visite: VisitePath
+        get(): VisitePath = visite()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.anomalie</code> table
+     */
+    val anomalie: AnomaliePath
+        get(): AnomaliePath = lPeiAnomalie().anomalie()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("geometrie_point_pei"), "((geometrytype(pei_geometrie) = 'POINT'::text))", true),
     )

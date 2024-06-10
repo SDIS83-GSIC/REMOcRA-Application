@@ -6,12 +6,16 @@ package remocra.db.jooq
 import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
+import remocra.db.jooq.tables.Anomalie
+import remocra.db.jooq.tables.AnomalieCategorie
 import remocra.db.jooq.tables.Api
 import remocra.db.jooq.tables.Commune
 import remocra.db.jooq.tables.Diametre
 import remocra.db.jooq.tables.Domaine
 import remocra.db.jooq.tables.Gestionnaire
 import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LPeiAnomalie
+import remocra.db.jooq.tables.LVisiteAnomalie
 import remocra.db.jooq.tables.LieuDit
 import remocra.db.jooq.tables.LogLine
 import remocra.db.jooq.tables.MarquePibi
@@ -25,6 +29,7 @@ import remocra.db.jooq.tables.Parametre
 import remocra.db.jooq.tables.Pei
 import remocra.db.jooq.tables.Pena
 import remocra.db.jooq.tables.Pibi
+import remocra.db.jooq.tables.PoidsAnomalie
 import remocra.db.jooq.tables.ProfilOrganisme
 import remocra.db.jooq.tables.Reservoir
 import remocra.db.jooq.tables.Site
@@ -33,6 +38,8 @@ import remocra.db.jooq.tables.TypeCanalisation
 import remocra.db.jooq.tables.TypeOrganisme
 import remocra.db.jooq.tables.TypeReseau
 import remocra.db.jooq.tables.Utilisateur
+import remocra.db.jooq.tables.Visite
+import remocra.db.jooq.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.tables.Voie
 import remocra.db.jooq.tables.ZoneIntegration
 import javax.annotation.processing.Generated
@@ -57,6 +64,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
          */
         val REMOCRA: Remocra = Remocra()
     }
+
+    /**
+     * The table <code>remocra.anomalie</code>.
+     */
+    val ANOMALIE: Anomalie get() = Anomalie.ANOMALIE
+
+    /**
+     * The table <code>remocra.anomalie_categorie</code>.
+     */
+    val ANOMALIE_CATEGORIE: AnomalieCategorie get() = AnomalieCategorie.ANOMALIE_CATEGORIE
 
     /**
      * The table <code>remocra.api</code>.
@@ -87,6 +104,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.l_pei_anomalie</code>.
+     */
+    val L_PEI_ANOMALIE: LPeiAnomalie get() = LPeiAnomalie.L_PEI_ANOMALIE
+
+    /**
+     * The table <code>remocra.l_visite_anomalie</code>.
+     */
+    val L_VISITE_ANOMALIE: LVisiteAnomalie get() = LVisiteAnomalie.L_VISITE_ANOMALIE
 
     /**
      * The table <code>remocra.lieu_dit</code>.
@@ -154,6 +181,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val PIBI: Pibi get() = Pibi.PIBI
 
     /**
+     * The table <code>remocra.poids_anomalie</code>.
+     */
+    val POIDS_ANOMALIE: PoidsAnomalie get() = PoidsAnomalie.POIDS_ANOMALIE
+
+    /**
      * The table <code>remocra.profil_organisme</code>.
      */
     val PROFIL_ORGANISME: ProfilOrganisme get() = ProfilOrganisme.PROFIL_ORGANISME
@@ -194,6 +226,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val UTILISATEUR: Utilisateur get() = Utilisateur.UTILISATEUR
 
     /**
+     * The table <code>remocra.visite</code>.
+     */
+    val VISITE: Visite get() = Visite.VISITE
+
+    /**
+     * The table <code>remocra.visite_ctrl_debit_pression</code>.
+     */
+    val VISITE_CTRL_DEBIT_PRESSION: VisiteCtrlDebitPression get() = VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION
+
+    /**
      * The table <code>remocra.voie</code>.
      */
     val VOIE: Voie get() = Voie.VOIE
@@ -206,12 +248,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        Anomalie.ANOMALIE,
+        AnomalieCategorie.ANOMALIE_CATEGORIE,
         Api.API,
         Commune.COMMUNE,
         Diametre.DIAMETRE,
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
         Job.JOB,
+        LPeiAnomalie.L_PEI_ANOMALIE,
+        LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,
         MarquePibi.MARQUE_PIBI,
@@ -225,6 +271,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Pei.PEI,
         Pena.PENA,
         Pibi.PIBI,
+        PoidsAnomalie.POIDS_ANOMALIE,
         ProfilOrganisme.PROFIL_ORGANISME,
         Reservoir.RESERVOIR,
         Site.SITE,
@@ -233,6 +280,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         TypeOrganisme.TYPE_ORGANISME,
         TypeReseau.TYPE_RESEAU,
         Utilisateur.UTILISATEUR,
+        Visite.VISITE,
+        VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION,
         Voie.VOIE,
         ZoneIntegration.ZONE_INTEGRATION,
     )

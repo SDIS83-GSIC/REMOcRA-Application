@@ -3,12 +3,16 @@
  */
 package remocra.db.jooq.tables.references
 
+import remocra.db.jooq.tables.Anomalie
+import remocra.db.jooq.tables.AnomalieCategorie
 import remocra.db.jooq.tables.Api
 import remocra.db.jooq.tables.Commune
 import remocra.db.jooq.tables.Diametre
 import remocra.db.jooq.tables.Domaine
 import remocra.db.jooq.tables.Gestionnaire
 import remocra.db.jooq.tables.Job
+import remocra.db.jooq.tables.LPeiAnomalie
+import remocra.db.jooq.tables.LVisiteAnomalie
 import remocra.db.jooq.tables.LieuDit
 import remocra.db.jooq.tables.LogLine
 import remocra.db.jooq.tables.MarquePibi
@@ -22,6 +26,7 @@ import remocra.db.jooq.tables.Parametre
 import remocra.db.jooq.tables.Pei
 import remocra.db.jooq.tables.Pena
 import remocra.db.jooq.tables.Pibi
+import remocra.db.jooq.tables.PoidsAnomalie
 import remocra.db.jooq.tables.ProfilOrganisme
 import remocra.db.jooq.tables.Reservoir
 import remocra.db.jooq.tables.Site
@@ -30,8 +35,20 @@ import remocra.db.jooq.tables.TypeCanalisation
 import remocra.db.jooq.tables.TypeOrganisme
 import remocra.db.jooq.tables.TypeReseau
 import remocra.db.jooq.tables.Utilisateur
+import remocra.db.jooq.tables.Visite
+import remocra.db.jooq.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.tables.Voie
 import remocra.db.jooq.tables.ZoneIntegration
+
+/**
+ * The table <code>remocra.anomalie</code>.
+ */
+val ANOMALIE: Anomalie = Anomalie.ANOMALIE
+
+/**
+ * The table <code>remocra.anomalie_categorie</code>.
+ */
+val ANOMALIE_CATEGORIE: AnomalieCategorie = AnomalieCategorie.ANOMALIE_CATEGORIE
 
 /**
  * The table <code>remocra.api</code>.
@@ -62,6 +79,16 @@ val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.l_pei_anomalie</code>.
+ */
+val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
+
+/**
+ * The table <code>remocra.l_visite_anomalie</code>.
+ */
+val L_VISITE_ANOMALIE: LVisiteAnomalie = LVisiteAnomalie.L_VISITE_ANOMALIE
 
 /**
  * The table <code>remocra.lieu_dit</code>.
@@ -129,6 +156,11 @@ val PENA: Pena = Pena.PENA
 val PIBI: Pibi = Pibi.PIBI
 
 /**
+ * The table <code>remocra.poids_anomalie</code>.
+ */
+val POIDS_ANOMALIE: PoidsAnomalie = PoidsAnomalie.POIDS_ANOMALIE
+
+/**
  * The table <code>remocra.profil_organisme</code>.
  */
 val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
@@ -167,6 +199,16 @@ val TYPE_RESEAU: TypeReseau = TypeReseau.TYPE_RESEAU
  * The table <code>remocra.utilisateur</code>.
  */
 val UTILISATEUR: Utilisateur = Utilisateur.UTILISATEUR
+
+/**
+ * The table <code>remocra.visite</code>.
+ */
+val VISITE: Visite = Visite.VISITE
+
+/**
+ * The table <code>remocra.visite_ctrl_debit_pression</code>.
+ */
+val VISITE_CTRL_DEBIT_PRESSION: VisiteCtrlDebitPression = VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION
 
 /**
  * The table <code>remocra.voie</code>.

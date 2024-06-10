@@ -29,7 +29,10 @@ import remocra.db.jooq.enums.TypePei
 import remocra.db.jooq.keys.NATURE_NATURE_CODE_KEY
 import remocra.db.jooq.keys.NATURE_PKEY
 import remocra.db.jooq.keys.PEI__PEI_PEI_NATURE_ID_FKEY
+import remocra.db.jooq.keys.POIDS_ANOMALIE__POIDS_ANOMALIE_POIDS_ANOMALIE_NATURE_ID_FKEY
+import remocra.db.jooq.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.tables.Pei.PeiPath
+import remocra.db.jooq.tables.PoidsAnomalie.PoidsAnomaliePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -154,6 +157,30 @@ open class Nature(
 
     val pei: PeiPath
         get(): PeiPath = pei()
+
+    private lateinit var _poidsAnomalie: PoidsAnomaliePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.poids_anomalie</code> table
+     */
+    fun poidsAnomalie(): PoidsAnomaliePath {
+        if (!this::_poidsAnomalie.isInitialized) {
+            _poidsAnomalie = PoidsAnomaliePath(this, null, POIDS_ANOMALIE__POIDS_ANOMALIE_POIDS_ANOMALIE_NATURE_ID_FKEY.inverseKey)
+        }
+
+        return _poidsAnomalie
+    }
+
+    val poidsAnomalie: PoidsAnomaliePath
+        get(): PoidsAnomaliePath = poidsAnomalie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.anomalie</code> table
+     */
+    val anomalie: AnomaliePath
+        get(): AnomaliePath = poidsAnomalie().anomalie()
     override fun `as`(alias: String): Nature = Nature(DSL.name(alias), this)
     override fun `as`(alias: Name): Nature = Nature(alias, this)
     override fun `as`(alias: Table<*>): Nature = Nature(alias.qualifiedName, this)
