@@ -92,3 +92,7 @@ fun Field<*>.getSortField(value: Any?): SortField<out Any>? =
 fun eqOrIsNullString(field: Field<String>, value: String?): Condition {
     return if (value == null) field.isNull else field.eq(value)
 }
+
+fun <T> Field<Array<T>?>.contains(value: T): Condition {
+    return DSL.value(value).eq(DSL.any(this))
+}
