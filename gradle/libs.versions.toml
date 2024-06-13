@@ -56,6 +56,9 @@ jakartaee-pac4j = "org.pac4j:jakartaee-pac4j:8.0.0"
 pac4j-jakartaee = "org.pac4j:pac4j-jakartaee:6.0.1"
 
 commons-email = "org.apache.commons:commons-email:1.6.0"
+#swagger-generator = "io.swagger:swagger-generator:2.4.41"
+swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.22"
+swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.22"
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"

@@ -54,6 +54,11 @@ dependencies {
     implementation(libs.jackson.datatype.jsr310)
     implementation(libs.jackson.dataformat.csv)
 
+    // OpenAPI
+//    implementation(libs.swagger.generator)
+    implementation(libs.swagger.core)
+    implementation(libs.swagger.jaxrs)
+
     // Pac4j (authn)
     implementation(libs.jakartaee.pac4j)
     implementation(libs.pac4j.oidc)
