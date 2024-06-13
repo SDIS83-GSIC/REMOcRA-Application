@@ -59,6 +59,9 @@ dependencies {
     implementation(libs.swagger.core)
     implementation(libs.swagger.jaxrs)
 
+    // Pour l'import des fichiers shape
+    implementation(libs.geotools.gt.shapefile)
+
     // Pac4j (authn)
     implementation(libs.jakartaee.pac4j)
     implementation(libs.pac4j.oidc)

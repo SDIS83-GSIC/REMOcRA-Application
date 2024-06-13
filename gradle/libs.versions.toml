@@ -60,6 +60,8 @@ commons-email = "org.apache.commons:commons-email:1.6.0"
 swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.22"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.22"
 
+geotools-gt-shapefile = "org.geotools:gt-shapefile:31.0"
+
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"
 errorprone = "net.ltgt.errorprone:2.0.2"
