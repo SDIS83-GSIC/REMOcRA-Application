@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Binder
 import com.google.inject.TypeLiteral
 import com.google.inject.multibindings.Multibinder
-import remocra.api.s.ApiModule
+import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
 import remocra.web.nomenclatures.NomenclatureModule
