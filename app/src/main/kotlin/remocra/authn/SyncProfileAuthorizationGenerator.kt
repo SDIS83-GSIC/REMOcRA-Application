@@ -17,14 +17,13 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
         if (profile is UserInfo) {
             // TODO prendre en compte les groups et les rôles
             val userProfile: UserInfo = profile
-            val utilisateur = utilisateurRepository.syncUtilisateur(
-                UUID.fromString(userProfile.getId()),
+            utilisateurRepository.syncUtilisateur(
+                UUID.fromString(userProfile.id),
                 userProfile.familyName,
                 userProfile.firstName,
                 userProfile.email,
                 userProfile.username,
             )
-            userProfile.utilisateur = utilisateur
         }
         return Optional.of(profile)
     }
