@@ -1,6 +1,8 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./components/App/AppProvider.tsx";
 import "./App.module.css";
+import routes from "./routes.tsx";
+import RouteConfig from "./components/Router/RouteConfig.tsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 /**
@@ -11,6 +13,7 @@ const App = () => {
     <BrowserRouter>
       <AppProvider>
         <h1>Page authentifiée</h1>
+        <RouteConfig routes={routes} />
       </AppProvider>
     </BrowserRouter>
   );
