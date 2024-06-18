@@ -92,6 +92,7 @@ val POIDS_ANOMALIE_POIDS_ANOMALIE_ANOMALIE_ID_POIDS_ANOMALIE_NA_KEY: UniqueKey<R
 val PROFIL_ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ProfilOrganisme.PROFIL_ORGANISME, DSL.name("profil_organisme_pkey"), arrayOf(ProfilOrganisme.PROFIL_ORGANISME.ID), true)
 val PROFIL_ORGANISME_PROFIL_ORGANISME_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(ProfilOrganisme.PROFIL_ORGANISME, DSL.name("profil_organisme_profil_organisme_code_key"), arrayOf(ProfilOrganisme.PROFIL_ORGANISME.CODE), true)
 val RESERVOIR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_pkey"), arrayOf(Reservoir.RESERVOIR.ID), true)
+val RESERVOIR_RESERVOIR_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_reservoir_code_key"), arrayOf(Reservoir.RESERVOIR.CODE), true)
 val SITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_pkey"), arrayOf(Site.SITE.ID), true)
 val SITE_SITE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_site_code_key"), arrayOf(Site.SITE.CODE), true)
 val TASK_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_pkey"), arrayOf(Task.TASK.ID), true)

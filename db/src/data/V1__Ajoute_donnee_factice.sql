@@ -101,10 +101,10 @@ INSERT INTO remocra.nature
 VALUES (gen_random_uuid(), true, 'PUI', 'Puits Puisard', 'PENA');
 INSERT INTO remocra.nature
     (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'PA_I', 'Point d''aspiration indéterminé', 'PENA');
+VALUES (gen_random_uuid(), true, 'PA_I', 'Point d''aspiration', 'PENA');
 INSERT INTO remocra.nature
     (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'ASP_I', 'Aspiration indéterminée', 'PENA');
+VALUES (gen_random_uuid(), true, 'ASP_I', 'Aspiration', 'PENA');
 INSERT INTO remocra.nature
     (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
 VALUES (gen_random_uuid(), true, 'LAV', 'Lavoir', 'PENA');
@@ -114,22 +114,59 @@ VALUES (gen_random_uuid(), true, 'LAV', 'Lavoir', 'PENA');
 
 
 INSERT INTO remocra.zone_integration
-(zone_integration_id, zone_integration_actif, zone_integration_code, zone_integration_libelle, zone_integration_geometrie, zone_integration_type)
-VALUES(gen_random_uuid(), true, 'FR', 'France', 'SRID=2154;MULTIPOLYGON (((1157055 6049646.5, 1157055 6158599, 1159342 6158599, 1159342 6233671, 1242375.125 6233671, 1242375.125 6102227.5, 1233711.125 6102227.5, 1233711.125 6049646.5, 1157055 6049646.5)), ((253465.140625 6997399.5, 253465.140625 7016562, 216607.21875 7016562, 216607.21875 7097114, 254268.3125 7097114, 254268.3125 7114420.5, 328282.71875 7114420.5, 328282.71875 7039838, 327053.5 7039838, 327053.5 6997399.5, 253465.140625 6997399.5)), ((595004 6137163.5, 595004 6164369.5, 522390.96875 6164369.5, 522390.96875 6179671.5, 508067 6179671.5, 508067 6178845.5, 428171.96875 6178845.5, 428171.96875 6193171.5, 311995 6193171.5, 311995 6283552, 334283 6283552, 334283 6389853, 361762.96875 6389853, 361762.96875 6448283.5, 348630.96875 6448283.5, 348630.96875 6582755.5, 287967.96875 6582755.5, 287967.96875 6649967.5, 280972.96875 6649967.5, 280972.96875 6704492.5, 199376.984375 6704492.5, 199376.984375 6760584.5, 99225.9921875 6760584.5, 99225.9921875 6873212, 209750.984375 6873212, 209750.984375 6881976, 337516 6881976, 337516 6856659, 343081.96875 6856659, 343081.96875 6969694, 425027 6969694, 425027 6929242, 487572.96875 6929242, 487572.96875 6998137, 583879.9375 6998137, 583879.9375 7030667, 597189.9375 7030667, 597189.9375 7101577, 634421.9375 7101577, 634421.9375 7110524, 788153.0625 7110524, 788153.0625 7009226, 873032.0625 7009226, 873032.0625 6949057, 908589.0625 6949057, 908589.0625 6943889, 1004385.0625 6943889, 1004385.0625 6939584, 1038956.0625 6939584, 1038956.0625 6895581, 1082671.125 6895581, 1082671.125 6789935.5, 1044932.0625 6789935.5, 1044932.0625 6710918.5, 1006440.0625 6710918.5, 1006440.0625 6610704.5, 944643 6610704.5, 944643 6596484, 1013117.0625 6596484, 1013117.0625 6541572, 1027185 6541572, 1027185 6445178.5, 1022851.0625 6445178.5, 1022851.0625 6370072, 1077507 6370072, 1077507 6272481.5, 1018256.0625 6272481.5, 1018256.0625 6214472.5, 914649 6214472.5, 914649 6232732.5, 799606.9375 6232732.5, 799606.9375 6263118.5, 796333.0625 6263118.5, 796333.0625 6234873.5, 719561 6234873.5, 719561 6172490.5, 714448 6172490.5, 714448 6137163.5, 595004 6137163.5), (643206 6867927.5, 643206 6853168, 654970.9375 6853168, 654970.9375 6867927.5, 643206 6867927.5)))'::public.geometry, 'ZONE_COMPETENCE');
+(zone_integration_id, zone_integration_actif, zone_integration_code, zone_integration_libelle,
+ zone_integration_geometrie, zone_integration_type)
+VALUES (gen_random_uuid(), true, 'FR', 'France',
+        'SRID=2154;MULTIPOLYGON (((1157055 6049646.5, 1157055 6158599, 1159342 6158599, 1159342 6233671, 1242375.125 6233671, 1242375.125 6102227.5, 1233711.125 6102227.5, 1233711.125 6049646.5, 1157055 6049646.5)), ((253465.140625 6997399.5, 253465.140625 7016562, 216607.21875 7016562, 216607.21875 7097114, 254268.3125 7097114, 254268.3125 7114420.5, 328282.71875 7114420.5, 328282.71875 7039838, 327053.5 7039838, 327053.5 6997399.5, 253465.140625 6997399.5)), ((595004 6137163.5, 595004 6164369.5, 522390.96875 6164369.5, 522390.96875 6179671.5, 508067 6179671.5, 508067 6178845.5, 428171.96875 6178845.5, 428171.96875 6193171.5, 311995 6193171.5, 311995 6283552, 334283 6283552, 334283 6389853, 361762.96875 6389853, 361762.96875 6448283.5, 348630.96875 6448283.5, 348630.96875 6582755.5, 287967.96875 6582755.5, 287967.96875 6649967.5, 280972.96875 6649967.5, 280972.96875 6704492.5, 199376.984375 6704492.5, 199376.984375 6760584.5, 99225.9921875 6760584.5, 99225.9921875 6873212, 209750.984375 6873212, 209750.984375 6881976, 337516 6881976, 337516 6856659, 343081.96875 6856659, 343081.96875 6969694, 425027 6969694, 425027 6929242, 487572.96875 6929242, 487572.96875 6998137, 583879.9375 6998137, 583879.9375 7030667, 597189.9375 7030667, 597189.9375 7101577, 634421.9375 7101577, 634421.9375 7110524, 788153.0625 7110524, 788153.0625 7009226, 873032.0625 7009226, 873032.0625 6949057, 908589.0625 6949057, 908589.0625 6943889, 1004385.0625 6943889, 1004385.0625 6939584, 1038956.0625 6939584, 1038956.0625 6895581, 1082671.125 6895581, 1082671.125 6789935.5, 1044932.0625 6789935.5, 1044932.0625 6710918.5, 1006440.0625 6710918.5, 1006440.0625 6610704.5, 944643 6610704.5, 944643 6596484, 1013117.0625 6596484, 1013117.0625 6541572, 1027185 6541572, 1027185 6445178.5, 1022851.0625 6445178.5, 1022851.0625 6370072, 1077507 6370072, 1077507 6272481.5, 1018256.0625 6272481.5, 1018256.0625 6214472.5, 914649 6214472.5, 914649 6232732.5, 799606.9375 6232732.5, 799606.9375 6263118.5, 796333.0625 6263118.5, 796333.0625 6234873.5, 719561 6234873.5, 719561 6172490.5, 714448 6172490.5, 714448 6137163.5, 595004 6137163.5), (643206 6867927.5, 643206 6853168, 654970.9375 6853168, 654970.9375 6867927.5, 643206 6867927.5)))'::public.geometry,
+        'ZONE_COMPETENCE');
 
 --organisme
 
-INSERT INTO remocra.organisme
-(organisme_id, organisme_actif, organisme_code, organisme_email_contact, organisme_profil_organisme_id, organisme_type_organisme_id, organisme_zone_integration_id, organisme_parent_id)
-VALUES(gen_random_uuid(), true, 'REMOCRA', 'remocra-projet@atolcd.com', (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'REMOCRA'), (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'REMOCRA'), (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR' ), NULL);
 
+
+INSERT INTO remocra.profil_organisme
+(profil_organisme_id, profil_organisme_actif, profil_organisme_code, profil_organisme_libelle,
+ profil_organisme_type_organisme_id)
+VALUES (gen_random_uuid(), true, 'UNE_COMMUNE', 'Une jolie commune',
+        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code ilike 'COMMUNE')),
+       (gen_random_uuid(), true, 'UNE_PREFECTURE', 'Préfectureuh',
+        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code ilike 'PREFECTURE')),
+       (gen_random_uuid(), true, 'EPCI', 'EPCI',
+        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code ilike 'EPCI')),
+       (gen_random_uuid(), true, 'AUTRE_SERVICE_PUBLIC_DECI', 'Autre Services Public DECI',
+        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code ilike 'AUTRE_SERVICE_PUBLIC_DECI'));
+
+
+INSERT INTO remocra.organisme
+(organisme_id, organisme_actif, organisme_code, organisme_libelle, organisme_email_contact,
+ organisme_profil_organisme_id, organisme_type_organisme_id, organisme_zone_integration_id, organisme_parent_id)
+VALUES (gen_random_uuid(), true, 'REMOCRA', 'Remocra Admin', 'remocra-projet@atolcd.com',
+        (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'REMOCRA'),
+        (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'REMOCRA'),
+        (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR'), NULL),
+       (gen_random_uuid(), true, 'UNE_COMMUNE', 'Une jolie commune', 'Une-jolie-commune@atolcd.com',
+        (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'UNE_COMMUNE'),
+        (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'COMMUNE'),
+        (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR'), NULL),
+       (gen_random_uuid(), true, 'UNE_PREFECTURE', 'Préfectureuh', 'UPréfectureuh@atolcd.com',
+        (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'UNE_PREFECTURE'),
+        (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'PREFECTURE'),
+        (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR'), NULL),
+       (gen_random_uuid(), true, 'EPCI', 'EPCI', 'EPCI@atolcd.com',
+        (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'EPCI'),
+        (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'EPCI'),
+        (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR'), NULL),
+       (gen_random_uuid(), true, 'AUTRE_SERVICE_PUBLIC_DECI', 'Autre Services Public DECI', 'AUTRE_SERVICE_PUBLIC_DECI@atolcd.com',
+        (select profil_organisme_id from remocra.profil_organisme where profil_organisme_code ilike 'AUTRE_SERVICE_PUBLIC_DECI'),
+        (select type_organisme_id from remocra.type_organisme where type_organisme_code ilike 'AUTRE_SERVICE_PUBLIC_DECI'),
+        (select zone_integration_id from remocra.zone_integration where zone_integration_code = 'FR'), NULL)
+;
 
 
 --3 pei
 
 INSERT
-INTO
-    remocra.pei
+INTO remocra.pei
 (pei_id,
  pei_annee_fabrication,
  pei_type_pei,
@@ -155,37 +192,36 @@ INTO
  pei_service_public_deci_id,
  pei_maintenance_deci_id,
  pei_en_face)
-VALUES(gen_random_uuid(),
-       2024,
-       'PIBI',
-       0,
-       (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
-       '',
-       null,
-       'un complément d''adresse',
-       'DISPONIBLE',
-       'SRID=2154;POINT (723817 6766010)',
-       null,
-       '2150_39',
-       39,
-       'une obs',
-       (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21802'),
-       (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DOMAINE'),
-       (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'PI'),
-       (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PUBLIC'),
-       null,
-       (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
-       NULL,
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       false);
+VALUES (gen_random_uuid(),
+        2024,
+        'PENA',
+        0,
+        (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
+        '',
+        null,
+        'un complément d''adresse',
+        'DISPONIBLE',
+        'SRID=2154;POINT (723817 6766010)',
+        null,
+        '2150_39',
+        39,
+        'une obs',
+        (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21802'),
+        (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DOMAINE'),
+        (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'CE'),
+        (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PUBLIC'),
+        null,
+        (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
+        NULL,
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        false);
 
 
 
 INSERT
-INTO
-    remocra.pei
+INTO remocra.pei
 (pei_id,
  pei_annee_fabrication,
  pei_type_pei,
@@ -211,36 +247,35 @@ INTO
  pei_service_public_deci_id,
  pei_maintenance_deci_id,
  pei_en_face)
-VALUES(gen_random_uuid(),
-       2024,
-       'PIBI',
-       0,
-       (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
-       '',
-       null,
-       'un complément d''adresse',
-       'DISPONIBLE',
-       'SRID=2154;POINT (723820 6766010)',
-       null,
-       '2150_38',
-       38,
-       'une obs',
-       (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21803'),
-       (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DEPARTEMENT'),
-       (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'BI'),
-       (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PRIVE'),
-       null,
-       (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
-       NULL,
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       false);
+VALUES (gen_random_uuid(),
+        2024,
+        'PIBI',
+        0,
+        (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
+        '',
+        null,
+        'un complément d''adresse',
+        'DISPONIBLE',
+        'SRID=2154;POINT (723820 6766010)',
+        null,
+        '2150_38',
+        38,
+        'une obs',
+        (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21803'),
+        (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DEPARTEMENT'),
+        (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'BI'),
+        (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PRIVE'),
+        null,
+        (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
+        NULL,
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        false);
 
 
 INSERT
-INTO
-    remocra.pei
+INTO remocra.pei
 (pei_id,
  pei_annee_fabrication,
  pei_type_pei,
@@ -266,34 +301,86 @@ INTO
  pei_service_public_deci_id,
  pei_maintenance_deci_id,
  pei_en_face)
-VALUES(gen_random_uuid(),
-       2024,
-       'PIBI',
-       0,
-       (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
-       '',
-       null,
-       'un complément d''adresse',
-       'DISPONIBLE',
-       'SRID=2154;POINT (723820 6766030)',
-       null,
-       '2150_37',
-       37,
-       'une obs',
-       (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21800'),
-       (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DEPARTEMENT'),
-       (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'BI'),
+VALUES (gen_random_uuid(),
+        2024,
+        'PIBI',
+        0,
+        (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
+        '',
+        null,
+        'un complément d''adresse',
+        'DISPONIBLE',
+        'SRID=2154;POINT (723820 6766030)',
+        null,
+        '2150_37',
+        37,
+        'une obs',
+        (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21800'),
+        (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'DEPARTEMENT'),
+        (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'BI'),
+        (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PUBLIC_CONVENTIONNE'),
+        null,
+        (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
+        NULL,
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        false);
 
-       (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'CONVENTIONNE'),
-       null,
-       (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
-       NULL,
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
-       false);
 
 
+INSERT
+INTO remocra.pei
+(pei_id,
+ pei_annee_fabrication,
+ pei_type_pei,
+ pei_numero_voie,
+ pei_voie_id,
+ pei_suffixe_voie,
+ pei_croisement_id,
+ pei_complement_adresse,
+ pei_disponibilite_terrestre,
+ pei_geometrie,
+ pei_lieu_dit_id,
+ pei_numero_complet,
+ pei_numero_interne,
+ pei_observation,
+ pei_commune_id,
+ pei_domaine_id,
+ pei_nature_id,
+ pei_nature_deci_id,
+ pei_zone_speciale_id,
+ pei_niveau_id,
+ pei_site_id,
+ pei_autorite_deci_id,
+ pei_service_public_deci_id,
+ pei_maintenance_deci_id,
+ pei_en_face)
+VALUES (gen_random_uuid(),
+        2024,
+        'PENA',
+        0,
+        (SELECT voie_id FROM remocra.voie WHERE voie_libelle ILIKE 'BAYSE'),
+        '',
+        null,
+        '',
+        'INDISPONIBLE',
+        'SRID=2154;POINT (723825 6766035)',
+        null,
+        '2134_40',
+        40,
+        'une obs',
+        (SELECT commune_id FROM remocra.remocra.commune WHERE commune_insee = '21803'),
+        (SELECT domaine_id FROM remocra.domaine WHERE domaine_code ILIKE 'COMMUNAL'),
+        (SELECT nature_id FROM remocra.nature WHERE nature_code ILIKE 'BI'),
+        (SELECT nature_deci_id FROM remocra.nature_deci WHERE nature_deci_code ILIKE 'PUBLIC_CONVENTIONNE'),
+        null,
+        (SELECT niveau_id FROM remocra.niveau WHERE niveau_code = 'VP'),
+        NULL,
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'UNE_PREFECTURE'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'UNE_COMMUNE'),
+        (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
+        false);
 
 
 

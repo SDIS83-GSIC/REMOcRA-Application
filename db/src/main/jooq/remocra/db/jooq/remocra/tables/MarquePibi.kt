@@ -94,9 +94,9 @@ open class MarquePibi(
     val CODE: TableField<Record, String?> = createField(DSL.name("marque_pibi_code"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.marque_pibi.marque_pibi_nom</code>.
+     * The column <code>remocra.marque_pibi.marque_pibi_libelle</code>.
      */
-    val NOM: TableField<Record, String?> = createField(DSL.name("marque_pibi_nom"), SQLDataType.CLOB.nullable(false), this, "")
+    val LIBELLE: TableField<Record, String?> = createField(DSL.name("marque_pibi_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

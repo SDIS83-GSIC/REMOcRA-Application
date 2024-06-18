@@ -21,7 +21,8 @@ import javax.annotation.processing.Generated
 data class Reservoir(
     val reservoirId: UUID,
     val reservoirActif: Boolean,
-    val reservoirNom: String,
+    val reservoirCode: String,
+    val reservoirLibelle: String,
     val reservoirCapacite: Int,
 ) : Serializable {
 
@@ -42,7 +43,10 @@ data class Reservoir(
         if (this.reservoirActif != o.reservoirActif) {
             return false
         }
-        if (this.reservoirNom != o.reservoirNom) {
+        if (this.reservoirCode != o.reservoirCode) {
+            return false
+        }
+        if (this.reservoirLibelle != o.reservoirLibelle) {
             return false
         }
         if (this.reservoirCapacite != o.reservoirCapacite) {
@@ -56,7 +60,8 @@ data class Reservoir(
         var result = 1
         result = prime * result + this.reservoirId.hashCode()
         result = prime * result + this.reservoirActif.hashCode()
-        result = prime * result + this.reservoirNom.hashCode()
+        result = prime * result + this.reservoirCode.hashCode()
+        result = prime * result + this.reservoirLibelle.hashCode()
         result = prime * result + this.reservoirCapacite.hashCode()
         return result
     }
@@ -66,7 +71,8 @@ data class Reservoir(
 
         sb.append(reservoirId)
         sb.append(", ").append(reservoirActif)
-        sb.append(", ").append(reservoirNom)
+        sb.append(", ").append(reservoirCode)
+        sb.append(", ").append(reservoirLibelle)
         sb.append(", ").append(reservoirCapacite)
 
         sb.append(")")

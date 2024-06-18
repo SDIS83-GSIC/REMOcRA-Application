@@ -22,7 +22,7 @@ data class ModelePibi(
     val modelePibiId: UUID,
     val modelePibiActif: Boolean,
     val modelePibiCode: String,
-    val modelePibiNom: String,
+    val modelePibiLibelle: String,
     val modelePibiMarqueId: UUID?,
 ) : Serializable {
 
@@ -46,7 +46,7 @@ data class ModelePibi(
         if (this.modelePibiCode != o.modelePibiCode) {
             return false
         }
-        if (this.modelePibiNom != o.modelePibiNom) {
+        if (this.modelePibiLibelle != o.modelePibiLibelle) {
             return false
         }
         if (this.modelePibiMarqueId == null) {
@@ -65,7 +65,7 @@ data class ModelePibi(
         result = prime * result + this.modelePibiId.hashCode()
         result = prime * result + this.modelePibiActif.hashCode()
         result = prime * result + this.modelePibiCode.hashCode()
-        result = prime * result + this.modelePibiNom.hashCode()
+        result = prime * result + this.modelePibiLibelle.hashCode()
         result = prime * result + (if (this.modelePibiMarqueId == null) 0 else this.modelePibiMarqueId.hashCode())
         return result
     }
@@ -76,7 +76,7 @@ data class ModelePibi(
         sb.append(modelePibiId)
         sb.append(", ").append(modelePibiActif)
         sb.append(", ").append(modelePibiCode)
-        sb.append(", ").append(modelePibiNom)
+        sb.append(", ").append(modelePibiLibelle)
         sb.append(", ").append(modelePibiMarqueId)
 
         sb.append(")")

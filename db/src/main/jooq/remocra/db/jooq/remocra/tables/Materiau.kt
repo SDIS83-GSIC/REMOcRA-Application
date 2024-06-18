@@ -94,9 +94,9 @@ open class Materiau(
     val CODE: TableField<Record, String?> = createField(DSL.name("materiau_code"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.materiau.materiau_nom</code>.
+     * The column <code>remocra.materiau.materiau_libelle</code>.
      */
-    val NOM: TableField<Record, String?> = createField(DSL.name("materiau_nom"), SQLDataType.CLOB.nullable(false), this, "")
+    val LIBELLE: TableField<Record, String?> = createField(DSL.name("materiau_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

@@ -20,8 +20,10 @@ import javax.annotation.processing.Generated
 @Suppress("UNCHECKED_CAST")
 data class NatureDeci(
     val natureDeciId: UUID,
+    val natureDeciActif: Boolean,
     val natureDeciCode: String,
-    val natureDeciNom: String,
+    val natureDeciLibelle: String,
+    val natureDeciProtected: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -38,10 +40,16 @@ data class NatureDeci(
         if (this.natureDeciId != o.natureDeciId) {
             return false
         }
+        if (this.natureDeciActif != o.natureDeciActif) {
+            return false
+        }
         if (this.natureDeciCode != o.natureDeciCode) {
             return false
         }
-        if (this.natureDeciNom != o.natureDeciNom) {
+        if (this.natureDeciLibelle != o.natureDeciLibelle) {
+            return false
+        }
+        if (this.natureDeciProtected != o.natureDeciProtected) {
             return false
         }
         return true
@@ -51,8 +59,10 @@ data class NatureDeci(
         val prime = 31
         var result = 1
         result = prime * result + this.natureDeciId.hashCode()
+        result = prime * result + this.natureDeciActif.hashCode()
         result = prime * result + this.natureDeciCode.hashCode()
-        result = prime * result + this.natureDeciNom.hashCode()
+        result = prime * result + this.natureDeciLibelle.hashCode()
+        result = prime * result + this.natureDeciProtected.hashCode()
         return result
     }
 
@@ -60,8 +70,10 @@ data class NatureDeci(
         val sb = StringBuilder("NatureDeci (")
 
         sb.append(natureDeciId)
+        sb.append(", ").append(natureDeciActif)
         sb.append(", ").append(natureDeciCode)
-        sb.append(", ").append(natureDeciNom)
+        sb.append(", ").append(natureDeciLibelle)
+        sb.append(", ").append(natureDeciProtected)
 
         sb.append(")")
         return sb.toString()

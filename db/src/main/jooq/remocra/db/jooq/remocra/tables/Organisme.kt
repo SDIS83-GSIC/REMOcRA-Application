@@ -108,6 +108,11 @@ open class Organisme(
     val CODE: TableField<Record, String?> = createField(DSL.name("organisme_code"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
+     * The column <code>remocra.organisme.organisme_libelle</code>.
+     */
+    val LIBELLE: TableField<Record, String?> = createField(DSL.name("organisme_libelle"), SQLDataType.CLOB.nullable(false), this, "")
+
+    /**
      * The column <code>remocra.organisme.organisme_email_contact</code>.
      * "adresse mail, si possible générique", permettant de contacter
      * l'organisme

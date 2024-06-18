@@ -23,6 +23,7 @@ data class Diametre(
     val diametreActif: Boolean,
     val diametreCode: String,
     val diametreLibelle: String,
+    val diametreProtected: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -48,6 +49,9 @@ data class Diametre(
         if (this.diametreLibelle != o.diametreLibelle) {
             return false
         }
+        if (this.diametreProtected != o.diametreProtected) {
+            return false
+        }
         return true
     }
 
@@ -58,6 +62,7 @@ data class Diametre(
         result = prime * result + this.diametreActif.hashCode()
         result = prime * result + this.diametreCode.hashCode()
         result = prime * result + this.diametreLibelle.hashCode()
+        result = prime * result + this.diametreProtected.hashCode()
         return result
     }
 
@@ -68,6 +73,7 @@ data class Diametre(
         sb.append(", ").append(diametreActif)
         sb.append(", ").append(diametreCode)
         sb.append(", ").append(diametreLibelle)
+        sb.append(", ").append(diametreProtected)
 
         sb.append(")")
         return sb.toString()

@@ -58,6 +58,10 @@ INSERT INTO remocra.type_organisme
  type_organisme_parent_id)
 VALUES (gen_random_uuid(), true, true, 'SERVICE_EAU', 'Service des eaux', null),
        (gen_random_uuid(), true, true, 'PRESTATAIRE_TECHNIQUE', 'Prestataire technique', null),
+       (gen_random_uuid(), true, true, 'AUTRE_SERVICE_PUBLIC_DECI', 'Autre Services Public DECI', null),
+       (gen_random_uuid(), true, true, 'COMMUNE', 'Commune', null),
+       (gen_random_uuid(), true, true, 'EPCI', 'EPCI', null),
+       (gen_random_uuid(), true, true, 'PREFECTURE', 'Préfecture', null),
        (gen_random_uuid(), true, true, 'REMOCRA', 'Organisme des dev', NULL);
 
 
@@ -99,17 +103,21 @@ VALUES (gen_random_uuid(), true, 'ANTENNE', 'Antenne'),
 CREATE TABLE remocra.nature_deci
 (
     nature_deci_id   UUID PRIMARY KEY,
+    nature_deci_actif  BOOLEAN NOT NULL,
     nature_deci_code VARCHAR NOT NULL,
-    nature_deci_nom  VARCHAR NOT NULL
+    nature_deci_libelle  VARCHAR NOT NULL,
+    nature_deci_protected  BOOLEAN NOT NULL
 );
 
-
 INSERT INTO remocra.nature_deci
-(nature_deci_id, nature_deci_code, nature_deci_nom)
-VALUES(gen_random_uuid(), 'PRIVE', 'Privé');
+(nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
+VALUES(gen_random_uuid(), 'PRIVE', 'Privé', true, true);
 INSERT INTO remocra.nature_deci
-(nature_deci_id, nature_deci_code, nature_deci_nom)
-VALUES(gen_random_uuid(), 'PUBLIC', 'Public');
+(nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
+VALUES(gen_random_uuid(), 'PUBLIC', 'Public', true, true);
 INSERT INTO remocra.nature_deci
-(nature_deci_id, nature_deci_code, nature_deci_nom)
-VALUES(gen_random_uuid(), 'CONVENTIONNE', 'Privé sous convention');
+(nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
+VALUES(gen_random_uuid(), 'PRIVE_CONVENTIONNE', 'Privé sous convention', false, true);
+INSERT INTO remocra.nature_deci
+(nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
+VALUES(gen_random_uuid(), 'PUBLIC_CONVENTIONNE', 'Public sous convention', false, true);

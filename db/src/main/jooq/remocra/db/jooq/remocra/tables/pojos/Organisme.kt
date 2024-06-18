@@ -22,6 +22,7 @@ data class Organisme(
     val organismeId: UUID,
     val organismeActif: Boolean,
     val organismeCode: String,
+    val organismeLibelle: String,
     val organismeEmailContact: String?,
     val organismeProfilOrganismeId: UUID,
     val organismeTypeOrganismeId: UUID,
@@ -47,6 +48,9 @@ data class Organisme(
             return false
         }
         if (this.organismeCode != o.organismeCode) {
+            return false
+        }
+        if (this.organismeLibelle != o.organismeLibelle) {
             return false
         }
         if (this.organismeEmailContact == null) {
@@ -81,6 +85,7 @@ data class Organisme(
         result = prime * result + this.organismeId.hashCode()
         result = prime * result + this.organismeActif.hashCode()
         result = prime * result + this.organismeCode.hashCode()
+        result = prime * result + this.organismeLibelle.hashCode()
         result = prime * result + (if (this.organismeEmailContact == null) 0 else this.organismeEmailContact.hashCode())
         result = prime * result + this.organismeProfilOrganismeId.hashCode()
         result = prime * result + this.organismeTypeOrganismeId.hashCode()
@@ -95,6 +100,7 @@ data class Organisme(
         sb.append(organismeId)
         sb.append(", ").append(organismeActif)
         sb.append(", ").append(organismeCode)
+        sb.append(", ").append(organismeLibelle)
         sb.append(", ").append(organismeEmailContact)
         sb.append(", ").append(organismeProfilOrganismeId)
         sb.append(", ").append(organismeTypeOrganismeId)

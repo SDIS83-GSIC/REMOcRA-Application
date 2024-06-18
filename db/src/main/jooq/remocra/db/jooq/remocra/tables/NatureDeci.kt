@@ -82,14 +82,24 @@ open class NatureDeci(
     val ID: TableField<Record, UUID?> = createField(DSL.name("nature_deci_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
+     * The column <code>remocra.nature_deci.nature_deci_actif</code>.
+     */
+    val ACTIF: TableField<Record, Boolean?> = createField(DSL.name("nature_deci_actif"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
+    /**
      * The column <code>remocra.nature_deci.nature_deci_code</code>.
      */
     val CODE: TableField<Record, String?> = createField(DSL.name("nature_deci_code"), SQLDataType.VARCHAR.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.nature_deci.nature_deci_nom</code>.
+     * The column <code>remocra.nature_deci.nature_deci_libelle</code>.
      */
-    val NOM: TableField<Record, String?> = createField(DSL.name("nature_deci_nom"), SQLDataType.VARCHAR.nullable(false), this, "")
+    val LIBELLE: TableField<Record, String?> = createField(DSL.name("nature_deci_libelle"), SQLDataType.VARCHAR.nullable(false), this, "")
+
+    /**
+     * The column <code>remocra.nature_deci.nature_deci_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("nature_deci_protected"), SQLDataType.BOOLEAN.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

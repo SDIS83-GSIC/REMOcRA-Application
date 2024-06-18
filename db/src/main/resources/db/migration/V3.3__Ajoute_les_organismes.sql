@@ -34,16 +34,18 @@ INSERT INTO remocra.profil_organisme
 (profil_organisme_id, profil_organisme_actif, profil_organisme_code, profil_organisme_libelle,
  profil_organisme_type_organisme_id)
 VALUES (gen_random_uuid(), true, 'REMOCRA', 'Remocra-projet',
-        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code ilike 'REMOCRA'));
+        (SELECT type_organisme_id FROM remocra.type_organisme WHERE type_organisme_code = 'REMOCRA'))
+;
 CREATE TABLE remocra.organisme
 (
     organisme_id                  UUID PRIMARY KEY,
     organisme_actif               BOOLEAN NOT NULL,
     organisme_code                TEXT    NOT NULL UNIQUE,
+    organisme_libelle             TEXT    NOT NULL,
     organisme_email_contact       TEXT,
-    organisme_profil_organisme_id UUID NOT NULL REFERENCES remocra.profil_organisme (profil_organisme_id),
-    organisme_type_organisme_id   UUID NOT NULL REFERENCES remocra.type_organisme (type_organisme_id),
-    organisme_zone_integration_id UUID NOT NULL REFERENCES remocra.zone_integration (zone_integration_id),
+    organisme_profil_organisme_id UUID    NOT NULL REFERENCES remocra.profil_organisme (profil_organisme_id),
+    organisme_type_organisme_id   UUID    NOT NULL REFERENCES remocra.type_organisme (type_organisme_id),
+    organisme_zone_integration_id UUID    NOT NULL REFERENCES remocra.zone_integration (zone_integration_id),
     organisme_parent_id           UUID REFERENCES remocra.organisme (organisme_id)
 
 );
@@ -54,7 +56,7 @@ COMMENT
 
 CREATE TABLE remocra.api
 (
-    api_organisme_id      UUID PRIMARY KEY REFERENCES remocra.organisme (organisme_id),
-    api_password          TEXT NOT NULL,
+    api_organisme_id       UUID PRIMARY KEY REFERENCES remocra.organisme (organisme_id),
+    api_password           TEXT NOT NULL,
     api_derniere_connexion TIMESTAMP
 )

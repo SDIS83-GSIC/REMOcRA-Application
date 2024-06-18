@@ -22,7 +22,7 @@ data class Materiau(
     val materiauId: UUID,
     val materiauActif: Boolean,
     val materiauCode: String,
-    val materiauNom: String,
+    val materiauLibelle: String,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -45,7 +45,7 @@ data class Materiau(
         if (this.materiauCode != o.materiauCode) {
             return false
         }
-        if (this.materiauNom != o.materiauNom) {
+        if (this.materiauLibelle != o.materiauLibelle) {
             return false
         }
         return true
@@ -57,7 +57,7 @@ data class Materiau(
         result = prime * result + this.materiauId.hashCode()
         result = prime * result + this.materiauActif.hashCode()
         result = prime * result + this.materiauCode.hashCode()
-        result = prime * result + this.materiauNom.hashCode()
+        result = prime * result + this.materiauLibelle.hashCode()
         return result
     }
 
@@ -67,7 +67,7 @@ data class Materiau(
         sb.append(materiauId)
         sb.append(", ").append(materiauActif)
         sb.append(", ").append(materiauCode)
-        sb.append(", ").append(materiauNom)
+        sb.append(", ").append(materiauLibelle)
 
         sb.append(")")
         return sb.toString()

@@ -102,6 +102,11 @@ open class Diametre(
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("diametre_libelle"), SQLDataType.CLOB.nullable(false), this, "Libellé permettant au SDIS de personnaliser l'affichage en front de chaque diamètre")
 
+    /**
+     * The column <code>remocra.diametre.diametre_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("diametre_protected"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
