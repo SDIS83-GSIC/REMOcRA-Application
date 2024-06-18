@@ -41,7 +41,7 @@ inline fun <reified T> Field<*>.coerce(): Field<T> = this.coerce(T::class.java)
 inline fun <reified T> Field<*>.cast(): Field<T> = this.cast(T::class.java)
 
 // Critère de recherche plein texte avec le dictionnaire "fr" sur le préfixe "value"
-fun Field<String>.ftsearch(value: String): Condition {
+fun Field<String?>.ftsearch(value: String): Condition {
     val escapedValued = escape(value).split(" ").filter { it != "" }.joinToString(separator = " & ")
     if (escapedValued.isBlank()) {
         return DSL.noCondition()

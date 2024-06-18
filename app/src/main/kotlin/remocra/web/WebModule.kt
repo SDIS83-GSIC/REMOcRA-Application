@@ -7,16 +7,25 @@ import com.google.inject.multibindings.Multibinder
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.web.commune.CommuneModule
+import remocra.web.nature.NatureModule
+import remocra.web.natureDeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
+import remocra.web.organisme.OrganismeModule
+import remocra.web.pei.PeiModule
 import kotlin.reflect.KClass
 
 object WebModule : AbstractModule() {
 
     override fun configure() {
-        bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
-
+        install(PeiModule)
+        install(CommuneModule)
+        install(NatureModule)
+        install(OrganismeModule)
+        install(NatureDeciModule)
         install(ApiModule)
         install(NomenclatureModule)
+        bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }
 
     private inline fun <reified T> registerResource() {

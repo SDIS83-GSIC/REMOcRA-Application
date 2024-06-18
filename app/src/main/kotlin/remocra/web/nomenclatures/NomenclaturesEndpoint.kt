@@ -9,6 +9,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.NomenclaturesProvider
+import remocra.data.GlobalData
 import remocra.data.enums.TypeNomenclature
 import java.util.Locale
 import java.util.UUID
@@ -57,10 +58,15 @@ class NomenclaturesEndpoint {
         val fieldLibelle = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_LIBELLE, true) }.also { it?.isAccessible = true }
 
         // On invoque sur chaque objet et on met le résultat dans un data pour fourniture au front
-        return Response.ok(nomenclaturesProvider.getData(typeNomenclature).values.map { IdLibelleData(fieldId?.get(it) as UUID, fieldLibelle?.get(it) as String) }).build()
+        return Response.ok(
+            nomenclaturesProvider.getData(typeNomenclature).values.map {
+                GlobalData.IdLibelleData(
+                    fieldId?.get(it) as UUID,
+                    fieldLibelle?.get(it) as String,
+                )
+            },
+        ).build()
     }
-
-    data class IdLibelleData(val id: UUID, val libelle: String)
 
     private fun getTypeNomenclatureFromString(typeNomenclatureString: String): TypeNomenclature {
         val typeNomenclature = TypeNomenclature.valueOf(typeNomenclatureString.uppercase(Locale.getDefault()))
