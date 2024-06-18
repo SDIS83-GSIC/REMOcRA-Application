@@ -79,7 +79,7 @@ function QueryTable({
   const [filterBy, setFilterBy] = useState(filterValuesToVariable({}));
 
   const historyPush = () => {
-    const f = filterValuesToVariable(formik.values);
+    const f = filterValuesToVariable(formik?.values);
     const filter = Object.values(f).filter(Boolean).length
       ? JSON.stringify(f)
       : null;
@@ -107,7 +107,7 @@ function QueryTable({
         pathname: location.pathname,
         search: decodeURIComponent(searchParams.toString()),
       });
-      setFilterBy(filterValuesToVariable(formik.values));
+      setFilterBy(filterValuesToVariable(formik?.values));
 
       // Si on change de filtres, on se remet à la première page
       setPagination({ offset: 0, limit: pagination.limit });
@@ -131,7 +131,7 @@ function QueryTable({
 
   useEffect(() => {
     debounceSearch();
-  }, [formik.values]);
+  }, [formik?.values]);
 
   useEffect(() => {
     historyPush();
@@ -144,15 +144,15 @@ function QueryTable({
     const offsetParams = searchParams.get("offset");
     const limitParams = searchParams.get("limit");
 
-    if (filterByParams || (!filterByParams && formik.values)) {
-      const temp = filterValuesToVariable(formik.values);
+    if (filterByParams || (!filterByParams && formik?.values)) {
+      const temp = filterValuesToVariable(formik?.values);
       const filter = Object.values(temp).filter(Boolean).length
         ? JSON.stringify(temp)
         : null;
       if (filter !== filterByParams) {
         // initializer && setValues(initializer(JSON.parse(filterByParams) ?? {}));
-        setValues(formik.values);
-        setFilterBy(filterValuesToVariable(formik.values));
+        setValues(formik?.values);
+        setFilterBy(filterValuesToVariable(formik?.values));
       }
     }
     if (sortByParams || (!sortByParams && sortBy)) {
@@ -300,9 +300,15 @@ function QueryTable({
           {Filter && (
             <div className={styles.headerFilter}>
               {React.cloneElement(Filter, {
-                onChange: (e) => formik.handleChange(e),
+                onChange: ({ name, value }) => {
+                  formik.setValues((prevValues) => ({
+                    ...prevValues,
+                    [name]: value,
+                  }));
+                  // formik.handleChange(e)
+                },
                 onBlur: formik.handleBlur,
-                value: formik.values[Filter.name],
+                value: formik?.values[Filter.name],
               })}
             </div>
           )}
@@ -321,7 +327,7 @@ function QueryTable({
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan={"100%"}>Chargement en cours</td>
+              <td>Chargement en cours</td>
             </tr>
           ) : getList(data)?.length === 0 ? (
             <tr>
@@ -354,21 +360,23 @@ type QueryTableType = {
     ({ limit, offset }: { limit: number; offset: number }) => void,
   ];
   className?: string;
-  columns: {
-    Header?: string | ReactNode;
-    Filter?: ReactNode;
-    accessor: string | ReactNode;
-    sortField?: () => string | string;
-    Cell?: ReactNode;
-    className?: string;
-    classNameHeader?: string;
-    width?: string;
-  }[];
+  columns: columnType[];
   idName: string;
   trClassName?: string;
   filterValuesToVariable?: any;
   filterContext?: any;
   watchedValues?: any;
+};
+
+export type columnType = {
+  Header?: string | ReactNode;
+  Filter?: ReactNode;
+  accessor: string | ReactNode;
+  sortField?: () => string | string;
+  Cell?: ReactNode;
+  className?: string;
+  classNameHeader?: string;
+  width?: string;
 };
 
 export default QueryTable;

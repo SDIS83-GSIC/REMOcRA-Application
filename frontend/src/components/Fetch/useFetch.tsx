@@ -25,7 +25,7 @@ export const doFetch = async (url: string, options = {}) => {
   });
 };
 
-export function useGet(url: string, asyncOptions: object) {
+export function useGet(url: string, asyncOptions: object = {}) {
   return useAsync({
     ...asyncOptions,
     promiseFn: useCallback(
@@ -60,7 +60,7 @@ export function useGetRun(url: string, asyncOptions: object) {
   });
 }
 
-export function usePost(url: string, asyncOptions: object) {
+export function usePost(url: string, asyncOptions: object = {}) {
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback(
@@ -78,7 +78,7 @@ export function usePost(url: string, asyncOptions: object) {
   });
 }
 
-export function useDelete(url: string, asyncOptions: object) {
+export function useDelete(url: string, asyncOptions: object = {}) {
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback(
@@ -96,7 +96,7 @@ export function useDelete(url: string, asyncOptions: object) {
 
 export function usePut(
   url: string,
-  asyncOptions: object,
+  asyncOptions: object = {},
   isMultipartFormData: boolean,
 ) {
   return useAsync({
