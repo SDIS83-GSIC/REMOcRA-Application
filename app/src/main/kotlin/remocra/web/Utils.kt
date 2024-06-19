@@ -2,6 +2,7 @@ package remocra.web
 
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.usecases.AbstractCUDUseCase
 
 /** As defined in [RFC 4918](https://tools.ietf.org/html/rfc4918#section-11.2) */
 const val SC_UNPROCESSABLE_ENTITY = 422
@@ -38,3 +39,13 @@ fun forbidden(): Response.ResponseBuilder = Response.status(Response.Status.FORB
 fun conflict(): Response.ResponseBuilder = Response.status(Response.Status.CONFLICT)
 
 fun unprocessableEntity(): Response.ResponseBuilder = Response.status(UNPROCESSABLE_ENTITY)
+
+/** Wrappe un AbstractCUDUseCase.Result dans une response gérant les différents cas de retour */
+fun AbstractCUDUseCase.Result.wrap(): Response {
+    return when (this) {
+        is AbstractCUDUseCase.Result.Success -> Response.ok().entity(this.entity).build()
+        is AbstractCUDUseCase.Result.NotFound -> notFound().text(this.message).build()
+        is AbstractCUDUseCase.Result.Forbidden -> forbidden().text(this.message).build()
+        is AbstractCUDUseCase.Result.Error -> Response.serverError().text(this.message).build()
+    }
+}
