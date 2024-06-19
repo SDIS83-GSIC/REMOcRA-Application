@@ -148,7 +148,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
     open fun notify(parameters: T?, idJob: UUID) {
         // Si les paramètres de notification sont définis dans *parameters*, on est sur un override, il prime sur le reste
         if (parameters?.notification != null) {
-            eventBus.post(NotificationEvent(parameters.notification, idJob))
+            eventBus.post(NotificationEvent(parameters.notification!!, idJob))
         } else {
             val jsonNotif = parametresData.mapTasksInfo[getType()]!!.taskNotification
             try {
@@ -216,7 +216,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
 /**
  * Paramètres d'une tâche.
  */
-open class TaskParameters(val notification: NotificationMail?)
+open class TaskParameters(open val notification: NotificationMail?)
 
 /**
  * Classe permettant de stocker les éléments de base pour déclencher une notification par mail au niveau d'un [Job].

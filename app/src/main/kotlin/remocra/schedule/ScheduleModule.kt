@@ -5,6 +5,7 @@ import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SimpleTask
+import remocra.tasks.SynchroUtilisateurTask
 import remocra.tasks.TaskParameters
 
 object ScheduleModule : KotlinModule() {
@@ -16,7 +17,7 @@ object ScheduleModule : KotlinModule() {
         KotlinMultibinder.newSetBinder<SchedulableTask<out SchedulableTaskParameters>>(
             kotlinBinder,
         ).apply {
-            // TODO : ajouter tâches programmées
+            addBinding().to<SynchroUtilisateurTask>().asEagerSingleton()
         }
     }
 }

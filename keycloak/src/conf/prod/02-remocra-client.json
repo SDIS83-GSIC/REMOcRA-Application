@@ -19,8 +19,11 @@
       "clientId": "remocra",
       "secret": "$(env:CLIENT_SECRET)",
       "clientAuthenticatorType": "client-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
       "publicClient": false,
-      "directAccessGrantsEnabled" : false,
       "baseUrl": "$(env:REMOCRA_URL)",
       "redirectUris": [
         "$(env:REMOCRA_URL)/callback"
@@ -33,6 +36,21 @@
         "groups",
         "email"
       ]
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-remocra",
+      "enabled": true,
+      "serviceAccountClientId": "remocra",
+      "realmRoles": [
+        "default-roles-remocra"
+      ],
+      "clientRoles": {
+        "realm-management": [
+          "manage-users"
+        ]
+      }
     }
   ]
 }

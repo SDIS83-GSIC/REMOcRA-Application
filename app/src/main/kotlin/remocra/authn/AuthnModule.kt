@@ -155,10 +155,24 @@ class AuthnModule(private val settings: AuthnSettings) : AbstractModule() {
         return logoutFilter
     }
 
+    @Provides
+    fun providerKeycloakClient(): KeycloakClient {
+        return KeycloakClient(
+            settings.clientId,
+            settings.clientSecret,
+        )
+    }
+
     data class AuthnSettings(
         val clientId: String,
         val clientSecret: String,
         val baseUri: String,
         val realm: String,
     )
+
+    /**
+     * @param clientId
+     * @param clientSecret
+     */
+    class KeycloakClient(val clientId: String, val clientSecret: String)
 }

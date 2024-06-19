@@ -2,6 +2,7 @@
 flyway = "10.1.0"
 forbiddenapis = "3.6"
 jooq = "3.19.3"
+retrofit = "2.9.0"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -61,6 +62,9 @@ swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.22"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.22"
 
 geotools-gt-shapefile = "org.geotools:gt-shapefile:31.0"
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"

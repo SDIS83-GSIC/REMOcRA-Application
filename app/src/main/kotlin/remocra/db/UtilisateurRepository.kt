@@ -13,22 +13,48 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             .fetchOneInto()
 
     fun setInactif(idUtilisateur: UUID) {
+        setActif(false, idUtilisateur)
+    }
+
+    fun setActif(actif: Boolean, idUtilisateur: UUID) {
         dsl.update(UTILISATEUR)
-            .set(UTILISATEUR.ACTIF, false)
+            .set(UTILISATEUR.ACTIF, actif)
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .execute()
     }
 
-    private fun insertUtilisateur(
+    fun updateUtilisateur(idUtilisateur: UUID, nom: String, prenom: String, email: String, actif: Boolean) {
+        dsl.update(UTILISATEUR)
+            .set(UTILISATEUR.ACTIF, actif)
+            .set(UTILISATEUR.NOM, nom)
+            .set(UTILISATEUR.PRENOM, prenom)
+            .set(UTILISATEUR.EMAIL, email)
+            .where(UTILISATEUR.ID.eq(idUtilisateur))
+            .execute()
+    }
+
+    fun desactiveAllUsers() {
+        dsl.update(UTILISATEUR)
+            .set(UTILISATEUR.ACTIF, false)
+            .execute()
+    }
+
+    fun deleteUtilisateurInactif(): Int =
+        dsl.deleteFrom(UTILISATEUR)
+            .where(UTILISATEUR.ACTIF.isFalse)
+            .execute()
+
+    fun insertUtilisateur(
         id: UUID,
         nom: String,
         prenom: String,
         email: String,
         username: String,
+        actif: Boolean = true,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
-            .set(UTILISATEUR.ACTIF, true)
+            .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
@@ -40,18 +66,32 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
 
     fun syncUtilisateur(
         id: UUID,
-        familyName: String,
+        lastName: String,
         firstName: String,
         email: String,
         username: String,
     ): Utilisateur {
         // Cas nominal, l'utilisateur existe et son ID est le même que dans keycloak
         val userById = getUtilisateurById(id)
+
         if (userById != null) {
+            // Si les propriétés ont changé, on les met à jour dans notre base
+            if (userById.utilisateurNom != lastName || userById.utilisateurPrenom != firstName || userById.utilisateurEmail != email) {
+                updateUtilisateur(
+                    idUtilisateur = userById.utilisateurId,
+                    nom = lastName,
+                    prenom = firstName,
+                    email = email,
+                    actif = true,
+                )
+            }
             return userById
         }
 
         // L'utilisateur n'existe pas, on le crée
-        return insertUtilisateur(id, familyName, firstName, email, username)
+        return insertUtilisateur(id, lastName, firstName, email, username)
     }
+
+    fun getAll(): Collection<Utilisateur> =
+        dsl.selectFrom(UTILISATEUR).fetchInto()
 }

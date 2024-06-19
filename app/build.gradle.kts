@@ -41,6 +41,9 @@ dependencies {
     implementation(libs.jetty.servlets)
     implementation(platform(libs.jetty.bom))
 
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.jackson)
+
     implementation(libs.resteasy.core.spi)
     implementation(libs.resteasy.core)
     implementation(libs.resteasy.multipart.provider)
