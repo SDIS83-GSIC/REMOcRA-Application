@@ -8,9 +8,12 @@ import remocra.data.enums.TypeNomenclature
 import remocra.db.CommuneRepository
 import remocra.db.DiametreRepository
 import remocra.db.DomaineRepository
+import remocra.db.MarquePibiRepository
 import remocra.db.MateriauRepository
+import remocra.db.ModelePibiRepository
 import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
+import remocra.db.NiveauRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
 
@@ -24,9 +27,12 @@ constructor(
     private val communeRepository: CommuneRepository,
     private val diametreRepository: DiametreRepository,
     private val domaineRepository: DomaineRepository,
+    private val marquePibiRepository: MarquePibiRepository,
     private val materiauRepository: MateriauRepository,
+    private val modelePibiRepository: ModelePibiRepository,
     private val natureRepository: NatureRepository,
     private val natureDeciRepository: NatureDeciRepository,
+    private val niveauRepository: NiveauRepository,
     private val typeCanalisationRepository: TypeCanalisationRepository,
     private val typeReseauRepository: TypeReseauRepository,
 
@@ -46,9 +52,12 @@ constructor(
         when (typeToReload) {
             TypeNomenclature.DIAMETRE -> nomenclaturesData.mapDiametre = diametreRepository.getMapById()
             TypeNomenclature.DOMAINE -> nomenclaturesData.mapDomaine = domaineRepository.getMapById()
+            TypeNomenclature.MARQUE_PIBI -> nomenclaturesData.mapMarquePibi = marquePibiRepository.getMapById()
             TypeNomenclature.MATERIAU -> nomenclaturesData.mapMateriau = materiauRepository.getMapById()
+            TypeNomenclature.MODELE_PIBI -> nomenclaturesData.mapModelePibi = modelePibiRepository.getMapById()
             TypeNomenclature.NATURE -> nomenclaturesData.mapNature = natureRepository.getMapById()
             TypeNomenclature.NATURE_DECI -> nomenclaturesData.mapNatureDeci = natureDeciRepository.getMapById()
+            TypeNomenclature.NIVEAU -> nomenclaturesData.mapNiveau = niveauRepository.getMapById()
             TypeNomenclature.TYPE_CANALISATION -> nomenclaturesData.mapTypeCanalisation = typeCanalisationRepository.getMapById()
             TypeNomenclature.TYPE_RESEAU -> nomenclaturesData.mapTypeReseau = typeReseauRepository.getMapById()
         }
@@ -61,9 +70,12 @@ constructor(
 //        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
+        val marquesPibi = marquePibiRepository.getMapById()
         val materiaux = materiauRepository.getMapById()
+        val modelesPibi = modelePibiRepository.getMapById()
         val nature = natureRepository.getMapById()
         val natureDeci = natureDeciRepository.getMapById()
+        val niveau = niveauRepository.getMapById()
         val typeCanalisation = typeCanalisationRepository.getMapById()
         val typeReseau = typeReseauRepository.getMapById()
 
@@ -72,8 +84,11 @@ constructor(
             mapDiametre = diametres,
             mapDomaine = domaines,
             mapMateriau = materiaux,
+            mapMarquePibi = marquesPibi,
+            mapModelePibi = modelesPibi,
             mapNature = nature,
             mapNatureDeci = natureDeci,
+            mapNiveau = niveau,
             mapTypeCanalisation = typeCanalisation,
             mapTypeReseau = typeReseau,
         )
@@ -85,9 +100,12 @@ constructor(
     fun getData(typeNomenclature: TypeNomenclature) = when (typeNomenclature) {
         TypeNomenclature.DIAMETRE -> get().mapDiametre
         TypeNomenclature.DOMAINE -> get().mapDomaine
+        TypeNomenclature.MARQUE_PIBI -> get().mapMarquePibi
         TypeNomenclature.MATERIAU -> get().mapMateriau
+        TypeNomenclature.MODELE_PIBI -> get().mapModelePibi
         TypeNomenclature.NATURE -> get().mapNature
         TypeNomenclature.NATURE_DECI -> get().mapNatureDeci
+        TypeNomenclature.NIVEAU -> get().mapNiveau
         TypeNomenclature.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeNomenclature.TYPE_RESEAU -> get().mapTypeReseau
     }

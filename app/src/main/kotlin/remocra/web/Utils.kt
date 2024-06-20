@@ -3,6 +3,7 @@ package remocra.web
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.usecases.AbstractCUDUseCase
+import java.util.stream.Collectors
 
 /** As defined in [RFC 4918](https://tools.ietf.org/html/rfc4918#section-11.2) */
 const val SC_UNPROCESSABLE_ENTITY = 422
@@ -48,4 +49,11 @@ fun AbstractCUDUseCase.Result.wrap(): Response {
         is AbstractCUDUseCase.Result.Forbidden -> forbidden().text(this.message).build()
         is AbstractCUDUseCase.Result.Error -> Response.serverError().text(this.message).build()
     }
+}
+
+/**
+ * Permet de simuler le limit + offset sur une collection, surtout utile pour les nomenclatures en cache afin d'éviter une requête SQL supplémentaire
+ */
+fun <E> Collection<E>.limitOffset(limit: Long?, offset: Long?): MutableSet<E>? {
+    return this.stream().skip(offset ?: 0).limit(limit ?: this.size.toLong()).collect(Collectors.toSet())
 }
