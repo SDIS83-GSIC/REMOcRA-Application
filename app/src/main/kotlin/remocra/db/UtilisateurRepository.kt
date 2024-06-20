@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Utilisateur
-import remocra.db.jooq.tables.references.UTILISATEUR
+import remocra.db.jooq.remocra.tables.pojos.Utilisateur
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
 class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {

@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import org.jooq.exception.IOException
 import remocra.authn.AuthnModule
 import remocra.db.UtilisateurRepository
-import remocra.db.jooq.enums.TypeTask
+import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.keycloak.KeycloakApi
 import remocra.keycloak.KeycloakToken
 import remocra.keycloak.representations.UserRepresentation

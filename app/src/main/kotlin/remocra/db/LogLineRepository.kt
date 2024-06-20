@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.LogLine
-import remocra.db.jooq.tables.references.LOG_LINE
+import remocra.db.jooq.remocra.tables.pojos.LogLine
+import remocra.db.jooq.remocra.tables.references.LOG_LINE
 import java.util.UUID
 
 class LogLineRepository @Inject constructor(private val dsl: DSLContext) {

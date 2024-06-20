@@ -2,9 +2,9 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Organisme
-import remocra.db.jooq.tables.references.ORGANISME
-import remocra.db.jooq.tables.references.TYPE_ORGANISME
+import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 
 class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
     fun getAll(codeTypeOrganisme: String?, limit: Int?, offset: Int?): Collection<Organisme> =

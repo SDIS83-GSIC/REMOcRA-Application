@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.TypeReseau
-import remocra.db.jooq.tables.references.TYPE_RESEAU
+import remocra.db.jooq.remocra.tables.pojos.TypeReseau
+import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import java.util.UUID
 
 class TypeReseauRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeReseau> {

@@ -1,8 +1,8 @@
 package remocra.utils
 
 import jakarta.inject.Inject
-import remocra.db.jooq.enums.TypeParametre
-import remocra.db.jooq.tables.pojos.Parametre
+import remocra.db.jooq.remocra.enums.TypeParametre
+import remocra.db.jooq.remocra.tables.pojos.Parametre
 import java.util.Base64
 
 class ParametresUtils @Inject constructor() {

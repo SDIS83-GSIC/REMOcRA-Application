@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Materiau
-import remocra.db.jooq.tables.references.MATERIAU
+import remocra.db.jooq.remocra.tables.pojos.Materiau
+import remocra.db.jooq.remocra.tables.references.MATERIAU
 import java.util.UUID
 
 class MateriauRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Materiau> {

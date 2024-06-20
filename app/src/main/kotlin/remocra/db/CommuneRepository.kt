@@ -4,8 +4,8 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
-import remocra.db.jooq.tables.pojos.Commune
-import remocra.db.jooq.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.pojos.Commune
+import remocra.db.jooq.remocra.tables.references.COMMUNE
 import java.util.UUID
 
 class CommuneRepository @Inject constructor(private val dsl: DSLContext) {

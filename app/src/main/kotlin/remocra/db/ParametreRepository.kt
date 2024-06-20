@@ -2,8 +2,8 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Parametre
-import remocra.db.jooq.tables.references.PARAMETRE
+import remocra.db.jooq.remocra.tables.pojos.Parametre
+import remocra.db.jooq.remocra.tables.references.PARAMETRE
 
 class ParametreRepository @Inject constructor(private val dsl: DSLContext) {
 

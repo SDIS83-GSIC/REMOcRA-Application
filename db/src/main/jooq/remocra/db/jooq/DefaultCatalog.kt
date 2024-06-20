@@ -6,6 +6,8 @@ package remocra.db.jooq
 import org.jooq.Constants
 import org.jooq.Schema
 import org.jooq.impl.CatalogImpl
+import remocra.db.jooq.historique.Historique
+import remocra.db.jooq.remocra.Remocra
 import javax.annotation.processing.Generated
 import kotlin.collections.List
 
@@ -30,11 +32,17 @@ open class DefaultCatalog : CatalogImpl("") {
     }
 
     /**
+     * The schema <code>historique</code>.
+     */
+    val HISTORIQUE: Historique get(): Historique = Historique.HISTORIQUE
+
+    /**
      * The schema <code>remocra</code>.
      */
     val REMOCRA: Remocra get(): Remocra = Remocra.REMOCRA
 
     override fun getSchemas(): List<Schema> = listOf(
+        Historique.HISTORIQUE,
         Remocra.REMOCRA,
     )
 

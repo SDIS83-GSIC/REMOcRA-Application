@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Niveau
-import remocra.db.jooq.tables.references.NIVEAU
+import remocra.db.jooq.remocra.tables.pojos.Niveau
+import remocra.db.jooq.remocra.tables.references.NIVEAU
 import java.util.UUID
 
 class NiveauRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Niveau> {

@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import org.apache.logging.log4j.core.util.CronExpression
 import org.slf4j.LoggerFactory
 import remocra.data.ParametresData
-import remocra.db.jooq.tables.pojos.Task
+import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.log.LogManagerFactory
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters

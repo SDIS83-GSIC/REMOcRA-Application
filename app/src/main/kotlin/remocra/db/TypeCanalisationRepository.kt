@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.TypeCanalisation
-import remocra.db.jooq.tables.references.TYPE_CANALISATION
+import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import java.util.UUID
 
 class TypeCanalisationRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeCanalisation> {

@@ -15,10 +15,10 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.NomenclaturesProvider
 import remocra.data.enums.TypeNomenclature
-import remocra.db.jooq.enums.TypePei
-import remocra.db.jooq.tables.pojos.MarquePibi
-import remocra.db.jooq.tables.pojos.ModelePibi
-import remocra.db.jooq.tables.pojos.Nature
+import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.tables.pojos.MarquePibi
+import remocra.db.jooq.remocra.tables.pojos.ModelePibi
+import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.web.limitOffset
 
 @Path("deci/referentiel/pibi")

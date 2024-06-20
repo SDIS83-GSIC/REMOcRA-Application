@@ -2,8 +2,8 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import remocra.db.jooq.tables.pojos.Nature
-import remocra.db.jooq.tables.references.NATURE
+import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.db.jooq.remocra.tables.references.NATURE
 import java.util.UUID
 
 class NatureRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Nature> {

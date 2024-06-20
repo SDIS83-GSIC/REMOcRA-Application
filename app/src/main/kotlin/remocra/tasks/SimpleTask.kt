@@ -13,7 +13,7 @@ import remocra.data.ParametresData
 import remocra.data.enums.Environment
 import remocra.db.JobRepository
 import remocra.db.TransactionManager
-import remocra.db.jooq.enums.TypeTask
+import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.eventbus.EventBus
 import remocra.eventbus.notification.NotificationEvent
 import remocra.log.LogManager
@@ -56,7 +56,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
     /** Environnements autorisés à exécuter la tâche : par défaut, tous. A overrider au besoin */
     open fun getAuthorizedEnvironments(): Collection<Environment> = Environment.entries
 
-    var jobDb: remocra.db.jooq.tables.pojos.Job? = null
+    var jobDb: remocra.db.jooq.remocra.tables.pojos.Job? = null
         get() {
             return jobRepository.getLatestExecution(getType())
         }
@@ -206,7 +206,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
     }
 
     data class Status(
-        val job: remocra.db.jooq.tables.pojos.Job?,
+        val job: remocra.db.jooq.remocra.tables.pojos.Job?,
         val isActive: Boolean,
         val isCompleted: Boolean,
         val isCancelled: Boolean,
@@ -229,7 +229,7 @@ data class NotificationMail(val destinataires: Set<String>, val objet: String, v
 }
 
 /**
- * Classe permattant de stocker dans une [remocra.db.jooq.tables.pojos.Task] les critères abstraits pour une future notification par mail.
+ * Classe permattant de stocker dans une [remocra.db.jooq.remocra.tables.pojos.Task] les critères abstraits pour une future notification par mail.
  * Ces critères seront ensuite transformés en données concrètes lors de l'exécution d'un job.
  */
 data class NotificationRaw(val typeDestinataire: Set<String>, val objet: String, val corps: String)

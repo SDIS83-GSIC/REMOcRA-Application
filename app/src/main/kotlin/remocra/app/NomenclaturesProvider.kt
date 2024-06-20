@@ -16,16 +16,16 @@ import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
-import remocra.db.jooq.tables.pojos.Diametre
-import remocra.db.jooq.tables.pojos.Domaine
-import remocra.db.jooq.tables.pojos.MarquePibi
-import remocra.db.jooq.tables.pojos.Materiau
-import remocra.db.jooq.tables.pojos.ModelePibi
-import remocra.db.jooq.tables.pojos.Nature
-import remocra.db.jooq.tables.pojos.NatureDeci
-import remocra.db.jooq.tables.pojos.Niveau
-import remocra.db.jooq.tables.pojos.TypeCanalisation
-import remocra.db.jooq.tables.pojos.TypeReseau
+import remocra.db.jooq.remocra.tables.pojos.Diametre
+import remocra.db.jooq.remocra.tables.pojos.Domaine
+import remocra.db.jooq.remocra.tables.pojos.MarquePibi
+import remocra.db.jooq.remocra.tables.pojos.Materiau
+import remocra.db.jooq.remocra.tables.pojos.ModelePibi
+import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.db.jooq.remocra.tables.pojos.NatureDeci
+import remocra.db.jooq.remocra.tables.pojos.Niveau
+import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 
 /**
  * Classe permettant de fournir toutes les nomenclatures stockées en cache dans REMOcRA

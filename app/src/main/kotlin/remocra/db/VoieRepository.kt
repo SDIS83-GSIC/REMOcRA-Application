@@ -4,9 +4,9 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
-import remocra.db.jooq.tables.pojos.Voie
-import remocra.db.jooq.tables.references.COMMUNE
-import remocra.db.jooq.tables.references.VOIE
+import remocra.db.jooq.remocra.tables.pojos.Voie
+import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.VOIE
 
 class VoieRepository @Inject constructor(private val dsl: DSLContext) {
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Voie> =

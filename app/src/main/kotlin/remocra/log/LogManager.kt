@@ -2,8 +2,8 @@ package remocra.log
 
 import org.slf4j.LoggerFactory
 import remocra.db.LogLineRepository
-import remocra.db.jooq.enums.LogLineGravity
-import remocra.db.jooq.tables.pojos.LogLine
+import remocra.db.jooq.remocra.enums.LogLineGravity
+import remocra.db.jooq.remocra.tables.pojos.LogLine
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.UUID
