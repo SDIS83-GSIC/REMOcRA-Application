@@ -16,6 +16,9 @@
         <schema>
           <inputSchema>remocra</inputSchema>
         </schema>
+        <schema>
+          <inputSchema>historique</inputSchema>
+        </schema>
       </schemata>
       <excludes>flyway_schema_history|flyway_data_history|pgp_armor_headers</excludes>
       <includeRoutines>false</includeRoutines>
