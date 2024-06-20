@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder
 import remocra.api.s.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.web.nomenclatures.NomenclatureModule
 import kotlin.reflect.KClass
 
 object WebModule : AbstractModule() {
@@ -15,6 +16,7 @@ object WebModule : AbstractModule() {
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         install(ApiModule)
+        install(NomenclatureModule)
     }
 
     private inline fun <reified T> registerResource() {
