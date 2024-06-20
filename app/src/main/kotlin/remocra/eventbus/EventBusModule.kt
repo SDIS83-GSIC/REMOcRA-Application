@@ -7,13 +7,18 @@ import com.typesafe.config.Config
 import dev.misfitlabs.kotlinguice4.KotlinModule
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.eventbus.notification.NotificationEventListener
+import remocra.eventbus.tracabilite.TracabiliteEventListener
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class EventBusModule(private val settings: MailSettings) : KotlinModule() {
     override fun configure() {
         val multibinder = KotlinMultibinder.newSetBinder<EventListener<*>>(kotlinBinder)
-        multibinder.addBinding().to<NotificationEventListener>()
+        multibinder.apply {
+            addBinding().to<NotificationEventListener>()
+            addBinding().to<TracabiliteEventListener<*>>()
+        }
+
         bind<EventBus>().to<EventBusImpl>().`in`(Singleton::class.java)
         bind(MailSettings::class.java).toInstance(settings)
     }
