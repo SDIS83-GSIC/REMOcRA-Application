@@ -83,7 +83,8 @@ tasks {
             "outputdir" to jooqOutputDir.path,
         )
         args(jooqConfigFile)
-        dependsOn(spotlessApply)
+        dependsOn(spotlessKotlin)
+        finalizedBy(spotlessKotlinApply)
     }
 }
 sourceSets {
