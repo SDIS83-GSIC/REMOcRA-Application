@@ -20,6 +20,7 @@ import javax.annotation.processing.Generated
 @Suppress("UNCHECKED_CAST")
 data class Utilisateur(
     val utilisateurId: UUID,
+    val utilisateurActif: Boolean,
     val utilisateurEmail: String,
     val utilisateurNom: String,
     val utilisateurPrenom: String,
@@ -38,6 +39,9 @@ data class Utilisateur(
         }
         val o: Utilisateur = other as Utilisateur
         if (this.utilisateurId != o.utilisateurId) {
+            return false
+        }
+        if (this.utilisateurActif != o.utilisateurActif) {
             return false
         }
         if (this.utilisateurEmail != o.utilisateurEmail) {
@@ -59,6 +63,7 @@ data class Utilisateur(
         val prime = 31
         var result = 1
         result = prime * result + this.utilisateurId.hashCode()
+        result = prime * result + this.utilisateurActif.hashCode()
         result = prime * result + this.utilisateurEmail.hashCode()
         result = prime * result + this.utilisateurNom.hashCode()
         result = prime * result + this.utilisateurPrenom.hashCode()
@@ -70,6 +75,7 @@ data class Utilisateur(
         val sb = StringBuilder("Utilisateur (")
 
         sb.append(utilisateurId)
+        sb.append(", ").append(utilisateurActif)
         sb.append(", ").append(utilisateurEmail)
         sb.append(", ").append(utilisateurNom)
         sb.append(", ").append(utilisateurPrenom)

@@ -9,8 +9,12 @@ import jakarta.servlet.http.HttpFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpServletResponseWrapper
+import remocra.db.UtilisateurRepository
 
-class UserInfoFilter @Inject constructor(private val objectMapper: ObjectMapper) : HttpFilter() {
+class UserInfoFilter @Inject constructor(
+    private val objectMapper: ObjectMapper,
+    private val utilisateurRepository: UtilisateurRepository,
+) : HttpFilter() {
 
     override fun doFilter(
         request: HttpServletRequest,
@@ -41,8 +45,12 @@ class UserInfoFilter @Inject constructor(private val objectMapper: ObjectMapper)
         // On regarde si on a déjà un user connecté
         val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
 
-        val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
-
-        response.outputStream?.println("""<script>const userInfo = $javascriptUser</script>""")
+        if (userInfo?.isActif == false) {
+            utilisateurRepository.setInactif(userInfo.idUtilisateur)
+            response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
+        } else {
+            val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
+            response.outputStream?.println("""<script>const userInfo = $javascriptUser</script>""")
+        }
     }
 }

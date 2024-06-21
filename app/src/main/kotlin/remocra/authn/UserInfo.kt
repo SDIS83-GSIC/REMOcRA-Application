@@ -14,6 +14,9 @@ class UserInfo : KeycloakOidcProfile() {
     val nom: String
         get() = familyName
 
+    val isActif: Boolean
+        get() = !this.roles.contains("inactif")
+
     override fun asPrincipal(): Principal {
         return UserPrincipal(this)
     }

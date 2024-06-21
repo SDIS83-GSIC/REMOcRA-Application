@@ -12,6 +12,13 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .fetchOneInto()
 
+    fun setInactif(idUtilisateur: UUID) {
+        dsl.update(UTILISATEUR)
+            .set(UTILISATEUR.ACTIF, false)
+            .where(UTILISATEUR.ID.eq(idUtilisateur))
+            .execute()
+    }
+
     private fun insertUtilisateur(
         id: UUID,
         nom: String,
@@ -21,6 +28,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
+            .set(UTILISATEUR.ACTIF, true)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)

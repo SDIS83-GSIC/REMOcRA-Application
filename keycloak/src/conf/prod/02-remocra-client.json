@@ -1,6 +1,17 @@
 {
   "realm": "remocra",
   "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "inactif",
+        "description": "Utilisateur inactif",
+        "composite": false,
+        "clientRole": false,
+        "attributes": {}
+      }
+    ]
+  },
   "clients": [
     {
       "enabled": true,
