@@ -16,6 +16,16 @@ import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
+import remocra.db.jooq.tables.pojos.Diametre
+import remocra.db.jooq.tables.pojos.Domaine
+import remocra.db.jooq.tables.pojos.MarquePibi
+import remocra.db.jooq.tables.pojos.Materiau
+import remocra.db.jooq.tables.pojos.ModelePibi
+import remocra.db.jooq.tables.pojos.Nature
+import remocra.db.jooq.tables.pojos.NatureDeci
+import remocra.db.jooq.tables.pojos.Niveau
+import remocra.db.jooq.tables.pojos.TypeCanalisation
+import remocra.db.jooq.tables.pojos.TypeReseau
 
 /**
  * Classe permettant de fournir toutes les nomenclatures stockées en cache dans REMOcRA
@@ -108,5 +118,21 @@ constructor(
         TypeNomenclature.NIVEAU -> get().mapNiveau
         TypeNomenclature.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeNomenclature.TYPE_RESEAU -> get().mapTypeReseau
+    }
+
+    /**
+     * Fonction permettant de retourner la classe du POJO attendu en fonction du type (pour introspection)
+     */
+    fun getPojoClassFromType(typeNomenclature: TypeNomenclature) = when (typeNomenclature) {
+        TypeNomenclature.DIAMETRE -> Diametre::class.java
+        TypeNomenclature.DOMAINE -> Domaine::class.java
+        TypeNomenclature.MARQUE_PIBI -> MarquePibi::class.java
+        TypeNomenclature.MATERIAU -> Materiau::class.java
+        TypeNomenclature.MODELE_PIBI -> ModelePibi::class.java
+        TypeNomenclature.NATURE -> Nature::class.java
+        TypeNomenclature.NATURE_DECI -> NatureDeci::class.java
+        TypeNomenclature.NIVEAU -> Niveau::class.java
+        TypeNomenclature.TYPE_CANALISATION -> TypeCanalisation::class.java
+        TypeNomenclature.TYPE_RESEAU -> TypeReseau::class.java
     }
 }
