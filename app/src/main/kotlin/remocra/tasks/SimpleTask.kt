@@ -80,6 +80,8 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         return parametresData.mapTasksInfo[getType()]!!.taskActif!!
     }
 
+    abstract fun getTaskParametersClass(): Class<T>
+
     fun start(logManager: LogManager, parameters: T? = null): Boolean {
         // Si l'environnement n'est pas compatible avec la tâche, on ne fait rien
         if (!getAuthorizedEnvironments().contains(settings.environment)) {
@@ -92,13 +94,16 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
             return false
         }
 
+        val taskParameters = parameters
+            ?: objectMapper.readValue(parametresData.mapTasksInfo[getType()]!!.taskParametres!!, getTaskParametersClass())
+
         // Insertion du job en base
         val result =
             transactionManager.transactionResult {
                 jobRepository.createJob(
                     logManager.idJob,
                     parametresData.mapTasksInfo[getType()]!!.taskId,
-                    parameters?.let { objectMapper.writeValueAsString(it) },
+                    taskParameters?.let { objectMapper.writeValueAsString(it) },
                 )
             }
         if (result > 0) {
@@ -111,9 +116,9 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         job =
             launch {
                 try {
-                    checkParameters(parameters)
-                    execute(parameters)
-                    notify(parameters, logManager.idJob)
+                    checkParameters(taskParameters)
+                    execute(taskParameters)
+                    notify(taskParameters, logManager.idJob)
                 } catch (e: Exception) {
                     if (latestJob != null) {
                         transactionManager.transaction {
