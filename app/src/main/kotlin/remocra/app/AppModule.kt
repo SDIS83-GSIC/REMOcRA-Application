@@ -6,6 +6,7 @@ import com.typesafe.config.Config
 import jakarta.inject.Singleton
 import remocra.data.NomenclaturesData
 import remocra.data.ParametresData
+import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
 import java.time.Clock
 import java.time.ZoneId
@@ -23,7 +24,10 @@ class AppModule(private val settings: AppSettings) : AbstractModule() {
     companion object {
         fun create(config: Config) =
             AppModule(
-                AppSettings(environment = config.getEnum(Environment::class.java, "environment")),
+                AppSettings(
+                    environment = config.getEnum(Environment::class.java, "environment"),
+                    codeSdis = config.getEnum(CodeSdis::class.java, "codeSdis"),
+                ),
             )
     }
 }
