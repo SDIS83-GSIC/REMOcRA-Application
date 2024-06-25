@@ -32,8 +32,10 @@ abstract class AbstractCUDUseCase<T : Any> {
                 throw ForbiddenException()
             }
             checkDroits(userInfo)
+            val result = transactionManager.transactionResult { execute(element) }
+            postEvent(element, userInfo)
             return Result.Success(
-                transactionManager.transactionResult { execute(element) },
+                result,
             )
         } catch (e: ForbiddenException) {
             return Result.Forbidden(e.message)
@@ -43,6 +45,12 @@ abstract class AbstractCUDUseCase<T : Any> {
             return Result.Error(e.message)
         }
     }
+
+    /**
+     * Permet de lancer un évènement suite à la mise à jour / insertion ou suppression d'un objet
+     */
+    protected abstract fun postEvent(element: T, userInfo: UserInfo)
+
     sealed class Result {
         data class Success(val entity: Any? = null) : Result()
         data class NotFound(val message: String?) : Result()
