@@ -36,4 +36,6 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
             .from(COMMUNE)
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
+
+    fun getById(id: UUID): Commune = dsl.selectFrom(COMMUNE).where(COMMUNE.ID.eq(id)).fetchSingleInto()
 }
