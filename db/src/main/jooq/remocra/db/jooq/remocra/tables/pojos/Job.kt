@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import org.jooq.JSONB
 import remocra.db.jooq.remocra.enums.EtatJob
 import java.io.Serializable
 import java.time.OffsetDateTime
@@ -26,7 +27,7 @@ data class Job(
     val jobEtatJob: EtatJob,
     val jobDateDebut: OffsetDateTime,
     val jobDateFin: OffsetDateTime?,
-    val jobParametres: String?,
+    val jobParametres: JSONB?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {

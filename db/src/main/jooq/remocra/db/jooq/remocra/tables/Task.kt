@@ -7,6 +7,7 @@ import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.InverseForeignKey
+import org.jooq.JSONB
 import org.jooq.Name
 import org.jooq.Path
 import org.jooq.PlainSQL
@@ -107,12 +108,12 @@ open class Task(
     /**
      * The column <code>remocra.task.task_parametres</code>.
      */
-    val PARAMETRES: TableField<Record, String?> = createField(DSL.name("task_parametres"), SQLDataType.CLOB, this, "")
+    val PARAMETRES: TableField<Record, JSONB?> = createField(DSL.name("task_parametres"), SQLDataType.JSONB, this, "")
 
     /**
      * The column <code>remocra.task.task_notification</code>.
      */
-    val NOTIFICATION: TableField<Record, String?> = createField(DSL.name("task_notification"), SQLDataType.CLOB, this, "")
+    val NOTIFICATION: TableField<Record, JSONB?> = createField(DSL.name("task_notification"), SQLDataType.JSONB, this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

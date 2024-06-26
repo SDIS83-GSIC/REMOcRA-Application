@@ -7,6 +7,7 @@ import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.InverseForeignKey
+import org.jooq.JSONB
 import org.jooq.Name
 import org.jooq.Path
 import org.jooq.PlainSQL
@@ -109,7 +110,7 @@ open class Job(
     /**
      * The column <code>remocra.job.job_parametres</code>.
      */
-    val PARAMETRES: TableField<Record, String?> = createField(DSL.name("job_parametres"), SQLDataType.CLOB, this, "")
+    val PARAMETRES: TableField<Record, JSONB?> = createField(DSL.name("job_parametres"), SQLDataType.JSONB, this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

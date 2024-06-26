@@ -8,6 +8,7 @@ import com.google.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.jooq.JSONB
 import remocra.app.AppSettings
 import remocra.data.ParametresData
 import remocra.data.enums.Environment
@@ -95,7 +96,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         }
 
         val taskParameters = parameters
-            ?: objectMapper.readValue(parametresData.mapTasksInfo[getType()]!!.taskParametres!!, getTaskParametersClass())
+            ?: objectMapper.readValue(parametresData.mapTasksInfo[getType()]!!.taskParametres!!.data(), getTaskParametersClass())
 
         // Insertion du job en base
         val result =
@@ -103,7 +104,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
                 jobRepository.createJob(
                     logManager.idJob,
                     parametresData.mapTasksInfo[getType()]!!.taskId,
-                    taskParameters?.let { objectMapper.writeValueAsString(it) },
+                    taskParameters?.let { JSONB.valueOf(objectMapper.writeValueAsString(it)) },
                 )
             }
         if (result > 0) {
@@ -150,7 +151,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         if (parameters?.notification != null) {
             eventBus.post(NotificationEvent(parameters.notification!!, idJob))
         } else {
-            val jsonNotif = parametresData.mapTasksInfo[getType()]!!.taskNotification
+            val jsonNotif = parametresData.mapTasksInfo[getType()]!!.taskNotification?.data()
             try {
                 if (jsonNotif == null) {
                     return
@@ -216,7 +217,10 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
 /**
  * Paramètres d'une tâche.
  */
-open class TaskParameters(open val notification: NotificationMail?)
+open class TaskParameters(
+    // Le champ "notification" sera set uniquement si la task est lancée manuellement
+    open val notification: NotificationMail?,
+)
 
 /**
  * Classe permettant de stocker les éléments de base pour déclencher une notification par mail au niveau d'un [Job].

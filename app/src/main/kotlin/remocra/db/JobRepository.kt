@@ -3,6 +3,7 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.JSONB
 import org.jooq.impl.DSL
 import remocra.data.JobData
 import remocra.db.jooq.remocra.enums.EtatJob
@@ -20,7 +21,7 @@ import java.util.UUID
 
 class JobRepository @Inject constructor(private val dsl: DSLContext, private val clock: Clock) {
 
-    fun createJob(idJob: UUID, idTask: UUID, parameters: String? = null): Int =
+    fun createJob(idJob: UUID, idTask: UUID, parameters: JSONB? = null): Int =
         dsl.insertInto(JOB)
             .set(
                 dsl.newRecord(

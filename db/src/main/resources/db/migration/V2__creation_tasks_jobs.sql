@@ -47,8 +47,8 @@ CREATE TABLE remocra.task (
     task_actif          BOOLEAN                     NOT NULL DEFAULT FALSE,
     task_planification  TEXT                            NULL,
     task_exec_manuelle  BOOLEAN                     NOT NULL DEFAULT TRUE,
-    task_parametres     TEXT                            NULL,
-    task_notification   TEXT                            NULL
+    task_parametres     JSONB                            NULL,
+    task_notification   JSONB                            NULL
 );
 
 CREATE TABLE remocra.job (
@@ -57,7 +57,7 @@ CREATE TABLE remocra.job (
     job_etat_job            remocra.etat_job             NOT NULL,
     job_date_debut          TIMESTAMP WITH TIME ZONE     NOT NULL,
     job_date_fin            TIMESTAMP WITH TIME ZONE         NULL,
-    job_parametres          TEXT                             NULL
+    job_parametres          JSONB                            NULL
 );
 
 CREATE TABLE remocra.log_line

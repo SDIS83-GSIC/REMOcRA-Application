@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import org.jooq.JSONB
 import remocra.db.jooq.remocra.enums.TypeTask
 import java.io.Serializable
 import java.util.UUID
@@ -25,8 +26,8 @@ data class Task(
     val taskActif: Boolean?,
     val taskPlanification: String?,
     val taskExecManuelle: Boolean?,
-    val taskParametres: String?,
-    val taskNotification: String?,
+    val taskParametres: JSONB?,
+    val taskNotification: JSONB?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
