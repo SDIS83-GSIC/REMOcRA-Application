@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.enums.TypeAutoriteDeci
+import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -30,6 +31,9 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
 
     fun getServicePublicForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries)))
+
+    fun getMaintenanceDeciForSelect(): List<IdCodeLibelleData> =
+        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries)))
 
     private fun getIdLibelleByCondition(condition: Condition): List<IdCodeLibelleData> =
         dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.CODE.`as`("code"), ORGANISME.LIBELLE.`as`("libelle"))

@@ -1,6 +1,7 @@
 package remocra.web.pei
 
 import jakarta.inject.Inject
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -45,4 +46,9 @@ class PeiEndPoint {
         @QueryParam("sortBy")
         val sortBy: PeiRepository.Sort?,
     )
+
+    @GET
+    @Path("/referentiel-for-update-pei") // TODO idPei
+    fun getReferentielUpdatePei() =
+        Response.ok(peiUseCase.getInfoForUpdate()).build()
 }
