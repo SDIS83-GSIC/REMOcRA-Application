@@ -7,6 +7,7 @@ import java.util.UUID
 data class PeiForCalculDispoData(
     val peiId: UUID,
     val peiNatureId: UUID,
+
     val diametreId: UUID?,
     val debit: Int?,
     val pression: Double?,
