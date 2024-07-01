@@ -1,9 +1,12 @@
 package remocra.utils
 
+import org.jooq.Condition
 import org.jooq.Record
 import org.jooq.SelectConditionStep
 import org.jooq.SelectWhereStep
 import org.jooq.TableField
+import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Geometry
 
 /**
  * Ce fichier répertorie les fonction postgis pour que l'on puisse les appliquer sur les fonctions jOOQ
@@ -69,3 +72,12 @@ private fun ST_DistanceCondition(
     signe: String,
 ) =
     "ST_Distance($geometrieField, 'SRID=$srid;POINT($coordonneeX $coordonneeY)') $signe $distance"
+
+/**
+ * Retourne true si geometrieField est dans la geometrieField2
+ */
+fun ST_Within(
+    geometrieField: TableField<Record, Geometry?>,
+    geometrieField2: TableField<Record, Geometry?>,
+): Condition =
+    DSL.condition("ST_Within($geometrieField, $geometrieField2)")

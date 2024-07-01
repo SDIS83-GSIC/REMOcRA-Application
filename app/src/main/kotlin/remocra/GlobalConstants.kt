@@ -15,6 +15,10 @@ object GlobalConstants {
     /** Type prédéfini pour un organisme de type "EPCI"  */
     const val EPCI: String = "EPCI"
 
+    const val TYPE_ORGANISME_COMMUNE = "COMMUNE"
+    const val TYPE_ORGANISME_GROUPEMENT = "GROUPEMENT"
+    const val TYPE_ORGANISME_CIS = "CIS"
+
     // Distance maximale entre 2 BI pour qu'il puisse y avoir jumelage
     const val DISTANCE_MAXIMALE_JUMELAGE = 25
 
@@ -44,6 +48,11 @@ object GlobalConstants {
 
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
+
+    // Constantes pour les courriers :
+    const val ROLE_DESTINATAIRE_MAIRE_ROP = "DESTINATAIRE_MAIRE_ROP"
+    const val ROLE_SIGNATAIRE_GROUPEMENT = "SIGNATAIRE_GROUPEMENT"
+    const val COURRIER_CODE_ROP = "ROP"
 
     /** Tag pour les endpoints de l'application mobile  */
     const val REMOCRA_MOBILE_TAG: String = "REMOcRA Mobile"

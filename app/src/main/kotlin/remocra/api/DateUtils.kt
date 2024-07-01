@@ -82,4 +82,8 @@ object DateUtils {
     fun format(date: ZonedDateTime, pattern: String = PATTERN_MINUTE): String {
         return date.format(DateTimeFormatter.ofPattern(pattern, Locale.getDefault()))
     }
+
+    fun formatDateOnly(date: ZonedDateTime?): String? {
+        return date?.format(DateTimeFormatter.ofPattern(PATTERN_DATE_ONLY, Locale.getDefault()))
+    }
 }

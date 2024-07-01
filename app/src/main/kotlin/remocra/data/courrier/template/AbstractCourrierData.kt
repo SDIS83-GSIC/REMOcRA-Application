@@ -24,5 +24,6 @@ abstract class AbstractCourrierData {
     abstract val destinataireVoie: String?
     abstract val destinataireVille: String?
     abstract val destinataireCodePostal: String?
+    abstract val destinataireLieuDit: String?
     abstract val expediteur: String
 }
