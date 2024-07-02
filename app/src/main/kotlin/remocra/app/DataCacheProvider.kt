@@ -114,18 +114,24 @@ constructor(
      * Permet de retourner une map de nomenclature en fonction de son type.
      */
     fun getData(typeDataCache: TypeDataCache) = when (typeDataCache) {
-        TypeDataCache.ANOMALIE -> get().mapAnomalie
-        TypeDataCache.DIAMETRE -> get().mapDiametre
+        TypeDataCache.ANOMALIE -> getAnomalies()
+        TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
         TypeDataCache.MATERIAU -> get().mapMateriau
         TypeDataCache.MODELE_PIBI -> get().mapModelePibi
-        TypeDataCache.NATURE -> get().mapNature
+        TypeDataCache.NATURE -> getNatures()
         TypeDataCache.NATURE_DECI -> get().mapNatureDeci
         TypeDataCache.NIVEAU -> get().mapNiveau
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
     }
+
+    fun getAnomalies() = get().mapAnomalie
+
+    fun getDiametres() = get().mapDiametre
+
+    fun getNatures() = get().mapNature
 
     /**
      * Fonction permettant de retourner la classe du POJO attendu en fonction du type (pour introspection)
