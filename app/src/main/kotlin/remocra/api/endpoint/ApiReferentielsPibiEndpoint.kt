@@ -13,8 +13,8 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.app.NomenclaturesProvider
-import remocra.data.enums.TypeNomenclature
+import remocra.app.DataCacheProvider
+import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
 import remocra.db.jooq.remocra.tables.pojos.ModelePibi
@@ -27,7 +27,7 @@ import remocra.web.limitOffset
 class ApiReferentielsPibiEndpoint {
 
     @Inject
-    lateinit var nomenclaturesProvider: NomenclaturesProvider
+    lateinit var dataCacheProvider: DataCacheProvider
 
     @GET
     @Path("/naturesPEI")
@@ -39,7 +39,7 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.NATURE)
+            dataCacheProvider.getData(TypeDataCache.NATURE)
                 .values
                 .filter { TypePei.PIBI == (it as Nature).natureTypePei }
                 .limitOffset(limit, offset),
@@ -60,7 +60,7 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.DIAMETRE)
+            dataCacheProvider.getData(TypeDataCache.DIAMETRE)
                 .values
                 .filter { TypePei.PIBI == (it as Nature).natureTypePei }
                 .limitOffset(limit, offset),
@@ -95,7 +95,7 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.MARQUE_PIBI)
+            dataCacheProvider.getData(TypeDataCache.MARQUE_PIBI)
                 .values
                 .limitOffset(limit, offset),
         ).build()
@@ -112,13 +112,13 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         @Suppress("UNCHECKED_CAST")
-        val data = nomenclaturesProvider.getData(TypeNomenclature.MODELE_PIBI)
+        val data = dataCacheProvider.getData(TypeDataCache.MODELE_PIBI)
             .values
             .let { it as Collection<ModelePibi> }
 
         // On va chercher l'identifiant de la marque dont le code est passé
         @Suppress("UNCHECKED_CAST")
-        val marquePibiId = nomenclaturesProvider.getData(TypeNomenclature.MARQUE_PIBI)
+        val marquePibiId = dataCacheProvider.getData(TypeDataCache.MARQUE_PIBI)
             .values
             .let { it as Collection<MarquePibi> }
             .find { marque -> codeMarque == marque.marquePibiCode }
@@ -147,7 +147,7 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.TYPE_RESEAU)
+            dataCacheProvider.getData(TypeDataCache.TYPE_RESEAU)
                 .values
                 .limitOffset(limit, offset),
         ).build()
@@ -163,7 +163,7 @@ class ApiReferentielsPibiEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.TYPE_CANALISATION)
+            dataCacheProvider.getData(TypeDataCache.TYPE_CANALISATION)
                 .values
                 .limitOffset(limit, offset),
         ).build()

@@ -8,9 +8,8 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.app.NomenclaturesProvider
-import remocra.data.GlobalData
-import remocra.data.enums.TypeNomenclature
+import remocra.app.DataCacheProvider
+import remocra.data.enums.TypeDataCache
 import java.util.Locale
 import java.util.UUID
 
@@ -23,18 +22,18 @@ private const val SUFFIXE_LIBELLE = "Libelle"
 class NomenclaturesEndpoint {
 
     @Inject
-    lateinit var nomenclaturesProvider: NomenclaturesProvider
+    lateinit var dataCacheProvider: DataCacheProvider
 
     /**
      * Méthode retournant une map du type de nomenclature demandé, sous forme id -> POJO
-     * @param typeNomenclatureString Type de nomenclature à récupérer, sous forme de littéral en minuscule de [TypeNomenclature]
+     * @param typeNomenclatureString Type de nomenclature à récupérer, sous forme de littéral en minuscule de [TypeDataCache]
      *
      * @return Map<UUID, POJO> wrappé dans une Response
      */
     @GET
     @Path("/{typeNomenclature}")
     fun getNomenclature(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
-        return Response.ok(nomenclaturesProvider.getData(getTypeNomenclatureFromString(typeNomenclatureString))).build()
+        return Response.ok(dataCacheProvider.getData(getTypeNomenclatureFromString(typeNomenclatureString))).build()
     }
 
     /**
@@ -42,7 +41,7 @@ class NomenclaturesEndpoint {
      *
      * A destination du front, attention à respecter le contrat (format du POJO et TypeNomenclature), faute de quoi on déclenchera une IllegalAccessException non catchée
      *
-     * @param typeNomenclatureString Type de nomenclature à récupérer, sous forme de littéral en minuscule de [TypeNomenclature]
+     * @param typeNomenclatureString Type de nomenclature à récupérer, sous forme de littéral en minuscule de [TypeDataCache]
      * @return Collection<IdLibelleData> wrappé dans une Response
      */
     @GET
@@ -51,26 +50,21 @@ class NomenclaturesEndpoint {
     fun getListIdLibelle(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
         val typeNomenclature = getTypeNomenclatureFromString(typeNomenclatureString)
 
-        val clazz = nomenclaturesProvider.getPojoClassFromType(typeNomenclature)
+        val clazz = dataCacheProvider.getPojoClassFromType(typeNomenclature)
 
         // On veut identifier les attributs nommés maclasseId et maclasseLibelle dans Maclasse, pour les invoquer plus tard
         val fieldId = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
         val fieldLibelle = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_LIBELLE, true) }.also { it?.isAccessible = true }
 
         // On invoque sur chaque objet et on met le résultat dans un data pour fourniture au front
-        return Response.ok(
-            nomenclaturesProvider.getData(typeNomenclature).values.map {
-                GlobalData.IdLibelleData(
-                    fieldId?.get(it) as UUID,
-                    fieldLibelle?.get(it) as String,
-                )
-            },
-        ).build()
+        return Response.ok(dataCacheProvider.getData(typeNomenclature).values.map { IdLibelleData(fieldId?.get(it) as UUID, fieldLibelle?.get(it) as String) }).build()
     }
 
-    private fun getTypeNomenclatureFromString(typeNomenclatureString: String): TypeNomenclature {
-        val typeNomenclature = TypeNomenclature.valueOf(typeNomenclatureString.uppercase(Locale.getDefault()))
+    data class IdLibelleData(val id: UUID, val libelle: String)
+
+    private fun getTypeNomenclatureFromString(typeNomenclatureString: String): TypeDataCache {
+        val typeDataCache = TypeDataCache.valueOf(typeNomenclatureString.uppercase(Locale.getDefault()))
         // On laisse planter si le type n'est pas acceptable
-        return typeNomenclature
+        return typeDataCache
     }
 }

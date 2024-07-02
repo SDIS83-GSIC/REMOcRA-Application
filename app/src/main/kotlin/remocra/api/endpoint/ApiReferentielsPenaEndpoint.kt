@@ -13,8 +13,8 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.app.NomenclaturesProvider
-import remocra.data.enums.TypeNomenclature
+import remocra.app.DataCacheProvider
+import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.web.limitOffset
@@ -25,7 +25,7 @@ import remocra.web.limitOffset
 class ApiReferentielsPenaEndpoint {
 
     @Inject
-    lateinit var nomenclaturesProvider: NomenclaturesProvider
+    lateinit var dataCacheProvider: DataCacheProvider
 
     @GET
     @Path("/naturesPEI")
@@ -37,7 +37,7 @@ class ApiReferentielsPenaEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.NATURE)
+            dataCacheProvider.getData(TypeDataCache.NATURE)
                 .values
                 .filter { TypePei.PENA == (it as Nature).natureTypePei }
                 .limitOffset(limit, offset),
@@ -54,7 +54,7 @@ class ApiReferentielsPenaEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.MATERIAU)
+            dataCacheProvider.getData(TypeDataCache.MATERIAU)
                 .values
                 .limitOffset(limit, offset),
         ).build()

@@ -13,8 +13,8 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.app.NomenclaturesProvider
-import remocra.data.enums.TypeNomenclature
+import remocra.app.DataCacheProvider
+import remocra.data.enums.TypeDataCache
 import remocra.web.limitOffset
 
 @Path("/api/deci/referentiel")
@@ -23,7 +23,7 @@ import remocra.web.limitOffset
 class ApiReferentielsDeciEndpoint {
 
     @Inject
-    lateinit var nomenclaturesProvider: NomenclaturesProvider
+    lateinit var dataCacheProvider: DataCacheProvider
 
     @GET
     @Path("/naturesDECI")
@@ -35,7 +35,7 @@ class ApiReferentielsDeciEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.NATURE_DECI)
+            dataCacheProvider.getData(TypeDataCache.NATURE_DECI)
                 .values
                 .limitOffset(limit, offset),
         ).build()
@@ -51,7 +51,7 @@ class ApiReferentielsDeciEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.NIVEAU)
+            dataCacheProvider.getData(TypeDataCache.NIVEAU)
                 .values
                 .limitOffset(limit, offset),
         ).build()
@@ -72,7 +72,7 @@ class ApiReferentielsDeciEndpoint {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            nomenclaturesProvider.getData(TypeNomenclature.DOMAINE)
+            dataCacheProvider.getData(TypeDataCache.DOMAINE)
                 .values
                 .limitOffset(limit, offset),
         ).build()

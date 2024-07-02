@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.typesafe.config.Config
 import jakarta.inject.Singleton
-import remocra.data.NomenclaturesData
+import remocra.data.DataCache
 import remocra.data.ParametresData
 import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
@@ -17,7 +17,7 @@ class AppModule(private val settings: AppSettings) : AbstractModule() {
 
     override fun configure() {
         bind(ParametresData::class.java).toProvider(ParametresProvider::class.java)
-        bind(NomenclaturesData::class.java).toProvider(NomenclaturesProvider::class.java)
+        bind(DataCache::class.java).toProvider(DataCacheProvider::class.java)
         bind(AppSettings::class.java).toInstance(settings)
     }
 
