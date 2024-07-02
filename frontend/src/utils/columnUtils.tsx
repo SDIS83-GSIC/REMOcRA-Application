@@ -70,8 +70,8 @@ function getColumnByStringArray(
       case COLUMN_PEI.NATURE:
         column.push({
           Header: "Nature",
-          accessor: "libelle",
-          sortField: "libelle",
+          accessor: "natureLibelle",
+          sortField: "natureLibelle",
           Filter: (
             <SelectNomenclaturesFilter
               name={"natureId"}
