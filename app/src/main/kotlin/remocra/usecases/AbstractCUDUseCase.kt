@@ -14,6 +14,13 @@ abstract class AbstractCUDUseCase<T : Any> {
     protected abstract fun checkDroits(userInfo: UserInfo)
 
     /**
+     * Vérifie si l'action peut être faite
+     * exemple : dans le cas d'une suppression de PEI, on vérifie s'il est utilisé quelque part
+     * Doit déclencher des [Exception] si les contraintes ne sont pas vérifiées
+     */
+    protected abstract fun checkContraintes(element: T)
+
+    /**
      * Exécute la logique métier d'insert / update / delete. Le type de retour est *facultatif*, le
      * cas nominal est un non-retour, ce qui va déboucher sur un Result.Success wrappé dans un
      * Response.ok() vide
@@ -32,6 +39,7 @@ abstract class AbstractCUDUseCase<T : Any> {
                 throw ForbiddenException()
             }
             checkDroits(userInfo)
+            checkContraintes(element)
             val result = transactionManager.transactionResult { execute(element) }
             postEvent(element, userInfo)
             return Result.Success(
