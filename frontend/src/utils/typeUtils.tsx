@@ -25,10 +25,15 @@ export type SelectFormType = SelectType & {
 
 export type SelectNomenclaturesFormType = SelectFormType & {
   nomenclature: TYPE_DATA_CACHE;
+  valueId: string | undefined;
+};
+
+export type SelectIdLibelleDataFromListType = SelectType & {
+  listIdLibelle: IdCodeLibelleType[];
 };
 
 export type IdCodeLibelleType = {
-  id: string;
-  code: string;
+  id: string | undefined;
+  code: string | undefined;
   libelle: string;
 };

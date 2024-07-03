@@ -18,7 +18,7 @@ const SelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
-  value,
+  defaultValue: value,
 }: SelectFilterFromListType) => {
   const defaultValue: IdCodeLibelleType = {
     id: "",

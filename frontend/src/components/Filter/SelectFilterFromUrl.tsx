@@ -15,7 +15,7 @@ const SelectFilterFromUrl = ({
   onChange,
   name,
   url,
-  value,
+  defaultValue,
 }: SelectFilterFromUrlType) => {
   const stateData = useGet(url);
 
@@ -30,10 +30,10 @@ const SelectFilterFromUrl = ({
   } else {
     return (
       <SelectFilterFromList
-        listIdLibelle={listData}
         name={name}
+        listIdCodeLibelle={listData}
         onChange={onChange}
-        value={value}
+        defaultValue={defaultValue}
       />
     );
   }
