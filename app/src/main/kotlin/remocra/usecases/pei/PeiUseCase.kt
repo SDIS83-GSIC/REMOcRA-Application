@@ -4,6 +4,14 @@ import jakarta.inject.Inject
 import remocra.db.PeiRepository
 import remocra.web.pei.PeiEndPoint
 
+/**
+ * UseCase regroupant tous les services devant remonter de l'information sur les PEI. <br />
+ *
+ * /!\ Aucun service ne doit modifier l'état des PEI, sinon passer par les UseCases dédiés :
+ * * [CreatePeiUseCase]
+ * * [UpdatePeiUseCase]
+ * * [DeletePeiUseCase]
+ */
 class PeiUseCase {
 
     @Inject
