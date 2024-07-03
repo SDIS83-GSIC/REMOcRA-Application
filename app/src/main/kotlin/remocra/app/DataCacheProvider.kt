@@ -150,6 +150,16 @@ constructor(
 
     fun getNaturesDeci() = get().mapNatureDeci
 
+    fun getMarquesPibi() = get().mapMarquePibi
+
+    fun getModelesPibi() = get().mapModelePibi
+
+    fun getTypesReseau() = get().mapTypeReseau
+
+    fun getTypesCanalisation() = get().mapTypeCanalisation
+
+    fun getMateriaux() = get().mapMateriau
+
     /**
      * Fonction permettant de retourner la classe du POJO attendu en fonction du type (pour introspection)
      */

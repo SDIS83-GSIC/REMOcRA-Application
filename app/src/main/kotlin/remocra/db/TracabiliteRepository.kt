@@ -5,7 +5,9 @@ import org.jooq.DSLContext
 import org.jooq.JSONB
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.historique.tables.pojos.Tracabilite
 import remocra.db.jooq.historique.tables.references.TRACABILITE
+import remocra.db.jooq.remocra.tables.references.PEI
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -30,4 +32,13 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) {
             .set(TRACABILITE.AUTEUR_ID, auteurId)
             .set(TRACABILITE.AUTEUR_DATA, auteurData)
             .execute()
+
+    /**
+     * Retourne tous les éléments de traçabilité de PEI (+visites) à partir d'un instant donné
+     */
+    fun getTracabilitePeiSince(moment: ZonedDateTime): List<Tracabilite> {
+        return dsl.selectFrom(TRACABILITE).where(TRACABILITE.TYPE_OBJET.`in`(listOf(TypeObjet.PEI, TypeObjet.VISITE)))
+            .and(TRACABILITE.DATE.ge(moment))
+            .fetchInto()
+    }
 }

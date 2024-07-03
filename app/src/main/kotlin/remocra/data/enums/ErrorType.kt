@@ -10,6 +10,11 @@ import remocra.db.jooq.remocra.enums.TypeVisite
  *
  */
 enum class ErrorType(val code: Int, val libelle: String, val status: Status = Status.BAD_REQUEST) {
+    // ********************************************************************************
+    // Erreurs générales
+    // ********************************************************************************
+    BAD_UUID(100, "Cette chaîne ne représente pas un UUID valide"),
+
     PEI_INEXISTANT(1000, "Le numéro spécifié ne correspond à aucun hydrant"),
     FORBIDDEN(1300, "Le numéro spécifié ne correspond à aucun hydrant qui vous est accessible", Status.FORBIDDEN),
     BAD_PATTERN(1010, "La date spécifiée n'existe pas ou ne respecte pas le format YYYY-MM-DD hh:mm"),
@@ -37,6 +42,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_AFTER_NOW(2111, "Impossible de créer une visite dans le futur"),
     VISITE_CREATE_NOT_LAST(2112, "La date renseignée est antérieure à la dernière visite de ce PEI, les visites doivent être saisies par ordre chronologique."),
     VISITE_CDP_INVALIDE(2113, "Au moins une valeur technique doit être saisie pour un contrôle débit pression valide.", Status.BAD_REQUEST),
+    VISITE_DELETE_NOT_LAST(2114, "La visite que vous essayez de supprimer n'est pas la dernière en date de ce PEI"),
 
     VISITE_TYPE_FORBIDDEN(2200, "Ce type de visite n'est pas accessible pour votre organisme sur ce PEI", Status.FORBIDDEN),
     VISITE_ORGANISME_FORBIDDEN(2201, "Votre organisme n'est pas autorisé à modifier une visite de ce type sur ce PEI", Status.FORBIDDEN),

@@ -3,12 +3,14 @@ package remocra.usecases.visites
 import com.google.inject.Inject
 import remocra.authn.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
 import java.time.Clock
 import java.time.ZonedDateTime
@@ -43,7 +45,7 @@ class DeleteVisiteUseCase @Inject constructor(
         val peiId = visiteRepository.getPeiIdByVisiteId(visiteId = element)
         val lastPeiVisiteId = visiteRepository.getLastPeiVisiteId(peiId = peiId!!)
         if (lastPeiVisiteId != element) {
-            throw IllegalArgumentException("La visite que vous essayez de supprimer n'est pas la dernière en date de ce PEI")
+            throw RemocraResponseException(ErrorType.VISITE_DELETE_NOT_LAST)
         }
     }
 

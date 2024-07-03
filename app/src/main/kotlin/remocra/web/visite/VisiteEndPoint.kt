@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.authn.userInfo
+import remocra.data.VisiteData
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypePei
@@ -70,7 +71,7 @@ class VisiteEndPoint : AbstractEndpoint() {
     @Path("/createVisite")
     fun createVisite(visiteInput: VisiteInput): Response {
         val generatedVisiteId = UUID.randomUUID()
-        val visite = VisiteCompleteToInsert(
+        val visite = VisiteData(
             visiteId = generatedVisiteId,
             visitePeiId = visiteInput.visitePeiId,
             visiteDate = visiteInput.visiteDate,
@@ -121,19 +122,6 @@ class VisiteEndPoint : AbstractEndpoint() {
         val ctrlDebit: Int?,
         val ctrlPression: BigDecimal?,
         val ctrlPressionDyn: BigDecimal?,
-    )
-
-    data class VisiteCompleteToInsert(
-        val visiteId: UUID,
-        val visitePeiId: UUID,
-        val visiteDate: ZonedDateTime,
-        val visiteTypeVisite: TypeVisite,
-        val visiteAgent1: String?,
-        val visiteAgent2: String?,
-        val visiteObservation: String?,
-        var listeAnomalie: List<UUID>,
-        val isCtrlDebitPression: Boolean,
-        var ctrlDebitPression: CreationVisiteCtrl?,
     )
 
     @DELETE

@@ -3,8 +3,17 @@ package remocra
 object GlobalConstants {
     const val UTILISATEUR_SYSTEME_USERNAME = "UTILISATEUR_SYSTEME"
 
-    // Code du type organisme Service des eaux
-    const val SERVICE_EAUX = "SERVICE_EAUX"
+    /** Type prédéfini pour un organisme de type "service des eaux"  */
+    const val SERVICE_EAUX: String = "SERVICEEAUX"
+
+    /** Type prédéfini pour un organisme de type "prestataire technique"  */
+    const val PRESTATAIRE_TECHNIQUE: String = "PRESTATAIRE_TECHNIQUE"
+
+    /** Type prédéfini pour un organisme de type "commune  */
+    const val COMMUNE: String = "COMMUNE"
+
+    /** Type prédéfini pour un organisme de type "EPCI"  */
+    const val EPCI: String = "EPCI"
 
     // Distance maximale entre 2 BI pour qu'il puisse y avoir jumelage
     const val DISTANCE_MAXIMALE_JUMELAGE = 25
@@ -35,4 +44,24 @@ object GlobalConstants {
 
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
+
+    /** Tag pour les endpoints de l'application mobile  */
+    const val REMOCRA_MOBILE_TAG: String = "REMOcRA Mobile"
+
+    const val DOSSIER_DOC_HYDRANT: String = "DOSSIER_DOC_HYDRANT"
+
+    /** Clé de la table "Parametre" pour la gestion des agents dans l'application mobile  */
+    const val GESTION_AGENT: String = "GESTION_AGENT"
+
+    /** Paramètres utilisés dans le cadre de l'appli mobile  */
+    const val PARAMETRE_CARACTERISTIQUE_PIBI: String = "CARACTERISTIQUE_PIBI"
+
+    const val PARAMETRE_CARACTERISTIQUE_PENA: String = "CARACTERISTIQUE_PENA"
+    const val PARAMETRE_DUREE_VALIDITE_TOKEN: String = "DUREE_VALIDITE_TOKEN"
+    const val PARAMETRE_MODE_DECONNECTE: String = "MODE_DECONNECTE"
+    const val PARAMETRE_MDP_ADMINISTRATEUR: String = "MDP_ADMINISTRATEUR"
+
+    enum class TypeDocument(val typeDocument: String) {
+        TYPE_DOCUMENT_HYDRANT("HYDRANT"),
+    }
 }

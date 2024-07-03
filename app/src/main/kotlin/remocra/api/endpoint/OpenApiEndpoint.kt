@@ -1,4 +1,4 @@
-package fr.sdis83.remocra.web.s
+package remocra.web.api
 
 import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource
 import io.swagger.v3.oas.annotations.Operation

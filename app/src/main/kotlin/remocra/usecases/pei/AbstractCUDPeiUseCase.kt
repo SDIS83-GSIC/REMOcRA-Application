@@ -178,7 +178,7 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
 
             // Si le Bi est jumelé à un autre, il faut mettre à jour l'autre
             if (peiData.pibiJumeleId != null) {
-                pibiRepository.updateJumelage(peiData.peiId, peiData.pibiJumeleId)
+                pibiRepository.updateJumelage(peiData.peiId, peiData.pibiJumeleId!!)
             } else {
                 //  si aucun jumelage on enlève les potentiels lien avec ce pei
                 pibiRepository.removeJumelage(peiData.peiId)

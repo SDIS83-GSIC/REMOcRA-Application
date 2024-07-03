@@ -3,6 +3,8 @@ package remocra.usecases.visites
 import com.google.inject.Inject
 import remocra.authn.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.VisiteData
+import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.VisiteRepository
@@ -14,8 +16,8 @@ import remocra.db.jooq.remocra.tables.pojos.Visite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
-import remocra.web.visite.VisiteEndPoint
 import java.time.Clock
 import java.time.ZonedDateTime
 
@@ -24,12 +26,12 @@ class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val clock: Clock,
-) : AbstractCUDUseCase<VisiteEndPoint.VisiteCompleteToInsert>() {
+) : AbstractCUDUseCase<VisiteData>() {
 
     override fun checkDroits(userInfo: UserInfo) {
     }
 
-    override fun postEvent(element: VisiteEndPoint.VisiteCompleteToInsert, userInfo: UserInfo) {
+    override fun postEvent(element: VisiteData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
@@ -45,16 +47,16 @@ class CreateVisiteUseCase @Inject constructor(
         // TODO : Gestion "notification changement état" et autres jobs
     }
 
-    override fun checkContraintes(element: VisiteEndPoint.VisiteCompleteToInsert) {
+    override fun checkContraintes(element: VisiteData) {
         // La visite n'est pas dans le future
         if (element.visiteDate.isAfter(ZonedDateTime.now())) {
-            throw IllegalArgumentException("Une visite ne peut pas être déclarée dans le future.")
+            throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
         }
         // La visite n'est pas antérieur à la dernière visite du pei
         val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
         if (lastVisite != null) {
             if (element.visiteDate.isBefore(lastVisite.visiteDate)) {
-                throw IllegalArgumentException("La date renseignée est antérieure à la dernière visite de ce PEI, les visites doivent être saisies par ordre chronologique.") }
+                throw RemocraResponseException(ErrorType.VISITE_CREATE_NOT_LAST) }
         }
         // Vérification de la validité du CDP
         if (element.isCtrlDebitPression && // Si la case CDP est coché
@@ -67,11 +69,11 @@ class CreateVisiteUseCase @Inject constructor(
                         )
                 )
         ) {
-            throw IllegalArgumentException("Au moins une valeur technique doit être saisie pour un contrôle débit pression valide.")
+            throw RemocraResponseException(ErrorType.VISITE_CDP_INVALIDE)
         }
     }
 
-    override fun execute(element: VisiteEndPoint.VisiteCompleteToInsert): VisiteEndPoint.VisiteCompleteToInsert {
+    override fun execute(element: VisiteData): VisiteData {
         // Insertion de la visite : remocra.visite
         visiteRepository.insertVisite(
             Visite(

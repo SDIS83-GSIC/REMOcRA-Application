@@ -2,7 +2,7 @@ package remocra.api.endpoint
 
 import com.google.inject.Binder
 import com.google.inject.Module
-import fr.sdis83.remocra.web.s.OpenApiEndpoint
+import remocra.web.api.OpenApiEndpoint
 import remocra.web.registerResources
 
 object ApiModule : Module {
@@ -13,5 +13,7 @@ object ApiModule : Module {
         binder.registerResources(ApiReferentielsDeciEndpoint::class)
         binder.registerResources(ApiReferentielsPibiEndpoint::class)
         binder.registerResources(ApiReferentielsPenaEndpoint::class)
+        binder.registerResources(ApiPeiEndpoint::class)
+        binder.registerResources(ApiVisitesEndpoint::class)
     }
 }

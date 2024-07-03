@@ -17,12 +17,17 @@ import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.Pei
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.DIAMETRE
+import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
+import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.web.pei.PeiEndPoint
 import java.util.UUID
 
@@ -79,9 +84,9 @@ class PeiRepository
             NATURE_DECI.LIBELLE,
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-            /*
-             * le multiset permet de renvoyer une liste dans une liste
-             * */
+                /*
+                 * le multiset permet de renvoyer une liste dans une liste
+                 * */
             multiset(
                 selectDistinct(L_PEI_ANOMALIE.ANOMALIE_ID)
                     .from(L_PEI_ANOMALIE)
@@ -107,10 +112,10 @@ class PeiRepository
             .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
-            /*
-            Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
-            de cette jointure
-             */
+                /*
+                Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
+                de cette jointure
+                 */
             .leftJoin(L_PEI_ANOMALIE)
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
@@ -158,11 +163,11 @@ class PeiRepository
         val servicePublicDeci: String?,
         val listeAnomalie: List<UUID>?,
 
-        /*
-            TODO
-                - rajouter les dates quand on aura les visites
-                - rajouter libellé tournée quand on aura les tournées
-         */
+            /*
+                TODO
+                    - rajouter les dates quand on aura les visites
+                    - rajouter libellé tournée quand on aura les tournées
+             */
     )
 
     data class Filter(
@@ -220,9 +225,9 @@ class PeiRepository
             NATURE_DECI.LIBELLE.getSortField(natureDeciLibelle),
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.getSortField(autoriteDeci),
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.getSortField(servicePublicDeci),
-            /* NUMERO_COMPLET est un string il faut donc ordonner par la longueur
-               pour avoir un ordre "numérique"
-             */
+                /* NUMERO_COMPLET est un string il faut donc ordonner par la longueur
+                   pour avoir un ordre "numérique"
+                 */
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
         )
@@ -286,4 +291,155 @@ class PeiRepository
             .set(record)
             .execute()
     }
+
+    fun getAll(codeInsee: String?, typePei: TypePei?, codeNature: String?, codeNatureDECI: String?, limit: Int?, offset: Int?): Collection<Pei> {
+        return dsl.select(*PEI.fields())
+            .from(PEI)
+            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .where(
+                DSL.and(
+                    listOfNotNull(
+                        codeInsee?.let { DSL.and(COMMUNE.CODE_INSEE.contains(it)) },
+                        typePei?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
+                        codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
+                        codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
+                    ),
+
+                ),
+            )
+            .limit(limit)
+            .offset(offset)
+            .fetchInto()
+    }
+
+    /**
+     * Indique si le PEI spécifié existe bien en base
+     *
+     * @param numero Le numéro du PEI
+     */
+    fun peiExist(numero: String?): Boolean {
+        return dsl.fetchExists(
+            dsl.select(PEI.ID).from(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)),
+        )
+    }
+
+    fun getPeiIdFromNumero(numero: String): UUID? = dsl.select(PEI.ID).from(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
+
+    fun getPeiFromNumero(numero: String): Pei? = dsl.selectFrom(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : PeiData> getPeiCaracteristiques(numero: String): T {
+        val idTypePei: IdTypePei =
+            dsl
+                .select(PEI.ID, PEI.TYPE_PEI)
+                .from(PEI)
+                .where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero))
+                .fetchSingleInto()
+
+        return if (TypePei.PIBI == idTypePei.peiTypePei) {
+            getPibiCaracteristiques(idTypePei.peiId) as T
+        } else {
+            getPenaCaracteristiques(idTypePei.peiId) as T
+        }
+    }
+
+    private data class IdTypePei(val peiId: UUID, val peiTypePei: TypePei)
+
+    private fun getPibiCaracteristiques(id: UUID): ApiPibiData {
+        return dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("numeroComplet"), PEI.NUMERO_INTERNE.`as`("numeroInterne"), PEI.ANNEE_FABRICATION.`as`("anneeFabrication"))
+            .select(PIBI.DIAMETRE_CANALISATION.`as`("diametreCanalisation"), PIBI.NUMERO_SCP.`as`("numeroScp"), PIBI.RENVERSABLE.`as`("renversable"), PIBI.DISPOSITIF_INVIOLABILITE.`as`("dispositifInviolabilite"), PIBI.DEBIT_RENFORCE.`as`("debitRenforce"), PIBI.SURPRESSE, PIBI.ADDITIVE.`as`("additive"))
+            .select(COMMUNE.CODE_INSEE).select(DOMAINE.CODE).select(NATURE.CODE).select(NATURE_DECI.CODE)
+            .select(DIAMETRE.CODE).select(ORGANISME.CODE).select(MODELE_PIBI.CODE)
+            .select(TYPE_CANALISATION.CODE)
+            .from(PEI)
+            .leftJoin(PIBI).on(PEI.ID.eq(PIBI.ID))
+            // jointures PEI
+            .leftJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .leftJoin(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .leftJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            // jointures PIBI
+            .leftJoin(DIAMETRE).on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
+            .leftJoin(ORGANISME).on(PIBI.SERVICE_EAU_ID.eq(ORGANISME.ID))
+            .leftJoin(MODELE_PIBI).on(PIBI.MODELE_PIBI_ID.eq(MODELE_PIBI.ID))
+            .leftJoin(TYPE_CANALISATION).on(PIBI.TYPE_CANALISATION_ID.eq(TYPE_CANALISATION.ID))
+            .leftJoin(TYPE_RESEAU).on(PIBI.TYPE_RESEAU_ID.eq(TYPE_RESEAU.ID))
+            .where(PEI.ID.eq(id))
+            // Tous les flags "actif"
+            .and(DOMAINE.ACTIF.isTrue)
+            .and(NATURE.ACTIF.isTrue)
+//                        .and(NATURE_DECI.ACTIF.isTrue)
+            .and(DOMAINE.ACTIF.isTrue)
+            .and(DOMAINE.ACTIF.isTrue)
+            .and(DOMAINE.ACTIF.isTrue)
+            .fetchSingleInto<ApiPibiData>()
+    }
+
+    // TODO requête à étoffer !
+    private fun getPenaCaracteristiques(id: UUID): ApiPenaData =
+        dsl.select(PEI.ANNEE_FABRICATION, PENA.CAPACITE, PENA.CAPACITE_ILLIMITEE)
+            .from(PEI).innerJoin(PENA).on(PEI.ID.eq(PENA.ID))
+            .where(PEI.ID.eq(id))
+            .fetchSingleInto<ApiPenaData>()
+
+    fun getPeiAccessibility(listPei: Set<UUID>): List<ApiPeiAccessibility> =
+        dsl
+            .select(
+                PEI.ID,
+                PEI.NUMERO_COMPLET,
+                PEI.MAINTENANCE_DECI_ID,
+                PEI.SERVICE_PUBLIC_DECI_ID,
+                PIBI.SERVICE_EAU_ID,
+            )
+            .from(PEI)
+            .leftJoin(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
+            .fetchInto()
+}
+
+data class ApiPeiAccessibility(val id: UUID, val numeroComplet: String, val maintenanceDeciId: UUID, val servicePublicDeciId: UUID, val serviceEauxId: UUID)
+
+/**
+ * Modèle général de représentation d'un PEI pour utilisation dans le back et le front ; ce modèle est décliné (hérité) pour chaque type (PIBI, PENA) afin de rajouter la sémantique nécessaire à ces spécificités.
+ */
+open class ApiPeiData {
+    lateinit var id: String
+    lateinit var numeroComplet: String
+    lateinit var numeroInterne: String
+    var codeInseeCommune: String? = null
+    var codeDomaine: String? = null
+    var codeNature: String? = null
+    var codeNatureDeci: String? = null
+    var anneeFabrication: Int? = null
+}
+
+// TODO vérifier toutes les propriétés de l'ancien type pour garantir le périmètre ISO + documenter les différences
+// TODO benchmark entre remontée objets complexes (commune, ...) et simplement le "code" à aller chercher dans un référentiel froid
+// faire une option pour permettre les 2 au cas par cas ?
+class ApiPibiData : ApiPeiData() {
+    var codeDiametre: String? = null
+    var codeServiceEau: String? = null
+    var numeroScp: String? = null
+    var renversable: Boolean? = false
+    var dispositifInviolabilite: Boolean = false
+    var codeModele: String? = null
+
+    // TODO liens PENA / jumelé
+    var codeReservoir: String? = null
+    var debitRenforce: Boolean? = false
+    var codeTypeCanalisation: String? = null
+    var codeTypeReseau: String? = null
+    var diametreCanalisation: Int? = null
+    var surpresse: Boolean? = false
+    var additive: Boolean? = false
+}
+
+class ApiPenaData : ApiPeiData() {
+    var disponibiliteHbe: Disponibilite? = null
+    var capacite: Int? = null
+    var capaciteIllimitee: Boolean? = null
+    var codeMateriau: String? = null
 }

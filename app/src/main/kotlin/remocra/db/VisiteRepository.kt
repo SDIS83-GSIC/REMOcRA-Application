@@ -2,11 +2,16 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
+import remocra.data.ApiVisiteData
+import remocra.data.ApiVisiteSpecifiqueData
 import remocra.db.jooq.remocra.enums.TypeVisite
+import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.Visite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_VISITE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
@@ -19,6 +24,8 @@ class VisiteRepository
 @Inject constructor(
     private val dsl: DSLContext,
 ) {
+
+    fun getById(visiteId: UUID): Visite = dsl.selectFrom(VISITE).where(VISITE.ID.eq(visiteId)).fetchSingleInto()
 
     fun getLastVisite(peiId: UUID): Visite? = dsl.selectFrom(VISITE)
         .where(VISITE.PEI_ID.eq(peiId))
@@ -147,4 +154,45 @@ class VisiteRepository
         dsl.deleteFrom(VISITE)
             .where(VISITE.ID.eq(visiteId))
             .execute()
+
+    fun getAllForApi(numeroComplet: String, typeVisite: TypeVisite?, moment: ZonedDateTime?, derniereOnly: Boolean, limit: Int?, offset: Int?): Collection<ApiVisiteData> {
+        return dsl.select(VISITE.ID, VISITE.DATE.`as`("moment"), VISITE.TYPE_VISITE)
+            .select(
+                DSL.multiset(
+                    DSL.selectDistinct(ANOMALIE.CODE)
+                        .from(L_VISITE_ANOMALIE)
+                        .innerJoin(ANOMALIE).on(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+                        .where(L_PEI_ANOMALIE.PEI_ID.eq(Pei.PEI.ID)),
+                ).`as`("anomalies"),
+            )
+            .from(VISITE)
+            .innerJoin(PEI).on(VISITE.PEI_ID.eq(PEI.ID))
+            .where(PEI.NUMERO_COMPLET.eq(numeroComplet))
+            .and(typeVisite?.let { VISITE.TYPE_VISITE.eq(typeVisite) })
+            .and(moment?.let { VISITE.DATE.ge(moment) })
+            .limit(if (derniereOnly) 1 else (if (limit == null || limit < 0) null else limit))
+            .offset(if (derniereOnly || offset == null || offset < 0) 0 else offset)
+            .fetchInto()
+    }
+
+    fun getVisiteForApi(visiteId: UUID): ApiVisiteSpecifiqueData {
+        return dsl.select(VISITE.ID, VISITE.DATE.`as`("moment"), VISITE.TYPE_VISITE, VISITE.AGENT1, VISITE.AGENT2, VISITE.OBSERVATION.`as`("observations"))
+            .select(VISITE_CTRL_DEBIT_PRESSION.DEBIT, VISITE_CTRL_DEBIT_PRESSION.PRESSION, VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN)
+            .select(
+                DSL.multiset(
+                    DSL.selectDistinct(ANOMALIE.CODE)
+                        .from(L_VISITE_ANOMALIE)
+                        .innerJoin(ANOMALIE).on(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+                        .where(L_PEI_ANOMALIE.PEI_ID.eq(Pei.PEI.ID)),
+                ).`as`("anomaliesConstatees"),
+            )
+            .from(VISITE)
+            .innerJoin(PEI).on(VISITE.PEI_ID.eq(PEI.ID))
+            .leftJoin(VISITE_CTRL_DEBIT_PRESSION).on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
+            .where(VISITE.ID.eq(visiteId))
+            .fetchSingleInto()
+
+        // TODO  Anomalies contrôlées => Anomalies présentes à cette visite + Anomalies présentes à la
+        //       visite précédente non présentes à cette visite
+    }
 }
