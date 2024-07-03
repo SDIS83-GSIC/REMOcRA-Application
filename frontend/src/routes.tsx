@@ -10,7 +10,7 @@ export const URLS = {
   ACCUEIL: url`/`,
   LOGOUT: url`/logout`,
   PEI: url`/pei`,
-  UPDATE_PEI: (peiId: string) => url`/pei/update/` + peiId,
+  UPDATE_PEI: (peiId: string) => url`/pei/` + peiId,
   UPDATE_PENA_ASPIRATION: (peiId: string) => url`/pena-aspiration/` + peiId,
   VISITE: (peiId: string) => url`/visite/` + peiId,
 };
