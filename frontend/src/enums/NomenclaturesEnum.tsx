@@ -1,11 +1,12 @@
 /**
- * Les nomenclatuer possible a demande au endpoint nomenclatures/list
+ * Les types possibles de données en cache à demander au endpoint nomenclatures/list
  */
-enum NOMENCLATURES {
-  NATURE = "nature",
-  NATURE_DECI = "nature_deci",
+export enum TYPE_DATA_CACHE {
+  ANOMALIE = "anomalie",
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
+  NATURE = "nature",
+  NATURE_DECI = "nature_deci",
   MARQUE_PIBI = "marque_pibi",
   MATERIAU = "materiau",
   MODELE_PIBI = "modele_pibi",
@@ -13,9 +14,8 @@ enum NOMENCLATURES {
   TYPE_CANALISATION = "type_canalisation",
   TYPE_RESEAU = "type_reseau",
 }
-
 export enum NOMENCLATURE_ORGANISME {
   SERVICE_PUBLIC_DECI = "servicePublicDeci",
   AUTORITE_DECI = "autoriteDeci",
 }
-export default NOMENCLATURES;
+export default TYPE_DATA_CACHE;

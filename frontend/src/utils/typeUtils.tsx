@@ -7,3 +7,8 @@ export type SelectNomenclaturesType = SelectType & {
 export type SelectIdLibelleDataType = SelectType & {
   url: string;
 };
+
+export type IdLibelle = {
+  id: string;
+  libelle: string;
+};
