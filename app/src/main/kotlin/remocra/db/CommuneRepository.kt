@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
-import remocra.data.GlobalData.IdLibelleData
+import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import java.util.UUID
@@ -31,8 +31,8 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
         return condition
     }
 
-    fun getCommuneForSelect(): List<IdLibelleData> =
-        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.LIBELLE.`as`("libelle"))
+    fun getCommuneForSelect(): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()

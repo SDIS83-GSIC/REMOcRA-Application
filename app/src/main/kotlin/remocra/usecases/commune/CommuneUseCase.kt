@@ -1,11 +1,11 @@
 package remocra.usecases.commune
 
 import com.google.inject.Inject
-import remocra.data.GlobalData.IdLibelleData
+import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.db.CommuneRepository
 
 class CommuneUseCase {
     @Inject
     lateinit var communeRepository: CommuneRepository
-    fun getCommuneForSelect(): List<IdLibelleData> = communeRepository.getCommuneForSelect()
+    fun getCommuneForSelect(): List<IdCodeLibelleData> = communeRepository.getCommuneForSelect()
 }

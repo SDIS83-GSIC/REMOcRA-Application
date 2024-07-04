@@ -4,5 +4,5 @@ import java.util.UUID
 
 class GlobalData {
 
-    data class IdLibelleData(val id: UUID, val libelle: String)
+    data class IdCodeLibelleData(val id: UUID, val code: String, val libelle: String)
 }

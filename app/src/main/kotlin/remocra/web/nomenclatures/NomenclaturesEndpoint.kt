@@ -9,12 +9,14 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
+import remocra.data.GlobalData
 import remocra.data.enums.TypeDataCache
 import java.util.Locale
 import java.util.UUID
 
 private const val SUFFIXE_ID = "Id"
 private const val SUFFIXE_LIBELLE = "Libelle"
+private const val SUFFIXE_CODE = "Code"
 
 @Path("/nomenclatures")
 @Produces("application/json; charset=UTF-8")
@@ -42,7 +44,7 @@ class NomenclaturesEndpoint {
      * A destination du front, attention à respecter le contrat (format du POJO et TypeNomenclature), faute de quoi on déclenchera une IllegalAccessException non catchée
      *
      * @param typeNomenclatureString Type de nomenclature à récupérer, sous forme de littéral en minuscule de [TypeDataCache]
-     * @return Collection<IdLibelleData> wrappé dans une Response
+     * @return Collection<IdCodeLibelleData> wrappé dans une Response
      */
     @GET
     @Path("/list/{typeNomenclature}")
@@ -55,12 +57,19 @@ class NomenclaturesEndpoint {
         // On veut identifier les attributs nommés maclasseId et maclasseLibelle dans Maclasse, pour les invoquer plus tard
         val fieldId = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
         val fieldLibelle = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_LIBELLE, true) }.also { it?.isAccessible = true }
+        val fieldCode = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_CODE, true) }.also { it?.isAccessible = true }
 
         // On invoque sur chaque objet et on met le résultat dans un data pour fourniture au front
-        return Response.ok(dataCacheProvider.getData(typeNomenclature).values.map { IdLibelleData(fieldId?.get(it) as UUID, fieldLibelle?.get(it) as String) }).build()
+        return Response.ok(
+            dataCacheProvider.getData(typeNomenclature).values.map {
+                GlobalData.IdCodeLibelleData(
+                    fieldId?.get(it) as UUID,
+                    fieldCode?.get(it) as String,
+                    fieldLibelle?.get(it) as String,
+                )
+            },
+        ).build()
     }
-
-    data class IdLibelleData(val id: UUID, val libelle: String)
 
     private fun getTypeNomenclatureFromString(typeNomenclatureString: String): TypeDataCache {
         val typeDataCache = TypeDataCache.valueOf(typeNomenclatureString.uppercase(Locale.getDefault()))

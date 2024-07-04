@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
-import remocra.data.GlobalData.IdLibelleData
+import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.tables.pojos.Organisme
@@ -22,17 +22,17 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .limit(limit).offset(offset)
             .fetchInto()
 
-    fun getOrganismeForSelect(): List<IdLibelleData> =
+    fun getOrganismeForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.noCondition())
 
-    fun getAutoriteDeciForSelect(): List<IdLibelleData> =
+    fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries)))
 
-    fun getServicePublicForSelect(): List<IdLibelleData> =
+    fun getServicePublicForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries)))
 
-    private fun getIdLibelleByCondition(condition: Condition): List<IdLibelleData> =
-        dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.LIBELLE.`as`("libelle"))
+    private fun getIdLibelleByCondition(condition: Condition): List<IdCodeLibelleData> =
+        dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.CODE.`as`("code"), ORGANISME.LIBELLE.`as`("libelle"))
             .from(ORGANISME)
             .join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .where(ORGANISME.ACTIF)

@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useReducer } from "react";
-import { IdLibelle } from "../../utils/typeUtils.tsx";
+import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 /**
  * Cette classe permet de mettre en cache les nomenclatures que l'on veut utiliser sur plusieurs pages.
@@ -8,11 +8,11 @@ import { IdLibelle } from "../../utils/typeUtils.tsx";
  */
 
 export interface DataCacheType {
-  [key: string]: IdLibelle[];
+  [key: string]: IdCodeLibelleType[];
 }
 
 export type DataCacheToUpdate = {
-  list: IdLibelle[];
+  list: IdCodeLibelleType[];
   nameProperty?: string | null;
 };
 

@@ -8,7 +8,8 @@ export type SelectIdLibelleDataType = SelectType & {
   url: string;
 };
 
-export type IdLibelle = {
+export type IdCodeLibelleType = {
   id: string;
+  code: string;
   libelle: string;
 };

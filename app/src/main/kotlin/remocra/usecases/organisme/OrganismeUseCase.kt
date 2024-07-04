@@ -1,14 +1,14 @@
 package remocra.usecases.organisme
 
 import com.google.inject.Inject
-import remocra.data.GlobalData.IdLibelleData
+import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.db.OrganismeRepository
 
 class OrganismeUseCase {
     @Inject
     lateinit var organismeRepository: OrganismeRepository
 
-    fun getOrganismeForSelect(): List<IdLibelleData> = organismeRepository.getOrganismeForSelect()
-    fun getAutoriteDeciForSelect(): List<IdLibelleData> = organismeRepository.getAutoriteDeciForSelect()
-    fun getServicePublicForSelect(): List<IdLibelleData> = organismeRepository.getServicePublicForSelect()
+    fun getOrganismeForSelect(): List<IdCodeLibelleData> = organismeRepository.getOrganismeForSelect()
+    fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = organismeRepository.getAutoriteDeciForSelect()
+    fun getServicePublicForSelect(): List<IdCodeLibelleData> = organismeRepository.getServicePublicForSelect()
 }
