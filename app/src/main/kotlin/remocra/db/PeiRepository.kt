@@ -6,12 +6,16 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.selectDistinct
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
+import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
@@ -74,7 +78,18 @@ class PeiRepository
             NATURE_DECI.LIBELLE,
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-
+            /*
+             * le multiset permet de renvoyer une liste dans une liste
+             * */
+            multiset(
+                selectDistinct(L_PEI_ANOMALIE.ANOMALIE_ID)
+                    .from(L_PEI_ANOMALIE)
+                    .where(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID)),
+            ).`as`("listeAnomalie").convertFrom { record ->
+                record?.map { r ->
+                    r.value1().let { it as UUID }
+                }
+            },
         )
             .from(PEI)
             .join(COMMUNE)
@@ -91,7 +106,28 @@ class PeiRepository
             .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+            /*
+            Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
+            de cette jointure
+             */
+            .leftJoin(L_PEI_ANOMALIE)
+            .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
+            .leftJoin(ANOMALIE)
+            .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
             .where(param.filterBy?.toCondition() ?: DSL.noCondition())
+            .groupBy(
+                PEI.ID,
+                PEI.NUMERO_COMPLET,
+                PEI.NUMERO_INTERNE,
+                PEI.TYPE_PEI,
+                PEI.DISPONIBILITE_TERRESTRE,
+                PENA.DISPONIBILITE_HBE,
+                NATURE.LIBELLE,
+                COMMUNE.LIBELLE,
+                NATURE_DECI.LIBELLE,
+                autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
+                servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
+            )
             .orderBy(
                 param.sortBy?.toCondition() ?: listOf(
                     DSL.length(PEI.NUMERO_COMPLET).asc(),
@@ -119,6 +155,7 @@ class PeiRepository
         val natureDeciLibelle: String,
         val autoriteDeci: String?,
         val servicePublicDeci: String?,
+        val listeAnomalie: List<UUID>?,
 
         /*
             TODO
@@ -138,7 +175,9 @@ class PeiRepository
         val servicePublicDeci: UUID?,
         val peiDisponibiliteTerrestre: Disponibilite?,
         val penaDisponibiliteHbe: Disponibilite?,
+        val listeAnomalie: String?,
     ) {
+
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
@@ -152,6 +191,7 @@ class PeiRepository
                     servicePublicDeci?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
                     peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
+                    listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
                 ),
             )
     }
