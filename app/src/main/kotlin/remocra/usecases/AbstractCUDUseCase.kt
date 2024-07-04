@@ -20,12 +20,14 @@ abstract class AbstractCUDUseCase<T : Any> {
      */
     protected abstract fun checkContraintes(element: T)
 
-    /**
-     * Exécute la logique métier d'insert / update / delete. Le type de retour est *facultatif*, le
-     * cas nominal est un non-retour, ce qui va déboucher sur un Result.Success wrappé dans un
-     * Response.ok() vide
+    /** Exécute la logique métier d'insert / update / delete.
+     *
+     * Retourner l'entité la plus à jour afin de permettre aux mécanismes ultérieurs (événements) de fonctionner au mieux
+     *
+     * @param element L'élément à enregistrer
+     * @return T l'élément enregistré
      */
-    protected abstract fun execute(element: T): Any?
+    protected abstract fun execute(element: T): T
 
     /**
      * Point d'entrée du useCase permettant de vérifier les droits et de déclencher l'action au sein
@@ -40,11 +42,9 @@ abstract class AbstractCUDUseCase<T : Any> {
             }
             checkDroits(userInfo)
             checkContraintes(element)
-            val result = transactionManager.transactionResult { execute(element) }
-            postEvent(element, userInfo)
-            return Result.Success(
-                result,
-            )
+            val savedElement = transactionManager.transactionResult { execute(element) }
+            postEvent(savedElement, userInfo)
+            return Result.Success(savedElement)
         } catch (e: ForbiddenException) {
             return Result.Forbidden(e.message)
         } catch (ndfe: NoDataFoundException) {
