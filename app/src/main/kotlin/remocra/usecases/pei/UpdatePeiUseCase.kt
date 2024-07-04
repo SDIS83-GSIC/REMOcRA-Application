@@ -1,18 +1,23 @@
 package remocra.usecases.pei
 
+import com.google.inject.Inject
 import remocra.authn.UserInfo
+import remocra.data.PeiData
+import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeOperation
-import remocra.db.jooq.remocra.tables.pojos.Pei
 
 class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPDATE) {
-    override fun executeSpecific(element: Pei): Any? {
+
+    @Inject lateinit var peiRepository: PeiRepository
+
+    override fun executeSpecific(element: PeiData) {
         TODO("Not yet implemented")
     }
 
     override fun checkDroits(userInfo: UserInfo) {
         TODO("Not yet implemented")
     }
-    override fun checkContraintes(element: Pei) {
+    override fun checkContraintes(element: PeiData) {
         TODO("Not yet implemented")
     }
 }

@@ -1,18 +1,18 @@
 package remocra.usecases.pei
 
 import remocra.authn.UserInfo
+import remocra.data.PeiData
 import remocra.db.jooq.historique.enums.TypeOperation
-import remocra.db.jooq.remocra.tables.pojos.Pei
 
 class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
-    override fun executeSpecific(element: Pei): Any? {
+    override fun executeSpecific(element: PeiData): Any? {
         TODO("Not yet implemented")
     }
 
     override fun checkDroits(userInfo: UserInfo) {
         TODO("Not yet implemented")
     }
-    override fun checkContraintes(element: Pei) {
+    override fun checkContraintes(element: PeiData) {
         TODO("Not yet implemented")
     }
 }
