@@ -11,6 +11,7 @@ type filterPei = {
   natureDeci?: string;
   autoriteDeci?: string;
   servicePublicDeci?: string;
+  listeAnomalie?: string;
 };
 
 export const filterValuesToVariable = ({
@@ -24,6 +25,7 @@ export const filterValuesToVariable = ({
   natureDeci,
   autoriteDeci,
   servicePublicDeci,
+  listeAnomalie,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -59,6 +61,9 @@ export const filterValuesToVariable = ({
   }
   if (peiNumeroInterne != null && peiNumeroInterne !== "") {
     filter.peiNumeroInterne = peiNumeroInterne;
+  }
+  if (listeAnomalie != null && listeAnomalie !== "") {
+    filter.listeAnomalie = listeAnomalie;
   }
 
   return filter;

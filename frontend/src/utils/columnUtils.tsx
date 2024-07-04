@@ -10,6 +10,7 @@ import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";
 import url from "../module/fetch.tsx";
+import getStringListeAnomalie from "./anomaliesUtils.tsx";
 
 function getColumnByStringArray(
   parametres: Array<COLUMN_PEI>,
@@ -136,6 +137,16 @@ function getColumnByStringArray(
               }
             />
           ),
+        });
+        break;
+      case COLUMN_PEI.ANOMALIES:
+        column.push({
+          Header: "Anomalies",
+          accessor: "listeAnomalie",
+          Cell: (value) => {
+            return <div>{getStringListeAnomalie(value.value)}</div>;
+          },
+          Filter: <FilterInput type="text" name="listeAnomalie" />,
         });
         break;
 

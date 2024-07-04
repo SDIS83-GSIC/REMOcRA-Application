@@ -9,10 +9,10 @@ export enum TYPE_DATA_CACHE {
   NATURE_PIBI = "nature_pibi",
   NATURE_PENA = "nature_pena",
   NATURE_DECI = "nature_deci",
+  NIVEAU = "niveau",
   MARQUE_PIBI = "marque_pibi",
   MATERIAU = "materiau",
   MODELE_PIBI = "modele_pibi",
-  NIVEAU = "niveau",
   TYPE_CANALISATION = "type_canalisation",
   TYPE_RESEAU = "type_reseau",
 }

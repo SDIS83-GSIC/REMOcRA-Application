@@ -19,6 +19,7 @@ const AccueilPei = () => {
     COLUMN_PEI.NATURE_DECI,
     COLUMN_PEI.AUTORITE_DECI,
     COLUMN_PEI.SERVICE_PUBLIC_DECI,
+    COLUMN_PEI.ANOMALIES,
   ];
 
   return (
@@ -34,6 +35,7 @@ const AccueilPei = () => {
           communeId: undefined,
           peiDisponibiliteTerrestre: undefined,
           penaDisponibiliteHbe: undefined,
+          listeAnomalie: undefined,
         })}
       />
     </>
