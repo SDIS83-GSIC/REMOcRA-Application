@@ -6,6 +6,8 @@ export enum TYPE_DATA_CACHE {
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
   NATURE = "nature",
+  NATURE_PIBI = "nature_pibi",
+  NATURE_PENA = "nature_pena",
   NATURE_DECI = "nature_deci",
   MARQUE_PIBI = "marque_pibi",
   MATERIAU = "materiau",

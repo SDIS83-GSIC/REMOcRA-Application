@@ -17,6 +17,7 @@ import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Domaine
@@ -69,7 +70,10 @@ constructor(
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
             TypeDataCache.MATERIAU -> dataCache.mapMateriau = materiauRepository.getMapById()
             TypeDataCache.MODELE_PIBI -> dataCache.mapModelePibi = modelePibiRepository.getMapById()
-            TypeDataCache.NATURE -> dataCache.mapNature = natureRepository.getMapById()
+            TypeDataCache.NATURE,
+            TypeDataCache.NATURE_PENA,
+            TypeDataCache.NATURE_PIBI,
+            -> dataCache.mapNature = natureRepository.getMapById()
             TypeDataCache.NATURE_DECI -> dataCache.mapNatureDeci = natureDeciRepository.getMapById()
             TypeDataCache.NIVEAU -> dataCache.mapNiveau = niveauRepository.getMapById()
             TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
@@ -121,6 +125,8 @@ constructor(
         TypeDataCache.MATERIAU -> get().mapMateriau
         TypeDataCache.MODELE_PIBI -> get().mapModelePibi
         TypeDataCache.NATURE -> getNatures()
+        TypeDataCache.NATURE_PIBI -> get().mapNature.filter { it.value.natureTypePei == TypePei.PIBI }
+        TypeDataCache.NATURE_PENA -> get().mapNature.filter { it.value.natureTypePei == TypePei.PENA }
         TypeDataCache.NATURE_DECI -> get().mapNatureDeci
         TypeDataCache.NIVEAU -> get().mapNiveau
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
@@ -143,7 +149,10 @@ constructor(
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java
         TypeDataCache.MATERIAU -> Materiau::class.java
         TypeDataCache.MODELE_PIBI -> ModelePibi::class.java
-        TypeDataCache.NATURE -> Nature::class.java
+        TypeDataCache.NATURE,
+        TypeDataCache.NATURE_PIBI,
+        TypeDataCache.NATURE_PENA,
+        -> Nature::class.java
         TypeDataCache.NATURE_DECI -> NatureDeci::class.java
         TypeDataCache.NIVEAU -> Niveau::class.java
         TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
