@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import org.jooq.Geometry
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -23,6 +24,7 @@ data class Site(
     val siteActif: Boolean,
     val siteCode: String,
     val siteLibelle: String,
+    val siteGeometrie: Geometry,
     val siteGestionnaireId: UUID?,
 ) : Serializable {
 
@@ -49,6 +51,9 @@ data class Site(
         if (this.siteLibelle != o.siteLibelle) {
             return false
         }
+        if (this.siteGeometrie != o.siteGeometrie) {
+            return false
+        }
         if (this.siteGestionnaireId == null) {
             if (o.siteGestionnaireId != null) {
                 return false
@@ -66,6 +71,7 @@ data class Site(
         result = prime * result + this.siteActif.hashCode()
         result = prime * result + this.siteCode.hashCode()
         result = prime * result + this.siteLibelle.hashCode()
+        result = prime * result + this.siteGeometrie.hashCode()
         result = prime * result + (if (this.siteGestionnaireId == null) 0 else this.siteGestionnaireId.hashCode())
         return result
     }
@@ -77,6 +83,7 @@ data class Site(
         sb.append(", ").append(siteActif)
         sb.append(", ").append(siteCode)
         sb.append(", ").append(siteLibelle)
+        sb.append(", ").append(siteGeometrie)
         sb.append(", ").append(siteGestionnaireId)
 
         sb.append(")")

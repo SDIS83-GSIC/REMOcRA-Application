@@ -16,6 +16,13 @@ CREATE TABLE remocra.site
     site_actif        BOOLEAN NOT NULL,
     site_code         TEXT    NOT NULL UNIQUE,
     site_libelle      TEXT    NOT NULL,
+    site_geometrie    geometry        NOT NULL,
     site_gestionnaire_id UUID REFERENCES remocra.gestionnaire
 );
+
+ALTER TABLE remocra.site
+    ADD CONSTRAINT polygon_multiPolygon_site CHECK (
+        geometrytype(site_geometrie) = 'POLYGON'
+            OR geometryType(site_geometrie) = 'MULTIPOLYGON'
+        );
 

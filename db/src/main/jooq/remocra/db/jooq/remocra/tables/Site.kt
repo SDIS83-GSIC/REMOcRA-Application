@@ -3,9 +3,11 @@
  */
 package remocra.db.jooq.remocra.tables
 
+import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Geometry
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -101,6 +103,11 @@ open class Site(
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("site_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
+     * The column <code>remocra.site.site_geometrie</code>.
+     */
+    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("site_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "")
+
+    /**
      * The column <code>remocra.site.site_gestionnaire_id</code>.
      */
     val GESTIONNAIRE_ID: TableField<Record, UUID?> = createField(DSL.name("site_gestionnaire_id"), SQLDataType.UUID, this, "")
@@ -173,6 +180,9 @@ open class Site(
 
     val pei: PeiPath
         get(): PeiPath = pei()
+    override fun getChecks(): List<Check<Record>> = listOf(
+        Internal.createCheck(this, DSL.name("polygon_multipolygon_site"), "(((geometrytype(site_geometrie) = 'POLYGON'::text) OR (geometrytype(site_geometrie) = 'MULTIPOLYGON'::text)))", true),
+    )
     override fun `as`(alias: String): Site = Site(DSL.name(alias), this)
     override fun `as`(alias: Name): Site = Site(alias, this)
     override fun `as`(alias: Table<*>): Site = Site(alias.qualifiedName, this)
