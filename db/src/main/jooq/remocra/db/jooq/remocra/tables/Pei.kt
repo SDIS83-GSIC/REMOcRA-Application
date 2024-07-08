@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_CROISEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_DOMAINE_ID_FKEY
+import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_NATURE_DECI_ID_FKEY
@@ -51,6 +52,7 @@ import remocra.db.jooq.remocra.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Domaine.DomainePath
+import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Nature.NaturePath
@@ -216,6 +218,11 @@ open class Pei(
     val NIVEAU_ID: TableField<Record, UUID?> = createField(DSL.name("pei_niveau_id"), SQLDataType.UUID, this, "")
 
     /**
+     * The column <code>remocra.pei.pei_gestionnaire_id</code>.
+     */
+    val GESTIONNAIRE_ID: TableField<Record, UUID?> = createField(DSL.name("pei_gestionnaire_id"), SQLDataType.UUID, this, "")
+
+    /**
      * The column <code>remocra.pei.pei_site_id</code>.
      */
     val SITE_ID: TableField<Record, UUID?> = createField(DSL.name("pei_site_id"), SQLDataType.UUID, this, "")
@@ -275,7 +282,7 @@ open class Pei(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = PEI_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PEI_PEI_NUMERO_COMPLET_KEY)
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PEI__PEI_PEI_VOIE_ID_FKEY, PEI__PEI_PEI_CROISEMENT_ID_FKEY, PEI__PEI_PEI_LIEU_DIT_ID_FKEY, PEI__PEI_PEI_COMMUNE_ID_FKEY, PEI__PEI_PEI_DOMAINE_ID_FKEY, PEI__PEI_PEI_NATURE_ID_FKEY, PEI__PEI_PEI_NATURE_DECI_ID_FKEY, PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY, PEI__PEI_PEI_NIVEAU_ID_FKEY, PEI__PEI_PEI_SITE_ID_FKEY, PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY, PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY, PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PEI__PEI_PEI_VOIE_ID_FKEY, PEI__PEI_PEI_CROISEMENT_ID_FKEY, PEI__PEI_PEI_LIEU_DIT_ID_FKEY, PEI__PEI_PEI_COMMUNE_ID_FKEY, PEI__PEI_PEI_DOMAINE_ID_FKEY, PEI__PEI_PEI_NATURE_ID_FKEY, PEI__PEI_PEI_NATURE_DECI_ID_FKEY, PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY, PEI__PEI_PEI_NIVEAU_ID_FKEY, PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY, PEI__PEI_PEI_SITE_ID_FKEY, PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY, PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY, PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY)
 
     private lateinit var _peiPeiVoieIdFkey: VoiePath
 
@@ -423,6 +430,23 @@ open class Pei(
 
     val niveau: NiveauPath
         get(): NiveauPath = niveau()
+
+    private lateinit var _gestionnaire: GestionnairePath
+
+    /**
+     * Get the implicit join path to the <code>remocra.gestionnaire</code>
+     * table.
+     */
+    fun gestionnaire(): GestionnairePath {
+        if (!this::_gestionnaire.isInitialized) {
+            _gestionnaire = GestionnairePath(this, PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY, null)
+        }
+
+        return _gestionnaire
+    }
+
+    val gestionnaire: GestionnairePath
+        get(): GestionnairePath = gestionnaire()
 
     private lateinit var _site: SitePath
 

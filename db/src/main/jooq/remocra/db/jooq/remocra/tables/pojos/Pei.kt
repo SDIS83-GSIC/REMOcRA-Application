@@ -42,6 +42,7 @@ data class Pei(
     val peiNatureDeciId: UUID,
     val peiZoneSpecialeId: UUID?,
     val peiNiveauId: UUID?,
+    val peiGestionnaireId: UUID?,
     val peiSiteId: UUID?,
     val peiAutoriteDeciId: UUID?,
     val peiServicePublicDeciId: UUID?,
@@ -160,6 +161,13 @@ data class Pei(
         } else if (this.peiNiveauId != o.peiNiveauId) {
             return false
         }
+        if (this.peiGestionnaireId == null) {
+            if (o.peiGestionnaireId != null) {
+                return false
+            }
+        } else if (this.peiGestionnaireId != o.peiGestionnaireId) {
+            return false
+        }
         if (this.peiSiteId == null) {
             if (o.peiSiteId != null) {
                 return false
@@ -221,6 +229,7 @@ data class Pei(
         result = prime * result + this.peiNatureDeciId.hashCode()
         result = prime * result + (if (this.peiZoneSpecialeId == null) 0 else this.peiZoneSpecialeId.hashCode())
         result = prime * result + (if (this.peiNiveauId == null) 0 else this.peiNiveauId.hashCode())
+        result = prime * result + (if (this.peiGestionnaireId == null) 0 else this.peiGestionnaireId.hashCode())
         result = prime * result + (if (this.peiSiteId == null) 0 else this.peiSiteId.hashCode())
         result = prime * result + (if (this.peiAutoriteDeciId == null) 0 else this.peiAutoriteDeciId.hashCode())
         result = prime * result + (if (this.peiServicePublicDeciId == null) 0 else this.peiServicePublicDeciId.hashCode())
@@ -252,6 +261,7 @@ data class Pei(
         sb.append(", ").append(peiNatureDeciId)
         sb.append(", ").append(peiZoneSpecialeId)
         sb.append(", ").append(peiNiveauId)
+        sb.append(", ").append(peiGestionnaireId)
         sb.append(", ").append(peiSiteId)
         sb.append(", ").append(peiAutoriteDeciId)
         sb.append(", ").append(peiServicePublicDeciId)

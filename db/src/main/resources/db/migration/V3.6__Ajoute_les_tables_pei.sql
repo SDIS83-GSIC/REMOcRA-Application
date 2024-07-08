@@ -25,6 +25,7 @@ CREATE TABLE remocra.pei
     pei_nature_deci_id          UUID            NOT NULL REFERENCES remocra.nature_deci (nature_deci_id),
     pei_zone_speciale_id        UUID REFERENCES remocra.zone_integration (zone_integration_id),
     pei_niveau_id               UUID REFERENCES remocra.niveau (niveau_id),
+    pei_gestionnaire_id         UUID REFERENCES remocra.gestionnaire (gestionnaire_id),
     pei_site_id                 UUID REFERENCES remocra.site (site_id),
     pei_autorite_deci_id        UUID REFERENCES remocra.organisme (organisme_id),
     pei_service_public_deci_id  UUID REFERENCES remocra.organisme (organisme_id),

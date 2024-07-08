@@ -27,7 +27,9 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.GESTIONNAIRE_GESTIONNAIRE_CODE_KEY
 import remocra.db.jooq.remocra.keys.GESTIONNAIRE_PKEY
+import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Site.SitePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -132,6 +134,22 @@ open class Gestionnaire(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = GESTIONNAIRE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(GESTIONNAIRE_GESTIONNAIRE_CODE_KEY)
+
+    private lateinit var _pei: PeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.pei</code> table
+     */
+    fun pei(): PeiPath {
+        if (!this::_pei.isInitialized) {
+            _pei = PeiPath(this, null, PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY.inverseKey)
+        }
+
+        return _pei
+    }
+
+    val pei: PeiPath
+        get(): PeiPath = pei()
 
     private lateinit var _site: SitePath
 
