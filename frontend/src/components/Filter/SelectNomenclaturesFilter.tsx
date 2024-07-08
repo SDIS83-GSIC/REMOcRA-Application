@@ -1,6 +1,6 @@
 import url from "../../module/fetch.tsx";
 import { SelectNomenclaturesType } from "../../utils/typeUtils.tsx";
-import SelectIdLibelleData from "./SelectIdLibelleData.tsx";
+import SelectFilterFromUrl from "./SelectFilterFromUrl.tsx";
 
 /**
  * Composant de sélection pour les nomenclatures.
@@ -9,13 +9,13 @@ import SelectIdLibelleData from "./SelectIdLibelleData.tsx";
  * @param {string} name - Nom du composant de sélection.
  * @param {TYPE_DATA_CACHE} nomenclature - La nomenclature voulue
  */
-const SelectNomenclatures = ({
+const SelectNomenclaturesFilter = ({
   onChange,
   name,
   nomenclature,
 }: SelectNomenclaturesType) => {
   return (
-    <SelectIdLibelleData
+    <SelectFilterFromUrl
       name={name}
       url={url`/api/nomenclatures/list/` + nomenclature}
       onChange={onChange}
@@ -23,4 +23,4 @@ const SelectNomenclatures = ({
   );
 };
 
-export default SelectNomenclatures;
+export default SelectNomenclaturesFilter;

@@ -3,9 +3,9 @@ import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
 import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
 import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
-import SelectNomenclatures from "../components/Form/SelectNomenclatures.tsx";
+import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
-import SelectIdLibelleData from "../components/Form/SelectIdLibelleData.tsx";
+import SelectFilterFromUrl from "../components/Filter/SelectFilterFromUrl.tsx";
 import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";
@@ -73,7 +73,7 @@ function getColumnByStringArray(
           accessor: "libelle",
           sortField: "libelle",
           Filter: (
-            <SelectNomenclatures
+            <SelectNomenclaturesFilter
               name={"natureId"}
               nomenclature={NOMENCLATURES.NATURE}
             />
@@ -86,7 +86,7 @@ function getColumnByStringArray(
           accessor: "communeLibelle",
           sortField: "communeLibelle",
           Filter: (
-            <SelectIdLibelleData
+            <SelectFilterFromUrl
               name={"autoriteDeci"}
               url={url`/api/commune/get-libelle-commune`}
             />
@@ -99,7 +99,7 @@ function getColumnByStringArray(
           accessor: "natureDeciLibelle",
           sortField: "natureDeciLibelle",
           Filter: (
-            <SelectNomenclatures
+            <SelectNomenclaturesFilter
               name={"natureDeci"}
               nomenclature={NOMENCLATURES.NATURE_DECI}
             />
@@ -112,7 +112,7 @@ function getColumnByStringArray(
           accessor: "autoriteDeci",
           sortField: "autoriteDeci",
           Filter: (
-            <SelectIdLibelleData
+            <SelectFilterFromUrl
               name={"autoriteDeci"}
               url={
                 url`/api/organisme/get-list-` +
@@ -128,7 +128,7 @@ function getColumnByStringArray(
           accessor: "servicePublicDeci",
           sortField: "servicePublicDeci",
           Filter: (
-            <SelectIdLibelleData
+            <SelectFilterFromUrl
               name={"servicePublicDeci"}
               url={
                 url`/api/organisme/get-list-` +

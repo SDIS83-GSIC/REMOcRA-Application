@@ -1,7 +1,7 @@
-import { Typeahead } from "react-bootstrap-typeahead";
 import { useGet } from "../Fetch/useFetch.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
-import { SelectIdLibelleDataType } from "../../utils/typeUtils.tsx";
+import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
+import SelectFilterFromList from "./SelectFilterFromList.tsx";
 
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
@@ -11,11 +11,12 @@ import { SelectIdLibelleDataType } from "../../utils/typeUtils.tsx";
  * @param {string} name - Nom du composant de sélection.
  * @param url
  */
-const SelectIdLibelleData = ({
+const SelectFilterFromUrl = ({
   onChange,
   name,
   url,
-}: SelectIdLibelleDataType) => {
+  value,
+}: SelectFilterFromUrlType) => {
   const stateData = useGet(url);
 
   const {
@@ -23,26 +24,18 @@ const SelectIdLibelleData = ({
     // eslint-disable-next-line no-empty-pattern
     data: listData = ([] = {}),
   } = stateData;
-  const defaultValue = {
-    id: undefined,
-    libelle: "Tous",
-  };
+
   if (!isResolvedListData) {
     return <Loading />;
   } else {
-    const data = [defaultValue].concat(listData);
     return (
-      <Typeahead
-        placeholder={"Sélectionnez..."}
-        size={"sm"}
-        clearButton
-        options={data}
-        labelKey={"libelle"}
-        onChange={(data) => {
-          onChange({ name: name, value: data[0]?.id });
-        }}
+      <SelectFilterFromList
+        listIdLibelle={listData}
+        name={name}
+        onChange={onChange}
+        value={value}
       />
     );
   }
 };
-export default SelectIdLibelleData;
+export default SelectFilterFromUrl;
