@@ -6,10 +6,14 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
+import remocra.data.PenaData
+import remocra.data.PibiData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
+import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -27,6 +31,34 @@ class PeiRepository
         // Alias de table
         val autoriteDeciAlias: Table<*> = ORGANISME.`as`("AUTORITE_DECI")
         val servicePublicDeciAlias: Table<*> = ORGANISME.`as`("SP_DECI")
+
+        val peiData = listOf(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+            PEI.NUMERO_INTERNE,
+            PEI.DISPONIBILITE_TERRESTRE,
+            PEI.TYPE_PEI,
+            PEI.COMMUNE_ID,
+            PEI.VOIE_ID,
+            PEI.NUMERO_VOIE,
+            PEI.SUFFIXE_VOIE,
+            PEI.LIEU_DIT_ID,
+            PEI.CROISEMENT_ID,
+            PEI.COMPLEMENT_ADRESSE,
+            PEI.EN_FACE,
+            PEI.DOMAINE_ID,
+            PEI.NATURE_ID,
+            PEI.SITE_ID,
+            PEI.GESTIONNAIRE_ID,
+            PEI.NATURE_DECI_ID,
+            PEI.ZONE_SPECIALE_ID,
+            PEI.ANNEE_FABRICATION,
+            PEI.AUTORITE_DECI_ID,
+            PEI.SERVICE_PUBLIC_DECI_ID,
+            PEI.MAINTENANCE_DECI_ID,
+            PEI.NIVEAU_ID,
+            PEI.OBSERVATION,
+        )
     }
 
     fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiForTableau> {
@@ -154,4 +186,55 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
         )
     }
+
+    fun getTypePei(idPei: UUID): TypePei =
+        dsl.select(PEI.TYPE_PEI)
+            .from(PEI)
+            .where(PEI.ID.eq(idPei))
+            .fetchSingleInto()
+
+    fun getInfoPibi(pibiId: UUID): PibiData =
+        dsl.select(peiData).select(
+            // DONNEE PIBI
+            PIBI.DIAMETRE_ID,
+            PIBI.SERVICE_EAU_ID,
+            PIBI.NUMERO_SCP,
+            PIBI.RENVERSABLE,
+            PIBI.DISPOSITIF_INVIOLABILITE,
+            PIBI.MODELE_PIBI_ID,
+            MODELE_PIBI.MARQUE_ID,
+            PIBI.RESERVOIR_ID,
+            PIBI.DEBIT_RENFORCE,
+            PIBI.TYPE_CANALISATION_ID,
+            PIBI.TYPE_RESEAU_ID,
+            PIBI.DIAMETRE_CANALISATION,
+            PIBI.SURPRESSE,
+            PIBI.ADDITIVE,
+        )
+            .from(PEI)
+            .join(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .leftJoin(MODELE_PIBI)
+            .on(MODELE_PIBI.ID.eq(PIBI.MODELE_PIBI_ID))
+            .leftJoin(MARQUE_PIBI)
+            .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
+            .where(PEI.ID.eq(pibiId))
+            .fetchSingleInto()
+
+    fun getInfoPena(penaId: UUID): PenaData =
+        dsl.select(peiData).select(
+            PENA.CAPACITE,
+            PENA.DISPONIBILITE_HBE,
+            PENA.CAPACITE_ILLIMITEE,
+            PENA.MATERIAU_ID,
+        )
+            .from(PEI)
+            .join(PENA)
+            .on(PENA.ID.eq(PEI.ID))
+            .leftJoin(MODELE_PIBI)
+            .on(MODELE_PIBI.ID.eq(PIBI.MODELE_PIBI_ID))
+            .leftJoin(MARQUE_PIBI)
+            .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
+            .where(PEI.ID.eq(penaId))
+            .fetchSingleInto()
 }

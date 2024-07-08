@@ -4,12 +4,14 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.db.PeiRepository
 import remocra.usecases.pei.PeiUseCase
+import java.util.UUID
 
 @Path("/pei")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +48,14 @@ class PeiEndPoint {
         @QueryParam("sortBy")
         val sortBy: PeiRepository.Sort?,
     )
+
+    @GET
+    @Path("/{idPei}")
+    fun getInfoPei(
+        @PathParam("idPei") idPei: UUID,
+    ): Response {
+        return Response.ok(peiUseCase.getInfoPei(idPei)).build()
+    }
 
     @GET
     @Path("/referentiel-for-update-pei") // TODO idPei

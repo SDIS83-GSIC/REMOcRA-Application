@@ -2,6 +2,7 @@ package remocra.usecases.pei
 
 import jakarta.inject.Inject
 import remocra.data.GlobalData.IdCodeLibelleData
+import remocra.data.PeiData
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.LieuDitRepository
@@ -9,7 +10,9 @@ import remocra.db.OrganismeRepository
 import remocra.db.PeiRepository
 import remocra.db.SiteRepository
 import remocra.db.VoieRepository
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.web.pei.PeiEndPoint
+import java.util.UUID
 
 /**
  * UseCase regroupant tous les services devant remonter de l'information sur les PEI. <br />
@@ -44,6 +47,16 @@ class PeiUseCase {
 
     fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiRepository.PeiForTableau> {
         return peiRepository.getPeiWithFilter(param)
+    }
+
+    fun getInfoPei(idPei: UUID): PeiData {
+        val typePei = peiRepository.getTypePei(idPei)
+
+        return when (typePei) {
+            TypePei.PIBI -> peiRepository.getInfoPibi(idPei)
+            TypePei.PENA -> peiRepository.getInfoPena(idPei)
+            else -> throw IllegalArgumentException("Le type du PEI $idPei est incorrect (Valeurs autorisées : PIBI, PENA)")
+        }
     }
 
     /**
