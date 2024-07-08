@@ -79,6 +79,8 @@ class PeiUseCase {
     }
 
     // On renvoie que des listes de Id - Code - Libellé pour que ça colle avec notre SelectInput
+    // Dans quelques cas, on a aussi besoin d'un id pour proposer les bonnes valeurs en fonction de celles saisies
+    // (par ex : les voies sont chargées en fonction des communes, les site en fonction des gestionnaires)
     data class FichePeiListSelect(
         val listAutoriteDeci: Collection<IdCodeLibelleData>,
         val listServicePublicDeci: Collection<IdCodeLibelleData>,
@@ -87,6 +89,6 @@ class PeiUseCase {
         val listSite: Collection<SiteRepository.SiteWithGestionnaire>,
         val listCommune: Collection<IdCodeLibelleData>,
         val listLieuDit: Collection<LieuDitRepository.LieuDitWithCommune>,
-        val listVoie: Collection<IdCodeLibelleData>,
+        val listVoie: Collection<VoieRepository.VoieWithCommune>,
     )
 }

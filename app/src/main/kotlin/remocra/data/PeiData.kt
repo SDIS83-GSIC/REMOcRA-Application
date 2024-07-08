@@ -17,7 +17,7 @@ open class PeiData(
 
     open val peiAutoriteDeciId: UUID?,
     open val peiServicePublicDeciId: UUID?,
-    open val peiMaintenanceDeci: UUID?,
+    open val peiMaintenanceDeciId: UUID?,
 
     open val peiCommuneId: UUID,
     open val peiVoieId: UUID?,
@@ -57,7 +57,7 @@ data class PibiData(
 
     override val peiAutoriteDeciId: UUID?,
     override val peiServicePublicDeciId: UUID?,
-    override val peiMaintenanceDeci: UUID?,
+    override val peiMaintenanceDeciId: UUID?,
 
     override val peiCommuneId: UUID,
     override val peiVoieId: UUID?,
@@ -101,7 +101,7 @@ data class PibiData(
     peiTypePei,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
-    peiMaintenanceDeci,
+    peiMaintenanceDeciId,
     peiCommuneId,
     peiVoieId,
     peiNumeroVoie,
@@ -130,7 +130,7 @@ class PenaData(
 
     override val peiAutoriteDeciId: UUID?,
     override val peiServicePublicDeciId: UUID?,
-    override val peiMaintenanceDeci: UUID?,
+    override val peiMaintenanceDeciId: UUID?,
 
     override val peiCommuneId: UUID,
     override val peiVoieId: UUID?,
@@ -163,7 +163,7 @@ class PenaData(
     peiTypePei,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
-    peiMaintenanceDeci,
+    peiMaintenanceDeciId,
     peiCommuneId,
     peiVoieId,
     peiNumeroVoie,

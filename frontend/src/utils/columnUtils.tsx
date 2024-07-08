@@ -10,6 +10,8 @@ import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";
 import url from "../module/fetch.tsx";
+import EditColumn from "../components/Table/columns.tsx";
+import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 
 function getColumnByStringArray(
@@ -158,6 +160,15 @@ function getColumnByStringArray(
         });
     }
   });
+
+  column.push(
+    EditColumn({
+      to: (peiId) => URLS.UPDATE_PEI(peiId),
+      title: true,
+      accessor: "peiId",
+      canEdit: true, // TODO voir avec les rôles
+    }),
+  );
   return column;
 }
 

@@ -21,10 +21,17 @@ export type SelectFormType = SelectType & {
   required?: boolean;
   disabled?: boolean;
   setValues: (e: any) => void;
+  setOtherValues?: () => void;
 };
 
-export type SelectNomenclaturesFormType = SelectFormType & {
+export type SelectNomenclaturesFormType = {
+  onChange?: any;
+  name: string;
   nomenclature: TYPE_DATA_CACHE;
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+  setValues: (e: any) => void;
   valueId: string | undefined;
 };
 

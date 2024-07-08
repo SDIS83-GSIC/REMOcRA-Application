@@ -11,13 +11,14 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
     @Inject lateinit var peiRepository: PeiRepository
 
     override fun executeSpecific(element: PeiData) {
-        TODO("Not yet implemented")
+        peiRepository.update(element)
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        TODO("Not yet implemented")
+        // TODO regarder les droits de l'utilisateur
+        //  Dans la v2 "Créer, ouvrir la fiche PEI"
     }
     override fun checkContraintes(element: PeiData) {
-        TODO("Not yet implemented")
+        // TODO il y a des contraintes ? Aujourd'hui les contraintes sont gérées depuis le front
     }
 }

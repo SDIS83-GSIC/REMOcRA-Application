@@ -228,6 +228,37 @@ class PeiRepository
         )
     }
 
+    // Champs modifiables depuis l'update d'un PEI
+    fun update(pei: PeiData): Int {
+        val request = dsl.update(PEI)
+            .set(PEI.NUMERO_VOIE, pei.peiNumeroVoie)
+            .set(PEI.VOIE_ID, pei.peiVoieId)
+            .set(PEI.SUFFIXE_VOIE, pei.peiSuffixeVoie)
+            .set(PEI.CROISEMENT_ID, pei.peiCroisementId)
+            .set(PEI.COMPLEMENT_ADRESSE, pei.peiComplementAdresse)
+            // .set(PEI.GEOMETRIE, pei.geometrie) TODO
+            .set(PEI.LIEU_DIT_ID, pei.peiLieuDitId)
+            .set(PEI.NUMERO_COMPLET, pei.peiNumeroComplet)
+            .set(PEI.NUMERO_INTERNE, pei.peiNumeroInterne)
+            .set(PEI.NATURE_ID, pei.peiNatureId)
+            .set(PEI.NATURE_DECI_ID, pei.peiNatureDeciId)
+            .set(PEI.AUTORITE_DECI_ID, pei.peiAutoriteDeciId)
+            .set(PEI.SERVICE_PUBLIC_DECI_ID, pei.peiServicePublicDeciId)
+            .set(PEI.MAINTENANCE_DECI_ID, pei.peiMaintenanceDeciId)
+            .set(PEI.COMMUNE_ID, pei.peiCommuneId)
+            .set(PEI.DOMAINE_ID, pei.peiDomaineId)
+            .set(PEI.EN_FACE, pei.peiEnFace)
+            .set(PEI.NIVEAU_ID, pei.peiNiveauId)
+        if (pei.peiGestionnaireId != null && pei.peiSiteId != null) {
+            request.set(PEI.SITE_ID, pei.peiSiteId)
+        } else if (pei.peiGestionnaireId != null) {
+            request.set(PEI.GESTIONNAIRE_ID, pei.peiGestionnaireId)
+        }
+
+        return request.where(PEI.ID.eq(pei.peiId))
+            .execute()
+    }
+
     fun getTypePei(idPei: UUID): TypePei =
         dsl.select(PEI.TYPE_PEI)
             .from(PEI)
@@ -272,10 +303,6 @@ class PeiRepository
             .from(PEI)
             .join(PENA)
             .on(PENA.ID.eq(PEI.ID))
-            .leftJoin(MODELE_PIBI)
-            .on(MODELE_PIBI.ID.eq(PIBI.MODELE_PIBI_ID))
-            .leftJoin(MARQUE_PIBI)
-            .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
             .where(PEI.ID.eq(penaId))
             .fetchSingleInto()
 
