@@ -28,4 +28,20 @@ export type PeiEntity = {
   peiNatureDeciId: string;
   peiAnneeFabrication: number;
   peiNiveauId: string;
+
+  // DONNEES PIBI
+  pibiDiametreId?: string;
+  pibiServiceEauId?: string;
+  pibiNumeroScp?: string;
+  pibiRenversable?: boolean;
+  pibiDispositifInviolabilite?: boolean;
+  pibiModeleId?: string;
+  pibiMarqueId?: string;
+  pibiReservoirId?: string;
+  pibiDebitRenforce?: boolean;
+  pibiTypeCanalisationId?: string;
+  pibiTypeReseauId?: string;
+  pibiDiametreCanalisation?: number;
+  pibiSurpresse?: boolean;
+  pibiAdditive?: boolean;
 };

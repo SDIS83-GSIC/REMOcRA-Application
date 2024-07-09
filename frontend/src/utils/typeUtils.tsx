@@ -27,16 +27,13 @@ export type SelectFormType = SelectType & {
 export type SelectNomenclaturesFormType = {
   onChange?: any;
   name: string;
+  valueId?: string;
   nomenclature: TYPE_DATA_CACHE;
   label?: string;
   required?: boolean;
   disabled?: boolean;
   setValues: (e: any) => void;
-  valueId: string | undefined;
-};
-
-export type SelectIdLibelleDataFromListType = SelectType & {
-  listIdLibelle: IdCodeLibelleType[];
+  setOtherValues?: () => void;
 };
 
 export type IdCodeLibelleType = {

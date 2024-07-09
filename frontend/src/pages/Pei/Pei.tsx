@@ -10,6 +10,7 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
   FormContainer,
+  NumberInput,
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
@@ -49,6 +50,22 @@ export const getInitialValues = (data: PeiEntity) => ({
   peiGestionnaireId: data.peiGestionnaireId ?? null,
   peiNatureDeciId: data.peiNatureDeciId ?? null,
   peiNiveauId: data.peiNiveauId ?? null,
+
+  // DONNEES PIBI
+  pibiDiametreId: data.pibiDiametreId ?? null,
+  pibiServiceEauId: data.pibiServiceEauId ?? null,
+  pibiNumeroScp: data.pibiNumeroScp ?? null,
+  pibiRenversable: data.pibiRenversable ?? null,
+  pibiDispositifInviolabilite: data.pibiDispositifInviolabilite ?? null,
+  pibiModeleId: data.pibiModeleId ?? null,
+  pibiMarqueId: data.pibiMarqueId ?? null,
+  pibiReservoirId: data.pibiReservoirId ?? null,
+  pibiDebitRenforce: data.pibiDebitRenforce ?? null,
+  pibiTypeCanalisationId: data.pibiTypeCanalisationId ?? null,
+  pibiTypeReseauId: data.pibiTypeReseauId ?? null,
+  pibiDiametreCanalisation: data.pibiDiametreCanalisation ?? null,
+  pibiSurpresse: data.pibiSurpresse ?? null,
+  pibiAdditive: data.pibiAdditive ?? null,
 });
 
 export const validationSchema = object({
@@ -84,6 +101,22 @@ export const prepareVariables = (data: PeiEntity, values: PeiEntity) => ({
   peiSiteId: values.peiSiteId ?? null,
   peiGestionnaireId: values.peiGestionnaireId ?? null,
   peiNiveauId: values.peiNiveauId ?? null,
+
+  // DONNEES PIBI
+  pibiDiametreId: values.pibiDiametreId ?? null,
+  pibiServiceEauId: values.pibiServiceEauId ?? null,
+  pibiNumeroScp: values.pibiNumeroScp ?? null,
+  pibiRenversable: values.pibiRenversable ?? null,
+  pibiDispositifInviolabilite: values.pibiDispositifInviolabilite ?? null,
+  pibiModeleId: values.pibiModeleId ?? null,
+  pibiMarqueId: values.pibiMarqueId ?? null,
+  pibiReservoirId: values.pibiReservoirId ?? null,
+  pibiDebitRenforce: values.pibiDebitRenforce ?? null,
+  pibiTypeCanalisationId: values.pibiTypeCanalisationId ?? null,
+  pibiTypeReseauId: values.pibiTypeReseauId ?? null,
+  pibiDiametreCanalisation: values.pibiDiametreCanalisation ?? null,
+  pibiSurpresse: values.pibiSurpresse ?? null,
+  pibiAdditive: values.pibiAdditive ?? null,
 });
 
 type SelectDataType = {
@@ -95,6 +128,8 @@ type SelectDataType = {
   listLieuDit: (IdCodeLibelleType & { communeId: string })[];
   listVoie: (IdCodeLibelleType & { communeId: string })[];
   listSite: (IdCodeLibelleType & { gestionnaireId: string })[];
+  listModele: (IdCodeLibelleType & { marqueId: string })[];
+  listServiceEau: IdCodeLibelleType[];
 };
 
 const Pei = () => {
@@ -135,7 +170,14 @@ const Pei = () => {
               },
               {
                 header: "Caractéristiques techniques",
-                content: <>TODO</>,
+                content: (
+                  <FormPibi
+                    values={values}
+                    selectData={selectDataState.data}
+                    setFieldValue={setFieldValue}
+                    setValues={setValues}
+                  />
+                ),
               },
               {
                 header: "Documents",
@@ -173,6 +215,10 @@ const FormEntetePei = ({
   const codeNatureDeci =
     listNatureDeci &&
     listNatureDeci.find((e) => e.id === values.peiNatureDeciId)?.code;
+
+  const idGestionnaire = values.peiSiteId
+    ? selectData.listSite.find((e) => e.id === values.peiSiteId)?.gestionnaireId
+    : null;
 
   return (
     listNatureDeci && (
@@ -264,8 +310,10 @@ const FormEntetePei = ({
                   name={"peiGestionnaireId"}
                   listIdCodeLibelle={selectData.listGestionnaire}
                   label="Gestionnaire"
-                  defaultValue={selectData.listGestionnaire.find(
-                    (e) => e.id === values.peiGestionnaireId,
+                  defaultValue={selectData.listGestionnaire.find((e) =>
+                    idGestionnaire
+                      ? e.id === idGestionnaire
+                      : e.id === values.peiGestionnaireId,
                   )}
                   required={false}
                   setValues={setValues}
@@ -410,6 +458,173 @@ const FormLocalisationPei = ({
             name="peiComplementAdresse"
             label="Complément d'adresse"
             required={false}
+          />
+        </Col>
+      </Row>
+    </>
+  );
+};
+
+const FormPibi = ({
+  values,
+  selectData,
+  setValues,
+  setFieldValue,
+}: {
+  values: PeiEntity;
+  selectData: SelectDataType;
+  setValues: (e: any) => void;
+  setFieldValue: (champ: string, newValue: any | undefined) => void;
+}) => {
+  const idMarque = values.pibiModeleId
+    ? selectData.listModele.find((e) => e.id === values.pibiModeleId)?.marqueId
+    : values.pibiMarqueId;
+
+  return (
+    <>
+      <h2>Informations PEI</h2>
+      <Row className="mt-3">
+        <Col>
+          <SelectNomenclaturesForm
+            name={"pibiDiametreId"}
+            nomenclature={TYPE_DATA_CACHE.DIAMETRE}
+            label="Diamètre nominal"
+            valueId={values.pibiDiametreId}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="pibiDispositifInviolabilite"
+            label="Dispositif d'inviolabilité ?"
+            defaultCheck={values.pibiDispositifInviolabilite}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="pibiRenversable"
+            label="Renversable ?"
+            defaultCheck={values.pibiRenversable}
+          />
+        </Col>
+      </Row>
+      <Row className="mt-3 d-flex align-items-center">
+        <Col>
+          <TextInput name="pibiNumeroScp" label="Numéro SCP" required={false} />
+        </Col>
+      </Row>
+
+      <Row className="mt-3">
+        <Col>
+          <SelectNomenclaturesForm
+            name={"pibiMarqueId"}
+            nomenclature={TYPE_DATA_CACHE.MARQUE_PIBI}
+            label="Marque"
+            valueId={idMarque}
+            required={false}
+            setValues={setValues}
+            setOtherValues={() => {
+              setFieldValue("pibiModeleId", null);
+            }}
+          />
+        </Col>
+        <Col>
+          <SelectForm
+            name={"pibiModeleId"}
+            listIdCodeLibelle={selectData.listModele.filter(
+              (e) => e.marqueId === values.pibiMarqueId,
+            )}
+            label="Modèle"
+            defaultValue={selectData.listModele.find(
+              (e) => e.id === values.pibiModeleId,
+            )}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+        <Col>
+          <PositiveNumberInput
+            name="peiAnneeFabrication"
+            label="Année de fabrication"
+            required={false}
+          />
+        </Col>
+      </Row>
+      <h2>Réseau</h2>
+      <Row className="mt-3">
+        <Col>
+          <SelectForm
+            name={"pibiServiceEauId"}
+            listIdCodeLibelle={selectData.listServiceEau}
+            label="Service des eaux"
+            defaultValue={selectData.listServiceEau.find(
+              (e) => e.id === values.pibiServiceEauId,
+            )}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+        <Col>
+          <SelectNomenclaturesForm
+            name={"pibiTypeReseauId"}
+            nomenclature={TYPE_DATA_CACHE.TYPE_RESEAU}
+            label="Type de réseau"
+            valueId={values.pibiTypeReseauId}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col>
+          <SelectNomenclaturesForm
+            name={"pibiTypeCanalisationId"}
+            nomenclature={TYPE_DATA_CACHE.TYPE_CANALISATION}
+            label="Type de canalisation"
+            valueId={values.pibiTypeCanalisationId}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+        <Col>
+          <NumberInput
+            name="pibiDiametreCanalisation"
+            label="Diamètre de canalisation"
+            required={false}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="pibiDebitRenforce"
+            label="Débit renforcé ?"
+            defaultCheck={values.pibiDebitRenforce}
+          />
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col>
+          <SelectNomenclaturesForm
+            name={"pibiReservoirId"}
+            nomenclature={TYPE_DATA_CACHE.RESERVOIR}
+            label="Réservoir"
+            valueId={values.pibiReservoirId}
+            required={false}
+            setValues={setValues}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="pibiSurpresse"
+            label="Réseau surpressé ?"
+            defaultCheck={values.pibiSurpresse}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="pibiAdditive"
+            label="Réseau additivé ?"
+            defaultCheck={values.pibiAdditive}
           />
         </Col>
       </Row>

@@ -3,6 +3,9 @@ package remocra
 object GlobalConstants {
     const val UTILISATEUR_SYSTEME_USERNAME = "UTILISATEUR_SYSTEME"
 
+    // Code du type organisme Service des eaux
+    const val SERVICE_EAUX = "SERVICE_EAUX"
+
     // Diamètre des PEI
     const val DIAMETRE_70 = "DIAM70"
     const val DIAMETRE_80 = "DIAM80"

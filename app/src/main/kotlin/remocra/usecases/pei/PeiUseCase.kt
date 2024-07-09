@@ -6,6 +6,7 @@ import remocra.data.PeiData
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.LieuDitRepository
+import remocra.db.ModelePibiRepository
 import remocra.db.OrganismeRepository
 import remocra.db.PeiRepository
 import remocra.db.SiteRepository
@@ -45,6 +46,9 @@ class PeiUseCase {
     @Inject
     lateinit var lieuDitRepository: LieuDitRepository
 
+    @Inject
+    lateinit var modelePibiRepository: ModelePibiRepository
+
     fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiRepository.PeiForTableau> {
         return peiRepository.getPeiWithFilter(param)
     }
@@ -75,6 +79,8 @@ class PeiUseCase {
             listVoie = voieRepository.getVoieForSelect(),
             listGestionnaire = gestionnaireRepository.getAll(),
             listLieuDit = lieuDitRepository.getAllWithCommune(),
+            listModele = modelePibiRepository.getModeleWithMarque(),
+            listServiceEau = organismeRepository.getServiceEauForSelect(),
         )
     }
 
@@ -90,5 +96,7 @@ class PeiUseCase {
         val listCommune: Collection<IdCodeLibelleData>,
         val listLieuDit: Collection<LieuDitRepository.LieuDitWithCommune>,
         val listVoie: Collection<VoieRepository.VoieWithCommune>,
+        val listModele: Collection<ModelePibiRepository.ModeleWithMarque>,
+        val listServiceEau: Collection<IdCodeLibelleData>,
     )
 }

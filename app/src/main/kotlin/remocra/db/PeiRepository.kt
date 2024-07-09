@@ -249,13 +249,48 @@ class PeiRepository
             .set(PEI.DOMAINE_ID, pei.peiDomaineId)
             .set(PEI.EN_FACE, pei.peiEnFace)
             .set(PEI.NIVEAU_ID, pei.peiNiveauId)
+            .set(PEI.ANNEE_FABRICATION, pei.peiAnneeFabrication)
         if (pei.peiGestionnaireId != null && pei.peiSiteId != null) {
             request.set(PEI.SITE_ID, pei.peiSiteId)
+            request.setNull(PEI.GESTIONNAIRE_ID)
         } else if (pei.peiGestionnaireId != null) {
             request.set(PEI.GESTIONNAIRE_ID, pei.peiGestionnaireId)
+            request.setNull(PEI.SITE_ID)
         }
 
         return request.where(PEI.ID.eq(pei.peiId))
+            .execute()
+    }
+
+    // Champs modifiables depuis l'update d'un PIBI
+    fun updatePibi(pibi: PibiData): Int {
+        val request = dsl.update(PIBI)
+            .set(PIBI.MODELE_PIBI_ID, pibi.pibiModeleId)
+            .set(PIBI.DIAMETRE_ID, pibi.pibiDiametreId)
+            .set(PIBI.ADDITIVE, pibi.pibiAdditive)
+            .set(PIBI.SURPRESSE, pibi.pibiSurpresse)
+            .set(PIBI.NUMERO_SCP, pibi.pibiNumeroScp)
+            .set(PIBI.DIAMETRE_CANALISATION, pibi.pibiDiametreCanalisation)
+            .set(PIBI.TYPE_RESEAU_ID, pibi.pibiTypeReseauId)
+            .set(PIBI.TYPE_CANALISATION_ID, pibi.pibiTypeCanalisationId)
+            .set(PIBI.DEBIT_RENFORCE, pibi.pibiDebitRenforce)
+            .set(PIBI.RESERVOIR_ID, pibi.pibiReservoirId)
+            .set(PIBI.DISPOSITIF_INVIOLABILITE, pibi.pibiDispositifInviolabilite)
+            .set(PIBI.SERVICE_EAU_ID, pibi.pibiServiceEauId)
+            .set(PIBI.RENVERSABLE, pibi.pibiRenversable)
+        // .set(PIBI.JUMELE_ID, pibi.pibiJumele)
+
+        // TODO gérer les PENA_ID
+
+        if (pibi.pibiMarqueId != null && pibi.pibiModeleId != null) {
+            request.set(PIBI.MODELE_PIBI_ID, pibi.pibiModeleId)
+            request.setNull(PIBI.MARQUE_PIBI_ID)
+        } else if (pibi.pibiMarqueId != null) {
+            request.set(PIBI.MARQUE_PIBI_ID, pibi.pibiMarqueId)
+            request.setNull(PIBI.MODELE_PIBI_ID)
+        }
+
+        return request.where(PIBI.ID.eq(pibi.peiId))
             .execute()
     }
 
@@ -273,8 +308,8 @@ class PeiRepository
             PIBI.NUMERO_SCP,
             PIBI.RENVERSABLE,
             PIBI.DISPOSITIF_INVIOLABILITE,
-            PIBI.MODELE_PIBI_ID,
-            MODELE_PIBI.MARQUE_ID,
+            PIBI.MODELE_PIBI_ID.`as`("pibiModeleId"),
+            PIBI.MARQUE_PIBI_ID.`as`("pibiMarqueId"),
             PIBI.RESERVOIR_ID,
             PIBI.DEBIT_RENFORCE,
             PIBI.TYPE_CANALISATION_ID,

@@ -14,6 +14,7 @@ const SelectNomenclaturesForm = ({
   disabled = false,
   setValues,
   nomenclature,
+  setOtherValues,
 }: SelectNomenclaturesFormType) => {
   const list = ensureDataCache(nomenclature);
   return (
@@ -27,6 +28,7 @@ const SelectNomenclaturesForm = ({
         disabled={disabled}
         onChange={onChange}
         setValues={setValues}
+        setOtherValues={setOtherValues}
       />
     )
   );

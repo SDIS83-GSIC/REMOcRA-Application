@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.GlobalConstants
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeMaintenanceDeci
@@ -34,6 +35,9 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
 
     fun getMaintenanceDeciForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries)))
+
+    fun getServiceEauForSelect(): List<IdCodeLibelleData> =
+        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.eq(GlobalConstants.SERVICE_EAUX)))
 
     private fun getIdLibelleByCondition(condition: Condition): List<IdCodeLibelleData> =
         dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.CODE.`as`("code"), ORGANISME.LIBELLE.`as`("libelle"))
