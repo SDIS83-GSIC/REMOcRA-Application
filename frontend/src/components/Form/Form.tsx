@@ -1,6 +1,6 @@
+import { ReactNode } from "react";
 import Form from "react-bootstrap/Form";
 import { Form as FormikForm, useField } from "formik";
-import styles from "./Form.module.css";
 
 type InputType = {
   name: string;
@@ -10,9 +10,27 @@ type InputType = {
   value?: string;
 };
 
-export const FormContainer = (props: any) => (
-  <FormikForm className={styles.form} {...props} />
+export const FormContainer = (props: any) => <FormikForm {...props} />;
+
+export const DivWithError = ({
+  error,
+  innerRef,
+  children,
+  ...rest
+}: DivWithErrorType) => (
+  <div {...rest} ref={innerRef}>
+    {children}
+    <div className="text-danger">{error}</div>
+  </div>
 );
+
+type DivWithErrorType = {
+  name: string;
+  className?: string;
+  error?: string | null;
+  innerRef?: (...args: any[]) => any;
+  children: ReactNode;
+};
 
 export const FormLabel = ({
   label,
@@ -22,8 +40,8 @@ export const FormLabel = ({
   required?: boolean;
 }) => {
   return (
-    <Form.Label className={styles.label}>
-      {label} {required && <span className={styles.obligatoire}>*</span>}
+    <Form.Label className="fw-bold">
+      {label} {required === true && <span className="text-danger">*</span>}
     </Form.Label>
   );
 };
@@ -35,9 +53,10 @@ export const TextInput = ({
   readOnly = false,
   value,
 }: InputType) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <FormLabel label={label} required={required} />
       <Form.Control
         required={required}
@@ -46,7 +65,7 @@ export const TextInput = ({
         defaultValue={value ?? ""}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
@@ -57,9 +76,10 @@ export const TextAreaInput = ({
   readOnly = false,
   value,
 }: InputType) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <FormLabel label={label} required={required} />
       <Form.Control
         required={required}
@@ -69,7 +89,7 @@ export const TextAreaInput = ({
         defaultValue={value ?? ""}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
@@ -84,16 +104,17 @@ export const CheckBoxInput = ({
   label,
   defaultCheck = false,
 }: CheckBoxInputType) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <Form.Check
         type="checkbox"
         label={label}
         defaultChecked={defaultCheck}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
@@ -108,9 +129,10 @@ export const FileInput = ({
   readOnly = false,
   accept,
 }: FileInputType) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <FormLabel label={label} required={required} />
       <Form.Control
         required={required}
@@ -119,7 +141,7 @@ export const FileInput = ({
         readOnly={readOnly}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
@@ -130,9 +152,10 @@ export const NumberInput = ({
   readOnly = false,
   value,
 }: InputType) => {
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <FormLabel label={label} required={required} />
       <Form.Control
         type="number"
@@ -142,7 +165,7 @@ export const NumberInput = ({
         defaultValue={value ?? ""}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
@@ -177,9 +200,10 @@ const PositiveNumberInput = ({
     }
   };
 
-  const [field] = useField(name);
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
   return (
-    <>
+    <DivWithError name={name} error={error}>
       <FormLabel label={label} required={required} />
       <Form.Control
         type="number"
@@ -191,7 +215,7 @@ const PositiveNumberInput = ({
         defaultValue={value ?? ""}
         {...field}
       />
-    </>
+    </DivWithError>
   );
 };
 
