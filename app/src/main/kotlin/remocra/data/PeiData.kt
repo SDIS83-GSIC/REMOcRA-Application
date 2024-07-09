@@ -39,6 +39,13 @@ open class PeiData(
     open val peiObservation: String?,
 
     // TODO ajouter la géométrie
+
+    // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
+    val peiNumeroInterneInitial: Int? = peiNumeroInterne,
+    val peiCommuneIdInitial: UUID = peiCommuneId,
+    val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
+    val peiNatureDeciIdInitial: UUID = peiNatureDeciId,
+    val peiDomaineIdInitial: UUID = peiDomaineId,
 )
 
 data class PibiData(

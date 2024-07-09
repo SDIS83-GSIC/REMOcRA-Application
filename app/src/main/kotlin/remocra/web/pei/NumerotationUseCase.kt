@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.util.Locale
+import java.util.UUID
 
 /**
  * Constantes potentiellement globales
@@ -752,6 +753,86 @@ class NumerotationUseCase {
     private fun checkNature(pei: PeiForNumerotationData) {
         if (pei.nature == null) {
             throw IllegalArgumentException("Pas de nature pour la numérotation")
+        }
+    }
+
+    /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de domaine. <br />
+     *
+     *
+     * @param domaineId id du domaine courante
+     * @param domaineIdInitial id du domaine en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneDomaine(domaineId: UUID, domaineIdInitial: UUID): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_78 ->
+                domaineId != domaineIdInitial
+            else -> false
+        }
+    }
+
+    /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de nature DECI. <br />
+     *
+     *
+     * @param natureDeciId id de la nature DECI courante
+     * @param natureDeciIdInitial id de la nature DECI en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneNatureDeci(natureDeciId: UUID, natureDeciIdInitial: UUID): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_53,
+            CodeSdis.SDIS_66,
+            CodeSdis.SDIS_91,
+            CodeSdis.SDIS_95,
+            ->
+                natureDeciId != natureDeciIdInitial
+            else -> false
+        }
+    }
+
+    /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de commune. <br />
+     *
+     * Pour certaines méthodes de numérotation, on prend en compte la zone spéciale, on doit donc la passer aussi
+     *
+     * @param communeId id de la commune courante
+     * @param communeIdInitial id de la commune en BDD
+     * @param zoneSpecialeId id de la zone spéciale courante (nullable)
+     * @param zoneSpecialeIdInitial id de la zone spéciale en BDD (nullable)
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_01,
+            CodeSdis.SDIS_39,
+            CodeSdis.SDIS_42,
+            CodeSdis.SDIS_53,
+            CodeSdis.SDIS_61,
+            CodeSdis.SDIS_66,
+            CodeSdis.SDIS_78,
+            CodeSdis.BSPP,
+            CodeSdis.SDMIS,
+            -> return communeId != communeIdInitial
+            CodeSdis.SDIS_09,
+            CodeSdis.SDIS_21,
+            CodeSdis.SDIS_38,
+            CodeSdis.SDIS_71,
+            CodeSdis.SDIS_77,
+            CodeSdis.SDIS_83,
+            CodeSdis.SDIS_89,
+            CodeSdis.SDIS_91,
+            CodeSdis.SDIS_95,
+            -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
+            // TODO trouver comment est numérotée la PROD, actuellement c'est le fallback sur le 83
+            CodeSdis.SDIS_14 -> TODO()
+            CodeSdis.SDIS_49 -> false
+            CodeSdis.SDIS_58 -> TODO()
+            CodeSdis.SDIS_973 -> TODO()
         }
     }
 }

@@ -1,7 +1,9 @@
 package remocra.usecases.pei
 
 import com.google.inject.Inject
+import remocra.GlobalConstants
 import remocra.app.DataCacheProvider
+import remocra.app.ParametresProvider
 import remocra.authn.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.PeiData
@@ -43,6 +45,9 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
     @Inject
     lateinit var visiteRepository: VisiteRepository
 
+    @Inject
+    lateinit var parametresProvider: ParametresProvider
+
     override fun postEvent(element: PeiData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
@@ -57,12 +62,19 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
         eventBus.post(PeiModifiedEvent(element.peiId))
     }
 
-    override fun execute(element: PeiData): PeiData {
-// TODO en fonction du futur paramétrage "activer la renumérotation auto" et des propriétés modifiées, définir
-        val needComputeNumero = false
+    /**
+     * Fonction permettant de savoir s'il faut recalculer le numéro interne du PEI car un de ses attributs structurants a été modifié. <br />
+     *
+     * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
+     */
+    private fun needComputeNumeroInterne(element: PeiData): Boolean {
+        return calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) || calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) || calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial)
+    }
 
+    override fun execute(element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
-            if (needComputeNumero) {
+            // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
+            if (element.peiNumeroInterne == null || parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true && needComputeNumeroInterne(element)) {
                 // Création de l'objet data pour le calcul
                 val peiForNumerotationData = PeiForNumerotationData(
                     peiNumeroInterne = null,

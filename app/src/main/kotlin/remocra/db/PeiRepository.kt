@@ -8,6 +8,7 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -276,5 +277,11 @@ class PeiRepository
             .leftJoin(MARQUE_PIBI)
             .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
             .where(PEI.ID.eq(penaId))
+            .fetchSingleInto()
+
+    fun getInfoPei(peiId: UUID): PeiData =
+        dsl.select(peiData)
+            .from(PEI)
+            .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
 }
