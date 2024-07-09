@@ -21,6 +21,7 @@ import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LTourneePei
+import remocra.db.jooq.remocra.tables.LTypeDroitProfilDroit
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -39,6 +40,7 @@ import remocra.db.jooq.remocra.tables.Pena
 import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
+import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.Reservoir
@@ -47,6 +49,7 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
+import remocra.db.jooq.remocra.tables.TypeDroit
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
@@ -147,6 +150,11 @@ val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 val L_TOURNEE_PEI: LTourneePei = LTourneePei.L_TOURNEE_PEI
 
 /**
+ * The table <code>remocra.l_type_droit_profil_droit</code>.
+ */
+val L_TYPE_DROIT_PROFIL_DROIT: LTypeDroitProfilDroit = LTypeDroitProfilDroit.L_TYPE_DROIT_PROFIL_DROIT
+
+/**
  * The table <code>remocra.l_visite_anomalie</code>.
  */
 val L_VISITE_ANOMALIE: LVisiteAnomalie = LVisiteAnomalie.L_VISITE_ANOMALIE
@@ -237,6 +245,11 @@ val PIBI: Pibi = Pibi.PIBI
 val POIDS_ANOMALIE: PoidsAnomalie = PoidsAnomalie.POIDS_ANOMALIE
 
 /**
+ * The table <code>remocra.profil_droit</code>.
+ */
+val PROFIL_DROIT: ProfilDroit = ProfilDroit.PROFIL_DROIT
+
+/**
  * The table <code>remocra.profil_organisme</code>.
  */
 val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
@@ -275,6 +288,11 @@ val TOURNEE: Tournee = Tournee.TOURNEE
  * The table <code>remocra.type_canalisation</code>.
  */
 val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
+
+/**
+ * The table <code>remocra.type_droit</code>.
+ */
+val TYPE_DROIT: TypeDroit = TypeDroit.TYPE_DROIT
 
 /**
  * The table <code>remocra.type_organisme</code>.
