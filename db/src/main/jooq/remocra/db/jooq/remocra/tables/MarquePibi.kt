@@ -28,7 +28,9 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.MARQUE_PIBI_MARQUE_PIBI_CODE_KEY
 import remocra.db.jooq.remocra.keys.MARQUE_PIBI_PKEY
 import remocra.db.jooq.remocra.keys.MODELE_PIBI__MODELE_PIBI_MODELE_PIBI_MARQUE_ID_FKEY
+import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_MARQUE_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.tables.ModelePibi.ModelePibiPath
+import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -149,6 +151,22 @@ open class MarquePibi(
 
     val modelePibi: ModelePibiPath
         get(): ModelePibiPath = modelePibi()
+
+    private lateinit var _pibi: PibiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.pibi</code> table
+     */
+    fun pibi(): PibiPath {
+        if (!this::_pibi.isInitialized) {
+            _pibi = PibiPath(this, null, PIBI__PIBI_PIBI_MARQUE_PIBI_ID_FKEY.inverseKey)
+        }
+
+        return _pibi
+    }
+
+    val pibi: PibiPath
+        get(): PibiPath = pibi()
     override fun `as`(alias: String): MarquePibi = MarquePibi(DSL.name(alias), this)
     override fun `as`(alias: Name): MarquePibi = MarquePibi(alias, this)
     override fun `as`(alias: Table<*>): MarquePibi = MarquePibi(alias.qualifiedName, this)

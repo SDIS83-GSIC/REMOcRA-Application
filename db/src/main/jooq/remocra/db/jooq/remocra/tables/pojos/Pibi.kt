@@ -26,6 +26,7 @@ data class Pibi(
     val pibiRenversable: Boolean?,
     val pibiDispositifInviolabilite: Boolean?,
     val pibiModelePibiId: UUID?,
+    val pibiMarquePibiId: UUID?,
     val pibiPenaId: UUID?,
     val pibiJumeleId: UUID?,
     val pibiReservoirId: UUID?,
@@ -91,6 +92,13 @@ data class Pibi(
                 return false
             }
         } else if (this.pibiModelePibiId != o.pibiModelePibiId) {
+            return false
+        }
+        if (this.pibiMarquePibiId == null) {
+            if (o.pibiMarquePibiId != null) {
+                return false
+            }
+        } else if (this.pibiMarquePibiId != o.pibiMarquePibiId) {
             return false
         }
         if (this.pibiPenaId == null) {
@@ -169,6 +177,7 @@ data class Pibi(
         result = prime * result + (if (this.pibiRenversable == null) 0 else this.pibiRenversable.hashCode())
         result = prime * result + (if (this.pibiDispositifInviolabilite == null) 0 else this.pibiDispositifInviolabilite.hashCode())
         result = prime * result + (if (this.pibiModelePibiId == null) 0 else this.pibiModelePibiId.hashCode())
+        result = prime * result + (if (this.pibiMarquePibiId == null) 0 else this.pibiMarquePibiId.hashCode())
         result = prime * result + (if (this.pibiPenaId == null) 0 else this.pibiPenaId.hashCode())
         result = prime * result + (if (this.pibiJumeleId == null) 0 else this.pibiJumeleId.hashCode())
         result = prime * result + (if (this.pibiReservoirId == null) 0 else this.pibiReservoirId.hashCode())
@@ -191,6 +200,7 @@ data class Pibi(
         sb.append(", ").append(pibiRenversable)
         sb.append(", ").append(pibiDispositifInviolabilite)
         sb.append(", ").append(pibiModelePibiId)
+        sb.append(", ").append(pibiMarquePibiId)
         sb.append(", ").append(pibiPenaId)
         sb.append(", ").append(pibiJumeleId)
         sb.append(", ").append(pibiReservoirId)

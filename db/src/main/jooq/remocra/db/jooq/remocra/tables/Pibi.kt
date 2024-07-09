@@ -29,6 +29,7 @@ import remocra.db.jooq.remocra.keys.PIBI_PKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_DIAMETRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_JUMELE_ID_FKEY
+import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_MARQUE_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_MODELE_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_RESERVOIR_ID_FKEY
@@ -36,6 +37,7 @@ import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_TYPE_CANALISATION_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_TYPE_RESEAU_ID_FKEY
 import remocra.db.jooq.remocra.tables.Diametre.DiametrePath
+import remocra.db.jooq.remocra.tables.MarquePibi.MarquePibiPath
 import remocra.db.jooq.remocra.tables.ModelePibi.ModelePibiPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
@@ -130,6 +132,11 @@ open class Pibi(
     val MODELE_PIBI_ID: TableField<Record, UUID?> = createField(DSL.name("pibi_modele_pibi_id"), SQLDataType.UUID, this, "")
 
     /**
+     * The column <code>remocra.pibi.pibi_marque_pibi_id</code>.
+     */
+    val MARQUE_PIBI_ID: TableField<Record, UUID?> = createField(DSL.name("pibi_marque_pibi_id"), SQLDataType.UUID, this, "")
+
+    /**
      * The column <code>remocra.pibi.pibi_pena_id</code>. PENA auquel le PIBI
      * est rattaché (cas d'une citerne ou d'un point d'aspiration par exemple)
      */
@@ -208,7 +215,7 @@ open class Pibi(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = PIBI_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PIBI__PIBI_PIBI_ID_FKEY, PIBI__PIBI_PIBI_DIAMETRE_ID_FKEY, PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY, PIBI__PIBI_PIBI_MODELE_PIBI_ID_FKEY, PIBI__PIBI_PIBI_PENA_ID_FKEY, PIBI__PIBI_PIBI_JUMELE_ID_FKEY, PIBI__PIBI_PIBI_RESERVOIR_ID_FKEY, PIBI__PIBI_PIBI_TYPE_CANALISATION_ID_FKEY, PIBI__PIBI_PIBI_TYPE_RESEAU_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PIBI__PIBI_PIBI_ID_FKEY, PIBI__PIBI_PIBI_DIAMETRE_ID_FKEY, PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY, PIBI__PIBI_PIBI_MODELE_PIBI_ID_FKEY, PIBI__PIBI_PIBI_MARQUE_PIBI_ID_FKEY, PIBI__PIBI_PIBI_PENA_ID_FKEY, PIBI__PIBI_PIBI_JUMELE_ID_FKEY, PIBI__PIBI_PIBI_RESERVOIR_ID_FKEY, PIBI__PIBI_PIBI_TYPE_CANALISATION_ID_FKEY, PIBI__PIBI_PIBI_TYPE_RESEAU_ID_FKEY)
 
     private lateinit var _pei: PeiPath
 
@@ -273,6 +280,22 @@ open class Pibi(
 
     val modelePibi: ModelePibiPath
         get(): ModelePibiPath = modelePibi()
+
+    private lateinit var _marquePibi: MarquePibiPath
+
+    /**
+     * Get the implicit join path to the <code>remocra.marque_pibi</code> table.
+     */
+    fun marquePibi(): MarquePibiPath {
+        if (!this::_marquePibi.isInitialized) {
+            _marquePibi = MarquePibiPath(this, PIBI__PIBI_PIBI_MARQUE_PIBI_ID_FKEY, null)
+        }
+
+        return _marquePibi
+    }
+
+    val marquePibi: MarquePibiPath
+        get(): MarquePibiPath = marquePibi()
 
     private lateinit var _pena: PenaPath
 

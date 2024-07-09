@@ -87,6 +87,7 @@ CREATE TABLE remocra.pibi
     pibi_renversable              BOOLEAN,
     pibi_dispositif_inviolabilite BOOLEAN,
     pibi_modele_pibi_id           UUID REFERENCES remocra.modele_pibi (modele_pibi_id),
+    pibi_marque_pibi_id           UUID REFERENCES remocra.marque_pibi (marque_pibi_id),
     pibi_pena_id                  UUID REFERENCES remocra.pena (pena_id),
     pibi_jumele_id                UUID REFERENCES remocra.pibi (pibi_id),
     pibi_reservoir_id             UUID REFERENCES remocra.reservoir (reservoir_id),
