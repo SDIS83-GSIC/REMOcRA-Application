@@ -15,6 +15,7 @@ import remocra.db.ModelePibiRepository
 import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
+import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
 import remocra.db.jooq.remocra.enums.TypePei
@@ -27,6 +28,7 @@ import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Niveau
+import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 
@@ -49,6 +51,7 @@ constructor(
     private val niveauRepository: NiveauRepository,
     private val typeCanalisationRepository: TypeCanalisationRepository,
     private val typeReseauRepository: TypeReseauRepository,
+    private val reservoirRepository: ReservoirRepository,
 
 ) : Provider<DataCache> {
     private lateinit var dataCache: DataCache
@@ -78,6 +81,7 @@ constructor(
             TypeDataCache.NIVEAU -> dataCache.mapNiveau = niveauRepository.getMapById()
             TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
             TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
+            TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
         }
     }
 
@@ -97,6 +101,7 @@ constructor(
         val niveau = niveauRepository.getMapById()
         val typeCanalisation = typeCanalisationRepository.getMapById()
         val typeReseau = typeReseauRepository.getMapById()
+        val reservoir = reservoirRepository.getMapById()
 
         return DataCache(
             mapAnomalie = anomalies,
@@ -111,6 +116,7 @@ constructor(
             mapNiveau = niveau,
             mapTypeCanalisation = typeCanalisation,
             mapTypeReseau = typeReseau,
+            mapReservoir = reservoir,
         )
     }
 
@@ -131,6 +137,7 @@ constructor(
         TypeDataCache.NIVEAU -> get().mapNiveau
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
+        TypeDataCache.RESERVOIR -> get().mapReservoir
     }
 
     fun getAnomalies() = get().mapAnomalie
@@ -157,5 +164,6 @@ constructor(
         TypeDataCache.NIVEAU -> Niveau::class.java
         TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
         TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
+        TypeDataCache.RESERVOIR -> Reservoir::class.java
     }
 }
