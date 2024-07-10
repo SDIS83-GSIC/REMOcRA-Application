@@ -86,9 +86,13 @@ class PeiEndPoint {
     }
 
     @GET
-    @Path("/referentiel-for-update-pei")
-    fun getReferentielUpdatePei() =
-        Response.ok(peiUseCase.getInfoForUpdate()).build()
+    @Path("/referentiel-for-upsert-pei/")
+    fun getReferentielUpdateOrCreatePei(
+        @QueryParam("coordonneeX") coordonneeX: String,
+        @QueryParam("coordonneeY") coordonneeY: String,
+        @QueryParam("peiId") peiId: UUID?,
+    ) =
+        Response.ok(peiUseCase.getInfoForUpdateOrCreate(coordonneeX, coordonneeY, peiId)).build()
 
     @PUT
     @Path("/update")
@@ -165,6 +169,7 @@ class PeiEndPoint {
                 peiNatureDeciIdInitial = peiInput.peiNatureDeciIdInitial,
                 peiZoneSpecialeIdInitial = peiInput.peiZoneSpecialeIdInitial,
                 peiNumeroInterneInitial = peiInput.peiNumeroInterneInitial,
+                pibiJumeleId = peiInput.pibiJumeleId,
             )
             TypePei.PENA -> PenaData(
                 peiId = peiInput.peiId ?: UUID.randomUUID(),
@@ -344,6 +349,9 @@ class PeiEndPoint {
 
         @FormParam("pibiAdditive")
         var pibiAdditive: Boolean = false
+
+        @FormParam("pibiJumeleId")
+        var pibiJumeleId: UUID? = null
 
         // DONNEES PENA
         @FormParam("penaMateriauId")

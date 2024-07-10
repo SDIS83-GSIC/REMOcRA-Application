@@ -1,6 +1,7 @@
 package remocra.usecases.pei
 
 import jakarta.inject.Inject
+import remocra.app.AppSettings
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.PeiData
 import remocra.db.CommuneRepository
@@ -49,6 +50,9 @@ class PeiUseCase {
     @Inject
     lateinit var modelePibiRepository: ModelePibiRepository
 
+    @Inject
+    lateinit var appSettings: AppSettings
+
     fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiRepository.PeiForTableau> {
         return peiRepository.getPeiWithFilter(param)
     }
@@ -67,9 +71,10 @@ class PeiUseCase {
      * Retourne les informations nécessaires pour les valeurs qui peuvent être modifié
      * dans le formaulaire d'update d'un PEI
      */
-    fun getInfoForUpdate(): FichePeiListSelect {
+    fun getInfoForUpdateOrCreate(coordonneeX: String, coordonneeY: String, peiId: UUID?): FichePeiListSelect {
         // TODO mettre en place les paramètres de distance pour remonter les communes et les voies et lieux dit qui sont
         //  pas trop loin du PEI en question + prendre en compte pour les organismes
+
         return FichePeiListSelect(
             listAutoriteDeci = organismeRepository.getAutoriteDeciForSelect(),
             listServicePublicDeci = organismeRepository.getServicePublicForSelect(),
@@ -81,6 +86,7 @@ class PeiUseCase {
             listLieuDit = lieuDitRepository.getAllWithCommune(),
             listModele = modelePibiRepository.getModeleWithMarque(),
             listServiceEau = organismeRepository.getServiceEauForSelect(),
+            listPeiJumelage = peiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, appSettings.sridInt), // TODO passer le bon SRID
         )
     }
 
@@ -98,5 +104,6 @@ class PeiUseCase {
         val listVoie: Collection<VoieRepository.VoieWithCommune>,
         val listModele: Collection<ModelePibiRepository.ModeleWithMarque>,
         val listServiceEau: Collection<IdCodeLibelleData>,
+        val listPeiJumelage: Collection<IdCodeLibelleData>,
     )
 }

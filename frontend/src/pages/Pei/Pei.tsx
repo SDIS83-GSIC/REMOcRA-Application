@@ -45,6 +45,9 @@ export const getInitialValues = (data?: PeiEntity) => ({
     TypeSystemeSrid.find((e) => e.srid === data?.srid)?.srid ??
     TypeSystemeSrid[0].srid,
 
+  coordonneeXToDisplay: data?.coordonneeX ?? null,
+  coordonneeYToDisplay: data?.coordonneeY ?? null,
+
   peiAutoriteDeciId: data?.peiAutoriteDeciId ?? null,
   peiServicePublicDeciId: data?.peiServicePublicDeciId ?? null,
   peiMaintenanceDeciId: data?.peiMaintenanceDeciId ?? null,
@@ -81,6 +84,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   pibiDiametreCanalisation: data?.pibiDiametreCanalisation ?? null,
   pibiSurpresse: data?.pibiSurpresse ?? null,
   pibiAdditive: data?.pibiAdditive ?? null,
+  pibiJumeleId: data?.pibiJumeleId ?? null,
 
   // DONNEES PENA
   penaCapacite: data?.penaCapacite ?? null,
@@ -150,6 +154,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
   pibiDiametreCanalisation: values.pibiDiametreCanalisation ?? null,
   pibiSurpresse: values.pibiSurpresse ?? null,
   pibiAdditive: values.pibiAdditive ?? null,
+  pibiJumeleId: values.pibiJumeleId ?? null,
 
   // DONNEES PENA
   penaCapacite: values.penaCapacite ?? null,
@@ -178,6 +183,7 @@ type SelectDataType = {
   listSite: (IdCodeLibelleType & { gestionnaireId: string })[];
   listModele: (IdCodeLibelleType & { marqueId: string })[];
   listServiceEau: IdCodeLibelleType[];
+  listPeiJumelage: IdCodeLibelleType[];
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
@@ -188,9 +194,17 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   }: {
     values: PeiEntity & {
       typeSystemeSrid: { srid: number; nomSystem: string };
+      coordonneeXToDisplay: string;
+      coordonneeYToDisplay: string;
     };
   } = useFormikContext();
-  const selectDataState = useGet(url`/api/pei/referentiel-for-update-pei`);
+  const selectDataState = useGet(
+    url`/api/pei/referentiel-for-upsert-pei?${{
+      coordonneeX: values.coordonneeX,
+      coordonneeY: values.coordonneeY,
+      peiId: values.peiId,
+    }}`,
+  );
 
   //eslint-disable-next-line react-hooks/rules-of-hooks
   const srid = ensureSrid();
@@ -199,8 +213,8 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   const geometrieState = useGet(
     !isNew
       ? url`/api/pei/get-geometrie-by-srid?${{
-          coordonneeX: values.coordonneeX,
-          coordonneeY: values.coordonneeY,
+          coordonneeX: values.coordonneeXToDisplay,
+          coordonneeY: values.coordonneeYToDisplay,
           srid: values.typeSystemeSrid,
         }}`
       : "",
@@ -208,15 +222,25 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
 
   useEffect(() => {
     geometrieState?.run({
+      coordonneeX: values.coordonneeXToDisplay,
+      coordonneeY: values.coordonneeYToDisplay,
+      srid: srid,
+    });
+
+    selectDataState.run({
       coordonneeX: values.coordonneeX,
       coordonneeY: values.coordonneeY,
-      srid: values.typeSystemeSrid,
+      peiId: values.peiId,
     });
   }, [
     values.coordonneeX,
     values.coordonneeY,
-    values.typeSystemeSrid,
+    values.coordonneeXToDisplay,
+    values.coordonneeYToDisplay,
+    srid,
     geometrieState,
+    values.peiId,
+    selectDataState,
   ]);
 
   // Permet de savoir si les sections de l'accordion sont ouvertes et de les set
@@ -582,8 +606,21 @@ const FormLocalisationPei = ({
               const projetionValeur = geometrieData?.find(
                 (e) => e.srid === parseInt(sridActif),
               );
-              setFieldValue("coordonneeX", projetionValeur?.coordonneeX);
-              setFieldValue("coordonneeY", projetionValeur?.coordonneeY);
+              setFieldValue(
+                "coordonneeXToDisplay",
+                projetionValeur?.coordonneeX,
+              );
+              setFieldValue(
+                "coordonneeYToDisplay",
+                projetionValeur?.coordonneeY,
+              );
+
+              // Coordonnées en 2154 ou autres
+              const coordonneesToSave = geometrieData?.find(
+                (e) => e.srid === srid,
+              );
+              setFieldValue("coordonneeX", coordonneesToSave?.coordonneeX);
+              setFieldValue("coordonneeY", coordonneesToSave?.coordonneeY);
             }}
           >
             {TypeSystemeSrid.map((e) => {
@@ -601,10 +638,18 @@ const FormLocalisationPei = ({
       </Row>
       <Row className="mt-3">
         <Col>
-          <TextInput label="Coordonnée X" name="coordonneeX" required={true} />
+          <TextInput
+            label="Coordonnée X"
+            name="coordonneeXToDisplay"
+            required={true}
+          />
         </Col>
         <Col>
-          <TextInput label="Coordonnée Y" name="coordonneeY" required={true} />
+          <TextInput
+            label="Coordonnée Y"
+            name="coordonneeYToDisplay"
+            required={true}
+          />
         </Col>
       </Row>
       <h2>Adresse</h2>
@@ -767,6 +812,18 @@ const FormPibi = ({
       <Row className="mt-3 d-flex align-items-center">
         <Col>
           <TextInput name="pibiNumeroScp" label="Numéro SCP" required={false} />
+        </Col>
+        <Col>
+          <SelectForm
+            name={"pibiJumeleId"}
+            listIdCodeLibelle={selectData.listPeiJumelage}
+            label="Jumelé avec"
+            defaultValue={selectData?.listPeiJumelage?.find(
+              (e) => e.id === values.pibiJumeleId,
+            )}
+            required={false}
+            setValues={setValues}
+          />
         </Col>
       </Row>
       <Row className="mt-3">

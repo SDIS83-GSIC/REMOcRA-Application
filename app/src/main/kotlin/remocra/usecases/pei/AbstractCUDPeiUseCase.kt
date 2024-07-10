@@ -169,6 +169,14 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
         // Puis on insert le PENA / PIBI
         if (peiData is PibiData) {
             peiRepository.upsertPibi(peiData)
+
+            // Si le Bi est jumelé à un autre, il faut mettre à jour l'autre
+            if (peiData.pibiJumeleId != null) {
+                peiRepository.updateJumelage(peiData.peiId, peiData.pibiJumeleId)
+            } else {
+                //  si aucun jumelage on enlève les potentiels lien avec ce pei
+                peiRepository.removeJumelage(peiData.peiId)
+            }
         }
 
         if (peiData is PenaData) {

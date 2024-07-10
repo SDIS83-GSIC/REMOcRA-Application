@@ -1,4 +1,3 @@
-import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 
 export type PeiEntity = {
@@ -49,6 +48,7 @@ export type PeiEntity = {
   pibiDiametreCanalisation?: number;
   pibiSurpresse?: boolean;
   pibiAdditive?: boolean;
+  pibiJumeleId?: string;
 
   // DONNEES PENA
   penaCapacite?: number;

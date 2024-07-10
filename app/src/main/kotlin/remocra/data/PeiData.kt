@@ -105,6 +105,7 @@ data class PibiData(
     val pibiDiametreCanalisation: Int?,
     val pibiSurpresse: Boolean = false,
     val pibiAdditive: Boolean = false,
+    val pibiJumeleId: UUID?,
     // TODO à compléter au fur et à mesure
 ) : PeiData(
     peiId,

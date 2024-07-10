@@ -10,6 +10,8 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.GlobalConstants
+import remocra.data.GlobalData
 import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
@@ -257,6 +259,7 @@ class PeiRepository
             PIBI.DIAMETRE_CANALISATION,
             PIBI.SURPRESSE,
             PIBI.ADDITIVE,
+            PIBI.JUMELE_ID,
         )
             .from(PEI)
             .join(PIBI)
@@ -282,6 +285,29 @@ class PeiRepository
             .on(PENA.ID.eq(PEI.ID))
             .where(PEI.ID.eq(penaId))
             .fetchSingleInto()
+
+    /**
+     * Retourne les BI qui sont à moins de DISTANCE_MAXIMALE_JUMELAGE
+     * Permettra de remplir la liste déroulante pour la modification  / création d'un PEI
+     * @param idPei : id du PEI en train d'être modifé
+     * @param geometrie : géométrie de PEI en train d'être modifié
+     * @param srid : srid de la géométrie => doit correspondre au paramètre dans la base de données
+     */
+    fun getBiCanJumele(coordoneeX: String, coordoneeY: String, peiId: UUID?, srid: Int): Collection<GlobalData.IdCodeLibelleData> =
+        dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("code"), PEI.NUMERO_COMPLET.`as`("libelle"))
+            .from(PEI)
+            .join(NATURE)
+            .on(NATURE.ID.eq(PEI.NATURE_ID))
+            .join(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .where(NATURE.CODE.eq(GlobalConstants.NATURE_BI))
+            .and(
+                "ST_DISTANCE(${PEI.GEOMETRIE}, 'SRID=$srid;POINT($coordoneeX $coordoneeY)')" +
+                    " < ${GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE}",
+            )
+            .and(DSL.and(PIBI.JUMELE_ID.isNull).or(PIBI.JUMELE_ID.eq(peiId)))
+            .and(if (peiId != null) PIBI.ID.notEqual(peiId) else DSL.trueCondition())
+            .fetchInto()
 
     fun getInfoPei(peiId: UUID): PeiData =
         dsl.select(peiData)
@@ -366,7 +392,7 @@ class PeiRepository
                 pibiDispositifInviolabilite = pibi.pibiDispositifInviolabilite,
                 pibiMarquePibiId = pibi.pibiMarqueId.takeIf { pibi.pibiModeleId == null },
                 pibiModelePibiId = pibi.pibiModeleId,
-                pibiJumeleId = null, // TODO
+                pibiJumeleId = pibi.pibiJumeleId,
                 pibiPenaId = null, // TODO
             ),
         )
@@ -399,6 +425,26 @@ class PeiRepository
         return set(record).onConflict(PENA.ID)
             .doUpdate()
             .set(record)
+            .execute()
+    }
+
+    /**
+     * Le jumelage se fait sur les 2 sens : Si A est jumelé avec B alors on doit mettre à jour A et B
+     */
+    fun updateJumelage(peiJumeleId: UUID, peiAMettreAJour: UUID) {
+        dsl.update(PIBI)
+            .set(PIBI.JUMELE_ID, peiJumeleId)
+            .where(PIBI.ID.eq(peiAMettreAJour))
+            .execute()
+    }
+
+    /**
+     * Supprime les jumelages d'un PIBI
+     */
+    fun removeJumelage(peiId: UUID) {
+        dsl.update(PIBI)
+            .setNull(PIBI.JUMELE_ID)
+            .where(PIBI.JUMELE_ID.eq(peiId))
             .execute()
     }
 }

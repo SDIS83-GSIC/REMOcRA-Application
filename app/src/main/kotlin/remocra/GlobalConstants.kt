@@ -6,6 +6,9 @@ object GlobalConstants {
     // Code du type organisme Service des eaux
     const val SERVICE_EAUX = "SERVICE_EAUX"
 
+    // Distance maximale entre 2 BI pour qu'il puisse y avoir jumelage
+    const val DISTANCE_MAXIMALE_JUMELAGE = 25
+
     // Diamètre des PEI
     const val DIAMETRE_70 = "DIAM70"
     const val DIAMETRE_80 = "DIAM80"
