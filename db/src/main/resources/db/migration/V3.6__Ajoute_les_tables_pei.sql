@@ -58,7 +58,6 @@ CREATE TABLE remocra.pena
     pena_capacite            INTEGER,
     pena_coordonne_dfci      TEXT,
     pena_materiau_id         UUID REFERENCES remocra.materiau (materiau_id),
-    pena_volume_constate     "VOLUME_CONSTATE" NOT NULL,
     pena_capacite_illimitee  BOOLEAN,
     pena_capacite_incertaine BOOLEAN,
     pena_quantite_appoint    FLOAT

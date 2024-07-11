@@ -26,7 +26,6 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
-import remocra.db.jooq.remocra.enums.VolumeConstate
 import remocra.db.jooq.remocra.keys.PENA_PKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_MATERIAU_ID_FKEY
@@ -107,11 +106,6 @@ open class Pena(
      * The column <code>remocra.pena.pena_materiau_id</code>.
      */
     val MATERIAU_ID: TableField<Record, UUID?> = createField(DSL.name("pena_materiau_id"), SQLDataType.UUID, this, "")
-
-    /**
-     * The column <code>remocra.pena.pena_volume_constate</code>.
-     */
-    val VOLUME_CONSTATE: TableField<Record, VolumeConstate?> = createField(DSL.name("pena_volume_constate"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(VolumeConstate::class.java), this, "")
 
     /**
      * The column <code>remocra.pena.pena_capacite_illimitee</code>. Vaut VRAI

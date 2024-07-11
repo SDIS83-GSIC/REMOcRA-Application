@@ -4,7 +4,6 @@
 package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.Disponibilite
-import remocra.db.jooq.remocra.enums.VolumeConstate
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -26,7 +25,6 @@ data class Pena(
     val penaCapacite: Int?,
     val penaCoordonneDfci: String?,
     val penaMateriauId: UUID?,
-    val penaVolumeConstate: VolumeConstate,
     val penaCapaciteIllimitee: Boolean?,
     val penaCapaciteIncertaine: Boolean?,
     val penaQuantiteAppoint: Double?,
@@ -70,9 +68,6 @@ data class Pena(
         } else if (this.penaMateriauId != o.penaMateriauId) {
             return false
         }
-        if (this.penaVolumeConstate != o.penaVolumeConstate) {
-            return false
-        }
         if (this.penaCapaciteIllimitee == null) {
             if (o.penaCapaciteIllimitee != null) {
                 return false
@@ -105,7 +100,6 @@ data class Pena(
         result = prime * result + (if (this.penaCapacite == null) 0 else this.penaCapacite.hashCode())
         result = prime * result + (if (this.penaCoordonneDfci == null) 0 else this.penaCoordonneDfci.hashCode())
         result = prime * result + (if (this.penaMateriauId == null) 0 else this.penaMateriauId.hashCode())
-        result = prime * result + this.penaVolumeConstate.hashCode()
         result = prime * result + (if (this.penaCapaciteIllimitee == null) 0 else this.penaCapaciteIllimitee.hashCode())
         result = prime * result + (if (this.penaCapaciteIncertaine == null) 0 else this.penaCapaciteIncertaine.hashCode())
         result = prime * result + (if (this.penaQuantiteAppoint == null) 0 else this.penaQuantiteAppoint.hashCode())
@@ -120,7 +114,6 @@ data class Pena(
         sb.append(", ").append(penaCapacite)
         sb.append(", ").append(penaCoordonneDfci)
         sb.append(", ").append(penaMateriauId)
-        sb.append(", ").append(penaVolumeConstate)
         sb.append(", ").append(penaCapaciteIllimitee)
         sb.append(", ").append(penaCapaciteIncertaine)
         sb.append(", ").append(penaQuantiteAppoint)
