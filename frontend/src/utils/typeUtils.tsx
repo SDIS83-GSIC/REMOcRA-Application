@@ -3,7 +3,7 @@ import { TYPE_DATA_CACHE } from "../enums/NomenclaturesEnum.tsx";
 export type SelectType = {
   onChange?: any;
   name: string;
-  value?: IdCodeLibelleType;
+  defaultValue?: IdCodeLibelleType;
 };
 export type SelectNomenclaturesType = SelectType & {
   nomenclature: TYPE_DATA_CACHE;

@@ -1,6 +1,7 @@
-import { Typeahead } from "react-bootstrap-typeahead";
+import { Form } from "react-bootstrap";
+import { useField } from "formik";
 import { SelectFormType } from "../../utils/typeUtils.tsx";
-import { FormLabel } from "./Form.tsx";
+import { DivWithError, FormLabel } from "./Form.tsx";
 
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
@@ -12,41 +13,50 @@ import { FormLabel } from "./Form.tsx";
  * @param {IdLibelleType} value - Value sélectionnée par défaut.
  * @param {string} label - Label du select.
  * @param {boolean} required - Valeur obligatoire ?
+ * @param {Function} setValues - Permet de mettre à jour la valeur du select
+ * @param {Function} setOtherValues - Permet de mettre à jour une / des autres valeurs du formulaire
  */
 const SelectForm = ({
   name,
   listIdCodeLibelle,
-  value,
+  defaultValue,
   label,
   required = false,
   disabled = false,
   setValues,
+  setOtherValues,
 }: SelectFormType) => {
-  // Si on est pas dans un filtre de tableau, on doit définir la fonction là pour set la valeur modifiée
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+
   const onChange = ({ name, value }) => {
     setValues((prevValues) => ({
       ...prevValues,
       [name]: value,
     }));
+    setOtherValues && setOtherValues();
   };
+
   const list = listIdCodeLibelle ?? [];
   return (
-    <>
+    <DivWithError name={name} error={error}>
       {label && <FormLabel label={label} required={required} />}
-      <Typeahead
-        className="d-flex"
-        placeholder={"Aucune valeur saisie"}
-        size={"sm"}
-        options={list}
-        labelKey={"libelle"}
-        onChange={(data) => {
-          onChange({ name: name, value: data[0]?.id });
-        }}
-        defaultSelected={value ? [value] : list[0]?.id === "" ? [list[0]] : []}
-        clearButton
+      <Form.Select
         disabled={disabled}
-      />
-    </>
+        required={required}
+        onChange={(e) => {
+          onChange({ name: name, value: e.target.value });
+        }}
+        {...field}
+      >
+        <option value={""}>Aucune valeur saisie</option>
+        {list.map((e, key) => (
+          <option key={key} value={e.id} selected={defaultValue === e}>
+            {e.libelle}
+          </option>
+        ))}
+      </Form.Select>
+    </DivWithError>
   );
 };
 

@@ -22,7 +22,7 @@ const SelectNomenclaturesForm = ({
         name={name}
         listIdCodeLibelle={list}
         label={label}
-        value={list.find((e: IdCodeLibelleType) => e.id === valueId)}
+        defaultValue={list.find((e: IdCodeLibelleType) => e.id === valueId)}
         required={required}
         disabled={disabled}
         onChange={onChange}
