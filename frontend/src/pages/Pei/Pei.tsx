@@ -66,6 +66,14 @@ export const getInitialValues = (data: PeiEntity) => ({
   pibiDiametreCanalisation: data.pibiDiametreCanalisation ?? null,
   pibiSurpresse: data.pibiSurpresse ?? null,
   pibiAdditive: data.pibiAdditive ?? null,
+
+  // DONNEES PENA
+  penaCapacite: data.penaCapacite ?? null,
+  penaCapaciteIllimitee: data.penaCapaciteIllimitee ?? null,
+  penaCapaciteIncertaine: data.penaCapaciteIncertaine ?? null,
+  penaMateriauId: data.penaMateriauId ?? null,
+  penaQuantiteAppoint: data.penaQuantiteAppoint ?? null,
+  penaDisponibiliteHbe: data.penaDisponibiliteHbe ?? null,
 });
 
 export const validationSchema = object({
@@ -117,6 +125,14 @@ export const prepareVariables = (data: PeiEntity, values: PeiEntity) => ({
   pibiDiametreCanalisation: values.pibiDiametreCanalisation ?? null,
   pibiSurpresse: values.pibiSurpresse ?? null,
   pibiAdditive: values.pibiAdditive ?? null,
+
+  // DONNEES PENA
+  penaCapacite: values.penaCapacite ?? null,
+  penaCapaciteIllimitee: values.penaCapaciteIllimitee ?? null,
+  penaCapaciteIncertaine: values.penaCapaciteIncertaine ?? null,
+  penaMateriauId: values.penaMateriauId ?? null,
+  penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
+  penaDisponibiliteHbe: data.penaDisponibiliteHbe ?? null,
 });
 
 type SelectDataType = {
@@ -170,14 +186,22 @@ const Pei = () => {
               },
               {
                 header: "Caractéristiques techniques",
-                content: (
-                  <FormPibi
-                    values={values}
-                    selectData={selectDataState.data}
-                    setFieldValue={setFieldValue}
-                    setValues={setValues}
-                  />
-                ),
+                content:
+                  values.peiTypePei === TYPE_PEI.PIBI ? (
+                    <FormPibi
+                      values={values}
+                      selectData={selectDataState.data}
+                      setFieldValue={setFieldValue}
+                      setValues={setValues}
+                    />
+                  ) : (
+                    <FormPena
+                      values={values}
+                      selectData={selectDataState.data}
+                      setFieldValue={setFieldValue}
+                      setValues={setValues}
+                    />
+                  ),
               },
               {
                 header: "Documents",
@@ -514,7 +538,6 @@ const FormPibi = ({
           <TextInput name="pibiNumeroScp" label="Numéro SCP" required={false} />
         </Col>
       </Row>
-
       <Row className="mt-3">
         <Col>
           <SelectNomenclaturesForm
@@ -625,6 +648,62 @@ const FormPibi = ({
             name="pibiAdditive"
             label="Réseau additivé ?"
             defaultCheck={values.pibiAdditive}
+          />
+        </Col>
+      </Row>
+    </>
+  );
+};
+
+const FormPena = ({
+  values,
+  setValues,
+}: {
+  values: PeiEntity;
+  setValues: (e: any) => void;
+}) => {
+  return (
+    <>
+      <h2>Ressource</h2>
+      <Row className="mt-3">
+        <Col>
+          <CheckBoxInput
+            name="penaCapaciteIllimitee"
+            label="Capacité illimitée ?"
+            defaultCheck={values.penaCapaciteIllimitee}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="penaCapaciteIncertaine"
+            label="Capacité incertaine ?"
+            defaultCheck={values.penaCapaciteIncertaine}
+          />
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col>
+          <PositiveNumberInput
+            name="penaCapacite"
+            label="Capacité en m³"
+            required={false}
+          />
+        </Col>
+        <Col>
+          <PositiveNumberInput
+            name="penaQuantiteAppoint"
+            label="Quantité d'appoint en m³/h"
+            required={false}
+          />
+        </Col>
+        <Col>
+          <SelectNomenclaturesForm
+            name={"penaMateriauId"}
+            nomenclature={TYPE_DATA_CACHE.MATERIAU}
+            label="Matériau de la citerne"
+            valueId={values.penaMateriauId}
+            required={false}
+            setValues={setValues}
           />
         </Col>
       </Row>

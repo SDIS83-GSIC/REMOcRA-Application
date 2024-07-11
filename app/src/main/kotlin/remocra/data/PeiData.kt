@@ -154,6 +154,8 @@ class PenaData(
     val penaDisponibiliteHbe: Disponibilite? = null,
     val penaCapacite: Int? = null,
     val penaCapaciteIllimitee: Boolean = false,
+    val penaCapaciteIncertaine: Boolean = false,
+    val penaQuantiteAppoint: Double?,
     val penaMateriauId: UUID? = null,
 ) : PeiData(
     peiId,

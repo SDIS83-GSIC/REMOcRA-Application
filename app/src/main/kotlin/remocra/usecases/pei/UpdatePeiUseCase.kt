@@ -22,7 +22,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
         }
 
         if (element is PenaData) {
-            // TODO update pena
+            peiRepository.updatePena(element)
         }
     }
 

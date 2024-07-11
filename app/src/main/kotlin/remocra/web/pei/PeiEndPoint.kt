@@ -73,7 +73,7 @@ class PeiEndPoint {
     }
 
     @GET
-    @Path("/referentiel-for-update-pei") // TODO idPei
+    @Path("/referentiel-for-update-pei")
     fun getReferentielUpdatePei() =
         Response.ok(peiUseCase.getInfoForUpdate()).build()
 
@@ -151,6 +151,13 @@ class PeiEndPoint {
                 peiAnneeFabrication = null,
                 peiNiveauId = peiInput.peiNiveauId,
                 peiObservation = null,
+                penaCapaciteIllimitee = peiInput.penaCapaciteIllimitee,
+                penaQuantiteAppoint = peiInput.penaQuantiteAppoint,
+                penaDisponibiliteHbe = peiInput.penaDisponibiliteHbe,
+                penaMateriauId = peiInput.penaMateriauId,
+                penaCapacite = peiInput.penaCapacite,
+                penaCapaciteIncertaine = peiInput.penaCapaciteIncertaine,
+
             )
             else -> throw IllegalArgumentException()
         }
@@ -272,5 +279,24 @@ class PeiEndPoint {
 
         @FormParam("pibiAdditive")
         var pibiAdditive: Boolean = false
+
+        // DONNEES PENA
+        @FormParam("penaMateriauId")
+        var penaMateriauId: UUID? = null
+
+        @FormParam("penaCapaciteIllimitee")
+        var penaCapaciteIllimitee: Boolean = false
+
+        @FormParam("penaCapaciteIncertaine")
+        var penaCapaciteIncertaine: Boolean = false
+
+        @FormParam("penaQuantiteAppoint")
+        var penaQuantiteAppoint: Double? = null
+
+        @FormParam("penaDisponibiliteHbe")
+        lateinit var penaDisponibiliteHbe: Disponibilite
+
+        @FormParam("penaCapacite")
+        var penaCapacite: Int? = null
     }
 }

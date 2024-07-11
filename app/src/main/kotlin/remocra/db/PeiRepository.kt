@@ -294,6 +294,16 @@ class PeiRepository
             .execute()
     }
 
+    // Champs modifiables depuis l'update d'un PIBI
+    fun updatePena(pena: PenaData): Int =
+        dsl.update(PENA)
+            .set(PENA.CAPACITE, pena.penaCapacite)
+            .set(PENA.QUANTITE_APPOINT, pena.penaQuantiteAppoint)
+            .set(PENA.CAPACITE_INCERTAINE, pena.penaCapaciteIncertaine)
+            .set(PENA.CAPACITE_ILLIMITEE, pena.penaCapaciteIllimitee)
+            .set(PENA.MATERIAU_ID, pena.penaMateriauId)
+            .execute()
+
     fun getTypePei(idPei: UUID): TypePei =
         dsl.select(PEI.TYPE_PEI)
             .from(PEI)
@@ -332,7 +342,9 @@ class PeiRepository
         dsl.select(peiData).select(
             PENA.CAPACITE,
             PENA.DISPONIBILITE_HBE,
+            PENA.QUANTITE_APPOINT,
             PENA.CAPACITE_ILLIMITEE,
+            PENA.CAPACITE_INCERTAINE,
             PENA.MATERIAU_ID,
         )
             .from(PEI)

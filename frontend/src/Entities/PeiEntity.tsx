@@ -6,7 +6,7 @@ export type PeiEntity = {
   peiNumeroComplet: string;
   peiNumeroInterne: number;
   peiTypePei: TYPE_PEI;
-  peiDisponibiliteTerrestre: DISPONIBILITE_PEI,
+  peiDisponibiliteTerrestre: DISPONIBILITE_PEI;
 
   peiAutoriteDeciId: string;
   peiServicePublicDeciId: string;
@@ -44,4 +44,12 @@ export type PeiEntity = {
   pibiDiametreCanalisation?: number;
   pibiSurpresse?: boolean;
   pibiAdditive?: boolean;
+
+  // DONNEES PENA
+  penaCapacite?: number;
+  penaCapaciteIllimitee?: boolean;
+  penaCapaciteIncertaine?: boolean;
+  penaMateriauId?: string;
+  penaQuantiteAppoint?: number;
+  penaDisponibiliteHbe?: DISPONIBILITE_PEI;
 };
