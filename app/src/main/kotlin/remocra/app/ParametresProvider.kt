@@ -6,9 +6,13 @@ import jakarta.inject.Singleton
 import remocra.data.ParametresData
 import remocra.db.ParametreRepository
 import remocra.db.TaskRepository
-import remocra.db.jooq.remocra.enums.TypeParametre
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.schedule.SchedulableTasksExecutor
+import remocra.web.admin.getBooleanOrNull
+import remocra.web.admin.getDoubleOrNull
+import remocra.web.admin.getIntOrNull
+import remocra.web.admin.getParametre
+import remocra.web.admin.getStringOrNull
 
 @Singleton
 class ParametresProvider
@@ -43,9 +47,7 @@ constructor(
     }
 
     private fun getParametre(key: String): Parametre {
-        val value = get().mapParametres[key] ?: throw IllegalArgumentException("La clé $key n'existe pas dans les paramètres")
-
-        return value
+        return get().mapParametres.getParametre(key)
     }
 
     fun getParametreValue(key: String): Any? {
@@ -57,12 +59,7 @@ constructor(
      *
      * */
     fun getParametreBoolean(key: String): Boolean? {
-        val param = getParametre(key)
-        if (TypeParametre.BOOLEAN != param.parametreType) {
-            throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-        }
-
-        return param.parametreValeur?.toBooleanStrictOrNull()
+        return get().mapParametres.getBooleanOrNull(key)
     }
 
     /**
@@ -70,12 +67,7 @@ constructor(
      *
      * */
     fun getParametreInt(key: String): Int? {
-        val param = getParametre(key)
-        if (TypeParametre.INTEGER != param.parametreType) {
-            throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-        }
-
-        return param.parametreValeur?.toIntOrNull()
+        return get().mapParametres.getIntOrNull(key)
     }
 
     /**
@@ -83,12 +75,7 @@ constructor(
      *
      * */
     fun getParametreDouble(key: String): Double? {
-        val param = getParametre(key)
-        if (TypeParametre.DOUBLE != param.parametreType) {
-            throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-        }
-
-        return param.parametreValeur?.toDoubleOrNull()
+        return get().mapParametres.getDoubleOrNull(key)
     }
 
     /**
@@ -96,11 +83,6 @@ constructor(
      *
      * */
     fun getParametreString(key: String): String? {
-        val param = getParametre(key)
-        if (TypeParametre.STRING != param.parametreType) {
-            throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-        }
-
-        return param.parametreValeur
+        return get().mapParametres.getStringOrNull(key)
     }
 }
