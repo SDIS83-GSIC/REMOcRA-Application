@@ -23,7 +23,7 @@ class VisiteRepository
     fun getLastVisite(peiId: UUID): Visite? = dsl.selectFrom(VISITE)
         .where(VISITE.PEI_ID.eq(peiId))
         .orderBy(VISITE.DATE.desc())
-        .fetchOneInto()
+        .fetchAnyInto()
 
     fun getAnomaliesFromVisite(visiteId: UUID): Collection<UUID> = dsl
         .select(L_VISITE_ANOMALIE.ANOMALIE_ID)
@@ -107,4 +107,15 @@ class VisiteRepository
         dsl.selectFrom(VISITE_CTRL_DEBIT_PRESSION)
             .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.`in`(listVisiteId))
             .fetchInto()
+
+    // CreateVisiteUseCase
+    fun insertVisite(visite: Visite) =
+        dsl.insertInto(VISITE)
+            .set(dsl.newRecord(VISITE, visite))
+            .execute()
+
+    fun insertCDP(ctrlDebitPression: VisiteCtrlDebitPression) =
+        dsl.insertInto(VISITE_CTRL_DEBIT_PRESSION)
+            .set(dsl.newRecord(VISITE_CTRL_DEBIT_PRESSION, ctrlDebitPression))
+            .execute()
 }
