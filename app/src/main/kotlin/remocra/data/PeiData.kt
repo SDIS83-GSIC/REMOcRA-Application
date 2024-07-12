@@ -151,7 +151,7 @@ class PenaData(
     override val peiNiveauId: UUID?,
     override val peiObservation: String?,
 
-    val penaDisponibiliteHbe: Disponibilite? = null,
+    val penaDisponibiliteHbe: Disponibilite,
     val penaCapacite: Int? = null,
     val penaCapaciteIllimitee: Boolean = false,
     val penaCapaciteIncertaine: Boolean = false,

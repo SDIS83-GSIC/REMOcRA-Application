@@ -12,6 +12,7 @@ import remocra.data.PeiForNumerotationData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.enums.TypeSourceModification
+import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -53,6 +54,8 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
 
     @Inject
     lateinit var clock: Clock
+
+    @Inject lateinit var peiRepository: PeiRepository
 
     override fun postEvent(element: PeiData, userInfo: UserInfo) {
         eventBus.post(
@@ -157,6 +160,20 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
 
         // On rend la main au parent pour la logique d'événements
         return element
+    }
+
+    protected fun upsertPei(peiData: PeiData) {
+        // On insert le PEI
+        peiRepository.upsert(peiData)
+
+        // Puis on insert le PENA / PIBI
+        if (peiData is PibiData) {
+            peiRepository.upsertPibi(peiData)
+        }
+
+        if (peiData is PenaData) {
+            peiRepository.upsertPena(peiData)
+        }
     }
 
     /**

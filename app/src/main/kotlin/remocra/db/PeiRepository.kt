@@ -3,17 +3,25 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.InsertSetStep
+import org.jooq.Record
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
 import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
+import remocra.db.jooq.remocra.tables.pojos.Pei
+import remocra.db.jooq.remocra.tables.pojos.Pena
+import remocra.db.jooq.remocra.tables.pojos.Pibi
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
@@ -228,82 +236,6 @@ class PeiRepository
         )
     }
 
-    // Champs modifiables depuis l'update d'un PEI
-    fun update(pei: PeiData): Int {
-        val request = dsl.update(PEI)
-            .set(PEI.NUMERO_VOIE, pei.peiNumeroVoie)
-            .set(PEI.VOIE_ID, pei.peiVoieId)
-            .set(PEI.SUFFIXE_VOIE, pei.peiSuffixeVoie)
-            .set(PEI.CROISEMENT_ID, pei.peiCroisementId)
-            .set(PEI.COMPLEMENT_ADRESSE, pei.peiComplementAdresse)
-            // .set(PEI.GEOMETRIE, pei.geometrie) TODO
-            .set(PEI.LIEU_DIT_ID, pei.peiLieuDitId)
-            .set(PEI.NUMERO_COMPLET, pei.peiNumeroComplet)
-            .set(PEI.NUMERO_INTERNE, pei.peiNumeroInterne)
-            .set(PEI.NATURE_ID, pei.peiNatureId)
-            .set(PEI.NATURE_DECI_ID, pei.peiNatureDeciId)
-            .set(PEI.AUTORITE_DECI_ID, pei.peiAutoriteDeciId)
-            .set(PEI.SERVICE_PUBLIC_DECI_ID, pei.peiServicePublicDeciId)
-            .set(PEI.MAINTENANCE_DECI_ID, pei.peiMaintenanceDeciId)
-            .set(PEI.COMMUNE_ID, pei.peiCommuneId)
-            .set(PEI.DOMAINE_ID, pei.peiDomaineId)
-            .set(PEI.EN_FACE, pei.peiEnFace)
-            .set(PEI.NIVEAU_ID, pei.peiNiveauId)
-            .set(PEI.ANNEE_FABRICATION, pei.peiAnneeFabrication)
-        if (pei.peiGestionnaireId != null && pei.peiSiteId != null) {
-            request.set(PEI.SITE_ID, pei.peiSiteId)
-            request.setNull(PEI.GESTIONNAIRE_ID)
-        } else if (pei.peiGestionnaireId != null) {
-            request.set(PEI.GESTIONNAIRE_ID, pei.peiGestionnaireId)
-            request.setNull(PEI.SITE_ID)
-        }
-
-        return request.where(PEI.ID.eq(pei.peiId))
-            .execute()
-    }
-
-    // Champs modifiables depuis l'update d'un PIBI
-    fun updatePibi(pibi: PibiData): Int {
-        val request = dsl.update(PIBI)
-            .set(PIBI.MODELE_PIBI_ID, pibi.pibiModeleId)
-            .set(PIBI.DIAMETRE_ID, pibi.pibiDiametreId)
-            .set(PIBI.ADDITIVE, pibi.pibiAdditive)
-            .set(PIBI.SURPRESSE, pibi.pibiSurpresse)
-            .set(PIBI.NUMERO_SCP, pibi.pibiNumeroScp)
-            .set(PIBI.DIAMETRE_CANALISATION, pibi.pibiDiametreCanalisation)
-            .set(PIBI.TYPE_RESEAU_ID, pibi.pibiTypeReseauId)
-            .set(PIBI.TYPE_CANALISATION_ID, pibi.pibiTypeCanalisationId)
-            .set(PIBI.DEBIT_RENFORCE, pibi.pibiDebitRenforce)
-            .set(PIBI.RESERVOIR_ID, pibi.pibiReservoirId)
-            .set(PIBI.DISPOSITIF_INVIOLABILITE, pibi.pibiDispositifInviolabilite)
-            .set(PIBI.SERVICE_EAU_ID, pibi.pibiServiceEauId)
-            .set(PIBI.RENVERSABLE, pibi.pibiRenversable)
-        // .set(PIBI.JUMELE_ID, pibi.pibiJumele)
-
-        // TODO gérer les PENA_ID
-
-        if (pibi.pibiMarqueId != null && pibi.pibiModeleId != null) {
-            request.set(PIBI.MODELE_PIBI_ID, pibi.pibiModeleId)
-            request.setNull(PIBI.MARQUE_PIBI_ID)
-        } else if (pibi.pibiMarqueId != null) {
-            request.set(PIBI.MARQUE_PIBI_ID, pibi.pibiMarqueId)
-            request.setNull(PIBI.MODELE_PIBI_ID)
-        }
-
-        return request.where(PIBI.ID.eq(pibi.peiId))
-            .execute()
-    }
-
-    // Champs modifiables depuis l'update d'un PIBI
-    fun updatePena(pena: PenaData): Int =
-        dsl.update(PENA)
-            .set(PENA.CAPACITE, pena.penaCapacite)
-            .set(PENA.QUANTITE_APPOINT, pena.penaQuantiteAppoint)
-            .set(PENA.CAPACITE_INCERTAINE, pena.penaCapaciteIncertaine)
-            .set(PENA.CAPACITE_ILLIMITEE, pena.penaCapaciteIllimitee)
-            .set(PENA.MATERIAU_ID, pena.penaMateriauId)
-            .execute()
-
     fun getTypePei(idPei: UUID): TypePei =
         dsl.select(PEI.TYPE_PEI)
             .from(PEI)
@@ -358,4 +290,118 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
+
+    fun upsertPibi(pibi: PibiData): Int =
+        dsl.insertInto(PIBI).setPibiField(pibi)
+
+    fun upsertPena(pena: PenaData): Int =
+        dsl.insertInto(PENA)
+            .setPenaField(pena)
+
+    fun upsert(pei: PeiData) =
+        dsl.insertInto(PEI).setPeiField(pei)
+
+    /**
+     * Permet d'insérer ou d'update les champs d'un PEI.
+     * Le jour où un champ est ajouté, il suffira de mettre à jour cette fonction.
+     */
+    private fun <R : Record?> InsertSetStep<R>.setPeiField(pei: PeiData): Int {
+        // On crée le record, si le PEI existe alors on met à jour ces champs
+        val record = dsl.newRecord(
+            PEI,
+            Pei(
+                peiId = pei.peiId,
+                peiTypePei = pei.peiTypePei,
+                peiGestionnaireId = pei.peiGestionnaireId.takeIf { pei.peiSiteId == null },
+                peiNumeroInterne = pei.peiNumeroInterne!!,
+                peiCommuneId = pei.peiCommuneId,
+                peiDomaineId = pei.peiDomaineId,
+                // TODO prendre en compte la géométrie avec le bon SRID
+                peiGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(Coordinate(723835.0, 6766075.0, 0.0)),
+                peiEnFace = pei.peiEnFace,
+                peiSiteId = pei.peiSiteId,
+                peiCroisementId = pei.peiCroisementId,
+                peiObservation = pei.peiObservation,
+                peiVoieId = pei.peiVoieId,
+                peiNatureId = pei.peiNatureId,
+                peiNiveauId = pei.peiNiveauId,
+                peiAnneeFabrication = pei.peiAnneeFabrication,
+                peiAutoriteDeciId = pei.peiAutoriteDeciId,
+                peiZoneSpecialeId = pei.peiZoneSpecialeId,
+                peiNumeroComplet = pei.peiNumeroComplet!!,
+                peiComplementAdresse = pei.peiComplementAdresse,
+                peiMaintenanceDeciId = pei.peiMaintenanceDeciId,
+                peiLieuDitId = pei.peiLieuDitId,
+                peiNumeroVoie = pei.peiNumeroVoie,
+                peiSuffixeVoie = pei.peiSuffixeVoie,
+                peiNatureDeciId = pei.peiNatureDeciId,
+                peiDisponibiliteTerrestre = pei.peiDisponibiliteTerrestre,
+                peiServicePublicDeciId = pei.peiServicePublicDeciId,
+            ),
+        )
+
+        return set(record).onConflict(PEI.ID)
+            .doUpdate()
+            .set(record)
+            .execute()
+    }
+
+    /**
+     * Permet d'insérer ou d'update les champs d'un PIBI.
+     * Le jour où un champ est ajouté, il suffira de mettre à jour cette fonction.
+     */
+    private fun <R : Record?> InsertSetStep<R>.setPibiField(pibi: PibiData): Int {
+        val record = dsl.newRecord(
+            PIBI,
+            Pibi(
+                pibiId = pibi.peiId,
+                pibiSurpresse = pibi.pibiSurpresse,
+                pibiAdditive = pibi.pibiAdditive,
+                pibiDiametreId = pibi.pibiDiametreId,
+                pibiNumeroScp = pibi.pibiNumeroScp,
+                pibiReservoirId = pibi.pibiReservoirId,
+                pibiRenversable = pibi.pibiRenversable,
+                pibiTypeReseauId = pibi.pibiTypeReseauId,
+                pibiServiceEauId = pibi.pibiServiceEauId,
+                pibiDebitRenforce = pibi.pibiDebitRenforce,
+                pibiTypeCanalisationId = pibi.pibiTypeCanalisationId,
+                pibiDiametreCanalisation = pibi.pibiDiametreCanalisation,
+                pibiDispositifInviolabilite = pibi.pibiDispositifInviolabilite,
+                pibiMarquePibiId = pibi.pibiMarqueId.takeIf { pibi.pibiModeleId == null },
+                pibiModelePibiId = pibi.pibiModeleId,
+                pibiJumeleId = null, // TODO
+                pibiPenaId = null, // TODO
+            ),
+        )
+
+        return set(record).onConflict(PIBI.ID)
+            .doUpdate()
+            .set(record)
+            .execute()
+    }
+
+    /**
+     * Permet d'insérer ou d'update les champs d'un PENA.
+     * Le jour où un champ est ajouté, il suffira de mettre à jour cette fonction.
+     */
+    private fun <R : Record?> InsertSetStep<R>.setPenaField(pena: PenaData): Int {
+        val record = dsl.newRecord(
+            PENA,
+            Pena(
+                penaId = pena.peiId,
+                penaCapacite = pena.penaCapacite,
+                penaMateriauId = pena.penaMateriauId,
+                penaCapaciteIllimitee = pena.penaCapaciteIllimitee,
+                penaQuantiteAppoint = pena.penaQuantiteAppoint,
+                penaDisponibiliteHbe = pena.penaDisponibiliteHbe,
+                penaCapaciteIncertaine = pena.penaCapaciteIncertaine,
+                penaCoordonneDfci = null, // TODO ?
+            ),
+        )
+
+        return set(record).onConflict(PENA.ID)
+            .doUpdate()
+            .set(record)
+            .execute()
+    }
 }

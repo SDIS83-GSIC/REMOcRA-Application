@@ -20,6 +20,7 @@ import remocra.data.PibiData
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecases.pei.CreatePeiUseCase
 import remocra.usecases.pei.PeiUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
 import java.util.UUID
@@ -33,6 +34,8 @@ class PeiEndPoint {
     @Inject lateinit var peiRepository: PeiRepository
 
     @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
+
+    @Inject lateinit var createPeiUseCase: CreatePeiUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -78,18 +81,40 @@ class PeiEndPoint {
         Response.ok(peiUseCase.getInfoForUpdate()).build()
 
     @PUT
-    @Path("/update/{idPei}")
-    fun update(
-        @PathParam("idPei") idPei: UUID,
+    @Path("/update")
+    fun update(peiInput: PeiInput): Response {
+        val pei: PeiData = getPeiData(peiInput)
+
+        return Response.ok(
+            updatePeiUseCase.execute(
+                securityContext.userInfo,
+                pei,
+            ),
+        ).build()
+    }
+
+    @POST
+    @Path("/create")
+    fun create(
         peiInput: PeiInput,
     ): Response {
-        val pei: PeiData = when (peiInput.peiTypePei) {
+        val pei = getPeiData(peiInput)
+        return Response.ok(
+            createPeiUseCase.execute(
+                securityContext.userInfo,
+                pei,
+            ),
+        ).build()
+    }
+
+    private fun getPeiData(peiInput: PeiInput) =
+        when (peiInput.peiTypePei) {
             TypePei.PIBI -> PibiData(
-                peiId = idPei,
+                peiId = peiInput.peiId ?: UUID.randomUUID(),
                 peiTypePei = peiInput.peiTypePei,
                 peiNumeroInterne = peiInput.peiNumeroInterne,
                 peiNumeroComplet = peiInput.peiNumeroComplet,
-                peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre!!,
+                peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre ?: Disponibilite.INDISPONIBLE,
                 peiAutoriteDeciId = peiInput.peiAutoriteDeciId,
                 peiServicePublicDeciId = peiInput.peiServicePublicDeciId,
                 peiMaintenanceDeciId = peiInput.peiMaintenanceDeciId,
@@ -126,11 +151,11 @@ class PeiEndPoint {
                 pibiDispositifInviolabilite = peiInput.pibiDispositifInviolabilite,
             )
             TypePei.PENA -> PenaData(
-                peiId = idPei,
+                peiId = peiInput.peiId ?: UUID.randomUUID(),
                 peiTypePei = peiInput.peiTypePei,
                 peiNumeroInterne = peiInput.peiNumeroInterne,
                 peiNumeroComplet = peiInput.peiNumeroComplet,
-                peiDisponibiliteTerrestre = Disponibilite.DISPONIBLE,
+                peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre ?: Disponibilite.INDISPONIBLE,
                 peiAutoriteDeciId = peiInput.peiAutoriteDeciId,
                 peiServicePublicDeciId = peiInput.peiServicePublicDeciId,
                 peiMaintenanceDeciId = peiInput.peiMaintenanceDeciId,
@@ -153,7 +178,7 @@ class PeiEndPoint {
                 peiObservation = null,
                 penaCapaciteIllimitee = peiInput.penaCapaciteIllimitee,
                 penaQuantiteAppoint = peiInput.penaQuantiteAppoint,
-                penaDisponibiliteHbe = peiInput.penaDisponibiliteHbe,
+                penaDisponibiliteHbe = peiInput.penaDisponibiliteHbe ?: Disponibilite.INDISPONIBLE,
                 penaMateriauId = peiInput.penaMateriauId,
                 penaCapacite = peiInput.penaCapacite,
                 penaCapaciteIncertaine = peiInput.penaCapaciteIncertaine,
@@ -161,14 +186,6 @@ class PeiEndPoint {
             )
             else -> throw IllegalArgumentException()
         }
-
-        return Response.ok(
-            updatePeiUseCase.execute(
-                securityContext.userInfo,
-                pei,
-            ),
-        ).build()
-    }
 
     class PeiInput {
         @FormParam("peiId")
@@ -294,7 +311,7 @@ class PeiEndPoint {
         var penaQuantiteAppoint: Double? = null
 
         @FormParam("penaDisponibiliteHbe")
-        lateinit var penaDisponibiliteHbe: Disponibilite
+        val penaDisponibiliteHbe: Disponibilite? = null
 
         @FormParam("penaCapacite")
         var penaCapacite: Int? = null

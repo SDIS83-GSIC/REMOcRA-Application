@@ -3,6 +3,7 @@ import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import Pei, {
   getInitialValues,
   prepareVariables,
@@ -23,8 +24,9 @@ const UpdatePei = () => {
       initialValues={getInitialValues(data)}
       validationSchema={validationSchema}
       isPost={false}
-      submitUrl={`/api/pei/update/` + peiId}
-      prepareVariables={(values) => prepareVariables(data, values)}
+      submitUrl={`/api/pei/update`}
+      prepareVariables={(values) => prepareVariables(values, data)}
+      redirectUrl={URLS.PEI}
     >
       <Pei />
     </MyFormik>

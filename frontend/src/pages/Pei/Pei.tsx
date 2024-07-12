@@ -19,7 +19,7 @@ import PositiveNumberInput, {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
-import { IconEdit } from "../../components/Icon/Icon.tsx";
+import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
@@ -28,56 +28,56 @@ import { requiredString } from "../../module/validators.tsx";
 import ensureDataCache from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
-export const getInitialValues = (data: PeiEntity) => ({
-  peiId: data.peiId ?? null,
-  peiNumeroComplet: data.peiNumeroComplet ?? null,
-  peiNumeroInterne: data.peiNumeroInterne ?? null,
-  peiTypePei: data.peiTypePei ?? null,
-  peiDisponibiliteTerrestre: data.peiDisponibiliteTerrestre ?? null,
+export const getInitialValues = (data?: PeiEntity) => ({
+  peiId: data?.peiId ?? null,
+  peiNumeroComplet: data?.peiNumeroComplet ?? null,
+  peiNumeroInterne: data?.peiNumeroInterne ?? null,
+  peiTypePei: data?.peiTypePei ?? null,
+  peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
 
-  peiAutoriteDeciId: data.peiAutoriteDeciId ?? null,
-  peiServicePublicDeciId: data.peiServicePublicDeciId ?? null,
-  peiMaintenanceDeciId: data.peiMaintenanceDeciId ?? null,
+  peiAutoriteDeciId: data?.peiAutoriteDeciId ?? null,
+  peiServicePublicDeciId: data?.peiServicePublicDeciId ?? null,
+  peiMaintenanceDeciId: data?.peiMaintenanceDeciId ?? null,
 
-  peiCommuneId: data.peiCommuneId ?? null,
-  peiVoieId: data.peiVoieId ?? null,
-  peiNumeroVoie: data.peiNumeroVoie ?? null,
-  peiSuffixeVoie: data.peiSuffixeVoie ?? null,
-  peiLieuDitId: data.peiLieuDitId ?? null,
-  peiCroisementId: data.peiCroisementId ?? null,
-  peiComplementAdresse: data.peiComplementAdresse ?? null,
-  peiEnFace: data.peiEnFace ?? null,
+  peiCommuneId: data?.peiCommuneId ?? null,
+  peiVoieId: data?.peiVoieId ?? null,
+  peiNumeroVoie: data?.peiNumeroVoie ?? null,
+  peiSuffixeVoie: data?.peiSuffixeVoie ?? null,
+  peiLieuDitId: data?.peiLieuDitId ?? null,
+  peiCroisementId: data?.peiCroisementId ?? null,
+  peiComplementAdresse: data?.peiComplementAdresse ?? null,
+  peiEnFace: data?.peiEnFace ?? null,
 
-  peiDomaineId: data.peiDomaineId ?? null,
-  peiNatureId: data.peiNatureId ?? null,
-  peiSiteId: data.peiSiteId ?? null,
-  peiGestionnaireId: data.peiGestionnaireId ?? null,
-  peiNatureDeciId: data.peiNatureDeciId ?? null,
-  peiNiveauId: data.peiNiveauId ?? null,
+  peiDomaineId: data?.peiDomaineId ?? null,
+  peiNatureId: data?.peiNatureId ?? null,
+  peiSiteId: data?.peiSiteId ?? null,
+  peiGestionnaireId: data?.peiGestionnaireId ?? null,
+  peiNatureDeciId: data?.peiNatureDeciId ?? null,
+  peiNiveauId: data?.peiNiveauId ?? null,
 
   // DONNEES PIBI
-  pibiDiametreId: data.pibiDiametreId ?? null,
-  pibiServiceEauId: data.pibiServiceEauId ?? null,
-  pibiNumeroScp: data.pibiNumeroScp ?? null,
-  pibiRenversable: data.pibiRenversable ?? null,
-  pibiDispositifInviolabilite: data.pibiDispositifInviolabilite ?? null,
-  pibiModeleId: data.pibiModeleId ?? null,
-  pibiMarqueId: data.pibiMarqueId ?? null,
-  pibiReservoirId: data.pibiReservoirId ?? null,
-  pibiDebitRenforce: data.pibiDebitRenforce ?? null,
-  pibiTypeCanalisationId: data.pibiTypeCanalisationId ?? null,
-  pibiTypeReseauId: data.pibiTypeReseauId ?? null,
-  pibiDiametreCanalisation: data.pibiDiametreCanalisation ?? null,
-  pibiSurpresse: data.pibiSurpresse ?? null,
-  pibiAdditive: data.pibiAdditive ?? null,
+  pibiDiametreId: data?.pibiDiametreId ?? null,
+  pibiServiceEauId: data?.pibiServiceEauId ?? null,
+  pibiNumeroScp: data?.pibiNumeroScp ?? null,
+  pibiRenversable: data?.pibiRenversable ?? null,
+  pibiDispositifInviolabilite: data?.pibiDispositifInviolabilite ?? null,
+  pibiModeleId: data?.pibiModeleId ?? null,
+  pibiMarqueId: data?.pibiMarqueId ?? null,
+  pibiReservoirId: data?.pibiReservoirId ?? null,
+  pibiDebitRenforce: data?.pibiDebitRenforce ?? null,
+  pibiTypeCanalisationId: data?.pibiTypeCanalisationId ?? null,
+  pibiTypeReseauId: data?.pibiTypeReseauId ?? null,
+  pibiDiametreCanalisation: data?.pibiDiametreCanalisation ?? null,
+  pibiSurpresse: data?.pibiSurpresse ?? null,
+  pibiAdditive: data?.pibiAdditive ?? null,
 
   // DONNEES PENA
-  penaCapacite: data.penaCapacite ?? null,
-  penaCapaciteIllimitee: data.penaCapaciteIllimitee ?? null,
-  penaCapaciteIncertaine: data.penaCapaciteIncertaine ?? null,
-  penaMateriauId: data.penaMateriauId ?? null,
-  penaQuantiteAppoint: data.penaQuantiteAppoint ?? null,
-  penaDisponibiliteHbe: data.penaDisponibiliteHbe ?? null,
+  penaCapacite: data?.penaCapacite ?? null,
+  penaCapaciteIllimitee: data?.penaCapaciteIllimitee ?? null,
+  penaCapaciteIncertaine: data?.penaCapaciteIncertaine ?? null,
+  penaMateriauId: data?.penaMateriauId ?? null,
+  penaQuantiteAppoint: data?.penaQuantiteAppoint ?? null,
+  penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
 });
 
 export const validationSchema = object({
@@ -91,12 +91,12 @@ export const validationSchema = object({
   peiDomaineId: requiredString,
 });
 
-export const prepareVariables = (data: PeiEntity, values: PeiEntity) => ({
-  peiId: data.peiId ?? null,
+export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
+  peiId: data?.peiId ?? null,
   peiNumeroComplet: values.peiNumeroComplet ?? null,
   peiNumeroInterne: values.peiNumeroInterne ?? null,
-  peiTypePei: data.peiTypePei,
-  peiDisponibiliteTerrestre: data.peiDisponibiliteTerrestre ?? null,
+  peiTypePei: values.peiTypePei,
+  peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
 
   peiAutoriteDeciId: values.peiAutoriteDeciId ?? null,
   peiServicePublicDeciId: values.peiServicePublicDeciId ?? null,
@@ -140,7 +140,7 @@ export const prepareVariables = (data: PeiEntity, values: PeiEntity) => ({
   penaCapaciteIncertaine: values.penaCapaciteIncertaine ?? null,
   penaMateriauId: values.penaMateriauId ?? null,
   penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
-  penaDisponibiliteHbe: data.penaDisponibiliteHbe ?? null,
+  penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
 });
 
 type SelectDataType = {
@@ -156,7 +156,7 @@ type SelectDataType = {
   listServiceEau: IdCodeLibelleType[];
 };
 
-const Pei = () => {
+const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   const { values, setValues, setFieldValue }: { values: PeiEntity } =
     useFormikContext();
   const selectDataState = useGet(url`/api/pei/referentiel-for-update-pei`);
@@ -210,8 +210,15 @@ const Pei = () => {
       <FormContainer>
         <Container>
           <PageTitle
-            icon={<IconEdit />}
-            title={"Modification du PIBI n°" + values.peiNumeroComplet}
+            icon={isNew ? <IconCreate /> : <IconEdit />}
+            title={
+              isNew
+                ? "Création d'un PEI"
+                : "Modification du " +
+                  values.peiTypePei +
+                  " n°" +
+                  values.peiNumeroComplet
+            }
           />
           <AccordionCustom
             activesKeys={activesKeys}
@@ -222,9 +229,10 @@ const Pei = () => {
                 content: (
                   <FormEntetePei
                     values={values}
-                    selectData={selectDataState.data}
+                    selectData={selectData}
                     setValues={setValues}
                     setFieldValue={setFieldValue}
+                    isNew={isNew}
                   />
                 ),
               },
@@ -233,7 +241,7 @@ const Pei = () => {
                 content: (
                   <FormLocalisationPei
                     values={values}
-                    selectData={selectDataState.data}
+                    selectData={selectData}
                     setValues={setValues}
                   />
                 ),
@@ -244,17 +252,14 @@ const Pei = () => {
                   values.peiTypePei === TYPE_PEI.PIBI ? (
                     <FormPibi
                       values={values}
-                      selectData={selectDataState.data}
+                      selectData={selectData}
                       setFieldValue={setFieldValue}
                       setValues={setValues}
                     />
+                  ) : values.peiTypePei === TYPE_PEI.PENA ? (
+                    <FormPena values={values} setValues={setValues} />
                   ) : (
-                    <FormPena
-                      values={values}
-                      selectData={selectDataState.data}
-                      setFieldValue={setFieldValue}
-                      setValues={setValues}
-                    />
+                    <div>Veuillez renseigner le type de PEI</div>
                   ),
               },
               {
@@ -310,11 +315,13 @@ const FormEntetePei = ({
   selectData,
   setValues,
   setFieldValue,
+  isNew,
 }: {
   values: PeiEntity;
   selectData: SelectDataType;
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
+  isNew: boolean;
 }) => {
   const listNatureDeci: IdCodeLibelleType[] = ensureDataCache(
     TYPE_DATA_CACHE.NATURE_DECI,
@@ -328,6 +335,10 @@ const FormEntetePei = ({
     ? selectData.listSite.find((e) => e.id === values.peiSiteId)?.gestionnaireId
     : null;
 
+  const listTypePei = Object.values(TYPE_PEI).map((e) => {
+    return { id: e.toString(), code: e.toString(), libelle: e.toString() };
+  });
+
   return (
     listNatureDeci && (
       <>
@@ -336,23 +347,42 @@ const FormEntetePei = ({
             <PositiveNumberInput
               name="peiNumeroInterne"
               label="Numéro interne"
+              required={false}
             />
           </Col>
           <Col>
-            <SelectNomenclaturesForm
-              name={"peiNatureId"}
-              nomenclature={
-                values.peiTypePei === TYPE_PEI.PIBI
-                  ? TYPE_DATA_CACHE.NATURE_PIBI
-                  : values.peiTypePei === TYPE_PEI.PENA
-                    ? TYPE_DATA_CACHE.NATURE_PENA
-                    : TYPE_DATA_CACHE.NATURE
-              }
-              label="Nature du PEI"
-              valueId={values.peiNatureId}
+            <SelectForm
+              name={"peiTypePei"}
+              listIdCodeLibelle={listTypePei}
+              label="Type de PEI"
+              defaultValue={listTypePei?.find(
+                (e) => e.code === values.peiTypePei,
+              )}
               required={true}
+              disabled={!isNew}
               setValues={setValues}
+              setOtherValues={() => {
+                setFieldValue("peiNatureId", null);
+              }}
             />
+          </Col>
+          <Col>
+            {values.peiTypePei && (
+              <SelectNomenclaturesForm
+                name={"peiNatureId"}
+                nomenclature={
+                  values.peiTypePei === TYPE_PEI.PIBI
+                    ? TYPE_DATA_CACHE.NATURE_PIBI
+                    : values.peiTypePei === TYPE_PEI.PENA
+                      ? TYPE_DATA_CACHE.NATURE_PENA
+                      : TYPE_DATA_CACHE.NATURE
+                }
+                label="Nature du PEI"
+                valueId={values.peiNatureId}
+                required={true}
+                setValues={setValues}
+              />
+            )}
           </Col>
         </Row>
         <Row className="mt-3">
@@ -431,7 +461,9 @@ const FormEntetePei = ({
                 <SelectForm
                   name={"peiSiteId"}
                   listIdCodeLibelle={selectData.listSite.filter(
-                    (e) => e.gestionnaireId === values.peiGestionnaireId,
+                    (e) =>
+                      e.gestionnaireId === values.peiGestionnaireId ||
+                      e.gestionnaireId === idGestionnaire,
                   )}
                   label="Site"
                   defaultValue={selectData.listSite.find(
@@ -640,7 +672,8 @@ const FormPibi = ({
           <SelectForm
             name={"pibiModeleId"}
             listIdCodeLibelle={selectData.listModele.filter(
-              (e) => e.marqueId === values.pibiMarqueId,
+              (e) =>
+                e.marqueId === values.pibiMarqueId || e.marqueId === idMarque,
             )}
             label="Modèle"
             defaultValue={selectData.listModele.find(

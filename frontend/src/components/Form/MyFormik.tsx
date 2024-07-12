@@ -55,7 +55,13 @@ const useMyFormik = (
   );
   const putState = usePut(
     submitUrl,
-    resolveReject(onSubmit, setErrorMessage),
+    resolveReject(
+      onSubmit,
+      setErrorMessage,
+      successToastMessage,
+      errorToastMessage,
+      redirectFn,
+    ),
     isMultipartFormData,
   );
   return { submitState: isPost ? postState : putState, errorMessage };
