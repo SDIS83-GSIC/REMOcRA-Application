@@ -5,7 +5,10 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { object } from "yup";
 import { PeiEntity } from "../../Entities/PeiEntity.tsx";
-import AccordionCustom from "../../components/Accordion/Accordion.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../components/Accordion/Accordion.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
@@ -16,6 +19,7 @@ import PositiveNumberInput, {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
+import { IconEdit } from "../../components/Icon/Icon.tsx";
 import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
@@ -81,6 +85,10 @@ export const validationSchema = object({
   peiServicePublicDeciId: requiredString,
   peiNatureId: requiredString,
   peiNatureDeciId: requiredString,
+
+  peiCommuneId: requiredString,
+  peiVoieId: requiredString,
+  peiDomaineId: requiredString,
 });
 
 export const prepareVariables = (data: PeiEntity, values: PeiEntity) => ({
@@ -153,6 +161,47 @@ const Pei = () => {
     useFormikContext();
   const selectDataState = useGet(url`/api/pei/referentiel-for-update-pei`);
 
+  // Permet de savoir si les sections de l'accordion sont ouvertes et de les set
+  const { handleShowClose, activesKeys, show } = useAccordionState([
+    true,
+    false,
+    false,
+    false,
+  ]);
+
+  // Correspond à la liste des champs obligatoires avec leur index dans l'accordion
+  // Cela nous permettra d'ouvrir une section si un champ obligatoire n'est pas saisi
+  const listValuesRequired: ValuesRequired[] = [
+    {
+      name: "peiAutoriteDeciId",
+      accordionIndex: 0,
+    },
+    {
+      name: "peiServicePublicDeciId",
+      accordionIndex: 0,
+    },
+    {
+      name: "peiNatureId",
+      accordionIndex: 0,
+    },
+    {
+      name: "peiNatureDeciId",
+      accordionIndex: 0,
+    },
+    {
+      name: "peiCommuneId",
+      accordionIndex: 1,
+    },
+    {
+      name: "peiVoieId",
+      accordionIndex: 1,
+    },
+    {
+      name: "peiDomaineId",
+      accordionIndex: 1,
+    },
+  ];
+
   const { data: selectData }: { data: SelectDataType | undefined } =
     selectDataState;
 
@@ -160,63 +209,98 @@ const Pei = () => {
     selectData && (
       <FormContainer>
         <Container>
-          <h1>PEI n°{values.peiNumeroComplet}</h1>
-          <AccordionCustom
-            list={[
-              {
-                header: "Informations générales",
-                content: (
-                  <FormEntetePei
-                    values={values}
-                    selectData={selectData}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
-              {
-                header: "Localisation",
-                content: (
-                  <FormLocalisationPei
-                    values={values}
-                    selectData={selectData}
-                    setValues={setValues}
-                  />
-                ),
-              },
-              {
-                header: "Caractéristiques techniques",
-                content:
-                  values.peiTypePei === TYPE_PEI.PIBI ? (
-                    <FormPibi
+          <PageTitle
+            icon={<IconEdit />}
+            title={"Modification du PIBI n°" + values.peiNumeroComplet}
+          />
+            <AccordionCustom
+              activesKeys={activesKeys}
+              handleShowClose={handleShowClose}
+              list={[
+                {
+                  header: "Informations générales",
+                  content: (
+                    <FormEntetePei
                       values={values}
                       selectData={selectDataState.data}
-                      setFieldValue={setFieldValue}
                       setValues={setValues}
+                      setFieldValue={setFieldValue}
                     />
-                  ) : (
-                    <FormPena
+                  ),
+                },
+                {
+                  header: "Localisation",
+                  content: (
+                    <FormLocalisationPei
                       values={values}
                       selectData={selectDataState.data}
-                      setFieldValue={setFieldValue}
                       setValues={setValues}
                     />
                   ),
-              },
-              {
-                header: "Documents",
-                content: <>TODO</>,
-              },
-            ]}
-          />
+                },
+                {
+                  header: "Caractéristiques techniques",
+                  content:
+                    values.peiTypePei === TYPE_PEI.PIBI ? (
+                      <FormPibi
+                        values={values}
+                        selectData={selectDataState.data}
+                        setFieldValue={setFieldValue}
+                        setValues={setValues}
+                      />
+                    ) : (
+                      <FormPena
+                        values={values}
+                        selectData={selectDataState.data}
+                        setFieldValue={setFieldValue}
+                        setValues={setValues}
+                      />
+                    ),
+                },
+                {
+                  header: "Documents",
+                  content: <>TODO</>,
+                },
+              ]}
+            />
 
-          <Button type="submit" variant="primary">
-            Valider
-          </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              onClick={() => checkValidity(values, show, listValuesRequired)}
+            >
+              Valider
+            </Button>
         </Container>
       </FormContainer>
     )
   );
+};
+
+/**
+ * Permet de check si le formulaire est conforme. S'il ne l'est pas on ouvre la section qui doit être modifiée
+ * @param values : les values de formik
+ * @param show : fonction d'ouverture d'une section
+ * @param listValuesRequired : liste des valeurs requises avec l'index de l'accordion
+ */
+function checkValidity(
+  values: any,
+  show: (e: number) => void,
+  listValuesRequired: ValuesRequired[],
+) {
+  listValuesRequired.map((e: ValuesRequired) => {
+    if (
+      validationSchema.fields[e.name] != null &&
+      (values[e.name] === null || values[e.name] === "")
+    ) {
+      show(e.accordionIndex);
+    }
+  });
+}
+
+type ValuesRequired = {
+  name: string;
+  accordionIndex: number;
 };
 
 export default Pei;
