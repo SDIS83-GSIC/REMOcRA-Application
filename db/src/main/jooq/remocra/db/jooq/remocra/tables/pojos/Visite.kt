@@ -5,7 +5,7 @@ package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.TypeVisite
 import java.io.Serializable
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -23,7 +23,7 @@ import javax.annotation.processing.Generated
 data class Visite(
     val visiteId: UUID,
     val visitePeiId: UUID,
-    val visiteDate: OffsetDateTime,
+    val visiteDate: ZonedDateTime,
     val visiteTypeVisite: TypeVisite,
     val visiteAgent1: String?,
     val visiteAgent2: String?,

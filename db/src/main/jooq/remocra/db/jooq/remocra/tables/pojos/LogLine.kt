@@ -5,7 +5,7 @@ package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.LogLineGravity
 import java.io.Serializable
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -24,7 +24,7 @@ data class LogLine(
     val logLineId: UUID,
     val logLineJobId: UUID,
     val logLineGravity: LogLineGravity,
-    val logLineDate: OffsetDateTime,
+    val logLineDate: ZonedDateTime,
     val logLineObjectId: UUID?,
     val logLineMessage: String,
 ) : Serializable {

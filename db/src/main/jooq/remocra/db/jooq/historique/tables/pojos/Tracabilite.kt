@@ -7,7 +7,7 @@ import org.jooq.JSONB
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import java.io.Serializable
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -25,7 +25,7 @@ import javax.annotation.processing.Generated
 data class Tracabilite(
     val tracabiliteId: UUID,
     val tracabiliteTypeOperation: TypeOperation,
-    val tracabiliteDate: OffsetDateTime,
+    val tracabiliteDate: ZonedDateTime,
     val tracabiliteObjetId: UUID,
     val tracabiliteTypeObjet: TypeObjet,
     val tracabiliteObjetData: JSONB,

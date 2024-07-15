@@ -24,7 +24,7 @@
       <includeRoutines>false</includeRoutines>
       <forcedTypes>
         <forcedType>
-          <userType>com.google.common.collect.Range&lt;java.time.OffsetDateTime&gt;</userType>
+          <userType>com.google.common.collect.Range&lt;java.time.ZonedDateTime&gt;</userType>
           <binding>remocra.db.jooq.bindings.PostgresTSTZRangeBinding</binding>
           <types>TSTZRANGE</types>
         </forcedType>
@@ -32,6 +32,10 @@
           <userType>org.locationtech.jts.geom.Geometry</userType>
           <binding>remocra.db.jooq.bindings.GeometryBinding</binding>
           <types>Geometry</types>
+        </forcedType>
+        <forcedType>
+          <userType>java.time.ZonedDateTime</userType>
+          <types>TIMESTAMPTZ</types>
         </forcedType>
       </forcedTypes>
     </database>

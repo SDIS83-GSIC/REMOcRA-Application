@@ -6,7 +6,7 @@ import org.jooq.JSONB
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.historique.tables.references.TRACABILITE
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 
 class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) {
@@ -18,7 +18,7 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) {
         objetData: JSONB,
         auteurId: UUID,
         auteurData: JSONB,
-        date: OffsetDateTime,
+        date: ZonedDateTime,
     ) =
         dsl.insertInto(TRACABILITE)
             .set(TRACABILITE.ID, UUID.randomUUID())

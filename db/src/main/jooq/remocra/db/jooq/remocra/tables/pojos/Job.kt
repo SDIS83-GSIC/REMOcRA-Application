@@ -6,7 +6,7 @@ package remocra.db.jooq.remocra.tables.pojos
 import org.jooq.JSONB
 import remocra.db.jooq.remocra.enums.EtatJob
 import java.io.Serializable
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -25,8 +25,8 @@ data class Job(
     val jobId: UUID,
     val jobTaskId: UUID,
     val jobEtatJob: EtatJob,
-    val jobDateDebut: OffsetDateTime,
-    val jobDateFin: OffsetDateTime?,
+    val jobDateDebut: ZonedDateTime,
+    val jobDateFin: ZonedDateTime?,
     val jobParametres: JSONB?,
 ) : Serializable {
 

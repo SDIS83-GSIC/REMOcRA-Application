@@ -23,8 +23,8 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
 import remocra.web.pei.CalculDispoUseCase
 import remocra.web.pei.NumerotationUseCase
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import java.time.Clock
+import java.time.ZonedDateTime
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -51,6 +51,9 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
     @Inject
     lateinit var parametresProvider: ParametresProvider
 
+    @Inject
+    lateinit var clock: Clock
+
     override fun postEvent(element: PeiData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
@@ -59,7 +62,7 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PEI,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.idUtilisateur, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = OffsetDateTime.now(ZoneId.systemDefault()),
+                date = ZonedDateTime.now(clock),
             ),
         )
         eventBus.post(PeiModifiedEvent(element.peiId))

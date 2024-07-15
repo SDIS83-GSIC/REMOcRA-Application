@@ -5,7 +5,7 @@ import remocra.data.AuteurTracabiliteData
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.Event
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 
 /***
@@ -23,5 +23,5 @@ class TracabiliteEvent<T> @Inject constructor(
     val typeOperation: TypeOperation,
     val typeObjet: TypeObjet,
     val auteurTracabilite: AuteurTracabiliteData,
-    val date: OffsetDateTime,
+    val date: ZonedDateTime,
 ) : Event

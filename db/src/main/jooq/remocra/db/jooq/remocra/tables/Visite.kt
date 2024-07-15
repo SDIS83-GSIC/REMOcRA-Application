@@ -20,6 +20,7 @@ import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
+import org.jooq.impl.AutoConverter
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
@@ -35,6 +36,7 @@ import remocra.db.jooq.remocra.tables.LVisiteAnomalie.LVisiteAnomaliePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression.VisiteCtrlDebitPressionPath
 import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -97,7 +99,7 @@ open class Visite(
     /**
      * The column <code>remocra.visite.visite_date</code>.
      */
-    val DATE: TableField<Record, OffsetDateTime?> = createField(DSL.name("visite_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
+    val DATE: TableField<Record, ZonedDateTime?> = createField(DSL.name("visite_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "", AutoConverter<OffsetDateTime, ZonedDateTime>(OffsetDateTime::class.java, ZonedDateTime::class.java))
 
     /**
      * The column <code>remocra.visite.visite_type_visite</code>.

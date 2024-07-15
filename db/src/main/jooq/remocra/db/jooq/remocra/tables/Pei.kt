@@ -166,7 +166,7 @@ open class Pei(
     /**
      * The column <code>remocra.pei.pei_geometrie</code>.
      */
-    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("pei_geometrie"), SQLDataType.GEOMETRY, this, "", GeometryBinding())
+    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("pei_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "", GeometryBinding())
 
     /**
      * The column <code>remocra.pei.pei_lieu_dit_id</code>.
