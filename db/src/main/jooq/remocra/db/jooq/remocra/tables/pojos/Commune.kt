@@ -3,7 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import org.jooq.Geometry
+import org.locationtech.jts.geom.Geometry
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated

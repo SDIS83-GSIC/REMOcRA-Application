@@ -3,7 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import org.jooq.Geometry
+import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import java.io.Serializable
@@ -31,7 +31,7 @@ data class Pei(
     val peiCroisementId: UUID?,
     val peiComplementAdresse: String?,
     val peiDisponibiliteTerrestre: Disponibilite,
-    val peiGeometrie: Geometry,
+    val peiGeometrie: Geometry?,
     val peiLieuDitId: UUID?,
     val peiNumeroComplet: String,
     val peiNumeroInterne: Int,
@@ -112,7 +112,11 @@ data class Pei(
         if (this.peiDisponibiliteTerrestre != o.peiDisponibiliteTerrestre) {
             return false
         }
-        if (this.peiGeometrie != o.peiGeometrie) {
+        if (this.peiGeometrie == null) {
+            if (o.peiGeometrie != null) {
+                return false
+            }
+        } else if (this.peiGeometrie != o.peiGeometrie) {
             return false
         }
         if (this.peiLieuDitId == null) {
@@ -218,7 +222,7 @@ data class Pei(
         result = prime * result + (if (this.peiCroisementId == null) 0 else this.peiCroisementId.hashCode())
         result = prime * result + (if (this.peiComplementAdresse == null) 0 else this.peiComplementAdresse.hashCode())
         result = prime * result + this.peiDisponibiliteTerrestre.hashCode()
-        result = prime * result + this.peiGeometrie.hashCode()
+        result = prime * result + (if (this.peiGeometrie == null) 0 else this.peiGeometrie.hashCode())
         result = prime * result + (if (this.peiLieuDitId == null) 0 else this.peiLieuDitId.hashCode())
         result = prime * result + this.peiNumeroComplet.hashCode()
         result = prime * result + this.peiNumeroInterne.hashCode()

@@ -7,7 +7,6 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
-import org.jooq.Geometry
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -26,6 +25,8 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.locationtech.jts.geom.Geometry
+import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeZoneIntegration
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_ZONE_INTEGRATION_ID_FKEY
@@ -108,7 +109,7 @@ open class ZoneIntegration(
      * The column
      * <code>remocra.zone_integration.zone_integration_geometrie</code>.
      */
-    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("zone_integration_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "")
+    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("zone_integration_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "", GeometryBinding())
 
     /**
      * The column <code>remocra.zone_integration.zone_integration_type</code>.

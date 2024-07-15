@@ -28,6 +28,11 @@
           <binding>remocra.db.jooq.bindings.PostgresTSTZRangeBinding</binding>
           <types>TSTZRANGE</types>
         </forcedType>
+        <forcedType>
+          <userType>org.locationtech.jts.geom.Geometry</userType>
+          <binding>remocra.db.jooq.bindings.GeometryBinding</binding>
+          <types>Geometry</types>
+        </forcedType>
       </forcedTypes>
     </database>
     <generate>

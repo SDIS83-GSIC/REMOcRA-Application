@@ -62,6 +62,7 @@ swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.22"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.22"
 
 geotools-gt-shapefile = "org.geotools:gt-shapefile:31.0"
+geotools-gt-main = "org.geotools:gt-main:31.2"
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }

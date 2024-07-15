@@ -65,6 +65,8 @@ dependencies {
     // Pour l'import des fichiers shape
     implementation(libs.geotools.gt.shapefile)
 
+    implementation(libs.geotools.gt.main)
+
     // Pac4j (authn)
     implementation(libs.jakartaee.pac4j)
     implementation(libs.pac4j.oidc)
