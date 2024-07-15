@@ -1,6 +1,7 @@
 package remocra.web.visite
 
 import com.google.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
@@ -17,6 +18,7 @@ import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.usecases.visites.CreateVisiteUseCase
+import remocra.usecases.visites.DeleteVisiteUseCase
 import remocra.usecases.visites.GetVisiteWithAnomalies
 import remocra.web.wrap
 import java.math.BigDecimal
@@ -31,6 +33,9 @@ class VisiteEndPoint {
 
     @Inject
     lateinit var createVisiteUseCase: CreateVisiteUseCase
+
+    @Inject
+    lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
 
     @Inject
     lateinit var peiRepository: PeiRepository
@@ -124,4 +129,12 @@ class VisiteEndPoint {
         val isCtrlDebitPression: Boolean,
         var ctrlDebitPression: CreationVisiteCtrl?,
     )
+
+    @DELETE
+    @Path("/{visiteId}")
+    fun deleteVisite(
+        @PathParam("visiteId") visiteId: UUID,
+    ): Response {
+        return deleteVisiteUseCase.execute(userInfo = securityContext.userInfo, element = visiteId).wrap()
+    }
 }

@@ -118,4 +118,33 @@ class VisiteRepository
         dsl.insertInto(VISITE_CTRL_DEBIT_PRESSION)
             .set(dsl.newRecord(VISITE_CTRL_DEBIT_PRESSION, ctrlDebitPression))
             .execute()
+
+    // DeleteVisiteUseCase
+    fun getPeiIdByVisiteId(visiteId: UUID): UUID? =
+        dsl.select(VISITE.PEI_ID)
+            .from(VISITE)
+            .where(VISITE.ID.eq(visiteId))
+            .fetchOneInto()
+
+    fun getLastPeiVisiteId(peiId: UUID): UUID? =
+        dsl.select(VISITE.ID)
+            .from(VISITE)
+            .where(VISITE.PEI_ID.eq(peiId))
+            .orderBy(VISITE.DATE.desc())
+            .fetchAnyInto()
+
+    fun deleteAllVisiteAnomalies(visiteId: UUID) =
+        dsl.deleteFrom(L_VISITE_ANOMALIE)
+            .where(L_VISITE_ANOMALIE.VISITE_ID.eq(visiteId))
+            .execute()
+
+    fun deleteVisiteCtrl(visiteId: UUID) =
+        dsl.deleteFrom(VISITE_CTRL_DEBIT_PRESSION)
+            .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(visiteId))
+            .execute()
+
+    fun deleteVisite(visiteId: UUID) =
+        dsl.deleteFrom(VISITE)
+            .where(VISITE.ID.eq(visiteId))
+            .execute()
 }
