@@ -149,6 +149,7 @@ export const NumberInput = ({
   required = true,
   readOnly = false,
   value,
+  ...rest
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -157,11 +158,12 @@ export const NumberInput = ({
       <FormLabel label={label} required={required} />
       <Form.Control
         type="number"
-        min={1}
-        step={0.1}
+        min={rest.min ?? 1}
+        step={rest.step ?? 0.1}
         readOnly={readOnly}
         defaultValue={value ?? ""}
         {...field}
+        {...rest}
       />
     </DivWithError>
   );
@@ -173,6 +175,7 @@ const PositiveNumberInput = ({
   required = true,
   readOnly = false,
   value,
+  ...rest
 }: InputType) => {
   const handleBlur = (e: React.FormEvent<EventTarget>) => {
     if (e.currentTarget.value === "0") {
@@ -207,11 +210,12 @@ const PositiveNumberInput = ({
         type="number"
         onKeyDown={handleKeypress}
         onBlur={handleBlur}
-        min={1}
-        step={1}
+        min={rest.min ?? 1}
+        step={rest.step ?? 1}
         readOnly={readOnly}
         defaultValue={value ?? ""}
         {...field}
+        {...rest}
       />
     </DivWithError>
   );
