@@ -222,3 +222,26 @@ const PositiveNumberInput = ({
 };
 
 export default PositiveNumberInput;
+
+export const DateTimeInput = ({
+  name,
+  label,
+  required = true,
+  readOnly = false,
+  ...rest
+}: InputType) => {
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+  return (
+    <DivWithError name={name} error={error}>
+      <FormLabel label={label} required={required} />
+      <input
+        type="datetime-local"
+        required={required}
+        {...field}
+        {...rest}
+        disabled={readOnly}
+      />
+    </DivWithError>
+  );
+};
