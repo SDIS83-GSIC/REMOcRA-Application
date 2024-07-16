@@ -15,6 +15,7 @@ import remocra.data.enums.TypeSourceModification
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.eventbus.EventBus
 import remocra.eventbus.pei.PeiModifiedEvent
@@ -28,6 +29,8 @@ import java.time.ZoneId
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
  * Permet de gérer les opérations transverses, calcul de la numérotation, de la dispo, et déclenchement des events, communes aux différents types d'opérations
+ * Dans le cadre d'une insertion, on ne peut en aucun cas renseigner ses visites. Le PEI sera donc mis en indisponible.
+ * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
 abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>() {
     @Inject
@@ -102,41 +105,47 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
                 element.peiNumeroComplet = numeroComplet
             }
 
-            // à partir de là, on a besoin de travailler sur le type concret
-            if (TypePei.PIBI == element.peiTypePei) {
-                val elementConcret = element as PibiData
-
-                val lastVisite = visiteRepository.getLastVisiteDebitPression(element.peiId)
-
-                // Calcul de la dispo du PEI
-                val peiForCalculDispoData = PeiForCalculDispoData(
-                    peiId = elementConcret.peiId,
-                    peiNatureId = elementConcret.peiNatureId,
-                    diametreId = elementConcret.pibiDiametreId,
-                    debit = lastVisite?.visiteCtrlDebitPressionDebit,
-                    pression = lastVisite?.visiteCtrlDebitPressionPression?.toDouble(),
-                    pressionDynamique = lastVisite?.visiteCtrlDebitPressionPressionDyn?.toDouble(),
-                    penaCapacite = null,
-                    penaCapaciteIllimitee = null,
-                )
-
-                elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)
+            // Si c'est une insertion, on met directement le PEI indisponible
+            // (Il n'est pas encore présent en base et n'a pas de visites)
+            if (typeOperation == TypeOperation.INSERT) {
+                element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
             } else {
-                val elementConcret = element as PenaData
+                // à partir de là, on a besoin de travailler sur le type concret
+                if (TypePei.PIBI == element.peiTypePei) {
+                    val elementConcret = element as PibiData
 
-                // Calcul de la dispo du PEI
-                val peiForCalculDispoData = PeiForCalculDispoData(
-                    peiId = elementConcret.peiId,
-                    peiNatureId = elementConcret.peiNatureId,
-                    diametreId = null,
-                    debit = null,
-                    pression = null,
-                    pressionDynamique = null,
-                    penaCapacite = elementConcret.penaCapacite,
-                    penaCapaciteIllimitee = elementConcret.penaCapaciteIllimitee,
-                )
+                    val lastVisite = visiteRepository.getLastVisiteDebitPression(element.peiId)
 
-                elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)
+                    // Calcul de la dispo du PEI
+                    val peiForCalculDispoData = PeiForCalculDispoData(
+                        peiId = elementConcret.peiId,
+                        peiNatureId = elementConcret.peiNatureId,
+                        diametreId = elementConcret.pibiDiametreId,
+                        debit = lastVisite?.visiteCtrlDebitPressionDebit,
+                        pression = lastVisite?.visiteCtrlDebitPressionPression?.toDouble(),
+                        pressionDynamique = lastVisite?.visiteCtrlDebitPressionPressionDyn?.toDouble(),
+                        penaCapacite = null,
+                        penaCapaciteIllimitee = null,
+                    )
+
+                    elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)
+                } else {
+                    val elementConcret = element as PenaData
+
+                    // Calcul de la dispo du PEI
+                    val peiForCalculDispoData = PeiForCalculDispoData(
+                        peiId = elementConcret.peiId,
+                        peiNatureId = elementConcret.peiNatureId,
+                        diametreId = null,
+                        debit = null,
+                        pression = null,
+                        pressionDynamique = null,
+                        penaCapacite = elementConcret.penaCapacite,
+                        penaCapaciteIllimitee = elementConcret.penaCapaciteIllimitee,
+                    )
+
+                    elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)
+                }
             }
         }
 
