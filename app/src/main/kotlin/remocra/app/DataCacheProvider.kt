@@ -146,6 +146,10 @@ constructor(
 
     fun getNatures() = get().mapNature
 
+    fun getDomaines() = get().mapDomaine
+
+    fun getNaturesDeci() = get().mapNatureDeci
+
     /**
      * Fonction permettant de retourner la classe du POJO attendu en fonction du type (pour introspection)
      */

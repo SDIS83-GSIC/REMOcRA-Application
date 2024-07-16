@@ -40,10 +40,10 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
     lateinit var calculDispoUseCase: CalculDispoUseCase
 
     @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
+    lateinit var visiteRepository: VisiteRepository
 
     @Inject
-    lateinit var visiteRepository: VisiteRepository
+    lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject
     lateinit var parametresProvider: ParametresProvider
@@ -68,21 +68,27 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
      * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
      */
     private fun needComputeNumeroInterne(element: PeiData): Boolean {
-        return calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) || calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) || calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial)
+        return calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
+            calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
+            calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial)
     }
 
     override fun execute(element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
-            if (element.peiNumeroInterne == null || parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true && needComputeNumeroInterne(element)) {
+            if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
+                parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
+                needComputeNumeroInterne(element)
+            ) {
                 // Création de l'objet data pour le calcul
                 val peiForNumerotationData = PeiForNumerotationData(
                     peiNumeroInterne = null,
                     peiId = element.peiId,
                     peiCommuneId = element.peiCommuneId,
                     peiZoneSpecialeId = element.peiZoneSpecialeId,
-                    peiNatureDeciId = element.peiNatureDeciId,
-                    peiDomaineId = element.peiDomaineId,
+                    domaine = dataCacheProvider.getDomaines().values.firstOrNull { it.domaineId == element.peiDomaineId },
+                    nature = dataCacheProvider.getNatures().values.firstOrNull { it.natureId == element.peiNatureId },
+                    natureDeci = dataCacheProvider.getNaturesDeci().values.firstOrNull { it.natureDeciId == element.peiNatureDeciId },
                 )
 
                 // Calcul du numéro *interne*
@@ -97,7 +103,7 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
             }
 
             // à partir de là, on a besoin de travailler sur le type concret
-            if (TypePei.PIBI == dataCacheProvider.getNatures()[element.peiNatureId]!!.natureTypePei) {
+            if (TypePei.PIBI == element.peiTypePei) {
                 val elementConcret = element as PibiData
 
                 val lastVisite = visiteRepository.getLastVisiteDebitPression(element.peiId)

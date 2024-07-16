@@ -3,6 +3,7 @@ package remocra.data
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.util.UUID
 
@@ -17,12 +18,11 @@ data class PeiForNumerotationData(
     val peiId: UUID?,
     val peiCommuneId: UUID?,
     val peiZoneSpecialeId: UUID?,
-    val peiNatureDeciId: UUID?,
-    val peiDomaineId: UUID?,
 
     val nature: Nature? = null,
+    val natureDeci: NatureDeci? = null,
     var zoneSpeciale: ZoneIntegration? = null,
     var commune: Commune? = null,
-    var domaine: Domaine? = null,
+    val domaine: Domaine? = null,
 
 )

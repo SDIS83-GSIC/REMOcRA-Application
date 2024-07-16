@@ -2,17 +2,13 @@ package remocra.web.pei
 
 import com.google.inject.Inject
 import remocra.app.AppSettings
-import remocra.app.DataCacheProvider
 import remocra.data.PeiForNumerotationData
 import remocra.data.enums.CodeSdis
-import remocra.data.enums.TypeDataCache
 import remocra.db.CommuneRepository
 import remocra.db.NumerotationRepository
 import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Commune
-import remocra.db.jooq.remocra.tables.pojos.Domaine
-import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.util.Locale
 import java.util.UUID
@@ -75,9 +71,6 @@ class NumerotationUseCase {
 
     @Inject
     private lateinit var communeRepository: CommuneRepository
-
-    @Inject
-    private lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject
     private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
@@ -217,7 +210,7 @@ class NumerotationUseCase {
             peiNatureId = null,
             peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
             peiZoneSpecialeId = pei.peiZoneSpecialeId,
-            peiNatureDeciId = pei.peiNatureDeciId,
+            peiNatureDeciId = pei.natureDeci?.natureDeciId,
         )
 
         val seed: Int
@@ -445,7 +438,7 @@ class NumerotationUseCase {
     }
 
     private fun computeNumeroInterne53Public(pei: PeiForNumerotationData, startRange: Int, stopRange: Int): Int {
-        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(pei.nature!!.natureTypePei, pei.nature.natureId, pei.peiCommuneId!!, pei.peiZoneSpecialeId!!, pei.peiNatureDeciId!!)
+        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(pei.nature!!.natureTypePei, pei.nature.natureId, pei.peiCommuneId!!, pei.peiZoneSpecialeId!!, pei.natureDeci?.natureDeciId)
 
         return listPeiNumeroInterne.getNextNumeroInterneWhile(startRange, stopRange)
     }
@@ -455,7 +448,7 @@ class NumerotationUseCase {
             if (ignoreDECI) { // si on ignore la nature DECI ; Cas des secteurs Changé Rive Gauche/Droite et Changé Privé
                 numerotationRepository.getListPeiNumeroInterne(pei.nature.natureTypePei, null, pei.peiCommuneId!!, pei.peiZoneSpecialeId, null)
             } else {
-                numerotationRepository.getListPeiNumeroInterne(pei.nature.natureTypePei, null, pei.peiCommuneId!!, pei.peiZoneSpecialeId, pei.peiNatureDeciId)
+                numerotationRepository.getListPeiNumeroInterne(pei.nature.natureTypePei, null, pei.peiCommuneId!!, pei.peiZoneSpecialeId, pei.natureDeci!!.natureDeciId)
             }
         } else {
             numerotationRepository.getListPeiNumeroInterne(pei.nature.natureTypePei, null, pei.peiCommuneId!!, null, null)
@@ -494,9 +487,10 @@ class NumerotationUseCase {
     }
 
     private fun computeNumero53(pei: PeiForNumerotationData): String {
+        checkNatureDeci(pei)
         var suffixe = ""
-        val natureDeci = dataCacheProvider.getData(TypeDataCache.NATURE_DECI)[pei.peiNatureDeciId] as NatureDeci
 
+        val natureDeci = pei.natureDeci!!
         if (TypePei.PIBI == pei.nature!!.natureTypePei) {
             if (CODE_INSEE_LAVAL.equals(ensureCommune(pei).communeInsee, ignoreCase = true)) {
                 if (pei.peiZoneSpecialeId != null && NATURE_DECI_PRIVE.equals(natureDeci.natureDeciCode, ignoreCase = true)) {
@@ -529,7 +523,7 @@ class NumerotationUseCase {
                         }
                     }
                 }
-            } else if (NATURE_DECI_PRIVE.equals(natureDeci.natureDeciCode, ignoreCase = true)) {
+            } else if (NATURE_DECI_PRIVE.equals(pei.natureDeci.natureDeciCode, ignoreCase = true)) {
                 suffixe = "P"
             }
         }
@@ -636,8 +630,8 @@ class NumerotationUseCase {
      */
     private fun computeNumero78(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
-        if (pei.peiDomaineId != null) {
-            val codeDomaine = (dataCacheProvider.getData(TypeDataCache.DOMAINE)[pei.peiDomaineId] as Domaine).domaineCode
+        if (pei.domaine != null) {
+            val codeDomaine = pei.domaine.domaineCode
 
             if (CODE_DOMAINE_AUTOROUTE == codeDomaine) {
                 return ensureCommune(pei).communeInsee + "A" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
@@ -741,7 +735,7 @@ class NumerotationUseCase {
      * @param constanteNatureDeci contenu de la constante associée pour tester le code de la nature DECI
      */
     private fun isNatureDeci(pei: PeiForNumerotationData, constanteNatureDeci: String): Boolean {
-        return constanteNatureDeci.equals((dataCacheProvider.getData(TypeDataCache.NATURE_DECI)[pei.peiNatureDeciId] as NatureDeci).natureDeciCode, ignoreCase = true)
+        return constanteNatureDeci.equals(pei.natureDeci?.natureDeciCode, ignoreCase = true)
     }
 
     private fun checkCommuneId(pei: PeiForNumerotationData) {
@@ -753,6 +747,12 @@ class NumerotationUseCase {
     private fun checkNature(pei: PeiForNumerotationData) {
         if (pei.nature == null) {
             throw IllegalArgumentException("Pas de nature pour la numérotation")
+        }
+    }
+
+    private fun checkNatureDeci(pei: PeiForNumerotationData) {
+        if (pei.natureDeci == null) {
+            throw IllegalArgumentException("Pas de nature DECI pour la numérotation")
         }
     }
 
