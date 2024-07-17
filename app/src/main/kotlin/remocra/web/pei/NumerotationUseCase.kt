@@ -530,7 +530,7 @@ class NumerotationUseCase {
 
         // Construction Numéro PEI
         val sb = StringBuilder()
-        sb.append(natureDeci.natureDeciCode)
+        sb.append(pei.nature.natureCode)
         sb.append(ensureCommune(pei).communeInsee)
         if (pei.peiNumeroInterne.toString().length == 4) {
             sb.append("%04d".format(Locale.getDefault(), pei.peiNumeroInterne))
