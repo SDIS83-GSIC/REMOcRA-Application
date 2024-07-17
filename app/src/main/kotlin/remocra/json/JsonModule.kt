@@ -12,6 +12,7 @@ import com.google.inject.Binder
 import com.google.inject.Module
 import com.google.inject.Provides
 import com.google.inject.Singleton
+import remocra.geometrie.GeometrieModule
 import remocra.web.registerResource
 
 object JsonModule : Module {
@@ -27,6 +28,7 @@ object JsonModule : Module {
             .registerModule(JavaTimeModule())
             .registerModule(GuavaModule())
             .registerModule(CustomTypeJsonModule())
+            .registerModule(GeometrieModule())
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
