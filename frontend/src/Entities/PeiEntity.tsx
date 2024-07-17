@@ -28,6 +28,7 @@ export type PeiEntity = {
   peiNatureDeciId: string;
   peiAnneeFabrication: number;
   peiNiveauId: string;
+  peiZoneSpecialeId: string;
 
   // DONNEES PIBI
   pibiDiametreId?: string;
@@ -52,4 +53,11 @@ export type PeiEntity = {
   penaMateriauId?: string;
   penaQuantiteAppoint?: number;
   penaDisponibiliteHbe?: DISPONIBILITE_PEI;
+
+  // DONNEES INITIALES
+  peiNumeroInterneInitial?: number;
+  peiCommuneIdInitial?: string;
+  peiZoneSpecialeIdInitial?: string;
+  peiNatureDeciIdInitial?: string;
+  peiDomaineIdInitial?: string;
 };

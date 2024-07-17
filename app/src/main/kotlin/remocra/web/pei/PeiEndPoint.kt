@@ -149,6 +149,11 @@ class PeiEndPoint {
                 pibiTypeCanalisationId = peiInput.pibiTypeCanalisationId,
                 pibiDiametreCanalisation = peiInput.pibiDiametreCanalisation,
                 pibiDispositifInviolabilite = peiInput.pibiDispositifInviolabilite,
+                peiCommuneIdInitial = peiInput.peiCommuneIdInitial,
+                peiDomaineIdInitial = peiInput.peiDomaineIdInitial,
+                peiNatureDeciIdInitial = peiInput.peiNatureDeciIdInitial,
+                peiZoneSpecialeIdInitial = peiInput.peiZoneSpecialeIdInitial,
+                peiNumeroInterneInitial = peiInput.peiNumeroInterneInitial,
             )
             TypePei.PENA -> PenaData(
                 peiId = peiInput.peiId ?: UUID.randomUUID(),
@@ -182,6 +187,11 @@ class PeiEndPoint {
                 penaMateriauId = peiInput.penaMateriauId,
                 penaCapacite = peiInput.penaCapacite,
                 penaCapaciteIncertaine = peiInput.penaCapaciteIncertaine,
+                peiCommuneIdInitial = peiInput.peiCommuneIdInitial,
+                peiDomaineIdInitial = peiInput.peiDomaineIdInitial,
+                peiNatureDeciIdInitial = peiInput.peiNatureDeciIdInitial,
+                peiZoneSpecialeIdInitial = peiInput.peiZoneSpecialeIdInitial,
+                peiNumeroInterneInitial = peiInput.peiNumeroInterneInitial,
 
             )
             else -> throw IllegalArgumentException()
@@ -315,5 +325,21 @@ class PeiEndPoint {
 
         @FormParam("penaCapacite")
         var penaCapacite: Int? = null
+
+        // On renvoie aussi les valeurs initiales pour la numérotation
+        @FormParam("peiNumeroInterneInitial")
+        var peiNumeroInterneInitial: Int? = null
+
+        @FormParam("peiCommuneIdInitial")
+        var peiCommuneIdInitial: UUID? = null
+
+        @FormParam("peiZoneSpecialeIdInitial")
+        var peiZoneSpecialeIdInitial: UUID? = null
+
+        @FormParam("peiNatureDeciIdInitial")
+        var peiNatureDeciIdInitial: UUID? = null
+
+        @FormParam("peiDomaineIdInitial")
+        var peiDomaineIdInitial: UUID? = null
     }
 }

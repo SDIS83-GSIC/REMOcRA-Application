@@ -765,7 +765,7 @@ class NumerotationUseCase {
      *
      * @return Boolean : doit-on recalculer le numéro interne ?
      */
-    fun needComputeNumeroInterneDomaine(domaineId: UUID, domaineIdInitial: UUID): Boolean {
+    fun needComputeNumeroInterneDomaine(domaineId: UUID, domaineIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_78 ->
                 domaineId != domaineIdInitial
@@ -782,7 +782,7 @@ class NumerotationUseCase {
      *
      * @return Boolean : doit-on recalculer le numéro interne ?
      */
-    fun needComputeNumeroInterneNatureDeci(natureDeciId: UUID, natureDeciIdInitial: UUID): Boolean {
+    fun needComputeNumeroInterneNatureDeci(natureDeciId: UUID, natureDeciIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_53,
             CodeSdis.SDIS_66,
@@ -806,7 +806,7 @@ class NumerotationUseCase {
      *
      * @return Boolean : doit-on recalculer le numéro interne ?
      */
-    fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
+    fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID?, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_39,

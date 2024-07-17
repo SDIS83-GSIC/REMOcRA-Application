@@ -41,11 +41,11 @@ open class PeiData(
     // TODO ajouter la géométrie
 
     // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
-    val peiNumeroInterneInitial: Int? = peiNumeroInterne,
-    val peiCommuneIdInitial: UUID = peiCommuneId,
-    val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
-    val peiNatureDeciIdInitial: UUID = peiNatureDeciId,
-    val peiDomaineIdInitial: UUID = peiDomaineId,
+    open val peiNumeroInterneInitial: Int? = peiNumeroInterne,
+    open val peiCommuneIdInitial: UUID? = peiCommuneId,
+    open val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
+    open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    open val peiDomaineIdInitial: UUID? = peiDomaineId,
 )
 
 data class PibiData(
@@ -77,6 +77,12 @@ data class PibiData(
     override val peiAnneeFabrication: Int?,
     override val peiNiveauId: UUID?,
     override val peiObservation: String?,
+
+    override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
+    override val peiCommuneIdInitial: UUID? = peiCommuneId,
+    override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
+    override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    override val peiDomaineIdInitial: UUID? = peiDomaineId,
 
     val pibiDiametreId: UUID?,
     val pibiServiceEauId: UUID?,
@@ -119,6 +125,11 @@ data class PibiData(
     peiAnneeFabrication,
     peiNiveauId,
     peiObservation,
+    peiNumeroInterneInitial,
+    peiCommuneIdInitial,
+    peiZoneSpecialeIdInitial,
+    peiNatureDeciIdInitial,
+    peiDomaineIdInitial,
 )
 
 class PenaData(
@@ -150,6 +161,12 @@ class PenaData(
     override val peiAnneeFabrication: Int?,
     override val peiNiveauId: UUID?,
     override val peiObservation: String?,
+
+    override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
+    override val peiCommuneIdInitial: UUID? = peiCommuneId,
+    override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
+    override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    override val peiDomaineIdInitial: UUID? = peiDomaineId,
 
     val penaDisponibiliteHbe: Disponibilite,
     val penaCapacite: Int? = null,
@@ -183,4 +200,9 @@ class PenaData(
     peiAnneeFabrication,
     peiNiveauId,
     peiObservation,
+    peiNumeroInterneInitial,
+    peiCommuneIdInitial,
+    peiZoneSpecialeIdInitial,
+    peiNatureDeciIdInitial,
+    peiDomaineIdInitial,
 )

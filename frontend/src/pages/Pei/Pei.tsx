@@ -54,6 +54,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiGestionnaireId: data?.peiGestionnaireId ?? null,
   peiNatureDeciId: data?.peiNatureDeciId ?? null,
   peiNiveauId: data?.peiNiveauId ?? null,
+  peiZoneSpecialeId: data?.peiZoneSpecialeId ?? null,
 
   // DONNEES PIBI
   pibiDiametreId: data?.pibiDiametreId ?? null,
@@ -141,6 +142,13 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
   penaMateriauId: values.penaMateriauId ?? null,
   penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
   penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+
+  // DONNEES INITIALES
+  peiNumeroInterneInitial: data?.peiNumeroInterne ?? null,
+  peiCommuneIdInitial: data?.peiCommuneId ?? null,
+  peiZoneSpecialeIdInitial: data?.peiZoneSpecialeId ?? null,
+  peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
+  peiDomaineIdInitial: data?.peiDomaineId ?? null,
 });
 
 type SelectDataType = {
