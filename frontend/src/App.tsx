@@ -14,7 +14,6 @@ const App = () => {
     <AppProvider>
       <DataCacheProvider>
         <BrowserRouter>
-          <h1>Page authentifiée</h1>
           <RouteConfig routes={routes} />
         </BrowserRouter>
       </DataCacheProvider>
