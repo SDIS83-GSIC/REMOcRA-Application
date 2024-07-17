@@ -34,6 +34,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiNumeroInterne: data?.peiNumeroInterne ?? null,
   peiTypePei: data?.peiTypePei ?? null,
   peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
+  peiAnneeFabrication: data?.peiAnneeFabrication ?? null,
 
   peiAutoriteDeciId: data?.peiAutoriteDeciId ?? null,
   peiServicePublicDeciId: data?.peiServicePublicDeciId ?? null,
@@ -98,6 +99,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
   peiNumeroInterne: values.peiNumeroInterne ?? null,
   peiTypePei: values.peiTypePei,
   peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
+  peiAnneeFabrication: values?.peiAnneeFabrication ?? null,
 
   peiAutoriteDeciId: values.peiAutoriteDeciId ?? null,
   peiServicePublicDeciId: values.peiServicePublicDeciId ?? null,

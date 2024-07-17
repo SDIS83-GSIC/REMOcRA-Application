@@ -131,8 +131,8 @@ class PeiEndPoint {
                 peiSiteId = peiInput.peiSiteId,
                 peiGestionnaireId = peiInput.peiGestionnaireId,
                 peiNatureDeciId = peiInput.peiNatureDeciId,
-                peiZoneSpecialeId = null,
-                peiAnneeFabrication = null,
+                peiZoneSpecialeId = peiInput.peiZoneSpecialeIdInitial,
+                peiAnneeFabrication = peiInput.peiAnneeFabrication,
                 peiNiveauId = peiInput.peiNiveauId,
                 peiObservation = null,
                 pibiRenversable = peiInput.pibiRenversable,
@@ -177,8 +177,8 @@ class PeiEndPoint {
                 peiSiteId = peiInput.peiSiteId,
                 peiGestionnaireId = peiInput.peiGestionnaireId,
                 peiNatureDeciId = peiInput.peiNatureDeciId,
-                peiZoneSpecialeId = null,
-                peiAnneeFabrication = null,
+                peiZoneSpecialeId = peiInput.peiZoneSpecialeIdInitial,
+                peiAnneeFabrication = peiInput.peiAnneeFabrication,
                 peiNiveauId = peiInput.peiNiveauId,
                 peiObservation = null,
                 penaCapaciteIllimitee = peiInput.penaCapaciteIllimitee,
@@ -215,6 +215,9 @@ class PeiEndPoint {
 
         @FormParam("peiDisponibiliteTerrestre")
         val peiDisponibiliteTerrestre: Disponibilite? = null
+
+        @FormParam("peiAnneeFabrication")
+        var peiAnneeFabrication: Int? = null
 
         @FormParam("peiServicePublicDeciId")
         lateinit var peiServicePublicDeciId: UUID
