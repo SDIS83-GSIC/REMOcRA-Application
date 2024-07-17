@@ -142,7 +142,7 @@ CREATE TABLE remocra.modele_pibi
     modele_pibi_actif     BOOLEAN NOT NULL,
     modele_pibi_code      TEXT    NOT NULL UNIQUE,
     modele_pibi_libelle   TEXT    NOT NULL,
-    modele_pibi_marque_id UUID REFERENCES remocra.marque_pibi (marque_pibi_id)
+    modele_pibi_marque_id UUID NOT NULL REFERENCES remocra.marque_pibi (marque_pibi_id)
 
 );
 INSERT INTO remocra.modele_pibi
