@@ -35,6 +35,7 @@
         </forcedType>
         <forcedType>
           <userType>java.time.ZonedDateTime</userType>
+          <binding>remocra.db.jooq.bindings.ZonedDateTimeBinding</binding>
           <types>TIMESTAMPTZ</types>
         </forcedType>
       </forcedTypes>

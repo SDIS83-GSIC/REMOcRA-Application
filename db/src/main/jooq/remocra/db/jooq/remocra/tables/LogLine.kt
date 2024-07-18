@@ -20,17 +20,16 @@ import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
-import org.jooq.impl.AutoConverter
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.LogLineGravity
 import remocra.db.jooq.remocra.keys.LOG_LINE_PKEY
 import remocra.db.jooq.remocra.keys.LOG_LINE__LOG_LINE_LOG_LINE_JOB_ID_FKEY
 import remocra.db.jooq.remocra.tables.Job.JobPath
-import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -99,7 +98,7 @@ open class LogLine(
     /**
      * The column <code>remocra.log_line.log_line_date</code>.
      */
-    val DATE: TableField<Record, ZonedDateTime?> = createField(DSL.name("log_line_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "", AutoConverter<OffsetDateTime, ZonedDateTime>(OffsetDateTime::class.java, ZonedDateTime::class.java))
+    val DATE: TableField<Record, ZonedDateTime?> = createField(DSL.name("log_line_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "", ZonedDateTimeBinding())
 
     /**
      * The column <code>remocra.log_line.log_line_object_id</code>.
