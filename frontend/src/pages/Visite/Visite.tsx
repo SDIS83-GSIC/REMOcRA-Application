@@ -3,21 +3,41 @@ import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { ReactNode, useState } from "react";
 import classNames from "classnames";
 import { useParams } from "react-router-dom";
+import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconOverview } from "../../components/Icon/Icon.tsx";
-import AccordionCustom from "../../components/Accordion/Accordion.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../components/Accordion/Accordion.tsx";
 import url from "../../module/fetch.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
+import VisiteForm, {
+  getInitialValues,
+  prepareVariables,
+  validationSchema,
+} from "./VisiteForm.tsx";
 
 const Visite = () => {
   const { peiId } = useParams();
 
   const [currentVisite, setCurrentVisite] =
     useState<VisiteCompleteEntity>(null);
+  const [newVisite, setNewVisite] = useState<boolean>(false); // Permet de différencier la lecture de la création d'un visite pour l'affichage
+
+  const { handleShowClose, activesKeys } = useAccordionState([
+    true,
+    false,
+    false,
+    false,
+  ]);
 
   const listeVisite = useGet(
     url`/api/visite/getVisiteWithAnomalies/` + peiId,
+    {},
+  );
+  const listeAnomaliesAssignable = useGet(
+    url`/api/anomalie/getAssignablesAnomalies/` + peiId,
     {},
   );
 
@@ -63,9 +83,19 @@ const Visite = () => {
   }
 
   return (
-    <Container className="p-0 m-0">
+    <Container>
       <Row>
         <Col xs="5">
+          <div>
+            <Button
+              onClick={() => {
+                setNewVisite(true);
+                setCurrentVisite(null);
+              }}
+            >
+              Nouvelle visite
+            </Button>
+          </div>
           <Table striped bordered size="sm">
             <thead>
               <tr>
@@ -93,10 +123,16 @@ const Visite = () => {
                       size="sm"
                       onClick={() => {
                         setCurrentVisite(element);
+                        setNewVisite(false);
                       }}
                     >
                       <IconOverview />
                     </Button>
+                    {/*
+                        TODO : Implémenter la suppression de la dernière visite
+                        TODO : Implémenter une modale de suppression
+                    {index === 0 && <Button size="sm">Supprimer</Button>}
+                    */}
                   </td>
                 </tr>
               ))}
@@ -104,11 +140,13 @@ const Visite = () => {
           </Table>
         </Col>
         {/* Visualisation d'une visite déja existante */}
-        {currentVisite && (
+        {currentVisite && !newVisite && (
           <Col xs="7">
             <div>
               <h3>Consultation d&apos;une visite </h3>
               <AccordionCustom
+                activesKeys={activesKeys}
+                handleShowClose={handleShowClose}
                 list={[
                   {
                     header: "Informations générales",
@@ -197,6 +235,30 @@ const Visite = () => {
                   },
                 ]}
               />
+            </div>
+          </Col>
+        )}
+        {/* Création d'une nouvelle visite */}
+        {!currentVisite && newVisite && (
+          <Col>
+            <div>
+              <h3>Création d&apos;une visite</h3>
+              <MyFormik
+                initialValues={getInitialValues(
+                  peiId,
+                  listeAnomaliesAssignable.data,
+                )}
+                validationSchema={validationSchema}
+                isPost={false}
+                submitUrl={`/api/visite/createVisite`}
+                prepareVariables={(values) => prepareVariables(values)}
+                onSubmit={() => window.location.reload()}
+              >
+                <VisiteForm
+                  nbVisite={listeVisite.data.length}
+                  listeAnomaliesAssignable={listeAnomaliesAssignable.data}
+                />
+              </MyFormik>
             </div>
           </Col>
         )}

@@ -4,7 +4,7 @@ import { Field, Form as FormikForm, useField } from "formik";
 
 type InputType = {
   name: string;
-  label: string;
+  label?: string;
   required?: boolean;
   readOnly?: boolean;
   value?: string;
@@ -37,14 +37,16 @@ export const FormLabel = ({
   className,
   required = true,
 }: {
-  label: string;
+  label?: string;
   className?: string;
   required?: boolean;
 }) => {
   return (
-    <Form.Label className={"fw-bold " + className}>
-      {label} {required === true && <span className="text-danger">*</span>}
-    </Form.Label>
+    label && (
+      <Form.Label className={"fw-bold " + className}>
+        {label} {required === true && <span className="text-danger">*</span>}
+      </Form.Label>
+    )
   );
 };
 
@@ -111,7 +113,7 @@ export const CheckBoxInput = ({
   return (
     <DivWithError name={name} error={error}>
       <Field name={name} type="checkbox" />
-      <FormLabel className="p-3" label={label} required={required} />
+      <FormLabel className="p-1" label={label} required={required} />
     </DivWithError>
   );
 };

@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
 import remocra.web.documents.DocumentModule
@@ -28,6 +29,7 @@ object WebModule : AbstractModule() {
         install(NatureDeciModule)
         install(ApiModule)
         install(VisiteModule)
+        install(AnomalieModule)
         install(NomenclatureModule)
         install(AppSettingsModule)
         install(DocumentModule)
