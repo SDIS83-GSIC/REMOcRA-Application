@@ -30,6 +30,10 @@ export type PeiEntity = {
   peiNiveauId: string;
   peiZoneSpecialeId: string;
 
+  coordonneeX: number;
+  coordonneeY: number;
+  srid: number;
+
   // DONNEES PIBI
   pibiDiametreId?: string;
   pibiServiceEauId?: string;

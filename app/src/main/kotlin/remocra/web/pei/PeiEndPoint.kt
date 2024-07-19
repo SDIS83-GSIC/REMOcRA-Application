@@ -13,6 +13,10 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
+import remocra.app.AppSettings
 import remocra.authn.userInfo
 import remocra.data.PeiData
 import remocra.data.PenaData
@@ -21,9 +25,11 @@ import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecases.pei.CreatePeiUseCase
+import remocra.usecases.pei.GetCoordonneesBySrid
 import remocra.usecases.pei.PeiUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
 import java.util.UUID
+import kotlin.properties.Delegates
 
 @Path("/pei")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,6 +42,10 @@ class PeiEndPoint {
     @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
 
     @Inject lateinit var createPeiUseCase: CreatePeiUseCase
+
+    @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
+
+    @Inject lateinit var appSettings: AppSettings
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -134,6 +144,7 @@ class PeiEndPoint {
                 peiZoneSpecialeId = peiInput.peiZoneSpecialeIdInitial,
                 peiAnneeFabrication = peiInput.peiAnneeFabrication,
                 peiNiveauId = peiInput.peiNiveauId,
+                peiGeometrie = GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(peiInput.coordonneeX, peiInput.coordonneeY)),
                 peiObservation = null,
                 pibiRenversable = peiInput.pibiRenversable,
                 pibiDiametreId = peiInput.pibiDiametreId,
@@ -158,6 +169,7 @@ class PeiEndPoint {
             TypePei.PENA -> PenaData(
                 peiId = peiInput.peiId ?: UUID.randomUUID(),
                 peiTypePei = peiInput.peiTypePei,
+                peiGeometrie = GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(peiInput.coordonneeX, peiInput.coordonneeY)),
                 peiNumeroInterne = peiInput.peiNumeroInterne,
                 peiNumeroComplet = peiInput.peiNumeroComplet,
                 peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre ?: Disponibilite.INDISPONIBLE,
@@ -196,6 +208,23 @@ class PeiEndPoint {
             )
             else -> throw IllegalArgumentException()
         }
+
+    /**
+     * Permet de renvoyer les différentes coordonnées en fonction du système de projection
+     * On passe les coordonnées en String, puisque en fonction du système de projection, ce n'est pas forcément un double
+     */
+    @GET
+    @Path("/get-geometrie-by-srid")
+    fun getGeometrieByTypeSrid(
+        @QueryParam("coordonneeX")
+        coordonneeX: String,
+        @QueryParam("coordonneeY")
+        coordonneeY: String,
+        @QueryParam("srid")
+        srid: Int,
+    ): Response {
+        return Response.ok(getCoordonneesBySrid.execute(coordonneeX, coordonneeY, srid)).build()
+    }
 
     class PeiInput {
         @FormParam("peiId")
@@ -266,6 +295,12 @@ class PeiEndPoint {
 
         @FormParam("peiNiveauId")
         var peiNiveauId: UUID? = null
+
+        @get:FormParam("coordonneeX")
+        var coordonneeX by Delegates.notNull<Double>()
+
+        @get:FormParam("coordonneeY")
+        var coordonneeY by Delegates.notNull<Double>()
 
         // //////////////// VALEURS POUR LES PIBI
         @FormParam("pibiDiametreId")

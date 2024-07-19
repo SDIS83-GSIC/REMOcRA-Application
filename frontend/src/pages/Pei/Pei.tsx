@@ -1,5 +1,6 @@
 import { useFormikContext } from "formik";
-import { Button } from "react-bootstrap";
+import { useEffect } from "react";
+import { Button, Form } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -23,9 +24,10 @@ import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
 import url from "../../module/fetch.tsx";
-import { requiredString } from "../../module/validators.tsx";
-import ensureDataCache from "../../utils/ensureData.tsx";
+import { requiredNumber, requiredString } from "../../module/validators.tsx";
+import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
@@ -35,6 +37,13 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiTypePei: data?.peiTypePei ?? null,
   peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
   peiAnneeFabrication: data?.peiAnneeFabrication ?? null,
+
+  coordonneeX: data?.coordonneeX ?? null,
+  coordonneeY: data?.coordonneeY ?? null,
+  srid: data?.srid ?? null,
+  typeSystemeSrid:
+    TypeSystemeSrid.find((e) => e.srid === data?.srid)?.srid ??
+    TypeSystemeSrid[0].srid,
 
   peiAutoriteDeciId: data?.peiAutoriteDeciId ?? null,
   peiServicePublicDeciId: data?.peiServicePublicDeciId ?? null,
@@ -91,6 +100,8 @@ export const validationSchema = object({
   peiCommuneId: requiredString,
   peiVoieId: requiredString,
   peiDomaineId: requiredString,
+  coordonneeX: requiredNumber,
+  coordonneeY: requiredNumber,
 });
 
 export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
@@ -120,6 +131,9 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
   peiSiteId: values.peiSiteId ?? null,
   peiGestionnaireId: values.peiGestionnaireId ?? null,
   peiNiveauId: values.peiNiveauId ?? null,
+
+  coordonneeX: values?.coordonneeX ?? null,
+  coordonneeY: values?.coordonneeY ?? null,
 
   // DONNEES PIBI
   pibiDiametreId: values.pibiDiametreId ?? null,
@@ -167,9 +181,43 @@ type SelectDataType = {
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
-  const { values, setValues, setFieldValue }: { values: PeiEntity } =
-    useFormikContext();
+  const {
+    values,
+    setValues,
+    setFieldValue,
+  }: {
+    values: PeiEntity & {
+      typeSystemeSrid: { srid: number; nomSystem: string };
+    };
+  } = useFormikContext();
   const selectDataState = useGet(url`/api/pei/referentiel-for-update-pei`);
+
+  //eslint-disable-next-line react-hooks/rules-of-hooks
+  const srid = ensureSrid();
+
+  // Si les coordonnées changent, il faut recharger les coordonnées dans les différents systèmes
+  const geometrieState = useGet(
+    !isNew
+      ? url`/api/pei/get-geometrie-by-srid?${{
+          coordonneeX: values.coordonneeX,
+          coordonneeY: values.coordonneeY,
+          srid: values.typeSystemeSrid,
+        }}`
+      : "",
+  );
+
+  useEffect(() => {
+    geometrieState?.run({
+      coordonneeX: values.coordonneeX,
+      coordonneeY: values.coordonneeY,
+      srid: values.typeSystemeSrid,
+    });
+  }, [
+    values.coordonneeX,
+    values.coordonneeY,
+    values.typeSystemeSrid,
+    geometrieState,
+  ]);
 
   // Permet de savoir si les sections de l'accordion sont ouvertes et de les set
   const { handleShowClose, activesKeys, show } = useAccordionState([
@@ -216,7 +264,8 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     selectDataState;
 
   return (
-    selectData && (
+    selectData &&
+    srid && (
       <FormContainer>
         <Container>
           <PageTitle
@@ -253,6 +302,9 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                     values={values}
                     selectData={selectData}
                     setValues={setValues}
+                    setFieldValue={setFieldValue}
+                    geometrieData={geometrieState?.data}
+                    srid={parseInt(srid)}
                   />
                 ),
               },
@@ -282,7 +334,15 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
           <Button
             type="submit"
             variant="primary"
-            onClick={() => checkValidity(values, show, listValuesRequired)}
+            onClick={() => {
+              const coordonnees = geometrieState.data?.find(
+                (e) => e.srid === parseInt(srid),
+              );
+              setFieldValue("coordonneeX", coordonnees.coordonneeX);
+              setFieldValue("coordonneeY", coordonnees.coordonneeY);
+              setFieldValue("typeSystemeSrid", srid);
+              checkValidity(values, show, listValuesRequired);
+            }}
           >
             Valider
           </Button>
@@ -495,13 +555,58 @@ const FormLocalisationPei = ({
   values,
   selectData,
   setValues,
+  setFieldValue,
+  geometrieData,
+  srid,
 }: {
   values: PeiEntity;
   selectData: SelectDataType;
   setValues: (e: any) => void;
+  setFieldValue: (value: string, newValue: any) => void;
+  geometrieData: { coordonneeX: string; coordonneeY: string; srid: number }[];
+  srid: number;
 }) => {
   return (
     <>
+      <h2>Coordonnées géographique</h2>
+      <Row className="mt-3">
+        <Col>
+          <Form.Select
+            name="typeSystemeSrid"
+            onChange={(e) => {
+              setValues((prevValues) => ({
+                ...prevValues,
+                typeSystemeSrid: e.target.value,
+              }));
+              const sridActif = e.target.value;
+              const projetionValeur = geometrieData?.find(
+                (e) => e.srid === parseInt(sridActif),
+              );
+              setFieldValue("coordonneeX", projetionValeur?.coordonneeX);
+              setFieldValue("coordonneeY", projetionValeur?.coordonneeY);
+            }}
+          >
+            {TypeSystemeSrid.map((e) => {
+              if (e.actif || e.srid === srid) {
+                return (
+                  <option key={e.srid} value={e.srid}>
+                    {" "}
+                    {e.nomSystem}
+                  </option>
+                );
+              }
+            })}
+          </Form.Select>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col>
+          <TextInput label="Coordonnée X" name="coordonneeX" required={true} />
+        </Col>
+        <Col>
+          <TextInput label="Coordonnée Y" name="coordonneeY" required={true} />
+        </Col>
+      </Row>
       <h2>Adresse</h2>
       <Row className="mt-3">
         <Col>

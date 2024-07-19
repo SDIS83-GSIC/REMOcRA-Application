@@ -3,6 +3,7 @@ flyway = "10.1.0"
 forbiddenapis = "3.6"
 jooq = "3.19.3"
 retrofit = "2.9.0"
+geotools = "31.2"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -61,8 +62,10 @@ commons-email = "org.apache.commons:commons-email:1.6.0"
 swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.22"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.22"
 
-geotools-gt-shapefile = "org.geotools:gt-shapefile:31.0"
-geotools-gt-main = "org.geotools:gt-main:31.2"
+geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "geotools" }
+geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }
+geotools-gt-referencing = { module = "org.geotools:gt-referencing", version.ref = "geotools" }
+geotools-gt-epsg = { module = "org.geotools:gt-epsg-hsql", version.ref = "geotools" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }

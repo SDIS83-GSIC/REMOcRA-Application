@@ -1,5 +1,6 @@
 package remocra.data
 
+import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import java.util.UUID
@@ -14,6 +15,11 @@ open class PeiData(
     open var peiNumeroInterne: Int?,
     open var peiDisponibiliteTerrestre: Disponibilite,
     open val peiTypePei: TypePei,
+
+    open val peiGeometrie: Geometry,
+    val coordonneeX: Double = peiGeometrie.coordinate.x,
+    val coordonneeY: Double = peiGeometrie.coordinate.y,
+    val srid: Int = peiGeometrie.srid,
 
     open val peiAutoriteDeciId: UUID?,
     open val peiServicePublicDeciId: UUID?,
@@ -54,6 +60,7 @@ data class PibiData(
     override var peiNumeroInterne: Int?,
     override var peiDisponibiliteTerrestre: Disponibilite,
     override val peiTypePei: TypePei,
+    override val peiGeometrie: Geometry,
 
     override val peiAutoriteDeciId: UUID?,
     override val peiServicePublicDeciId: UUID?,
@@ -105,6 +112,10 @@ data class PibiData(
     peiNumeroInterne,
     peiDisponibiliteTerrestre,
     peiTypePei,
+    peiGeometrie,
+    coordonneeX = peiGeometrie.coordinate.x,
+    coordonneeY = peiGeometrie.coordinate.y,
+    peiGeometrie.srid,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
     peiMaintenanceDeciId,
@@ -138,6 +149,7 @@ class PenaData(
     override var peiNumeroInterne: Int?,
     override var peiDisponibiliteTerrestre: Disponibilite,
     override val peiTypePei: TypePei,
+    override val peiGeometrie: Geometry,
 
     override val peiAutoriteDeciId: UUID?,
     override val peiServicePublicDeciId: UUID?,
@@ -180,6 +192,10 @@ class PenaData(
     peiNumeroInterne,
     peiDisponibiliteTerrestre,
     peiTypePei,
+    peiGeometrie,
+    coordonneeX = peiGeometrie.coordinate.x,
+    coordonneeY = peiGeometrie.coordinate.y,
+    peiGeometrie.srid,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
     peiMaintenanceDeciId,

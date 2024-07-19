@@ -10,9 +10,6 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.PrecisionModel
 import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
@@ -51,6 +48,7 @@ class PeiRepository
             PEI.NUMERO_INTERNE,
             PEI.DISPONIBILITE_TERRESTRE,
             PEI.TYPE_PEI,
+            PEI.GEOMETRIE,
             PEI.COMMUNE_ID,
             PEI.VOIE_ID,
             PEI.NUMERO_VOIE,
@@ -316,8 +314,7 @@ class PeiRepository
                 peiNumeroInterne = pei.peiNumeroInterne!!,
                 peiCommuneId = pei.peiCommuneId,
                 peiDomaineId = pei.peiDomaineId,
-                // TODO prendre en compte la géométrie avec le bon SRID
-                peiGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(Coordinate(723835.0, 6766075.0, 0.0)),
+                peiGeometrie = pei.peiGeometrie,
                 peiEnFace = pei.peiEnFace,
                 peiSiteId = pei.peiSiteId,
                 peiCroisementId = pei.peiCroisementId,

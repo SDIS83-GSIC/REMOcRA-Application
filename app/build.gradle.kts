@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.geotools.gt.shapefile)
 
     implementation(libs.geotools.gt.main)
+    implementation(libs.geotools.gt.referencing)
+    implementation(libs.geotools.gt.epsg)
 
     // Pac4j (authn)
     implementation(libs.jakartaee.pac4j)

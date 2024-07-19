@@ -15,6 +15,6 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
         //  Dans la v2 "Créer, ouvrir la fiche PEI"
     }
     override fun checkContraintes(element: PeiData) {
-        // TODO il y a des contraintes ? Aujourd'hui les contraintes sont gérées depuis le front
+        // TODO vérifier que la géométrie est bien dans la zone de compétence de l'utilisateur connecté
     }
 }

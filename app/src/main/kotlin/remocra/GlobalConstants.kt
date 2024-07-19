@@ -17,4 +17,6 @@ object GlobalConstants {
 
     // Clés des paramètres
     const val PARAM_PEI_RENUMEROTATION_INTERNE_AUTO = "PEI_RENUMEROTATION_INTERNE_AUTO"
+
+    const val SRID_4326 = 4326
 }
