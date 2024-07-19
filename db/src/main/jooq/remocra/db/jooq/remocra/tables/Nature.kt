@@ -26,11 +26,14 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.keys.L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_NATURE_ID_FKEY
 import remocra.db.jooq.remocra.keys.NATURE_NATURE_CODE_KEY
 import remocra.db.jooq.remocra.keys.NATURE_PKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_NATURE_ID_FKEY
 import remocra.db.jooq.remocra.keys.POIDS_ANOMALIE__POIDS_ANOMALIE_POIDS_ANOMALIE_NATURE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
+import remocra.db.jooq.remocra.tables.Diametre.DiametrePath
+import remocra.db.jooq.remocra.tables.LDiametreNature.LDiametreNaturePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.PoidsAnomalie.PoidsAnomaliePath
 import java.util.UUID
@@ -142,6 +145,23 @@ open class Nature(
     override fun getPrimaryKey(): UniqueKey<Record> = NATURE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(NATURE_NATURE_CODE_KEY)
 
+    private lateinit var _lDiametreNature: LDiametreNaturePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_diametre_nature</code> table
+     */
+    fun lDiametreNature(): LDiametreNaturePath {
+        if (!this::_lDiametreNature.isInitialized) {
+            _lDiametreNature = LDiametreNaturePath(this, null, L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_NATURE_ID_FKEY.inverseKey)
+        }
+
+        return _lDiametreNature
+    }
+
+    val lDiametreNature: LDiametreNaturePath
+        get(): LDiametreNaturePath = lDiametreNature()
+
     private lateinit var _pei: PeiPath
 
     /**
@@ -174,6 +194,13 @@ open class Nature(
 
     val poidsAnomalie: PoidsAnomaliePath
         get(): PoidsAnomaliePath = poidsAnomalie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.diametre</code> table
+     */
+    val diametre: DiametrePath
+        get(): DiametrePath = lDiametreNature().diametre()
 
     /**
      * Get the implicit many-to-many join path to the

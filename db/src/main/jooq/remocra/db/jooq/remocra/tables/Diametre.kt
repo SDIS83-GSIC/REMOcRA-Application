@@ -27,7 +27,10 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.DIAMETRE_DIAMETRE_CODE_KEY
 import remocra.db.jooq.remocra.keys.DIAMETRE_PKEY
+import remocra.db.jooq.remocra.keys.L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_DIAMETRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_DIAMETRE_ID_FKEY
+import remocra.db.jooq.remocra.tables.LDiametreNature.LDiametreNaturePath
+import remocra.db.jooq.remocra.tables.Nature.NaturePath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -142,6 +145,23 @@ open class Diametre(
     override fun getPrimaryKey(): UniqueKey<Record> = DIAMETRE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(DIAMETRE_DIAMETRE_CODE_KEY)
 
+    private lateinit var _lDiametreNature: LDiametreNaturePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_diametre_nature</code> table
+     */
+    fun lDiametreNature(): LDiametreNaturePath {
+        if (!this::_lDiametreNature.isInitialized) {
+            _lDiametreNature = LDiametreNaturePath(this, null, L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_DIAMETRE_ID_FKEY.inverseKey)
+        }
+
+        return _lDiametreNature
+    }
+
+    val lDiametreNature: LDiametreNaturePath
+        get(): LDiametreNaturePath = lDiametreNature()
+
     private lateinit var _pibi: PibiPath
 
     /**
@@ -157,6 +177,13 @@ open class Diametre(
 
     val pibi: PibiPath
         get(): PibiPath = pibi()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.nature</code> table
+     */
+    val nature: NaturePath
+        get(): NaturePath = lDiametreNature().nature()
     override fun `as`(alias: String): Diametre = Diametre(DSL.name(alias), this)
     override fun `as`(alias: Name): Diametre = Diametre(alias, this)
     override fun `as`(alias: Table<*>): Diametre = Diametre(alias.qualifiedName, this)

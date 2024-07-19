@@ -269,4 +269,10 @@ COMMENT
     IS 'En m3 (mètre cube)';
 
 
+CREATE TABLE remocra.l_diametre_nature
+(
+    diametre_id   UUID NOT NULL REFERENCES remocra.diametre (diametre_id),
+    nature_id UUID NOT NULL REFERENCES remocra.nature (nature_id),
 
+    PRIMARY KEY (diametre_id, nature_id)
+);

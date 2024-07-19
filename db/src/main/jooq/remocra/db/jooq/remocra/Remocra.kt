@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -105,6 +106,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.l_diametre_nature</code>.
+     */
+    val L_DIAMETRE_NATURE: LDiametreNature get() = LDiametreNature.L_DIAMETRE_NATURE
 
     /**
      * The table <code>remocra.l_pei_anomalie</code>.
@@ -257,6 +263,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
         Job.JOB,
+        LDiametreNature.L_DIAMETRE_NATURE,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,

@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -79,6 +80,11 @@ val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.l_diametre_nature</code>.
+ */
+val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
 
 /**
  * The table <code>remocra.l_pei_anomalie</code>.
