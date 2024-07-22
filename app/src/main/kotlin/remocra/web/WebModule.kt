@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
 import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
@@ -27,6 +28,7 @@ object WebModule : AbstractModule() {
         install(ApiModule)
         install(VisiteModule)
         install(NomenclatureModule)
+        install(AppSettingsModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }
 

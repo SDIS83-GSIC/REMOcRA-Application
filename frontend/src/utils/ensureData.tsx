@@ -40,3 +40,15 @@ const EnsureData = (typeDataCache: TYPE_DATA_CACHE) => {
     return response.data;
   }
 };
+
+export function ensureSrid() {
+  if (
+    localStorage.getItem("srid") === "undefined" ||
+    localStorage.getItem("srid") === null
+  ) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    localStorage.setItem("srid", useGet(url`/api/app-settings/srid`)?.data);
+  }
+
+  return localStorage.getItem("srid");
+}
