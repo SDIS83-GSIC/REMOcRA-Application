@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import styles from "./PageTitle.module.css";
+import { Col, Row } from "react-bootstrap";
 
 type TitlePageModel = {
   title: string;
@@ -9,12 +9,20 @@ type TitlePageModel = {
 
 const PageTitle = ({ title, icon, right }: TitlePageModel) => {
   return (
-    <div className={styles.pageTitle}>
-      <h1 className={styles.title}>
-        <span className={styles.icon}>{icon}</span> {title}
-      </h1>
-      {right ? <div className={styles.right}>{right}</div> : ""}
-    </div>
+    <Row className="my-3 mx-2">
+      <Col>
+        <h1 className="fw-bold">
+          {icon} {title}
+        </h1>
+      </Col>
+      {right ? (
+        <Col className="my-auto" sm={"auto"}>
+          {right}
+        </Col>
+      ) : (
+        ""
+      )}
+    </Row>
   );
 };
 

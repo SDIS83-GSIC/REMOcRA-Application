@@ -1,9 +1,12 @@
-import url from "../../module/fetch.tsx";
+import { Container } from "react-bootstrap";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconPei } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
-import getColumnByStringArray from "../../utils/columnUtils.tsx";
 import COLUMN_PEI from "../../enums/ColumnPeiEnum.tsx";
+import url from "../../module/fetch.tsx";
+import getColumnByStringArray from "../../utils/columnUtils.tsx";
 import { filterValuesToVariable } from "./FilterPei.tsx";
 
 const AccueilPei = () => {
@@ -23,7 +26,8 @@ const AccueilPei = () => {
   ];
 
   return (
-    <>
+    <Container>
+      <PageTitle icon={<IconPei />} title={"Liste des points d'eau"} />
       <QueryTable
         query={url`/api/pei`}
         columns={getColumnByStringArray(column)}
@@ -38,7 +42,7 @@ const AccueilPei = () => {
           listeAnomalie: undefined,
         })}
       />
-    </>
+    </Container>
   );
 };
 

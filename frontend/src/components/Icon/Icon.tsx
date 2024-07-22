@@ -12,6 +12,7 @@ export const Toggle = ({ toggled = false }: { toggled: boolean }) => (
 export const IconEdit = () => <i className="fi fi-br-pencil" />;
 export const IconCreate = () => <i className="fi fi-br-add" />;
 export const IconSee = () => <i className="fi fi-br-overview" />;
+export const IconPei = () => <i className="fi fi-ss-fire-hydrant" />;
 
 export const IconDocument = () => <i className="fi fi-br-document" />;
 export const IconInfo = () => <i className="fi fi-br-interrogation" />;
