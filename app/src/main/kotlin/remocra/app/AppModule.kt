@@ -27,6 +27,8 @@ class AppModule(private val settings: AppSettings) : AbstractModule() {
                 AppSettings(
                     environment = config.getEnum(Environment::class.java, "environment"),
                     codeSdis = config.getEnum(CodeSdis::class.java, "codeSdis"),
+                    sridString = config.getString("srid"),
+                    sridInt = config.getString("srid").split(":")[1].toInt(),
                 ),
             )
     }
