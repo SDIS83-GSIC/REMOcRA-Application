@@ -13,6 +13,8 @@ import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.enums.TypeSourceModification
 import remocra.db.PeiRepository
+import remocra.db.PenaRepository
+import remocra.db.PibiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -56,6 +58,10 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
     lateinit var clock: Clock
 
     @Inject lateinit var peiRepository: PeiRepository
+
+    @Inject lateinit var pibiRepository: PibiRepository
+
+    @Inject lateinit var penaRepository: PenaRepository
 
     override fun postEvent(element: PeiData, userInfo: UserInfo) {
         eventBus.post(
@@ -168,19 +174,19 @@ abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) :
 
         // Puis on insert le PENA / PIBI
         if (peiData is PibiData) {
-            peiRepository.upsertPibi(peiData)
+            pibiRepository.upsertPibi(peiData)
 
             // Si le Bi est jumelé à un autre, il faut mettre à jour l'autre
             if (peiData.pibiJumeleId != null) {
-                peiRepository.updateJumelage(peiData.peiId, peiData.pibiJumeleId)
+                pibiRepository.updateJumelage(peiData.peiId, peiData.pibiJumeleId)
             } else {
                 //  si aucun jumelage on enlève les potentiels lien avec ce pei
-                peiRepository.removeJumelage(peiData.peiId)
+                pibiRepository.removeJumelage(peiData.peiId)
             }
         }
 
         if (peiData is PenaData) {
-            peiRepository.upsertPena(peiData)
+            penaRepository.upsertPena(peiData)
         }
     }
 

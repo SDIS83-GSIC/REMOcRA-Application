@@ -10,6 +10,8 @@ import remocra.db.LieuDitRepository
 import remocra.db.ModelePibiRepository
 import remocra.db.OrganismeRepository
 import remocra.db.PeiRepository
+import remocra.db.PenaRepository
+import remocra.db.PibiRepository
 import remocra.db.SiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
@@ -28,6 +30,12 @@ class PeiUseCase {
 
     @Inject
     lateinit var peiRepository: PeiRepository
+
+    @Inject
+    lateinit var pibiRepository: PibiRepository
+
+    @Inject
+    lateinit var penaRepository: PenaRepository
 
     @Inject
     lateinit var communeRepository: CommuneRepository
@@ -61,8 +69,8 @@ class PeiUseCase {
         val typePei = peiRepository.getTypePei(idPei)
 
         return when (typePei) {
-            TypePei.PIBI -> peiRepository.getInfoPibi(idPei)
-            TypePei.PENA -> peiRepository.getInfoPena(idPei)
+            TypePei.PIBI -> pibiRepository.getInfoPibi(idPei)
+            TypePei.PENA -> penaRepository.getInfoPena(idPei)
             else -> throw IllegalArgumentException("Le type du PEI $idPei est incorrect (Valeurs autorisées : PIBI, PENA)")
         }
     }
@@ -86,7 +94,7 @@ class PeiUseCase {
             listLieuDit = lieuDitRepository.getAllWithCommune(),
             listModele = modelePibiRepository.getModeleWithMarque(),
             listServiceEau = organismeRepository.getServiceEauForSelect(),
-            listPeiJumelage = peiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, appSettings.sridInt), // TODO passer le bon SRID
+            listPeiJumelage = pibiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, appSettings.sridInt),
         )
     }
 

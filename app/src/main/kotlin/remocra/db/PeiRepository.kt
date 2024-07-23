@@ -10,22 +10,14 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
-import remocra.GlobalConstants
-import remocra.data.GlobalData
 import remocra.data.PeiData
-import remocra.data.PenaData
-import remocra.data.PibiData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.Pei
-import remocra.db.jooq.remocra.tables.pojos.Pena
-import remocra.db.jooq.remocra.tables.pojos.Pibi
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
-import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
-import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -242,85 +234,11 @@ class PeiRepository
             .where(PEI.ID.eq(idPei))
             .fetchSingleInto()
 
-    fun getInfoPibi(pibiId: UUID): PibiData =
-        dsl.select(peiData).select(
-            // DONNEE PIBI
-            PIBI.DIAMETRE_ID,
-            PIBI.SERVICE_EAU_ID,
-            PIBI.NUMERO_SCP,
-            PIBI.RENVERSABLE,
-            PIBI.DISPOSITIF_INVIOLABILITE,
-            PIBI.MODELE_PIBI_ID.`as`("pibiModeleId"),
-            PIBI.MARQUE_PIBI_ID.`as`("pibiMarqueId"),
-            PIBI.RESERVOIR_ID,
-            PIBI.DEBIT_RENFORCE,
-            PIBI.TYPE_CANALISATION_ID,
-            PIBI.TYPE_RESEAU_ID,
-            PIBI.DIAMETRE_CANALISATION,
-            PIBI.SURPRESSE,
-            PIBI.ADDITIVE,
-            PIBI.JUMELE_ID,
-        )
-            .from(PEI)
-            .join(PIBI)
-            .on(PIBI.ID.eq(PEI.ID))
-            .leftJoin(MODELE_PIBI)
-            .on(MODELE_PIBI.ID.eq(PIBI.MODELE_PIBI_ID))
-            .leftJoin(MARQUE_PIBI)
-            .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
-            .where(PEI.ID.eq(pibiId))
-            .fetchSingleInto()
-
-    fun getInfoPena(penaId: UUID): PenaData =
-        dsl.select(peiData).select(
-            PENA.CAPACITE,
-            PENA.DISPONIBILITE_HBE,
-            PENA.QUANTITE_APPOINT,
-            PENA.CAPACITE_ILLIMITEE,
-            PENA.CAPACITE_INCERTAINE,
-            PENA.MATERIAU_ID,
-        )
-            .from(PEI)
-            .join(PENA)
-            .on(PENA.ID.eq(PEI.ID))
-            .where(PEI.ID.eq(penaId))
-            .fetchSingleInto()
-
-    /**
-     * Retourne les BI qui sont à moins de DISTANCE_MAXIMALE_JUMELAGE
-     * Permettra de remplir la liste déroulante pour la modification  / création d'un PEI
-     * @param idPei : id du PEI en train d'être modifé
-     * @param geometrie : géométrie de PEI en train d'être modifié
-     * @param srid : srid de la géométrie => doit correspondre au paramètre dans la base de données
-     */
-    fun getBiCanJumele(coordoneeX: String, coordoneeY: String, peiId: UUID?, srid: Int): Collection<GlobalData.IdCodeLibelleData> =
-        dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("code"), PEI.NUMERO_COMPLET.`as`("libelle"))
-            .from(PEI)
-            .join(NATURE)
-            .on(NATURE.ID.eq(PEI.NATURE_ID))
-            .join(PIBI)
-            .on(PIBI.ID.eq(PEI.ID))
-            .where(NATURE.CODE.eq(GlobalConstants.NATURE_BI))
-            .and(
-                "ST_DISTANCE(${PEI.GEOMETRIE}, 'SRID=$srid;POINT($coordoneeX $coordoneeY)')" +
-                    " < ${GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE}",
-            )
-            .and(DSL.and(PIBI.JUMELE_ID.isNull).or(PIBI.JUMELE_ID.eq(peiId)))
-            .and(if (peiId != null) PIBI.ID.notEqual(peiId) else DSL.trueCondition())
-            .fetchInto()
-
     fun getInfoPei(peiId: UUID): PeiData =
         dsl.select(peiData)
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
-
-    fun upsertPibi(pibi: PibiData): Int =
-        dsl.insertInto(PIBI).setPibiField(pibi)
-
-    fun upsertPena(pena: PenaData): Int =
-        dsl.insertInto(PENA)
-            .setPenaField(pena)
 
     fun upsert(pei: PeiData) =
         dsl.insertInto(PEI).setPeiField(pei)
@@ -366,85 +284,6 @@ class PeiRepository
         return set(record).onConflict(PEI.ID)
             .doUpdate()
             .set(record)
-            .execute()
-    }
-
-    /**
-     * Permet d'insérer ou d'update les champs d'un PIBI.
-     * Le jour où un champ est ajouté, il suffira de mettre à jour cette fonction.
-     */
-    private fun <R : Record?> InsertSetStep<R>.setPibiField(pibi: PibiData): Int {
-        val record = dsl.newRecord(
-            PIBI,
-            Pibi(
-                pibiId = pibi.peiId,
-                pibiSurpresse = pibi.pibiSurpresse,
-                pibiAdditive = pibi.pibiAdditive,
-                pibiDiametreId = pibi.pibiDiametreId,
-                pibiNumeroScp = pibi.pibiNumeroScp,
-                pibiReservoirId = pibi.pibiReservoirId,
-                pibiRenversable = pibi.pibiRenversable,
-                pibiTypeReseauId = pibi.pibiTypeReseauId,
-                pibiServiceEauId = pibi.pibiServiceEauId,
-                pibiDebitRenforce = pibi.pibiDebitRenforce,
-                pibiTypeCanalisationId = pibi.pibiTypeCanalisationId,
-                pibiDiametreCanalisation = pibi.pibiDiametreCanalisation,
-                pibiDispositifInviolabilite = pibi.pibiDispositifInviolabilite,
-                pibiMarquePibiId = pibi.pibiMarqueId.takeIf { pibi.pibiModeleId == null },
-                pibiModelePibiId = pibi.pibiModeleId,
-                pibiJumeleId = pibi.pibiJumeleId,
-                pibiPenaId = null, // TODO
-            ),
-        )
-
-        return set(record).onConflict(PIBI.ID)
-            .doUpdate()
-            .set(record)
-            .execute()
-    }
-
-    /**
-     * Permet d'insérer ou d'update les champs d'un PENA.
-     * Le jour où un champ est ajouté, il suffira de mettre à jour cette fonction.
-     */
-    private fun <R : Record?> InsertSetStep<R>.setPenaField(pena: PenaData): Int {
-        val record = dsl.newRecord(
-            PENA,
-            Pena(
-                penaId = pena.peiId,
-                penaCapacite = pena.penaCapacite,
-                penaMateriauId = pena.penaMateriauId,
-                penaCapaciteIllimitee = pena.penaCapaciteIllimitee,
-                penaQuantiteAppoint = pena.penaQuantiteAppoint,
-                penaDisponibiliteHbe = pena.penaDisponibiliteHbe,
-                penaCapaciteIncertaine = pena.penaCapaciteIncertaine,
-                penaCoordonneDfci = null, // TODO ?
-            ),
-        )
-
-        return set(record).onConflict(PENA.ID)
-            .doUpdate()
-            .set(record)
-            .execute()
-    }
-
-    /**
-     * Le jumelage se fait sur les 2 sens : Si A est jumelé avec B alors on doit mettre à jour A et B
-     */
-    fun updateJumelage(peiJumeleId: UUID, peiAMettreAJour: UUID) {
-        dsl.update(PIBI)
-            .set(PIBI.JUMELE_ID, peiJumeleId)
-            .where(PIBI.ID.eq(peiAMettreAJour))
-            .execute()
-    }
-
-    /**
-     * Supprime les jumelages d'un PIBI
-     */
-    fun removeJumelage(peiId: UUID) {
-        dsl.update(PIBI)
-            .setNull(PIBI.JUMELE_ID)
-            .where(PIBI.JUMELE_ID.eq(peiId))
             .execute()
     }
 }
