@@ -26,12 +26,14 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
+import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA_PKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_MATERIAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_PENA_ID_FKEY
 import remocra.db.jooq.remocra.tables.Materiau.MateriauPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.PenaAspiration.PenaAspirationPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -190,6 +192,23 @@ open class Pena(
 
     val materiau: MateriauPath
         get(): MateriauPath = materiau()
+
+    private lateinit var _penaAspiration: PenaAspirationPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.pena_aspiration</code> table
+     */
+    fun penaAspiration(): PenaAspirationPath {
+        if (!this::_penaAspiration.isInitialized) {
+            _penaAspiration = PenaAspirationPath(this, null, PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY.inverseKey)
+        }
+
+        return _penaAspiration
+    }
+
+    val penaAspiration: PenaAspirationPath
+        get(): PenaAspirationPath = penaAspiration()
 
     private lateinit var _pibi: PibiPath
 

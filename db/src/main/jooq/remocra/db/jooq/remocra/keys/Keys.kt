@@ -31,6 +31,7 @@ import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.Pena
+import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
@@ -39,6 +40,7 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
+import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.Visite
@@ -88,6 +90,8 @@ val PARAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAM
 val PEI_PEI_NUMERO_COMPLET_KEY: UniqueKey<Record> = Internal.createUniqueKey(Pei.PEI, DSL.name("pei_pei_numero_complet_key"), arrayOf(Pei.PEI.NUMERO_COMPLET), true)
 val PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pei.PEI, DSL.name("pei_pkey"), arrayOf(Pei.PEI.ID), true)
 val PENA_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pena.PENA, DSL.name("pena_pkey"), arrayOf(Pena.PENA.ID), true)
+val PENA_ASPIRATION_PENA_ASPIRATION_NUMERO_KEY: UniqueKey<Record> = Internal.createUniqueKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pena_aspiration_numero_key"), arrayOf(PenaAspiration.PENA_ASPIRATION.NUMERO), true)
+val PENA_ASPIRATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pkey"), arrayOf(PenaAspiration.PENA_ASPIRATION.ID), true)
 val PIBI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pibi.PIBI, DSL.name("pibi_pkey"), arrayOf(Pibi.PIBI.ID), true)
 val POIDS_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PoidsAnomalie.POIDS_ANOMALIE, DSL.name("poids_anomalie_pkey"), arrayOf(PoidsAnomalie.POIDS_ANOMALIE.ID), true)
 val POIDS_ANOMALIE_POIDS_ANOMALIE_ANOMALIE_ID_POIDS_ANOMALIE_NA_KEY: UniqueKey<Record> = Internal.createUniqueKey(PoidsAnomalie.POIDS_ANOMALIE, DSL.name("poids_anomalie_poids_anomalie_anomalie_id_poids_anomalie_na_key"), arrayOf(PoidsAnomalie.POIDS_ANOMALIE.ANOMALIE_ID, PoidsAnomalie.POIDS_ANOMALIE.NATURE_ID), true)
@@ -103,6 +107,8 @@ val TYPE_CANALISATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCan
 val TYPE_CANALISATION_TYPE_CANALISATION_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCanalisation.TYPE_CANALISATION, DSL.name("type_canalisation_type_canalisation_code_key"), arrayOf(TypeCanalisation.TYPE_CANALISATION.CODE), true)
 val TYPE_ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_pkey"), arrayOf(TypeOrganisme.TYPE_ORGANISME.ID), true)
 val TYPE_ORGANISME_TYPE_ORGANISME_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_type_organisme_code_key"), arrayOf(TypeOrganisme.TYPE_ORGANISME.CODE), true)
+val TYPE_PENA_ASPIRATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypePenaAspiration.TYPE_PENA_ASPIRATION, DSL.name("type_pena_aspiration_pkey"), arrayOf(TypePenaAspiration.TYPE_PENA_ASPIRATION.ID), true)
+val TYPE_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypePenaAspiration.TYPE_PENA_ASPIRATION, DSL.name("type_pena_aspiration_type_pena_aspiration_code_key"), arrayOf(TypePenaAspiration.TYPE_PENA_ASPIRATION.CODE), true)
 val TYPE_RESEAU_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeReseau.TYPE_RESEAU, DSL.name("type_reseau_pkey"), arrayOf(TypeReseau.TYPE_RESEAU.ID), true)
 val TYPE_RESEAU_TYPE_RESEAU_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeReseau.TYPE_RESEAU, DSL.name("type_reseau_type_reseau_code_key"), arrayOf(TypeReseau.TYPE_RESEAU.CODE), true)
 val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.ID), true)
@@ -150,6 +156,8 @@ val PEI__PEI_PEI_VOIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForei
 val PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pei.PEI, DSL.name("pei_pei_zone_speciale_id_fkey"), arrayOf(Pei.PEI.ZONE_SPECIALE_ID), remocra.db.jooq.remocra.keys.ZONE_INTEGRATION_PKEY, arrayOf(ZoneIntegration.ZONE_INTEGRATION.ID), true)
 val PENA__PENA_PENA_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pena.PENA, DSL.name("pena_pena_id_fkey"), arrayOf(Pena.PENA.ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val PENA__PENA_PENA_MATERIAU_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pena.PENA, DSL.name("pena_pena_materiau_id_fkey"), arrayOf(Pena.PENA.MATERIAU_ID), remocra.db.jooq.remocra.keys.MATERIAU_PKEY, arrayOf(Materiau.MATERIAU.ID), true)
+val PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pena_aspiration_pena_id_fkey"), arrayOf(PenaAspiration.PENA_ASPIRATION.PENA_ID), remocra.db.jooq.remocra.keys.PENA_PKEY, arrayOf(Pena.PENA.ID), true)
+val PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pena_aspiration_type_pena_aspiration_id_fkey"), arrayOf(PenaAspiration.PENA_ASPIRATION.TYPE_PENA_ASPIRATION_ID), remocra.db.jooq.remocra.keys.TYPE_PENA_ASPIRATION_PKEY, arrayOf(TypePenaAspiration.TYPE_PENA_ASPIRATION.ID), true)
 val PIBI__PIBI_PIBI_DIAMETRE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pibi.PIBI, DSL.name("pibi_pibi_diametre_id_fkey"), arrayOf(Pibi.PIBI.DIAMETRE_ID), remocra.db.jooq.remocra.keys.DIAMETRE_PKEY, arrayOf(Diametre.DIAMETRE.ID), true)
 val PIBI__PIBI_PIBI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pibi.PIBI, DSL.name("pibi_pibi_id_fkey"), arrayOf(Pibi.PIBI.ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val PIBI__PIBI_PIBI_JUMELE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Pibi.PIBI, DSL.name("pibi_pibi_jumele_id_fkey"), arrayOf(Pibi.PIBI.JUMELE_ID), remocra.db.jooq.remocra.keys.PIBI_PKEY, arrayOf(Pibi.PIBI.ID), true)

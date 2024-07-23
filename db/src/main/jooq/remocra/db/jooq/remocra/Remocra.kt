@@ -30,6 +30,7 @@ import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.Pena
+import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
@@ -38,6 +39,7 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
+import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.Visite
@@ -183,6 +185,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val PENA: Pena get() = Pena.PENA
 
     /**
+     * The table <code>remocra.pena_aspiration</code>.
+     */
+    val PENA_ASPIRATION: PenaAspiration get() = PenaAspiration.PENA_ASPIRATION
+
+    /**
      * The table <code>remocra.pibi</code>.
      */
     val PIBI: Pibi get() = Pibi.PIBI
@@ -221,6 +228,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.type_organisme</code>.
      */
     val TYPE_ORGANISME: TypeOrganisme get() = TypeOrganisme.TYPE_ORGANISME
+
+    /**
+     * The table <code>remocra.type_pena_aspiration</code>.
+     */
+    val TYPE_PENA_ASPIRATION: TypePenaAspiration get() = TypePenaAspiration.TYPE_PENA_ASPIRATION
 
     /**
      * The table <code>remocra.type_reseau</code>.
@@ -278,6 +290,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Parametre.PARAMETRE,
         Pei.PEI,
         Pena.PENA,
+        PenaAspiration.PENA_ASPIRATION,
         Pibi.PIBI,
         PoidsAnomalie.POIDS_ANOMALIE,
         ProfilOrganisme.PROFIL_ORGANISME,
@@ -286,6 +299,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Task.TASK,
         TypeCanalisation.TYPE_CANALISATION,
         TypeOrganisme.TYPE_ORGANISME,
+        TypePenaAspiration.TYPE_PENA_ASPIRATION,
         TypeReseau.TYPE_RESEAU,
         Utilisateur.UTILISATEUR,
         Visite.VISITE,

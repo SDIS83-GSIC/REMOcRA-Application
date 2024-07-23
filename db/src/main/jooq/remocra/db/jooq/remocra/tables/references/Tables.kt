@@ -26,6 +26,7 @@ import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.Pena
+import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
@@ -34,6 +35,7 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
+import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.Visite
@@ -157,6 +159,11 @@ val PEI: Pei = Pei.PEI
 val PENA: Pena = Pena.PENA
 
 /**
+ * The table <code>remocra.pena_aspiration</code>.
+ */
+val PENA_ASPIRATION: PenaAspiration = PenaAspiration.PENA_ASPIRATION
+
+/**
  * The table <code>remocra.pibi</code>.
  */
 val PIBI: Pibi = Pibi.PIBI
@@ -195,6 +202,11 @@ val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
  * The table <code>remocra.type_organisme</code>.
  */
 val TYPE_ORGANISME: TypeOrganisme = TypeOrganisme.TYPE_ORGANISME
+
+/**
+ * The table <code>remocra.type_pena_aspiration</code>.
+ */
+val TYPE_PENA_ASPIRATION: TypePenaAspiration = TypePenaAspiration.TYPE_PENA_ASPIRATION
 
 /**
  * The table <code>remocra.type_reseau</code>.
