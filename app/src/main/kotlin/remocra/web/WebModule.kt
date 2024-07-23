@@ -13,6 +13,7 @@ import remocra.web.natureDeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
 import remocra.web.organisme.OrganismeModule
 import remocra.web.pei.PeiModule
+import remocra.web.visite.VisiteModule
 import kotlin.reflect.KClass
 
 object WebModule : AbstractModule() {
@@ -24,6 +25,7 @@ object WebModule : AbstractModule() {
         install(OrganismeModule)
         install(NatureDeciModule)
         install(ApiModule)
+        install(VisiteModule)
         install(NomenclatureModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }

@@ -3,6 +3,7 @@ import url from "./module/fetch.tsx";
 import UpdatePei from "./pages/Pei/UpdatePei.tsx";
 import AccueilPei from "./pages/Pei/AccueilPei.tsx";
 import AireAspiration from "./pages/Pena/AireAspiration.tsx";
+import Visite from "./pages/Visite/Visite.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -10,6 +11,7 @@ export const URLS = {
   PEI: url`/pei`,
   UPDATE_PEI: (peiId: string) => url`/pei/update/` + peiId,
   UPDATE_PENA_ASPIRATION: (peiId: string) => url`/pena-aspiration/` + peiId,
+  VISITE: (peiId: string) => url`/visite/` + peiId,
 };
 
 export default [
@@ -24,6 +26,10 @@ export default [
   {
     path: "/pena-aspiration/:penaId",
     element: <AireAspiration />,
+  },
+  {
+    path: "/visite/:peiId",
+    element: <Visite />,
   },
   {
     path: "*",
