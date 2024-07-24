@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Form from "react-bootstrap/Form";
-import { Form as FormikForm, useField } from "formik";
+import { Field, Form as FormikForm, useField } from "formik";
 
 type InputType = {
   name: string;
@@ -34,13 +34,15 @@ type DivWithErrorType = {
 
 export const FormLabel = ({
   label,
+  className,
   required = true,
 }: {
   label: string;
+  className?: string;
   required?: boolean;
 }) => {
   return (
-    <Form.Label className="fw-bold">
+    <Form.Label className={"fw-bold " + className}>
       {label} {required === true && <span className="text-danger">*</span>}
     </Form.Label>
   );
@@ -96,24 +98,20 @@ export const TextAreaInput = ({
 type CheckBoxInputType = {
   name: string;
   label: string;
-  defaultCheck?: boolean;
+  required?: boolean;
 };
 
 export const CheckBoxInput = ({
   name,
   label,
-  defaultCheck = false,
+  required = false,
 }: CheckBoxInputType) => {
-  const [field, meta] = useField(name);
+  const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <Form.Check
-        type="checkbox"
-        label={label}
-        defaultChecked={defaultCheck}
-        {...field}
-      />
+      <Field name={name} type="checkbox" />
+      <FormLabel className="p-3" label={label} required={required} />
     </DivWithError>
   );
 };
