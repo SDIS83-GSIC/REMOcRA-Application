@@ -12,11 +12,13 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Diametre
+import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
+import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -95,6 +97,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val DIAMETRE: Diametre get() = Diametre.DIAMETRE
 
     /**
+     * The table <code>remocra.document</code>.
+     */
+    val DOCUMENT: Document get() = Document.DOCUMENT
+
+    /**
      * The table <code>remocra.domaine</code>.
      */
     val DOMAINE: Domaine get() = Domaine.DOMAINE
@@ -118,6 +125,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_pei_anomalie</code>.
      */
     val L_PEI_ANOMALIE: LPeiAnomalie get() = LPeiAnomalie.L_PEI_ANOMALIE
+
+    /**
+     * The table <code>remocra.l_pei_document</code>.
+     */
+    val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
 
     /**
      * The table <code>remocra.l_visite_anomalie</code>.
@@ -272,11 +284,13 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Api.API,
         Commune.COMMUNE,
         Diametre.DIAMETRE,
+        Document.DOCUMENT,
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
         Job.JOB,
         LDiametreNature.L_DIAMETRE_NATURE,
         LPeiAnomalie.L_PEI_ANOMALIE,
+        LPeiDocument.L_PEI_DOCUMENT,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,

@@ -27,6 +27,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     GESTIONNAIRE("GESTIONNAIRE"),
     SITE("SITE"),
     PENA_ASPIRATION("PENA_ASPIRATION"),
+    DOCUMENT_PEI("DOCUMENT_PEI"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

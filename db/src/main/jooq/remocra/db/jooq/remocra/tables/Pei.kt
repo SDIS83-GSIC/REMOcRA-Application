@@ -31,6 +31,7 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI_PEI_NUMERO_COMPLET_KEY
 import remocra.db.jooq.remocra.keys.PEI_PKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
@@ -52,9 +53,11 @@ import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.Domaine.DomainePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
+import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Nature.NaturePath
 import remocra.db.jooq.remocra.tables.NatureDeci.NatureDeciPath
@@ -533,6 +536,23 @@ open class Pei(
     val lPeiAnomalie: LPeiAnomaliePath
         get(): LPeiAnomaliePath = lPeiAnomalie()
 
+    private lateinit var _lPeiDocument: LPeiDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_pei_document</code> table
+     */
+    fun lPeiDocument(): LPeiDocumentPath {
+        if (!this::_lPeiDocument.isInitialized) {
+            _lPeiDocument = LPeiDocumentPath(this, null, L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _lPeiDocument
+    }
+
+    val lPeiDocument: LPeiDocumentPath
+        get(): LPeiDocumentPath = lPeiDocument()
+
     private lateinit var _pena: PenaPath
 
     /**
@@ -588,6 +608,13 @@ open class Pei(
      */
     val anomalie: AnomaliePath
         get(): AnomaliePath = lPeiAnomalie().anomalie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.document</code> table
+     */
+    val document: DocumentPath
+        get(): DocumentPath = lPeiDocument().document()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("geometrie_point_pei"), "((geometrytype(pei_geometrie) = 'POINT'::text))", true),
     )

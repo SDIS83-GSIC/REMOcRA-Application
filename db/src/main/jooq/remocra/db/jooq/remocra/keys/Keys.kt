@@ -13,11 +13,13 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Diametre
+import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
+import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -62,6 +64,7 @@ val COMMUNE_COMMUNE_INSEE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Comm
 val COMMUNE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Commune.COMMUNE, DSL.name("commune_pkey"), arrayOf(Commune.COMMUNE.ID), true)
 val DIAMETRE_DIAMETRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Diametre.DIAMETRE, DSL.name("diametre_diametre_code_key"), arrayOf(Diametre.DIAMETRE.CODE), true)
 val DIAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Diametre.DIAMETRE, DSL.name("diametre_pkey"), arrayOf(Diametre.DIAMETRE.ID), true)
+val DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Document.DOCUMENT, DSL.name("document_pkey"), arrayOf(Document.DOCUMENT.ID), true)
 val DOMAINE_DOMAINE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_domaine_code_key"), arrayOf(Domaine.DOMAINE.CODE), true)
 val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_pkey"), arrayOf(Domaine.DOMAINE.ID), true)
 val GESTIONNAIRE_GESTIONNAIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_gestionnaire_code_key"), arrayOf(Gestionnaire.GESTIONNAIRE.CODE), true)
@@ -69,6 +72,7 @@ val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire
 val JOB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Job.JOB, DSL.name("job_pkey"), arrayOf(Job.JOB.ID), true)
 val L_DIAMETRE_NATURE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_pkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.DIAMETRE_ID, LDiametreNature.L_DIAMETRE_NATURE.NATURE_ID), true)
 val L_PEI_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID, LPeiAnomalie.L_PEI_ANOMALIE.ANOMALIE_ID), true)
+val L_PEI_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID, LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), true)
 val L_VISITE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_pkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID, LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), true)
 val LIEU_DIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LieuDit.LIEU_DIT, DSL.name("lieu_dit_pkey"), arrayOf(LieuDit.LIEU_DIT.ID), true)
 val LOG_LINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LogLine.LOG_LINE, DSL.name("log_line_pkey"), arrayOf(LogLine.LOG_LINE.ID), true)
@@ -131,6 +135,8 @@ val L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_DIAMETRE_ID_FKEY: ForeignKey<Record, Re
 val L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_NATURE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_nature_id_fkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.NATURE_ID), remocra.db.jooq.remocra.keys.NATURE_PKEY, arrayOf(Nature.NATURE.ID), true)
 val L_PEI_ANOMALIE__L_PEI_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_anomalie_id_fkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.ANOMALIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_PKEY, arrayOf(Anomalie.ANOMALIE.ID), true)
 val L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pei_id_fkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
+val L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_document_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
+val L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pei_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_anomalie_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_PKEY, arrayOf(Anomalie.ANOMALIE.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_VISITE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_visite_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID), remocra.db.jooq.remocra.keys.VISITE_PKEY, arrayOf(Visite.VISITE.ID), true)
 val LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LieuDit.LIEU_DIT, DSL.name("lieu_dit_lieu_dit_commune_id_fkey"), arrayOf(LieuDit.LIEU_DIT.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)

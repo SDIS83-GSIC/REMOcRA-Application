@@ -8,11 +8,13 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Diametre
+import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
+import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -69,6 +71,11 @@ val COMMUNE: Commune = Commune.COMMUNE
 val DIAMETRE: Diametre = Diametre.DIAMETRE
 
 /**
+ * The table <code>remocra.document</code>.
+ */
+val DOCUMENT: Document = Document.DOCUMENT
+
+/**
  * The table <code>remocra.domaine</code>.
  */
 val DOMAINE: Domaine = Domaine.DOMAINE
@@ -92,6 +99,11 @@ val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
  * The table <code>remocra.l_pei_anomalie</code>.
  */
 val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
+
+/**
+ * The table <code>remocra.l_pei_document</code>.
+ */
+val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 
 /**
  * The table <code>remocra.l_visite_anomalie</code>.
