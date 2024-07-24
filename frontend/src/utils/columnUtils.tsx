@@ -1,16 +1,19 @@
-import { columnType } from "../components/Table/QueryTable.tsx";
-import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
-import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
-import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
+import { Button } from "react-bootstrap";
 import FilterInput from "../components/Filter/FilterInput.tsx";
-import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
-import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import SelectFilterFromUrl from "../components/Filter/SelectFilterFromUrl.tsx";
+import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
+import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
+import { IconAireAspiration } from "../components/Icon/Icon.tsx";
+import { columnType } from "../components/Table/QueryTable.tsx";
+import EditColumn from "../components/Table/columns.tsx";
+import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
+import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
+import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
 import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";
+import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import url from "../module/fetch.tsx";
-import EditColumn from "../components/Table/columns.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 
@@ -167,8 +170,36 @@ function getColumnByStringArray(
       title: true,
       accessor: "peiId",
       canEdit: true, // TODO voir avec les rôles
+      title: false,
     }),
   );
+
+  column.push({
+    Cell: (row: any) => {
+      return (
+        <>
+          {row.value.peiTypePei === TYPE_PEI.PENA && (
+            <TooltipCustom
+              tooltipText=" Gérer les aires d'aspiration"
+              tooltipId={row.value.peiId}
+            >
+              <Button
+                variant="link"
+                href={URLS.UPDATE_PENA_ASPIRATION(row.value.peiId)}
+              >
+                <IconAireAspiration />
+              </Button>
+            </TooltipCustom>
+          )}
+        </>
+      );
+    },
+    accessor: ({ peiTypePei, peiId }) => {
+      return { peiTypePei, peiId };
+    },
+    width: 90,
+  });
+
   return column;
 }
 

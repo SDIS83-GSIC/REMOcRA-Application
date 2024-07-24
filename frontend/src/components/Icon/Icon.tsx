@@ -10,3 +10,5 @@ export const Toggle = ({ toggled = false }: { toggled: boolean }) => (
 
 export const IconEdit = () => <i className="fi fi-br-pencil" />;
 export const IconSee = () => <i className="fi fi-br-overview" />;
+
+export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;

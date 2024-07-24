@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object PeiModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(PeiEndPoint::class)
+        binder.registerResources(PeiEndPoint::class, PenaEndPoint::class)
     }
 }

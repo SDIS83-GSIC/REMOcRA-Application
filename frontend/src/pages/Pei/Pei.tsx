@@ -213,64 +213,64 @@ const Pei = () => {
             icon={<IconEdit />}
             title={"Modification du PIBI n°" + values.peiNumeroComplet}
           />
-            <AccordionCustom
-              activesKeys={activesKeys}
-              handleShowClose={handleShowClose}
-              list={[
-                {
-                  header: "Informations générales",
-                  content: (
-                    <FormEntetePei
+          <AccordionCustom
+            activesKeys={activesKeys}
+            handleShowClose={handleShowClose}
+            list={[
+              {
+                header: "Informations générales",
+                content: (
+                  <FormEntetePei
+                    values={values}
+                    selectData={selectDataState.data}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "Localisation",
+                content: (
+                  <FormLocalisationPei
+                    values={values}
+                    selectData={selectDataState.data}
+                    setValues={setValues}
+                  />
+                ),
+              },
+              {
+                header: "Caractéristiques techniques",
+                content:
+                  values.peiTypePei === TYPE_PEI.PIBI ? (
+                    <FormPibi
                       values={values}
                       selectData={selectDataState.data}
-                      setValues={setValues}
                       setFieldValue={setFieldValue}
+                      setValues={setValues}
                     />
-                  ),
-                },
-                {
-                  header: "Localisation",
-                  content: (
-                    <FormLocalisationPei
+                  ) : (
+                    <FormPena
                       values={values}
                       selectData={selectDataState.data}
+                      setFieldValue={setFieldValue}
                       setValues={setValues}
                     />
                   ),
-                },
-                {
-                  header: "Caractéristiques techniques",
-                  content:
-                    values.peiTypePei === TYPE_PEI.PIBI ? (
-                      <FormPibi
-                        values={values}
-                        selectData={selectDataState.data}
-                        setFieldValue={setFieldValue}
-                        setValues={setValues}
-                      />
-                    ) : (
-                      <FormPena
-                        values={values}
-                        selectData={selectDataState.data}
-                        setFieldValue={setFieldValue}
-                        setValues={setValues}
-                      />
-                    ),
-                },
-                {
-                  header: "Documents",
-                  content: <>TODO</>,
-                },
-              ]}
-            />
+              },
+              {
+                header: "Documents",
+                content: <>TODO</>,
+              },
+            ]}
+          />
 
-            <Button
-              type="submit"
-              variant="primary"
-              onClick={() => checkValidity(values, show, listValuesRequired)}
-            >
-              Valider
-            </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            onClick={() => checkValidity(values, show, listValuesRequired)}
+          >
+            Valider
+          </Button>
         </Container>
       </FormContainer>
     )
