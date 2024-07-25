@@ -117,6 +117,7 @@ val MODELE_PIBI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModelePibi.MO
 val MODULE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Module.MODULE, DSL.name("module_pkey"), arrayOf(Module.MODULE.ID), true)
 val NATURE_NATURE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Nature.NATURE, DSL.name("nature_nature_code_key"), arrayOf(Nature.NATURE.CODE), true)
 val NATURE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Nature.NATURE, DSL.name("nature_pkey"), arrayOf(Nature.NATURE.ID), true)
+val NATURE_DECI_NATURE_DECI_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(NatureDeci.NATURE_DECI, DSL.name("nature_deci_nature_deci_code_key"), arrayOf(NatureDeci.NATURE_DECI.CODE), true)
 val NATURE_DECI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(NatureDeci.NATURE_DECI, DSL.name("nature_deci_pkey"), arrayOf(NatureDeci.NATURE_DECI.ID), true)
 val NIVEAU_NIVEAU_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Niveau.NIVEAU, DSL.name("niveau_niveau_code_key"), arrayOf(Niveau.NIVEAU.CODE), true)
 val NIVEAU_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Niveau.NIVEAU, DSL.name("niveau_pkey"), arrayOf(Niveau.NIVEAU.ID), true)

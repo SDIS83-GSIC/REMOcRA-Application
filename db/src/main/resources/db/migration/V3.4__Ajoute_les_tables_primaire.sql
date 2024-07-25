@@ -96,13 +96,10 @@ COMMENT
 
 INSERT INTO remocra.diametre
 (diametre_id, diametre_actif, diametre_code, diametre_libelle, diametre_protected)
-VALUES (gen_random_uuid(), true, 'DIAM100', '100', true);
-INSERT INTO remocra.diametre
-(diametre_id, diametre_actif, diametre_code, diametre_libelle, diametre_protected)
-VALUES (gen_random_uuid(), true, 'DIAM80', '80', true);
-INSERT INTO remocra.diametre
-(diametre_id, diametre_actif, diametre_code, diametre_libelle, diametre_protected)
-VALUES (gen_random_uuid(), true, 'DIAM150', '150', true);
+VALUES (gen_random_uuid(), true, 'DIAM70', '70', true),
+       (gen_random_uuid(), true, 'DIAM80', '80', true),
+       (gen_random_uuid(), true, 'DIAM100', '100', true),
+       (gen_random_uuid(), true, 'DIAM150', '150', true);
 
 
 
@@ -261,7 +258,7 @@ CREATE TABLE remocra.reservoir
     reservoir_actif    BOOLEAN NOT NULL,
     reservoir_code     TEXT    NOT NULL UNIQUE,
     reservoir_libelle  TEXT    NOT NULL,
-    reservoir_capacite INTEGER NOT NULL
+    reservoir_capacite INTEGER
 );
 
 COMMENT

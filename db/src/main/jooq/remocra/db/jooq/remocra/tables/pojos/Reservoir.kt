@@ -23,7 +23,7 @@ data class Reservoir(
     val reservoirActif: Boolean,
     val reservoirCode: String,
     val reservoirLibelle: String,
-    val reservoirCapacite: Int,
+    val reservoirCapacite: Int?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -49,7 +49,11 @@ data class Reservoir(
         if (this.reservoirLibelle != o.reservoirLibelle) {
             return false
         }
-        if (this.reservoirCapacite != o.reservoirCapacite) {
+        if (this.reservoirCapacite == null) {
+            if (o.reservoirCapacite != null) {
+                return false
+            }
+        } else if (this.reservoirCapacite != o.reservoirCapacite) {
             return false
         }
         return true
@@ -62,7 +66,7 @@ data class Reservoir(
         result = prime * result + this.reservoirActif.hashCode()
         result = prime * result + this.reservoirCode.hashCode()
         result = prime * result + this.reservoirLibelle.hashCode()
-        result = prime * result + this.reservoirCapacite.hashCode()
+        result = prime * result + (if (this.reservoirCapacite == null) 0 else this.reservoirCapacite.hashCode())
         return result
     }
 

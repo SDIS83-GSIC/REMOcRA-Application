@@ -102,7 +102,7 @@ open class Reservoir(
      * The column <code>remocra.reservoir.reservoir_capacite</code>. En m3
      * (mètre cube)
      */
-    val CAPACITE: TableField<Record, Int?> = createField(DSL.name("reservoir_capacite"), SQLDataType.INTEGER.nullable(false), this, "En m3 (mètre cube)")
+    val CAPACITE: TableField<Record, Int?> = createField(DSL.name("reservoir_capacite"), SQLDataType.INTEGER, this, "En m3 (mètre cube)")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

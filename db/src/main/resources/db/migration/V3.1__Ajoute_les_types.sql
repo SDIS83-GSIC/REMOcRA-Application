@@ -46,7 +46,7 @@ COMMENT
 INSERT INTO remocra.type_organisme
 (type_organisme_id, type_organisme_actif, type_organisme_protected, type_organisme_code, type_organisme_libelle,
  type_organisme_parent_id)
-VALUES (gen_random_uuid(), true, true, 'SERVICE_EAU', 'Service des eaux', null),
+VALUES (gen_random_uuid(), true, true, 'SERVICE_EAUX', 'Service des eaux', null),
        (gen_random_uuid(), true, true, 'PRESTATAIRE_TECHNIQUE', 'Prestataire technique', null),
        (gen_random_uuid(), true, true, 'AUTRE_SERVICE_PUBLIC_DECI', 'Autre Services Public DECI', null),
        (gen_random_uuid(), true, true, 'COMMUNE', 'Commune', null),
@@ -94,7 +94,7 @@ CREATE TABLE remocra.nature_deci
 (
     nature_deci_id   UUID PRIMARY KEY,
     nature_deci_actif  BOOLEAN NOT NULL,
-    nature_deci_code VARCHAR NOT NULL,
+    nature_deci_code VARCHAR NOT NULL UNIQUE,
     nature_deci_libelle  VARCHAR NOT NULL,
     nature_deci_protected  BOOLEAN NOT NULL
 );
@@ -105,6 +105,7 @@ VALUES(gen_random_uuid(), 'PRIVE', 'Privé', true, true);
 INSERT INTO remocra.nature_deci
 (nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
 VALUES(gen_random_uuid(), 'PUBLIC', 'Public', true, true);
+
 INSERT INTO remocra.nature_deci
 (nature_deci_id, nature_deci_code, nature_deci_libelle, nature_deci_protected,nature_deci_actif)
 VALUES(gen_random_uuid(), 'PRIVE_CONVENTIONNE', 'Privé sous convention', false, true);

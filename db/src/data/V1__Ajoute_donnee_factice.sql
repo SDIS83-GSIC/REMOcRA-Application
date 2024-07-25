@@ -348,7 +348,3 @@ VALUES (gen_random_uuid(),
         (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'UNE_COMMUNE'),
         (SELECT organisme_id FROM remocra.organisme WHERE organisme_code ILIKE 'REMOCRA'),
         false);
-
-
-
-
