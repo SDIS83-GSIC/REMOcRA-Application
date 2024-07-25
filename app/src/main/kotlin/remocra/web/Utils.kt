@@ -1,5 +1,6 @@
 package remocra.web
 
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.usecases.AbstractCUDUseCase
@@ -57,3 +58,6 @@ fun AbstractCUDUseCase.Result.wrap(): Response {
 fun <E> Collection<E>.limitOffset(limit: Long?, offset: Long?): MutableSet<E>? {
     return this.stream().skip(offset ?: 0).limit(limit ?: this.size.toLong()).collect(Collectors.toSet())
 }
+
+fun HttpServletRequest.getTextPart(part: String) =
+    this.getPart(part).inputStream.reader().readText()

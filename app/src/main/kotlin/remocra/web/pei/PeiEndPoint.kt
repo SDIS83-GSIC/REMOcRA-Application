@@ -1,6 +1,10 @@
 package remocra.web.pei
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -13,21 +17,21 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.PrecisionModel
 import remocra.app.AppSettings
 import remocra.authn.userInfo
-import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecases.AbstractCUDUseCase
+import remocra.usecases.document.UpsertDocumentPeiUseCase
 import remocra.usecases.pei.CreatePeiUseCase
 import remocra.usecases.pei.GetCoordonneesBySrid
 import remocra.usecases.pei.PeiUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
+import remocra.web.getTextPart
+import remocra.web.wrap
 import java.util.UUID
 import kotlin.properties.Delegates
 
@@ -43,7 +47,11 @@ class PeiEndPoint {
 
     @Inject lateinit var createPeiUseCase: CreatePeiUseCase
 
+    @Inject lateinit var upsertDocumentPeiUseCase: UpsertDocumentPeiUseCase
+
     @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
+
+    @Inject lateinit var objectMapper: ObjectMapper
 
     @Inject lateinit var appSettings: AppSettings
 
@@ -96,122 +104,64 @@ class PeiEndPoint {
 
     @PUT
     @Path("/update")
-    fun update(peiInput: PeiInput): Response {
-        val pei: PeiData = getPeiData(peiInput)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun update(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val pei = getPeiData(httpRequest)
 
-        return Response.ok(
-            updatePeiUseCase.execute(
-                securityContext.userInfo,
-                pei,
+        val result = updatePeiUseCase.execute(securityContext.userInfo, pei)
+
+        // Si on n'a pas réussi à update le PEI
+        if (result !is AbstractCUDUseCase.Result.Success) {
+            return result.wrap()
+        }
+
+        return upsertDocumentPeiUseCase.execute(
+            securityContext.userInfo,
+            UpsertDocumentPeiUseCase.DocumentsPei(
+                peiId = pei.peiId,
+                listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
+                documentIdToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
+                listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
-        ).build()
+        ).wrap()
     }
 
     @POST
     @Path("/create")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun create(
-        peiInput: PeiInput,
+        @Context httpRequest: HttpServletRequest,
     ): Response {
-        val pei = getPeiData(peiInput)
-        return Response.ok(
-            createPeiUseCase.execute(
-                securityContext.userInfo,
-                pei,
+        val pei = getPeiData(httpRequest)
+
+        val result = createPeiUseCase.execute(
+            securityContext.userInfo,
+            pei,
+        )
+
+        // Si on n'a pas réussi à insérer le PEI
+        if (result !is AbstractCUDUseCase.Result.Success) {
+            return result.wrap()
+        }
+
+        return upsertDocumentPeiUseCase.execute(
+            securityContext.userInfo,
+            UpsertDocumentPeiUseCase.DocumentsPei(
+                peiId = pei.peiId,
+                listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
+                documentIdToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
+                listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
-        ).build()
+        ).wrap()
     }
 
-    private fun getPeiData(peiInput: PeiInput) =
-        when (peiInput.peiTypePei) {
-            TypePei.PIBI -> PibiData(
-                peiId = peiInput.peiId ?: UUID.randomUUID(),
-                peiTypePei = peiInput.peiTypePei,
-                peiNumeroInterne = peiInput.peiNumeroInterne,
-                peiNumeroComplet = peiInput.peiNumeroComplet,
-                peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre ?: Disponibilite.INDISPONIBLE,
-                peiAutoriteDeciId = peiInput.peiAutoriteDeciId,
-                peiServicePublicDeciId = peiInput.peiServicePublicDeciId,
-                peiMaintenanceDeciId = peiInput.peiMaintenanceDeciId,
-                peiCommuneId = peiInput.peiCommuneId,
-                peiVoieId = peiInput.peiVoieId,
-                peiNumeroVoie = peiInput.peiNumeroVoie,
-                peiSuffixeVoie = peiInput.peiSuffixeVoie,
-                peiLieuDitId = peiInput.peiLieuDitId,
-                peiCroisementId = peiInput.peiCroisementId,
-                peiComplementAdresse = peiInput.peiComplementAdresse,
-                peiEnFace = peiInput.peiEnFace,
-                peiDomaineId = peiInput.peiDomaineId,
-                peiNatureId = peiInput.peiNatureId,
-                peiSiteId = peiInput.peiSiteId,
-                peiGestionnaireId = peiInput.peiGestionnaireId,
-                peiNatureDeciId = peiInput.peiNatureDeciId,
-                peiZoneSpecialeId = peiInput.peiZoneSpecialeIdInitial,
-                peiAnneeFabrication = peiInput.peiAnneeFabrication,
-                peiNiveauId = peiInput.peiNiveauId,
-                peiGeometrie = GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(peiInput.coordonneeX, peiInput.coordonneeY)),
-                peiObservation = null,
-                pibiRenversable = peiInput.pibiRenversable,
-                pibiDiametreId = peiInput.pibiDiametreId,
-                pibiAdditive = peiInput.pibiAdditive,
-                pibiSurpresse = peiInput.pibiSurpresse,
-                pibiServiceEauId = peiInput.pibiServiceEauId,
-                pibiTypeReseauId = peiInput.pibiTypeReseauId,
-                pibiDebitRenforce = peiInput.pibiDebitRenforce,
-                pibiMarqueId = peiInput.pibiMarqueId,
-                pibiModeleId = peiInput.pibiModeleId,
-                pibiNumeroScp = peiInput.pibiNumeroScp,
-                pibiReservoirId = peiInput.pibiReservoirId,
-                pibiTypeCanalisationId = peiInput.pibiTypeCanalisationId,
-                pibiDiametreCanalisation = peiInput.pibiDiametreCanalisation,
-                pibiDispositifInviolabilite = peiInput.pibiDispositifInviolabilite,
-                peiCommuneIdInitial = peiInput.peiCommuneIdInitial,
-                peiDomaineIdInitial = peiInput.peiDomaineIdInitial,
-                peiNatureDeciIdInitial = peiInput.peiNatureDeciIdInitial,
-                peiZoneSpecialeIdInitial = peiInput.peiZoneSpecialeIdInitial,
-                peiNumeroInterneInitial = peiInput.peiNumeroInterneInitial,
-                pibiJumeleId = peiInput.pibiJumeleId,
-            )
-            TypePei.PENA -> PenaData(
-                peiId = peiInput.peiId ?: UUID.randomUUID(),
-                peiTypePei = peiInput.peiTypePei,
-                peiGeometrie = GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(peiInput.coordonneeX, peiInput.coordonneeY)),
-                peiNumeroInterne = peiInput.peiNumeroInterne,
-                peiNumeroComplet = peiInput.peiNumeroComplet,
-                peiDisponibiliteTerrestre = peiInput.peiDisponibiliteTerrestre ?: Disponibilite.INDISPONIBLE,
-                peiAutoriteDeciId = peiInput.peiAutoriteDeciId,
-                peiServicePublicDeciId = peiInput.peiServicePublicDeciId,
-                peiMaintenanceDeciId = peiInput.peiMaintenanceDeciId,
-                peiCommuneId = peiInput.peiCommuneId,
-                peiVoieId = peiInput.peiVoieId,
-                peiNumeroVoie = peiInput.peiNumeroVoie,
-                peiSuffixeVoie = peiInput.peiSuffixeVoie,
-                peiLieuDitId = peiInput.peiLieuDitId,
-                peiCroisementId = peiInput.peiCroisementId,
-                peiComplementAdresse = peiInput.peiComplementAdresse,
-                peiEnFace = peiInput.peiEnFace,
-                peiDomaineId = peiInput.peiDomaineId,
-                peiNatureId = peiInput.peiNatureId,
-                peiSiteId = peiInput.peiSiteId,
-                peiGestionnaireId = peiInput.peiGestionnaireId,
-                peiNatureDeciId = peiInput.peiNatureDeciId,
-                peiZoneSpecialeId = peiInput.peiZoneSpecialeIdInitial,
-                peiAnneeFabrication = peiInput.peiAnneeFabrication,
-                peiNiveauId = peiInput.peiNiveauId,
-                peiObservation = null,
-                penaCapaciteIllimitee = peiInput.penaCapaciteIllimitee,
-                penaQuantiteAppoint = peiInput.penaQuantiteAppoint,
-                penaDisponibiliteHbe = peiInput.penaDisponibiliteHbe ?: Disponibilite.INDISPONIBLE,
-                penaMateriauId = peiInput.penaMateriauId,
-                penaCapacite = peiInput.penaCapacite,
-                penaCapaciteIncertaine = peiInput.penaCapaciteIncertaine,
-                peiCommuneIdInitial = peiInput.peiCommuneIdInitial,
-                peiDomaineIdInitial = peiInput.peiDomaineIdInitial,
-                peiNatureDeciIdInitial = peiInput.peiNatureDeciIdInitial,
-                peiZoneSpecialeIdInitial = peiInput.peiZoneSpecialeIdInitial,
-                peiNumeroInterneInitial = peiInput.peiNumeroInterneInitial,
-
-            )
-            else -> throw IllegalArgumentException()
+    private fun getPeiData(httpRequest: HttpServletRequest) =
+        if (httpRequest.getTextPart("peiTypePei") == TypePei.PIBI.literal) {
+            objectMapper.readValue(httpRequest.getTextPart("peiData"), PibiData::class.java)
+        } else {
+            objectMapper.readValue(httpRequest.getTextPart("peiData"), PenaData::class.java)
         }
 
     /**

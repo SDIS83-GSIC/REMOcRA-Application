@@ -64,4 +64,12 @@ export type PeiEntity = {
   peiZoneSpecialeIdInitial?: string;
   peiNatureDeciIdInitial?: string;
   peiDomaineIdInitial?: string;
+
+  // Documents
+  documents: {
+    documentId: string | null;
+    documentNomFichier: string | null;
+    isPhotoPei: boolean;
+    data: File;
+  }[];
 };

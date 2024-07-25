@@ -9,6 +9,7 @@ import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
+import remocra.web.documents.DocumentModule
 import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
@@ -29,6 +30,7 @@ object WebModule : AbstractModule() {
         install(VisiteModule)
         install(NomenclatureModule)
         install(AppSettingsModule)
+        install(DocumentModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }
 

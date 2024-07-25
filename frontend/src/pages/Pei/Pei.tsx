@@ -13,6 +13,7 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
+  FileInput,
   FormContainer,
   NumberInput,
   TextAreaInput,
@@ -29,6 +30,8 @@ import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
 import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
+import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
   peiId: data?.peiId ?? null,
@@ -93,6 +96,8 @@ export const getInitialValues = (data?: PeiEntity) => ({
   penaMateriauId: data?.penaMateriauId ?? null,
   penaQuantiteAppoint: data?.penaQuantiteAppoint ?? null,
   penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+
+  documents: data?.documents ?? [],
 });
 
 export const validationSchema = object({
@@ -108,69 +113,119 @@ export const validationSchema = object({
   coordonneeY: requiredNumber,
 });
 
-export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => ({
-  peiId: data?.peiId ?? null,
-  peiNumeroComplet: values.peiNumeroComplet ?? null,
-  peiNumeroInterne: values.peiNumeroInterne ?? null,
-  peiTypePei: values.peiTypePei,
-  peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
-  peiAnneeFabrication: values?.peiAnneeFabrication ?? null,
+export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
+  const formData = new FormData();
+  values.documents.map((e) => {
+    if (e.data != null) {
+      formData.append("document_" + e.documentNomFichier, e.data);
+    }
+  });
 
-  peiAutoriteDeciId: values.peiAutoriteDeciId ?? null,
-  peiServicePublicDeciId: values.peiServicePublicDeciId ?? null,
-  peiMaintenanceDeciId: values.peiMaintenanceDeciId ?? null,
+  formData.append("documents", JSON.stringify(values.documents));
+  formData.append(
+    "documentIdToRemove",
+    JSON.stringify(
+      data?.documents
+        .filter(
+          (e) =>
+            !values?.documents.map((e) => e.documentId).includes(e.documentId),
+        )
+        .filter((e) => e != null)
+        .map((e) => e.documentId) ?? [],
+    ),
+  );
 
-  peiCommuneId: values.peiCommuneId ?? null,
-  peiVoieId: values.peiVoieId ?? null,
-  peiNumeroVoie: values.peiNumeroVoie ?? null,
-  peiSuffixeVoie: values.peiSuffixeVoie ?? null,
-  peiLieuDitId: values.peiLieuDitId ?? null,
-  peiCroisementId: values.peiCroisementId ?? null,
-  peiComplementAdresse: values.peiComplementAdresse ?? null,
-  peiEnFace: values.peiEnFace ?? null,
+  formData.append("peiTypePei", values.peiTypePei);
 
-  peiDomaineId: values.peiDomaineId ?? null,
-  peiNatureId: values.peiNatureId ?? null,
-  peiNatureDeciId: values.peiNatureDeciId ?? null,
-  peiSiteId: values.peiSiteId ?? null,
-  peiGestionnaireId: values.peiGestionnaireId ?? null,
-  peiNiveauId: values.peiNiveauId ?? null,
+  const dataPei = {
+    peiId: data?.peiId,
+    peiNumeroComplet: values.peiNumeroComplet ?? null,
+    peiNumeroInterne: values.peiNumeroInterne ?? null,
+    peiTypePei: values.peiTypePei,
+    peiDisponibiliteTerrestre:
+      data?.peiDisponibiliteTerrestre ??
+      DISPONIBILITE_PEI.INDISPONIBLE.toUpperCase(),
+    peiAnneeFabrication: values?.peiAnneeFabrication ?? null,
+    peiGeometrie:
+      "SRID=" +
+      values.typeSystemeSrid +
+      ";POINT(" +
+      values.coordonneeX +
+      " " +
+      values.coordonneeY +
+      ")",
 
-  coordonneeX: values?.coordonneeX ?? null,
-  coordonneeY: values?.coordonneeY ?? null,
+    peiAutoriteDeciId: values.peiAutoriteDeciId ?? null,
+    peiServicePublicDeciId: values.peiServicePublicDeciId ?? null,
+    peiMaintenanceDeciId: values.peiMaintenanceDeciId ?? null,
 
-  // DONNEES PIBI
-  pibiDiametreId: values.pibiDiametreId ?? null,
-  pibiServiceEauId: values.pibiServiceEauId ?? null,
-  pibiNumeroScp: values.pibiNumeroScp ?? null,
-  pibiRenversable: values.pibiRenversable ?? null,
-  pibiDispositifInviolabilite: values.pibiDispositifInviolabilite ?? null,
-  pibiModeleId: values.pibiModeleId ?? null,
-  pibiMarqueId: values.pibiMarqueId ?? null,
-  pibiReservoirId: values.pibiReservoirId ?? null,
-  pibiDebitRenforce: values.pibiDebitRenforce ?? null,
-  pibiTypeCanalisationId: values.pibiTypeCanalisationId ?? null,
-  pibiTypeReseauId: values.pibiTypeReseauId ?? null,
-  pibiDiametreCanalisation: values.pibiDiametreCanalisation ?? null,
-  pibiSurpresse: values.pibiSurpresse ?? null,
-  pibiAdditive: values.pibiAdditive ?? null,
-  pibiJumeleId: values.pibiJumeleId ?? null,
+    peiCommuneId: values.peiCommuneId ?? null,
+    peiVoieId: values.peiVoieId ?? null,
+    peiNumeroVoie: values.peiNumeroVoie ?? null,
+    peiSuffixeVoie: values.peiSuffixeVoie ?? null,
+    peiLieuDitId: values.peiLieuDitId ?? null,
+    peiCroisementId: values.peiCroisementId ?? null,
+    peiComplementAdresse: values.peiComplementAdresse ?? null,
+    peiEnFace: values.peiEnFace ?? null,
 
-  // DONNEES PENA
-  penaCapacite: values.penaCapacite ?? null,
-  penaCapaciteIllimitee: values.penaCapaciteIllimitee ?? null,
-  penaCapaciteIncertaine: values.penaCapaciteIncertaine ?? null,
-  penaMateriauId: values.penaMateriauId ?? null,
-  penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
-  penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+    peiDomaineId: values.peiDomaineId ?? null,
+    peiNatureId: values.peiNatureId ?? null,
+    peiNatureDeciId: values.peiNatureDeciId ?? null,
+    peiSiteId: values.peiSiteId ?? null,
+    peiGestionnaireId: values.peiGestionnaireId ?? null,
+    peiNiveauId: values.peiNiveauId ?? null,
 
-  // DONNEES INITIALES
-  peiNumeroInterneInitial: data?.peiNumeroInterne ?? null,
-  peiCommuneIdInitial: data?.peiCommuneId ?? null,
-  peiZoneSpecialeIdInitial: data?.peiZoneSpecialeId ?? null,
-  peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
-  peiDomaineIdInitial: data?.peiDomaineId ?? null,
-});
+    coordonneeX: values?.coordonneeX ?? null,
+    coordonneeY: values?.coordonneeY ?? null,
+
+    // DONNEES INITIALES
+    peiNumeroInterneInitial: data?.peiNumeroInterne ?? null,
+    peiCommuneIdInitial: data?.peiCommuneId ?? null,
+    peiZoneSpecialeIdInitial: data?.peiZoneSpecialeId ?? null,
+    peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
+    peiDomaineIdInitial: data?.peiDomaineId ?? null,
+  };
+
+  formData.append(
+    "peiData",
+    JSON.stringify(
+      values.peiTypePei === TYPE_PEI.PIBI
+        ? {
+            ...dataPei,
+            // DONNEES PIBI
+            pibiDiametreId: values.pibiDiametreId ?? null,
+            pibiServiceEauId: values.pibiServiceEauId ?? null,
+            pibiNumeroScp: values.pibiNumeroScp ?? null,
+            pibiRenversable: values.pibiRenversable ?? null,
+            pibiDispositifInviolabilite:
+              values.pibiDispositifInviolabilite ?? null,
+            pibiModeleId: values.pibiModeleId ?? null,
+            pibiMarqueId: values.pibiMarqueId ?? null,
+            pibiReservoirId: values.pibiReservoirId ?? null,
+            pibiDebitRenforce: values.pibiDebitRenforce ?? null,
+            pibiTypeCanalisationId: values.pibiTypeCanalisationId ?? null,
+            pibiTypeReseauId: values.pibiTypeReseauId ?? null,
+            pibiDiametreCanalisation: values.pibiDiametreCanalisation ?? null,
+            pibiSurpresse: values.pibiSurpresse ?? null,
+            pibiAdditive: values.pibiAdditive ?? null,
+            pibiJumeleId: values.pibiJumeleId ?? null,
+          }
+        : {
+            ...dataPei,
+
+            // DONNEES PENA
+            penaCapacite: values.penaCapacite ?? null,
+            penaCapaciteIllimitee: values.penaCapaciteIllimitee ?? null,
+            penaCapaciteIncertaine: values.penaCapaciteIncertaine ?? null,
+            penaMateriauId: values.penaMateriauId ?? null,
+            penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
+            penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+          },
+    ),
+  );
+
+  return formData;
+};
 
 type SelectDataType = {
   listAutoriteDeci: IdCodeLibelleType[];
@@ -254,6 +309,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     values.peiId,
     geometrieState,
     selectDataState,
+    srid,
   ]);
 
   // Permet de savoir si les sections de l'accordion sont ouvertes et de les set
@@ -363,7 +419,12 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
               },
               {
                 header: "Documents",
-                content: <>TODO</>,
+                content: (
+                  <FormDocuments
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
               },
             ]}
           />
@@ -1012,3 +1073,70 @@ const FormPena = ({
     </>
   );
 };
+
+const FormDocuments = ({
+  values,
+  setFieldValue,
+}: {
+  values: PeiEntity;
+  setFieldValue: (champ: string, newValue: any | undefined) => void;
+}) => {
+  return (
+    <>
+      <FileInput
+        name="documentCourant"
+        accept="*.*"
+        label="Ajouter un document"
+        required={false}
+        onChange={(e) => {
+          values.documents.push({
+            documentId: null,
+            documentNomFichier: e.target.files[0].name,
+            isPhotoPei: false,
+            data: e.target.files[0],
+          });
+          setFieldValue("documents", values.documents);
+        }}
+      />
+      <AddRemoveComponent
+        name="documents"
+        createComponentToRepeat={formDocumentsToRepeat}
+        listeElements={values.documents}
+        canAdd={false}
+      />
+    </>
+  );
+};
+
+function formDocumentsToRepeat(index: number, listeElements: any[]) {
+  return (
+    <>
+      {listeElements[index].documentId != null ? (
+        <Col>
+          <Button
+            variant="link"
+            href={
+              url`/api/documents/pei/telecharger/` +
+              listeElements[index].documentId
+            }
+          >
+            {listeElements[index].documentNomFichier}
+          </Button>
+        </Col>
+      ) : (
+        <Col>{listeElements[index].documentNomFichier}</Col>
+      )}
+      {
+        // Si c'est une image
+        ["png", "svg", "jpeg", "jpg"].includes(
+          listeElements[index].documentNomFichier.split(".").at(-1),
+        ) && (
+          <CheckBoxInput
+            name={`documents[${index}].isPhotoPei`}
+            label="Est la photo du PEI ?"
+          />
+        )
+      }
+    </>
+  );
+}

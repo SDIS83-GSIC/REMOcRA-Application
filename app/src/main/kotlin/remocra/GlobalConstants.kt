@@ -24,4 +24,10 @@ object GlobalConstants {
     const val TOLERANCE_VOIES_METRES = "TOLERANCE_VOIES_METRES"
 
     const val SRID_4326 = 4326
+
+    const val DOSSIER_DATA = "/var/lib/remocra/"
+
+    const val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
+
+    const val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
 }

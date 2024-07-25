@@ -12,6 +12,7 @@ const CreatePei = () => {
       initialValues={getInitialValues()}
       validationSchema={validationSchema}
       isPost={true}
+      isMultipartFormData={true}
       submitUrl={`/api/pei/create/`}
       prepareVariables={(values) => prepareVariables(values)}
       redirectUrl={URLS.PEI}

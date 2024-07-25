@@ -10,7 +10,7 @@ import java.util.UUID
  * ce modèle est décliné (hérité) pour chaque type (PIBI, PENA) afin de rajouter la sémantique nécessaire à ces spécificités.
  */
 open class PeiData(
-    open val peiId: UUID,
+    open val peiId: UUID = UUID.randomUUID(),
     open var peiNumeroComplet: String?,
     open var peiNumeroInterne: Int?,
     open var peiDisponibiliteTerrestre: Disponibilite,
@@ -55,7 +55,7 @@ open class PeiData(
 )
 
 data class PibiData(
-    override val peiId: UUID,
+    override val peiId: UUID = UUID.randomUUID(),
     override var peiNumeroComplet: String?,
     override var peiNumeroInterne: Int?,
     override var peiDisponibiliteTerrestre: Disponibilite,
@@ -145,7 +145,7 @@ data class PibiData(
 )
 
 class PenaData(
-    override val peiId: UUID,
+    override val peiId: UUID = UUID.randomUUID(),
     override var peiNumeroComplet: String?,
     override var peiNumeroInterne: Int?,
     override var peiDisponibiliteTerrestre: Disponibilite,
