@@ -12,8 +12,18 @@ import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_DWithin
+import java.util.UUID
 
 class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
+
+    companion object {
+        val conditionAutoriteDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries))
+        val conditionServiceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries))
+        val conditionMaintenanceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries))
+    }
+
     fun getAll(codeTypeOrganisme: String?, limit: Int?, offset: Int?): Collection<Organisme> =
         dsl.select(*ORGANISME.fields())
             .from(ORGANISME)
@@ -28,13 +38,13 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
         getIdLibelleByCondition(DSL.noCondition())
 
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> =
-        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries)))
+        getIdLibelleByCondition(conditionAutoriteDeci)
 
     fun getServicePublicForSelect(): List<IdCodeLibelleData> =
-        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries)))
+        getIdLibelleByCondition(conditionServiceDeci)
 
     fun getMaintenanceDeciForSelect(): List<IdCodeLibelleData> =
-        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries)))
+        getIdLibelleByCondition(conditionMaintenanceDeci)
 
     fun getServiceEauForSelect(): List<IdCodeLibelleData> =
         getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.eq(GlobalConstants.SERVICE_EAUX)))
@@ -47,4 +57,31 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .and(condition)
             .orderBy(ORGANISME.LIBELLE.asc())
             .fetchInto()
+
+    fun getAutoriteDeciPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int) =
+        getOrganismePei(coordonneeX, coordonneeY, srid, toleranceCommuneMetres, conditionAutoriteDeci)
+
+    fun getServicePublicDeciPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int) =
+        getOrganismePei(coordonneeX, coordonneeY, srid, toleranceCommuneMetres, conditionServiceDeci)
+
+    fun getMaintenanceDeciPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int) =
+        getOrganismePei(coordonneeX, coordonneeY, srid, toleranceCommuneMetres, conditionMaintenanceDeci)
+
+    private fun getOrganismePei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int, condition: Condition): List<OrganismePei> =
+        dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.CODE.`as`("code"), ORGANISME.LIBELLE.`as`("libelle"), TYPE_ORGANISME.CODE.`as`("codeTypeOrganisme"))
+            .from(ORGANISME)
+            .join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+            .where(ORGANISME.ACTIF)
+            .and(condition)
+            .ST_DWithin(ZONE_INTEGRATION.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceCommuneMetres)
+            .orderBy(ORGANISME.LIBELLE.asc())
+            .fetchInto()
+
+    data class OrganismePei(
+        val id: UUID,
+        val code: String,
+        var libelle: String,
+        val codeTypeOrganisme: String,
+    )
 }

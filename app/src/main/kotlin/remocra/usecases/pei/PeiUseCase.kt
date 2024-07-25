@@ -1,9 +1,12 @@
 package remocra.usecases.pei
 
 import jakarta.inject.Inject
+import remocra.GlobalConstants
 import remocra.app.AppSettings
+import remocra.app.ParametresProvider
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.PeiData
+import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.LieuDitRepository
@@ -59,6 +62,9 @@ class PeiUseCase {
     lateinit var modelePibiRepository: ModelePibiRepository
 
     @Inject
+    lateinit var parametresProvider: ParametresProvider
+
+    @Inject
     lateinit var appSettings: AppSettings
 
     fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiRepository.PeiForTableau> {
@@ -79,22 +85,57 @@ class PeiUseCase {
      * Retourne les informations nécessaires pour les valeurs qui peuvent être modifié
      * dans le formaulaire d'update d'un PEI
      */
-    fun getInfoForUpdateOrCreate(coordonneeX: String, coordonneeY: String, peiId: UUID?): FichePeiListSelect {
-        // TODO mettre en place les paramètres de distance pour remonter les communes et les voies et lieux dit qui sont
-        //  pas trop loin du PEI en question + prendre en compte pour les organismes
+    fun getInfoForUpdateOrCreate(coordonneeX: String?, coordonneeY: String?, peiId: UUID?): FichePeiListSelect {
+        val srid = appSettings.sridInt
+
+        val toleranceCommune = parametresProvider.getParametreInt(GlobalConstants.PEI_TOLERANCE_COMMUNE_METRES)
+            ?: throw IllegalArgumentException("Le paramètre PEI_TOLERANCE_COMMUNE_METRES est nul, veuillez renseigner une valeur")
+        val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
+            ?: throw IllegalArgumentException("Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur")
+
+        var listCommune: Collection<IdCodeLibelleData> = listOf()
+
+        var listVoiePei: Collection<VoieRepository.VoieWithCommune> = listOf()
+        var listAutoriteDeci: Collection<OrganismeRepository.OrganismePei> = listOf()
+        var listServicePublicDeci: Collection<IdCodeLibelleData> = listOf()
+        var listMaintenanceDeci: Collection<IdCodeLibelleData> = listOf()
+        var listLieuDit: Collection<LieuDitRepository.LieuDitWithCommune> = listOf()
+        var listPeiJumelage: Collection<IdCodeLibelleData> = listOf()
+
+        if (!coordonneeX.isNullOrEmpty() && !coordonneeY.isNullOrEmpty()) {
+            listCommune = communeRepository.getCommunesPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+            val listIdCommune = listCommune.map { it.id }
+            listVoiePei = voieRepository.getVoies(coordonneeX, coordonneeY, srid, toleranceVoie, listIdCommune)
+            listAutoriteDeci = organismeRepository
+                .getAutoriteDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune).onEach {
+                    when (it.codeTypeOrganisme.uppercase()) {
+                        TypeAutoriteDeci.COMMUNE.name.uppercase() -> it.libelle = "Maire (${it.libelle})"
+                        TypeAutoriteDeci.PREFECTURE.name.uppercase() -> it.libelle = "Préfet (${it.libelle})"
+                        TypeAutoriteDeci.EPCI.name.uppercase() -> it.libelle = "Président (${it.libelle})"
+                    }
+                }
+
+            listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listIdCommune)
+            listPeiJumelage = pibiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, srid)
+            listMaintenanceDeci = organismeRepository.getMaintenanceDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
+
+            listServicePublicDeci = organismeRepository.getServicePublicDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
+        }
 
         return FichePeiListSelect(
-            listAutoriteDeci = organismeRepository.getAutoriteDeciForSelect(),
-            listServicePublicDeci = organismeRepository.getServicePublicForSelect(),
-            listMaintenanceDeci = organismeRepository.getMaintenanceDeciForSelect(),
-            listCommune = communeRepository.getCommuneForSelect(),
+            listAutoriteDeci = listAutoriteDeci.map { IdCodeLibelleData(it.id, it.code, it.libelle) },
+            listServicePublicDeci = listServicePublicDeci,
+            listMaintenanceDeci = listMaintenanceDeci,
+            listCommune = listCommune,
             listSite = siteRepository.getAll(),
-            listVoie = voieRepository.getVoieForSelect(),
+            listVoie = listVoiePei,
             listGestionnaire = gestionnaireRepository.getAll(),
-            listLieuDit = lieuDitRepository.getAllWithCommune(),
+            listLieuDit = listLieuDit,
             listModele = modelePibiRepository.getModeleWithMarque(),
             listServiceEau = organismeRepository.getServiceEauForSelect(),
-            listPeiJumelage = pibiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, appSettings.sridInt),
+            listPeiJumelage = listPeiJumelage,
         )
     }
 

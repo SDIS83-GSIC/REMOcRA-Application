@@ -7,9 +7,12 @@ import java.util.UUID
 
 class LieuDitRepository @Inject constructor(private val dsl: DSLContext) {
 
-    fun getAllWithCommune(): Collection<LieuDitWithCommune> =
+    fun getLieuDitWithCommunePei(
+        listIdCommune: List<UUID>,
+    ): Collection<LieuDitWithCommune> =
         dsl.select(LIEU_DIT.ID.`as`("id"), LIEU_DIT.LIBELLE.`as`("libelle"), LIEU_DIT.COMMUNE_ID.`as`("communeId"))
             .from(LIEU_DIT)
+            .where(LIEU_DIT.COMMUNE_ID.`in`(listIdCommune))
             .orderBy(LIEU_DIT.LIBELLE)
             .fetchInto()
 

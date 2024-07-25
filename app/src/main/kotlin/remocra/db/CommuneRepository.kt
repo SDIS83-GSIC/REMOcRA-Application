@@ -7,6 +7,7 @@ import org.jooq.impl.DSL
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.utils.ST_DWithin
 import java.util.UUID
 
 class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
@@ -34,6 +35,16 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
     fun getCommuneForSelect(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
+            .orderBy(COMMUNE.LIBELLE)
+            .fetchInto()
+
+    /**
+     * Retourne les communes qui sont à moins de PEI_TOLERANCE_COMMUNE_METRES mètres de la géométrie passée en paramètre
+     */
+    fun getCommunesPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
+            .from(COMMUNE)
+            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceCommuneMetres)
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
 

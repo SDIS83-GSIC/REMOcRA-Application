@@ -88,8 +88,8 @@ class PeiEndPoint {
     @GET
     @Path("/referentiel-for-upsert-pei/")
     fun getReferentielUpdateOrCreatePei(
-        @QueryParam("coordonneeX") coordonneeX: String,
-        @QueryParam("coordonneeY") coordonneeY: String,
+        @QueryParam("coordonneeX") coordonneeX: String?,
+        @QueryParam("coordonneeY") coordonneeY: String?,
         @QueryParam("peiId") peiId: UUID?,
     ) =
         Response.ok(peiUseCase.getInfoForUpdateOrCreate(coordonneeX, coordonneeY, peiId)).build()
@@ -222,12 +222,15 @@ class PeiEndPoint {
     @Path("/get-geometrie-by-srid")
     fun getGeometrieByTypeSrid(
         @QueryParam("coordonneeX")
-        coordonneeX: String,
+        coordonneeX: String?,
         @QueryParam("coordonneeY")
-        coordonneeY: String,
+        coordonneeY: String?,
         @QueryParam("srid")
-        srid: Int,
+        srid: Int?,
     ): Response {
+        if (coordonneeX.isNullOrEmpty() || coordonneeY.isNullOrEmpty() || srid == null) {
+            return Response.ok(listOf<GetCoordonneesBySrid.CoordonneesBySysteme>()).build()
+        }
         return Response.ok(getCoordonneesBySrid.execute(coordonneeX, coordonneeY, srid)).build()
     }
 

@@ -206,40 +206,53 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     }}`,
   );
 
+  // Si les coordonnées changent, il faut recharger les coordonnées dans les différents systèmes
+  const geometrieState = useGet(
+    url`/api/pei/get-geometrie-by-srid?${{
+      coordonneeX: values.coordonneeXToDisplay,
+      coordonneeY: values.coordonneeYToDisplay,
+      srid: values.typeSystemeSrid,
+    }}`,
+  );
+
   //eslint-disable-next-line react-hooks/rules-of-hooks
   const srid = ensureSrid();
 
-  // Si les coordonnées changent, il faut recharger les coordonnées dans les différents systèmes
-  const geometrieState = useGet(
-    !isNew
-      ? url`/api/pei/get-geometrie-by-srid?${{
-          coordonneeX: values.coordonneeXToDisplay,
-          coordonneeY: values.coordonneeYToDisplay,
-          srid: values.typeSystemeSrid,
-        }}`
-      : "",
-  );
-
   useEffect(() => {
-    geometrieState?.run({
-      coordonneeX: values.coordonneeXToDisplay,
-      coordonneeY: values.coordonneeYToDisplay,
-      srid: srid,
-    });
+    if (
+      values.coordonneeXToDisplay != null &&
+      values.coordonneeYToDisplay != null
+    ) {
+      geometrieState?.run({
+        coordonneeX: values.coordonneeXToDisplay,
+        coordonneeY: values.coordonneeYToDisplay,
+        srid: values.typeSystemeSrid,
+      });
+    }
 
-    selectDataState.run({
-      coordonneeX: values.coordonneeX,
-      coordonneeY: values.coordonneeY,
-      peiId: values.peiId,
-    });
+    if (values.coordonneeX != null && values.coordonneeY != null) {
+      selectDataState?.run({
+        coordonneeX: values.coordonneeX,
+        coordonneeY: values.coordonneeY,
+        peiId: values.peiId,
+      });
+    }
+
+    const coordonnees = geometrieState?.data?.find((e) => e.srid === srid);
+
+    if (coordonnees != null) {
+      setFieldValue("coordonneeX", coordonnees?.coordonneeX);
+      setFieldValue("coordonneeY", coordonnees?.coordonneeY);
+    }
   }, [
+    setFieldValue,
     values.coordonneeX,
     values.coordonneeY,
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
-    srid,
-    geometrieState,
+    values.typeSystemeSrid,
     values.peiId,
+    geometrieState,
     selectDataState,
   ]);
 
@@ -289,7 +302,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
 
   return (
     selectData &&
-    srid && (
+    srid != null && (
       <FormContainer>
         <Container>
           <PageTitle

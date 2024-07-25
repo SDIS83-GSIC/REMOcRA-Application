@@ -7,6 +7,7 @@ import org.jooq.impl.DSL
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.utils.ST_DistanceInferieurStrict
 import java.util.UUID
 
 class VoieRepository @Inject constructor(private val dsl: DSLContext) {
@@ -18,7 +19,13 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) {
             .offset(offset)
             .fetchInto()
 
-    fun getVoieForSelect(): List<VoieWithCommune> =
+    fun getVoies(
+        coordonneeX: String,
+        coordonneeY: String,
+        srid: Int,
+        toleranceVoiesMetres: Int,
+        listeIdCommune: List<UUID>,
+    ): List<VoieWithCommune> =
         dsl.select(
             VOIE.ID.`as`("id"),
             VOIE.LIBELLE.`as`("code"),
@@ -26,6 +33,8 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) {
             VOIE.COMMUNE_ID.`as`("communeId"),
         )
             .from(VOIE)
+            .where(VOIE.COMMUNE_ID.`in`(listeIdCommune))
+            .ST_DistanceInferieurStrict(VOIE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceVoiesMetres)
             .orderBy(VOIE.LIBELLE)
             .fetchInto()
 
