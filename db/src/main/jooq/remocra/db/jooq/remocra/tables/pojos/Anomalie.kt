@@ -23,7 +23,7 @@ data class Anomalie(
     val anomalieCode: String,
     val anomalieLibelle: String,
     val anomalieCommentaire: String?,
-    val anomalieAnomalieCategorieId: UUID?,
+    val anomalieAnomalieCategorieId: UUID,
     val anomalieActif: Boolean,
     val anomalieProtected: Boolean,
     val anomalieRendNonConforme: Boolean,
@@ -56,11 +56,7 @@ data class Anomalie(
         } else if (this.anomalieCommentaire != o.anomalieCommentaire) {
             return false
         }
-        if (this.anomalieAnomalieCategorieId == null) {
-            if (o.anomalieAnomalieCategorieId != null) {
-                return false
-            }
-        } else if (this.anomalieAnomalieCategorieId != o.anomalieAnomalieCategorieId) {
+        if (this.anomalieAnomalieCategorieId != o.anomalieAnomalieCategorieId) {
             return false
         }
         if (this.anomalieActif != o.anomalieActif) {
@@ -82,7 +78,7 @@ data class Anomalie(
         result = prime * result + this.anomalieCode.hashCode()
         result = prime * result + this.anomalieLibelle.hashCode()
         result = prime * result + (if (this.anomalieCommentaire == null) 0 else this.anomalieCommentaire.hashCode())
-        result = prime * result + (if (this.anomalieAnomalieCategorieId == null) 0 else this.anomalieAnomalieCategorieId.hashCode())
+        result = prime * result + this.anomalieAnomalieCategorieId.hashCode()
         result = prime * result + this.anomalieActif.hashCode()
         result = prime * result + this.anomalieProtected.hashCode()
         result = prime * result + this.anomalieRendNonConforme.hashCode()

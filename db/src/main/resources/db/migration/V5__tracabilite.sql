@@ -23,7 +23,7 @@ VALUES (
     'UTILISATEUR_SYSTEME',
     'UTILISATEUR_SYSTEME',
     'UTILISATEUR_SYSTEME'
-);
+)ON CONFLICT DO NOTHING;
 
 CREATE TABLE historique.tracabilite (
     tracabilite_id                  UUID                        PRIMARY KEY,

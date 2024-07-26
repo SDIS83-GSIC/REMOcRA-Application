@@ -103,7 +103,7 @@ open class ModelePibi(
     /**
      * The column <code>remocra.modele_pibi.modele_pibi_marque_id</code>.
      */
-    val MARQUE_ID: TableField<Record, UUID?> = createField(DSL.name("modele_pibi_marque_id"), SQLDataType.UUID, this, "")
+    val MARQUE_ID: TableField<Record, UUID?> = createField(DSL.name("modele_pibi_marque_id"), SQLDataType.UUID.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

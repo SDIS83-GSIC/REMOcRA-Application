@@ -23,7 +23,7 @@ data class ModelePibi(
     val modelePibiActif: Boolean,
     val modelePibiCode: String,
     val modelePibiLibelle: String,
-    val modelePibiMarqueId: UUID?,
+    val modelePibiMarqueId: UUID,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -49,11 +49,7 @@ data class ModelePibi(
         if (this.modelePibiLibelle != o.modelePibiLibelle) {
             return false
         }
-        if (this.modelePibiMarqueId == null) {
-            if (o.modelePibiMarqueId != null) {
-                return false
-            }
-        } else if (this.modelePibiMarqueId != o.modelePibiMarqueId) {
+        if (this.modelePibiMarqueId != o.modelePibiMarqueId) {
             return false
         }
         return true
@@ -66,7 +62,7 @@ data class ModelePibi(
         result = prime * result + this.modelePibiActif.hashCode()
         result = prime * result + this.modelePibiCode.hashCode()
         result = prime * result + this.modelePibiLibelle.hashCode()
-        result = prime * result + (if (this.modelePibiMarqueId == null) 0 else this.modelePibiMarqueId.hashCode())
+        result = prime * result + this.modelePibiMarqueId.hashCode()
         return result
     }
 

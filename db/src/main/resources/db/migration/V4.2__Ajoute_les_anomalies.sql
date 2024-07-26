@@ -24,7 +24,7 @@ CREATE TABLE remocra.anomalie (
     anomalie_code                   TEXT UNIQUE NOT NULL,
     anomalie_libelle                TEXT NOT NULL,
     anomalie_commentaire            TEXT,
-    anomalie_anomalie_categorie_id  UUID REFERENCES remocra.anomalie_categorie,
+    anomalie_anomalie_categorie_id  UUID NOT NULL REFERENCES remocra.anomalie_categorie,
     anomalie_actif                  BOOLEAN NOT NULL,
     anomalie_protected              BOOLEAN NOT NULL,
     anomalie_rend_non_conforme      BOOLEAN NOT NULL

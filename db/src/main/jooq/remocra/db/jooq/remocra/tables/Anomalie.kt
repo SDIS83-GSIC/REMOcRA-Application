@@ -112,7 +112,7 @@ open class Anomalie(
     /**
      * The column <code>remocra.anomalie.anomalie_anomalie_categorie_id</code>.
      */
-    val ANOMALIE_CATEGORIE_ID: TableField<Record, UUID?> = createField(DSL.name("anomalie_anomalie_categorie_id"), SQLDataType.UUID, this, "")
+    val ANOMALIE_CATEGORIE_ID: TableField<Record, UUID?> = createField(DSL.name("anomalie_anomalie_categorie_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
      * The column <code>remocra.anomalie.anomalie_actif</code>.
