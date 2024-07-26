@@ -60,20 +60,30 @@ export function useGetRun(url: string, asyncOptions: object) {
   });
 }
 
-export function usePost(url: string, asyncOptions: object = {}) {
+export function usePost(
+  url: string,
+  asyncOptions: object = {},
+  isMultipartFormData = false,
+) {
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback(
       (args, props, { signal }) => {
-        const options = getFetchOptions({
-          signal,
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(args[0]),
-        });
+        const options = isMultipartFormData
+          ? getFetchOptions({
+              signal,
+              method: "POST",
+              body: args[0],
+            })
+          : getFetchOptions({
+              signal,
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(args[0]),
+            });
         return doFetch(url, options);
       },
-      [url],
+      [isMultipartFormData, url],
     ),
   });
 }

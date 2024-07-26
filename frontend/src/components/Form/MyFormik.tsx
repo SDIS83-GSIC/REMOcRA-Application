@@ -52,6 +52,7 @@ const useMyFormik = (
       errorToastMessage,
       redirectFn,
     ),
+    isMultipartFormData,
   );
   const putState = usePut(
     submitUrl,
