@@ -25,6 +25,8 @@ import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
 import remocra.db.jooq.remocra.tables.Materiau
+import remocra.db.jooq.remocra.tables.ModeleCourrier
+import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
 import remocra.db.jooq.remocra.tables.Nature
 import remocra.db.jooq.remocra.tables.NatureDeci
@@ -162,6 +164,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.materiau</code>.
      */
     val MATERIAU: Materiau get() = Materiau.MATERIAU
+
+    /**
+     * The table <code>remocra.modele_courrier</code>.
+     */
+    val MODELE_COURRIER: ModeleCourrier get() = ModeleCourrier.MODELE_COURRIER
+
+    /**
+     * The table <code>remocra.modele_courrier_parametre</code>.
+     */
+    val MODELE_COURRIER_PARAMETRE: ModeleCourrierParametre get() = ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE
 
     /**
      * The table <code>remocra.modele_pibi</code>.
@@ -309,6 +321,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LogLine.LOG_LINE,
         MarquePibi.MARQUE_PIBI,
         Materiau.MATERIAU,
+        ModeleCourrier.MODELE_COURRIER,
+        ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE,
         ModelePibi.MODELE_PIBI,
         Nature.NATURE,
         NatureDeci.NATURE_DECI,
