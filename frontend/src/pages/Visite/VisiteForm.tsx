@@ -19,6 +19,7 @@ import referenceTypeVisite, {
   TYPE_VISITE,
 } from "../../enums/TypeVisiteEnum.tsx";
 import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
+import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 
 export const getInitialValues = (
   _visitePeiId: string,
@@ -56,9 +57,11 @@ export const prepareVariables = (values: VisiteCompleteEntity) => ({
 
 const VisiteForm = ({
   nbVisite,
+  typePei,
   listeAnomaliesAssignable,
 }: {
   nbVisite: number;
+  typePei: string;
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
 }) => {
   const { values, setValues }: { values: VisiteCompleteEntity } =
@@ -186,12 +189,14 @@ const VisiteForm = ({
                     setValues={setValues}
                   />
                 </div>
-                <div>
-                  <CheckBoxInput
-                    name="isCtrlDebitPression"
-                    label="Contrôle débit et pression (CDP)"
-                  />
-                </div>
+                {typePei === TYPE_PEI.PIBI && (
+                  <div>
+                    <CheckBoxInput
+                      name="isCtrlDebitPression"
+                      label="Contrôle débit et pression (CDP)"
+                    />
+                  </div>
+                )}
                 <Row>
                   <Col>
                     <TextInput

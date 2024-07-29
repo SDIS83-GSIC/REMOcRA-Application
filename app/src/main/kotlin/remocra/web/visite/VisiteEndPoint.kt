@@ -12,6 +12,9 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.authn.userInfo
+import remocra.db.PeiRepository
+import remocra.db.VisiteRepository
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.usecases.visites.CreateVisiteUseCase
 import remocra.usecases.visites.GetVisiteWithAnomalies
@@ -29,6 +32,9 @@ class VisiteEndPoint {
     @Inject
     lateinit var createVisiteUseCase: CreateVisiteUseCase
 
+    @Inject
+    lateinit var peiRepository: PeiRepository
+
     @Context
     lateinit var securityContext: SecurityContext
 
@@ -37,8 +43,17 @@ class VisiteEndPoint {
     fun getVisiteWithAnomalies(
         @PathParam("peiId") peiId: UUID,
     ): Response {
-        return Response.ok().entity(getVisiteWithAnomalies.getVisiteWithAnomalies(peiUUID = peiId)).build()
+        val dataToSend = DataToSendVisite(
+            listVisite = getVisiteWithAnomalies.getVisiteWithAnomalies(peiUUID = peiId),
+            typePei = peiRepository.getTypePei(idPei = peiId),
+        )
+        return Response.ok().entity(dataToSend).build()
     }
+
+    data class DataToSendVisite(
+        val listVisite: List<VisiteRepository.VisiteComplete>,
+        val typePei: TypePei,
+    )
 
     @PUT
     @Path("/createVisite")

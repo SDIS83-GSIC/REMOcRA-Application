@@ -12,6 +12,7 @@ import url from "../../module/fetch.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
+import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
@@ -32,18 +33,23 @@ const Visite = () => {
     false,
   ]);
 
-  const listeVisite = useGet(
+  const visiteInformations = useGet(
     url`/api/visite/getVisiteWithAnomalies/` + peiId,
     {},
   );
+
   const listeAnomaliesAssignable = useGet(
     url`/api/anomalie/getAssignablesAnomalies/` + peiId,
     {},
   );
 
-  if (!listeVisite.isResolved) {
+  if (!visiteInformations.isResolved) {
     return;
   }
+
+  const typePei = visiteInformations.data.typePei;
+
+  const listeVisite = visiteInformations.data.listVisite;
 
   const listeVoletsAccordion: { header: string; content: ReactNode }[] = [];
 
@@ -106,7 +112,7 @@ const Visite = () => {
               </tr>
             </thead>
             <tbody>
-              {listeVisite.data.map((element, index) => (
+              {listeVisite.map((element, index) => (
                 <tr
                   key={index}
                   className={
@@ -160,14 +166,18 @@ const Visite = () => {
                           <div>
                             TypeVisite : {currentVisite.visiteTypeVisite}
                           </div>
-                          <div>
-                            <Form.Check
-                              type="checkbox"
-                              disabled
-                              checked={currentVisite.ctrlDebitPression != null}
-                              label="Contrôle débit et pression (CDP)"
-                            />
-                          </div>
+                          {typePei === TYPE_PEI.PIBI && (
+                            <div>
+                              <Form.Check
+                                type="checkbox"
+                                disabled
+                                checked={
+                                  currentVisite.ctrlDebitPression != null
+                                }
+                                label="Contrôle débit et pression (CDP)"
+                              />
+                            </div>
+                          )}
                           <Row>
                             <Col>Agent1 : {currentVisite.visiteAgent1}</Col>
                             <Col>Agent2 : {currentVisite.visiteAgent2}</Col>
@@ -176,44 +186,48 @@ const Visite = () => {
                       </>
                     ),
                   },
-                  {
-                    header: "Mesures",
-                    content: (
-                      <>
-                        {currentVisite.ctrlDebitPression != null && (
-                          <div>
-                            <div>
-                              Débit à 1 bar (m3/h) :{" "}
-                              {
-                                currentVisite.ctrlDebitPression
-                                  .visiteCtrlDebitPressionDebit
-                              }
-                            </div>
-                            <div>
-                              Pression dynamique au débit nominal (bar) :{" "}
-                              {
-                                currentVisite.ctrlDebitPression
-                                  .visiteCtrlDebitPressionPressionDyn
-                              }
-                            </div>
-                            <div>
-                              Pression statique (bar) :{" "}
-                              {
-                                currentVisite.ctrlDebitPression
-                                  .visiteCtrlDebitPressionPression
-                              }
-                            </div>
-                          </div>
-                        )}
-                        {currentVisite.ctrlDebitPression == null && (
-                          <p>
-                            Aucune mesure de débit/pression n&apos;a été
-                            effectuée lors de cette visite
-                          </p>
-                        )}
-                      </>
-                    ),
-                  },
+                  ...(typePei === TYPE_PEI.PIBI
+                    ? [
+                        {
+                          header: "Mesures",
+                          content: (
+                            <>
+                              {currentVisite.ctrlDebitPression != null && (
+                                <div>
+                                  <div>
+                                    Débit à 1 bar (m3/h) :{" "}
+                                    {
+                                      currentVisite.ctrlDebitPression
+                                        .visiteCtrlDebitPressionDebit
+                                    }
+                                  </div>
+                                  <div>
+                                    Pression dynamique au débit nominal (bar) :{" "}
+                                    {
+                                      currentVisite.ctrlDebitPression
+                                        .visiteCtrlDebitPressionPressionDyn
+                                    }
+                                  </div>
+                                  <div>
+                                    Pression statique (bar) :{" "}
+                                    {
+                                      currentVisite.ctrlDebitPression
+                                        .visiteCtrlDebitPressionPression
+                                    }
+                                  </div>
+                                </div>
+                              )}
+                              {currentVisite.ctrlDebitPression == null && (
+                                <p>
+                                  Aucune mesure de débit/pression n&apos;a été
+                                  effectuée lors de cette visite
+                                </p>
+                              )}
+                            </>
+                          ),
+                        },
+                      ]
+                    : []),
                   {
                     header: "Points d'attention",
                     content: (
@@ -255,7 +269,8 @@ const Visite = () => {
                 onSubmit={() => window.location.reload()}
               >
                 <VisiteForm
-                  nbVisite={listeVisite.data.length}
+                  nbVisite={listeVisite.length}
+                  typePei={typePei}
                   listeAnomaliesAssignable={listeAnomaliesAssignable.data}
                 />
               </MyFormik>
