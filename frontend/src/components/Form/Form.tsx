@@ -36,14 +36,20 @@ export const FormLabel = ({
   label,
   className,
   required = true,
+  disabled = false,
 }: {
   label?: string;
   className?: string;
   required?: boolean;
+  disabled?: boolean;
 }) => {
   return (
     label && (
-      <Form.Label className={"fw-bold " + className}>
+      <Form.Label
+        className={
+          !disabled ? "fw-bold " + className : "text-muted" + className
+        }
+      >
         {label} {required === true && <span className="text-danger">*</span>}
       </Form.Label>
     )
@@ -101,19 +107,26 @@ type CheckBoxInputType = {
   name: string;
   label: string;
   required?: boolean;
+  disabled?: boolean;
 };
 
 export const CheckBoxInput = ({
   name,
   label,
   required = false,
+  disabled = false,
 }: CheckBoxInputType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <Field name={name} type="checkbox" />
-      <FormLabel className="p-1" label={label} required={required} />
+      <Field name={name} type="checkbox" disabled={disabled} />
+      <FormLabel
+        className="p-1"
+        label={label}
+        required={required}
+        disabled={disabled}
+      />
     </DivWithError>
   );
 };
