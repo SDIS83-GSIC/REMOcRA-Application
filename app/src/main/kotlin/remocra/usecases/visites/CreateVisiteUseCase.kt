@@ -86,7 +86,7 @@ class CreateVisiteUseCase @Inject constructor(
         )
 
         // Insertion du CDP, si nécessaire : remocra.visite_ctrl_debit_pression
-        if (element.ctrlDebitPression != null) {
+        if (element.isCtrlDebitPression && element.ctrlDebitPression != null) {
             visiteRepository.insertCDP(
                 VisiteCtrlDebitPression(
                     visiteCtrlDebitPressionVisiteId = element.visiteId,

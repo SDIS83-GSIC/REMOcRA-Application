@@ -95,36 +95,42 @@ const VisiteForm = ({
           );
 
   let filteredListAnomalie = [];
+  let enableCDP = false;
   if (values.visiteTypeVisite) {
     switch (values.visiteTypeVisite) {
       case TYPE_VISITE.RECEPTION.toString(): {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isReceptionAssignable === true,
         );
+        enableCDP = true;
         break;
       }
       case TYPE_VISITE.RECO_INIT.toString(): {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isRecoInitAssignable === true,
         );
+        values.isCtrlDebitPression = false;
         break;
       }
       case TYPE_VISITE.CTP.toString(): {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isCTPAssignable === true,
         );
+        enableCDP = true;
         break;
       }
       case TYPE_VISITE.RECOP.toString(): {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isRecopAssignable === true,
         );
+        values.isCtrlDebitPression = false;
         break;
       }
       case TYPE_VISITE.NP.toString(): {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isNPAssignable === true,
         );
+        values.isCtrlDebitPression = false;
         break;
       }
       default: {
@@ -194,6 +200,7 @@ const VisiteForm = ({
                     <CheckBoxInput
                       name="isCtrlDebitPression"
                       label="Contrôle débit et pression (CDP)"
+                      disabled={!enableCDP}
                     />
                   </div>
                 )}
