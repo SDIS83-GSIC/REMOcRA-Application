@@ -17,6 +17,7 @@ import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
+import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.usecases.visites.CreateVisiteUseCase
 import remocra.usecases.visites.DeleteVisiteUseCase
 import remocra.usecases.visites.GetVisiteWithAnomalies
@@ -40,6 +41,9 @@ class VisiteEndPoint {
     @Inject
     lateinit var peiRepository: PeiRepository
 
+    @Inject
+    lateinit var visiteRepository: VisiteRepository
+
     @Context
     lateinit var securityContext: SecurityContext
 
@@ -51,6 +55,7 @@ class VisiteEndPoint {
         val dataToSend = DataToSendVisite(
             listVisite = getVisiteWithAnomalies.getVisiteWithAnomalies(peiUUID = peiId),
             typePei = peiRepository.getTypePei(idPei = peiId),
+            lastCDP = visiteRepository.getLastVisiteDebitPression(peiId = peiId),
         )
         return Response.ok().entity(dataToSend).build()
     }
@@ -58,6 +63,7 @@ class VisiteEndPoint {
     data class DataToSendVisite(
         val listVisite: List<VisiteRepository.VisiteComplete>,
         val typePei: TypePei,
+        val lastCDP: VisiteCtrlDebitPression?,
     )
 
     @PUT

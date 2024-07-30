@@ -36,7 +36,7 @@ class VisiteRepository
         .innerJoin(VISITE).on(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(VISITE.ID))
         .where(VISITE.PEI_ID.eq(peiId))
         .orderBy(VISITE.DATE.desc())
-        .fetchOneInto()
+        .fetchAnyInto()
 
     fun getAllVisiteByPeiId(peiId: UUID): List<VisiteComplete> =
         dsl.select(VISITE.fields().toList())

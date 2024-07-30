@@ -13,10 +13,10 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
-  validationSchema,
 } from "./VisiteForm.tsx";
 
 const Visite = () => {
@@ -47,9 +47,16 @@ const Visite = () => {
     return;
   }
 
-  const typePei = visiteInformations.data.typePei;
-
   const listeVisite = visiteInformations.data.listVisite;
+  const typePei = visiteInformations.data.typePei;
+  const lastCDP: CtrlDebitPressionEntity = {
+    ctrlVisiteId: null,
+    ctrlDebit: visiteInformations.data.lastCDP.visiteCtrlDebitPressionDebit,
+    ctrlPression:
+      visiteInformations.data.lastCDP.visiteCtrlDebitPressionPression,
+    ctrlPressionDyn:
+      visiteInformations.data.lastCDP.visiteCtrlDebitPressionPressionDyn,
+  };
 
   const listeVoletsAccordion: { header: string; content: ReactNode }[] = [];
 
@@ -261,8 +268,8 @@ const Visite = () => {
                 initialValues={getInitialValues(
                   peiId,
                   listeAnomaliesAssignable.data,
+                  lastCDP,
                 )}
-                validationSchema={validationSchema}
                 isPost={false}
                 submitUrl={`/api/visite/createVisite`}
                 prepareVariables={(values) => prepareVariables(values)}

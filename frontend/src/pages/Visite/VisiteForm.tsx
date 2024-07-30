@@ -1,5 +1,4 @@
 import { useFormikContext } from "formik";
-import { object } from "yup";
 import { Button, Col, Row } from "react-bootstrap";
 import { ReactNode } from "react";
 import classNames from "classnames";
@@ -20,10 +19,12 @@ import referenceTypeVisite, {
 } from "../../enums/TypeVisiteEnum.tsx";
 import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 
 export const getInitialValues = (
   _visitePeiId: string,
   _listeAnomaliesAssignable: AnomalieCompleteEntity[],
+  _lastCDP: CtrlDebitPressionEntity,
 ) => ({
   visiteId: null,
   visitePeiId: _visitePeiId,
@@ -34,10 +35,8 @@ export const getInitialValues = (
   visiteObservation: null,
   listeAnomalie: _listeAnomaliesAssignable,
   isCtrlDebitPression: false,
-  ctrlDebitPression: null, // TODO : Ajouter la remonté du dernier CDP pour aider la saisie
+  ctrlDebitPression: _lastCDP,
 });
-
-export const validationSchema = object({});
 
 export const prepareVariables = (values: VisiteCompleteEntity) => ({
   visiteId: values.visiteId ?? null,
@@ -72,6 +71,7 @@ const VisiteForm = ({
     activesKeys: activesKeysFormulaire,
     show,
   } = useAccordionState([true, false, false, false]);
+
   const {
     handleShowClose: handleShowCloseAnomalies,
     activesKeys: activesKeysAnomalies,
@@ -83,7 +83,7 @@ const VisiteForm = ({
     libelle: e.libelle,
   }));
 
-  const dynamicListTypeVistie =
+  const dynamicListTypeVisite =
     nbVisite === 0
       ? listTypeVisite.filter((e) => e.code === TYPE_VISITE.RECEPTION)
       : nbVisite === 1
@@ -189,7 +189,7 @@ const VisiteForm = ({
                 <div>
                   <SelectForm
                     name={"visiteTypeVisite"}
-                    listIdCodeLibelle={dynamicListTypeVistie}
+                    listIdCodeLibelle={dynamicListTypeVisite}
                     label="TypeVisite : "
                     required={true}
                     setValues={setValues}
