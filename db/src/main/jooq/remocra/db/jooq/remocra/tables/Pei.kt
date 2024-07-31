@@ -32,6 +32,7 @@ import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_TOURNEE_PEI__L_TOURNEE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI_PEI_NUMERO_COMPLET_KEY
 import remocra.db.jooq.remocra.keys.PEI_PKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
@@ -58,6 +59,7 @@ import remocra.db.jooq.remocra.tables.Domaine.DomainePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
+import remocra.db.jooq.remocra.tables.LTourneePei.LTourneePeiPath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Nature.NaturePath
 import remocra.db.jooq.remocra.tables.NatureDeci.NatureDeciPath
@@ -66,6 +68,7 @@ import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pena.PenaPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.Site.SitePath
+import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import remocra.db.jooq.remocra.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
@@ -553,6 +556,23 @@ open class Pei(
     val lPeiDocument: LPeiDocumentPath
         get(): LPeiDocumentPath = lPeiDocument()
 
+    private lateinit var _lTourneePei: LTourneePeiPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_tournee_pei</code> table
+     */
+    fun lTourneePei(): LTourneePeiPath {
+        if (!this::_lTourneePei.isInitialized) {
+            _lTourneePei = LTourneePeiPath(this, null, L_TOURNEE_PEI__L_TOURNEE_PEI_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _lTourneePei
+    }
+
+    val lTourneePei: LTourneePeiPath
+        get(): LTourneePeiPath = lTourneePei()
+
     private lateinit var _pena: PenaPath
 
     /**
@@ -615,6 +635,13 @@ open class Pei(
      */
     val document: DocumentPath
         get(): DocumentPath = lPeiDocument().document()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.tournee</code> table
+     */
+    val tournee: TourneePath
+        get(): TourneePath = lTourneePei().tournee()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("geometrie_point_pei"), "((geometrytype(pei_geometrie) = 'POINT'::text))", true),
     )

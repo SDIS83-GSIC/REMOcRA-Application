@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -39,6 +40,7 @@ import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
+import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
@@ -130,6 +132,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_pei_document</code>.
      */
     val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_tournee_pei</code>.
+     */
+    val L_TOURNEE_PEI: LTourneePei get() = LTourneePei.L_TOURNEE_PEI
 
     /**
      * The table <code>remocra.l_visite_anomalie</code>.
@@ -232,6 +239,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TASK: Task get() = Task.TASK
 
     /**
+     * The table <code>remocra.tournee</code>.
+     */
+    val TOURNEE: Tournee get() = Tournee.TOURNEE
+
+    /**
      * The table <code>remocra.type_canalisation</code>.
      */
     val TYPE_CANALISATION: TypeCanalisation get() = TypeCanalisation.TYPE_CANALISATION
@@ -291,6 +303,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDiametreNature.L_DIAMETRE_NATURE,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
+        LTourneePei.L_TOURNEE_PEI,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,
@@ -311,6 +324,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Reservoir.RESERVOIR,
         Site.SITE,
         Task.TASK,
+        Tournee.TOURNEE,
         TypeCanalisation.TYPE_CANALISATION,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,

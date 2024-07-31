@@ -36,11 +36,13 @@ import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY
+import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.Api.ApiPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
+import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
 import java.util.UUID
@@ -324,6 +326,23 @@ open class Organisme(
 
     val pibi: PibiPath
         get(): PibiPath = pibi()
+
+    private lateinit var _tournee: TourneePath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.tournee</code>
+     * table
+     */
+    fun tournee(): TourneePath {
+        if (!this::_tournee.isInitialized) {
+            _tournee = TourneePath(this, null, TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _tournee
+    }
+
+    val tournee: TourneePath
+        get(): TourneePath = tournee()
     override fun `as`(alias: String): Organisme = Organisme(DSL.name(alias), this)
     override fun `as`(alias: Name): Organisme = Organisme(alias, this)
     override fun `as`(alias: Table<*>): Organisme = Organisme(alias.qualifiedName, this)

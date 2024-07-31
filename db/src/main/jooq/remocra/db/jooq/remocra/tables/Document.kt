@@ -85,9 +85,10 @@ open class Document(
     val ID: TableField<Record, UUID?> = createField(DSL.name("document_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.document.document_date</code>.
+     * The column <code>remocra.document.document_date</code>. Date d'ajout du
+     * document dans l'application
      */
-    val DATE: TableField<Record, ZonedDateTime?> = createField(DSL.name("document_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "", ZonedDateTimeBinding())
+    val DATE: TableField<Record, ZonedDateTime?> = createField(DSL.name("document_date"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "Date d'ajout du document dans l'application", ZonedDateTimeBinding())
 
     /**
      * The column <code>remocra.document.document_nom_fichier</code>.

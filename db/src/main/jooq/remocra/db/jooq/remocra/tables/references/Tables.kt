@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -35,6 +36,7 @@ import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
+import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
@@ -104,6 +106,11 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
  * The table <code>remocra.l_pei_document</code>.
  */
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
+
+/**
+ * The table <code>remocra.l_tournee_pei</code>.
+ */
+val L_TOURNEE_PEI: LTourneePei = LTourneePei.L_TOURNEE_PEI
 
 /**
  * The table <code>remocra.l_visite_anomalie</code>.
@@ -204,6 +211,11 @@ val SITE: Site = Site.SITE
  * The table <code>remocra.task</code>.
  */
 val TASK: Task = Task.TASK
+
+/**
+ * The table <code>remocra.tournee</code>.
+ */
+val TOURNEE: Tournee = Tournee.TOURNEE
 
 /**
  * The table <code>remocra.type_canalisation</code>.

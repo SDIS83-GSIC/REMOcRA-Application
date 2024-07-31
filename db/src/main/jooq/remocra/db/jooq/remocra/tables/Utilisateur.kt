@@ -8,6 +8,7 @@ import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
 import org.jooq.PlainSQL
 import org.jooq.QueryPart
 import org.jooq.Record
@@ -20,12 +21,15 @@ import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
+import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
+import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -123,9 +127,39 @@ open class Utilisateur(
      * Create a <code>remocra.utilisateur</code> table reference
      */
     constructor() : this(DSL.name("utilisateur"), null)
+
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, Record>?, parentPath: InverseForeignKey<out Record, Record>?) : this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, UTILISATEUR, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class UtilisateurPath : Utilisateur, Path<Record> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, Record>?, parentPath: InverseForeignKey<out Record, Record>?) : super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<Record>) : super(alias, aliased)
+        override fun `as`(alias: String): UtilisateurPath = UtilisateurPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): UtilisateurPath = UtilisateurPath(alias, this)
+        override fun `as`(alias: Table<*>): UtilisateurPath = UtilisateurPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = UTILISATEUR_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_EMAIL_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
+
+    private lateinit var _tournee: TourneePath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.tournee</code>
+     * table
+     */
+    fun tournee(): TourneePath {
+        if (!this::_tournee.isInitialized) {
+            _tournee = TourneePath(this, null, TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _tournee
+    }
+
+    val tournee: TourneePath
+        get(): TourneePath = tournee()
     override fun `as`(alias: String): Utilisateur = Utilisateur(DSL.name(alias), this)
     override fun `as`(alias: Name): Utilisateur = Utilisateur(alias, this)
     override fun `as`(alias: Table<*>): Utilisateur = Utilisateur(alias.qualifiedName, this)
