@@ -10,6 +10,7 @@ import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import ListEtude from "./pages/Etude/ListEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
+import GestionTournee from "./pages/Tournee/Tournee.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
 
@@ -74,6 +75,15 @@ export default [
           <Authorization
             Component={AireAspiration}
             droits={[TYPE_DROIT.PEI_CARACTERISTIQUES_U, TYPE_DROIT.PEI_U]}
+          />
+        ),
+      },
+      {
+        path: "tournee",
+        element: (
+          <Authorization
+            Component={GestionTournee}
+            droits={[TYPE_DROIT.TOURNEE_R, TYPE_DROIT.TOURNEE_A]}
           />
         ),
       },
