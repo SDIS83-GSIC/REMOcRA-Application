@@ -74,6 +74,11 @@ dependencies {
     implementation(libs.pac4j.oidc)
     implementation(libs.pac4j.jakartaee)
 
+    // jasper
+    implementation(libs.jasperreports)
+    implementation(libs.jasperreports.pdf)
+    implementation(libs.jasperreports.fronts)
+
     // Tests
     testCompileOnly(libs.forbiddenapis)
     testImplementation(libs.junit.jupiter.api)

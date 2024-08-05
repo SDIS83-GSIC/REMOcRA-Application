@@ -4,6 +4,7 @@ forbiddenapis = "3.6"
 jooq = "3.19.3"
 retrofit = "2.9.0"
 geotools = "31.2"
+jasperreports = "7.0.0"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -69,6 +70,10 @@ geotools-gt-epsg = { module = "org.geotools:gt-epsg-hsql", version.ref = "geotoo
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
+
+jasperreports =  { module = "net.sf.jasperreports:jasperreports", version.ref = "jasperreports" }
+jasperreports-pdf = { module = "net.sf.jasperreports:jasperreports-pdf", version.ref = "jasperreports" }
+jasperreports-fronts = { module = "net.sf.jasperreports:jasperreports-fonts", version.ref = "jasperreports" }
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"
