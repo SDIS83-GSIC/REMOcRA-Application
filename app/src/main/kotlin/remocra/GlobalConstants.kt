@@ -31,6 +31,8 @@ object GlobalConstants {
 
     const val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
 
+    const val DOSSIER_MODELES_COURRIERS = DOSSIER_DATA + "modeles/courriers/"
+
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
 }
