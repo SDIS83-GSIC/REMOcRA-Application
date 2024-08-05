@@ -38,6 +38,7 @@ import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.Api.ApiPath
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
@@ -47,6 +48,7 @@ import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
+import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -363,6 +365,23 @@ open class Organisme(
 
     val tournee: TourneePath
         get(): TourneePath = tournee()
+
+    private lateinit var _utilisateur: UtilisateurPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.utilisateur</code> table
+     */
+    fun utilisateur(): UtilisateurPath {
+        if (!this::_utilisateur.isInitialized) {
+            _utilisateur = UtilisateurPath(this, null, UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _utilisateur
+    }
+
+    val utilisateur: UtilisateurPath
+        get(): UtilisateurPath = utilisateur()
 
     /**
      * Get the implicit many-to-many join path to the

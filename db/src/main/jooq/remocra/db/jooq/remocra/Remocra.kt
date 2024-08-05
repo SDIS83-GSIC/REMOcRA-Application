@@ -43,6 +43,7 @@ import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
+import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.Role
 import remocra.db.jooq.remocra.tables.Site
@@ -261,6 +262,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val PROFIL_ORGANISME: ProfilOrganisme get() = ProfilOrganisme.PROFIL_ORGANISME
 
     /**
+     * The table <code>remocra.profil_utilisateur</code>.
+     */
+    val PROFIL_UTILISATEUR: ProfilUtilisateur get() = ProfilUtilisateur.PROFIL_UTILISATEUR
+
+    /**
      * The table <code>remocra.reservoir</code>.
      */
     val RESERVOIR: Reservoir get() = Reservoir.RESERVOIR
@@ -369,6 +375,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Pibi.PIBI,
         PoidsAnomalie.POIDS_ANOMALIE,
         ProfilOrganisme.PROFIL_ORGANISME,
+        ProfilUtilisateur.PROFIL_UTILISATEUR,
         Reservoir.RESERVOIR,
         Role.ROLE,
         Site.SITE,

@@ -27,11 +27,13 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME__PROFIL_ORGANISME_PROFIL_ORGANISME_TYPE_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME_TYPE_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME__TYPE_ORGANISME_TYPE_ORGANISME_PARENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
+import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -200,6 +202,23 @@ open class TypeOrganisme(
 
     val profilOrganisme: ProfilOrganismePath
         get(): ProfilOrganismePath = profilOrganisme()
+
+    private lateinit var _profilUtilisateur: ProfilUtilisateurPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.profil_utilisateur</code> table
+     */
+    fun profilUtilisateur(): ProfilUtilisateurPath {
+        if (!this::_profilUtilisateur.isInitialized) {
+            _profilUtilisateur = ProfilUtilisateurPath(this, null, PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _profilUtilisateur
+    }
+
+    val profilUtilisateur: ProfilUtilisateurPath
+        get(): ProfilUtilisateurPath = profilUtilisateur()
     override fun `as`(alias: String): TypeOrganisme = TypeOrganisme(DSL.name(alias), this)
     override fun `as`(alias: Name): TypeOrganisme = TypeOrganisme(alias, this)
     override fun `as`(alias: Table<*>): TypeOrganisme = TypeOrganisme(alias.qualifiedName, this)

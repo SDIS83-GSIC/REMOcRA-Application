@@ -25,6 +25,10 @@ data class Utilisateur(
     val utilisateurNom: String,
     val utilisateurPrenom: String,
     val utilisateurUsername: String,
+    val utilisateurTelephone: String?,
+    val utilisateurCanBeNotified: Boolean?,
+    val utilisateurProfilUtilisateurId: UUID?,
+    val utilisateurOrganismeId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -56,6 +60,34 @@ data class Utilisateur(
         if (this.utilisateurUsername != o.utilisateurUsername) {
             return false
         }
+        if (this.utilisateurTelephone == null) {
+            if (o.utilisateurTelephone != null) {
+                return false
+            }
+        } else if (this.utilisateurTelephone != o.utilisateurTelephone) {
+            return false
+        }
+        if (this.utilisateurCanBeNotified == null) {
+            if (o.utilisateurCanBeNotified != null) {
+                return false
+            }
+        } else if (this.utilisateurCanBeNotified != o.utilisateurCanBeNotified) {
+            return false
+        }
+        if (this.utilisateurProfilUtilisateurId == null) {
+            if (o.utilisateurProfilUtilisateurId != null) {
+                return false
+            }
+        } else if (this.utilisateurProfilUtilisateurId != o.utilisateurProfilUtilisateurId) {
+            return false
+        }
+        if (this.utilisateurOrganismeId == null) {
+            if (o.utilisateurOrganismeId != null) {
+                return false
+            }
+        } else if (this.utilisateurOrganismeId != o.utilisateurOrganismeId) {
+            return false
+        }
         return true
     }
 
@@ -68,6 +100,10 @@ data class Utilisateur(
         result = prime * result + this.utilisateurNom.hashCode()
         result = prime * result + this.utilisateurPrenom.hashCode()
         result = prime * result + this.utilisateurUsername.hashCode()
+        result = prime * result + (if (this.utilisateurTelephone == null) 0 else this.utilisateurTelephone.hashCode())
+        result = prime * result + (if (this.utilisateurCanBeNotified == null) 0 else this.utilisateurCanBeNotified.hashCode())
+        result = prime * result + (if (this.utilisateurProfilUtilisateurId == null) 0 else this.utilisateurProfilUtilisateurId.hashCode())
+        result = prime * result + (if (this.utilisateurOrganismeId == null) 0 else this.utilisateurOrganismeId.hashCode())
         return result
     }
 
@@ -80,6 +116,10 @@ data class Utilisateur(
         sb.append(", ").append(utilisateurNom)
         sb.append(", ").append(utilisateurPrenom)
         sb.append(", ").append(utilisateurUsername)
+        sb.append(", ").append(utilisateurTelephone)
+        sb.append(", ").append(utilisateurCanBeNotified)
+        sb.append(", ").append(utilisateurProfilUtilisateurId)
+        sb.append(", ").append(utilisateurOrganismeId)
 
         sb.append(")")
         return sb.toString()

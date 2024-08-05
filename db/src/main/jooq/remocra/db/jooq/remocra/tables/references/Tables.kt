@@ -39,6 +39,7 @@ import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
+import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.Role
 import remocra.db.jooq.remocra.tables.Site
@@ -233,6 +234,11 @@ val POIDS_ANOMALIE: PoidsAnomalie = PoidsAnomalie.POIDS_ANOMALIE
  * The table <code>remocra.profil_organisme</code>.
  */
 val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
+
+/**
+ * The table <code>remocra.profil_utilisateur</code>.
+ */
+val PROFIL_UTILISATEUR: ProfilUtilisateur = ProfilUtilisateur.PROFIL_UTILISATEUR
 
 /**
  * The table <code>remocra.reservoir</code>.

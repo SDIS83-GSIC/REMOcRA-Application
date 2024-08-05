@@ -29,6 +29,10 @@ import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISA
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
+import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
+import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -109,6 +113,27 @@ open class Utilisateur(
      */
     val USERNAME: TableField<Record, String?> = createField(DSL.name("utilisateur_username"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.utilisateur.utilisateur_telephone</code>.
+     */
+    val TELEPHONE: TableField<Record, String?> = createField(DSL.name("utilisateur_telephone"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column <code>remocra.utilisateur.utilisateur_can_be_notified</code>.
+     */
+    val CAN_BE_NOTIFIED: TableField<Record, Boolean?> = createField(DSL.name("utilisateur_can_be_notified"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "")
+
+    /**
+     * The column
+     * <code>remocra.utilisateur.utilisateur_profil_utilisateur_id</code>.
+     */
+    val PROFIL_UTILISATEUR_ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_profil_utilisateur_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.utilisateur.utilisateur_organisme_id</code>.
+     */
+    val ORGANISME_ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_organisme_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -143,6 +168,40 @@ open class Utilisateur(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = UTILISATEUR_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_EMAIL_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY, UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY)
+
+    private lateinit var _profilUtilisateur: ProfilUtilisateurPath
+
+    /**
+     * Get the implicit join path to the <code>remocra.profil_utilisateur</code>
+     * table.
+     */
+    fun profilUtilisateur(): ProfilUtilisateurPath {
+        if (!this::_profilUtilisateur.isInitialized) {
+            _profilUtilisateur = ProfilUtilisateurPath(this, UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY, null)
+        }
+
+        return _profilUtilisateur
+    }
+
+    val profilUtilisateur: ProfilUtilisateurPath
+        get(): ProfilUtilisateurPath = profilUtilisateur()
+
+    private lateinit var _organisme: OrganismePath
+
+    /**
+     * Get the implicit join path to the <code>remocra.organisme</code> table.
+     */
+    fun organisme(): OrganismePath {
+        if (!this::_organisme.isInitialized) {
+            _organisme = OrganismePath(this, UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY, null)
+        }
+
+        return _organisme
+    }
+
+    val organisme: OrganismePath
+        get(): OrganismePath = organisme()
 
     private lateinit var _tournee: TourneePath
 
