@@ -7,11 +7,15 @@ import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
+import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LContactGestionnaire
+import remocra.db.jooq.remocra.tables.LContactOrganisme
+import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
@@ -36,6 +40,7 @@ import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.Reservoir
+import remocra.db.jooq.remocra.tables.Role
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
@@ -70,6 +75,11 @@ val API: Api = Api.API
 val COMMUNE: Commune = Commune.COMMUNE
 
 /**
+ * The table <code>remocra.contact</code>.
+ */
+val CONTACT: Contact = Contact.CONTACT
+
+/**
  * The table <code>remocra.diametre</code>.
  */
 val DIAMETRE: Diametre = Diametre.DIAMETRE
@@ -93,6 +103,21 @@ val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.l_contact_gestionnaire</code>.
+ */
+val L_CONTACT_GESTIONNAIRE: LContactGestionnaire = LContactGestionnaire.L_CONTACT_GESTIONNAIRE
+
+/**
+ * The table <code>remocra.l_contact_organisme</code>.
+ */
+val L_CONTACT_ORGANISME: LContactOrganisme = LContactOrganisme.L_CONTACT_ORGANISME
+
+/**
+ * The table <code>remocra.l_contact_role</code>.
+ */
+val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
 
 /**
  * The table <code>remocra.l_diametre_nature</code>.
@@ -213,6 +238,11 @@ val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
  * The table <code>remocra.reservoir</code>.
  */
 val RESERVOIR: Reservoir = Reservoir.RESERVOIR
+
+/**
+ * The table <code>remocra.role</code>.
+ */
+val ROLE: Role = Role.ROLE
 
 /**
  * The table <code>remocra.site</code>.

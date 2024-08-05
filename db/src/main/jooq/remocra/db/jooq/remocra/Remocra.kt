@@ -11,11 +11,15 @@ import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
+import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LContactGestionnaire
+import remocra.db.jooq.remocra.tables.LContactOrganisme
+import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
@@ -40,6 +44,7 @@ import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.Reservoir
+import remocra.db.jooq.remocra.tables.Role
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
@@ -96,6 +101,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val COMMUNE: Commune get() = Commune.COMMUNE
 
     /**
+     * The table <code>remocra.contact</code>.
+     */
+    val CONTACT: Contact get() = Contact.CONTACT
+
+    /**
      * The table <code>remocra.diametre</code>.
      */
     val DIAMETRE: Diametre get() = Diametre.DIAMETRE
@@ -119,6 +129,21 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.l_contact_gestionnaire</code>.
+     */
+    val L_CONTACT_GESTIONNAIRE: LContactGestionnaire get() = LContactGestionnaire.L_CONTACT_GESTIONNAIRE
+
+    /**
+     * The table <code>remocra.l_contact_organisme</code>.
+     */
+    val L_CONTACT_ORGANISME: LContactOrganisme get() = LContactOrganisme.L_CONTACT_ORGANISME
+
+    /**
+     * The table <code>remocra.l_contact_role</code>.
+     */
+    val L_CONTACT_ROLE: LContactRole get() = LContactRole.L_CONTACT_ROLE
 
     /**
      * The table <code>remocra.l_diametre_nature</code>.
@@ -241,6 +266,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val RESERVOIR: Reservoir get() = Reservoir.RESERVOIR
 
     /**
+     * The table <code>remocra.role</code>.
+     */
+    val ROLE: Role get() = Role.ROLE
+
+    /**
      * The table <code>remocra.site</code>.
      */
     val SITE: Site get() = Site.SITE
@@ -307,11 +337,15 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         AnomalieCategorie.ANOMALIE_CATEGORIE,
         Api.API,
         Commune.COMMUNE,
+        Contact.CONTACT,
         Diametre.DIAMETRE,
         Document.DOCUMENT,
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
         Job.JOB,
+        LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
+        LContactOrganisme.L_CONTACT_ORGANISME,
+        LContactRole.L_CONTACT_ROLE,
         LDiametreNature.L_DIAMETRE_NATURE,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
@@ -336,6 +370,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         PoidsAnomalie.POIDS_ANOMALIE,
         ProfilOrganisme.PROFIL_ORGANISME,
         Reservoir.RESERVOIR,
+        Role.ROLE,
         Site.SITE,
         Task.TASK,
         Tournee.TOURNEE,

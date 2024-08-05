@@ -26,6 +26,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.API__API_API_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PARENT_ID_FKEY
@@ -38,6 +39,8 @@ import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.Api.ApiPath
+import remocra.db.jooq.remocra.tables.Contact.ContactPath
+import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
@@ -260,6 +263,23 @@ open class Organisme(
     val api: ApiPath
         get(): ApiPath = api()
 
+    private lateinit var _lContactOrganisme: LContactOrganismePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_contact_organisme</code> table
+     */
+    fun lContactOrganisme(): LContactOrganismePath {
+        if (!this::_lContactOrganisme.isInitialized) {
+            _lContactOrganisme = LContactOrganismePath(this, null, L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _lContactOrganisme
+    }
+
+    val lContactOrganisme: LContactOrganismePath
+        get(): LContactOrganismePath = lContactOrganisme()
+
     private lateinit var _peiPeiAutoriteDeciIdFkey: PeiPath
 
     /**
@@ -343,6 +363,13 @@ open class Organisme(
 
     val tournee: TourneePath
         get(): TourneePath = tournee()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.contact</code> table
+     */
+    val contact: ContactPath
+        get(): ContactPath = lContactOrganisme().contact()
     override fun `as`(alias: String): Organisme = Organisme(DSL.name(alias), this)
     override fun `as`(alias: Name): Organisme = Organisme(alias, this)
     override fun `as`(alias: Table<*>): Organisme = Organisme(alias.qualifiedName, this)
