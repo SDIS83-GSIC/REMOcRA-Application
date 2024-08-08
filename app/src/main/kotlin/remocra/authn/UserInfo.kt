@@ -1,10 +1,13 @@
 package remocra.authn
 
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
+import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import java.security.Principal
 import java.util.UUID
 
 class UserInfo : KeycloakOidcProfile() {
+    private lateinit var utilisateur: Utilisateur
+
     val idUtilisateur: UUID
         get() = UUID.fromString(subject)
 
@@ -13,6 +16,9 @@ class UserInfo : KeycloakOidcProfile() {
 
     val nom: String
         get() = familyName
+
+    val organismeId: UUID?
+        get() = utilisateur.utilisateurOrganismeId
 
     val isActif: Boolean
         get() = !this.roles.contains("inactif")
