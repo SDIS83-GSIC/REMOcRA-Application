@@ -13,4 +13,7 @@ export const IconEdit = () => <i className="fi fi-br-pencil" />;
 export const IconCreate = () => <i className="fi fi-br-add" />;
 export const IconSee = () => <i className="fi fi-br-overview" />;
 
+export const IconDocument = () => <i className="fi fi-br-document" />;
+export const IconInfo = () => <i className="fi fi-br-interrogation" />;
+
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;

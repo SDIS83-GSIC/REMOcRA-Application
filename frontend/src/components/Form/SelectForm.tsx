@@ -23,10 +23,11 @@ const SelectForm = ({
   label,
   required = false,
   disabled = false,
+  onChange: onChangeCustom,
   setValues,
   setOtherValues,
 }: SelectFormType) => {
-  const [field, meta] = useField(name);
+  const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
 
   const onChange = ({ name, value }) => {
@@ -34,7 +35,7 @@ const SelectForm = ({
       ...prevValues,
       [name]: value,
     }));
-    setOtherValues && setOtherValues();
+    setOtherValues != null && setOtherValues();
   };
 
   const list = listIdCodeLibelle ?? [];
@@ -42,12 +43,14 @@ const SelectForm = ({
     <DivWithError name={name} error={error}>
       {label && <FormLabel label={label} required={required} />}
       <Form.Select
+        name={name}
         disabled={disabled}
         required={required}
         onChange={(e) => {
-          onChange({ name: name, value: e.target.value });
+          onChangeCustom
+            ? onChangeCustom(e)
+            : onChange({ name: name, value: e.target.value });
         }}
-        {...field}
       >
         <option value={""}>Aucune valeur saisie</option>
         {list.map((e, key) => (

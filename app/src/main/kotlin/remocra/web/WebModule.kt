@@ -11,6 +11,7 @@ import remocra.web.admin.AdminModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
+import remocra.web.courrier.CourrierModule
 import remocra.web.documents.DocumentModule
 import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
@@ -35,6 +36,7 @@ object WebModule : RemocraModule() {
         install(AppSettingsModule)
         install(DocumentModule)
         install(AdminModule)
+        install(CourrierModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
     }
 

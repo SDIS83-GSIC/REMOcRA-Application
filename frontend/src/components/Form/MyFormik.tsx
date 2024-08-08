@@ -27,7 +27,7 @@ const resolveReject = (
   };
 };
 
-const useMyFormik = (
+export const useMyFormik = (
   submitUrl: string,
   isPost: boolean,
   onSubmit: any,

@@ -7,7 +7,7 @@ class CourrierParametresRopData(
     val gestionnaireId: UUID?,
     val isOnlyPublic: Boolean?,
     val isEPCI: Boolean?, // Peut être envoyé à un maire ou un président d'EPCI
-    val profilUtilisteurId: UUID?,
+    val profilUtilisateurId: UUID?,
     val annee: String?,
     val expediteurGrade: String?,
     val expediteurStatut: String?,
