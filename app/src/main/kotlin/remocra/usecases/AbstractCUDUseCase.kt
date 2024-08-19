@@ -1,10 +1,14 @@
 package remocra.usecases
 import com.google.inject.Inject
 import jakarta.ws.rs.ForbiddenException
+import jakarta.ws.rs.core.Response
 import org.jooq.exception.NoDataFoundException
 import remocra.authn.UserInfo
 import remocra.db.TransactionManager
-abstract class AbstractCUDUseCase<T : Any> {
+import remocra.exception.RemocraResponseException
+import remocra.web.AbstractEndpoint
+
+abstract class AbstractCUDUseCase<T : Any> : AbstractEndpoint() {
     @Inject lateinit var transactionManager: TransactionManager
 
     /**
@@ -49,6 +53,12 @@ abstract class AbstractCUDUseCase<T : Any> {
             return Result.Forbidden(e.message)
         } catch (ndfe: NoDataFoundException) {
             return Result.NotFound(ndfe.message)
+        } catch (rre: RemocraResponseException) {
+            // Par propreté, on transforme en "vrai" Forbidden
+            if (rre.errorType.status == Response.Status.FORBIDDEN) {
+                return Result.Forbidden(rre.message)
+            }
+            return Result.Error(rre.message)
         } catch (e: Exception) {
             return Result.Error(e.message)
         }
@@ -58,11 +68,4 @@ abstract class AbstractCUDUseCase<T : Any> {
      * Permet de lancer un évènement suite à la mise à jour / insertion ou suppression d'un objet
      */
     protected abstract fun postEvent(element: T, userInfo: UserInfo)
-
-    sealed class Result {
-        data class Success(val entity: Any? = null) : Result()
-        data class NotFound(val message: String?) : Result()
-        data class Forbidden(val message: String?) : Result()
-        data class Error(val message: String?) : Result()
-    }
 }

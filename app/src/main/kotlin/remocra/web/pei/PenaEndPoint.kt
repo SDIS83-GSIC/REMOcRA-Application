@@ -14,12 +14,12 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.authn.userInfo
 import remocra.db.AireAspirationRepository
 import remocra.usecases.pena.AireAspirationUseCase
-import remocra.web.wrap
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/pena")
 @Produces(MediaType.APPLICATION_JSON)
-class PenaEndPoint {
+class PenaEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 

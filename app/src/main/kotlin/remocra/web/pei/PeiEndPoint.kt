@@ -24,20 +24,19 @@ import remocra.data.PibiData
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.usecases.AbstractCUDUseCase
 import remocra.usecases.document.UpsertDocumentPeiUseCase
 import remocra.usecases.pei.CreatePeiUseCase
 import remocra.usecases.pei.GetCoordonneesBySrid
 import remocra.usecases.pei.PeiUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
+import remocra.web.AbstractEndpoint
 import remocra.web.getTextPart
-import remocra.web.wrap
 import java.util.UUID
 import kotlin.properties.Delegates
 
 @Path("/pei")
 @Produces(MediaType.APPLICATION_JSON)
-class PeiEndPoint {
+class PeiEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var peiUseCase: PeiUseCase
 
@@ -113,7 +112,7 @@ class PeiEndPoint {
         val result = updatePeiUseCase.execute(securityContext.userInfo, pei)
 
         // Si on n'a pas réussi à update le PEI
-        if (result !is AbstractCUDUseCase.Result.Success) {
+        if (result !is Result.Success) {
             return result.wrap()
         }
 
@@ -142,7 +141,7 @@ class PeiEndPoint {
         )
 
         // Si on n'a pas réussi à insérer le PEI
-        if (result !is AbstractCUDUseCase.Result.Success) {
+        if (result !is Result.Success) {
             return result.wrap()
         }
 

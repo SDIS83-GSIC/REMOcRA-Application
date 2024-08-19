@@ -21,14 +21,14 @@ import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.usecases.visites.CreateVisiteUseCase
 import remocra.usecases.visites.DeleteVisiteUseCase
 import remocra.usecases.visites.GetVisiteWithAnomalies
-import remocra.web.wrap
+import remocra.web.AbstractEndpoint
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 import java.util.UUID
 
 @Path("/visite")
 @Produces(MediaType.APPLICATION_JSON)
-class VisiteEndPoint {
+class VisiteEndPoint : AbstractEndpoint() {
     @Inject
     lateinit var getVisiteWithAnomalies: GetVisiteWithAnomalies
 
