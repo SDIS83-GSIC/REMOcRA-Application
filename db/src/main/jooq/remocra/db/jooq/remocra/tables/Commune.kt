@@ -27,8 +27,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_POSTAL_KEY
-import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_INSEE_KEY
+import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
@@ -96,9 +95,9 @@ open class Commune(
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("commune_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.commune.commune_insee</code>.
+     * The column <code>remocra.commune.commune_code_insee</code>.
      */
-    val INSEE: TableField<Record, String?> = createField(DSL.name("commune_insee"), SQLDataType.CLOB.nullable(false), this, "")
+    val CODE_INSEE: TableField<Record, String?> = createField(DSL.name("commune_code_insee"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column <code>remocra.commune.commune_code_postal</code>.
@@ -148,7 +147,7 @@ open class Commune(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = COMMUNE_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(COMMUNE_COMMUNE_INSEE_KEY, COMMUNE_COMMUNE_CODE_POSTAL_KEY)
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(COMMUNE_COMMUNE_CODE_INSEE_KEY)
 
     private lateinit var _lieuDit: LieuDitPath
 

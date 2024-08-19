@@ -319,7 +319,7 @@ class NumerotationUseCase {
         val commune = ensureCommune(pei)
         try {
             if (TypePei.PIBI == pei.nature!!.natureTypePei) {
-                if (CODE_INSEE_LAVAL.equals(commune.communeInsee, ignoreCase = true)) {
+                if (CODE_INSEE_LAVAL.equals(commune.communeCodeInsee, ignoreCase = true)) {
                     if (pei.peiZoneSpecialeId != null) {
                         val zoneSpeciale = zoneIntegrationRepository.getById(pei.peiZoneSpecialeId)
 
@@ -362,7 +362,7 @@ class NumerotationUseCase {
                             }
                         }
                     }
-                } else if (CODE_INSEE_CHANGE.equals(commune.communeInsee, ignoreCase = true)) { // Changé
+                } else if (CODE_INSEE_CHANGE.equals(commune.communeCodeInsee, ignoreCase = true)) { // Changé
                     if (pei.peiZoneSpecialeId != null) {
                         val zoneSpeciale = zoneIntegrationRepository.getById(pei.peiZoneSpecialeId)
                         when (zoneSpeciale.zoneIntegrationCode) {
@@ -379,7 +379,7 @@ class NumerotationUseCase {
                             }
                         }
                     }
-                } else if (CODE_INSEE_LOUVERNE.equals(commune.communeInsee, ignoreCase = true)) { // Louverne
+                } else if (CODE_INSEE_LOUVERNE.equals(commune.communeCodeInsee, ignoreCase = true)) { // Louverne
                     if (pei.peiZoneSpecialeId != null) {
                         val zoneSpeciale = zoneIntegrationRepository.getById(pei.peiZoneSpecialeId)
                         if (zoneSpeciale.zoneIntegrationCode.equals(SECTEUR_LOUVERNE_2, true)) {
@@ -467,7 +467,7 @@ class NumerotationUseCase {
     private fun computeNumeroMethodeA(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
         val commune = ensureCommune(pei)
-        return commune.communeInsee + "_" + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return commune.communeCodeInsee + "_" + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -483,7 +483,7 @@ class NumerotationUseCase {
         checkNature(pei)
 
         val commune = ensureCommune(pei)
-        return pei.nature!!.natureCode + commune.communeInsee + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return pei.nature!!.natureCode + commune.communeCodeInsee + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     private fun computeNumero53(pei: PeiForNumerotationData): String {
@@ -492,7 +492,7 @@ class NumerotationUseCase {
 
         val natureDeci = pei.natureDeci!!
         if (TypePei.PIBI == pei.nature!!.natureTypePei) {
-            if (CODE_INSEE_LAVAL.equals(ensureCommune(pei).communeInsee, ignoreCase = true)) {
+            if (CODE_INSEE_LAVAL.equals(ensureCommune(pei).communeCodeInsee, ignoreCase = true)) {
                 if (pei.peiZoneSpecialeId != null && NATURE_DECI_PRIVE.equals(natureDeci.natureDeciCode, ignoreCase = true)) {
                     when (ensureZoneSpeciale(pei).zoneIntegrationCode) {
                         SECTEUR_LAVAL_1 -> suffixe = "S1"
@@ -505,7 +505,7 @@ class NumerotationUseCase {
                         SECTEUR_LAVAL_8 -> suffixe = "S8"
                     }
                 }
-            } else if (CODE_INSEE_CHANGE.equals(ensureCommune(pei).communeInsee, ignoreCase = true)) {
+            } else if (CODE_INSEE_CHANGE.equals(ensureCommune(pei).communeCodeInsee, ignoreCase = true)) {
                 if (pei.peiZoneSpecialeId != null) {
                     when (ensureZoneSpeciale(pei).zoneIntegrationCode) {
                         SECTEUR_CHANGE_RIVE_DROITE -> suffixe = "D"
@@ -531,7 +531,7 @@ class NumerotationUseCase {
         // Construction Numéro PEI
         val sb = StringBuilder()
         sb.append(pei.nature.natureCode)
-        sb.append(ensureCommune(pei).communeInsee)
+        sb.append(ensureCommune(pei).communeCodeInsee)
         if (pei.peiNumeroInterne.toString().length == 4) {
             sb.append("%04d".format(Locale.getDefault(), pei.peiNumeroInterne))
         } else {
@@ -554,7 +554,7 @@ class NumerotationUseCase {
         val commune = ensureCommune(pei)
         val codeZoneSpeciale = if (pei.peiZoneSpecialeId != null) ensureZoneSpeciale(pei).zoneIntegrationCode else null
 
-        return (codeZoneSpeciale ?: commune.communeInsee) + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return (codeZoneSpeciale ?: commune.communeCodeInsee) + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -565,7 +565,7 @@ class NumerotationUseCase {
     private fun computeNumero14(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
 
-        val insee = ensureCommune(pei).communeInsee
+        val insee = ensureCommune(pei).communeCodeInsee
         return insee.substring(0, 2) + " " + insee.substring(2, 5) + " " + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
@@ -580,7 +580,7 @@ class NumerotationUseCase {
     private fun computeNumero38(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
 
-        return ensureCommune(pei).communeInsee + "-" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return ensureCommune(pei).communeCodeInsee + "-" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -604,7 +604,7 @@ class NumerotationUseCase {
 
         val suffixe = if (isNatureDeciPrive(pei)) "P" else ""
 
-        return commune.communeInsee + "_" + pei.peiNumeroInterne + suffixe
+        return commune.communeCodeInsee + "_" + pei.peiNumeroInterne + suffixe
     }
 
     /**
@@ -617,7 +617,7 @@ class NumerotationUseCase {
         val codeZoneSpeciale = if (pei.peiZoneSpecialeId != null) ensureZoneSpeciale(pei).zoneIntegrationCode else null
         val commune = ensureCommune(pei)
 
-        return (codeZoneSpeciale ?: commune.communeInsee) + "_%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return (codeZoneSpeciale ?: commune.communeCodeInsee) + "_%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -634,10 +634,10 @@ class NumerotationUseCase {
             val codeDomaine = pei.domaine.domaineCode
 
             if (CODE_DOMAINE_AUTOROUTE == codeDomaine) {
-                return ensureCommune(pei).communeInsee + "A" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+                return ensureCommune(pei).communeCodeInsee + "A" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
             }
         }
-        return ensureCommune(pei).communeInsee + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return ensureCommune(pei).communeCodeInsee + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -662,7 +662,7 @@ class NumerotationUseCase {
             sb.append("PN")
         }
         sb.append(" ")
-        sb.append(codeZoneSpeciale ?: commune.communeInsee)
+        sb.append(codeZoneSpeciale ?: commune.communeCodeInsee)
         return sb.append(" ").append(pei.peiNumeroInterne).toString()
     }
 
@@ -676,7 +676,7 @@ class NumerotationUseCase {
         checkCommuneId(pei)
 
         val commune = ensureCommune(pei)
-        return commune.communeInsee + "_" + pei.peiNumeroInterne
+        return commune.communeCodeInsee + "_" + pei.peiNumeroInterne
     }
 
     /**
@@ -689,7 +689,7 @@ class NumerotationUseCase {
         checkCommuneId(pei)
 
         val commune = ensureCommune(pei)
-        return commune.communeInsee + "-" + pei.peiNumeroInterne
+        return commune.communeCodeInsee + "-" + pei.peiNumeroInterne
     }
 
     /**
@@ -703,7 +703,7 @@ class NumerotationUseCase {
         checkCommuneId(pei)
 
         val commune = ensureCommune(pei)
-        return commune.communeInsee + "." + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        return commune.communeCodeInsee + "." + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**

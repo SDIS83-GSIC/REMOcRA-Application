@@ -7,8 +7,8 @@ CREATE TABLE remocra.commune
 (
     commune_id          UUID PRIMARY KEY,
     commune_libelle     TEXT     NOT NULL,
-    commune_insee       TEXT     NOT NULL UNIQUE,
-    commune_code_postal TEXT     NOT NULL UNIQUE,
+    commune_code_insee  TEXT     NOT NULL UNIQUE,
+    commune_code_postal TEXT     NOT NULL,
     commune_geometrie   geometry NOT NULL,
     commune_pprif       BOOLEAN  NOT NULL
 );

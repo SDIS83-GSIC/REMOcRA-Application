@@ -48,7 +48,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) {
     private fun getConditions(codeInsee: String?, libelleVoie: String?): Condition {
         var condition: Condition = DSL.trueCondition()
         if (codeInsee != null) {
-            condition = condition.and(COMMUNE.INSEE.eq(codeInsee))
+            condition = condition.and(COMMUNE.CODE_INSEE.eq(codeInsee))
         }
         if (libelleVoie != null) {
             condition = condition.and(VOIE.LIBELLE.likeIgnoreCase("%$libelleVoie%"))

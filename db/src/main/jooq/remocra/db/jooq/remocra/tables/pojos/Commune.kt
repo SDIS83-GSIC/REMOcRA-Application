@@ -22,7 +22,7 @@ import javax.annotation.processing.Generated
 data class Commune(
     val communeId: UUID,
     val communeLibelle: String,
-    val communeInsee: String,
+    val communeCodeInsee: String,
     val communeCodePostal: String,
     val communeGeometrie: Geometry,
     val communePprif: Boolean,
@@ -45,7 +45,7 @@ data class Commune(
         if (this.communeLibelle != o.communeLibelle) {
             return false
         }
-        if (this.communeInsee != o.communeInsee) {
+        if (this.communeCodeInsee != o.communeCodeInsee) {
             return false
         }
         if (this.communeCodePostal != o.communeCodePostal) {
@@ -65,7 +65,7 @@ data class Commune(
         var result = 1
         result = prime * result + this.communeId.hashCode()
         result = prime * result + this.communeLibelle.hashCode()
-        result = prime * result + this.communeInsee.hashCode()
+        result = prime * result + this.communeCodeInsee.hashCode()
         result = prime * result + this.communeCodePostal.hashCode()
         result = prime * result + this.communeGeometrie.hashCode()
         result = prime * result + this.communePprif.hashCode()
@@ -77,7 +77,7 @@ data class Commune(
 
         sb.append(communeId)
         sb.append(", ").append(communeLibelle)
-        sb.append(", ").append(communeInsee)
+        sb.append(", ").append(communeCodeInsee)
         sb.append(", ").append(communeCodePostal)
         sb.append(", ").append(communeGeometrie)
         sb.append(", ").append(communePprif)

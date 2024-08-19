@@ -16,7 +16,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Commune> =
         dsl.selectFrom(COMMUNE)
             .where(getConditions(codeInsee, libelle))
-            .orderBy(COMMUNE.INSEE)
+            .orderBy(COMMUNE.CODE_INSEE)
             .limit(limit)
             .offset(offset)
             .fetchInto()
@@ -24,7 +24,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
     private fun getConditions(codeInsee: String?, libelle: String?): Condition {
         var condition: Condition = DSL.trueCondition()
         if (codeInsee != null) {
-            condition = condition.and(COMMUNE.INSEE.eq(codeInsee))
+            condition = condition.and(COMMUNE.CODE_INSEE.eq(codeInsee))
         }
         if (libelle != null) {
             condition = condition.and(COMMUNE.LIBELLE.likeIgnoreCase("%$libelle%"))
@@ -33,7 +33,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
     }
 
     fun getCommuneForSelect(): List<GlobalData.IdCodeLibelleData> =
-        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
@@ -42,7 +42,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
      * Retourne les communes qui sont à moins de PEI_TOLERANCE_COMMUNE_METRES mètres de la géométrie passée en paramètre
      */
     fun getCommunesPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
-        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
             .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceCommuneMetres)
             .orderBy(COMMUNE.LIBELLE)
