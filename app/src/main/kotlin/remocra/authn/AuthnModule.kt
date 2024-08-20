@@ -1,6 +1,5 @@
 package remocra.authn
 
-import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Provides
 import com.google.inject.Singleton
@@ -24,10 +23,11 @@ import org.pac4j.oidc.client.KeycloakOidcClient
 import org.pac4j.oidc.config.KeycloakOidcConfiguration
 import org.pac4j.oidc.profile.OidcProfileDefinition
 import org.pac4j.oidc.profile.creator.OidcProfileCreator
+import remocra.RemocraModule
 import remocra.web.registerResources
 import java.net.MalformedURLException
 
-class AuthnModule(private val settings: AuthnSettings) : AbstractModule() {
+class AuthnModule(private val settings: AuthnSettings) : RemocraModule() {
     override fun configure() {
         binder().registerResources()
         bind(AuthnSettings::class.java).toInstance(settings)

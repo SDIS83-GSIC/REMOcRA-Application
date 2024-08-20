@@ -1,13 +1,13 @@
 package remocra.healthcheck
 
-import com.google.inject.AbstractModule
 import com.google.inject.Binder
 import com.google.inject.binder.LinkedBindingBuilder
 import com.typesafe.config.Config
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMapBinder
+import remocra.RemocraModule
 import java.time.Duration
 
-class HealthModule(private val settings: HealthSettings) : AbstractModule() {
+class HealthModule(private val settings: HealthSettings) : RemocraModule() {
     override fun configure() {
         bind(HealthSettings::class.java).toInstance(settings)
     }

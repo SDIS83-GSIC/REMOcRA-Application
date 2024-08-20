@@ -4,14 +4,15 @@ import com.google.common.eventbus.AsyncEventBus
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.typesafe.config.Config
-import dev.misfitlabs.kotlinguice4.KotlinModule
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
+import remocra.RemocraModule
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.tracabilite.TracabiliteEventListener
+import remocra.getStringOrNull
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class EventBusModule(private val settings: MailSettings) : KotlinModule() {
+class EventBusModule(private val settings: MailSettings) : RemocraModule() {
     override fun configure() {
         val multibinder = KotlinMultibinder.newSetBinder<EventListener<*>>(kotlinBinder)
         multibinder.apply {
@@ -30,8 +31,8 @@ class EventBusModule(private val settings: MailSettings) : KotlinModule() {
                     from = config.getString("from"),
                     smtpUrl = config.getString("smtp-url"),
                     smtpPort = config.getInt("smtp-port"),
-                    smtpUser = config.getString("smtp-user"),
-                    smtpPassword = config.getString("smtp-password"),
+                    smtpUser = config.getStringOrNull("smtp-user"),
+                    smtpPassword = config.getStringOrNull("smtp-password"),
                     urlSite = config.getString("url-site"),
                 ),
             )

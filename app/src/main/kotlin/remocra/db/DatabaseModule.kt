@@ -1,7 +1,6 @@
 package remocra.db
 
 import com.google.common.io.Resources
-import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.typesafe.config.Config
@@ -16,13 +15,14 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.ThreadLocalTransactionProvider
+import remocra.RemocraModule
 import java.util.Locale
 import java.util.Properties
 import javax.sql.DataSource
 
 class DatabaseModule
 private constructor(private val sqlDialect: SQLDialect, private val properties: Properties) :
-    AbstractModule() {
+    RemocraModule() {
 
     @Provides
     @Singleton

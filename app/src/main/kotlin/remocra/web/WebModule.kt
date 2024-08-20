@@ -1,9 +1,9 @@
 package remocra.web
 
-import com.google.inject.AbstractModule
 import com.google.inject.Binder
 import com.google.inject.TypeLiteral
 import com.google.inject.multibindings.Multibinder
+import remocra.RemocraModule
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
@@ -19,7 +19,7 @@ import remocra.web.pei.PeiModule
 import remocra.web.visite.VisiteModule
 import kotlin.reflect.KClass
 
-object WebModule : AbstractModule() {
+object WebModule : RemocraModule() {
 
     override fun configure() {
         install(PeiModule)

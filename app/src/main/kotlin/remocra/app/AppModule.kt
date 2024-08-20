@@ -1,9 +1,9 @@
 package remocra.app
 
-import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.typesafe.config.Config
 import jakarta.inject.Singleton
+import remocra.RemocraModule
 import remocra.data.DataCache
 import remocra.data.ParametresData
 import remocra.data.enums.CodeSdis
@@ -11,7 +11,7 @@ import remocra.data.enums.Environment
 import java.time.Clock
 import java.time.ZoneId
 
-class AppModule(private val settings: AppSettings) : AbstractModule() {
+class AppModule(private val settings: AppSettings) : RemocraModule() {
     @Provides @Singleton
     fun provideClock() = Clock.system(ZoneId.systemDefault())
 

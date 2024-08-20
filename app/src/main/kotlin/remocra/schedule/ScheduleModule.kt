@@ -1,14 +1,14 @@
 package remocra.schedule
 
-import dev.misfitlabs.kotlinguice4.KotlinModule
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
+import remocra.RemocraModule
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SimpleTask
 import remocra.tasks.SynchroUtilisateurTask
 import remocra.tasks.TaskParameters
 
-object ScheduleModule : KotlinModule() {
+object ScheduleModule : RemocraModule() {
     override fun configure() {
         KotlinMultibinder.newSetBinder<SimpleTask<out TaskParameters>>(kotlinBinder).apply {
             // TODO : ajouter tâches

@@ -2,12 +2,12 @@ package remocra.keycloak
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.typesafe.config.Config
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import remocra.RemocraModule
 import remocra.healthcheck.HealthModule
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -17,7 +17,7 @@ class KeycloakModule(
     private val healthcheckUrl: URI,
     private val apiBaseUrl: HttpUrl,
     private val urlToken: HttpUrl,
-) : AbstractModule() {
+) : RemocraModule() {
 
     override fun configure() {
         HealthModule.addHealthCheck(binder(), "keycloak").to(KeycloakHealthChecker::class.java)
