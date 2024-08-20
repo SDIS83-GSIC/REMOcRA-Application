@@ -8,6 +8,7 @@ import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.PeiData
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.CommuneRepository
+import remocra.db.DiametreRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.LieuDitRepository
 import remocra.db.ModelePibiRepository
@@ -63,6 +64,9 @@ class PeiUseCase {
 
     @Inject
     lateinit var parametresProvider: ParametresProvider
+
+    @Inject
+    lateinit var diametreRepository: DiametreRepository
 
     @Inject
     lateinit var appSettings: AppSettings
@@ -136,6 +140,7 @@ class PeiUseCase {
             listModele = modelePibiRepository.getModeleWithMarque(),
             listServiceEau = organismeRepository.getServiceEauForSelect(),
             listPeiJumelage = listPeiJumelage,
+            listDiametreWithNature = diametreRepository.getDiametreWithIdNature(),
         )
     }
 
@@ -154,5 +159,6 @@ class PeiUseCase {
         val listModele: Collection<ModelePibiRepository.ModeleWithMarque>,
         val listServiceEau: Collection<IdCodeLibelleData>,
         val listPeiJumelage: Collection<IdCodeLibelleData>,
+        val listDiametreWithNature: Collection<DiametreRepository.DiametreWithNature>,
     )
 }

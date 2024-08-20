@@ -24,7 +24,7 @@ export default [
     element: <AccueilPei />,
   },
   {
-    path: "/pei/update/:peiId",
+    path: "/pei/:peiId",
     element: <UpdatePei />,
   },
   {

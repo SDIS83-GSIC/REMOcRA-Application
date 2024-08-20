@@ -239,6 +239,7 @@ type SelectDataType = {
   listModele: (IdCodeLibelleType & { marqueId: string })[];
   listServiceEau: IdCodeLibelleType[];
   listPeiJumelage: IdCodeLibelleType[];
+  listDiametreWithNature: IdCodeLibelleType & { natureId: string }[];
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
@@ -531,6 +532,7 @@ const FormEntetePei = ({
               setValues={setValues}
               setOtherValues={() => {
                 setFieldValue("peiNatureId", null);
+                setFieldValue("pibiDiametreId", null);
               }}
             />
           </Col>
@@ -549,6 +551,9 @@ const FormEntetePei = ({
                 valueId={values.peiNatureId}
                 required={true}
                 setValues={setValues}
+                setOtherValues={() => {
+                  setFieldValue("pibiDiametreId", null);
+                }}
               />
             )}
           </Col>
@@ -783,11 +788,7 @@ const FormLocalisationPei = ({
           />
         </Col>
         <Col>
-          <CheckBoxInput
-            name="peiEnFace"
-            label="Situé en face ?"
-            defaultCheck={values.peiEnFace}
-          />
+          <CheckBoxInput name="peiEnFace" label="Situé en face ?" />
         </Col>
       </Row>
       <Row className="mt-3 d-flex align-items-center">
@@ -854,16 +855,27 @@ const FormPibi = ({
     ? selectData.listModele.find((e) => e.id === values.pibiModeleId)?.marqueId
     : values.pibiMarqueId;
 
+  const idNature = values.peiNatureId
+    ? selectData.listDiametreWithNature.find(
+        (e) => e.id === values.pibiDiametreId,
+      )?.natureId
+    : values.peiNatureId;
+
   return (
     <>
       <h2>Informations PEI</h2>
       <Row className="mt-3">
         <Col>
-          <SelectNomenclaturesForm
+          <SelectForm
             name={"pibiDiametreId"}
-            nomenclature={TYPE_DATA_CACHE.DIAMETRE}
+            listIdCodeLibelle={selectData.listDiametreWithNature.filter(
+              (e) =>
+                e.natureId === values.peiNatureId || e.natureId === idNature,
+            )}
             label="Diamètre nominal"
-            valueId={values.pibiDiametreId}
+            defaultValue={selectData.listDiametreWithNature.find(
+              (e) => e.id === values.pibiDiametreId,
+            )}
             required={false}
             setValues={setValues}
           />
@@ -872,15 +884,10 @@ const FormPibi = ({
           <CheckBoxInput
             name="pibiDispositifInviolabilite"
             label="Dispositif d'inviolabilité ?"
-            defaultCheck={values.pibiDispositifInviolabilite}
           />
         </Col>
         <Col>
-          <CheckBoxInput
-            name="pibiRenversable"
-            label="Renversable ?"
-            defaultCheck={values.pibiRenversable}
-          />
+          <CheckBoxInput name="pibiRenversable" label="Renversable ?" />
         </Col>
       </Row>
       <Row className="mt-3 d-flex align-items-center">
@@ -981,11 +988,7 @@ const FormPibi = ({
           />
         </Col>
         <Col>
-          <CheckBoxInput
-            name="pibiDebitRenforce"
-            label="Débit renforcé ?"
-            defaultCheck={values.pibiDebitRenforce}
-          />
+          <CheckBoxInput name="pibiDebitRenforce" label="Débit renforcé ?" />
         </Col>
       </Row>
       <Row className="mt-3">
@@ -1000,18 +1003,10 @@ const FormPibi = ({
           />
         </Col>
         <Col>
-          <CheckBoxInput
-            name="pibiSurpresse"
-            label="Réseau surpressé ?"
-            defaultCheck={values.pibiSurpresse}
-          />
+          <CheckBoxInput name="pibiSurpresse" label="Réseau surpressé ?" />
         </Col>
         <Col>
-          <CheckBoxInput
-            name="pibiAdditive"
-            label="Réseau additivé ?"
-            defaultCheck={values.pibiAdditive}
-          />
+          <CheckBoxInput name="pibiAdditive" label="Réseau additivé ?" />
         </Col>
       </Row>
     </>
@@ -1033,14 +1028,12 @@ const FormPena = ({
           <CheckBoxInput
             name="penaCapaciteIllimitee"
             label="Capacité illimitée ?"
-            defaultCheck={values.penaCapaciteIllimitee}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="penaCapaciteIncertaine"
             label="Capacité incertaine ?"
-            defaultCheck={values.penaCapaciteIncertaine}
           />
         </Col>
       </Row>
