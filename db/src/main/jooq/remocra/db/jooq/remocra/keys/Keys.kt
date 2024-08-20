@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
@@ -80,6 +81,7 @@ val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, 
 val GESTIONNAIRE_GESTIONNAIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_gestionnaire_code_key"), arrayOf(Gestionnaire.GESTIONNAIRE.CODE), true)
 val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_pkey"), arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)
 val JOB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Job.JOB, DSL.name("job_pkey"), arrayOf(Job.JOB.ID), true)
+val L_COMMUNE_CIS_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_pkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID, LCommuneCis.L_COMMUNE_CIS.CIS_ID), true)
 val L_CONTACT_GESTIONNAIRE_CONTACT_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_contact_id_key"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID), true)
 val L_CONTACT_GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_pkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID, LContactGestionnaire.L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID), true)
 val L_CONTACT_ORGANISME_CONTACT_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_contact_id_key"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.CONTACT_ID), true)
@@ -157,6 +159,8 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val JOB__JOB_JOB_TASK_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_task_id_fkey"), arrayOf(Job.JOB.TASK_ID), remocra.db.jooq.remocra.keys.TASK_PKEY, arrayOf(Task.TASK.ID), true)
+val L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_cis_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.CIS_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
+val L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_commune_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
 val L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_contact_id_fkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID), remocra.db.jooq.remocra.keys.CONTACT_PKEY, arrayOf(Contact.CONTACT.ID), true)
 val L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_gestionnaire_id_fkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID), remocra.db.jooq.remocra.keys.GESTIONNAIRE_PKEY, arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)
 val L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_gestionnaire_site_id_fkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_SITE_ID), remocra.db.jooq.remocra.keys.GESTIONNAIRE_PKEY, arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)

@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
@@ -104,6 +105,11 @@ val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.l_commune_cis</code>.
+ */
+val L_COMMUNE_CIS: LCommuneCis = LCommuneCis.L_COMMUNE_CIS
 
 /**
  * The table <code>remocra.l_contact_gestionnaire</code>.

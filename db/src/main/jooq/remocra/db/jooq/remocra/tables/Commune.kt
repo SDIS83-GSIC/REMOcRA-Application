@@ -30,9 +30,12 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
+import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import java.util.UUID
@@ -149,6 +152,23 @@ open class Commune(
     override fun getPrimaryKey(): UniqueKey<Record> = COMMUNE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(COMMUNE_COMMUNE_CODE_INSEE_KEY)
 
+    private lateinit var _lCommuneCis: LCommuneCisPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_commune_cis</code> table
+     */
+    fun lCommuneCis(): LCommuneCisPath {
+        if (!this::_lCommuneCis.isInitialized) {
+            _lCommuneCis = LCommuneCisPath(this, null, L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY.inverseKey)
+        }
+
+        return _lCommuneCis
+    }
+
+    val lCommuneCis: LCommuneCisPath
+        get(): LCommuneCisPath = lCommuneCis()
+
     private lateinit var _lieuDit: LieuDitPath
 
     /**
@@ -197,6 +217,13 @@ open class Commune(
 
     val voie: VoiePath
         get(): VoiePath = voie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.organisme</code> table
+     */
+    val organisme: OrganismePath
+        get(): OrganismePath = lCommuneCis().organisme()
     override fun `as`(alias: String): Commune = Commune(DSL.name(alias), this)
     override fun `as`(alias: Name): Commune = Commune(alias, this)
     override fun `as`(alias: Table<*>): Commune = Commune(alias.qualifiedName, this)

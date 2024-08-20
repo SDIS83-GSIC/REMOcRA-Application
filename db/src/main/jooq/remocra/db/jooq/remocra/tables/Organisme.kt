@@ -26,6 +26,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.API__API_API_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.ORGANISME_PKEY
@@ -40,7 +41,9 @@ import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_SERVICE_EAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.Api.ApiPath
+import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
+import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
@@ -265,6 +268,23 @@ open class Organisme(
     val api: ApiPath
         get(): ApiPath = api()
 
+    private lateinit var _lCommuneCis: LCommuneCisPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_commune_cis</code> table
+     */
+    fun lCommuneCis(): LCommuneCisPath {
+        if (!this::_lCommuneCis.isInitialized) {
+            _lCommuneCis = LCommuneCisPath(this, null, L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY.inverseKey)
+        }
+
+        return _lCommuneCis
+    }
+
+    val lCommuneCis: LCommuneCisPath
+        get(): LCommuneCisPath = lCommuneCis()
+
     private lateinit var _lContactOrganisme: LContactOrganismePath
 
     /**
@@ -382,6 +402,13 @@ open class Organisme(
 
     val utilisateur: UtilisateurPath
         get(): UtilisateurPath = utilisateur()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.commune</code> table
+     */
+    val commune: CommunePath
+        get(): CommunePath = lCommuneCis().commune()
 
     /**
      * Get the implicit many-to-many join path to the
