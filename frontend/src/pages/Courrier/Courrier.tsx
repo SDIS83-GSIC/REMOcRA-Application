@@ -5,6 +5,7 @@ import {
   CourrierParametreEntity,
   ModeleCourrierWithParametres,
   TypeComposant,
+  TypeOperation,
 } from "../../Entities/CourrierEntity.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import {
@@ -60,6 +61,7 @@ const Courrier = ({
     <FormContainer>
       <Container>
         <PageTitle icon={<IconDocument />} title={"Générer un courrier"} />
+        <div className="fs-3 fw-bold mb-3">1 - Modèle de courrier</div>
         <SelectForm
           name={"modeleCourrierId"}
           listIdCodeLibelle={listModeleCourrier}
@@ -80,16 +82,34 @@ const Courrier = ({
               );
           }}
         />
+        <div className="mt-3">
+          {
+            initialesValues.find(
+              (e) =>
+                e.modeleCourrier.modeleCourrierId === values.modeleCourrierId,
+            )?.modeleCourrier?.modeleCourrierDescription
+          }
+        </div>
         <br />
+        {listParametres && (
+          <div className="fs-3 fw-bold mb-3">2 - Paramètres du courrier</div>
+        )}
         {listParametres &&
           listParametres.map((e) => {
             switch (e.typeComposant) {
               case TypeComposant.SELECT_INPUT: {
                 return (
-                  checkConditionToDisplay(e, values) && (
+                  checkConditionToDisplay(e, values, setFieldValue) && (
                     <SelectForm
                       name={e.nameField}
-                      listIdCodeLibelle={e.liste}
+                      listIdCodeLibelle={
+                        e.nameLienField != null
+                          ? e.liste?.filter(
+                              (element) =>
+                                element.lienId === values[e.nameLienField],
+                            )
+                          : e.liste
+                      }
                       label={
                         <>
                           {e.label}
@@ -111,7 +131,7 @@ const Courrier = ({
               }
               case TypeComposant.CHECKBOX_INPUT: {
                 return (
-                  checkConditionToDisplay(e, values) && (
+                  checkConditionToDisplay(e, values, setFieldValue) && (
                     <CheckBoxInput
                       name={e.nameField}
                       label={
@@ -133,7 +153,7 @@ const Courrier = ({
               }
               case TypeComposant.TEXT_INPUT: {
                 return (
-                  checkConditionToDisplay(e, values) && (
+                  checkConditionToDisplay(e, values, setFieldValue) && (
                     <TextInput
                       name={e.nameField}
                       label={
@@ -167,16 +187,36 @@ const Courrier = ({
   );
 };
 
+/**
+ * Retourne vrai si le paramètre remplit les conditions d'affichage
+ * @param e
+ * @param values
+ * @returns
+ */
 function checkConditionToDisplay(
   e: CourrierParametreEntity,
   values: ValuesType,
+  setFieldValue,
 ) {
-  return (
-    (e.conditionToDisplay != null &&
+  let bool = true;
+  if (
+    e.conditionToDisplay?.valeurAttendue?.operation === TypeOperation.DIFFERENT
+  ) {
+    bool =
+      values[e.conditionToDisplay.nameField] !==
+      e.conditionToDisplay.valeurAttendue.valeurAttendue;
+  } else if (
+    e.conditionToDisplay?.valeurAttendue?.operation === TypeOperation.EGAL
+  ) {
+    bool =
       values[e.conditionToDisplay.nameField] ===
-        e.conditionToDisplay.valeurAttendue) ||
-    e.conditionToDisplay == null
-  );
+      e.conditionToDisplay.valeurAttendue.valeurAttendue;
+  }
+
+  if (bool === false && values[e.nameField] != null) {
+    setFieldValue(e.nameField, null);
+  }
+  return bool;
 }
 
 export default Courrier;

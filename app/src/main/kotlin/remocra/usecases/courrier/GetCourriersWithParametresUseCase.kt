@@ -2,6 +2,7 @@ package remocra.usecases.courrier
 
 import com.google.inject.Inject
 import remocra.data.GlobalData
+import remocra.db.CisCommuneRepository
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.ModeleCourrierRepository
@@ -17,6 +18,8 @@ class GetCourriersWithParametresUseCase {
     @Inject lateinit var communeRepository: CommuneRepository
 
     @Inject lateinit var gestionnaireRepository: GestionnaireRepository
+
+    @Inject lateinit var cisCommuneRepository: CisCommuneRepository
 
     fun execute(): MutableList<ModeleCourrierWithParametre> {
         // TODO prendre en compte le profil droit de l'utilisateur
@@ -36,8 +39,24 @@ class GetCourriersWithParametresUseCase {
                 ),
             )
         }
-        val listCommune = communeRepository.getCommuneForSelect()
-        val listGestionnaire = gestionnaireRepository.getAll()
+        val listCommune = communeRepository.getCommuneForSelect().map {
+            GlobalData.IdCodeLibelleLienData(
+                it.id,
+                it.code,
+                it.libelle,
+                null,
+            )
+        }
+        val listGestionnaire = gestionnaireRepository.getAll().map {
+            GlobalData.IdCodeLibelleLienData(
+                it.id,
+                it.code,
+                it.libelle,
+                null,
+            )
+        }
+
+        val listCisWithCommune = cisCommuneRepository.getCisCommune()
 
         mapParametreByCourrier.forEach { courrierWithParametres ->
             val listParametreCourrier = mutableListOf<ParametreCourrier>()
@@ -56,7 +75,10 @@ class GetCourriersWithParametresUseCase {
                                 ) {
                                     ConditionToDisplay(
                                         nameField = TypeParametreCourrier.IS_ONLY_PUBLIC.name,
-                                        valeurAttendue = true,
+                                        valeurAttendue = ValeurAttendue(
+                                            Operation.EGAL,
+                                            true,
+                                        ),
                                     )
                                 } else {
                                     null
@@ -76,12 +98,34 @@ class GetCourriersWithParametresUseCase {
                                 ) {
                                     ConditionToDisplay(
                                         nameField = TypeParametreCourrier.IS_ONLY_PUBLIC.name,
-                                        valeurAttendue = false,
+                                        valeurAttendue = ValeurAttendue(
+                                            Operation.EGAL,
+                                            false,
+                                        ),
                                     )
                                 } else {
                                     null
                                 },
                                 defaultValue = null,
+                            )
+                        }
+                        TypeParametreCourrier.CIS_ID -> {
+                            ParametreCourrier(
+                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
+                                label = parametre.modeleCourrierParametreLibelle,
+                                liste = listCisWithCommune,
+                                description = parametre.modeleCourrierParametreDescription,
+                                typeComposant = TypeComposant.SELECT_INPUT,
+                                conditionToDisplay =
+                                ConditionToDisplay(
+                                    nameField = TypeParametreCourrier.COMMUNE_ID.name,
+                                    valeurAttendue = ValeurAttendue(
+                                        Operation.DIFFERENT,
+                                        null,
+                                    ),
+                                ),
+                                defaultValue = null,
+                                nameLienField = TypeParametreCourrier.COMMUNE_ID.name,
                             )
                         }
                         TypeParametreCourrier.IS_ONLY_PUBLIC,
@@ -97,7 +141,6 @@ class GetCourriersWithParametresUseCase {
                             )
                         }
                         TypeParametreCourrier.PROFIL_UTILISATEUR_ID -> TODO()
-                        TypeParametreCourrier.CIS_ID -> TODO()
                         TypeParametreCourrier.ANNEE,
                         TypeParametreCourrier.EXPEDITEUR_GRADE,
                         TypeParametreCourrier.EXPEDITEUR_STATUT,
@@ -132,23 +175,46 @@ class GetCourriersWithParametresUseCase {
         val listParametres: Collection<ParametreCourrier>?,
     )
 
+    /**
+     * @property nameField : Le nom utilisé dans les inputs et qui nous sera retourné
+     * @property label : Le nom à afficher (stocké en base)
+     * @property description : La description du paramètre qui s'affichera sous forme de tooltip si elle n'est pas nulle
+     * @property liste : Si c'est une liste déroulante, on passe l'id, le code , le libellé et l'id de laison. Les paramètres peuvent
+     * se compléter. Par exemple, pour le CIS, on ne veut afficher que les CIS de la commune sélectionnée
+     * @property typeComposant : Type de composant utilisé dans le front
+     * @property conditionToDisplay : Condition à respecter pour que le paramètre soit affiché
+     * @property defaultValue : valeur par défaut
+     * @property nameLienField : Le nom du champ de lien utilisé dans le front
+     */
     data class ParametreCourrier(
-        val nameField: String, // Nom utilisé dans les input dans le front
-        val label: String, // Le label à afficher
+        val nameField: String,
+        val label: String,
         val description: String?,
-        val liste: Collection<GlobalData.IdCodeLibelleData>?, // Si c'est une liste déroulante
-        val typeComposant: TypeComposant, // TextArea, CheckBox ...
+        val liste: Collection<GlobalData.IdCodeLibelleLienData>?,
+        val typeComposant: TypeComposant,
         val conditionToDisplay: ConditionToDisplay? = null,
         val defaultValue: Any?,
+        val nameLienField: String? = null,
     )
 
     /**
-     * Les paramètres peuvent dépendre des uns et des autres. On passe donc le nameField du paramètre et la valeur attendue pour que notre paramètre soit affiché
+     * Les paramètres peuvent dépendre des uns et des autres. On passe donc le nameField du paramètre et
+     * la valeur attendue pour que notre paramètre soit affiché. Il faut aussi préciser le type d'opération si égal ou différent
      */
     data class ConditionToDisplay(
         val nameField: String,
-        val valeurAttendue: Any,
+        val valeurAttendue: ValeurAttendue,
     )
+
+    data class ValeurAttendue(
+        val operation: Operation,
+        val valeurAttendue: Any?,
+    )
+
+    enum class Operation {
+        DIFFERENT,
+        EGAL,
+    }
 
     enum class TypeComposant {
         TEXT_INPUT,

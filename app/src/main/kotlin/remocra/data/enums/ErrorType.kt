@@ -133,6 +133,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
      * Pour la gestion des études de la couverture hydraulique
      */
     ETUDE_TYPE_FORBIDDEN_C(4000, "Vous n'avez pas les droits de création d'une étude.", Status.FORBIDDEN),
+    ETUDE_TYPE_FORBIDDEN_U(4001, "Vous n'avez pas les droits pour mettre à jour une étude.", Status.FORBIDDEN),
     ETUDE_DOCUMENT_MEME_NOM(4002, "Les documents d'une même étude ne doivent pas avoir le même nom."),
 
     IMPORT_SHP_ETUDE_SHP_INTROUVABLE(4100, "Aucun fichier .shp n'a été trouvé."),
@@ -146,13 +147,37 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_RESERVE(4108, "Le débit doit être renseigné pour une réserve."),
     ETUDE_NUMERO_UNIQUE(4007, "Une étude avec ce numéro existe déjà."),
 
-    ETUDE_TYPE_FORBIDDEN_U(4001, "Vous n'avez pas les droits pour mettre à jour une étude.", Status.FORBIDDEN),
     ETUDE_CAPACITE_MANQUANTE(4003, "La capacité doit être renseignée."),
     ETUDE_DEBIT_MANQUANT(4004, "Le débit doit être renseigné."),
     ETUDE_DIAMETRE_MANQUANT(4005, "Le diamètre doit être renseigné."),
     ETUDE_DIAMETRE_CANALISATION_MANQUANT(4006, "Le diamètre doit être renseigné."),
 
-    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier"),
+    /***
+     * ***********************************************************************
+     * Courrier
+     * ***********************************************************************
+     */
+    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier", Status.FORBIDDEN),
+    COURRIER_SAISIR_COMMUNE(
+        5001,
+        "Veuillez spécifier la commune.",
+    ),
+    COURRIER_SAISIR_CIS(
+        5002,
+        "Veuillez spécifier le CIS.",
+    ),
+    COURRIER_SAISIR_GESTIONNAIRE(
+        5003,
+        "Veuillez spécifier le CIS.",
+    ),
+    COURRIER_GROUPEMENT_INTROUVABLE(
+        5004,
+        "Impossble de trouver le groupement associé à la commune.",
+    ),
+    COURRIER_ORGANISME_COMMUNE(
+        5005,
+        "Aucun organisme de type COMMUNE ne correspond à la commune sélectionnée. La géométrie de la commune doit être contenu dans celle de l'organisme",
+    ),
 
     //
     // ********************************************************************************

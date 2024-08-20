@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.pojos.Contact
+import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
@@ -147,7 +148,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
         val coordonneeX: String,
         val coordonneeY: String,
         val listeAnomalie: String,
-        val voieLibelle: String,
+        val voieLibelle: String?,
         val croisementLibelle: String?,
     )
 
@@ -171,7 +172,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
             .join(COMMUNE)
             .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
-            .join(VOIE)
+            .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
             .leftJoin(GESTIONNAIRE)
             .on(GESTIONNAIRE.ID.eq(PEI.GESTIONNAIRE_ID))
@@ -215,7 +216,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
             .join(COMMUNE)
             .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
-            .join(VOIE)
+            .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
             .leftJoin(GESTIONNAIRE)
             .on(GESTIONNAIRE.ID.eq(PEI.GESTIONNAIRE_ID))
@@ -262,7 +263,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
         abstract val peiNumeroComplet: String
         abstract val peiComplementAdresse: String?
         abstract val peiNumeroVoie: Int?
-        abstract val voieLibelle: String
+        abstract val voieLibelle: String?
         abstract val croisementLibelle: String?
         abstract val domaineLibelle: String
         abstract val natureLibelle: String
@@ -280,7 +281,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
     class PibiRop(
         override val peiId: UUID,
         override val peiNumeroComplet: String,
-        override val voieLibelle: String,
+        override val voieLibelle: String?,
         override val croisementLibelle: String?,
         override val domaineLibelle: String,
         override val natureLibelle: String,
@@ -307,7 +308,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
     class PenaRop(
         override val peiId: UUID,
         override val peiNumeroComplet: String,
-        override val voieLibelle: String,
+        override val voieLibelle: String?,
         override val croisementLibelle: String?,
         override val domaineLibelle: String,
         override val natureLibelle: String,
@@ -502,4 +503,9 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
                 .where(UTILISATEUR.ID.eq(utilisateurId))
                 .and(MODELE_COURRIER.CODE.eq(GlobalConstants.COURRIER_CODE_ROP)),
         )
+
+    fun getCis(cisId: UUID): Organisme =
+        dsl.selectFrom(ORGANISME)
+            .where(ORGANISME.ID.eq(cisId))
+            .fetchSingleInto()
 }

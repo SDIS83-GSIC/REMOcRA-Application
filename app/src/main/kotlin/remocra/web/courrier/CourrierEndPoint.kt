@@ -59,7 +59,7 @@ class CourrierEndPoint {
 
     data class NomValue(
         val nom: String,
-        val valeur: String,
+        val valeur: String?,
     )
 
     @GET

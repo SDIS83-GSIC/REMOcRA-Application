@@ -1,6 +1,7 @@
 package remocra.usecases.courrier
 
 import com.google.inject.Inject
+import jakarta.ws.rs.core.Response
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
 import remocra.api.DateUtils
@@ -184,11 +185,14 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
     private fun CourrierRopData.getData21(element: CourrierParametresRopData): CourrierRopData {
         if (element.isOnlyPublic == true) {
             ensureCommune(element.communeId)
+            ensureCis(element.cis)
 
             val commune = courrierRopRepository.getCommune(element.communeId!!)
+            val cisOrganisme = courrierRopRepository.getCis(element.cis!!)
 
             communeLibelle = commune.communeLibelle
             insee = commune.communeCodeInsee
+            cis = cisOrganisme.organismeLibelle
         } else {
             ensureGestionnaire(element.gestionnaireId)
             // TODO voir pour remonter la commune depuis le gestionnaire
@@ -275,7 +279,11 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
     private fun CourrierRopData.getData49(element: CourrierParametresRopData): CourrierRopData {
         ensureCommune(element.communeId)
+        ensureCis(element.cis)
         val organismeId = ensureOrganismeCommune(element.communeId!!)
+        val cisOrganisme = courrierRopRepository.getCis(element.cis!!)
+
+        cis = cisOrganisme.organismeLibelle
 
         val listePibiRop = courrierRopRepository.getPibi(element.communeId, element.gestionnaireId, null, element.isOnlyPublic == true)
         val listePenaRop = courrierRopRepository.getPena(element.communeId, element.gestionnaireId, null, element.isOnlyPublic == true)
@@ -335,15 +343,18 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
     private fun CourrierRopData.getData61(element: CourrierParametresRopData): CourrierRopData {
         ensureCommune(element.communeId)
+        ensureCis(element.cis)
 
         val commune = courrierRopRepository.getCommune(element.communeId!!)
         val condition = DSL.and(ANOMALIE.CODE.notEqual(CODE_ANOMALIE_INACTIF))
         val listePibiRop = courrierRopRepository.getPibi(element.communeId, null, condition)
         val listePenaRop = courrierRopRepository.getPena(element.communeId, null, condition)
 
+        val cisOrganisme = courrierRopRepository.getCis(element.cis!!)
+
         communeLibelle = commune.communeLibelle
         affaireSuiviePar = "${userConnecte.prenom} ${userConnecte.nom}"
-        cis = "" // TODO
+        cis = cisOrganisme.organismeLibelle
 
         listPibiIndispoWithAnomalie = listePibiRop.filter { it.peiDisponibiliteTerrestre == Disponibilite.INDISPONIBLE.literal }
         listPenaIndispoWithAnomalie = listePenaRop.filter { it.peiDisponibiliteTerrestre == Disponibilite.INDISPONIBLE.literal }
@@ -391,7 +402,11 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
     private fun CourrierRopData.getData95(element: CourrierParametresRopData): CourrierRopData {
         ensureCommune(element.communeId)
+        ensureCommune(element.cis)
         val organismeId = ensureOrganismeCommune(element.communeId!!)
+        val cisOrganisme = courrierRopRepository.getCis(element.cis!!)
+
+        cis = cisOrganisme.organismeLibelle
 
         val commune = courrierRopRepository.getCommune(element.communeId)
         val condition = DSL.and(ANOMALIE_CATEGORIE.CODE.notEqual(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
@@ -437,31 +452,34 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
     private fun ensureCommune(communeId: UUID?) {
         if (communeId == null) {
-            throw IllegalArgumentException("Veuillez spécifier la commune.")
+            throw RemocraResponseException(ErrorType.COURRIER_SAISIR_COMMUNE)
+        }
+    }
+
+    private fun ensureCis(cisId: UUID?) {
+        if (cisId == null) {
+            throw RemocraResponseException(ErrorType.COURRIER_SAISIR_CIS)
         }
     }
 
     private fun ensureGestionnaire(gestionnaireId: UUID?) {
         if (gestionnaireId == null) {
-            throw IllegalArgumentException("Veuillez spécifier le gestionnaire.")
+            throw RemocraResponseException(ErrorType.COURRIER_SAISIR_GESTIONNAIRE)
         }
     }
 
     private fun ensureGroupement(organismeCommuneId: UUID) =
         courrierRopRepository.getGroupement(organismeCommuneId)
-            ?: throw IllegalArgumentException("Impossble de trouver le groupement associé à la commune")
+            ?: throw RemocraResponseException(ErrorType.COURRIER_GROUPEMENT_INTROUVABLE)
 
     private fun ensureOrganismeCommune(communeId: UUID) =
         // L'organisme correspondant à la commune sélectionnée
         courrierRopRepository.getOrganismeCommune(communeId)
-            ?: throw IllegalArgumentException(
-                "Aucun organisme de type COMMUNE ne correspond à la commune sélectionnée. La géométrie de la commune" +
-                    " doit être contenu dans celle de l'organisme",
-            )
+            ?: throw RemocraResponseException(ErrorType.COURRIER_ORGANISME_COMMUNE)
 
     private fun ensureDestinataireRop(organismeId: UUID) =
         courrierRopRepository.getDestinataireMaire(organismeId)
-            ?: throw IllegalArgumentException("Aucun destinataire Maire pour cette commune. Vérifier que le contact existe et qu'il a bien le rôle '${GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP}'")
+            ?: throw RemocraResponseException(5006, "Aucun destinataire Maire pour cette commune. Vérifier que le contact existe et qu'il a bien le rôle '${GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP}'", Response.Status.BAD_REQUEST)
 
     private fun setDonneesCtp(listePibiRop: Collection<CourrierRopRepository.PibiRop>, mapPibiByDateCtp: Map<UUID?, ZonedDateTime?>) {
         val ctrlDebitPression = courrierRopRepository.getLastCtrlDebitPression(mapPibiByDateCtp)

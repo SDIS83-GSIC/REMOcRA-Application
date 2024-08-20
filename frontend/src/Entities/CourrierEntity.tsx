@@ -11,10 +11,11 @@ export type CourrierParametreEntity = {
   nameField: string;
   label: string;
   description: string | undefined;
-  liste: IdCodeLibelleType[] | null;
+  liste: IdCodeLibelleLienType[] | null;
   typeComposant: TypeComposant;
   conditionToDisplay?: ConditionToDisplay;
   defaultValue?: string;
+  nameLienField: string;
 };
 
 export type ModeleCourrierWithParametres = {
@@ -28,7 +29,21 @@ export enum TypeComposant {
   CHECKBOX_INPUT = "CHECKBOX_INPUT",
 }
 
+export enum TypeOperation {
+  DIFFERENT = "DIFFERENT",
+  EGAL = "EGAL",
+}
+
+export type ValeurAttendue = {
+  operation: TypeOperation;
+  valeurAttendue: string;
+};
+
 export type ConditionToDisplay = {
   nameField: string;
-  valeurAttendue: string;
+  valeurAttendue: ValeurAttendue;
+};
+
+export type IdCodeLibelleLienType = IdCodeLibelleType & {
+  lienId: string | null;
 };
