@@ -14,6 +14,7 @@ import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
 import remocra.web.courrier.CourrierModule
 import remocra.web.documents.DocumentModule
+import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
@@ -38,6 +39,7 @@ object WebModule : RemocraModule() {
         install(DocumentModule)
         install(AdminModule)
         install(CourrierModule)
+        install(ModuleModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
