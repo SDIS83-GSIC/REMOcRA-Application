@@ -26,7 +26,7 @@ class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val clock: Clock,
-) : AbstractCUDUseCase<VisiteData>() {
+) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: UserInfo) {
     }
@@ -36,7 +36,7 @@ class CreateVisiteUseCase @Inject constructor(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.visiteId,
-                typeOperation = TypeOperation.INSERT,
+                typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.idUtilisateur, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                 date = ZonedDateTime.now(clock),

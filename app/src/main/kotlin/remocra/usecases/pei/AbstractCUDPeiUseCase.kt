@@ -35,7 +35,7 @@ import java.time.ZonedDateTime
  * Dans le cadre d'une insertion, on ne peut en aucun cas renseigner ses visites. Le PEI sera donc mis en indisponible.
  * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
-abstract class AbstractCUDPeiUseCase(private val typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>() {
+abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>(typeOperation) {
     @Inject
     lateinit var eventBus: EventBus
 

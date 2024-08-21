@@ -17,7 +17,7 @@ import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.DocumentsPei>() {
+class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.DocumentsPei>(TypeOperation.UPDATE) {
     @Inject lateinit var eventBus: EventBus
 
     @Inject lateinit var documentUtils: DocumentUtils

@@ -5,10 +5,11 @@ import jakarta.ws.rs.core.Response
 import org.jooq.exception.NoDataFoundException
 import remocra.authn.UserInfo
 import remocra.db.TransactionManager
+import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
-import remocra.web.AbstractEndpoint
+import remocra.web.AbstractEndpoint.Result
 
-abstract class AbstractCUDUseCase<T : Any> : AbstractEndpoint() {
+abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
     @Inject lateinit var transactionManager: TransactionManager
 
     /**
@@ -48,7 +49,9 @@ abstract class AbstractCUDUseCase<T : Any> : AbstractEndpoint() {
             checkContraintes(element)
             val savedElement = transactionManager.transactionResult { execute(element) }
             postEvent(savedElement, userInfo)
-            return Result.Success(savedElement)
+
+            // On veut renvoyer un HTTP 201 lors d'une création
+            return if (TypeOperation.INSERT == typeOperation) Result.Created(savedElement) else Result.Success(savedElement)
         } catch (e: ForbiddenException) {
             return Result.Forbidden(e.message)
         } catch (ndfe: NoDataFoundException) {

@@ -20,7 +20,7 @@ class DeleteVisiteUseCase @Inject constructor(
     private val eventBus: EventBus,
     private val visiteRepository: VisiteRepository,
     private val clock: Clock,
-) : AbstractCUDUseCase<UUID>() {
+) : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: UserInfo) {
     }
@@ -30,7 +30,7 @@ class DeleteVisiteUseCase @Inject constructor(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element,
-                typeOperation = TypeOperation.DELETE,
+                typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.idUtilisateur, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                 date = ZonedDateTime.now(clock),

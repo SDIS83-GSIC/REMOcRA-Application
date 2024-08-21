@@ -19,7 +19,7 @@ import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>() {
+class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 
     @Inject lateinit var eventBus: EventBus
@@ -40,7 +40,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.penaId,
-                typeOperation = TypeOperation.UPDATE,
+                typeOperation = typeOperation,
                 typeObjet = TypeObjet.PENA_ASPIRATION,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.idUtilisateur, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                 date = ZonedDateTime.now(clock),
