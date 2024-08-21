@@ -35,6 +35,7 @@ import remocra.db.jooq.remocra.tables.Materiau
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
+import remocra.db.jooq.remocra.tables.Module
 import remocra.db.jooq.remocra.tables.Nature
 import remocra.db.jooq.remocra.tables.NatureDeci
 import remocra.db.jooq.remocra.tables.Niveau
@@ -107,6 +108,7 @@ val MODELE_COURRIER_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModeleCou
 val MODELE_COURRIER_PARAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE, DSL.name("modele_courrier_parametre_pkey"), arrayOf(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID, ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE.TYPE_PARAMETRE_COURRIER), true)
 val MODELE_PIBI_MODELE_PIBI_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(ModelePibi.MODELE_PIBI, DSL.name("modele_pibi_modele_pibi_code_key"), arrayOf(ModelePibi.MODELE_PIBI.CODE), true)
 val MODELE_PIBI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModelePibi.MODELE_PIBI, DSL.name("modele_pibi_pkey"), arrayOf(ModelePibi.MODELE_PIBI.ID), true)
+val MODULE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Module.MODULE, DSL.name("module_pkey"), arrayOf(Module.MODULE.ID), true)
 val NATURE_NATURE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Nature.NATURE, DSL.name("nature_nature_code_key"), arrayOf(Nature.NATURE.CODE), true)
 val NATURE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Nature.NATURE, DSL.name("nature_pkey"), arrayOf(Nature.NATURE.ID), true)
 val NATURE_DECI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(NatureDeci.NATURE_DECI, DSL.name("nature_deci_pkey"), arrayOf(NatureDeci.NATURE_DECI.ID), true)

@@ -30,6 +30,7 @@ import remocra.db.jooq.remocra.tables.Materiau
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
+import remocra.db.jooq.remocra.tables.Module
 import remocra.db.jooq.remocra.tables.Nature
 import remocra.db.jooq.remocra.tables.NatureDeci
 import remocra.db.jooq.remocra.tables.Niveau
@@ -192,6 +193,11 @@ val MODELE_COURRIER_PARAMETRE: ModeleCourrierParametre = ModeleCourrierParametre
  * The table <code>remocra.modele_pibi</code>.
  */
 val MODELE_PIBI: ModelePibi = ModelePibi.MODELE_PIBI
+
+/**
+ * The table <code>remocra.module</code>.
+ */
+val MODULE: Module = Module.MODULE
 
 /**
  * The table <code>remocra.nature</code>.

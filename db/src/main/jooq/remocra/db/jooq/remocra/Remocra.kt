@@ -34,6 +34,7 @@ import remocra.db.jooq.remocra.tables.Materiau
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
+import remocra.db.jooq.remocra.tables.Module
 import remocra.db.jooq.remocra.tables.Nature
 import remocra.db.jooq.remocra.tables.NatureDeci
 import remocra.db.jooq.remocra.tables.Niveau
@@ -220,6 +221,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val MODELE_PIBI: ModelePibi get() = ModelePibi.MODELE_PIBI
 
     /**
+     * The table <code>remocra.module</code>.
+     */
+    val MODULE: Module get() = Module.MODULE
+
+    /**
      * The table <code>remocra.nature</code>.
      */
     val NATURE: Nature get() = Nature.NATURE
@@ -384,6 +390,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         ModeleCourrier.MODELE_COURRIER,
         ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE,
         ModelePibi.MODELE_PIBI,
+        Module.MODULE,
         Nature.NATURE,
         NatureDeci.NATURE_DECI,
         Niveau.NIVEAU,
