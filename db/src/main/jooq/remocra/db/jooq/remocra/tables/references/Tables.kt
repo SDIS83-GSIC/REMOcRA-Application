@@ -57,6 +57,7 @@ import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
+import remocra.db.jooq.remocra.tables.VPeiDateRecop
 import remocra.db.jooq.remocra.tables.Visite
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.Voie
@@ -331,6 +332,11 @@ val TYPE_RESEAU: TypeReseau = TypeReseau.TYPE_RESEAU
  * The table <code>remocra.utilisateur</code>.
  */
 val UTILISATEUR: Utilisateur = Utilisateur.UTILISATEUR
+
+/**
+ * The table <code>remocra.v_pei_date_recop</code>.
+ */
+val V_PEI_DATE_RECOP: VPeiDateRecop = VPeiDateRecop.V_PEI_DATE_RECOP
 
 /**
  * The table <code>remocra.visite</code>.

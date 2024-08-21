@@ -9,8 +9,11 @@ import FilterInput from "../../components/Filter/FilterInput.tsx";
 import { URLS } from "../../routes.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconTournee, IconSortList } from "../../components/Icon/Icon.tsx";
+import { formatDate } from "../../utils/formatDateUtils.tsx";
 import EditColumn from "../../components/Table/columns.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
+import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -54,6 +57,16 @@ const ListTournee = () => {
         );
       },
       sortField: "tourneeActif",
+    },
+    {
+      Header: "Prochaine RECOP",
+      accessor: ({ tourneeNextRecopDate }) => {
+        return tourneeNextRecopDate ? formatDate(tourneeNextRecopDate) : "";
+      },
+      sortField: "tourneeNextRecopDate",
+      Filter: (
+        <SelectEnumOption options={DELTA_DATE} name={"tourneeDeltaDate"} />
+      ),
     },
   ];
 

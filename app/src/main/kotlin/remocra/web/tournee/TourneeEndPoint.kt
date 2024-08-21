@@ -17,13 +17,13 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.db.TourneeRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.usecases.tournee.CreateTourneeUseCase
+import remocra.usecases.tournee.FetchTourneeDataUseCase
 import remocra.usecases.tournee.UpdateLTourneePeiUseCase
 import remocra.usecases.tournee.UpdateTourneeUseCase
 import remocra.web.AbstractEndpoint
@@ -35,6 +35,9 @@ import java.util.UUID
 class TourneeEndPoint : AbstractEndpoint() {
     @Inject
     lateinit var tourneeRepository: TourneeRepository
+
+    @Inject
+    lateinit var fetchTourneeDataUseCase: FetchTourneeDataUseCase
 
     @Inject
     lateinit var createTourneeUseCase: CreateTourneeUseCase
@@ -55,13 +58,8 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
-    fun getAllTourneeComplete(params: Params<TourneeRepository.Filter, TourneeRepository.Sort>): Response =
-        Response.ok(
-            DataTableau(
-                tourneeRepository.getAllTourneeComplete(params),
-                tourneeRepository.countAllTournee(params),
-            ),
-        ).build()
+    fun fetchTourneeData(params: Params<TourneeRepository.Filter, TourneeRepository.Sort>): Response =
+        Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params)).build()
 
     @GET
     @Path("/{tourneeId}")

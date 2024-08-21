@@ -5,7 +5,6 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
-import org.jooq.SortField
 import org.jooq.TableField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.concat
@@ -15,7 +14,6 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
-import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
@@ -23,6 +21,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -30,7 +29,7 @@ class TourneeRepository
 @Inject constructor(
     private val dsl: DSLContext,
 ) {
-    fun getAllTourneeComplete(params: Params<Filter, Sort>): List<TourneeComplete> {
+    fun getAllTourneeComplete(filter: Filter?): List<TourneeComplete> {
         val peiCounterCteName = name("PEI_COUNTER_CTE")
         val peiCounterCte = peiCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_PEI").`as`(
             select(
@@ -41,7 +40,18 @@ class TourneeRepository
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 
-        return dsl.with(peiCounterCte)
+        val nextRecopCteName = name("NEXT_RECOP_CTE")
+        val nextRecopCte = nextRecopCteName.fields("TOURNEE_ID", "TOURNEE_NEXT_RECOP_DATE").`as`(
+            select(
+                L_TOURNEE_PEI.TOURNEE_ID,
+                DSL.min(V_PEI_DATE_RECOP.PEI_NEXT_RECOP).`as`("TOURNEE_NEXT_RECOP_DATE"),
+            )
+                .from(L_TOURNEE_PEI)
+                .join(V_PEI_DATE_RECOP).on(L_TOURNEE_PEI.PEI_ID.eq(V_PEI_DATE_RECOP.PEI_ID))
+                .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
+        )
+
+        return dsl.with(peiCounterCte, nextRecopCte)
             .select(
                 TOURNEE.ID,
                 TOURNEE.LIBELLE,
@@ -60,16 +70,16 @@ class TourneeRepository
                 TOURNEE.DATE_SYNCHRONISATION,
                 TOURNEE.ACTIF,
                 peiCounterCte.field("TOURNEE_NB_PEI"),
+                nextRecopCte.field("TOURNEE_NEXT_RECOP_DATE"),
             )
             .from(TOURNEE)
             .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
             .leftJoin(UTILISATEUR).on(TOURNEE.RESERVATION_UTILISATEUR_ID.eq(UTILISATEUR.ID))
             .leftJoin(table(peiCounterCteName))
             .on(TOURNEE.ID.eq(field(name("PEI_COUNTER_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
-            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
-            .orderBy(params.sortBy?.toCondition() ?: listOf(TOURNEE.LIBELLE.asc()))
-            .limit(params.limit)
-            .offset(params.offset)
+            .leftJoin(table(nextRecopCteName))
+            .on(TOURNEE.ID.eq(field(name("NEXT_RECOP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
+            .where(filter?.toCondition() ?: DSL.noCondition())
             .fetchInto()
     }
 
@@ -90,15 +100,14 @@ class TourneeRepository
         val tourneeDateSynchronisation: ZonedDateTime?,
         val tourneeActif: Boolean,
         val tourneeNbPei: Int,
+        var tourneeNextRecopDate: ZonedDateTime?,
     )
-
-    fun countAllTournee(params: Params<Filter, Sort>): Int =
-        getAllTourneeComplete(Params(filterBy = params.filterBy, sortBy = null, limit = null, offset = null)).size
 
     data class Filter(
         val tourneeLibelle: String?,
         val tourneeOrganismeLibelle: String?,
         val tourneeUtilisateurReservationLibelle: String?,
+        val tourneeDeltaDate: String?,
     ) {
         /** Retourne une chaine regroupant toutes les possibilités d'enchainements de trois champs : ABCABACBAC
          *  @param f1: TableField<Record, String?>
@@ -126,16 +135,71 @@ class TourneeRepository
         val tourneeEtat: Int?,
         val tourneeUtilisateurReservationLibelle: Int?,
         val tourneeActif: Int?,
+        val tourneeNextRecopDate: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> =
-            listOfNotNull(
-                TOURNEE.LIBELLE.getSortField(tourneeLibelle),
-                ORGANISME.LIBELLE.getSortField(organismeLibelle),
-                TOURNEE.ETAT.getSortField(tourneeEtat),
-                UTILISATEUR.NOM.getSortField(tourneeUtilisateurReservationLibelle),
-                UTILISATEUR.PRENOM.getSortField(tourneeUtilisateurReservationLibelle),
-                TOURNEE.ACTIF.getSortField(tourneeActif),
-            )
+        fun toCondition(list: Collection<TourneeComplete>): Collection<TourneeComplete> {
+            return when {
+                tourneeLibelle == 1 -> {
+                    list.sortedBy { it.tourneeLibelle }
+                }
+
+                tourneeLibelle == -1 -> {
+                    list.sortedByDescending { it.tourneeLibelle }
+                }
+
+                tourneeNbPei == 1 -> {
+                    list.sortedBy { it.tourneeNbPei }
+                }
+
+                tourneeNbPei == -1 -> {
+                    list.sortedByDescending { it.tourneeNbPei }
+                }
+
+                organismeLibelle == 1 -> {
+                    list.sortedBy { it.organismeLibelle }
+                }
+
+                organismeLibelle == -1 -> {
+                    list.sortedByDescending { it.organismeLibelle }
+                }
+
+                tourneeEtat == 1 -> {
+                    list.sortedBy { it.tourneeEtat }
+                }
+
+                tourneeEtat == -1 -> {
+                    list.sortedByDescending { it.tourneeEtat }
+                }
+
+                tourneeUtilisateurReservationLibelle == 1 -> {
+                    list.sortedBy { it.tourneeUtilisateurReservationLibelle }
+                }
+
+                tourneeUtilisateurReservationLibelle == -1 -> {
+                    list.sortedByDescending { it.tourneeUtilisateurReservationLibelle }
+                }
+
+                tourneeActif == 1 -> {
+                    list.sortedBy { it.tourneeActif }
+                }
+
+                tourneeActif == -1 -> {
+                    list.sortedByDescending { it.tourneeActif }
+                }
+
+                tourneeNextRecopDate == 1 -> {
+                    list.sortedBy { it.tourneeNextRecopDate }
+                }
+
+                tourneeNextRecopDate == -1 -> {
+                    list.sortedByDescending { it.tourneeNextRecopDate }
+                }
+
+                else -> {
+                    list
+                }
+            }
+        }
     }
 
     fun insertTournee(tournee: Tournee) =
