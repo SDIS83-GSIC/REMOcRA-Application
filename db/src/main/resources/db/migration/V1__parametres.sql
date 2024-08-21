@@ -49,3 +49,4 @@ INSERT INTO parametre(parametre_id, parametre_code, parametre_valeur, parametre_
 INSERT INTO parametre(parametre_id, parametre_code, parametre_valeur, parametre_type) values(gen_random_uuid(), 'PEI_RENOUVELLEMENT_RECO_PRIVE', null, 'INTEGER');
 INSERT INTO parametre(parametre_id, parametre_code, parametre_valeur, parametre_type) values(gen_random_uuid(), 'PEI_RENOUVELLEMENT_RECO_PUBLIC', null, 'INTEGER');
 INSERT INTO parametre(parametre_id, parametre_code, parametre_valeur, parametre_type) values(gen_random_uuid(), 'PEI_TOLERANCE_COMMUNE_METRES', null, 'INTEGER');
+INSERT INTO parametre(parametre_id, parametre_code, parametre_valeur, parametre_type) values(gen_random_uuid(), 'PEI_RENUMEROTATION_INTERNE_AUTO', null, 'BOOLEAN');
