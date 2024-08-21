@@ -25,10 +25,12 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_CODE_KEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import java.util.UUID
@@ -161,6 +163,23 @@ open class ProfilUtilisateur(
 
     val typeOrganisme: TypeOrganismePath
         get(): TypeOrganismePath = typeOrganisme()
+
+    private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_profil_utilisateur_organisme_droit</code> table
+     */
+    fun lProfilUtilisateurOrganismeDroit(): LProfilUtilisateurOrganismeDroitPath {
+        if (!this::_lProfilUtilisateurOrganismeDroit.isInitialized) {
+            _lProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroitPath(this, null, L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _lProfilUtilisateurOrganismeDroit
+    }
+
+    val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
+        get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
 
     private lateinit var _utilisateur: UtilisateurPath
 

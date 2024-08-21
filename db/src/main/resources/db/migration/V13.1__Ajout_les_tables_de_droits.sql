@@ -2,28 +2,109 @@ DROP TABLE IF EXISTS remocra.l_type_droit_profil_droit;
 DROP TABLE IF EXISTS remocra.profil_droit;
 DROP TABLE IF EXISTS remocra.type_droit;
 
+-- Tous les droits possibles, à étoffer au fur et à mesure
+CREATE TYPE remocra."DROIT" AS ENUM (
+   'ADMIN_API',
+   'ADMIN_DROITS',
+   'ADMIN_PARAM_APPLI',
+   'ADMIN_PARAM_APPLI_MOBILE',
+   'ADMIN_PARAM_TRAITEMENTS',
+   'ADMIN_RAPPORTS_PERSO',
+   'ADMIN_UTILISATEURS_A',
+   'ADMIN_UTILISATEURS_ORGA_A',
+   'ADMIN_UTILISATEURS_ORGA_R',
+   'ADMIN_UTILISATEURS_R',
+   'ADRESSES_C',
+   'ALERTES_EXPORT_C',
+   'CARTOGRAPHIES_E',
+   'COURRIER_ADMIN_R',
+   'COURRIER_C',
+   'COURRIER_ORGANISME_R',
+   'COURRIER_UTILISATEUR_R',
+   'CRISE_C',
+   'CRISE_D',
+   'CRISE_R',
+   'CRISE_U',
+   'DASHBOARD_A',
+   'DEBITS_SIMULTANES_A',
+   'DEBITS_SIMULTANES_R',
+   'DECLARATION_PEI',
+   'DEPOT_DELIB_C',
+   'DFCI_EXPORTATLAS_C',
+   'DFCI_R',
+   'DFCI_RECEPTRAVAUX_C',
+   'DOCUMENTS_R',
+   'ETUDE_C',
+   'ETUDE_D',
+   'ETUDE_R',
+   'ETUDE_U',
+   'GEST_SITE_A',
+   'GEST_SITE_R',
+   'IMPORT_CTP_A',
+   'IMPORT_CTP_PEI_DEPLACEMENT_U',
+   'INDISPO_TEMP_C',
+   'INDISPO_TEMP_D',
+   'INDISPO_TEMP_R',
+   'INDISPO_TEMP_U',
+   'MOBILE_GESTIONNAIRE_C',
+   'MOBILE_PEI_C',
+   'OLDEB_C',
+   'OLDEB_D',
+   'OLDEB_R',
+   'OLDEB_U',
+   'PEI_ADRESSE_C',
+   'PEI_C',
+   'PEI_CARACTERISTIQUES_U',
+   'PEI_D',
+   'PEI_DEPLACEMENT_U',
+   'PEI_GESTIONNAIRE_C',
+   'PEI_NUMERO_INTERNE_U',
+   'PEI_PRESCRIT_A',
+   'PEI_PRESCRIT_R',
+   'PEI_R',
+   'PEI_U',
+   'PERMIS_A',
+   'PERMIS_DOCUMENTS_C',
+   'PERMIS_R',
+   'PERMIS_TRAITEMENT_E',
+   'RCCI_A',
+   'RCCI_R',
+   'RISQUES_KML_D',
+   'RISQUES_KML_R',
+   'TOURNEE_A',
+   'TOURNEE_FORCER_POURCENTAGE_E',
+   'TOURNEE_R',
+   'TOURNEE_RESERVATION_D',
+   'TRAITEMENTS_E',
+   'TRAITEMENTS_PEI_E',
+   'VISITE_CONTROLE_TECHNIQUE_C',
+   'VISITE_CTP_D',
+   'VISITE_NON_PROGRAMME_C',
+   'VISITE_NP_D',
+   'VISITE_RECEP_C',
+   'VISITE_RECEP_D',
+   'VISITE_RECO_C',
+   'VISITE_RECO_D',
+   'VISITE_RECO_INIT_C',
+   'VISITE_RECO_INIT_D',
+   'ZOOM_LIEU_R'
+);
+
+
 -- Création de la table profil_droit
 CREATE TABLE remocra.profil_droit
 (
-    profil_droit_id                             UUID            NOT NULL PRIMARY KEY,
-    profil_droit_code                           TEXT    UNIQUE  NOT NULL,
-    profil_droit_libelle                        TEXT            NOT NULL
+    profil_droit_id                             UUID                NOT NULL PRIMARY KEY,
+    profil_droit_code                           TEXT    UNIQUE      NOT NULL,
+    profil_droit_libelle                        TEXT                NOT NULL,
+    profil_droit_droits                         remocra."DROIT"[]   NOT NULL
 );
 
--- Création de la table type_droit
-CREATE TABLE remocra.type_droit
-(
-    type_droit_id                               UUID            NOT NULL PRIMARY KEY,
-    type_droit_code                             TEXT    UNIQUE  NOT NULL,
-    type_droit_libelle                          TEXT            NOT NULL
-);
+-- Liaison entre le profil utilisateur, le profil organisme et le profil droits
+CREATE TABLE remocra.l_profil_utilisateur_organisme_droit (
+    profil_utilisateur_id                       UUID    NOT NULL REFERENCES remocra.profil_utilisateur(profil_utilisateur_id),
+    profil_organisme_id                         UUID    NOT NULL REFERENCES remocra.profil_organisme(profil_organisme_id),
+    profil_droit_id                             UUID    NOT NULL REFERENCES remocra.profil_droit(profil_droit_id),
 
-
--- Création de la table de liaison type_droit <-> profil_droit
-CREATE TABLE remocra.l_type_droit_profil_droit
-(
-    profil_droit_id                             UUID NOT NULL REFERENCES remocra.profil_droit (profil_droit_id),
-    type_droit_id                               UUID NOT NULL REFERENCES remocra.type_droit (type_droit_id),
-
-     PRIMARY KEY (profil_droit_id, type_droit_id)
+    PRIMARY KEY (profil_utilisateur_id, profil_organisme_id, profil_droit_id)
 );

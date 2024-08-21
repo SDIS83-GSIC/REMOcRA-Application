@@ -24,8 +24,8 @@ import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LTourneePei
-import remocra.db.jooq.remocra.tables.LTypeDroitProfilDroit
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -53,7 +53,6 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
-import remocra.db.jooq.remocra.tables.TypeDroit
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
@@ -171,14 +170,14 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
 
     /**
+     * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
+     */
+    val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit get() = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+
+    /**
      * The table <code>remocra.l_tournee_pei</code>.
      */
     val L_TOURNEE_PEI: LTourneePei get() = LTourneePei.L_TOURNEE_PEI
-
-    /**
-     * The table <code>remocra.l_type_droit_profil_droit</code>.
-     */
-    val L_TYPE_DROIT_PROFIL_DROIT: LTypeDroitProfilDroit get() = LTypeDroitProfilDroit.L_TYPE_DROIT_PROFIL_DROIT
 
     /**
      * The table <code>remocra.l_visite_anomalie</code>.
@@ -316,11 +315,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TYPE_CANALISATION: TypeCanalisation get() = TypeCanalisation.TYPE_CANALISATION
 
     /**
-     * The table <code>remocra.type_droit</code>.
-     */
-    val TYPE_DROIT: TypeDroit get() = TypeDroit.TYPE_DROIT
-
-    /**
      * The table <code>remocra.type_organisme</code>.
      */
     val TYPE_ORGANISME: TypeOrganisme get() = TypeOrganisme.TYPE_ORGANISME
@@ -380,8 +374,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDiametreNature.L_DIAMETRE_NATURE,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
+        LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
         LTourneePei.L_TOURNEE_PEI,
-        LTypeDroitProfilDroit.L_TYPE_DROIT_PROFIL_DROIT,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,
@@ -409,7 +403,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Task.TASK,
         Tournee.TOURNEE,
         TypeCanalisation.TYPE_CANALISATION,
-        TypeDroit.TYPE_DROIT,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,
         TypeReseau.TYPE_RESEAU,

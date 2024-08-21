@@ -25,11 +25,11 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.L_TYPE_DROIT_PROFIL_DROIT__L_TYPE_DROIT_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PROFIL_DROIT_CODE_KEY
-import remocra.db.jooq.remocra.tables.LTypeDroitProfilDroit.LTypeDroitProfilDroitPath
-import remocra.db.jooq.remocra.tables.TypeDroit.TypeDroitPath
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -94,6 +94,11 @@ open class ProfilDroit(
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("profil_droit_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.profil_droit.profil_droit_droits</code>.
+     */
+    val DROITS: TableField<Record, Array<Droit?>?> = createField(DSL.name("profil_droit_droits"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(Droit::class.java).array(), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -129,29 +134,22 @@ open class ProfilDroit(
     override fun getPrimaryKey(): UniqueKey<Record> = PROFIL_DROIT_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PROFIL_DROIT_PROFIL_DROIT_CODE_KEY)
 
-    private lateinit var _lTypeDroitProfilDroit: LTypeDroitProfilDroitPath
+    private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_type_droit_profil_droit</code> table
+     * <code>remocra.l_profil_utilisateur_organisme_droit</code> table
      */
-    fun lTypeDroitProfilDroit(): LTypeDroitProfilDroitPath {
-        if (!this::_lTypeDroitProfilDroit.isInitialized) {
-            _lTypeDroitProfilDroit = LTypeDroitProfilDroitPath(this, null, L_TYPE_DROIT_PROFIL_DROIT__L_TYPE_DROIT_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY.inverseKey)
+    fun lProfilUtilisateurOrganismeDroit(): LProfilUtilisateurOrganismeDroitPath {
+        if (!this::_lProfilUtilisateurOrganismeDroit.isInitialized) {
+            _lProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroitPath(this, null, L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY.inverseKey)
         }
 
-        return _lTypeDroitProfilDroit
+        return _lProfilUtilisateurOrganismeDroit
     }
 
-    val lTypeDroitProfilDroit: LTypeDroitProfilDroitPath
-        get(): LTypeDroitProfilDroitPath = lTypeDroitProfilDroit()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.type_droit</code> table
-     */
-    val typeDroit: TypeDroitPath
-        get(): TypeDroitPath = lTypeDroitProfilDroit().typeDroit()
+    val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
+        get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
     override fun `as`(alias: String): ProfilDroit = ProfilDroit(DSL.name(alias), this)
     override fun `as`(alias: Name): ProfilDroit = ProfilDroit(alias, this)
     override fun `as`(alias: Table<*>): ProfilDroit = ProfilDroit(alias.qualifiedName, this)

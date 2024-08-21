@@ -20,8 +20,8 @@ import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LTourneePei
-import remocra.db.jooq.remocra.tables.LTypeDroitProfilDroit
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -49,7 +49,6 @@ import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
-import remocra.db.jooq.remocra.tables.TypeDroit
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
@@ -145,14 +144,14 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 
 /**
+ * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
+ */
+val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+
+/**
  * The table <code>remocra.l_tournee_pei</code>.
  */
 val L_TOURNEE_PEI: LTourneePei = LTourneePei.L_TOURNEE_PEI
-
-/**
- * The table <code>remocra.l_type_droit_profil_droit</code>.
- */
-val L_TYPE_DROIT_PROFIL_DROIT: LTypeDroitProfilDroit = LTypeDroitProfilDroit.L_TYPE_DROIT_PROFIL_DROIT
 
 /**
  * The table <code>remocra.l_visite_anomalie</code>.
@@ -288,11 +287,6 @@ val TOURNEE: Tournee = Tournee.TOURNEE
  * The table <code>remocra.type_canalisation</code>.
  */
 val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
-
-/**
- * The table <code>remocra.type_droit</code>.
- */
-val TYPE_DROIT: TypeDroit = TypeDroit.TYPE_DROIT
 
 /**
  * The table <code>remocra.type_organisme</code>.
