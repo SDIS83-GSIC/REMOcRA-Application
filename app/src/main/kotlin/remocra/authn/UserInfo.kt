@@ -1,12 +1,15 @@
 package remocra.authn
 
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import java.security.Principal
 import java.util.UUID
 
 class UserInfo : KeycloakOidcProfile() {
-    private lateinit var utilisateur: Utilisateur
+    lateinit var utilisateur: Utilisateur
+
+    lateinit var droits: Collection<Droit>
 
     val idUtilisateur: UUID
         get() = UUID.fromString(subject)
