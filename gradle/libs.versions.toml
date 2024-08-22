@@ -5,6 +5,7 @@ jooq = "3.19.3"
 retrofit = "2.9.0"
 geotools = "31.2"
 jasperreports = "7.0.0"
+sentry= "7.14.0"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -74,6 +75,11 @@ retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackso
 jasperreports =  { module = "net.sf.jasperreports:jasperreports", version.ref = "jasperreports" }
 jasperreports-pdf = { module = "net.sf.jasperreports:jasperreports-pdf", version.ref = "jasperreports" }
 jasperreports-fronts = { module = "net.sf.jasperreports:jasperreports-fonts", version.ref = "jasperreports" }
+
+sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
+sentry-servlet-jakarta = { module = "io.sentry:sentry-servlet-jakarta", version.ref = "sentry" }
+sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
+
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.6.1"

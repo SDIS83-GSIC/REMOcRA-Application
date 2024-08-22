@@ -16,6 +16,7 @@ import remocra.http.HttpServerModule
 import remocra.json.JsonModule
 import remocra.keycloak.KeycloakModule
 import remocra.schedule.ScheduleModule
+import remocra.sentry.SentryModule
 import remocra.web.WebModule
 import kotlin.system.exitProcess
 
@@ -95,6 +96,7 @@ class Main : Runnable {
                 AuthnModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 HealthModule.create(config.getConfig("remocra.health")),
+                SentryModule.create(config.getConfig("remocra.sentry")),
                 HttpServerModule.create(config.getConfig("remocra.http")),
                 DatabaseModule.create(config.getConfig("remocra.database")),
                 ScheduleModule,

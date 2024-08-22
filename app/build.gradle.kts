@@ -16,6 +16,9 @@ dependencies {
     runtimeOnly(libs.log4j.bom)
     runtimeOnly(libs.log4j.core)
     implementation(libs.disruptor)
+    implementation(libs.sentry)
+    implementation(libs.sentry.servlet.jakarta)
+    implementation(libs.sentry.log4j2)
 
     // Utilitaires
     compileOnly(libs.forbiddenapis)
