@@ -51,11 +51,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     //
     // ********************************************************************************
-    // Tournee
+    // Tournées
     // ********************************************************************************
     //
     TOURNEE_GESTION_FORBIDDEN(3100, "Vous n'avez pas les droits de gestion des tournées, nécessaires pour réaliser cette opération", Status.FORBIDDEN),
     TOURNEE_ALREADY_EXISTS(3001, "Une tournée assignée à cet organisme existe déjà sous ce nom"),
+    TOURNEE_LECTURE_SEULE(3002, "La tournée est réservée dans l'application mobile, elle ne peut être modifiée"),
     ;
 
     override fun toString(): String {

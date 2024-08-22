@@ -9,6 +9,7 @@ import FilterInput from "../../components/Filter/FilterInput.tsx";
 import { URLS } from "../../routes.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconTournee } from "../../components/Icon/Icon.tsx";
+import EditColumn from "../../components/Table/columns.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -54,6 +55,20 @@ const ListTournee = () => {
       sortField: "tourneeActif",
     },
   ];
+
+  column.push(
+    EditColumn({
+      to: (data) => URLS.UPDATE_TOURNEE(data.tourneeId),
+      accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
+        return { tourneeId, tourneeUtilisateurReservationLibelle };
+      },
+      title: false,
+      canEditFunction(data) {
+        // TODO Ajouter la gestion des droits
+        return data.tourneeUtilisateurReservationLibelle != null ? false : true;
+      },
+    }),
+  );
 
   return (
     <Container>

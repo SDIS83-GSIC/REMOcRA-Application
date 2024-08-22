@@ -71,6 +71,12 @@ class TourneeRepository
             .fetchInto()
     }
 
+    fun getTourneeInfoById(tourneeId: UUID): Tournee =
+        dsl.select(TOURNEE.fields().asList())
+            .from(TOURNEE)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .fetchSingleInto()
+
     data class TourneeComplete(
         val tourneeId: UUID,
         val tourneeLibelle: String,
@@ -137,4 +143,10 @@ class TourneeRepository
 
     fun tourneeAlreadyExists(tourneeLibelle: String, tourneeOrganismeId: UUID) =
         dsl.fetchExists(dsl.selectFrom(TOURNEE).where(TOURNEE.LIBELLE.eq(tourneeLibelle).and(TOURNEE.ORGANISME_ID.eq(tourneeOrganismeId))))
+
+    fun updateTourneeLibelle(tourneeId: UUID, tourneeLibelle: String) =
+        dsl.update(TOURNEE)
+            .set(TOURNEE.LIBELLE, tourneeLibelle)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
 }

@@ -14,7 +14,7 @@ const CreateTournee = () => {
       prepareVariables={(values) => prepareVariables(values)}
       redirectUrl={URLS.TOURNEE}
     >
-      <TourneeForm />
+      <TourneeForm isCreation={true} />
     </MyFormik>
   );
 };

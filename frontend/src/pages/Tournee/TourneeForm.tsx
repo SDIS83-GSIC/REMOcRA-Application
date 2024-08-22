@@ -6,12 +6,12 @@ import url from "../../module/fetch.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconCreate } from "../../components/Icon/Icon.tsx";
+import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 
-export const getInitialValues = () => ({
-  tourneeId: null,
-  tourneeLibelle: null,
-  tourneeOrganismeId: null,
+export const getInitialValues = (data?: TourneeFormEntity) => ({
+  tourneeId: data?.tourneeId ?? null,
+  tourneeLibelle: data?.tourneeLibelle ?? null,
+  tourneeOrganismeId: data?.tourneeOrganismeId ?? null,
 });
 
 export const prepareVariables = (values: TourneeFormEntity) => ({
@@ -20,7 +20,13 @@ export const prepareVariables = (values: TourneeFormEntity) => ({
   tourneeOrganismeId: values.tourneeOrganismeId ?? null,
 });
 
-const TourneeForm = () => {
+const TourneeForm = ({
+  isCreation = false,
+  tourneeLibelle = null,
+}: {
+  isCreation?: boolean;
+  tourneeLibelle?: string;
+}) => {
   const { setValues }: { values: TourneeFormEntity } = useFormikContext();
 
   const organismeState = useGet(url`/api/organisme/get-libelle-organisme`); // TODO : ne remonter que l'organisme et les enfants de l'utilisateur courant
@@ -30,16 +36,25 @@ const TourneeForm = () => {
 
   return (
     <FormContainer>
-      <PageTitle icon={<IconCreate />} title="Création d'une tournée" />
+      <PageTitle
+        icon={isCreation ? <IconCreate /> : <IconEdit />}
+        title={
+          isCreation
+            ? "Création d'une tournée"
+            : "Modification de la tournée " + tourneeLibelle
+        }
+      />
       <Col>
         <TextInput name="tourneeLibelle" label="Nom de la tournée :" />
-        <SelectForm
-          name={"tourneeOrganismeId"}
-          listIdCodeLibelle={organismeState.data}
-          label="Organisme :"
-          required={true}
-          setValues={setValues}
-        />
+        {isCreation && (
+          <SelectForm
+            name={"tourneeOrganismeId"}
+            listIdCodeLibelle={organismeState.data}
+            label="Organisme :"
+            required={true}
+            setValues={setValues}
+          />
+        )}
       </Col>
       <Button type="submit" variant="primary">
         Valider

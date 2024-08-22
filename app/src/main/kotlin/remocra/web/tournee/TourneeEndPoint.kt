@@ -2,8 +2,11 @@ package remocra.web.tournee
 
 import com.google.inject.Inject
 import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -17,6 +20,7 @@ import remocra.db.TourneeRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.usecases.tournee.CreateTourneeUseCase
+import remocra.usecases.tournee.UpdateTourneeUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -28,6 +32,9 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createTourneeUseCase: CreateTourneeUseCase
+
+    @Inject
+    lateinit var updateTourneeUseCase: UpdateTourneeUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -43,6 +50,12 @@ class TourneeEndPoint : AbstractEndpoint() {
                 tourneeRepository.countAllTournee(params),
             ),
         ).build()
+
+    @GET
+    @Path("/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_A])
+    fun getTourneeById(@PathParam("tourneeId") tourneeId: UUID): Response =
+        Response.ok().entity(tourneeRepository.getTourneeInfoById(tourneeId)).build()
 
     @POST
     @Path("/createTournee")
@@ -61,7 +74,18 @@ class TourneeEndPoint : AbstractEndpoint() {
             ),
         ).wrap()
 
+    @PUT
+    @Path("/updateTournee")
+    @RequireDroits([Droit.TOURNEE_A])
+    fun updateTournee(tourneeInput: TourneeInput): Response {
+        val tourneeToUpdate = tourneeRepository.getTourneeInfoById(tourneeInput.tourneeId!!).copy(tourneeLibelle = tourneeInput.tourneeLibelle)
+        return updateTourneeUseCase.execute(userInfo = securityContext.userInfo, element = tourneeToUpdate).wrap()
+    }
+
     class TourneeInput {
+        @FormParam("tourneeId")
+        val tourneeId: UUID? = null
+
         @FormParam("tourneeLibelle")
         lateinit var tourneeLibelle: String
 
