@@ -7,6 +7,7 @@ import remocra.RemocraModule
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.security.CsrfFeature
 import remocra.web.admin.AdminModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
@@ -38,6 +39,8 @@ object WebModule : RemocraModule() {
         install(AdminModule)
         install(CourrierModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
+
+        registerResource<CsrfFeature>()
     }
 
     private inline fun <reified T> registerResource() {

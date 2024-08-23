@@ -23,10 +23,13 @@ private const val COOKIE_NAME = "xt"
 
 private const val HEADER_NAME = "X-XTok"
 
-/** Permet de désactiver le filtre CSRF pour certaines resources JAX-RS. */
+/**
+ * Permet de désactiver le filtre CSRF pour certaines resources JAX-RS.
+ * La justification est obligatoire, permet de garantir que ce n'est pas un reliquat de tests !
+ * */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class NoCsrf
+annotation class NoCsrf(val justification: String)
 
 class CsrfFeature : DynamicFeature {
     override fun configure(resourceInfo: ResourceInfo, context: FeatureContext) {
