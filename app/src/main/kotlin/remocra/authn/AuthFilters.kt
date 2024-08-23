@@ -12,10 +12,13 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import java.io.IOException
 
-/** Permet de désactiver l'authent pour certaines resources JAX-RS */
+/**
+ * Permet de désactiver l'authent pour certaines resources JAX-RS
+ * La justification est obligatoire, permet de garantir que ce n'est pas un reliquat de tests !
+ * */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Public
+annotation class Public(val justification: String)
 
 val HttpServletRequest.userInfo: UserInfo?
     get() = getSession(false)?.userInfo

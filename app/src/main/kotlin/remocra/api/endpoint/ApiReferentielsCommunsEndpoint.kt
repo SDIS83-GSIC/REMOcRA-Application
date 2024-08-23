@@ -13,12 +13,10 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.authn.Public
 import remocra.db.CommuneRepository
 import remocra.db.OrganismeRepository
 import remocra.db.TypeOrganismeRepository
 import remocra.db.VoieRepository
-import remocra.security.NoCsrf
 
 @Path("/referentiel")
 @Produces("application/json; charset=UTF-8")
@@ -40,8 +38,6 @@ class ApiReferentielsCommunsEndpoint {
     @Path("/typesOrganismes")
     @Operation(summary = "Retourne les types d'organismes susceptibles d'exploiter REMOcRA", tags = ["Référentiels communs"])
     @RolesAllowed(ApiRole.RoleType.RECEVOIR)
-    @NoCsrf
-    @Public
     fun getRefentielNatureOrganismes(
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,

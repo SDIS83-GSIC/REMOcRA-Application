@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.UriInfo
 import remocra.authn.Public
 
 // TODO débrayer l'a12n, soit en faisant une exception dans la servlet, soit en faisant une servlet à part !
-@Public
+@Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
 @Path("/openapi")
 class OpenApiEndpoint : BaseOpenApiResource() {
     @Context
