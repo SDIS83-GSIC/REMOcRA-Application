@@ -3,7 +3,7 @@ import com.google.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.Response
 import org.jooq.exception.NoDataFoundException
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventBus

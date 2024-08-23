@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
 import remocra.db.jooq.remocra.enums.Droit

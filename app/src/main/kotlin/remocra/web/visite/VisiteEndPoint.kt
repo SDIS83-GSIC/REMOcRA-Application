@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.authn.userInfo
+import remocra.auth.userInfo
 import remocra.data.VisiteData
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository

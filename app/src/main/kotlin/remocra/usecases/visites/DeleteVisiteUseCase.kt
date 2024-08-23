@@ -1,7 +1,7 @@
 package remocra.usecases.visites
 
 import com.google.inject.Inject
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification

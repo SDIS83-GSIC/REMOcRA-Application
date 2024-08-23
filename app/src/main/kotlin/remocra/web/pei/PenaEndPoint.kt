@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.authn.userInfo
+import remocra.auth.userInfo
 import remocra.db.AireAspirationRepository
 import remocra.usecases.pena.AireAspirationUseCase
 import remocra.web.AbstractEndpoint

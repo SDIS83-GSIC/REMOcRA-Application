@@ -14,10 +14,10 @@ import jakarta.ws.rs.core.HttpHeaders
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
-import remocra.authn.Public
+import remocra.auth.Public
 
 // TODO débrayer l'a12n, soit en faisant une exception dans la servlet, soit en faisant une servlet à part !
-@Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
+
 @Path("/openapi")
 class OpenApiEndpoint : BaseOpenApiResource() {
     @Context
@@ -26,6 +26,7 @@ class OpenApiEndpoint : BaseOpenApiResource() {
     @Context
     var app: Application? = null
 
+    @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
     @GET
     @Path("openapi.{type:json|yaml}")
     @Produces(value = [MediaType.APPLICATION_JSON, "application/yaml"])
@@ -40,6 +41,7 @@ class OpenApiEndpoint : BaseOpenApiResource() {
         return super.getOpenApi(headers, config, app, uriInfo, type)
     }
 
+    @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Operation(hidden = true)

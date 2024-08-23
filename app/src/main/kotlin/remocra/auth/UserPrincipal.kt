@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 import org.pac4j.core.profile.Pac4JPrincipal
 

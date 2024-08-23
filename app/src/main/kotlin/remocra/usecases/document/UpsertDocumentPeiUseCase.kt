@@ -3,7 +3,7 @@ package remocra.usecases.document
 import com.google.inject.Inject
 import jakarta.servlet.http.Part
 import remocra.GlobalConstants
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository

@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject

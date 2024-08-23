@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
-import remocra.authn.userInfo
+import remocra.auth.userInfo
 import remocra.usecases.courrier.CourrierGenerator
 import remocra.usecases.courrier.CourrierRopGenerator
 import remocra.usecases.courrier.GetCourriersWithParametresUseCase

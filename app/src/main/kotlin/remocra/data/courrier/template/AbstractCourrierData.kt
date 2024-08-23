@@ -1,7 +1,7 @@
 package remocra.data.courrier.template
 
 import org.jooq.JSONB
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 
 /**
  * Correspond aux données des templates

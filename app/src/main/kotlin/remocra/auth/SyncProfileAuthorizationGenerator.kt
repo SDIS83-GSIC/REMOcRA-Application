@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 import com.google.inject.Inject
 import org.pac4j.core.authorization.generator.AuthorizationGenerator

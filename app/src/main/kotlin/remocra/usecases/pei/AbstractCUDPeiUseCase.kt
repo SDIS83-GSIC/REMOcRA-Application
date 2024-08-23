@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import remocra.GlobalConstants
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.PeiData
 import remocra.data.PeiForCalculDispoData

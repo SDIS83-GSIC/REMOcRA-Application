@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 object AuthnConstants {
     const val API_SERVLET_NAME = "API"

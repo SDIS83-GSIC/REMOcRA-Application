@@ -3,7 +3,7 @@ package remocra.usecases.courrier
 import com.google.inject.Inject
 import jakarta.ws.rs.core.UriInfo
 import remocra.GlobalConstants
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.courrier.parametres.CourrierParametresRopData
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeParametreCourrier

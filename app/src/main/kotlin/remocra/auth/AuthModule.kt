@@ -1,4 +1,4 @@
-package remocra.authn
+package remocra.auth
 
 import com.google.inject.Inject
 import com.google.inject.Provides
@@ -27,15 +27,15 @@ import remocra.RemocraModule
 import remocra.web.registerResources
 import java.net.MalformedURLException
 
-class AuthnModule(private val settings: AuthnSettings) : RemocraModule() {
+class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
     override fun configure() {
-        binder().registerResources()
+        binder().registerResources(AuthenticationFilter::class, AuthorizationFilter::class)
         bind(AuthnSettings::class.java).toInstance(settings)
     }
 
     companion object {
         fun create(config: Config) =
-            AuthnModule(
+            AuthModule(
                 AuthnSettings(
                     config.getString("client-id"),
                     config.getString("client-secret"),

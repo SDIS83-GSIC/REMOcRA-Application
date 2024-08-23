@@ -8,7 +8,7 @@ import net.sf.jasperreports.engine.JREmptyDataSource
 import net.sf.jasperreports.engine.JasperCompileManager
 import net.sf.jasperreports.engine.JasperRunManager
 import remocra.GlobalConstants
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.courrier.parametres.AbstractCourrierParametresData
 import remocra.data.courrier.template.AbstractCourrierData
 import remocra.db.TransactionManager

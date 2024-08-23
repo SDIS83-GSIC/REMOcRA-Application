@@ -34,8 +34,8 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory
 import org.pac4j.jee.filter.CallbackFilter
 import org.pac4j.jee.filter.LogoutFilter
 import org.pac4j.jee.filter.SecurityFilter
-import remocra.authn.AuthnConstants
-import remocra.authn.UserInfoFilter
+import remocra.auth.AuthnConstants
+import remocra.auth.UserInfoFilter
 import remocra.healthcheck.HealthServlet
 import remocra.resteasy.GuiceInjectorFactory
 import remocra.security.CsrfServletFilter

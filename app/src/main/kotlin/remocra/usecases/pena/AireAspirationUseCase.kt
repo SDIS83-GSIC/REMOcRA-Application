@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AireAspirationRepository

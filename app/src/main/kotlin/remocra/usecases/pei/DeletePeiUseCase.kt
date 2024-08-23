@@ -1,6 +1,6 @@
 package remocra.usecases.pei
 
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.PeiData
 import remocra.db.jooq.historique.enums.TypeOperation
 

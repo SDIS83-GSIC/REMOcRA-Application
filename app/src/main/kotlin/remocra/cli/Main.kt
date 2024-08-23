@@ -8,7 +8,7 @@ import org.flywaydb.core.Flyway
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import remocra.app.AppModule
-import remocra.authn.AuthnModule
+import remocra.auth.AuthModule
 import remocra.db.DatabaseModule
 import remocra.eventbus.EventBusModule
 import remocra.healthcheck.HealthModule
@@ -93,7 +93,7 @@ class Main : Runnable {
                 WebModule,
                 JsonModule,
                 EventBusModule.create(config.getConfig("remocra.mail")),
-                AuthnModule.create(config.getConfig("remocra.authn")),
+                AuthModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 HealthModule.create(config.getConfig("remocra.health")),
                 SentryModule.create(config.getConfig("remocra.sentry")),

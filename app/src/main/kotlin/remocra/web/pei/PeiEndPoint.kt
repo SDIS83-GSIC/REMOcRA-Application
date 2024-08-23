@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.app.AppSettings
-import remocra.authn.userInfo
+import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.data.PenaData

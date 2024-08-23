@@ -13,7 +13,6 @@ import jakarta.ws.rs.container.DynamicFeature
 import jakarta.ws.rs.container.ResourceInfo
 import jakarta.ws.rs.core.FeatureContext
 import org.eclipse.jetty.util.URIUtil
-import remocra.authn.isAnnotatedWith
 import remocra.web.forbidden
 import remocra.web.text
 import java.security.SecureRandom
@@ -27,13 +26,13 @@ private const val HEADER_NAME = "X-XTok"
  * Permet de désactiver le filtre CSRF pour certaines resources JAX-RS.
  * La justification est obligatoire, permet de garantir que ce n'est pas un reliquat de tests !
  * */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class NoCsrf(val justification: String)
 
 class CsrfFeature : DynamicFeature {
     override fun configure(resourceInfo: ResourceInfo, context: FeatureContext) {
-        if (!isAnnotatedWith(resourceInfo, NoCsrf::class.java)) {
+        if (!resourceInfo.resourceMethod.isAnnotationPresent(NoCsrf::class.java)) {
             context.register(CsrfFilter)
         }
     }

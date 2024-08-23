@@ -1,7 +1,7 @@
 package remocra.usecases.utilisateur
 
 import com.google.inject.Inject
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.db.OrganismeRepository
 
 /**

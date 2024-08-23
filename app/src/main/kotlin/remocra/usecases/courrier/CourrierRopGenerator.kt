@@ -5,7 +5,7 @@ import org.jooq.impl.DSL
 import remocra.GlobalConstants
 import remocra.api.DateUtils
 import remocra.app.AppSettings
-import remocra.authn.UserInfo
+import remocra.auth.UserInfo
 import remocra.data.courrier.parametres.CourrierParametresRopData
 import remocra.data.courrier.template.CourrierRopData
 import remocra.data.enums.CodeSdis
