@@ -16,9 +16,11 @@ import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.data.Params
+import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.time.ZonedDateTime
@@ -149,4 +151,30 @@ class TourneeRepository
             .set(TOURNEE.LIBELLE, tourneeLibelle)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
+
+    fun getAllPeiByTourneeIdForDnD(tourneeId: UUID): List<PeiTourneeForDnD> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+            L_TOURNEE_PEI.ORDRE,
+        )
+            .from(L_TOURNEE_PEI)
+            .join(PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .orderBy(L_TOURNEE_PEI.ORDRE)
+            .fetchInto()
+
+    data class PeiTourneeForDnD(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
+        val lTourneePeiOrdre: Int,
+    )
+
+    fun deleteLTourneePeiByTourneeId(tourneeId: UUID) =
+        dsl.deleteFrom(L_TOURNEE_PEI)
+            .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .execute()
+
+    fun batchInsertLTourneePei(listeTourneePei: List<LTourneePei>) =
+        dsl.batch(listeTourneePei.map { DSL.insertInto(L_TOURNEE_PEI).set(dsl.newRecord(L_TOURNEE_PEI, it)) }).execute()
 }

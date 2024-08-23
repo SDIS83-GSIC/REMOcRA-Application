@@ -21,3 +21,4 @@ export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
 
 export const IconTournee = () => <i className="fi fi-br-document" />;
+export const IconSortList = () => <i className="fi fi-br-apps-sort" />;

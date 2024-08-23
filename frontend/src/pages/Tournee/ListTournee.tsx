@@ -8,8 +8,9 @@ import url from "../../module/fetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import { URLS } from "../../routes.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconTournee } from "../../components/Icon/Icon.tsx";
+import { IconTournee, IconSortList } from "../../components/Icon/Icon.tsx";
 import EditColumn from "../../components/Table/columns.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -65,10 +66,36 @@ const ListTournee = () => {
       title: false,
       canEditFunction(data) {
         // TODO Ajouter la gestion des droits
-        return data.tourneeUtilisateurReservationLibelle != null ? false : true;
+        return data.tourneeUtilisateurReservationLibelle == null;
       },
     }),
   );
+
+  column.push({
+    Cell: (row: any) => {
+      return (
+        <>
+          {row.value.tourneeUtilisateurReservationLibelle == null && (
+            <TooltipCustom
+              tooltipText="Gérer les PEI et leur ordre dans une tournée"
+              tooltipId={row.value.tourneeId}
+            >
+              <Button
+                variant="link"
+                href={URLS.TOURNEE_PEI(row.value.tourneeId)}
+              >
+                <IconSortList />
+              </Button>
+            </TooltipCustom>
+          )}
+        </>
+      );
+    },
+    accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
+      return { tourneeId, tourneeUtilisateurReservationLibelle };
+    },
+    width: 90,
+  });
 
   return (
     <Container>

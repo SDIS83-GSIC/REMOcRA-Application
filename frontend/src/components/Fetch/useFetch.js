@@ -1,6 +1,6 @@
 import { useAsync } from "react-async";
 import { useCallback } from "react";
-import { getFetchOptions } from "../../modules/fetch.js";
+import { getFetchOptions } from "../../module/fetch.tsx";
 
 export const doFetch = async (url, options = {}) => {
   if (!url) {

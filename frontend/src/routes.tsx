@@ -13,6 +13,7 @@ import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import ListTournee from "./pages/Tournee/ListTournee.tsx";
 import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
+import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
 
@@ -28,6 +29,7 @@ export const URLS = {
   LIST_TOURNEE: url`/deci/tournee`,
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
+  TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -106,6 +108,15 @@ export default [
         element: (
           <Authorization
             Component={UpdateTournee}
+            droits={[TYPE_DROIT.TOURNEE_A]}
+          />
+        ),
+      },
+      {
+        path: "tournee/pei/:tourneeId",
+        element: (
+          <Authorization
+            Component={TourneePei}
             droits={[TYPE_DROIT.TOURNEE_A]}
           />
         ),
