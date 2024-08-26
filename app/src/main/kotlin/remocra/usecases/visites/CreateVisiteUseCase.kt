@@ -7,9 +7,13 @@ import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
+import remocra.db.PeiRepository
+import remocra.db.PenaRepository
+import remocra.db.PibiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.pojos.Visite
@@ -17,6 +21,7 @@ import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
+import remocra.usecases.pei.UpdatePeiUseCase
 import java.time.Clock
 import java.time.ZonedDateTime
 
@@ -24,6 +29,11 @@ class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val clock: Clock,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+    private val peiRepository: PeiRepository,
+    private val pibiRepository: PibiRepository,
+    private val penaRepository: PenaRepository,
+
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: UserInfo) {
@@ -117,6 +127,17 @@ class CreateVisiteUseCase @Inject constructor(
             // 2.2.2- Insertion en masse
             anomalieRepository.batchInsertLVisiteAnomalie(visiteAnomalieToInsert)
         }
+
+        // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
+        val typePei = peiRepository.getTypePei(element.visitePeiId)
+        val peiData = if (TypePei.PIBI == typePei) pibiRepository.getInfoPibi(element.visitePeiId) else penaRepository.getInfoPena(element.visitePeiId)
+
+        updatePeiUseCase.execute(
+            userInfo = userInfo,
+            element = peiData,
+            mainTransactionManager = transactionManager,
+        )
+
         return element
     }
 }
