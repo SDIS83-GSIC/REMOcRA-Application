@@ -60,7 +60,7 @@ class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.Doc
         )
     }
 
-    override fun execute(element: DocumentsPei): DocumentsPei {
+    override fun execute(userInfo: UserInfo?, element: DocumentsPei): DocumentsPei {
         // On supprime les documents de la liste documentIdToRemove
         val listeDocumentToSupprime = documentRepository.getDocumentByIds(element.documentIdToRemove)
 

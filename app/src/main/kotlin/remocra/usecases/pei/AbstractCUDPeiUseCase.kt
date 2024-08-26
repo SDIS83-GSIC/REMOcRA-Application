@@ -85,7 +85,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial)
     }
 
-    override fun execute(element: PeiData): PeiData {
+    override fun execute(userInfo: UserInfo?, element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
             if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||

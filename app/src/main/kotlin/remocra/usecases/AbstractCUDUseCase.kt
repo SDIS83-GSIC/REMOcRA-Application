@@ -35,22 +35,27 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
      * @param element L'élément à enregistrer
      * @return T l'élément enregistré
      */
-    protected abstract fun execute(element: T): T
+    protected abstract fun execute(userInfo: UserInfo?, element: T): T
 
     /**
      * Point d'entrée du useCase permettant de vérifier les droits et de déclencher l'action au sein
      * d'une transaction.
+     * Pour une exécution "simple" du useCase, le transactionManager est défini en interne.
+     * En revanche, afin de permettre un enchaînement des useCases au sein d'une seule transaction, il faudra définir
+     * le *TransactionManager* dans l'appel de plus haut niveau, et le faire transiter dans tous les appels subséquents
      * @return Result : dans le cas d'un success, on peut au besoin faire retourner n'importe quoi
      * dans le success, pour le faire transiter côté client, mais ce n'est pas obligatoire.
      */
-    fun execute(userInfo: UserInfo?, element: T): Result {
+    fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager? = null): Result {
         try {
             if (userInfo == null) {
                 throw ForbiddenException()
             }
             checkDroits(userInfo)
             checkContraintes(element)
-            val savedElement = transactionManager.transactionResult { execute(element) }
+
+            // On utilise le transactionManager parent s'il est fourni, sinon fallback sur celui qui est injecté
+            val savedElement = (mainTransactionManager ?: transactionManager).transactionResult { execute(userInfo, element) }
             postEvent(savedElement, userInfo)
 
             // On veut renvoyer un HTTP 201 lors d'une création

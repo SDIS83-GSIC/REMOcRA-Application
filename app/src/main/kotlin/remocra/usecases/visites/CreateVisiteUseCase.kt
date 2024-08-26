@@ -71,7 +71,7 @@ class CreateVisiteUseCase @Inject constructor(
         }
     }
 
-    override fun execute(element: VisiteData): VisiteData {
+    override fun execute(userInfo: UserInfo?, element: VisiteData): VisiteData {
         // Insertion de la visite : remocra.visite
         visiteRepository.insertVisite(
             Visite(

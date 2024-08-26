@@ -47,7 +47,7 @@ class DeleteVisiteUseCase @Inject constructor(
         }
     }
 
-    override fun execute(element: UUID): UUID {
+    override fun execute(userInfo: UserInfo?, element: UUID): UUID {
         visiteRepository.deleteAllVisiteAnomalies(element)
         visiteRepository.deleteVisiteCtrl(element)
         visiteRepository.deleteVisite(element)

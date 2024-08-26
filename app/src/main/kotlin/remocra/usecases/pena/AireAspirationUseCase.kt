@@ -45,7 +45,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
         )
     }
 
-    override fun execute(element: PenaAspirationData): PenaAspirationData {
+    override fun execute(userInfo: UserInfo?, element: PenaAspirationData): PenaAspirationData {
         // On supprime en amont les aires existantes pour les recréer
         aireAspirationRepository.deleteAireAspiration(element.penaId)
 
