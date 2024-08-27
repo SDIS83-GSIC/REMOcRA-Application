@@ -7,6 +7,7 @@ import AireAspiration from "./pages/Pena/AireAspiration.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
 import Accueil from "./pages/Accueil/Accueil.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
+import ListEtude from "./pages/Etude/ListEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 
@@ -34,24 +35,24 @@ export default [
     children: [
       { path: "pei", element: <AccueilPei /> },
       {
-        path: "pei/update/:peiId",
+        path: "pei/:peiId",
         element: <UpdatePei />,
       },
       {
-        path: "/deci/pei/update/:peiId",
-        element: <UpdatePei />,
-      },
-      {
-        path: "deci/pei/create",
+        path: "pei/create",
         element: <CreatePei />,
       },
       {
-        path: "/deci/pena-aspiration/:penaId",
+        path: "pena-aspiration/:penaId",
         element: <AireAspiration />,
       },
       {
-        path: "/deci/visite/:peiId",
+        path: "visite/:peiId",
         element: <Visite />,
+      },
+      {
+        path: "etudes",
+        element: <ListEtude />,
       },
     ],
   },

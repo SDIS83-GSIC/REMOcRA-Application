@@ -16,6 +16,6 @@ const FilterInput = ({
     />
   );
 };
-type FilterInputType = { type: string; name: string; onChange: any };
+type FilterInputType = { type: string; name: string; onChange?: any };
 
 export default FilterInput;

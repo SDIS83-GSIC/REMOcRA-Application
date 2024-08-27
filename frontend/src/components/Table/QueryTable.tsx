@@ -373,7 +373,7 @@ export type columnType = {
   Filter?: ReactNode;
   accessor: string | ReactNode;
   sortField?: () => string | string;
-  Cell?: ReactNode;
+  Cell?: (value: any) => ReactNode;
   className?: string;
   classNameHeader?: string;
   width?: string;
