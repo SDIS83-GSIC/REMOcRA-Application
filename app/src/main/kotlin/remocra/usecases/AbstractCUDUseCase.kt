@@ -6,11 +6,14 @@ import org.jooq.exception.NoDataFoundException
 import remocra.authn.UserInfo
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.eventbus.EventBus
 import remocra.exception.RemocraResponseException
 import remocra.web.AbstractEndpoint.Result
 
 abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
     @Inject lateinit var transactionManager: TransactionManager
+
+    @Inject lateinit var eventBus: EventBus
 
     /**
      * Vérifie les droits de l'utilisateur, et déclenche une [ForbiddenException] si l'utilisateur

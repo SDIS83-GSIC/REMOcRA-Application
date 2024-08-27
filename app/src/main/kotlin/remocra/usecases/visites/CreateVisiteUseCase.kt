@@ -14,7 +14,6 @@ import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.pojos.Visite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
-import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
@@ -22,7 +21,6 @@ import java.time.Clock
 import java.time.ZonedDateTime
 
 class CreateVisiteUseCase @Inject constructor(
-    private val eventBus: EventBus,
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val clock: Clock,

@@ -11,7 +11,6 @@ import remocra.db.AireAspirationRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
-import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
 import remocra.web.pei.PenaEndPoint
@@ -21,8 +20,6 @@ import java.util.UUID
 
 class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
-
-    @Inject lateinit var eventBus: EventBus
 
     @Inject lateinit var clock: Clock
 

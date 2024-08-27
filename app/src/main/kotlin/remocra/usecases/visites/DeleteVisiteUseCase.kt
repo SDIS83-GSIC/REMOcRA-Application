@@ -8,7 +8,6 @@ import remocra.data.enums.TypeSourceModification
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
-import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
@@ -17,7 +16,6 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 class DeleteVisiteUseCase @Inject constructor(
-    private val eventBus: EventBus,
     private val visiteRepository: VisiteRepository,
     private val clock: Clock,
 ) : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {

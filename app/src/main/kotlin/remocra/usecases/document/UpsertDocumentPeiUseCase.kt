@@ -10,7 +10,6 @@ import remocra.db.DocumentRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
-import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
 import java.time.Clock
@@ -18,8 +17,6 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.DocumentsPei>(TypeOperation.UPDATE) {
-    @Inject lateinit var eventBus: EventBus
-
     @Inject lateinit var documentUtils: DocumentUtils
 
     @Inject lateinit var documentRepository: DocumentRepository

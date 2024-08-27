@@ -20,7 +20,6 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.eventbus.EventBus
 import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
@@ -36,8 +35,6 @@ import java.time.ZonedDateTime
  * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
 abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>(typeOperation) {
-    @Inject
-    lateinit var eventBus: EventBus
 
     @Inject
     lateinit var calculNumerotationUseCase: NumerotationUseCase
