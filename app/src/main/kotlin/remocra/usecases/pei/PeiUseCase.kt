@@ -5,6 +5,7 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
 import remocra.data.GlobalData.IdCodeLibelleData
+import remocra.data.Params
 import remocra.data.PeiData
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.CommuneRepository
@@ -19,7 +20,6 @@ import remocra.db.PibiRepository
 import remocra.db.SiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.web.pei.PeiEndPoint
 import java.util.UUID
 
 /**
@@ -71,7 +71,7 @@ class PeiUseCase {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiRepository.PeiForTableau> {
+    fun getPeiWithFilter(param: Params<PeiRepository.Filter, PeiRepository.Sort>): List<PeiRepository.PeiForTableau> {
         return peiRepository.getPeiWithFilter(param)
     }
 

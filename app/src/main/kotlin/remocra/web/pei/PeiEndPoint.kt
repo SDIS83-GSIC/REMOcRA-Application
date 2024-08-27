@@ -19,6 +19,8 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.app.AppSettings
 import remocra.authn.userInfo
+import remocra.data.DataTableau
+import remocra.data.Params
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.PeiRepository
@@ -59,30 +61,13 @@ class PeiEndPoint : AbstractEndpoint() {
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getPeiWithFilter(params: Params): Response {
+    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
         val listPei = peiUseCase.getPeiWithFilter(params)
         return Response.ok(
             DataTableau(listPei, peiRepository.countAllPeiWithFilter(params)),
         )
             .build()
     }
-
-    data class DataTableau(
-
-        val list: List<PeiRepository.PeiForTableau>?,
-        val count: Int,
-
-    )
-    data class Params(
-        @QueryParam("limit")
-        val limit: Int? = 10,
-        @QueryParam("offset")
-        val offset: Int? = 0,
-        @QueryParam("filterBy")
-        val filterBy: PeiRepository.Filter?,
-        @QueryParam("sortBy")
-        val sortBy: PeiRepository.Sort?,
-    )
 
     @GET
     @Path("/{idPei}")

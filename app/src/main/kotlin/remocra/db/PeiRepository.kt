@@ -10,6 +10,7 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.data.Params
 import remocra.data.PeiData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
@@ -28,7 +29,6 @@ import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
-import remocra.web.pei.PeiEndPoint
 import java.util.UUID
 
 class PeiRepository
@@ -71,7 +71,7 @@ class PeiRepository
         )
     }
 
-    fun getPeiWithFilter(param: PeiEndPoint.Params): List<PeiForTableau> {
+    fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> {
         return dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -145,8 +145,8 @@ class PeiRepository
             .fetchInto()
     }
 
-    fun countAllPeiWithFilter(param: PeiEndPoint.Params): Int {
-        return getPeiWithFilter(PeiEndPoint.Params(filterBy = param.filterBy, sortBy = null, limit = null)).size
+    fun countAllPeiWithFilter(param: Params<Filter, Sort>): Int {
+        return getPeiWithFilter(Params(filterBy = param.filterBy, sortBy = null, limit = null)).size
     }
 
     data class PeiForTableau(
