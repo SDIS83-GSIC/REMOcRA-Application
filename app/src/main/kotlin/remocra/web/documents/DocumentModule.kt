@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object DocumentModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(DocumentPeiEndPoint::class)
+        binder.registerResources(DocumentPeiEndPoint::class, DocumentEndPoint::class)
     }
 }

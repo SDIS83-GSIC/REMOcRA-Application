@@ -1,5 +1,8 @@
 package remocra.usecases.document
 
+import jakarta.ws.rs.core.Response
+import org.slf4j.LoggerFactory
+import remocra.web.notFound
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -7,6 +10,8 @@ import java.nio.file.Paths
 import kotlin.io.path.pathString
 
 class DocumentUtils {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     /**
      * S'assure que le répertoire existe en le créant si besoin.
      *
@@ -67,5 +72,15 @@ class DocumentUtils {
         } else {
             throw SecurityException("Impossible de supprimer le fichier $fichierPath")
         }
+    }
+
+    fun checkFile(file: File): Response {
+        if (!file.exists()) {
+            logger.error("Le document ${file.path} est introuvable.")
+            return notFound().build()
+        }
+        return Response.ok(file.readBytes())
+            .header("Content-Disposition", "attachment; filename=\"${file.name}\"")
+            .build()
     }
 }

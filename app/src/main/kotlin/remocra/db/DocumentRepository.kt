@@ -22,10 +22,10 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) {
             .where(L_PEI_DOCUMENT.PEI_ID.eq(peiId))
             .fetchInto()
 
-    fun getById(documentId: UUID): Document =
+    fun getById(documentId: UUID): Document? =
         dsl.selectFrom(DOCUMENT)
             .where(DOCUMENT.ID.eq(documentId))
-            .fetchSingleInto()
+            .fetchOneInto()
 
     fun getDocumentByIds(listId: List<UUID>): Collection<Document> =
         dsl.selectFrom(DOCUMENT)

@@ -1,3 +1,4 @@
+import { Document } from "../components/Form/FormDocuments.tsx";
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 
 export type PeiEntity = {
@@ -66,10 +67,8 @@ export type PeiEntity = {
   peiDomaineIdInitial?: string;
 
   // Documents
-  documents: {
-    documentId: string | null;
-    documentNomFichier: string | null;
-    isPhotoPei: boolean;
-    data: File;
-  }[];
+  documents: Document &
+    {
+      isPhotoPei: boolean;
+    }[];
 };

@@ -13,15 +13,16 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
-  FileInput,
   FormContainer,
   NumberInput,
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
+import FormDocuments from "../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
+import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
@@ -30,8 +31,6 @@ import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
 import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
-import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
-import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
   peiId: data?.peiId ?? null,
@@ -422,8 +421,36 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                 header: "Documents",
                 content: (
                   <FormDocuments
-                    values={values}
+                    documents={values.documents}
                     setFieldValue={setFieldValue}
+                    defaultOtherProperties={{
+                      isPhotoPei: false,
+                    }}
+                    autreFormParam={(index: number, listeElements: any[]) => (
+                      <>
+                        {
+                          // Si c'est une image
+                          [
+                            "png",
+                            "svg",
+                            "jpeg",
+                            "jpg",
+                            "bmp",
+                            "webp",
+                            "gif",
+                          ].includes(
+                            listeElements[index].documentNomFichier
+                              .split(".")
+                              .at(-1),
+                          ) && (
+                            <CheckBoxInput
+                              name={`documents[${index}].isPhotoPei`}
+                              label="Est la photo du PEI ?"
+                            />
+                          )
+                        }
+                      </>
+                    )}
                   />
                 ),
               },
@@ -1066,70 +1093,3 @@ const FormPena = ({
     </>
   );
 };
-
-const FormDocuments = ({
-  values,
-  setFieldValue,
-}: {
-  values: PeiEntity;
-  setFieldValue: (champ: string, newValue: any | undefined) => void;
-}) => {
-  return (
-    <>
-      <FileInput
-        name="documentCourant"
-        accept="*.*"
-        label="Ajouter un document"
-        required={false}
-        onChange={(e) => {
-          values.documents.push({
-            documentId: null,
-            documentNomFichier: e.target.files[0].name,
-            isPhotoPei: false,
-            data: e.target.files[0],
-          });
-          setFieldValue("documents", values.documents);
-        }}
-      />
-      <AddRemoveComponent
-        name="documents"
-        createComponentToRepeat={formDocumentsToRepeat}
-        listeElements={values.documents}
-        canAdd={false}
-      />
-    </>
-  );
-};
-
-function formDocumentsToRepeat(index: number, listeElements: any[]) {
-  return (
-    <>
-      {listeElements[index].documentId != null ? (
-        <Col>
-          <Button
-            variant="link"
-            href={
-              url`/api/documents/pei/telecharger/` +
-              listeElements[index].documentId
-            }
-          >
-            {listeElements[index].documentNomFichier}
-          </Button>
-        </Col>
-      ) : (
-        <Col>{listeElements[index].documentNomFichier}</Col>
-      )}
-      {
-        // Si c'est une image
-        ["png", "svg", "jpeg", "jpg"].includes(
-          listeElements[index].documentNomFichier.split(".").at(-1),
-        ) && (
-          <CheckBoxInput
-            name={`documents[${index}].isPhotoPei`}
-            label="Est la photo du PEI ?"
-          />
-        )
-      }
-    </>
-  );
-}
