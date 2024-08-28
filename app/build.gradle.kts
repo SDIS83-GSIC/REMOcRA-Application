@@ -3,6 +3,94 @@ plugins {
     kotlin("jvm")
     idea
     alias(libs.plugins.cyclonedx)
+    alias(libs.plugins.licensee)
+}
+
+licensee {
+    // Voir https://www.gnu.org/licenses/license-list.html pour la compatibilité avec AGPL 3.0
+    // allow("AGPL-3.0-only")
+    // allow("AGPL-3.0-or-later")
+    allow("BSD-3-Clause")
+    allow("BSD-2-Clause")
+    allow("MIT")
+    allow("MIT-0")
+    allow("Apache-2.0")
+    // allow("MPL-2.0")
+    // allow("LGPL-2.1")
+    allow("GPL-2.0-with-classpath-exception")
+    allowUrl("http://www.jooq.org/inc/LICENSE.txt") {
+        because("Dual-licensed Apache-2.0 or jOOQ License")
+    }
+    allowUrl("https://www.mozilla.org/en-US/MPL/2.0/") {
+        because("MPL-2.0")
+    }
+    allowUrl("https://golang.org/LICENSE") {
+        because("BSD-3-Clause")
+    }
+    allowUrl("http://www.eclipse.org/org/documents/edl-v10.php") {
+        because("BSD-3-Clause")
+    }
+    allowUrl("https://asm.ow2.io/license.html") {
+        because("BSD-3-Clause")
+    }
+    allowUrl("http://hsqldb.org/web/hsqlLicense.html") {
+        because("BSD-3-Clause")
+    }
+    allowUrl("https://repository.jboss.org/licenses/apache-2.0.txt") {
+        because("Apache-2.0")
+    }
+    allowUrl("https://flywaydb.org/licenses/flyway-oss") {
+        because("Erreur 404 mais FlywayDB est Apache-2.0")
+    }
+    allowUrl("http://www.gnu.org/licenses/lgpl.html") {
+        because("LGPL")
+    }
+    allowUrl("http://www.gnu.org/copyleft/lesser.txt") {
+        because("LGPL")
+    }
+    allowUrl("https://github.com/geotools/geotools/blob/master/modules/plugin/epsg-hsql/LICENSE.txt") {
+        because("LGPL-2.1")
+    }
+    allowUrl("http://jasperreports.sourceforge.net/license.html") {
+        because("LGPL-3.0")
+    }
+    allowUrl("https://jdbc.postgresql.org/about/license.html") {
+        because("BSD-2-Clause")
+    }
+    allowUrl("https://projectlombok.org/LICENSE") {
+        because("MIT")
+    }
+    allowDependency("aopalliance", "aopalliance", "1.0") {
+        because("Public Domain")
+    }
+    allowDependency("it.geosolutions.jgridshift", "jgridshift-core", "1.3") {
+        because("LGPL-2.1")
+    }
+    allowDependency("javax.media", "jai_core", "1.1.3") {
+        because("Java Distribution License")
+    }
+    allowDependency("org.locationtech.jts", "jts-core", "1.19.0") {
+        because("Dual-licensed EPL-2.0 ou EDL-1.0 (BSD-3-Clause)")
+    }
+    // Dépendances javax.measurement
+    allowDependency("javax.measure", "unit-api", "2.1.3") {
+        because("BSD-3-Clause")
+    }
+    allowDependency("systems.uom", "systems-common", "2.1") {
+        because("BSD-3-Clause")
+    }
+    allowDependency("tech.units", "indriya", "2.1.3") {
+        because("BSD-3-Clause")
+    }
+    allowDependency("tech.uom.lib", "uom-lib-common", "2.1") {
+        because("BSD-3-Clause")
+    }
+    // Fin des dépendances javax.measurement
+
+    // On gère au niveau des dépendances directement plutôt que de la licence pour mieux contrôler le besoin
+    ignoreDependencies("org.eclipse.emf") {
+        because("EPL-1.0 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
+    }
 }
 
 dependencies {
@@ -88,26 +176,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-object Props {
-    private val map = mutableMapOf<String, String>()
-
-    var name by map
-    var description by map
-    var user by map
-    var group by map
-    var mainclass by map
-
-    init {
-        name = "remocra"
-        description = "remocra"
-        user = "remocra"
-        group = "remocra"
-        mainclass = "remocra.cli.Main"
-    }
-
-    fun asMap(): Map<String, String> = map
-}
-
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"
 
 tasks {
@@ -129,7 +197,7 @@ tasks {
         group = "cli"
         description = "Lance l'application"
         classpath = sourceSets["main"].runtimeClasspath
-        mainClass = Props.mainclass
+        mainClass = "remocra.cli.Main"
         args(*extraArgs)
         systemProperties = mapOf(
             "remocra.http.static-dir" to frontendOutputDir,
@@ -146,11 +214,5 @@ tasks {
         setIncludeConfigs(listOf("runtimeClasspath"))
         // Specified the type of project being built. Defaults to 'library'
         projectType = "application"
-    }
-}
-
-idea {
-    module {
-        excludeDirs = excludeDirs + file("node_modules")
     }
 }
