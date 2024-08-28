@@ -40,7 +40,7 @@ dependencies {
     api(libs.jooq.codegen)
 
     api(libs.guava)
-    implementation(libs.geotools.gt.main)
+    implementation(libs.locationtech.jts.core)
 
     runtimeOnly(libs.postgresql)
     runtimeOnly(libs.flyway.database.postgresql)
