@@ -36,3 +36,7 @@ CREATE TABLE l_tournee_pei (
 COMMENT
     ON COLUMN remocra.l_tournee_pei.l_tournee_pei_ordre
     IS 'Indique l''ordre d''apparition du pei dans la tournee';
+
+
+ALTER TYPE historique.type_objet ADD VALUE 'TOURNEE';
+ALTER TYPE historique.type_objet ADD VALUE 'TOURNEE_PEI';
