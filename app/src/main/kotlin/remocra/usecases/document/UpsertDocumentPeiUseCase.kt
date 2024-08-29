@@ -12,7 +12,6 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
-import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -20,8 +19,6 @@ class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.Doc
     @Inject lateinit var documentUtils: DocumentUtils
 
     @Inject lateinit var documentRepository: DocumentRepository
-
-    @Inject lateinit var clock: Clock
 
     data class DocumentsPei(
         val peiId: UUID,

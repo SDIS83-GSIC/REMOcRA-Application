@@ -11,13 +11,11 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
-import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
 class DeleteVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
-    private val clock: Clock,
 ) : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: UserInfo) {

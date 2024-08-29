@@ -22,13 +22,11 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
-import java.time.Clock
 import java.time.ZonedDateTime
 
 class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
-    private val clock: Clock,
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val peiRepository: PeiRepository,
     private val pibiRepository: PibiRepository,

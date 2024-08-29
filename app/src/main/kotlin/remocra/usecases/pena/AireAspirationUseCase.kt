@@ -14,14 +14,11 @@ import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
 import remocra.web.pei.PenaEndPoint
-import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
 class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
-
-    @Inject lateinit var clock: Clock
 
     data class PenaAspirationData(
         val listeAireAspiration: List<PenaEndPoint.AireAspirationUpsert>,

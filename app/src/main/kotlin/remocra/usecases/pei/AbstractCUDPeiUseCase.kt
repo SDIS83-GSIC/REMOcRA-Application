@@ -25,7 +25,6 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
 import remocra.web.pei.CalculDispoUseCase
 import remocra.web.pei.NumerotationUseCase
-import java.time.Clock
 import java.time.ZonedDateTime
 
 /**
@@ -50,9 +49,6 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject
     lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var clock: Clock
 
     @Inject lateinit var peiRepository: PeiRepository
 
