@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(plugin(libs.plugins.kotlin))
+    implementation(plugin(libs.plugins.android.lint))
     implementation(plugin(libs.plugins.spotless))
     implementation(plugin(libs.plugins.loggingCapabilities))
     implementation(plugin(libs.plugins.forbiddenapis))

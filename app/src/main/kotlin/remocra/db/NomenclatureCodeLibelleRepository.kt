@@ -229,16 +229,18 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 val infosFk = getInfosFk(type)
                 if (infosFk != null) {
                     it.select(infosFk.idFk.`as`("idFk"), infosFk.libelleCible.`as`("libelleFk"))
+                } else {
+                    it
                 }
-                it
             }
             .from(getTableFromType(type))
             .let {
                 val infosFk = getInfosFk(type)
                 if (infosFk != null) {
                     it.leftJoin(infosFk.tableCible).on(infosFk.idFk.eq(infosFk.idCible))
+                } else {
+                    it
                 }
-                it
             }
             .where(params.filterBy?.takeIf { it.type != null }?.toCondition() ?: DSL.trueCondition())
             .orderBy(
@@ -265,8 +267,9 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 val infosFk = getInfosFk(type)
                 if (infosFk != null) {
                     it.select(infosFk.idFk.`as`("idFk"))
+                } else {
+                    it
                 }
-                it
             }
             .from(getTableFromType(type)).where(getIdField(type).eq(id)).fetchOneInto()
 
@@ -288,8 +291,9 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             .let {
                 if (getInfosFk(type) != null) {
                     it.set(getInfosFk(type)!!.idFk, nomenclatureCodeLibelleData.idFk)
+                } else {
+                    it
                 }
-                it
             }
             .execute()
 
@@ -302,8 +306,9 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 val infosFk = getInfosFk(type)
                 if (infosFk != null) {
                     it.set(infosFk.idFk, nomenclatureCodeLibelleData.idFk)
+                } else {
+                    it
                 }
-                it
             }
             .where(getIdField(type).eq(nomenclatureCodeLibelleData.id))
             .execute()

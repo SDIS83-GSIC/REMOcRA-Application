@@ -6,6 +6,7 @@ plugins {
     id("local.dependency-management")
     id("de.thetaphi.forbiddenapis")
     kotlin("jvm")
+    id("com.android.lint")
 }
 
 kotlin {
@@ -38,6 +39,12 @@ tasks.withType<Test>().configureEach {
 
 forbiddenApis {
     bundledSignatures = setOf("jdk-unsafe", "jdk-deprecated", "jdk-internal", "jdk-non-portable", "jdk-system-out")
+}
+
+lint {
+    abortOnError = true
+    warningsAsErrors = true
+    disable += setOf("TrulyRandom", "GradleDependency")
 }
 
 spotless {

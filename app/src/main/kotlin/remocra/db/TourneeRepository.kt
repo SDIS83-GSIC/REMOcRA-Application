@@ -179,20 +179,29 @@ class TourneeRepository
                     condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
                 ),
             )
-            .also {
+            .let {
                 if (isPrive != null) {
                     if (isPrive) {
                         it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
                     } else {
                         it.and(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
                     }
+                } else {
+                    it
                 }
-                // TODO vérifier que ces 2 conditions sont prises en compte, c'était un let avant
+            }
+            .let {
                 if (onlyAvailable == true) {
                     it.and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNull)
+                } else {
+                    it
                 }
+            }
+            .let {
                 if (onlyNonTerminees == true) {
                     it.and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100))
+                } else {
+                    it
                 }
             }
             .fetchInto()

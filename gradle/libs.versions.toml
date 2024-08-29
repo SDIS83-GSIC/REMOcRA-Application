@@ -85,6 +85,7 @@ archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.3.0"
 
 
 [plugins]
+android-lint = "com.android.lint:8.7.3"
 cyclonedx = "org.cyclonedx.bom:1.7.4"
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }

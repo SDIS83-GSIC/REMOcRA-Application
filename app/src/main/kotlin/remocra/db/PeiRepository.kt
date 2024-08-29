@@ -111,8 +111,8 @@ class PeiRepository
     fun getPeiWithFilter(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> =
         getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.LISTE_PEI, isSuperAdmin).fetchInto()
 
-    fun countAllPeiWithFilter(filterBy: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int {
-        val requete = dsl.selectDistinct(PEI.ID)
+    fun countAllPeiWithFilter(filterBy: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int =
+        dsl.selectDistinct(PEI.ID)
             .from(PEI)
             .join(NATURE)
             .on(PEI.NATURE_ID.eq(NATURE.ID))
@@ -128,24 +128,22 @@ class PeiRepository
             .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+            .let {
+                when (pageFilter) {
+                    PageFilter.INDISPONIBILITE_TEMPORAIRE -> it.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                        .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
 
-        when (pageFilter) {
-            PageFilter.INDISPONIBILITE_TEMPORAIRE -> requete.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                    // la tournée est déjà jointe pour afficher le libelle
+                    PageFilter.TOURNEE -> it
 
-            // la tournée est déjà jointe pour afficher le libelle
-            PageFilter.TOURNEE -> Unit
-
-            // Si on vient de la page des pei pas de join supplémentaire
-            PageFilter.LISTE_PEI -> Unit
-        }
-
-        return requete
+                    // Si on vient de la page des pei pas de join supplémentaire
+                    PageFilter.LISTE_PEI -> it
+                }
+            }
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             // Et la zone de compétence de l'utilisateur s'il n'est pas super admin
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .count()
-    }
 
     fun isInZoneCompetence(
         srid: Int,
@@ -173,8 +171,8 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> {
-        val requete = dsl.select(
+    ): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> =
+        dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
             PEI.NUMERO_INTERNE,
@@ -242,21 +240,21 @@ class PeiRepository
             .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+            .let {
+                // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
+                // pour les indispos temporaires)
+                when (pageFilter) {
+                    PageFilter.INDISPONIBILITE_TEMPORAIRE -> it.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                        .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
 
-        // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
-        // pour les indispos temporaires)
-        when (pageFilter) {
-            PageFilter.INDISPONIBILITE_TEMPORAIRE -> requete.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                    // la tournée est déjà jointe pour afficher le libelle
+                    PageFilter.TOURNEE -> it
 
-            // la tournée est déjà jointe pour afficher le libelle
-            PageFilter.TOURNEE -> Unit
-
-            // Si on vient de la page des pei pas de join supplémentaire
-            PageFilter.LISTE_PEI -> Unit
-        }
-
-        return requete.where(param.filterBy?.toCondition() ?: DSL.noCondition())
+                    // Si on vient de la page des pei pas de join supplémentaire
+                    PageFilter.LISTE_PEI -> it
+                }
+            }
+            .where(param.filterBy?.toCondition() ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .groupBy(
                 PEI.ID,
@@ -280,7 +278,6 @@ class PeiRepository
             )
             .limit(param.limit)
             .offset(param.offset)
-    }
 
     data class PeiForTableau(
         val peiId: UUID,

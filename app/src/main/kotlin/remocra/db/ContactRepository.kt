@@ -91,8 +91,9 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .let {
                 if (isGestionnaire) {
                     it.select(SITE.LIBELLE)
+                } else {
+                    it
                 }
-                it
             }
             .from(CONTACT)
             .let {

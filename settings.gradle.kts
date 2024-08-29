@@ -1,6 +1,17 @@
 rootProject.name = "remocra"
 
 pluginManagement {
+    repositories {
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("android")
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
+            }
+        }
+        gradlePluginPortal()
+    }
     includeBuild("build-logic")
 }
 plugins {
@@ -15,6 +26,14 @@ dependencyResolutionManagement {
                 includeGroup("org.geotools")
                 includeGroup("org.geotools.ogc")
                 includeGroup("javax.media")
+            }
+        }
+        google {
+            mavenContent {
+                includeGroupAndSubgroups("android")
+                includeGroupAndSubgroups("androidx")
+                includeGroupAndSubgroups("com.android")
+                includeGroupAndSubgroups("com.google")
             }
         }
         mavenCentral()
