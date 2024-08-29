@@ -13,16 +13,19 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
+import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
+import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
+import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
@@ -79,6 +82,9 @@ val API_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Api.API, DSL.name("ap
 val COMMUNE_COMMUNE_CODE_INSEE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Commune.COMMUNE, DSL.name("commune_commune_code_insee_key"), arrayOf(Commune.COMMUNE.CODE_INSEE), true)
 val COMMUNE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Commune.COMMUNE, DSL.name("commune_pkey"), arrayOf(Commune.COMMUNE.ID), true)
 val CONTACT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Contact.CONTACT, DSL.name("contact_pkey"), arrayOf(Contact.CONTACT.ID), true)
+val COUCHE_COUCHE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Couche.COUCHE, DSL.name("couche_couche_code_key"), arrayOf(Couche.COUCHE.CODE), true)
+val COUCHE_COUCHE_ORDRE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Couche.COUCHE, DSL.name("couche_couche_ordre_key"), arrayOf(Couche.COUCHE.ORDRE), true)
+val COUCHE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Couche.COUCHE, DSL.name("couche_pkey"), arrayOf(Couche.COUCHE.ID), true)
 val DIAMETRE_DIAMETRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Diametre.DIAMETRE, DSL.name("diametre_diametre_code_key"), arrayOf(Diametre.DIAMETRE.CODE), true)
 val DIAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Diametre.DIAMETRE, DSL.name("diametre_pkey"), arrayOf(Diametre.DIAMETRE.ID), true)
 val DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Document.DOCUMENT, DSL.name("document_pkey"), arrayOf(Document.DOCUMENT.ID), true)
@@ -86,6 +92,9 @@ val DOMAINE_DOMAINE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Domai
 val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_pkey"), arrayOf(Domaine.DOMAINE.ID), true)
 val GESTIONNAIRE_GESTIONNAIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_gestionnaire_code_key"), arrayOf(Gestionnaire.GESTIONNAIRE.CODE), true)
 val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_pkey"), arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)
+val GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_groupe_couche_code_key"), arrayOf(GroupeCouche.GROUPE_COUCHE.CODE), true)
+val GROUPE_COUCHE_GROUPE_COUCHE_ORDRE_KEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_groupe_couche_ordre_key"), arrayOf(GroupeCouche.GROUPE_COUCHE.ORDRE), true)
+val GROUPE_COUCHE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_pkey"), arrayOf(GroupeCouche.GROUPE_COUCHE.ID), true)
 val INDISPONIBILITE_TEMPORAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE, DSL.name("indisponibilite_temporaire_pkey"), arrayOf(IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE.ID), true)
 val JOB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Job.JOB, DSL.name("job_pkey"), arrayOf(Job.JOB.ID), true)
 val L_COMMUNE_CIS_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_pkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID, LCommuneCis.L_COMMUNE_CIS.CIS_ID), true)
@@ -94,6 +103,7 @@ val L_CONTACT_GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LC
 val L_CONTACT_ORGANISME_CONTACT_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_contact_id_key"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.CONTACT_ID), true)
 val L_CONTACT_ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_pkey"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.CONTACT_ID, LContactOrganisme.L_CONTACT_ORGANISME.ORGANISME_ID), true)
 val L_CONTACT_ROLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_pkey"), arrayOf(LContactRole.L_CONTACT_ROLE.CONTACT_ID, LContactRole.L_CONTACT_ROLE.ROLE_ID), true)
+val L_COUCHE_DROIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LCoucheDroit.L_COUCHE_DROIT, DSL.name("l_couche_droit_pkey"), arrayOf(LCoucheDroit.L_COUCHE_DROIT.COUCHE_ID, LCoucheDroit.L_COUCHE_DROIT.PROFIL_DROIT_ID), true)
 val L_DIAMETRE_NATURE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_pkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.DIAMETRE_ID, LDiametreNature.L_DIAMETRE_NATURE.NATURE_ID), true)
 val L_INDISPONIBILITE_TEMPORAIRE_PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI, DSL.name("l_indisponibilite_temporaire_pei_pkey"), arrayOf(LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID, LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID), true)
 val L_MODELE_COURRIER_PROFIL_DROIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT, DSL.name("l_modele_courrier_profil_droit_pkey"), arrayOf(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID, LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID), true)
@@ -172,6 +182,7 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
+val COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Couche.COUCHE, DSL.name("couche_couche_groupe_couche_id_fkey"), arrayOf(Couche.COUCHE.GROUPE_COUCHE_ID), remocra.db.jooq.remocra.keys.GROUPE_COUCHE_PKEY, arrayOf(GroupeCouche.GROUPE_COUCHE.ID), true)
 val JOB__JOB_JOB_TASK_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_task_id_fkey"), arrayOf(Job.JOB.TASK_ID), remocra.db.jooq.remocra.keys.TASK_PKEY, arrayOf(Task.TASK.ID), true)
 val L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_cis_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.CIS_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_commune_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
@@ -182,6 +193,8 @@ val L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_CONTACT_ID_FKEY: ForeignKey<Record,
 val L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_organisme_id_fkey"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val L_CONTACT_ROLE__L_CONTACT_ROLE_CONTACT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_contact_id_fkey"), arrayOf(LContactRole.L_CONTACT_ROLE.CONTACT_ID), remocra.db.jooq.remocra.keys.CONTACT_PKEY, arrayOf(Contact.CONTACT.ID), true)
 val L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_role_id_fkey"), arrayOf(LContactRole.L_CONTACT_ROLE.ROLE_ID), remocra.db.jooq.remocra.keys.ROLE_PKEY, arrayOf(Role.ROLE.ID), true)
+val L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCoucheDroit.L_COUCHE_DROIT, DSL.name("l_couche_droit_couche_id_fkey"), arrayOf(LCoucheDroit.L_COUCHE_DROIT.COUCHE_ID), remocra.db.jooq.remocra.keys.COUCHE_PKEY, arrayOf(Couche.COUCHE.ID), true)
+val L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCoucheDroit.L_COUCHE_DROIT, DSL.name("l_couche_droit_profil_droit_id_fkey"), arrayOf(LCoucheDroit.L_COUCHE_DROIT.PROFIL_DROIT_ID), remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY, arrayOf(ProfilDroit.PROFIL_DROIT.ID), true)
 val L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_DIAMETRE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_diametre_id_fkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.DIAMETRE_ID), remocra.db.jooq.remocra.keys.DIAMETRE_PKEY, arrayOf(Diametre.DIAMETRE.ID), true)
 val L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_NATURE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_nature_id_fkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.NATURE_ID), remocra.db.jooq.remocra.keys.NATURE_PKEY, arrayOf(Nature.NATURE.ID), true)
 val L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE__INDISPONIBILITE_TEMPORAIRE_I_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI, DSL.name("l_indisponibilite_temporaire__indisponibilite_temporaire_i_fkey"), arrayOf(LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID), remocra.db.jooq.remocra.keys.INDISPONIBILITE_TEMPORAIRE_PKEY, arrayOf(IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE.ID), true)

@@ -12,16 +12,19 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
+import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
+import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
+import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
@@ -115,6 +118,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val CONTACT: Contact get() = Contact.CONTACT
 
     /**
+     * The table <code>remocra.couche</code>.
+     */
+    val COUCHE: Couche get() = Couche.COUCHE
+
+    /**
      * The table <code>remocra.diametre</code>.
      */
     val DIAMETRE: Diametre get() = Diametre.DIAMETRE
@@ -133,6 +141,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.gestionnaire</code>.
      */
     val GESTIONNAIRE: Gestionnaire get() = Gestionnaire.GESTIONNAIRE
+
+    /**
+     * The table <code>remocra.groupe_couche</code>.
+     */
+    val GROUPE_COUCHE: GroupeCouche get() = GroupeCouche.GROUPE_COUCHE
 
     /**
      * The table <code>remocra.indisponibilite_temporaire</code>.
@@ -163,6 +176,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_contact_role</code>.
      */
     val L_CONTACT_ROLE: LContactRole get() = LContactRole.L_CONTACT_ROLE
+
+    /**
+     * The table <code>remocra.l_couche_droit</code>.
+     */
+    val L_COUCHE_DROIT: LCoucheDroit get() = LCoucheDroit.L_COUCHE_DROIT
 
     /**
      * The table <code>remocra.l_diametre_nature</code>.
@@ -392,16 +410,19 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Api.API,
         Commune.COMMUNE,
         Contact.CONTACT,
+        Couche.COUCHE,
         Diametre.DIAMETRE,
         Document.DOCUMENT,
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
+        GroupeCouche.GROUPE_COUCHE,
         IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,
         Job.JOB,
         LCommuneCis.L_COMMUNE_CIS,
         LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
+        LCoucheDroit.L_COUCHE_DROIT,
         LDiametreNature.L_DIAMETRE_NATURE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
         LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,

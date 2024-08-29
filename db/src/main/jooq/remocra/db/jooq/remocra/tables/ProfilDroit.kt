@@ -26,10 +26,13 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PROFIL_DROIT_CODE_KEY
+import remocra.db.jooq.remocra.tables.Couche.CouchePath
+import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
@@ -137,6 +140,23 @@ open class ProfilDroit(
     override fun getPrimaryKey(): UniqueKey<Record> = PROFIL_DROIT_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PROFIL_DROIT_PROFIL_DROIT_CODE_KEY)
 
+    private lateinit var _lCoucheDroit: LCoucheDroitPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_couche_droit</code> table
+     */
+    fun lCoucheDroit(): LCoucheDroitPath {
+        if (!this::_lCoucheDroit.isInitialized) {
+            _lCoucheDroit = LCoucheDroitPath(this, null, L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_ID_FKEY.inverseKey)
+        }
+
+        return _lCoucheDroit
+    }
+
+    val lCoucheDroit: LCoucheDroitPath
+        get(): LCoucheDroitPath = lCoucheDroit()
+
     private lateinit var _lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
 
     /**
@@ -170,6 +190,13 @@ open class ProfilDroit(
 
     val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
         get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.couche</code> table
+     */
+    val couche: CouchePath
+        get(): CouchePath = lCoucheDroit().couche()
 
     /**
      * Get the implicit many-to-many join path to the
