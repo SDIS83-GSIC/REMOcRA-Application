@@ -16,12 +16,14 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
+import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
+import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
@@ -131,6 +133,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val GESTIONNAIRE: Gestionnaire get() = Gestionnaire.GESTIONNAIRE
 
     /**
+     * The table <code>remocra.indisponibilite_temporaire</code>.
+     */
+    val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire get() = IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE
+
+    /**
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
@@ -159,6 +166,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_diametre_nature</code>.
      */
     val L_DIAMETRE_NATURE: LDiametreNature get() = LDiametreNature.L_DIAMETRE_NATURE
+
+    /**
+     * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
+     */
+    val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei get() = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
 
     /**
      * The table <code>remocra.l_pei_anomalie</code>.
@@ -372,12 +384,14 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Document.DOCUMENT,
         Domaine.DOMAINE,
         Gestionnaire.GESTIONNAIRE,
+        IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,
         Job.JOB,
         LCommuneCis.L_COMMUNE_CIS,
         LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
         LDiametreNature.L_DIAMETRE_NATURE,
+        LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,

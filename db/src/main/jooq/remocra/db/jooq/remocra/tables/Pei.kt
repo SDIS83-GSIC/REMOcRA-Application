@@ -30,6 +30,7 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.keys.L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_TOURNEE_PEI__L_TOURNEE_PEI_PEI_ID_FKEY
@@ -57,6 +58,8 @@ import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.Domaine.DomainePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
+import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire.IndisponibiliteTemporairePath
+import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei.LIndisponibiliteTemporairePeiPath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.LTourneePei.LTourneePeiPath
@@ -522,6 +525,23 @@ open class Pei(
     val zoneIntegration: ZoneIntegrationPath
         get(): ZoneIntegrationPath = zoneIntegration()
 
+    private lateinit var _lIndisponibiliteTemporairePei: LIndisponibiliteTemporairePeiPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_indisponibilite_temporaire_pei</code> table
+     */
+    fun lIndisponibiliteTemporairePei(): LIndisponibiliteTemporairePeiPath {
+        if (!this::_lIndisponibiliteTemporairePei.isInitialized) {
+            _lIndisponibiliteTemporairePei = LIndisponibiliteTemporairePeiPath(this, null, L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE_PEI_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _lIndisponibiliteTemporairePei
+    }
+
+    val lIndisponibiliteTemporairePei: LIndisponibiliteTemporairePeiPath
+        get(): LIndisponibiliteTemporairePeiPath = lIndisponibiliteTemporairePei()
+
     private lateinit var _lPeiAnomalie: LPeiAnomaliePath
 
     /**
@@ -621,6 +641,13 @@ open class Pei(
 
     val visite: VisitePath
         get(): VisitePath = visite()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.indisponibilite_temporaire</code> table
+     */
+    val indisponibiliteTemporaire: IndisponibiliteTemporairePath
+        get(): IndisponibiliteTemporairePath = lIndisponibiliteTemporairePei().indisponibiliteTemporaire()
 
     /**
      * Get the implicit many-to-many join path to the

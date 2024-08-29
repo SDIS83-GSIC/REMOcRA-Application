@@ -12,12 +12,14 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Gestionnaire
+import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
+import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
@@ -105,6 +107,11 @@ val DOMAINE: Domaine = Domaine.DOMAINE
 val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
 
 /**
+ * The table <code>remocra.indisponibilite_temporaire</code>.
+ */
+val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire = IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE
+
+/**
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
@@ -133,6 +140,11 @@ val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
  * The table <code>remocra.l_diametre_nature</code>.
  */
 val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
+
+/**
+ * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
+ */
+val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
 
 /**
  * The table <code>remocra.l_pei_anomalie</code>.

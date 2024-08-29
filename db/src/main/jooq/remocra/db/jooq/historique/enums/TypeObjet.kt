@@ -30,6 +30,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     DOCUMENT_PEI("DOCUMENT_PEI"),
     ETUDE("ETUDE"),
     DOCUMENT_ETUDE("DOCUMENT_ETUDE"),
+    INDISPONIBILITE_TEMPORAIRE("INDISPONIBILITE_TEMPORAIRE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
