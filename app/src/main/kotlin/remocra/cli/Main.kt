@@ -11,6 +11,7 @@ import remocra.app.AppModule
 import remocra.auth.AuthModule
 import remocra.db.DatabaseModule
 import remocra.eventbus.EventBusModule
+import remocra.geoserver.GeoserverModule
 import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
@@ -95,6 +96,7 @@ class Main : Runnable {
                 EventBusModule.create(config.getConfig("remocra.mail")),
                 AuthModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
+                GeoserverModule.create(config.getConfig("remocra.geoserver")),
                 HealthModule.create(config.getConfig("remocra.health")),
                 SentryModule.create(config.getConfig("remocra.sentry")),
                 HttpServerModule.create(config.getConfig("remocra.http")),
