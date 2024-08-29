@@ -18,7 +18,9 @@ import PositiveNumberInput, {
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
-import FormDocuments from "../../components/Form/FormDocuments.tsx";
+import FormDocuments, {
+  setDocumentInFormData,
+} from "../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
@@ -114,25 +116,8 @@ export const validationSchema = object({
 
 export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
   const formData = new FormData();
-  values.documents.map((e) => {
-    if (e.data != null) {
-      formData.append("document_" + e.documentNomFichier, e.data);
-    }
-  });
 
-  formData.append("documents", JSON.stringify(values.documents));
-  formData.append(
-    "documentIdToRemove",
-    JSON.stringify(
-      data?.documents
-        .filter(
-          (e) =>
-            !values?.documents.map((e) => e.documentId).includes(e.documentId),
-        )
-        .filter((e) => e != null)
-        .map((e) => e.documentId) ?? [],
-    ),
-  );
+  setDocumentInFormData(values?.documents, data?.documents, formData);
 
   formData.append("peiTypePei", values.peiTypePei);
 

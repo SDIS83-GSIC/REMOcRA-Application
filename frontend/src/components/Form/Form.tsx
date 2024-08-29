@@ -48,7 +48,9 @@ export const FormLabel = ({
     label && (
       <Form.Label
         className={
-          !disabled ? "fw-bold " + className : "text-muted" + className
+          !disabled
+            ? "fw-bold mt-2 " + className
+            : "text-muted mt-2 " + className
         }
       >
         {label} {required === true && <span className="text-danger">*</span>}
@@ -134,6 +136,7 @@ export const CheckBoxInput = ({
 
 type FileInputType = InputType & {
   accept: string;
+  onChange: (e) => any;
 };
 
 export const FileInput = ({
@@ -142,8 +145,9 @@ export const FileInput = ({
   required = true,
   readOnly = false,
   accept,
+  onChange,
 }: FileInputType) => {
-  const [field, meta] = useField(name);
+  const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
@@ -153,7 +157,7 @@ export const FileInput = ({
         type="file"
         accept={accept}
         readOnly={readOnly}
-        {...field}
+        onChange={onChange}
       />
     </DivWithError>
   );

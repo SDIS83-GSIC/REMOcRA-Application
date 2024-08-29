@@ -1,15 +1,17 @@
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import EtudeStatutEnum from "../../Entities/EtudeEntity.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
-import { IconEtude } from "../../components/Icon/Icon.tsx";
+import { IconEdit, IconEtude } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import filterValuesToVariable from "./FilterEtude.tsx";
 
@@ -19,7 +21,13 @@ const ListEtude = () => {
   return (
     <>
       <Container>
-        <PageTitle icon={<IconEtude />} title={"Liste des études"} />
+        <PageTitle
+          icon={<IconEtude />}
+          title={"Liste des études"}
+          right={
+            <Button href={URLS.CREATE_ETUDE}>Ajouter une nouvelle étude</Button>
+          }
+        />
         <QueryTable
           query={url`/api/couverture-hydraulique`}
           columns={[
@@ -97,6 +105,27 @@ const ListEtude = () => {
                   </div>
                 );
               },
+            },
+            {
+              accessor: "etudeId",
+              Cell: (row: any) => {
+                return (
+                  <>
+                    <TooltipCustom
+                      tooltipText="Modifier l'étude"
+                      tooltipId={row.value}
+                    >
+                      <Button
+                        variant="link"
+                        href={URLS.UPDATE_ETUDE(row.value)}
+                      >
+                        <IconEdit />
+                      </Button>
+                    </TooltipCustom>
+                  </>
+                );
+              },
+              width: 90,
             },
           ]}
           idName={"tableEtudeId"}

@@ -8,6 +8,8 @@ import Visite from "./pages/Visite/Visite.tsx";
 import Accueil from "./pages/Accueil/Accueil.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import ListEtude from "./pages/Etude/ListEtude.tsx";
+import CreateEtude from "./pages/Etude/CreateEtude.tsx";
+import UpdateEtude from "./pages/Etude/UpdateEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
@@ -34,6 +36,9 @@ export const URLS = {
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,
   VISITE: (peiId: string) => url`/deci/visite/` + peiId,
+  CREATE_ETUDE: url`/deci/etudes/create`,
+  UPDATE_ETUDE: (etudeId: string) => url`/deci/etudes/` + etudeId,
+  LIST_ETUDE: url`/deci/etudes/`,
   LIST_TOURNEE: url`/deci/tournee`,
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
@@ -139,6 +144,24 @@ export default [
         path: "etudes",
         element: (
           <Authorization Component={ListEtude} droits={[TYPE_DROIT.ETUDE_R]} />
+        ),
+      },
+      {
+        path: "etudes/create",
+        element: (
+          <Authorization
+            Component={CreateEtude}
+            droits={[TYPE_DROIT.ETUDE_C]}
+          />
+        ),
+      },
+      {
+        path: "etudes/:etudeId",
+        element: (
+          <Authorization
+            Component={UpdateEtude}
+            droits={[TYPE_DROIT.ETUDE_U]}
+          />
         ),
       },
       {

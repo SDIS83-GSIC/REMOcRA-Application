@@ -8,18 +8,26 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.GlobalData
+import remocra.data.Params
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
 import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
 import remocra.db.jooq.couverturehydraulique.tables.references.L_ETUDE_COMMUNE
+import remocra.db.jooq.couverturehydraulique.tables.references.L_ETUDE_DOCUMENT
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class CouvertureHydrauliqueRepository @Inject constructor(private val dsl: DSLContext) {
+class CouvertureHydrauliqueRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val clock: Clock,
+) {
 
-    fun getEtudes(limit: Int?, offset: Int?, filterBy: Filter?, sortBy: Sort?): Collection<EtudeComplete> =
+    fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>): Collection<EtudeComplete> =
         dsl.select(
+            ETUDE.ID,
             TYPE_ETUDE.LIBELLE,
             TYPE_ETUDE.ID,
             ETUDE.NUMERO,
@@ -46,19 +54,22 @@ class CouvertureHydrauliqueRepository @Inject constructor(private val dsl: DSLCo
             .from(ETUDE)
             .join(TYPE_ETUDE)
             .on(ETUDE.TYPE_ETUDE_ID.eq(TYPE_ETUDE.ID))
-            .where(filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ETUDE.LIBELLE))
-            .limit(limit)
-            .offset(offset)
+            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .and(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ETUDE.LIBELLE))
+            .limit(params.limit)
+            .offset(params.offset)
             .fetchInto()
 
-    fun getCountEtudes(filterBy: Filter?): Int =
+    fun getCountEtudes(filterBy: Filter?, affiliatedOrganismeIds: Set<UUID>): Int =
         dsl.selectCount()
             .from(ETUDE)
             .where(filterBy?.toCondition() ?: DSL.trueCondition())
+            .and(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
             .fetchSingleInto()
 
     data class EtudeComplete(
+        val etudeId: UUID,
         val typeEtudeLibelle: String,
         val typeEtudeId: UUID,
         val etudeNumero: String,
@@ -68,7 +79,6 @@ class CouvertureHydrauliqueRepository @Inject constructor(private val dsl: DSLCo
         val etudeStatut: EtudeStatut,
         val etudeDateMaj: ZonedDateTime?,
     )
-
     data class CommuneSansGeometrie(
         val communeId: UUID,
         val communeCodeInsee: String,
@@ -119,4 +129,123 @@ class CouvertureHydrauliqueRepository @Inject constructor(private val dsl: DSLCo
             TYPE_ETUDE.CODE.`as`("code"),
             TYPE_ETUDE.LIBELLE.`as`("libelle"),
         ).from(TYPE_ETUDE).fetchInto()
+
+    fun getEtude(etudeId: UUID): EtudeUpsert =
+        dsl.select(
+            ETUDE.ID,
+            TYPE_ETUDE.ID,
+            ETUDE.NUMERO,
+            ETUDE.LIBELLE,
+            ETUDE.DESCRIPTION,
+            multiset(
+                selectDistinct(L_ETUDE_COMMUNE.COMMUNE_ID)
+                    .from(L_ETUDE_COMMUNE)
+                    .where(L_ETUDE_COMMUNE.ETUDE_ID.eq(ETUDE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1().let { it as UUID }
+                }
+            }.`as`("listeCommuneId"),
+            multiset(
+                selectDistinct(
+                    L_ETUDE_DOCUMENT.DOCUMENT_ID,
+                    DOCUMENT.NOM_FICHIER,
+                    L_ETUDE_DOCUMENT.LIBELLE,
+                )
+                    .from(L_ETUDE_DOCUMENT)
+                    .join(DOCUMENT)
+                    .on(DOCUMENT.ID.eq(L_ETUDE_DOCUMENT.DOCUMENT_ID))
+                    .where(L_ETUDE_DOCUMENT.ETUDE_ID.eq(ETUDE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    DocumentEtudeData(
+                        documentId = r.value1() as UUID,
+                        documentNomFichier = r.value2().toString(),
+                        etudeDocumentLibelle = r.value3().toString(),
+                    )
+                }
+            }.`as`("documents"),
+        ).from(ETUDE)
+            .join(TYPE_ETUDE)
+            .on(TYPE_ETUDE.ID.eq(ETUDE.TYPE_ETUDE_ID))
+            .where(ETUDE.ID.eq(etudeId))
+            .fetchSingleInto()
+
+    data class EtudeUpsert(
+        val etudeId: UUID,
+        val typeEtudeId: UUID,
+        val etudeNumero: String,
+        val etudeLibelle: String,
+        val etudeDescription: String?,
+        val listeCommuneId: Collection<UUID>,
+        val documents: Collection<DocumentEtudeData>?,
+    )
+
+    data class DocumentEtudeData(
+        val documentId: UUID,
+        val documentNomFichier: String,
+        val etudeDocumentLibelle: String,
+    )
+
+    fun insertEtudeDocument(documentId: UUID, etudeId: UUID, lEtudeDocumentLibelle: String?) =
+        dsl.insertInto(L_ETUDE_DOCUMENT)
+            .set(L_ETUDE_DOCUMENT.DOCUMENT_ID, documentId)
+            .set(L_ETUDE_DOCUMENT.ETUDE_ID, etudeId)
+            .set(L_ETUDE_DOCUMENT.LIBELLE, lEtudeDocumentLibelle)
+            .execute()
+
+    fun deleteEtudeDocument(documentsId: Collection<UUID>) =
+        dsl.deleteFrom(L_ETUDE_DOCUMENT)
+            .where(L_ETUDE_DOCUMENT.DOCUMENT_ID.`in`(documentsId))
+            .execute()
+
+    fun updateEtudeDocument(documentId: UUID, lEtudeDocumentLibelle: String?) =
+        dsl.update(L_ETUDE_DOCUMENT)
+            .set(L_ETUDE_DOCUMENT.LIBELLE, lEtudeDocumentLibelle)
+            .where(L_ETUDE_DOCUMENT.DOCUMENT_ID.eq(documentId))
+            .execute()
+
+    fun updateEtude(etudeId: UUID, typeEtudeId: UUID, etudeNumero: String, etudeLibelle: String, etudeDescription: String?) =
+        dsl.update(ETUDE)
+            .set(ETUDE.TYPE_ETUDE_ID, typeEtudeId)
+            .set(ETUDE.NUMERO, etudeNumero)
+            .set(ETUDE.LIBELLE, etudeLibelle)
+            .set(ETUDE.DESCRIPTION, etudeDescription)
+            .set(ETUDE.DATE_MAJ, ZonedDateTime.now(clock))
+            .where(ETUDE.ID.eq(etudeId))
+            .execute()
+
+    fun deleteLEtudeCommune(etudeId: UUID) =
+        dsl.deleteFrom(L_ETUDE_COMMUNE)
+            .where(L_ETUDE_COMMUNE.ETUDE_ID.eq(etudeId))
+            .execute()
+
+    fun insertLEtudeCommune(etudeId: UUID, listeCommuneId: Collection<UUID>) =
+        dsl.batch(
+            listeCommuneId.map {
+                DSL.insertInto(L_ETUDE_COMMUNE)
+                    .set(L_ETUDE_COMMUNE.ETUDE_ID, etudeId)
+                    .set(L_ETUDE_COMMUNE.COMMUNE_ID, it)
+            },
+        )
+            .execute()
+
+    fun insertEtude(
+        etudeId: UUID,
+        typeEtudeId: UUID,
+        etudeNumero: String,
+        etudeLibelle: String,
+        etudeDescription: String?,
+        etudeOrganismeId: UUID,
+    ) =
+        dsl.insertInto(ETUDE)
+            .set(ETUDE.ID, etudeId)
+            .set(ETUDE.TYPE_ETUDE_ID, typeEtudeId)
+            .set(ETUDE.NUMERO, etudeNumero)
+            .set(ETUDE.LIBELLE, etudeLibelle)
+            .set(ETUDE.DESCRIPTION, etudeDescription)
+            .set(ETUDE.ORGANISME_ID, etudeOrganismeId)
+            .set(ETUDE.DATE_MAJ, ZonedDateTime.now(clock))
+            .set(ETUDE.STATUT, EtudeStatut.EN_COURS)
+            .execute()
 }

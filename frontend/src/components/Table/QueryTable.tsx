@@ -384,7 +384,7 @@ export type columnType = {
   Cell?: (value: any) => ReactNode;
   className?: string;
   classNameHeader?: string;
-  width?: string;
+  width?: number;
 };
 
 export default QueryTable;

@@ -1,11 +1,13 @@
 package remocra.usecases.document
 
+import com.google.inject.Inject
 import jakarta.servlet.http.Part
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -14,58 +16,55 @@ import remocra.exception.RemocraResponseException
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentPeiUseCase.DocumentsPei>() {
-    open class DocumentsPei(
+class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentEtudeUseCase.DocumentsEtude>() {
+
+    @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
+
+    open class DocumentsEtude(
         override val objectId: UUID,
         override val listeDocsToRemove: List<UUID>,
-        override val listDocument: List<DocumentData>,
+        override val listDocument: List<DocumentEtudeData>,
         override val listDocumentParts: List<Part>,
     ) : AbstractDocuments()
 
-    open class DocumentData(
+    open class DocumentEtudeData(
         override val documentId: UUID?,
         override val documentNomFichier: String,
-        val isPhotoPei: Boolean,
+        val etudeDocumentLibelle: String?,
     ) : AbstractDocumentData()
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsPei, newDoc: AbstractDocumentData) {
-        documentRepository.insertDocumentPei(element.objectId, documentId, (newDoc as DocumentData).isPhotoPei)
+    override fun insertLDocument(documentId: UUID, element: DocumentsEtude, newDoc: AbstractDocumentData) {
+        couvertureHydrauliqueRepository.insertEtudeDocument(documentId, element.objectId, (newDoc as DocumentEtudeData).etudeDocumentLibelle)
     }
 
     override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        documentRepository.deleteDocumentPei(listeDocsToRemove)
+        couvertureHydrauliqueRepository.deleteEtudeDocument(listeDocsToRemove)
     }
 
     override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
-        val documentsNonPhoto = listToUpdate.filter { !(it as DocumentData).isPhotoPei }.map { it.documentId!! }
-        if (documentsNonPhoto.isNotEmpty()) {
-            documentRepository.updateIsPhotoPei(documentsNonPhoto, false)
-        }
-
-        val documentPhoto: UUID? = listToUpdate.firstOrNull { !(it as DocumentData).isPhotoPei }?.documentId
-        if (documentPhoto != null) {
-            documentRepository.updateIsPhotoPei(listOf(documentPhoto), true)
+        listToUpdate.forEach {
+            couvertureHydrauliqueRepository.updateEtudeDocument(it.documentId!!, (it as DocumentEtudeData).etudeDocumentLibelle)
         }
     }
 
     override fun getRepertoire(): String {
-        return GlobalConstants.DOSSIER_DOCUMENT_PEI
+        return GlobalConstants.DOSSIER_DOCUMENT_ETUDE
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (typeOperation == TypeOperation.INSERT && !userInfo.droits.contains(Droit.PEI_C)) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_C)
-        } else if (typeOperation == TypeOperation.UPDATE && !userInfo.droits.contains(Droit.PEI_U)) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
+        if (typeOperation == TypeOperation.INSERT && !userInfo.droits.contains(Droit.ETUDE_C)) {
+            throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_C)
+        } else if (typeOperation == TypeOperation.UPDATE && !userInfo.droits.contains(Droit.ETUDE_U)) {
+            throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: DocumentsPei, userInfo: UserInfo) {
+    override fun postEvent(element: DocumentsEtude, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo =
                 // On ne sauvegarde pas les bytearray
-                DocumentsPei(
+                DocumentsEtude(
                     element.objectId,
                     element.listeDocsToRemove,
                     element.listDocument,
@@ -73,22 +72,17 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentPei
                 ),
                 pojoId = element.objectId,
                 typeOperation = TypeOperation.UPDATE,
-                typeObjet = TypeObjet.DOCUMENT_PEI,
+                typeObjet = TypeObjet.DOCUMENT_ETUDE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                 date = ZonedDateTime.now(clock),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsPei) {
+    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsEtude) {
         // Si même nom => lève une exeption
         if (element.listDocument.groupingBy { it.documentNomFichier }.eachCount().any { it.value > 1 }) {
-            throw RemocraResponseException(ErrorType.PEI_DOCUMENT_MEME_NOM)
-        }
-
-        // Une seule photo PEI
-        if (element.listDocument.count { it.isPhotoPei } > 1) {
-            throw RemocraResponseException(ErrorType.PEI_DOCUMENT_PHOTO)
+            throw RemocraResponseException(ErrorType.ETUDE_DOCUMENT_MEME_NOM)
         }
     }
 }

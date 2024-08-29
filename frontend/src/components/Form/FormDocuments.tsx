@@ -78,4 +78,32 @@ const FormDocuments = ({
   );
 };
 
+export function setDocumentInFormData(
+  documentsApresModif: Document[],
+  documentsAvantModif: Document[],
+  formData: FormData,
+) {
+  documentsApresModif.map((e) => {
+    if (e.data != null) {
+      formData.append("document_" + e.documentNomFichier, e.data);
+    }
+  });
+
+  formData.append("documents", JSON.stringify(documentsApresModif));
+  formData.append(
+    "listeDocsToRemove",
+    JSON.stringify(
+      documentsAvantModif
+        ?.filter(
+          (e) =>
+            !documentsApresModif
+              .map((e) => e.documentId)
+              .includes(e.documentId),
+        )
+        .filter((e) => e != null)
+        .map((e) => e.documentId) ?? [],
+    ),
+  );
+}
+
 export default FormDocuments;

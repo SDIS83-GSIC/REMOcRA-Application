@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.slf4j.LoggerFactory
 import remocra.db.DocumentRepository
+import remocra.security.NoCsrf
 import remocra.usecases.document.DocumentUtils
 import remocra.web.notFound
 import java.io.File
@@ -31,6 +32,7 @@ class DocumentEndPoint {
      * @return La réponse HTTP contenant le fichier à télécharger.
      */
     @GET
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
     @Path("/telecharger/{documentId}")
     @Produces(MediaType.TEXT_PLAIN)
     fun telechargerRessource(@PathParam("documentId") documentId: UUID): Response {
