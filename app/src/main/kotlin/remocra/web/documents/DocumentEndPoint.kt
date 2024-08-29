@@ -8,6 +8,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.slf4j.LoggerFactory
+import remocra.auth.Public
 import remocra.db.DocumentRepository
 import remocra.security.NoCsrf
 import remocra.usecases.document.DocumentUtils
@@ -33,6 +34,7 @@ class DocumentEndPoint {
      */
     @GET
     @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
+    @Public("Le téléchargement des documents n'est pas dépendant d'un droit particulier")
     @Path("/telecharger/{documentId}")
     @Produces(MediaType.TEXT_PLAIN)
     fun telechargerRessource(@PathParam("documentId") documentId: UUID): Response {

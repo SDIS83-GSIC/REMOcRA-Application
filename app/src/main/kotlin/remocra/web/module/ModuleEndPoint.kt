@@ -30,6 +30,7 @@ class ModuleEndPoint {
     @GET
     @Path("/get-image")
     @Produces("image/png", "image/jpeg", "image/jpg")
+    @Public("Pas de droit particulier pour charger une image")
     fun getUriImage(@QueryParam("imagePath") imagePath: String?): Response {
         return Response.ok(
             imagePath?.let { File(it) },

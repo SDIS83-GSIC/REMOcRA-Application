@@ -174,6 +174,7 @@ dependencies {
     testCompileOnly(libs.forbiddenapis)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.archunit.junit5)
 }
 
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"

@@ -81,6 +81,8 @@ sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 sentry-servlet-jakarta = { module = "io.sentry:sentry-servlet-jakarta", version.ref = "sentry" }
 sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 
+archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.3.0"
+
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.7.4"
