@@ -61,7 +61,7 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-dom": "1.12.3",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-security": "^2.1.1",
+    "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-storybook": "0.8.0",
     "mini-css-extract-plugin": "^2.9.1",
     "npm-run-all2": "^6.2.2",
