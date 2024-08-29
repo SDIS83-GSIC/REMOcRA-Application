@@ -37,7 +37,7 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) {
             .where(DOCUMENT.ID.`in`(listId))
             .execute()
 
-    fun deleteDocumentPei(listId: List<UUID>) =
+    fun deleteDocumentPei(listId: Collection<UUID>) =
         dsl.deleteFrom(L_PEI_DOCUMENT)
             .where(L_PEI_DOCUMENT.DOCUMENT_ID.`in`(listId))
             .execute()

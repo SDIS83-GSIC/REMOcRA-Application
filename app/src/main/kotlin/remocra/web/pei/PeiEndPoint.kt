@@ -104,9 +104,9 @@ class PeiEndPoint : AbstractEndpoint() {
         return upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
             UpsertDocumentPeiUseCase.DocumentsPei(
-                peiId = pei.peiId,
+                objectId = pei.peiId,
                 listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
-                documentIdToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
+                listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
         ).wrap()
@@ -134,9 +134,9 @@ class PeiEndPoint : AbstractEndpoint() {
         return upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
             UpsertDocumentPeiUseCase.DocumentsPei(
-                peiId = pei.peiId,
+                objectId = pei.peiId,
                 listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
-                documentIdToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
+                listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
         ).wrap()
