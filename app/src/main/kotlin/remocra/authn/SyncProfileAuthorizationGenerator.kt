@@ -6,6 +6,7 @@ import org.pac4j.core.context.CallContext
 import org.pac4j.core.profile.UserProfile
 import remocra.db.DroitsRepository
 import remocra.db.UtilisateurRepository
+import remocra.usecases.utilisateur.UtilisateurOrganismesUseCase
 import java.util.Optional
 import java.util.UUID
 
@@ -16,6 +17,9 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
 
     @Inject
     lateinit var droitsRepository: DroitsRepository
+
+    @Inject
+    lateinit var utilisateurOrganismesUseCase: UtilisateurOrganismesUseCase
 
     override fun generate(p0: CallContext?, profile: UserProfile): Optional<UserProfile> {
         if (profile is UserInfo) {
@@ -30,6 +34,9 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
 
             // On remplit ses droits
             userProfile.droits = droitsRepository.getDroitsFromUser(userProfile.idUtilisateur)
+
+            // On remplit ses organismes affiliés
+            utilisateurOrganismesUseCase.execute(userProfile)
         }
 
         return Optional.of(profile)

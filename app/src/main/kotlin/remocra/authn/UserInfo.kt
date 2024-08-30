@@ -23,6 +23,9 @@ class UserInfo : KeycloakOidcProfile() {
     val organismeId: UUID?
         get() = utilisateur.utilisateurOrganismeId
 
+    // Les organismes affiliés, à savoir l'organisme de rattachement et ses enfants, pour simplifier les requêtes hiérarchiques
+    lateinit var affiliatedOrganismeIds: Set<UUID>
+
     val isActif: Boolean
         get() = !this.roles.contains("inactif")
 

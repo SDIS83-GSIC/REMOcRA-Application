@@ -4,6 +4,11 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.field
+import org.jooq.impl.DSL.name
+import org.jooq.impl.DSL.select
+import org.jooq.impl.DSL.table
+import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.enums.TypeAutoriteDeci
@@ -84,4 +89,27 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
         var libelle: String,
         val codeTypeOrganisme: String,
     )
+
+    /**
+     * Retourne l'ID de l'organisme et de tous ses enfants, pour simplifier les requêtes hiérarchiques
+     *
+     */
+    fun getOrganismeAndChildren(organismeId: UUID): Collection<UUID> {
+        val nomCte = name("org")
+        val cte = nomCte.fields("organisme_id").`as`(
+            select(ORGANISME.ID)
+                .from(ORGANISME)
+                .where(ORGANISME.ID.eq(organismeId))
+                .unionAll(
+                    select(ORGANISME.ID)
+                        .from(table(nomCte))
+                        .innerJoin(ORGANISME)
+                        .on(ORGANISME.PARENT_ID.eq(field(name("org", "organisme_id"), SQLDataType.UUID))),
+                ),
+        )
+        return dsl
+            .withRecursive(cte)
+            .selectFrom(cte)
+            .fetchInto()
+    }
 }
