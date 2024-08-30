@@ -49,6 +49,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier"),
 
+    //
+    // ********************************************************************************
+    // Tournee
+    // ********************************************************************************
+    //
+    TOURNEE_GESTION_FORBIDDEN(3100, "Vous n'avez pas les droits de gestion des tournées, nécessaires pour réaliser cette opération", Status.FORBIDDEN),
+    TOURNEE_ALREADY_EXISTS(3001, "Une tournée assignée à cet organisme existe déjà sous ce nom"),
     ;
 
     override fun toString(): String {

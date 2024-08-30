@@ -16,6 +16,7 @@ import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.data.Params
+import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.TOURNEE
@@ -128,4 +129,12 @@ class TourneeRepository
                 TOURNEE.ACTIF.getSortField(tourneeActif),
             )
     }
+
+    fun insertTournee(tournee: Tournee) =
+        dsl.insertInto(TOURNEE)
+            .set(dsl.newRecord(TOURNEE, tournee))
+            .execute()
+
+    fun tourneeAlreadyExists(tourneeLibelle: String, tourneeOrganismeId: UUID) =
+        dsl.fetchExists(dsl.selectFrom(TOURNEE).where(TOURNEE.LIBELLE.eq(tourneeLibelle).and(TOURNEE.ORGANISME_ID.eq(tourneeOrganismeId))))
 }

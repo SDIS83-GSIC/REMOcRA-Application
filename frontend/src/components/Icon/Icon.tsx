@@ -19,3 +19,5 @@ export const IconInfo = () => <i className="fi fi-br-interrogation" />;
 
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
+
+export const IconTournee = () => <i className="fi fi-br-document" />;

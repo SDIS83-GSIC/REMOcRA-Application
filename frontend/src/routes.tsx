@@ -10,7 +10,8 @@ import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import ListEtude from "./pages/Etude/ListEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
-import GestionTournee from "./pages/Tournee/Tournee.tsx";
+import ListTournee from "./pages/Tournee/ListTournee.tsx";
+import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
 
@@ -23,6 +24,8 @@ export const URLS = {
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,
   VISITE: (peiId: string) => url`/deci/visite/` + peiId,
+  LIST_TOURNEE: url`/deci/tournee`,
+  CREATE_TOURNEE: url`/deci/tournee/create`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -82,8 +85,17 @@ export default [
         path: "tournee",
         element: (
           <Authorization
-            Component={GestionTournee}
+            Component={ListTournee}
             droits={[TYPE_DROIT.TOURNEE_R, TYPE_DROIT.TOURNEE_A]}
+          />
+        ),
+      },
+      {
+        path: "tournee/create",
+        element: (
+          <Authorization
+            Component={CreateTournee}
+            droits={[TYPE_DROIT.TOURNEE_A]}
           />
         ),
       },

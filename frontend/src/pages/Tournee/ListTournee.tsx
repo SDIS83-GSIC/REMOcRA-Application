@@ -1,14 +1,17 @@
 import Form from "react-bootstrap/Form";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import QueryTable, {
   columnType,
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
 import url from "../../module/fetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
+import { URLS } from "../../routes.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconTournee } from "../../components/Icon/Icon.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
-const GestionTournee = () => {
+const ListTournee = () => {
   const column: Array<columnType> = [
     {
       Header: "Nom",
@@ -54,7 +57,15 @@ const GestionTournee = () => {
 
   return (
     <Container>
-      <h1>Gestion des tournées</h1>
+      <PageTitle
+        icon={<IconTournee />}
+        title={"Liste des tournées"}
+        right={
+          <Button variant="primary" href={URLS.CREATE_TOURNEE}>
+            Créer une tournée
+          </Button>
+        }
+      />
       <QueryTable
         query={url`/api/tournee`}
         columns={column}
@@ -70,4 +81,4 @@ const GestionTournee = () => {
   );
 };
 
-export default GestionTournee;
+export default ListTournee;
