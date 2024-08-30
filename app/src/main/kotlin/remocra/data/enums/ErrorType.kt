@@ -60,6 +60,19 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     TOURNEE_GESTION_FORBIDDEN(3100, "Vous n'avez pas les droits de gestion des tournées, nécessaires pour réaliser cette opération", Status.FORBIDDEN),
     TOURNEE_ALREADY_EXISTS(3001, "Une tournée assignée à cet organisme existe déjà sous ce nom"),
     TOURNEE_LECTURE_SEULE(3002, "La tournée est réservée dans l'application mobile, elle ne peut être modifiée"),
+
+    //
+    // ********************************************************************************
+    // Indisponibilite temporaire
+    // ********************************************************************************
+    //
+    INDISPONIBILITE_TEMPORAIRE_FIN_AVANT_DEBUT(6000, "La date de fin est avant la date de début"),
+    INDISPONIBILITE_TEMPORAIRE_INEXISTANTE(6001, "L'indisponibilité temporaire n'existe pas"),
+    INDISPONIBILITE_TEMPORAIRE_EN_COURS(6002, "Impossible de supprimer une indisponibilité temporaire en cours"),
+    INDISPONIBILITE_TEMPORAIRE_STATUT_INTROUVABLE(6003, "Le statut n'a pas pu être défini", Status.FORBIDDEN),
+    INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE(6004, "Vous n'avez pas les droits de création des indisponibilités temporaires", Status.FORBIDDEN),
+    INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_UPDATE(6005, "Vous n'avez pas les droits de modification des indisponibilités temporaires", Status.FORBIDDEN),
+    INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_DELETE(6006, "Vous n'avez pas les droits de suppression des indisponibilités temporaires", Status.FORBIDDEN),
     ;
 
     override fun toString(): String {

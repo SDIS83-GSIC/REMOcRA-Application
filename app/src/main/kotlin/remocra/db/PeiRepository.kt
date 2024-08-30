@@ -29,6 +29,8 @@ import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_Within
 import java.util.UUID
 
 class PeiRepository
@@ -398,7 +400,21 @@ class PeiRepository
             .on(PIBI.ID.eq(PEI.ID))
             .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
             .fetchInto()
+
+    fun getListIdNumeroCompletInZoneCompetence(organismeId: UUID?): Collection<IdNumeroComplet> =
+        dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
+            .from(PEI)
+            .join(ORGANISME).on(ORGANISME.ID.eq(organismeId))
+            .join(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+            .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .fetchInto()
 }
+
+data class IdNumeroComplet(
+    val peiId: UUID,
+    val peiNumeroComplet: String,
+)
 
 data class ApiPeiAccessibility(val id: UUID, val numeroComplet: String, val maintenanceDeciId: UUID, val servicePublicDeciId: UUID, val serviceEauxId: UUID)
 

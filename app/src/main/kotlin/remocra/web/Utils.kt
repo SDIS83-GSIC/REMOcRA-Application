@@ -3,6 +3,9 @@ package remocra.web
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import org.jooq.Condition
+import org.jooq.Record
+import org.jooq.TableField
 import java.util.stream.Collectors
 
 /** As defined in [RFC 4918](https://tools.ietf.org/html/rfc4918#section-11.2) */
@@ -50,3 +53,19 @@ fun <E> Collection<E>.limitOffset(limit: Long?, offset: Long?): MutableSet<E>? {
 
 fun HttpServletRequest.getTextPart(part: String) =
     this.getPart(part).inputStream.reader().readText()
+
+/**
+ * Cette méthode génère une condition jOOQ basée sur une valeur booléenne fournie.
+ *
+ * @param condition La valeur booléenne utilisée pour déterminer la condition de la requête.
+ *                  Si `true`, la condition vérifiera que le champ est vrai.
+ *                  Si `false`, la condition vérifiera que le champ est faux.
+ * @param field     Le champ de la table (de type `TableField`) à vérifier.
+ *                  Ce champ doit être de type `Boolean?` pour permettre des valeurs nulles.
+ *
+ * @return Une condition jOOQ (`Condition`) qui vérifie si le champ est `true` ou `false`
+ *         selon la valeur du paramètre `condition`.
+ */
+fun booleanFilter(condition: Boolean, field: TableField<Record, Boolean?>): Condition {
+    return if (condition) field.isTrue() else field.isFalse()
+}
