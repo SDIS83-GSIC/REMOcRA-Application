@@ -3,6 +3,8 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Geometry
 import org.jooq.InsertSetStep
 import org.jooq.Record
 import org.jooq.Record14
@@ -406,6 +408,39 @@ class PeiRepository
             )
             .limit(limit)
             .offset(offset)
+            .fetchInto()
+    }
+
+    /**
+     * Récupère les points dans une BBOX selon la zone de compétence
+     */
+    fun getPointsWithinZoneAndBbox(zoneId: UUID, bbox: Field<org.locationtech.jts.geom.Geometry?>): Collection<Pei> {
+        return dsl.select(*PEI.fields())
+            .from(PEI)
+            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                    .and(ST_Within(PEI.GEOMETRIE, bbox)),
+            )
+            .fetchInto()
+    }
+
+    /**
+     * Récupère les points selon la zone de compétence
+     */
+    fun getPointsWithinZone(zoneId: UUID): Collection<Pei> {
+        return dsl.select(*PEI.fields())
+            .from(PEI)
+            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE),
+            )
             .fetchInto()
     }
 

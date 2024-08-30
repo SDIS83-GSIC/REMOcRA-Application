@@ -3,7 +3,13 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
+import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
+import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import java.util.UUID
 
 class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
@@ -94,4 +100,17 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
 
     fun getAll(): Collection<Utilisateur> =
         dsl.selectFrom(UTILISATEUR).fetchInto()
+
+    fun getZoneByUtilisateurId(utilisateurId: UUID): ZoneIntegration? {
+        return dsl.select(*ZONE_INTEGRATION.fields())
+            .from(ZONE_INTEGRATION)
+            .join(ORGANISME).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .join(PROFIL_ORGANISME).on(PROFIL_ORGANISME.ID.eq(ORGANISME.PROFIL_ORGANISME_ID))
+            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT).on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
+            .join(PROFIL_UTILISATEUR).on(PROFIL_UTILISATEUR.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .join(UTILISATEUR).on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
+            .where(UTILISATEUR.ID.eq(utilisateurId))
+            .limit(1)
+            .fetchOneInto()
+    }
 }

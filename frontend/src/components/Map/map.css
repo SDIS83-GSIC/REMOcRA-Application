@@ -1,0 +1,15 @@
+.ol-mouse-position {
+  top: unset;
+  left: unset;
+  bottom: 0.5em;
+  right: 0.5em;
+
+  color: var(--ol-subtle-foreground-color);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+  background-color: var(--ol-partial-background-color);
+  border-radius: 2px;
+  padding: 0.2em 0.8em;
+  text-decoration: none;
+}

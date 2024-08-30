@@ -13,6 +13,7 @@ const ModuleDeci = () => {
       path: URLS.LIST_INDISPONIBILITE_TEMPORAIRE,
       label: "Indisponibilités temporaires",
     },
+    { path: URLS.PEI_CARTE, label: "Carte" },
   ];
 
   return (

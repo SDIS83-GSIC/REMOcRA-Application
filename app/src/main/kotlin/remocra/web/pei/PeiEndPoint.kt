@@ -23,6 +23,7 @@ import remocra.data.Params
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.db.PeiRepository
+import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecases.document.UpsertDocumentPeiUseCase
@@ -31,7 +32,11 @@ import remocra.usecases.pei.GetCoordonneesBySrid
 import remocra.usecases.pei.PeiUseCase
 import remocra.usecases.pei.UpdatePeiUseCase
 import remocra.web.AbstractEndpoint
+import remocra.web.forbidden
+import remocra.web.geometryFromBBox
 import remocra.web.getTextPart
+import remocra.web.notFound
+import remocra.web.toGeomFromText
 import java.util.UUID
 
 @Path("/pei")
@@ -45,6 +50,8 @@ class PeiEndPoint : AbstractEndpoint() {
     @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
 
     @Inject lateinit var createPeiUseCase: CreatePeiUseCase
+
+    @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
     @Inject lateinit var upsertDocumentPeiUseCase: UpsertDocumentPeiUseCase
 
@@ -212,4 +219,60 @@ class PeiEndPoint : AbstractEndpoint() {
         }
         return Response.ok(getCoordonneesBySrid.execute(coordonneeX, coordonneeY, srid)).build()
     }
+
+    /**
+     * Renvoie les points d'eau au format GeoJSON pour assurer les interactions sur la carte
+     */
+    @GET
+    @Path("/layer")
+    @RequireDroits([Droit.PEI_R])
+    fun layer(@QueryParam("bbox") bbox: String?, @QueryParam("srid") srid: String?): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        val zoneCompetence = utilisateurRepository.getZoneByUtilisateurId(securityContext.userInfo!!.utilisateurId) ?: return notFound().build()
+
+        return Response.ok(
+            LayersRes(
+                features =
+                bbox.let {
+                    if (it.isNullOrEmpty()) {
+                        peiRepository.getPointsWithinZone(zoneCompetence.zoneIntegrationId)
+                    } else {
+                        val geom = geometryFromBBox(bbox, srid) ?: return notFound().build()
+                        peiRepository.getPointsWithinZoneAndBbox(zoneCompetence.zoneIntegrationId, geom.toGeomFromText())
+                    }
+                }.map {
+                    Feature(
+                        geometry = FeatureGeom(
+                            type = it.peiGeometrie.geometryType,
+                            coordinates = it.peiGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
+                            srid = "EPSG:${it.peiGeometrie.srid}",
+                        ),
+                        id = it.peiId,
+                        properties = it,
+                    )
+                },
+            ),
+        ).build()
+    }
+
+    // Data classes pour renvoyer les données au format GeoJSON
+    data class LayersRes(
+        val type: String = "FeatureCollection",
+        val features: List<Feature>,
+    )
+
+    data class Feature(
+        val type: String = "Feature",
+        val geometry: FeatureGeom,
+        val id: UUID,
+        val properties: Any,
+    )
+
+    data class FeatureGeom(
+        val type: String,
+        val coordinates: Array<Double>,
+        val srid: String,
+    )
 }

@@ -1,6 +1,7 @@
 package remocra.utils
 
 import org.jooq.Condition
+import org.jooq.Field
 import org.jooq.Record
 import org.jooq.SelectConditionStep
 import org.jooq.SelectWhereStep
@@ -77,7 +78,7 @@ private fun ST_DistanceCondition(
  * Retourne true si geometrieField est dans la geometrieField2
  */
 fun ST_Within(
-    geometrieField: TableField<Record, Geometry?>,
-    geometrieField2: TableField<Record, Geometry?>,
+    geometrieField: Field<Geometry?>,
+    geometrieField2: Field<Geometry?>,
 ): Condition =
     DSL.condition("ST_Within($geometrieField, $geometrieField2)")

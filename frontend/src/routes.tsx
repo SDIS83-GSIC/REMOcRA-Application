@@ -25,6 +25,7 @@ import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiPr
 import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
+import MapComponent from "./components/Map/Map.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -115,6 +116,10 @@ export default [
             droits={[TYPE_DROIT.PEI_CARACTERISTIQUES_U, TYPE_DROIT.PEI_U]}
           />
         ),
+      },
+      {
+        path: "pei/carte",
+        element: <Authorization Component={MapComponent} isPublic={true} />,
       },
       {
         path: "tournee",
