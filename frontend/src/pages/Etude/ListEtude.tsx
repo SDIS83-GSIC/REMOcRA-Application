@@ -5,7 +5,11 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
-import { IconEdit, IconEtude } from "../../components/Icon/Icon.tsx";
+import {
+  IconEdit,
+  IconEtude,
+  IconImport,
+} from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
@@ -120,6 +124,28 @@ const ListEtude = () => {
                         href={URLS.UPDATE_ETUDE(row.value)}
                       >
                         <IconEdit />
+                      </Button>
+                    </TooltipCustom>
+                  </>
+                );
+              },
+              width: 90,
+            },
+            {
+              accessor: "etudeId",
+              Cell: (row: any) => {
+                return (
+                  // TODO le déplacer au bon endroit quand on autre la page
+                  <>
+                    <TooltipCustom
+                      tooltipText="Importer des fichiers shapes pour l'étude"
+                      tooltipId={row.value}
+                    >
+                      <Button
+                        variant="link"
+                        href={URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(row.value)}
+                      >
+                        <IconImport />
                       </Button>
                     </TooltipCustom>
                   </>

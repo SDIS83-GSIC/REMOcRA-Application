@@ -12,6 +12,7 @@ import CreateEtude from "./pages/Etude/CreateEtude.tsx";
 import UpdateEtude from "./pages/Etude/UpdateEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
+import ImportShapeEtude from "./pages/Etude/ImportShapeEtude.tsx";
 import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import ListTournee from "./pages/Tournee/ListTournee.tsx";
@@ -43,6 +44,8 @@ export const URLS = {
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
+  IMPORTER_COUVERTURE_HYDRAULIQUE: (etudeId: string) =>
+    url`/deci/etudes/import/` + etudeId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -163,6 +166,10 @@ export default [
             droits={[TYPE_DROIT.ETUDE_U]}
           />
         ),
+      },
+      {
+        path: "etudes/import/:etudeId",
+        element: <ImportShapeEtude />,
       },
       {
         path: "indisponibilite-temporaire/",

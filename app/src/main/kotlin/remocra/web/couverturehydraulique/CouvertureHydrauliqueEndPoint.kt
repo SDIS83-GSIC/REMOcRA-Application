@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -22,6 +23,7 @@ import remocra.data.Params
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecases.couverturehydraulique.CreateEtudeUseCase
+import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecases.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecases.document.UpsertDocumentEtudeUseCase
 import remocra.web.AbstractEndpoint
@@ -36,6 +38,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @Inject lateinit var updateEtudeUseCase: UpdateEtudeUseCase
 
     @Inject lateinit var createEtudeUseCase: CreateEtudeUseCase
+
+    @Inject lateinit var importDataCouvertureHydrauliqueUseCase: ImportDataCouvertureHydrauliqueUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -134,4 +138,24 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             etudeData,
         ).wrap()
     }
+
+    @PUT
+    @Path("/import/{etudeId}")
+    @RequireDroits([Droit.ETUDE_U])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importData(
+        @PathParam("etudeId")
+        etudeId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ) =
+        importDataCouvertureHydrauliqueUseCase.execute(
+            securityContext.userInfo,
+            ImportDataCouvertureHydrauliqueUseCase.ReseauBatimentPeiProjet(
+                etudeId,
+                if (httpRequest.getPart("fileReseau").contentType != null) httpRequest.getPart("fileReseau").inputStream else null,
+                if (httpRequest.getPart("fileBatiment").contentType != null) httpRequest.getPart("fileBatiment").inputStream else null,
+                if (httpRequest.getPart("filePeiProjet").contentType != null) httpRequest.getPart("filePeiProjet").inputStream else null,
+            ),
+        ).wrap()
 }

@@ -20,6 +20,7 @@ export const IconInfo = () => <i className="fi fi-br-interrogation" />;
 
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
+export const IconImport = () => <i className="fi fi-br-upload" />;
 
 export const IconIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-time-delete" />

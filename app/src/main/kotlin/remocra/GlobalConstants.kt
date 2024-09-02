@@ -53,6 +53,8 @@ object GlobalConstants {
 
     const val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
 
+    const val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
+
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
 

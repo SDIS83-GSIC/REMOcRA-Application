@@ -10,12 +10,17 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
+import remocra.db.jooq.couverturehydraulique.tables.pojos.PeiProjet
+import remocra.db.jooq.couverturehydraulique.tables.references.BATIMENT
 import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
 import remocra.db.jooq.couverturehydraulique.tables.references.L_ETUDE_COMMUNE
 import remocra.db.jooq.couverturehydraulique.tables.references.L_ETUDE_DOCUMENT
+import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
+import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -247,5 +252,51 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .set(ETUDE.ORGANISME_ID, etudeOrganismeId)
             .set(ETUDE.DATE_MAJ, ZonedDateTime.now(clock))
             .set(ETUDE.STATUT, EtudeStatut.EN_COURS)
+            .execute()
+
+    fun deleteReseauByEtudeId(etudeId: UUID) =
+        dsl.deleteFrom(RESEAU)
+            .where(RESEAU.ETUDE_ID.eq(etudeId))
+            .execute()
+
+    fun insertReseau(etudeId: UUID, listReseau: List<ImportDataCouvertureHydrauliqueUseCase.Reseau>) =
+        dsl.batch(
+            listReseau.map {
+                dsl.insertInto(RESEAU)
+                    .set(RESEAU.ID, UUID.randomUUID())
+                    .set(RESEAU.ETUDE_ID, etudeId)
+                    .set(RESEAU.GEOMETRIE, it.reseauGeometrie)
+                    .set(RESEAU.TRAVERSABLE, it.reseauTraversable)
+                    .set(RESEAU.SENS_UNIQUE, it.reseauSensUnique)
+                    .set(RESEAU.NIVEAU, it.reseauNiveau)
+            },
+        )
+            .execute()
+
+    fun deleteBatimentByEtudeId(etudeId: UUID) =
+        dsl.deleteFrom(BATIMENT)
+            .where(BATIMENT.ETUDE_ID.eq(etudeId))
+            .execute()
+
+    fun insertBatiment(etudeId: UUID, listBatiment: List<ImportDataCouvertureHydrauliqueUseCase.Batiment>) =
+        dsl.batch(
+            listBatiment.map {
+                dsl.insertInto(BATIMENT)
+                    .set(BATIMENT.ID, UUID.randomUUID())
+                    .set(BATIMENT.ETUDE_ID, etudeId)
+                    .set(BATIMENT.GEOMETRIE, it.batimentGeometrie)
+            },
+        )
+            .execute()
+
+    fun deletePeiProjetByEtudeId(etudeId: UUID) =
+        dsl.deleteFrom(PEI_PROJET)
+            .where(PEI_PROJET.ETUDE_ID.eq(etudeId))
+            .execute()
+
+    fun insertPeiProjet(listPeiProjet: List<PeiProjet>) =
+        dsl.batch(
+            listPeiProjet.map { dsl.insertInto(PEI_PROJET).set(dsl.newRecord(PEI_PROJET, it)) },
+        )
             .execute()
 }

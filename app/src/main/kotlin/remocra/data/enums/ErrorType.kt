@@ -129,14 +129,24 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         Status.FORBIDDEN,
     ),
 
-    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier"),
-
     /**
      * Pour la gestion des études de la couverture hydraulique
      */
     ETUDE_TYPE_FORBIDDEN_C(4000, "Vous n'avez pas les droits de création d'une étude.", Status.FORBIDDEN),
     ETUDE_TYPE_FORBIDDEN_U(4001, "Vous n'avez pas les droits pour mettre à jour une étude.", Status.FORBIDDEN),
     ETUDE_DOCUMENT_MEME_NOM(4002, "Les documents d'une même étude ne doivent pas avoir le même nom."),
+
+    IMPORT_SHP_ETUDE_SHP_INTROUVABLE(4100, "Aucun fichier .shp n'a été trouvé."),
+    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE(4101, "La géométrie ne doit pas être nulle."),
+    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE_POINT(4102, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_SHP_ETUDE_NATURE_DECI(4103, "Le code de la nature DECI doit être renseigné."),
+    IMPORT_SHP_ETUDE_TYPE_PEI_PROJET(4104, "Le type du PEI doit être renseigné."),
+    IMPORT_SHP_ETUDE_DIAMETRE_MANQUANT(4105, "Le diamètre de canalisation doit être renseigné pour un PIBI."),
+    IMPORT_SHP_ETUDE_CAPACITE_MANQUANTE(4106, "La capacité doit être renseignée pour une réserve."),
+    IMPORT_SHP_ETUDE_DEBIT_MANQUANT_PA(4107, "Le débit doit être renseigné pour un PA."),
+    IMPORT_SHP_ETUDE_DEBIT_MANQUANT_RESERVE(4108, "Le débit doit être renseigné pour une réserve."),
+
+    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier", Status.FORBIDDEN),
 
     //
     // ********************************************************************************

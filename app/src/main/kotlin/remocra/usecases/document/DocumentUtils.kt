@@ -20,7 +20,7 @@ class DocumentUtils {
      * @throws SecurityException si le répertoire n'a pas pu être créé
      */
     @Throws(SecurityException::class)
-    private fun ensureDirectory(repertoire: String): File {
+    fun ensureDirectory(repertoire: String): File {
         val dir = File(repertoire)
         if (!dir.exists()) {
             // Créer le répertoire
@@ -82,5 +82,23 @@ class DocumentUtils {
         return Response.ok(file.readBytes())
             .header("Content-Disposition", "attachment; filename=\"${file.name}\"")
             .build()
+    }
+
+    /**
+     * Suppression d'un répertoire sur disque.
+     *
+     * @param repertoire : Nom du répertoire
+     * @throws Exception
+     */
+    @Throws(Exception::class)
+    fun deleteDirectory(repertoire: String) {
+        val repertoireFile = File(repertoire)
+
+        if (repertoireFile.canWrite()) {
+            // Suppression du fichier
+            repertoireFile.delete()
+        } else {
+            throw SecurityException("Impossible de supprimer le répertoire $repertoireFile")
+        }
     }
 }

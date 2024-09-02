@@ -69,7 +69,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
             return Result.NotFound(ndfe.message)
         } catch (rre: RemocraResponseException) {
             // Par propreté, on transforme en "vrai" Forbidden
-            if (rre.errorType.status == Response.Status.FORBIDDEN) {
+            if (rre.status == Response.Status.FORBIDDEN) {
                 return Result.Forbidden(rre.message)
             }
             return Result.Error(rre.message)
