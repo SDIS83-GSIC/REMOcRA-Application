@@ -289,4 +289,9 @@ class TourneeRepository
 
     fun batchInsertLTourneePei(listeTourneePei: List<LTourneePei>) =
         dsl.batch(listeTourneePei.map { DSL.insertInto(L_TOURNEE_PEI).set(dsl.newRecord(L_TOURNEE_PEI, it)) }).execute()
+
+    fun deleteTournee(tourneeId: UUID) =
+        dsl.deleteFrom(TOURNEE)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -24,6 +25,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.usecases.tournee.CreateTourneeUseCase
+import remocra.usecases.tournee.DeleteTourneeUseCase
 import remocra.usecases.tournee.FetchTourneeDataUseCase
 import remocra.usecases.tournee.UpdateLTourneePeiUseCase
 import remocra.usecases.tournee.UpdateTourneeUseCase
@@ -45,6 +47,9 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateTourneeUseCase: UpdateTourneeUseCase
+
+    @Inject
+    lateinit var deleteTourneeUseCase: DeleteTourneeUseCase
 
     @Inject
     lateinit var updateLTourneePeiUseCase: UpdateLTourneePeiUseCase
@@ -103,6 +108,15 @@ class TourneeEndPoint : AbstractEndpoint() {
         @FormParam("tourneeOrganismeId")
         lateinit var tourneeOrganismeId: UUID
     }
+
+    @DELETE
+    @Path("/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_A])
+    fun deleteTournee(@PathParam("tourneeId") tourneeId: UUID) =
+        deleteTourneeUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = tourneeRepository.getTourneeInfoById(tourneeId),
+        ).wrap()
 
     @GET
     @Path("/listPeiTournee/{tourneeId}")
