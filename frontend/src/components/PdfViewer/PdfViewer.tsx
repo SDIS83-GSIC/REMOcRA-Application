@@ -91,14 +91,16 @@ const PdfViewer = ({ url }: { url: string }) => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     renderToolbar,
   });
-
   return (
     <div className={styles.worker}>
       <Worker
-        workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`}
+        workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.js`}
       >
         <div className={styles.height100}>
           <Viewer
+            transformGetDocumentParams={(options) =>
+              Object.assign({}, options, { isEvalSupported: false })
+            }
             localization={fr_FR as LocalizationMap}
             fileUrl={url}
             plugins={[defaultLayoutPluginInstance]}
