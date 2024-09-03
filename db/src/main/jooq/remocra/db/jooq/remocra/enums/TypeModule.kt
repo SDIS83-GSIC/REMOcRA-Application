@@ -22,6 +22,7 @@ import javax.annotation.processing.Generated
 @Suppress("UNCHECKED_CAST")
 enum class TypeModule(@get:JvmName("literal") public val literal: String) : EnumType {
     DECI("DECI"),
+    COUVERTURE_HYDRAULIQUE("COUVERTURE_HYDRAULIQUE"),
     CARTOGRAPHIE("CARTOGRAPHIE"),
     OLDEBS("OLDEBS"),
     PERMIS("PERMIS"),

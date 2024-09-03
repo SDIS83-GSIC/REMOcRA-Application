@@ -77,6 +77,14 @@ function getLinks(
           link: URLS.PEI,
         },
       ];
+    case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
+      return [
+        {
+          aLeDroit: true, // TODO droit
+          label: "Liste des études",
+          link: URLS.LIST_ETUDE,
+        },
+      ];
     case TypeModuleRemocra.CARTOGRAPHIE:
     case TypeModuleRemocra.OLDEBS:
     case TypeModuleRemocra.PERMIS:
@@ -85,6 +93,8 @@ function getLinks(
     case TypeModuleRemocra.ADRESSES:
     case TypeModuleRemocra.RISQUES:
     case TypeModuleRemocra.ADMIN:
+    case TypeModuleRemocra.COURRIER:
+    case TypeModuleRemocra.DOCUMENT:
     case TypeModuleRemocra.PERSONNALISE:
   }
 }

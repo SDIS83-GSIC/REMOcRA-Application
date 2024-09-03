@@ -21,6 +21,7 @@ import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
+import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 
 export const URLS = {
@@ -28,6 +29,8 @@ export const URLS = {
   LOGOUT: url`/logout`,
   LIST_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/`,
   VIEW_COURRIER: url`/create-courrier/view-courrier`,
+
+  // Module DECI
   PEI: url`/deci/pei`,
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
@@ -37,15 +40,18 @@ export const URLS = {
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,
   VISITE: (peiId: string) => url`/deci/visite/` + peiId,
-  CREATE_ETUDE: url`/deci/etudes/create`,
-  UPDATE_ETUDE: (etudeId: string) => url`/deci/etudes/` + etudeId,
-  LIST_ETUDE: url`/deci/etudes/`,
   LIST_TOURNEE: url`/deci/tournee`,
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
+
+  // Module couverture hydraulique
+  CREATE_ETUDE: url`/couverture-hydraulique/etudes/create`,
+  UPDATE_ETUDE: (etudeId: string) =>
+    url`/couverture-hydraulique/etudes/` + etudeId,
+  LIST_ETUDE: url`/couverture-hydraulique/etudes/`,
   IMPORTER_COUVERTURE_HYDRAULIQUE: (etudeId: string) =>
-    url`/deci/etudes/import/` + etudeId,
+    url`/couverture-hydraulique/etudes/import/` + etudeId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -143,6 +149,12 @@ export default [
           <Authorization Component={Visite} droits={[TYPE_DROIT.VISITE_R]} />
         ),
       },
+    ],
+  },
+  {
+    path: "/couverture-hydraulique/",
+    element: <ModuleCouvertureHydraulique />,
+    children: [
       {
         path: "etudes",
         element: (
@@ -169,7 +181,12 @@ export default [
       },
       {
         path: "etudes/import/:etudeId",
-        element: <ImportShapeEtude />,
+        element: (
+          <Authorization
+            Component={ImportShapeEtude}
+            droits={[TYPE_DROIT.ETUDE_U]}
+          />
+        ),
       },
       {
         path: "indisponibilite-temporaire/",

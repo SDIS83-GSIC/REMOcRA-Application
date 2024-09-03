@@ -58,6 +58,7 @@ type ModuleRemocra = {
 
 export enum TypeModuleRemocra {
   DECI = "DECI",
+  COUVERTURE_HYDRAULIQUE = "COUVERTURE_HYDRAULIQUE",
   CARTOGRAPHIE = "CARTOGRAPHIE",
   OLDEBS = "OLDEBS",
   PERMIS = "PERMIS",
@@ -66,5 +67,7 @@ export enum TypeModuleRemocra {
   ADRESSES = "ADRESSES",
   RISQUES = "RISQUES",
   ADMIN = "ADMIN",
+  COURRIER = "COURRIER",
+  DOCUMENT = "DOCUMENT",
   PERSONNALISE = "PERSONNALISE",
 }
