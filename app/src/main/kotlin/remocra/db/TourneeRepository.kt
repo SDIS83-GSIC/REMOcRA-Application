@@ -16,11 +16,14 @@ import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
+import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
+import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -220,10 +223,16 @@ class TourneeRepository
         dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
-            L_TOURNEE_PEI.ORDRE,
+            NATURE.LIBELLE,
+            PEI.NUMERO_VOIE,
+            VOIE.LIBELLE,
+            COMMUNE.LIBELLE,
         )
             .from(L_TOURNEE_PEI)
             .join(PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
             .orderBy(L_TOURNEE_PEI.ORDRE)
             .fetchInto()
@@ -231,8 +240,20 @@ class TourneeRepository
     data class PeiTourneeForDnD(
         val peiId: UUID,
         val peiNumeroComplet: String,
-        val lTourneePeiOrdre: Int,
+        val natureLibelle: String,
+        val peiNumeroVoie: Int?,
+        val voieLibelle: String?,
+        val communeLibelle: String,
     )
+
+    fun getTourneeLibelleById(tourneeId: UUID): String =
+        dsl.select(TOURNEE.LIBELLE).from(TOURNEE).where(TOURNEE.ID.eq(tourneeId)).fetchSingleInto()
+
+    fun getTourneeOrganismeLibelleById(tourneeId: UUID): String =
+        dsl.select(ORGANISME.LIBELLE)
+            .from(TOURNEE)
+            .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
+            .where(TOURNEE.ID.eq(tourneeId)).fetchSingleInto()
 
     fun deleteLTourneePeiByTourneeId(tourneeId: UUID) =
         dsl.deleteFrom(L_TOURNEE_PEI)

@@ -19,6 +19,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.Params
 import remocra.db.TourneeRepository
+import remocra.db.TourneeRepository.PeiTourneeForDnD
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
@@ -107,7 +108,19 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/listPeiTournee/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_A])
     fun getListPeiTournee(@PathParam("tourneeId") tourneeId: UUID): Response =
-        Response.ok().entity(tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId)).build()
+        Response.ok().entity(
+            DataToSendTourneePei(
+                tourneeLibelle = tourneeRepository.getTourneeLibelleById(tourneeId = tourneeId),
+                organismeLibelle = tourneeRepository.getTourneeOrganismeLibelleById(tourneeId = tourneeId),
+                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId),
+            ),
+        ).build()
+
+    data class DataToSendTourneePei(
+        val tourneeLibelle: String,
+        val organismeLibelle: String,
+        val listPeiTournee: List<PeiTourneeForDnD>,
+    )
 
     @PUT
     @Path("/listPeiTournee/update/{tourneeId}")

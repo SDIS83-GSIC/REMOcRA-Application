@@ -72,3 +72,14 @@ export type PeiEntity = {
       isPhotoPei: boolean;
     }[];
 };
+
+/** Entity utilisé dans l'affichages des informations TourneePei */
+export type PeiInfoEntity = {
+  id: string;
+  peiNumeroComplet: string;
+  natureLibelle: string;
+  peiNumeroVoie?: number;
+  voieLibelle?: string;
+  communeLibelle: string;
+  tourneeId: string;
+};

@@ -1,29 +1,41 @@
-import { DndContext } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import SortableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.js";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
-
-interface PeiIdNumero {
-  id: string;
-  peiNumeroComplet: string;
-  tourneeId: number;
-}
+import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconTournee } from "../../components/Icon/Icon.tsx";
+import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 
 const TourneePei = () => {
   const { tourneeId } = useParams();
-  const [items, setItems] = useState<PeiIdNumero[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>(null);
-  const navigate = useNavigate();
 
-  const listPeiTournee = useGet(
+  const tourneePeiInfo = useGet(
     url`/api/tournee/listPeiTournee/` + tourneeId,
     {},
   );
+
+  const [data, setData] = useState<PeiInfoEntity[]>(null);
+  const [errorMessage, setErrorMessage] = useState<string>(null);
+  const navigate = useNavigate();
+
+  if (tourneePeiInfo.isResolved && data == null) {
+    setData(
+      tourneePeiInfo.data.listPeiTournee.map((e) => {
+        return {
+          id: e.peiId,
+          peiNumeroComplet: e.peiNumeroComplet,
+          natureLibelle: e.natureLibelle,
+          peiNumeroVoie: e.peiNumeroVoie,
+          voieLibelle: e.voieLibelle,
+          communeLibelle: e.communeLibelle,
+          tourneeId: tourneeId,
+        };
+      }),
+    );
+  }
 
   const execute = usePut(
     url`/api/tournee/listPeiTournee/update/` + tourneeId,
@@ -41,37 +53,12 @@ const TourneePei = () => {
     true,
   );
 
-  useEffect(() => {
-    if (listPeiTournee.isResolved) {
-      setItems(
-        listPeiTournee.data.map((e) => {
-          return {
-            id: e.peiId,
-            peiNumeroComplet: e.peiNumeroComplet,
-            tourneeId: tourneeId,
-          };
-        }),
-      );
-    }
-  }, [listPeiTournee.data, setItems]);
-
-  function dragEndEvent(e: DndContext) {
-    const { over, active } = e;
-    setItems((items) => {
-      return arrayMove(
-        items,
-        items.findIndex((item) => item.id === active.id),
-        items.findIndex((item) => item.id === over?.id),
-      );
-    });
-  }
-
   const submitList = () => {
     const formData = new FormData();
-    const formatedData = items.map((e, index) => {
+    const formatedData = data.map((e, index) => {
       return {
-        peiId: e.id,
         tourneeId: e.tourneeId,
+        peiId: e.id,
         lTourneePeiOrdre: index + 1,
       };
     });
@@ -81,31 +68,26 @@ const TourneePei = () => {
   };
 
   return (
-    <Container>
-      <h2>Mes PEI d&apos;une tournée</h2>
-      <Button onClick={submitList}>Enregistrer la liste</Button>
-      {/* Liste triable */}
-      {errorMessage !== null && <div>{errorMessage}</div>}
-      <div className="w-75">
-        <DndContext onDragEnd={dragEndEvent}>
-          <SortableContext items={items}>
-            {items.map((v, index) => (
-              <Row key={v.id}>
-                <Col>{index + 1}</Col>
-                <Col>
-                  {/* LA PROPRIÉTÉ V.ID DOIT OBLIGATOIREMENT S'APPELER ID */}
-                  <SortableTourneePei
-                    key={v.id}
-                    id={v.id}
-                    peiNumeroComplet={v.peiNumeroComplet}
-                  />
-                </Col>
-              </Row>
-            ))}
-          </SortableContext>
-        </DndContext>
-      </div>
-    </Container>
+    data && (
+      <Container>
+        <PageTitle
+          icon={<IconTournee />}
+          title={`Gestion des PEI de la tournée ${tourneePeiInfo.data.tourneeLibelle}`}
+        />
+        <Row className="my-3 mx-2">
+          <Col>
+            <div>Libelle tournée : {tourneePeiInfo.data.tourneeLibelle}</div>
+            <div>Organisme : {tourneePeiInfo.data.organismeLibelle}</div>
+          </Col>
+          <Col sm={"auto"}>
+            <Button onClick={submitList}>Enregistrer la liste</Button>
+          </Col>
+        </Row>
+        {/* Tableau triable */}
+        {errorMessage !== null && <div>{errorMessage}</div>}
+        <SortableTableTourneePei data={data} setData={setData} />
+      </Container>
+    )
   );
 };
 

@@ -22,3 +22,6 @@ export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
 
 export const IconTournee = () => <i className="fi fi-br-document" />;
 export const IconSortList = () => <i className="fi fi-br-apps-sort" />;
+export const IconDragNDrop = () => (
+  <i className="fi fi-br-grip-dots-vertical" />
+);
