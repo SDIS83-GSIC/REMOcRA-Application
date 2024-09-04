@@ -1,0 +1,5 @@
+CREATE TYPE remocra."DROIT_API" AS ENUM (
+    'RECEVOIR',
+    'TRANSMETTRE',
+    'ADMINISTRER'
+);
