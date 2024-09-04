@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.Public
 import remocra.usecases.organisme.OrganismeUseCase
 
 @Path("/organisme")
@@ -17,6 +18,7 @@ class OrganismeEndPoint {
 
     @GET
     @Path("/get-libelle-organisme")
+    @Public("Les organismes ne sont pas liés à un droit")
     @Produces(MediaType.APPLICATION_JSON)
     fun getOrganismeForSelect(): Response {
         return Response.ok(
@@ -27,6 +29,7 @@ class OrganismeEndPoint {
 
     @GET
     @Path("/get-list-autoriteDeci")
+    @Public("Les organismes ne sont pas liés à un droit")
     @Produces(MediaType.APPLICATION_JSON)
     fun getAutoriteDeciForSelect(): Response {
         return Response.ok(
@@ -37,6 +40,7 @@ class OrganismeEndPoint {
 
     @GET
     @Path("/get-list-servicePublicDeci")
+    @Public("Les organismes ne sont pas liés à un droit")
     @Produces(MediaType.APPLICATION_JSON)
     fun getServicePublicForSelect(): Response {
         return Response.ok(

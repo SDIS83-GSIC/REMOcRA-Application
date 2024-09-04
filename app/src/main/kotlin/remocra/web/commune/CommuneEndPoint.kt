@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.Public
 import remocra.usecases.commune.CommuneUseCase
 
 @Path("/commune")
@@ -17,6 +18,7 @@ class CommuneEndPoint {
 
     @GET
     @Path("/get-libelle-commune")
+    @Public("Les communes ne sont pas liés à un droit")
     @Produces(MediaType.APPLICATION_JSON)
     fun getCommuneForSelect(): Response {
         return Response.ok(

@@ -5,6 +5,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.core.Response
 import remocra.app.AppSettings
+import remocra.auth.Public
 
 @Path("/app-settings")
 class AppSettingsEndPoint {
@@ -13,6 +14,7 @@ class AppSettingsEndPoint {
 
     @GET
     @Path("/srid")
+    @Public("Le srid n'est pas lié à un droit")
     fun getSrid() =
         Response.ok(appSettings.sridInt).build()
 }

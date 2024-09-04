@@ -9,6 +9,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
+import remocra.auth.Public
 import remocra.data.GlobalData
 import remocra.data.enums.TypeDataCache
 import java.util.Locale
@@ -34,6 +35,7 @@ class NomenclaturesEndpoint {
      */
     @GET
     @Path("/{typeNomenclature}")
+    @Public("Les nomenclatures ne sont pas liés à un droit")
     fun getNomenclature(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
         return Response.ok(dataCacheProvider.getData(getTypeNomenclatureFromString(typeNomenclatureString))).build()
     }

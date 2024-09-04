@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
+import remocra.auth.Public
 import remocra.usecases.module.ModuleUseCase
 import java.io.File
 
@@ -21,6 +22,7 @@ class ModuleEndPoint {
 
     @GET
     @Path("/")
+    @Public("Les modules de la pages d'accueil sont accessibles à tous, la page d'accueil affichera les modules en fonction des droits")
     @Produces(MediaType.APPLICATION_JSON)
     fun getAll(): Response =
         Response.ok(moduleUseCase.execute(uriInfo)).build()
