@@ -62,7 +62,7 @@ class AuthorizationFilter : ContainerRequestFilter {
             // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
             val setDroitsPossibles = resourceInfo.resourceMethod.getAnnotation(RequireDroits::class.java).droits.toSet()
 
-            if (setDroitsPossibles.intersect(requestContext.securityContext.userInfo!!.droits.toSet()).isNotEmpty()) {
+            if (setDroitsPossibles.intersect(requestContext.securityContext.userInfo!!.droits.toSet()).isEmpty()) {
                 requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build())
             }
         }
