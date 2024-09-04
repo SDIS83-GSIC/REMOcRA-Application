@@ -6,9 +6,13 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { object } from "yup";
 import { PeiEntity } from "../../Entities/PeiEntity.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
@@ -24,6 +28,7 @@ import FormDocuments, {
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
+import { hasDroit } from "../../droits.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
@@ -227,6 +232,9 @@ type SelectDataType = {
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
+  // On récupère l'utilisateur pour prendre en compte les droits
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
   const {
     values,
     setValues,
@@ -341,6 +349,8 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   const { data: selectData }: { data: SelectDataType | undefined } =
     selectDataState;
 
+  const hasDroitCaracteristique =
+    isNew || hasDroit(user, TYPE_DROIT.PEI_CARACTERISTIQUES_U);
   return (
     selectData &&
     srid != null && (
@@ -370,6 +380,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                     setValues={setValues}
                     setFieldValue={setFieldValue}
                     isNew={isNew}
+                    user={user}
                   />
                 ),
               },
@@ -383,6 +394,8 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                     setFieldValue={setFieldValue}
                     geometrieData={geometrieState?.data}
                     srid={parseInt(srid)}
+                    isNew={isNew}
+                    user={user}
                   />
                 ),
               },
@@ -395,9 +408,14 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                       selectData={selectData}
                       setFieldValue={setFieldValue}
                       setValues={setValues}
+                      hasDroitCaracteristique={hasDroitCaracteristique}
                     />
                   ) : values.peiTypePei === TYPE_PEI.PENA ? (
-                    <FormPena values={values} setValues={setValues} />
+                    <FormPena
+                      values={values}
+                      setValues={setValues}
+                      hasDroitCaracteristique={hasDroitCaracteristique}
+                    />
                   ) : (
                     <div>Veuillez renseigner le type de PEI</div>
                   ),
@@ -436,6 +454,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                         }
                       </>
                     )}
+                    disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_U)}
                   />
                 ),
               },
@@ -497,12 +516,14 @@ const FormEntetePei = ({
   setValues,
   setFieldValue,
   isNew,
+  user,
 }: {
   values: PeiEntity;
   selectData: SelectDataType;
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   isNew: boolean;
+  user: UtilisateurEntity;
 }) => {
   const listNatureDeci: IdCodeLibelleType[] = ensureDataCache(
     TYPE_DATA_CACHE.NATURE_DECI,
@@ -520,6 +541,8 @@ const FormEntetePei = ({
     return { id: e.toString(), code: e.toString(), libelle: e.toString() };
   });
 
+  const hasDroitUpdate = isNew || hasDroit(user, TYPE_DROIT.PEI_U);
+
   return (
     listNatureDeci && (
       <>
@@ -529,6 +552,9 @@ const FormEntetePei = ({
               name="peiNumeroInterne"
               label="Numéro interne"
               required={false}
+              disabled={
+                !isNew && !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U)
+              }
             />
           </Col>
           <Col>
@@ -566,6 +592,7 @@ const FormEntetePei = ({
                 setOtherValues={() => {
                   setFieldValue("pibiDiametreId", null);
                 }}
+                disabled={!hasDroitUpdate}
               />
             )}
           </Col>
@@ -581,6 +608,7 @@ const FormEntetePei = ({
               )}
               required={true}
               setValues={setValues}
+              disabled={!hasDroitUpdate}
             />
           </Col>
           <Col>
@@ -593,6 +621,7 @@ const FormEntetePei = ({
               )}
               required={true}
               setValues={setValues}
+              disabled={!hasDroitUpdate}
             />
           </Col>
           <Col>
@@ -605,6 +634,7 @@ const FormEntetePei = ({
               )}
               required={false}
               setValues={setValues}
+              disabled={!hasDroitUpdate}
             />
           </Col>
         </Row>
@@ -623,6 +653,7 @@ const FormEntetePei = ({
                 setFieldValue("peiSiteId", null);
               }}
               setValues={setValues}
+              disabled={!hasDroitUpdate}
             />
           </Col>
           {(codeNatureDeci === TYPE_NATURE_DECI.PRIVE ||
@@ -640,6 +671,7 @@ const FormEntetePei = ({
                   )}
                   required={false}
                   setValues={setValues}
+                  disabled={!hasDroitUpdate}
                 />
               </Col>
               <Col>
@@ -656,6 +688,7 @@ const FormEntetePei = ({
                   )}
                   required={false}
                   setValues={setValues}
+                  disabled={!hasDroitUpdate}
                 />
               </Col>
             </>
@@ -673,6 +706,8 @@ const FormLocalisationPei = ({
   setFieldValue,
   geometrieData,
   srid,
+  isNew,
+  user,
 }: {
   values: PeiEntity;
   selectData: SelectDataType;
@@ -680,10 +715,14 @@ const FormLocalisationPei = ({
   setFieldValue: (value: string, newValue: any) => void;
   geometrieData: { coordonneeX: string; coordonneeY: string; srid: number }[];
   srid: number;
+  isNew: boolean;
+  user: UtilisateurEntity;
 }) => {
+  const hasDroitUpdate = isNew || hasDroit(user, TYPE_DROIT.PEI_U);
+
   return (
     <>
-      <h2>Coordonnées géographique</h2>
+      <h2>Coordonnées géographiques</h2>
       <Row className="mt-3">
         <Col>
           <Form.Select
@@ -713,6 +752,7 @@ const FormLocalisationPei = ({
               setFieldValue("coordonneeX", coordonneesToSave?.coordonneeX);
               setFieldValue("coordonneeY", coordonneesToSave?.coordonneeY);
             }}
+            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
           >
             {TypeSystemeSrid.map((e) => {
               if (e.actif || e.srid === srid) {
@@ -733,6 +773,7 @@ const FormLocalisationPei = ({
             label="Coordonnée X"
             name="coordonneeXToDisplay"
             required={true}
+            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
           />
         </Col>
         <Col>
@@ -740,6 +781,7 @@ const FormLocalisationPei = ({
             label="Coordonnée Y"
             name="coordonneeYToDisplay"
             required={true}
+            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
           />
         </Col>
       </Row>
@@ -755,6 +797,7 @@ const FormLocalisationPei = ({
             )}
             required={true}
             setValues={setValues}
+            disabled={!hasDroitUpdate}
           />
         </Col>
         <Col>
@@ -770,6 +813,7 @@ const FormLocalisationPei = ({
               )}
               required={false}
               setValues={setValues}
+              disabled={!hasDroitUpdate}
             />
           )}
         </Col>
@@ -780,10 +824,16 @@ const FormLocalisationPei = ({
             name="peiNumeroVoie"
             label="Numéro de voie"
             required={false}
+            disabled={!hasDroitUpdate}
           />
         </Col>
         <Col>
-          <TextInput name="peiSuffixeVoie" label="Suffixe" required={false} />
+          <TextInput
+            name="peiSuffixeVoie"
+            label="Suffixe"
+            required={false}
+            disabled={!hasDroitUpdate}
+          />
         </Col>
         <Col>
           <SelectForm
@@ -797,10 +847,15 @@ const FormLocalisationPei = ({
             )}
             required={true}
             setValues={setValues}
+            disabled={!hasDroitUpdate}
           />
         </Col>
         <Col>
-          <CheckBoxInput name="peiEnFace" label="Situé en face ?" />
+          <CheckBoxInput
+            name="peiEnFace"
+            label="Situé en face ?"
+            disabled={!hasDroitUpdate}
+          />
         </Col>
       </Row>
       <Row className="mt-3 d-flex align-items-center">
@@ -812,6 +867,7 @@ const FormLocalisationPei = ({
             valueId={values.peiNiveauId}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitUpdate}
           />
         </Col>
         <Col>
@@ -826,6 +882,7 @@ const FormLocalisationPei = ({
             )}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitUpdate}
           />
         </Col>
         <Col>
@@ -836,6 +893,7 @@ const FormLocalisationPei = ({
             valueId={values.peiDomaineId}
             required={true}
             setValues={setValues}
+            disabled={!hasDroitUpdate}
           />
         </Col>
       </Row>
@@ -845,6 +903,7 @@ const FormLocalisationPei = ({
             name="peiComplementAdresse"
             label="Complément d'adresse"
             required={false}
+            disabled={!hasDroitUpdate}
           />
         </Col>
       </Row>
@@ -857,11 +916,13 @@ const FormPibi = ({
   selectData,
   setValues,
   setFieldValue,
+  hasDroitCaracteristique,
 }: {
   values: PeiEntity;
   selectData: SelectDataType;
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
+  hasDroitCaracteristique: boolean;
 }) => {
   const idMarque = values.pibiModeleId
     ? selectData.listModele.find((e) => e.id === values.pibiModeleId)?.marqueId
@@ -889,6 +950,7 @@ const FormPibi = ({
               (e) => e.id === values.pibiDiametreId,
             )}
             required={false}
+            disabled={!hasDroitCaracteristique}
             setValues={setValues}
           />
         </Col>
@@ -896,15 +958,25 @@ const FormPibi = ({
           <CheckBoxInput
             name="pibiDispositifInviolabilite"
             label="Dispositif d'inviolabilité ?"
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
-          <CheckBoxInput name="pibiRenversable" label="Renversable ?" />
+          <CheckBoxInput
+            name="pibiRenversable"
+            label="Renversable ?"
+            disabled={!hasDroitCaracteristique}
+          />
         </Col>
       </Row>
       <Row className="mt-3 d-flex align-items-center">
         <Col>
-          <TextInput name="pibiNumeroScp" label="Numéro SCP" required={false} />
+          <TextInput
+            name="pibiNumeroScp"
+            label="Numéro SCP"
+            required={false}
+            disabled={!hasDroitCaracteristique}
+          />
         </Col>
         <Col>
           <SelectForm
@@ -916,6 +988,7 @@ const FormPibi = ({
             )}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
       </Row>
@@ -931,6 +1004,7 @@ const FormPibi = ({
             setOtherValues={() => {
               setFieldValue("pibiModeleId", null);
             }}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -946,6 +1020,7 @@ const FormPibi = ({
             )}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -953,6 +1028,7 @@ const FormPibi = ({
             name="peiAnneeFabrication"
             label="Année de fabrication"
             required={false}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
       </Row>
@@ -968,6 +1044,7 @@ const FormPibi = ({
             )}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -978,6 +1055,7 @@ const FormPibi = ({
             valueId={values.pibiTypeReseauId}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
       </Row>
@@ -990,6 +1068,7 @@ const FormPibi = ({
             valueId={values.pibiTypeCanalisationId}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -997,6 +1076,7 @@ const FormPibi = ({
             name="pibiDiametreCanalisation"
             label="Diamètre de canalisation"
             required={false}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -1012,13 +1092,22 @@ const FormPibi = ({
             valueId={values.pibiReservoirId}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
-          <CheckBoxInput name="pibiSurpresse" label="Réseau surpressé ?" />
+          <CheckBoxInput
+            name="pibiSurpresse"
+            label="Réseau surpressé ?"
+            disabled={!hasDroitCaracteristique}
+          />
         </Col>
         <Col>
-          <CheckBoxInput name="pibiAdditive" label="Réseau additivé ?" />
+          <CheckBoxInput
+            name="pibiAdditive"
+            label="Réseau additivé ?"
+            disabled={!hasDroitCaracteristique}
+          />
         </Col>
       </Row>
     </>
@@ -1028,9 +1117,11 @@ const FormPibi = ({
 const FormPena = ({
   values,
   setValues,
+  hasDroitCaracteristique,
 }: {
   values: PeiEntity;
   setValues: (e: any) => void;
+  hasDroitCaracteristique: boolean;
 }) => {
   return (
     <>
@@ -1040,12 +1131,14 @@ const FormPena = ({
           <CheckBoxInput
             name="penaCapaciteIllimitee"
             label="Capacité illimitée ?"
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="penaCapaciteIncertaine"
             label="Capacité incertaine ?"
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
       </Row>
@@ -1055,6 +1148,7 @@ const FormPena = ({
             name="penaCapacite"
             label="Capacité en m³"
             required={false}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -1062,6 +1156,7 @@ const FormPena = ({
             name="penaQuantiteAppoint"
             label="Quantité d'appoint en m³/h"
             required={false}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
@@ -1072,6 +1167,7 @@ const FormPena = ({
             valueId={values.penaMateriauId}
             required={false}
             setValues={setValues}
+            disabled={!hasDroitCaracteristique}
           />
         </Col>
       </Row>

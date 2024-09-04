@@ -9,6 +9,7 @@ type InputType = {
   required?: boolean;
   readOnly?: boolean;
   value?: string;
+  disabled?: boolean;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -64,6 +65,7 @@ export const TextInput = ({
   label,
   required = true,
   readOnly = false,
+  disabled = false,
   value,
 }: InputType) => {
   const [field, meta] = useField(name);
@@ -75,6 +77,7 @@ export const TextInput = ({
         required={required}
         type="text"
         readOnly={readOnly}
+        disabled={disabled}
         defaultValue={value ?? ""}
         {...field}
       />
@@ -87,6 +90,7 @@ export const TextAreaInput = ({
   label,
   required = true,
   readOnly = false,
+  disabled = false,
   value,
 }: InputType) => {
   const [field, meta] = useField(name);
@@ -99,6 +103,7 @@ export const TextAreaInput = ({
         as="textarea"
         rows={3}
         readOnly={readOnly}
+        disabled={disabled}
         defaultValue={value ?? ""}
         {...field}
       />
@@ -144,6 +149,7 @@ export const FileInput = ({
   label,
   required = true,
   readOnly = false,
+  disabled = false,
   accept,
   onChange,
 }: FileInputType) => {
@@ -157,6 +163,7 @@ export const FileInput = ({
         type="file"
         accept={accept}
         readOnly={readOnly}
+        disabled={disabled}
         onChange={onChange}
       />
     </DivWithError>

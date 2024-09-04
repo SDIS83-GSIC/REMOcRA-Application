@@ -23,11 +23,13 @@ const FormDocuments = ({
   setFieldValue,
   otherFormParam,
   defaultOtherProperties,
+  disabled,
 }: {
   documents: Document[];
   defaultOtherProperties: any;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   otherFormParam: (index: number, listeElements: any[]) => ReactNode;
+  disabled: boolean;
 }) => {
   function formDocumentsToRepeat(index: number, listeElements: any[]) {
     return (
@@ -67,6 +69,7 @@ const FormDocuments = ({
           });
           setFieldValue("documents", documents);
         }}
+        disabled={disabled}
       />
       <AddRemoveComponent
         name="documents"
