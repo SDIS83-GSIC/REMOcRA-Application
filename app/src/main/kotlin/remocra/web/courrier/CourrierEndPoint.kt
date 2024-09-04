@@ -12,7 +12,9 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecases.courrier.CourrierGenerator
 import remocra.usecases.courrier.CourrierRopGenerator
 import remocra.usecases.courrier.GetCourriersWithParametresUseCase
@@ -35,6 +37,7 @@ class CourrierEndPoint {
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.COURRIER_C])
     fun genererCourrier(
         parametreCourrierInput: ParametreCourrierInput,
     ): Response {
@@ -61,6 +64,7 @@ class CourrierEndPoint {
 
     @GET
     @Path("/parametres")
+    @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.APPLICATION_JSON)
     fun getParametreByCourrier(): Response {
         return Response.ok(getCourriersWithParametresUseCase.execute()).build()
@@ -68,6 +72,7 @@ class CourrierEndPoint {
 
     @GET
     @Path("/get-courrier")
+    @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.MEDIA_TYPE_WILDCARD)
     fun getUriCourrier(@QueryParam("courrierPath") courrierPath: String?): Response {
         return Response.ok(

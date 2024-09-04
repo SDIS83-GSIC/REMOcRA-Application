@@ -1,4 +1,4 @@
-package remocra.web.pei
+package remocra.usecases.pei
 
 import com.google.inject.Inject
 import remocra.app.AppSettings

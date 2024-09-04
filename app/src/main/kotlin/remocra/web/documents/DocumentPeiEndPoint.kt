@@ -9,6 +9,8 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
+import remocra.auth.RequireDroits
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecases.document.DocumentPeiUseCase
 import java.io.File
 import java.nio.file.Paths
@@ -25,6 +27,7 @@ class DocumentPeiEndPoint {
 
     @GET
     @Path("/{peiId}")
+    @RequireDroits([Droit.PEI_R, Droit.PEI_U, Droit.PEI_C])
     fun getDocumentByPeiId(
         @PathParam("peiId")
         peiId: UUID,

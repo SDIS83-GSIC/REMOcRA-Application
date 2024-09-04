@@ -23,8 +23,6 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecases.AbstractCUDUseCase
-import remocra.web.pei.CalculDispoUseCase
-import remocra.web.pei.NumerotationUseCase
 import java.time.ZonedDateTime
 
 /**
