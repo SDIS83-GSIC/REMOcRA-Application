@@ -16,6 +16,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     BAD_UUID(100, "Cette chaîne ne représente pas un UUID valide"),
 
     PEI_INEXISTANT(1000, "Le numéro spécifié ne correspond à aucun hydrant"),
+    PEI_FORBIDDEN_C(1001, "Vous n'avez pas les droits de création de PEI.", Status.FORBIDDEN),
+    PEI_FORBIDDEN_U(1002, "Vous n'avez pas les droits de modification de PEI", Status.FORBIDDEN),
+
     FORBIDDEN(1300, "Le numéro spécifié ne correspond à aucun hydrant qui vous est accessible", Status.FORBIDDEN),
     BAD_PATTERN(1010, "La date spécifiée n'existe pas ou ne respecte pas le format YYYY-MM-DD hh:mm"),
 

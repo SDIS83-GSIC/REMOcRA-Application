@@ -4,14 +4,18 @@ import com.google.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
+import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AireAspirationRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecases.AbstractCUDUseCase
 import remocra.web.pei.PenaEndPoint
 import java.time.ZonedDateTime
@@ -20,13 +24,19 @@ import java.util.UUID
 class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 
+    @Inject lateinit var appSettings: AppSettings
+
     data class PenaAspirationData(
         val listeAireAspiration: List<PenaEndPoint.AireAspirationUpsert>,
         val penaId: UUID,
     )
 
     override fun checkDroits(userInfo: UserInfo) {
-        // TODO
+        if (!userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) ||
+            !userInfo.droits.contains(Droit.PEI_U)
+        ) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
+        }
     }
 
     override fun postEvent(element: PenaAspirationData, userInfo: UserInfo) {
@@ -53,9 +63,8 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
                     penaAspirationTypePenaAspirationId = it.typePenaAspirationId,
                     penaAspirationNumero = it.numero,
                     penaAspirationPenaId = element.penaId,
-                    // TODO SRID
                     penaAspirationGeometrie = if (!it.coordonneeX.isNullOrEmpty() && !it.coordonneeY.isNullOrEmpty() && it.estDeporte) {
-                        GeometryFactory(PrecisionModel(), 2154).createPoint(Coordinate(it.coordonneeX.toDouble(), it.coordonneeY.toDouble()))
+                        GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(it.coordonneeX.toDouble(), it.coordonneeY.toDouble()))
                     } else {
                         null
                     },
