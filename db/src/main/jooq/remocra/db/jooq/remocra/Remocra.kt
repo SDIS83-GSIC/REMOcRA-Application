@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
+import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
@@ -171,6 +172,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
      */
     val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei get() = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
+
+    /**
+     * The table <code>remocra.l_modele_courrier_profil_droit</code>.
+     */
+    val L_MODELE_COURRIER_PROFIL_DROIT: LModeleCourrierProfilDroit get() = LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT
 
     /**
      * The table <code>remocra.l_pei_anomalie</code>.
@@ -392,6 +398,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactRole.L_CONTACT_ROLE,
         LDiametreNature.L_DIAMETRE_NATURE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
+        LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,

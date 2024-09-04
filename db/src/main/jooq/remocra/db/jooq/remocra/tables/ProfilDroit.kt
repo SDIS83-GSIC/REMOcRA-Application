@@ -26,10 +26,13 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PROFIL_DROIT_CODE_KEY
+import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
+import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -134,6 +137,23 @@ open class ProfilDroit(
     override fun getPrimaryKey(): UniqueKey<Record> = PROFIL_DROIT_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PROFIL_DROIT_PROFIL_DROIT_CODE_KEY)
 
+    private lateinit var _lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_modele_courrier_profil_droit</code> table
+     */
+    fun lModeleCourrierProfilDroit(): LModeleCourrierProfilDroitPath {
+        if (!this::_lModeleCourrierProfilDroit.isInitialized) {
+            _lModeleCourrierProfilDroit = LModeleCourrierProfilDroitPath(this, null, L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY.inverseKey)
+        }
+
+        return _lModeleCourrierProfilDroit
+    }
+
+    val lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
+        get(): LModeleCourrierProfilDroitPath = lModeleCourrierProfilDroit()
+
     private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
 
     /**
@@ -150,6 +170,13 @@ open class ProfilDroit(
 
     val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
         get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.modele_courrier</code> table
+     */
+    val modeleCourrier: ModeleCourrierPath
+        get(): ModeleCourrierPath = lModeleCourrierProfilDroit().modeleCourrier()
     override fun `as`(alias: String): ProfilDroit = ProfilDroit(DSL.name(alias), this)
     override fun `as`(alias: Name): ProfilDroit = ProfilDroit(alias, this)
     override fun `as`(alias: Table<*>): ProfilDroit = ProfilDroit(alias.qualifiedName, this)
