@@ -25,7 +25,10 @@ import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
+import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -33,10 +36,12 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.RESERVOIR
 import remocra.db.jooq.remocra.tables.references.ROLE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.VISITE
 import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
 import remocra.db.jooq.remocra.tables.references.VOIE
@@ -476,4 +481,25 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
         dsl.selectFrom(COMMUNE)
             .where(COMMUNE.ID.eq(communeId))
             .fetchSingleInto()
+
+    fun checkProfilDroitRop(utilisateurId: UUID) =
+        dsl.fetchExists(
+            dsl.select(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID)
+                .from(L_MODELE_COURRIER_PROFIL_DROIT)
+                .join(MODELE_COURRIER)
+                .on(MODELE_COURRIER.ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID))
+                .join(PROFIL_DROIT)
+                .on(PROFIL_DROIT.ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID))
+                .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+                .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
+                .join(UTILISATEUR)
+                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                .join(ORGANISME)
+                .on(
+                    ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)
+                        .and(UTILISATEUR.ORGANISME_ID.eq(ORGANISME.ID)),
+                )
+                .where(UTILISATEUR.ID.eq(utilisateurId))
+                .and(MODELE_COURRIER.CODE.eq(GlobalConstants.COURRIER_CODE_ROP)),
+        )
 }

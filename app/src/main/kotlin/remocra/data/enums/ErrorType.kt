@@ -47,6 +47,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_TYPE_FORBIDDEN(2200, "Ce type de visite n'est pas accessible pour votre organisme sur ce PEI", Status.FORBIDDEN),
     VISITE_ORGANISME_FORBIDDEN(2201, "Votre organisme n'est pas autorisé à modifier une visite de ce type sur ce PEI", Status.FORBIDDEN),
 
+    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier"),
+
     ;
 
     override fun toString(): String {

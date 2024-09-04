@@ -9,12 +9,14 @@ import remocra.auth.UserInfo
 import remocra.data.courrier.parametres.CourrierParametresRopData
 import remocra.data.courrier.template.CourrierRopData
 import remocra.data.enums.CodeSdis
+import remocra.data.enums.ErrorType
 import remocra.db.CourrierRopRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
+import remocra.exception.RemocraResponseException
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -44,7 +46,9 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
     }
 
     override fun checkProfilDroit(userInfo: UserInfo) {
-        // TODO get profil droit
+        if (!courrierRopRepository.checkProfilDroitRop(userInfo.idUtilisateur)) {
+            throw RemocraResponseException(ErrorType.MODELE_COURRIER_DROIT_FORBIDDEN)
+        }
     }
 
     override fun execute(element: CourrierParametresRopData, userInfo: UserInfo): CourrierRopData {
