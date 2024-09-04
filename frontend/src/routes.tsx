@@ -10,6 +10,8 @@ import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import ListEtude from "./pages/Etude/ListEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
+import { Authorization } from "./droits.tsx";
+import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -27,39 +29,82 @@ export const URLS = {
 export default [
   {
     path: "/",
-    element: <Accueil />,
+    element: (
+      <Authorization Component={Accueil} droits={Object.values(TYPE_DROIT)} />
+    ),
   },
   {
     path: "/deci/",
-    element: <ModuleDeci />,
+    element: (
+      <Authorization
+        Component={ModuleDeci}
+        droits={Object.values(TYPE_DROIT)}
+      />
+    ),
     children: [
-      { path: "pei", element: <AccueilPei /> },
+      {
+        path: "pei",
+        element: (
+          <Authorization Component={AccueilPei} droits={[TYPE_DROIT.PEI_R]} />
+        ),
+      },
       {
         path: "pei/:peiId",
-        element: <UpdatePei />,
+        element: (
+          <Authorization
+            Component={UpdatePei}
+            droits={[
+              TYPE_DROIT.PEI_U,
+              TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+              TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+              TYPE_DROIT.PEI_DEPLACEMENT_U,
+            ]}
+          />
+        ),
       },
       {
         path: "pei/create",
-        element: <CreatePei />,
+        element: (
+          <Authorization Component={CreatePei} droits={[TYPE_DROIT.PEI_C]} />
+        ),
       },
       {
         path: "pena-aspiration/:penaId",
-        element: <AireAspiration />,
+        element: (
+          <Authorization
+            Component={AireAspiration}
+            droits={[TYPE_DROIT.PEI_CARACTERISTIQUES_U, TYPE_DROIT.PEI_U]}
+          />
+        ),
       },
       {
         path: "visite/:peiId",
-        element: <Visite />,
+        element: (
+          <Authorization Component={Visite} droits={[TYPE_DROIT.VISITE_R]} />
+        ),
       },
       {
         path: "etudes",
-        element: <ListEtude />,
+        element: (
+          <Authorization Component={ListEtude} droits={[TYPE_DROIT.ETUDE_R]} />
+        ),
       },
     ],
   },
   {
     path: "/create-courrier/",
     element: <GenereCourrier />,
-    children: [{ path: "view-courrier", element: <ViewCourrier /> }],
+    children: [
+      {
+        path: "view-courrier",
+        element: (
+          <Authorization
+            Component={ViewCourrier}
+            droits={[TYPE_DROIT.COURRIER_C]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "*",

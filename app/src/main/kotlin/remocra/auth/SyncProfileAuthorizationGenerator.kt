@@ -33,7 +33,7 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
             )
 
             // On remplit ses droits
-            userProfile.droits = droitsRepository.getDroitsFromUser(userProfile.idUtilisateur)
+            userProfile.droits = droitsRepository.getDroitsFromUser(userProfile.utilisateurId)
 
             // On remplit ses organismes affiliés
             utilisateurOrganismesUseCase.execute(userProfile)

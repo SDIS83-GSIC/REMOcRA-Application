@@ -51,7 +51,7 @@ class UpsertDocumentPeiUseCase : AbstractCUDUseCase<UpsertDocumentPeiUseCase.Doc
                 pojoId = element.peiId,
                 typeOperation = TypeOperation.UPDATE,
                 typeObjet = TypeObjet.DOCUMENT_PEI,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.idUtilisateur, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                 date = ZonedDateTime.now(clock),
             ),
         )

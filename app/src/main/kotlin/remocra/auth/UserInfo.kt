@@ -6,12 +6,13 @@ import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import java.security.Principal
 import java.util.UUID
 
-class UserInfo : KeycloakOidcProfile() {
+class
+UserInfo : KeycloakOidcProfile() {
     lateinit var utilisateur: Utilisateur
 
     lateinit var droits: Collection<Droit>
 
-    val idUtilisateur: UUID
+    val utilisateurId: UUID
         get() = UUID.fromString(subject)
 
     val prenom: String
@@ -35,10 +36,12 @@ class UserInfo : KeycloakOidcProfile() {
 
     fun asJavascriptUserProfile(): JavascriptUserProfile {
         return JavascriptUserProfile(
-            idUtilisateur = this.idUtilisateur,
+            utilisateurId = this.utilisateurId,
             nom = this.familyName,
             prenom = this.firstName,
             username = this.username,
+            organismeId = this.organismeId,
+            droits = this.droits,
         )
     }
 
@@ -47,9 +50,11 @@ class UserInfo : KeycloakOidcProfile() {
      * puis passée au javascript pour utilisation directe.
      */
     class JavascriptUserProfile(
-        val idUtilisateur: UUID,
+        val utilisateurId: UUID,
         val nom: String,
         val prenom: String,
         val username: String,
+        val organismeId: UUID?,
+        val droits: Collection<Droit>,
     )
 }
