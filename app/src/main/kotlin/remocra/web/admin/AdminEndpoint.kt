@@ -7,6 +7,8 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.RequireDroits
+import remocra.db.jooq.remocra.enums.Droit
 
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
@@ -17,12 +19,14 @@ class AdminEndpoint {
 
     @GET
     @Path("/parametres")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     fun getParametresData(): Response {
         return Response.ok(parametresUseCase.getParametresData()).build()
     }
 
     @PUT
     @Path("/parametres")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     fun updateParametres(parametres: ParametresData): Response {
         return Response.ok(parametresUseCase.updateParametres(parametres)).build()
     }
