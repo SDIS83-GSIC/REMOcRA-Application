@@ -19,12 +19,15 @@ import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
+import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -219,10 +222,32 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
 
+    fun getPeiForDnD(tourneeId: UUID): List<PeiTourneeForDnD> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+            NATURE_DECI.CODE,
+            NATURE.LIBELLE,
+            PEI.NUMERO_VOIE,
+            VOIE.LIBELLE,
+            COMMUNE.LIBELLE,
+        )
+            .from(TOURNEE)
+            .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
+            .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .join(PEI).on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .where(TOURNEE.ID.eq(tourneeId))
+            .fetchInto()
+
     fun getAllPeiByTourneeIdForDnD(tourneeId: UUID): List<PeiTourneeForDnD> =
         dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
+            NATURE_DECI.CODE,
             NATURE.LIBELLE,
             PEI.NUMERO_VOIE,
             VOIE.LIBELLE,
@@ -230,6 +255,7 @@ class TourneeRepository
         )
             .from(L_TOURNEE_PEI)
             .join(PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -240,6 +266,7 @@ class TourneeRepository
     data class PeiTourneeForDnD(
         val peiId: UUID,
         val peiNumeroComplet: String,
+        val natureDeciCode: String,
         val natureLibelle: String,
         val peiNumeroVoie: Int?,
         val voieLibelle: String?,

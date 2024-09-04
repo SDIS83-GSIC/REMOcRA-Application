@@ -77,6 +77,7 @@ export type PeiEntity = {
 export type PeiInfoEntity = {
   id: string;
   peiNumeroComplet: string;
+  natureDeciCode: string;
   natureLibelle: string;
   peiNumeroVoie?: number;
   voieLibelle?: string;

@@ -27,7 +27,7 @@ const UpdateTournee = () => {
       isMultipartFormData={false}
       submitUrl={`/api/tournee/updateTournee`}
       prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={URLS.TOURNEE}
+      redirectUrl={URLS.LIST_TOURNEE}
     >
       <TourneeForm tourneeLibelle={data.tourneeLibelle} />
     </MyFormik>

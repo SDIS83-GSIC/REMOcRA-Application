@@ -12,7 +12,7 @@ const CreateTournee = () => {
       isPost={true}
       submitUrl={`/api/tournee/createTournee`}
       prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={URLS.TOURNEE}
+      redirectUrl={URLS.LIST_TOURNEE}
     >
       <TourneeForm isCreation={true} />
     </MyFormik>

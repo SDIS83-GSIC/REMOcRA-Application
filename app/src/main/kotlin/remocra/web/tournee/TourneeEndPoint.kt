@@ -122,6 +122,12 @@ class TourneeEndPoint : AbstractEndpoint() {
         val listPeiTournee: List<PeiTourneeForDnD>,
     )
 
+    @GET
+    @Path("/listPei/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_A])
+    fun getPeiForDnD(@PathParam("tourneeId") tourneeId: UUID): Response =
+        Response.ok().entity(tourneeRepository.getPeiForDnD(tourneeId)).build()
+
     @PUT
     @Path("/listPeiTournee/update/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_A])
