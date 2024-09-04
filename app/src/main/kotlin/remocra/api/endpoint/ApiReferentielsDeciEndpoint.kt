@@ -1,10 +1,8 @@
 package remocra.api.endpoint
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import fr.sdis83.remocra.authn.ApiRole
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -14,7 +12,9 @@ import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
+import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.web.limitOffset
 
 @Path("/api/deci/referentiel")
@@ -28,7 +28,7 @@ class ApiReferentielsDeciEndpoint {
     @GET
     @Path("/naturesDECI")
     @Operation(summary = "Retourne les types de DECI applicables sur les PEI (publique, privée, privée sous convention). Attention la nature DECI peut être différente du domaine", tags = ["DECI - Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielNaturesDECI(
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
@@ -44,7 +44,7 @@ class ApiReferentielsDeciEndpoint {
     @GET
     @Path("/niveaux")
     @Operation(summary = "Retourne les valeurs de positionnement par rapport au sol possibles pour un PEI", tags = ["DECI - Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getReferentielNiveaux(
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
@@ -65,7 +65,7 @@ class ApiReferentielsDeciEndpoint {
             "la nature de la DECI",
         tags = ["DECI - Référentiels communs"],
     )
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielDomaines(
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,

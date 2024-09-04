@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import org.slf4j.LoggerFactory
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.DroitApi
 
 /**
  * Annotation permettant de définir les droits d'accès que l'utilisateur connecté doit posséder pour exécuter cette fonction.
@@ -17,6 +18,13 @@ import remocra.db.jooq.remocra.enums.Droit
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class RequireDroits(val droits: Array<Droit>)
+
+/**
+ * Annotation permettant de définir les droits d'accès à l'API
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class RequireDroitsApi(val droitsApi: Array<DroitApi>)
 
 /**
  * Permet de vérifier que la ressource ciblée est bien accessible au demandeur.
@@ -34,7 +42,7 @@ class AuthorizationFilter : ContainerRequestFilter {
 
     override fun filter(requestContext: ContainerRequestContext) {
         val isPublic = resourceInfo.resourceMethod.isAnnotationPresent(Public::class.java)
-        val isRequireDroitPresent = resourceInfo.resourceMethod.isAnnotationPresent(RequireDroits::class.java)
+        val isRequireDroitPresent = resourceInfo.resourceMethod.isAnnotationPresent(RequireDroits::class.java) || resourceInfo.resourceMethod.isAnnotationPresent(RequireDroitsApi::class.java)
         if (!isPublic && !isRequireDroitPresent) {
             // Si l'annotation n'existe pas sur une ressource non publique, on refuse de la servir
             logger.error("Pas de contexte d'autorisation défini pour la méthode ${resourceInfo.resourceMethod}")

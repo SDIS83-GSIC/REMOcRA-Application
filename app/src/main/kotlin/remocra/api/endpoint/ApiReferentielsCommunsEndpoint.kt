@@ -1,9 +1,7 @@
 package remocra.api.endpoint
 
-import fr.sdis83.remocra.authn.ApiRole
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -13,10 +11,12 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.RequireDroitsApi
 import remocra.db.CommuneRepository
 import remocra.db.OrganismeRepository
 import remocra.db.TypeOrganismeRepository
 import remocra.db.VoieRepository
+import remocra.db.jooq.remocra.enums.DroitApi
 
 @Path("/referentiel")
 @Produces("application/json; charset=UTF-8")
@@ -37,7 +37,7 @@ class ApiReferentielsCommunsEndpoint {
     @GET
     @Path("/typesOrganismes")
     @Operation(summary = "Retourne les types d'organismes susceptibles d'exploiter REMOcRA", tags = ["Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getRefentielNatureOrganismes(
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
@@ -50,7 +50,7 @@ class ApiReferentielsCommunsEndpoint {
     @GET
     @Path("/communes")
     @Operation(summary = "Retourne la liste des communes", tags = ["Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getRefentielCommunes(
         @Parameter(description = "Code INSEE de la commune")
         @QueryParam("codeInsee") codeInsee: String?,
@@ -67,7 +67,7 @@ class ApiReferentielsCommunsEndpoint {
     @GET
     @Path("/voies/{codeInsee}")
     @Operation(summary = "Retourne les voies d'une commune donnée", tags = ["Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getRefentielVoies(
         @Parameter(description = "Code INSEE de la commune", required = true)
         @PathParam("codeInsee") codeInsee: String?,
@@ -84,7 +84,7 @@ class ApiReferentielsCommunsEndpoint {
     @GET
     @Path("/organismes")
     @Operation(summary = "Retourne les organismes susceptibles d'exploiter REMOcRA (utilisateurs nommés avec accès à l'interface applicative ou exploitation de l'API)", tags = ["Référentiels communs"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getRefentielOrganismes(
         @Parameter(description = "Code de la nature de l'organisme")
         @QueryParam("codeType") codeTypeOrganisme: String?,

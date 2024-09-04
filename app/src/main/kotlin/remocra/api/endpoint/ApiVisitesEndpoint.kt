@@ -1,10 +1,8 @@
 package remocra.api.endpoint
 
-import fr.sdis83.remocra.authn.ApiRole
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
@@ -17,7 +15,9 @@ import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.api.usecase.ApiVisitesUseCase
+import remocra.auth.RequireDroitsApi
 import remocra.data.ApiVisiteFormData
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.exception.RemocraResponseException
 import remocra.web.AbstractEndpoint
 import java.io.IOException
@@ -41,7 +41,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
             "du PEI",
         tags = ["DECI - Visites"],
     )
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(IOException::class)
     fun getPeiVisites(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
@@ -66,7 +66,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     // TODO actuellement on retourne du 200 (par simplicité), voir si on veut réellement une 201 comme en V2 ou pas
     @ApiResponse(responseCode = "201", description = "Visite créée avec succès")
     @ApiResponse(responseCode = "400", description = "Erreur à la saisie")
-    @RolesAllowed(ApiRole.RoleType.TRANSMETTRE)
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
     @Throws(RemocraResponseException::class)
     fun addVisite(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
@@ -78,7 +78,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     @GET
     @Path("/{idVisite}")
     @Operation(summary = "Retourne l'information détaillée d'une visite spécifique dont les éventuelles informations de débit et pressions", tags = ["DECI - Visites"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(IOException::class)
     fun getVisiteSpecifique(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
@@ -92,7 +92,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     @Operation(summary = "Modifie les informations relatives à une visite spécifique", tags = ["DECI - Visites"])
     @ApiResponse(responseCode = "200", description = "Visite modifiée avec succès")
     @ApiResponse(responseCode = "400", description = "Erreur à la saisie")
-    @RolesAllowed(ApiRole.RoleType.TRANSMETTRE)
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
     @Throws(RemocraResponseException::class)
     fun updateVisite(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
@@ -107,7 +107,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     @Operation(summary = "Supprime une visite spécifique", tags = ["DECI - Visites"])
     @ApiResponse(responseCode = "200", description = "Visite supprimée avec succès")
     @ApiResponse(responseCode = "400", description = "Erreur à la saisie")
-    @RolesAllowed(ApiRole.RoleType.TRANSMETTRE)
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
     fun deleteVisite(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,

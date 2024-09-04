@@ -1,11 +1,9 @@
 package remocra.api.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import fr.sdis83.remocra.authn.ApiRole
 import fr.sdis83.remocra.authn.ApiUserInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
 import jakarta.inject.Provider
 import jakarta.validation.constraints.Max
@@ -21,9 +19,11 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.api.CurrentApiUser
 import remocra.api.usecase.ApiPeiUseCase
+import remocra.auth.RequireDroitsApi
 import remocra.data.ApiPenaFormData
 import remocra.data.ApiPibiFormData
 import remocra.db.PeiRepository
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.web.AbstractEndpoint
 
@@ -57,7 +57,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
  """,
         tags = ["DECI - Points d'Eau Incendie"],
     )
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getListPei(
         @Parameter(description = "Numéro INSEE de la commune où se trouve le PEI") @QueryParam("insee") codeInsee: String?,
         @Parameter(description = "Type du PEI : 'PIBI' ou 'PENA'") @QueryParam("type") type: TypePei?,
@@ -72,7 +72,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     @GET
     @Path("/{numeroComplet}")
     @Operation(summary = "Retourne les informations communes à tout type de PEI d'un PEI spécifique", tags = ["DECI - Points d'Eau Incendie"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getPeiSpecifique(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
@@ -82,7 +82,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     @GET
     @Path("/{numeroComplet}/caracteristiques")
     @Operation(summary = "Retourne les caractéristiques techniques propres au PEI et à son type (PIBI ou PENA)", tags = ["DECI - Points d'Eau Incendie"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getPeiCaracteristiques(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
@@ -92,7 +92,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     @PUT
     @Path("/{numeroComplet}/pibi-caracteristiques")
     @Operation(summary = "Modifie les caractéristiques techniques propres au PIBI", tags = ["DECI - Points d'Eau Incendie"])
-    @RolesAllowed(ApiRole.RoleType.TRANSMETTRE)
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
     fun updatePibiCaracteristiques(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations du PEI") peiForm: ApiPibiFormData,
@@ -103,7 +103,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     @PUT
     @Path("/{numeroComplet}/pena-caracteristiques")
     @Operation(summary = "Modifie les caractéristiques techniques propres au PENA", tags = ["DECI - Points d'Eau Incendie"])
-    @RolesAllowed(ApiRole.RoleType.TRANSMETTRE)
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
     fun updatePenaCaracteristiques(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations du PEI") peiForm: ApiPenaFormData,
@@ -114,7 +114,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     @GET
     @Path("/diff")
     @Operation(summary = "Liste des PEI ayant subit une modification (ajout, modification ou suppression) postérieure au *moment* passée en paramètre", tags = ["DECI - Points d'Eau Incendie"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     fun diff(
         @Parameter(description = "Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm", required = true) @QueryParam("moment") moment: String?,
     ): Response {

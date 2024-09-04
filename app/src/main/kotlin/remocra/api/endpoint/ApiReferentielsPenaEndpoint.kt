@@ -1,10 +1,8 @@
 package remocra.api.endpoint
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import fr.sdis83.remocra.authn.ApiRole
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.annotation.security.RolesAllowed
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -14,7 +12,9 @@ import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
+import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.web.limitOffset
@@ -30,7 +30,7 @@ class ApiReferentielsPenaEndpoint {
     @GET
     @Path("/naturesPEI")
     @Operation(summary = "Retourne les natures de PEI possibles pour les PEI de type PENA", tags = ["DECI - Référentiels PENA"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielNaturesPEI(
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
@@ -47,7 +47,7 @@ class ApiReferentielsPenaEndpoint {
     @GET
     @Path("/materiaux")
     @Operation(summary = "Retourne les matériaux possibles pour les PEI de type PENA", tags = ["DECI - Référentiels PENA"])
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielMateriaux(
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
@@ -67,7 +67,7 @@ class ApiReferentielsPenaEndpoint {
             "(type de visite) spécifiques",
         tags = ["DECI - Référentiels PENA"],
     )
-    @RolesAllowed(ApiRole.RoleType.RECEVOIR)
+    @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielNaturesAnomalies(
 //        @Parameter(description = "Nature du PIBI") @PathParam("codeNature") codeNature: String?,
