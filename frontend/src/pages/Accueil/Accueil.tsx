@@ -7,8 +7,14 @@ import ModuleRemocra, {
 } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
+import { hasDroit } from "../../droits.tsx";
 
 const Accueil = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   // On récupère les modules
   const modulesState = useGet(url`/api/modules/`);
 
@@ -29,7 +35,7 @@ const Accueil = () => {
           {Object.entries(mapColonneRow).map(([key, values]) => (
             <Col key={key}>
               {Array.from(values).map((e) => {
-                const listeLink = getLinks(e.moduleType);
+                const listeLink = getLinks(e.moduleType, user);
                 return (
                   (listeLink?.find((e) => e.aLeDroit === true) != null ||
                     e.moduleContenuHtml != null) && (
@@ -60,14 +66,13 @@ const Accueil = () => {
  */
 function getLinks(
   typeModuleRemocra: TypeModuleRemocra,
+  user: UtilisateurEntity,
 ): LinkType[] | undefined {
-  // TODO prendre en compte les droits de l'utilisateur pour chaque lien
-
   switch (typeModuleRemocra) {
     case TypeModuleRemocra.DECI:
       return [
         {
-          aLeDroit: true, // TODO droit
+          aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),
           label: "Gestion des points d'eau",
           link: URLS.PEI,
         },
