@@ -46,7 +46,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
     }
 
     override fun checkProfilDroit(userInfo: UserInfo) {
-        if (!courrierRopRepository.checkProfilDroitRop(userInfo.idUtilisateur)) {
+        if (!courrierRopRepository.checkProfilDroitRop(userInfo.utilisateurId)) {
             throw RemocraResponseException(ErrorType.MODELE_COURRIER_DROIT_FORBIDDEN)
         }
     }
