@@ -31,6 +31,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     TOURNEE("TOURNEE"),
     TOURNEE_PEI("TOURNEE_PEI"),
     ETUDE("ETUDE"),
+    PEI_PROJET("PEI_PROJET"),
     DOCUMENT_ETUDE("DOCUMENT_ETUDE"),
     INDISPONIBILITE_TEMPORAIRE("INDISPONIBILITE_TEMPORAIRE"),
     ;

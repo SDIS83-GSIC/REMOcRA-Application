@@ -234,6 +234,7 @@ const PositiveNumberInput = ({
         step={rest.step ?? 1}
         readOnly={readOnly}
         defaultValue={value ?? ""}
+        required={required}
         {...field}
         {...rest}
       />

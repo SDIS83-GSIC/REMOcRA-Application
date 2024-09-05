@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -15,15 +16,21 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.EtudeData
 import remocra.data.Params
+import remocra.data.PeiProjetData
 import remocra.db.CouvertureHydrauliqueRepository
+import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecases.couverturehydraulique.CloreEtudeUseCase
 import remocra.usecases.couverturehydraulique.CreateEtudeUseCase
+import remocra.usecases.couverturehydraulique.CreatePeiProjetUseCase
 import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecases.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecases.document.UpsertDocumentEtudeUseCase
@@ -35,6 +42,8 @@ import java.util.UUID
 class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
+
+    @Inject lateinit var createPeiProjetUseCase: CreatePeiProjetUseCase
 
     @Inject lateinit var updateEtudeUseCase: UpdateEtudeUseCase
 
@@ -70,9 +79,66 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         return Response.ok(couvertureHydrauliqueRepository.getTypeEtudes()).build()
     }
 
+    @POST
+    @Path("/etude/{etudeId}/pei-projet/create")
+    @RequireDroits([Droit.ETUDE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun createPeiProjet(
+        @PathParam("etudeId")
+        etudeId: UUID,
+        peiProjetInput: PeiProjetInput,
+    ): Response {
+        return createPeiProjetUseCase.execute(
+            securityContext.userInfo,
+            PeiProjetData(
+                peiProjetId = UUID.randomUUID(),
+                peiProjetEtudeId = etudeId,
+                peiProjetDiametreId = peiProjetInput.peiProjetDiametreId,
+                peiProjetNatureDeciId = peiProjetInput.peiProjetNatureDeciId,
+                peiProjetTypePeiProjet = peiProjetInput.peiProjetTypePeiProjet,
+                peiProjetCapacite = peiProjetInput.peiProjetCapacite,
+                peiProjetDebit = peiProjetInput.peiProjetDebit,
+                peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
+                // TODO Géométrie à prendre en compte quand on aura la carto
+                peiProjetGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(
+                    Coordinate(
+                        peiProjetInput.peiProjetCoordonneeX.toDouble(),
+                        peiProjetInput.peiProjetCoordonneeY.toDouble(),
+                    ),
+                ),
+            ),
+        ).wrap()
+    }
+
+    class PeiProjetInput {
+        @FormParam("peiProjetNatureDeciId")
+        lateinit var peiProjetNatureDeciId: UUID
+
+        @FormParam("peiProjetTypePeiProjet")
+        lateinit var peiProjetTypePeiProjet: TypePeiProjet
+
+        @FormParam("peiProjetDiametreId")
+        val peiProjetDiametreId: UUID? = null
+
+        @FormParam("peiProjetDiametreCanalisation")
+        val peiProjetDiametreCanalisation: Int? = null
+
+        @FormParam("peiProjetCapacite")
+        val peiProjetCapacite: Int? = null
+
+        @FormParam("peiProjetDebit")
+        val peiProjetDebit: Int? = null
+
+        @FormParam("peiProjetCoordonneeX")
+        lateinit var peiProjetCoordonneeX: String
+
+        @FormParam("peiProjetCoordonneeY")
+        lateinit var peiProjetCoordonneeY: String
+    }
+
     @GET
     @Path("/etude/{etudeId}")
-    @RequireDroits([Droit.ETUDE_U])
+    @RequireDroits([Droit.ETUDE_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getEtude(
         @PathParam("etudeId")

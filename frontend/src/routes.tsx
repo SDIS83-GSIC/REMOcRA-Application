@@ -7,12 +7,12 @@ import AireAspiration from "./pages/Pena/AireAspiration.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
 import Accueil from "./pages/Accueil/Accueil.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
-import ListEtude from "./pages/Etude/ListEtude.tsx";
-import CreateEtude from "./pages/Etude/CreateEtude.tsx";
-import UpdateEtude from "./pages/Etude/UpdateEtude.tsx";
+import ListEtude from "./pages/CouvertureHydraulique/Etude/ListEtude.tsx";
+import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
+import UpdateEtude from "./pages/CouvertureHydraulique/Etude/UpdateEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
-import ImportShapeEtude from "./pages/Etude/ImportShapeEtude.tsx";
+import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
 import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import ListTournee from "./pages/Tournee/ListTournee.tsx";
@@ -21,6 +21,7 @@ import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
+import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 
@@ -52,6 +53,8 @@ export const URLS = {
   LIST_ETUDE: url`/couverture-hydraulique/etudes/`,
   IMPORTER_COUVERTURE_HYDRAULIQUE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/import/` + etudeId,
+  CREATE_PEI_PROJET: (etudeId: string) =>
+    url`/couverture-hydraulique/etude/` + etudeId + `/pei-projet/`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -149,6 +152,24 @@ export default [
           <Authorization Component={Visite} droits={[TYPE_DROIT.VISITE_R]} />
         ),
       },
+      {
+        path: "indisponibilite-temporaire/create",
+        element: (
+          <Authorization
+            Component={CreateIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_C]}
+          />
+        ),
+      },
+      {
+        path: "indisponibilite-temporaire/:indisponibiliteTemporaireId",
+        element: (
+          <Authorization
+            Component={UpdateIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_U]}
+          />
+        ),
+      },
     ],
   },
   {
@@ -198,20 +219,11 @@ export default [
         ),
       },
       {
-        path: "indisponibilite-temporaire/create",
+        path: "etude/:etudeId/pei-projet",
         element: (
           <Authorization
-            Component={CreateIndisponibiliteTemporaire}
-            droits={[TYPE_DROIT.INDISPO_TEMP_C]}
-          />
-        ),
-      },
-      {
-        path: "indisponibilite-temporaire/:indisponibiliteTemporaireId",
-        element: (
-          <Authorization
-            Component={UpdateIndisponibiliteTemporaire}
-            droits={[TYPE_DROIT.INDISPO_TEMP_U]}
+            Component={CreatePeiProjet}
+            droits={[TYPE_DROIT.ETUDE_U]}
           />
         ),
       },

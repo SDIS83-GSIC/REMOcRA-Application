@@ -269,4 +269,5 @@ COMMENT
 
 
 ALTER TYPE historique.type_objet ADD VALUE 'ETUDE';
+ALTER TYPE historique.type_objet ADD VALUE 'PEI_PROJET';
 ALTER TYPE historique.type_objet ADD VALUE 'DOCUMENT_ETUDE';

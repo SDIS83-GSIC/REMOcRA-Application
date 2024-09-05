@@ -1,11 +1,11 @@
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
-import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconEtude } from "../../components/Icon/Icon.tsx";
-import url from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { IconEtude } from "../../../components/Icon/Icon.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import Etude, {
   getInitialValues,
   prepareVariables,

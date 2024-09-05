@@ -2,12 +2,12 @@ import { useFormikContext } from "formik";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { object } from "yup";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { FileInput, FormContainer } from "../../components/Form/Form.tsx";
-import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconImport, IconInfo } from "../../components/Icon/Icon.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
-import { URLS } from "../../routes.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { IconImport, IconInfo } from "../../../components/Icon/Icon.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import { URLS } from "../../../routes.tsx";
 
 export const getInitialValues = () => ({
   fileReseau: null,

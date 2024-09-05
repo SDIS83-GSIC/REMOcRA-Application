@@ -7,9 +7,11 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Geometry
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
+import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.pojos.PeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.references.BATIMENT
 import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
@@ -134,6 +136,38 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             TYPE_ETUDE.CODE.`as`("code"),
             TYPE_ETUDE.LIBELLE.`as`("libelle"),
         ).from(TYPE_ETUDE).fetchInto()
+
+    fun insertPeiProjetPA(etudeId: UUID, peiProjetId: UUID, debit: Int, geometrie: Geometry, natureDeciId: UUID) =
+        dsl.insertInto(PEI_PROJET)
+            .set(PEI_PROJET.ETUDE_ID, etudeId)
+            .set(PEI_PROJET.ID, peiProjetId)
+            .set(PEI_PROJET.TYPE_PEI_PROJET, TypePeiProjet.PA)
+            .set(PEI_PROJET.DEBIT, debit)
+            .set(PEI_PROJET.NATURE_DECI_ID, natureDeciId)
+            .set(PEI_PROJET.GEOMETRIE, geometrie)
+            .execute()
+
+    fun insertPeiProjetReserve(etudeId: UUID, peiProjetId: UUID, debit: Int, capacite: Int, geometrie: Geometry, natureDeciId: UUID) =
+        dsl.insertInto(PEI_PROJET)
+            .set(PEI_PROJET.ETUDE_ID, etudeId)
+            .set(PEI_PROJET.ID, peiProjetId)
+            .set(PEI_PROJET.TYPE_PEI_PROJET, TypePeiProjet.RESERVE)
+            .set(PEI_PROJET.DEBIT, debit)
+            .set(PEI_PROJET.CAPACITE, capacite)
+            .set(PEI_PROJET.GEOMETRIE, geometrie)
+            .set(PEI_PROJET.NATURE_DECI_ID, natureDeciId)
+            .execute()
+
+    fun insertPeiProjetPibi(etudeId: UUID, peiProjetId: UUID, diametreId: UUID, diametreCanalisation: Int, geometrie: Geometry, natureDeciId: UUID) =
+        dsl.insertInto(PEI_PROJET)
+            .set(PEI_PROJET.ETUDE_ID, etudeId)
+            .set(PEI_PROJET.ID, peiProjetId)
+            .set(PEI_PROJET.TYPE_PEI_PROJET, TypePeiProjet.PIBI)
+            .set(PEI_PROJET.DIAMETRE_ID, diametreId)
+            .set(PEI_PROJET.DIAMETRE_CANALISATION, diametreCanalisation)
+            .set(PEI_PROJET.NATURE_DECI_ID, natureDeciId)
+            .set(PEI_PROJET.GEOMETRIE, geometrie)
+            .execute()
 
     fun getEtude(etudeId: UUID): EtudeUpsert =
         dsl.select(

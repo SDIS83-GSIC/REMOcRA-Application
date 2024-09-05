@@ -1,20 +1,20 @@
 import { useFormikContext } from "formik";
 import { Button } from "react-bootstrap";
 import { object } from "yup";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   FormContainer,
   Multiselect,
   TextAreaInput,
   TextInput,
-} from "../../components/Form/Form.tsx";
+} from "../../../components/Form/Form.tsx";
 import FormDocuments, {
   setDocumentInFormData,
-} from "../../components/Form/FormDocuments.tsx";
-import SelectForm from "../../components/Form/SelectForm.tsx";
-import { EtudeType } from "../../Entities/EtudeEntity.tsx";
-import url from "../../module/fetch.tsx";
-import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+} from "../../../components/Form/FormDocuments.tsx";
+import SelectForm from "../../../components/Form/SelectForm.tsx";
+import { EtudeType } from "../../../Entities/EtudeEntity.tsx";
+import url from "../../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data: EtudeType) => ({
   typeEtudeId: data?.typeEtudeId ?? null,

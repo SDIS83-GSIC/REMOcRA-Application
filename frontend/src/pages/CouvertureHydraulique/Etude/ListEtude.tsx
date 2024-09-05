@@ -1,25 +1,25 @@
 import { Button, Container } from "react-bootstrap";
-import EtudeStatutEnum from "../../Entities/EtudeEntity.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
-import FilterInput from "../../components/Filter/FilterInput.tsx";
-import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
-import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
+import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
+import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconClose,
   IconEdit,
   IconEtude,
   IconImport,
-} from "../../components/Icon/Icon.tsx";
-import ConfirmModal from "../../components/Modal/ConfirmModal.tsx";
-import useModal from "../../components/Modal/ModalUtils.tsx";
+} from "../../../components/Icon/Icon.tsx";
+import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
+import useModal from "../../../components/Modal/ModalUtils.tsx";
 import QueryTable, {
   useFilterContext,
-} from "../../components/Table/QueryTable.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
-import url from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
-import formatDateTime from "../../utils/formatDateUtils.tsx";
+} from "../../../components/Table/QueryTable.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
+import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import filterValuesToVariable from "./FilterEtude.tsx";
 
 const ListEtude = () => {
@@ -150,6 +150,28 @@ const ListEtude = () => {
                         href={URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(row.value)}
                       >
                         <IconImport />
+                      </Button>
+                    </TooltipCustom>
+                  </>
+                );
+              },
+              width: 90,
+            },
+            {
+              accessor: "etudeId",
+              Cell: (row: any) => {
+                return (
+                  // TODO le déplacer au bon endroit quand on autre la page
+                  <>
+                    <TooltipCustom
+                      tooltipText="Ajouter un PEI projet"
+                      tooltipId={row.value}
+                    >
+                      <Button
+                        variant="link"
+                        href={URLS.CREATE_PEI_PROJET(row.value)}
+                      >
+                        <IconEtude />
                       </Button>
                     </TooltipCustom>
                   </>
