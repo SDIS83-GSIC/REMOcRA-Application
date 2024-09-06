@@ -3,5 +3,11 @@
   "extends": [
     "local>atolcd/renovate-config",
     "local>atolcd/renovate-config:packageRules-gradle"
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["org.cyclonedx.bom"],
+      "allowedVersions": "<=1.7"
+    }
   ]
 }
