@@ -22,6 +22,7 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
 import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
+import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 
@@ -54,7 +55,12 @@ export const URLS = {
   IMPORTER_COUVERTURE_HYDRAULIQUE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/import/` + etudeId,
   CREATE_PEI_PROJET: (etudeId: string) =>
-    url`/couverture-hydraulique/etude/` + etudeId + `/pei-projet/`,
+    url`/couverture-hydraulique/etudes/` + etudeId + `/pei-projet/`,
+  UPDATE_PEI_PROJET: (etudeId: string, peiProjetId: string) =>
+    url`/couverture-hydraulique/etudes/` +
+    etudeId +
+    `/pei-projet/` +
+    peiProjetId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -219,10 +225,19 @@ export default [
         ),
       },
       {
-        path: "etude/:etudeId/pei-projet",
+        path: "etudes/:etudeId/pei-projet",
         element: (
           <Authorization
             Component={CreatePeiProjet}
+            droits={[TYPE_DROIT.ETUDE_U]}
+          />
+        ),
+      },
+      {
+        path: "etudes/:etudeId/pei-projet/:peiProjetId",
+        element: (
+          <Authorization
+            Component={UpdatePeiProjet}
             droits={[TYPE_DROIT.ETUDE_U]}
           />
         ),

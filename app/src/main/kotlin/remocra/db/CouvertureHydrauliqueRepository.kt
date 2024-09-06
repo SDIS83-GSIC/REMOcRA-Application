@@ -10,6 +10,7 @@ import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import remocra.data.GlobalData
 import remocra.data.Params
+import remocra.data.PeiProjetData
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.pojos.PeiProjet
@@ -333,6 +334,43 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             listPeiProjet.map { dsl.insertInto(PEI_PROJET).set(dsl.newRecord(PEI_PROJET, it)) },
         )
             .execute()
+
+    fun updatePeiProjet(
+        peiProjetId: UUID,
+        peiTypePeiProjet: TypePeiProjet,
+        debit: Int?,
+        capacite: Int?,
+        geometrie: Geometry,
+        diametreId: UUID?,
+        diametreCanalisation: Int?,
+        natureDeciId: UUID,
+    ) =
+        dsl.update(PEI_PROJET)
+            .set(PEI_PROJET.TYPE_PEI_PROJET, peiTypePeiProjet)
+            .set(PEI_PROJET.DEBIT, debit)
+            .set(PEI_PROJET.CAPACITE, capacite)
+            .set(PEI_PROJET.NATURE_DECI_ID, natureDeciId)
+            .set(PEI_PROJET.GEOMETRIE, geometrie)
+            .set(PEI_PROJET.DIAMETRE_ID, diametreId)
+            .set(PEI_PROJET.DIAMETRE_CANALISATION, diametreCanalisation)
+            .where(PEI_PROJET.ID.eq(peiProjetId))
+            .execute()
+
+    fun getPeiProjet(peiProjetId: UUID): PeiProjetData =
+        dsl.select(
+            PEI_PROJET.ID,
+            PEI_PROJET.TYPE_PEI_PROJET,
+            PEI_PROJET.ETUDE_ID,
+            PEI_PROJET.CAPACITE,
+            PEI_PROJET.DEBIT,
+            PEI_PROJET.DIAMETRE_ID,
+            PEI_PROJET.NATURE_DECI_ID,
+            PEI_PROJET.DIAMETRE_CANALISATION,
+            PEI_PROJET.GEOMETRIE,
+        )
+            .from(PEI_PROJET)
+            .where(PEI_PROJET.ID.eq(peiProjetId))
+            .fetchSingleInto()
 
     fun cloreEtude(etudeId: UUID) =
         dsl.update(ETUDE)

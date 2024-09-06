@@ -33,6 +33,7 @@ import remocra.usecases.couverturehydraulique.CreateEtudeUseCase
 import remocra.usecases.couverturehydraulique.CreatePeiProjetUseCase
 import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecases.couverturehydraulique.UpdateEtudeUseCase
+import remocra.usecases.couverturehydraulique.UpdatePeiProjetUseCase
 import remocra.usecases.document.UpsertDocumentEtudeUseCase
 import remocra.web.AbstractEndpoint
 import remocra.web.getTextPart
@@ -44,6 +45,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
     @Inject lateinit var createPeiProjetUseCase: CreatePeiProjetUseCase
+
+    @Inject lateinit var updatePeiProjetUseCase: UpdatePeiProjetUseCase
 
     @Inject lateinit var updateEtudeUseCase: UpdateEtudeUseCase
 
@@ -92,6 +95,52 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             securityContext.userInfo,
             PeiProjetData(
                 peiProjetId = UUID.randomUUID(),
+                peiProjetEtudeId = etudeId,
+                peiProjetDiametreId = peiProjetInput.peiProjetDiametreId,
+                peiProjetNatureDeciId = peiProjetInput.peiProjetNatureDeciId,
+                peiProjetTypePeiProjet = peiProjetInput.peiProjetTypePeiProjet,
+                peiProjetCapacite = peiProjetInput.peiProjetCapacite,
+                peiProjetDebit = peiProjetInput.peiProjetDebit,
+                peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
+                // TODO Géométrie à prendre en compte quand on aura la carto
+                peiProjetGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(
+                    Coordinate(
+                        peiProjetInput.peiProjetCoordonneeX.toDouble(),
+                        peiProjetInput.peiProjetCoordonneeY.toDouble(),
+                    ),
+                ),
+            ),
+        ).wrap()
+    }
+
+    @GET
+    @Path("/pei-projet/{peiProjetId}")
+    @RequireDroits([Droit.ETUDE_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getPeiProjet(
+        @PathParam("peiProjetId")
+        peiProjetId: UUID,
+    ): Response {
+        return Response.ok(
+            couvertureHydrauliqueRepository.getPeiProjet(peiProjetId),
+        ).build()
+    }
+
+    @PUT
+    @Path("/etude/{etudeId}/pei-projet/{peiProjetId}")
+    @RequireDroits([Droit.ETUDE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun updatePeiProjet(
+        @PathParam("etudeId")
+        etudeId: UUID,
+        @PathParam("peiProjetId")
+        peiProjetId: UUID,
+        peiProjetInput: PeiProjetInput,
+    ): Response {
+        return updatePeiProjetUseCase.execute(
+            securityContext.userInfo,
+            PeiProjetData(
+                peiProjetId = peiProjetId,
                 peiProjetEtudeId = etudeId,
                 peiProjetDiametreId = peiProjetInput.peiProjetDiametreId,
                 peiProjetNatureDeciId = peiProjetInput.peiProjetNatureDeciId,

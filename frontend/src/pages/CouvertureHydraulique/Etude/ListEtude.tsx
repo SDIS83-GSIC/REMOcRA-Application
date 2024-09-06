@@ -1,5 +1,9 @@
 import { Button, Container } from "react-bootstrap";
 import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
@@ -17,6 +21,7 @@ import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import { hasDroit } from "../../../droits.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
@@ -24,6 +29,7 @@ import filterValuesToVariable from "./FilterEtude.tsx";
 
 const ListEtude = () => {
   const typeEtudeState = useGet(url`/api/couverture-hydraulique/type-etudes`);
+  const { user }: { user: UtilisateurEntity } = useAppContext();
 
   return (
     <>
@@ -32,7 +38,11 @@ const ListEtude = () => {
           icon={<IconEtude />}
           title={"Liste des études"}
           right={
-            <Button href={URLS.CREATE_ETUDE}>Ajouter une nouvelle étude</Button>
+            hasDroit(user, TYPE_DROIT.ETUDE_C) && (
+              <Button href={URLS.CREATE_ETUDE}>
+                Ajouter une nouvelle étude
+              </Button>
+            )
           }
         />
         <QueryTable
