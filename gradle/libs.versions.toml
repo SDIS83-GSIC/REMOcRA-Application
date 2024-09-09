@@ -24,7 +24,7 @@ forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbidden
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
 kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
-kotlin-reflect = "org.jetbrains.kotlin:kotlin-reflect:1.9.25"
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 disruptor = "com.lmax:disruptor:4.0.0"
 slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "1.7.36" } }
@@ -86,7 +86,7 @@ sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 cyclonedx = "org.cyclonedx.bom:1.7.4"
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
-kotlin = "org.jetbrains.kotlin.jvm:1.9.25"
+kotlin = "org.jetbrains.kotlin.jvm:2.0.20"
 licensee = "app.cash.licensee:1.11.0"
 loggingCapabilities = "dev.jacomet.logging-capabilities:0.11.1"
 spotless = "com.diffplug.spotless:6.25.0"
