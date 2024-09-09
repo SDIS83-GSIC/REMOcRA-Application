@@ -1,5 +1,5 @@
 [versions]
-flyway = "10.17.2"
+flyway = "10.17.3"
 forbiddenapis = "3.7"
 jooq = "3.19.11"
 retrofit = "2.11.0"
@@ -12,11 +12,11 @@ javaToolchain = "21"
 ktlint = "0.49.0"
 
 [libraries]
-log4j-bom = "org.apache.logging.log4j:log4j-bom:2.23.1"
+log4j-bom = "org.apache.logging.log4j:log4j-bom:2.24.0"
 log4j-core = { module = "org.apache.logging.log4j:log4j-core"}
 log4j-jul = { module = "org.apache.logging.log4j:log4j-jul" }
 guice-bom = "com.google.inject:guice-bom:7.0.0"
-jetty-bom ="org.eclipse.jetty:jetty-bom:11.0.23"
+jetty-bom ="org.eclipse.jetty:jetty-bom:11.0.24"
 jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet" }
 jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets" }
 junit-bom = "org.junit:junit-bom:5.11.0"
