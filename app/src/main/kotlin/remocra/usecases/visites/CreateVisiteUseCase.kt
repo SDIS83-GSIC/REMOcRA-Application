@@ -13,7 +13,9 @@ import remocra.db.PibiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.pojos.Visite
@@ -54,16 +56,42 @@ class CreateVisiteUseCase @Inject constructor(
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: VisiteData) {
+        if (userInfo == null) {
+            throw RemocraResponseException(errorType = ErrorType.VISITE_C_FORBIDDEN)
+        }
+
+        // Vérification des droits de création
+        when (element.visiteTypeVisite) {
+            TypeVisite.CTP -> if (!userInfo.droits.contains(Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_CTP_FORBIDDEN)
+            }
+            TypeVisite.RECEPTION -> if (!userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECEPTION_FORBIDDEN)
+            }
+            TypeVisite.RECO_INIT -> if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECO_INIT_FORBIDDEN)
+            }
+            TypeVisite.RECOP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECOP_FORBIDDEN)
+            }
+            TypeVisite.NP -> if (!userInfo.droits.contains(Droit.VISITE_NON_PROGRAMME_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_NP_FORBIDDEN)
+            }
+        }
+
         // La visite n'est pas dans le future
         if (element.visiteDate.isAfter(ZonedDateTime.now())) {
             throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
         }
+
         // La visite n'est pas antérieur à la dernière visite du pei
         val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
         if (lastVisite != null) {
             if (element.visiteDate.isBefore(lastVisite.visiteDate)) {
-                throw RemocraResponseException(ErrorType.VISITE_CREATE_NOT_LAST) }
+                throw RemocraResponseException(ErrorType.VISITE_CREATE_NOT_LAST)
+            }
         }
+
         // Vérification de la validité du CDP
         if (element.isCtrlDebitPression && // Si la case CDP est coché
             (

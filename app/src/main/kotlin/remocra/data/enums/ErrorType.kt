@@ -50,6 +50,19 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_TYPE_FORBIDDEN(2200, "Ce type de visite n'est pas accessible pour votre organisme sur ce PEI", Status.FORBIDDEN),
     VISITE_ORGANISME_FORBIDDEN(2201, "Votre organisme n'est pas autorisé à modifier une visite de ce type sur ce PEI", Status.FORBIDDEN),
 
+    VISITE_C_FORBIDDEN(2101, "Vous n'avez pas les droits suffisant pour créer une visite", Status.FORBIDDEN),
+    VISITE_D_FORBIDDEN(2102, "Vous n'avez pas les droits suffisant pour supprimer une visite", Status.FORBIDDEN),
+    VISITE_C_CTP_FORBIDDEN(2311, "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.CTP}", Status.FORBIDDEN),
+    VISITE_D_CTP_FORBIDDEN(2312, "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.CTP}", Status.FORBIDDEN),
+    VISITE_C_NP_FORBIDDEN(2321, "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.NP}", Status.FORBIDDEN),
+    VISITE_D_NP_FORBIDDEN(2322, "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.NP}", Status.FORBIDDEN),
+    VISITE_C_RECEPTION_FORBIDDEN(2331, "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.RECEPTION}", Status.FORBIDDEN),
+    VISITE_D_RECEPTION_FORBIDDEN(2332, "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.RECEPTION}", Status.FORBIDDEN),
+    VISITE_C_RECOP_FORBIDDEN(2341, "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.RECOP}", Status.FORBIDDEN),
+    VISITE_D_RECOP_FORBIDDEN(2342, "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.RECOP}", Status.FORBIDDEN),
+    VISITE_C_RECO_INIT_FORBIDDEN(2351, "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.RECO_INIT}", Status.FORBIDDEN),
+    VISITE_D_RECO_INIT_FORBIDDEN(2352, "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.RECO_INIT}", Status.FORBIDDEN),
+
     MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier"),
 
     //

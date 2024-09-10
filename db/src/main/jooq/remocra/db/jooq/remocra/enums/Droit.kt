@@ -105,6 +105,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     VISITE_RECO_INIT_C("VISITE_RECO_INIT_C"),
     VISITE_RECO_INIT_D("VISITE_RECO_INIT_D"),
     ZOOM_LIEU_R("ZOOM_LIEU_R"),
+    VISITE_R("VISITE_R"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

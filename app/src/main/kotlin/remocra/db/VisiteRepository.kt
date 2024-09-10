@@ -25,8 +25,6 @@ class VisiteRepository
     private val dsl: DSLContext,
 ) {
 
-    fun getById(visiteId: UUID): Visite = dsl.selectFrom(VISITE).where(VISITE.ID.eq(visiteId)).fetchSingleInto()
-
     fun getLastVisite(peiId: UUID): Visite? = dsl.selectFrom(VISITE)
         .where(VISITE.PEI_ID.eq(peiId))
         .orderBy(VISITE.DATE.desc())
@@ -44,6 +42,25 @@ class VisiteRepository
         .where(VISITE.PEI_ID.eq(peiId))
         .orderBy(VISITE.DATE.desc())
         .fetchAnyInto()
+
+    fun getVisiteCompleteByVisiteId(visiteId: UUID): VisiteComplete =
+        dsl.select(VISITE.fields().toList())
+            .from(VISITE)
+            .where(VISITE.ID.eq(visiteId))
+            .fetchSingle()
+            .map { record ->
+                VisiteComplete(
+                    visiteId = record.getValue(VISITE.ID)!!,
+                    visitePeiId = record.getValue(VISITE.PEI_ID)!!,
+                    visiteDate = record.getValue(VISITE.DATE)!!,
+                    visiteTypeVisite = record.getValue(VISITE.TYPE_VISITE)!!,
+                    visiteAgent1 = record.getValue(VISITE.AGENT1),
+                    visiteAgent2 = record.getValue(VISITE.AGENT2),
+                    visiteObservation = record.getValue(VISITE.OBSERVATION),
+                    listeAnomalie = null,
+                    ctrlDebitPression = null,
+                )
+            }
 
     fun getAllVisiteByPeiId(peiId: UUID): List<VisiteComplete> =
         dsl.select(VISITE.fields().toList())
@@ -110,6 +127,11 @@ class VisiteRepository
         val poidsAnomalieValIndispoHbe: Int?,
     )
 
+    fun getCtrlByVisiteId(visiteId: UUID): VisiteCtrlDebitPression? =
+        dsl.selectFrom(VISITE_CTRL_DEBIT_PRESSION)
+            .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(visiteId))
+            .fetchOneInto()
+
     fun getAllCtrlByListVisiteId(listVisiteId: List<UUID>): List<VisiteCtrlDebitPression> =
         dsl.selectFrom(VISITE_CTRL_DEBIT_PRESSION)
             .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.`in`(listVisiteId))
@@ -127,12 +149,6 @@ class VisiteRepository
             .execute()
 
     // DeleteVisiteUseCase
-    fun getPeiIdByVisiteId(visiteId: UUID): UUID? =
-        dsl.select(VISITE.PEI_ID)
-            .from(VISITE)
-            .where(VISITE.ID.eq(visiteId))
-            .fetchOneInto()
-
     fun getLastPeiVisiteId(peiId: UUID): UUID? =
         dsl.select(VISITE.ID)
             .from(VISITE)

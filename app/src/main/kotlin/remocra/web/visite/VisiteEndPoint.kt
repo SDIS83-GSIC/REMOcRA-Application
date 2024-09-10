@@ -12,10 +12,12 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.VisiteData
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
@@ -50,6 +52,7 @@ class VisiteEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/getVisiteWithAnomalies/{peiId}")
+    @RequireDroits([Droit.VISITE_R])
     fun getVisiteWithAnomalies(
         @PathParam("peiId") peiId: UUID,
     ): Response {
@@ -69,6 +72,7 @@ class VisiteEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("/createVisite")
+    @RequireDroits([Droit.VISITE_CONTROLE_TECHNIQUE_C, Droit.VISITE_NON_PROGRAMME_C, Droit.VISITE_RECEP_C, Droit.VISITE_RECO_C, Droit.VISITE_RECO_INIT_C])
     fun createVisite(visiteInput: VisiteInput): Response {
         val generatedVisiteId = UUID.randomUUID()
         val visite = VisiteData(
@@ -126,9 +130,31 @@ class VisiteEndPoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/{visiteId}")
-    fun deleteVisite(
-        @PathParam("visiteId") visiteId: UUID,
-    ): Response {
-        return deleteVisiteUseCase.execute(userInfo = securityContext.userInfo, element = visiteId).wrap()
+    @RequireDroits([Droit.VISITE_NP_D, Droit.VISITE_RECEP_D, Droit.VISITE_CTP_D, Droit.VISITE_RECO_D, Droit.VISITE_RECO_INIT_D])
+    fun deleteVisite(@PathParam("visiteId") visiteId: UUID): Response {
+        val visiteComplete = visiteRepository.getVisiteCompleteByVisiteId(visiteId)
+        val ctrl = visiteRepository.getCtrlByVisiteId(visiteId)
+        val listAnomalies = visiteRepository.getAnomaliesFromVisite(visiteId)
+
+        val visiteDataToDelete = VisiteData(
+            visiteId = visiteId,
+            visitePeiId = visiteComplete.visitePeiId,
+            visiteDate = visiteComplete.visiteDate,
+            visiteTypeVisite = visiteComplete.visiteTypeVisite,
+            visiteAgent1 = visiteComplete.visiteAgent1,
+            visiteAgent2 = visiteComplete.visiteAgent2,
+            visiteObservation = visiteComplete.visiteObservation,
+            listeAnomalie = listAnomalies.toList(),
+            isCtrlDebitPression = ctrl != null,
+            ctrlDebitPression = CreationVisiteCtrl(
+                ctrlDebit = ctrl?.visiteCtrlDebitPressionDebit,
+                ctrlPression = ctrl?.visiteCtrlDebitPressionPression,
+                ctrlPressionDyn = ctrl?.visiteCtrlDebitPressionPressionDyn,
+            ),
+        )
+        return deleteVisiteUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = visiteDataToDelete,
+        ).wrap()
     }
 }

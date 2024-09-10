@@ -2,6 +2,7 @@ package remocra.api.usecase
 
 import jakarta.inject.Inject
 import remocra.api.DateUtils
+import remocra.auth.userInfo
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.VisiteData
@@ -13,6 +14,7 @@ import remocra.usecases.visites.CreateVisiteUseCase
 import remocra.usecases.visites.DeleteVisiteUseCase
 import remocra.web.AbstractEndpoint.Result
 import remocra.web.visite.VisiteEndPoint
+import remocra.web.visite.VisiteEndPoint.CreationVisiteCtrl
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -122,17 +124,40 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
      */
     fun deleteVisite(numeroComplet: String, visiteIdString: String): Result {
         try {
-            val visiteId = UUID.fromString(visiteIdString)
-            val visite = visiteRepository.getById(visiteId)
+            val visiteComplete = visiteRepository.getVisiteCompleteByVisiteId(UUID.fromString(visiteIdString))
             val pei = getPeiSpecifique(numeroComplet)
 
-            if (visite.visitePeiId != pei.peiId) {
+            if (visiteComplete.visitePeiId != pei.peiId) {
                 return Result.Error(ErrorType.VISITE_INEXISTANTE.toString())
             }
 
+            val visiteId = visiteComplete.visiteId
+
+            val ctrl = visiteRepository.getCtrlByVisiteId(visiteId)
+            val listAnomalies = visiteRepository.getAnomaliesFromVisite(visiteId)
+
+            val visiteDataToDelete = VisiteData(
+                visiteId = visiteId,
+                visitePeiId = visiteComplete.visitePeiId,
+                visiteDate = visiteComplete.visiteDate,
+                visiteTypeVisite = visiteComplete.visiteTypeVisite,
+                visiteAgent1 = visiteComplete.visiteAgent1,
+                visiteAgent2 = visiteComplete.visiteAgent2,
+                visiteObservation = visiteComplete.visiteObservation,
+                listeAnomalie = listAnomalies.toList(),
+                isCtrlDebitPression = ctrl != null,
+                ctrlDebitPression = CreationVisiteCtrl(
+                    ctrlDebit = ctrl?.visiteCtrlDebitPressionDebit,
+                    ctrlPression = ctrl?.visiteCtrlDebitPressionPression,
+                    ctrlPressionDyn = ctrl?.visiteCtrlDebitPressionPressionDyn,
+                ),
+            )
             // TODO vérifier 2201, 2110 au moins
             // TODO le userInfo !
-            return deleteVisiteUseCase.execute(null, visiteId)
+            return deleteVisiteUseCase.execute(
+                userInfo = null,
+                element = visiteDataToDelete,
+            )
         } catch (iae: IllegalArgumentException) {
             return Result.Error(ErrorType.BAD_UUID.toString())
         }

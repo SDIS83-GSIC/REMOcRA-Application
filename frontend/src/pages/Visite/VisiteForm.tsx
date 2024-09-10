@@ -20,6 +20,10 @@ import referenceTypeVisite, {
 import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
+import { hasDroit } from "../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
 
 export const getInitialValues = (
   _visitePeiId: string,
@@ -58,10 +62,12 @@ const VisiteForm = ({
   nbVisite,
   typePei,
   listeAnomaliesAssignable,
+  user,
 }: {
   nbVisite: number;
   typePei: string;
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
+  user: UtilisateurEntity;
 }) => {
   const { values, setValues }: { values: VisiteCompleteEntity } =
     useFormikContext();
@@ -84,14 +90,23 @@ const VisiteForm = ({
   }));
 
   const dynamicListTypeVisite =
-    nbVisite === 0
+    nbVisite === 0 && hasDroit(user, TYPE_DROIT.VISITE_RECEP_C)
       ? listTypeVisite.filter((e) => e.code === TYPE_VISITE.RECEPTION)
-      : nbVisite === 1
+      : nbVisite === 1 && hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_C)
         ? listTypeVisite.filter((e) => e.code === TYPE_VISITE.RECO_INIT)
         : listTypeVisite.filter(
             (e) =>
               e.code !== TYPE_VISITE.RECEPTION &&
-              e.code !== TYPE_VISITE.RECO_INIT,
+              e.code !== TYPE_VISITE.RECO_INIT &&
+              (!hasDroit(user, TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C)
+                ? e.code !== TYPE_VISITE.CTP
+                : true) &&
+              (!hasDroit(user, TYPE_DROIT.VISITE_RECO_C)
+                ? e.code !== TYPE_VISITE.RECOP
+                : true) &&
+              (!hasDroit(user, TYPE_DROIT.VISITE_NON_PROGRAMME_C)
+                ? e.code !== TYPE_VISITE.NP
+                : true),
           );
 
   let filteredListAnomalie = [];

@@ -7,7 +7,9 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.RequireDroits
 import remocra.db.AnomalieRepository
+import remocra.db.jooq.remocra.enums.Droit
 import java.util.UUID
 
 @Path("/anomalie")
@@ -18,6 +20,7 @@ class AnomalieEndPoint {
 
     @GET
     @Path("/getAssignablesAnomalies/{peiId}")
+    @RequireDroits([Droit.VISITE_CONTROLE_TECHNIQUE_C, Droit.VISITE_NON_PROGRAMME_C, Droit.VISITE_RECEP_C, Droit.VISITE_RECO_C, Droit.VISITE_RECO_INIT_C])
     fun getAssignableAnomalie(
         @PathParam("peiId") peiId: UUID,
     ): Response {

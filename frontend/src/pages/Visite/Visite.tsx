@@ -1,19 +1,25 @@
-import Form from "react-bootstrap/Form";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { ReactNode, useState } from "react";
 import classNames from "classnames";
+import { ReactNode, useState } from "react";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import { useParams } from "react-router-dom";
-import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconOverview } from "../../components/Icon/Icon.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
-import url from "../../module/fetch.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
-import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
-import formatDateTime from "../../utils/formatDateUtils.tsx";
-import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
+import { IconOverview } from "../../components/Icon/Icon.tsx";
+import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
+import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
+import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
+import url from "../../module/fetch.tsx";
+import formatDateTime from "../../utils/formatDateUtils.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
@@ -21,6 +27,7 @@ import VisiteForm, {
 
 const Visite = () => {
   const { peiId } = useParams();
+  const { user }: { user: UtilisateurEntity } = useAppContext();
 
   const [currentVisite, setCurrentVisite] =
     useState<VisiteCompleteEntity>(null);
@@ -95,19 +102,50 @@ const Visite = () => {
     );
   }
 
+  const hasRightToDelete = (visite: VisiteCompleteEntity) => {
+    switch (visite.visiteTypeVisite) {
+      case TYPE_VISITE.CTP:
+        return hasDroit(user, TYPE_DROIT.VISITE_CTP_D);
+      case TYPE_VISITE.NP:
+        return hasDroit(user, TYPE_DROIT.VISITE_NP_D);
+      case TYPE_VISITE.RECEPTION:
+        return hasDroit(user, TYPE_DROIT.VISITE_RECEP_D);
+      case TYPE_VISITE.RECOP:
+        return hasDroit(user, TYPE_DROIT.VISITE_RECO_D);
+      case TYPE_VISITE.RECO_INIT:
+        return hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_D);
+    }
+  };
+
+  const hasRightToCreate = () => {
+    if (listeVisite.length === 0) {
+      return hasDroit(user, TYPE_DROIT.VISITE_RECEP_C);
+    } else if (listeVisite.length === 1) {
+      return hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_C);
+    } else if (listeVisite.lenght >= 3) {
+      return (
+        hasDroit(user, TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C) ||
+        hasDroit(user, TYPE_DROIT.VISITE_RECO_C) ||
+        hasDroit(user, TYPE_DROIT.VISITE_NON_PROGRAMME_C)
+      );
+    }
+  };
+
   return (
     <Container>
       <Row>
         <Col xs="5">
           <div>
-            <Button
-              onClick={() => {
-                setNewVisite(true);
-                setCurrentVisite(null);
-              }}
-            >
-              Nouvelle visite
-            </Button>
+            {hasRightToCreate && (
+              <Button
+                onClick={() => {
+                  setNewVisite(true);
+                  setCurrentVisite(null);
+                }}
+              >
+                Nouvelle visite
+              </Button>
+            )}
           </div>
           <Table striped bordered size="sm">
             <thead>
@@ -141,11 +179,11 @@ const Visite = () => {
                     >
                       <IconOverview />
                     </Button>
-                    {/*
-                        TODO : Implémenter la suppression de la dernière visite
-                        TODO : Implémenter une modale de suppression
-                    {index === 0 && <Button size="sm">Supprimer</Button>}
-                    */}
+                    {/* TODO : Implémenter la suppression de la dernière visite */}
+                    {/* TODO : Implémenter une modale de suppression */}
+                    {index === 0 && hasRightToDelete(element) && (
+                      <Button size="sm">Supprimer</Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -279,6 +317,7 @@ const Visite = () => {
                   nbVisite={listeVisite.length}
                   typePei={typePei}
                   listeAnomaliesAssignable={listeAnomaliesAssignable.data}
+                  user={user}
                 />
               </MyFormik>
             </div>
