@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import MyFormik from "../Form/MyFormik.tsx";
 import { FormContainer } from "../Form/Form.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
-import ToastAutohide from "../../module/Toast/toast.tsx";
+import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
 
 const EditModalBody = ({
   prepareVariables,

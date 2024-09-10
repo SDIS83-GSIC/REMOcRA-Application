@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { useDelete } from "../Fetch/useFetch.tsx";
-import ToastAutohide from "../../module/Toast/toast.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 
 const DeleteModalBody = ({
   query,
@@ -11,19 +11,16 @@ const DeleteModalBody = ({
   onDelete,
   content,
 }: DeleteModalBodyType) => {
+  const { success: successToast, error: errorToast } = useToastContext();
   const del = useDelete(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onDelete && onDelete(res);
-      ToastAutohide({
-        content: "L'élément a bien été supprimé",
-        variant: "success",
-      });
+      successToast({ message: "L'élément a bien été supprimé" });
       closeModal();
     },
     onReject: async (error: any) => {
-      ToastAutohide({
-        content: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
-        variant: "danger",
+      errorToast({
+        message: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
       });
       closeModal();
     },

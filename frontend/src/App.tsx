@@ -5,6 +5,7 @@ import routes from "./routes.tsx";
 import RouteConfig from "./components/Router/RouteConfig.tsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { DataCacheProvider } from "./components/App/DataCacheContext.tsx";
+import { ToastProvider } from "./module/Toast/ToastProvider.tsx";
 
 /**
  * Ce fichier est le point d'entrée pour la partie authentifiée du site. Le userInfo ne doit jamais être nul.
@@ -13,9 +14,11 @@ const App = () => {
   return (
     <AppProvider>
       <DataCacheProvider>
-        <BrowserRouter>
-          <RouteConfig routes={routes} />
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
+            <RouteConfig routes={routes} />
+          </BrowserRouter>
+        </ToastProvider>
       </DataCacheProvider>
     </AppProvider>
   );

@@ -2,19 +2,20 @@ import { ReactNode, SetStateAction, useState } from "react";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { usePost, usePut } from "../Fetch/useFetch.tsx";
-import ToastAutohide from "../../module/Toast/toast.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 
-const resolveReject = (
+const ResolveReject = (
   onSubmit: any,
   setErrorMessage: (value: SetStateAction<null>) => void,
   successToastMessage = "L'élément a bien été enregistré",
   errorToastMessage = "L'élément n'a pas été enregistré",
   redirectFn?: any,
 ) => {
+  const { success: successToast, error: errorToast } = useToastContext();
   return {
     onResolve: (result: string) => {
       setErrorMessage(null);
-      <ToastAutohide content={successToastMessage} />;
+      successToast({ message: successToastMessage });
       onSubmit?.(result);
       redirectFn?.();
     },
@@ -22,7 +23,7 @@ const resolveReject = (
       text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
     }) => {
       setErrorMessage(await error.text());
-      <ToastAutohide content={errorToastMessage} />;
+      errorToast({ message: errorToastMessage });
     },
   };
 };
@@ -45,7 +46,7 @@ export const useMyFormik = (
     : null;
   const postState = usePost(
     submitUrl,
-    resolveReject(
+    ResolveReject(
       onSubmit,
       setErrorMessage,
       successToastMessage,
@@ -56,7 +57,7 @@ export const useMyFormik = (
   );
   const putState = usePut(
     submitUrl,
-    resolveReject(
+    ResolveReject(
       onSubmit,
       setErrorMessage,
       successToastMessage,

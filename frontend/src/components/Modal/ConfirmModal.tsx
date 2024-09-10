@@ -2,7 +2,8 @@ import Modal from "react-bootstrap/Modal";
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import { usePost } from "../Fetch/useFetch.tsx";
-import ToastAutohide from "../../module/Toast/toast.tsx";
+import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 
 const ConfirmModalBody = ({
   query,
@@ -12,19 +13,16 @@ const ConfirmModalBody = ({
   content,
   href,
 }: ConfirmModalBodyType) => {
+  const { success: successToast, error: errorToast } = useToastContext();
   const action = usePost(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onConfirm && onConfirm(res);
-      ToastAutohide({
-        content: "L'action a été exécutée avec succès",
-        variant: "success",
-      });
+      successToast({ message: "L'action a bien été exécutée" });
       closeModal();
     },
     onReject: async (error: any) => {
-      ToastAutohide({
-        content: `Erreur lors de l'exécution de l'action : ${error.text}`,
-        variant: "danger",
+      errorToast({
+        message: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
       });
       closeModal();
     },
