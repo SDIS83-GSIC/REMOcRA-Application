@@ -26,7 +26,6 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.enums.StatutIndisponibiliteTemporaire
 import remocra.db.jooq.remocra.keys.INDISPONIBILITE_TEMPORAIRE_PKEY
 import remocra.db.jooq.remocra.keys.L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE__INDISPONIBILITE_TEMPORAIRE_I_FKEY
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei.LIndisponibiliteTemporairePeiPath
@@ -110,12 +109,6 @@ open class IndisponibiliteTemporaire(
      * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_observation</code>.
      */
     val OBSERVATION: TableField<Record, String?> = createField(DSL.name("indisponibilite_temporaire_observation"), SQLDataType.CLOB, this, "")
-
-    /**
-     * The column
-     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_statut</code>.
-     */
-    val STATUT: TableField<Record, StatutIndisponibiliteTemporaire?> = createField(DSL.name("indisponibilite_temporaire_statut"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(StatutIndisponibiliteTemporaire::class.java), this, "")
 
     /**
      * The column

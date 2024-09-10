@@ -28,11 +28,11 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     SITE("SITE"),
     PENA_ASPIRATION("PENA_ASPIRATION"),
     DOCUMENT_PEI("DOCUMENT_PEI"),
+    TOURNEE("TOURNEE"),
+    TOURNEE_PEI("TOURNEE_PEI"),
     ETUDE("ETUDE"),
     DOCUMENT_ETUDE("DOCUMENT_ETUDE"),
     INDISPONIBILITE_TEMPORAIRE("INDISPONIBILITE_TEMPORAIRE"),
-    TOURNEE("TOURNEE"),
-    TOURNEE_PEI("TOURNEE_PEI"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

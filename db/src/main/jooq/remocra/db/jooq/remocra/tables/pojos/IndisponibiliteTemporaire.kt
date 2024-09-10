@@ -3,7 +3,6 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import remocra.db.jooq.remocra.enums.StatutIndisponibiliteTemporaire
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -26,7 +25,6 @@ data class IndisponibiliteTemporaire(
     val indisponibiliteTemporaireDateFin: ZonedDateTime?,
     val indisponibiliteTemporaireMotif: String,
     val indisponibiliteTemporaireObservation: String?,
-    val indisponibiliteTemporaireStatut: StatutIndisponibiliteTemporaire,
     val indisponibiliteTemporaireBasculeAutoIndisponible: Boolean,
     val indisponibiliteTemporaireBasculeAutoDisponible: Boolean,
     val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean,
@@ -67,9 +65,6 @@ data class IndisponibiliteTemporaire(
         } else if (this.indisponibiliteTemporaireObservation != o.indisponibiliteTemporaireObservation) {
             return false
         }
-        if (this.indisponibiliteTemporaireStatut != o.indisponibiliteTemporaireStatut) {
-            return false
-        }
         if (this.indisponibiliteTemporaireBasculeAutoIndisponible != o.indisponibiliteTemporaireBasculeAutoIndisponible) {
             return false
         }
@@ -93,7 +88,6 @@ data class IndisponibiliteTemporaire(
         result = prime * result + (if (this.indisponibiliteTemporaireDateFin == null) 0 else this.indisponibiliteTemporaireDateFin.hashCode())
         result = prime * result + this.indisponibiliteTemporaireMotif.hashCode()
         result = prime * result + (if (this.indisponibiliteTemporaireObservation == null) 0 else this.indisponibiliteTemporaireObservation.hashCode())
-        result = prime * result + this.indisponibiliteTemporaireStatut.hashCode()
         result = prime * result + this.indisponibiliteTemporaireBasculeAutoIndisponible.hashCode()
         result = prime * result + this.indisponibiliteTemporaireBasculeAutoDisponible.hashCode()
         result = prime * result + this.indisponibiliteTemporaireMailAvantIndisponibilite.hashCode()
@@ -109,7 +103,6 @@ data class IndisponibiliteTemporaire(
         sb.append(", ").append(indisponibiliteTemporaireDateFin)
         sb.append(", ").append(indisponibiliteTemporaireMotif)
         sb.append(", ").append(indisponibiliteTemporaireObservation)
-        sb.append(", ").append(indisponibiliteTemporaireStatut)
         sb.append(", ").append(indisponibiliteTemporaireBasculeAutoIndisponible)
         sb.append(", ").append(indisponibiliteTemporaireBasculeAutoDisponible)
         sb.append(", ").append(indisponibiliteTemporaireMailAvantIndisponibilite)
