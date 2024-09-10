@@ -42,7 +42,7 @@
     "react-select": "^5.8.0",
     "regenerator-runtime": "^0.14.1",
     "use-debounce": "^10.0.3",
-    "yup": "^0.32.11"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
