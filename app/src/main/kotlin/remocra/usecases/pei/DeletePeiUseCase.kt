@@ -12,7 +12,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
     override fun checkDroits(userInfo: UserInfo) {
         TODO("Not yet implemented")
     }
-    override fun checkContraintes(element: PeiData) {
+    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
         TODO("Not yet implemented")
     }
 }

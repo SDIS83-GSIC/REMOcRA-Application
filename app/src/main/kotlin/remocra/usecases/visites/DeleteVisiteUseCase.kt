@@ -37,7 +37,7 @@ class DeleteVisiteUseCase @Inject constructor(
         // TODO : Gestion "notification changement état" et autres jobs
     }
 
-    override fun checkContraintes(element: UUID) {
+    override fun checkContraintes(userInfo: UserInfo?, element: UUID) {
         val peiId = visiteRepository.getPeiIdByVisiteId(visiteId = element)
         val lastPeiVisiteId = visiteRepository.getLastPeiVisiteId(peiId = peiId!!)
         if (lastPeiVisiteId != element) {

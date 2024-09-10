@@ -38,7 +38,7 @@ class UpdateTourneeUseCase @Inject constructor(
         )
     }
 
-    override fun checkContraintes(element: Tournee) {
+    override fun checkContraintes(userInfo: UserInfo?, element: Tournee) {
         // La paire organisme_id et tournee_libelle doit etre unique
         if (tourneeRepository.tourneeAlreadyExists(tourneeLibelle = element.tourneeLibelle, tourneeOrganismeId = element.tourneeOrganismeId)) {
             throw RemocraResponseException(ErrorType.TOURNEE_ALREADY_EXISTS)

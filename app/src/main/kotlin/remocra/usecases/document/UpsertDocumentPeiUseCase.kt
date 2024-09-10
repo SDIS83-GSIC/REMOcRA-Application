@@ -73,7 +73,7 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentPei
         )
     }
 
-    override fun checkContraintes(element: DocumentsPei) {
+    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsPei) {
         // Si même nom => lève une exeption
         if (element.listDocument.groupingBy { it.documentNomFichier }.eachCount().any { it.value > 1 }) {
             throw IllegalArgumentException("Les documents d'un même PEI ne doivent pas avoir le même nom.")

@@ -19,7 +19,7 @@ class CreatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.INS
         }
     }
 
-    override fun checkContraintes(element: PeiData) {
+    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
         // Aucune contrainte
     }
 }

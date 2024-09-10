@@ -25,7 +25,7 @@ class UpdateLTourneePeiUseCase @Inject constructor(
         }
     }
 
-    override fun checkContraintes(element: LTourneePeiToInsert) {
+    override fun checkContraintes(userInfo: UserInfo?, element: LTourneePeiToInsert) {
         // TODO vérifier que tous les pei qu'on souhaite insérer sont bien de meme nature deci,
         // a défaut public et privé sous convention ET privée et public sous convention
     }

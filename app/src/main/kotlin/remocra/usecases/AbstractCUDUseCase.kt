@@ -29,7 +29,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
      * exemple : dans le cas d'une suppression de PEI, on vérifie s'il est utilisé quelque part
      * Doit déclencher des [Exception] si les contraintes ne sont pas vérifiées
      */
-    protected abstract fun checkContraintes(element: T)
+    protected abstract fun checkContraintes(userInfo: UserInfo?, element: T)
 
     /** Exécute la logique métier d'insert / update / delete.
      *
@@ -55,7 +55,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
                 throw ForbiddenException()
             }
             checkDroits(userInfo)
-            checkContraintes(element)
+            checkContraintes(userInfo, element)
 
             // On utilise le transactionManager parent s'il est fourni, sinon fallback sur celui qui est injecté
             val savedElement = (mainTransactionManager ?: transactionManager).transactionResult { execute(userInfo, element) }

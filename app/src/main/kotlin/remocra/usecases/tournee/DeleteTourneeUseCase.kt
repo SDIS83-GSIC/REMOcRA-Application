@@ -38,7 +38,7 @@ class DeleteTourneeUseCase @Inject constructor(
         )
     }
 
-    override fun checkContraintes(element: Tournee) {
+    override fun checkContraintes(userInfo: UserInfo?, element: Tournee) {
         // Si la tournée est réservée, elle est en lecture seule => impossible de modifier ses informations
         if (element.tourneeReservationUtilisateurId != null) {
             throw RemocraResponseException(ErrorType.TOURNEE_LECTURE_SEULE)

@@ -78,7 +78,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
         return element
     }
 
-    override fun checkContraintes(element: PenaAspirationData) {
+    override fun checkContraintes(userInfo: UserInfo?, element: PenaAspirationData) {
         // Vérifie si on n'a pas de doublon sur le numéro
         if (element.listeAireAspiration.groupingBy { it.numero }.eachCount().any { it.value > 1 }) {
             throw IllegalArgumentException("Le numéro doit être unique")

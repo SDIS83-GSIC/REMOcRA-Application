@@ -53,7 +53,7 @@ class CreateVisiteUseCase @Inject constructor(
         // TODO : Gestion "notification changement état" et autres jobs
     }
 
-    override fun checkContraintes(element: VisiteData) {
+    override fun checkContraintes(userInfo: UserInfo?, element: VisiteData) {
         // La visite n'est pas dans le future
         if (element.visiteDate.isAfter(ZonedDateTime.now())) {
             throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
