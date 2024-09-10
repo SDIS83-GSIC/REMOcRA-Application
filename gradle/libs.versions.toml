@@ -83,11 +83,9 @@ sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 
 [plugins]
 cyclonedx = "org.cyclonedx.bom:1.7.4"
-errorprone = "net.ltgt.errorprone:2.0.2"
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
 kotlin = "org.jetbrains.kotlin.jvm:1.9.25"
 licensee = "app.cash.licensee:1.11.0"
 loggingCapabilities = "dev.jacomet.logging-capabilities:0.11.1"
-nullaway = "net.ltgt.nullaway:1.6.0"
 spotless = "com.diffplug.spotless:6.25.0"
