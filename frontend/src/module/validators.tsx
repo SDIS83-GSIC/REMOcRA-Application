@@ -6,9 +6,8 @@ import {
   mixed as mixedYup,
   date as dateYup,
 } from "yup";
-import { AnyObject } from "yup/lib/types";
 
-function requiredIf(test: boolean, validator: AnyObject) {
+function requiredIf(test: boolean, validator: object) {
   return test ? validator.required("Ce champ est requis.") : validator;
 }
 
