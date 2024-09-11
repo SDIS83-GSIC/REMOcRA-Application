@@ -68,7 +68,7 @@ geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "g
 geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }
 geotools-gt-referencing = { module = "org.geotools:gt-referencing", version.ref = "geotools" }
 geotools-gt-epsg = { module = "org.geotools:gt-epsg-hsql", version.ref = "geotools" }
-locationtech-jts-core = "org.locationtech.jts:jts-core:1.19.0"
+locationtech-jts-core = "org.locationtech.jts:jts-core:1.20.0"
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }

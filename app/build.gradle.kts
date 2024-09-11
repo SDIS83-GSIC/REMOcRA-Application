@@ -69,7 +69,7 @@ licensee {
     allowDependency("javax.media", "jai_core", "1.1.3") {
         because("Java Distribution License")
     }
-    allowDependency("org.locationtech.jts", "jts-core", "1.19.0") {
+    allowDependency("org.locationtech.jts", "jts-core", "1.20.0") {
         because("Dual-licensed EPL-2.0 ou EDL-1.0 (BSD-3-Clause)")
     }
     // Dépendances javax.measurement
