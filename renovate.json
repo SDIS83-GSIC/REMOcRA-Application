@@ -1,9 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>atolcd/renovate-config",
-    "local>atolcd/renovate-config:packageRules-gradle"
-  ],
   "packageRules": [
     {
       "matchDepNames": ["org.cyclonedx.bom"],
