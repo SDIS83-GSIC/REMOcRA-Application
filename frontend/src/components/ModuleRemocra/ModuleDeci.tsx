@@ -3,7 +3,13 @@ import { URLS } from "../../routes.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
 
 const ModuleDeci = () => {
-  const navLinks: NavToProps[] = [{ path: URLS.PEI, label: "Points d'eau" }];
+  const navLinks: NavToProps[] = [
+    { path: URLS.PEI, label: "Points d'eau" },
+    {
+      path: URLS.LIST_INDISPONIBILITE_TEMPORAIRE,
+      label: "Indisponibilités temporaires",
+    },
+  ];
 
   return (
     <>

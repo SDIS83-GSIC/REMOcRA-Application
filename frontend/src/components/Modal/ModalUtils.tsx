@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-function useModal(initialVisible = false) {
-  const [visible, setVisible] = useState(initialVisible);
+const useModal = () => {
+  const [visible, setVisible] = useState(false);
   const [value, setValue] = useState(null);
 
-  function handleShow(value = null) {
+  const ref = useRef<HTMLDialogElement | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+    const modal = ref.current;
+    visible && modal.showModal();
+    !visible && modal.close();
+  }, [visible]);
+
+  function show(value = null) {
     setVisible(true);
+    const modal = ref.current;
+    modal?.showModal();
     setValue(value);
   }
 
-  function handleClose() {
+  function close() {
+    const modal = ref.current;
+    modal?.close();
     setVisible(false);
     setValue(null);
   }
 
-  return { visible, value, handleShow, handleClose };
-}
+  return { visible, value, show, close, ref };
+};
 
 export default useModal;

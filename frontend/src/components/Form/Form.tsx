@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Form from "react-bootstrap/Form";
 import { Field, Form as FormikForm, useField } from "formik";
+import ReactSelect from "react-select";
 
 type InputType = {
   name: string;
@@ -249,13 +250,54 @@ export const DateTimeInput = ({
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel label={label} required={required} className={"me-2"} />
       <input
         type="datetime-local"
         required={required}
         {...field}
         {...rest}
         disabled={readOnly}
+      />
+    </DivWithError>
+  );
+};
+
+type MultiselectType = InputType & {
+  options: any[];
+  getOptionValue: (e: any) => string;
+  getOptionLabel: (e: any) => string;
+  isClearable?: boolean;
+  onChange: (e: any) => any;
+};
+
+export const Multiselect = ({
+  name,
+  label,
+  options,
+  getOptionValue,
+  getOptionLabel,
+  value,
+  isClearable = false,
+  required = true,
+  readOnly = false,
+  onChange,
+}: MultiselectType) => {
+  const [, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+
+  return (
+    <DivWithError name={name} error={error}>
+      <FormLabel label={label} required={required} />
+      <ReactSelect
+        isMulti={true}
+        name={name}
+        options={options}
+        getOptionValue={getOptionValue}
+        getOptionLabel={getOptionLabel}
+        isClearable={isClearable}
+        value={value}
+        onChange={onChange}
+        isDisabled={readOnly}
       />
     </DivWithError>
   );

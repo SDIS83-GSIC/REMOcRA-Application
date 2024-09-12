@@ -17,6 +17,15 @@ function formatDateTime(dateToFormat: Date) {
   return formatDateWithPattern(dateToFormat, "dd/MM/yyyy HH:mm");
 }
 
+/** Retourne une date au format 'dd-MM-yyyy HH:mm:ss'
+ * utilisé pour préremplir le composant DateTimeInput
+ * @param dateToFormat: Date
+ * @returns: string
+ */
+export function formatDateTimeForDateTimeInput(dateToFormat: Date) {
+  return formatDateWithPattern(dateToFormat, "yyyy-MM-dd HH:mm");
+}
+
 /** Retourne une date au format 'dd/MM/yyyy'
  * @param dateToFormat: Date
  * @returns: string

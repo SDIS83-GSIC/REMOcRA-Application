@@ -10,18 +10,26 @@ import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import ListEtude from "./pages/Etude/ListEtude.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
+import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
+import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import ListTournee from "./pages/Tournee/ListTournee.tsx";
 import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
+import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
   LOGOUT: url`/logout`,
+  LIST_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/`,
   VIEW_COURRIER: url`/create-courrier/view-courrier`,
   PEI: url`/deci/pei`,
+  CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
+  UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
+    url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
+
   UPDATE_PEI: (peiId: string) => url`/deci/pei/` + peiId,
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,
@@ -131,6 +139,33 @@ export default [
         path: "etudes",
         element: (
           <Authorization Component={ListEtude} droits={[TYPE_DROIT.ETUDE_R]} />
+        ),
+      },
+      {
+        path: "indisponibilite-temporaire/",
+        element: (
+          <Authorization
+            Component={ListIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_R]}
+          />
+        ),
+      },
+      {
+        path: "indisponibilite-temporaire/create",
+        element: (
+          <Authorization
+            Component={CreateIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_C]}
+          />
+        ),
+      },
+      {
+        path: "indisponibilite-temporaire/:indisponibiliteTemporaireId",
+        element: (
+          <Authorization
+            Component={UpdateIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_U]}
+          />
         ),
       },
     ],

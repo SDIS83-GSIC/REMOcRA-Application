@@ -1,6 +1,3 @@
-/**
- * Enumération définissant les types PEI
- */
 enum DISPONIBILITE_PEI {
   DISPONIBLE = "Disponible",
   INDISPONIBLE = "Indisponible",

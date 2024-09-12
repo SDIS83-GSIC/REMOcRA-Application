@@ -1,12 +1,20 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
-import { IconEdit, IconSee } from "../Icon/Icon.tsx";
+import Form from "react-bootstrap/Form";
+import { IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
+import DeleteModal from "../Modal/DeleteModal.tsx";
+import useModal from "../Modal/ModalUtils.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import { columnType } from "./QueryTable.tsx";
 
 const EditColumn = ({
   to,
   canEdit = false,
   canEditFunction,
   title = true,
+  disabled = false,
+  disable = () => false,
+  textDisable = "",
   ...option
 }: EditColumnType) => ({
   // eslint-disable-next-line react/display-name
@@ -14,12 +22,21 @@ const EditColumn = ({
     const canEditValue = canEditFunction ? canEditFunction(row.value) : canEdit;
     return (
       <>
-        {canEditValue && (
-          <Button variant="link" href={to(row.value)}>
-            <IconEdit />
-            {title && <>&nbsp;Modifier</>}
-          </Button>
-        )}
+        <TooltipCustom
+          tooltipText={!(disable(row) || disabled) ? "Modifier" : textDisable}
+          tooltipId={row.value}
+        >
+          {canEditValue && (
+            <Button
+              variant="link"
+              href={to(row.value)}
+              disabled={disabled || disable(row)}
+            >
+              <IconEdit />
+              {title && <>&nbsp;Modifier</>}
+            </Button>
+          )}
+        </TooltipCustom>
       </>
     );
   },
@@ -34,6 +51,9 @@ type EditColumnType = {
   title?: boolean;
   accessor: string;
   canEdit?: boolean;
+  textDisable?: string;
+  disabled: boolean;
+  disable: (t?: any) => boolean;
   canEditFunction?: (t: any) => boolean;
 };
 
@@ -54,6 +74,87 @@ export const SeeColumn = ({
     ) : null;
   },
   width: title ? 70 : 50,
+  ...options,
+});
+
+type DeleteColumnType = {
+  path: string;
+  reload: boolean;
+  title: boolean;
+  canSupress: boolean;
+  disabled: boolean;
+  disable: (t?: any) => boolean;
+  textDisable: string;
+};
+export const DeleteColumn = ({
+  path,
+  reload,
+  title = true,
+  canSupress,
+  disabled = false,
+  disable = () => false,
+  textDisable = "",
+  ...options
+}): DeleteColumnType => ({
+  // eslint-disable-next-line react/display-name
+  Cell: (row) => {
+    const { visible, show, close, ref } = useModal();
+    const query = `${path}${row.value}`;
+    return (
+      <>
+        {canSupress && (
+          <>
+            <TooltipCustom
+              tooltipText={!disable(row) ? "Supprimer" : textDisable}
+              tooltipId={row.value}
+            >
+              <Button
+                variant={"link"}
+                className={disabled || disable(row) ? "" : "text-danger"}
+                disabled={disabled || disable(row)}
+                onClick={show}
+              >
+                <IconDelete />
+                {title && <>&nbsp;Supprimer</>}
+              </Button>
+            </TooltipCustom>
+            {!disable(row) && (
+              <DeleteModal
+                visible={visible}
+                closeModal={close}
+                query={query}
+                ref={ref}
+                onDelete={() =>
+                  reload ? reload() : window.location.reload(false)
+                }
+              />
+            )}
+          </>
+        )}
+      </>
+    );
+  },
+  width: title ? 160 : 90,
+  ...options,
+});
+
+export const BooleanColumn = ({
+  Header,
+  accessor,
+  sortField,
+  ...options
+}: columnType) => ({
+  // eslint-disable-next-line react/display-name
+  Header: Header,
+  accessor: accessor,
+  Cell: (value) => {
+    return (
+      <div className="text-center">
+        <Form.Check type="checkbox" disabled checked={value.value === true} />
+      </div>
+    );
+  },
+  sortField: sortField,
   ...options,
 });
 

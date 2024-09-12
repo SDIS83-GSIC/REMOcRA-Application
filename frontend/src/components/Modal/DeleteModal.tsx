@@ -57,6 +57,7 @@ const DeleteModalBody = ({
 };
 
 const DeleteModal = ({
+  ref,
   visible,
   closeModal,
   header = "Suppression d'un élément",
@@ -66,7 +67,7 @@ const DeleteModal = ({
   content = "Voulez-vous supprimer cet élément ?",
 }: DeleteModalBodyType & { visible: boolean }) => {
   return (
-    <Modal show={visible} onHide={closeModal}>
+    <Modal show={visible} onHide={closeModal} ref={ref}>
       <Modal.Header>
         <Modal.Title>{header}</Modal.Title>
       </Modal.Header>
@@ -87,6 +88,7 @@ type DeleteModalBodyType = {
   query: string;
   id?: string;
   content: ReactNode;
+  ref?: any;
   onDelete: (values: any) => void;
 };
 

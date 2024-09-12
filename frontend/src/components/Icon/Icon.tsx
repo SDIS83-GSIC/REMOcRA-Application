@@ -10,6 +10,7 @@ export const Toggle = ({ toggled = false }: { toggled: boolean }) => (
 );
 
 export const IconEdit = () => <i className="fi fi-br-pencil" />;
+export const IconDelete = () => <i className="fi fi-br-trash" />;
 export const IconCreate = () => <i className="fi fi-br-add" />;
 export const IconSee = () => <i className="fi fi-br-overview" />;
 export const IconPei = () => <i className="fi fi-ss-fire-hydrant" />;
@@ -19,6 +20,14 @@ export const IconInfo = () => <i className="fi fi-br-interrogation" />;
 
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
+
+export const IconIndisponibiliteTemporaire = () => (
+  <i className="fi fi-bs-time-delete" />
+);
+
+export const IconCloseIndisponibiliteTemporaire = () => (
+  <i className="fi fi-bs-hourglass-end" />
+);
 
 export const IconTournee = () => <i className="fi fi-br-document" />;
 export const IconSortList = () => <i className="fi fi-br-apps-sort" />;
