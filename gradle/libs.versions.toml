@@ -23,7 +23,7 @@ junit-bom = "org.junit:junit-bom:5.11.0"
 forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
-kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1"
+kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 disruptor = "com.lmax:disruptor:4.0.0"
