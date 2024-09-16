@@ -93,7 +93,7 @@ function getColumnByStringArray(
           sortField: "communeLibelle",
           Filter: (
             <SelectFilterFromUrl
-              name={"autoriteDeci"}
+              name={"communeId"}
               url={url`/api/commune/get-libelle-commune`}
             />
           ),
