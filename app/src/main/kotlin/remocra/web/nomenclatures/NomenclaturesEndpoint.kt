@@ -35,7 +35,7 @@ class NomenclaturesEndpoint {
      */
     @GET
     @Path("/{typeNomenclature}")
-    @Public("Les nomenclatures ne sont pas liés à un droit")
+    @Public("Les nomenclatures ne sont pas liées à un droit")
     fun getNomenclature(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
         return Response.ok(dataCacheProvider.getData(getTypeNomenclatureFromString(typeNomenclatureString))).build()
     }
@@ -51,6 +51,7 @@ class NomenclaturesEndpoint {
     @GET
     @Path("/list/{typeNomenclature}")
     @Throws(IllegalAccessException::class, IllegalArgumentException::class)
+    @Public("Les nomenclatures ne sont pas liées à un droit")
     fun getListIdLibelle(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
         val typeNomenclature = getTypeNomenclatureFromString(typeNomenclatureString)
 
