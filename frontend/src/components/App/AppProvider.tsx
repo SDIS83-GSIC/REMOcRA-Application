@@ -1,7 +1,6 @@
 /*global userInfo */
 
-import { createContext, useContext } from "react";
-import PropTypes from "prop-types";
+import { createContext, ReactNode, useContext } from "react";
 
 const AppContext = createContext({});
 
@@ -9,7 +8,7 @@ export const useAppContext = () => {
   return useContext(AppContext);
 };
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppContext.Provider
       value={{
@@ -19,8 +18,4 @@ export const AppProvider = ({ children }) => {
       {children}
     </AppContext.Provider>
   );
-};
-
-AppProvider.propTypes = {
-  children: PropTypes.node,
 };
