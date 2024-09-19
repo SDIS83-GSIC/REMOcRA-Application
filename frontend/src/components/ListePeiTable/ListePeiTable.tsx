@@ -33,6 +33,7 @@ const ListPei = ({
     autoriteDeci: "",
     servicePublicDeci: "",
     listeAnomalie: "",
+    tourneeLibelle: "",
   };
 
   let urlTable;

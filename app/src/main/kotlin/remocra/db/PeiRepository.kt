@@ -5,7 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record13
+import org.jooq.Record14
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -24,12 +24,14 @@ import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
@@ -98,7 +100,7 @@ class PeiRepository
         return getAllWithFilterAndConditionalJoin(param).count()
     }
 
-    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record13<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, ZonedDateTime?>> {
+    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, ZonedDateTime?, String?>> {
         val requete = dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -124,6 +126,7 @@ class PeiRepository
                 }
             },
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
+            TOURNEE.LIBELLE.`as`("tourneeLibelle"),
         )
             .from(PEI)
             .join(COMMUNE)
@@ -150,6 +153,10 @@ class PeiRepository
             .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
             .leftJoin(V_PEI_DATE_RECOP)
             .on(V_PEI_DATE_RECOP.PEI_ID.eq(PEI.ID))
+            .leftJoin(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .leftJoin(TOURNEE)
+            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
         // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
         // pour les indispos temporaires)
         when (pageFilter) {
@@ -174,6 +181,7 @@ class PeiRepository
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
+                TOURNEE.LIBELLE,
             )
             .orderBy(
                 param.sortBy?.toCondition() ?: listOf(
@@ -198,11 +206,7 @@ class PeiRepository
         val servicePublicDeci: String?,
         val listeAnomalie: List<UUID>?,
         val peiNextRecop: ZonedDateTime?,
-
-            /*
-                TODO
-                    - rajouter libellé tournée
-             */
+        val tourneeLibelle: String?,
     )
 
     data class Filter(
@@ -218,7 +222,7 @@ class PeiRepository
         val penaDisponibiliteHbe: Disponibilite?,
         val listeAnomalie: String?,
         var idIndisponibiliteTemporaire: UUID?,
-
+        val tourneeLibelle: String?,
     ) {
 
         fun toCondition(): Condition =
@@ -236,6 +240,7 @@ class PeiRepository
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
                     listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
                     idIndisponibiliteTemporaire?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)) },
+                    tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCase(it)) },
                 ),
             )
     }
@@ -252,6 +257,7 @@ class PeiRepository
         val autoriteDeci: Int?,
         val servicePublicDeci: Int?,
         val peiNextRecop: Int?,
+        val tourneeLibelle: Int?,
 
     ) {
 
@@ -271,6 +277,7 @@ class PeiRepository
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
+            TOURNEE.LIBELLE.getSortField(tourneeLibelle),
         )
     }
 

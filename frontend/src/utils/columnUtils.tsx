@@ -178,7 +178,14 @@ function getColumnPeiByStringArray(
           Cell: (value) => {
             return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
           },
-          Filter: <FilterInput type="text" name="listeAnomalie" />,
+        });
+        break;
+      case COLUMN_PEI.TOURNEE_LIBELLE:
+        column.push({
+          Header: "Tournée",
+          accessor: "tourneeLibelle",
+          sortField: "tourneeLibelle",
+          Filter: <FilterInput type="text" name="tourneeLibelle" />,
         });
         break;
       default:
