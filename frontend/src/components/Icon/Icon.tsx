@@ -28,6 +28,7 @@ export const IconIndisponibiliteTemporaire = () => (
 export const IconCloseIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-hourglass-end" />
 );
+export const IconList = () => <i className="fi fi-br-list" />;
 
 export const IconTournee = () => <i className="fi fi-br-document" />;
 export const IconSortList = () => <i className="fi fi-br-apps-sort" />;

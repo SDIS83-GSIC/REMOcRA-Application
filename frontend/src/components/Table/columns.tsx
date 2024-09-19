@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
+import { IconDelete, IconEdit, IconList, IconSee } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
@@ -46,6 +46,31 @@ const EditColumn = ({
 
 export default EditColumn;
 
+export const ListePeiColumn = ({
+  handleButtonClick,
+  accessor,
+}: ListePeiColumnType) => ({
+  Header: "",
+  accessor: accessor,
+  Cell: (value) => {
+    return (
+      <TooltipCustom tooltipText={"Lister les points d'eau"} tooltipId={value}>
+        <Button
+          variant={"link"}
+          onClick={() => {
+            handleButtonClick(value.value);
+          }}
+        >
+          <IconList />
+        </Button>
+      </TooltipCustom>
+    );
+  },
+});
+type ListePeiColumnType = {
+  handleButtonClick: (value: string) => any;
+  accessor: string;
+};
 type EditColumnType = {
   to: (id: string) => any;
   title?: boolean;

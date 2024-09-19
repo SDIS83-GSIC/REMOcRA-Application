@@ -1,0 +1,4 @@
+enum FILTER_PAGE {
+  INDISPONIBILITE_TEMPORAIRE,
+}
+export default FILTER_PAGE;

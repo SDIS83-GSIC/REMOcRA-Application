@@ -15,6 +15,7 @@ import { columnType } from "../components/Table/QueryTable.tsx";
 import EditColumn, {
   BooleanColumn,
   DeleteColumn,
+  ListePeiColumn,
 } from "../components/Table/columns.tsx";
 import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../droits.tsx";
@@ -219,11 +220,24 @@ function getColumnPeiByStringArray(
 }
 
 /***********************INDISPO_TEMPORARIE******************/
-export function getColumnIndisponibiliteTemporaireByStringArray(
-  user: UtilisateurEntity,
-  parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>,
-): Array<columnType> {
+export function getColumnIndisponibiliteTemporaireByStringArray({
+  user,
+  parametres,
+  handleButtonClick,
+}: {
+  user: UtilisateurEntity;
+  parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>;
+  handleButtonClick: (value: string) => any;
+}): Array<columnType> {
   const column: Array<columnType> = [];
+  {
+    column.push(
+      ListePeiColumn({
+        handleButtonClick: handleButtonClick,
+        accessor: "indisponibiliteTemporaireId",
+      }),
+    );
+  }
   parametres.forEach((_parametre: COLUMN_INDISPONIBILITE_TEMPORAIRE) => {
     switch (_parametre) {
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF:
@@ -253,7 +267,6 @@ export function getColumnIndisponibiliteTemporaireByStringArray(
         column.push({
           Header: "Statut",
           accessor: "indisponibiliteTemporaireStatut",
-          sortField: "indisponibiliteTemporaireStatut",
           Cell: (value) => {
             return (
               <div>
@@ -368,6 +381,7 @@ export function getColumnIndisponibiliteTemporaireByStringArray(
       default:
     }
   });
+
   {
     if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
       column.push(
@@ -391,6 +405,7 @@ export function getColumnIndisponibiliteTemporaireByStringArray(
       );
     }
   }
+
   {
     if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_D)) {
       column.push(

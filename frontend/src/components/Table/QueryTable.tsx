@@ -1,12 +1,12 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { default as classnames, default as classNames } from "classnames";
 import { useFormik } from "formik";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-import { useDebouncedCallback } from "use-debounce";
 import { useNavigate } from "react-router-dom";
-import classnames from "classnames";
-import useQueryParams from "../Fetch/useQueryParams.tsx";
+import { useDebouncedCallback } from "use-debounce";
 import url from "../../module/fetch.tsx";
 import { usePost } from "../Fetch/useFetch.tsx";
+import useQueryParams from "../Fetch/useQueryParams.tsx";
 import Pagination, {
   setOffsetToSearchParams,
   usePaginationState,
@@ -50,6 +50,7 @@ function QueryTable({
   getCount = (data) => data?.count,
   columns = [],
   idName = "id",
+  displayNone = false,
   className,
   trClassName,
   filterContext = {},
@@ -318,7 +319,12 @@ function QueryTable({
   };
   return (
     <div>
-      <Table striped bordered hover className={className}>
+      <Table
+        striped
+        bordered
+        hover
+        className={classNames({ "d-none": displayNone }, className)}
+      >
         <thead>
           <tr>
             {columns.map((column, i) => makeHeader(column, i.toString()))}
@@ -343,12 +349,14 @@ function QueryTable({
         count={getCount(data)}
         paginationState={[pagination, setPagination]}
         dataLength={getList(data)?.length}
+        className={classNames({ "d-none": displayNone })}
       />
     </div>
   );
 }
 
 type QueryTableType = {
+  displayNone?: boolean;
   query: string;
   queryParams: object[];
   asyncOptions: object[];

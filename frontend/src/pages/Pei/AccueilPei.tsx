@@ -9,7 +9,7 @@ const AccueilPei = () => {
       <Container>
         <PageTitle icon={<IconPei />} title={"Liste des points d'eau"} />
       </Container>
-      <Container fluid>
+      <Container fluid className={"px-5"}>
         <ListPei />
       </Container>
     </>
