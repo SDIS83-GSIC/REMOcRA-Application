@@ -5,6 +5,8 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.Record
+import org.jooq.Record12
+import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
@@ -20,6 +22,7 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
@@ -73,8 +76,28 @@ class PeiRepository
         )
     }
 
-    fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> {
-        return dsl.select(
+    enum class PageFilter {
+        INDISPONIBILITE_TEMPORAIRE,
+        LISTE_PEI,
+    }
+
+    fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID): List<PeiForTableau> {
+        param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
+        return getAllWithFilterAndConditionalJoin(param, PageFilter.INDISPONIBILITE_TEMPORAIRE).fetchInto()
+    }
+    fun countAllPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID): Int {
+        param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
+        return getAllWithFilterAndConditionalJoin(param, PageFilter.INDISPONIBILITE_TEMPORAIRE).count()
+    }
+
+    fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> = getAllWithFilterAndConditionalJoin(param).fetchInto()
+
+    fun countAllPeiWithFilter(param: Params<Filter, Sort>): Int {
+        return getAllWithFilterAndConditionalJoin(param).count()
+    }
+
+    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record12<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>>> {
+        val requete = dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
             PEI.NUMERO_INTERNE,
@@ -86,9 +109,9 @@ class PeiRepository
             NATURE_DECI.LIBELLE,
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-                /*
-                 * le multiset permet de renvoyer une liste dans une liste
-                 * */
+            /*
+             * le multiset permet de renvoyer une liste dans une liste
+             * */
             multiset(
                 selectDistinct(L_PEI_ANOMALIE.ANOMALIE_ID)
                     .from(L_PEI_ANOMALIE)
@@ -114,15 +137,26 @@ class PeiRepository
             .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
-                /*
-                Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
-                de cette jointure
-                 */
+            /*
+            Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
+            de cette jointure
+             */
             .leftJoin(L_PEI_ANOMALIE)
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
             .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
-            .where(param.filterBy?.toCondition() ?: DSL.noCondition())
+
+        // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
+        // pour les indispos temporaires)
+        when (pageFilter) {
+            PageFilter.INDISPONIBILITE_TEMPORAIRE -> requete.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+
+            // Si on vient de la page des pei pas de join supplémentaire
+            PageFilter.LISTE_PEI -> requete
+        }
+
+        return requete.where(param.filterBy?.toCondition() ?: DSL.noCondition())
             .groupBy(
                 PEI.ID,
                 PEI.NUMERO_COMPLET,
@@ -144,13 +178,7 @@ class PeiRepository
             )
             .limit(param.limit)
             .offset(param.offset)
-            .fetchInto()
     }
-
-    fun countAllPeiWithFilter(param: Params<Filter, Sort>): Int {
-        return getPeiWithFilter(Params(filterBy = param.filterBy, sortBy = null, limit = null)).size
-    }
-
     data class PeiForTableau(
         val peiId: UUID,
         val peiNumeroComplet: String,
@@ -167,8 +195,8 @@ class PeiRepository
 
             /*
                 TODO
-                    - rajouter les dates quand on aura les visites
-                    - rajouter libellé tournée quand on aura les tournées
+                    - rajouter les dates dernière recop
+                    - rajouter libellé tournée
              */
     )
 
@@ -184,6 +212,7 @@ class PeiRepository
         val peiDisponibiliteTerrestre: Disponibilite?,
         val penaDisponibiliteHbe: Disponibilite?,
         val listeAnomalie: String?,
+        var idIndisponibiliteTemporaire: UUID?,
     ) {
 
         fun toCondition(): Condition =
@@ -200,6 +229,7 @@ class PeiRepository
                     peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
                     listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
+                    idIndisponibiliteTemporaire?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)) },
                 ),
             )
     }
