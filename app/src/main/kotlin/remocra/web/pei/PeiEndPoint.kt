@@ -66,6 +66,24 @@ class PeiEndPoint : AbstractEndpoint() {
             .build()
     }
 
+    @POST
+    @Path("/get-by-indispo/{idIndisponibiliteTemporaire}")
+    @RequireDroits([Droit.PEI_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getPeiByIndisponibiliteTemporaire(
+        @PathParam("idIndisponibiliteTemporaire") idIndisponibiliteTemporaire: UUID,
+        params: Params<
+            PeiRepository.Filter,
+            PeiRepository.Sort,
+            >,
+    ): Response {
+        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire)
+        return Response.ok(
+            DataTableau(listPei, peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire)),
+        )
+            .build()
+    }
+
     @GET
     @Path("/get-id-numero")
     @RequireDroits([Droit.PEI_R])

@@ -75,6 +75,14 @@ class PeiUseCase {
         return peiRepository.getPeiWithFilter(param)
     }
 
+    fun getPeiWithFilterByIndisponibiliteTemporaire(
+        param: Params<
+            PeiRepository.Filter,
+            PeiRepository.Sort,
+            >,
+        idIndisponibiliteTemporaire: UUID,
+    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire)
+
     fun getInfoPei(idPei: UUID): PeiData {
         val typePei = peiRepository.getTypePei(idPei)
 
@@ -121,11 +129,13 @@ class PeiUseCase {
 
             listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listIdCommune)
             listPeiJumelage = pibiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, srid)
-            listMaintenanceDeci = organismeRepository.getMaintenanceDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
-                .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
+            listMaintenanceDeci =
+                organismeRepository.getMaintenanceDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                    .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
 
-            listServicePublicDeci = organismeRepository.getServicePublicDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
-                .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
+            listServicePublicDeci =
+                organismeRepository.getServicePublicDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                    .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
         }
 
         return FichePeiListSelect(
