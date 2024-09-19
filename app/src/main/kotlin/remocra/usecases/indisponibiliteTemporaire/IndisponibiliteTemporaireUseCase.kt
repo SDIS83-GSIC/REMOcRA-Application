@@ -18,7 +18,16 @@ class IndisponibiliteTemporaireUseCase {
     lateinit var clock: Clock
 
     fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
-        return indisponibiliteTemporaireRepository.getAllWithListPei(params)
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getAllWithListPei(params)
+
+        // Le statut est calculé en kotlin ce n'est pas une info stockée en base
+        // On filtre côté back pour éviter de réimplémenter le calcul en BDD
+        params.filterBy?.indisponibiliteTemporaireStatut?.let {
+                statusSearch ->
+            return listeIndisponibiliteTemporaire.filter { it.indisponibiliteTemporaireStatut == statusSearch }
+        }
+
+        return listeIndisponibiliteTemporaire
     }
 
     fun getDataFromId(id: UUID): IndisponibiliteTemporaireData {
