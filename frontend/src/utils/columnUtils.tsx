@@ -68,6 +68,16 @@ function getColumnPeiByStringArray(
           Header: "Disponibilité",
           accessor: "peiDisponibiliteTerrestre",
           sortField: "peiDisponibiliteTerrestre",
+          Cell: (value) => {
+            const bg =
+              DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
+                ? "bg-warning"
+                : DISPONIBILITE_PEI[value.value] ===
+                    DISPONIBILITE_PEI.INDISPONIBLE
+                  ? "bg-danger text-light"
+                  : "";
+            return <div className={bg}>{value.value}</div>;
+          },
           Filter: (
             <SelectEnumOption
               options={DISPONIBILITE_PEI}
@@ -81,6 +91,16 @@ function getColumnPeiByStringArray(
           Header: "Disponibilité HBE",
           accessor: "penaDisponibiliteHbe",
           sortField: "penaDisponibiliteHbe",
+          Cell: (value) => {
+            const bg =
+              DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
+                ? "bg-warning"
+                : DISPONIBILITE_PEI[value.value] ===
+                    DISPONIBILITE_PEI.INDISPONIBLE
+                  ? "bg-danger"
+                  : "";
+            return <div className={bg}>{value.value}</div>;
+          },
           Filter: (
             <SelectEnumOption
               options={DISPONIBILITE_PEI}
