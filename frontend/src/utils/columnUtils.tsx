@@ -170,7 +170,17 @@ function getColumnPeiByStringArray(
           Filter: <FilterInput type="text" name="listeAnomalie" />,
         });
         break;
-
+      case COLUMN_PEI.PEI_NEXT_RECOP:
+        column.push({
+          Header: "Date Prochaine RECOP",
+          accessor: "peiNextRecop",
+          sortField: "peiNextRecop",
+          Cell: (value) => {
+            return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
+          },
+          Filter: <FilterInput type="text" name="listeAnomalie" />,
+        });
+        break;
       default:
         column.push({
           Header: "Erreur",

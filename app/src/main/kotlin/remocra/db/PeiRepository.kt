@@ -5,7 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record12
+import org.jooq.Record13
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -32,8 +32,10 @@ import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
+import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
+import java.time.ZonedDateTime
 import java.util.UUID
 
 class PeiRepository
@@ -96,7 +98,7 @@ class PeiRepository
         return getAllWithFilterAndConditionalJoin(param).count()
     }
 
-    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record12<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>>> {
+    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record13<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, ZonedDateTime?>> {
         val requete = dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -121,6 +123,7 @@ class PeiRepository
                     r.value1().let { it as UUID }
                 }
             },
+            V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
         )
             .from(PEI)
             .join(COMMUNE)
@@ -145,7 +148,8 @@ class PeiRepository
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
             .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
-
+            .leftJoin(V_PEI_DATE_RECOP)
+            .on(V_PEI_DATE_RECOP.PEI_ID.eq(PEI.ID))
         // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
         // pour les indispos temporaires)
         when (pageFilter) {
@@ -169,6 +173,7 @@ class PeiRepository
                 NATURE_DECI.LIBELLE,
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
+                V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
             )
             .orderBy(
                 param.sortBy?.toCondition() ?: listOf(
@@ -192,10 +197,10 @@ class PeiRepository
         val autoriteDeci: String?,
         val servicePublicDeci: String?,
         val listeAnomalie: List<UUID>?,
+        val peiNextRecop: ZonedDateTime?,
 
             /*
                 TODO
-                    - rajouter les dates dernière recop
                     - rajouter libellé tournée
              */
     )
@@ -213,6 +218,7 @@ class PeiRepository
         val penaDisponibiliteHbe: Disponibilite?,
         val listeAnomalie: String?,
         var idIndisponibiliteTemporaire: UUID?,
+
     ) {
 
         fun toCondition(): Condition =
@@ -245,6 +251,8 @@ class PeiRepository
         val natureDeciLibelle: Int?,
         val autoriteDeci: Int?,
         val servicePublicDeci: Int?,
+        val peiNextRecop: Int?,
+
     ) {
 
         fun toCondition(): List<SortField<*>> = listOfNotNull(
@@ -262,6 +270,7 @@ class PeiRepository
                  */
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
+            V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
         )
     }
 
