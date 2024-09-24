@@ -25,6 +25,7 @@ import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import MapLegend from "./MapLegend.tsx";
+import MapToolbar from "./MapToolbar.tsx";
 
 proj4.defs(
   "EPSG:2154",
@@ -34,12 +35,13 @@ register(proj4);
 
 const MapComponent = () => {
   const [availableLayers, setAvailableLayers] = useState([]);
-  const [, setWorkingLayer] = useState();
-  const [, setDataLayer] = useState();
+  const [workingLayer, setWorkingLayer] = useState();
+  const [dataLayer, setDataLayer] = useState();
   const [map, setMap] = useState<Map>();
   const mapElement = useRef<HTMLDivElement>();
   const layersState = useGet(url`/api/layers`, {});
   const layerListRef = useRef<MapLegend>();
+  const mapToolbarRef = useRef<MapToolbar>();
 
   const projection = "EPSG:2154";
   const resolutions = [];
@@ -276,6 +278,14 @@ const MapComponent = () => {
 
   return (
     <Container fluid>
+      {map && (
+        <MapToolbar
+          ref={mapToolbarRef}
+          map={map}
+          workingLayer={workingLayer}
+          dataLayer={dataLayer}
+        />
+      )}
       <Row className={"gutt-0"}>
         <Col>
           <div ref={mapElement} style={{ width: "100%", height: "800px" }} />
