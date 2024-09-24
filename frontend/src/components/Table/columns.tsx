@@ -45,7 +45,62 @@ const EditColumn = ({
   ...option,
 });
 
+type EditColumnType = {
+  to: (id: string) => any;
+  title?: boolean;
+  accessor: string;
+  textDisable?: string;
+  disabled: boolean;
+  disable: (t?: any) => boolean;
+};
+
 export default EditColumn;
+
+export const LinkColumn = ({
+  to,
+  title = "",
+  icon,
+  disabled = false,
+  disable = () => false,
+  tooltipText = "",
+  textDisable = "",
+  ...option
+}: LinkColumnType) => ({
+  // eslint-disable-next-line react/display-name
+  Cell: (row: any) => {
+    const titleIsNotEmpty = title?.trim().length > 0;
+    return (
+      <>
+        <TooltipCustom
+          tooltipText={!(disable(row) || disabled) ? tooltipText : textDisable}
+          tooltipId={row.value}
+        >
+          <Button
+            variant="link"
+            href={to(row.value)}
+            disabled={disabled || disable(row)}
+          >
+            {icon}
+            {titleIsNotEmpty && title}
+          </Button>
+        </TooltipCustom>
+      </>
+    );
+  },
+  width: title ? 140 : 90,
+  ...option,
+});
+
+type LinkColumnType = {
+  to: (id: string) => any;
+  title?: string;
+  icon: ReactNode;
+  accessor: string;
+  textDisable?: string;
+  disabled: boolean;
+  disable: (t?: any) => boolean;
+  tooltipText?: string;
+};
 
 export const ListePeiColumn = ({
   handleButtonClick,
@@ -71,14 +126,6 @@ export const ListePeiColumn = ({
 type ListePeiColumnType = {
   handleButtonClick: (value: string) => any;
   accessor: string;
-};
-type EditColumnType = {
-  to: (id: string) => any;
-  title?: boolean;
-  accessor: string;
-  textDisable?: string;
-  disabled: boolean;
-  disable: (t?: any) => boolean;
 };
 
 export const SeeColumn = ({
