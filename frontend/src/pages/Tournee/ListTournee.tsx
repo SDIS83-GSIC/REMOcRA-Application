@@ -10,13 +10,20 @@ import { URLS } from "../../routes.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconTournee, IconSortList } from "../../components/Icon/Icon.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
-import EditColumn from "../../components/Table/columns.tsx";
+import EditColumn, { DeleteColumn } from "../../components/Table/columns.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
+import { hasDroit } from "../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
   const column: Array<columnType> = [
     {
       Header: "Nom",
@@ -109,6 +116,21 @@ const ListTournee = () => {
     },
     width: 90,
   });
+
+  if (hasDroit(user, TYPE_DROIT.TOURNEE_A)) {
+    column.push(
+      DeleteColumn({
+        path: url`/api/tournee/`,
+        title: false,
+        canSupress: hasDroit(user, TYPE_DROIT.TOURNEE_A),
+        accessor: "tourneeId",
+        textDisable: "Impossible de supprimer une tournée réservée",
+        disable: (v) => {
+          return v.original.tourneeUtilisateurReservationLibelle != null;
+        },
+      }),
+    );
+  }
 
   return (
     <Container>
