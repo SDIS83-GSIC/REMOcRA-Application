@@ -128,7 +128,7 @@ function QueryTable({
     }
   };
 
-  const { callback: debounceSearch } = useDebouncedCallback(historyPush, 500);
+  const debounceSearch = useDebouncedCallback(historyPush, 500);
 
   useEffect(() => {
     debounceSearch();
