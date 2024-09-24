@@ -7,6 +7,10 @@ import remocra.RemocraModule
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
+import remocra.resteasy.MultipartFormAnnotationReader
+import remocra.resteasy.ParamConverterProvider
+import remocra.resteasy.UUIDMessageBodyReader
+import remocra.resteasy.UnhandledExceptionMapper
 import remocra.security.CsrfFeature
 import remocra.web.admin.AdminModule
 import remocra.web.anomalie.AnomalieModule
@@ -21,6 +25,7 @@ import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
 import remocra.web.organisme.OrganismeModule
+import remocra.web.parametres.ParametreModule
 import remocra.web.pei.PeiModule
 import remocra.web.visite.VisiteModule
 import kotlin.reflect.KClass
@@ -44,9 +49,14 @@ object WebModule : RemocraModule() {
         install(CouvertureHydrauliqueModule)
         install(IndisponibiliteTemporaireModule)
         install(ModuleModule)
+        install(ParametreModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
+        registerResource<MultipartFormAnnotationReader>()
+        registerResource<UUIDMessageBodyReader>()
+        registerResource<ParamConverterProvider>()
+        registerResource<UnhandledExceptionMapper>()
     }
 
     private inline fun <reified T> registerResource() {

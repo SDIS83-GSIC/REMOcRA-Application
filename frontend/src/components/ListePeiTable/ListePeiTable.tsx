@@ -16,9 +16,21 @@ const ListPei = ({
 }: ListePeiType) => {
   let peiColonnes: COLUMN_PEI[] = [];
 
-  const listeParametre = useGet("/api/admin/parametres");
+  const PEI_COLONNES = "PEI_COLONNES";
+
+  const parametrePeiColonnes = [PEI_COLONNES];
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(parametrePeiColonnes),
+    }}`,
+  );
+
   if (listeParametre.isResolved) {
-    peiColonnes = listeParametre?.data.pei.peiColonnes;
+    // Le résultat est un String, on le parse pour récupérer le tableau
+    peiColonnes = JSON.parse(
+      listeParametre?.data[PEI_COLONNES].parametreValeur,
+    );
   }
 
   const filter = {
