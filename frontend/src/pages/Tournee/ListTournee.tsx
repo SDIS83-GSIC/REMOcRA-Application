@@ -77,47 +77,58 @@ const ListTournee = () => {
     },
   ];
 
-  column.push(
-    EditColumn({
-      to: (data) => URLS.UPDATE_TOURNEE(data.tourneeId),
+  const hasRight = hasDroit(user, TYPE_DROIT.TOURNEE_A);
+  if (hasRight) {
+    column.push(
+      EditColumn({
+        to: (data) => URLS.UPDATE_TOURNEE(data.tourneeId),
+        accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
+          return { tourneeId, tourneeUtilisateurReservationLibelle };
+        },
+        canEdit: hasRight,
+        title: false,
+        textDisable: "Impossible de modifier une tournée réservée",
+        disable: (v) => {
+          return v.original.tourneeUtilisateurReservationLibelle != null;
+        },
+      }),
+    );
+
+    column.push({
+      Cell: (row: any) => {
+        const disable =
+          row.original.tourneeUtilisateurReservationLibelle != null;
+        return (
+          <>
+            {
+              <TooltipCustom
+                tooltipText={
+                  !disable
+                    ? "Gérer les PEI et leur ordre dans une tournée"
+                    : "Impossible de modifier une tournée réservée"
+                }
+                tooltipId={row.value.tourneeId}
+              >
+                <Button
+                  disabled={
+                    row.original.tourneeUtilisateurReservationLibelle != null
+                  }
+                  variant="link"
+                  href={URLS.TOURNEE_PEI(row.value.tourneeId)}
+                >
+                  <IconSortList />
+                </Button>
+              </TooltipCustom>
+            }
+          </>
+        );
+      },
       accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
         return { tourneeId, tourneeUtilisateurReservationLibelle };
       },
-      title: false,
-      canEditFunction(data) {
-        // TODO Ajouter la gestion des droits
-        return data.tourneeUtilisateurReservationLibelle == null;
-      },
-    }),
-  );
+      width: 90,
+    });
 
-  column.push({
-    Cell: (row: any) => {
-      return (
-        <>
-          {row.value.tourneeUtilisateurReservationLibelle == null && (
-            <TooltipCustom
-              tooltipText="Gérer les PEI et leur ordre dans une tournée"
-              tooltipId={row.value.tourneeId}
-            >
-              <Button
-                variant="link"
-                href={URLS.TOURNEE_PEI(row.value.tourneeId)}
-              >
-                <IconSortList />
-              </Button>
-            </TooltipCustom>
-          )}
-        </>
-      );
-    },
-    accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
-      return { tourneeId, tourneeUtilisateurReservationLibelle };
-    },
-    width: 90,
-  });
-
-  if (hasDroit(user, TYPE_DROIT.TOURNEE_A)) {
     column.push(
       DeleteColumn({
         path: url`/api/tournee/`,
