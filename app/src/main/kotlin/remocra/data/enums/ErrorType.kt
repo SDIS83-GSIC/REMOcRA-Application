@@ -119,8 +119,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         Status.FORBIDDEN,
     ),
 
-    VISITE_C_FORBIDDEN(2101, "Vous n'avez pas les droits suffisant pour créer une visite", Status.FORBIDDEN),
-    VISITE_D_FORBIDDEN(2102, "Vous n'avez pas les droits suffisant pour supprimer une visite", Status.FORBIDDEN),
+    VISITE_C_FORBIDDEN(2300, "Vous n'avez pas les droits suffisant pour créer une visite", Status.FORBIDDEN),
+    VISITE_D_FORBIDDEN(2301, "Vous n'avez pas les droits suffisant pour supprimer une visite", Status.FORBIDDEN),
     VISITE_C_CTP_FORBIDDEN(
         2311,
         "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.CTP}",
