@@ -5,6 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
+import org.jooq.SelectJoinStep
 import org.jooq.SelectSeekStepN
 import org.jooq.SortField
 import org.jooq.impl.DSL
@@ -141,21 +142,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         .execute()
 
     fun getWithListPeiById(indisponibiliteTemporaireId: UUID): IndisponibiliteTemporaireData? {
-        return dsl.select(
-            *INDISPONIBILITE_TEMPORAIRE.fields(),
-            multiset(
-                dsl.selectDistinct(PEI.ID)
-                    .from(PEI)
-                    .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                    .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
-                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID)),
-
-            ).`as`("indisponibiliteTemporaireListePeiId").convertFrom { record ->
-                record?.map { r ->
-                    r.value1().let { it as UUID }
-                }
-            },
-        ).from(INDISPONIBILITE_TEMPORAIRE)
+        return getWithListPeiByIdOrPei()
             .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(indisponibiliteTemporaireId))
             .fetchOneInto<IndisponibiliteTemporaireData>()
     }
@@ -171,6 +158,30 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(indisponibiliteTemporaireId))
             .execute()
     }
+
+    fun getWithListPeiByPei(idPei: UUID): List<IndisponibiliteTemporaireData> {
+        return getWithListPeiByIdOrPei()
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(idPei))
+            .fetchInto()
+    }
+
+    private fun getWithListPeiByIdOrPei(): SelectJoinStep<Record> = dsl.select(
+        *INDISPONIBILITE_TEMPORAIRE.fields(),
+        multiset(
+            dsl.selectDistinct(PEI.ID)
+                .from(PEI)
+                .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID)),
+
+        ).`as`("indisponibiliteTemporaireListePeiId").convertFrom { record ->
+            record?.map { r ->
+                r.value1().let { it as UUID }
+            }
+        },
+    ).from(INDISPONIBILITE_TEMPORAIRE)
 
     data class IndisponibiliteTemporaireWithPei(
         val indisponibiliteTemporaireId: UUID,
