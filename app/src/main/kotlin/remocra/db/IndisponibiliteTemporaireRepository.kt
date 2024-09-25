@@ -16,7 +16,7 @@ import org.jooq.impl.SQLDataType
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
-import remocra.db.jooq.remocra.enums.StatutIndisponibiliteTemporaireEnum
+import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI

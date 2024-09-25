@@ -1,4 +1,4 @@
-package remocra.db.jooq.remocra.enums
+package remocra.data.enums
 
 enum class StatutIndisponibiliteTemporaireEnum {
     EN_COURS,

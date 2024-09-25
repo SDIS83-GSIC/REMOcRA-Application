@@ -94,6 +94,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     TOURNEE_RESERVATION_D("TOURNEE_RESERVATION_D"),
     TRAITEMENTS_E("TRAITEMENTS_E"),
     TRAITEMENTS_PEI_E("TRAITEMENTS_PEI_E"),
+    VISITE_R("VISITE_R"),
     VISITE_CONTROLE_TECHNIQUE_C("VISITE_CONTROLE_TECHNIQUE_C"),
     VISITE_CTP_D("VISITE_CTP_D"),
     VISITE_NON_PROGRAMME_C("VISITE_NON_PROGRAMME_C"),
@@ -105,7 +106,6 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     VISITE_RECO_INIT_C("VISITE_RECO_INIT_C"),
     VISITE_RECO_INIT_D("VISITE_RECO_INIT_D"),
     ZOOM_LIEU_R("ZOOM_LIEU_R"),
-    VISITE_R("VISITE_R"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
