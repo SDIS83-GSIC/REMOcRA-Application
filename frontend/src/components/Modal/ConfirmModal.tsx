@@ -27,6 +27,7 @@ const ConfirmModalBody = ({
       closeModal();
     },
   });
+
   return (
     <>
       <Modal.Body>{content}</Modal.Body>
@@ -38,7 +39,7 @@ const ConfirmModalBody = ({
           variant="primary"
           onClick={async () => {
             // Si on a un href, on n'est pas en post
-            if (href === null) {
+            if (href === undefined) {
               try {
                 await action.run();
               } catch (e: any) {

@@ -6,10 +6,13 @@ import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
+  IconClose,
   IconEdit,
   IconEtude,
   IconImport,
 } from "../../components/Icon/Icon.tsx";
+import ConfirmModal from "../../components/Modal/ConfirmModal.tsx";
+import useModal from "../../components/Modal/ModalUtils.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
@@ -131,6 +134,7 @@ const ListEtude = () => {
               },
               width: 90,
             },
+            CellCloreEtude(),
             {
               accessor: "etudeId",
               Cell: (row: any) => {
@@ -169,5 +173,31 @@ const ListEtude = () => {
     </>
   );
 };
+
+const CellCloreEtude = () => ({
+  accessor: "etudeId",
+  Cell: (row) => {
+    const { visible, show, close } = useModal();
+    const query = `/api/couverture-hydraulique/etude/clore`;
+    return (
+      <>
+        <>
+          <TooltipCustom tooltipText={"Clore l'étude"} tooltipId={row.value}>
+            <Button variant={"link"} className={"text-danger"} onClick={show}>
+              <IconClose />
+            </Button>
+          </TooltipCustom>
+          <ConfirmModal
+            id={row.value}
+            visible={visible}
+            closeModal={close}
+            query={query}
+            onConfirm={() => window.location.reload()}
+          />
+        </>
+      </>
+    );
+  },
+});
 
 export default ListEtude;

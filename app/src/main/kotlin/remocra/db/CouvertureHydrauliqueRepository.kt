@@ -299,4 +299,10 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             listPeiProjet.map { dsl.insertInto(PEI_PROJET).set(dsl.newRecord(PEI_PROJET, it)) },
         )
             .execute()
+
+    fun cloreEtude(etudeId: UUID) =
+        dsl.update(ETUDE)
+            .set(ETUDE.STATUT, EtudeStatut.TERMINEE)
+            .where(ETUDE.ID.eq(etudeId))
+            .execute()
 }

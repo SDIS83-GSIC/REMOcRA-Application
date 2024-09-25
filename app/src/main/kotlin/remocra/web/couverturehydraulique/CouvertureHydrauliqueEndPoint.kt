@@ -22,6 +22,7 @@ import remocra.data.EtudeData
 import remocra.data.Params
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecases.couverturehydraulique.CloreEtudeUseCase
 import remocra.usecases.couverturehydraulique.CreateEtudeUseCase
 import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecases.couverturehydraulique.UpdateEtudeUseCase
@@ -38,6 +39,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @Inject lateinit var updateEtudeUseCase: UpdateEtudeUseCase
 
     @Inject lateinit var createEtudeUseCase: CreateEtudeUseCase
+
+    @Inject lateinit var cloreEtudeUseCase: CloreEtudeUseCase
 
     @Inject lateinit var importDataCouvertureHydrauliqueUseCase: ImportDataCouvertureHydrauliqueUseCase
 
@@ -76,6 +79,17 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         etudeId: UUID,
     ): Response {
         return Response.ok(couvertureHydrauliqueRepository.getEtude(etudeId)).build()
+    }
+
+    @POST
+    @Path("/etude/clore/{etudeId}")
+    @RequireDroits([Droit.ETUDE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun cloreEtude(
+        @PathParam("etudeId")
+        etudeId: UUID,
+    ): Response {
+        return Response.ok(cloreEtudeUseCase.execute(securityContext.userInfo, etudeId)).build()
     }
 
     @PUT
