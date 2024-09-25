@@ -10,6 +10,12 @@ type InputType = {
   readOnly?: boolean;
   value?: string;
   disabled?: boolean;
+  placeholder?: string;
+  name: string;
+  label?: string;
+  required?: boolean;
+  readOnly?: boolean;
+  value?: string;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -67,6 +73,7 @@ export const TextInput = ({
   readOnly = false,
   disabled = false,
   value,
+  placeholder,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -79,6 +86,7 @@ export const TextInput = ({
         readOnly={readOnly}
         disabled={disabled}
         defaultValue={value ?? ""}
+        placeholder={placeholder}
         {...field}
       />
     </DivWithError>

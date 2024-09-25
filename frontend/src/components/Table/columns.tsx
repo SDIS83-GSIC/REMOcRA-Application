@@ -1,7 +1,14 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { IconDelete, IconEdit, IconList, IconSee } from "../Icon/Icon.tsx";
+import {
+  IconDelete,
+  IconEdit,
+  IconList,
+  IconLock,
+  IconSee,
+  IconUnlock,
+} from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
@@ -15,7 +22,6 @@ const EditColumn = ({
   textDisable = "",
   ...option
 }: EditColumnType) => ({
-  // eslint-disable-next-line react/display-name
   Cell: (row: any) => {
     return (
       <>
@@ -97,11 +103,12 @@ export const SeeColumn = ({
 
 type DeleteColumnType = {
   path: string;
-  reload: boolean;
+  reload?: boolean;
   title: boolean;
-  disabled: boolean;
-  disable: (t?: any) => boolean;
-  textDisable: string;
+  accessor: string;
+  disabled?: boolean;
+  disable?: (t?: any) => boolean;
+  textDisable?: string;
 };
 export const DeleteColumn = ({
   path,
@@ -162,6 +169,28 @@ export const BooleanColumn = ({
       <div className="text-center">
         <Form.Check type="checkbox" disabled checked={value.value === true} />
       </div>
+    );
+  },
+  sortField: sortField,
+  ...options,
+});
+
+export const ProtectedColumn = ({
+  Header,
+  accessor,
+  sortField,
+  ...options
+}: columnType) => ({
+  // eslint-disable-next-line react/display-name
+  Header: Header,
+  accessor: accessor,
+  Cell: (value: { value: any }) => {
+    return (
+      <>
+        <div className="text-center">
+          {value.value ? <IconLock /> : <IconUnlock />}
+        </div>
+      </>
     );
   },
   sortField: sortField,

@@ -259,8 +259,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Vous n'avez pas les droits de suppression des indisponibilités temporaires",
         Status.FORBIDDEN,
     ),
-    ;
 
+    ADMIN_DIAMETRE_FORBIDDEN_INSERT(7000, "Vous n'avez pas les droits de création des diamètres", Status.FORBIDDEN),
+    ADMIN_DIAMETRE_FORBIDDEN_DELETE(7001, "Vous n'avez pas les droits de suppression des diamètres", Status.FORBIDDEN),
+    ADMIN_DIAMETRE_FORBIDDEN_UPDATE(7002, "Vous n'avez pas les droits de modification des diamètres", Status.FORBIDDEN),
+    ADMIN_DIAMETRE_NOTFOUND(7003, "Cette valeur n'existe pas"),
+    ADMIN_DIAMETRE_IS_PROTECTED(7004, "Cette valeur est protégée"), ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
     }

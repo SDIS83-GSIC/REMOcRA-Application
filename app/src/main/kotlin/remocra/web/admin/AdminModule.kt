@@ -2,10 +2,10 @@ package remocra.web.admin
 
 import com.google.inject.Binder
 import com.google.inject.Module
-import remocra.web.registerResource
+import remocra.web.registerResources
 
 object AdminModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResource(AdminEndpoint::class)
+        binder.registerResources(AdminEndpoint::class, DiametreEndpoint::class)
     }
 }

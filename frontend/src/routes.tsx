@@ -27,6 +27,9 @@ import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouver
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 import MapComponent from "./components/Map/Map.tsx";
 import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
+import ListDiametre from "./pages/Admin/diametre/ListDiametre.tsx";
+import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
+import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -64,6 +67,9 @@ export const URLS = {
     etudeId +
     `/pei-projet/` +
     peiProjetId,
+  UPDATE_DIAMETRE: (diametreId: string) => url`/admin/diametre/` + diametreId,
+  DIAMETRE: url`/admin/diametre/`,
+  ADD_DIAMETRE: url`/admin/diametre/add/`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -271,6 +277,33 @@ export default [
         ),
       },
     ],
+  },
+  {
+    path: "/admin/diametre/",
+    element: (
+      <Authorization
+        Component={ListDiametre}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/diametre/:diametreId",
+    element: (
+      <Authorization
+        Component={UpdateDiametre}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/diametre/add",
+    element: (
+      <Authorization
+        Component={CreateDiametre}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
   },
   {
     path: "*",
