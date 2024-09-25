@@ -6,6 +6,10 @@ const ModuleDeci = () => {
   const navLinks: NavToProps[] = [
     { path: URLS.PEI, label: "Points d'eau" },
     {
+      path: URLS.LIST_TOURNEE,
+      label: "Tournée",
+    },
+    {
       path: URLS.LIST_INDISPONIBILITE_TEMPORAIRE,
       label: "Indisponibilités temporaires",
     },
