@@ -168,6 +168,15 @@ export default [
         ),
       },
       {
+        path: "indisponibilite-temporaire/",
+        element: (
+          <Authorization
+            Component={ListIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_R]}
+          />
+        ),
+      },
+      {
         path: "indisponibilite-temporaire/:indisponibiliteTemporaireId",
         element: (
           <Authorization
@@ -216,16 +225,7 @@ export default [
         ),
       },
       {
-        path: "indisponibilite-temporaire/",
-        element: (
-          <Authorization
-            Component={ListIndisponibiliteTemporaire}
-            droits={[TYPE_DROIT.INDISPO_TEMP_R]}
-          />
-        ),
-      },
-      {
-        path: "etudes/:etudeId/pei-projet",
+        path: "etude/:etudeId/pei-projet",
         element: (
           <Authorization
             Component={CreatePeiProjet}
