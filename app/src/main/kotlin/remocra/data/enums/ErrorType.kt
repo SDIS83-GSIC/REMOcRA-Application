@@ -144,6 +144,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SHP_ETUDE_CAPACITE_MANQUANTE(4106, "La capacité doit être renseignée pour une réserve."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_PA(4107, "Le débit doit être renseigné pour un PA."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_RESERVE(4108, "Le débit doit être renseigné pour une réserve."),
+    ETUDE_NUMERO_UNIQUE(4007, "Une étude avec ce numéro existe déjà."),
 
     ETUDE_TYPE_FORBIDDEN_U(4001, "Vous n'avez pas les droits pour mettre à jour une étude.", Status.FORBIDDEN),
     ETUDE_CAPACITE_MANQUANTE(4003, "La capacité doit être renseignée."),

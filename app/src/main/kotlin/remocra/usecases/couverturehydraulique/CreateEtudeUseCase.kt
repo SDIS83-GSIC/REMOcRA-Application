@@ -72,6 +72,8 @@ class CreateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.INSERT) {
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: EtudeData) {
-        // noop pas de contrainte
+        if (couvertureHydrauliqueRepository.checkNumeroExists(element.etudeNumero)) {
+            throw RemocraResponseException(ErrorType.ETUDE_NUMERO_UNIQUE)
+        }
     }
 }
