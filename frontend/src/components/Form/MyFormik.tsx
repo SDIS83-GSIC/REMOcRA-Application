@@ -15,7 +15,7 @@ const ResolveReject = (
   return {
     onResolve: (result: string) => {
       setErrorMessage(null);
-      successToast({ message: successToastMessage });
+      successToast(successToastMessage);
       onSubmit?.(result);
       redirectFn?.();
     },
@@ -23,7 +23,7 @@ const ResolveReject = (
       text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
     }) => {
       setErrorMessage(await error.text());
-      errorToast({ message: errorToastMessage });
+      errorToast(errorToastMessage);
     },
   };
 };
