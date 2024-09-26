@@ -60,6 +60,15 @@ const ListPei = ({
       }
       urlTable = url`/api/pei/get-by-indispo/` + filterId;
       break;
+    case FILTER_PAGE.TOURNEE:
+      if (filterId == null) {
+        //filterId obligatoire quand filterPage est renseigné
+        throw new Error(
+          "Le filterId est obligatoire si le filterPage est renseigné",
+        );
+      }
+      urlTable = url`/api/pei/get-by-tournee/` + filterId;
+      break;
     default:
       urlTable = url`/api/pei`;
   }

@@ -1,24 +1,30 @@
-import Form from "react-bootstrap/Form";
+import { useState } from "react";
 import { Button, Container } from "react-bootstrap";
-import QueryTable, {
+import Form from "react-bootstrap/Form";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import FilterInput from "../../components/Filter/FilterInput.tsx";
+import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
+import { IconSortList, IconTournee } from "../../components/Icon/Icon.tsx";
+import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
+import EditColumn, {
+  DeleteColumn,
+  ListePeiColumn,
+} from "../../components/Table/columns.tsx";
+import {
   columnType,
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
-import url from "../../module/fetch.tsx";
-import FilterInput from "../../components/Filter/FilterInput.tsx";
-import { URLS } from "../../routes.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconTournee, IconSortList } from "../../components/Icon/Icon.tsx";
-import { formatDate } from "../../utils/formatDateUtils.tsx";
-import EditColumn, { DeleteColumn } from "../../components/Table/columns.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
-import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
-import { hasDroit } from "../../droits.tsx";
+import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
+import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
+import { formatDate } from "../../utils/formatDateUtils.tsx";
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import { hasDroit } from "../../droits.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -77,6 +83,25 @@ const ListTournee = () => {
     },
   ];
 
+  /***Constante permetant de gérer les états des composants "QueryTable" et "ListePei" *****/
+  const [showTable, setShowTable] = useState(true); // Contrôle de l'affichage du tableau
+  const [idTournee, setIdTournee] = useState(null); // Variable à mettre à jour
+
+  // Fonction qui sera appelée quand le bouton dans la cellule est cliqué
+  const handleButtonClick = (value) => {
+    setIdTournee(value); // Met à jour la valeur
+    setShowTable(false); // Cache le tableau actuel
+  };
+
+  {
+    column.unshift(
+      ListePeiColumn({
+        handleButtonClick: handleButtonClick,
+        accessor: "tourneeId",
+      }),
+    );
+  }
+
   const hasRight = hasDroit(user, TYPE_DROIT.TOURNEE_A);
   if (hasRight) {
     column.push(
@@ -93,7 +118,7 @@ const ListTournee = () => {
         },
       }),
     );
-
+    //colonne réorganisation PEI
     column.push({
       Cell: (row: any) => {
         const disable =
@@ -154,17 +179,26 @@ const ListTournee = () => {
           </Button>
         }
       />
-      <QueryTable
-        query={url`/api/tournee`}
-        columns={column}
-        idName={"TourneeTable"}
-        filterValuesToVariable={filterValuesToVariable}
-        filterContext={useFilterContext({
-          tourneeLibelle: undefined,
-          tourneeOrganismeLibelle: undefined,
-          tourneeUtilisateurReservationLibelle: undefined,
-        })}
-      />
+      {
+        //pas besoin de container il est dans le composant QueryTableWithListingPei
+        <QueryTableWithListingPei
+          column={column}
+          query={url`/api/tournee`}
+          idName={"TourneeTable"}
+          filterPage={FILTER_PAGE.TOURNEE}
+          showTable={showTable}
+          filterId={idTournee}
+          //on envoie les constantes au composant enfant pour qu'il mette à jour le composant parent
+          setFilterId={setIdTournee}
+          setShowTable={setShowTable}
+          filterValuesToVariable={filterValuesToVariable}
+          useFilterContext={useFilterContext({
+            tourneeLibelle: undefined,
+            tourneeOrganismeLibelle: undefined,
+            tourneeUtilisateurReservationLibelle: undefined,
+          })}
+        />
+      }
     </Container>
   );
 };

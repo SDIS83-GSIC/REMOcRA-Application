@@ -82,6 +82,7 @@ class PeiRepository
 
     enum class PageFilter {
         INDISPONIBILITE_TEMPORAIRE,
+        TOURNEE,
         LISTE_PEI,
     }
 
@@ -92,6 +93,16 @@ class PeiRepository
     fun countAllPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID): Int {
         param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
         return getAllWithFilterAndConditionalJoin(param, PageFilter.INDISPONIBILITE_TEMPORAIRE).count()
+    }
+
+    fun getPeiWithFilterByTournee(param: Params<Filter, Sort>, idTournee: UUID): List<PeiForTableau> {
+        return getAllWithFilterAndConditionalJoin(param, PageFilter.TOURNEE).fetchInto()
+    }
+
+    // Très peu de données donc peu d'impact d'utiliser le count jooq plutôt que la primitive SQL
+    fun countAllPeiWithFilterByTournee(param: Params<Filter, Sort>, idTournee: UUID): Int {
+        param.filterBy?.idTournee = idTournee
+        return getAllWithFilterAndConditionalJoin(param, PageFilter.TOURNEE).count()
     }
 
     fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> = getAllWithFilterAndConditionalJoin(param).fetchInto()
@@ -163,6 +174,9 @@ class PeiRepository
             PageFilter.INDISPONIBILITE_TEMPORAIRE -> requete.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
                 .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
 
+            // la tournée est déjà jointe pour afficher le libelle
+            PageFilter.TOURNEE -> requete
+
             // Si on vient de la page des pei pas de join supplémentaire
             PageFilter.LISTE_PEI -> requete
         }
@@ -182,6 +196,7 @@ class PeiRepository
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
                 TOURNEE.LIBELLE,
+                L_TOURNEE_PEI.ORDRE,
             )
             .orderBy(
                 param.sortBy?.toCondition() ?: listOf(
@@ -222,6 +237,7 @@ class PeiRepository
         val penaDisponibiliteHbe: Disponibilite?,
         val listeAnomalie: String?,
         var idIndisponibiliteTemporaire: UUID?,
+        var idTournee: UUID?,
         val tourneeLibelle: String?,
     ) {
 
@@ -240,6 +256,7 @@ class PeiRepository
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
                     listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
                     idIndisponibiliteTemporaire?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)) },
+                    idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                     tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCase(it)) },
                 ),
             )
@@ -258,6 +275,7 @@ class PeiRepository
         val servicePublicDeci: Int?,
         val peiNextRecop: Int?,
         val tourneeLibelle: Int?,
+        var ordreTournee: Int?,
 
     ) {
 
@@ -278,6 +296,7 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
             TOURNEE.LIBELLE.getSortField(tourneeLibelle),
+            L_TOURNEE_PEI.ORDRE.getSortField(ordreTournee),
         )
     }
 

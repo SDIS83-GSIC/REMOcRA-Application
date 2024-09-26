@@ -83,6 +83,18 @@ class PeiUseCase {
         idIndisponibiliteTemporaire: UUID,
     ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire)
 
+    fun getPeiWithFilterByTournee(
+        param: Params<
+            PeiRepository.Filter,
+            PeiRepository.Sort,
+            >,
+        idTournee: UUID,
+    ): List<PeiRepository.PeiForTableau> {
+        param.filterBy?.idTournee = idTournee
+        param.sortBy?.ordreTournee = 1
+        return peiRepository.getPeiWithFilterByTournee(param, idTournee)
+    }
+
     fun getInfoPei(idPei: UUID): PeiData {
         val typePei = peiRepository.getTypePei(idPei)
 

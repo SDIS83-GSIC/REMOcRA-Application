@@ -84,6 +84,24 @@ class PeiEndPoint : AbstractEndpoint() {
             .build()
     }
 
+    @POST
+    @Path("/get-by-tournee/{idTournee}")
+    @RequireDroits([Droit.PEI_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getPeiByTournee(
+        @PathParam("idTournee") idTournee: UUID,
+        params: Params<
+            PeiRepository.Filter,
+            PeiRepository.Sort,
+            >,
+    ): Response {
+        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee)
+        return Response.ok(
+            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params, idTournee)),
+        )
+            .build()
+    }
+
     @GET
     @Path("/get-id-numero")
     @RequireDroits([Droit.PEI_R])
