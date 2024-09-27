@@ -5,7 +5,7 @@ import remocra.data.PeiData
 import remocra.db.jooq.historique.enums.TypeOperation
 
 class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
-    override fun executeSpecific(element: PeiData): Any? {
+    override fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any? {
         TODO("Not yet implemented")
     }
 

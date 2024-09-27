@@ -153,7 +153,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         }
 
         // Tout est à jour, on peut enregistrer l'élément :
-        executeSpecific(element)
+        executeSpecific(userInfo, element)
 
         // On rend la main au parent pour la logique d'événements
         return element
@@ -184,5 +184,5 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     /**
      * Méthode permettant de décrire tout ce qui est spécifique à chaque opération, typiquement le service métier à appeler
      */
-    abstract fun executeSpecific(element: PeiData): Any?
+    protected abstract fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any?
 }

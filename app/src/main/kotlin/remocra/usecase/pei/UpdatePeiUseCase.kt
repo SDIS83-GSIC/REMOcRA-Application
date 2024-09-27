@@ -9,7 +9,7 @@ import remocra.exception.RemocraResponseException
 
 class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPDATE) {
 
-    override fun executeSpecific(element: PeiData) {
+    override fun executeSpecific(userInfo: UserInfo?, element: PeiData) {
         upsertPei(element)
     }
 
