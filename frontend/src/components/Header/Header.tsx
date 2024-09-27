@@ -34,7 +34,9 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
             ))}
           </Nav>
         </Navbar.Collapse>
-        <NavTo path={URLS.LOGOUT} label="Déconnexion" />
+        <a href={URLS.LOGOUT} className="nav-link">
+          Déconnexion
+        </a>
       </Container>
     </Navbar>
   );
