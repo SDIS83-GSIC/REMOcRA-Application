@@ -15,13 +15,13 @@ const DeleteModalBody = ({
   const del = useDelete(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onDelete && onDelete(res);
-      successToast({ message: "L'élément a bien été supprimé" });
+      successToast("L'élément a bien été supprimé");
       closeModal();
     },
     onReject: async (error: any) => {
-      errorToast({
-        message: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
-      });
+      errorToast(
+        `Erreur lors de l'exécution de l'action : ${await error.text()}`,
+      );
       closeModal();
     },
   });
