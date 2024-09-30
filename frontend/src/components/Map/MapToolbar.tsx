@@ -15,6 +15,7 @@ import { Overlay } from "ol";
 import { unByKey } from "ol/Observable";
 import { shiftKeyOnly } from "ol/events/condition";
 import Row from "react-bootstrap/Row";
+import AdresseTypeahead from "./AdresseTypeahead.tsx";
 
 const MapToolbar = forwardRef(
   (
@@ -307,6 +308,9 @@ const MapToolbar = forwardRef(
             >
               Sélectionner
             </ToggleButton>
+          </ButtonGroup>
+          <AdresseTypeahead map={map} />
+          <ButtonGroup>
             <ToggleButton
               name={"tool"}
               onClick={() => toggleTool("measure-length")}
