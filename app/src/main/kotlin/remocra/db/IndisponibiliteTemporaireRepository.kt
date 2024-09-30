@@ -45,8 +45,8 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @param params Les paramètres de filtrage et de tri.
      * @return Le nombre d'éléments correspondants.
      */
-    fun countAllWithListPei(params: Params<Filter, Sort>): Int =
-        internalWithListPei(params).count()
+    fun countAllWithListPei(filterBy: Filter?): Int =
+        internalWithListPei(Params(limit = null, offset = null, filterBy = filterBy, sortBy = null)).count()
 
     /**
      * Crée une requête SQL pour récupérer des enregistrements d'indisponibilités temporaires

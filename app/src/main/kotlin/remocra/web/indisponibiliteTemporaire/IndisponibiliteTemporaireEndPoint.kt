@@ -68,7 +68,7 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
         return Response.ok(
             DataTableau(
                 list = indisponibiliteTemporaireUseCase.getAllWithListPei(params),
-                count = indisponibiliteTemporaireRepository.countAllWithListPei(params),
+                count = indisponibiliteTemporaireRepository.countAllWithListPei(params.filterBy),
             ),
         )
             .build()

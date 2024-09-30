@@ -61,7 +61,7 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
         val listPei = peiUseCase.getPeiWithFilter(params)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy)),
         )
             .build()
     }
@@ -79,7 +79,7 @@ class PeiEndPoint : AbstractEndpoint() {
     ): Response {
         val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(params.filterBy, idIndisponibiliteTemporaire)),
         )
             .build()
     }
@@ -97,7 +97,7 @@ class PeiEndPoint : AbstractEndpoint() {
     ): Response {
         val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params, idTournee)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params.filterBy, idTournee)),
         )
             .build()
     }
