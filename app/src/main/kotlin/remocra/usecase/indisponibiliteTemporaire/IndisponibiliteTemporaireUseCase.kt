@@ -30,8 +30,13 @@ class IndisponibiliteTemporaireUseCase {
         return listeIndisponibiliteTemporaire
     }
 
-    fun getDataFromId(id: UUID): IndisponibiliteTemporaireData {
-        val indisponibiliteTemporaireData = indisponibiliteTemporaireRepository.getWithListPeiById(id)
+    fun getAllWithListPeiByPei(idPei: UUID): List<IndisponibiliteTemporaireData>? {
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getWithListPeiByPei(idPei)
+
+        return listeIndisponibiliteTemporaire
+    }
+    fun getDataFromId(idIndisponibiliteTemporaire: UUID): IndisponibiliteTemporaireData {
+        val indisponibiliteTemporaireData = indisponibiliteTemporaireRepository.getWithListPeiById(idIndisponibiliteTemporaire)
             ?: throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_INEXISTANTE)
 
         return indisponibiliteTemporaireData

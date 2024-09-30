@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -31,6 +32,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.UpsertDocumentPeiUseCase
 import remocra.usecase.pei.CreatePeiUseCase
+import remocra.usecase.pei.DeletePeiUseCase
 import remocra.usecase.pei.GetCoordonneesBySrid
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
@@ -55,6 +57,8 @@ class PeiEndPoint : AbstractEndpoint() {
     @Inject lateinit var createPeiUseCase: CreatePeiUseCase
 
     @Inject lateinit var utilisateurRepository: UtilisateurRepository
+
+    @Inject lateinit var deletePeiUseCase: DeletePeiUseCase
 
     @Inject lateinit var upsertDocumentPeiUseCase: UpsertDocumentPeiUseCase
 
@@ -163,6 +167,13 @@ class PeiEndPoint : AbstractEndpoint() {
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
         ).wrap()
+    }
+
+    @DELETE
+    @Path("/delete/{peiId}")
+    @RequireDroits([Droit.PEI_D])
+    fun deletePei(@PathParam("peiId")peiId: UUID): Response {
+        return deletePeiUseCase.execute(securityContext.userInfo, peiRepository.getInfoPei(peiId)).wrap()
     }
 
     @POST

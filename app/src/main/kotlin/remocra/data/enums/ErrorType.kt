@@ -21,8 +21,51 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_INEXISTANT(1000, "Le numéro spécifié ne correspond à aucun hydrant"),
     PEI_FORBIDDEN_C(1001, "Vous n'avez pas les droits de création de PEI.", Status.FORBIDDEN),
     PEI_FORBIDDEN_U(1002, "Vous n'avez pas les droits de modification de PEI", Status.FORBIDDEN),
-    PEI_DOCUMENT_MEME_NOM(1003, "Les documents d'un même PEI ne doivent pas avoir le même nom."),
-    PEI_DOCUMENT_PHOTO(1004, "Un seul document peut représenter la photo du PEI"),
+    PEI_FORBIDDEN_D(1003, "Vous n'avez pas les droits de suppression de PEI", Status.FORBIDDEN),
+    PEI_DOCUMENT_MEME_NOM(1004, "Les documents d'un même PEI ne doivent pas avoir le même nom."),
+    PEI_DOCUMENT_PHOTO(1005, "Un seul document peut représenter la photo du PEI"),
+    PEI_FORBIDDEN_ZONE_COMPETENCE(1006, "Le PEI n'est pas dans votre zone de compétence", Status.FORBIDDEN),
+
+    /*
+        Erreur si on essaie de supprimer une IT en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
+        des IT
+     */
+    PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE(
+        1100,
+        """
+        Le PEI que vous tentez de supprimer possède une indisponibilité temporaire contenant seulement ce PEI,
+        mais vous n'avez pas les droits pour supprimer cette dernière. Cette opération ne peut donc aboutir,
+        contactez le SDIS pour supprimer ce PEI
+        """.trimIndent(),
+        Status.FORBIDDEN,
+
+    ),
+
+    /*
+        Erreur si on essaie de supprimer une tournée en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
+        des tournées
+     */
+    PEI_FORBIDDEN_D_TOURNEE(
+        1101,
+        """
+        Le PEI que vous tentez de supprimer est inclus dans une tournée contenant seulement ce PEI,
+        mais vous n'avez pas les droits pour supprimer cette dernière.
+        Cette opération ne peut donc aboutir, contactez le SDIS pour supprimer ce PEI
+        """.trimIndent(),
+        Status.FORBIDDEN,
+    ),
+    PEI_INDISPONIBILITE_TEMPORAIRE_EN_COURS(
+        1102,
+        """
+        Le PEI que vous tentez de supprimer est contenu dans une indisponibilité temporaire en cours.
+        Veuillez clore l'indisponibilité temporaire avant de supprimer le PEI
+        """.trimIndent(),
+
+    ),
+    PEI_TOURNEE_LECTURE_SEULE(
+        1103,
+        "Le PEI fait partie d'une tournée réservée, impossible de le supprimer",
+    ),
 
     FORBIDDEN(1300, "Le numéro spécifié ne correspond à aucun hydrant qui vous est accessible", Status.FORBIDDEN),
     BAD_PATTERN(1010, "La date spécifiée n'existe pas ou ne respecte pas le format YYYY-MM-DD hh:mm"),

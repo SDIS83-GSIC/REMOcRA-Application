@@ -89,11 +89,20 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun getTourneeInfoById(tourneeId: UUID): Tournee =
+    private fun getTourneeByIdOrPei() =
         dsl.select(TOURNEE.fields().asList())
             .from(TOURNEE)
+
+    fun getTourneeById(tourneeId: UUID): Tournee =
+        getTourneeByIdOrPei()
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchSingleInto()
+
+    fun getTourneeByPei(peiId: UUID): List<Tournee> =
+        getTourneeByIdOrPei()
+            .join(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.PEI_ID.eq(peiId))
+            .fetchInto()
 
     data class TourneeComplete(
         val tourneeId: UUID,
@@ -285,6 +294,12 @@ class TourneeRepository
     fun deleteLTourneePeiByTourneeId(tourneeId: UUID) =
         dsl.deleteFrom(L_TOURNEE_PEI)
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .execute()
+
+    fun deleteLTourneePeiByTourneeAndPeiId(tourneeId: UUID, peiId: UUID) =
+        dsl.deleteFrom(L_TOURNEE_PEI)
+            .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
+            .and(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
             .execute()
 
     fun batchInsertLTourneePei(listeTourneePei: List<LTourneePei>) =

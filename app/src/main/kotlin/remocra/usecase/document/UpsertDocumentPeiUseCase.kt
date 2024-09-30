@@ -25,7 +25,6 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
     override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
         documentRepository.deleteDocumentPei(listeDocsToRemove)
     }
-
     override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
         val documentsNonPhoto = listToUpdate.filter { !(it as DocumentData).isPhotoPei }.map { it.documentId!! }
         if (documentsNonPhoto.isNotEmpty()) {

@@ -58,4 +58,6 @@ class PenaRepository @Inject constructor(
             .set(record)
             .execute()
     }
+
+    fun deleteById(peiId: UUID) = dsl.deleteFrom(PENA).where(PENA.ID.eq(peiId)).execute()
 }

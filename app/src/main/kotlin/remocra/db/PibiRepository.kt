@@ -129,4 +129,6 @@ class PibiRepository @Inject constructor(
             .where(PIBI.JUMELE_ID.eq(peiId))
             .execute()
     }
+
+    fun deleteById(peiId: UUID) = dsl.deleteFrom(PIBI).where(PIBI.ID.eq(peiId)).execute()
 }

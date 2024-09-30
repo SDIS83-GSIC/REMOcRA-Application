@@ -71,7 +71,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_A])
     fun getTourneeById(@PathParam("tourneeId") tourneeId: UUID): Response =
-        Response.ok().entity(tourneeRepository.getTourneeInfoById(tourneeId)).build()
+        Response.ok().entity(tourneeRepository.getTourneeById(tourneeId)).build()
 
     @POST
     @Path("/createTournee")
@@ -94,7 +94,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/updateTournee")
     @RequireDroits([Droit.TOURNEE_A])
     fun updateTournee(tourneeInput: TourneeInput): Response {
-        val tourneeToUpdate = tourneeRepository.getTourneeInfoById(tourneeInput.tourneeId!!).copy(tourneeLibelle = tourneeInput.tourneeLibelle)
+        val tourneeToUpdate = tourneeRepository.getTourneeById(tourneeInput.tourneeId!!).copy(tourneeLibelle = tourneeInput.tourneeLibelle)
         return updateTourneeUseCase.execute(userInfo = securityContext.userInfo, element = tourneeToUpdate).wrap()
     }
 
@@ -115,7 +115,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun deleteTournee(@PathParam("tourneeId") tourneeId: UUID) =
         deleteTourneeUseCase.execute(
             userInfo = securityContext.userInfo,
-            element = tourneeRepository.getTourneeInfoById(tourneeId),
+            element = tourneeRepository.getTourneeById(tourneeId),
         ).wrap()
 
     @GET

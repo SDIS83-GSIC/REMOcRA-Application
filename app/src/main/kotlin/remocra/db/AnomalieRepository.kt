@@ -111,6 +111,8 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .where(isActiveCondition(isActive = true))
             .fetchInto()
 
+    fun deleteLiaisonByPei(idPEi: UUID) = dsl.deleteFrom(L_PEI_ANOMALIE).where(L_PEI_ANOMALIE.PEI_ID.eq(idPEi)).execute()
+
     data class CompletedAnomalie(
         val anomalieId: UUID,
         val anomalieCode: String,

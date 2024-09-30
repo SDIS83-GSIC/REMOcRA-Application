@@ -5,6 +5,8 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import remocra.data.ApiVisiteData
 import remocra.data.ApiVisiteSpecifiqueData
+import remocra.data.CreationVisiteCtrl
+import remocra.data.VisiteData
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.Visite
@@ -211,4 +213,24 @@ class VisiteRepository
         // TODO  Anomalies contrôlées => Anomalies présentes à cette visite + Anomalies présentes à la
         //       visite précédente non présentes à cette visite
     }
+
+    fun getAllVisiteByPeiIdToDeletePei(peiId: UUID): List<VisiteData> = getAllVisiteByPeiId(peiId)
+        .map { record ->
+            VisiteData(
+                visiteId = record.visiteId,
+                visitePeiId = record.visitePeiId,
+                visiteDate = record.visiteDate,
+                visiteTypeVisite = record.visiteTypeVisite,
+                visiteAgent1 = record.visiteAgent1,
+                visiteAgent2 = record.visiteAgent2,
+                visiteObservation = record.visiteObservation,
+                listeAnomalie = record.listeAnomalie?.map { it.anomalieId } ?: emptyList(),
+                isCtrlDebitPression = record.ctrlDebitPression != null,
+                ctrlDebitPression = CreationVisiteCtrl(
+                    ctrlDebit = record.ctrlDebitPression?.visiteCtrlDebitPressionDebit,
+                    ctrlPression = record.ctrlDebitPression?.visiteCtrlDebitPressionPression,
+                    ctrlPressionDyn = record.ctrlDebitPression?.visiteCtrlDebitPressionPressionDyn,
+                ),
+            )
+        }
 }

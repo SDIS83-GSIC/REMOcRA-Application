@@ -17,9 +17,6 @@ open class PeiData(
     open val peiTypePei: TypePei,
 
     open val peiGeometrie: Geometry,
-    val coordonneeX: Double = peiGeometrie.coordinate.x,
-    val coordonneeY: Double = peiGeometrie.coordinate.y,
-    val srid: Int = peiGeometrie.srid,
 
     open val peiAutoriteDeciId: UUID?,
     open val peiServicePublicDeciId: UUID?,
@@ -50,7 +47,11 @@ open class PeiData(
     open val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
-)
+) {
+    val coordonneeX: Double = peiGeometrie.coordinate.x
+    val coordonneeY: Double = peiGeometrie.coordinate.y
+    val srid: Int = peiGeometrie.srid
+}
 
 data class PibiData(
     override val peiId: UUID = UUID.randomUUID(),
@@ -112,9 +113,6 @@ data class PibiData(
     peiDisponibiliteTerrestre,
     peiTypePei,
     peiGeometrie,
-    coordonneeX = peiGeometrie.coordinate.x,
-    coordonneeY = peiGeometrie.coordinate.y,
-    peiGeometrie.srid,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
     peiMaintenanceDeciId,
@@ -192,9 +190,6 @@ class PenaData(
     peiDisponibiliteTerrestre,
     peiTypePei,
     peiGeometrie,
-    coordonneeX = peiGeometrie.coordinate.x,
-    coordonneeY = peiGeometrie.coordinate.y,
-    peiGeometrie.srid,
     peiAutoriteDeciId,
     peiServicePublicDeciId,
     peiMaintenanceDeciId,

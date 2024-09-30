@@ -1,18 +1,152 @@
 package remocra.usecase.pei
 
+import jakarta.inject.Inject
+import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.PeiData
+import remocra.data.enums.ErrorType
+import remocra.db.AireAspirationRepository
+import remocra.db.AnomalieRepository
+import remocra.db.DocumentRepository
+import remocra.db.IndisponibiliteTemporaireRepository
+import remocra.db.TourneeRepository
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.tables.pojos.Tournee
+import remocra.exception.RemocraResponseException
+import remocra.usecase.document.UpsertDocumentPeiUseCase
+import remocra.usecase.indisponibiliteTemporaire.DeleteIndisponibiliteTemporaireUseCase
+import remocra.usecase.indisponibiliteTemporaire.UpdateIndisponibiliteTemporaireUseCase
+import remocra.usecase.visites.DeleteVisiteUseCase
+import java.time.ZonedDateTime
+import java.util.UUID
 
 class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
-    override fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any? {
-        TODO("Not yet implemented")
+    @Inject
+    lateinit var appSettings: AppSettings
+
+    @Inject
+    lateinit var indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository
+
+    @Inject
+    lateinit var deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase
+
+    @Inject
+    lateinit var updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase
+
+    @Inject
+    lateinit var tourneeRepository: TourneeRepository
+
+    @Inject
+    lateinit var anomalieRepository: AnomalieRepository
+
+    @Inject
+    lateinit var aireAspirationRepository: AireAspirationRepository
+
+    @Inject
+    lateinit var upsertDocument: UpsertDocumentPeiUseCase
+
+    @Inject
+    lateinit var documentRepository: DocumentRepository
+
+    @Inject
+    lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
+
+    override fun executeSpecific(userInfo: UserInfo?, element: PeiData) {
+        // Gestion des Indisponibilités temporaires
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireUseCase.getWithListPeiByPei(element.peiId)
+        listeIndisponibiliteTemporaire.forEach { indisponibiliteTemporaire ->
+
+            /* Si un seul PEI dans l'indisponibilité temporaire un supprimer l'IT
+               sinon on la modifie */
+            if (indisponibiliteTemporaire.indisponibiliteTemporaireListePeiId.size == 1) {
+                if (indisponibiliteTemporaire.indisponibiliteTemporaireDateDebut.isBefore(ZonedDateTime.now(clock)) &&
+                    indisponibiliteTemporaire.indisponibiliteTemporaireDateFin?.isAfter(ZonedDateTime.now(clock)) != false
+                ) {
+                    throw RemocraResponseException(ErrorType.PEI_INDISPONIBILITE_TEMPORAIRE_EN_COURS)
+                }
+                deleIndisponibiliteTemporaireUseCase.execute(userInfo, indisponibiliteTemporaire, transactionManager)
+            } else {
+                updateIndisponibiliteTemporaireUseCase.execute(
+                    userInfo = userInfo,
+                    // "element" est une copie de l'indisponibilité temporaire avec le PEI en cours de suppression en moins
+                    element = indisponibiliteTemporaire.copy(
+                        indisponibiliteTemporaireListePeiId = indisponibiliteTemporaire.indisponibiliteTemporaireListePeiId
+                            .minus(element.peiId),
+                    ),
+                    transactionManager,
+                )
+            }
+        }
+
+        // Gestion des tournées
+        val listeTournee = tourneeRepository.getTourneeByPei(element.peiId)
+        listeTournee.forEach {
+                tournee: Tournee ->
+            // impossible de modifier une tournée réservée
+            if (tournee.tourneeReservationUtilisateurId != null) {
+                throw RemocraResponseException(ErrorType.PEI_TOURNEE_LECTURE_SEULE)
+            }
+            tourneeRepository.deleteLTourneePeiByTourneeAndPeiId(tourneeId = tournee.tourneeId, peiId = element.peiId)
+        }
+
+        // Suppression des liaisons anomalies
+        anomalieRepository.deleteLiaisonByPei(element.peiId)
+
+        // Suppression des Aires d'aspiration
+        if (element.peiTypePei == TypePei.PENA) {
+            aireAspirationRepository.deleteAireAspiration(element.peiId)
+        }
+
+        // Suppression des documents
+
+        val listeDocsToRemove = mutableListOf<UUID>()
+        documentRepository.getDocumentByPei(element.peiId).forEach {
+            listeDocsToRemove.add(it.documentId)
+        }
+        upsertDocument.deleteLDocument(listeDocsToRemove)
+
+        // Suppression des visites
+        visiteRepository.getAllVisiteByPeiIdToDeletePei(element.peiId).forEach {
+            deleteVisiteUseCase.execute(userInfo, it, transactionManager)
+        }
+
+        // Suppression dans la table PIBI ou PENA
+        when (element.peiTypePei) {
+            TypePei.PENA -> {
+                penaRepository.deleteById(element.peiId)
+            }
+            TypePei.PIBI -> {
+                pibiRepository.deleteById(element.peiId)
+            }
+        }
+        // Suppression du PEI
+        peiRepository.deleteById(element.peiId)
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        TODO("Not yet implemented")
+        if (!userInfo.droits.contains(Droit.PEI_D)) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D)
+        }
     }
+
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        TODO("Not yet implemented")
+        val isInZoneCompetence = peiRepository.isInZoneCompetence(
+            srid = appSettings.sridInt,
+            coordonneeY = element.coordonneeY,
+            coordonneeX = element.coordonneeX,
+            idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
+        )
+
+        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_D)) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
+        }
+        if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
+        }
+        if (!isInZoneCompetence) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_ZONE_COMPETENCE)
+        }
     }
 }

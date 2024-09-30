@@ -12,9 +12,7 @@ import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.count
 import org.jooq.impl.DSL.multiset
-import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
 import remocra.data.PeiData
@@ -40,6 +38,7 @@ import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_DWithin
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -90,10 +89,14 @@ class PeiRepository
         LISTE_PEI,
     }
 
-    fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID): List<PeiForTableau> {
+    fun getPeiWithFilterByIndisponibiliteTemporaire(
+        param: Params<Filter, Sort>,
+        idIndisponibiliteTemporaire: UUID,
+    ): List<PeiForTableau> {
         param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
         return getAllWithFilterAndConditionalJoin(param, PageFilter.INDISPONIBILITE_TEMPORAIRE).fetchInto()
     }
+
     fun countAllPeiWithFilterByIndisponibiliteTemporaire(filterBy: Filter?, idIndisponibiliteTemporaire: UUID): Int {
         filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
         return countAllPeiWithFilter(filterBy, PageFilter.INDISPONIBILITE_TEMPORAIRE)
@@ -109,7 +112,8 @@ class PeiRepository
         return countAllPeiWithFilter(filterBy, PageFilter.TOURNEE)
     }
 
-    fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> = getAllWithFilterAndConditionalJoin(param).fetchInto()
+    fun getPeiWithFilter(param: Params<Filter, Sort>): List<PeiForTableau> =
+        getAllWithFilterAndConditionalJoin(param).fetchInto()
 
     fun countAllPeiWithFilter(filterBy: Filter?, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int {
         val requete = dsl.selectDistinct(PEI.ID)
@@ -143,7 +147,31 @@ class PeiRepository
             .count()
     }
 
-    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> {
+    fun isInZoneCompetence(
+        srid: Int,
+        coordonneeX: Double,
+        coordonneeY: Double,
+        idOrganisme: UUID,
+    ): Boolean =
+        dsl.fetchExists(
+            dsl.select().from(PEI)
+                .join(ORGANISME)
+                .on(ORGANISME.ID.eq(idOrganisme))
+                .join(ZONE_INTEGRATION)
+                .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+                .ST_DWithin(
+                    srid = srid,
+                    distance = 0,
+                    geometrieField = ZONE_INTEGRATION.GEOMETRIE,
+                    coordonneeX = coordonneeX,
+                    coordonneeY = coordonneeY,
+                ),
+        )
+
+    private fun getAllWithFilterAndConditionalJoin(
+        param: Params<Filter, Sort>,
+        pageFilter: PageFilter = PageFilter.LISTE_PEI,
+    ): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> {
         val requete = dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -247,6 +275,7 @@ class PeiRepository
             .limit(param.limit)
             .offset(param.offset)
     }
+
     data class PeiForTableau(
         val peiId: UUID,
         val peiNumeroComplet: String,
@@ -295,7 +324,13 @@ class PeiRepository
                     peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
                     listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
-                    idIndisponibiliteTemporaire?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)) },
+                    idIndisponibiliteTemporaire?.let {
+                        DSL.and(
+                            L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(
+                                it,
+                            ),
+                        )
+                    },
                     idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                 ),
             )
@@ -328,9 +363,9 @@ class PeiRepository
             NATURE_DECI.LIBELLE.getSortField(natureDeciLibelle),
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.getSortField(autoriteDeci),
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.getSortField(servicePublicDeci),
-                /* NUMERO_COMPLET est un string il faut donc ordonner par la longueur
-                   pour avoir un ordre "numérique"
-                 */
+            /* NUMERO_COMPLET est un string il faut donc ordonner par la longueur
+               pour avoir un ordre "numérique"
+             */
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
@@ -396,7 +431,14 @@ class PeiRepository
             .execute()
     }
 
-    fun getAll(codeInsee: String?, typePei: TypePei?, codeNature: String?, codeNatureDECI: String?, limit: Int?, offset: Int?): Collection<Pei> {
+    fun getAll(
+        codeInsee: String?,
+        typePei: TypePei?,
+        codeNature: String?,
+        codeNatureDECI: String?,
+        limit: Int?,
+        offset: Int?,
+    ): Collection<Pei> {
         return dsl.select(*PEI.fields())
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -462,9 +504,11 @@ class PeiRepository
         )
     }
 
-    fun getPeiIdFromNumero(numero: String): UUID? = dsl.select(PEI.ID).from(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
+    fun getPeiIdFromNumero(numero: String): UUID? =
+        dsl.select(PEI.ID).from(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
 
-    fun getPeiFromNumero(numero: String): Pei? = dsl.selectFrom(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
+    fun getPeiFromNumero(numero: String): Pei? =
+        dsl.selectFrom(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
 
     @Suppress("UNCHECKED_CAST")
     fun <T : PeiData> getPeiCaracteristiques(numero: String): T {
@@ -485,8 +529,21 @@ class PeiRepository
     private data class IdTypePei(val peiId: UUID, val peiTypePei: TypePei)
 
     private fun getPibiCaracteristiques(id: UUID): ApiPibiData {
-        return dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("numeroComplet"), PEI.NUMERO_INTERNE.`as`("numeroInterne"), PEI.ANNEE_FABRICATION.`as`("anneeFabrication"))
-            .select(PIBI.DIAMETRE_CANALISATION.`as`("diametreCanalisation"), PIBI.NUMERO_SCP.`as`("numeroScp"), PIBI.RENVERSABLE.`as`("renversable"), PIBI.DISPOSITIF_INVIOLABILITE.`as`("dispositifInviolabilite"), PIBI.DEBIT_RENFORCE.`as`("debitRenforce"), PIBI.SURPRESSE, PIBI.ADDITIVE.`as`("additive"))
+        return dsl.select(
+            PEI.ID.`as`("id"),
+            PEI.NUMERO_COMPLET.`as`("numeroComplet"),
+            PEI.NUMERO_INTERNE.`as`("numeroInterne"),
+            PEI.ANNEE_FABRICATION.`as`("anneeFabrication"),
+        )
+            .select(
+                PIBI.DIAMETRE_CANALISATION.`as`("diametreCanalisation"),
+                PIBI.NUMERO_SCP.`as`("numeroScp"),
+                PIBI.RENVERSABLE.`as`("renversable"),
+                PIBI.DISPOSITIF_INVIOLABILITE.`as`("dispositifInviolabilite"),
+                PIBI.DEBIT_RENFORCE.`as`("debitRenforce"),
+                PIBI.SURPRESSE,
+                PIBI.ADDITIVE.`as`("additive"),
+            )
             .select(COMMUNE.CODE_INSEE).select(DOMAINE.CODE).select(NATURE.CODE).select(NATURE_DECI.CODE)
             .select(DIAMETRE.CODE).select(ORGANISME.CODE).select(MODELE_PIBI.CODE)
             .select(TYPE_CANALISATION.CODE)
@@ -553,7 +610,13 @@ data class IdNumeroComplet(
     val peiNumeroComplet: String,
 )
 
-data class ApiPeiAccessibility(val id: UUID, val numeroComplet: String, val maintenanceDeciId: UUID, val servicePublicDeciId: UUID, val serviceEauxId: UUID)
+data class ApiPeiAccessibility(
+    val id: UUID,
+    val numeroComplet: String,
+    val maintenanceDeciId: UUID,
+    val servicePublicDeciId: UUID,
+    val serviceEauxId: UUID,
+)
 
 /**
  * Modèle général de représentation d'un PEI pour utilisation dans le back et le front ; ce modèle est décliné (hérité) pour chaque type (PIBI, PENA) afin de rajouter la sémantique nécessaire à ces spécificités.
