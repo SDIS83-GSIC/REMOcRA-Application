@@ -35,6 +35,7 @@ import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime from "./formatDateUtils.tsx";
 
 function getColumnPeiByStringArray(
+  user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
 ): Array<columnType> {
   const column: Array<columnType> = [];
@@ -205,7 +206,6 @@ function getColumnPeiByStringArray(
         column.push({
           Header: "Tournée",
           accessor: "tourneeLibelle",
-          sortField: "tourneeLibelle",
           Filter: <FilterInput type="text" name="tourneeLibelle" />,
         });
         break;
@@ -227,15 +227,34 @@ function getColumnPeiByStringArray(
     }),
   );
 
-  column.push(
-    EditColumn({
-      to: (peiId) => URLS.UPDATE_PEI(peiId),
-      title: true,
-      accessor: "peiId",
-      canEdit: true, // TODO voir avec les rôles
-      title: false,
-    }),
-  );
+  {
+    if (hasDroit(user, TYPE_DROIT.PEI_U)) {
+      column.push(
+        EditColumn({
+          to: (peiId) => URLS.UPDATE_PEI(peiId),
+          title: true,
+          accessor: "peiId",
+          title: false,
+        }),
+      );
+    }
+  }
+  {
+    if (hasDroit(user, TYPE_DROIT.PEI_D)) {
+      column.push(
+        DeleteColumn({
+          path: url`/api/pei/delete/`,
+          title: false,
+          disable: (v) => {
+            return v.original.tourneeId != null;
+          },
+          textDisable: "Impossible de supprimer un PEI affecté à une tournée",
+          accessor: "peiId",
+        }),
+      );
+    }
+  }
+
   column.push({
     Cell: (row: any) => {
       return (

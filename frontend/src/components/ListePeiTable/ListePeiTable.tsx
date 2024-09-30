@@ -7,6 +7,8 @@ import url from "../../module/fetch.tsx";
 import { filterValuesToVariable } from "../../pages/Pei/FilterPei.tsx";
 import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 
 const ListPei = ({
   filterPage,
@@ -14,6 +16,8 @@ const ListPei = ({
   className,
   displayNone,
 }: ListePeiType) => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
   let peiColonnes: COLUMN_PEI[] = [];
 
   const PEI_COLONNES = "PEI_COLONNES";
@@ -79,7 +83,7 @@ const ListPei = ({
         displayNone={displayNone}
         className={className}
         query={urlTable}
-        columns={getColumnPeiByStringArray(peiColonnes)}
+        columns={getColumnPeiByStringArray(user, peiColonnes)}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}
         filterContext={useFilterContext({ filter })}

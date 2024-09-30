@@ -9,8 +9,6 @@ import { columnType } from "./QueryTable.tsx";
 
 const EditColumn = ({
   to,
-  canEdit = false,
-  canEditFunction,
   title = true,
   disabled = false,
   disable = () => false,
@@ -19,23 +17,20 @@ const EditColumn = ({
 }: EditColumnType) => ({
   // eslint-disable-next-line react/display-name
   Cell: (row: any) => {
-    const canEditValue = canEditFunction ? canEditFunction(row.value) : canEdit;
     return (
       <>
         <TooltipCustom
           tooltipText={!(disable(row) || disabled) ? "Modifier" : textDisable}
           tooltipId={row.value}
         >
-          {canEditValue && (
-            <Button
-              variant="link"
-              href={to(row.value)}
-              disabled={disabled || disable(row)}
-            >
-              <IconEdit />
-              {title && <>&nbsp;Modifier</>}
-            </Button>
-          )}
+          <Button
+            variant="link"
+            href={to(row.value)}
+            disabled={disabled || disable(row)}
+          >
+            <IconEdit />
+            {title && <>&nbsp;Modifier</>}
+          </Button>
         </TooltipCustom>
       </>
     );
@@ -75,11 +70,9 @@ type EditColumnType = {
   to: (id: string) => any;
   title?: boolean;
   accessor: string;
-  canEdit?: boolean;
   textDisable?: string;
   disabled: boolean;
   disable: (t?: any) => boolean;
-  canEditFunction?: (t: any) => boolean;
 };
 
 export const SeeColumn = ({
@@ -106,7 +99,6 @@ type DeleteColumnType = {
   path: string;
   reload: boolean;
   title: boolean;
-  canSupress: boolean;
   disabled: boolean;
   disable: (t?: any) => boolean;
   textDisable: string;
@@ -115,7 +107,6 @@ export const DeleteColumn = ({
   path,
   reload,
   title = true,
-  canSupress,
   disabled = false,
   disable = () => false,
   textDisable = "",
@@ -127,34 +118,28 @@ export const DeleteColumn = ({
     const query = `${path}${row.value}`;
     return (
       <>
-        {canSupress && (
-          <>
-            <TooltipCustom
-              tooltipText={!disable(row) ? "Supprimer" : textDisable}
-              tooltipId={row.value}
-            >
-              <Button
-                variant={"link"}
-                className={disabled || disable(row) ? "" : "text-danger"}
-                disabled={disabled || disable(row)}
-                onClick={show}
-              >
-                <IconDelete />
-                {title && <>&nbsp;Supprimer</>}
-              </Button>
-            </TooltipCustom>
-            {!disable(row) && (
-              <DeleteModal
-                visible={visible}
-                closeModal={close}
-                query={query}
-                ref={ref}
-                onDelete={() =>
-                  reload ? reload() : window.location.reload(false)
-                }
-              />
-            )}
-          </>
+        <TooltipCustom
+          tooltipText={!disable(row) ? "Supprimer" : textDisable}
+          tooltipId={row.value}
+        >
+          <Button
+            variant={"link"}
+            className={disabled || disable(row) ? "" : "text-danger"}
+            disabled={disabled || disable(row)}
+            onClick={show}
+          >
+            <IconDelete />
+            {title && <>&nbsp;Supprimer</>}
+          </Button>
+        </TooltipCustom>
+        {!disable(row) && (
+          <DeleteModal
+            visible={visible}
+            closeModal={close}
+            query={query}
+            ref={ref}
+            onDelete={() => (reload ? reload() : window.location.reload(false))}
+          />
         )}
       </>
     );
