@@ -71,8 +71,19 @@ class PeiUseCase {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun getPeiWithFilter(param: Params<PeiRepository.Filter, PeiRepository.Sort>): List<PeiRepository.PeiForTableau> {
-        return peiRepository.getPeiWithFilter(param)
+    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): List<PeiRepository.PeiForTableau> {
+        val listePei = peiRepository.getPeiWithFilter(params)
+
+        /*
+         * Le libelle de la tournée est un multiset qui concatène toutes les tournées
+         * Impossible en jooq de filtrer sur un multiset
+         */
+        params.filterBy?.tourneeLibelle?.let {
+                tourneeSearch ->
+            return listePei.filter { it.tourneeLibelle?.contains(tourneeSearch) == true }
+        }
+
+        return peiRepository.getPeiWithFilter(params)
     }
 
     fun getPeiWithFilterByIndisponibiliteTemporaire(

@@ -12,7 +12,9 @@ import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.count
 import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
 import remocra.data.PeiData
@@ -141,7 +143,7 @@ class PeiRepository
             .count()
     }
 
-    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, ZonedDateTime?, String?>> {
+    private fun getAllWithFilterAndConditionalJoin(param: Params<Filter, Sort>, pageFilter: PageFilter = PageFilter.LISTE_PEI): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> {
         val requete = dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -166,8 +168,18 @@ class PeiRepository
                     r.value1().let { it as UUID }
                 }
             },
+            multiset(
+                selectDistinct(TOURNEE.LIBELLE)
+                    .from(TOURNEE)
+                    .join(L_TOURNEE_PEI)
+                    .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                    .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)),
+            ).`as`("listeTournee").convertFrom { record ->
+                record?.map { r ->
+                    r.value1()
+                }?.joinToString()
+            }.`as`("tourneeLibelle"),
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
-            TOURNEE.LIBELLE.`as`("tourneeLibelle"),
         )
             .from(PEI)
             .join(COMMUNE)
@@ -225,8 +237,6 @@ class PeiRepository
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
-                TOURNEE.LIBELLE,
-                L_TOURNEE_PEI.ORDRE,
             )
             .orderBy(
                 param.sortBy?.toCondition() ?: listOf(
@@ -287,7 +297,6 @@ class PeiRepository
                     listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
                     idIndisponibiliteTemporaire?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)) },
                     idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
-                    tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCase(it)) },
                 ),
             )
     }
@@ -325,8 +334,6 @@ class PeiRepository
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
-            TOURNEE.LIBELLE.getSortField(tourneeLibelle),
-            L_TOURNEE_PEI.ORDRE.getSortField(ordreTournee),
         )
     }
 
@@ -537,6 +544,8 @@ class PeiRepository
             .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
             .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
             .fetchInto()
+
+    fun deleteById(peiId: UUID) = dsl.deleteFrom(PEI).where(PEI.ID.eq(peiId)).execute()
 }
 
 data class IdNumeroComplet(
