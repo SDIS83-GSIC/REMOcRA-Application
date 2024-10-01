@@ -50,8 +50,6 @@ class CreateVisiteUseCase @Inject constructor(
                 date = ZonedDateTime.now(clock),
             ),
         )
-        // TODO : Gestion du calcul debit/pression
-        // TODO : Gestion du calcul indispo
         // TODO : Gestion "notification changement état" et autres jobs
     }
 

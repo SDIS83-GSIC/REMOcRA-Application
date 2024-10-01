@@ -44,8 +44,6 @@ open class PeiData(
     open val peiNiveauId: UUID?,
     open val peiObservation: String?,
 
-    // TODO ajouter la géométrie
-
     // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
     open val peiNumeroInterneInitial: Int? = peiNumeroInterne,
     open val peiCommuneIdInitial: UUID? = peiCommuneId,

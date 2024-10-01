@@ -63,7 +63,6 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
             " cas d'un \"Contrôle Technique Périodique\"",
         tags = ["DECI - Visites"],
     )
-    // TODO actuellement on retourne du 200 (par simplicité), voir si on veut réellement une 201 comme en V2 ou pas
     @ApiResponse(responseCode = "201", description = "Visite créée avec succès")
     @ApiResponse(responseCode = "400", description = "Erreur à la saisie")
     @RequireDroitsApi([DroitApi.TRANSMETTRE])

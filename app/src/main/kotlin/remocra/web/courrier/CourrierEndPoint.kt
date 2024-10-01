@@ -67,7 +67,7 @@ class CourrierEndPoint {
     @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.APPLICATION_JSON)
     fun getParametreByCourrier(): Response {
-        return Response.ok(getCourriersWithParametresUseCase.execute()).build()
+        return Response.ok(getCourriersWithParametresUseCase.execute(securityContext.userInfo)).build()
     }
 
     @GET

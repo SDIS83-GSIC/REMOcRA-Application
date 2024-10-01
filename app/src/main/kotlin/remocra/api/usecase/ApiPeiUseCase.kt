@@ -215,7 +215,7 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
         peiForm.capaciteIncertaine?.apply { penaData.penaCapaciteIncertaine = this }
         peiForm.quantiteAppoint?.apply { penaData.penaQuantiteAppoint = this }
         peiForm.codeMateriau?.apply { penaData.penaMateriauId = dataCacheProvider.getMateriaux().values.first { it.materiauCode == this }.materiauId }
-        // TODO on n'a pas l'info, oubli ou à modifier ?   peiForm.equipeHBE?.apply { penaData.hbe }
+        peiForm.equipeHBE?.apply { penaData.penaDisponibiliteHbe }
 
         // TODO idem PIBI
         return updatePeiUseCase.execute(null, penaData)

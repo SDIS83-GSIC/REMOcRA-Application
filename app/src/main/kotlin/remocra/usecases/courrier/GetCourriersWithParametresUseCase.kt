@@ -1,13 +1,16 @@
 package remocra.usecases.courrier
 
 import com.google.inject.Inject
+import remocra.auth.UserInfo
 import remocra.data.GlobalData
+import remocra.data.enums.ErrorType
 import remocra.db.CisCommuneRepository
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeParametreCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
+import remocra.exception.RemocraResponseException
 
 /**
  * Retourne tous les modèles de courriers avec leurs paramètres
@@ -21,9 +24,11 @@ class GetCourriersWithParametresUseCase {
 
     @Inject lateinit var cisCommuneRepository: CisCommuneRepository
 
-    fun execute(): MutableList<ModeleCourrierWithParametre> {
-        // TODO prendre en compte le profil droit de l'utilisateur
-        val allModeleCourrier = modeleCourrierRepository.getAll()
+    fun execute(userInfo: UserInfo?): MutableList<ModeleCourrierWithParametre> {
+        if (userInfo == null) {
+            throw RemocraResponseException(ErrorType.MODELE_COURRIER_DROIT_FORBIDDEN)
+        }
+        val allModeleCourrier = modeleCourrierRepository.getAll(userInfo.utilisateurId)
         val mapParametreByCourrier = modeleCourrierRepository.getParametresByModele()
 
         val listeWithParametres = mutableListOf<ModeleCourrierWithParametre>()

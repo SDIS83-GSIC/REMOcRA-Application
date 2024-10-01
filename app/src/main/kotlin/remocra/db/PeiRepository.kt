@@ -465,7 +465,7 @@ class PeiRepository
             // Tous les flags "actif"
             .and(DOMAINE.ACTIF.isTrue)
             .and(NATURE.ACTIF.isTrue)
-//                        .and(NATURE_DECI.ACTIF.isTrue)
+            .and(NATURE_DECI.ACTIF.isTrue)
             .and(DOMAINE.ACTIF.isTrue)
             .and(DOMAINE.ACTIF.isTrue)
             .and(DOMAINE.ACTIF.isTrue)
