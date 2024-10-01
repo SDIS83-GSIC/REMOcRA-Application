@@ -17,6 +17,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
+import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
@@ -90,6 +91,7 @@ val DIAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Diametre.DIAMETR
 val DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Document.DOCUMENT, DSL.name("document_pkey"), arrayOf(Document.DOCUMENT.ID), true)
 val DOMAINE_DOMAINE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_domaine_code_key"), arrayOf(Domaine.DOMAINE.CODE), true)
 val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_pkey"), arrayOf(Domaine.DOMAINE.ID), true)
+val FICHE_RESUME_BLOC_PKEY: UniqueKey<Record> = Internal.createUniqueKey(FicheResumeBloc.FICHE_RESUME_BLOC, DSL.name("fiche_resume_bloc_pkey"), arrayOf(FicheResumeBloc.FICHE_RESUME_BLOC.ID), true)
 val GESTIONNAIRE_GESTIONNAIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_gestionnaire_code_key"), arrayOf(Gestionnaire.GESTIONNAIRE.CODE), true)
 val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_pkey"), arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)
 val GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_groupe_couche_code_key"), arrayOf(GroupeCouche.GROUPE_COUCHE.CODE), true)

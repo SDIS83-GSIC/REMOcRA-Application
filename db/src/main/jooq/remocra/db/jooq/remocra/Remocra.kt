@@ -16,6 +16,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
+import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
@@ -136,6 +137,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.domaine</code>.
      */
     val DOMAINE: Domaine get() = Domaine.DOMAINE
+
+    /**
+     * The table <code>remocra.fiche_resume_bloc</code>.
+     */
+    val FICHE_RESUME_BLOC: FicheResumeBloc get() = FicheResumeBloc.FICHE_RESUME_BLOC
 
     /**
      * The table <code>remocra.gestionnaire</code>.
@@ -414,6 +420,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Diametre.DIAMETRE,
         Document.DOCUMENT,
         Domaine.DOMAINE,
+        FicheResumeBloc.FICHE_RESUME_BLOC,
         Gestionnaire.GESTIONNAIRE,
         GroupeCouche.GROUPE_COUCHE,
         IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,

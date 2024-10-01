@@ -12,6 +12,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
+import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
@@ -110,6 +111,11 @@ val DOCUMENT: Document = Document.DOCUMENT
  * The table <code>remocra.domaine</code>.
  */
 val DOMAINE: Domaine = Domaine.DOMAINE
+
+/**
+ * The table <code>remocra.fiche_resume_bloc</code>.
+ */
+val FICHE_RESUME_BLOC: FicheResumeBloc = FicheResumeBloc.FICHE_RESUME_BLOC
 
 /**
  * The table <code>remocra.gestionnaire</code>.
