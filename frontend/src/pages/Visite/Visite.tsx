@@ -58,11 +58,11 @@ const Visite = () => {
   const typePei = visiteInformations.data.typePei;
   const lastCDP: CtrlDebitPressionEntity = {
     ctrlVisiteId: null,
-    ctrlDebit: visiteInformations.data.lastCDP.visiteCtrlDebitPressionDebit,
+    ctrlDebit: visiteInformations.data.lastCDP?.visiteCtrlDebitPressionDebit,
     ctrlPression:
-      visiteInformations.data.lastCDP.visiteCtrlDebitPressionPression,
+      visiteInformations.data.lastCDP?.visiteCtrlDebitPressionPression,
     ctrlPressionDyn:
-      visiteInformations.data.lastCDP.visiteCtrlDebitPressionPressionDyn,
+      visiteInformations.data.lastCDP?.visiteCtrlDebitPressionPressionDyn,
   };
 
   const listeVoletsAccordion: { header: string; content: ReactNode }[] = [];
@@ -179,7 +179,6 @@ const Visite = () => {
                     >
                       <IconOverview />
                     </Button>
-                    {/* TODO : Implémenter la suppression de la dernière visite */}
                     {/* TODO : Implémenter une modale de suppression */}
                     {index === 0 && hasRightToDelete(element) && (
                       <Button size="sm">Supprimer</Button>
