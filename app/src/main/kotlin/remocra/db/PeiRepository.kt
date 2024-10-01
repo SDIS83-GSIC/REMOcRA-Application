@@ -267,7 +267,7 @@ class PeiRepository
                 V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
             )
             .orderBy(
-                param.sortBy?.toCondition() ?: listOf(
+                param.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(
                     DSL.length(PEI.NUMERO_COMPLET).asc(),
                     PEI.NUMERO_COMPLET.asc(),
                 ),
