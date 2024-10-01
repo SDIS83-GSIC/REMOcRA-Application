@@ -122,14 +122,14 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
                     notify(taskParameters, logManager.idJob)
                 } catch (e: Exception) {
                     if (latestJob != null) {
-                        transactionManager.transaction {
+                        transactionManager.transactionResult {
                             jobRepository.endJobError(latestJob.jobId)
                         }
                     }
                     logManager.error("Tâche terminée en erreur : ${e.message}")
                 } finally {
                     if (latestJob != null) {
-                        transactionManager.transaction {
+                        transactionManager.transactionResult {
                             jobRepository.endJobSuccess(latestJob.jobId)
                         }
                     }
@@ -181,7 +181,7 @@ abstract class SimpleTask<T : TaskParameters> : CoroutineScope {
         }
         val latestJob = jobDb
         if (latestJob != null) {
-            transactionManager.transaction {
+            transactionManager.transactionResult {
                 jobRepository.endJobError(latestJob.jobId)
             }
         }

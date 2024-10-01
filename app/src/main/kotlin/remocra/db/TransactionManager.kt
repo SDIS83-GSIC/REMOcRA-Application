@@ -10,12 +10,13 @@ import org.jooq.DSLContext
  */
 class TransactionManager @Inject constructor(private val context: DSLContext) {
 
-    fun transaction(transactional: () -> Unit) {
-        context.transaction(transactional)
-    }
-
     fun <T> transactionResult(
+        wrapInsideTransaction: Boolean = true,
         transactional: () -> T,
     ): T =
-        context.transactionResult(transactional)
+        if (wrapInsideTransaction) {
+            context.transactionResult { _ -> transactional() }
+        } else {
+            transactional()
+        }
 }
