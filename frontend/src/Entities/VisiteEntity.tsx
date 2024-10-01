@@ -24,3 +24,21 @@ export type VisiteCompleteEntity = {
   isCtrlDebitPression: boolean;
   ctrlDebitPression: CtrlDebitPressionEntity;
 };
+
+export type VisiteTourneeEntity = {
+  tourneeId?: string;
+  visiteDate?: Date;
+  visiteTypeVisite?: TYPE_VISITE;
+  visiteAgent1?: string;
+  visiteAgent2?: string;
+  isCtrlDebitPression?: boolean;
+  listeSimplifiedVisite: SimplifiedVisiteEntity[];
+};
+
+export type SimplifiedVisiteEntity = {
+  visiteId?: string;
+  visitePeiId: string;
+  visiteObservation: string;
+  listeAnomalie: AnomalieCompleteEntity[];
+  ctrlDebitPression: CtrlDebitPressionEntity;
+};

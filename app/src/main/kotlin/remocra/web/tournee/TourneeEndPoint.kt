@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.Params
@@ -29,6 +30,7 @@ import remocra.usecase.tournee.DeleteTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
+import remocra.usecase.visites.FetchTourneeVisiteUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -41,6 +43,9 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var fetchTourneeDataUseCase: FetchTourneeDataUseCase
+
+    @Inject
+    lateinit var fetchTourneeVisiteUseCase: FetchTourneeVisiteUseCase
 
     @Inject
     lateinit var createTourneeUseCase: CreateTourneeUseCase
@@ -153,4 +158,10 @@ class TourneeEndPoint : AbstractEndpoint() {
                 listLTourneePei = objectMapper.readValue<List<LTourneePei>>(httpRequest.getTextPart("listTourneePei")),
             ),
         ).wrap()
+
+    @GET
+    @Path("/fetchTourneeVisiteInfo/{tourneeId}")
+    @Public("TODO trouver le bon droit")
+    fun fetchTourneeVisiteUseCase(@PathParam("tourneeId") tourneeId: UUID): Response =
+        Response.ok().entity(fetchTourneeVisiteUseCase.fetchTourneeVisite(tourneeId)).build()
 }

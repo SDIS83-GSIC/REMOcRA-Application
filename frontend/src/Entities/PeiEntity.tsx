@@ -1,4 +1,5 @@
 import { Document } from "../components/Form/FormDocuments.tsx";
+import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 
 export type PeiEntity = {
@@ -84,4 +85,25 @@ export type PeiInfoEntity = {
   voieLibelle?: string;
   communeLibelle: string;
   tourneeId: string;
+};
+
+export type PeiVisiteTourneeInformationEntity = {
+  peiId: string;
+  peiNumeroComplet: string;
+  natureDeciCode: string;
+  natureDeciLibelle: string;
+  domaineLibelle: string;
+  natureLibelle: string;
+  peiTypePei: TYPE_PEI;
+  peiNumeroVoie?: number;
+  peiSuffixeVoie?: string;
+  voieLibelle?: string;
+  communeLibelle: string;
+  communeCodeInsee: string;
+  communeCodePostal: string;
+  peiDisponibiliteTerrestre: DISPONIBILITE_PEI;
+  gestionnaireLibelle?: string;
+  concatAnomalies?: string;
+  peiNextRecop?: Date;
+  peiNextCtp?: Date;
 };

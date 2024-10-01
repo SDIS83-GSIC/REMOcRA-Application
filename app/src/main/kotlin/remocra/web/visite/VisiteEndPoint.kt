@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -12,16 +13,19 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
+import remocra.data.VisiteTourneeInput
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
+import remocra.usecase.visites.CreateMultipleVisiteUseCase
 import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
 import remocra.usecase.visites.GetVisiteWithAnomalies
@@ -40,6 +44,9 @@ class VisiteEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
+
+    @Inject
+    lateinit var createMultipleVisiteUseCase: CreateMultipleVisiteUseCase
 
     @Inject
     lateinit var peiRepository: PeiRepository
@@ -118,6 +125,21 @@ class VisiteEndPoint : AbstractEndpoint() {
         @FormParam("ctrlDebitPression")
         val ctrlDebitPression: CreationVisiteCtrl? = null
     }
+
+    /** Permet d'inserer en masse des visite
+     *  @param visiteTourneeInput : un objet VisiteTourneeInput contenant une liste de SimplifiedVisiteInput
+     *  @return une liste de AbstractEndpoint.Result de type différent de Created
+     */
+    @POST
+    @Path("/createVisiteTournee")
+    @Public("TODO trouver le bon droit")
+    fun createVisiteTournee(visiteTourneeInput: VisiteTourneeInput): Response =
+        Response.ok().entity(
+            createMultipleVisiteUseCase.createMultipleVisite(
+                securityContext.userInfo,
+                visiteTourneeInput,
+            ),
+        ).build()
 
     @DELETE
     @Path("/{visiteId}")

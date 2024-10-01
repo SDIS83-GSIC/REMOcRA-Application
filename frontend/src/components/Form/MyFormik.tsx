@@ -74,10 +74,10 @@ type MyFormikProps = {
   initialStatus?: object;
   initialValues: object;
   prepareVariables: (...args: any[]) => any;
-  validationSchema: object;
+  validationSchema?: object;
   submitUrl: string;
   isPost: boolean;
-  redirectUrl: string;
+  redirectUrl?: string;
   onSubmit: (...args: any[]) => any;
   successToastMessage?: string;
   errorToastMessage?: string;

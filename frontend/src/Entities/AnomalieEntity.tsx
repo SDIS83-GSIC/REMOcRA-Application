@@ -14,3 +14,5 @@ export type AnomalieCompleteEntity = {
   isNPAssignable: boolean;
   isAssigned: boolean;
 };
+
+export type MapAnomalieCompleteByPeiId = Map<string, AnomalieCompleteEntity[]>;

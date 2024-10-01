@@ -7,6 +7,7 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.db.AnomalieRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -26,6 +27,17 @@ class AnomalieEndPoint {
     ): Response {
         return Response.ok()
             .entity(anomalieRepository.getAllAnomalieAssignable(peiId))
+            .build()
+    }
+
+    @GET
+    @Path("/getAssignablesAnomaliesByTourneeId/{tourneeId}")
+    @Public("Todo Trouver le droit SaisieEnMasseDesVisites")
+    fun getAssignableAnomalieByTourneeId(
+        @PathParam("tourneeId") tourneeId: UUID,
+    ): Response {
+        return Response.ok()
+            .entity(anomalieRepository.getAllAnomalieAssignableByPeiTourneeId(tourneeId))
             .build()
     }
 }

@@ -9,6 +9,7 @@ import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableW
 import EditColumn, {
   DeleteColumn,
   ListePeiColumn,
+  LinkColumn,
 } from "../../components/Table/columns.tsx";
 import {
   columnType,
@@ -116,6 +117,22 @@ const ListTournee = () => {
         disable: (v) => {
           return v.original.tourneeUtilisateurReservationLibelle != null;
         },
+      }),
+    );
+    // Colonne d'accès à la saisie en masse des visites
+    // TODO : Vérifier les droits
+    column.push(
+      LinkColumn({
+        to: (data) => URLS.TOURNEE_VISITE(data.tourneeId),
+        accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
+          return { tourneeId, tourneeUtilisateurReservationLibelle };
+        },
+        icon: <IconTournee />,
+        canInteractFunction(data) {
+          return data.tourneeUtilisateurReservationLibelle == null;
+        },
+        tooltipText: "Saisir toutes les visites de la tournée",
+        textDisable: "Impossible de saisir les visites d'une tournée réservée",
       }),
     );
     //colonne réorganisation PEI

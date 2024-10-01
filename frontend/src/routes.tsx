@@ -25,6 +25,7 @@ import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiPr
 import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
+import SaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import MapComponent from "./components/Map/Map.tsx";
 import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
 import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
@@ -58,6 +59,8 @@ export const URLS = {
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
+  TOURNEE_VISITE: (tourneeId: string) =>
+    url`/deci/tournee/visite-tournee/` + tourneeId,
   FICHE_RESUME: (peiId: string) => url`/deci/pei/fiche/` + peiId,
 
   // Module couverture hydraulique
@@ -184,6 +187,15 @@ export default [
         element: (
           <Authorization
             Component={TourneePei}
+            droits={[TYPE_DROIT.TOURNEE_A]}
+          />
+        ),
+      },
+      {
+        path: "tournee/visite-tournee/:tourneeId",
+        element: (
+          <Authorization
+            Component={SaisieVisiteTournee}
             droits={[TYPE_DROIT.TOURNEE_A]}
           />
         ),

@@ -10,13 +10,22 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.concat
 import org.jooq.impl.DSL.count
 import org.jooq.impl.DSL.field
+import org.jooq.impl.DSL.listAgg
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
+import remocra.GlobalConstants
+import remocra.db.jooq.remocra.enums.Disponibilite
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
+import remocra.db.jooq.remocra.tables.references.ANOMALIE
+import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
@@ -24,10 +33,13 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.VISITE
+import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
+import java.math.BigDecimal
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -309,4 +321,135 @@ class TourneeRepository
         dsl.deleteFrom(TOURNEE)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
+
+    // Saisie visite en masse
+    fun getTourneeLibelle(tourneeId: UUID): String =
+        dsl.select(TOURNEE.LIBELLE)
+            .from(TOURNEE)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .fetchSingleInto()
+
+    fun getPeiVisiteTourneeInformation(tourneeId: UUID): List<PeiVisiteTourneeInformation> {
+        val concatAnomaliesCteName = name("CONCAT_ANOMALIES_CTE")
+        val concatAnomaliesCte = concatAnomaliesCteName.fields("PEI_ID", "LISTE_ANOMALIES").`as`(
+            select(
+                L_PEI_ANOMALIE.PEI_ID,
+                listAgg(ANOMALIE.LIBELLE, ", ").withinGroupOrderBy(ANOMALIE_CATEGORIE.LIBELLE, ANOMALIE.LIBELLE).`as`("LISTE_ANOMALIES"),
+            )
+                .from(L_PEI_ANOMALIE)
+                .join(ANOMALIE).on(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+                .join(ANOMALIE_CATEGORIE).on(ANOMALIE.ANOMALIE_CATEGORIE_ID.eq(ANOMALIE_CATEGORIE.ID))
+                .where(ANOMALIE_CATEGORIE.CODE.ne(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME)) // notEqual
+                .groupBy(L_PEI_ANOMALIE.PEI_ID),
+        )
+
+        val nextVisiteCteName = name("NEXT_VISITE_CTE")
+        val nextVisiteCte = nextVisiteCteName.fields("PEI_ID", "PEI_NEXT_RECOP", "PEI_NEXT_CTP").`as`(
+            select(
+                V_PEI_VISITE_DATE.PEI_ID,
+                V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+                V_PEI_VISITE_DATE.PEI_NEXT_CTP,
+            )
+                .from(V_PEI_VISITE_DATE),
+        )
+
+        return dsl.with(concatAnomaliesCte, nextVisiteCte)
+            .select(
+                PEI.ID,
+                PEI.NUMERO_COMPLET,
+                NATURE_DECI.CODE,
+                NATURE_DECI.LIBELLE,
+                DOMAINE.LIBELLE,
+                NATURE.LIBELLE,
+                PEI.TYPE_PEI,
+                PEI.NUMERO_VOIE,
+                PEI.SUFFIXE_VOIE,
+                VOIE.LIBELLE,
+                COMMUNE.LIBELLE,
+                COMMUNE.CODE_INSEE,
+                COMMUNE.CODE_POSTAL,
+                PEI.DISPONIBILITE_TERRESTRE,
+                GESTIONNAIRE.LIBELLE,
+                concatAnomaliesCte.field("LISTE_ANOMALIES"),
+                nextVisiteCte.field("PEI_NEXT_RECOP"),
+                nextVisiteCte.field("PEI_NEXT_CTP"),
+            )
+            .from(PEI)
+            .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .leftJoin(table(concatAnomaliesCteName))
+            .on(PEI.ID.eq(field(name("CONCAT_ANOMALIES_CTE", "PEI_ID"), SQLDataType.UUID)))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID))
+            .join(table(nextVisiteCteName))
+            .on(PEI.ID.eq(field(name("NEXT_VISITE_CTE", "PEI_ID"), SQLDataType.UUID)))
+            .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .fetchInto()
+    }
+
+    data class PeiVisiteTourneeInformation(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
+        val natureDeciCode: String,
+        val natureDeciLibelle: String,
+        val domaineLibelle: String,
+        val natureLibelle: String,
+        val peiTypePei: TypePei,
+        val peiNumeroVoie: Int?,
+        val peiSuffixeVoie: String?,
+        val voieLibelle: String?,
+        val communeLibelle: String,
+        val communeCodeInsee: String,
+        val communeCodePostal: String,
+        val peiDisponibiliteTerrestre: Disponibilite,
+        val gestionnaireLibelle: String?,
+        val listeAnomalies: String?,
+        val peiNextRecop: ZonedDateTime?,
+        val peiNextCtp: ZonedDateTime?,
+    )
+
+    fun getListLastPeiCDPByTournee(tourneeId: UUID): List<CDPByPeiId> {
+        val lastCDPCteName = name("LAST_CDP_CTE")
+        val lastCDPCte = lastCDPCteName.fields("PEI_ID", "MAX_DATE").`as`(
+            select(
+                VISITE.PEI_ID,
+                DSL.max(VISITE.DATE).`as`("MAX_DATE"),
+            )
+                .from(VISITE_CTRL_DEBIT_PRESSION)
+                .join(VISITE).on(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(VISITE.ID))
+                .groupBy(VISITE.PEI_ID),
+        )
+        return dsl.with(lastCDPCte)
+            .select(
+                PEI.ID,
+                VISITE_CTRL_DEBIT_PRESSION.VISITE_ID,
+                VISITE_CTRL_DEBIT_PRESSION.DEBIT,
+                VISITE_CTRL_DEBIT_PRESSION.PRESSION,
+                VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN,
+            )
+            .distinctOn(PEI.ID)
+            .from(PEI)
+            .leftJoin(table(lastCDPCteName)).on(PEI.ID.eq(field(name("LAST_CDP_CTE", "PEI_ID"), SQLDataType.UUID)))
+            .leftJoin(VISITE).on(PEI.ID.eq(VISITE.PEI_ID)).and(
+                field(name("LAST_CDP_CTE", "MAX_DATE"), ZonedDateTime::class.java).eq(
+                    VISITE.DATE,
+                ),
+            )
+            .leftJoin(VISITE_CTRL_DEBIT_PRESSION).on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
+            .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+            .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .orderBy(PEI.ID)
+            .fetchInto()
+    }
+
+    data class CDPByPeiId(
+        val peiId: UUID,
+        val visiteCtrlDebitPressionVisiteId: UUID?,
+        val visiteCtrlDebitPressionDebit: Int?,
+        val visiteCtrlDebitPressionPression: BigDecimal?,
+        val visiteCtrlDebitPressionPressionDyn: BigDecimal?,
+    )
 }

@@ -121,7 +121,7 @@ export const TextAreaInput = ({
 
 type CheckBoxInputType = {
   name: string;
-  label: string;
+  label: string | ReactNode;
   required?: boolean;
   disabled?: boolean;
 };
