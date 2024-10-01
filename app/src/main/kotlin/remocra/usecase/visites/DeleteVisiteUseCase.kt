@@ -69,9 +69,9 @@ class DeleteVisiteUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: UserInfo?, element: VisiteData): VisiteData {
-        visiteRepository.deleteAllVisiteAnomalies(element.visitePeiId)
-        visiteRepository.deleteVisiteCtrl(element.visitePeiId)
-        visiteRepository.deleteVisite(element.visitePeiId)
+        visiteRepository.deleteAllVisiteAnomalies(element.visiteId)
+        visiteRepository.deleteVisiteCtrl(element.visiteId)
+        visiteRepository.deleteVisite(element.visiteId)
         return element
     }
 }
