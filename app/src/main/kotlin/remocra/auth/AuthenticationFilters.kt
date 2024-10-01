@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import java.io.IOException
+import java.util.UUID
 
 /**
  * Permet de désactiver l'authent pour certaines resources JAX-RS
@@ -20,6 +21,9 @@ annotation class Public(val justification: String)
 
 val SecurityContext.userInfo: UserInfo?
     get() = (userPrincipal as? UserPrincipal)?.userInfo
+
+val SecurityContext.organismeUserId: UUID?
+    get() = (userPrincipal as? UserPrincipal)?.userInfo?.organismeId
 
 @Priority(Priorities.AUTHENTICATION)
 class AuthenticationFilter : ContainerRequestFilter {

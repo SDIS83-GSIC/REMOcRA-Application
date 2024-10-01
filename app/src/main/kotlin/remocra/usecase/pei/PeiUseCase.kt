@@ -72,8 +72,8 @@ class PeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): List<PeiRepository.PeiForTableau> {
-        val listePei = peiRepository.getPeiWithFilter(params)
+    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, organismeId: UUID): List<PeiRepository.PeiForTableau> {
+        val listePei = peiRepository.getPeiWithFilter(params, organismeId)
 
         /*
          * Le libelle de la tournée est un multiset qui concatène toutes les tournées
@@ -84,7 +84,7 @@ class PeiUseCase : AbstractUseCase() {
             return listePei.filter { it.tourneeLibelle?.contains(tourneeSearch) == true }
         }
 
-        return peiRepository.getPeiWithFilter(params)
+        return peiRepository.getPeiWithFilter(params, organismeId)
     }
 
     fun getPeiWithFilterByIndisponibiliteTemporaire(
@@ -93,7 +93,8 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idIndisponibiliteTemporaire: UUID,
-    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire)
+        organismeId: UUID,
+    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, organismeId, idIndisponibiliteTemporaire)
 
     fun getPeiWithFilterByTournee(
         param: Params<
@@ -101,10 +102,11 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idTournee: UUID,
+        organismeId: UUID,
     ): List<PeiRepository.PeiForTableau> {
         param.filterBy?.idTournee = idTournee
         param.sortBy?.ordreTournee = 1
-        return peiRepository.getPeiWithFilterByTournee(param, idTournee)
+        return peiRepository.getPeiWithFilterByTournee(param, organismeId, idTournee)
     }
 
     fun getInfoPei(idPei: UUID): PeiData {

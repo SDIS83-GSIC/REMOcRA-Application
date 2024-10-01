@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
+import remocra.auth.organismeUserId
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.DocumentsData.DocumentData
@@ -74,9 +75,10 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
-        val listPei = peiUseCase.getPeiWithFilter(params)
+        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
+        val listPei = peiUseCase.getPeiWithFilter(params, organismeId)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, organismeId)),
         )
             .build()
     }
@@ -92,9 +94,17 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire)
+        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
+        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, organismeId)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(params.filterBy, idIndisponibiliteTemporaire)),
+            DataTableau(
+                listPei,
+                peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(
+                    params.filterBy,
+                    organismeId,
+                    idIndisponibiliteTemporaire,
+                ),
+            ),
         )
             .build()
     }
@@ -110,9 +120,10 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee)
+        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
+        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, organismeId)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params.filterBy, idTournee)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params.filterBy, idTournee, organismeId)),
         )
             .build()
     }
@@ -121,7 +132,7 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/get-id-numero")
     @RequireDroits([Droit.PEI_R])
     fun getIdNumeroComplet(): Response {
-        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetence(securityContext.userInfo?.organismeId)).build()
+        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetence(securityContext.organismeUserId)).build()
     }
 
     @GET
