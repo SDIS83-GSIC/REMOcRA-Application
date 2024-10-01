@@ -32,6 +32,7 @@ import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME_PROFIL_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME__PROFIL_ORGANISME_PROFIL_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
+import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -195,6 +196,13 @@ open class ProfilOrganisme(
 
     val organisme: OrganismePath
         get(): OrganismePath = organisme()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.profil_utilisateur</code> table
+     */
+    val profilUtilisateur: ProfilUtilisateurPath
+        get(): ProfilUtilisateurPath = lProfilUtilisateurOrganismeDroit().profilUtilisateur()
     override fun `as`(alias: String): ProfilOrganisme = ProfilOrganisme(DSL.name(alias), this)
     override fun `as`(alias: Name): ProfilOrganisme = ProfilOrganisme(alias, this)
     override fun `as`(alias: Table<*>): ProfilOrganisme = ProfilOrganisme(alias.qualifiedName, this)
