@@ -9,7 +9,7 @@ import AccordionCustom, {
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconOverview } from "../../components/Icon/Icon.tsx";
+import { IconDelete, IconOverview } from "../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 import UtilisateurEntity, {
@@ -20,6 +20,8 @@ import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
+import DeleteModal from "../../components/Modal/DeleteModal.tsx";
+import useModal from "../../components/Modal/ModalUtils.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
@@ -28,6 +30,8 @@ import VisiteForm, {
 const Visite = () => {
   const { peiId } = useParams();
   const { user }: { user: UtilisateurEntity } = useAppContext();
+
+  const { visible, show, close, ref } = useModal();
 
   const [currentVisite, setCurrentVisite] =
     useState<VisiteCompleteEntity>(null);
@@ -130,7 +134,6 @@ const Visite = () => {
       );
     }
   };
-
   return (
     <Container>
       <Row>
@@ -179,9 +182,27 @@ const Visite = () => {
                     >
                       <IconOverview />
                     </Button>
-                    {/* TODO : Implémenter une modale de suppression */}
                     {index === 0 && hasRightToDelete(element) && (
-                      <Button size="sm">Supprimer</Button>
+                      <>
+                        <Button
+                          variant={"link"}
+                          className={"text-danger"}
+                          onClick={show}
+                        >
+                          <IconDelete />
+                        </Button>
+
+                        <DeleteModal
+                          visible={visible}
+                          closeModal={close}
+                          query={url`/api/visite/` + element.visiteId}
+                          ref={ref}
+                          onDelete={() => {
+                            visiteInformations.reload();
+                            listeAnomaliesAssignable.reload();
+                          }}
+                        />
+                      </>
                     )}
                   </td>
                 </tr>
