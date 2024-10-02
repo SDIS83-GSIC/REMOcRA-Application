@@ -1,6 +1,5 @@
 package remocra.data
 
-import remocra.usecase.document.UpsertDocumentEtudeUseCase
 import java.util.UUID
 
 data class EtudeData(
@@ -10,5 +9,5 @@ data class EtudeData(
     val etudeLibelle: String,
     val etudeDescription: String?,
     val listeCommuneId: Collection<UUID>?,
-    val listeDocument: UpsertDocumentEtudeUseCase.DocumentsEtude?,
+    val listeDocument: DocumentsData.DocumentsEtude?,
 )

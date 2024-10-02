@@ -8,6 +8,9 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.auth.UserInfo
+import remocra.data.couverturehydraulique.Batiment
+import remocra.data.couverturehydraulique.Reseau
+import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
 import remocra.data.enums.ErrorType
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
@@ -23,7 +26,7 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ImportDataCouvertureHydrauliqueUseCase.ReseauBatimentPeiProjet>(TypeOperation.UPDATE) {
+class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatimentPeiProjet>(TypeOperation.UPDATE) {
 
     @Inject lateinit var documentUtils: DocumentUtils
 
@@ -32,24 +35,6 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ImportDataCouv
     @Inject lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject lateinit var appSettings: AppSettings
-
-    data class ReseauBatimentPeiProjet(
-        val etudeId: UUID,
-        val fileReseau: InputStream?,
-        val fileBatiment: InputStream?,
-        val filePeiProjet: InputStream?,
-    )
-
-    data class Batiment(
-        val batimentGeometrie: Geometry,
-    )
-
-    data class Reseau(
-        val reseauGeometrie: Geometry,
-        val reseauTraversable: Boolean,
-        val reseauSensUnique: Boolean,
-        val reseauNiveau: Int?,
-    )
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ETUDE_U)) {

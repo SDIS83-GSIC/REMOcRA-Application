@@ -1,6 +1,7 @@
 package remocra.usecase.document
 
 import com.google.inject.Inject
+import remocra.data.DocumentsData.DocumentData
 import remocra.db.DocumentRepository
 import java.util.UUID
 
@@ -8,11 +9,11 @@ class DocumentPeiUseCase {
 
     @Inject lateinit var documentRepository: DocumentRepository
 
-    fun execute(peiId: UUID): List<UpsertDocumentPeiUseCase.DocumentData> {
+    fun execute(peiId: UUID): List<DocumentData> {
         val listeDocument = documentRepository.getDocumentByPei(peiId)
 
         return listeDocument.map {
-            UpsertDocumentPeiUseCase.DocumentData(
+            DocumentData(
                 it.documentId,
                 it.documentNomFichier,
                 it.isPhotoPei,

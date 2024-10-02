@@ -11,6 +11,8 @@ import org.locationtech.jts.geom.Geometry
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiProjetData
+import remocra.data.couverturehydraulique.Batiment
+import remocra.data.couverturehydraulique.Reseau
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.pojos.PeiProjet
@@ -23,7 +25,6 @@ import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
-import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -297,7 +298,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .where(RESEAU.ETUDE_ID.eq(etudeId))
             .execute()
 
-    fun insertReseau(etudeId: UUID, listReseau: List<ImportDataCouvertureHydrauliqueUseCase.Reseau>) =
+    fun insertReseau(etudeId: UUID, listReseau: List<Reseau>) =
         dsl.batch(
             listReseau.map {
                 dsl.insertInto(RESEAU)
@@ -316,7 +317,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .where(BATIMENT.ETUDE_ID.eq(etudeId))
             .execute()
 
-    fun insertBatiment(etudeId: UUID, listBatiment: List<ImportDataCouvertureHydrauliqueUseCase.Batiment>) =
+    fun insertBatiment(etudeId: UUID, listBatiment: List<Batiment>) =
         dsl.batch(
             listBatiment.map {
                 dsl.insertInto(BATIMENT)

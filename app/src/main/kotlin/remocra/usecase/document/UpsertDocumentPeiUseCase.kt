@@ -1,9 +1,11 @@
 package remocra.usecase.document
 
-import jakarta.servlet.http.Part
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.AbstractDocumentData
 import remocra.data.AuteurTracabiliteData
+import remocra.data.DocumentsData.DocumentData
+import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -14,19 +16,7 @@ import remocra.exception.RemocraResponseException
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentPeiUseCase.DocumentsPei>() {
-    open class DocumentsPei(
-        override val objectId: UUID,
-        override val listeDocsToRemove: List<UUID>,
-        override val listDocument: List<DocumentData>,
-        override val listDocumentParts: List<Part>,
-    ) : AbstractDocuments()
-
-    open class DocumentData(
-        override val documentId: UUID?,
-        override val documentNomFichier: String,
-        val isPhotoPei: Boolean,
-    ) : AbstractDocumentData()
+class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
 
     override fun insertLDocument(documentId: UUID, element: DocumentsPei, newDoc: AbstractDocumentData) {
         documentRepository.insertDocumentPei(element.objectId, documentId, (newDoc as DocumentData).isPhotoPei)

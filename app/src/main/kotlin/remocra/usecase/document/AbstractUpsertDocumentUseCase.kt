@@ -1,8 +1,9 @@
 package remocra.usecase.document
 
 import com.google.inject.Inject
-import jakarta.servlet.http.Part
 import remocra.auth.UserInfo
+import remocra.data.AbstractDocumentData
+import remocra.data.AbstractDocuments
 import remocra.db.DocumentRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
@@ -76,16 +77,4 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
         updateLDocument(listToUpdate)
         return element
     }
-}
-
-abstract class AbstractDocumentData {
-    abstract val documentId: UUID?
-    abstract val documentNomFichier: String
-}
-
-abstract class AbstractDocuments {
-    abstract val objectId: UUID
-    abstract val listeDocsToRemove: List<UUID>
-    abstract val listDocument: List<AbstractDocumentData>
-    abstract val listDocumentParts: List<Part>
 }

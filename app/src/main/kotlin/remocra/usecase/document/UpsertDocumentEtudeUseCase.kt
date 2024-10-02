@@ -1,10 +1,11 @@
 package remocra.usecase.document
 
 import com.google.inject.Inject
-import jakarta.servlet.http.Part
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.AbstractDocumentData
 import remocra.data.AuteurTracabiliteData
+import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.CouvertureHydrauliqueRepository
@@ -16,25 +17,12 @@ import remocra.exception.RemocraResponseException
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentEtudeUseCase.DocumentsEtude>() {
+class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEtude>() {
 
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
-    open class DocumentsEtude(
-        override val objectId: UUID,
-        override val listeDocsToRemove: List<UUID>,
-        override val listDocument: List<DocumentEtudeData>,
-        override val listDocumentParts: List<Part>,
-    ) : AbstractDocuments()
-
-    open class DocumentEtudeData(
-        override val documentId: UUID?,
-        override val documentNomFichier: String,
-        val etudeDocumentLibelle: String?,
-    ) : AbstractDocumentData()
-
-    override fun insertLDocument(documentId: UUID, element: DocumentsEtude, newDoc: AbstractDocumentData) {
-        couvertureHydrauliqueRepository.insertEtudeDocument(documentId, element.objectId, (newDoc as DocumentEtudeData).etudeDocumentLibelle)
+    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEtude, newDoc: AbstractDocumentData) {
+        couvertureHydrauliqueRepository.insertEtudeDocument(documentId, element.objectId, (newDoc as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
     }
 
     override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
@@ -43,7 +31,7 @@ class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentE
 
     override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
         listToUpdate.forEach {
-            couvertureHydrauliqueRepository.updateEtudeDocument(it.documentId!!, (it as DocumentEtudeData).etudeDocumentLibelle)
+            couvertureHydrauliqueRepository.updateEtudeDocument(it.documentId!!, (it as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
         }
     }
 
@@ -59,12 +47,12 @@ class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentE
         }
     }
 
-    override fun postEvent(element: DocumentsEtude, userInfo: UserInfo) {
+    override fun postEvent(element: DocumentsData.DocumentsEtude, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo =
                 // On ne sauvegarde pas les bytearray
-                DocumentsEtude(
+                DocumentsData.DocumentsEtude(
                     element.objectId,
                     element.listeDocsToRemove,
                     element.listDocument,
@@ -79,7 +67,7 @@ class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<UpsertDocumentE
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsEtude) {
+    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsData.DocumentsEtude) {
         // Si même nom => lève une exeption
         if (element.listDocument.groupingBy { it.documentNomFichier }.eachCount().any { it.value > 1 }) {
             throw RemocraResponseException(ErrorType.ETUDE_DOCUMENT_MEME_NOM)

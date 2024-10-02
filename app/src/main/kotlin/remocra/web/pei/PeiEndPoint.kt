@@ -19,6 +19,8 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.DocumentsData.DocumentData
+import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.Params
 import remocra.data.PenaData
 import remocra.data.PibiData
@@ -153,9 +155,9 @@ class PeiEndPoint : AbstractEndpoint() {
 
         return upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
-            UpsertDocumentPeiUseCase.DocumentsPei(
+            DocumentsPei(
                 objectId = pei.peiId,
-                listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
+                listDocument = objectMapper.readValue<List<DocumentData>>(httpRequest.getTextPart("documents")),
                 listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
@@ -183,9 +185,9 @@ class PeiEndPoint : AbstractEndpoint() {
 
         return upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
-            UpsertDocumentPeiUseCase.DocumentsPei(
+            DocumentsPei(
                 objectId = pei.peiId,
-                listDocument = objectMapper.readValue<List<UpsertDocumentPeiUseCase.DocumentData>>(httpRequest.getTextPart("documents")),
+                listDocument = objectMapper.readValue<List<DocumentData>>(httpRequest.getTextPart("documents")),
                 listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),

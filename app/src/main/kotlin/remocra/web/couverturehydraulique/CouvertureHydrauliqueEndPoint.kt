@@ -22,9 +22,11 @@ import org.locationtech.jts.geom.PrecisionModel
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.DocumentsData
 import remocra.data.EtudeData
 import remocra.data.Params
 import remocra.data.PeiProjetData
+import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.remocra.enums.Droit
@@ -34,7 +36,6 @@ import remocra.usecase.couverturehydraulique.CreatePeiProjetUseCase
 import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
-import remocra.usecase.document.UpsertDocumentEtudeUseCase
 import remocra.web.AbstractEndpoint
 import remocra.web.getTextPart
 import java.util.UUID
@@ -224,9 +225,9 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             etudeLibelle = httpRequest.getTextPart("etudeLibelle"),
             etudeDescription = httpRequest.getTextPart("etudeDescription"),
             listeCommuneId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeCommuneId")),
-            listeDocument = UpsertDocumentEtudeUseCase.DocumentsEtude(
+            listeDocument = DocumentsData.DocumentsEtude(
                 objectId = etudeId,
-                listDocument = objectMapper.readValue<List<UpsertDocumentEtudeUseCase.DocumentEtudeData>>(httpRequest.getTextPart("documents")),
+                listDocument = objectMapper.readValue<List<DocumentsData.DocumentEtudeData>>(httpRequest.getTextPart("documents")),
                 listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
@@ -254,9 +255,9 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             etudeLibelle = httpRequest.getTextPart("etudeLibelle"),
             etudeDescription = httpRequest.getTextPart("etudeDescription"),
             listeCommuneId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeCommuneId")),
-            listeDocument = UpsertDocumentEtudeUseCase.DocumentsEtude(
+            listeDocument = DocumentsData.DocumentsEtude(
                 objectId = etudeId,
-                listDocument = objectMapper.readValue<List<UpsertDocumentEtudeUseCase.DocumentEtudeData>>(httpRequest.getTextPart("documents")),
+                listDocument = objectMapper.readValue<List<DocumentsData.DocumentEtudeData>>(httpRequest.getTextPart("documents")),
                 listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
@@ -280,7 +281,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     ) =
         importDataCouvertureHydrauliqueUseCase.execute(
             securityContext.userInfo,
-            ImportDataCouvertureHydrauliqueUseCase.ReseauBatimentPeiProjet(
+            ReseauBatimentPeiProjet(
                 etudeId,
                 if (httpRequest.getPart("fileReseau").contentType != null) httpRequest.getPart("fileReseau").inputStream else null,
                 if (httpRequest.getPart("fileBatiment").contentType != null) httpRequest.getPart("fileBatiment").inputStream else null,

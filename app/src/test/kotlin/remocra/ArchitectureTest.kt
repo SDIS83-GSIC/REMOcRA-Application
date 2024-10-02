@@ -3,6 +3,7 @@ package remocra
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
 import jakarta.ws.rs.Path
 import remocra.auth.Public
@@ -25,6 +26,14 @@ class ArchitectureTest {
             .beAnnotatedWith(RequireDroits::class.java)
             .orShould()
             .beAnnotatedWith(Public::class.java)
+
+    @ArchTest
+    val dontDependOnUseCases: ArchRule = classes()
+        .that()
+        .resideInAPackage("..usecase..")
+        .should()
+        .onlyHaveDependentClassesThat()
+        .resideInAnyPackage("..usecase..", "..web..", "..auth..", "..endpoint..", "..eventbus..")
 }
 
 /**
