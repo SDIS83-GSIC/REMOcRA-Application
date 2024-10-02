@@ -1,5 +1,6 @@
 package remocra
 
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
@@ -9,8 +10,9 @@ import jakarta.ws.rs.Path
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
+import remocra.db.TransactionManager
 
-@AnalyzeClasses(packages = ["remocra"])
+@AnalyzeClasses(packages = ["remocra"], importOptions = [DoNotIncludeTests::class])
 class ArchitectureTest {
     /**
      * Les méthodes des Endpoint hors API doivent comporter un @RequireDroits ou un @Public
@@ -34,6 +36,14 @@ class ArchitectureTest {
         .should()
         .onlyHaveDependentClassesThat()
         .resideInAnyPackage("..usecase..", "..web..", "..auth..", "..endpoint..", "..eventbus..")
+
+    @ArchTest
+    val onlyUsecasesManageTransactions: ArchRule = classes()
+        .that()
+        .areAssignableTo(TransactionManager::class.java)
+        .should()
+        .onlyHaveDependentClassesThat()
+        .resideInAnyPackage("..usecase..", "..eventbus..", "..tasks..")
 }
 
 /**
