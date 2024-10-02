@@ -4,16 +4,15 @@ import jakarta.inject.Inject
 import remocra.api.DateUtils
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
+import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractUseCase.Result
 import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
-import remocra.web.AbstractEndpoint.Result
-import remocra.web.visite.VisiteEndPoint
-import remocra.web.visite.VisiteEndPoint.CreationVisiteCtrl
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -93,7 +92,7 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
             visiteObservation = form.observations,
             listeAnomalie = listOf(), // TODO qu'est-ce qui est attendu, les anomalies contrôlées, constatées, ... ?
             isCtrlDebitPression = isCtrlDebitPression,
-            ctrlDebitPression = if (isCtrlDebitPression) VisiteEndPoint.CreationVisiteCtrl(form.debit, form.pression?.toBigDecimal(), form.pressionDynamique?.toBigDecimal()) else null,
+            ctrlDebitPression = if (isCtrlDebitPression) CreationVisiteCtrl(form.debit, form.pression?.toBigDecimal(), form.pressionDynamique?.toBigDecimal()) else null,
 
         )
 

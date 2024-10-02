@@ -25,6 +25,7 @@ import remocra.data.ApiPibiFormData
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecase.AbstractUseCase
 import remocra.web.AbstractEndpoint
 
 @Path("/deci/pei")
@@ -120,7 +121,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     ): Response {
         // Quand tout s'est bien passé, on sérialise, sinon on wrap comme d'habitude
         val result = peiUseCase.diff(moment)
-        if (result is Result.Success) {
+        if (result is AbstractUseCase.Result.Success) {
             return Response.ok(objectMapper.writeValueAsString(result.entity), MediaType.APPLICATION_JSON).build()
         }
         return result.wrap()

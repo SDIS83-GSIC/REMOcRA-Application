@@ -11,7 +11,6 @@ import remocra.app.AppModule
 import remocra.auth.AuthModule
 import remocra.db.DatabaseModule
 import remocra.eventbus.EventBusModule
-import remocra.geoserver.GeoserverModule
 import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
@@ -19,6 +18,7 @@ import remocra.keycloak.KeycloakModule
 import remocra.schedule.ScheduleModule
 import remocra.sentry.SentryModule
 import remocra.web.WebModule
+import remocra.web.geoserver.GeoserverModule
 import kotlin.system.exitProcess
 
 /**

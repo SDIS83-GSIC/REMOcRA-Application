@@ -13,8 +13,8 @@ import jakarta.ws.rs.container.DynamicFeature
 import jakarta.ws.rs.container.ResourceInfo
 import jakarta.ws.rs.core.FeatureContext
 import org.eclipse.jetty.util.URIUtil
-import remocra.web.forbidden
-import remocra.web.text
+import remocra.utils.forbidden
+import remocra.utils.text
 import java.security.SecureRandom
 import java.util.Base64
 

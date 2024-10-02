@@ -1,7 +1,6 @@
 package remocra.web.courrier
 
 import com.google.inject.Inject
-import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
@@ -14,12 +13,13 @@ import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.courrier.CourrierGenerator
 import remocra.usecase.courrier.CourrierRopGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import java.io.File
-import java.util.UUID
+import kotlin.reflect.jvm.javaMethod
 
 @Path("/courriers")
 class CourrierEndPoint {
@@ -43,24 +43,16 @@ class CourrierEndPoint {
     ): Response {
         return Response.ok()
             .entity(
-                courrierGenerator.execute(parametreCourrierInput, securityContext.userInfo, uriInfo),
+                courrierGenerator.execute(
+                    parametreCourrierInput,
+                    securityContext.userInfo,
+                    uriInfo.baseUriBuilder
+                        .path(CourrierEndPoint::class.java)
+                        .path(CourrierEndPoint::getUriCourrier.javaMethod),
+                ),
             )
             .build()
     }
-
-    class ParametreCourrierInput(
-        @FormParam("modeleCourrierId")
-        val modeleCourrierId: UUID,
-
-        @FormParam("listParametres")
-        val listParametres: List<NomValue>?,
-
-    )
-
-    data class NomValue(
-        val nom: String,
-        val valeur: String?,
-    )
 
     @GET
     @Path("/parametres")

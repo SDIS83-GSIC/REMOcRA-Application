@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
@@ -25,7 +26,6 @@ import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
 import remocra.usecase.visites.GetVisiteWithAnomalies
 import remocra.web.AbstractEndpoint
-import java.math.BigDecimal
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -118,15 +118,6 @@ class VisiteEndPoint : AbstractEndpoint() {
         @FormParam("ctrlDebitPression")
         val ctrlDebitPression: CreationVisiteCtrl? = null
     }
-
-    /** Reprend les attributs du Pojo VisiteCtrlDebitPression
-     * en faisant abstraction de visiteId, non défini lors de la création d'un visite
-     */
-    data class CreationVisiteCtrl(
-        val ctrlDebit: Int?,
-        val ctrlPression: BigDecimal?,
-        val ctrlPressionDyn: BigDecimal?,
-    )
 
     @DELETE
     @Path("/{visiteId}")

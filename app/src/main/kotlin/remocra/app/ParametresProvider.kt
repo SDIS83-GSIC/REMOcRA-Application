@@ -11,11 +11,11 @@ import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.eventbus.EventListener
 import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.schedule.SchedulableTasksExecutor
-import remocra.web.admin.getBooleanOrNull
-import remocra.web.admin.getDoubleOrNull
-import remocra.web.admin.getIntOrNull
-import remocra.web.admin.getParametre
-import remocra.web.admin.getStringOrNull
+import remocra.utils.getBooleanOrNull
+import remocra.utils.getDoubleOrNull
+import remocra.utils.getIntOrNull
+import remocra.utils.getParametre
+import remocra.utils.getStringOrNull
 
 @Singleton
 class ParametresProvider

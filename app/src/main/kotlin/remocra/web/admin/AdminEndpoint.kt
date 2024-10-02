@@ -9,6 +9,8 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.RequireDroits
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.admin.ParametresData
+import remocra.usecase.admin.ParametresUseCase
 
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)

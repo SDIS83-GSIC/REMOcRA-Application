@@ -1,4 +1,4 @@
-package remocra.web.admin
+package remocra.usecase.admin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
@@ -6,6 +6,12 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
 import remocra.eventbus.EventBus
 import remocra.eventbus.parametres.ParametresModifiedEvent
+import remocra.utils.getBooleanOrNull
+import remocra.utils.getInt
+import remocra.utils.getIntOrNull
+import remocra.utils.getListOfInt
+import remocra.utils.getListOfString
+import remocra.utils.getStringOrNull
 
 /**
  * Usecase permettant de manipuler les paramètres de l'application.

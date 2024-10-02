@@ -22,7 +22,6 @@ import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.exception.RemocraResponseException
-import remocra.web.booleanFilter
 import java.time.ZonedDateTime
 import java.util.UUID
 

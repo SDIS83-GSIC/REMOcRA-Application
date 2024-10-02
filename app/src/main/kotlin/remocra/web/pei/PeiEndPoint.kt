@@ -28,16 +28,17 @@ import remocra.db.PeiRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.UpsertDocumentPeiUseCase
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.pei.GetCoordonneesBySrid
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
+import remocra.utils.forbidden
+import remocra.utils.getTextPart
+import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
-import remocra.web.forbidden
 import remocra.web.geometryFromBBox
-import remocra.web.getTextPart
-import remocra.web.notFound
 import remocra.web.toGeomFromText
 import java.util.UUID
 
@@ -149,7 +150,7 @@ class PeiEndPoint : AbstractEndpoint() {
         val result = updatePeiUseCase.execute(securityContext.userInfo, pei)
 
         // Si on n'a pas réussi à update le PEI
-        if (result !is Result.Success) {
+        if (result !is AbstractUseCase.Result.Success) {
             return result.wrap()
         }
 
@@ -179,7 +180,7 @@ class PeiEndPoint : AbstractEndpoint() {
         )
 
         // Si on n'a pas réussi à insérer le PEI
-        if (result !is Result.Success) {
+        if (result !is AbstractUseCase.Result.Success) {
             return result.wrap()
         }
 

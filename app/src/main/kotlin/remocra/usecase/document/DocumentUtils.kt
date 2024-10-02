@@ -2,7 +2,7 @@ package remocra.usecase.document
 
 import jakarta.ws.rs.core.Response
 import org.slf4j.LoggerFactory
-import remocra.web.notFound
+import remocra.utils.notFound
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

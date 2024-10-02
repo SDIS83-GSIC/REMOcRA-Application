@@ -1,18 +1,16 @@
 package remocra.usecase.module
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.core.UriInfo
+import jakarta.ws.rs.core.UriBuilder
 import remocra.GlobalConstants
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.web.module.ModuleEndPoint
 import java.nio.file.Paths
-import kotlin.reflect.jvm.javaMethod
 
 class ModuleUseCase {
     @Inject lateinit var moduleRepository: ModuleRepository
 
-    fun execute(uriInfo: UriInfo): List<ModuleWithImageLink> {
+    fun execute(uriInfo: UriBuilder): List<ModuleWithImageLink> {
         val listeModule = moduleRepository.getModules()
 
         return listeModule.map {
@@ -21,9 +19,6 @@ class ModuleUseCase {
                 moduleTitre = it.moduleTitre,
                 moduleLinkImage = it.moduleImage?.let {
                     uriInfo
-                        .baseUriBuilder
-                        .path(ModuleEndPoint::class.java)
-                        .path(ModuleEndPoint::getUriImage.javaMethod)
                         .queryParam("imagePath", Paths.get(GlobalConstants.DOSSIER_IMAGE_MODULE, it).toString())
                         .build()
                         .toString()

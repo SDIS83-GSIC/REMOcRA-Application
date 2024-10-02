@@ -12,7 +12,7 @@ import remocra.auth.Public
 import remocra.db.DocumentRepository
 import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
-import remocra.web.notFound
+import remocra.utils.notFound
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID

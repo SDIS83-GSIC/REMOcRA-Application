@@ -17,7 +17,7 @@ import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Nature
-import remocra.web.limitOffset
+import remocra.utils.limitOffset
 
 @Path("deci/referentiel/pena")
 @Produces("application/json; charset=UTF-8")

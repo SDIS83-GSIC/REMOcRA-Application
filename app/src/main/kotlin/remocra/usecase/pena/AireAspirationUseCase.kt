@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.app.AppSettings
 import remocra.auth.UserInfo
+import remocra.data.AireAspirationUpsertData
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
@@ -17,7 +18,6 @@ import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import remocra.web.pei.PenaEndPoint
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -27,7 +27,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
     @Inject lateinit var appSettings: AppSettings
 
     data class PenaAspirationData(
-        val listeAireAspiration: List<PenaEndPoint.AireAspirationUpsert>,
+        val listeAireAspiration: List<AireAspirationUpsertData>,
         val penaId: UUID,
     )
 

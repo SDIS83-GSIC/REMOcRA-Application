@@ -1,4 +1,4 @@
-package remocra.geoserver
+package remocra.web.geoserver
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder

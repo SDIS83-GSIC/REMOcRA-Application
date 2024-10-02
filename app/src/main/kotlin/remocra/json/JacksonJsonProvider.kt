@@ -9,9 +9,9 @@ import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.WebApplicationException
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.MultivaluedMap
-import remocra.web.badRequest
-import remocra.web.text
-import remocra.web.unprocessableEntity
+import remocra.utils.badRequest
+import remocra.utils.text
+import remocra.utils.unprocessableEntity
 import java.io.InputStream
 import java.lang.reflect.Type
 

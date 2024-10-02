@@ -96,3 +96,19 @@ fun eqOrIsNullString(field: Field<String>, value: String?): Condition {
 fun <T> Field<Array<T>?>.contains(value: T): Condition {
     return DSL.value(value).eq(DSL.any(this))
 }
+
+/**
+ * Cette méthode génère une condition jOOQ basée sur une valeur booléenne fournie.
+ *
+ * @param condition La valeur booléenne utilisée pour déterminer la condition de la requête.
+ *                  Si `true`, la condition vérifiera que le champ est vrai.
+ *                  Si `false`, la condition vérifiera que le champ est faux.
+ * @param field     Le champ de la table (de type `TableField`) à vérifier.
+ *                  Ce champ doit être de type `Boolean?` pour permettre des valeurs nulles.
+ *
+ * @return Une condition jOOQ (`Condition`) qui vérifie si le champ est `true` ou `false`
+ *         selon la valeur du paramètre `condition`.
+ */
+fun booleanFilter(condition: Boolean, field: TableField<Record, Boolean?>): Condition {
+    return if (condition) field.isTrue() else field.isFalse()
+}

@@ -8,10 +8,9 @@ import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventBus
 import remocra.exception.RemocraResponseException
-import remocra.web.AbstractEndpoint.Result
 import java.time.Clock
 
-abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) {
+abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : AbstractUseCase() {
     @Inject lateinit var transactionManager: TransactionManager
 
     @Inject lateinit var eventBus: EventBus

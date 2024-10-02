@@ -1,4 +1,4 @@
-package remocra.geoserver
+package remocra.web.geoserver
 
 import com.typesafe.config.Config
 import remocra.RemocraModule

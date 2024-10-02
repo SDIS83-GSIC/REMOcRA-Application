@@ -8,7 +8,7 @@ import remocra.data.enums.DeltaDate
 import remocra.db.TourneeRepository
 import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
-import remocra.web.limitOffset
+import remocra.utils.limitOffset
 import java.time.ZonedDateTime
 
 class FetchTourneeDataUseCase {

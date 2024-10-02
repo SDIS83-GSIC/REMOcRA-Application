@@ -36,8 +36,8 @@ import remocra.usecase.couverturehydraulique.CreatePeiProjetUseCase
 import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
+import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
-import remocra.web.getTextPart
 import java.util.UUID
 
 @Path("/couverture-hydraulique")

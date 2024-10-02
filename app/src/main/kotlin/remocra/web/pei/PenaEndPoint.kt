@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.AireAspirationUpsertData
 import remocra.db.AireAspirationRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.pena.AireAspirationUseCase
@@ -63,17 +64,6 @@ class PenaEndPoint : AbstractEndpoint() {
 
     class AireAspirationInput {
         @FormParam("listeAireAspiration")
-        lateinit var listeAireAspiration: List<AireAspirationUpsert>
+        lateinit var listeAireAspiration: List<AireAspirationUpsertData>
     }
-
-    data class AireAspirationUpsert(
-        val penaAspirationId: UUID?, // Nullable si création
-        val numero: String,
-        val estNormalise: Boolean,
-        val typePenaAspirationId: UUID?,
-        val hauteurSuperieure3Metres: Boolean,
-        val estDeporte: Boolean,
-        val coordonneeX: String?,
-        val coordonneeY: String?,
-    )
 }

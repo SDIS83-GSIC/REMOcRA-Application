@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
 import remocra.usecase.module.ModuleUseCase
 import java.io.File
+import kotlin.reflect.jvm.javaMethod
 
 @Path("/modules")
 class ModuleEndPoint {
@@ -25,7 +26,13 @@ class ModuleEndPoint {
     @Public("Les modules de la pages d'accueil sont accessibles à tous, la page d'accueil affichera les modules en fonction des droits")
     @Produces(MediaType.APPLICATION_JSON)
     fun getAll(): Response =
-        Response.ok(moduleUseCase.execute(uriInfo)).build()
+        Response.ok(
+            moduleUseCase.execute(
+                uriInfo.baseUriBuilder
+                    .path(ModuleEndPoint::class.java)
+                    .path(ModuleEndPoint::getUriImage.javaMethod),
+            ),
+        ).build()
 
     @GET
     @Path("/get-image")

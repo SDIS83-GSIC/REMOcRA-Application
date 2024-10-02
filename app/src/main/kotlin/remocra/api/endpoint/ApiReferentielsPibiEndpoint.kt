@@ -19,7 +19,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
 import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.pojos.Nature
-import remocra.web.limitOffset
+import remocra.utils.limitOffset
 
 @Path("deci/referentiel/pibi")
 @Produces("application/json; charset=UTF-8")

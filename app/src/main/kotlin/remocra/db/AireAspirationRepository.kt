@@ -3,17 +3,17 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.data.AireAspirationUpsertData
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
-import remocra.web.pei.PenaEndPoint
 import java.util.UUID
 
 class AireAspirationRepository @Inject constructor(private val dsl: DSLContext) {
 
-    fun getAiresAspiration(penaId: UUID): Collection<PenaEndPoint.AireAspirationUpsert> =
+    fun getAiresAspiration(penaId: UUID): Collection<AireAspirationUpsertData> =
         dsl.select(
             PENA_ASPIRATION.ID,
             PENA_ASPIRATION.NUMERO.`as`("numero"),

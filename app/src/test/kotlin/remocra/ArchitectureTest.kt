@@ -44,6 +44,14 @@ class ArchitectureTest {
         .should()
         .onlyHaveDependentClassesThat()
         .resideInAnyPackage("..usecase..", "..eventbus..", "..tasks..")
+
+    @ArchTest
+    val dontDependOnWeb: ArchRule = classes()
+        .that()
+        .resideInAPackage("..web..")
+        .should()
+        .onlyHaveDependentClassesThat()
+        .resideInAnyPackage("..web..", "..http..", "..endpoint..", "..auth..", "..json..", "..cli..")
 }
 
 /**

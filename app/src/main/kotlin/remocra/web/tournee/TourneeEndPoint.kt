@@ -29,8 +29,8 @@ import remocra.usecase.tournee.DeleteTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
+import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
-import remocra.web.getTextPart
 import java.util.UUID
 
 @Path("/tournee")

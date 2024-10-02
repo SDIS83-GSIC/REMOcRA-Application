@@ -1,20 +1,20 @@
 package remocra.usecase.courrier
 
 import com.google.inject.Inject
-import jakarta.ws.rs.core.UriInfo
+import jakarta.ws.rs.core.UriBuilder
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.courrier.form.NomValue
+import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.data.courrier.parametres.CourrierParametresRopData
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeParametreCourrier
 import remocra.usecase.document.DocumentUtils
-import remocra.web.courrier.CourrierEndPoint
 import java.nio.file.Paths
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
-import kotlin.reflect.jvm.javaMethod
 
 class CourrierGenerator {
 
@@ -30,7 +30,7 @@ class CourrierGenerator {
     @Inject
     lateinit var clock: Clock
 
-    fun execute(parametreCourrierInput: CourrierEndPoint.ParametreCourrierInput, userInfo: UserInfo?, uriInfo: UriInfo): UrlCourrier? {
+    fun execute(parametreCourrierInput: ParametreCourrierInput, userInfo: UserInfo?, uriBuilder: UriBuilder): UrlCourrier? {
         val modeleCourrier = modeleCourrierRepository.getById(parametreCourrierInput.modeleCourrierId)
         val file = if (modeleCourrier.modeleCourrierCode == GlobalConstants.COURRIER_CODE_ROP) {
             courrierRopGenerator.execute(
@@ -57,10 +57,7 @@ class CourrierGenerator {
             val nomFichier = "${modeleCourrier.modeleCourrierCode}-${ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}.pdf"
             documentUtils.saveFile(file, nomFichier, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
             return UrlCourrier(
-                url = uriInfo
-                    .baseUriBuilder
-                    .path(CourrierEndPoint::class.java)
-                    .path(CourrierEndPoint::getUriCourrier.javaMethod)
+                url = uriBuilder
                     .queryParam("courrierPath", Paths.get(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE, nomFichier))
                     .build()
                     .toString(),
@@ -74,10 +71,10 @@ class CourrierGenerator {
         val url: String,
     )
 
-    private fun getValue(listParametres: List<CourrierEndPoint.NomValue>?, nomParametre: String) =
+    private fun getValue(listParametres: List<NomValue>?, nomParametre: String) =
         listParametres?.firstOrNull { it.nom == nomParametre }?.valeur
 
-    private fun getValueUUID(listParametres: List<CourrierEndPoint.NomValue>?, nomParametre: String): UUID? {
+    private fun getValueUUID(listParametres: List<NomValue>?, nomParametre: String): UUID? {
         val value = getValue(listParametres, nomParametre)
         if (value != null) {
             return UUID.fromString(value)

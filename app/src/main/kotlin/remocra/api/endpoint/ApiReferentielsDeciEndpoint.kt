@@ -15,7 +15,7 @@ import remocra.app.DataCacheProvider
 import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.DroitApi
-import remocra.web.limitOffset
+import remocra.utils.limitOffset
 
 @Path("/api/deci/referentiel")
 @Produces("application/json; charset=UTF-8")
