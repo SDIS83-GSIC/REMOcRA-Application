@@ -7,7 +7,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
-import remocra.usecases.natureDeci.NatureDeciUseCase
+import remocra.usecase.natureDeci.NatureDeciUseCase
 
 @Path("/natureDeci")
 @Produces(MediaType.APPLICATION_JSON)

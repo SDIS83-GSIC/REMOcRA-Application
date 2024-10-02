@@ -2,7 +2,6 @@ package remocra.api.usecase
 
 import jakarta.inject.Inject
 import remocra.api.DateUtils
-import remocra.auth.userInfo
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.VisiteData
@@ -10,8 +9,8 @@ import remocra.data.enums.ErrorType
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
-import remocra.usecases.visites.CreateVisiteUseCase
-import remocra.usecases.visites.DeleteVisiteUseCase
+import remocra.usecase.visites.CreateVisiteUseCase
+import remocra.usecase.visites.DeleteVisiteUseCase
 import remocra.web.AbstractEndpoint.Result
 import remocra.web.visite.VisiteEndPoint
 import remocra.web.visite.VisiteEndPoint.CreationVisiteCtrl

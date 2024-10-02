@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import remocra.auth.Public
 import remocra.db.DocumentRepository
 import remocra.security.NoCsrf
-import remocra.usecases.document.DocumentUtils
+import remocra.usecase.document.DocumentUtils
 import remocra.web.notFound
 import java.io.File
 import java.nio.file.Paths

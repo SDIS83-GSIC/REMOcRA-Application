@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.RequireDroits
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecases.document.DocumentPeiUseCase
+import remocra.usecase.document.DocumentPeiUseCase
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID

@@ -15,7 +15,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.db.AireAspirationRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecases.pena.AireAspirationUseCase
+import remocra.usecase.pena.AireAspirationUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 

@@ -1,6 +1,6 @@
 package remocra.data
 
-import remocra.usecases.document.UpsertDocumentEtudeUseCase
+import remocra.usecase.document.UpsertDocumentEtudeUseCase
 import java.util.UUID
 
 data class EtudeData(

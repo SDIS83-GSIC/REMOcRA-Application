@@ -24,11 +24,11 @@ import remocra.db.TourneeRepository.PeiTourneeForDnD
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
-import remocra.usecases.tournee.CreateTourneeUseCase
-import remocra.usecases.tournee.DeleteTourneeUseCase
-import remocra.usecases.tournee.FetchTourneeDataUseCase
-import remocra.usecases.tournee.UpdateLTourneePeiUseCase
-import remocra.usecases.tournee.UpdateTourneeUseCase
+import remocra.usecase.tournee.CreateTourneeUseCase
+import remocra.usecase.tournee.DeleteTourneeUseCase
+import remocra.usecase.tournee.FetchTourneeDataUseCase
+import remocra.usecase.tournee.UpdateLTourneePeiUseCase
+import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.web.AbstractEndpoint
 import remocra.web.getTextPart
 import java.util.UUID

@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
-import remocra.usecases.module.ModuleUseCase
+import remocra.usecase.module.ModuleUseCase
 import java.io.File
 
 @Path("/modules")

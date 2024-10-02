@@ -21,9 +21,9 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
-import remocra.usecases.visites.CreateVisiteUseCase
-import remocra.usecases.visites.DeleteVisiteUseCase
-import remocra.usecases.visites.GetVisiteWithAnomalies
+import remocra.usecase.visites.CreateVisiteUseCase
+import remocra.usecase.visites.DeleteVisiteUseCase
+import remocra.usecase.visites.GetVisiteWithAnomalies
 import remocra.web.AbstractEndpoint
 import java.math.BigDecimal
 import java.time.ZonedDateTime

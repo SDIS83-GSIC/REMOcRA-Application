@@ -15,9 +15,9 @@ import jakarta.ws.rs.core.UriInfo
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecases.courrier.CourrierGenerator
-import remocra.usecases.courrier.CourrierRopGenerator
-import remocra.usecases.courrier.GetCourriersWithParametresUseCase
+import remocra.usecase.courrier.CourrierGenerator
+import remocra.usecase.courrier.CourrierRopGenerator
+import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import java.io.File
 import java.util.UUID
 

@@ -23,7 +23,7 @@ import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
-import remocra.usecases.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
+import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import java.time.Clock
 import java.time.ZonedDateTime
 import java.util.UUID

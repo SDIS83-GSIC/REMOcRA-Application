@@ -7,7 +7,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
-import remocra.usecases.organisme.OrganismeUseCase
+import remocra.usecase.organisme.OrganismeUseCase
 
 @Path("/organisme")
 @Produces(MediaType.APPLICATION_JSON)

@@ -26,11 +26,11 @@ import remocra.db.PeiRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.usecases.document.UpsertDocumentPeiUseCase
-import remocra.usecases.pei.CreatePeiUseCase
-import remocra.usecases.pei.GetCoordonneesBySrid
-import remocra.usecases.pei.PeiUseCase
-import remocra.usecases.pei.UpdatePeiUseCase
+import remocra.usecase.document.UpsertDocumentPeiUseCase
+import remocra.usecase.pei.CreatePeiUseCase
+import remocra.usecase.pei.GetCoordonneesBySrid
+import remocra.usecase.pei.PeiUseCase
+import remocra.usecase.pei.UpdatePeiUseCase
 import remocra.web.AbstractEndpoint
 import remocra.web.forbidden
 import remocra.web.geometryFromBBox

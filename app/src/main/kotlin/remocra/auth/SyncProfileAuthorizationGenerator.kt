@@ -6,7 +6,7 @@ import org.pac4j.core.context.CallContext
 import org.pac4j.core.profile.UserProfile
 import remocra.db.DroitsRepository
 import remocra.db.UtilisateurRepository
-import remocra.usecases.utilisateur.UtilisateurOrganismesUseCase
+import remocra.usecase.utilisateur.UtilisateurOrganismesUseCase
 import java.util.Optional
 import java.util.UUID
 

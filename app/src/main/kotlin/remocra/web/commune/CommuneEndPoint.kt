@@ -7,7 +7,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
-import remocra.usecases.commune.CommuneUseCase
+import remocra.usecase.commune.CommuneUseCase
 
 @Path("/commune")
 @Produces(MediaType.APPLICATION_JSON)

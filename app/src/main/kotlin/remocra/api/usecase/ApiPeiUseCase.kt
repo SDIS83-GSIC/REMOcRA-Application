@@ -19,7 +19,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.exception.RemocraResponseException
-import remocra.usecases.pei.UpdatePeiUseCase
+import remocra.usecase.pei.UpdatePeiUseCase
 import remocra.web.AbstractEndpoint.Result
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException

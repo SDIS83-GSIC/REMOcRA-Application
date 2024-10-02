@@ -3,7 +3,7 @@ package remocra.eventbus.utilisateur
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import remocra.eventbus.EventListener
-import remocra.usecases.utilisateur.UtilisateurOrganismesUseCase
+import remocra.usecase.utilisateur.UtilisateurOrganismesUseCase
 
 class UtilisateurModifiedEventListener @Inject constructor() :
     EventListener<UtilisateurModifiedEvent> {
