@@ -18,6 +18,7 @@ object GlobalConstants {
     const val TYPE_ORGANISME_COMMUNE = "COMMUNE"
     const val TYPE_ORGANISME_GROUPEMENT = "GROUPEMENT"
     const val TYPE_ORGANISME_CIS = "CIS"
+    const val TYPE_ORGANISME_CASERNE = "CASERNE"
 
     // Distance maximale entre 2 BI pour qu'il puisse y avoir jumelage
     const val DISTANCE_MAXIMALE_JUMELAGE = 25

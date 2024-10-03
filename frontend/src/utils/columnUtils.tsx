@@ -16,6 +16,7 @@ import EditColumn, {
   BooleanColumn,
   DeleteColumn,
   ListePeiColumn,
+  SeeColumn,
 } from "../components/Table/columns.tsx";
 import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../droits.tsx";
@@ -218,6 +219,15 @@ function getColumnPeiByStringArray(
   });
 
   column.push(
+    SeeColumn({
+      to: (peiId) => URLS.FICHE_RESUME(peiId),
+      title: true,
+      accessor: "peiId",
+      title: false,
+    }),
+  );
+
+  column.push(
     EditColumn({
       to: (peiId) => URLS.UPDATE_PEI(peiId),
       title: true,
@@ -226,7 +236,6 @@ function getColumnPeiByStringArray(
       title: false,
     }),
   );
-
   column.push({
     Cell: (row: any) => {
       return (
