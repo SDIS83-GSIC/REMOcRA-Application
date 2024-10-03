@@ -686,7 +686,7 @@ const FormEntetePei = ({
             />
           </Col>
           {(codeNatureDeci === TYPE_NATURE_DECI.PRIVE ||
-            codeNatureDeci === TYPE_NATURE_DECI.PRIVE_CONVENTIONNE) && (
+            codeNatureDeci === TYPE_NATURE_DECI.CONVENTIONNE) && (
             <>
               <Col>
                 <SelectForm
