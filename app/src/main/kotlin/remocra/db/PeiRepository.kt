@@ -34,7 +34,7 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
-import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
+import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_Within
@@ -206,7 +206,7 @@ class PeiRepository
                     r.value1()
                 }?.joinToString()
             }.`as`("tourneeLibelle"),
-            V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
+            V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
         )
             .from(PEI)
             .join(COMMUNE)
@@ -231,8 +231,8 @@ class PeiRepository
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
             .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
-            .leftJoin(V_PEI_DATE_RECOP)
-            .on(V_PEI_DATE_RECOP.PEI_ID.eq(PEI.ID))
+            .leftJoin(V_PEI_VISITE_DATE)
+            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .leftJoin(TOURNEE)
@@ -263,7 +263,7 @@ class PeiRepository
                 NATURE_DECI.LIBELLE,
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-                V_PEI_DATE_RECOP.PEI_NEXT_RECOP,
+                V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
             )
             .orderBy(
                 param.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(
@@ -367,7 +367,7 @@ class PeiRepository
              */
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
-            V_PEI_DATE_RECOP.PEI_NEXT_RECOP.getSortField(peiNextRecop),
+            V_PEI_VISITE_DATE.PEI_NEXT_RECOP.getSortField(peiNextRecop),
         )
     }
 

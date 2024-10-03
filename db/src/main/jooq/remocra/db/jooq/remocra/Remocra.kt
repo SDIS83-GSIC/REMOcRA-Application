@@ -65,7 +65,7 @@ import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
-import remocra.db.jooq.remocra.tables.VPeiDateRecop
+import remocra.db.jooq.remocra.tables.VPeiVisiteDate
 import remocra.db.jooq.remocra.tables.Visite
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.Voie
@@ -384,9 +384,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val UTILISATEUR: Utilisateur get() = Utilisateur.UTILISATEUR
 
     /**
-     * The table <code>remocra.v_pei_date_recop</code>.
+     * The table <code>remocra.v_pei_visite_date</code>.
      */
-    val V_PEI_DATE_RECOP: VPeiDateRecop get() = VPeiDateRecop.V_PEI_DATE_RECOP
+    val V_PEI_VISITE_DATE: VPeiVisiteDate get() = VPeiVisiteDate.V_PEI_VISITE_DATE
 
     /**
      * The table <code>remocra.visite</code>.
@@ -469,7 +469,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         TypePenaAspiration.TYPE_PENA_ASPIRATION,
         TypeReseau.TYPE_RESEAU,
         Utilisateur.UTILISATEUR,
-        VPeiDateRecop.V_PEI_DATE_RECOP,
+        VPeiVisiteDate.V_PEI_VISITE_DATE,
         Visite.VISITE,
         VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION,
         Voie.VOIE,

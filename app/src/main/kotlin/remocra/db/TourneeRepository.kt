@@ -25,7 +25,7 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.VOIE
-import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
+import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
@@ -50,10 +50,10 @@ class TourneeRepository
         val nextRecopCte = nextRecopCteName.fields("TOURNEE_ID", "TOURNEE_NEXT_RECOP_DATE").`as`(
             select(
                 L_TOURNEE_PEI.TOURNEE_ID,
-                DSL.min(V_PEI_DATE_RECOP.PEI_NEXT_RECOP).`as`("TOURNEE_NEXT_RECOP_DATE"),
+                DSL.min(V_PEI_VISITE_DATE.PEI_NEXT_RECOP).`as`("TOURNEE_NEXT_RECOP_DATE"),
             )
                 .from(L_TOURNEE_PEI)
-                .join(V_PEI_DATE_RECOP).on(L_TOURNEE_PEI.PEI_ID.eq(V_PEI_DATE_RECOP.PEI_ID))
+                .join(V_PEI_VISITE_DATE).on(L_TOURNEE_PEI.PEI_ID.eq(V_PEI_VISITE_DATE.PEI_ID))
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 

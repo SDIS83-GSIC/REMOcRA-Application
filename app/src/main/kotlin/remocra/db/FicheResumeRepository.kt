@@ -24,7 +24,7 @@ import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.VISITE
 import remocra.db.jooq.remocra.tables.references.VOIE
-import remocra.db.jooq.remocra.tables.references.V_PEI_DATE_RECOP
+import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
@@ -85,7 +85,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) {
             PIBI.DEBIT_RENFORCE,
             pibiJumeleTable.NUMERO_COMPLET.`as`("pibiJumele"),
             PENA.CAPACITE,
-            V_PEI_DATE_RECOP.PEI_LAST_RECOP,
+            V_PEI_VISITE_DATE.LAST_RECOP,
         ).from(PEI)
             .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
@@ -101,8 +101,8 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) {
             .on(pibiJumeleTable.ID.eq(PIBI.JUMELE_ID))
             .leftJoin(PENA)
             .on(PENA.ID.eq(PEI.ID))
-            .leftJoin(V_PEI_DATE_RECOP)
-            .on(V_PEI_DATE_RECOP.PEI_ID.eq(PEI.ID))
+            .leftJoin(V_PEI_VISITE_DATE)
+            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
     }
