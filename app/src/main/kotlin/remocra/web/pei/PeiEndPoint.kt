@@ -266,7 +266,7 @@ class PeiEndPoint : AbstractEndpoint() {
      */
     @GET
     @Path("/layer")
-    @RequireDroits([Droit.ETUDE_U])
+    @RequireDroits([Droit.PEI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response {
         if (securityContext.userInfo == null || securityContext.userInfo?.organismeId == null) {
             return forbidden().build()

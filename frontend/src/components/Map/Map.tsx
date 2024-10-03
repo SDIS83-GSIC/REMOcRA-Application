@@ -5,7 +5,7 @@ import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY } from "ol/coordinate";
 import { getWidth } from "ol/extent";
 import { GeoJSON } from "ol/format";
-import { DragPan, MouseWheelZoom } from "ol/interaction";
+import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
@@ -14,10 +14,11 @@ import { fromLonLat, get as getProjection } from "ol/proj";
 import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
+import { getUid } from "ol";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { useMemo, useRef } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useAppContext } from "../App/AppProvider.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
@@ -106,15 +107,27 @@ const MapComponent = ({
   layerListRef,
   mapToolbarRef,
   mapElement,
+  toolbarElement,
+  toggleTool,
+  activeTool,
 }: {
-  map: Map;
+  map?: Map;
   workingLayer: any;
   availableLayers: any[];
   addOrRemoveLayer: (layer: any) => void;
   layerListRef: any;
   mapToolbarRef: any;
   mapElement: any;
+  toolbarElement?: ReactNode;
+  toggleTool: any;
+  activeTool: any;
 }) => {
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+    toggleTool("move-view");
+  }, [map]);
   return (
     <Container fluid>
       {map && mapElement && (
@@ -124,7 +137,10 @@ const MapComponent = ({
             ref={mapToolbarRef}
             map={map}
             workingLayer={workingLayer}
+            toggleTool={toggleTool}
+            activeTool={activeTool}
           />
+          {toolbarElement && toolbarElement}
         </>
       )}
       <Row className={"gutt-0"}>
@@ -150,7 +166,7 @@ export const useMapComponent = ({ mapElement }) => {
   const mapToolbarRef = useRef<MapToolbar>();
 
   const map = useMemo(() => {
-    if (!projection) {
+    if (!projection || !mapElement.current) {
       return;
     }
     const initialMap = new Map({
@@ -163,7 +179,6 @@ export const useMapComponent = ({ mapElement }) => {
         scaleControl,
       ]),
       interactions: [
-        new DragPan(),
         new MouseWheelZoom({ useAnchor: false, constrainResolution: true }),
       ],
       target: mapElement.current,
@@ -193,7 +208,7 @@ export const useMapComponent = ({ mapElement }) => {
           });
           if (layer.active) {
             map?.addLayer(openlayer);
-            layerListRef.current?.addActiveLayer(openlayer.ol_uid);
+            layerListRef.current?.addActiveLayer(getUid(openlayer));
           }
           return {
             ...layer,
@@ -209,10 +224,10 @@ export const useMapComponent = ({ mapElement }) => {
     const index = map?.getLayers().getArray().indexOf(layer.openlayer);
     if (index > -1) {
       map?.removeLayer(layer.openlayer);
-      layerListRef.current?.removeActiveLayer(layer.openlayer.ol_uid);
+      layerListRef.current?.removeActiveLayer(getUid(layer.openlayer));
     } else {
       map?.addLayer(layer.openlayer);
-      layerListRef.current?.addActiveLayer(layer.openlayer.ol_uid);
+      layerListRef.current?.addActiveLayer(getUid(layer.openlayer));
     }
   };
   // Ajout de la couche de travail
@@ -321,6 +336,7 @@ export const useMapComponent = ({ mapElement }) => {
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
+    projection,
   };
 };
 

@@ -118,6 +118,7 @@ export const URLS = {
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
     url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
 
+  CREATE_PEI: url`/deci/pei/create`,
   UPDATE_PEI: (peiId: string) => url`/deci/pei/` + peiId,
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,

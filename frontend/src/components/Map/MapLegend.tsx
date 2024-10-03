@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Card, Form, ListGroup } from "react-bootstrap";
 import FormRange from "react-bootstrap/FormRange";
+import { getUid } from "ol";
 
 const MapLegend = forwardRef(
   (
@@ -31,10 +32,10 @@ const MapLegend = forwardRef(
               <ListGroup className="list-group-flush">
                 {group.layers.map((layer: any, layerIdx: number) => (
                   <ListGroup.Item key={layerIdx}>
-                    <Form.Group controlId={layer.openlayer.ol_uid}>
+                    <Form.Group controlId={getUid(layer.openlayer)}>
                       <Form.Switch
                         checked={activeLayers.some(
-                          (l) => layer.openlayer.ol_uid === l,
+                          (l) => getUid(layer.openlayer) === l,
                         )}
                         onClick={() => {
                           addOrRemoveLayer(layer);
@@ -51,7 +52,7 @@ const MapLegend = forwardRef(
                     </Form.Group>
                     <FormRange
                       disabled={
-                        !activeLayers.some((l) => layer.openlayer.ol_uid === l)
+                        !activeLayers.some((l) => getUid(layer.openlayer) === l)
                       }
                       min={0}
                       max={1}

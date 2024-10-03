@@ -287,6 +287,16 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         8001,
         "Impossible de transformer la BBOX en objet Geometry.",
     ),
+    ZONE_COMPETENCE_GEOMETRIE_FORBIDDEN(
+        8002,
+        "La géométrie est hors de votre zone de compétence.",
+        Status.FORBIDDEN,
+    ),
+    BAD_GEOMETRIE(
+        8003,
+        "Le format de la géométrie n'est pas reconnu.",
+        Status.BAD_REQUEST,
+    ),
 
     //
     // ********************************************************************************

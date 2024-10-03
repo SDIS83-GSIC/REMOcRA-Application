@@ -46,7 +46,7 @@ export default function url(
   }, strings[0]);
 }
 
-export function getFetchOptions(options = {}) {
+export function getFetchOptions(options = {}): RequestInit {
   return {
     ...options,
     credentials: "same-origin",

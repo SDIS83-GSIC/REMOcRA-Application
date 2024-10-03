@@ -6,213 +6,208 @@ import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, useState } from "react";
-import { Button, ToggleButton } from "react-bootstrap";
+import { forwardRef, useMemo, useState } from "react";
+import { Button } from "react-bootstrap";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
 import Volet from "../../Volet/Volet.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
 
-const MapToolbarCouvertureHydraulique = forwardRef(
-  ({
-    map,
-    dataPeiLayer,
-    dataPeiProjetLayer,
-    workingLayer,
-    etudeId,
-    reseauImporte,
-    disabledEditPeiProjet,
-  }: {
-    map: Map;
-    dataPeiLayer: any;
-    dataPeiProjetLayer: any;
-    workingLayer: any;
-    etudeId: string;
-    reseauImporte: boolean;
-    disabledEditPeiProjet: boolean;
-  }) => {
-    const { success: successToast, error: errorToast } = useToastContext();
+const drawStyle = new Style({
+  fill: new Fill({
+    color: "rgba(255, 255, 255, 0.2)",
+  }),
+  stroke: new Stroke({
+    color: "rgba(0, 0, 0, 0.5)",
+    lineDash: [10, 10],
+    width: 2,
+  }),
+  image: new CircleStyle({
+    radius: 5,
+    stroke: new Stroke({
+      color: "rgba(0, 0, 0, 0.7)",
+    }),
+    fill: new Fill({
+      color: "rgba(255, 255, 255, 0.2)",
+    }),
+  }),
+});
 
-    const [showCreatePeiProjet, setShowPeiProjet] = useState(false);
-    const handleClosePeiProjet = () => setShowPeiProjet(false);
-    const [pointPeiProjet, setPointPeiProjet] = useState<Point | null>(null);
+export const useToolbarCouvertureHydrauliqueContext = ({
+  map,
+  workingLayer,
+  dataPeiLayer,
+  dataPeiProjetLayer,
+  etudeId,
+  reseauImporte,
+}) => {
+  const { success: successToast, error: errorToast } = useToastContext();
+  const [showCreatePeiProjet, setShowPeiProjet] = useState(false);
+  const handleClosePeiProjet = () => setShowPeiProjet(false);
+  const [pointPeiProjet, setPointPeiProjet] = useState<Point | null>(null);
+  const [showTraceeCouverture, setShowTraceeCouverture] = useState(false);
+  const handleCloseTraceeCouverture = () => setShowTraceeCouverture(false);
+  const [listePeiId] = useState<string[]>([]);
+  const [listePeiProjetId] = useState<string[]>([]);
 
-    const [showTraceeCouverture, setShowTraceeCouverture] = useState(false);
-    const handleCloseTraceeCouverture = () => setShowTraceeCouverture(false);
-    const [listePeiId, setListePeiId] = useState<string[]>([]);
-    const [listePeiProjetId, setListePeiProjetId] = useState<string[]>([]);
-
-    const [activeTool, setActiveTool] = useState<string>();
-
-    const measureStyle = new Style({
-      fill: new Fill({
-        color: "rgba(255, 255, 255, 0.2)",
-      }),
-      stroke: new Stroke({
-        color: "rgba(0, 0, 0, 0.5)",
-        lineDash: [10, 10],
-        width: 2,
-      }),
-      image: new CircleStyle({
-        radius: 5,
-        stroke: new Stroke({
-          color: "rgba(0, 0, 0, 0.7)",
-        }),
-        fill: new Fill({
-          color: "rgba(255, 255, 255, 0.2)",
-        }),
-      }),
-    });
-
-    function toggleSelect(active = false) {
-      const selectCtrl = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof Select)[0];
-      const dragBoxCtrl = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof DragBox)[0];
-
-      if (active) {
-        if (!selectCtrl) {
-          const select = new Select({});
-          const dragBox = new DragBox({
-            style: new Style({
-              stroke: new Stroke({
-                color: [0, 0, 255, 1],
-              }),
-            }),
-            minArea: 25,
-          });
-          dragBox.on("boxend", function (e) {
-            if (!shiftKeyOnly(e.mapBrowserEvent)) {
-              select.getFeatures().clear();
-            }
-            const boxExtent = dragBox.getGeometry().getExtent();
-            const boxFeatures = dataPeiLayer
-              .getSource()
-              .getFeaturesInExtent(boxExtent);
-
-            select.getFeatures().extend(boxFeatures);
-            const boxFeaturesPeiProjet = dataPeiProjetLayer
-              .getSource()
-              .getFeaturesInExtent(boxExtent);
-
-            select.getFeatures().extend(boxFeaturesPeiProjet);
-          });
-
-          map.addInteraction(select);
-          map.addInteraction(dragBox);
-        }
-      } else {
-        if (selectCtrl) {
-          map.removeInteraction(selectCtrl);
-        }
-        if (dragBoxCtrl) {
-          map.removeInteraction(dragBoxCtrl);
-        }
-      }
+  /**
+   * Permet de dessiner un point pour la création des PEI en projet
+   */
+  async function calculCouverture() {
+    if (listePeiId.length === 0 && listePeiProjetId.length === 0) {
+      return;
     }
+
+    // Si l'étude a un réseau importé alors on demande quel réseau utiliser.
+    if (reseauImporte) {
+      setShowTraceeCouverture(true);
+    } else {
+      (
+        await fetch(
+          url`/api/couverture-hydraulique/calcul/` + etudeId,
+          getFetchOptions({
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              listePeiId: listePeiId,
+              listePeiProjetId: listePeiProjetId,
+              useReseauImporte: false,
+              useReseauImporteWithReseauCourant: false,
+            }),
+          }),
+        )
+      )
+        .text()
+        .then(() => {
+          successToast("Couverture hydraulique tracée");
+        })
+        .catch((reason: string) => {
+          errorToast(reason);
+        });
+    }
+  }
+
+  /**
+   * Permet de dessiner un point pour la création des PEI en projet
+   */
+  async function clearCouverture() {
+    (
+      await fetch(
+        url`/api/couverture-hydraulique/calcul/clear/` + etudeId,
+        getFetchOptions({
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+    )
+      .text()
+      .then(() => {
+        successToast("Couverture hydraulique effacée");
+      })
+      .catch((reason: string) => {
+        errorToast(reason);
+      });
+  }
+
+  const tools = useMemo(() => {
+    if (!map) {
+      return {};
+    }
+
+    const createPeiProjetCtrl = new Draw({
+      source: workingLayer.getSource(),
+      type: "Point",
+      style: (feature) => {
+        const geometryType = feature.getGeometry().getType();
+        if (geometryType === "Point") {
+          return drawStyle;
+        }
+      },
+    });
+    createPeiProjetCtrl.on("drawstart", async () => {
+      // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
+      workingLayer.getSource().clear();
+    });
+    createPeiProjetCtrl.on("drawend", async (event) => {
+      const geometry = event.feature.getGeometry();
+      setPointPeiProjet(geometry);
+      setShowPeiProjet(true);
+    });
 
     /**
      * Permet de dessiner un point pour la création des PEI en projet
      */
     function toggleCreatePeiProjet(active = false) {
-      const createCtrl2 = map
+      const idx = map
         ?.getInteractions()
         .getArray()
-        .filter((c) => c instanceof Draw)[0];
+        .indexOf(createPeiProjetCtrl);
       if (active) {
-        if (!createCtrl2) {
-          const draw = new Draw({
-            source: workingLayer.getSource(),
-            type: "Point",
-            style: (feature) => {
-              const geometryType = feature.getGeometry().getType();
-              if (geometryType === "Point") {
-                return measureStyle;
-              }
-            },
-          });
-          draw.on("drawstart", async () => {
-            // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
-            workingLayer.getSource().clear();
-          });
-          draw.on("drawend", async (event) => {
-            const geometry = event.feature.getGeometry();
-            setPointPeiProjet(geometry);
-            setShowPeiProjet(true);
-          });
-          map.addInteraction(draw);
+        if (idx === -1) {
+          map.addInteraction(createPeiProjetCtrl);
         }
       } else {
-        if (createCtrl2) {
-          map.removeInteraction(createCtrl2);
-        }
+        map.removeInteraction(createPeiProjetCtrl);
       }
     }
+
+    const peiPlusProcheCtrl = new Draw({
+      source: workingLayer.getSource(),
+      type: "Point",
+      style: (feature) => {
+        const geometryType = feature.getGeometry().getType();
+        if (geometryType === "Point") {
+          return drawStyle;
+        }
+      },
+    });
+    peiPlusProcheCtrl.on("drawstart", async () => {
+      // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
+      workingLayer.getSource().clear();
+    });
+    peiPlusProcheCtrl.on("drawend", async (event) => {
+      const geometry = event.feature.getGeometry();
+      const result = await doFetch(
+        url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
+        getFetchOptions({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            longitude: geometry.getFlatCoordinates()[0],
+            latitude: geometry.getFlatCoordinates()[1],
+            srid: map.getView().getProjection().getCode().split(":")[1],
+          }),
+        }),
+      );
+      if (result?.chemin != null) {
+        const wktChemin = result.chemin;
+        const wktPei = result.peiGeometry;
+        const distance = result.dist;
+
+        // Affichage des features
+        cheminPlusCourtFeaturePei(workingLayer, wktPei, distance);
+        cheminPlusCourtFeatureChemin(workingLayer, wktChemin);
+        cheminPlusCourtFeatureClic(workingLayer, geometry);
+      } else {
+        errorToast("Aucun PEI n'a été trouvé.");
+      }
+    });
 
     /**
      * Permet de dessiner un point pour la création des PEI en projet
      */
     function togglePeiPlusProche(active = false) {
-      const createCtrl = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof Draw)[0];
+      const idx = map?.getInteractions().getArray().indexOf(peiPlusProcheCtrl);
       if (active) {
-        if (!createCtrl) {
-          const draw = new Draw({
-            source: workingLayer.getSource(),
-            type: "Point",
-            style: (feature) => {
-              const geometryType = feature.getGeometry().getType();
-              if (geometryType === "Point") {
-                return measureStyle;
-              }
-            },
-          });
-          draw.on("drawstart", async () => {
-            // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
-            workingLayer.getSource().clear();
-          });
-          draw.on("drawend", async (event) => {
-            const geometry = event.feature.getGeometry();
-            const result = await doFetch(
-              url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
-              getFetchOptions({
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  longitude: geometry.getFlatCoordinates()[0],
-                  latitude: geometry.getFlatCoordinates()[1],
-                  srid: map.getView().getProjection().getCode().split(":")[1],
-                }),
-              }),
-            );
-            if (result?.chemin != null) {
-              const wktChemin = result.chemin;
-              const wktPei = result.peiGeometry;
-              const distance = result.dist;
-
-              // Affichage des features
-              cheminPlusCourtFeaturePei(workingLayer, wktPei, distance);
-              cheminPlusCourtFeatureChemin(workingLayer, wktChemin);
-              cheminPlusCourtFeatureClic(workingLayer, geometry);
-            } else {
-              errorToast("Aucun PEI n'a été trouvé.");
-            }
-          });
-          map.addInteraction(draw);
+        if (idx === -1) {
+          map.addInteraction(peiPlusProcheCtrl);
         }
       } else {
-        if (createCtrl) {
-          map.removeInteraction(createCtrl);
-        }
+        map.removeInteraction(peiPlusProcheCtrl);
       }
     }
 
@@ -313,247 +308,240 @@ const MapToolbarCouvertureHydraulique = forwardRef(
       workingLayer.getSource().addFeature(pointClic);
     }
 
-    /**
-     * Permet de dessiner un point pour la création des PEI en projet
-     */
-    async function calculCouverture() {
-      // On va chercher les identifiants des PEI sélectionnées
-      const listePeiId: string[] = [];
-      const listePeiProjetId: string[] = [];
-      map
-        .getInteractions()
-        .getArray()
-        .find((e) => e instanceof Select)
-        ?.getFeatures()
-        .forEach((e) => {
-          const point = e.getProperties();
-          if (point.typePointCarte === "PEI_PROJET") {
-            listePeiProjetId.push(point.pointId);
-          }
-          if (point.typePointCarte === "PEI") {
-            listePeiId.push(point.pointId);
-          }
-        });
-
-      if (listePeiId.length === 0 && listePeiProjetId.length === 0) {
-        return;
+    const selectCtrl = new Select({});
+    const dragBoxCtrl = new DragBox({
+      style: new Style({
+        stroke: new Stroke({
+          color: [0, 0, 255, 1],
+        }),
+      }),
+      minArea: 25,
+    });
+    dragBoxCtrl.on("boxend", function (e) {
+      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+        selectCtrl.getFeatures().clear();
       }
+      const boxExtent = dragBoxCtrl.getGeometry().getExtent();
+      const boxFeatures = dataPeiLayer
+        .getSource()
+        .getFeaturesInExtent(boxExtent);
 
-      setListePeiId(listePeiId);
-      setListePeiProjetId(listePeiProjetId);
+      selectCtrl.getFeatures().extend(boxFeatures);
+      const boxFeaturesPeiProjet = dataPeiProjetLayer
+        .getSource()
+        .getFeaturesInExtent(boxExtent);
 
-      // Si l'étude a un réseau importé alors on demande quel réseau utiliser.
-      if (reseauImporte) {
-        setShowTraceeCouverture(true);
-      } else {
-        (
-          await fetch(
-            url`/api/couverture-hydraulique/calcul/` + etudeId,
-            getFetchOptions({
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                listePeiId: listePeiId,
-                listePeiProjetId: listePeiProjetId,
-                useReseauImporte: false,
-                useReseauImporteWithReseauCourant: false,
-              }),
-            }),
-          )
-        )
-          .text()
-          .then(() => {
-            successToast("Couverture hydraulique tracée");
-          })
-          .catch((reason: string) => {
-            errorToast(reason);
-          });
-      }
-    }
+      selectCtrl.getFeatures().extend(boxFeaturesPeiProjet);
 
-    /**
-     * Permet de dessiner un point pour la création des PEI en projet
-     */
-    async function clearCouverture() {
-      (
-        await fetch(
-          url`/api/couverture-hydraulique/calcul/clear/` + etudeId,
-          getFetchOptions({
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-          }),
-        )
-      )
-        .text()
-        .then(() => {
-          successToast("Couverture hydraulique effacée");
-        })
-        .catch((reason: string) => {
-          errorToast(reason);
-        });
-    }
+      listePeiId.splice(0, listePeiId.length);
+      listePeiProjetId.splice(0, listePeiProjetId.length);
 
-    /**
-     * Permet de dessiner un point pour la création des PEI en projet
-     */
-    function toggleDeplacerPeiProjet(active = false) {
-      const interactionMovePei = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof Select)[0];
+      selectCtrl.getFeatures().forEach((e) => {
+        const point = e.getProperties();
+        if (point.typePointCarte === "PEI") {
+          listePeiId.push(point.pointId);
+        }
+        if (point.typePointCarte === "PEI_PROJET") {
+          listePeiProjetId.push(point.pointId);
+        }
+      });
+    });
+
+    function toggleSelect(active = false) {
+      const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
+      const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
       if (active) {
-        const select = new Select();
-        map.addInteraction(select);
-
-        const modify = new Modify({
-          features: select.getFeatures(),
-          source: dataPeiProjetLayer,
-          snapToPointer: true,
-        });
-
-        map.addInteraction(modify);
-
-        select.on("select", function (evt) {
-          evt.selected.forEach(async function (feature) {
-            // Si ce n'est pas un PEI en projet, on n'autorise pas le déplacement
-            if (feature.getProperties().typePointCarte !== "PEI_PROJET") {
-              map.removeInteraction(modify);
-            } else {
-              map.addInteraction(modify);
-            }
-          });
-        });
-
-        modify.on("modifyend", function (evt) {
-          evt.features.forEach(async function (feature) {
-            if (feature.getProperties().typePointCarte === "PEI_PROJET") {
-              const coordinate = feature.getGeometry().getCoordinates();
-              (
-                await fetch(
-                  url`/api/couverture-hydraulique/pei-projet/move/` +
-                    feature.getProperties().pointId,
-                  getFetchOptions({
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      coordonneeX: coordinate[0],
-                      coordonneeY: coordinate[1],
-                      srid: map
-                        .getView()
-                        .getProjection()
-                        .getCode()
-                        .split(":")[1],
-                    }),
-                  }),
-                )
-              )
-                .text()
-                .then(() => {
-                  successToast("Le PEI a bien été déplacé.");
-                })
-                .catch((reason: string) => {
-                  errorToast(reason);
-                });
-            }
-          });
-        });
+        if (idx1 === -1 && idx2 === -1) {
+          map.addInteraction(selectCtrl);
+          map.addInteraction(dragBoxCtrl);
+        }
       } else {
-        map.removeInteraction(interactionMovePei);
+        listePeiId.splice(0, listePeiId.length);
+        listePeiProjetId.splice(0, listePeiProjetId.length);
+        map.removeInteraction(selectCtrl);
+        map.removeInteraction(dragBoxCtrl);
+      }
+    }
+
+    const selectProjetCtrl = new Select();
+    const modifyCtrl = new Modify({
+      features: selectProjetCtrl.getFeatures(),
+      source: dataPeiProjetLayer,
+      snapToPointer: true,
+    });
+
+    function toggleDeplacerPeiProjet(active = false) {
+      const idx1 = map?.getInteractions().getArray().indexOf(selectProjetCtrl);
+      const idx2 = map?.getInteractions().getArray().indexOf(modifyCtrl);
+
+      if (active) {
+        if (idx1 === -1 && idx2 === -1) {
+          map.addInteraction(selectProjetCtrl);
+          map.addInteraction(modifyCtrl);
+
+          selectProjetCtrl.on("select", function (evt) {
+            evt.selected.forEach(async function (feature) {
+              // Si ce n'est pas un PEI en projet, on n'autorise pas le déplacement
+              if (feature.getProperties().typePointCarte !== "PEI_PROJET") {
+                map.removeInteraction(modifyCtrl);
+              } else {
+                map.addInteraction(modifyCtrl);
+              }
+            });
+          });
+
+          modifyCtrl.on("modifyend", function (evt) {
+            evt.features.forEach(async function (feature) {
+              if (feature.getProperties().typePointCarte === "PEI_PROJET") {
+                const coordinate = feature.getGeometry().getCoordinates();
+                (
+                  await fetch(
+                    url`/api/couverture-hydraulique/pei-projet/move/` +
+                      feature.getProperties().pointId,
+                    getFetchOptions({
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        coordonneeX: coordinate[0],
+                        coordonneeY: coordinate[1],
+                        srid: map
+                          .getView()
+                          .getProjection()
+                          .getCode()
+                          .split(":")[1],
+                      }),
+                    }),
+                  )
+                )
+                  .text()
+                  .then(() => {
+                    successToast("Le PEI a bien été déplacé.");
+                  })
+                  .catch((reason: string) => {
+                    errorToast(reason);
+                  });
+              }
+            });
+          });
+        }
+      } else {
+        map.removeInteraction(selectProjetCtrl);
+        map.removeInteraction(modifyCtrl);
       }
     }
 
     const tools = {
-      create: {
+      "create-pei-projet": {
         action: toggleCreatePeiProjet,
       },
-      select: {
+      "select-etude": {
         action: toggleSelect,
       },
-      peiPlusProche: {
+      "pei-plus-proche": {
         action: togglePeiPlusProche,
       },
-      deplacer: {
+      "deplacer-pei-projet": {
         action: toggleDeplacerPeiProjet,
       },
     };
 
-    function toggleTool(toolId) {
-      let newTool = null;
-      if (activeTool != null) {
-        tools[activeTool].action(false, activeTool);
-      }
-      if (activeTool === toolId) {
-        setActiveTool(null);
-      } else {
-        setActiveTool(toolId);
-        newTool = toolId;
-        tools[newTool].action(true, newTool);
-      }
-    }
+    return tools;
+  }, [map]);
 
+  return {
+    tools,
+    calculCouverture,
+    clearCouverture,
+    handleClosePeiProjet,
+    showCreatePeiProjet,
+    pointPeiProjet,
+    handleCloseTraceeCouverture,
+    showTraceeCouverture,
+    listePeiId,
+    listePeiProjetId,
+  };
+};
+
+const MapToolbarCouvertureHydraulique = forwardRef(
+  ({
+    map,
+    dataPeiProjetLayer,
+    etudeId,
+    disabledEditPeiProjet,
+    calculCouverture,
+    clearCouverture,
+    handleClosePeiProjet,
+    showCreatePeiProjet,
+    pointPeiProjet,
+    handleCloseTraceeCouverture,
+    showTraceeCouverture,
+    listePeiId,
+    listePeiProjetId,
+    toggleTool: toggleToolCallback,
+    activeTool,
+  }: {
+    map?: Map;
+    dataPeiLayer: any;
+    dataPeiProjetLayer: any;
+    workingLayer: any;
+    etudeId: string;
+    disabledEditPeiProjet: boolean;
+    calculCouverture: () => void;
+    clearCouverture: () => void;
+    handleClosePeiProjet: () => void;
+    showCreatePeiProjet: () => void;
+    pointPeiProjet: string[];
+    handleCloseTraceeCouverture: () => void;
+    showTraceeCouverture: () => void;
+    listePeiId: string[];
+    listePeiProjetId: string[];
+    toggleTool: (toolId: string) => void;
+    activeTool: string;
+  }) => {
     return (
       <>
         {/**Pour la couverture hydraulique */}
-        <ToggleButton
-          name={"tool"}
-          onClick={() => toggleTool("select")}
-          id={"select"}
-          value={"select"}
-          type={"radio"}
-          variant={"outline-primary"}
-          checked={activeTool === "select"}
-        >
-          Sélectionner
-        </ToggleButton>
-
-        <ToggleButton
-          name={"toolCreate"}
-          onClick={() => toggleTool("create")}
-          id={"create"}
-          value={"create"}
-          type={"radio"}
-          variant={"outline-primary"}
-          checked={activeTool === "create"}
-        >
-          Créer un PEI en projet
-        </ToggleButton>
-        <ToggleButton
-          name={"toolPeiPlusProche"}
-          onClick={() => toggleTool("peiPlusProche")}
-          id={"peiPlusProche"}
-          value={"peiPlusProche"}
-          type={"radio"}
-          variant={"outline-primary"}
-          checked={activeTool === "peiPlusProche"}
-        >
-          Trouver le PEI plus proche
-        </ToggleButton>
-        <ToggleButton
-          name={"toolDeplacer"}
-          onClick={() => toggleTool("deplacer")}
-          id={"deplacer"}
-          value={"deplacer"}
-          type={"radio"}
-          variant={"outline-primary"}
-          checked={activeTool === "deplacer"}
-        >
-          Déplacer un PEI en projet
-        </ToggleButton>
+        <ToolbarButton
+          toolName={"select-etude"}
+          toolLabel={"Sélectionner"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+        <ToolbarButton
+          toolName={"create-pei-projet"}
+          toolLabel={"Créer un PEI en projet"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+          disabled={disabledEditPeiProjet}
+        />
+        <ToolbarButton
+          toolName={"pei-plus-proche"}
+          toolLabel={"Trouver le PEI le plus proche"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+          disabled={disabledEditPeiProjet}
+        />
+        <ToolbarButton
+          toolName={"deplacer-pei-projett"}
+          toolLabel={"Déplacer un PEI en projet"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+          disabled={disabledEditPeiProjet}
+        />
         <Button
           variant="outline-primary"
-          onClick={() => calculCouverture()}
+          onClick={calculCouverture}
           disabled={disabledEditPeiProjet}
         >
           Lancer une simulation
         </Button>
         <Button
           variant="outline-primary"
-          onClick={() => clearCouverture()}
+          onClick={clearCouverture}
           disabled={disabledEditPeiProjet}
         >
           Effacer la couverture tracée
         </Button>
-
         <Volet
           handleClose={handleClosePeiProjet}
           show={showCreatePeiProjet}

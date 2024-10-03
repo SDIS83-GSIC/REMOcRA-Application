@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { URLS } from "../../routes.tsx";
 import Pei, {
@@ -7,9 +8,17 @@ import Pei, {
 } from "./Pei.tsx";
 
 const CreatePei = () => {
+  // En cas de création via la carte, on récupère les coordonnées passées dans le state
+  const { state } = useLocation();
+  let initialValues;
+  if (state) {
+    initialValues = state;
+    // On vide le state
+    window.history.replaceState(null, "");
+  }
   return (
     <MyFormik
-      initialValues={getInitialValues()}
+      initialValues={getInitialValues(initialValues)}
       validationSchema={validationSchema}
       isPost={true}
       isMultipartFormData={true}

@@ -2,6 +2,7 @@ package remocra.web
 
 import jakarta.ws.rs.core.Response
 import remocra.usecase.AbstractUseCase
+import remocra.utils.badRequest
 import remocra.utils.created
 import remocra.utils.forbidden
 import remocra.utils.notFound
@@ -17,6 +18,7 @@ abstract class AbstractEndpoint {
             is AbstractUseCase.Result.NotFound -> notFound().text(this.message).build()
             is AbstractUseCase.Result.Forbidden -> forbidden().text(this.message).build()
             is AbstractUseCase.Result.Error -> Response.serverError().text(this.message).build()
+            is AbstractUseCase.Result.BadRequest -> badRequest().text(this.message).build()
         }
     }
 }

@@ -1,9 +1,11 @@
 import { useRef } from "react";
 import MapComponent, { useMapComponent } from "../Map.tsx";
-import MapToolbarPei from "./MapToolbarPei.tsx";
+import { useToolbarContext } from "../MapToolbar.tsx";
+import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
   const mapElement = useRef<HTMLDivElement>();
+
   const {
     map,
     workingLayer,
@@ -13,21 +15,36 @@ const MapPei = () => {
     layerListRef,
     mapToolbarRef,
   } = useMapComponent({ mapElement: mapElement });
+
+  const { tools: extraTools } = useToolbarPeiContext({
+    map,
+    workingLayer,
+    dataPeiLayer,
+  });
+
+  const { toggleTool, activeTool } = useToolbarContext({
+    map: map,
+    workingLayer: workingLayer,
+    extraTools: extraTools,
+  });
+
   return (
-    map && (
-      <>
-        <MapToolbarPei dataPeiLayer={dataPeiLayer} map={map} />
-        <MapComponent
-          map={map}
-          workingLayer={workingLayer}
-          availableLayers={availableLayers}
-          addOrRemoveLayer={addOrRemoveLayer}
-          layerListRef={layerListRef}
-          mapToolbarRef={mapToolbarRef}
-          mapElement={mapElement}
-        />
-      </>
-    )
+    <MapComponent
+      map={map}
+      workingLayer={workingLayer}
+      availableLayers={availableLayers}
+      addOrRemoveLayer={addOrRemoveLayer}
+      layerListRef={layerListRef}
+      mapToolbarRef={mapToolbarRef}
+      mapElement={mapElement}
+      toggleTool={toggleTool}
+      activeTool={activeTool}
+      toolbarElement={
+        mapToolbarRef.current && (
+          <MapToolbarPei toggleTool={toggleTool} activeTool={activeTool} />
+        )
+      }
+    />
   );
 };
 
