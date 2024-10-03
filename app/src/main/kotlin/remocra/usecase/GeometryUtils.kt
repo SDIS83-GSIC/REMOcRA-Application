@@ -1,4 +1,4 @@
-package remocra.web
+package remocra.usecase
 
 import org.jooq.Field
 import org.jooq.impl.DSL
