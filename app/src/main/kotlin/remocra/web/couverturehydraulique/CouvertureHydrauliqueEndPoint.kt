@@ -12,6 +12,7 @@ import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -27,20 +28,24 @@ import remocra.data.EtudeData
 import remocra.data.Params
 import remocra.data.PeiProjetData
 import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
+import remocra.data.enums.TypePointCarte
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.couverturehydraulique.CloreEtudeUseCase
 import remocra.usecase.couverturehydraulique.CreateEtudeUseCase
 import remocra.usecase.couverturehydraulique.CreatePeiProjetUseCase
 import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
+import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/couverture-hydraulique")
+@Produces(MediaType.APPLICATION_JSON)
 class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
@@ -54,6 +59,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @Inject lateinit var createEtudeUseCase: CreateEtudeUseCase
 
     @Inject lateinit var cloreEtudeUseCase: CloreEtudeUseCase
+
+    @Inject lateinit var getPointCarteUseCase: GetPointCarteUseCase
 
     @Inject lateinit var importDataCouvertureHydrauliqueUseCase: ImportDataCouvertureHydrauliqueUseCase
 
@@ -288,4 +295,29 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 if (httpRequest.getPart("filePeiProjet").contentType != null) httpRequest.getPart("filePeiProjet").inputStream else null,
             ),
         ).wrap()
+
+    /**
+     * Renvoie les points d'eau au format GeoJSON pour assurer les interactions sur la carte
+     */
+    @GET
+    @Path("/layer")
+    @RequireDroits([Droit.PEI_R])
+    fun layer(
+        @QueryParam("bbox") bbox: String,
+        @QueryParam("srid") srid: String,
+        @QueryParam("etudeId") etudeId: UUID,
+    ): Response {
+        if (securityContext.userInfo == null || securityContext.userInfo?.organismeId == null) {
+            return forbidden().build()
+        }
+        return Response.ok(
+            getPointCarteUseCase.execute(
+                bbox,
+                srid,
+                securityContext.userInfo!!.organismeId!!,
+                etudeId,
+                TypePointCarte.PEI_PROJET,
+            ),
+        ).build()
+    }
 }

@@ -189,6 +189,28 @@ const ListEtude = () => {
               },
               width: 90,
             },
+            {
+              accessor: "etudeId",
+              Cell: (row: any) => {
+                return (
+                  // TODO le déplacer au bon endroit quand on autre la page
+                  <>
+                    <TooltipCustom
+                      tooltipText="Ouvrir l'étude"
+                      tooltipId={row.value}
+                    >
+                      <Button
+                        variant="link"
+                        href={URLS.OUVRIR_ETUDE(row.value)}
+                      >
+                        <IconEtude />
+                      </Button>
+                    </TooltipCustom>
+                  </>
+                );
+              },
+              width: 90,
+            },
           ]}
           idName={"tableEtudeId"}
           filterValuesToVariable={filterValuesToVariable}

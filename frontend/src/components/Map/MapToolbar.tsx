@@ -21,9 +21,15 @@ const MapToolbar = forwardRef(
   (
     {
       map,
-      dataLayer,
+      dataPeiLayer,
+      dataPeiProjetLayer,
       workingLayer,
-    }: { map: Map; dataLayer: any; workingLayer: any },
+    }: {
+      map: Map;
+      dataPeiLayer: any;
+      dataPeiProjetLayer: any;
+      workingLayer: any;
+    },
     ref,
   ) => {
     const [activeTool, setActiveTool] = useState<string>();
@@ -100,10 +106,16 @@ const MapToolbar = forwardRef(
               select.getFeatures().clear();
             }
             const boxExtent = dragBox.getGeometry().getExtent();
-            const boxFeatures = dataLayer
+            const boxFeatures = dataPeiLayer
               .getSource()
               .getFeaturesInExtent(boxExtent);
             select.getFeatures().extend(boxFeatures);
+
+            const boxFeaturesPeiProjet = dataPeiProjetLayer
+              .getSource()
+              .getFeaturesInExtent(boxExtent);
+
+            select.getFeatures().extend(boxFeaturesPeiProjet);
           });
 
           map.addInteraction(select);

@@ -33,10 +33,11 @@ proj4.defs(
 );
 register(proj4);
 
-const MapComponent = () => {
+const MapComponent = ({ etudeId = null }: { etudeId: string | null }) => {
   const [availableLayers, setAvailableLayers] = useState([]);
   const [workingLayer, setWorkingLayer] = useState();
-  const [dataLayer, setDataLayer] = useState();
+  const [dataPeiLayer, setDataPeiLayer] = useState();
+  const [dataPeiProjetLayer, setDataPeiProjetLayer] = useState();
   const [map, setMap] = useState<Map>();
   const mapElement = useRef<HTMLDivElement>();
   const layersState = useGet(url`/api/layers`, {});
@@ -193,7 +194,7 @@ const MapComponent = () => {
     return wl;
   }
 
-  function createDataLayer() {
+  function createDataPeiLayer() {
     const vectorSource = toOpenLayer({
       source: "GSON",
       loader: async (extent, resolution, projection, success, failure) => {
@@ -248,6 +249,68 @@ const MapComponent = () => {
     return dl;
   }
 
+  /**
+   * Permet d'afficher les PEI en projet
+   * @param etudeId l'étude concernée
+   * @returns
+   */
+  function createDataPeiProjetLayer(etudeId: string) {
+    const vectorSource = toOpenLayer({
+      source: "GSON",
+      loader: async (extent, resolution, projection, success, failure) => {
+        const res = await fetch(
+          url`/api/couverture-hydraulique/layer?bbox=` +
+            extent.join(",") +
+            "&srid=" +
+            projection.getCode() +
+            "&etudeId=" +
+            etudeId,
+          getFetchOptions({ method: "GET" }),
+        );
+        res
+          .text()
+          .then((text) => {
+            const features = vectorSource
+              .getFormat()
+              .readFeatures(JSON.parse(text));
+            vectorSource.addFeatures(features);
+            success(features);
+          })
+          .catch(() => {
+            vectorSource.removeLoadedExtent(extent);
+            failure();
+          });
+      },
+      extent: map?.getView().calculateExtent(),
+      projection: "EPSG:2154",
+      strategy: bboxStrategy,
+    });
+
+    const dl = new VectorLayer({
+      source: vectorSource,
+      style: new Style({
+        image: new Circle({
+          radius: 5,
+          fill: new Fill({ color: "green" }),
+          stroke: new Stroke({
+            color: [255, 0, 0],
+            width: 1,
+          }),
+        }),
+      }),
+      extent: map?.getView().calculateExtent(),
+      opacity: 1,
+      visible: true,
+      minResolution: 0,
+      maxResolution: 99999,
+      zIndex: 9999,
+    });
+
+    map?.addLayer(dl);
+
+    return dl;
+  }
+
   // Initialisation de la map
   useEffect(() => {
     const initialMap = new Map({
@@ -273,8 +336,9 @@ const MapComponent = () => {
 
   useEffect(() => {
     setWorkingLayer(createWorkingLayer());
-    setDataLayer(createDataLayer());
-  }, [map]);
+    setDataPeiLayer(createDataPeiLayer());
+    etudeId && setDataPeiProjetLayer(createDataPeiProjetLayer(etudeId));
+  }, [map, etudeId]);
 
   return (
     <Container fluid>
@@ -283,7 +347,8 @@ const MapComponent = () => {
           ref={mapToolbarRef}
           map={map}
           workingLayer={workingLayer}
-          dataLayer={dataLayer}
+          dataPeiLayer={dataPeiLayer}
+          dataPeiProjetLayer={dataPeiProjetLayer}
         />
       )}
       <Row className={"gutt-0"}>

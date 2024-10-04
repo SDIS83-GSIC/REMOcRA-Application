@@ -26,6 +26,7 @@ import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiPr
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 import MapComponent from "./components/Map/Map.tsx";
+import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
 import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
 import ListDiametre from "./pages/Admin/diametre/ListDiametre.tsx";
 import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
@@ -67,6 +68,9 @@ export const URLS = {
     etudeId +
     `/pei-projet/` +
     peiProjetId,
+  OUVRIR_ETUDE: (etudeId: string) =>
+    url`/couverture-hydraulique/etudes/open/` + etudeId,
+
   UPDATE_DIAMETRE: (diametreId: string) => url`/admin/diametre/` + diametreId,
   DIAMETRE: url`/admin/diametre/`,
   ADD_DIAMETRE: url`/admin/diametre/add/`,
@@ -235,6 +239,20 @@ export default [
         ),
       },
       {
+        path: "etudes/open/:etudeId",
+        element: (
+          <Authorization
+            Component={MapEtude}
+            droits={[
+              TYPE_DROIT.ETUDE_U,
+              TYPE_DROIT.ETUDE_R,
+              TYPE_DROIT.ETUDE_D,
+              TYPE_DROIT.ETUDE_C,
+            ]}
+          />
+        ),
+      },
+      {
         path: "etudes/import/:etudeId",
         element: (
           <Authorization
@@ -244,7 +262,7 @@ export default [
         ),
       },
       {
-        path: "etude/:etudeId/pei-projet",
+        path: "etudes/:etudeId/pei-projet",
         element: (
           <Authorization
             Component={CreatePeiProjet}
