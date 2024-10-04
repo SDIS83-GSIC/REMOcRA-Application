@@ -58,7 +58,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : A
             var result: Result? = null
             var savedElement: T? = null
             // On utilise le transactionManager parent s'il est fourni, sinon fallback sur celui qui est injecté
-            (mainTransactionManager ?: transactionManager).transactionResult {
+            (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
                 try {
                     savedElement = execute(userInfo, element)
                 } catch (rre: RemocraResponseException) {
