@@ -8,12 +8,13 @@ import remocra.data.enums.ErrorType
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.tables.pojos.Pei
 import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
 /**
  * Regroupe toutes les méthodes nécessaires à la manipulation d'un PEI dans l'API
  */
-abstract class AbstractApiPeiUseCase {
+abstract class AbstractApiPeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var peiRepository: PeiRepository
 

@@ -20,6 +20,7 @@ import remocra.db.PibiRepository
 import remocra.db.SiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
 /**
@@ -30,7 +31,7 @@ import java.util.UUID
  * * [UpdatePeiUseCase]
  * * [DeletePeiUseCase]
  */
-class PeiUseCase {
+class PeiUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var peiRepository: PeiRepository

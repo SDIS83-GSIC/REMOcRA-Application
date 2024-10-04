@@ -13,12 +13,13 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.db.CoucheRepository
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/layers")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class LayersEndpoint {
+class LayersEndpoint : AbstractEndpoint() {
     @Context
     lateinit var securityContext: SecurityContext
 

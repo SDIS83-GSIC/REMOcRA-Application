@@ -17,11 +17,12 @@ import remocra.db.OrganismeRepository
 import remocra.db.TypeOrganismeRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.DroitApi
+import remocra.web.AbstractEndpoint
 
 @Path("/referentiel")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class ApiReferentielsCommunsEndpoint {
+class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var typeOrganismeRepository: TypeOrganismeRepository
 

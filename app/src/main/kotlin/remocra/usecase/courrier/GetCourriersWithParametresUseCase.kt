@@ -11,11 +11,12 @@ import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeParametreCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractUseCase
 
 /**
  * Retourne tous les modèles de courriers avec leurs paramètres
  */
-class GetCourriersWithParametresUseCase {
+class GetCourriersWithParametresUseCase : AbstractUseCase() {
     @Inject lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
     @Inject lateinit var communeRepository: CommuneRepository

@@ -6,6 +6,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
 import remocra.eventbus.EventBus
 import remocra.eventbus.parametres.ParametresModifiedEvent
+import remocra.usecase.AbstractUseCase
 import remocra.utils.getBooleanOrNull
 import remocra.utils.getInt
 import remocra.utils.getIntOrNull
@@ -16,7 +17,7 @@ import remocra.utils.getStringOrNull
 /**
  * Usecase permettant de manipuler les paramètres de l'application.
  */
-class ParametresUseCase {
+class ParametresUseCase : AbstractUseCase() {
     @Inject
     private lateinit var parametreRepository: ParametreRepository
 

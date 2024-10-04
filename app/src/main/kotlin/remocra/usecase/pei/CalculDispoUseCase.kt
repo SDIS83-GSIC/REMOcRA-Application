@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
 // TODO spécifique au 39, mais on aimerait que ça saute, c'est a priori juste une problématique de numérotation ; en attendant, on constantise pour en garder trace
@@ -23,7 +24,7 @@ const val NATURE_PEI_A = "A"
  * But du usecase (pour l'instant) : tabula rasa sur les anomalies système, recalcul des ano système, mise à jour du statut de disponibilité du PEI.
  * Doit être morcelé (morcelable) afin de s'intégrer dans l'enregistrement transactionnel d'un PEI.
  */
-class CalculDispoUseCase {
+class CalculDispoUseCase : AbstractUseCase() {
     @Inject
     private lateinit var appSettings: AppSettings
 

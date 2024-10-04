@@ -4,8 +4,9 @@ import com.google.inject.Inject
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.db.OrganismeRepository
 import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.usecase.AbstractUseCase
 
-class OrganismeUseCase {
+class OrganismeUseCase : AbstractUseCase() {
     @Inject
     lateinit var organismeRepository: OrganismeRepository
 

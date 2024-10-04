@@ -16,11 +16,12 @@ import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.utils.limitOffset
+import remocra.web.AbstractEndpoint
 
 @Path("/api/deci/referentiel")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class ApiReferentielsDeciEndpoint {
+class ApiReferentielsDeciEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider

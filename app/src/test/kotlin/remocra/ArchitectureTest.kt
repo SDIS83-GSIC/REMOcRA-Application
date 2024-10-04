@@ -11,6 +11,8 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
 import remocra.db.TransactionManager
+import remocra.usecase.AbstractUseCase
+import remocra.web.AbstractEndpoint
 
 @AnalyzeClasses(packages = ["remocra"], importOptions = [DoNotIncludeTests::class])
 class ArchitectureTest {
@@ -52,6 +54,25 @@ class ArchitectureTest {
         .should()
         .onlyHaveDependentClassesThat()
         .resideInAnyPackage("..web..", "..http..", "..endpoint..", "..auth..", "..json..", "..cli..")
+
+    // Tous les Endpoint doivent hériter de AbstractEndpoint
+    @ArchTest
+    val inheritsEndpoint: ArchRule = classes()
+        .that()
+        .haveNameMatching(".*Endpoint")
+        .and()
+        // Celui-ci est particulier : public, pas les mêmes patterns
+        .haveSimpleNameNotContaining("OpenApiEndpoint")
+        .should()
+        .beAssignableTo(AbstractEndpoint::class.java)
+
+    // Tous les Usecase doivent hériter de AbstractUsecase
+    @ArchTest
+    val inheritsUseCase: ArchRule = classes()
+        .that()
+        .haveNameMatching(".*UseCase")
+        .should()
+        .beAssignableTo(AbstractUseCase::class.java)
 }
 
 /**

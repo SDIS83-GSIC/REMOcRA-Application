@@ -11,10 +11,11 @@ import remocra.auth.RequireDroits
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.ParametresData
 import remocra.usecase.admin.ParametresUseCase
+import remocra.web.AbstractEndpoint
 
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
-class AdminEndpoint {
+class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var parametresUseCase: ParametresUseCase

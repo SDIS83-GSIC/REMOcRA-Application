@@ -5,9 +5,10 @@ import jakarta.ws.rs.core.UriBuilder
 import remocra.GlobalConstants
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.usecase.AbstractUseCase
 import java.nio.file.Paths
 
-class ModuleUseCase {
+class ModuleUseCase : AbstractUseCase() {
     @Inject lateinit var moduleRepository: ModuleRepository
 
     fun execute(uriInfo: UriBuilder): List<ModuleWithImageLink> {

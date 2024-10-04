@@ -18,11 +18,12 @@ import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.utils.limitOffset
+import remocra.web.AbstractEndpoint
 
 @Path("deci/referentiel/pena")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class ApiReferentielsPenaEndpoint {
+class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider

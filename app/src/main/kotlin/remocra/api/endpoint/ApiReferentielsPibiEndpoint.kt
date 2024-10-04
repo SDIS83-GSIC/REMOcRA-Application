@@ -20,11 +20,12 @@ import remocra.db.jooq.remocra.tables.pojos.MarquePibi
 import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.utils.limitOffset
+import remocra.web.AbstractEndpoint
 
 @Path("deci/referentiel/pibi")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class ApiReferentielsPibiEndpoint {
+class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider

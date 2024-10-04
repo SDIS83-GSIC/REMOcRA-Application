@@ -8,10 +8,11 @@ import remocra.data.enums.DeltaDate
 import remocra.db.TourneeRepository
 import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
+import remocra.usecase.AbstractUseCase
 import remocra.utils.limitOffset
 import java.time.ZonedDateTime
 
-class FetchTourneeDataUseCase {
+class FetchTourneeDataUseCase : AbstractUseCase() {
     @Inject lateinit var tourneeRepository: TourneeRepository
 
     fun fetchTourneeData(params: Params<Filter, Sort>): DataTableau<TourneeRepository.TourneeComplete>? {

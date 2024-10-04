@@ -5,9 +5,10 @@ import remocra.api.DateUtils
 import remocra.db.FicheResumeRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeResumeElement
+import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class BuildFicheResumeUseCase {
+class BuildFicheResumeUseCase : AbstractUseCase() {
     @Inject
     private lateinit var ficheResumeRepository: FicheResumeRepository
 

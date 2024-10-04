@@ -10,6 +10,7 @@ import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
+import remocra.usecase.AbstractUseCase
 import java.util.Locale
 import java.util.UUID
 
@@ -62,7 +63,7 @@ private const val NATURE_RESERVE_INCENDIE = "RI"
  * Ce useCase est stateless, et doit être utilisé par les services d'enregistrement d'un PEI au sein d'une transaction (sinon le nextNuméro peut être faussé !)
  *
  */
-class NumerotationUseCase {
+class NumerotationUseCase : AbstractUseCase() {
     @Inject
     private lateinit var appSettings: AppSettings
 

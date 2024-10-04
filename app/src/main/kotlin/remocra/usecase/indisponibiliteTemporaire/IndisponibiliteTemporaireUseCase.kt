@@ -6,10 +6,11 @@ import remocra.data.Params
 import remocra.data.enums.ErrorType
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractUseCase
 import java.time.Clock
 import java.util.UUID
 
-class IndisponibiliteTemporaireUseCase {
+class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository

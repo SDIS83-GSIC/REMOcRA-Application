@@ -9,9 +9,10 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.ParametresProvider
 import remocra.auth.Public
+import remocra.web.AbstractEndpoint
 
 @Path("/parametres")
-class ParametreEndpoint {
+class ParametreEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var parametresProvider: ParametresProvider
 

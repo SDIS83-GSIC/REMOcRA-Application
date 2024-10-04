@@ -3,9 +3,10 @@ package remocra.usecase.document
 import com.google.inject.Inject
 import remocra.data.DocumentsData.DocumentData
 import remocra.db.DocumentRepository
+import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class DocumentPeiUseCase {
+class DocumentPeiUseCase : AbstractUseCase() {
 
     @Inject lateinit var documentRepository: DocumentRepository
 

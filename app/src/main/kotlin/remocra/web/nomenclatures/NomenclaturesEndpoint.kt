@@ -12,6 +12,7 @@ import remocra.app.DataCacheProvider
 import remocra.auth.Public
 import remocra.data.GlobalData
 import remocra.data.enums.TypeDataCache
+import remocra.web.AbstractEndpoint
 import java.util.Locale
 import java.util.UUID
 
@@ -22,7 +23,7 @@ private const val SUFFIXE_CODE = "Code"
 @Path("/nomenclatures")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
-class NomenclaturesEndpoint {
+class NomenclaturesEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
