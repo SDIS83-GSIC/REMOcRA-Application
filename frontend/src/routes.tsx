@@ -22,7 +22,6 @@ import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtu
 import ListEtude from "./pages/CouvertureHydraulique/Etude/ListEtude.tsx";
 import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
 import UpdateEtude from "./pages/CouvertureHydraulique/Etude/UpdateEtude.tsx";
-import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
@@ -72,8 +71,6 @@ export const URLS = {
   LIST_ETUDE: url`/couverture-hydraulique/etudes/`,
   IMPORTER_COUVERTURE_HYDRAULIQUE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/import/` + etudeId,
-  CREATE_PEI_PROJET: (etudeId: string) =>
-    url`/couverture-hydraulique/etudes/` + etudeId + `/pei-projet/`,
   UPDATE_PEI_PROJET: (etudeId: string, peiProjetId: string) =>
     url`/couverture-hydraulique/etudes/` +
     etudeId +
@@ -284,15 +281,6 @@ export default [
         element: (
           <Authorization
             Component={ImportShapeEtude}
-            droits={[TYPE_DROIT.ETUDE_U]}
-          />
-        ),
-      },
-      {
-        path: "etudes/:etudeId/pei-projet",
-        element: (
-          <Authorization
-            Component={CreatePeiProjet}
             droits={[TYPE_DROIT.ETUDE_U]}
           />
         ),

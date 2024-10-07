@@ -1,31 +1,33 @@
-import { useEffect, useRef, useState } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
-import TileLayer from "ol/layer/Tile";
-import { TileWMS, WMTS } from "ol/source";
-import { fromLonLat, get as getProjection } from "ol/proj";
-import { getWidth } from "ol/extent";
-import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { MousePosition, ScaleLine } from "ol/control";
+import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY } from "ol/coordinate";
-import { register } from "ol/proj/proj4";
-import proj4 from "proj4";
-import "ol/ol.css";
-import TileSource from "ol/source/Tile";
-import { Col, Container, Row } from "react-bootstrap";
-import "./map.css";
-import { DragPan, MouseWheelZoom } from "ol/interaction";
-import { Circle, Fill, Stroke, Style } from "ol/style";
-import VectorLayer from "ol/layer/Vector";
-import CircleStyle from "ol/style/Circle";
-import VectorSource from "ol/source/Vector";
+import { getWidth } from "ol/extent";
 import { GeoJSON } from "ol/format";
+import { DragPan, MouseWheelZoom } from "ol/interaction";
+import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
+import "ol/ol.css";
+import { fromLonLat, get as getProjection } from "ol/proj";
+import { register } from "ol/proj/proj4";
+import { TileWMS, WMTS } from "ol/source";
+import TileSource from "ol/source/Tile";
+import VectorSource from "ol/source/Vector";
+import { Circle, Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
+import WMTSTileGrid from "ol/tilegrid/WMTS";
+import proj4 from "proj4";
+import { useEffect, useRef, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import TYPE_CARTE from "../../enums/TypeCarte.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import MapLegend from "./MapLegend.tsx";
 import MapToolbar from "./MapToolbar.tsx";
+import MapToolbarCouvertureHydraulique from "./MapToolbarCouvertureHydraulique.tsx";
+import "./map.css";
 
 proj4.defs(
   "EPSG:2154",
@@ -33,7 +35,15 @@ proj4.defs(
 );
 register(proj4);
 
-const MapComponent = ({ etudeId = null }: { etudeId: string | null }) => {
+const MapComponent = ({
+  etudeId = null,
+  typeCarte = TYPE_CARTE.PEI,
+  disabledEditPeiProjet = false,
+}: {
+  etudeId: string | null;
+  typeCarte: TYPE_CARTE;
+  disabledEditPeiProjet: boolean;
+}) => {
   const [availableLayers, setAvailableLayers] = useState([]);
   const [workingLayer, setWorkingLayer] = useState();
   const [dataPeiLayer, setDataPeiLayer] = useState();
@@ -343,13 +353,26 @@ const MapComponent = ({ etudeId = null }: { etudeId: string | null }) => {
   return (
     <Container fluid>
       {map && (
-        <MapToolbar
-          ref={mapToolbarRef}
-          map={map}
-          workingLayer={workingLayer}
-          dataPeiLayer={dataPeiLayer}
-          dataPeiProjetLayer={dataPeiProjetLayer}
-        />
+        <>
+          {/* Commun à toutes les cartes */}
+          <MapToolbar
+            ref={mapToolbarRef}
+            map={map}
+            workingLayer={workingLayer}
+            dataPeiLayer={dataPeiLayer}
+            dataPeiProjetLayer={dataPeiProjetLayer}
+          />
+          {typeCarte === TYPE_CARTE.COUVERTURE_HYDRAULIQUE && (
+            <MapToolbarCouvertureHydraulique
+              ref={mapToolbarRef}
+              map={map}
+              etudeId={etudeId}
+              workingLayer={workingLayer}
+              dataPeiProjetLayer={dataPeiProjetLayer}
+              disabledEditPeiProjet={disabledEditPeiProjet}
+            />
+          )}
+        </>
       )}
       <Row className={"gutt-0"}>
         <Col>

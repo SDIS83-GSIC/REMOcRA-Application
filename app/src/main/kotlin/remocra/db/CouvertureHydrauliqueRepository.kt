@@ -175,6 +175,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
         dsl.select(
             ETUDE.ID,
             TYPE_ETUDE.ID,
+            ETUDE.STATUT,
             ETUDE.NUMERO,
             ETUDE.LIBELLE,
             ETUDE.DESCRIPTION,
@@ -215,6 +216,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
     data class EtudeUpsert(
         val etudeId: UUID,
         val typeEtudeId: UUID,
+        val etudeStatut: EtudeStatut,
         val etudeNumero: String,
         val etudeLibelle: String,
         val etudeDescription: String?,

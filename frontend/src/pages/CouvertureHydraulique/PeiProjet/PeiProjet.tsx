@@ -20,7 +20,9 @@ export const getInitialValues = (data: PeiProjetEntity) => ({
   peiProjetDiametreCanalisation: data?.peiProjetDiametreCanalisation,
   peiProjetCapacite: data?.peiProjetCapacite,
   peiProjetDebit: data?.peiProjetDebit,
-  // TODO géométrie
+  peiProjetCoordonneeX: data.peiProjetCoordonneeX,
+  peiProjetCoordonneeY: data.peiProjetCoordonneeY,
+  peiProjetSrid: data.peiProjetSrid,
 });
 
 export const validationSchema = object({
@@ -34,9 +36,9 @@ export const prepareVariables = (values: PeiProjetEntity) => ({
   peiProjetDiametreCanalisation: values.peiProjetDiametreCanalisation,
   peiProjetCapacite: values.peiProjetCapacite,
   peiProjetDebit: values.peiProjetDebit,
-  //TODO Géométrie
-  peiProjetCoordonneeX: "12456",
-  peiProjetCoordonneeY: "12456",
+  peiProjetCoordonneeX: values.peiProjetCoordonneeX,
+  peiProjetCoordonneeY: values.peiProjetCoordonneeY,
+  peiProjetSrid: values.peiProjetSrid,
 });
 
 const PeiProjet = () => {

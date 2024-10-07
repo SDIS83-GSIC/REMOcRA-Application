@@ -14,6 +14,7 @@ import {
   IconEdit,
   IconEtude,
   IconImport,
+  IconSee,
 } from "../../../components/Icon/Icon.tsx";
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
@@ -174,28 +175,6 @@ const ListEtude = () => {
                   // TODO le déplacer au bon endroit quand on autre la page
                   <>
                     <TooltipCustom
-                      tooltipText="Ajouter un PEI projet"
-                      tooltipId={row.value}
-                    >
-                      <Button
-                        variant="link"
-                        href={URLS.CREATE_PEI_PROJET(row.value)}
-                      >
-                        <IconEtude />
-                      </Button>
-                    </TooltipCustom>
-                  </>
-                );
-              },
-              width: 90,
-            },
-            {
-              accessor: "etudeId",
-              Cell: (row: any) => {
-                return (
-                  // TODO le déplacer au bon endroit quand on autre la page
-                  <>
-                    <TooltipCustom
                       tooltipText="Ouvrir l'étude"
                       tooltipId={row.value}
                     >
@@ -203,7 +182,7 @@ const ListEtude = () => {
                         variant="link"
                         href={URLS.OUVRIR_ETUDE(row.value)}
                       >
-                        <IconEtude />
+                        <IconSee />
                       </Button>
                     </TooltipCustom>
                   </>

@@ -109,13 +109,15 @@ const MapToolbar = forwardRef(
             const boxFeatures = dataPeiLayer
               .getSource()
               .getFeaturesInExtent(boxExtent);
+
             select.getFeatures().extend(boxFeatures);
+            if (dataPeiProjetLayer != null) {
+              const boxFeaturesPeiProjet = dataPeiProjetLayer
+                .getSource()
+                .getFeaturesInExtent(boxExtent);
 
-            const boxFeaturesPeiProjet = dataPeiProjetLayer
-              .getSource()
-              .getFeaturesInExtent(boxExtent);
-
-            select.getFeatures().extend(boxFeaturesPeiProjet);
+              select.getFeatures().extend(boxFeaturesPeiProjet);
+            }
           });
 
           map.addInteraction(select);
