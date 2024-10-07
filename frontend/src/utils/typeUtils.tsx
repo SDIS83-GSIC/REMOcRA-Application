@@ -41,3 +41,9 @@ export type IdCodeLibelleType = {
   code: string | undefined;
   libelle: string;
 };
+
+export type SubmitButtonType = {
+  update?: boolean;
+  returnLink: string;
+  onClick?: (...args: any[]) => void;
+};
