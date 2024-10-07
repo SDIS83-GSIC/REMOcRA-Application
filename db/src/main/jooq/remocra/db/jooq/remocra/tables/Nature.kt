@@ -110,6 +110,11 @@ open class Nature(
      */
     val TYPE_PEI: TableField<Record, TypePei?> = createField(DSL.name("nature_type_pei"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypePei::class.java), this, "")
 
+    /**
+     * The column <code>remocra.nature.nature_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("nature_protected"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -284,6 +284,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_DIAMETRE_NOTFOUND(7003, "Cette valeur n'existe pas"),
     ADMIN_DIAMETRE_IS_PROTECTED(7004, "Cette valeur est protégée"),
 
+    ADMIN_NATURE_FORBIDDEN_INSERT(8100, "Vous n'avez pas les droits de création des natures", Status.FORBIDDEN),
+    ADMIN_NATURE_FORBIDDEN_UPDATE(8101, "Vous n'avez pas les droits de modification des natures", Status.FORBIDDEN),
+    ADMIN_NATURE_IS_PROTECTED(8102, "Cette nature est protégée"),
+    ADMIN_NATURE_FORBIDDEN_REMOVAL(8103, "Vous n'avez pas les droits de suppression des natures", Status.FORBIDDEN),
+    ADMIN_NATURE_FORBIDDEN_PEI_TYPE(8104, "PEI type doit être PENA ou PENA"),
     ;
 
     override fun toString(): String {

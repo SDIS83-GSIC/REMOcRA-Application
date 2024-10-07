@@ -25,6 +25,7 @@ data class Nature(
     val natureCode: String,
     val natureLibelle: String,
     val natureTypePei: TypePei,
+    val natureProtected: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -53,6 +54,13 @@ data class Nature(
         if (this.natureTypePei != o.natureTypePei) {
             return false
         }
+        if (this.natureProtected == null) {
+            if (o.natureProtected != null) {
+                return false
+            }
+        } else if (this.natureProtected != o.natureProtected) {
+            return false
+        }
         return true
     }
 
@@ -64,6 +72,7 @@ data class Nature(
         result = prime * result + this.natureCode.hashCode()
         result = prime * result + this.natureLibelle.hashCode()
         result = prime * result + this.natureTypePei.hashCode()
+        result = prime * result + (if (this.natureProtected == null) 0 else this.natureProtected.hashCode())
         return result
     }
 
@@ -75,6 +84,7 @@ data class Nature(
         sb.append(", ").append(natureCode)
         sb.append(", ").append(natureLibelle)
         sb.append(", ").append(natureTypePei)
+        sb.append(", ").append(natureProtected)
 
         sb.append(")")
         return sb.toString()
