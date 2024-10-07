@@ -278,19 +278,36 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Impossible de transformer la BBOX en objet Geometry.",
     ),
 
+    //
+    // ********************************************************************************
+    // Diametres
+    // ********************************************************************************
+    //
     ADMIN_DIAMETRE_FORBIDDEN_INSERT(7000, "Vous n'avez pas les droits de création des diamètres", Status.FORBIDDEN),
     ADMIN_DIAMETRE_FORBIDDEN_DELETE(7001, "Vous n'avez pas les droits de suppression des diamètres", Status.FORBIDDEN),
     ADMIN_DIAMETRE_FORBIDDEN_UPDATE(7002, "Vous n'avez pas les droits de modification des diamètres", Status.FORBIDDEN),
     ADMIN_DIAMETRE_NOTFOUND(7003, "Cette valeur n'existe pas"),
     ADMIN_DIAMETRE_IS_PROTECTED(7004, "Cette valeur est protégée"),
 
+    //
+    // ********************************************************************************
+    // Nature
+    // ********************************************************************************
+    //
     ADMIN_NATURE_FORBIDDEN_INSERT(8100, "Vous n'avez pas les droits de création des natures", Status.FORBIDDEN),
     ADMIN_NATURE_FORBIDDEN_UPDATE(8101, "Vous n'avez pas les droits de modification des natures", Status.FORBIDDEN),
     ADMIN_NATURE_IS_PROTECTED(8102, "Cette nature est protégée"),
     ADMIN_NATURE_FORBIDDEN_REMOVAL(8103, "Vous n'avez pas les droits de suppression des natures", Status.FORBIDDEN),
-    ADMIN_NATURE_FORBIDDEN_PEI_TYPE(8104, "PEI type doit être PENA ou PENA"),
-    ;
+    ADMIN_NATURE_FORBIDDEN_PEI_TYPE(8104, "Le type de PEI doit être PENA ou PENA"),
 
+    //
+    // ********************************************************************************
+    // Organisme
+    // ********************************************************************************
+    //
+    ADMIN_ORGANISME_FORBIDDEN_INSERT(9000, "Vous n'avez pas les droits de création des organimes", Status.FORBIDDEN),
+    ADMIN_ORGANISME_FORBIDDEN_UPDATE(9001, "Vous n'avez pas les droits de modification des organimes", Status.FORBIDDEN),
+    ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
     }

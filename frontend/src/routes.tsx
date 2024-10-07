@@ -34,6 +34,9 @@ import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";
 import ListNature from "./pages/Admin/nature/ListNature.tsx";
 import UpdateNature from "./pages/Admin/nature/UpdateNature.tsx";
 import CreateNature from "./pages/Admin/nature/CreateNature.tsx";
+import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
+import CreateOrganisme from "./pages/Admin/organisme/CreateOrganisme.tsx";
+import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -80,6 +83,10 @@ export const URLS = {
   ADD_NATURE: url`/admin/nature/add`,
   UPDATE_NATURE: (natureId: string) => url`/admin/nature/edit/` + natureId,
   LIST_NATURE: url`/admin/nature`,
+  ADD_ORGANISME: url`/admin/organisme/add/`,
+  UPDATE_ORGANISME: (organismeId: string) =>
+    url`/admin/organisme/edit/` + organismeId,
+  ORGANISME: url`/admin/organisme`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -352,6 +359,33 @@ export default [
     element: (
       <Authorization
         Component={CreateNature}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/organisme",
+    element: (
+      <Authorization
+        Component={ListOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/organisme/add",
+    element: (
+      <Authorization
+        Component={CreateOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/organisme/edit/:organismeId",
+    element: (
+      <Authorization
+        Component={UpdateOrganisme}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),

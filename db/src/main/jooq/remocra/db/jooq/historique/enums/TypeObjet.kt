@@ -36,6 +36,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     INDISPONIBILITE_TEMPORAIRE("INDISPONIBILITE_TEMPORAIRE"),
     DIAMETRE("DIAMETRE"),
     NATURE("NATURE"),
+    ORGANISME("ORGANISME"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

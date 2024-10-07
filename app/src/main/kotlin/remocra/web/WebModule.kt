@@ -28,7 +28,10 @@ import remocra.web.nomenclatures.NomenclatureModule
 import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
 import remocra.web.pei.PeiModule
+import remocra.web.profilOrganisme.ProfilOrganismeModule
+import remocra.web.typeOrganisme.TypeOrganismeModule
 import remocra.web.visite.VisiteModule
+import remocra.web.zoneIntegration.ZoneIntegrationModule
 import kotlin.reflect.KClass
 
 object WebModule : RemocraModule() {
@@ -52,6 +55,9 @@ object WebModule : RemocraModule() {
         install(ModuleModule)
         install(ParametreModule)
         install(FicheResumeModule)
+        install(ProfilOrganismeModule)
+        install(TypeOrganismeModule)
+        install(ZoneIntegrationModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

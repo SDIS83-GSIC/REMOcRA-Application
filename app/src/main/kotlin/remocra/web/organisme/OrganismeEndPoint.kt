@@ -48,4 +48,11 @@ class OrganismeEndPoint {
         )
             .build()
     }
+
+    @GET
+    @Path("/get-active")
+    @Public("Les organismes ne sont pas liés à un droit")
+    fun getActive(): Response {
+        return Response.ok(organismeUseCase.getActiveOrganisme()).build()
+    }
 }

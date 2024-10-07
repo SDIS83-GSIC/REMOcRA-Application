@@ -13,4 +13,6 @@ class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .limit(limit)
             .offset(offset)
             .fetchInto()
+
+    fun getAll(): Collection<TypeOrganisme> = getAll(null, null)
 }

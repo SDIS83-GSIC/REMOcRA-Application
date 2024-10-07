@@ -9,7 +9,7 @@ import { DivWithError, FormLabel } from "./Form.tsx";
  *
  * @param {Function} onChange - Fonction de rappel pour gérer les changements de sélection.
  * @param {string} name - Nom du composant de sélection.
- * @param {list} listIdLibelle - Liste ayant des objets id-Libellé.
+ * @param {list} listIdCodeLibelle - Liste ayant des objets id-Libellé.
  * @param {IdLibelleType} value - Value sélectionnée par défaut.
  * @param {string} label - Label du select.
  * @param {boolean} required - Valeur obligatoire ?
