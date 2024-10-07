@@ -4,7 +4,7 @@ import styles from "./Loading.module.css";
 
 const Loading = ({ className, ...rest }: { className?: string }) => (
   <div className={classnames(styles.loading, className)} {...rest}>
-    <Spinner animation="border" />;
+    <Spinner animation="border" />
   </div>
 );
 
