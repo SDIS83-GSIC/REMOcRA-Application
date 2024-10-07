@@ -48,9 +48,12 @@ open class PeiData(
     open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
 ) {
-    val coordonneeX: Double = peiGeometrie.coordinate.x
-    val coordonneeY: Double = peiGeometrie.coordinate.y
-    val srid: Int = peiGeometrie.srid
+    val coordonneeX: Double
+        get() = peiGeometrie.coordinate.x
+    val coordonneeY: Double
+        get() = peiGeometrie.coordinate.y
+    val srid: Int
+        get() = peiGeometrie.srid
 }
 
 data class PibiData(
