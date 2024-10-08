@@ -58,17 +58,36 @@ class CreateVisiteUseCase @Inject constructor(
             throw RemocraResponseException(errorType = ErrorType.VISITE_C_FORBIDDEN)
         }
 
-        // Vérification des droits de création
+        val nbVisite = visiteRepository.getCountVisite(element.visitePeiId)
+        if (!arrayOf(TypeVisite.RECO_INIT, TypeVisite.RECEPTION).contains(element.visiteTypeVisite)) {
+            if (nbVisite == 0) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_RECEPTION)
+            } else if (nbVisite == 1) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_RECO_INIT)
+            }
+        }
+
         when (element.visiteTypeVisite) {
-            TypeVisite.CTP -> if (!userInfo.droits.contains(Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
-                throw RemocraResponseException(errorType = ErrorType.VISITE_C_CTP_FORBIDDEN)
-            }
-            TypeVisite.RECEPTION -> if (!userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
-                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECEPTION_FORBIDDEN)
-            }
-            TypeVisite.RECO_INIT -> if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_C)) {
-                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECO_INIT_FORBIDDEN)
-            }
+            TypeVisite.CTP ->
+                if (!userInfo.droits.contains(Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_C_CTP_FORBIDDEN)
+                }
+            TypeVisite.RECEPTION ->
+                if (!userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECEPTION_FORBIDDEN)
+                } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
+                } else if (nbVisite != 0) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_RECEPTION_NOT_FIRST)
+                }
+            TypeVisite.RECO_INIT ->
+                if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_C)) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECO_INIT_FORBIDDEN)
+                } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
+                } else if (nbVisite != 1) {
+                    throw RemocraResponseException(errorType = ErrorType.VISITE_RECO_INIT_NOT_FIRST)
+                }
             TypeVisite.RECOP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_C)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECOP_FORBIDDEN)
             }

@@ -139,6 +139,14 @@ class VisiteRepository
             .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.`in`(listVisiteId))
             .fetchInto()
 
+    fun visiteAlreadyExists(peiId: UUID, visiteType: TypeVisite): Boolean =
+        dsl.fetchExists(
+            VISITE,
+            VISITE.PEI_ID.eq(peiId)
+                .and(VISITE.TYPE_VISITE.eq(visiteType)),
+        )
+    fun getCountVisite(peiId: UUID): Int = dsl.fetchCount(VISITE, VISITE.PEI_ID.eq(peiId))
+
     // CreateVisiteUseCase
     fun insertVisite(visite: Visite) =
         dsl.insertInto(VISITE)

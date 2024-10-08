@@ -110,6 +110,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         Status.BAD_REQUEST,
     ),
     VISITE_DELETE_NOT_LAST(2114, "La visite que vous essayez de supprimer n'est pas la dernière en date de ce PEI"),
+    VISITE_RECEPTION_NOT_FIRST(2115, "La visite de type ${TypeVisite.RECEPTION} doit être la première visite du PEI"),
+    VISITE_RECO_INIT_NOT_FIRST(2116, "La visite de type ${TypeVisite.RECO_INIT} doit être la deuxième visite du PEI"),
 
     VISITE_TYPE_FORBIDDEN(
         2200,
