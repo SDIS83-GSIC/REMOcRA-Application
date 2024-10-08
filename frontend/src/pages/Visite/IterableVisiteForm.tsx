@@ -18,6 +18,9 @@ const IterableVisiteForm = ({
   listPeiInformations,
   results,
 }: IterableVisiteFormType) => {
+  // Sauvegarde des anomalies tel qu'avant la saisie de la visite
+  const listeAnomalieInitiale: MapAnomalieCompleteByPeiId =
+    listeAnomaliesAssignable;
   return (
     <FieldArray
       name={name}
@@ -100,6 +103,9 @@ const IterableVisiteForm = ({
                         listeAnomaliesAssignable={
                           listeAnomaliesAssignable[currentPeiId]
                         }
+                        listeAnomalieInitiale={
+                          listeAnomalieInitiale[currentPeiId]
+                        }
                         typePei={currentInformation.peiTypePei}
                       />
                     </Col>
@@ -113,9 +119,7 @@ const IterableVisiteForm = ({
     />
   );
 };
-
 export default IterableVisiteForm;
-
 type IterableVisiteFormType = {
   name: string;
   listeElements: SimplifiedVisiteEntity[];

@@ -89,7 +89,7 @@ const SaisieVisiteTournee = ({
         visiteAgent1: saveValues!.visiteAgent1,
         visiteAgent2: saveValues!.visiteAgent2,
         isCtrlDebitPression: saveValues!.isCtrlDebitPression,
-        listeSimplifiedVisite: valuesMemo.listeSimplifiedVisite.filter((e) =>
+        listeSimplifiedVisite: saveValues!.listeSimplifiedVisite.filter((e) =>
           Object.keys(result).includes(e.visitePeiId),
         ),
       });
@@ -114,6 +114,8 @@ const SaisieVisiteTournee = ({
           ctrlPression: cdp.visiteCtrlDebitPressionPression,
           ctrlPressionDyn: cdp.visiteCtrlDebitPressionPressionDyn,
         },
+        isNoAnomalieChecked: false,
+        isSameAnomalieChecked: false,
       }),
     );
     return {
@@ -173,11 +175,16 @@ export const prepareVariables = (_values: VisiteTourneeEntity) => ({
   isCtrlDebitPression: _values.isCtrlDebitPression ?? false,
   listeSimplifiedVisite: _values.listeSimplifiedVisite.map((visite) => {
     return {
-      ...visite, // Fait une copie à l'identique de l'élément visite
+      visitePeiId: visite.visitePeiId,
+      visiteObservation:
+        visite.visiteObservation?.trim().length > 0
+          ? visite.visiteObservation
+          : null,
       listeAnomalie:
-        visite.listeAnomalie // Override la valeur listeAnomalie de l'objet visite
+        visite.listeAnomalie // ne retourne que les anomalieId pour le back
           .filter((e) => e.isAssigned === true)
           .map((e) => e.anomalieId) ?? [],
+      ctrlDebitPression: visite.ctrlDebitPression ?? null,
     };
   }),
 });

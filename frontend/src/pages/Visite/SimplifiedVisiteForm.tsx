@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useFormikContext } from "formik";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
+import { Button, Col, Row } from "react-bootstrap";
 import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
 import { VisiteTourneeEntity } from "../../Entities/VisiteEntity.tsx";
 import AccordionCustom, {
@@ -10,21 +11,24 @@ import PositiveNumberInput, {
   CheckBoxInput,
   TextAreaInput,
 } from "../../components/Form/Form.tsx";
-import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
+import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 
 const SimplifiedVisiteForm = ({
   index,
   typeVisite,
   listeAnomaliesAssignable,
+  listeAnomalieInitiale,
   typePei,
 }: {
   index: number;
   typeVisite?: TYPE_VISITE;
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
+  listeAnomalieInitiale: AnomalieCompleteEntity[];
   typePei: TYPE_PEI;
 }) => {
-  const { values } = useFormikContext<VisiteTourneeEntity>();
+  const { values, setFieldValue } = useFormikContext<VisiteTourneeEntity>();
 
   const {
     handleShowClose: handleShowCloseFormulaire,
@@ -77,8 +81,13 @@ const SimplifiedVisiteForm = ({
 
   const groupedListeAnomalies = Object.groupBy(
     filteredListAnomalie,
-    (item: { anomalieCategorieLibelle: string }) =>
-      item.anomalieCategorieLibelle,
+    (item: {
+      anomalieId: string;
+      poidsAnomalieValIndispoTerrestre: number;
+      poidsAnomalieValIndispoHbe: number;
+      anomalieLibelle: ReactNode;
+      anomalieCategorieLibelle: string;
+    }) => item.anomalieCategorieLibelle,
   );
 
   const listeVoletsAccordion: { header: string; content: ReactNode }[] = [];
@@ -105,6 +114,10 @@ const SimplifiedVisiteForm = ({
                 {element.anomalieLibelle}
               </span>
             }
+            disabled={
+              values.listeSimplifiedVisite[index].isNoAnomalieChecked ||
+              values.listeSimplifiedVisite[index].isSameAnomalieChecked
+            }
           />
         );
       }),
@@ -112,78 +125,162 @@ const SimplifiedVisiteForm = ({
   );
 
   return (
-    <AccordionCustom
-      activesKeys={activesKeysFormulaire}
-      handleShowClose={handleShowCloseFormulaire}
-      list={[
-        ...(values.isCtrlDebitPression === true && typePei === TYPE_PEI.PIBI
-          ? [
-              {
-                header: "Mesures",
-                content: (
-                  <div>
-                    <div>
-                      <PositiveNumberInput
-                        name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlDebit`}
-                        label="Débit à 1 bar (m3/h) : "
-                        min={0}
-                        required={false}
-                      />
-                    </div>
-                    <div>
-                      <PositiveNumberInput
-                        name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPressionDyn`}
-                        label="Pression dynamique au débit nominal (bar) : "
-                        min={0}
-                        step={0.01}
-                        required={false}
-                      />
-                    </div>
-                    <div>
-                      <PositiveNumberInput
-                        name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPression`}
-                        label="Pression statique (bar) : "
-                        min={0}
-                        step={0.01}
-                        required={false}
-                      />
-                    </div>
-                  </div>
-                ),
-              },
-            ]
-          : []),
-        {
-          header: "Points d'attention",
-          content: (
-            <div>
-              {values.visiteTypeVisite ? (
-                <AccordionCustom
-                  activesKeys={activesKeysAnomalies}
-                  handleShowClose={handleShowCloseAnomalies}
-                  list={listeVoletsAccordion}
-                />
-              ) : (
-                <p>
-                  Sélectionnez le type de visite pour accéder à la liste des
-                  anomalies assignables
-                </p>
-              )}
-            </div>
-          ),
-        },
-        {
-          header: "Observations",
-          content: (
-            <TextAreaInput
-              name={`listeSimplifiedVisite[${index}].visiteObservation`}
-              required={false}
+    <>
+      <Row>
+        <Col>
+          <TooltipCustom
+            tooltipText={`Le PEI contrôlé ne présente aucune anomalie`}
+            tooltipId={`${index}.isNoAnomalieChecked`}
+          >
+            <CheckBoxInput
+              key={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
+              name={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
+              label={"Aucune anomalie"}
+              onChange={() => {
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isNoAnomalieChecked`,
+                  !values.listeSimplifiedVisite[index].isNoAnomalieChecked,
+                );
+                // Pour l'appli, la valeur isNoAnomalieChecked n'est pas encore update quand on arrive au niveau du if
+                // il faut donc mettre à jour la liste d'anomalie en prenant pour référence la valeur avant update
+                if (values.listeSimplifiedVisite[index].isNoAnomalieChecked) {
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].listeAnomalie`,
+                    listeAnomalieInitiale,
+                  );
+                } else {
+                  const listeAnomalieUnasigned = listeAnomalieInitiale.map(
+                    (anomalie) => ({
+                      ...anomalie,
+                      isAssigned: false,
+                    }),
+                  );
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].listeAnomalie`,
+                    listeAnomalieUnasigned,
+                  );
+                }
+              }}
+              disabled={
+                values.listeSimplifiedVisite[index].isSameAnomalieChecked
+              }
             />
-          ),
-        },
-      ]}
-    />
+          </TooltipCustom>
+        </Col>
+        <Col>
+          <TooltipCustom
+            tooltipText={`Les anomalies relevées lors du contrôle du PEI correspondent en tout point à celles du précédent contrôle`}
+            tooltipId={`${index}.isSameAnomalieChecked`}
+          >
+            <CheckBoxInput
+              key={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
+              name={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
+              label={"Rien à modifier"}
+              onChange={() => {
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isSameAnomalieChecked`,
+                  !values.listeSimplifiedVisite[index].isSameAnomalieChecked,
+                );
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].listeAnomalie`,
+                  listeAnomalieInitiale,
+                );
+              }}
+              disabled={values.listeSimplifiedVisite[index].isNoAnomalieChecked}
+            />
+          </TooltipCustom>
+        </Col>
+        <Col xs={"auto"} className="text-align-center">
+          <Button
+            onClick={() =>
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].listeAnomalie`,
+                listeAnomalieInitiale,
+              )
+            }
+            disabled={
+              values.listeSimplifiedVisite[index].isNoAnomalieChecked ||
+              values.listeSimplifiedVisite[index].isSameAnomalieChecked
+            }
+          >
+            Réinitialiser les anomalies à l&apos;état initial
+          </Button>
+        </Col>
+      </Row>
+      <Row>
+        <AccordionCustom
+          activesKeys={activesKeysFormulaire}
+          handleShowClose={handleShowCloseFormulaire}
+          list={[
+            ...(values.isCtrlDebitPression === true && typePei === TYPE_PEI.PIBI
+              ? [
+                  {
+                    header: "Mesures",
+                    content: (
+                      <div>
+                        <div>
+                          <PositiveNumberInput
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlDebit`}
+                            label="Débit à 1 bar (m3/h) : "
+                            min={0}
+                            required={false}
+                          />
+                        </div>
+                        <div>
+                          <PositiveNumberInput
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPressionDyn`}
+                            label="Pression dynamique au débit nominal (bar) : "
+                            min={0}
+                            step={0.01}
+                            required={false}
+                          />
+                        </div>
+                        <div>
+                          <PositiveNumberInput
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPression`}
+                            label="Pression statique (bar) : "
+                            min={0}
+                            step={0.01}
+                            required={false}
+                          />
+                        </div>
+                      </div>
+                    ),
+                  },
+                ]
+              : []),
+            {
+              header: "Points d'attention",
+              content: (
+                <div>
+                  {values.visiteTypeVisite ? (
+                    <AccordionCustom
+                      activesKeys={activesKeysAnomalies}
+                      handleShowClose={handleShowCloseAnomalies}
+                      list={listeVoletsAccordion}
+                    />
+                  ) : (
+                    <p>
+                      Sélectionnez le type de visite pour accéder à la liste des
+                      anomalies assignables
+                    </p>
+                  )}
+                </div>
+              ),
+            },
+            {
+              header: "Observations",
+              content: (
+                <TextAreaInput
+                  name={`listeSimplifiedVisite[${index}].visiteObservation`}
+                  required={false}
+                />
+              ),
+            },
+          ]}
+        />
+      </Row>
+    </>
   );
 };
-
 export default SimplifiedVisiteForm;

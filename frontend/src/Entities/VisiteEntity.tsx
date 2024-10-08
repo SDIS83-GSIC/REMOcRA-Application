@@ -41,4 +41,6 @@ export type SimplifiedVisiteEntity = {
   visiteObservation: string;
   listeAnomalie: AnomalieCompleteEntity[];
   ctrlDebitPression: CtrlDebitPressionEntity;
+  isNoAnomalieChecked: boolean;
+  isSameAnomalieChecked: boolean;
 };

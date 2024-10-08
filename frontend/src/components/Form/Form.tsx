@@ -1,6 +1,6 @@
+import { Field, Form as FormikForm, useField } from "formik";
 import { ReactNode } from "react";
 import Form from "react-bootstrap/Form";
-import { Field, Form as FormikForm, useField } from "formik";
 import ReactSelect from "react-select";
 
 type InputType = {
@@ -124,6 +124,7 @@ type CheckBoxInputType = {
   label: string | ReactNode;
   required?: boolean;
   disabled?: boolean;
+  onChange?: (...args: any[]) => void;
 };
 
 export const CheckBoxInput = ({
@@ -131,12 +132,18 @@ export const CheckBoxInput = ({
   label,
   required = false,
   disabled = false,
+  onChange,
 }: CheckBoxInputType) => {
-  const [, meta] = useField(name);
+  const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <Field name={name} type="checkbox" disabled={disabled} />
+      <Field
+        name={name}
+        type="checkbox"
+        disabled={disabled}
+        onChange={(v: boolean) => (onChange ? onChange(v) : field.onChange(v))}
+      />
       <FormLabel
         className="p-1"
         label={label}
