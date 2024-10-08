@@ -117,7 +117,7 @@ class CalculDispoUseCase {
 
             // On calcule le poids total, comme étant la somme des poids de chaque anomalie présente sur le PEI, quelle que soit sa provenance
             val note = setGlobalAnomalies.map { ano ->
-                poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }!!.poidsAnomalieValIndispoTerrestre
+                poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }?.poidsAnomalieValIndispoTerrestre
             }.reduce { acc, next -> if (acc != null && next != null) acc.plus(next) else null } ?: 0
 
             if (note > 5) {
@@ -134,7 +134,7 @@ class CalculDispoUseCase {
 
     // TODO quoi retourner, l'UUID, boolean, le futur objet IT ? Pour l'instant, on imagine retourner l'UUID de l'anomalie si elle existe
     private fun getIndispoTemporaires(pei: PeiForCalculDispoData): UUID? {
-        TODO("" + pei)
+        return null
     }
 
     /**

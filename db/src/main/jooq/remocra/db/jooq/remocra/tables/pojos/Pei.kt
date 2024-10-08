@@ -48,6 +48,7 @@ data class Pei(
     val peiServicePublicDeciId: UUID?,
     val peiMaintenanceDeciId: UUID?,
     val peiEnFace: Boolean?,
+    val peiVoieTexte: String?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -203,6 +204,13 @@ data class Pei(
         } else if (this.peiEnFace != o.peiEnFace) {
             return false
         }
+        if (this.peiVoieTexte == null) {
+            if (o.peiVoieTexte != null) {
+                return false
+            }
+        } else if (this.peiVoieTexte != o.peiVoieTexte) {
+            return false
+        }
         return true
     }
 
@@ -235,6 +243,7 @@ data class Pei(
         result = prime * result + (if (this.peiServicePublicDeciId == null) 0 else this.peiServicePublicDeciId.hashCode())
         result = prime * result + (if (this.peiMaintenanceDeciId == null) 0 else this.peiMaintenanceDeciId.hashCode())
         result = prime * result + (if (this.peiEnFace == null) 0 else this.peiEnFace.hashCode())
+        result = prime * result + (if (this.peiVoieTexte == null) 0 else this.peiVoieTexte.hashCode())
         return result
     }
 
@@ -267,6 +276,7 @@ data class Pei(
         sb.append(", ").append(peiServicePublicDeciId)
         sb.append(", ").append(peiMaintenanceDeciId)
         sb.append(", ").append(peiEnFace)
+        sb.append(", ").append(peiVoieTexte)
 
         sb.append(")")
         return sb.toString()

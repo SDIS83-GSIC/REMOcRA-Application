@@ -1,7 +1,6 @@
 package remocra.usecase.pei
 
 import jakarta.inject.Inject
-import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.PeiData
 import remocra.data.enums.ErrorType
@@ -23,8 +22,6 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
-    @Inject
-    lateinit var appSettings: AppSettings
 
     @Inject
     lateinit var indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository
@@ -132,21 +129,13 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        val isInZoneCompetence = peiRepository.isInZoneCompetence(
-            srid = appSettings.sridInt,
-            coordonneeY = element.coordonneeY,
-            coordonneeX = element.coordonneeX,
-            idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
-        )
+        super.checkContraintes(userInfo!!, element)
 
         if (!userInfo.droits.contains(Droit.INDISPO_TEMP_D)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
         }
         if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
-        }
-        if (!isInZoneCompetence) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_ZONE_COMPETENCE)
         }
     }
 }

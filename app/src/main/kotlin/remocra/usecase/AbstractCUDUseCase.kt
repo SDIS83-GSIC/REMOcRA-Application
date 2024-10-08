@@ -50,6 +50,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : A
      */
     fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager? = null): Result {
         try {
+            // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
             if (userInfo == null) {
                 throw ForbiddenException()
             }

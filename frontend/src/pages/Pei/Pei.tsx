@@ -63,6 +63,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
 
   peiCommuneId: data?.peiCommuneId ?? null,
   peiVoieId: data?.peiVoieId ?? null,
+  peiVoieTexte: data?.peiVoieTexte ?? null,
   peiNumeroVoie: data?.peiNumeroVoie ?? null,
   peiSuffixeVoie: data?.peiSuffixeVoie ?? null,
   peiLieuDitId: data?.peiLieuDitId ?? null,
@@ -104,6 +105,9 @@ export const getInitialValues = (data?: PeiEntity) => ({
   penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
 
   documents: data?.documents ?? [],
+
+  voieSaisieLibre:
+    data?.peiVoieTexte != null && data?.peiVoieTexte?.trim() !== "",
 });
 
 export const validationSchema = object({
@@ -113,7 +117,8 @@ export const validationSchema = object({
   peiNatureDeciId: requiredString,
 
   peiCommuneId: requiredString,
-  peiVoieId: requiredString,
+  //peiVoieId: requiredString,
+  // TODO ici un XOR entre voie et voieText ?
   peiDomaineId: requiredString,
   coordonneeX: requiredNumber,
   coordonneeY: requiredNumber,
@@ -150,6 +155,10 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
 
     peiCommuneId: values.peiCommuneId ?? null,
     peiVoieId: values.peiVoieId ?? null,
+    peiVoieTexte:
+      values.peiVoieTexte != null && values.peiVoieTexte?.trim() !== ""
+        ? values.peiVoieTexte
+        : null,
     peiNumeroVoie: values.peiNumeroVoie ?? null,
     peiSuffixeVoie: values.peiSuffixeVoie ?? null,
     peiLieuDitId: values.peiLieuDitId ?? null,
@@ -244,6 +253,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
       typeSystemeSrid: { srid: number; nomSystem: string };
       coordonneeXToDisplay: string;
       coordonneeYToDisplay: string;
+      voieSaisieLibre: boolean;
     };
   } = useFormikContext();
   const selectDataState = useGet(
@@ -262,6 +272,24 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
       srid: values.typeSystemeSrid,
     }}`,
   );
+
+  const VOIE_SAISIE_LIBRE = "VOIE_SAISIE_LIBRE";
+  const parametres = [VOIE_SAISIE_LIBRE];
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(parametres),
+    }}`,
+  );
+
+  let isSaisieVoieEnabled = false;
+
+  if (listeParametre.isResolved) {
+    // Le résultat est un String, on le parse pour récupérer le tableau
+    isSaisieVoieEnabled = JSON.parse(
+      listeParametre?.data[VOIE_SAISIE_LIBRE].parametreValeur,
+    );
+  }
 
   //eslint-disable-next-line react-hooks/rules-of-hooks
   const srid = ensureSrid();
@@ -394,6 +422,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                     setFieldValue={setFieldValue}
                     geometrieData={geometrieState?.data}
                     srid={parseInt(srid)}
+                    isSaisieVoieEnabled={isSaisieVoieEnabled}
                     isNew={isNew}
                     user={user}
                   />
@@ -706,6 +735,7 @@ const FormLocalisationPei = ({
   setFieldValue,
   geometrieData,
   srid,
+  isSaisieVoieEnabled,
   isNew,
   user,
 }: {
@@ -715,6 +745,7 @@ const FormLocalisationPei = ({
   setFieldValue: (value: string, newValue: any) => void;
   geometrieData: { coordonneeX: string; coordonneeY: string; srid: number }[];
   srid: number;
+  isSaisieVoieEnabled: boolean;
   isNew: boolean;
   user: UtilisateurEntity;
 }) => {
@@ -845,10 +876,35 @@ const FormLocalisationPei = ({
             defaultValue={selectData.listVoie.find(
               (e) => e.id === values.peiVoieId,
             )}
-            required={true}
+            required={!isSaisieVoieEnabled} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
             setValues={setValues}
-            disabled={!hasDroitUpdate}
+            disabled={
+              !hasDroitUpdate ||
+              (values.peiVoieTexte != null &&
+                values.peiVoieTexte?.trim() !== "")
+            }
           />
+          {isSaisieVoieEnabled && (
+            <>
+              <CheckBoxInput
+                name="voieSaisieLibre"
+                label="Voie non trouvée ?"
+                disabled={!hasDroitUpdate}
+              />
+              {values.voieSaisieLibre && (
+                <TextInput
+                  name="peiVoieTexte"
+                  label="Voie (saisie libre)"
+                  required={false} // TODO XOR entre voieId et voieText
+                  disabled={
+                    !hasDroitUpdate ||
+                    (values.peiVoieId != null &&
+                      values.peiVoieId?.trim() !== "")
+                  }
+                />
+              )}
+            </>
+          )}
         </Col>
         <Col>
           <CheckBoxInput

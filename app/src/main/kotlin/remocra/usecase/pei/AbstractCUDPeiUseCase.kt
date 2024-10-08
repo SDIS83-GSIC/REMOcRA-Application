@@ -2,6 +2,7 @@ package remocra.usecase.pei
 
 import com.google.inject.Inject
 import remocra.GlobalConstants
+import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.UserInfo
@@ -11,6 +12,7 @@ import remocra.data.PeiForCalculDispoData
 import remocra.data.PeiForNumerotationData
 import remocra.data.PenaData
 import remocra.data.PibiData
+import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
@@ -22,6 +24,7 @@ import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import java.time.ZonedDateTime
 
@@ -32,6 +35,8 @@ import java.time.ZonedDateTime
  * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
 abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>(typeOperation) {
+    @Inject
+    lateinit var appSettings: AppSettings
 
     @Inject
     lateinit var calculNumerotationUseCase: NumerotationUseCase
@@ -185,4 +190,32 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
      * Méthode permettant de décrire tout ce qui est spécifique à chaque opération, typiquement le service métier à appeler
      */
     protected abstract fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any?
+
+    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
+        val isInZoneCompetence = peiRepository.isInZoneCompetence(
+            srid = appSettings.sridInt,
+            coordonneeY = element.coordonneeY,
+            coordonneeX = element.coordonneeX,
+            idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
+        )
+        if (!isInZoneCompetence) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_ZONE_COMPETENCE)
+        }
+
+        val isSaisieLibreEnabled = parametresProvider.getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!
+        // Normalement impossible, sauf sur changement du paramètre sans nettoyage
+        if (!isSaisieLibreEnabled && element.peiVoieTexte != null) {
+            throw RemocraResponseException(ErrorType.PEI_VOIE_SAISIE_LIBRE_FORBIDDEN)
+        }
+
+        // On veut obligatoirement l'un ou l'autre des champs
+        if (element.peiVoieTexte == null && element.peiVoieId == null) {
+            throw RemocraResponseException(ErrorType.PEI_VOIE_OBLIGATOIRE)
+        }
+
+        // On ne veut pas les 2 champs en même temps (XOR non nullable)
+        if (!element.peiVoieTexte.isNullOrBlank() && element.peiVoieId != null) {
+            throw RemocraResponseException(ErrorType.PEI_VOIE_XOR)
+        }
+    }
 }

@@ -20,6 +20,8 @@ class CreatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.INS
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
+        super.checkContraintes(userInfo, element)
+
         // TODO Vérifier zone de compétence
     }
 }

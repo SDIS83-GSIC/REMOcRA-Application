@@ -14,6 +14,7 @@ export type PeiEntity = {
 
   peiCommuneId: string;
   peiVoieId: string;
+  peiVoieTexte: string;
   peiNumeroVoie: number;
   peiSuffixeVoie: string;
   peiLieuDitId: string;

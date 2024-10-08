@@ -258,6 +258,11 @@ open class Pei(
      */
     val EN_FACE: TableField<Record, Boolean?> = createField(DSL.name("pei_en_face"), SQLDataType.BOOLEAN, this, "Sert à spécifier si le PEI se trouve sur le trottoir d'en face de l'adresse indiquée")
 
+    /**
+     * The column <code>remocra.pei.pei_voie_texte</code>.
+     */
+    val VOIE_TEXTE: TableField<Record, String?> = createField(DSL.name("pei_voie_texte"), SQLDataType.CLOB, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -671,6 +676,7 @@ open class Pei(
         get(): TourneePath = lTourneePei().tournee()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("geometrie_point_pei"), "((geometrytype(pei_geometrie) = 'POINT'::text))", true),
+        Internal.createCheck(this, DSL.name("pei_voie"), "((((pei_voie_id IS NULL) AND (pei_voie_texte IS NULL)) OR ((pei_voie_id IS NULL) <> (pei_voie_texte IS NULL))))", true),
     )
     override fun `as`(alias: String): Pei = Pei(DSL.name(alias), this)
     override fun `as`(alias: Name): Pei = Pei(alias, this)
