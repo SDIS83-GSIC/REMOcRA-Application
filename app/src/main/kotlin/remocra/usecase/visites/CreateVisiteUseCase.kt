@@ -109,18 +109,34 @@ class CreateVisiteUseCase @Inject constructor(
             }
         }
 
+        val typePei = peiRepository.getTypePei(element.visitePeiId)
+
         // Vérification de la validité du CDP
-        if (element.isCtrlDebitPression && // Si la case CDP est coché
-            (
-                (element.ctrlDebitPression == null) || // Et que l'objet est null
-                    (
-                        element.ctrlDebitPression?.ctrlDebit == null && // Ou ne contient que des valeurs null
-                            element.ctrlDebitPression?.ctrlPression == null &&
-                            element.ctrlDebitPression?.ctrlPressionDyn == null
-                        )
-                )
-        ) {
-            throw RemocraResponseException(ErrorType.VISITE_CDP_INVALIDE)
+
+        if (element.isCtrlDebitPression) {
+            if (typePei == TypePei.PIBI && // Si je suis un PIBI
+                (
+                    (element.ctrlDebitPression == null) || // Et que l'objet est null
+                        (
+                            element.ctrlDebitPression?.ctrlDebit == null && // Ou ne contient que des valeurs null
+                                element.ctrlDebitPression?.ctrlPression == null &&
+                                element.ctrlDebitPression?.ctrlPressionDyn == null
+                            )
+                    )
+            ) {
+                throw RemocraResponseException(ErrorType.VISITE_CDP_INVALIDE)
+            } else if (typePei == TypePei.PENA && // Si je suis un PENA
+                (
+                    (element.ctrlDebitPression != null) && // Et que l'objet n'est pas null
+                        (
+                            element.ctrlDebitPression?.ctrlDebit != null || // Ou contient des valeurs non-nulle
+                                element.ctrlDebitPression?.ctrlPression != null ||
+                                element.ctrlDebitPression?.ctrlPressionDyn != null
+                            )
+                    )
+            ) {
+                throw RemocraResponseException(ErrorType.VISITE_CDP_PENA)
+            }
         }
     }
 
@@ -139,7 +155,7 @@ class CreateVisiteUseCase @Inject constructor(
         )
 
         // Insertion du CDP, si nécessaire : remocra.visite_ctrl_debit_pression
-        if (element.isCtrlDebitPression && element.ctrlDebitPression != null) {
+        if (element.isCtrlDebitPression && peiRepository.getTypePei(element.visitePeiId) == TypePei.PIBI) {
             visiteRepository.insertCDP(
                 VisiteCtrlDebitPression(
                     visiteCtrlDebitPressionVisiteId = element.visiteId,

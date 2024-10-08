@@ -11,15 +11,18 @@ import PositiveNumberInput, {
   TextAreaInput,
 } from "../../components/Form/Form.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
+import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 
 const SimplifiedVisiteForm = ({
   index,
   typeVisite,
   listeAnomaliesAssignable,
+  typePei,
 }: {
   index: number;
   typeVisite?: TYPE_VISITE;
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
+  typePei: TYPE_PEI;
 }) => {
   const { values } = useFormikContext<VisiteTourneeEntity>();
 
@@ -113,7 +116,7 @@ const SimplifiedVisiteForm = ({
       activesKeys={activesKeysFormulaire}
       handleShowClose={handleShowCloseFormulaire}
       list={[
-        ...(values.isCtrlDebitPression === true
+        ...(values.isCtrlDebitPression === true && typePei === TYPE_PEI.PIBI
           ? [
               {
                 header: "Mesures",

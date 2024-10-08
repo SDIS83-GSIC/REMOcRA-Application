@@ -112,6 +112,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_DELETE_NOT_LAST(2114, "La visite que vous essayez de supprimer n'est pas la dernière en date de ce PEI"),
     VISITE_RECEPTION_NOT_FIRST(2115, "La visite de type ${TypeVisite.RECEPTION} doit être la première visite du PEI"),
     VISITE_RECO_INIT_NOT_FIRST(2116, "La visite de type ${TypeVisite.RECO_INIT} doit être la deuxième visite du PEI"),
+    VISITE_CDP_PENA(2117, "Il est impossible de saisir un Contrôle Débit Pression pour un PENA"),
 
     VISITE_TYPE_FORBIDDEN(
         2200,

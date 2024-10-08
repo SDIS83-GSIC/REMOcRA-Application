@@ -100,6 +100,7 @@ const IterableVisiteForm = ({
                         listeAnomaliesAssignable={
                           listeAnomaliesAssignable[currentPeiId]
                         }
+                        typePei={currentInformation.peiTypePei}
                       />
                     </Col>
                   </Row>
