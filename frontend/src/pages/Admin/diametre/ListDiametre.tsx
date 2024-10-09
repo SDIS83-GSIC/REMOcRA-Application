@@ -1,4 +1,4 @@
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconPei } from "../../../components/Icon/Icon.tsx";
 import QueryTable, {
@@ -14,21 +14,20 @@ import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { URLS } from "../../../routes.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import FilterValuesDiametre from "./FilterDiametre.tsx";
 
 const ListDiametre = () => {
   return (
     <>
-      <PageTitle title="Liste des diamètres" icon={<IconPei />} />
       <Container>
-        <Button
-          type="button"
-          variant="primary"
-          href={URLS.ADD_DIAMETRE}
-          className="mb-1"
-        >
-          Ajouter un diamètre
-        </Button>
+        <PageTitle
+          title="Liste des diamètres"
+          icon={<IconPei />}
+          right={
+            <CreateButton title={"Ajouter diamètre"} href={URLS.ADD_DIAMETRE} />
+          }
+        />
         <QueryTable
           filterValuesToVariable={FilterValuesDiametre}
           query={url`/api/diametre/get`}
