@@ -1,4 +1,5 @@
 import { Button } from "react-bootstrap";
+import React from "react";
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../Entities/UtilisateurEntity.tsx";
@@ -13,10 +14,10 @@ import {
 } from "../components/Icon/Icon.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
 import EditColumn, {
+  ActionColumn,
   BooleanColumn,
   DeleteColumn,
   ListePeiColumn,
-  SeeColumn,
 } from "../components/Table/columns.tsx";
 import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../droits.tsx";
@@ -31,6 +32,10 @@ import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
 import url from "../module/fetch.tsx";
 import { URLS } from "../routes.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../components/Table/TableActionColumn.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime from "./formatDateUtils.tsx";
 
@@ -218,68 +223,62 @@ function getColumnPeiByStringArray(
     }
   });
 
-  column.push(
-    SeeColumn({
-      to: (peiId) => URLS.FICHE_RESUME(peiId),
-      title: true,
-      accessor: "peiId",
-      title: false,
-    }),
-  );
-
   {
+    const listeButton: ButtonType[] = [];
+    if (hasDroit(user, TYPE_DROIT.PEI_R)) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.SEE,
+        href: (idPei) => URLS.FICHE_RESUME(idPei),
+      });
+    }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {
-      column.push(
-        EditColumn({
-          to: (peiId) => URLS.UPDATE_PEI(peiId),
-          title: true,
-          accessor: "peiId",
-          title: false,
-        }),
-      );
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.UPDATE,
+        href: (idPei) => URLS.UPDATE_PEI(idPei),
+      });
     }
-  }
-  {
     if (hasDroit(user, TYPE_DROIT.PEI_D)) {
-      column.push(
-        DeleteColumn({
-          path: url`/api/pei/delete/`,
-          title: false,
-          disable: (v) => {
-            return v.original.tourneeId != null;
-          },
-          textDisable: "Impossible de supprimer un PEI affecté à une tournée",
-          accessor: "peiId",
-        }),
-      );
+      listeButton.push({
+        disable: (v) => {
+          return v.original.tourneeLibelle !== "";
+        },
+        textDisable: "Impossible de supprimer un PEI affecté à une tournée",
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.DELETE,
+        path: url`/api/pei/delete/`,
+      });
     }
+    if (hasDroit(user, TYPE_DROIT.PEI_U)) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        href: (idPei) => URLS.UPDATE_PENA_ASPIRATION(idPei),
+        type: TYPE_BUTTON.CUSTOM,
+        icon: <IconAireAspiration />,
+        textEnable: "Gérer les aires d'aspirations",
+        classEnable: "warning",
+        hide: (original: any) => {
+          return original.peiTypePei !== TYPE_PEI.PENA;
+        },
+      });
+    }
+    column.push(
+      ActionColumn({
+        Header: "Actions",
+        accessor: "peiId",
+        buttons: listeButton,
+      }),
+    );
   }
-
-  column.push({
-    Cell: (row: any) => {
-      return (
-        <>
-          {row.value.peiTypePei === TYPE_PEI.PENA && (
-            <TooltipCustom
-              tooltipText=" Gérer les aires d'aspiration"
-              tooltipId={row.value.peiId}
-            >
-              <Button
-                variant="link"
-                href={URLS.UPDATE_PENA_ASPIRATION(row.value.peiId)}
-              >
-                <IconAireAspiration />
-              </Button>
-            </TooltipCustom>
-          )}
-        </>
-      );
-    },
-    accessor: ({ peiTypePei, peiId }) => {
-      return { peiTypePei, peiId };
-    },
-    width: 90,
-  });
 
   return column;
 }

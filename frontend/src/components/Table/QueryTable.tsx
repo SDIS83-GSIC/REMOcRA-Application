@@ -12,6 +12,7 @@ import Pagination, {
   usePaginationState,
 } from "./Pagination.tsx";
 import styles from "./Table.module.css";
+import { ButtonType } from "./TableActionColumn.tsx";
 
 export const useSortBy = () => {
   const { sortBy: init = {} }: any = useQueryParams();
@@ -386,5 +387,6 @@ export type columnType = {
   classNameHeader?: string;
   width?: number;
 };
+export type actionColumnType = columnType & { buttons: Array<ButtonType> };
 
 export default QueryTable;

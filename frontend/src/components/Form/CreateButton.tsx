@@ -9,6 +9,10 @@ const CreateButton = ({ title, href, onClick }: CreateButtonType) => {
   );
 };
 
-type CreateButtonType = { title: string; href?: string; onClick?: (...args: any[]) => void };
+type CreateButtonType = {
+  title: string;
+  href?: string;
+  onClick?: (...args: any[]) => void;
+};
 
 export default CreateButton;

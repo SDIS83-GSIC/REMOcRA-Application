@@ -6,13 +6,13 @@ import {
   IconEdit,
   IconList,
   IconLock,
-  IconSee,
   IconUnlock,
 } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
-import { columnType } from "./QueryTable.tsx";
+import { actionColumnType, columnType } from "./QueryTable.tsx";
+import { ActionButton } from "./TableActionColumn.tsx";
 
 const EditColumn = ({
   to,
@@ -22,6 +22,7 @@ const EditColumn = ({
   textDisable = "",
   ...option
 }: EditColumnType) => ({
+  // eslint-disable-next-line react/display-name
   Cell: (row: any) => {
     return (
       <>
@@ -128,26 +129,6 @@ type ListePeiColumnType = {
   accessor: string;
 };
 
-export const SeeColumn = ({
-  to,
-  title = true,
-  header,
-  ...options
-}: SeeColumnType) => ({
-  // eslint-disable-next-line react/display-name
-  Header: header,
-  Cell: (row) => {
-    return row?.value ? (
-      <Button variant="link" href={to(row.value)}>
-        <IconSee />
-        {title && <>&nbsp;Voir</>}
-      </Button>
-    ) : null;
-  },
-  width: title ? 70 : 50,
-  ...options,
-});
-
 type DeleteColumnType = {
   path: string;
   reload?: boolean;
@@ -202,6 +183,24 @@ export const DeleteColumn = ({
   ...options,
 });
 
+export const ActionColumn = ({
+  Header,
+  accessor,
+  sortField,
+  buttons,
+  ...options
+}: actionColumnType) => ({
+  // eslint-disable-next-line react/display-name
+  Header: Header,
+  accessor: accessor,
+  Cell: (row) => {
+    return <ActionButton buttons={buttons} row={row} />;
+  },
+  sortField: sortField,
+  width: 200,
+  ...options,
+});
+
 export const BooleanColumn = ({
   Header,
   accessor,
@@ -243,9 +242,3 @@ export const ProtectedColumn = ({
   sortField: sortField,
   ...options,
 });
-
-type SeeColumnType = {
-  to: (id: string) => any;
-  header?: ReactNode;
-  title?: boolean;
-};
