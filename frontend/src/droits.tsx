@@ -22,7 +22,7 @@ type AuthorizationEntity = {
   isPublic?: boolean;
 };
 
-function isAuthorized(user: UtilisateurEntity, droits: TYPE_DROIT[]) {
+export function isAuthorized(user: UtilisateurEntity, droits: TYPE_DROIT[]) {
   return droits.some((droit) => hasDroit(user, droit));
 }
 
@@ -30,6 +30,6 @@ export function hasDroit(user: UtilisateurEntity, droit: TYPE_DROIT) {
   return user.droits.includes(droit);
 }
 
-const Forbidden = () => {
+export const Forbidden = () => {
   return <div>Vous n&apos;avez pas le droit d&apos;accéder à cette page</div>;
 };

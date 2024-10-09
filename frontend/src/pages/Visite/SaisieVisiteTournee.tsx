@@ -1,7 +1,8 @@
 import { useFormikContext } from "formik";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
@@ -13,8 +14,12 @@ import {
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import { IconTournee } from "../../components/Icon/Icon.tsx";
+import { Forbidden, hasDroit, isAuthorized } from "../../droits.tsx";
 import { MapAnomalieCompleteByPeiId } from "../../Entities/AnomalieEntity.tsx";
 import { PeiVisiteTourneeInformationEntity } from "../../Entities/PeiEntity.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
 import {
   SimplifiedVisiteEntity,
   VisiteTourneeEntity,
@@ -26,8 +31,40 @@ import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import IterableVisiteForm from "./IterableVisiteForm.tsx";
 
-const SaisieVisiteTournee = () => {
+// Pour respecter la loi des Hooks et empécher de charger des données (useGet) pour un utilisateur qui n'a pas les droits
+// Le router appel ce composant qui s'occupe de vérifier les droits et de valider ou non le passage vers le formulaire
+const ValidateAccessSaisieVisiteTournee = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const { tourneeId } = useParams();
+
+  // La vérification suivante s'ajoute aux conditions dans l'appel au composant dans routes.tsx
+  // Pour accéder à cet écran il faut :
+  // - le droit TOURNEE_R ou TOURNEE_A
+  // - au moins un droit de création de visite (parmis les 5 types de visite)
+  if (
+    !isAuthorized(user, [
+      TYPE_DROIT.VISITE_RECEP_C,
+      TYPE_DROIT.VISITE_RECO_INIT_C,
+      TYPE_DROIT.VISITE_NON_PROGRAMME_C,
+      TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C,
+      TYPE_DROIT.VISITE_RECO_C,
+    ])
+  ) {
+    return <Forbidden />;
+  }
+
+  return <SaisieVisiteTournee user={user} tourneeId={tourneeId} />;
+};
+
+export default ValidateAccessSaisieVisiteTournee;
+
+const SaisieVisiteTournee = ({
+  user,
+  tourneeId,
+}: {
+  user: UtilisateurEntity;
+  tourneeId: string;
+}) => {
   const navigate = useNavigate();
 
   const listeAnomaliesAssignable = useGet(
@@ -104,6 +141,7 @@ const SaisieVisiteTournee = () => {
         onSubmit={onSubmitResult} // Méthode appelée à l'obtention d'une réponse au Submit du formulaire
       >
         <VisiteTourneeForm
+          user={user}
           tourneeLibelle={tourneeInformations.data.tourneeLibelle}
           listPeiInformations={tourneeInformations.data.listPeiInformations}
           listeAnomaliesAssignable={listeAnomaliesAssignable.data}
@@ -114,8 +152,6 @@ const SaisieVisiteTournee = () => {
     )
   );
 };
-
-export default SaisieVisiteTournee;
 
 const getInitialValues = (_saveValues: VisiteTourneeEntity) => ({
   tourneeId: _saveValues.tourneeId,
@@ -146,12 +182,14 @@ export const prepareVariables = (_values: VisiteTourneeEntity) => ({
 });
 
 export const VisiteTourneeForm = ({
+  user,
   tourneeLibelle,
   listPeiInformations,
   listeAnomaliesAssignable,
   setSaveValues,
   results,
 }: {
+  user: UtilisateurEntity;
   tourneeLibelle: string;
   listPeiInformations: PeiVisiteTourneeInformationEntity[];
   listeAnomaliesAssignable: MapAnomalieCompleteByPeiId;
@@ -160,11 +198,31 @@ export const VisiteTourneeForm = ({
 }) => {
   const { values, setValues } = useFormikContext<VisiteTourneeEntity>();
 
-  const dynamicListTypeVisite = referenceTypeVisite.map((e) => ({
+  const listTypeVisite = referenceTypeVisite.map((e) => ({
     id: e.code,
     code: e.code,
     libelle: e.libelle,
   }));
+
+  // Retire les types de visite que l'utilisateur n'a pas le droit de sasir
+  const dynamicListTypeVisite = listTypeVisite.filter(
+    (e) =>
+      (!hasDroit(user, TYPE_DROIT.VISITE_RECEP_C)
+        ? e.code !== TYPE_VISITE.RECEPTION
+        : true) &&
+      (!hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_C)
+        ? e.code !== TYPE_VISITE.RECO_INIT
+        : true) &&
+      (!hasDroit(user, TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C)
+        ? e.code !== TYPE_VISITE.CTP
+        : true) &&
+      (!hasDroit(user, TYPE_DROIT.VISITE_RECO_C)
+        ? e.code !== TYPE_VISITE.RECOP
+        : true) &&
+      (!hasDroit(user, TYPE_DROIT.VISITE_NON_PROGRAMME_C)
+        ? e.code !== TYPE_VISITE.NP
+        : true),
+  );
 
   let enableCDP = false;
   if (values.visiteTypeVisite) {

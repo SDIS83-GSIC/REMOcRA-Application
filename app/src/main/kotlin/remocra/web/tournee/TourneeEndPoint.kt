@@ -16,7 +16,6 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.Params
@@ -161,7 +160,7 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/fetchTourneeVisiteInfo/{tourneeId}")
-    @Public("TODO trouver le bon droit")
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun fetchTourneeVisiteUseCase(@PathParam("tourneeId") tourneeId: UUID): Response =
         Response.ok().entity(fetchTourneeVisiteUseCase.fetchTourneeVisite(tourneeId)).build()
 }

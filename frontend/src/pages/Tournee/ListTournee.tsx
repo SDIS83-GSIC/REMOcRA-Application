@@ -25,7 +25,7 @@ import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
-import { hasDroit } from "../../droits.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -119,22 +119,6 @@ const ListTournee = () => {
         },
       }),
     );
-    // Colonne d'accès à la saisie en masse des visites
-    // TODO : Vérifier les droits
-    column.push(
-      LinkColumn({
-        to: (data) => URLS.TOURNEE_VISITE(data.tourneeId),
-        accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
-          return { tourneeId, tourneeUtilisateurReservationLibelle };
-        },
-        icon: <IconTournee />,
-        canInteractFunction(data) {
-          return data.tourneeUtilisateurReservationLibelle == null;
-        },
-        tooltipText: "Saisir toutes les visites de la tournée",
-        textDisable: "Impossible de saisir les visites d'une tournée réservée",
-      }),
-    );
     //colonne réorganisation PEI
     column.push({
       Cell: (row: any) => {
@@ -170,6 +154,34 @@ const ListTournee = () => {
       },
       width: 90,
     });
+
+    // Bouton d'accès à la saisie en masse des visites
+    const hasVisiteTourneeRight =
+      isAuthorized(user, [TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_R]) &&
+      isAuthorized(user, [
+        TYPE_DROIT.VISITE_RECEP_C,
+        TYPE_DROIT.VISITE_RECO_INIT_C,
+        TYPE_DROIT.VISITE_NON_PROGRAMME_C,
+        TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C,
+        TYPE_DROIT.VISITE_RECO_C,
+      ]);
+    if (hasVisiteTourneeRight) {
+      column.push(
+        LinkColumn({
+          to: (data) => URLS.TOURNEE_VISITE(data.tourneeId),
+          accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
+            return { tourneeId, tourneeUtilisateurReservationLibelle };
+          },
+          icon: <IconTournee />,
+          canInteractFunction(data) {
+            return data.tourneeUtilisateurReservationLibelle == null;
+          },
+          tooltipText: "Saisir toutes les visites de la tournée",
+          textDisable:
+            "Impossible de saisir les visites d'une tournée réservée",
+        }),
+      );
+    }
 
     column.push(
       DeleteColumn({

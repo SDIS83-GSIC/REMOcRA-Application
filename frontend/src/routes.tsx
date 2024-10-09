@@ -1,43 +1,43 @@
-import NoMatch from "./components/Router/NoMatch.tsx";
-import url from "./module/fetch.tsx";
-import UpdatePei from "./pages/Pei/UpdatePei.tsx";
-import AccueilPei from "./pages/Pei/AccueilPei.tsx";
-import CreatePei from "./pages/Pei/CreatePei.tsx";
-import AireAspiration from "./pages/Pena/AireAspiration.tsx";
-import Visite from "./pages/Visite/Visite.tsx";
-import Accueil from "./pages/Accueil/Accueil.tsx";
+import MapComponent from "./components/Map/Map.tsx";
+import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
-import ListEtude from "./pages/CouvertureHydraulique/Etude/ListEtude.tsx";
-import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
-import UpdateEtude from "./pages/CouvertureHydraulique/Etude/UpdateEtude.tsx";
-import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
-import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
-import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
-import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
-import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
-import ListTournee from "./pages/Tournee/ListTournee.tsx";
-import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
-import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
-import TourneePei from "./pages/Tournee/TourneePei.tsx";
+import NoMatch from "./components/Router/NoMatch.tsx";
 import { Authorization } from "./droits.tsx";
 import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
-import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
-import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
-import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
-import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
-import SaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
-import MapComponent from "./components/Map/Map.tsx";
-import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
-import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
+import url from "./module/fetch.tsx";
+import Accueil from "./pages/Accueil/Accueil.tsx";
+import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";
 import ListDiametre from "./pages/Admin/diametre/ListDiametre.tsx";
 import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
-import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";
+import CreateNature from "./pages/Admin/nature/CreateNature.tsx";
 import ListNature from "./pages/Admin/nature/ListNature.tsx";
 import UpdateNature from "./pages/Admin/nature/UpdateNature.tsx";
-import CreateNature from "./pages/Admin/nature/CreateNature.tsx";
-import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
 import CreateOrganisme from "./pages/Admin/organisme/CreateOrganisme.tsx";
+import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
 import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
+import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
+import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
+import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
+import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
+import ListEtude from "./pages/CouvertureHydraulique/Etude/ListEtude.tsx";
+import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
+import UpdateEtude from "./pages/CouvertureHydraulique/Etude/UpdateEtude.tsx";
+import CreatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
+import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
+import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
+import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
+import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
+import AccueilPei from "./pages/Pei/AccueilPei.tsx";
+import CreatePei from "./pages/Pei/CreatePei.tsx";
+import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
+import UpdatePei from "./pages/Pei/UpdatePei.tsx";
+import AireAspiration from "./pages/Pena/AireAspiration.tsx";
+import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
+import ListTournee from "./pages/Tournee/ListTournee.tsx";
+import TourneePei from "./pages/Tournee/TourneePei.tsx";
+import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
+import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
+import Visite from "./pages/Visite/Visite.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -195,8 +195,8 @@ export default [
         path: "tournee/visite-tournee/:tourneeId",
         element: (
           <Authorization
-            Component={SaisieVisiteTournee}
-            droits={[TYPE_DROIT.TOURNEE_A]}
+            Component={ValidateAccessSaisieVisiteTournee}
+            droits={[TYPE_DROIT.TOURNEE_R, TYPE_DROIT.TOURNEE_A]}
           />
         ),
       },
