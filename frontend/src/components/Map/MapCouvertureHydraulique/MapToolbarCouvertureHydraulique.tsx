@@ -5,7 +5,10 @@ import Map from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, useState } from "react";
-import { ToggleButton } from "react-bootstrap";
+import { Button, ToggleButton } from "react-bootstrap";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
@@ -17,6 +20,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
     dataPeiProjetLayer,
     workingLayer,
     etudeId,
+    reseauImporte,
     disabledEditPeiProjet,
   }: {
     map: Map;
@@ -24,10 +28,20 @@ const MapToolbarCouvertureHydraulique = forwardRef(
     dataPeiProjetLayer: any;
     workingLayer: any;
     etudeId: string;
+    reseauImporte: boolean;
     disabledEditPeiProjet: boolean;
   }) => {
-    const [show, setShow] = useState(false);
+    const { success: successToast, error: errorToast } = useToastContext();
+
+    const [showCreatePeiProjet, setShowPeiProjet] = useState(false);
+    const handleClosePeiProjet = () => setShowPeiProjet(false);
     const [pointPeiProjet, setPointPeiProjet] = useState<Point | null>(null);
+
+    const [showTraceeCouverture, setShowTraceeCouverture] = useState(false);
+    const handleCloseTraceeCouverture = () => setShowTraceeCouverture(false);
+    const [listePeiId, setListePeiId] = useState<string[]>([]);
+    const [listePeiProjetId, setListePeiProjetId] = useState<string[]>([]);
+
     const [activeTool, setActiveTool] = useState<string>();
 
     const measureStyle = new Style({
@@ -127,7 +141,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           draw.on("drawend", async (event) => {
             const geometry = event.feature.getGeometry();
             setPointPeiProjet(geometry);
-            setShow(true);
+            setShowPeiProjet(true);
           });
           map.addInteraction(draw);
         }
@@ -138,7 +152,86 @@ const MapToolbarCouvertureHydraulique = forwardRef(
       }
     }
 
-    const handleClose = () => setShow(false);
+    /**
+     * Permet de dessiner un point pour la création des PEI en projet
+     */
+    async function calculCouverture() {
+      // On va chercher les identifiants des PEI sélectionnées
+      const listePeiId: string[] = [];
+      const listePeiProjetId: string[] = [];
+      map
+        .getInteractions()
+        .getArray()
+        .find((e) => e instanceof Select)
+        ?.getFeatures()
+        .forEach((e) => {
+          const point = e.getProperties();
+          if (point.typePointCarte === "PEI_PROJET") {
+            listePeiProjetId.push(point.pointId);
+          }
+          if (point.typePointCarte === "PEI") {
+            listePeiId.push(point.pointId);
+          }
+        });
+
+      if (listePeiId.length === 0 && listePeiProjetId.length === 0) {
+        return;
+      }
+
+      setListePeiId(listePeiId);
+      setListePeiProjetId(listePeiProjetId);
+
+      // Si l'étude a un réseau importé alors on demande quel réseau utiliser.
+      if (reseauImporte) {
+        setShowTraceeCouverture(true);
+      } else {
+        (
+          await fetch(
+            url`/api/couverture-hydraulique/calcul/` + etudeId,
+            getFetchOptions({
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                listePeiId: listePeiId,
+                listePeiProjetId: listePeiProjetId,
+                useReseauImporte: false,
+                useReseauImporteWithReseauCourant: false,
+              }),
+            }),
+          )
+        )
+          .text()
+          .then(() => {
+            successToast("Couverture hydraulique tracée");
+          })
+          .catch((reason: string) => {
+            errorToast(reason);
+          });
+      }
+    }
+
+    /**
+     * Permet de dessiner un point pour la création des PEI en projet
+     */
+    async function clearCouverture() {
+      (
+        await fetch(
+          url`/api/couverture-hydraulique/calcul/clear/` + etudeId,
+          getFetchOptions({
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          }),
+        )
+      )
+        .text()
+        .then(() => {
+          successToast("Couverture hydraulique effacée");
+        })
+        .catch((reason: string) => {
+          errorToast(reason);
+        });
+    }
+
     const tools = {
       create: {
         action: toggleCreatePeiProjet,
@@ -182,7 +275,32 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           activeTool={activeTool}
           disabled={disabledEditPeiProjet}
         />
-        <Volet handleClose={handleClose} show={show} className="w-auto">
+        <Button
+          variant="outline-primary"
+          onClick={() => calculCouverture()}
+          disabled={
+            disabledEditPeiProjet &&
+            (listePeiId.length === 0 || listePeiProjetId.length === 0)
+          }
+        >
+          Lancer une simulation
+        </Button>
+        <Button
+          variant="outline-primary"
+          onClick={() => clearCouverture()}
+          disabled={
+            disabledEditPeiProjet &&
+            (listePeiId.length === 0 || listePeiProjetId.length === 0)
+          }
+        >
+          Effacer la couverture tracée
+        </Button>
+
+        <Volet
+          handleClose={handleClosePeiProjet}
+          show={showCreatePeiProjet}
+          className="w-auto"
+        >
           <CreatePeiProjet
             coordonneeX={pointPeiProjet?.getFlatCoordinates()[0]}
             coordonneeY={pointPeiProjet?.getFlatCoordinates()[1]}
@@ -190,8 +308,21 @@ const MapToolbarCouvertureHydraulique = forwardRef(
             etudeId={etudeId}
             onSubmit={() => {
               dataPeiProjetLayer.getSource().refresh();
-              handleClose();
+              handleClosePeiProjet();
             }}
+          />
+        </Volet>
+
+        <Volet
+          handleClose={handleCloseTraceeCouverture}
+          show={showTraceeCouverture}
+          className="w-auto"
+        >
+          <TraceeCouvertureForm
+            etudeId={etudeId}
+            listePeiId={listePeiId}
+            listePeiProjetId={listePeiProjetId}
+            closeVolet={handleCloseTraceeCouverture}
           />
         </Volet>
       </>

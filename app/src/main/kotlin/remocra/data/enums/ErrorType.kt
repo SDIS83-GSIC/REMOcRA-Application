@@ -201,6 +201,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ETUDE_DIAMETRE_MANQUANT(4005, "Le diamètre doit être renseigné."),
     ETUDE_DIAMETRE_CANALISATION_MANQUANT(4006, "Le diamètre doit être renseigné."),
 
+    CALCUL_COUVERTURE_PARAMETRE_PROFONDEUR_MANQUANT(4008, "Le paramètre ${ParametreEnum.PROFONDEUR_COUVERTURE} doit être renseigné."),
+    CALCUL_COUVERTURE_DECI_DISTANCE_MAX_PARCOURS_MANQUANT(4009, "Le paramètre ${ParametreEnum.DECI_DISTANCE_MAX_PARCOURS} doit être renseigné."),
+    CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT(4010, "Le paramètre ${ParametreEnum.DECI_ISODISTANCES} doit être renseigné."),
+
     /***
      * ***********************************************************************
      * Courrier

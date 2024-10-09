@@ -11,9 +11,11 @@ import MapToolbarCouvertureHydraulique from "./MapToolbarCouvertureHydraulique.t
 const MapCouvertureHydraulique = ({
   etudeId,
   disabledEditPeiProjet,
+  reseauImporte,
 }: {
   etudeId: string;
   disabledEditPeiProjet: boolean;
+  reseauImporte: boolean;
 }) => {
   const [dataPeiProjetLayer, setDataPeiProjetLayer] = useState();
 
@@ -109,6 +111,7 @@ const MapCouvertureHydraulique = ({
             dataPeiLayer={dataPeiLayer}
             dataPeiProjetLayer={dataPeiProjetLayer}
             disabledEditPeiProjet={disabledEditPeiProjet}
+            reseauImporte={reseauImporte}
           />
           <MapComponent
             map={map}

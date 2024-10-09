@@ -24,6 +24,7 @@ const MapEtude = () => {
             EtudeStatutEnum[etudeState?.data?.etudeStatut] ===
             EtudeStatutEnum.TERMINEE
           }
+          reseauImporte={etudeState?.data?.reseauImporte}
         />
       </>
     )
