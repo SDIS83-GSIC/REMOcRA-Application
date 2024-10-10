@@ -458,7 +458,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                     defaultOtherProperties={{
                       isPhotoPei: false,
                     }}
-                    autreFormParam={(index: number, listeElements: any[]) => (
+                    otherFormParam={(index: number, listeElements: any[]) => (
                       <>
                         {
                           // Si c'est une image
