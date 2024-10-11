@@ -46,6 +46,8 @@ export const URLS = {
   VIEW_COURRIER: url`/create-courrier/view-courrier`,
 
   // Module DECI
+  DECI_CARTE: url`/deci/carte`,
+
   PEI: url`/deci/pei`,
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
@@ -152,7 +154,7 @@ export default [
         ),
       },
       {
-        path: "pei/carte",
+        path: "carte",
         element: <Authorization Component={MapComponent} isPublic={true} />,
       },
       {
