@@ -43,4 +43,5 @@ export type SimplifiedVisiteEntity = {
   ctrlDebitPression: CtrlDebitPressionEntity;
   isNoAnomalieChecked: boolean;
   isSameAnomalieChecked: boolean;
+  isModified: boolean;
 };

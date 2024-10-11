@@ -1,5 +1,5 @@
+import classNames from "classnames";
 import { FieldArray } from "formik";
-import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { MapAnomalieCompleteByPeiId } from "../../Entities/AnomalieEntity.tsx";
 import { PeiVisiteTourneeInformationEntity } from "../../Entities/PeiEntity.tsx";
@@ -18,16 +18,13 @@ const IterableVisiteForm = ({
   listPeiInformations,
   results,
 }: IterableVisiteFormType) => {
-  // Sauvegarde des anomalies tel qu'avant la saisie de la visite
-  const listeAnomalieInitiale: MapAnomalieCompleteByPeiId =
-    listeAnomaliesAssignable;
   return (
     <FieldArray
       name={name}
       render={() => (
         <>
           {listeElements?.map((value: any, index: number) => {
-            const currentPeiId = listeElements[index].visitePeiId;
+            const currentPeiId = value.visitePeiId;
             const currentInformation =
               listPeiInformations[
                 listPeiInformations.findIndex(
@@ -41,7 +38,13 @@ const IterableVisiteForm = ({
 
             return (
               <>
-                <div key={index} className="bg-light m-4 p-3 border rounded-3">
+                <div
+                  key={index}
+                  className={classNames(
+                    "bg-light m-4 p-3 border rounded-3",
+                    value.isModified && "border border-success",
+                  )}
+                >
                   {results && (
                     <Row className="bg-danger">
                       {results[currentPeiId]?.message}
@@ -103,9 +106,6 @@ const IterableVisiteForm = ({
                         listeAnomaliesAssignable={
                           listeAnomaliesAssignable[currentPeiId]
                         }
-                        listeAnomalieInitiale={
-                          listeAnomalieInitiale[currentPeiId]
-                        }
                         typePei={currentInformation.peiTypePei}
                       />
                     </Col>
@@ -119,7 +119,9 @@ const IterableVisiteForm = ({
     />
   );
 };
+
 export default IterableVisiteForm;
+
 type IterableVisiteFormType = {
   name: string;
   listeElements: SimplifiedVisiteEntity[];

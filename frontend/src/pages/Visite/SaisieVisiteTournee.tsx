@@ -116,6 +116,7 @@ const SaisieVisiteTournee = ({
         },
         isNoAnomalieChecked: false,
         isSameAnomalieChecked: false,
+        isModified: false,
       }),
     );
     return {
@@ -315,6 +316,9 @@ export const VisiteTourneeForm = ({
           type="submit"
           variant="primary"
           onClick={() => setSaveValues(values)}
+          disabled={values.listeSimplifiedVisite.some(
+            (visite) => visite.isModified === false,
+          )}
         >
           Valider
         </Button>

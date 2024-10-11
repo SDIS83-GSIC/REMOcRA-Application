@@ -19,13 +19,11 @@ const SimplifiedVisiteForm = ({
   index,
   typeVisite,
   listeAnomaliesAssignable,
-  listeAnomalieInitiale,
   typePei,
 }: {
   index: number;
   typeVisite?: TYPE_VISITE;
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
-  listeAnomalieInitiale: AnomalieCompleteEntity[];
   typePei: TYPE_PEI;
 }) => {
   const { values, setFieldValue } = useFormikContext<VisiteTourneeEntity>();
@@ -118,6 +116,15 @@ const SimplifiedVisiteForm = ({
               values.listeSimplifiedVisite[index].isNoAnomalieChecked ||
               values.listeSimplifiedVisite[index].isSameAnomalieChecked
             }
+            onChange={() => {
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].listeAnomalie[${anomalieIndex}].isAssigned`,
+                !values.listeSimplifiedVisite[index].listeAnomalie[
+                  anomalieIndex
+                ].isAssigned,
+              );
+              setFieldValue(`listeSimplifiedVisite[${index}].isModified`, true);
+            }}
           />
         );
       }),
@@ -146,10 +153,14 @@ const SimplifiedVisiteForm = ({
                 if (values.listeSimplifiedVisite[index].isNoAnomalieChecked) {
                   setFieldValue(
                     `listeSimplifiedVisite[${index}].listeAnomalie`,
-                    listeAnomalieInitiale,
+                    listeAnomaliesAssignable,
+                  );
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].isModified`,
+                    false,
                   );
                 } else {
-                  const listeAnomalieUnasigned = listeAnomalieInitiale.map(
+                  const listeAnomalieUnasigned = listeAnomaliesAssignable.map(
                     (anomalie) => ({
                       ...anomalie,
                       isAssigned: false,
@@ -158,6 +169,10 @@ const SimplifiedVisiteForm = ({
                   setFieldValue(
                     `listeSimplifiedVisite[${index}].listeAnomalie`,
                     listeAnomalieUnasigned,
+                  );
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].isModified`,
+                    true,
                   );
                 }
               }}
@@ -183,8 +198,19 @@ const SimplifiedVisiteForm = ({
                 );
                 setFieldValue(
                   `listeSimplifiedVisite[${index}].listeAnomalie`,
-                  listeAnomalieInitiale,
+                  listeAnomaliesAssignable,
                 );
+                if (values.listeSimplifiedVisite[index].isSameAnomalieChecked) {
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].isModified`,
+                    false,
+                  );
+                } else {
+                  setFieldValue(
+                    `listeSimplifiedVisite[${index}].isModified`,
+                    true,
+                  );
+                }
               }}
               disabled={values.listeSimplifiedVisite[index].isNoAnomalieChecked}
             />
@@ -192,12 +218,16 @@ const SimplifiedVisiteForm = ({
         </Col>
         <Col xs={"auto"} className="text-align-center">
           <Button
-            onClick={() =>
+            onClick={() => {
               setFieldValue(
                 `listeSimplifiedVisite[${index}].listeAnomalie`,
-                listeAnomalieInitiale,
-              )
-            }
+                listeAnomaliesAssignable,
+              );
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].isModified`,
+                false,
+              );
+            }}
             disabled={
               values.listeSimplifiedVisite[index].isNoAnomalieChecked ||
               values.listeSimplifiedVisite[index].isSameAnomalieChecked

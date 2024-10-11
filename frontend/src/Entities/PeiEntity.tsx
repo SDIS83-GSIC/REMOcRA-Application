@@ -103,7 +103,7 @@ export type PeiVisiteTourneeInformationEntity = {
   communeCodePostal: string;
   peiDisponibiliteTerrestre: DISPONIBILITE_PEI;
   gestionnaireLibelle?: string;
-  concatAnomalies?: string;
+  listeAnomalies?: string;
   peiNextRecop?: Date;
   peiNextCtp?: Date;
 };
