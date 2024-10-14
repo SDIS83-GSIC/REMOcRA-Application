@@ -24,6 +24,9 @@ import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../../Entities/UtilisateurEntity.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import url from "../../module/fetch.tsx";
 
 export const getInitialValues = (
   _visitePeiId: string,
@@ -72,6 +75,22 @@ const VisiteForm = ({
   const { values, setValues }: { values: VisiteCompleteEntity } =
     useFormikContext();
 
+  const parametreVisiteTypeCdp = PARAMETRE.TYPE_VISITE_CDP;
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(parametreVisiteTypeCdp),
+    }}`,
+  );
+
+  let listeTypeVisiteCdp: TYPE_VISITE[] = [];
+
+  if (listeParametre.isResolved) {
+    listeTypeVisiteCdp = JSON.parse(
+      listeParametre?.data[parametreVisiteTypeCdp].parametreValeur,
+    );
+  }
+
   const {
     handleShowClose: handleShowCloseFormulaire,
     activesKeys: activesKeysFormulaire,
@@ -112,40 +131,45 @@ const VisiteForm = ({
   let filteredListAnomalie = [];
   let enableCDP = false;
   if (values.visiteTypeVisite) {
+    if (
+      listeTypeVisiteCdp.some(
+        (typeVisite) => values.visiteTypeVisite === typeVisite,
+      )
+    ) {
+      enableCDP = true;
+    } else {
+      values.isCtrlDebitPression = false;
+    }
+
     switch (values.visiteTypeVisite) {
-      case TYPE_VISITE.RECEPTION.toString(): {
+      case TYPE_VISITE.RECEPTION: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isReceptionAssignable === true,
         );
-        enableCDP = true;
         break;
       }
-      case TYPE_VISITE.RECO_INIT.toString(): {
+      case TYPE_VISITE.RECO_INIT: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isRecoInitAssignable === true,
         );
-        values.isCtrlDebitPression = false;
         break;
       }
-      case TYPE_VISITE.CTP.toString(): {
+      case TYPE_VISITE.CTP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isCTPAssignable === true,
         );
-        enableCDP = true;
         break;
       }
-      case TYPE_VISITE.RECOP.toString(): {
+      case TYPE_VISITE.RECOP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isRecopAssignable === true,
         );
-        values.isCtrlDebitPression = false;
         break;
       }
-      case TYPE_VISITE.NP.toString(): {
+      case TYPE_VISITE.NP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
           (e) => e.isNPAssignable === true,
         );
-        values.isCtrlDebitPression = false;
         break;
       }
       default: {

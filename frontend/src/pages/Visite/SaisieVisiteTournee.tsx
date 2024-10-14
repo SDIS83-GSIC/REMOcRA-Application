@@ -24,6 +24,7 @@ import {
   SimplifiedVisiteEntity,
   VisiteTourneeEntity,
 } from "../../Entities/VisiteEntity.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import referenceTypeVisite, {
   TYPE_VISITE,
 } from "../../enums/TypeVisiteEnum.tsx";
@@ -224,32 +225,32 @@ export const VisiteTourneeForm = ({
         : true),
   );
 
+  const parametreVisiteTypeCdp = PARAMETRE.TYPE_VISITE_CDP;
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(parametreVisiteTypeCdp),
+    }}`,
+  );
+
+  let listeTypeVisiteCdp: TYPE_VISITE[] = [];
+
+  if (listeParametre.isResolved) {
+    listeTypeVisiteCdp = JSON.parse(
+      listeParametre?.data[parametreVisiteTypeCdp].parametreValeur,
+    );
+  }
+
   let enableCDP = false;
   if (values.visiteTypeVisite) {
-    switch (values.visiteTypeVisite) {
-      case TYPE_VISITE.RECEPTION.toString(): {
-        enableCDP = true;
-        break;
-      }
-      case TYPE_VISITE.RECO_INIT.toString(): {
-        values.isCtrlDebitPression = false;
-        break;
-      }
-      case TYPE_VISITE.CTP.toString(): {
-        enableCDP = true;
-        break;
-      }
-      case TYPE_VISITE.RECOP.toString(): {
-        values.isCtrlDebitPression = false;
-        break;
-      }
-      case TYPE_VISITE.NP.toString(): {
-        values.isCtrlDebitPression = false;
-        break;
-      }
-      default: {
-        break;
-      }
+    if (
+      listeTypeVisiteCdp.some(
+        (typeVisite) => values.visiteTypeVisite === typeVisite,
+      )
+    ) {
+      enableCDP = true;
+    } else {
+      values.isCtrlDebitPression = false;
     }
   }
 
