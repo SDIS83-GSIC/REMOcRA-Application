@@ -38,6 +38,7 @@ import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
 import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
   peiId: data?.peiId ?? null,
@@ -273,12 +274,11 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     }}`,
   );
 
-  const VOIE_SAISIE_LIBRE = "VOIE_SAISIE_LIBRE";
-  const parametres = [VOIE_SAISIE_LIBRE];
+  const parametreVoieSaisieLibre = PARAMETRE.VOIE_SAISIE_LIBRE;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
-      listeParametreCode: JSON.stringify(parametres),
+      listeParametreCode: JSON.stringify(parametreVoieSaisieLibre),
     }}`,
   );
 
@@ -287,7 +287,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   if (listeParametre.isResolved) {
     // Le résultat est un String, on le parse pour récupérer le tableau
     isSaisieVoieEnabled = JSON.parse(
-      listeParametre?.data[VOIE_SAISIE_LIBRE].parametreValeur,
+      listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
   }
 

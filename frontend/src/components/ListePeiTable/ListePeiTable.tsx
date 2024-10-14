@@ -9,6 +9,7 @@ import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 
 const ListPei = ({
   filterPage,
@@ -20,9 +21,7 @@ const ListPei = ({
 
   let peiColonnes: COLUMN_PEI[] = [];
 
-  const PEI_COLONNES = "PEI_COLONNES";
-
-  const parametrePeiColonnes = [PEI_COLONNES];
+  const parametrePeiColonnes = PARAMETRE.PEI_COLONNES;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
@@ -33,7 +32,7 @@ const ListPei = ({
   if (listeParametre.isResolved) {
     // Le résultat est un String, on le parse pour récupérer le tableau
     peiColonnes = JSON.parse(
-      listeParametre?.data[PEI_COLONNES].parametreValeur,
+      listeParametre?.data[parametrePeiColonnes].parametreValeur,
     );
   }
 
