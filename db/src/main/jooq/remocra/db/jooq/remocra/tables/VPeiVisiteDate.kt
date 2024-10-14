@@ -93,7 +93,7 @@ open class VPeiVisiteDate(
                        WHEN ((nd_1.nature_deci_code)::text = 'PRIVE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_PRIVE'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'PUBLIC'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                       WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_PUBLIC'::text))
                        ELSE NULL::integer
@@ -102,7 +102,7 @@ open class VPeiVisiteDate(
                        WHEN ((nd_1.nature_deci_code)::text = 'PRIVE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_PRIVE'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'PUBLIC'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                       WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_PUBLIC'::text))
                        ELSE NULL::integer
