@@ -445,6 +445,18 @@ class TourneeRepository
             .fetchInto()
     }
 
+    fun setAvancementTournee(tourneeId: UUID, etat: Int) =
+        dsl.update(TOURNEE)
+            .set(TOURNEE.ETAT, etat)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
+
+    fun desaffectationTournee(tourneeId: UUID) =
+        dsl.update(TOURNEE)
+            .setNull(TOURNEE.RESERVATION_UTILISATEUR_ID)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
+
     data class CDPByPeiId(
         val peiId: UUID,
         val visiteCtrlDebitPressionVisiteId: UUID?,

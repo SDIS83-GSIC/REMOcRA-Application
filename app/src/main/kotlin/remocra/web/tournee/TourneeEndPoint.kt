@@ -26,7 +26,9 @@ import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.usecase.tournee.CreateTourneeUseCase
 import remocra.usecase.tournee.DeleteTourneeUseCase
+import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
+import remocra.usecase.tournee.ForcerEtatTourneeUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
@@ -57,6 +59,12 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateLTourneePeiUseCase: UpdateLTourneePeiUseCase
+
+    @Inject
+    lateinit var desaffecterTourneeUseCase: DesaffecterTourneeUseCase
+
+    @Inject
+    lateinit var forcerEtatTourneeUseCase: ForcerEtatTourneeUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -163,4 +171,31 @@ class TourneeEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun fetchTourneeVisiteUseCase(@PathParam("tourneeId") tourneeId: UUID): Response =
         Response.ok().entity(fetchTourneeVisiteUseCase.fetchTourneeVisite(tourneeId)).build()
+
+    @POST
+    @Path("/desaffecter/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_FORCER_POURCENTAGE_E])
+    fun desaffectationTournee(@PathParam("tourneeId") tourneeId: UUID): Response =
+        desaffecterTourneeUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneeReservationUtilisateurId = null),
+        ).wrap()
+
+    @POST
+    @Path("/avancement-force-0/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_FORCER_POURCENTAGE_E])
+    fun setAvancementTournee0(@PathParam("tourneeId") tourneeId: UUID): Response =
+        forcerEtatTourneeUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneeEtat = 0),
+        ).wrap()
+
+    @POST
+    @Path("/avancement-force-100/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_FORCER_POURCENTAGE_E])
+    fun setAvancementTournee100(@PathParam("tourneeId") tourneeId: UUID): Response =
+        forcerEtatTourneeUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneeEtat = 100),
+        ).wrap()
 }

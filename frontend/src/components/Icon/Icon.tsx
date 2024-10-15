@@ -36,6 +36,9 @@ export const IconSortList = () => <i className="fi fi-br-apps-sort" />;
 export const IconDragNDrop = () => (
   <i className="fi fi-br-grip-dots-vertical" />
 );
+export const IconDesaffecter = () => <i className="fi fi-br-user-slash" />;
+export const IconZeroPourcent = () => <i className="fi fi-br-square-0" />;
+export const IconCentPourcent = () => <i className="fi fi-br-percent-100" />;
 
 export const IconLock = () => <i className="fi fi-br-lock" />;
 export const IconUnlock = () => <i className="fi fi-br-unlock" />;

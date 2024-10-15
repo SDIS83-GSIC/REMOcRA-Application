@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
+import CreateButton from "../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
-import { IconSortList, IconTournee } from "../../components/Icon/Icon.tsx";
+import {
+  IconCentPourcent,
+  IconDesaffecter,
+  IconSortList,
+  IconTournee,
+  IconZeroPourcent,
+} from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
 import {
   ActionColumn,
@@ -14,21 +22,19 @@ import {
   columnType,
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../components/Table/TableActionColumn.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../Entities/UtilisateurEntity.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
-import { hasDroit, isAuthorized } from "../../droits.tsx";
-import CreateButton from "../../components/Form/CreateButton.tsx";
-import {
-  ButtonType,
-  TYPE_BUTTON,
-} from "../../components/Table/TableActionColumn.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -151,6 +157,7 @@ const ListTournee = () => {
   function isDisabled(v: any): boolean {
     return v.original.tourneeUtilisateurReservationLibelle != null;
   }
+
   // Bouton d'accès à la saisie en masse des visites
   const hasVisiteTourneeRight =
     isAuthorized(user, [TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_R]) &&
@@ -175,6 +182,66 @@ const ListTournee = () => {
       disable: (v) => {
         return isDisabled(v);
       },
+    });
+  }
+
+  // Bouton désaffectation de la tournée
+  if (hasDroit(user, TYPE_DROIT.TOURNEE_RESERVATION_D)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      textEnable: "Retirer la réservation",
+      path: url`/api/tournee/desaffecter/`,
+      icon: <IconDesaffecter />,
+      classEnable: "danger",
+      hide: (v: any) => {
+        return v.tourneeUtilisateurReservationLibelle == null;
+      },
+    });
+  }
+
+  // Bouton forcer l'état d'un tournée
+  if (hasDroit(user, TYPE_DROIT.TOURNEE_FORCER_POURCENTAGE_E)) {
+    // Forcer à 0%
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      conditionnalTextDisable: (row) => {
+        return row.original.tourneeEtat === 0
+          ? "L'état de la tournée est déjà à 0"
+          : "Impossible de modifier une tournée réservée";
+      },
+      textEnable: "Forcer l'état de la tournée à 0",
+      path: url`/api/tournee/avancement-force-0/`,
+      icon: <IconZeroPourcent />,
+      disable: (v) => {
+        return v.original.tourneeEtat === 0 || isDisabled(v);
+      },
+      classEnable: "warning",
+    });
+
+    // Forcer à 100%
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      conditionnalTextDisable: (row) => {
+        return row.original.tourneeEtat === 100
+          ? "L'état de la tournée est déjà à 100"
+          : "Impossible de modifier une tournée réservée";
+      },
+      textEnable: "Forcer l'état de la tournée à 100",
+      path: url`/api/tournee/avancement-force-100/`,
+      icon: <IconCentPourcent />,
+      disable: (v) => {
+        return v.original.tourneeEtat === 100 || isDisabled(v);
+      },
+      classEnable: "warning",
     });
   }
 
