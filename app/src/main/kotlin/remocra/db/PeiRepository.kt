@@ -12,6 +12,7 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Point
 import remocra.data.Params
 import remocra.data.PeiData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -578,6 +579,12 @@ class PeiRepository
             .fetchInto()
 
     fun deleteById(peiId: UUID) = dsl.deleteFrom(PEI).where(PEI.ID.eq(peiId)).execute()
+
+    fun getGeometriePei(peiId: UUID): Point =
+        dsl.select(PEI.GEOMETRIE)
+            .from(PEI)
+            .where(PEI.ID.eq(peiId))
+            .fetchSingleInto()
 }
 
 data class IdNumeroComplet(

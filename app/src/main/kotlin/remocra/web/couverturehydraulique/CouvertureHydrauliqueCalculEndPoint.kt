@@ -2,6 +2,7 @@ package remocra.web.couverturehydraulique
 
 import com.google.inject.Inject
 import jakarta.ws.rs.DELETE
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -13,9 +14,11 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.couverturehydraulique.CalculData
+import remocra.data.couverturehydraulique.ClosestPeiData
 import remocra.db.CouvertureHydrauliqueCalculRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.couverturehydraulique.CalculCouvertureUseCase
+import remocra.usecase.couverturehydraulique.ClosestPeiUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -24,6 +27,9 @@ import java.util.UUID
 class CouvertureHydrauliqueCalculEndPoint : AbstractEndpoint() {
     @Inject
     lateinit var calculCouvertureUseCase: CalculCouvertureUseCase
+
+    @Inject
+    lateinit var closestPeiUseCase: ClosestPeiUseCase
 
     @Inject
     lateinit var couvertureHydrauliqueCalculRepository: CouvertureHydrauliqueCalculRepository
@@ -68,5 +74,15 @@ class CouvertureHydrauliqueCalculEndPoint : AbstractEndpoint() {
         etudeId: UUID,
     ): Response {
         return Response.ok(couvertureHydrauliqueCalculRepository.deleteCouverture(etudeId)).build()
+    }
+
+    @POST
+    @Path("/pei-plus-proche")
+    @RequireDroits([Droit.ETUDE_R, Droit.ETUDE_U, Droit.ETUDE_C, Droit.ETUDE_D])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getPeiPlusProche(
+        closestPeiData: ClosestPeiData,
+    ): Response {
+        return Response.ok(closestPeiUseCase.execute(closestPeiData)).build()
     }
 }

@@ -7,6 +7,9 @@ import org.jooq.Record1
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
+import org.jooq.impl.DSL.selectFrom
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.Point
 import remocra.data.enums.CodeSdis
 import remocra.db.jooq.couverturehydraulique.tables.references.COUVERTURE_TRACEE
 import remocra.db.jooq.couverturehydraulique.tables.references.COUVERTURE_TRACEE_PEI
@@ -151,4 +154,41 @@ class CouvertureHydrauliqueCalculRepository @Inject constructor(
                 ),
         )
     }
+
+    /**
+     * La fonction plus_proche_pei prend en paramètre la géométrie du clic de l'utilisateur, la distance maximale de parcours
+     */
+    fun getClosestPei(
+        point: Point,
+        srid: Int,
+        distanceMaxParcours: Int,
+    ) =
+        dsl
+            .selectFrom(
+                """
+                    couverturehydraulique.plus_proche_pei(
+                        ST_GeomFromText('${point.toText()}', $srid), $distanceMaxParcours
+                    )
+                """,
+            )
+            .fetchOneInto<ClosestPeiResult>()
+
+    data class ClosestPeiResult(
+        val pei: UUID?,
+        val chemin: String?,
+        val dist: Double?,
+        var peiGeometry: Geometry? = null,
+    )
+
+    fun checkIsPeiProjet(peiId: UUID) =
+        dsl.fetchExists(
+            selectFrom(PEI_PROJET)
+                .where(PEI_PROJET.ID.eq(peiId)),
+        )
+
+    fun getGeometriePeiProjet(peiProjetId: UUID): Point =
+        dsl.select(PEI_PROJET.GEOMETRIE)
+            .from(PEI_PROJET)
+            .where(PEI_PROJET.ID.eq(peiProjetId))
+            .fetchSingleInto()
 }

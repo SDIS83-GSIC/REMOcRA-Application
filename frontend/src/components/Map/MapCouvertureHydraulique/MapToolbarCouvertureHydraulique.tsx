@@ -1,8 +1,10 @@
+import { Feature } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
-import { Point } from "ol/geom";
+import { WKT } from "ol/format";
+import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
 import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
-import { Fill, Stroke, Style } from "ol/style";
+import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, useState } from "react";
 import { Button, ToggleButton } from "react-bootstrap";
@@ -11,6 +13,7 @@ import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import Volet from "../../Volet/Volet.tsx";
+import { doFetch } from "../../Fetch/useFetch.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 
 const MapToolbarCouvertureHydraulique = forwardRef(
@@ -118,6 +121,40 @@ const MapToolbarCouvertureHydraulique = forwardRef(
      * Permet de dessiner un point pour la création des PEI en projet
      */
     function toggleCreatePeiProjet(active = false) {
+      const createCtrl2 = map
+        ?.getInteractions()
+        .getArray()
+        .filter((c) => c instanceof Draw)[0];
+      if (active) {
+        if (!createCtrl2) {
+          const draw = new Draw({
+            source: workingLayer.getSource(),
+            type: "Point",
+            style: (feature) => {
+              const geometryType = feature.getGeometry().getType();
+              if (geometryType === "Point") {
+                return measureStyle;
+              }
+            },
+          });
+          draw.on("drawstart", async () => {
+            // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
+            workingLayer.getSource().clear();
+          });
+          draw.on("drawend", async (event) => {
+            const geometry = event.feature.getGeometry();
+            setPointPeiProjet(geometry);
+            setShowPeiProjet(true);
+          });
+          map.addInteraction(draw);
+        }
+      }
+    }
+
+    /**
+     * Permet de dessiner un point pour la création des PEI en projet
+     */
+    function togglePeiPlusProche(active = false) {
       const createCtrl = map
         ?.getInteractions()
         .getArray()
@@ -140,16 +177,131 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           });
           draw.on("drawend", async (event) => {
             const geometry = event.feature.getGeometry();
-            setPointPeiProjet(geometry);
-            setShowPeiProjet(true);
+            const result = await doFetch(
+              url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
+              getFetchOptions({
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  longitude: geometry.getFlatCoordinates()[0],
+                  latitude: geometry.getFlatCoordinates()[1],
+                  srid: map.getView().getProjection().getCode().split(":")[1],
+                }),
+              }),
+            );
+            if (result?.chemin != null) {
+              const wktChemin = result.chemin;
+              const wktPei = result.peiGeometry;
+              const distance = result.dist;
+
+              // Affichage des features
+              cheminPlusCourtFeaturePei(workingLayer, wktPei, distance);
+              cheminPlusCourtFeatureChemin(workingLayer, wktChemin);
+              cheminPlusCourtFeatureClic(workingLayer, geometry);
+            } else {
+              errorToast("Aucun PEI n'a été trouvé.");
+            }
           });
           map.addInteraction(draw);
         }
-      } else {
-        if (createCtrl) {
-          map.removeInteraction(createCtrl);
-        }
       }
+    }
+
+    /**
+     * Permet de dessiner un rond rouge sur le PEI le plus proche
+     */
+    function cheminPlusCourtFeaturePei(
+      workingLayer: any,
+      wktPei: Geometry,
+      distance: number,
+    ) {
+      if (wktPei == null) {
+        return;
+      }
+      const featurePei = new WKT().readFeature(wktPei.split(";")[1]);
+
+      const circle = new Feature(
+        new Circle(featurePei.get("geometry").flatCoordinates),
+      );
+
+      circle.setStyle(
+        new Style({
+          geometry: new Point(featurePei.get("geometry").flatCoordinates),
+          image: new CircleStyle({
+            radius: 12,
+            stroke: new Stroke({
+              color: "#f01f18",
+              width: 3,
+            }),
+          }),
+          text: new Text({
+            font: "16px Calibri,sans-serif",
+            overflow: true,
+            fill: new Fill({
+              color: "white",
+            }),
+            text: Math.round(distance) + " m",
+            offsetY: -20,
+            stroke: new Stroke({ color: "black", width: 2 }),
+          }),
+        }),
+      );
+
+      workingLayer.getSource().addFeature(circle);
+    }
+
+    /**
+     * Permet de dessiner le chemin entre le clic et le PEI le plus proche
+     */
+    function cheminPlusCourtFeatureChemin(
+      workingLayer: any,
+      wktChemin: Geometry,
+    ) {
+      const featureChemin = new WKT().readFeature(wktChemin);
+      const path = new Feature({
+        geometry: new MultiLineString(
+          featureChemin.getGeometry().getCoordinates(),
+        ),
+        name: "chemin",
+      });
+
+      path.setStyle(
+        new Style({
+          stroke: new Stroke({
+            color: "#f01f18",
+            width: 3,
+          }),
+        }),
+      );
+
+      workingLayer.getSource().addFeature(path);
+    }
+
+    /**
+     * Permet de dessiner un rond à l'endroit du clic de l'utilisateur
+     */
+    function cheminPlusCourtFeatureClic(
+      workingLayer: any,
+      coordsClic: Geometry,
+    ) {
+      const pointClic = new Feature(coordsClic);
+      pointClic.setStyle(
+        new Style({
+          geometry: coordsClic,
+          image: new CircleStyle({
+            radius: 6,
+            stroke: new Stroke({
+              color: "black",
+              width: 2,
+            }),
+            fill: new Fill({
+              color: "white",
+            }),
+          }),
+        }),
+      );
+
+      workingLayer.getSource().addFeature(pointClic);
     }
 
     /**
@@ -239,6 +391,9 @@ const MapToolbarCouvertureHydraulique = forwardRef(
       select: {
         action: toggleSelect,
       },
+      peiPlusProche: {
+        action: togglePeiPlusProche,
+      },
     };
 
     function toggleTool(toolId) {
@@ -275,23 +430,24 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           activeTool={activeTool}
           disabled={disabledEditPeiProjet}
         />
+        <ToolbarButton
+          toolName={"peiPlusProche"}
+          toolLabel={"Trouver le PEI le plus proche"}
+          toggleTool={toggleTool}
+          activeTool={activeTool}
+          disabled={disabledEditPeiProjet}
+        />
         <Button
           variant="outline-primary"
           onClick={() => calculCouverture()}
-          disabled={
-            disabledEditPeiProjet &&
-            (listePeiId.length === 0 || listePeiProjetId.length === 0)
-          }
+          disabled={disabledEditPeiProjet}
         >
           Lancer une simulation
         </Button>
         <Button
           variant="outline-primary"
           onClick={() => clearCouverture()}
-          disabled={
-            disabledEditPeiProjet &&
-            (listePeiId.length === 0 || listePeiProjetId.length === 0)
-          }
+          disabled={disabledEditPeiProjet}
         >
           Effacer la couverture tracée
         </Button>
