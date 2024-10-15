@@ -74,7 +74,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     addToast({ message, header, delay, type: "info" });
   };
 
-  const success = (message = "Information", header, delay) => {
+  const success = (message, header = "Information", delay) => {
     addToast({ message, header, delay, type: "success" });
   };
 

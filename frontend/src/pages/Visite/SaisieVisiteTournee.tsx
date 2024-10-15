@@ -143,6 +143,15 @@ const SaisieVisiteTournee = ({
         submitUrl={`/api/visite/createVisiteTournee`}
         prepareVariables={(values) => prepareVariables(values)}
         onSubmit={onSubmitResult} // Méthode appelée à l'obtention d'une réponse au Submit du formulaire
+        isPartialSuccess={function (result: Map<string, string>): boolean {
+          if (Object.keys(result).length > 0) {
+            return true;
+          } else {
+            return false;
+          }
+        }}
+        successToastMessage="Toutes les visites ont été enregistrées"
+        warningToastMessage="Une ou plusieurs visites n'ont pas pu être enregistrées"
       >
         <VisiteTourneeForm
           user={user}

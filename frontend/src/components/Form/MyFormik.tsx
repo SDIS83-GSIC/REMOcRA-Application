@@ -9,13 +9,22 @@ const ResolveReject = (
   setErrorMessage: (value: SetStateAction<null>) => void,
   successToastMessage = "L'élément a bien été enregistré",
   errorToastMessage = "L'élément n'a pas été enregistré",
+  warningToastMessage = "Les informations fournies sont incomplètes ou erronées",
   redirectFn?: any,
+  isPartialSuccess: (result: any) => boolean = () => false,
 ) => {
-  const { success: successToast, error: errorToast } = useToastContext();
+  const {
+    success: successToast,
+    warning: warningToast,
+    error: errorToast,
+  } = useToastContext();
+
   return {
     onResolve: (result: string) => {
       setErrorMessage(null);
-      successToast(successToastMessage);
+      isPartialSuccess(result)
+        ? warningToast(warningToastMessage)
+        : successToast(successToastMessage);
       onSubmit?.(result);
       redirectFn?.();
     },
@@ -28,14 +37,24 @@ const ResolveReject = (
   };
 };
 
+/**
+ * @param isPartialSuccess Méthode qui prend en parametre les résultats du Submit.
+ * Intervient lorsque la requete de Submit remonte un code 200.
+ * Permet de définir un cas particulier pour surcharger la définition du toast de réponse :
+ * - Si méthode non définie => cas nominal = Toast Success
+ * - Si méthode return true => toast Warning
+ * - Si méthode return false => toast Success
+ */
 export const useMyFormik = (
   submitUrl: string,
   isPost: boolean,
   onSubmit: any,
-  successToastMessage: string | undefined,
-  errorToastMessage: string | undefined,
   redirectUrl: string,
   isMultipartFormData: boolean,
+  isPartialSuccess?: (result: any) => boolean,
+  successToastMessage?: string | undefined,
+  errorToastMessage?: string | undefined,
+  warningToastMessage?: string | undefined,
 ) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
@@ -51,7 +70,9 @@ export const useMyFormik = (
       setErrorMessage,
       successToastMessage,
       errorToastMessage,
+      warningToastMessage,
       redirectFn,
+      isPartialSuccess,
     ),
     isMultipartFormData,
   );
@@ -62,7 +83,9 @@ export const useMyFormik = (
       setErrorMessage,
       successToastMessage,
       errorToastMessage,
+      warningToastMessage,
       redirectFn,
+      isPartialSuccess,
     ),
     isMultipartFormData,
   );
@@ -79,8 +102,10 @@ type MyFormikProps = {
   isPost: boolean;
   redirectUrl: string;
   onSubmit: (...args: any[]) => any;
+  isPartialSuccess?: (...args: any[]) => boolean;
   successToastMessage?: string;
   errorToastMessage?: string;
+  warningToastMessage?: string;
   isMultipartFormData?: boolean;
 };
 
@@ -89,10 +114,12 @@ const MyFormik = (props: MyFormikProps) => {
     props.submitUrl,
     props.isPost,
     props.onSubmit,
-    props.successToastMessage,
-    props.errorToastMessage,
     props.redirectUrl,
     props.isMultipartFormData ?? false,
+    props.isPartialSuccess,
+    props.successToastMessage,
+    props.errorToastMessage,
+    props.warningToastMessage,
   );
 
   return (
