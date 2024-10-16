@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
 import { useEffect } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -38,6 +38,8 @@ import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
 import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { URLS } from "../../routes.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
@@ -490,9 +492,9 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
             ]}
           />
 
-          <Button
-            type="submit"
-            variant="primary"
+          <SubmitFormButtons
+            update={!isNew}
+            returnLink={URLS.PEI}
             onClick={() => {
               const coordonnees = geometrieState.data?.find(
                 (e) => e.srid === parseInt(srid),
@@ -502,9 +504,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
               setFieldValue("typeSystemeSrid", srid);
               checkValidity(values, show, listValuesRequired);
             }}
-          >
-            Valider
-          </Button>
+          />
         </Container>
       </FormContainer>
     )
