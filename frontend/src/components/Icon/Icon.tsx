@@ -39,3 +39,8 @@ export const IconDragNDrop = () => (
 
 export const IconLock = () => <i className="fi fi-br-lock" />;
 export const IconUnlock = () => <i className="fi fi-br-unlock" />;
+
+export const IconNextPage = () => <i className="fi fi-rr-angle-circle-right" />;
+export const IconPreviousPage = () => (
+  <i className="fi fi-rr-angle-circle-left" />
+);

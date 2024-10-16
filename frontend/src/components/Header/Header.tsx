@@ -23,7 +23,7 @@ const NavTo = ({ path, label }: NavToProps) => {
 
 const Header = ({ links }: { links?: NavToProps[] }) => {
   return (
-    <Navbar className="bg-body-tertiary justify-content-between">
+    <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
         <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -33,10 +33,10 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
               <NavTo key={index} path={item.path} label={item.label} />
             ))}
           </Nav>
+          <a href={URLS.LOGOUT} className="nav-link">
+            Déconnexion
+          </a>
         </Navbar.Collapse>
-        <a href={URLS.LOGOUT} className="nav-link">
-          Déconnexion
-        </a>
       </Container>
     </Navbar>
   );

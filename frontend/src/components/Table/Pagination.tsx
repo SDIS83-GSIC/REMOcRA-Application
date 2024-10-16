@@ -1,9 +1,10 @@
 import { useState, useEffect, ReactNode } from "react";
 import classnames from "classnames";
 import ReactSelect from "react-select";
+import { Button } from "react-bootstrap";
 import useQueryParams from "../Fetch/useQueryParams.tsx";
+import { IconNextPage, IconPreviousPage } from "../Icon/Icon.tsx";
 import styles from "./Pagination.module.css";
-
 const PAGINATION = [10, 25, 50, 100];
 const PAGINATION_DEFAULT = "10";
 const PAGINATION_KEY = "itemsPerPage";
@@ -95,17 +96,11 @@ export const setOffsetToSearchParams = (search, itemsPerPage, offset) => {
   return decodeURIComponent(searchParams.toString());
 };
 
-const DisabledLink = (props) => {
-  return (
-    <span className={classnames(styles.linkA, styles.disabled)} {...props} />
-  );
-};
-
 const Pagination = ({
   className,
   isLoading,
-  previousText = <>&lt;</>,
-  nextText = <>&gt;</>,
+  previousText = <IconPreviousPage />,
+  nextText = <IconNextPage />,
   count = 0,
   paginationState,
   dataLength = 0,
@@ -145,8 +140,9 @@ const Pagination = ({
         <ul>
           <li>
             {canPrevious && !isLoading ? (
-              <a
-                className={classnames(styles.navigate)}
+              <Button
+                variant={"link"}
+                className={"text-decoration-none"}
                 onClick={() => {
                   setPagination({
                     limit: itemsPerPage,
@@ -155,11 +151,15 @@ const Pagination = ({
                 }}
               >
                 {previousText}
-              </a>
+              </Button>
             ) : (
-              <DisabledLink>
-                <span className={styles.navigateDisable}>{previousText}</span>
-              </DisabledLink>
+              <Button
+                variant={"link"}
+                className={"text-decoration-none text-muted"}
+                disabled={true}
+              >
+                {previousText}
+              </Button>
             )}
           </li>
           {getVisiblePages().map((val, i, array) => {
@@ -171,7 +171,7 @@ const Pagination = ({
                     type="button"
                     key={i}
                     className={classnames(styles.linkA, {
-                      [styles.active]: currentPage === page,
+                      "text-primary": currentPage === page,
                     })}
                     onClick={() => {
                       setPagination({
@@ -181,29 +181,40 @@ const Pagination = ({
                     }}
                   >
                     {array[i - 1] + 1 < val ? (
-                      <span className={styles.pointille}>........... </span>
+                      <Button
+                        variant={"link"}
+                        className={"text-muted text-decoration-none me-2"}
+                      >
+                        ...
+                      </Button>
                     ) : (
-                      ""
+                      <></>
                     )}
                     {val}
                   </span>
                 ) : (
-                  <DisabledLink>
+                  <>
                     {array[i - 1] + 1 < val ? (
-                      <span className={styles.pointille}>........... </span>
+                      <Button
+                        variant={"link"}
+                        className={"text-muted text-decoration-none me-2"}
+                      >
+                        ...
+                      </Button>
                     ) : (
-                      ""
+                      <></>
                     )}
                     {val}
-                  </DisabledLink>
+                  </>
                 )}
               </li>
             );
           })}
           <li>
             {canNext && !isLoading ? (
-              <span
-                className={classnames(styles.navigate)}
+              <Button
+                variant={"link"}
+                className={"text-decoration-none"}
                 onClick={() => {
                   setPagination({
                     limit: itemsPerPage,
@@ -212,11 +223,15 @@ const Pagination = ({
                 }}
               >
                 {nextText}
-              </span>
+              </Button>
             ) : (
-              <DisabledLink>
-                <span className={styles.navigateDisable}>{nextText}</span>
-              </DisabledLink>
+              <Button
+                variant={"link"}
+                className={"text-decoration-none"}
+                disabled={true}
+              >
+                {nextText}
+              </Button>
             )}
           </li>
         </ul>
@@ -227,7 +242,7 @@ const Pagination = ({
             Résultats par page :
             <ReactSelect
               menuPlacement={"auto"}
-              classNamePrefix="select"
+              className={"ms-2"}
               value={
                 PAGINATION_VALUES.find(
                   (data) => data.value === itemsPerPage,
@@ -240,7 +255,6 @@ const Pagination = ({
               }}
               closeMenuOnSelect={true}
               isClearable={false}
-              placeholder={"Sélectionnez une valeur..."}
             />
           </div>
         )}
