@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
@@ -12,6 +11,7 @@ import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { getColumnIndisponibiliteTemporaireByStringArray } from "../../utils/columnUtils.tsx";
+import CreateButton from "../../components/Form/CreateButton.tsx";
 import filterValuesToVariable from "./FilterIndisponibiliteTemporaire.tsx";
 
 const ListIndisponibiliteTemporaire = () => {
@@ -49,9 +49,10 @@ const ListIndisponibiliteTemporaire = () => {
           title={"Indisponibilités temporaires"}
           icon={<IconIndisponibiliteTemporaire />}
           right={
-            <Button href={URLS.CREATE_INDISPONIBILITE_TEMPORAIRE}>
-              Nouvelle indisponibilité temporaire
-            </Button>
+            <CreateButton
+              title={"Nouvelle indisponibilité temporaire"}
+              href={URLS.CREATE_INDISPONIBILITE_TEMPORAIRE}
+            />
           }
         />
       </Container>

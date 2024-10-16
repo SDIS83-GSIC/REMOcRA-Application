@@ -26,6 +26,7 @@ import { hasDroit } from "../../../droits.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import filterValuesToVariable from "./FilterEtude.tsx";
 
 const ListEtude = () => {
@@ -40,9 +41,10 @@ const ListEtude = () => {
           title={"Liste des études"}
           right={
             hasDroit(user, TYPE_DROIT.ETUDE_C) && (
-              <Button href={URLS.CREATE_ETUDE}>
-                Ajouter une nouvelle étude
-              </Button>
+              <CreateButton
+                href={URLS.CREATE_ETUDE}
+                title={"Ajouter une nouvelle étude"}
+              />
             )
           }
         />
