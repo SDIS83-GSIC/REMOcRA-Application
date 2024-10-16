@@ -27,8 +27,8 @@ kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 disruptor = "com.lmax:disruptor:4.0.0"
-slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "1.7.36" } }
-log4j-slf4jImpl = { module = "org.apache.logging.log4j:log4j-slf4j-impl" }
+slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "2.0.16" } }
+log4j-slf4j2Impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl" }
 typesafe = "com.typesafe:config:1.4.3"
 postgresql = "org.postgresql:postgresql:42.7.4"
 hikaricp = "com.zaxxer:HikariCP:5.1.0"

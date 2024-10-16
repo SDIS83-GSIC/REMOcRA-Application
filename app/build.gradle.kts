@@ -100,7 +100,7 @@ dependencies {
     implementation(libs.log4j.core)
     implementation(platform(libs.log4j.bom))
     runtimeOnly(libs.slf4j.api)
-    runtimeOnly(libs.log4j.slf4jImpl)
+    runtimeOnly(libs.log4j.slf4j2Impl)
     runtimeOnly(libs.log4j.bom)
     runtimeOnly(libs.log4j.core)
     implementation(libs.disruptor)
