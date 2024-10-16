@@ -1,9 +1,7 @@
-import { Button } from "react-bootstrap";
 import React from "react";
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../Entities/UtilisateurEntity.tsx";
-import { usePut } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
 import SelectFilterFromUrl from "../components/Filter/SelectFilterFromUrl.tsx";
 import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
@@ -13,13 +11,11 @@ import {
   IconCloseIndisponibiliteTemporaire,
 } from "../components/Icon/Icon.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
-import EditColumn, {
+import {
   ActionColumn,
   BooleanColumn,
-  DeleteColumn,
   ListePeiColumn,
 } from "../components/Table/columns.tsx";
-import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
@@ -445,97 +441,74 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
       default:
     }
   });
-
   {
+    const listeButton: ButtonType[] = [];
     if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
-      column.push(
-        EditColumn({
-          to: (indisponibiliteTemporaireId) =>
-            URLS.UPDATE_INDISPONIBILITE_TEMPORAIRE(indisponibiliteTemporaireId),
-          title: true,
-          accessor: "indisponibiliteTemporaireId",
-          canEdit: hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U),
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.UPDATE,
+        disable: (v) => {
+          return (
+            STATUT_INDISPONIBILITE_TEMPORAIRE[
+              v.original.indisponibiliteTemporaireStatut
+            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE
+          );
+        },
+        textDisable:
+          "Impossible de modifier une indisponibilité temporaire terminée",
+        onClick: (indisponibiliteTemporaireId) =>
+          URLS.UPDATE_INDISPONIBILITE_TEMPORAIRE(indisponibiliteTemporaireId),
+      });
+    }
+    if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_D)) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.DELETE,
+        disable: (v) => {
+          return (
+            STATUT_INDISPONIBILITE_TEMPORAIRE[
+              v.original.indisponibiliteTemporaireStatut
+            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
+          );
+        },
+        textDisable: "Impossible de supprimer une IT en cours",
+        path: url`/api/indisponibilite-temporaire/delete/`,
+      });
+
+      if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
+        listeButton.push({
+          isPost: false,
+          row: (row) => {
+            return row;
+          },
+          type: TYPE_BUTTON.CONFIRM,
           disable: (v) => {
             return (
               STATUT_INDISPONIBILITE_TEMPORAIRE[
                 v.original.indisponibiliteTemporaireStatut
-              ] === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE
+              ] !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
             );
           },
           textDisable:
-            "Impossible de modifier une indisponibilité temporaire terminée",
-          title: false,
-        }),
-      );
+            "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
+          textEnable: "Clore l'indisponibilité temporaire",
+          path: url`/api/indisponibilite-temporaire/clore/`,
+          icon: <IconCloseIndisponibiliteTemporaire />,
+          classEnable: "warning",
+        });
+      }
     }
-  }
-
-  {
-    if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_D)) {
-      column.push(
-        DeleteColumn({
-          path: url`/api/indisponibilite-temporaire/delete/`,
-          title: false,
-          canSupress: hasDroit(user, TYPE_DROIT.INDISPO_TEMP_D),
-          accessor: "indisponibiliteTemporaireId",
-          textDisable: "Impossible de supprimer une IT en cours",
-          disable: (v) => {
-            return (
-              STATUT_INDISPONIBILITE_TEMPORAIRE[
-                v.original.indisponibiliteTemporaireStatut
-              ] === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
-            );
-          },
-        }),
-      );
-    }
-  }
-  {
-    if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
-      const closeIndispo = (value) =>
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        usePut(
-          url`/api/indisponibilite-temporaire/clore/` + value,
-          {
-            onResolve: () => {
-              // TODO: Ajouter un toast
-              window.location.reload();
-            },
-          },
-          true,
-        );
-      column.push({
-        Header: "",
+    column.push(
+      ActionColumn({
+        Header: "Actions",
         accessor: "indisponibiliteTemporaireId",
-        Cell: (value) => {
-          const disable =
-            STATUT_INDISPONIBILITE_TEMPORAIRE[
-              value.original.indisponibiliteTemporaireStatut
-            ] !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS;
-          return (
-            <TooltipCustom
-              tooltipText={
-                !disable
-                  ? "Clore l'indisponibilité temporaire"
-                  : "Impossible de clore une indisponibilité temporaire qui n'est pas en cours"
-              }
-              tooltipId={value}
-            >
-              <div>
-                <Button
-                  variant={"link"}
-                  onClick={closeIndispo(value.value).run}
-                  disabled={disable}
-                  className={disable ? "" : "text-warning"}
-                >
-                  <IconCloseIndisponibiliteTemporaire />
-                </Button>
-              </div>
-            </TooltipCustom>
-          );
-        },
-      });
-    }
+        buttons: listeButton,
+      }),
+    );
   }
 
   return column;
