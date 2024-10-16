@@ -19,8 +19,6 @@ const TooltipCustom = ({
         </Popover>
       }
       placement={placement}
-      delayShow={300}
-      delayHide={150}
     >
       <a> {children}</a>
     </OverlayTrigger>
