@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { object } from "yup";
 import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
@@ -16,6 +16,7 @@ import SelectForm from "../../components/Form/SelectForm.tsx";
 import { IconAireAspiration } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 
 export const getInitialValues = (data) => ({
   listeAireAspiration: data,
@@ -57,26 +58,30 @@ const FormAireAspiration = () => {
   return (
     <FormContainer>
       <Container>
-        <PageTitle
-          icon={<IconAireAspiration />}
-          title={"Modification des aires d'aspiration"}
-        />
-        <AddRemoveComponent
-          name="listeAireAspiration"
-          createComponentToRepeat={createComponentToRepeat}
-          defaultElement={{
-            penaAspirationId: null,
-            numero: "",
-            estNormalise: false,
-            hauteurSuperieure3Metres: false,
-            typePenaAspirationId: null,
-            estDeporte: false,
-            coordonneeX: null,
-            coordonneeY: null,
-          }}
-          listeElements={values.listeAireAspiration}
-        />
-        <Button type="submit">Valider</Button>
+        <Row>
+          <PageTitle
+            icon={<IconAireAspiration />}
+            title={"Modification des aires d'aspiration"}
+          />
+        </Row>
+        <Row>
+          <AddRemoveComponent
+            name="listeAireAspiration"
+            createComponentToRepeat={createComponentToRepeat}
+            defaultElement={{
+              penaAspirationId: null,
+              numero: "",
+              estNormalise: false,
+              hauteurSuperieure3Metres: false,
+              typePenaAspirationId: null,
+              estDeporte: false,
+              coordonneeX: null,
+              coordonneeY: null,
+            }}
+            listeElements={values.listeAireAspiration}
+          />
+        </Row>
+        <SubmitFormButtons returnLink={URLS.PEI} />
       </Container>
     </FormContainer>
   );
