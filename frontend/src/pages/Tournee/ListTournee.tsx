@@ -1,21 +1,19 @@
-import { useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import { IconSortList, IconTournee } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
-import EditColumn, {
-  DeleteColumn,
+import {
+  ActionColumn,
   ListePeiColumn,
-  LinkColumn,
 } from "../../components/Table/columns.tsx";
 import {
   columnType,
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
@@ -26,6 +24,11 @@ import UtilisateurEntity, {
 } from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
+import CreateButton from "../../components/Form/CreateButton.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../components/Table/TableActionColumn.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = () => {
@@ -103,99 +106,85 @@ const ListTournee = () => {
     );
   }
 
-  const hasRight = hasDroit(user, TYPE_DROIT.TOURNEE_A);
-  if (hasRight) {
-    column.push(
-      EditColumn({
-        to: (data) => URLS.UPDATE_TOURNEE(data.tourneeId),
-        accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
-          return { tourneeId, tourneeUtilisateurReservationLibelle };
-        },
-        canEdit: hasRight,
-        title: false,
-        textDisable: "Impossible de modifier une tournée réservée",
-        disable: (v) => {
-          return v.original.tourneeUtilisateurReservationLibelle != null;
-        },
-      }),
-    );
-    //colonne réorganisation PEI
-    column.push({
-      Cell: (row: any) => {
-        const disable =
-          row.original.tourneeUtilisateurReservationLibelle != null;
-        return (
-          <>
-            {
-              <TooltipCustom
-                tooltipText={
-                  !disable
-                    ? "Gérer les PEI et leur ordre dans une tournée"
-                    : "Impossible de modifier une tournée réservée"
-                }
-                tooltipId={row.value.tourneeId}
-              >
-                <Button
-                  disabled={
-                    row.original.tourneeUtilisateurReservationLibelle != null
-                  }
-                  variant="link"
-                  href={URLS.TOURNEE_PEI(row.value.tourneeId)}
-                >
-                  <IconSortList />
-                </Button>
-              </TooltipCustom>
-            }
-          </>
-        );
+  const listeButton: ButtonType[] = [];
+
+  if (hasDroit(user, TYPE_DROIT.TOURNEE_A)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
       },
-      accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
-        return { tourneeId, tourneeUtilisateurReservationLibelle };
+      type: TYPE_BUTTON.UPDATE,
+      disable: (v) => {
+        return isDisabled(v);
       },
-      width: 90,
+      href: (idTournee) => URLS.UPDATE_TOURNEE(idTournee),
+      textDisable: "Impossible de modifier une tournée réservée",
     });
 
-    // Bouton d'accès à la saisie en masse des visites
-    const hasVisiteTourneeRight =
-      isAuthorized(user, [TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_R]) &&
-      isAuthorized(user, [
-        TYPE_DROIT.VISITE_RECEP_C,
-        TYPE_DROIT.VISITE_RECO_INIT_C,
-        TYPE_DROIT.VISITE_NON_PROGRAMME_C,
-        TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C,
-        TYPE_DROIT.VISITE_RECO_C,
-      ]);
-    if (hasVisiteTourneeRight) {
-      column.push(
-        LinkColumn({
-          to: (data) => URLS.TOURNEE_VISITE(data.tourneeId),
-          accessor: ({ tourneeId, tourneeUtilisateurReservationLibelle }) => {
-            return { tourneeId, tourneeUtilisateurReservationLibelle };
-          },
-          icon: <IconTournee />,
-          canInteractFunction(data) {
-            return data.tourneeUtilisateurReservationLibelle == null;
-          },
-          tooltipText: "Saisir toutes les visites de la tournée",
-          textDisable:
-            "Impossible de saisir les visites d'une tournée réservée",
-        }),
-      );
-    }
+    listeButton.push({
+      disable: (v) => {
+        return isDisabled(v);
+      },
+      textDisable: "Impossible de supprimer une tournée réservée",
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      path: url`/api/tournee/`,
+    });
 
-    column.push(
-      DeleteColumn({
-        path: url`/api/tournee/`,
-        title: false,
-        canSupress: hasDroit(user, TYPE_DROIT.TOURNEE_A),
-        accessor: "tourneeId",
-        textDisable: "Impossible de supprimer une tournée réservée",
-        disable: (v) => {
-          return v.original.tourneeUtilisateurReservationLibelle != null;
-        },
-      }),
-    );
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (idTournee) => URLS.TOURNEE_PEI(idTournee),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconSortList />,
+      textEnable: "Gérer les PEI et leur ordre dans une tournée",
+      textDisable: "Impossible de modifier une tournée réservée",
+      classEnable: "warning",
+      disable: (v) => {
+        return isDisabled(v);
+      },
+    });
   }
+  function isDisabled(v: any): boolean {
+    return v.original.tourneeUtilisateurReservationLibelle != null;
+  }
+  // Bouton d'accès à la saisie en masse des visites
+  const hasVisiteTourneeRight =
+    isAuthorized(user, [TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_R]) &&
+    isAuthorized(user, [
+      TYPE_DROIT.VISITE_RECEP_C,
+      TYPE_DROIT.VISITE_RECO_INIT_C,
+      TYPE_DROIT.VISITE_NON_PROGRAMME_C,
+      TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C,
+      TYPE_DROIT.VISITE_RECO_C,
+    ]);
+  if (hasVisiteTourneeRight) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconTournee />,
+      textEnable: "Saisir toutes les visites de la tournée",
+      textDisable: "Impossible de saisir les visites d'une tournée réservée",
+      classEnable: "warning",
+      disable: (v) => {
+        return isDisabled(v);
+      },
+    });
+  }
+
+  column.push(
+    ActionColumn({
+      Header: "Actions",
+      accessor: "tourneeId",
+      buttons: listeButton,
+    }),
+  );
 
   return (
     <Container>
@@ -203,9 +192,10 @@ const ListTournee = () => {
         icon={<IconTournee />}
         title={"Liste des tournées"}
         right={
-          <Button variant="primary" href={URLS.CREATE_TOURNEE}>
-            Créer une tournée
-          </Button>
+          <CreateButton
+            href={URLS.CREATE_TOURNEE}
+            title={"Créer une tournée"}
+          />
         }
       />
       {
