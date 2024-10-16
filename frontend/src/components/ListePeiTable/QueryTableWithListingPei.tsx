@@ -44,7 +44,7 @@ const QueryTableWithListingPei = ({
         filterContext={useFilterContext}
       />
 
-      <Row className={""} xs={"auto"}>
+      <Row xs={"auto"}>
         <Button
           onClick={() => {
             if (setShowTable) {

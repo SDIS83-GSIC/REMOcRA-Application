@@ -32,7 +32,7 @@ const ListPei = ({
   if (listeParametre.isResolved) {
     // Le résultat est un String, on le parse pour récupérer le tableau
     peiColonnes = JSON.parse(
-      listeParametre?.data[parametrePeiColonnes].parametreValeur,
+      listeParametre?.data?.[parametrePeiColonnes].parametreValeur,
     );
   }
 
