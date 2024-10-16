@@ -4,6 +4,8 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import url from "../../module/fetch.tsx";
 import { usePost } from "../Fetch/useFetch.tsx";
 import useQueryParams from "../Fetch/useQueryParams.tsx";
@@ -244,63 +246,67 @@ function QueryTable({
   const makeHeader = (column: any, key: string) => {
     const { Header, sortField, classNameHeader, width, Filter } = column;
     return (
-      <th key={key} className={classNameHeader} style={{ width: width }}>
-        <div className={styles.headerWrapper}>
-          <div className={styles.headerTitle}>
-            {Header}
-            {sortField && (
-              <div className={styles.sortWrapper}>
-                <div
-                  onClick={() => {
-                    if (!sortField) {
-                      return;
-                    }
+      <th
+        key={key}
+        className={classNames("align-middle", classNameHeader)}
+        style={{ width: width }}
+      >
+        <Row className={"d-flex align-items-center justify-content-center"}>
+          <Col xs={"auto"}>{Header}</Col>
 
-                    // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
-                    if (sortBy[sortField] === "1") {
-                      setSortBy({});
-                    } else {
-                      const asc = [];
-                      asc[sortField] = "1";
-                      setSortBy({ ...asc });
-                    }
-                  }}
-                  className={classnames({
-                    [styles.sort]: sortField,
-                    [styles.noSort]: !sortField,
-                    [styles.sortActive]: sortBy[sortField] === "1",
-                  })}
-                >
-                  ▲
-                </div>
+          {sortField && (
+            <Col xs={"auto"}>
+              <div
+                onClick={() => {
+                  if (!sortField) {
+                    return;
+                  }
 
-                <div
-                  onClick={() => {
-                    if (!sortField) {
-                      return;
-                    }
-                    // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
-                    if (sortBy[sortField] === "-1") {
-                      setSortBy({});
-                    } else {
-                      const desc = [];
-                      desc[sortField] = "-1";
-                      setSortBy({ ...desc });
-                    }
-                  }}
-                  className={classnames({
-                    [styles.sort]: sortField,
-                    [styles.noSort]: !sortField,
-                    [styles.sortActive]: sortBy[sortField] === "-1",
-                  })}
-                >
-                  ▼
-                </div>
+                  // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
+                  if (sortBy[sortField] === "1") {
+                    setSortBy({});
+                  } else {
+                    const asc = [];
+                    asc[sortField] = "1";
+                    setSortBy({ ...asc });
+                  }
+                }}
+                className={classnames({
+                  [styles.sort]: sortField,
+                  [styles.noSort]: !sortField,
+                  [styles.sortActive]: sortBy[sortField] === "1",
+                })}
+              >
+                ▲
               </div>
-            )}
-          </div>
+              <div
+                onClick={() => {
+                  if (!sortField) {
+                    return;
+                  }
+                  // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
+                  if (sortBy[sortField] === "-1") {
+                    setSortBy({});
+                  } else {
+                    const desc = [];
+                    desc[sortField] = "-1";
+                    setSortBy({ ...desc });
+                  }
+                }}
+                className={classnames({
+                  [styles.sort]: sortField,
+                  [styles.noSort]: !sortField,
+                  [styles.sortActive]: sortBy[sortField] === "-1",
+                })}
+              >
+                ▼
+              </div>
+            </Col>
+          )}
+        </Row>
+        <Row>
           {Filter && (
-            <div className={styles.headerFilter}>
+            <Col>
               {React.cloneElement(Filter, {
                 onChange: ({ name, value }) => {
                   formik.setValues((prevValues) => ({
@@ -312,9 +318,9 @@ function QueryTable({
                 onBlur: formik.handleBlur,
                 value: formik?.values[Filter.name],
               })}
-            </div>
+            </Col>
           )}
-        </div>
+        </Row>
       </th>
     );
   };
