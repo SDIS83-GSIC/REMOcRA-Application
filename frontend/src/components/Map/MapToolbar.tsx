@@ -1,3 +1,11 @@
+import { Overlay } from "ol";
+import Map from "ol/Map";
+import { unByKey } from "ol/Observable";
+import { LineString, Polygon } from "ol/geom";
+import { DragPan, Draw } from "ol/interaction";
+import { getArea, getLength } from "ol/sphere";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import {
   Button,
@@ -5,15 +13,6 @@ import {
   ButtonToolbar,
   ToggleButton,
 } from "react-bootstrap";
-import Map from "ol/Map";
-import { DragBox, DragPan, Draw, Select } from "ol/interaction";
-import { Fill, Stroke, Style } from "ol/style";
-import CircleStyle from "ol/style/Circle";
-import { LineString, Polygon } from "ol/geom";
-import { getArea, getLength } from "ol/sphere";
-import { Overlay } from "ol";
-import { unByKey } from "ol/Observable";
-import { shiftKeyOnly } from "ol/events/condition";
 import Row from "react-bootstrap/Row";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
 
@@ -21,13 +20,9 @@ const MapToolbar = forwardRef(
   (
     {
       map,
-      dataPeiLayer,
-      dataPeiProjetLayer,
       workingLayer,
     }: {
       map: Map;
-      dataPeiLayer: any;
-      dataPeiProjetLayer: any;
       workingLayer: any;
     },
     ref,
@@ -77,58 +72,6 @@ const MapToolbar = forwardRef(
       } else {
         if (dragPanCtrl) {
           map.removeInteraction(dragPanCtrl);
-        }
-      }
-    }
-
-    function toggleSelect(active = false) {
-      const selectCtrl = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof Select)[0];
-      const dragBoxCtrl = map
-        ?.getInteractions()
-        .getArray()
-        .filter((c) => c instanceof DragBox)[0];
-      if (active) {
-        if (!selectCtrl) {
-          const select = new Select({});
-          const dragBox = new DragBox({
-            style: new Style({
-              stroke: new Stroke({
-                color: [0, 0, 255, 1],
-              }),
-            }),
-            minArea: 25,
-          });
-          dragBox.on("boxend", function (e) {
-            if (!shiftKeyOnly(e.mapBrowserEvent)) {
-              select.getFeatures().clear();
-            }
-            const boxExtent = dragBox.getGeometry().getExtent();
-            const boxFeatures = dataPeiLayer
-              .getSource()
-              .getFeaturesInExtent(boxExtent);
-
-            select.getFeatures().extend(boxFeatures);
-            if (dataPeiProjetLayer != null) {
-              const boxFeaturesPeiProjet = dataPeiProjetLayer
-                .getSource()
-                .getFeaturesInExtent(boxExtent);
-
-              select.getFeatures().extend(boxFeaturesPeiProjet);
-            }
-          });
-
-          map.addInteraction(select);
-          map.addInteraction(dragBox);
-        }
-      } else {
-        if (selectCtrl) {
-          map.removeInteraction(selectCtrl);
-        }
-        if (dragBoxCtrl) {
-          map.removeInteraction(dragBoxCtrl);
         }
       }
     }
@@ -255,9 +198,6 @@ const MapToolbar = forwardRef(
       move: {
         action: toggleMove,
       },
-      select: {
-        action: toggleSelect,
-      },
       "measure-length": {
         action: toggleMeasureLength,
       },
@@ -310,17 +250,6 @@ const MapToolbar = forwardRef(
               checked={activeTool === "move"}
             >
               Déplacer
-            </ToggleButton>
-            <ToggleButton
-              name={"tool"}
-              onClick={() => toggleTool("select")}
-              id={"select"}
-              value={"select"}
-              type={"radio"}
-              variant={"outline-primary"}
-              checked={activeTool === "select"}
-            >
-              Sélectionner
             </ToggleButton>
           </ButtonGroup>
           <AdresseTypeahead map={map} />

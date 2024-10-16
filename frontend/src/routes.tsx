@@ -1,4 +1,4 @@
-import MapComponent from "./components/Map/Map.tsx";
+import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import NoMatch from "./components/Router/NoMatch.tsx";
@@ -152,7 +152,7 @@ export default [
       },
       {
         path: "carte",
-        element: <Authorization Component={MapComponent} isPublic={true} />,
+        element: <Authorization Component={MapPei} isPublic={true} />,
       },
       {
         path: "tournee",

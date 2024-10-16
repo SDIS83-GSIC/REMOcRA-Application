@@ -21,12 +21,10 @@ import WMTSTileGrid from "ol/tilegrid/WMTS";
 import proj4 from "proj4";
 import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import TYPE_CARTE from "../../enums/TypeCarte.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import MapLegend from "./MapLegend.tsx";
 import MapToolbar from "./MapToolbar.tsx";
-import MapToolbarCouvertureHydraulique from "./MapToolbarCouvertureHydraulique.tsx";
 import "./map.css";
 
 proj4.defs(
@@ -35,53 +33,131 @@ proj4.defs(
 );
 register(proj4);
 
+const projection = "EPSG:2154";
+const resolutions = [];
+const matrixIds = [];
+const proj3857 = getProjection("EPSG:3857")!;
+const maxResolution = getWidth(proj3857.getExtent()) / 256;
+
+// Matrices / résolutions
+for (let i = 0; i < 20; i++) {
+  matrixIds[i] = i.toString();
+  resolutions[i] = maxResolution / Math.pow(2, i);
+}
+
+// Échelle sur la carte suivant le niveau zoom
+const scaleControl = new ScaleLine({
+  units: "metric",
+  bar: true,
+  steps: 5,
+  text: true,
+  maxWidth: 200,
+  minWidth: 100,
+});
+
+// Grille de tuiles
+const tileGrid = new WMTSTileGrid({
+  origin: [-20037508, 20037508],
+  resolutions: resolutions,
+  matrixIds: matrixIds,
+});
+
+// Déclaration OL depuis une définition de couche
+export function toOpenLayer(
+  layer: any,
+): TileSource | WMTS | VectorSource | undefined {
+  switch (layer.source) {
+    case "WMS":
+      return new TileWMS({
+        url: layer.url,
+        params: {
+          LAYERS: layer.layer,
+          TILED: true,
+          projection: layer.projection,
+          matrixSet: "PM",
+          format: layer.format ?? "image/png",
+          tileGrid: tileGrid,
+          style: "normal",
+        },
+      });
+    case "WMTS":
+      return new WMTS({
+        url: layer.url,
+        layer: layer.layer,
+        projection: layer.projection,
+        matrixSet: "PM",
+        format: layer.format ?? "image/png",
+        tileGrid: tileGrid,
+        style: "normal",
+      });
+    case "GSON":
+      return new VectorSource({
+        url: layer.url,
+        loader: layer.loader,
+        strategy: layer.strategy,
+        format: new GeoJSON({
+          dataProjection: layer.projection,
+          featureProjection: layer.projection,
+        }),
+      });
+    default:
+      return undefined;
+  }
+}
+
 const MapComponent = ({
-  etudeId = null,
-  typeCarte = TYPE_CARTE.PEI,
-  disabledEditPeiProjet = false,
+  map,
+  workingLayer,
+  availableLayers,
+  addOrRemoveLayer,
+  layerListRef,
+  mapToolbarRef,
+  mapElement,
 }: {
-  etudeId: string | null;
-  typeCarte: TYPE_CARTE;
-  disabledEditPeiProjet: boolean;
+  map: Map;
+  workingLayer: any;
+  availableLayers: any[];
+  addOrRemoveLayer: (layer: any) => void;
+  layerListRef: any;
+  mapToolbarRef: any;
+  mapElement: any;
 }) => {
+  return (
+    <Container fluid>
+      {map && mapElement && (
+        <>
+          {/* Commun à toutes les cartes */}
+          <MapToolbar
+            ref={mapToolbarRef}
+            map={map}
+            workingLayer={workingLayer}
+          />
+        </>
+      )}
+      <Row className={"gutt-0"}>
+        <Col>
+          <div ref={mapElement} style={{ width: "100%", height: "800px" }} />
+        </Col>
+        <Col xs={3}>
+          <MapLegend
+            ref={layerListRef}
+            layers={availableLayers}
+            addOrRemoveLayer={addOrRemoveLayer}
+          />
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export const useMapComponent = ({ mapElement }) => {
   const [availableLayers, setAvailableLayers] = useState([]);
   const [workingLayer, setWorkingLayer] = useState();
   const [dataPeiLayer, setDataPeiLayer] = useState();
-  const [dataPeiProjetLayer, setDataPeiProjetLayer] = useState();
   const [map, setMap] = useState<Map>();
-  const mapElement = useRef<HTMLDivElement>();
   const layersState = useGet(url`/api/layers`, {});
   const layerListRef = useRef<MapLegend>();
   const mapToolbarRef = useRef<MapToolbar>();
-
-  const projection = "EPSG:2154";
-  const resolutions = [];
-  const matrixIds = [];
-  const proj3857 = getProjection("EPSG:3857")!;
-  const maxResolution = getWidth(proj3857.getExtent()) / 256;
-
-  // Matrices / résolutions
-  for (let i = 0; i < 20; i++) {
-    matrixIds[i] = i.toString();
-    resolutions[i] = maxResolution / Math.pow(2, i);
-  }
-
-  // Grille de tuiles
-  const tileGrid = new WMTSTileGrid({
-    origin: [-20037508, 20037508],
-    resolutions: resolutions,
-    matrixIds: matrixIds,
-  });
-
-  // Échelle sur la carte suivant le niveau zoom
-  const scaleControl = new ScaleLine({
-    units: "metric",
-    bar: true,
-    steps: 5,
-    text: true,
-    maxWidth: 200,
-    minWidth: 100,
-  });
 
   // Coordonnées du pointeur sur la carte
   const mousePosition = new MousePosition({
@@ -100,49 +176,6 @@ const MapComponent = ({
       layerListRef.current?.addActiveLayer(layer.openlayer.ol_uid);
     }
   };
-
-  // Déclaration OL depuis une définition de couche
-  function toOpenLayer(
-    layer: any,
-  ): TileSource | WMTS | VectorSource | undefined {
-    switch (layer.source) {
-      case "WMS":
-        return new TileWMS({
-          url: layer.url,
-          params: {
-            LAYERS: layer.layer,
-            TILED: true,
-            projection: layer.projection,
-            matrixSet: "PM",
-            format: layer.format ?? "image/png",
-            tileGrid: tileGrid,
-            style: "normal",
-          },
-        });
-      case "WMTS":
-        return new WMTS({
-          url: layer.url,
-          layer: layer.layer,
-          projection: layer.projection,
-          matrixSet: "PM",
-          format: layer.format ?? "image/png",
-          tileGrid: tileGrid,
-          style: "normal",
-        });
-      case "GSON":
-        return new VectorSource({
-          url: layer.url,
-          loader: layer.loader,
-          strategy: layer.strategy,
-          format: new GeoJSON({
-            dataProjection: layer.projection,
-            featureProjection: layer.projection,
-          }),
-        });
-      default:
-        return undefined;
-    }
-  }
 
   // Ajout des couches disponibles depuis le serveur
   useEffect(() => {
@@ -259,68 +292,6 @@ const MapComponent = ({
     return dl;
   }
 
-  /**
-   * Permet d'afficher les PEI en projet
-   * @param etudeId l'étude concernée
-   * @returns
-   */
-  function createDataPeiProjetLayer(etudeId: string) {
-    const vectorSource = toOpenLayer({
-      source: "GSON",
-      loader: async (extent, resolution, projection, success, failure) => {
-        const res = await fetch(
-          url`/api/couverture-hydraulique/layer?bbox=` +
-            extent.join(",") +
-            "&srid=" +
-            projection.getCode() +
-            "&etudeId=" +
-            etudeId,
-          getFetchOptions({ method: "GET" }),
-        );
-        res
-          .text()
-          .then((text) => {
-            const features = vectorSource
-              .getFormat()
-              .readFeatures(JSON.parse(text));
-            vectorSource.addFeatures(features);
-            success(features);
-          })
-          .catch(() => {
-            vectorSource.removeLoadedExtent(extent);
-            failure();
-          });
-      },
-      extent: map?.getView().calculateExtent(),
-      projection: "EPSG:2154",
-      strategy: bboxStrategy,
-    });
-
-    const dl = new VectorLayer({
-      source: vectorSource,
-      style: new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "green" }),
-          stroke: new Stroke({
-            color: [255, 0, 0],
-            width: 1,
-          }),
-        }),
-      }),
-      extent: map?.getView().calculateExtent(),
-      opacity: 1,
-      visible: true,
-      minResolution: 0,
-      maxResolution: 99999,
-      zIndex: 9999,
-    });
-
-    map?.addLayer(dl);
-
-    return dl;
-  }
-
   // Initialisation de la map
   useEffect(() => {
     const initialMap = new Map({
@@ -342,52 +313,22 @@ const MapComponent = ({
       }),
     });
     setMap(initialMap);
-  }, []);
+  }, [mapElement.current]);
 
   useEffect(() => {
     setWorkingLayer(createWorkingLayer());
     setDataPeiLayer(createDataPeiLayer());
-    etudeId && setDataPeiProjetLayer(createDataPeiProjetLayer(etudeId));
-  }, [map, etudeId]);
+  }, [map]);
 
-  return (
-    <Container fluid>
-      {map && (
-        <>
-          {/* Commun à toutes les cartes */}
-          <MapToolbar
-            ref={mapToolbarRef}
-            map={map}
-            workingLayer={workingLayer}
-            dataPeiLayer={dataPeiLayer}
-            dataPeiProjetLayer={dataPeiProjetLayer}
-          />
-          {typeCarte === TYPE_CARTE.COUVERTURE_HYDRAULIQUE && (
-            <MapToolbarCouvertureHydraulique
-              ref={mapToolbarRef}
-              map={map}
-              etudeId={etudeId}
-              workingLayer={workingLayer}
-              dataPeiProjetLayer={dataPeiProjetLayer}
-              disabledEditPeiProjet={disabledEditPeiProjet}
-            />
-          )}
-        </>
-      )}
-      <Row className={"gutt-0"}>
-        <Col>
-          <div ref={mapElement} style={{ width: "100%", height: "800px" }} />
-        </Col>
-        <Col xs={3}>
-          <MapLegend
-            ref={layerListRef}
-            layers={availableLayers}
-            addOrRemoveLayer={addOrRemoveLayer}
-          />
-        </Col>
-      </Row>
-    </Container>
-  );
+  return {
+    map,
+    workingLayer,
+    dataPeiLayer,
+    availableLayers,
+    addOrRemoveLayer,
+    layerListRef,
+    mapToolbarRef,
+  };
 };
 
 export default MapComponent;

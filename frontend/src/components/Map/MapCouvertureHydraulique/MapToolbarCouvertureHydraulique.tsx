@@ -1,22 +1,26 @@
+import { shiftKeyOnly } from "ol/events/condition";
 import { Point } from "ol/geom";
-import { Draw } from "ol/interaction";
+import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, useState } from "react";
-import CreatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
-import Volet from "../Volet/Volet.tsx";
-import ToolbarButton from "./ToolbarButton.tsx";
+import { ToggleButton } from "react-bootstrap";
+import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
+import Volet from "../../Volet/Volet.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
 
 const MapToolbarCouvertureHydraulique = forwardRef(
   ({
     map,
+    dataPeiLayer,
     dataPeiProjetLayer,
     workingLayer,
     etudeId,
     disabledEditPeiProjet,
   }: {
     map: Map;
+    dataPeiLayer: any;
     dataPeiProjetLayer: any;
     workingLayer: any;
     etudeId: string;
@@ -45,6 +49,56 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         }),
       }),
     });
+
+    function toggleSelect(active = false) {
+      const selectCtrl = map
+        ?.getInteractions()
+        .getArray()
+        .filter((c) => c instanceof Select)[0];
+      const dragBoxCtrl = map
+        ?.getInteractions()
+        .getArray()
+        .filter((c) => c instanceof DragBox)[0];
+      if (active) {
+        if (!selectCtrl) {
+          const select = new Select({});
+          const dragBox = new DragBox({
+            style: new Style({
+              stroke: new Stroke({
+                color: [0, 0, 255, 1],
+              }),
+            }),
+            minArea: 25,
+          });
+          dragBox.on("boxend", function (e) {
+            if (!shiftKeyOnly(e.mapBrowserEvent)) {
+              select.getFeatures().clear();
+            }
+            const boxExtent = dragBox.getGeometry().getExtent();
+            const boxFeatures = dataPeiLayer
+              .getSource()
+              .getFeaturesInExtent(boxExtent);
+
+            select.getFeatures().extend(boxFeatures);
+            const boxFeaturesPeiProjet = dataPeiProjetLayer
+              .getSource()
+              .getFeaturesInExtent(boxExtent);
+
+            select.getFeatures().extend(boxFeaturesPeiProjet);
+          });
+
+          map.addInteraction(select);
+          map.addInteraction(dragBox);
+        }
+      } else {
+        if (selectCtrl) {
+          map.removeInteraction(selectCtrl);
+        }
+        if (dragBoxCtrl) {
+          map.removeInteraction(dragBoxCtrl);
+        }
+      }
+    }
 
     /**
      * Permet de dessiner un point pour la création des PEI en projet
@@ -89,6 +143,9 @@ const MapToolbarCouvertureHydraulique = forwardRef(
       create: {
         action: toggleCreatePeiProjet,
       },
+      select: {
+        action: toggleSelect,
+      },
     };
 
     function toggleTool(toolId) {
@@ -107,6 +164,17 @@ const MapToolbarCouvertureHydraulique = forwardRef(
     return (
       <>
         {/**Pour la couverture hydraulique */}
+        <ToggleButton
+          name={"tool"}
+          onClick={() => toggleTool("select")}
+          id={"select"}
+          value={"select"}
+          type={"radio"}
+          variant={"outline-primary"}
+          checked={activeTool === "select"}
+        >
+          Sélectionner
+        </ToggleButton>
         <ToolbarButton
           toolName={"create"}
           toolLabel={"Créer un PEI en projet"}

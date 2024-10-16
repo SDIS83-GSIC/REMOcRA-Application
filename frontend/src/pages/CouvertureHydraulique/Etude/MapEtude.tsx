@@ -1,11 +1,10 @@
 import { useParams } from "react-router-dom";
+import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import { IconEtude } from "../../../components/Icon/Icon.tsx";
-import MapComponent from "../../../components/Map/Map.tsx";
+import MapCouvertureHydraulique from "../../../components/Map/MapCouvertureHydraulique/MapCouvertureHydraulique.tsx";
 import url from "../../../module/fetch.tsx";
-import TYPE_CARTE from "../../../enums/TypeCarte.tsx";
-import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
 
 const MapEtude = () => {
   const { etudeId } = useParams();
@@ -19,9 +18,8 @@ const MapEtude = () => {
           title={etudeState?.data?.etudeLibelle}
           icon={<IconEtude />}
         />
-        <MapComponent
+        <MapCouvertureHydraulique
           etudeId={etudeId}
-          typeCarte={TYPE_CARTE.COUVERTURE_HYDRAULIQUE}
           disabledEditPeiProjet={
             EtudeStatutEnum[etudeState?.data?.etudeStatut] ===
             EtudeStatutEnum.TERMINEE
