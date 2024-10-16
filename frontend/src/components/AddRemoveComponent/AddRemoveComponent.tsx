@@ -1,6 +1,9 @@
 import { FieldArray, useFormikContext } from "formik";
 import { ReactNode } from "react";
-import { Button, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
+import CreateButton from "../Form/CreateButton.tsx";
+import DeleteButton from "../Form/DeleteButton.tsx";
 
 /**
  * ATTENTION : doit être utiliser dans un <MyFormik>
@@ -29,12 +32,14 @@ const AddRemoveComponent = ({
         render={(elements) => (
           <>
             {canAdd && (
-              <Button
-                variant="primary"
-                onClick={() => elements.push(defaultElement)}
-              >
-                Ajouter
-              </Button>
+              <Row>
+                <Col xs={"auto"} className={"ms-auto"}>
+                  <CreateButton
+                    title={"Ajouter"}
+                    onClick={() => elements.push(defaultElement)}
+                  />
+                </Col>
+              </Row>
             )}
             {listeElements.map((value: any, index: number) => {
               return (
@@ -44,8 +49,8 @@ const AddRemoveComponent = ({
                 >
                   {createComponentToRepeat(index, listeElements)}
                   <Col key={index} className="p-2 d-flex justify-content-end">
-                    <Button
-                      variant="danger"
+                    <DeleteButton
+                      title={"Supprimer"}
                       onClick={() => {
                         elements.remove(index);
                         setFieldValue(
@@ -53,9 +58,7 @@ const AddRemoveComponent = ({
                           elements.form.values[name].filter((e) => e !== value),
                         );
                       }}
-                    >
-                      Supprimer
-                    </Button>
+                    />
                   </Col>
                 </span>
               );
