@@ -84,7 +84,7 @@ type DeleteModalBodyType = {
   closeModal: () => void;
   query: string;
   id?: string;
-  content: ReactNode;
+  content?: ReactNode;
   ref?: any;
   onDelete: (values: any) => void;
 };
