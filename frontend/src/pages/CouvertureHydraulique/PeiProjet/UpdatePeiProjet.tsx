@@ -1,21 +1,31 @@
 import { Container } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconPei } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import PeiProjet, {
   getInitialValues,
   prepareVariables,
   validationSchema,
 } from "./PeiProjet.tsx";
 
-const UpdatePeiProjet = () => {
-  const { etudeId, peiProjetId } = useParams();
-
-  const peiProjetState = useGet(
+const UpdatePeiProjet = ({
+  etudeId,
+  peiProjetId,
+  coordonneeX,
+  coordonneeY,
+  srid,
+  onSubmit,
+}: {
+  etudeId: string;
+  peiProjetId: string;
+  coordonneeX: number;
+  coordonneeY: number;
+  srid: number;
+  onSubmit: () => void;
+}) => {
+  const { data } = useGet(
     url`/api/couverture-hydraulique/pei-projet/` + peiProjetId,
   );
 
@@ -23,7 +33,18 @@ const UpdatePeiProjet = () => {
     <Container>
       <PageTitle icon={<IconPei />} title="Modification d'un PEI en projet" />
       <MyFormik
-        initialValues={getInitialValues(peiProjetState?.data)}
+        initialValues={getInitialValues({
+          peiProjetNatureDeciId: data?.peiProjetNatureDeciId,
+          peiProjetTypePeiProjet: data?.peiProjetTypePeiProjet,
+          peiProjetDiametreId: data?.peiProjetDiametreId,
+          peiProjetDiametreCanalisation: data?.peiProjetDiametreCanalisation,
+          peiProjetCapacite: data?.peiProjetCapacite,
+          peiProjetDebit: data?.peiProjetDebit,
+          peiProjetCoordonneeX: coordonneeX,
+          peiProjetCoordonneeY: coordonneeY,
+          peiProjetSrid: srid,
+          peiProjetEtudeId: etudeId,
+        })}
         validationSchema={validationSchema}
         isPost={false}
         submitUrl={
@@ -33,8 +54,7 @@ const UpdatePeiProjet = () => {
           peiProjetId
         }
         prepareVariables={(values) => prepareVariables(values)}
-        // TODO redirect vers la carte
-        redirectUrl={URLS.PEI}
+        onSubmit={onSubmit}
       >
         <PeiProjet />
       </MyFormik>

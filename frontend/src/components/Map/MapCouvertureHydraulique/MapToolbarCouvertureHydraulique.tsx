@@ -12,9 +12,10 @@ import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
-import Volet from "../../Volet/Volet.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
+import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
+import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
 
 const MapToolbarCouvertureHydraulique = forwardRef(
   ({
@@ -468,7 +469,6 @@ const MapToolbarCouvertureHydraulique = forwardRef(
             }}
           />
         </Volet>
-
         <Volet
           handleClose={handleCloseTraceeCouverture}
           show={showTraceeCouverture}
@@ -481,6 +481,11 @@ const MapToolbarCouvertureHydraulique = forwardRef(
             closeVolet={handleCloseTraceeCouverture}
           />
         </Volet>
+        <TooltipMapEditPeiProjet
+          etudeId={etudeId}
+          map={map}
+          disabledEditPeiProjet={disabledEditPeiProjet}
+        />
       </>
     );
   },

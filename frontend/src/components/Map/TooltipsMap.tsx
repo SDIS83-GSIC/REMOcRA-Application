@@ -1,16 +1,146 @@
 import { Feature, Map, Overlay } from "ol";
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
-import { IconClose } from "../Icon/Icon.tsx";
+import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
+import { IconClose, IconEdit } from "../Icon/Icon.tsx";
+import Volet from "../Volet/Volet.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
  * @param map : la carte
  * @returns la tooltip
  */
-const TooltipMap = ({ map }: { map: Map }) => {
-  const [featureSelect, setFeatureSelect] = useState<Feature | null>(null);
+const TooltipMapInfo = ({ map }: { map: Map }) => {
   const ref = useRef(null);
+  const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+
+  return (
+    <div ref={ref}>
+      <Tooltip featureSelect={featureSelect} overlay={overlay} />
+    </div>
+  );
+};
+
+export default TooltipMapInfo;
+
+const Tooltip = ({
+  featureSelect,
+  overlay,
+  displayButtonEdit = false,
+  onClickEdit,
+}: {
+  featureSelect: Feature | undefined;
+  overlay: Overlay | undefined;
+  displayButtonEdit?: boolean;
+  onClickEdit?: () => void;
+}) => {
+  return (
+    <>
+      {featureSelect && (
+        <Popover
+          id="popover"
+          placement="bottom"
+          arrowProps={{
+            style: {
+              display: "none",
+            },
+          }}
+        >
+          <Popover.Header>
+            <Row>
+              <Col>Information</Col>
+              <Col className="ms-auto" xs={"auto"}>
+                <Button
+                  variant="link"
+                  onClick={() => overlay?.setPosition(undefined)}
+                >
+                  <IconClose />
+                </Button>
+              </Col>
+            </Row>
+          </Popover.Header>
+          <Popover.Body>
+            {Object.entries(featureSelect.getProperties()).map(
+              ([key, value]) =>
+                key !== "geometry" && (
+                  <div key={key}>
+                    <span className="fw-bold">{key}</span> : {value}{" "}
+                  </div>
+                ),
+            )}
+            {displayButtonEdit && (
+              <Row className="mt-3">
+                <Col className="ms-auto" xs={"auto"}>
+                  <Button variant="primary" onClick={onClickEdit}>
+                    <IconEdit /> Modifier
+                  </Button>
+                </Col>
+              </Row>
+            )}
+          </Popover.Body>
+        </Popover>
+      )}
+    </>
+  );
+};
+
+export const TooltipMapEditPeiProjet = ({
+  map,
+  etudeId,
+  disabledEditPeiProjet = false,
+}: {
+  map: Map;
+  etudeId: string;
+  disabledEditPeiProjet: boolean;
+}) => {
+  const ref = useRef(null);
+  const [showUpdatePeiProjet, setShowUpdatePeiProjet] = useState(false);
+  const handleCloseUpdatePeiProjet = () => setShowUpdatePeiProjet(false);
+
+  const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+  return (
+    <>
+      <div ref={ref}>
+        <Tooltip
+          featureSelect={featureSelect}
+          overlay={overlay}
+          onClickEdit={() => setShowUpdatePeiProjet(true)}
+          displayButtonEdit={
+            !disabledEditPeiProjet &&
+            featureSelect?.getProperties().typePointCarte === "PEI_PROJET"
+          }
+        />
+      </div>
+      <Volet
+        handleClose={handleCloseUpdatePeiProjet}
+        show={showUpdatePeiProjet}
+        className="w-auto"
+      >
+        <UpdatePeiProjet
+          etudeId={etudeId}
+          peiProjetId={featureSelect?.getProperties().pointId}
+          coordonneeX={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
+          }
+          coordonneeY={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
+          }
+          srid={map.getView().getProjection().getCode().split(":")[1]}
+          onSubmit={() => {
+            handleCloseUpdatePeiProjet();
+            overlay?.setPosition(undefined);
+          }}
+        />
+      </Volet>
+    </>
+  );
+};
+
+/**
+ * Permet d'observer quel point est cliqué par l'utilisateur
+ */
+const useTooltipMap = ({ ref, map }) => {
+  const [featureSelect, setFeatureSelect] = useState<Feature | null>(null);
   const [overlay, setOverlay] = useState<Overlay | undefined>(
     new Overlay({
       positioning: "bottom-center",
@@ -39,47 +169,7 @@ const TooltipMap = ({ map }: { map: Map }) => {
         });
       });
     }
-  }, [map]);
+  }, [map, ref]);
 
-  return (
-    <div ref={ref}>
-      {featureSelect && (
-        <Popover
-          id="popover"
-          placement="bottom"
-          arrowProps={{
-            style: {
-              display: "none",
-            },
-          }}
-        >
-          <Popover.Header>
-            <Row>
-              <Col>Information PEI</Col>
-              <Col className="ms-auto" xs={"auto"}>
-                <Button
-                  variant="link"
-                  onClick={() => overlay?.setPosition(undefined)}
-                >
-                  <IconClose />
-                </Button>
-              </Col>
-            </Row>
-          </Popover.Header>
-          <Popover.Body>
-            {Object.entries(featureSelect.getProperties()).map(
-              ([key, value]) =>
-                key !== "geometry" && (
-                  <div key={key}>
-                    <span className="fw-bold">{key}</span> : {value}{" "}
-                  </div>
-                ),
-            )}
-          </Popover.Body>
-        </Popover>
-      )}
-    </div>
-  );
+  return { featureSelect, overlay };
 };
-
-export default TooltipMap;
