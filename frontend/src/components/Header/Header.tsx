@@ -4,7 +4,9 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { NavLink } from "react-router-dom";
+import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
+import BanniereHeader from "./BanniereHeader.tsx";
 
 export interface NavToProps {
   path: string;
@@ -20,25 +22,33 @@ const NavTo = ({ path, label }: NavToProps) => {
     </Nav.Item>
   );
 };
-
 const Header = ({ links }: { links?: NavToProps[] }) => {
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            {links?.map((item, index) => (
-              <NavTo key={index} path={item.path} label={item.label} />
-            ))}
-          </Nav>
-          <a href={URLS.LOGOUT} className="nav-link">
-            Déconnexion
-          </a>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <Row className={"header"}>
+      <BanniereHeader />
+      <Navbar expand="lg" bg={"primary"} data-bs-theme="dark">
+        <Container>
+          <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              {links?.map((item, index) => (
+                <NavTo key={index} path={item.path} label={item.label} />
+              ))}
+            </Nav>
+            <Nav>
+              <a
+                href={URLS.LOGOUT}
+                className={"text-decoration-none text-light"}
+              >
+                {" "}
+                Déconnexion{" "}
+              </a>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </Row>
   );
 };
 
