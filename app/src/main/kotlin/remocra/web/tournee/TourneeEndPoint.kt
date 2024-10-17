@@ -28,7 +28,7 @@ import remocra.usecase.tournee.CreateTourneeUseCase
 import remocra.usecase.tournee.DeleteTourneeUseCase
 import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
-import remocra.usecase.tournee.ForcerEtatTourneeUseCase
+import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
@@ -64,7 +64,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     lateinit var desaffecterTourneeUseCase: DesaffecterTourneeUseCase
 
     @Inject
-    lateinit var forcerEtatTourneeUseCase: ForcerEtatTourneeUseCase
+    lateinit var forcerAvancementTourneeUseCase: ForcerAvancementTourneeUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -96,7 +96,7 @@ class TourneeEndPoint : AbstractEndpoint() {
                 tourneeActif = true,
                 tourneeOrganismeId = tourneeInput.tourneeOrganismeId,
                 tourneeLibelle = tourneeInput.tourneeLibelle,
-                tourneeEtat = null,
+                tourneePourcentageAvancement = null,
                 tourneeReservationUtilisateurId = null,
                 tourneeDateSynchronisation = null,
             ),
@@ -185,17 +185,17 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/avancement-force-0/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_FORCER_POURCENTAGE_E])
     fun setAvancementTournee0(@PathParam("tourneeId") tourneeId: UUID): Response =
-        forcerEtatTourneeUseCase.execute(
+        forcerAvancementTourneeUseCase.execute(
             userInfo = securityContext.userInfo,
-            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneeEtat = 0),
+            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneePourcentageAvancement = 0),
         ).wrap()
 
     @POST
     @Path("/avancement-force-100/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_FORCER_POURCENTAGE_E])
     fun setAvancementTournee100(@PathParam("tourneeId") tourneeId: UUID): Response =
-        forcerEtatTourneeUseCase.execute(
+        forcerAvancementTourneeUseCase.execute(
             userInfo = securityContext.userInfo,
-            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneeEtat = 100),
+            element = tourneeRepository.getTourneeById(tourneeId).copy(tourneePourcentageAvancement = 100),
         ).wrap()
 }

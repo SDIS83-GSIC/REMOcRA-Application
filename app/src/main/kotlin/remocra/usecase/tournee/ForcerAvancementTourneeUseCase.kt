@@ -14,12 +14,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class ForcerEtatTourneeUseCase @Inject constructor(
+class ForcerAvancementTourneeUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
 ) : AbstractCUDUseCase<Tournee>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.TOURNEE_FORCER_POURCENTAGE_E)) {
-            throw RemocraResponseException(ErrorType.TOURNEE_FORCER_ETAT_FORBIDDEN)
+            throw RemocraResponseException(ErrorType.TOURNEE_FORCER_AVANCEMENT_FORBIDDEN)
         }
     }
 
@@ -43,7 +43,7 @@ class ForcerEtatTourneeUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: UserInfo?, element: Tournee): Tournee {
-        tourneeRepository.setAvancementTournee(element.tourneeId, element.tourneeEtat!!)
+        tourneeRepository.setAvancementTournee(element.tourneeId, element.tourneePourcentageAvancement!!)
         return element
     }
 }

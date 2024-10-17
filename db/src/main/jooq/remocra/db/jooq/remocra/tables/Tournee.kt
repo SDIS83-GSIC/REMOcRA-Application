@@ -107,9 +107,9 @@ open class Tournee(
     val ORGANISME_ID: TableField<Record, UUID?> = createField(DSL.name("tournee_organisme_id"), SQLDataType.UUID.nullable(false), this, "Identifiant de l'organisme à qui est affecté cette tournée")
 
     /**
-     * The column <code>remocra.tournee.tournee_etat</code>.
+     * The column <code>remocra.tournee.tournee_pourcentage_avancement</code>.
      */
-    val ETAT: TableField<Record, Int?> = createField(DSL.name("tournee_etat"), SQLDataType.INTEGER, this, "")
+    val POURCENTAGE_AVANCEMENT: TableField<Record, Int?> = createField(DSL.name("tournee_pourcentage_avancement"), SQLDataType.INTEGER, this, "")
 
     /**
      * The column

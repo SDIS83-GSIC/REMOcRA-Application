@@ -75,7 +75,7 @@ class TourneeRepository
                 TOURNEE.LIBELLE,
                 TOURNEE.ORGANISME_ID,
                 ORGANISME.LIBELLE,
-                TOURNEE.ETAT,
+                TOURNEE.POURCENTAGE_AVANCEMENT,
                 TOURNEE.RESERVATION_UTILISATEUR_ID,
                 concat(
                     UTILISATEUR.PRENOM,
@@ -121,7 +121,7 @@ class TourneeRepository
         val tourneeLibelle: String,
         val tourneeOrganismeId: UUID,
         val organismeLibelle: String,
-        val tourneeEtat: Int?,
+        val tourneePourcentageAvancement: Int?,
         val tourneeReservationUtilisateurId: UUID?,
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDateSynchronisation: ZonedDateTime?,
@@ -159,7 +159,7 @@ class TourneeRepository
         val tourneeLibelle: Int?,
         val tourneeNbPei: Int?,
         val organismeLibelle: Int?,
-        val tourneeEtat: Int?,
+        val tourneePourcentageAvancement: Int?,
         val tourneeUtilisateurReservationLibelle: Int?,
         val tourneeActif: Int?,
         val tourneeNextRecopDate: Int?,
@@ -190,12 +190,12 @@ class TourneeRepository
                     list.sortedByDescending { it.organismeLibelle }
                 }
 
-                tourneeEtat == 1 -> {
-                    list.sortedBy { it.tourneeEtat }
+                tourneePourcentageAvancement == 1 -> {
+                    list.sortedBy { it.tourneePourcentageAvancement }
                 }
 
-                tourneeEtat == -1 -> {
-                    list.sortedByDescending { it.tourneeEtat }
+                tourneePourcentageAvancement == -1 -> {
+                    list.sortedByDescending { it.tourneePourcentageAvancement }
                 }
 
                 tourneeUtilisateurReservationLibelle == 1 -> {
@@ -445,9 +445,9 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun setAvancementTournee(tourneeId: UUID, etat: Int) =
+    fun setAvancementTournee(tourneeId: UUID, avancement: Int) =
         dsl.update(TOURNEE)
-            .set(TOURNEE.ETAT, etat)
+            .set(TOURNEE.POURCENTAGE_AVANCEMENT, avancement)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
 

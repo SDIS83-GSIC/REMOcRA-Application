@@ -59,9 +59,9 @@ const ListTournee = () => {
       Filter: <FilterInput type="text" name="tourneeOrganismeLibelle" />,
     },
     {
-      Header: "Etat",
-      accessor: "tourneeEtat",
-      sortField: "tourneeEtat",
+      Header: "Pourcentage d'avancement",
+      accessor: "tourneePourcentageAvancement",
+      sortField: "tourneePourcentageAvancement",
     },
     {
       Header: "Réservation",
@@ -202,7 +202,7 @@ const ListTournee = () => {
     });
   }
 
-  // Bouton forcer l'état d'un tournée
+  // Bouton forcer l'avancement d'une tournée
   if (hasDroit(user, TYPE_DROIT.TOURNEE_FORCER_POURCENTAGE_E)) {
     // Forcer à 0%
     listeButton.push({
@@ -211,15 +211,15 @@ const ListTournee = () => {
       },
       type: TYPE_BUTTON.CONFIRM,
       conditionnalTextDisable: (row) => {
-        return row.original.tourneeEtat === 0
-          ? "L'état de la tournée est déjà à 0"
+        return row.original.tourneePourcentageAvancement === 0
+          ? "L'avancement de la tournée est déjà à 0%"
           : "Impossible de modifier une tournée réservée";
       },
-      textEnable: "Forcer l'état de la tournée à 0",
+      textEnable: "Forcer l'avancement de la tournée à 0",
       path: url`/api/tournee/avancement-force-0/`,
       icon: <IconZeroPourcent />,
       disable: (v) => {
-        return v.original.tourneeEtat === 0 || isDisabled(v);
+        return v.original.tourneePourcentageAvancement === 0 || isDisabled(v);
       },
       classEnable: "warning",
     });
@@ -231,15 +231,15 @@ const ListTournee = () => {
       },
       type: TYPE_BUTTON.CONFIRM,
       conditionnalTextDisable: (row) => {
-        return row.original.tourneeEtat === 100
-          ? "L'état de la tournée est déjà à 100"
+        return row.original.tourneePourcentageAvancement === 100
+          ? "L'avancement de la tournée est déjà à 100"
           : "Impossible de modifier une tournée réservée";
       },
-      textEnable: "Forcer l'état de la tournée à 100",
+      textEnable: "Forcer l'avancement de la tournée à 100",
       path: url`/api/tournee/avancement-force-100/`,
       icon: <IconCentPourcent />,
       disable: (v) => {
-        return v.original.tourneeEtat === 100 || isDisabled(v);
+        return v.original.tourneePourcentageAvancement === 100 || isDisabled(v);
       },
       classEnable: "warning",
     });

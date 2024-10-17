@@ -24,7 +24,7 @@ data class Tournee(
     val tourneeActif: Boolean,
     val tourneeLibelle: String,
     val tourneeOrganismeId: UUID,
-    val tourneeEtat: Int?,
+    val tourneePourcentageAvancement: Int?,
     val tourneeReservationUtilisateurId: UUID?,
     val tourneeDateSynchronisation: ZonedDateTime?,
 ) : Serializable {
@@ -52,11 +52,11 @@ data class Tournee(
         if (this.tourneeOrganismeId != o.tourneeOrganismeId) {
             return false
         }
-        if (this.tourneeEtat == null) {
-            if (o.tourneeEtat != null) {
+        if (this.tourneePourcentageAvancement == null) {
+            if (o.tourneePourcentageAvancement != null) {
                 return false
             }
-        } else if (this.tourneeEtat != o.tourneeEtat) {
+        } else if (this.tourneePourcentageAvancement != o.tourneePourcentageAvancement) {
             return false
         }
         if (this.tourneeReservationUtilisateurId == null) {
@@ -83,7 +83,7 @@ data class Tournee(
         result = prime * result + this.tourneeActif.hashCode()
         result = prime * result + this.tourneeLibelle.hashCode()
         result = prime * result + this.tourneeOrganismeId.hashCode()
-        result = prime * result + (if (this.tourneeEtat == null) 0 else this.tourneeEtat.hashCode())
+        result = prime * result + (if (this.tourneePourcentageAvancement == null) 0 else this.tourneePourcentageAvancement.hashCode())
         result = prime * result + (if (this.tourneeReservationUtilisateurId == null) 0 else this.tourneeReservationUtilisateurId.hashCode())
         result = prime * result + (if (this.tourneeDateSynchronisation == null) 0 else this.tourneeDateSynchronisation.hashCode())
         return result
@@ -96,7 +96,7 @@ data class Tournee(
         sb.append(", ").append(tourneeActif)
         sb.append(", ").append(tourneeLibelle)
         sb.append(", ").append(tourneeOrganismeId)
-        sb.append(", ").append(tourneeEtat)
+        sb.append(", ").append(tourneePourcentageAvancement)
         sb.append(", ").append(tourneeReservationUtilisateurId)
         sb.append(", ").append(tourneeDateSynchronisation)
 

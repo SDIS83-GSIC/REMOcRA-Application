@@ -3,7 +3,7 @@ export type TourneeEntity = {
   tourneeActif: boolean;
   tourneeLibelle: string;
   tourneeOrganisme_id: string;
-  tourneeEtat: number;
+  tourneePourcentageAvancement: number;
   tourneeReservationUtilisateurId: string;
   tourneeDateSynchronisation: Date;
 };
