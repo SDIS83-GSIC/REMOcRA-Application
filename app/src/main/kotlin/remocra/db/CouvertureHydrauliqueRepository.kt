@@ -342,6 +342,11 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .where(PEI_PROJET.ETUDE_ID.eq(etudeId))
             .execute()
 
+    fun deletePeiProjet(peiProjetId: UUID) =
+        dsl.deleteFrom(PEI_PROJET)
+            .where(PEI_PROJET.ID.eq(peiProjetId))
+            .execute()
+
     fun insertPeiProjet(listPeiProjet: List<PeiProjet>) =
         dsl.batch(
             listPeiProjet.map { dsl.insertInto(PEI_PROJET).set(dsl.newRecord(PEI_PROJET, it)) },

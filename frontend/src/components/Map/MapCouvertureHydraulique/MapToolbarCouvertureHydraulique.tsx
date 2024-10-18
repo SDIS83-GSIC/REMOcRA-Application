@@ -485,6 +485,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           etudeId={etudeId}
           map={map}
           disabledEditPeiProjet={disabledEditPeiProjet}
+          dataPeiProjetLayer={dataPeiProjetLayer}
         />
       </>
     );

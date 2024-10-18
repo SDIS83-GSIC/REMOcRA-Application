@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -36,6 +37,7 @@ import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.couverturehydraulique.CloreEtudeUseCase
 import remocra.usecase.couverturehydraulique.CreateEtudeUseCase
 import remocra.usecase.couverturehydraulique.CreatePeiProjetUseCase
+import remocra.usecase.couverturehydraulique.DeletePeiProjetUseCase
 import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
@@ -51,6 +53,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
     @Inject lateinit var createPeiProjetUseCase: CreatePeiProjetUseCase
+
+    @Inject lateinit var deletePeiProjetUseCase: DeletePeiProjetUseCase
 
     @Inject lateinit var updatePeiProjetUseCase: UpdatePeiProjetUseCase
 
@@ -165,6 +169,17 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 ),
             ),
         ).wrap()
+    }
+
+    @DELETE
+    @Path("/pei-projet/{peiProjetId}")
+    @RequireDroits([Droit.ETUDE_U])
+    fun deletePeiProjet(
+        @PathParam("peiProjetId")
+        peiProjetId: UUID,
+    ): Response {
+        val peiProjetData = couvertureHydrauliqueRepository.getPeiProjet(peiProjetId)
+        return deletePeiProjetUseCase.execute(securityContext.userInfo, peiProjetData).wrap()
     }
 
     class PeiProjetInput {

@@ -4,6 +4,7 @@ import { Button, Col, Popover, Row } from "react-bootstrap";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import { IconClose, IconEdit } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
+import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -28,15 +29,21 @@ const Tooltip = ({
   overlay,
   displayButtonEdit = false,
   onClickEdit,
+  displayButtonDelete = false,
+  onClickDelete,
+  deletePath,
 }: {
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
   displayButtonEdit?: boolean;
   onClickEdit?: () => void;
+  displayButtonDelete: boolean;
+  onClickDelete?: () => void;
+  deletePath: string;
 }) => {
   return (
     <>
-      {featureSelect && (
+      {featureSelect?.getProperties().pointId && (
         <Popover
           id="popover"
           placement="bottom"
@@ -77,6 +84,18 @@ const Tooltip = ({
                 </Col>
               </Row>
             )}
+            {displayButtonDelete && (
+              <Row className="mt-3">
+                <Col className="ms-auto" xs={"auto"}>
+                  <DeleteButtonWithModale
+                    path={deletePath}
+                    disabled={!displayButtonDelete}
+                    title={true}
+                    reload={onClickDelete}
+                  />
+                </Col>
+              </Row>
+            )}
           </Popover.Body>
         </Popover>
       )}
@@ -88,16 +107,22 @@ export const TooltipMapEditPeiProjet = ({
   map,
   etudeId,
   disabledEditPeiProjet = false,
+  dataPeiProjetLayer,
 }: {
   map: Map;
   etudeId: string;
   disabledEditPeiProjet: boolean;
+  dataPeiProjetLayer: any;
 }) => {
   const ref = useRef(null);
   const [showUpdatePeiProjet, setShowUpdatePeiProjet] = useState(false);
   const handleCloseUpdatePeiProjet = () => setShowUpdatePeiProjet(false);
 
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+  const displayEditDeleteButton =
+    !disabledEditPeiProjet &&
+    featureSelect?.getProperties().typePointCarte === "PEI_PROJET" &&
+    featureSelect?.getProperties().pointId != null;
   return (
     <>
       <div ref={ref}>
@@ -105,9 +130,15 @@ export const TooltipMapEditPeiProjet = ({
           featureSelect={featureSelect}
           overlay={overlay}
           onClickEdit={() => setShowUpdatePeiProjet(true)}
-          displayButtonEdit={
-            !disabledEditPeiProjet &&
-            featureSelect?.getProperties().typePointCarte === "PEI_PROJET"
+          displayButtonEdit={displayEditDeleteButton}
+          displayButtonDelete={displayEditDeleteButton}
+          onClickDelete={() => {
+            dataPeiProjetLayer.getSource().refresh();
+            overlay?.setPosition(undefined);
+          }}
+          deletePath={
+            "/api/couverture-hydraulique/pei-projet/" +
+            featureSelect?.getProperties().pointId
           }
         />
       </div>
