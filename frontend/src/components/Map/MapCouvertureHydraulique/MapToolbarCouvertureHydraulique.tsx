@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
-import { DragBox, Draw, Select } from "ol/interaction";
+import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -76,6 +76,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         ?.getInteractions()
         .getArray()
         .filter((c) => c instanceof DragBox)[0];
+
       if (active) {
         if (!selectCtrl) {
           const select = new Select({});
@@ -392,6 +393,75 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         });
     }
 
+    /**
+     * Permet de dessiner un point pour la création des PEI en projet
+     */
+    function toggleDeplacerPeiProjet(active = false) {
+      const interactionMovePei = map
+        ?.getInteractions()
+        .getArray()
+        .filter((c) => c instanceof Select)[0];
+      if (active) {
+        const select = new Select();
+        map.addInteraction(select);
+
+        const modify = new Modify({
+          features: select.getFeatures(),
+          source: dataPeiProjetLayer,
+          snapToPointer: true,
+        });
+
+        map.addInteraction(modify);
+
+        select.on("select", function (evt) {
+          evt.selected.forEach(async function (feature) {
+            // Si ce n'est pas un PEI en projet, on n'autorise pas le déplacement
+            if (feature.getProperties().typePointCarte !== "PEI_PROJET") {
+              map.removeInteraction(modify);
+            } else {
+              map.addInteraction(modify);
+            }
+          });
+        });
+
+        modify.on("modifyend", function (evt) {
+          evt.features.forEach(async function (feature) {
+            if (feature.getProperties().typePointCarte === "PEI_PROJET") {
+              const coordinate = feature.getGeometry().getCoordinates();
+              (
+                await fetch(
+                  url`/api/couverture-hydraulique/pei-projet/move/` +
+                    feature.getProperties().pointId,
+                  getFetchOptions({
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      coordonneeX: coordinate[0],
+                      coordonneeY: coordinate[1],
+                      srid: map
+                        .getView()
+                        .getProjection()
+                        .getCode()
+                        .split(":")[1],
+                    }),
+                  }),
+                )
+              )
+                .text()
+                .then(() => {
+                  successToast("Le PEI a bien été déplacé.");
+                })
+                .catch((reason: string) => {
+                  errorToast(reason);
+                });
+            }
+          });
+        });
+      } else {
+        map.removeInteraction(interactionMovePei);
+      }
+    }
+
     const tools = {
       create: {
         action: toggleCreatePeiProjet,
@@ -401,6 +471,9 @@ const MapToolbarCouvertureHydraulique = forwardRef(
       },
       peiPlusProche: {
         action: togglePeiPlusProche,
+      },
+      deplacer: {
+        action: toggleDeplacerPeiProjet,
       },
     };
 
@@ -455,6 +528,17 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         >
           Trouver le PEI plus proche
         </ToggleButton>
+        <ToggleButton
+          name={"toolDeplacer"}
+          onClick={() => toggleTool("deplacer")}
+          id={"deplacer"}
+          value={"deplacer"}
+          type={"radio"}
+          variant={"outline-primary"}
+          checked={activeTool === "deplacer"}
+        >
+          Déplacer un PEI en projet
+        </ToggleButton>
         <Button
           variant="outline-primary"
           onClick={() => calculCouverture()}
@@ -503,6 +587,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           map={map}
           disabledEditPeiProjet={disabledEditPeiProjet}
           dataPeiProjetLayer={dataPeiProjetLayer}
+          disabled={activeTool === "deplacer"}
         />
       </>
     );

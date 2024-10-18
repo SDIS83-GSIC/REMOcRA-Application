@@ -171,6 +171,35 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         ).wrap()
     }
 
+    @PUT
+    @Path("/pei-projet/move/{peiProjetId}")
+    @RequireDroits([Droit.ETUDE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun movePeiProjet(
+        @PathParam("peiProjetId")
+        peiProjetId: UUID,
+        coordonnees: Coordonnees,
+    ): Response {
+        val peiProjetData = couvertureHydrauliqueRepository.getPeiProjet(peiProjetId)
+        return updatePeiProjetUseCase.execute(
+            securityContext.userInfo,
+            peiProjetData.copy(
+                peiProjetGeometrie = GeometryFactory(PrecisionModel(), coordonnees.srid).createPoint(
+                    Coordinate(
+                        coordonnees.coordonneeX,
+                        coordonnees.coordonneeY,
+                    ),
+                ),
+            ),
+        ).wrap()
+    }
+
+    data class Coordonnees(
+        val coordonneeX: Double,
+        val coordonneeY: Double,
+        val srid: Int,
+    )
+
     @DELETE
     @Path("/pei-projet/{peiProjetId}")
     @RequireDroits([Droit.ETUDE_U])

@@ -1,5 +1,5 @@
 import { Feature, Map, Overlay } from "ol";
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import { IconClose, IconEdit } from "../Icon/Icon.tsx";
@@ -32,6 +32,7 @@ const Tooltip = ({
   displayButtonDelete = false,
   onClickDelete,
   deletePath,
+  disabled = false,
 }: {
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
@@ -40,10 +41,11 @@ const Tooltip = ({
   displayButtonDelete: boolean;
   onClickDelete?: () => void;
   deletePath: string;
+  disabled: boolean;
 }) => {
   return (
     <>
-      {featureSelect?.getProperties().pointId && (
+      {featureSelect?.getProperties().pointId && !disabled && (
         <Popover
           id="popover"
           placement="bottom"
@@ -108,21 +110,31 @@ export const TooltipMapEditPeiProjet = ({
   etudeId,
   disabledEditPeiProjet = false,
   dataPeiProjetLayer,
+  disabled,
 }: {
   map: Map;
   etudeId: string;
   disabledEditPeiProjet: boolean;
   dataPeiProjetLayer: any;
+  disabled: boolean;
 }) => {
   const ref = useRef(null);
   const [showUpdatePeiProjet, setShowUpdatePeiProjet] = useState(false);
   const handleCloseUpdatePeiProjet = () => setShowUpdatePeiProjet(false);
 
-  const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    disabled: disabled,
+  });
   const displayEditDeleteButton =
     !disabledEditPeiProjet &&
     featureSelect?.getProperties().typePointCarte === "PEI_PROJET" &&
     featureSelect?.getProperties().pointId != null;
+
+  if (disabled) {
+    overlay?.setPosition(undefined);
+  }
   return (
     <>
       <div ref={ref}>
@@ -140,6 +152,7 @@ export const TooltipMapEditPeiProjet = ({
             "/api/couverture-hydraulique/pei-projet/" +
             featureSelect?.getProperties().pointId
           }
+          disabled={disabled}
         />
       </div>
       <Volet
@@ -170,7 +183,14 @@ export const TooltipMapEditPeiProjet = ({
 /**
  * Permet d'observer quel point est cliqué par l'utilisateur
  */
-const useTooltipMap = ({ ref, map }) => {
+const useTooltipMap = ({
+  ref,
+  map,
+  disabled = false,
+}: {
+  ref: Ref<HTMLDivElement>;
+  map: Map;
+}) => {
   const [featureSelect, setFeatureSelect] = useState<Feature | null>(null);
   const [overlay, setOverlay] = useState<Overlay | undefined>(
     new Overlay({
@@ -180,7 +200,7 @@ const useTooltipMap = ({ ref, map }) => {
   );
 
   useEffect(() => {
-    if (map && ref.current != null) {
+    if (map && ref.current != null && !disabled) {
       map.on("singleclick", (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
 
@@ -200,7 +220,7 @@ const useTooltipMap = ({ ref, map }) => {
         });
       });
     }
-  }, [map, ref]);
+  }, [map, ref, disabled]);
 
   return { featureSelect, overlay };
 };
