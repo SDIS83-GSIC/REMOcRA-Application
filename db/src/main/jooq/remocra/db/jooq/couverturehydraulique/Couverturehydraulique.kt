@@ -25,7 +25,6 @@ import remocra.db.jooq.couverturehydraulique.tables.Sommet
 import remocra.db.jooq.couverturehydraulique.tables.TempDistance
 import remocra.db.jooq.couverturehydraulique.tables.TypeEtude
 import remocra.db.jooq.couverturehydraulique.tables.VoieLaterale
-import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.List
 
@@ -98,12 +97,10 @@ open class Couverturehydraulique : SchemaImpl("couverturehydraulique", DefaultCa
         configuration: Configuration,
         geomclic: Geometry?,
         distanceMaxParcours: Int?,
-        idreseauimporte: UUID?,
     ): Result<Record> = configuration.dsl().selectFrom(
         remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
             geomclic,
             distanceMaxParcours,
-            idreseauimporte,
         ),
     ).fetch()
 
@@ -113,11 +110,9 @@ open class Couverturehydraulique : SchemaImpl("couverturehydraulique", DefaultCa
     fun PLUS_PROCHE_PEI(
         geomclic: Geometry?,
         distanceMaxParcours: Int?,
-        idreseauimporte: UUID?,
     ): PlusProchePei = remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
         geomclic,
         distanceMaxParcours,
-        idreseauimporte,
     )
 
     /**
@@ -126,11 +121,9 @@ open class Couverturehydraulique : SchemaImpl("couverturehydraulique", DefaultCa
     fun PLUS_PROCHE_PEI(
         geomclic: Field<Geometry?>,
         distanceMaxParcours: Field<Int?>,
-        idreseauimporte: Field<UUID?>,
     ): PlusProchePei = remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
         geomclic,
         distanceMaxParcours,
-        idreseauimporte,
     )
 
     /**

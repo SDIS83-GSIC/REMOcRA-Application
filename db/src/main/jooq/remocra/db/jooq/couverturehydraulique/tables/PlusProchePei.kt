@@ -91,7 +91,6 @@ open class PlusProchePei(
         arrayOf(
             DSL.value(null, SQLDataType.GEOMETRY.asConvertedDataType(GeometryBinding())),
             DSL.value(null, SQLDataType.INTEGER),
-            DSL.value(null, SQLDataType.UUID),
         ),
         null,
     )
@@ -140,14 +139,12 @@ open class PlusProchePei(
     fun call(
         geomclic: Geometry?,
         distanceMaxParcours: Int?,
-        idreseauimporte: UUID?,
     ): PlusProchePei = PlusProchePei(
         DSL.name("plus_proche_pei"),
         null,
         arrayOf(
             DSL.value(geomclic, SQLDataType.GEOMETRY.asConvertedDataType(GeometryBinding())),
             DSL.value(distanceMaxParcours, SQLDataType.INTEGER),
-            DSL.value(idreseauimporte, SQLDataType.UUID),
         ),
     ).let { if (aliased()) it.`as`(unqualifiedName) else it }
 
@@ -157,14 +154,12 @@ open class PlusProchePei(
     fun call(
         geomclic: Field<Geometry?>,
         distanceMaxParcours: Field<Int?>,
-        idreseauimporte: Field<UUID?>,
     ): PlusProchePei = PlusProchePei(
         DSL.name("plus_proche_pei"),
         null,
         arrayOf(
             geomclic,
             distanceMaxParcours,
-            idreseauimporte,
         ),
     ).let { if (aliased()) it.`as`(unqualifiedName) else it }
 }

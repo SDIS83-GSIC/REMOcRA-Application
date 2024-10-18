@@ -9,7 +9,6 @@ import org.jooq.Record
 import org.jooq.Result
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.couverturehydraulique.tables.PlusProchePei
-import java.util.UUID
 
 /**
  * Call <code>couverturehydraulique.plus_proche_pei</code>.
@@ -18,12 +17,10 @@ fun plusProchePei(
     configuration: Configuration,
     geomclic: Geometry?,
     distanceMaxParcours: Int?,
-    idreseauimporte: UUID?,
 ): Result<Record> = configuration.dsl().selectFrom(
     remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
         geomclic,
         distanceMaxParcours,
-        idreseauimporte,
     ),
 ).fetch()
 
@@ -33,11 +30,9 @@ fun plusProchePei(
 fun plusProchePei(
     geomclic: Geometry?,
     distanceMaxParcours: Int?,
-    idreseauimporte: UUID?,
 ): PlusProchePei = remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
     geomclic,
     distanceMaxParcours,
-    idreseauimporte,
 )
 
 /**
@@ -46,9 +41,7 @@ fun plusProchePei(
 fun plusProchePei(
     geomclic: Field<Geometry?>,
     distanceMaxParcours: Field<Int?>,
-    idreseauimporte: Field<UUID?>,
 ): PlusProchePei = remocra.db.jooq.couverturehydraulique.tables.PlusProchePei.PLUS_PROCHE_PEI.call(
     geomclic,
     distanceMaxParcours,
-    idreseauimporte,
 )
