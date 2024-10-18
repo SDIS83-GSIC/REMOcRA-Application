@@ -1,4 +1,4 @@
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import Header from "../../components/Header/Header.tsx";
@@ -12,6 +12,7 @@ import UtilisateurEntity, {
 } from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { hasDroit } from "../../droits.tsx";
+import SquelettePage from "../SquelettePage.tsx";
 
 const Accueil = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
@@ -28,33 +29,30 @@ const Accueil = () => {
   );
 
   return (
-    <>
-      <Header />
-      <Container>
-        <Row>
-          {Object.entries(mapColonneRow).map(([key, values]) => (
-            <Col key={key}>
-              {Array.from(values).map((e) => {
-                const listeLink = getLinks(e.moduleType, user);
-                return (
-                  (listeLink?.find((e) => e.aLeDroit === true) != null ||
-                    e.moduleContenuHtml != null) && (
-                    <Row className="m-3">
-                      <ModuleRemocra
-                        titre={e.moduleTitre}
-                        image={e.moduleLinkImage}
-                        contenuHtml={e.moduleContenuHtml}
-                        listeLink={listeLink}
-                      />
-                    </Row>
-                  )
-                );
-              })}
-            </Col>
-          ))}
-        </Row>
-      </Container>
-    </>
+    <SquelettePage header={<Header />} fluid={false}>
+      <Row>
+        {Object.entries(mapColonneRow).map(([key, values]) => (
+          <Col key={key}>
+            {Array.from(values).map((e) => {
+              const listeLink = getLinks(e.moduleType, user);
+              return (
+                (listeLink?.find((e) => e.aLeDroit === true) != null ||
+                  e.moduleContenuHtml != null) && (
+                  <Row className="m-3">
+                    <ModuleRemocra
+                      titre={e.moduleTitre}
+                      image={e.moduleLinkImage}
+                      contenuHtml={e.moduleContenuHtml}
+                      listeLink={listeLink}
+                    />
+                  </Row>
+                )
+              );
+            })}
+          </Col>
+        ))}
+      </Row>
+    </SquelettePage>
   );
 };
 

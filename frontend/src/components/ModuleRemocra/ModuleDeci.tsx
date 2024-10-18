@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { URLS } from "../../routes.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
+import SquelettePage from "../../pages/SquelettePage.tsx";
 
 const ModuleDeci = () => {
   const navLinks: NavToProps[] = [
@@ -17,11 +18,10 @@ const ModuleDeci = () => {
   ];
 
   return (
-    <>
-      <Header links={navLinks} />
+    <SquelettePage header={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
-    </>
+    </SquelettePage>
   );
 };
 
