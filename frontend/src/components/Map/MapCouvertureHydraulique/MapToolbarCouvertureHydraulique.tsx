@@ -14,7 +14,6 @@ import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/Tra
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
 import Volet from "../../Volet/Volet.tsx";
-import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
 
 const MapToolbarCouvertureHydraulique = forwardRef(
@@ -149,6 +148,10 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           });
           map.addInteraction(draw);
         }
+      } else {
+        if (createCtrl2) {
+          map.removeInteraction(createCtrl2);
+        }
       }
     }
 
@@ -204,6 +207,10 @@ const MapToolbarCouvertureHydraulique = forwardRef(
             }
           });
           map.addInteraction(draw);
+        }
+      } else {
+        if (createCtrl) {
+          map.removeInteraction(createCtrl);
         }
       }
     }
@@ -399,14 +406,15 @@ const MapToolbarCouvertureHydraulique = forwardRef(
 
     function toggleTool(toolId) {
       let newTool = null;
+      if (activeTool != null) {
+        tools[activeTool].action(false, activeTool);
+      }
       if (activeTool === toolId) {
         setActiveTool(null);
       } else {
         setActiveTool(toolId);
         newTool = toolId;
-      }
-      for (const property in tools) {
-        tools[property].action(property === newTool);
+        tools[newTool].action(true, newTool);
       }
     }
 
@@ -424,20 +432,29 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         >
           Sélectionner
         </ToggleButton>
-        <ToolbarButton
-          toolName={"create"}
-          toolLabel={"Créer un PEI en projet"}
-          toggleTool={toggleTool}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
-        <ToolbarButton
-          toolName={"peiPlusProche"}
-          toolLabel={"Trouver le PEI le plus proche"}
-          toggleTool={toggleTool}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
+
+        <ToggleButton
+          name={"toolCreate"}
+          onClick={() => toggleTool("create")}
+          id={"create"}
+          value={"create"}
+          type={"radio"}
+          variant={"outline-primary"}
+          checked={activeTool === "create"}
+        >
+          Créer un PEI en projet
+        </ToggleButton>
+        <ToggleButton
+          name={"toolPeiPlusProche"}
+          onClick={() => toggleTool("peiPlusProche")}
+          id={"peiPlusProche"}
+          value={"peiPlusProche"}
+          type={"radio"}
+          variant={"outline-primary"}
+          checked={activeTool === "peiPlusProche"}
+        >
+          Trouver le PEI plus proche
+        </ToggleButton>
         <Button
           variant="outline-primary"
           onClick={() => calculCouverture()}
