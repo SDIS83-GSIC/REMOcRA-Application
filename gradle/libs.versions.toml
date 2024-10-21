@@ -62,7 +62,7 @@ pac4j-jakartaee = "org.pac4j:pac4j-jakartaee:6.0.6"
 commons-email = "org.apache.commons:commons-email:1.6.0"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
 swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.25"
-swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.23"
+swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.25"
 
 geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "geotools" }
 geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }
