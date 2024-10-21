@@ -1,6 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./components/App/AppProvider.tsx";
-import "./App.module.css";
+import "./App.css";
 import routes from "./routes.tsx";
 import RouteConfig from "./components/Router/RouteConfig.tsx";
 import "bootstrap/dist/css/bootstrap.min.css";
