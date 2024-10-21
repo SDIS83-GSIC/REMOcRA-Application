@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Form } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -244,7 +244,8 @@ type SelectDataType = {
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   // On récupère l'utilisateur pour prendre en compte les droits
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user, srid }: { user: UtilisateurEntity; srid: string } =
+    useAppContext();
 
   const {
     values,
@@ -283,17 +284,15 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     }}`,
   );
 
-  let isSaisieVoieEnabled = false;
-
-  if (listeParametre.isResolved) {
-    // Le résultat est un String, on le parse pour récupérer le tableau
-    isSaisieVoieEnabled = JSON.parse(
+  const isSaisieVoieEnabled = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
-  }
-
-  //eslint-disable-next-line react-hooks/rules-of-hooks
-  const { data: srid } = useGet(url`/api/app-settings/srid`);
+  }, [listeParametre.isResolved]);
 
   useEffect(() => {
     if (

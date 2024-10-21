@@ -200,7 +200,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
         val isInZoneCompetence = peiRepository.isInZoneCompetence(
-            srid = appSettings.sridInt,
+            srid = appSettings.srid,
             coordonneeY = element.coordonneeY,
             coordonneeX = element.coordonneeX,
             idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),

@@ -8,8 +8,9 @@ import remocra.db.CarteRepository
 import remocra.db.UtilisateurRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.usecase.geometryFromBBox
-import remocra.usecase.toGeomFromText
+import remocra.utils.geometryFromBBox
+import remocra.utils.sridFromEpsgCode
+import remocra.utils.toGeomFromText
 import java.util.UUID
 
 class GetPointCarteUseCase : AbstractUseCase() {
@@ -30,14 +31,15 @@ class GetPointCarteUseCase : AbstractUseCase() {
      * @param typePointCarte : Permet de spécifier le type de points (PEI, PEI en projet, PEI prescrit ...)
      */
     fun execute(
-        bbox: String?,
-        srid: String?,
+        bbox: String,
+        sridSource: String,
         organismeId: UUID,
         etudeId: UUID?,
         typePointCarte: TypePointCarte,
         isSuperAdmin: Boolean,
     ): LayersRes {
         val zoneCompetence = utilisateurRepository.getZoneByOrganismeId(organismeId)
+        val srid = sridFromEpsgCode(sridSource)
 
         val feature = when (typePointCarte) {
             TypePointCarte.PEI -> bbox.let {
@@ -46,18 +48,18 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
                 }
                 if (it.isNullOrEmpty()) {
-                    carteRepository.getPeiWithinZone(zoneCompetence.zoneIntegrationId, isSuperAdmin)
+                    carteRepository.getPeiWithinZone(zoneCompetence.zoneIntegrationId, srid)
                 } else {
-                    val geom = geometryFromBBox(bbox, srid) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getPeiWithinZoneAndBbox(zoneCompetence.zoneIntegrationId, geom.toGeomFromText())
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getPeiWithinZoneAndBbox(zoneCompetence.zoneIntegrationId, geom.toGeomFromText(), srid)
                 }
             }
             TypePointCarte.PEI_PROJET -> bbox.let {
                 if (it.isNullOrEmpty()) {
-                    carteRepository.getPeiProjetWithinEtude(etudeId!!)
+                    carteRepository.getPeiProjetWithinEtude(etudeId!!, srid)
                 } else {
-                    val geom = geometryFromBBox(bbox, srid) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getPeiProjetWithinEtudeAndBbox(etudeId!!, geom.toGeomFromText())
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getPeiProjetWithinEtudeAndBbox(etudeId!!, geom.toGeomFromText(), srid)
                 }
             }
             TypePointCarte.PEI_PRESCRIT -> TODO()

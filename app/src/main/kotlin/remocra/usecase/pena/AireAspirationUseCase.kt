@@ -63,7 +63,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
                     penaAspirationNumero = it.numero,
                     penaAspirationPenaId = element.penaId,
                     penaAspirationGeometrie = if (!it.coordonneeX.isNullOrEmpty() && !it.coordonneeY.isNullOrEmpty() && it.estDeporte) {
-                        GeometryFactory(PrecisionModel(), appSettings.sridInt).createPoint(Coordinate(it.coordonneeX.toDouble(), it.coordonneeY.toDouble()))
+                        GeometryFactory(PrecisionModel(), appSettings.srid).createPoint(Coordinate(it.coordonneeX.toDouble(), it.coordonneeY.toDouble()))
                     } else {
                         null
                     },

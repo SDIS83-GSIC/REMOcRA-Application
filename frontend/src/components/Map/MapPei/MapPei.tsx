@@ -3,7 +3,7 @@ import MapComponent, { useMapComponent } from "../Map.tsx";
 import MapToolbarPei from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
-  const mapElement = useRef();
+  const mapElement = useRef<HTMLDivElement>();
   const {
     map,
     workingLayer,

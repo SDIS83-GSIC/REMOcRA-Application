@@ -80,7 +80,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
                     (next.properties.find { it.name.localPart == "the_geom" }?.value as Geometry?)?.getGeometryN(0)
                         ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_GEOMETRIE_NULLE)
 
-                geometrie.srid = appSettings.sridInt
+                geometrie.srid = appSettings.srid
 
                 val reseauTraversable: Boolean =
                     next.properties.find { it.name.localPart == "traversabl" }?.value?.toString()?.toBooleanStrictOrNull() ?: false
@@ -126,7 +126,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
                     next.properties.find { it.name.localPart == "the_geom" }?.value as Geometry?
                         ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_GEOMETRIE_NULLE)
 
-                geometrie.srid = appSettings.sridInt
+                geometrie.srid = appSettings.srid
 
                 listBatiment.add(
                     Batiment(
@@ -167,7 +167,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
                     throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_GEOMETRIE_NULLE_POINT)
                 }
 
-                geometrie.srid = appSettings.sridInt
+                geometrie.srid = appSettings.srid
 
                 val codeNatureDeci: String =
                     next.properties.find { it.name.localPart == "natureDeci" }?.value?.toString()

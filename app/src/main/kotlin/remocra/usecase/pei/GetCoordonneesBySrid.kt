@@ -74,14 +74,14 @@ class GetCoordonneesBySrid {
         }
 
         // Maintenant on transforme les coordonnées 4326 par le SRID fourni dans le reference.conf
-        if (srid != settings.sridInt) {
+        if (srid != settings.srid) {
             listeCoordonneesBySystem.add(
                 GeometryFactory(PrecisionModel(), GlobalConstants.SRID_4326).createPoint(
                     Coordinate(
                         coordonneeX4326.toDouble(),
                         coordonneeY4326.toDouble(),
                     ),
-                ).transformProjection(settings.sridInt),
+                ).transformProjection(settings.srid),
             )
         }
 

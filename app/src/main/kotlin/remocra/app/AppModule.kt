@@ -31,8 +31,12 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                 AppSettings(
                     environment = config.getEnum(Environment::class.java, "environment"),
                     codeSdis = config.getEnum(CodeSdis::class.java, "codeSdis"),
-                    sridString = config.getString("srid"),
-                    sridInt = config.getString("srid").split(":")[1].toInt(),
+                    epsg = config.getConfig("epsg").let {
+                        Epsg(
+                            name = it.getString("name"),
+                            projection = it.getString("projection"),
+                        )
+                    },
                 ),
             )
     }

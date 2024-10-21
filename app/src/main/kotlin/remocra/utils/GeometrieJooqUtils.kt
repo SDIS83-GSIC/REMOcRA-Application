@@ -82,3 +82,12 @@ fun ST_Within(
     geometrieField2: Field<Geometry?>,
 ): Condition =
     DSL.condition("ST_Within($geometrieField, $geometrieField2)")
+
+/**
+ * Retourne true si geometrieField est dans la geometrieField2
+ */
+fun ST_Transform(
+    geometrieField: Field<Geometry?>,
+    srid: Int?,
+): Field<Geometry?> =
+    DSL.field("ST_Transform($geometrieField, $srid)", Geometry::class.java)

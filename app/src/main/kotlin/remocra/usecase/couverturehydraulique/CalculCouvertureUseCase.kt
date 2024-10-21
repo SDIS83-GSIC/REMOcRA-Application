@@ -77,7 +77,7 @@ class CalculCouvertureUseCase : AbstractCUDUseCase<CalculData>(TypeOperation.UPD
             element.listPeiId,
             element.listPeiProjetId,
             profondeurCouverture,
-            appSettings.sridInt,
+            appSettings.srid,
             appSettings.codeSdis,
         )
 

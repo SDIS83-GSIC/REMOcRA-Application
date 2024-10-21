@@ -126,7 +126,7 @@ class PeiUseCase : AbstractUseCase() {
      * dans le formaulaire d'update d'un PEI
      */
     fun getInfoForUpdateOrCreate(coordonneeX: String?, coordonneeY: String?, peiId: UUID?): FichePeiListSelect {
-        val srid = appSettings.sridInt
+        val srid = appSettings.srid
 
         val toleranceCommune = parametresProvider.getParametreInt(GlobalConstants.PEI_TOLERANCE_COMMUNE_METRES)
             ?: throw IllegalArgumentException("Le paramètre PEI_TOLERANCE_COMMUNE_METRES est nul, veuillez renseigner une valeur")
