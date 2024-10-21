@@ -4,13 +4,13 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "parcel build --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html",
+    "build": "parcel build --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html src/style.scss",
     "watch": "parcel watch --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html",
     "lint:js": "eslint --cache --cache-location build/cache/eslint 'src/**/*.tsx'",
-    "lint:css": "stylelint --cache --cache-location build/cache/stylelint 'src/**/*.css'",
+    "lint:css": "stylelint --cache --cache-location build/cache/stylelint 'src/**/*.{css,scss}'",
     "lint:html": "prettier --list-different 'src/**/*.html'",
     "lint": "run-p lint:*",
-    "format": "prettier --write '.*rc{,.tsx}' '!.browserslistrc' '*.js' 'src/**/*.{ts,tsx,js,css,html}'",
+    "format": "prettier --write '.*rc{,.tsx}' '!.browserslistrc' '*.js' 'src/**/*.{ts,tsx,js,css,html,scss}'",
     "bom": "npm sbom --sbom-format cyclonedx --sbom-type application --output build/reports/bom-js.json"
   },
   "dependencies": {
@@ -43,6 +43,7 @@
     "react-router-dom": "^6.26.2",
     "react-select": "^5.8.0",
     "regenerator-runtime": "^0.14.1",
+    "sass": "1.77.6",
     "use-debounce": "^10.0.3",
     "yup": "^1.4.0"
   },
@@ -51,6 +52,7 @@
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.7",
     "@babel/runtime": "^7.25.7",
+    "@parcel/transformer-sass": "^2.12.0",
     "@types/proj4": "^2.5.5",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
