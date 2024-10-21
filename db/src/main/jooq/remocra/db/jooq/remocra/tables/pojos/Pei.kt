@@ -25,7 +25,7 @@ data class Pei(
     val peiId: UUID,
     val peiAnneeFabrication: Int?,
     val peiTypePei: TypePei,
-    val peiNumeroVoie: Int?,
+    val peiNumeroVoie: String?,
     val peiVoieId: UUID?,
     val peiSuffixeVoie: String?,
     val peiCroisementId: UUID?,

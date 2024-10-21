@@ -142,7 +142,7 @@ open class Pei(
     /**
      * The column <code>remocra.pei.pei_numero_voie</code>.
      */
-    val NUMERO_VOIE: TableField<Record, Int?> = createField(DSL.name("pei_numero_voie"), SQLDataType.INTEGER, this, "")
+    val NUMERO_VOIE: TableField<Record, String?> = createField(DSL.name("pei_numero_voie"), SQLDataType.CLOB, this, "")
 
     /**
      * The column <code>remocra.pei.pei_voie_id</code>.

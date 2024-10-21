@@ -16,7 +16,7 @@ export type PeiEntity = {
   peiCommuneId: string;
   peiVoieId: string;
   peiVoieTexte: string;
-  peiNumeroVoie: number;
+  peiNumeroVoie: string;
   peiSuffixeVoie: string;
   peiLieuDitId: string;
   peiCroisementId: string;
@@ -81,7 +81,7 @@ export type PeiInfoEntity = {
   peiNumeroComplet: string;
   natureDeciCode: string;
   natureLibelle: string;
-  peiNumeroVoie?: number;
+  peiNumeroVoie?: string;
   voieLibelle?: string;
   communeLibelle: string;
   tourneeId: string;
@@ -95,7 +95,7 @@ export type PeiVisiteTourneeInformationEntity = {
   domaineLibelle: string;
   natureLibelle: string;
   peiTypePei: TYPE_PEI;
-  peiNumeroVoie?: number;
+  peiNumeroVoie?: string;
   peiSuffixeVoie?: string;
   voieLibelle?: string;
   communeLibelle: string;

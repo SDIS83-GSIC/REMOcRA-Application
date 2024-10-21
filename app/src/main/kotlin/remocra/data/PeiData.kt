@@ -24,7 +24,7 @@ open class PeiData(
 
     open val peiCommuneId: UUID,
     open val peiVoieId: UUID?,
-    open val peiNumeroVoie: Int?,
+    open val peiNumeroVoie: String?,
     open val peiSuffixeVoie: String?,
     open val peiVoieTexte: String?,
     open val peiLieuDitId: UUID?,
@@ -71,7 +71,7 @@ data class PibiData(
 
     override val peiCommuneId: UUID,
     override val peiVoieId: UUID?,
-    override val peiNumeroVoie: Int?,
+    override val peiNumeroVoie: String?,
     override val peiSuffixeVoie: String?,
     override val peiVoieTexte: String?,
     override val peiLieuDitId: UUID?,
@@ -160,7 +160,7 @@ class PenaData(
 
     override val peiCommuneId: UUID,
     override val peiVoieId: UUID?,
-    override val peiNumeroVoie: Int?,
+    override val peiNumeroVoie: String?,
     override val peiSuffixeVoie: String?,
     override val peiVoieTexte: String?,
     override val peiLieuDitId: UUID?,
