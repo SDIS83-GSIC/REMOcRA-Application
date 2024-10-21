@@ -1,37 +1,86 @@
-import { Button, Container } from "react-bootstrap";
-import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../../Entities/UtilisateurEntity.tsx";
+import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconClose,
-  IconEdit,
   IconEtude,
   IconImport,
-  IconSee,
 } from "../../../components/Icon/Icon.tsx";
-import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
-import useModal from "../../../components/Modal/ModalUtils.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
+import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../../Entities/UtilisateurEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
-import CreateButton from "../../../components/Form/CreateButton.tsx";
 import filterValuesToVariable from "./FilterEtude.tsx";
 
 const ListEtude = () => {
   const typeEtudeState = useGet(url`/api/couverture-hydraulique/type-etudes`);
   const { user }: { user: UtilisateurEntity } = useAppContext();
+
+  const listeButton: ButtonType[] = [];
+  if (hasDroit(user, TYPE_DROIT.ETUDE_R)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.SEE,
+      href: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
+    });
+  }
+
+  if (hasDroit(user, TYPE_DROIT.ETUDE_U)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (etudeId) => URLS.UPDATE_ETUDE(etudeId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      disable: (v) => {
+        return (
+          EtudeStatutEnum[v.original.etudeStatut] === EtudeStatutEnum.TERMINEE
+        );
+      },
+      textDisable: "Impossible de clore une étude qui n'est pas en cours",
+      textEnable: "Clore l'étude",
+      path: url`/api/couverture-hydraulique/etude/clore/`,
+      icon: <IconClose />,
+      classEnable: "danger",
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (etudeId) => URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(etudeId),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconImport />,
+      textEnable: "Importer des fichiers shapes pour l'étude",
+      classEnable: "warning",
+    });
+  }
 
   return (
     <>
@@ -126,72 +175,11 @@ const ListEtude = () => {
                 );
               },
             },
-            {
+            ActionColumn({
+              Header: "Actions",
               accessor: "etudeId",
-              Cell: (row: any) => {
-                return (
-                  <>
-                    <TooltipCustom
-                      tooltipText="Modifier l'étude"
-                      tooltipId={row.value}
-                    >
-                      <Button
-                        variant="link"
-                        href={URLS.UPDATE_ETUDE(row.value)}
-                      >
-                        <IconEdit />
-                      </Button>
-                    </TooltipCustom>
-                  </>
-                );
-              },
-              width: 90,
-            },
-            CellCloreEtude(),
-            {
-              accessor: "etudeId",
-              Cell: (row: any) => {
-                return (
-                  // TODO le déplacer au bon endroit quand on autre la page
-                  <>
-                    <TooltipCustom
-                      tooltipText="Importer des fichiers shapes pour l'étude"
-                      tooltipId={row.value}
-                    >
-                      <Button
-                        variant="link"
-                        href={URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(row.value)}
-                      >
-                        <IconImport />
-                      </Button>
-                    </TooltipCustom>
-                  </>
-                );
-              },
-              width: 90,
-            },
-            {
-              accessor: "etudeId",
-              Cell: (row: any) => {
-                return (
-                  // TODO le déplacer au bon endroit quand on autre la page
-                  <>
-                    <TooltipCustom
-                      tooltipText="Ouvrir l'étude"
-                      tooltipId={row.value}
-                    >
-                      <Button
-                        variant="link"
-                        href={URLS.OUVRIR_ETUDE(row.value)}
-                      >
-                        <IconSee />
-                      </Button>
-                    </TooltipCustom>
-                  </>
-                );
-              },
-              width: 90,
-            },
+              buttons: listeButton,
+            }),
           ]}
           idName={"tableEtudeId"}
           filterValuesToVariable={filterValuesToVariable}
@@ -208,31 +196,5 @@ const ListEtude = () => {
     </>
   );
 };
-
-const CellCloreEtude = () => ({
-  accessor: "etudeId",
-  Cell: (row) => {
-    const { visible, show, close } = useModal();
-    const query = `/api/couverture-hydraulique/etude/clore`;
-    return (
-      <>
-        <>
-          <TooltipCustom tooltipText={"Clore l'étude"} tooltipId={row.value}>
-            <Button variant={"link"} className={"text-danger"} onClick={show}>
-              <IconClose />
-            </Button>
-          </TooltipCustom>
-          <ConfirmModal
-            id={row.value}
-            visible={visible}
-            closeModal={close}
-            query={query}
-            onConfirm={() => window.location.reload()}
-          />
-        </>
-      </>
-    );
-  },
-});
 
 export default ListEtude;
