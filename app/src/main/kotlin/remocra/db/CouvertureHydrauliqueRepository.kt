@@ -212,7 +212,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
                     .from(RESEAU)
                     .where(RESEAU.ETUDE_ID.eq(etudeId))
                     .limit(1),
-            ).convertFrom { record -> record.first().value1() != null }.`as`("reseauImporte"),
+            ).isNotNull.`as`("reseauImporte"),
         ).from(ETUDE)
             .join(TYPE_ETUDE)
             .on(TYPE_ETUDE.ID.eq(ETUDE.TYPE_ETUDE_ID))
@@ -228,7 +228,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
         val etudeDescription: String?,
         val listeCommuneId: Collection<UUID>,
         val documents: Collection<DocumentEtudeData>?,
-        val reseauImporte: Boolean,
+        val reseauImporte: Boolean = false,
     )
 
     data class DocumentEtudeData(
