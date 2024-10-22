@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { Col, Container, Row, Table } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import {
   Bar,
   BarChart,
@@ -18,9 +17,7 @@ import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
 
-const FicheResume = () => {
-  const { peiId } = useParams();
-
+const FicheResume = ({ peiId }: { peiId: string }) => {
   const elementFicheResumeState = useGet(url`/api/fiche-resume/` + peiId);
 
   if (!elementFicheResumeState.isResolved) {

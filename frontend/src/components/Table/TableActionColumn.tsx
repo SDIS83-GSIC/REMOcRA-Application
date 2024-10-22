@@ -8,6 +8,7 @@ import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import DeleteButton from "../Form/DeleteButton.tsx";
 import ConfirmModal from "../Modal/ConfirmModal.tsx";
 import CustomLinkButton from "../Form/CustomLinkButton.tsx";
+import SimpleModal from "../Modal/SimpleModal.tsx";
 
 const TableActionColumn = ({
   row,
@@ -17,6 +18,7 @@ const TableActionColumn = ({
   classEnable = "primary",
   deleteModale = null,
   confirmModale = null,
+  simpleModal = null,
   isPost = true,
   query,
   reload,
@@ -82,6 +84,28 @@ const TableActionColumn = ({
                   />
                 )}
               </>
+            ) : simpleModal != null ? (
+              <>
+                <SimpleModal
+                  closeModal={simpleModal.close}
+                  content={simpleModal.content}
+                  header={simpleModal.header}
+                  ref={simpleModal.ref}
+                  visible={simpleModal.visible}
+                />
+                <TooltipCustom
+                  tooltipText={disabled ? textDisable : textEnable}
+                  tooltipId={row.value}
+                >
+                  <CustomLinkButton
+                    className={disabled ? "text-muted" : "text-" + classEnable}
+                    disabled={disabled}
+                    onClick={simpleModal?.show}
+                  >
+                    {icon}
+                  </CustomLinkButton>
+                </TooltipCustom>
+              </>
             ) : (
               <TooltipCustom
                 tooltipText={disabled ? textDisable : textEnable}
@@ -115,6 +139,7 @@ type TableActionButtonType = {
   reload?;
   confirmModale?: ModaleType | null;
   deleteModale?: ModaleType | null;
+  simpleModal?: SimpleModalType | null;
   path?: string;
   href?: (param: any) => string;
   hide?: (param: any) => boolean;
@@ -129,6 +154,10 @@ type ModaleType = {
   ref?: MutableRefObject<HTMLDialogElement | null>;
 };
 
+type SimpleModalType = ModaleType & {
+  header: string;
+  content: (id: string) => ReactNode;
+};
 export const ActionButton = ({
   buttons,
   row,
@@ -144,6 +173,8 @@ export const ActionButton = ({
             return <DeleteButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.CONFIRM:
             return <ConfirmButtonPrivate _button={_button} row={row} />;
+          case TYPE_BUTTON.SIMPLE_MODAL:
+            return <SimpleModalButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.UPDATE:
             return (
               <TableActionColumn
@@ -196,6 +227,7 @@ export type ButtonType = TableActionButtonType & {
 export enum TYPE_BUTTON {
   DELETE,
   CONFIRM,
+  SIMPLE_MODAL,
   UPDATE,
   SEE,
   CUSTOM,
@@ -244,6 +276,30 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmeButtonType) => {
       confirmModale={confirmModale}
       icon={_button.icon ?? <IconClose />}
       query={`${_button.path}${row.value}`}
+    />
+  );
+};
+
+type SimpleModalButtonType = {
+  row: any;
+  _button: ButtonType;
+};
+const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
+  const { visible, show, close, ref } = useModal();
+  const simpleModal: SimpleModalType = {
+    close: close,
+    ref: ref,
+    show: show,
+    visible: visible,
+    content: _button.simpleModal.content(row.value),
+    header: _button.simpleModal.header,
+  };
+  return (
+    <TableActionColumn
+      row={row}
+      simpleModal={simpleModal}
+      textEnable={_button.textEnable ?? "Voir plus"}
+      icon={_button.icon ?? <IconClose />}
     />
   );
 };

@@ -28,7 +28,6 @@ import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/Lis
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 import AccueilPei from "./pages/Pei/AccueilPei.tsx";
 import CreatePei from "./pages/Pei/CreatePei.tsx";
-import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
 import UpdatePei from "./pages/Pei/UpdatePei.tsx";
 import AireAspiration from "./pages/Pena/AireAspiration.tsx";
 import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
@@ -62,7 +61,6 @@ export const URLS = {
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
   TOURNEE_VISITE: (tourneeId: string) =>
     url`/deci/tournee/visite-tournee/` + tourneeId,
-  FICHE_RESUME: (peiId: string) => url`/deci/pei/fiche/` + peiId,
 
   // Module couverture hydraulique
   CREATE_ETUDE: url`/couverture-hydraulique/etudes/create`,
@@ -127,12 +125,6 @@ export default [
               TYPE_DROIT.PEI_DEPLACEMENT_U,
             ]}
           />
-        ),
-      },
-      {
-        path: "pei/fiche/:peiId",
-        element: (
-          <Authorization Component={FicheResume} droits={[TYPE_DROIT.PEI_R]} />
         ),
       },
       {

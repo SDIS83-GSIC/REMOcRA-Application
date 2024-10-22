@@ -1,4 +1,3 @@
-import React from "react";
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../Entities/UtilisateurEntity.tsx";
@@ -9,8 +8,13 @@ import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
 import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
+  IconSee,
 } from "../components/Icon/Icon.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../components/Table/TableActionColumn.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -27,11 +31,8 @@ import STATUT_INDISPONIBILITE_TEMPORAIRE from "../enums/StatutIndisponibiliteTem
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
 import url from "../module/fetch.tsx";
+import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
-import {
-  ButtonType,
-  TYPE_BUTTON,
-} from "../components/Table/TableActionColumn.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime from "./formatDateUtils.tsx";
 
@@ -226,8 +227,13 @@ function getColumnPeiByStringArray(
         row: (row) => {
           return row;
         },
-        type: TYPE_BUTTON.SEE,
-        href: (idPei) => URLS.FICHE_RESUME(idPei),
+        type: TYPE_BUTTON.SIMPLE_MODAL,
+        icon: <IconSee />,
+        textEnable: "Voir le résumé",
+        simpleModal: {
+          content: (peiId: string) => <FicheResume peiId={peiId} />,
+          header: "Résumé",
+        },
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {
