@@ -46,6 +46,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     PEI_RENOUVELLEMENT_RECO_PRIVE(ParametreSection.PEI),
     PEI_RENOUVELLEMENT_RECO_PUBLIC(ParametreSection.PEI),
     PEI_TOLERANCE_COMMUNE_METRES(ParametreSection.PEI),
+    TYPE_VISITE_CDP(ParametreSection.PEI),
 
     ;
 

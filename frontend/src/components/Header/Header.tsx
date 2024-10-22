@@ -26,7 +26,7 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
   return (
     <Row className={"header"}>
       <BanniereHeader />
-      <Navbar expand="lg" bg={"primary"} data-bs-theme="dark">
+      <Navbar className="mb-3" expand="lg" bg={"primary"} data-bs-theme="dark">
         <Container>
           <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -9,12 +9,16 @@ import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.data.PibiData
 import remocra.db.PeiRepository.Companion.peiData
+import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.Pibi
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.VISITE
+import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
+import java.time.ZonedDateTime
 import java.util.UUID
 
 class PibiRepository @Inject constructor(
@@ -131,4 +135,27 @@ class PibiRepository @Inject constructor(
     }
 
     fun deleteById(peiId: UUID) = dsl.deleteFrom(PIBI).where(PIBI.ID.eq(peiId)).execute()
+
+    fun getHistorique(pibiId: UUID, nbHistorique: Int, listeTypeVisiteCdp: List<TypeVisite>) =
+        dsl.select(
+            VISITE.DATE,
+            VISITE_CTRL_DEBIT_PRESSION.DEBIT.`as`("debit"),
+            VISITE_CTRL_DEBIT_PRESSION.PRESSION.`as`("pression"),
+            VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN.`as`("pressionDyn"),
+        )
+            .from(VISITE)
+            .join(VISITE_CTRL_DEBIT_PRESSION)
+            .on(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(VISITE.ID))
+            .where(VISITE.PEI_ID.eq(pibiId))
+            .and(VISITE.TYPE_VISITE.`in`(listeTypeVisiteCdp))
+            .orderBy(VISITE.DATE.desc())
+            .limit(nbHistorique)
+            .fetchInto<DebitPressionChart>()
+
+    data class DebitPressionChart(
+        val visiteDate: ZonedDateTime,
+        val debit: Int?,
+        val pression: Double?,
+        val pressionDyn: Double?,
+    )
 }

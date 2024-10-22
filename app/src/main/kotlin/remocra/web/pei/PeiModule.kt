@@ -7,6 +7,6 @@ import remocra.web.tournee.TourneeEndPoint
 
 object PeiModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(PeiEndPoint::class, PenaEndPoint::class, TourneeEndPoint::class)
+        binder.registerResources(PeiEndPoint::class, PenaEndPoint::class, PibiEndpoint::class, TourneeEndPoint::class)
     }
 }
