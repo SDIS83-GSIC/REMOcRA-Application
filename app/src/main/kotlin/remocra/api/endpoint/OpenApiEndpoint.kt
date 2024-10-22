@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
+import remocra.security.NoCsrf
 
 // TODO débrayer l'a12n, soit en faisant une exception dans la servlet, soit en faisant une servlet à part !
 
@@ -27,6 +28,7 @@ class OpenApiEndpoint : BaseOpenApiResource() {
     var app: Application? = null
 
     @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
+    @NoCsrf("Uniquement consultatif")
     @GET
     @Path("openapi.{type:json|yaml}")
     @Produces(value = [MediaType.APPLICATION_JSON, "application/yaml"])
@@ -42,6 +44,7 @@ class OpenApiEndpoint : BaseOpenApiResource() {
     }
 
     @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
+    @NoCsrf("Uniquement consultatif")
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Operation(hidden = true)
