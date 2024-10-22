@@ -7,16 +7,12 @@ import remocra.data.enums.ErrorType
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import java.time.Clock
 import java.util.UUID
 
 class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
-
-    @Inject
-    lateinit var clock: Clock
 
     fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
         val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getAllWithListPei(params)

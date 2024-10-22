@@ -14,7 +14,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class CreatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.INSERT) {
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
@@ -33,7 +32,7 @@ class CreatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.I
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PEI_PROJET,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

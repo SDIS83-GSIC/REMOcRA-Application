@@ -1,6 +1,5 @@
-package remocra.api
+package remocra.utils
 
-import jakarta.inject.Inject
 import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
 import java.time.Clock
@@ -15,20 +14,20 @@ import java.util.Locale
  * pour gérer la différence de fuseau, en BDD on est sur de l'UTC mais sur le front et les appels,
  * on veut l'heure en GMT+1
  */
-object DateUtils {
+class DateUtils(val clock: Clock) {
 
-    @Inject
-    lateinit var clock: Clock
+    companion object {
 
-    /** Pattern attendu pour les chaînes représentatives d'une date (moment)  */
-    const val PATTERN_MINUTE_SECONDE: String = "yyyy-MM-dd HH:mm:ss"
+        /** Pattern attendu pour les chaînes représentatives d'une date (moment)  */
+        const val PATTERN_MINUTE_SECONDE: String = "yyyy-MM-dd HH:mm:ss"
 
-    /** Pattern attendu pour les chaînes représentatives d'une date (moment) SANS secondes */
-    const val PATTERN_MINUTE: String = "yyyy-MM-dd HH:mm"
-    const val PATTERN_DATE_ONLY: String = "yyyy-MM-dd"
+        /** Pattern attendu pour les chaînes représentatives d'une date (moment) SANS secondes */
+        const val PATTERN_MINUTE: String = "yyyy-MM-dd HH:mm"
+        const val PATTERN_DATE_ONLY: String = "yyyy-MM-dd"
 
-    const val PATTERN_NATUREL: String = "dd/MM/yyyy HH:mm:ss"
-    const val PATTERN_NATUREL_DATE_ONLY: String = "dd/MM/yyyy"
+        const val PATTERN_NATUREL: String = "dd/MM/yyyy HH:mm:ss"
+        const val PATTERN_NATUREL_DATE_ONLY: String = "dd/MM/yyyy"
+    }
 
     /**
      * Retourne un moment (ZoneDateTime) à partir d'une chaîne de date

@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class UpdateOrganismeUseCase @Inject constructor(private val organismeRepository: OrganismeRepository) :
     AbstractCUDUseCase<OrganismeData>(
@@ -39,7 +38,7 @@ class UpdateOrganismeUseCase @Inject constructor(private val organismeRepository
                     email = userInfo.email,
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

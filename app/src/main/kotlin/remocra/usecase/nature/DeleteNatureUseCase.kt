@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class DeleteNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
     AbstractCUDUseCase<Nature>(TypeOperation.DELETE) {
@@ -31,7 +30,7 @@ class DeleteNatureUseCase @Inject constructor(private val natureRepository: Natu
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.NATURE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

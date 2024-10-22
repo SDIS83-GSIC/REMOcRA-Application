@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class DeleteDiametreUseCase @Inject constructor(
@@ -33,7 +32,7 @@ class DeleteDiametreUseCase @Inject constructor(
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.DIAMETRE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

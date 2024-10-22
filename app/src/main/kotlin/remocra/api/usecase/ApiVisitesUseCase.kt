@@ -1,7 +1,6 @@
 package remocra.api.usecase
 
 import jakarta.inject.Inject
-import remocra.api.DateUtils
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
@@ -10,7 +9,6 @@ import remocra.data.enums.ErrorType
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractUseCase.Result
 import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
 import java.time.ZonedDateTime
@@ -29,7 +27,7 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
     fun getAll(numeroComplet: String, typeVisiteString: String?, momentString: String?, derniereOnly: Boolean?, limit: Int?, offset: Int?): Result.Success {
         var moment: ZonedDateTime? = null
         if (momentString != null) {
-            moment = DateUtils.getMomentForResponse(momentString)
+            moment = dateUtils.getMomentForResponse(momentString)
         }
 
         // TODO tester l'accessibilité, pas fait en V2 mais serait un plus.
@@ -85,7 +83,7 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
         val visiteData = VisiteData(
             visiteId = UUID.randomUUID(),
             visitePeiId = pei.peiId,
-            visiteDate = DateUtils.getMomentForResponse(form.date),
+            visiteDate = dateUtils.getMomentForResponse(form.date),
             visiteTypeVisite = getTypeVisiteFromString(form.typeVisite),
             visiteAgent1 = form.agent1,
             visiteAgent2 = form.agent2,

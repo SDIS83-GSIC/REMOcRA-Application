@@ -18,7 +18,6 @@ import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
@@ -47,7 +46,7 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PENA_ASPIRATION,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import jakarta.ws.rs.core.Response
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
-import remocra.api.DateUtils
 import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.courrier.parametres.CourrierParametresRopData
@@ -18,7 +17,7 @@ import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.exception.RemocraResponseException
-import java.time.Clock
+import remocra.utils.DateUtils
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -37,7 +36,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
     lateinit var courrierRopRepository: CourrierRopRepository
 
     @Inject
-    lateinit var clock: Clock
+    lateinit var dateUtils: DateUtils
 
     companion object {
         const val CODE_MODELE_COURRIER_ROP = "ROP"
@@ -55,13 +54,13 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
     override fun execute(element: CourrierParametresRopData, userInfo: UserInfo): CourrierRopData {
         // on va chercher le courrier en base qui a le code ROP
         val modeleCourrier = modeleCourrierRepository.getByCode(CODE_MODELE_COURRIER_ROP)
-        val date = ZonedDateTime.now(clock)
+        val date = dateUtils.now()
 
         // Données communes à toutes les rop
         val courrierDataRop = CourrierRopData(
             courrierPath = modeleCourrier.modeleCourrierChemin,
             courrierSubReport = modeleCourrier.modeleCourrierSubreports,
-            dateGeneration = DateUtils.formatDateOnly(date)!!,
+            dateGeneration = dateUtils.formatDateOnly(date)!!,
             userConnecte = userInfo,
         )
 
@@ -136,7 +135,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listPeiRop.map { it.peiId })
 
         listPeiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
         listPeiWithAnomalie = listPeiRop
 
@@ -166,10 +165,10 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listPeiRop.map { it.peiId })
 
         listPeiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
 
-        derniereDateReco = DateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
+        derniereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
         listPeiWithAnomalie = listPeiRop
 
         affaireSuiviePar = "${userConnecte.prenom} ${userConnecte.nom}"
@@ -205,14 +204,14 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listPeiRop.map { it.peiId })
 
         listePibiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
 
         val mapPeiByDateCtp = courrierRopRepository.getLastDateCtp(listePibiRop.map { it.peiId })
 
         listePenaRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
-            it.dateCtp = DateUtils.formatDateOnly(mapPeiByDateCtp[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateCtp = dateUtils.formatDateOnly(mapPeiByDateCtp[it.peiId])
         }
 
         setDonneesCtp(listePibiRop, mapPeiByDateCtp)
@@ -240,7 +239,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listPeiRop.map { it.peiId })
 
         listePibiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
 
         val mapPeiByDateCtp = courrierRopRepository.getLastDateCtp(listePibiRop.map { it.peiId })
@@ -248,8 +247,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listePenaAspiration = courrierRopRepository.getPenaAspiration(listePenaRop.map { it.peiId })
         listePenaRop.forEach {
             val penaAspirationWithType = listePenaAspiration.firstOrNull { pa -> pa.penaId == it.peiId }
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
-            it.dateCtp = DateUtils.formatDateOnly(mapPeiByDateCtp[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateCtp = dateUtils.formatDateOnly(mapPeiByDateCtp[it.peiId])
             it.penaAspirationEstNormalise = penaAspirationWithType?.penaAspirationEstNormalise ?: false
             it.typePenaAspirationLibelle = penaAspirationWithType?.typePenaAspirationLibelle
         }
@@ -265,7 +264,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         destinataireLieuDit = destinataireContact.contactLieuDit.orEmpty()
         destinataireCodePostal = destinataireContact.contactCodePostal.orEmpty()
         expediteur = "${userConnecte.prenom} ${userConnecte.prenom}"
-        annee = ZonedDateTime.now().year.toString()
+        annee = dateUtils.now().year.toString()
         listPeiIndispoWithAnomalie = courrierRopRepository.getPeiIndisponibles(element.communeId)
         listPibiWithAnomalie = courrierRopRepository.getPibi(element.communeId)
         listPenaWithAnomalie = courrierRopRepository.getPena(element.communeId)
@@ -292,10 +291,10 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listePeiRop.map { it.peiId })
 
         listePibiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
         listePenaRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
         val groupementData = ensureGroupement(organismeId)
 
@@ -307,8 +306,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
         expediteur = "${expediteurGroupement.contactFonction} ${expediteurGroupement.contactPrenom} ${expediteurGroupement.contactNom?.uppercase()}"
 
-        derniereDateReco = DateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
-        premiereDateReco = DateUtils.formatDateOnly(listPeiWithLastRop.values.sortedBy { it }.firstOrNull())
+        derniereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
+        premiereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedBy { it }.firstOrNull())
 
         // TODO affaireSuiviePar
 
@@ -325,7 +324,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
         val listPeiWithLastRop = courrierRopRepository.getLastDateRop(listePeiRop.map { it.peiId })
         listePeiRop.forEach {
-            it.dateRop = DateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
+            it.dateRop = dateUtils.formatDateOnly(listPeiWithLastRop[it.peiId])
         }
 
         communeLibelle = commune.communeLibelle
@@ -333,8 +332,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         listPeiPublicWithAnomalie = listePeiRop.filter { it.natureDeciCode != CourrierRopRepository.NATURE_DECI_PRIVE }
         listPeiPriveWithAnomalie = listePeiRop.minus(listPeiPublicWithAnomalie ?: setOf())
 
-        derniereDateReco = DateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
-        premiereDateReco = DateUtils.formatDateOnly(listPeiWithLastRop.values.sortedBy { it }.firstOrNull())
+        derniereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
+        premiereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedBy { it }.firstOrNull())
 
         // TODO civilité ? plutôt utiliser des contacts ?
 
@@ -371,7 +370,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         // TODO gérer la civilité
         destinataire = if (element.isEPCI == true) "Madame la présidente d'EPCI" else "Madame la Maire"
         expediteur = "${userConnecte.prenom} ${userConnecte.prenom}"
-        annee = ZonedDateTime.now().year.toString()
+        annee = dateUtils.now().year.toString()
         listPeiIndispoWithAnomalie = courrierRopRepository.getPeiIndisponibles(element.communeId!!)
         listPibiWithAnomalie = courrierRopRepository.getPibi(element.communeId)
         listPenaWithAnomalie = courrierRopRepository.getPena(element.communeId)
@@ -491,7 +490,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
                 ?.visiteCtrlDebitPressionPression?.toDouble()
             it.visiteCtrlDebitPressionPressionDyn = ctrlDebitPression[it.peiId]?.visiteCtrlDebitPression
                 ?.visiteCtrlDebitPressionPressionDyn?.toDouble()
-            it.dateCtp = DateUtils.formatDateOnly(mapPibiByDateCtp[it.peiId])
+            it.dateCtp = dateUtils.formatDateOnly(mapPibiByDateCtp[it.peiId])
         }
     }
 }

@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class UpdateNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
     AbstractCUDUseCase<Nature>(TypeOperation.UPDATE) {
@@ -37,7 +36,7 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
                     email = userInfo.email,
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

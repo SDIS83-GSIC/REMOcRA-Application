@@ -24,7 +24,6 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
-import java.time.ZonedDateTime
 
 class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
@@ -47,7 +46,7 @@ class CreateVisiteUseCase @Inject constructor(
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
         // TODO : Gestion "notification changement état" et autres jobs
@@ -97,7 +96,7 @@ class CreateVisiteUseCase @Inject constructor(
         }
 
         // La visite n'est pas dans le future
-        if (element.visiteDate.isAfter(ZonedDateTime.now())) {
+        if (element.visiteDate.isAfter(dateUtils.now())) {
             throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
         }
 

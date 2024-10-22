@@ -4,8 +4,7 @@ import org.slf4j.LoggerFactory
 import remocra.db.LogLineRepository
 import remocra.db.jooq.remocra.enums.LogLineGravity
 import remocra.db.jooq.remocra.tables.pojos.LogLine
-import java.time.Clock
-import java.time.ZonedDateTime
+import remocra.utils.DateUtils
 import java.util.UUID
 
 /**
@@ -17,8 +16,8 @@ import java.util.UUID
  */
 class LogManager(
     private val logLineRepository: LogLineRepository,
-    private val clock: Clock,
     val idJob: UUID,
+    private val dateUtils: DateUtils,
 ) {
 
     // Logger inception
@@ -42,7 +41,7 @@ class LogManager(
                 UUID.randomUUID(),
                 idJob,
                 gravity,
-                ZonedDateTime.now(clock),
+                dateUtils.now(),
                 objectId,
                 message,
             )

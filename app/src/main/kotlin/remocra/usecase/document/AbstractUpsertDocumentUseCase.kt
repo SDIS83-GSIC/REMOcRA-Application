@@ -8,7 +8,6 @@ import remocra.db.DocumentRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCUDUseCase<T>(TypeOperation.UPDATE) {
@@ -63,7 +62,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
             documentRepository.insertDocument(
                 Document(
                     documentId = idDocument,
-                    documentDate = ZonedDateTime.now(clock),
+                    documentDate = dateUtils.now(),
                     documentRepertoire = repertoire,
                     documentNomFichier = newDoc.documentNomFichier,
                 ),

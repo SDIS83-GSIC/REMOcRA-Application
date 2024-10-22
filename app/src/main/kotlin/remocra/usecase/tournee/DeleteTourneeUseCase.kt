@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class DeleteTourneeUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
@@ -32,7 +31,7 @@ class DeleteTourneeUseCase @Inject constructor(
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.TOURNEE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

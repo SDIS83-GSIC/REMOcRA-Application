@@ -25,13 +25,13 @@ import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
-import java.time.Clock
+import remocra.utils.DateUtils
 import java.time.ZonedDateTime
 import java.util.UUID
 
 class CouvertureHydrauliqueRepository @Inject constructor(
     private val dsl: DSLContext,
-    private val clock: Clock,
+    private val dateUtils: DateUtils,
 ) {
 
     fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>): Collection<EtudeComplete> =
@@ -264,7 +264,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .set(ETUDE.NUMERO, etudeNumero)
             .set(ETUDE.LIBELLE, etudeLibelle)
             .set(ETUDE.DESCRIPTION, etudeDescription)
-            .set(ETUDE.DATE_MAJ, ZonedDateTime.now(clock))
+            .set(ETUDE.DATE_MAJ, dateUtils.now())
             .where(ETUDE.ID.eq(etudeId))
             .execute()
 
@@ -298,7 +298,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .set(ETUDE.LIBELLE, etudeLibelle)
             .set(ETUDE.DESCRIPTION, etudeDescription)
             .set(ETUDE.ORGANISME_ID, etudeOrganismeId)
-            .set(ETUDE.DATE_MAJ, ZonedDateTime.now(clock))
+            .set(ETUDE.DATE_MAJ, dateUtils.now())
             .set(ETUDE.STATUT, EtudeStatut.EN_COURS)
             .execute()
 

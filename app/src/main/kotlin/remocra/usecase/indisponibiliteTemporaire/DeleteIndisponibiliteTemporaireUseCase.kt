@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class DeleteIndisponibiliteTemporaireUseCase @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
@@ -38,7 +37,7 @@ class DeleteIndisponibiliteTemporaireUseCase @Inject constructor(
                     email = userInfo.email,
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }
@@ -50,8 +49,8 @@ class DeleteIndisponibiliteTemporaireUseCase @Inject constructor(
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: IndisponibiliteTemporaireData) {
-        if (element.indisponibiliteTemporaireDateDebut.isBefore(ZonedDateTime.now(clock)) &&
-            element.indisponibiliteTemporaireDateFin?.isAfter(ZonedDateTime.now(clock)) != false
+        if (element.indisponibiliteTemporaireDateDebut.isBefore(dateUtils.now()) &&
+            element.indisponibiliteTemporaireDateFin?.isAfter(dateUtils.now()) != false
         ) {
             throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_EN_COURS)
         }

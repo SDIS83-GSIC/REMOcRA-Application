@@ -14,7 +14,6 @@ import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class CreateIndisponibiliteTemporaireUseCase
 @Inject constructor(
@@ -35,7 +34,7 @@ class CreateIndisponibiliteTemporaireUseCase
                     email = userInfo.email,
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

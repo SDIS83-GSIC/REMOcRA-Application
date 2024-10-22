@@ -1,11 +1,11 @@
 package remocra.usecase.ficheresume
 
 import com.google.inject.Inject
-import remocra.api.DateUtils
 import remocra.db.FicheResumeRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeResumeElement
 import remocra.usecase.AbstractUseCase
+import remocra.utils.DateUtils
 import java.util.UUID
 
 class BuildFicheResumeUseCase : AbstractUseCase() {
@@ -104,7 +104,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         
                         Dernière RECO : ${
                         peiData.peiLastRecop?.let {
-                            DateUtils.format(
+                            dateUtils.format(
                                 peiData.peiLastRecop,
                                 DateUtils.PATTERN_NATUREL,
                             )

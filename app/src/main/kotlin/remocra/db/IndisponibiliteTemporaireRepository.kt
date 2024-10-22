@@ -23,10 +23,11 @@ import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.exception.RemocraResponseException
+import remocra.utils.DateUtils
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext) {
+class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) {
 
     /**
      * Récupère une collection d'objets IndisponibiliteTemporaireWithPei filtrée et triée en fonction des paramètres fournis.

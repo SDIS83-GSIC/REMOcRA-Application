@@ -3,7 +3,7 @@ package remocra.log
 import com.google.inject.Inject
 import com.google.inject.Provider
 import remocra.db.LogLineRepository
-import java.time.Clock
+import remocra.utils.DateUtils
 import java.util.UUID
 
 interface LogManagerFactory {
@@ -25,7 +25,7 @@ class LogManagerFactoryImpl
 @Inject
 constructor(
     private val logLineRepositoryProvider: Provider<LogLineRepository>,
-    private val clock: Clock,
+    private val dateUtils: DateUtils,
 ) : LogManagerFactory {
     override fun create(): LogManager {
         return create(UUID.randomUUID())
@@ -35,7 +35,7 @@ constructor(
         return LogManager(
             logLineRepository = logLineRepositoryProvider.get(),
             idJob = idJob,
-            clock = clock,
+            dateUtils = dateUtils,
         )
     }
 }

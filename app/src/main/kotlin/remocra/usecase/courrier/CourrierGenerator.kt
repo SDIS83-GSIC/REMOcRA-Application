@@ -10,9 +10,8 @@ import remocra.data.courrier.parametres.CourrierParametresRopData
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeParametreCourrier
 import remocra.usecase.document.DocumentUtils
+import remocra.utils.DateUtils
 import java.nio.file.Paths
-import java.time.Clock
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -28,7 +27,7 @@ class CourrierGenerator {
     lateinit var documentUtils: DocumentUtils
 
     @Inject
-    lateinit var clock: Clock
+    lateinit var dateUtils: DateUtils
 
     fun execute(parametreCourrierInput: ParametreCourrierInput, userInfo: UserInfo?, uriBuilder: UriBuilder): UrlCourrier? {
         val modeleCourrier = modeleCourrierRepository.getById(parametreCourrierInput.modeleCourrierId)
@@ -54,7 +53,7 @@ class CourrierGenerator {
         // TODO générer les autres courrier ici
 
         if (file != null) {
-            val nomFichier = "${modeleCourrier.modeleCourrierCode}-${ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}.pdf"
+            val nomFichier = "${modeleCourrier.modeleCourrierCode}-${dateUtils.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}.pdf"
             documentUtils.saveFile(file, nomFichier, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
             return UrlCourrier(
                 url = uriBuilder

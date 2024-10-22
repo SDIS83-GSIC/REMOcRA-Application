@@ -8,12 +8,16 @@ import remocra.data.DataCache
 import remocra.data.ParametresData
 import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
+import remocra.utils.DateUtils
 import java.time.Clock
 import java.time.ZoneId
 
 class AppModule(private val settings: AppSettings) : RemocraModule() {
     @Provides @Singleton
     fun provideClock() = Clock.system(ZoneId.systemDefault())
+
+    @Provides @Singleton
+    fun provideDateUtils() = DateUtils(provideClock())
 
     override fun configure() {
         bind(ParametresData::class.java).toProvider(ParametresProvider::class.java)

@@ -26,7 +26,6 @@ import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -67,7 +66,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PEI,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
         eventBus.post(PeiModifiedEvent(element.peiId))

@@ -1,7 +1,6 @@
 package remocra.usecase.tournee
 
 import com.google.inject.Inject
-import remocra.api.DateUtils.clock
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.data.enums.DeltaDate
@@ -10,7 +9,6 @@ import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
 import remocra.usecase.AbstractUseCase
 import remocra.utils.limitOffset
-import java.time.ZonedDateTime
 
 class FetchTourneeDataUseCase : AbstractUseCase() {
     @Inject lateinit var tourneeRepository: TourneeRepository
@@ -20,7 +18,7 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete
         if (!filterTourneeDeltaDate.isNullOrEmpty()) {
-            val today = ZonedDateTime.now(clock)
+            val today = dateUtils.now()
             val dateLimite = when (filterTourneeDeltaDate) {
                 DeltaDate.INF_1_MOIS.toString() -> today.plusMonths(1)
                 DeltaDate.INF_2_MOIS.toString() -> today.plusMonths(2)

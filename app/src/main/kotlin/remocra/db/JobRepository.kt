@@ -13,13 +13,13 @@ import remocra.db.jooq.remocra.tables.pojos.Job
 import remocra.db.jooq.remocra.tables.pojos.LogLine
 import remocra.db.jooq.remocra.tables.references.LOG_LINE
 import remocra.db.jooq.remocra.tables.references.TASK
-import java.time.Clock
+import remocra.utils.DateUtils
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class JobRepository @Inject constructor(private val dsl: DSLContext, private val clock: Clock) {
+class JobRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) {
 
     fun createJob(idJob: UUID, idTask: UUID, parameters: JSONB? = null): Int =
         dsl.insertInto(JOB)
@@ -30,7 +30,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
                         idJob,
                         idTask,
                         EtatJob.EN_COURS,
-                        ZonedDateTime.now(clock),
+                        dateUtils.now(),
                         null,
                         parameters,
                     ),
@@ -50,7 +50,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
     fun endJobSuccess(idJob: UUID): Job =
         dsl.update(JOB)
             .set(JOB.ETAT_JOB, EtatJob.TERMINE)
-            .set(JOB.DATE_FIN, ZonedDateTime.now(clock))
+            .set(JOB.DATE_FIN, dateUtils.now())
             .where(JOB.ID.eq(idJob))
             .returning()
             .fetchSingleInto()
@@ -58,7 +58,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
     fun endJobError(idJob: UUID): Job =
         dsl.update(JOB)
             .set(JOB.ETAT_JOB, EtatJob.EN_ERREUR)
-            .set(JOB.DATE_FIN, ZonedDateTime.now(clock))
+            .set(JOB.DATE_FIN, dateUtils.now())
             .where(JOB.ID.eq(idJob))
             .returning()
             .fetchSingleInto()

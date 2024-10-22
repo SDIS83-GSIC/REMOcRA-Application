@@ -13,7 +13,6 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
@@ -64,7 +63,7 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
                 typeOperation = TypeOperation.UPDATE,
                 typeObjet = TypeObjet.DOCUMENT_PEI,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

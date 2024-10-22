@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class CreateOrganismeUseCase @Inject constructor(private val organismeRepository: OrganismeRepository) : AbstractCUDUseCase<OrganismeData>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: UserInfo) {
@@ -30,7 +29,7 @@ class CreateOrganismeUseCase @Inject constructor(private val organismeRepository
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ORGANISME,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(),
+                date = dateUtils.now(),
             ),
         )
     }

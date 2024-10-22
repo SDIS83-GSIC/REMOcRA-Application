@@ -18,7 +18,6 @@ import remocra.usecase.document.UpsertDocumentPeiUseCase
 import remocra.usecase.indisponibiliteTemporaire.DeleteIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibiliteTemporaire.UpdateIndisponibiliteTemporaireUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
@@ -58,8 +57,8 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
             /* Si un seul PEI dans l'indisponibilité temporaire un supprimer l'IT
                sinon on la modifie */
             if (indisponibiliteTemporaire.indisponibiliteTemporaireListePeiId.size == 1) {
-                if (indisponibiliteTemporaire.indisponibiliteTemporaireDateDebut.isBefore(ZonedDateTime.now(clock)) &&
-                    indisponibiliteTemporaire.indisponibiliteTemporaireDateFin?.isAfter(ZonedDateTime.now(clock)) != false
+                if (indisponibiliteTemporaire.indisponibiliteTemporaireDateDebut.isBefore(dateUtils.now()) &&
+                    indisponibiliteTemporaire.indisponibiliteTemporaireDateFin?.isAfter(dateUtils.now()) != false
                 ) {
                     throw RemocraResponseException(ErrorType.PEI_INDISPONIBILITE_TEMPORAIRE_EN_COURS)
                 }

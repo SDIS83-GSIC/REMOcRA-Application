@@ -2,7 +2,6 @@ package remocra.api.usecase
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
-import remocra.api.DateUtils
 import remocra.api.PeiUtils
 import remocra.app.DataCacheProvider
 import remocra.data.ApiPenaFormData
@@ -19,7 +18,6 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractUseCase.Result
 import remocra.usecase.pei.UpdatePeiUseCase
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
@@ -82,7 +80,7 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
         var valide = true
         if (dateString != null) {
             try {
-                moment = DateUtils.getMoment(dateString)
+                moment = dateUtils.getMoment(dateString)
             } catch (dtpe: DateTimeParseException) {
                 valide = false
             }

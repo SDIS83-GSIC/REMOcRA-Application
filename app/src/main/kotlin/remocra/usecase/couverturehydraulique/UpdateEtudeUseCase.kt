@@ -14,7 +14,6 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.UpsertDocumentEtudeUseCase
-import java.time.ZonedDateTime
 
 class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
 
@@ -38,7 +37,7 @@ class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

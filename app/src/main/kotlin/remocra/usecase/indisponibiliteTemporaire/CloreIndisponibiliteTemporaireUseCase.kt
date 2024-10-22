@@ -14,7 +14,6 @@ import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 
 class CloreIndisponibiliteTemporaireUseCase
 @Inject constructor(
@@ -34,7 +33,7 @@ class CloreIndisponibiliteTemporaireUseCase
                     email = userInfo.email,
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }
@@ -47,7 +46,7 @@ class CloreIndisponibiliteTemporaireUseCase
             indisponibiliteTemporaireMailApresIndisponibilite = element.indisponibiliteTemporaireMailApresIndisponibilite,
             indisponibiliteTemporaireMailAvantIndisponibilite = element.indisponibiliteTemporaireMailAvantIndisponibilite,
             indisponibiliteTemporaireDateDebut = element.indisponibiliteTemporaireDateDebut,
-            indisponibiliteTemporaireDateFin = ZonedDateTime.now(clock), // date actuelle pour "clore" l'indispo
+            indisponibiliteTemporaireDateFin = dateUtils.now(), // date actuelle pour "clore" l'indispo
             indisponibiliteTemporaireBasculeAutoDisponible = element.indisponibiliteTemporaireBasculeAutoDisponible,
             indisponibiliteTemporaireBasculeAutoIndisponible = element.indisponibiliteTemporaireBasculeAutoIndisponible,
         )

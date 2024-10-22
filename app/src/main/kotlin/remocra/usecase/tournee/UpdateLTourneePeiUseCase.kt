@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class UpdateLTourneePeiUseCase @Inject constructor(
@@ -38,7 +37,7 @@ class UpdateLTourneePeiUseCase @Inject constructor(
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.TOURNEE_PEI,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }

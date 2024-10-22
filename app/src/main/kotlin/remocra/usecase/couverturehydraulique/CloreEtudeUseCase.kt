@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class CloreEtudeUseCase : AbstractCUDUseCase<UUID>(TypeOperation.UPDATE) {
@@ -44,7 +43,7 @@ class CloreEtudeUseCase : AbstractCUDUseCase<UUID>(TypeOperation.UPDATE) {
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ETUDE,
                 auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
-                date = ZonedDateTime.now(clock),
+                date = dateUtils.now(),
             ),
         )
     }
