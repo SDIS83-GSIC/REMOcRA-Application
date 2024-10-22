@@ -296,4 +296,22 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 ),
             )
     }
+
+    /**
+     * Retourne VRAI si le PEI possède au moins une IT en cours à l'instant donné, FALSE sinon
+     * @param peiId: UUID
+     *
+     */
+    fun hasPeiIndisponibiliteTemporaire(peiId: UUID): Boolean {
+        val now = dateUtils.now()
+        return dsl.fetchExists(
+            dsl.select(INDISPONIBILITE_TEMPORAIRE.ID)
+                .from(INDISPONIBILITE_TEMPORAIRE)
+                .innerJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(peiId))
+                .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now))
+                .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull.or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now))),
+        )
+    }
 }

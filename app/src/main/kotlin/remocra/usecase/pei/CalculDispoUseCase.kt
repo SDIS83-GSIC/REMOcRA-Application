@@ -7,6 +7,7 @@ import remocra.app.DataCacheProvider
 import remocra.data.PeiForCalculDispoData
 import remocra.data.enums.CodeSdis
 import remocra.db.CalculDispoRepository
+import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PoidsAnomalieRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -39,6 +40,9 @@ class CalculDispoUseCase : AbstractUseCase() {
 
     @Inject
     private lateinit var poidsAnomalieRepository: PoidsAnomalieRepository
+
+    @Inject
+    private lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
 
     private fun getAnomalieIdFromCode(code: String): UUID {
         return (dataCacheProvider.getAnomalies().values).find { ano -> ano.anomalieCode == code }!!.anomalieId
@@ -93,12 +97,15 @@ class CalculDispoUseCase : AbstractUseCase() {
         // TODO idem ici, laisser private si possible, sinon exposer et ne pas appeler dans le execute.
         insertAnomaliesDebitPression(pei, anomaliesDebitPression)
 
+        // Si le PEI a une IT en cours, il est indispo de toute façon
+        if (hasIndispoTemporaires(pei)) {
+            return Disponibilite.INDISPONIBLE
+        }
+
         // on a besoin de la  dernière visite :
         val lastVisite = visiteRepository.getLastVisite(pei.peiId)
         val anomaliesDerniereVisite: List<Anomalie> = lastVisite?.let { visiteRepository.getAnomaliesFromVisite(lastVisite.visiteId).map { dataCacheProvider.getAnomalies()[it]!! } }
             ?: listOf()
-
-        val anomalieIndispoTemp = getIndispoTemporaires(pei)?.let { dataCacheProvider.getAnomalies()[it] }
 
         // On construit un set contenant toutes les anomalies possibles
         val setGlobalAnomalies: MutableSet<Anomalie> = mutableSetOf()
@@ -107,9 +114,6 @@ class CalculDispoUseCase : AbstractUseCase() {
         }
         if (anomaliesDerniereVisite.isNotEmpty()) {
             setGlobalAnomalies.addAll(anomaliesDerniereVisite)
-        }
-        if (anomalieIndispoTemp != null) {
-            setGlobalAnomalies.add(anomalieIndispoTemp)
         }
 
         if (setGlobalAnomalies.isNotEmpty()) {
@@ -133,9 +137,11 @@ class CalculDispoUseCase : AbstractUseCase() {
         return Disponibilite.DISPONIBLE
     }
 
-    // TODO quoi retourner, l'UUID, boolean, le futur objet IT ? Pour l'instant, on imagine retourner l'UUID de l'anomalie si elle existe
-    private fun getIndispoTemporaires(pei: PeiForCalculDispoData): UUID? {
-        return null
+    /**
+     * Retourne VRAI si le PEI a au moins une IT en cours au moment de la requête, FAUX sinon
+     */
+    private fun hasIndispoTemporaires(pei: PeiForCalculDispoData): Boolean {
+        return indisponibiliteTemporaireRepository.hasPeiIndisponibiliteTemporaire(pei.peiId)
     }
 
     /**
