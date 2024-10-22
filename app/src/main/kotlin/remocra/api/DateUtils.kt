@@ -25,10 +25,10 @@ object DateUtils {
 
     /** Pattern attendu pour les chaînes représentatives d'une date (moment) SANS secondes */
     const val PATTERN_MINUTE: String = "yyyy-MM-dd HH:mm"
+    const val PATTERN_DATE_ONLY: String = "yyyy-MM-dd"
 
     const val PATTERN_NATUREL: String = "dd/MM/yyyy HH:mm:ss"
-
-    const val PATTERN_DATE_ONLY: String = "dd/MM/yyyy"
+    const val PATTERN_NATUREL_DATE_ONLY: String = "dd/MM/yyyy"
 
     /**
      * Retourne un moment (ZoneDateTime) à partir d'une chaîne de date
@@ -43,6 +43,24 @@ object DateUtils {
             dateString,
             DateTimeFormatter.ofPattern(PATTERN_MINUTE, Locale.getDefault()).withZone(clock.zone),
         )
+    }
+
+    /**
+     * Retourne une ZonedDateTime à l'instant now()
+     * @return ZonedDateTime
+     *
+     */
+    fun now(): ZonedDateTime {
+        return ZonedDateTime.now(clock)
+    }
+
+    /**
+     * Retourne un Instant à l'instant now()
+     * @return Instant
+     *
+     */
+    fun nowInstant(): Instant {
+        return Instant.now(clock)
     }
 
     /**
@@ -71,6 +89,10 @@ object DateUtils {
         return instant.atZone(clock.zone).format(getFormatter(PATTERN_NATUREL))
     }
 
+    fun formatIsoEtendu(instant: Instant): String {
+        return instant.atZone(clock.zone).format(getFormatter(PATTERN_DATE_ONLY))
+    }
+
     private val formatter: DateTimeFormatter
         get() = DateTimeFormatter.ofPattern(PATTERN_MINUTE, Locale.getDefault())
 
@@ -84,6 +106,6 @@ object DateUtils {
     }
 
     fun formatDateOnly(date: ZonedDateTime?): String? {
-        return date?.format(DateTimeFormatter.ofPattern(PATTERN_DATE_ONLY, Locale.getDefault()))
+        return date?.format(DateTimeFormatter.ofPattern(PATTERN_NATUREL_DATE_ONLY, Locale.getDefault()))
     }
 }
