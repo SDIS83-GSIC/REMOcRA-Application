@@ -3,7 +3,6 @@ import { AppProvider } from "./components/App/AppProvider.tsx";
 import "./App.css";
 import routes from "./routes.tsx";
 import RouteConfig from "./components/Router/RouteConfig.tsx";
-import { DataCacheProvider } from "./components/App/DataCacheContext.tsx";
 import { ToastProvider } from "./module/Toast/ToastProvider.tsx";
 import "./style.scss";
 
@@ -13,13 +12,11 @@ import "./style.scss";
 const App = () => {
   return (
     <AppProvider>
-      <DataCacheProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <RouteConfig routes={routes} />
-          </BrowserRouter>
-        </ToastProvider>
-      </DataCacheProvider>
+      <ToastProvider>
+        <BrowserRouter>
+          <RouteConfig routes={routes} />
+        </BrowserRouter>
+      </ToastProvider>
     </AppProvider>
   );
 };

@@ -35,10 +35,12 @@ import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime from "./formatDateUtils.tsx";
+import { IdCodeLibelleType } from "./typeUtils.tsx";
 
 function getColumnPeiByStringArray(
   user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
+  listeAnomaliePossible: Array<IdCodeLibelleType>,
 ): Array<columnType> {
   const column: Array<columnType> = [];
   parametres.forEach((_parametre: COLUMN_PEI) => {
@@ -189,7 +191,11 @@ function getColumnPeiByStringArray(
           Header: "Anomalies",
           accessor: "listeAnomalie",
           Cell: (value) => {
-            return <div>{getStringListeAnomalie(value.value)}</div>;
+            return (
+              <div>
+                {getStringListeAnomalie(value.value, listeAnomaliePossible)}
+              </div>
+            );
           },
           Filter: <FilterInput type="text" name="listeAnomalie" />,
         });

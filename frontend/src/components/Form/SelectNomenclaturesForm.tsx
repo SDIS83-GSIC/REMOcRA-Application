@@ -1,8 +1,9 @@
-import ensureDataCache from "../../utils/ensureData.tsx";
+import url from "../../module/fetch.tsx";
 import {
   IdCodeLibelleType,
   SelectNomenclaturesFormType,
 } from "../../utils/typeUtils.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import SelectForm from "./SelectForm.tsx";
 
 const SelectNomenclaturesForm = ({
@@ -16,14 +17,16 @@ const SelectNomenclaturesForm = ({
   nomenclature,
   setOtherValues,
 }: SelectNomenclaturesFormType) => {
-  const list = ensureDataCache(nomenclature);
+  const response = useGet(url`/api/nomenclatures/list/` + nomenclature);
   return (
-    list && (
+    response.data && (
       <SelectForm
         name={name}
-        listIdCodeLibelle={list}
+        listIdCodeLibelle={response.data}
         label={label}
-        defaultValue={list.find((e: IdCodeLibelleType) => e.id === valueId)}
+        defaultValue={response.data.find(
+          (e: IdCodeLibelleType) => e.id === valueId,
+        )}
         required={required}
         disabled={disabled}
         onChange={onChange}

@@ -10,6 +10,7 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
 
 const ListPei = ({
   filterPage,
@@ -18,6 +19,10 @@ const ListPei = ({
   displayNone,
 }: ListePeiType) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
+
+  const { data: listeAnomaliePossible } = useGet(
+    url`/api/nomenclatures/list/` + TYPE_DATA_CACHE.ANOMALIE,
+  );
 
   let peiColonnes: COLUMN_PEI[] = [];
 
@@ -82,7 +87,11 @@ const ListPei = ({
         displayNone={displayNone}
         className={className}
         query={urlTable}
-        columns={getColumnPeiByStringArray(user, peiColonnes)}
+        columns={getColumnPeiByStringArray(
+          user,
+          peiColonnes,
+          listeAnomaliePossible,
+        )}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}
         filterContext={useFilterContext({ filter })}

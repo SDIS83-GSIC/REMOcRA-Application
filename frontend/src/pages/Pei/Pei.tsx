@@ -36,7 +36,6 @@ import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
-import ensureDataCache, { ensureSrid } from "../../utils/ensureData.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { URLS } from "../../routes.tsx";
@@ -294,7 +293,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   }
 
   //eslint-disable-next-line react-hooks/rules-of-hooks
-  const srid = ensureSrid();
+  const { data: srid } = useGet(url`/api/app-settings/srid`);
 
   useEffect(() => {
     if (
@@ -554,8 +553,8 @@ const FormEntetePei = ({
   isNew: boolean;
   user: UtilisateurEntity;
 }) => {
-  const listNatureDeci: IdCodeLibelleType[] = ensureDataCache(
-    TYPE_DATA_CACHE.NATURE_DECI,
+  const { data: listNatureDeci }: { data: IdCodeLibelleType[] } = useGet(
+    url`/api/nomenclatures/list/` + TYPE_DATA_CACHE.NATURE_DECI,
   );
 
   const codeNatureDeci =

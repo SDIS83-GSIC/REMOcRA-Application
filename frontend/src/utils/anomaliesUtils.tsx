@@ -1,8 +1,9 @@
-import { TYPE_DATA_CACHE } from "../enums/NomenclaturesEnum.tsx";
-import ensureData from "./ensureData.tsx";
+import { IdCodeLibelleType } from "./typeUtils.tsx";
 
-function getStringListeAnomalie(listeAnomaliesPresent: Array<string>) {
-  const listeAnomaliePossible = ensureData(TYPE_DATA_CACHE.ANOMALIE);
+function getStringListeAnomalie(
+  listeAnomaliesPresent: Array<string>,
+  listeAnomaliePossible: Array<IdCodeLibelleType>,
+) {
   if (listeAnomaliePossible === undefined) {
     return;
   }

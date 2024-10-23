@@ -1,5 +1,6 @@
-import ensureDataCache from "../../utils/ensureData.tsx";
+import url from "../../module/fetch.tsx";
 import { SelectNomenclaturesType } from "../../utils/typeUtils.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import SelectFilterFromList from "./SelectFilterFromList.tsx";
 /**
  * Composant de sélection pour les nomenclatures.
@@ -13,12 +14,12 @@ const SelectNomenclaturesFilter = ({
   name,
   nomenclature,
 }: SelectNomenclaturesType) => {
-  const list = ensureDataCache(nomenclature);
+  const response = useGet(url`/api/nomenclatures/list/` + nomenclature);
   return (
-    list && (
+    response.data && (
       <SelectFilterFromList
         name={name}
-        listIdCodeLibelle={list}
+        listIdCodeLibelle={response.data}
         onChange={onChange}
       />
     )
