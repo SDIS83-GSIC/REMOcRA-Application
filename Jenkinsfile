@@ -71,7 +71,7 @@ pipeline {
         expression { ! isGerritReview() }
       }
       steps {
-        smartDependencyTrackPublisher name: 'remocre-v3',
+        smartDependencyTrackPublisher name: 'remocra-v3',
           version: env.BRANCH_NAME,
           bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/bom.json'],
           classifier: 'APPLICATION',
