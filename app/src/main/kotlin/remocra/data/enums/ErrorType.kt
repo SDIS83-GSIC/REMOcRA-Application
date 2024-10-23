@@ -309,11 +309,23 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     //
     // ********************************************************************************
+    // Nomenclatures code - libellé
+    // ********************************************************************************
+    //
+    ADMIN_NOMENC_FORBIDDEN_INSERT(8200, "Vous n'avez pas les droits de création pour cette nomenclature", Status.FORBIDDEN),
+    ADMIN_NOMENC_FORBIDDEN_UPDATE(8201, "Vous n'avez pas les droits de modification pour cette nomenclature", Status.FORBIDDEN),
+    ADMIN_NOMENC_IS_PROTECTED(8202, "Cette nomenclature est protégée"),
+    ADMIN_NOMENC_FORBIDDEN_REMOVAL(8203, "Vous n'avez pas les droits de suppression des nomenclatures", Status.FORBIDDEN),
+    ADMIN_NOMENC_SAME_ELEMENT(8204, "Vous ne pouvez pas définir l'objet parent avec la valeur courante"),
+
+    //
+    // ********************************************************************************
     // Organisme
     // ********************************************************************************
     //
     ADMIN_ORGANISME_FORBIDDEN_INSERT(9000, "Vous n'avez pas les droits de création des organimes", Status.FORBIDDEN),
     ADMIN_ORGANISME_FORBIDDEN_UPDATE(9001, "Vous n'avez pas les droits de modification des organimes", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
