@@ -185,6 +185,7 @@ export const ActionButton = ({
                 textDisable={_button.textDisable}
                 disabled={_button.disable ? _button.disable(row) : false}
                 href={_button.href?.(row.value)}
+                onClick={() => _button.onClick?.(row.value)}
               />
             );
           case TYPE_BUTTON.SEE:
