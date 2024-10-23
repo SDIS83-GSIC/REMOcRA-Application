@@ -1,4 +1,4 @@
-import { TYPE_DATA_CACHE } from "../enums/NomenclaturesEnum.tsx";
+import NOMENCLATURE from "../enums/NomenclaturesEnum.tsx";
 
 export type SelectType = {
   onChange?: any;
@@ -6,7 +6,7 @@ export type SelectType = {
   defaultValue?: IdCodeLibelleType;
 };
 export type SelectNomenclaturesType = SelectType & {
-  nomenclature: TYPE_DATA_CACHE;
+  nomenclature: NOMENCLATURE;
 };
 export type SelectFilterFromUrlType = SelectType & {
   url: string;
@@ -28,7 +28,7 @@ export type SelectNomenclaturesFormType = {
   onChange?: any;
   name: string;
   valueId?: string;
-  nomenclature: TYPE_DATA_CACHE;
+  nomenclature: NOMENCLATURE;
   label?: string;
   required?: boolean;
   disabled?: boolean;

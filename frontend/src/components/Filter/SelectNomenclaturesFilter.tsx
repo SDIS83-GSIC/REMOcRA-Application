@@ -7,7 +7,7 @@ import SelectFilterFromList from "./SelectFilterFromList.tsx";
  *
  * @param {Function} onChange - Fonction de rappel pour gérer les changements de sélection.
  * @param {string} name - Nom du composant de sélection.
- * @param {TYPE_DATA_CACHE} nomenclature - La nomenclature voulue
+ * @param {NOMENCLATURE} nomenclature - La nomenclature voulue
  */
 const SelectNomenclaturesFilter = ({
   onChange,

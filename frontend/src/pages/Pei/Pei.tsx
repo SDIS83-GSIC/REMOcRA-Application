@@ -30,7 +30,7 @@ import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesFo
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../droits.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
-import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
+import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
@@ -554,7 +554,7 @@ const FormEntetePei = ({
   user: UtilisateurEntity;
 }) => {
   const { data: listNatureDeci }: { data: IdCodeLibelleType[] } = useGet(
-    url`/api/nomenclatures/list/` + TYPE_DATA_CACHE.NATURE_DECI,
+    url`/api/nomenclatures/list/` + NOMENCLATURE.NATURE_DECI,
   );
 
   const codeNatureDeci =
@@ -608,10 +608,10 @@ const FormEntetePei = ({
                 name={"peiNatureId"}
                 nomenclature={
                   values.peiTypePei === TYPE_PEI.PIBI
-                    ? TYPE_DATA_CACHE.NATURE_PIBI
+                    ? NOMENCLATURE.NATURE_PIBI
                     : values.peiTypePei === TYPE_PEI.PENA
-                      ? TYPE_DATA_CACHE.NATURE_PENA
-                      : TYPE_DATA_CACHE.NATURE
+                      ? NOMENCLATURE.NATURE_PENA
+                      : NOMENCLATURE.NATURE
                 }
                 label="Nature du PEI"
                 valueId={values.peiNatureId}
@@ -917,7 +917,7 @@ const FormLocalisationPei = ({
         <Col>
           <SelectNomenclaturesForm
             name={"peiNiveauId"}
-            nomenclature={TYPE_DATA_CACHE.NIVEAU}
+            nomenclature={NOMENCLATURE.NIVEAU}
             label="Niveau"
             valueId={values.peiNiveauId}
             required={false}
@@ -943,7 +943,7 @@ const FormLocalisationPei = ({
         <Col>
           <SelectNomenclaturesForm
             name={"peiDomaineId"}
-            nomenclature={TYPE_DATA_CACHE.DOMAINE}
+            nomenclature={NOMENCLATURE.DOMAINE}
             label="Domaine"
             valueId={values.peiDomaineId}
             required={true}
@@ -1051,7 +1051,7 @@ const FormPibi = ({
         <Col>
           <SelectNomenclaturesForm
             name={"pibiMarqueId"}
-            nomenclature={TYPE_DATA_CACHE.MARQUE_PIBI}
+            nomenclature={NOMENCLATURE.MARQUE_PIBI}
             label="Marque"
             valueId={idMarque}
             required={false}
@@ -1105,7 +1105,7 @@ const FormPibi = ({
         <Col>
           <SelectNomenclaturesForm
             name={"pibiTypeReseauId"}
-            nomenclature={TYPE_DATA_CACHE.TYPE_RESEAU}
+            nomenclature={NOMENCLATURE.TYPE_RESEAU}
             label="Type de réseau"
             valueId={values.pibiTypeReseauId}
             required={false}
@@ -1118,7 +1118,7 @@ const FormPibi = ({
         <Col>
           <SelectNomenclaturesForm
             name={"pibiTypeCanalisationId"}
-            nomenclature={TYPE_DATA_CACHE.TYPE_CANALISATION}
+            nomenclature={NOMENCLATURE.TYPE_CANALISATION}
             label="Type de canalisation"
             valueId={values.pibiTypeCanalisationId}
             required={false}
@@ -1142,7 +1142,7 @@ const FormPibi = ({
         <Col>
           <SelectNomenclaturesForm
             name={"pibiReservoirId"}
-            nomenclature={TYPE_DATA_CACHE.RESERVOIR}
+            nomenclature={NOMENCLATURE.RESERVOIR}
             label="Réservoir"
             valueId={values.pibiReservoirId}
             required={false}
@@ -1217,7 +1217,7 @@ const FormPena = ({
         <Col>
           <SelectNomenclaturesForm
             name={"penaMateriauId"}
-            nomenclature={TYPE_DATA_CACHE.MATERIAU}
+            nomenclature={NOMENCLATURE.MATERIAU}
             label="Matériau de la citerne"
             valueId={values.penaMateriauId}
             required={false}

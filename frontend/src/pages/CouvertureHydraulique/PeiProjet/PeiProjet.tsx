@@ -9,7 +9,7 @@ import PositiveNumberInput, {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../../components/Form/SelectNomenclaturesForm.tsx";
-import TYPE_DATA_CACHE from "../../../enums/NomenclaturesEnum.tsx";
+import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
 import { requiredString } from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
@@ -79,7 +79,7 @@ const PeiProjet = () => {
         <Col>
           <SelectNomenclaturesForm
             name={"peiProjetNatureDeciId"}
-            nomenclature={TYPE_DATA_CACHE.NATURE_DECI}
+            nomenclature={NOMENCLATURE.NATURE_DECI}
             label="Nature DECI"
             valueId={values.peiProjetNatureDeciId}
             required={true}
@@ -93,7 +93,7 @@ const PeiProjet = () => {
             <Col>
               <SelectNomenclaturesForm
                 name={"peiProjetDiametreId"}
-                nomenclature={TYPE_DATA_CACHE.DIAMETRE}
+                nomenclature={NOMENCLATURE.DIAMETRE}
                 label="Diamètre"
                 valueId={values.peiProjetDiametreId}
                 required={true}

@@ -10,7 +10,7 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
-import TYPE_DATA_CACHE from "../../enums/NomenclaturesEnum.tsx";
+import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 
 const ListPei = ({
   filterPage,
@@ -21,7 +21,7 @@ const ListPei = ({
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
   const { data: listeAnomaliePossible } = useGet(
-    url`/api/nomenclatures/list/` + TYPE_DATA_CACHE.ANOMALIE,
+    url`/api/nomenclatures/list/` + NOMENCLATURE.ANOMALIE,
   );
 
   let peiColonnes: COLUMN_PEI[] = [];

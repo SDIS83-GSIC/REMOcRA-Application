@@ -1,7 +1,7 @@
 /**
  * Les types possibles de données en cache à demander au endpoint nomenclatures/list
  */
-export enum TYPE_DATA_CACHE {
+export enum NOMENCLATURE {
   ANOMALIE = "anomalie",
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
@@ -21,4 +21,4 @@ export enum NOMENCLATURE_ORGANISME {
   SERVICE_PUBLIC_DECI = "servicePublicDeci",
   AUTORITE_DECI = "autoriteDeci",
 }
-export default TYPE_DATA_CACHE;
+export default NOMENCLATURE;
