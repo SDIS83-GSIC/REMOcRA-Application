@@ -132,6 +132,7 @@ type TableActionButtonType = {
   disable?: (row?: any) => boolean;
   disabled?: boolean;
   textDisable?: string;
+  conditionnalTextDisable?: (row?: any) => string;
   textEnable?: string;
   icon?: ReactNode;
   classEnable?: "primary" | "danger" | "warning" | "info" | "success";
@@ -271,7 +272,9 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmeButtonType) => {
       isPost={_button.isPost}
       row={row}
       disabled={_button.disable ? _button.disable(row) : false}
-      textDisable={_button.textDisable}
+      textDisable={
+        _button.textDisable ?? _button.conditionnalTextDisable?.(row)
+      }
       textEnable={_button.textEnable}
       classEnable={_button.classEnable}
       confirmModale={confirmModale}
