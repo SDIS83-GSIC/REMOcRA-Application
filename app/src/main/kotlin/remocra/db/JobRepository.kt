@@ -47,6 +47,16 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
             .limit(1)
             .fetchOneInto()
 
+    fun getPreviousExecution(taskType: TypeTask, jobId: UUID): Job? =
+        dsl.select(*JOB.fields()).from(JOB)
+            .innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID))
+            .where(TASK.TYPE.eq(taskType))
+            .and(JOB.ETAT_JOB.`in`(EtatJob.NOTIFIE, EtatJob.TERMINE))
+            .and(JOB.ID.ne(jobId))
+            .orderBy(JOB.DATE_DEBUT.desc(), JOB.DATE_FIN.desc().nullsFirst())
+            .limit(1)
+            .fetchOneInto()
+
     fun endJobSuccess(idJob: UUID): Job =
         dsl.update(JOB)
             .set(JOB.ETAT_JOB, EtatJob.TERMINE)

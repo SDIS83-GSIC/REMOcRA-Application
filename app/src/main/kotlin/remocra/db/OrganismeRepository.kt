@@ -18,12 +18,19 @@ import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.db.jooq.remocra.tables.references.CONTACT
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
+import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.tasks.Destinataire
 import remocra.utils.ST_DWithin
+import remocra.utils.ST_Within
 import java.util.UUID
 
 class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
@@ -263,4 +270,45 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
 
     fun getById(id: UUID): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchOneInto()
+
+    fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<String>, contactRole: String): Map<Destinataire, List<UUID?>> =
+        dsl.select(
+            PEI.ID,
+            CONTACT.ID,
+            CONTACT.CIVILITE,
+            FONCTION_CONTACT.LIBELLE,
+            CONTACT.NOM,
+            CONTACT.PRENOM,
+            CONTACT.EMAIL,
+        )
+            .from(ORGANISME)
+            .join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .join(PEI).on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .join(L_CONTACT_ORGANISME).on(ORGANISME.ID.eq(L_CONTACT_ORGANISME.ORGANISME_ID))
+            .join(CONTACT).on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+            .join(L_CONTACT_ROLE).on(CONTACT.ID.eq(L_CONTACT_ROLE.CONTACT_ID))
+            .join(ROLE_CONTACT).on(L_CONTACT_ROLE.ROLE_ID.eq(ROLE_CONTACT.ID))
+            .leftJoin(FONCTION_CONTACT).on(CONTACT.FONCTION_CONTACT_ID.eq(FONCTION_CONTACT.ID))
+            .where(PEI.ID.`in`(listePeiId))
+            .and(TYPE_ORGANISME.CODE.`in`(typeOrganisme))
+            .and(ROLE_CONTACT.CODE.eq(contactRole))
+            .and(CONTACT.EMAIL.isNotNull)
+            .fetchGroups(
+                {
+                        record ->
+                    Destinataire(
+                        destinataireId = record.get(CONTACT.ID),
+                        destinataireCivilite = record.get(CONTACT.CIVILITE),
+                        destinataireFonction = record.get(FONCTION_CONTACT.LIBELLE),
+                        destinataireNom = record.get(CONTACT.NOM),
+                        destinatairePrenom = record.get(CONTACT.PRENOM),
+                        destinataireEmail = record.get(CONTACT.EMAIL)!!,
+                    )
+                },
+                {
+                        record ->
+                    record.get(PEI.ID)
+                },
+            )
 }

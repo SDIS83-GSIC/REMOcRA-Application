@@ -20,6 +20,7 @@ import remocra.eventbus.EventBus
 import remocra.eventbus.notification.NotificationEvent
 import remocra.log.LogManager
 import remocra.usecase.tasks.TaskUseCase
+import remocra.utils.DateUtils
 import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -52,6 +53,9 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
 
     @Inject
     lateinit var taskUseCase: TaskUseCase
+
+    @Inject
+    lateinit var dateUtils: DateUtils
 
     /**
      * Méthode exécutant le code de la tâche à proprement parler.

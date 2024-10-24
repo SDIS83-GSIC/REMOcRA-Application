@@ -91,7 +91,7 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
             return Result.Error(ErrorType.BAD_PATTERN.toString())
         }
 
-        val events = tracabiliteRepository.getTracabilitePeiSince(moment!!)
+        val events = tracabiliteRepository.getTracabilitePeiAndVisiteSince(moment!!)
         val diffs = events.map { traca ->
             val peiId: UUID
             val numeroComplet: String

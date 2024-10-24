@@ -2,6 +2,7 @@ package remocra.schedule
 
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
+import remocra.tasks.ChangementEtatPeiTask
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
@@ -20,6 +21,7 @@ object ScheduleModule : RemocraModule() {
         ).apply {
             // TODO : ajouter tâches programmées
             addBinding().to<SynchroUtilisateurTask>().asEagerSingleton()
+            addBinding().to<ChangementEtatPeiTask>().asEagerSingleton()
         }
     }
 }

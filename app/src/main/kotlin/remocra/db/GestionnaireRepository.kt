@@ -8,10 +8,15 @@ import org.jooq.impl.DSL
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
+import remocra.db.jooq.remocra.tables.references.CONTACT
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.SITE
+import remocra.tasks.Destinataire
 import java.util.UUID
 
 class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
@@ -119,4 +124,43 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
                 .from(SITE)
                 .where(SITE.GESTIONNAIRE_ID.eq(gestionnaireId)),
         )
+
+    fun getDestinataireContactGestionnaire(
+        listePeiId: List<UUID>,
+        contactRole: String,
+    ): Map<Destinataire, List<UUID?>> =
+        dsl.select(
+            PEI.ID,
+            CONTACT.ID,
+            CONTACT.CIVILITE,
+            FONCTION_CONTACT.LIBELLE,
+            CONTACT.NOM,
+            CONTACT.PRENOM,
+            CONTACT.EMAIL,
+        )
+            .from(GESTIONNAIRE)
+            .join(L_CONTACT_GESTIONNAIRE).on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
+            .join(CONTACT).on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+            .join(PEI).on(GESTIONNAIRE.ID.eq(PEI.GESTIONNAIRE_ID))
+            .join(L_CONTACT_ROLE).on(CONTACT.ID.eq(L_CONTACT_ROLE.CONTACT_ID))
+            .join(ROLE_CONTACT).on(L_CONTACT_ROLE.ROLE_ID.eq(ROLE_CONTACT.ID))
+            .leftJoin(FONCTION_CONTACT).on(CONTACT.FONCTION_CONTACT_ID.eq(FONCTION_CONTACT.ID))
+            .where(PEI.ID.`in`(listePeiId))
+            .and(ROLE_CONTACT.CODE.eq(contactRole))
+            .and(CONTACT.EMAIL.isNotNull)
+            .fetchGroups(
+                { record ->
+                    Destinataire(
+                        destinataireId = record.get(CONTACT.ID),
+                        destinataireCivilite = record.get(CONTACT.CIVILITE),
+                        destinataireFonction = record.get(FONCTION_CONTACT.LIBELLE),
+                        destinataireNom = record.get(CONTACT.NOM),
+                        destinatairePrenom = record.get(CONTACT.PRENOM),
+                        destinataireEmail = record.get(CONTACT.EMAIL)!!,
+                    )
+                },
+                { record ->
+                    record.get(PEI.ID)
+                },
+            )
 }

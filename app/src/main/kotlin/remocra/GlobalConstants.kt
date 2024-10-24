@@ -85,4 +85,8 @@ object GlobalConstants {
     enum class TypeDocument(val typeDocument: String) {
         TYPE_DOCUMENT_HYDRANT("HYDRANT"),
     }
+
+    /** Code des Rôles Contact Protected */
+    const val CHANGEMENT_ETAT_PEI: String = "CHANGEMENT_ETAT_PEI"
+    // TODO : A agrémenter petit à petit
 }

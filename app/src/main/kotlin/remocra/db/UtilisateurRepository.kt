@@ -1,12 +1,17 @@
 package remocra.db
 
 import com.google.inject.Inject
+import kotlinx.coroutines.selects.select
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.tasks.Destinataire
+import remocra.utils.ST_Within
 import java.util.UUID
 
 class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
@@ -105,4 +110,40 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             .where(ORGANISME.ID.eq(organismeId))
             .fetchOneInto()
     }
+
+    fun getDestinataireUtilisateurOrganisme(
+        listePeiId: List<UUID>,
+        typeOrganisme: List<String>,
+    ): Map<Destinataire, List<UUID?>> =
+        dsl.select(
+            PEI.ID,
+            UTILISATEUR.ID,
+            UTILISATEUR.NOM,
+            UTILISATEUR.PRENOM,
+            UTILISATEUR.EMAIL,
+        )
+            .from(UTILISATEUR)
+            .join(ORGANISME).on(UTILISATEUR.ORGANISME_ID.eq(ORGANISME.ID))
+            .join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .join(PEI).on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .where(PEI.ID.`in`(listePeiId))
+            .and(TYPE_ORGANISME.CODE.`in`(typeOrganisme))
+            .and(UTILISATEUR.CAN_BE_NOTIFIED)
+            .and(UTILISATEUR.EMAIL.isNotNull)
+            .fetchGroups(
+                { record ->
+                    Destinataire(
+                        destinataireId = record.get(UTILISATEUR.ID),
+                        destinataireCivilite = null,
+                        destinataireFonction = null,
+                        destinataireNom = record.get(UTILISATEUR.NOM),
+                        destinatairePrenom = record.get(UTILISATEUR.PRENOM),
+                        destinataireEmail = record.get(UTILISATEUR.EMAIL)!!,
+                    )
+                },
+                { record ->
+                    record.get(PEI.ID)
+                },
+            )
 }
