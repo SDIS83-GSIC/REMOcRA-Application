@@ -36,6 +36,9 @@ import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
 import CreateProfilOrganisme from "./pages/Admin/profilOrganisme/CreateProfilOrganismes.tsx";
 import ListProfilOrganisme from "./pages/Admin/profilOrganisme/ListProfilOrganisme.tsx";
 import UpdateProfilOrganisme from "./pages/Admin/profilOrganisme/UpdateProfilOrganisme.tsx";
+import CreateProfilUtilisateur from "./pages/Admin/profilUtilisateur/CreateProfilUtilisateur.tsx";
+import ListProfilUtilisateur from "./pages/Admin/profilUtilisateur/ListProfilUtilisateur.tsx";
+import UpdateProfilUtilisateur from "./pages/Admin/profilUtilisateur/UpdateProfilUtilisateur.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
@@ -181,6 +184,11 @@ export const URLS = {
   UPDATE_PROFIL_ORGANISME: (profilOrganismeId: string) =>
     url`/admin/profil-organisme/edit/` + profilOrganismeId,
   LIST_PROFIL_ORGANISME: url`/admin/profil-organisme`,
+
+  ADD_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur/add`,
+  UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>
+    url`/admin/profil-utilisateur/edit/` + profilUtilisateurId,
+  LIST_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -799,6 +807,33 @@ export default [
     element: (
       <Authorization
         Component={UpdateProfilOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-utilisateur",
+    element: (
+      <Authorization
+        Component={ListProfilUtilisateur}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-utilisateur/add",
+    element: (
+      <Authorization
+        Component={CreateProfilUtilisateur}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-utilisateur/edit/:profilUtilisateurId",
+    element: (
+      <Authorization
+        Component={UpdateProfilUtilisateur}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
