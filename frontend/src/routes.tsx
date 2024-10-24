@@ -40,6 +40,7 @@ import UpdateProfilOrganisme from "./pages/Admin/profilOrganisme/UpdateProfilOrg
 import CreateProfilUtilisateur from "./pages/Admin/profilUtilisateur/CreateProfilUtilisateur.tsx";
 import ListProfilUtilisateur from "./pages/Admin/profilUtilisateur/ListProfilUtilisateur.tsx";
 import UpdateProfilUtilisateur from "./pages/Admin/profilUtilisateur/UpdateProfilUtilisateur.tsx";
+import ListSite from "./pages/Admin/site/ListSite.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
@@ -843,16 +844,25 @@ export default [
           />
         ),
       },
+      {
+        path: "profil-utilisateur/update/:profilUtilisateurId",
+        element: (
+          <Authorization
+            Component={UpdateProfilUtilisateur}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "site",
+        element: (
+          <Authorization
+            Component={ListSite}
+            droits={[TYPE_DROIT.GEST_SITE_R]}
+          />
+        ),
+      },
     ],
-  },
-  {
-    path: "profil-utilisateur/update/:profilUtilisateurId",
-    element: (
-      <Authorization
-        Component={UpdateProfilUtilisateur}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
   },
   {
     path: "*",

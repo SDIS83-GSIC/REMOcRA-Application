@@ -20,6 +20,7 @@ import remocra.web.courrier.CourrierModule
 import remocra.web.couverturehydraulique.CouvertureHydrauliqueModule
 import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
+import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.image.ImageModule
 import remocra.web.indisponibiliteTemporaire.IndisponibiliteTemporaireModule
 import remocra.web.marque.MarquePibiModule
@@ -62,6 +63,7 @@ object WebModule : RemocraModule() {
         install(ZoneIntegrationModule)
         install(ImageModule)
         install(MarquePibiModule)
+        install(GestionnaireModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

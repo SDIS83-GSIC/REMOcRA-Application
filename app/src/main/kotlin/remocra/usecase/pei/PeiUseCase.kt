@@ -188,7 +188,7 @@ class PeiUseCase : AbstractUseCase() {
         val listServicePublicDeci: Collection<IdCodeLibelleData>,
         val listMaintenanceDeci: Collection<IdCodeLibelleData>,
         val listGestionnaire: Collection<IdCodeLibelleData>,
-        val listSite: Collection<SiteRepository.SiteWithGestionnaire>,
+        val listSite: Collection<SiteRepository.SiteWithGestionnaireId>,
         val listCommune: Collection<IdCodeLibelleData>,
         val listLieuDit: Collection<LieuDitRepository.LieuDitWithCommune>,
         val listVoie: Collection<VoieRepository.VoieWithCommune>,
