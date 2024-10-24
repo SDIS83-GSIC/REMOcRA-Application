@@ -1,4 +1,5 @@
 import MapPei from "./components/Map/MapPei/MapPei.tsx";
+import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import NoMatch from "./components/Router/NoMatch.tsx";
@@ -116,78 +117,81 @@ export const URLS = {
   OUVRIR_ETUDE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/open/` + etudeId,
 
+  // MODULE ADMIN
+  MODULE_ADMIN: url`/admin`,
   UPDATE_DIAMETRE: (diametreId: string) => url`/admin/diametre/` + diametreId,
   DIAMETRE: url`/admin/diametre/`,
-  ADD_DIAMETRE: url`/admin/diametre/add/`,
-  ADD_NATURE: url`/admin/nature/add`,
-  UPDATE_NATURE: (natureId: string) => url`/admin/nature/edit/` + natureId,
+  ADD_DIAMETRE: url`/admin/diametre/create/`,
+  ADD_NATURE: url`/admin/nature/create`,
+  UPDATE_NATURE: (natureId: string) => url`/admin/nature/update/` + natureId,
   LIST_NATURE: url`/admin/nature`,
-  ADD_ORGANISME: url`/admin/organisme/add/`,
+  ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
-    url`/admin/organisme/edit/` + organismeId,
+    url`/admin/organisme/update/` + organismeId,
   ORGANISME: url`/admin/organisme`,
 
-  ADD_NATURE_DECI: url`/admin/nature-deci/add`,
+  ADD_NATURE_DECI: url`/admin/nature-deci/create`,
   UPDATE_NATURE_DECI: (natureDeciId: string) =>
-    url`/admin/nature-deci/edit/` + natureDeciId,
+    url`/admin/nature-deci/update/` + natureDeciId,
   LIST_NATURE_DECI: url`/admin/nature-deci`,
 
-  ADD_DOMAINE: url`/admin/domaine/add`,
-  UPDATE_DOMAINE: (domaineId: string) => url`/admin/domaine/edit/` + domaineId,
+  ADD_DOMAINE: url`/admin/domaine/create`,
+  UPDATE_DOMAINE: (domaineId: string) =>
+    url`/admin/domaine/update/` + domaineId,
   LIST_DOMAINE: url`/admin/domaine`,
 
-  ADD_MARQUE_PIBI: url`/admin/marque-pibi/add`,
+  ADD_MARQUE_PIBI: url`/admin/marque-pibi/create`,
   UPDATE_MARQUE_PIBI: (marquePibiId: string) =>
-    url`/admin/marque-pibi/edit/` + marquePibiId,
+    url`/admin/marque-pibi/update/` + marquePibiId,
   LIST_MARQUE_PIBI: url`/admin/marque-pibi`,
 
-  ADD_MATERIAU: url`/admin/materiau/add`,
+  ADD_MATERIAU: url`/admin/materiau/create`,
   UPDATE_MATERIAU: (materiauId: string) =>
-    url`/admin/materiau/edit/` + materiauId,
+    url`/admin/materiau/update/` + materiauId,
   LIST_MATERIAU: url`/admin/materiau`,
 
-  ADD_TYPE_CANALISATION: url`/admin/type-canalisation/add`,
+  ADD_TYPE_CANALISATION: url`/admin/type-canalisation/create`,
   UPDATE_TYPE_CANALISATION: (typeCanalisationId: string) =>
-    url`/admin/type-canalisation/edit/` + typeCanalisationId,
+    url`/admin/type-canalisation/update/` + typeCanalisationId,
   LIST_TYPE_CANALISATION: url`/admin/type-canalisation`,
 
-  ADD_TYPE_RESEAU: url`/admin/type-reseau/add`,
+  ADD_TYPE_RESEAU: url`/admin/type-reseau/create`,
   UPDATE_TYPE_RESEAU: (typeReseauId: string) =>
-    url`/admin/type-reseau/edit/` + typeReseauId,
+    url`/admin/type-reseau/update/` + typeReseauId,
   LIST_TYPE_RESEAU: url`/admin/type-reseau`,
 
-  ADD_NIVEAU: url`/admin/niveau/add`,
-  UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/edit/` + niveauId,
+  ADD_NIVEAU: url`/admin/niveau/create`,
+  UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/update/` + niveauId,
   LIST_NIVEAU: url`/admin/niveau`,
 
-  ADD_MODELE_PIBI: url`/admin/modele-pibi/add`,
+  ADD_MODELE_PIBI: url`/admin/modele-pibi/create`,
   UPDATE_MODELE_PIBI: (modelePibiId: string) =>
-    url`/admin/modele-pibi/edit/` + modelePibiId,
+    url`/admin/modele-pibi/update/` + modelePibiId,
   LIST_MODELE_PIBI: url`/admin/modele-pibi`,
 
-  ADD_TYPE_ETUDE: url`/admin/type-etude/add`,
+  ADD_TYPE_ETUDE: url`/admin/type-etude/create`,
   UPDATE_TYPE_ETUDE: (typeEtudeId: string) =>
-    url`/admin/type-etude/edit/` + typeEtudeId,
+    url`/admin/type-etude/update/` + typeEtudeId,
   LIST_TYPE_ETUDE: url`/admin/type-etude`,
 
-  ADD_TYPE_PENA_ASPIRATION: url`/admin/type-pena-aspiration/add`,
+  ADD_TYPE_PENA_ASPIRATION: url`/admin/type-pena-aspiration/create`,
   UPDATE_TYPE_PENA_ASPIRATION: (typePenaAspirationId: string) =>
-    url`/admin/type-pena-aspiration/edit/` + typePenaAspirationId,
+    url`/admin/type-pena-aspiration/update/` + typePenaAspirationId,
   LIST_TYPE_PENA_ASPIRATION: url`/admin/type-pena-aspiration`,
 
-  ADD_TYPE_ORGANISME: url`/admin/type-organisme/add`,
+  ADD_TYPE_ORGANISME: url`/admin/type-organisme/create`,
   UPDATE_TYPE_ORGANISME: (typeOrganismeId: string) =>
-    url`/admin/type-organisme/edit/` + typeOrganismeId,
-  LIST_TYPE_ORGANISME: url`/admin/type-organisme`,
+    url`/admin/type-organisme/update/` + typeOrganismeId,
+  LIST_TYPE_ORGANSIME: url`/admin/type-organisme`,
 
-  ADD_PROFIL_ORGANISME: url`/admin/profil-organisme/add`,
+  ADD_PROFIL_ORGANISME: url`/admin/profil-organisme/create`,
   UPDATE_PROFIL_ORGANISME: (profilOrganismeId: string) =>
-    url`/admin/profil-organisme/edit/` + profilOrganismeId,
-  LIST_PROFIL_ORGANISME: url`/admin/profil-organisme`,
+    url`/admin/profil-organisme/update/` + profilOrganismeId,
+  LIST_PROFIL_ORGANSIME: url`/admin/profil-organisme`,
 
-  ADD_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur/add`,
+  ADD_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur/create`,
   UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>
-    url`/admin/profil-utilisateur/edit/` + profilUtilisateurId,
+    url`/admin/profil-utilisateur/update/` + profilUtilisateurId,
   LIST_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur`,
 };
 
@@ -405,432 +409,444 @@ export default [
       },
     ],
   },
-  {
-    path: "/admin/diametre/",
-    element: (
-      <Authorization
-        Component={ListDiametre}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/diametre/:diametreId",
-    element: (
-      <Authorization
-        Component={UpdateDiametre}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/diametre/add",
-    element: (
-      <Authorization
-        Component={CreateDiametre}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature/",
-    element: (
-      <Authorization
-        Component={ListNature}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature/edit/:natureId",
-    element: (
-      <Authorization
-        Component={UpdateNature}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature/add",
-    element: (
-      <Authorization
-        Component={CreateNature}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature-deci/",
-    element: (
-      <Authorization
-        Component={ListNatureDeci}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature-deci/edit/:natureDeciId",
-    element: (
-      <Authorization
-        Component={UpdateNatureDeci}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/nature-deci/add",
-    element: (
-      <Authorization
-        Component={CreateNatureDeci}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/domaine",
-    element: (
-      <Authorization
-        Component={ListDomaine}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/domaine/edit/:domaineId",
-    element: (
-      <Authorization
-        Component={UpdateDomaine}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/domaine/add",
-    element: (
-      <Authorization
-        Component={CreateDomaine}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/marque-pibi",
-    element: (
-      <Authorization
-        Component={ListMarquePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/marque-pibi/edit/:marquePibiId",
-    element: (
-      <Authorization
-        Component={UpdateMarquePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/marque-pibi/add",
-    element: (
-      <Authorization
-        Component={CreateMarquePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/materiau",
-    element: (
-      <Authorization
-        Component={ListMateriau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/materiau/edit/:materiauId",
-    element: (
-      <Authorization
-        Component={UpdateMateriau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/materiau/add",
-    element: (
-      <Authorization
-        Component={CreateMateriau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-canalisation",
-    element: (
-      <Authorization
-        Component={ListTypeCanalisation}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-canalisation/edit/:typeCanalisationId",
-    element: (
-      <Authorization
-        Component={UpdateTypeCanalisation}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-canalisation/add",
-    element: (
-      <Authorization
-        Component={CreateTypeCanalisation}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-reseau",
-    element: (
-      <Authorization
-        Component={ListTypeReseau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-reseau/edit/:typeReseauId",
-    element: (
-      <Authorization
-        Component={UpdateTypeReseau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-reseau/add",
-    element: (
-      <Authorization
-        Component={CreateTypeReseau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
 
   {
-    path: "/admin/niveau",
+    path: "/admin/",
     element: (
       <Authorization
-        Component={ListNiveau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
+        Component={ModuleAdmin}
+        droits={Object.values(TYPE_DROIT)}
       />
     ),
+    children: [
+      {
+        path: "diametre",
+        element: (
+          <Authorization
+            Component={ListDiametre}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "diametre/:diametreId",
+        element: (
+          <Authorization
+            Component={UpdateDiametre}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "diametre/create",
+        element: (
+          <Authorization
+            Component={CreateDiametre}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature/",
+        element: (
+          <Authorization
+            Component={ListNature}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature/update/:natureId",
+        element: (
+          <Authorization
+            Component={UpdateNature}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature/create",
+        element: (
+          <Authorization
+            Component={CreateNature}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature-deci/",
+        element: (
+          <Authorization
+            Component={ListNatureDeci}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature-deci/update/:natureDeciId",
+        element: (
+          <Authorization
+            Component={UpdateNatureDeci}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "nature-deci/create",
+        element: (
+          <Authorization
+            Component={CreateNatureDeci}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "domaine",
+        element: (
+          <Authorization
+            Component={ListDomaine}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "domaine/update/:domaineId",
+        element: (
+          <Authorization
+            Component={UpdateDomaine}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "domaine/create",
+        element: (
+          <Authorization
+            Component={CreateDomaine}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "marque-pibi",
+        element: (
+          <Authorization
+            Component={ListMarquePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "marque-pibi/update/:marquePibiId",
+        element: (
+          <Authorization
+            Component={UpdateMarquePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "marque-pibi/create",
+        element: (
+          <Authorization
+            Component={CreateMarquePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "materiau",
+        element: (
+          <Authorization
+            Component={ListMateriau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "materiau/update/:materiauId",
+        element: (
+          <Authorization
+            Component={UpdateMateriau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "materiau/create",
+        element: (
+          <Authorization
+            Component={CreateMateriau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-canalisation",
+        element: (
+          <Authorization
+            Component={ListTypeCanalisation}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-canalisation/update/:typeCanalisationId",
+        element: (
+          <Authorization
+            Component={UpdateTypeCanalisation}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-canalisation/create",
+        element: (
+          <Authorization
+            Component={CreateTypeCanalisation}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-reseau",
+        element: (
+          <Authorization
+            Component={ListTypeReseau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-reseau/update/:typeReseauId",
+        element: (
+          <Authorization
+            Component={UpdateTypeReseau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-reseau/create",
+        element: (
+          <Authorization
+            Component={CreateTypeReseau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+
+      {
+        path: "niveau",
+        element: (
+          <Authorization
+            Component={ListNiveau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "niveau/update/:niveauId",
+        element: (
+          <Authorization
+            Component={UpdateNiveau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "niveau/create",
+        element: (
+          <Authorization
+            Component={CreateNiveau}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "modele-pibi",
+        element: (
+          <Authorization
+            Component={ListModelePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "modele-pibi/update/:modelePibiId",
+        element: (
+          <Authorization
+            Component={UpdateModelePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "modele-pibi/create",
+        element: (
+          <Authorization
+            Component={CreateModelePibi}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-etude",
+        element: (
+          <Authorization
+            Component={ListTypeEtude}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-etude/update/:typeEtudeId",
+        element: (
+          <Authorization
+            Component={UpdateTypeEtude}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-etude/create",
+        element: (
+          <Authorization
+            Component={CreateTypeEtude}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-pena-aspiration",
+        element: (
+          <Authorization
+            Component={ListTypePenaAspiration}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-pena-aspiration/update/:typePenaAspirationId",
+        element: (
+          <Authorization
+            Component={UpdateTypePenaAspiration}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-pena-aspiration/create",
+        element: (
+          <Authorization
+            Component={CreateTypePenaAspiration}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "organisme",
+        element: (
+          <Authorization
+            Component={ListOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "organisme/create",
+        element: (
+          <Authorization
+            Component={CreateOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "organisme/update/:organismeId",
+        element: (
+          <Authorization
+            Component={UpdateOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-organisme",
+        element: (
+          <Authorization
+            Component={ListTypeOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-organisme/create",
+        element: (
+          <Authorization
+            Component={CreateTypeOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-organisme/update/:typeOrganismeId",
+        element: (
+          <Authorization
+            Component={UpdateTypeOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-organisme",
+        element: (
+          <Authorization
+            Component={ListProfilOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-organisme/create",
+        element: (
+          <Authorization
+            Component={CreateProfilOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-organisme/update/:profilOrganismeId",
+        element: (
+          <Authorization
+            Component={UpdateProfilOrganisme}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-utilisateur",
+        element: (
+          <Authorization
+            Component={ListProfilUtilisateur}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-utilisateur/create",
+        element: (
+          <Authorization
+            Component={CreateProfilUtilisateur}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+    ],
   },
   {
-    path: "/admin/niveau/edit/:niveauId",
-    element: (
-      <Authorization
-        Component={UpdateNiveau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/niveau/add",
-    element: (
-      <Authorization
-        Component={CreateNiveau}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/modele-pibi",
-    element: (
-      <Authorization
-        Component={ListModelePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/modele-pibi/edit/:modelePibiId",
-    element: (
-      <Authorization
-        Component={UpdateModelePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/modele-pibi/add",
-    element: (
-      <Authorization
-        Component={CreateModelePibi}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-etude",
-    element: (
-      <Authorization
-        Component={ListTypeEtude}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-etude/edit/:typeEtudeId",
-    element: (
-      <Authorization
-        Component={UpdateTypeEtude}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-etude/add",
-    element: (
-      <Authorization
-        Component={CreateTypeEtude}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-pena-aspiration",
-    element: (
-      <Authorization
-        Component={ListTypePenaAspiration}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-pena-aspiration/edit/:typePenaAspirationId",
-    element: (
-      <Authorization
-        Component={UpdateTypePenaAspiration}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-pena-aspiration/add",
-    element: (
-      <Authorization
-        Component={CreateTypePenaAspiration}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/organisme",
-    element: (
-      <Authorization
-        Component={ListOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/organisme/add",
-    element: (
-      <Authorization
-        Component={CreateOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/organisme/edit/:organismeId",
-    element: (
-      <Authorization
-        Component={UpdateOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-organisme",
-    element: (
-      <Authorization
-        Component={ListTypeOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-organisme/add",
-    element: (
-      <Authorization
-        Component={CreateTypeOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/type-organisme/edit/:typeOrganismeId",
-    element: (
-      <Authorization
-        Component={UpdateTypeOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-organisme",
-    element: (
-      <Authorization
-        Component={ListProfilOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-organisme/add",
-    element: (
-      <Authorization
-        Component={CreateProfilOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-organisme/edit/:profilOrganismeId",
-    element: (
-      <Authorization
-        Component={UpdateProfilOrganisme}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-utilisateur",
-    element: (
-      <Authorization
-        Component={ListProfilUtilisateur}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-utilisateur/add",
-    element: (
-      <Authorization
-        Component={CreateProfilUtilisateur}
-        droits={[TYPE_DROIT.ADMIN_DROITS]}
-      />
-    ),
-  },
-  {
-    path: "/admin/profil-utilisateur/edit/:profilUtilisateurId",
+    path: "profil-utilisateur/update/:profilUtilisateurId",
     element: (
       <Authorization
         Component={UpdateProfilUtilisateur}

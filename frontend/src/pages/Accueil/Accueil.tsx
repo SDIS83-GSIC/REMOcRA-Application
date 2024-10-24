@@ -78,7 +78,7 @@ function getLinks(
     case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
       return [
         {
-          aLeDroit: true, // TODO droit
+          aLeDroit: hasDroit(user, TYPE_DROIT.ETUDE_R),
           label: "Liste des études",
           link: URLS.LIST_ETUDE,
         },
@@ -91,6 +91,13 @@ function getLinks(
     case TypeModuleRemocra.ADRESSES:
     case TypeModuleRemocra.RISQUES:
     case TypeModuleRemocra.ADMIN:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
+          label: "Administrer l'application",
+          link: URLS.MODULE_ADMIN,
+        },
+      ];
     case TypeModuleRemocra.COURRIER:
     case TypeModuleRemocra.DOCUMENT:
     case TypeModuleRemocra.PERSONNALISE:
