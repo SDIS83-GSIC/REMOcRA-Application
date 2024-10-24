@@ -30,6 +30,9 @@ import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
+import CreateTypeReseau from "./pages/Admin/typeReseau/CreateTypeReseau.tsx";
+import ListTypeReseau from "./pages/Admin/typeReseau/ListTypeReseau.tsx";
+import UpdateTypeReseau from "./pages/Admin/typeReseau/UpdateTypeReseau.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
@@ -126,6 +129,11 @@ export const URLS = {
   UPDATE_TYPE_CANALISATION: (typeCanalisationId: string) =>
     url`/admin/type-canalisation/edit/` + typeCanalisationId,
   LIST_TYPE_CANALISATION: url`/admin/type-canalisation`,
+
+  ADD_TYPE_RESEAU: url`/admin/type-reseau/add`,
+  UPDATE_TYPE_RESEAU: (typeReseauId: string) =>
+    url`/admin/type-reseau/edit/` + typeReseauId,
+  LIST_TYPE_RESEAU: url`/admin/type-reseau`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -527,6 +535,33 @@ export default [
     element: (
       <Authorization
         Component={CreateTypeCanalisation}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-reseau",
+    element: (
+      <Authorization
+        Component={ListTypeReseau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-reseau/edit/:typeReseauId",
+    element: (
+      <Authorization
+        Component={UpdateTypeReseau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-reseau/add",
+    element: (
+      <Authorization
+        Component={CreateTypeReseau}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
