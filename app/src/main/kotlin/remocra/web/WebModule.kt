@@ -22,6 +22,7 @@ import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.image.ImageModule
 import remocra.web.indisponibiliteTemporaire.IndisponibiliteTemporaireModule
+import remocra.web.marque.MarquePibiModule
 import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
 import remocra.web.natureDeci.NatureDeciModule
@@ -60,6 +61,7 @@ object WebModule : RemocraModule() {
         install(TypeOrganismeModule)
         install(ZoneIntegrationModule)
         install(ImageModule)
+        install(MarquePibiModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

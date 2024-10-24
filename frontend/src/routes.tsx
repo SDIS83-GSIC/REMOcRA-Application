@@ -18,6 +18,9 @@ import UpdateMarquePibi from "./pages/Admin/marquePibi/UpdateMarquePibi.tsx";
 import CreateMateriau from "./pages/Admin/materiau/CreateMateriau.tsx";
 import ListMateriau from "./pages/Admin/materiau/ListMateriau.tsx";
 import UpdateMateriau from "./pages/Admin/materiau/UpdateMateriau.tsx";
+import CreateModelePibi from "./pages/Admin/modelePibi/CreateModelePibi.tsx";
+import ListModelePibi from "./pages/Admin/modelePibi/ListModelePibi.tsx";
+import UpdateModelePibi from "./pages/Admin/modelePibi/UpdateModelePibi.tsx";
 import CreateNature from "./pages/Admin/nature/CreateNature.tsx";
 import ListNature from "./pages/Admin/nature/ListNature.tsx";
 import UpdateNature from "./pages/Admin/nature/UpdateNature.tsx";
@@ -141,6 +144,11 @@ export const URLS = {
   ADD_NIVEAU: url`/admin/niveau/add`,
   UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/edit/` + niveauId,
   LIST_NIVEAU: url`/admin/niveau`,
+
+  ADD_MODELE_PIBI: url`/admin/modele-pibi/add`,
+  UPDATE_MODELE_PIBI: (modelePibiId: string) =>
+    url`/admin/modele-pibi/edit/` + modelePibiId,
+  LIST_MODELE_PIBI: url`/admin/modele-pibi`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -597,6 +605,33 @@ export default [
     element: (
       <Authorization
         Component={CreateNiveau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/modele-pibi",
+    element: (
+      <Authorization
+        Component={ListModelePibi}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/modele-pibi/edit/:modelePibiId",
+    element: (
+      <Authorization
+        Component={UpdateModelePibi}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/modele-pibi/add",
+    element: (
+      <Authorization
+        Component={CreateModelePibi}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
