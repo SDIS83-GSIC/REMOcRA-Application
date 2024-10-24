@@ -15,6 +15,9 @@ import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
 import CreateMarquePibi from "./pages/Admin/marquePibi/CreateMarquePibi.tsx";
 import ListMarquePibi from "./pages/Admin/marquePibi/ListMarquePibi.tsx";
 import UpdateMarquePibi from "./pages/Admin/marquePibi/UpdateMarquePibi.tsx";
+import CreateMateriau from "./pages/Admin/materiau/CreateMateriau.tsx";
+import ListMateriau from "./pages/Admin/materiau/ListMateriau.tsx";
+import UpdateMateriau from "./pages/Admin/materiau/UpdateMateriau.tsx";
 import CreateNature from "./pages/Admin/nature/CreateNature.tsx";
 import ListNature from "./pages/Admin/nature/ListNature.tsx";
 import UpdateNature from "./pages/Admin/nature/UpdateNature.tsx";
@@ -110,6 +113,11 @@ export const URLS = {
   UPDATE_MARQUE_PIBI: (marquePibiId: string) =>
     url`/admin/marque-pibi/edit/` + marquePibiId,
   LIST_MARQUE_PIBI: url`/admin/marque-pibi`,
+
+  ADD_MATERIAU: url`/admin/materiau/add`,
+  UPDATE_MATERIAU: (materiauId: string) =>
+    url`/admin/materiau/edit/` + materiauId,
+  LIST_MATERIAU: url`/admin/materiau`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -457,6 +465,33 @@ export default [
     element: (
       <Authorization
         Component={CreateMarquePibi}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/materiau",
+    element: (
+      <Authorization
+        Component={ListMateriau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/materiau/edit/:materiauId",
+    element: (
+      <Authorization
+        Component={UpdateMateriau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/materiau/add",
+    element: (
+      <Authorization
+        Component={CreateMateriau}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
