@@ -142,8 +142,19 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             when (type) {
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> InfosFk(MODELE_PIBI.MARQUE_ID, MARQUE_PIBI, MARQUE_PIBI.ID, MARQUE_PIBI.LIBELLE)
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> InfosFk(PROFIL_ORGANISME.TYPE_ORGANISME_ID, TYPE_ORGANISME, TYPE_ORGANISME.ID, TYPE_ORGANISME.LIBELLE)
-                TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> InfosFk(PROFIL_UTILISATEUR.TYPE_ORGANISME_ID, TYPE_ORGANISME, TYPE_ORGANISME.ID, TYPE_ORGANISME.LIBELLE)
-                TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> InfosFk(TYPE_ORGANISME.PARENT_ID, TYPE_ORGANISME, TYPE_ORGANISME.ID, TYPE_ORGANISME.LIBELLE)
+                TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> InfosFk(
+                    PROFIL_UTILISATEUR.TYPE_ORGANISME_ID,
+                    TYPE_ORGANISME,
+                    TYPE_ORGANISME.ID,
+                    TYPE_ORGANISME.LIBELLE,
+                )
+                TypeNomenclatureCodeLibelle.TYPE_ORGANISME ->
+                    InfosFk(
+                        TYPE_ORGANISME.PARENT_ID,
+                        TYPE_ORGANISME.`as`("typeOrganismeFk"),
+                        TYPE_ORGANISME.`as`("typeOrganismeFk").ID,
+                        TYPE_ORGANISME.`as`("typeOrganismeFk").LIBELLE,
+                    )
                 else -> null
             }
     }
@@ -161,15 +172,15 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val actif: Boolean?,
         val protected: Boolean?,
         val idFk: UUID?,
-        val type: TypeNomenclatureCodeLibelle,
+        var type: TypeNomenclatureCodeLibelle?,
     ) {
         fun toCondition(): Condition = DSL.and(
             listOfNotNull(
-                actif?.let { DSL.and(getActifField(type).eq(actif)) },
-                code?.let { DSL.and(getCodeField(type).contains(code)) },
-                libelle?.let { DSL.and(getLibelleField(type).contains(libelle)) },
-                protected?.let { DSL.and(getProtectedField(type)?.eq(protected) ?: DSL.noCondition()) },
-                idFk?.let { DSL.and(getInfosFk(type)?.idFk?.eq(idFk) ?: DSL.noCondition()) },
+                actif?.let { DSL.and(getActifField(type!!).eq(actif)) },
+                code?.let { DSL.and(getCodeField(type!!).contains(code)) },
+                libelle?.let { DSL.and(getLibelleField(type!!).contains(libelle)) },
+                protected?.let { DSL.and(getProtectedField(type!!)?.eq(protected) ?: DSL.noCondition()) },
+                idFk?.let { DSL.and(getInfosFk(type!!)?.idFk?.eq(idFk) ?: DSL.noCondition()) },
             ),
 
         )
@@ -181,10 +192,10 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val actif: Int?,
         val protected: Int?,
         val libelleFk: String?,
-        val type: TypeNomenclatureCodeLibelle,
+        val type: TypeNomenclatureCodeLibelle?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
-            getCodeField(type).getSortField(code),
+            getCodeField(type!!).getSortField(code),
             getLibelleField(type).getSortField(libelle),
             getActifField(type).getSortField(actif),
             getProtectedField(type)?.getSortField(protected),
@@ -205,13 +216,13 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             .let {
                 val infosFk = getInfosFk(type)
                 if (infosFk != null) {
-                    it.innerJoin(infosFk.tableCible).on(infosFk.idFk.eq(infosFk.idCible))
+                    it.leftJoin(infosFk.tableCible).on(infosFk.idFk.eq(infosFk.idCible))
                 }
                 it
             }
-            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .where(params.filterBy?.takeIf { it.type != null }?.toCondition() ?: DSL.trueCondition())
             .orderBy(
-                params.sortBy?.toCondition()
+                params.sortBy?.takeIf { it.type != null }?.toCondition()
                     ?: listOf(getCodeField(type)),
             ).limit(params.limit).offset(params.offset)
             .fetchInto()
@@ -223,27 +234,37 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         ).fetchSingleInto()
 
     fun getById(type: TypeNomenclatureCodeLibelle, id: UUID): NomenclatureCodeLibelleData? =
-        dsl.select(getTableFromType(type).fields().asList()).from(getTableFromType(type)).where(getIdField(type).eq(id)).fetchOneInto()
+        dsl.select(
+            getIdField(type).`as`("id"),
+            getCodeField(type).`as`("code"),
+            getLibelleField(type).`as`("libelle"),
+            getActifField(type).`as`("actif"),
+            getProtectedField(type)?.`as`("protected"),
+        )
+            .let {
+                val infosFk = getInfosFk(type)
+                if (infosFk != null) {
+                    it.select(infosFk.idFk.`as`("idFk"))
+                }
+                it
+            }
+            .from(getTableFromType(type)).where(getIdField(type).eq(id)).fetchOneInto()
 
     fun create(type: TypeNomenclatureCodeLibelle, nomenclatureCodeLibelleData: NomenclatureCodeLibelleData): Int =
         dsl.insertInto(
             getTableFromType(type),
-            getIdField(type),
-            getCodeField(type),
-            getLibelleField(type),
-            getActifField(type),
-            getProtectedField(type),
-            // TODO pas sûr !
-            getInfosFk(type)?.idFk,
         )
-            .values(
-                nomenclatureCodeLibelleData.id,
-                nomenclatureCodeLibelleData.code,
-                nomenclatureCodeLibelleData.libelle,
-                nomenclatureCodeLibelleData.actif,
-                false,
-                nomenclatureCodeLibelleData.idFk,
-            ).execute()
+            .set(getIdField(type), nomenclatureCodeLibelleData.id)
+            .set(getCodeField(type), nomenclatureCodeLibelleData.code)
+            .set(getLibelleField(type), nomenclatureCodeLibelleData.libelle)
+            .set(getActifField(type), nomenclatureCodeLibelleData.actif)
+            .let {
+                if (getInfosFk(type) != null) {
+                    it.set(getInfosFk(type)!!.idFk, nomenclatureCodeLibelleData.idFk)
+                }
+                it
+            }
+            .execute()
 
     fun update(type: TypeNomenclatureCodeLibelle, nomenclatureCodeLibelleData: NomenclatureCodeLibelleData): Int =
         dsl.update(getTableFromType(type))

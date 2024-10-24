@@ -31,11 +31,11 @@ const UpdateNomenclature = ({
   let initialValues: {
     hasProtectedValue: boolean;
     listeFk: IdCodeLibelleType[] | null;
-    fkLibelle: string | null;
+    libelleFk: string | null;
   } = {
     hasProtectedValue: true,
     listeFk: null,
-    fkLibelle: null,
+    libelleFk: null,
   };
   if (state) {
     initialValues = state;
@@ -58,7 +58,7 @@ const UpdateNomenclature = ({
           returnLink={redirectLink}
           hasProtectedValue={initialValues.hasProtectedValue}
           listeFk={initialValues.listeFk}
-          fkLibelle={initialValues.fkLibelle}
+          libelleFk={initialValues.libelleFk}
         />
       </MyFormik>
     </Container>

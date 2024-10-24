@@ -6,7 +6,7 @@ const CreateProfilOrganisme = () => {
   return (
     <CreateNomenclature
       typeNomenclature={NOMENCLATURE.PROFIL_ORGANISME}
-      redirectLink={URLS.LIST_PROFIL_ORGANISME}
+      redirectLink={URLS.LIST_PROFIL_ORGANSIME}
     />
   );
 };

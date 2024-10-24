@@ -17,7 +17,7 @@ type NomenclatureType = {
 export const getInitialValue = (data?: NomenclatureType) => ({
   code: data?.code ?? null,
   libelle: data?.libelle ?? null,
-  actif: data?.actif ?? null,
+  actif: data?.actif ?? false,
   protected: data?.protected ?? null,
   idFk: data?.idFk ?? null,
 });
@@ -58,7 +58,7 @@ export const Nomenclature = ({
         disabled={hasProtectedValue && values.protected}
       />
       <TextInput label="Libellé" name="libelle" required={true} />
-      <CheckBoxInput name="actif" label="actif" />
+      <CheckBoxInput name="actif" label="Actif" />
       {hasProtectedValue && (
         <CheckBoxInput name="protected" label="Protégé" disabled={true} />
       )}
