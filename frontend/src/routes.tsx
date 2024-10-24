@@ -41,6 +41,7 @@ import CreateProfilUtilisateur from "./pages/Admin/profilUtilisateur/CreateProfi
 import ListProfilUtilisateur from "./pages/Admin/profilUtilisateur/ListProfilUtilisateur.tsx";
 import UpdateProfilUtilisateur from "./pages/Admin/profilUtilisateur/UpdateProfilUtilisateur.tsx";
 import ListSite from "./pages/Admin/site/ListSite.tsx";
+import UpdateSite from "./pages/Admin/site/UpdateSite.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
@@ -194,6 +195,9 @@ export const URLS = {
   UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>
     url`/admin/profil-utilisateur/update/` + profilUtilisateurId,
   LIST_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur`,
+
+  LIST_SITE: url`/admin/site`,
+  UPDATE_SITE: (siteId: string) => url`/admin/site/update/` + siteId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -859,6 +863,15 @@ export default [
           <Authorization
             Component={ListSite}
             droits={[TYPE_DROIT.GEST_SITE_R]}
+          />
+        ),
+      },
+      {
+        path: "site/update/:siteId",
+        element: (
+          <Authorization
+            Component={UpdateSite}
+            droits={[TYPE_DROIT.GEST_SITE_A]}
           />
         ),
       },

@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.Params
+import remocra.db.jooq.remocra.tables.pojos.Site
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
@@ -19,6 +20,9 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) {
             .where(SITE.ACTIF)
             .and(GESTIONNAIRE.ACTIF)
             .fetchInto()
+
+    fun getById(siteId: UUID): Site =
+        dsl.selectFrom(SITE).where(SITE.ID.eq(siteId)).fetchSingleInto()
 
     data class SiteWithGestionnaireId(
         val id: UUID,
@@ -90,4 +94,13 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) {
         val siteGestionnaireId: UUID?,
         val gestionnaireLibelle: String?,
     )
+
+    fun updateSite(siteId: UUID, siteGestionnaireId: UUID?, siteCode: String, siteLibelle: String, siteActif: Boolean) =
+        dsl.update(SITE)
+            .set(SITE.GESTIONNAIRE_ID, siteGestionnaireId)
+            .set(SITE.CODE, siteCode)
+            .set(SITE.LIBELLE, siteLibelle)
+            .set(SITE.ACTIF, siteActif)
+            .where(SITE.ID.eq(siteId))
+            .execute()
 }
