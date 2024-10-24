@@ -1,0 +1,13 @@
+ALTER TYPE historique.type_objet ADD VALUE 'PROFIL_ORGANISME';
+ALTER TYPE historique.type_objet ADD VALUE 'PROFIL_UTILISATEUR';
+ALTER TYPE historique.type_objet ADD VALUE 'TYPE_ORGANISME';
+ALTER TYPE historique.type_objet ADD VALUE 'DOMAINE';
+ALTER TYPE historique.type_objet ADD VALUE 'TYPE_CANALISATION';
+ALTER TYPE historique.type_objet ADD VALUE 'TYPE_ETUDE';
+ALTER TYPE historique.type_objet ADD VALUE 'TYPE_PENA_ASPIRATION';
+ALTER TYPE historique.type_objet ADD VALUE 'MODELE_PIBI';
+ALTER TYPE historique.type_objet ADD VALUE 'NATURE_DECI';
+ALTER TYPE historique.type_objet ADD VALUE 'MATERIAU';
+ALTER TYPE historique.type_objet ADD VALUE 'MARQUE_PIBI';
+ALTER TYPE historique.type_objet ADD VALUE 'TYPE_RESEAU';
+ALTER TYPE historique.type_objet ADD VALUE 'NIVEAU';
