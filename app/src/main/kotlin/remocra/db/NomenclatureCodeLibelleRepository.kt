@@ -123,7 +123,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.ACTIF
-                TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.TYPE_ACTIF // TODO renommer en ACTIF
+                TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_RESEAU -> TYPE_RESEAU.ACTIF
             }
 
