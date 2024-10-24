@@ -36,6 +36,9 @@ import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
+import CreateTypeEtude from "./pages/Admin/typeEtude/CreateTypeEtude.tsx";
+import ListTypeEtude from "./pages/Admin/typeEtude/ListTypeEtude.tsx";
+import UpdateTypeEtude from "./pages/Admin/typeEtude/UpdateTypeEtude.tsx";
 import CreateTypeReseau from "./pages/Admin/typeReseau/CreateTypeReseau.tsx";
 import ListTypeReseau from "./pages/Admin/typeReseau/ListTypeReseau.tsx";
 import UpdateTypeReseau from "./pages/Admin/typeReseau/UpdateTypeReseau.tsx";
@@ -149,6 +152,11 @@ export const URLS = {
   UPDATE_MODELE_PIBI: (modelePibiId: string) =>
     url`/admin/modele-pibi/edit/` + modelePibiId,
   LIST_MODELE_PIBI: url`/admin/modele-pibi`,
+
+  ADD_TYPE_ETUDE: url`/admin/type-etude/add`,
+  UPDATE_TYPE_ETUDE: (typeEtudeId: string) =>
+    url`/admin/type-etude/edit/` + typeEtudeId,
+  LIST_TYPE_ETUDE: url`/admin/type-etude`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -632,6 +640,33 @@ export default [
     element: (
       <Authorization
         Component={CreateModelePibi}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-etude",
+    element: (
+      <Authorization
+        Component={ListTypeEtude}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-etude/edit/:typeEtudeId",
+    element: (
+      <Authorization
+        Component={UpdateTypeEtude}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-etude/add",
+    element: (
+      <Authorization
+        Component={CreateTypeEtude}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),

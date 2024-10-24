@@ -14,6 +14,7 @@ export enum NOMENCLATURE {
   MODELE_PIBI = "modele_pibi",
   NIVEAU = "niveau",
   RESERVOIR = "reservoir",
+  TYPE_ETUDE = "type_etude",
   TYPE_CANALISATION = "type_canalisation",
   TYPE_RESEAU = "type_reseau",
 }
