@@ -33,6 +33,9 @@ import UpdateNiveau from "./pages/Admin/niveau/UpdateNiveau.tsx";
 import CreateOrganisme from "./pages/Admin/organisme/CreateOrganisme.tsx";
 import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
 import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
+import CreateProfilOrganisme from "./pages/Admin/profilOrganisme/CreateProfilOrganismes.tsx";
+import ListProfilOrganisme from "./pages/Admin/profilOrganisme/ListProfilOrganisme.tsx";
+import UpdateProfilOrganisme from "./pages/Admin/profilOrganisme/UpdateProfilOrganisme.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
 import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
@@ -173,6 +176,11 @@ export const URLS = {
   UPDATE_TYPE_ORGANISME: (typeOrganismeId: string) =>
     url`/admin/type-organisme/edit/` + typeOrganismeId,
   LIST_TYPE_ORGANISME: url`/admin/type-organisme`,
+
+  ADD_PROFIL_ORGANISME: url`/admin/profil-organisme/add`,
+  UPDATE_PROFIL_ORGANISME: (profilOrganismeId: string) =>
+    url`/admin/profil-organisme/edit/` + profilOrganismeId,
+  LIST_PROFIL_ORGANISME: url`/admin/profil-organisme`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -764,6 +772,33 @@ export default [
     element: (
       <Authorization
         Component={UpdateTypeOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-organisme",
+    element: (
+      <Authorization
+        Component={ListProfilOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-organisme/add",
+    element: (
+      <Authorization
+        Component={CreateProfilOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/profil-organisme/edit/:profilOrganismeId",
+    element: (
+      <Authorization
+        Component={UpdateProfilOrganisme}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
