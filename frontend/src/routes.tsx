@@ -27,6 +27,9 @@ import UpdateNatureDeci from "./pages/Admin/natureDeci/UpdateNatureDeci.tsx";
 import CreateOrganisme from "./pages/Admin/organisme/CreateOrganisme.tsx";
 import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
 import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
+import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
+import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalisation.tsx";
+import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
@@ -118,6 +121,11 @@ export const URLS = {
   UPDATE_MATERIAU: (materiauId: string) =>
     url`/admin/materiau/edit/` + materiauId,
   LIST_MATERIAU: url`/admin/materiau`,
+
+  ADD_TYPE_CANALISATION: url`/admin/type-canalisation/add`,
+  UPDATE_TYPE_CANALISATION: (typeCanalisationId: string) =>
+    url`/admin/type-canalisation/edit/` + typeCanalisationId,
+  LIST_TYPE_CANALISATION: url`/admin/type-canalisation`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -492,6 +500,33 @@ export default [
     element: (
       <Authorization
         Component={CreateMateriau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-canalisation",
+    element: (
+      <Authorization
+        Component={ListTypeCanalisation}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-canalisation/edit/:typeCanalisationId",
+    element: (
+      <Authorization
+        Component={UpdateTypeCanalisation}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-canalisation/add",
+    element: (
+      <Authorization
+        Component={CreateTypeCanalisation}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
