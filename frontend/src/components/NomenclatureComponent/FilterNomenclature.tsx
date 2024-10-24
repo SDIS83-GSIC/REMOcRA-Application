@@ -1,8 +1,9 @@
 type FilterNomenclatureType = {
-  actif?: string | undefined;
+  actif?: boolean | undefined;
   code?: string | undefined;
   libelle?: string | undefined;
   protected1?: boolean | undefined;
+  idFk?: string | undefined;
 };
 
 const FilterValues = ({
@@ -10,6 +11,7 @@ const FilterValues = ({
   libelle,
   protected,
   actif,
+  idFk,
 }: FilterNomenclatureType) => {
   const filter: FilterNomenclatureType = {};
 
@@ -17,6 +19,7 @@ const FilterValues = ({
   filterProperty(filter, libelle, "libelle");
   filterProperty(filter, actif, "actif");
   filterProperty(filter, protected, "protected");
+  filterProperty(filter, idFk, "idFk");
 
   return filter;
 };

@@ -8,9 +8,11 @@ import UtilisateurEntity, {
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PageTitle from "../Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../Filter/FilterInput.tsx";
+import SelectFilterFromList from "../Filter/SelectFilterFromList.tsx";
 import CreateButton from "../Form/CreateButton.tsx";
 import SelectEnumOption from "../Form/SelectEnumOption.tsx";
 import {
@@ -28,12 +30,16 @@ const ListNomenclature = ({
   typeNomenclature,
   lienPageAjout,
   hasProtectedValue = true,
+  listeFk,
+  libelleFk,
   lienPageUpdate,
 }: {
   pageTitle: string;
   pageIcon: ReactNode;
   typeNomenclature: NOMENCLATURE;
   hasProtectedValue?: boolean;
+  listeFk?: IdCodeLibelleType[];
+  libelleFk?: string;
   lienPageAjout: any;
   lienPageUpdate: any;
 }) => {
@@ -52,6 +58,8 @@ const ListNomenclature = ({
         navigate(lienPageUpdate(nomenclatureId), {
           state: {
             hasProtectedValue: hasProtectedValue,
+            listeFk: listeFk,
+            libelleFk: libelleFk,
           },
         }),
       type: TYPE_BUTTON.UPDATE,
@@ -70,12 +78,38 @@ const ListNomenclature = ({
     });
   }
 
+  const colonneFk = listeFk
+    ? [
+        {
+          Header: libelleFk,
+          accessor: "libelleFk",
+          sortField: "libelleFk",
+          Filter: (
+            <SelectFilterFromList name={"idFk"} listIdCodeLibelle={listeFk} />
+          ),
+        },
+      ]
+    : [];
+
   return (
     <Container>
       <PageTitle
         title={pageTitle}
         icon={pageIcon}
-        right={<CreateButton title={"Ajouter"} href={lienPageAjout} />}
+        right={
+          <CreateButton
+            title={"Ajouter"}
+            onClick={() =>
+              navigate(lienPageAjout, {
+                state: {
+                  hasProtectedValue: hasProtectedValue,
+                  listeFk: listeFk,
+                  libelleFk: libelleFk,
+                },
+              })
+            }
+          />
+        }
       />
       <QueryTable
         filterValuesToVariable={FilterValues}
@@ -99,6 +133,7 @@ const ListNomenclature = ({
             sortField: "actif",
             Filter: <SelectEnumOption options={VRAI_FAUX} name={"actif"} />,
           }),
+          ...colonneFk,
           ...(hasProtectedValue
             ? [
                 ProtectedColumn({
