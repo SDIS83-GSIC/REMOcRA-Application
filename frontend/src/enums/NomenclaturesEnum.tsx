@@ -16,6 +16,7 @@ export enum NOMENCLATURE {
   RESERVOIR = "reservoir",
   TYPE_ETUDE = "type_etude",
   TYPE_CANALISATION = "type_canalisation",
+  TYPE_ORGANISME = "type_organisme",
   TYPE_PENA_ASPIRATION = "type_pena_aspiration",
   TYPE_RESEAU = "type_reseau",
 }

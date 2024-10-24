@@ -39,6 +39,9 @@ import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCan
 import CreateTypeEtude from "./pages/Admin/typeEtude/CreateTypeEtude.tsx";
 import ListTypeEtude from "./pages/Admin/typeEtude/ListTypeEtude.tsx";
 import UpdateTypeEtude from "./pages/Admin/typeEtude/UpdateTypeEtude.tsx";
+import CreateTypeOrganisme from "./pages/Admin/TypeOrganisme/CreateTypeOrganismes.tsx";
+import ListTypeOrganisme from "./pages/Admin/TypeOrganisme/ListTypeOrganisme.tsx";
+import UpdateTypeOrganisme from "./pages/Admin/TypeOrganisme/UpdateTypeOrganisme.tsx";
 import CreateTypePenaAspiration from "./pages/Admin/typePenaAspiration/CreateTypePenaAspiration.tsx";
 import ListTypePenaAspiration from "./pages/Admin/typePenaAspiration/ListTypePenaAspiration.tsx";
 import UpdateTypePenaAspiration from "./pages/Admin/typePenaAspiration/UpdateTypePenaAspiration.tsx";
@@ -165,6 +168,11 @@ export const URLS = {
   UPDATE_TYPE_PENA_ASPIRATION: (typePenaAspirationId: string) =>
     url`/admin/type-pena-aspiration/edit/` + typePenaAspirationId,
   LIST_TYPE_PENA_ASPIRATION: url`/admin/type-pena-aspiration`,
+
+  ADD_TYPE_ORGANISME: url`/admin/type-organisme/add`,
+  UPDATE_TYPE_ORGANISME: (typeOrganismeId: string) =>
+    url`/admin/type-organisme/edit/` + typeOrganismeId,
+  LIST_TYPE_ORGANISME: url`/admin/type-organisme`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -729,6 +737,33 @@ export default [
     element: (
       <Authorization
         Component={UpdateOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-organisme",
+    element: (
+      <Authorization
+        Component={ListTypeOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-organisme/add",
+    element: (
+      <Authorization
+        Component={CreateTypeOrganisme}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/type-organisme/edit/:typeOrganismeId",
+    element: (
+      <Authorization
+        Component={UpdateTypeOrganisme}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
