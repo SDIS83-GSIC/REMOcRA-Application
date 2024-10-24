@@ -98,6 +98,11 @@ open class Niveau(
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("niveau_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.niveau.niveau_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("niveau_protected"), SQLDataType.BOOLEAN, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

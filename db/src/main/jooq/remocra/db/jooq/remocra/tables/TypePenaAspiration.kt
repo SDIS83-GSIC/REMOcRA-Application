@@ -86,9 +86,9 @@ open class TypePenaAspiration(
 
     /**
      * The column
-     * <code>remocra.type_pena_aspiration.type_pena_aspiration_type_actif</code>.
+     * <code>remocra.type_pena_aspiration.type_pena_aspiration_actif</code>.
      */
-    val TYPE_ACTIF: TableField<Record, Boolean?> = createField(DSL.name("type_pena_aspiration_type_actif"), SQLDataType.BOOLEAN.nullable(false), this, "")
+    val ACTIF: TableField<Record, Boolean?> = createField(DSL.name("type_pena_aspiration_actif"), SQLDataType.BOOLEAN.nullable(false), this, "")
 
     /**
      * The column

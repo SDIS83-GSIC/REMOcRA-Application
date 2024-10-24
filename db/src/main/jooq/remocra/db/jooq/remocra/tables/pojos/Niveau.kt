@@ -23,6 +23,7 @@ data class Niveau(
     val niveauActif: Boolean,
     val niveauCode: String,
     val niveauLibelle: String,
+    val niveauProtected: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -48,6 +49,13 @@ data class Niveau(
         if (this.niveauLibelle != o.niveauLibelle) {
             return false
         }
+        if (this.niveauProtected == null) {
+            if (o.niveauProtected != null) {
+                return false
+            }
+        } else if (this.niveauProtected != o.niveauProtected) {
+            return false
+        }
         return true
     }
 
@@ -58,6 +66,7 @@ data class Niveau(
         result = prime * result + this.niveauActif.hashCode()
         result = prime * result + this.niveauCode.hashCode()
         result = prime * result + this.niveauLibelle.hashCode()
+        result = prime * result + (if (this.niveauProtected == null) 0 else this.niveauProtected.hashCode())
         return result
     }
 
@@ -68,6 +77,7 @@ data class Niveau(
         sb.append(", ").append(niveauActif)
         sb.append(", ").append(niveauCode)
         sb.append(", ").append(niveauLibelle)
+        sb.append(", ").append(niveauProtected)
 
         sb.append(")")
         return sb.toString()

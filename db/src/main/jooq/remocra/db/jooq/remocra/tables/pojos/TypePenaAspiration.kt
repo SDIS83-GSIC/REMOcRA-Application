@@ -20,7 +20,7 @@ import javax.annotation.processing.Generated
 @Suppress("UNCHECKED_CAST")
 data class TypePenaAspiration(
     val typePenaAspirationId: UUID,
-    val typePenaAspirationTypeActif: Boolean,
+    val typePenaAspirationActif: Boolean,
     val typePenaAspirationCode: String,
     val typePenaAspirationLibelle: String,
 ) : Serializable {
@@ -39,7 +39,7 @@ data class TypePenaAspiration(
         if (this.typePenaAspirationId != o.typePenaAspirationId) {
             return false
         }
-        if (this.typePenaAspirationTypeActif != o.typePenaAspirationTypeActif) {
+        if (this.typePenaAspirationActif != o.typePenaAspirationActif) {
             return false
         }
         if (this.typePenaAspirationCode != o.typePenaAspirationCode) {
@@ -55,7 +55,7 @@ data class TypePenaAspiration(
         val prime = 31
         var result = 1
         result = prime * result + this.typePenaAspirationId.hashCode()
-        result = prime * result + this.typePenaAspirationTypeActif.hashCode()
+        result = prime * result + this.typePenaAspirationActif.hashCode()
         result = prime * result + this.typePenaAspirationCode.hashCode()
         result = prime * result + this.typePenaAspirationLibelle.hashCode()
         return result
@@ -65,7 +65,7 @@ data class TypePenaAspiration(
         val sb = StringBuilder("TypePenaAspiration (")
 
         sb.append(typePenaAspirationId)
-        sb.append(", ").append(typePenaAspirationTypeActif)
+        sb.append(", ").append(typePenaAspirationActif)
         sb.append(", ").append(typePenaAspirationCode)
         sb.append(", ").append(typePenaAspirationLibelle)
 

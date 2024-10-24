@@ -24,6 +24,9 @@ import UpdateNature from "./pages/Admin/nature/UpdateNature.tsx";
 import CreateNatureDeci from "./pages/Admin/natureDeci/CreateNatureDeci.tsx";
 import ListNatureDeci from "./pages/Admin/natureDeci/ListNatureDeci.tsx";
 import UpdateNatureDeci from "./pages/Admin/natureDeci/UpdateNatureDeci.tsx";
+import CreateNiveau from "./pages/Admin/niveau/CreateNiveau.tsx";
+import ListNiveau from "./pages/Admin/niveau/ListNiveau.tsx";
+import UpdateNiveau from "./pages/Admin/niveau/UpdateNiveau.tsx";
 import CreateOrganisme from "./pages/Admin/organisme/CreateOrganisme.tsx";
 import ListOrganisme from "./pages/Admin/organisme/ListOrganisme.tsx";
 import UpdateOrganisme from "./pages/Admin/organisme/UpdateOrganisme.tsx";
@@ -134,6 +137,10 @@ export const URLS = {
   UPDATE_TYPE_RESEAU: (typeReseauId: string) =>
     url`/admin/type-reseau/edit/` + typeReseauId,
   LIST_TYPE_RESEAU: url`/admin/type-reseau`,
+
+  ADD_NIVEAU: url`/admin/niveau/add`,
+  UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/edit/` + niveauId,
+  LIST_NIVEAU: url`/admin/niveau`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -562,6 +569,34 @@ export default [
     element: (
       <Authorization
         Component={CreateTypeReseau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+
+  {
+    path: "/admin/niveau",
+    element: (
+      <Authorization
+        Component={ListNiveau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/niveau/edit/:niveauId",
+    element: (
+      <Authorization
+        Component={UpdateNiveau}
+        droits={[TYPE_DROIT.ADMIN_DROITS]}
+      />
+    ),
+  },
+  {
+    path: "/admin/niveau/add",
+    element: (
+      <Authorization
+        Component={CreateNiveau}
         droits={[TYPE_DROIT.ADMIN_DROITS]}
       />
     ),
