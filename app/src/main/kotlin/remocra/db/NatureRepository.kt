@@ -18,6 +18,12 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     override fun getMapById(): Map<UUID, Nature> =
         dsl.selectFrom(NATURE).where(NATURE.ACTIF.isTrue).fetchInto<Nature>().associateBy { it.natureId }
 
+/**
+     * Retourne l'ensemble des natures
+     */
+    fun getAllForAdmin(): Collection<Nature> =
+        dsl.selectFrom(NATURE).where(NATURE.ACTIF).fetchInto()
+
     fun getNatureForSelect(): List<IdLibelleNature> =
         dsl.select(NATURE.ID, NATURE.LIBELLE).from(NATURE).orderBy(NATURE.LIBELLE).fetchInto()
 

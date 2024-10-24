@@ -8,8 +8,10 @@ import org.jooq.impl.DSL.`when`
 import remocra.GlobalConstants
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
+import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.pojos.LVisiteAnomalie
+import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
@@ -22,6 +24,24 @@ import java.util.UUID
 class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Anomalie> {
 
     override fun getMapById(): Map<UUID, Anomalie> = dsl.selectFrom(ANOMALIE).where(ANOMALIE.ACTIF.isTrue).fetchInto<Anomalie>().associateBy { it.anomalieId }
+
+    /**
+     * Retourne l'ensemble des anomalies
+     */
+    fun getAllForAdmin(): Collection<Anomalie> =
+        dsl.selectFrom(ANOMALIE).fetchInto()
+
+    /**
+     * Retourne l'ensemble des poids/anomalies
+     */
+    fun getAllAnomaliePoidsForAdmin(): Collection<PoidsAnomalie> =
+        dsl.selectFrom(POIDS_ANOMALIE).fetchInto()
+
+    /**
+     * Retourne l'ensemble des catégories d'anomalie
+     */
+    fun getAllAnomalieCategorieForAdmin(): Collection<AnomalieCategorie> =
+        dsl.selectFrom(ANOMALIE_CATEGORIE).fetchInto()
 
     /** Supprimer de la table remocra.l_pei_anomalie toutes les anomalies non-protégées du PEI renseigné
      * @param peiId : UUID

@@ -23,6 +23,8 @@ export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
 export const IconImport = () => <i className="fi fi-br-upload" />;
 export const IconExport = () => <i className="fi fi-br-download" />;
 
+export const IconAnomalie = () => <i className="fi fi-br-bug" />;
+
 export const IconIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-time-delete" />
 );

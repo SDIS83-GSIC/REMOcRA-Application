@@ -94,6 +94,7 @@ import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
 import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
 import CreateBlocDocument from "./pages/Admin/blocDocument/CreateBlocDocument.tsx";
 import UpdateBlocDocument from "./pages/Admin/blocDocument/UpdateBlocDocument.tsx";
+import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1069,6 +1070,15 @@ export default [
           <Authorization
             Component={UpdateBlocDocument}
             droits={[TYPE_DROIT.DOCUMENTS_A]}
+          />
+        ),
+      },
+      {
+        path: "anomalie",
+        element: (
+          <Authorization
+            Component={AnomalieList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
