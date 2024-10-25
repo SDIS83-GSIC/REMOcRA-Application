@@ -14,6 +14,7 @@ import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
 import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
+import UpdateGestionnaire from "./pages/Admin/Gestionnaire/UpdateGestionnaire.tsx";
 import CreateMarquePibi from "./pages/Admin/marquePibi/CreateMarquePibi.tsx";
 import ListMarquePibi from "./pages/Admin/marquePibi/ListMarquePibi.tsx";
 import UpdateMarquePibi from "./pages/Admin/marquePibi/UpdateMarquePibi.tsx";
@@ -200,6 +201,10 @@ export const URLS = {
 
   LIST_SITE: url`/admin/site`,
   UPDATE_SITE: (siteId: string) => url`/admin/site/update/` + siteId,
+
+  LIST_GESTIONNAIRE: url`/admin/gestionnaire`,
+  UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
+    url`/admin/gestionnaire/update/` + gestionnaireId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -892,6 +897,15 @@ export default [
           <Authorization
             Component={ListGestionnaire}
             droits={[TYPE_DROIT.GEST_SITE_R]}
+          />
+        ),
+      },
+      {
+        path: "gestionnaire/update/:gestionnaireId",
+        element: (
+          <Authorization
+            Component={UpdateGestionnaire}
+            droits={[TYPE_DROIT.GEST_SITE_A]}
           />
         ),
       },

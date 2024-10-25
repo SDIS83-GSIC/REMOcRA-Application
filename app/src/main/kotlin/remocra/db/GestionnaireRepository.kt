@@ -7,9 +7,9 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.GlobalData
 import remocra.data.Params
-import remocra.db.SiteRepository.Filter
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import java.util.UUID
 
 class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
 
@@ -33,6 +33,9 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
             .from(GESTIONNAIRE)
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .count()
+
+    fun getById(gestionnaireId: UUID): Gestionnaire =
+        dsl.selectFrom(GESTIONNAIRE).where(GESTIONNAIRE.ID.eq(gestionnaireId)).fetchSingleInto()
 
     data class Filter(
         val gestionnaireCode: String?,
@@ -62,4 +65,12 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
             GESTIONNAIRE.ACTIF.getSortField(gestionnaireActif),
         )
     }
+
+    fun updateGestionnaire(gestionnaire: Gestionnaire) =
+        dsl.update(GESTIONNAIRE)
+            .set(GESTIONNAIRE.CODE, gestionnaire.gestionnaireCode)
+            .set(GESTIONNAIRE.LIBELLE, gestionnaire.gestionnaireLibelle)
+            .set(GESTIONNAIRE.ACTIF, gestionnaire.gestionnaireActif)
+            .where(GESTIONNAIRE.ID.eq(gestionnaire.gestionnaireId))
+            .execute()
 }
