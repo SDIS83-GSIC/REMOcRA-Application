@@ -37,6 +37,14 @@ const ListGestionnaire = () => {
       href: (gestionnaireId) => URLS.UPDATE_GESTIONNAIRE(gestionnaireId),
       type: TYPE_BUTTON.UPDATE,
     });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      path: url`/api/gestionnaire/delete/`,
+    });
   }
   return (
     <>

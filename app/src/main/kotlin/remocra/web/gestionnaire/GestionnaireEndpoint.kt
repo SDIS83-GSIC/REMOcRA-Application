@@ -1,6 +1,7 @@
 package remocra.web.gestionnaire
 
 import com.google.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -20,6 +21,7 @@ import remocra.db.GestionnaireRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.usecase.gestionnaire.CreateGestionnaireUseCase
+import remocra.usecase.gestionnaire.DeleteGestionnaireUseCase
 import remocra.usecase.gestionnaire.UpdateGestionnaireUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -36,6 +38,9 @@ class GestionnaireEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createGestionnaireUseCase: CreateGestionnaireUseCase
+
+    @Inject
+    lateinit var deleteGestionnaireUseCase: DeleteGestionnaireUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -104,4 +109,15 @@ class GestionnaireEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.GEST_SITE_R])
     fun getById(@PathParam("gestionnaireId") gestionnaireId: UUID): Response =
         Response.ok(gestionnaireRepository.getById(gestionnaireId)).build()
+
+    @DELETE
+    @Path("/delete/{gestionnaireId}")
+    @RequireDroits([Droit.GEST_SITE_A])
+    fun delete(@PathParam("gestionnaireId") gestionnaireId: UUID): Response {
+        val gestionnaire = gestionnaireRepository.getById(gestionnaireId)
+        return deleteGestionnaireUseCase.execute(
+            securityContext.userInfo,
+            gestionnaire,
+        ).wrap()
+    }
 }

@@ -9,6 +9,8 @@ import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
 
 class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
@@ -78,4 +80,23 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
         dsl.insertInto(GESTIONNAIRE)
             .set(dsl.newRecord(GESTIONNAIRE, gestionnaire))
             .execute()
+
+    fun deleteGestionnaire(gestionnaireId: UUID) =
+        dsl.delete(GESTIONNAIRE)
+            .where(GESTIONNAIRE.ID.eq(gestionnaireId))
+            .execute()
+
+    fun gestionnaireUsedInPei(gestionnaireId: UUID) =
+        dsl.fetchExists(
+            dsl.select(PEI.ID)
+                .from(PEI)
+                .where(PEI.GESTIONNAIRE_ID.eq(gestionnaireId)),
+        )
+
+    fun gestionnaireUsedInSite(gestionnaireId: UUID) =
+        dsl.fetchExists(
+            dsl.select(SITE.ID)
+                .from(SITE)
+                .where(SITE.GESTIONNAIRE_ID.eq(gestionnaireId)),
+        )
 }
