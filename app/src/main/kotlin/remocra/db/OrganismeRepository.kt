@@ -5,7 +5,6 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.count
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
@@ -171,7 +170,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
         val parentLibelle: String?,
     )
 
-    fun getTable(params: Params<Filter, Sort>): Collection<OrganismeComplet> {
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<OrganismeComplet> {
         val parent = ORGANISME.`as`("parent")
         return dsl.select(
             ORGANISME.ID,
@@ -195,7 +194,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .fetchInto()
     }
 
-    fun getCount(params: Params<Filter, Sort>): Int {
+    fun getCountForAdmin(params: Params<Filter, Sort>): Int {
         val parent = ORGANISME.`as`("parent")
         return dsl.selectDistinct(ORGANISME.ID).from(ORGANISME)
             .leftJoin(PROFIL_ORGANISME).on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))

@@ -203,7 +203,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         )
     }
 
-    fun getAll(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Collection<NomenclatureCodeLibelleData> =
+    fun getAllForAdmin(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Collection<NomenclatureCodeLibelleData> =
         dsl.select(getIdField(type).`as`("id"), getCodeField(type).`as`("code"), getLibelleField(type).`as`("libelle"), getActifField(type).`as`("actif"), getProtectedField(type)?.`as`("protected"))
             .let {
                 val infosFk = getInfosFk(type)
@@ -227,7 +227,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             ).limit(params.limit).offset(params.offset)
             .fetchInto()
 
-    fun getCount(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Int =
+    fun getCountForAdmin(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Int =
         dsl.selectCount().from(getTableFromType(type)).where(
             params.filterBy?.toCondition()
                 ?: DSL.trueCondition(),

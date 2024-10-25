@@ -68,7 +68,7 @@ class OrganismeEndpoint : AbstractEndpoint() {
     @Path("/get")
     @RequireDroits([Droit.ADMIN_DROITS])
     fun get(params: Params<OrganismeRepository.Filter, OrganismeRepository.Sort>): Response {
-        return Response.ok(DataTableau(organismeRepository.getTable(params), organismeRepository.getCount(params)))
+        return Response.ok(DataTableau(organismeRepository.getAllForAdmin(params), organismeRepository.getCountForAdmin(params)))
             .build()
     }
 
