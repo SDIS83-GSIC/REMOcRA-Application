@@ -28,7 +28,6 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.GESTIONNAIRE_GESTIONNAIRE_CODE_KEY
 import remocra.db.jooq.remocra.keys.GESTIONNAIRE_PKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
@@ -139,41 +138,22 @@ open class Gestionnaire(
     override fun getPrimaryKey(): UniqueKey<Record> = GESTIONNAIRE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(GESTIONNAIRE_GESTIONNAIRE_CODE_KEY)
 
-    private lateinit var _lContactGestionnaireGestionnaireIdFkey: LContactGestionnairePath
+    private lateinit var _lContactGestionnaire: LContactGestionnairePath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_contact_gestionnaire</code> table, via the
-     * <code>l_contact_gestionnaire_gestionnaire_id_fkey</code> key
+     * <code>remocra.l_contact_gestionnaire</code> table
      */
-    fun lContactGestionnaireGestionnaireIdFkey(): LContactGestionnairePath {
-        if (!this::_lContactGestionnaireGestionnaireIdFkey.isInitialized) {
-            _lContactGestionnaireGestionnaireIdFkey = LContactGestionnairePath(this, null, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY.inverseKey)
+    fun lContactGestionnaire(): LContactGestionnairePath {
+        if (!this::_lContactGestionnaire.isInitialized) {
+            _lContactGestionnaire = LContactGestionnairePath(this, null, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY.inverseKey)
         }
 
-        return _lContactGestionnaireGestionnaireIdFkey
+        return _lContactGestionnaire
     }
 
-    val lContactGestionnaireGestionnaireIdFkey: LContactGestionnairePath
-        get(): LContactGestionnairePath = lContactGestionnaireGestionnaireIdFkey()
-
-    private lateinit var _lContactGestionnaireGestionnaireSiteIdFkey: LContactGestionnairePath
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_contact_gestionnaire</code> table, via the
-     * <code>l_contact_gestionnaire_gestionnaire_site_id_fkey</code> key
-     */
-    fun lContactGestionnaireGestionnaireSiteIdFkey(): LContactGestionnairePath {
-        if (!this::_lContactGestionnaireGestionnaireSiteIdFkey.isInitialized) {
-            _lContactGestionnaireGestionnaireSiteIdFkey = LContactGestionnairePath(this, null, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY.inverseKey)
-        }
-
-        return _lContactGestionnaireGestionnaireSiteIdFkey
-    }
-
-    val lContactGestionnaireGestionnaireSiteIdFkey: LContactGestionnairePath
-        get(): LContactGestionnairePath = lContactGestionnaireGestionnaireSiteIdFkey()
+    val lContactGestionnaire: LContactGestionnairePath
+        get(): LContactGestionnairePath = lContactGestionnaire()
 
     private lateinit var _pei: PeiPath
 
@@ -212,7 +192,7 @@ open class Gestionnaire(
      * <code>remocra.contact</code> table
      */
     val contact: ContactPath
-        get(): ContactPath = lContactGestionnaireGestionnaireIdFkey().contact()
+        get(): ContactPath = lContactGestionnaire().contact()
     override fun `as`(alias: String): Gestionnaire = Gestionnaire(DSL.name(alias), this)
     override fun `as`(alias: Name): Gestionnaire = Gestionnaire(alias, this)
     override fun `as`(alias: Table<*>): Gestionnaire = Gestionnaire(alias.qualifiedName, this)

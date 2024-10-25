@@ -45,6 +45,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         private const val CODE_ANOMALIE_INACTIF = "INACTIF"
     }
 
+    // TODO prendre en compte les communeId, voieId et lieuDitId
+
     override fun checkProfilDroit(userInfo: UserInfo) {
         if (!courrierRopRepository.checkProfilDroitRop(userInfo.utilisateurId)) {
             throw RemocraResponseException(ErrorType.MODELE_COURRIER_DROIT_FORBIDDEN)
@@ -111,8 +113,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
         destinataire = getCiviliteWithMaire(destinataireContact.contactCivilite)
         destinataireEmail = destinataireContact.contactEmail
-        destinataireVoie = destinataireContact.contactVoie
-        destinataireVille = destinataireContact.contactVille
+        destinataireVoie = destinataireContact.contactVoieText
+        destinataireVille = destinataireContact.contactCommuneText
         destinataireCodePostal = destinataireContact.contactCodePostal
         listPeiIndispoWithAnomalie = courrierRopRepository.getPeiIndisponibles(element.communeId)
         listPibiWithAnomalie = listePibiRop
@@ -153,9 +155,9 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
         destinataire = getCiviliteWithMaire(destinataireContact.contactCivilite)
         destinataireEmail = destinataireContact.contactEmail.orEmpty()
-        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoie}"
-        destinataireVille = destinataireContact.contactVille.orEmpty()
-        destinataireLieuDit = destinataireContact.contactLieuDit.orEmpty()
+        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoieText}"
+        destinataireVille = destinataireContact.contactCommuneText.orEmpty()
+        destinataireLieuDit = destinataireContact.contactLieuDitText.orEmpty()
         destinataireCodePostal = destinataireContact.contactCodePostal.orEmpty()
 
         val listePibiRop = courrierRopRepository.getPibi(element.communeId)
@@ -259,9 +261,9 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
         destinataire = "${destinataireContact.contactPrenom} ${destinataireContact.contactNom}"
         destinataireEmail = destinataireContact.contactEmail.orEmpty()
-        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoie}"
-        destinataireVille = destinataireContact.contactVille.orEmpty()
-        destinataireLieuDit = destinataireContact.contactLieuDit.orEmpty()
+        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoieText}"
+        destinataireVille = destinataireContact.contactCommuneText.orEmpty()
+        destinataireLieuDit = destinataireContact.contactLieuDitText.orEmpty()
         destinataireCodePostal = destinataireContact.contactCodePostal.orEmpty()
         expediteur = "${userConnecte.prenom} ${userConnecte.prenom}"
         annee = dateUtils.now().year.toString()
@@ -420,8 +422,8 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val destinataireContact = ensureDestinataireRop(organismeId)
 
         destinataire = "${destinataireContact.contactPrenom} ${destinataireContact.contactNom}"
-        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoie}"
-        destinataireVille = destinataireContact.contactVille
+        destinataireVoie = "${destinataireContact.contactNumeroVoie.orEmpty()} ${destinataireContact.contactVoieText}"
+        destinataireVille = destinataireContact.contactCommuneText
         destinataireCodePostal = destinataireContact.contactCodePostal
 
         val listePeiPrives = listePeiRop.filter { it.natureDeciCode == CourrierRopRepository.NATURE_DECI_PRIVE }

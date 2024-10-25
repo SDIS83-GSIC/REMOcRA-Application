@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated
 data class LContactGestionnaire(
     val contactId: UUID,
     val gestionnaireId: UUID,
-    val gestionnaireSiteId: UUID?,
+    val siteId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -41,11 +41,11 @@ data class LContactGestionnaire(
         if (this.gestionnaireId != o.gestionnaireId) {
             return false
         }
-        if (this.gestionnaireSiteId == null) {
-            if (o.gestionnaireSiteId != null) {
+        if (this.siteId == null) {
+            if (o.siteId != null) {
                 return false
             }
-        } else if (this.gestionnaireSiteId != o.gestionnaireSiteId) {
+        } else if (this.siteId != o.siteId) {
             return false
         }
         return true
@@ -56,7 +56,7 @@ data class LContactGestionnaire(
         var result = 1
         result = prime * result + this.contactId.hashCode()
         result = prime * result + this.gestionnaireId.hashCode()
-        result = prime * result + (if (this.gestionnaireSiteId == null) 0 else this.gestionnaireSiteId.hashCode())
+        result = prime * result + (if (this.siteId == null) 0 else this.siteId.hashCode())
         return result
     }
 
@@ -65,7 +65,7 @@ data class LContactGestionnaire(
 
         sb.append(contactId)
         sb.append(", ").append(gestionnaireId)
-        sb.append(", ").append(gestionnaireSiteId)
+        sb.append(", ").append(siteId)
 
         sb.append(")")
         return sb.toString()

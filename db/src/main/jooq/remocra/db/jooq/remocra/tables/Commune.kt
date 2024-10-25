@@ -32,10 +32,12 @@ import remocra.db.jooq.couverturehydraulique.tables.LEtudeCommune.LEtudeCommuneP
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
+import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -171,6 +173,23 @@ open class Commune(
 
     val lEtudeCommune: LEtudeCommunePath
         get(): LEtudeCommunePath = lEtudeCommune()
+
+    private lateinit var _contact: ContactPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.contact</code>
+     * table
+     */
+    fun contact(): ContactPath {
+        if (!this::_contact.isInitialized) {
+            _contact = ContactPath(this, null, CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY.inverseKey)
+        }
+
+        return _contact
+    }
+
+    val contact: ContactPath
+        get(): ContactPath = contact()
 
     private lateinit var _lCommuneCis: LCommuneCisPath
 

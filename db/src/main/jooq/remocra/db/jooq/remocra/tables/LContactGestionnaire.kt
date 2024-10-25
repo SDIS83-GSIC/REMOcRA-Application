@@ -29,9 +29,10 @@ import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE_CONTACT_ID_KEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE_PKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
+import remocra.db.jooq.remocra.tables.Site.SitePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -92,10 +93,9 @@ open class LContactGestionnaire(
     val GESTIONNAIRE_ID: TableField<Record, UUID?> = createField(DSL.name("gestionnaire_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column
-     * <code>remocra.l_contact_gestionnaire.gestionnaire_site_id</code>.
+     * The column <code>remocra.l_contact_gestionnaire.site_id</code>.
      */
-    val GESTIONNAIRE_SITE_ID: TableField<Record, UUID?> = createField(DSL.name("gestionnaire_site_id"), SQLDataType.UUID, this, "")
+    val SITE_ID: TableField<Record, UUID?> = createField(DSL.name("site_id"), SQLDataType.UUID, this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
@@ -133,7 +133,7 @@ open class LContactGestionnaire(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = L_CONTACT_GESTIONNAIRE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(L_CONTACT_GESTIONNAIRE_CONTACT_ID_KEY)
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY)
 
     private lateinit var _contact: ContactPath
 
@@ -151,41 +151,38 @@ open class LContactGestionnaire(
     val contact: ContactPath
         get(): ContactPath = contact()
 
-    private lateinit var _lContactGestionnaireGestionnaireIdFkey: GestionnairePath
+    private lateinit var _gestionnaire: GestionnairePath
 
     /**
      * Get the implicit join path to the <code>remocra.gestionnaire</code>
-     * table, via the <code>l_contact_gestionnaire_gestionnaire_id_fkey</code>
-     * key.
+     * table.
      */
-    fun lContactGestionnaireGestionnaireIdFkey(): GestionnairePath {
-        if (!this::_lContactGestionnaireGestionnaireIdFkey.isInitialized) {
-            _lContactGestionnaireGestionnaireIdFkey = GestionnairePath(this, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY, null)
+    fun gestionnaire(): GestionnairePath {
+        if (!this::_gestionnaire.isInitialized) {
+            _gestionnaire = GestionnairePath(this, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_ID_FKEY, null)
         }
 
-        return _lContactGestionnaireGestionnaireIdFkey
+        return _gestionnaire
     }
 
-    val lContactGestionnaireGestionnaireIdFkey: GestionnairePath
-        get(): GestionnairePath = lContactGestionnaireGestionnaireIdFkey()
+    val gestionnaire: GestionnairePath
+        get(): GestionnairePath = gestionnaire()
 
-    private lateinit var _lContactGestionnaireGestionnaireSiteIdFkey: GestionnairePath
+    private lateinit var _site: SitePath
 
     /**
-     * Get the implicit join path to the <code>remocra.gestionnaire</code>
-     * table, via the
-     * <code>l_contact_gestionnaire_gestionnaire_site_id_fkey</code> key.
+     * Get the implicit join path to the <code>remocra.site</code> table.
      */
-    fun lContactGestionnaireGestionnaireSiteIdFkey(): GestionnairePath {
-        if (!this::_lContactGestionnaireGestionnaireSiteIdFkey.isInitialized) {
-            _lContactGestionnaireGestionnaireSiteIdFkey = GestionnairePath(this, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_GESTIONNAIRE_SITE_ID_FKEY, null)
+    fun site(): SitePath {
+        if (!this::_site.isInitialized) {
+            _site = SitePath(this, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY, null)
         }
 
-        return _lContactGestionnaireGestionnaireSiteIdFkey
+        return _site
     }
 
-    val lContactGestionnaireGestionnaireSiteIdFkey: GestionnairePath
-        get(): GestionnairePath = lContactGestionnaireGestionnaireSiteIdFkey()
+    val site: SitePath
+        get(): SitePath = site()
     override fun `as`(alias: String): LContactGestionnaire = LContactGestionnaire(DSL.name(alias), this)
     override fun `as`(alias: Name): LContactGestionnaire = LContactGestionnaire(alias, this)
     override fun `as`(alias: Table<*>): LContactGestionnaire = LContactGestionnaire(alias.qualifiedName, this)

@@ -27,10 +27,12 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -151,6 +153,23 @@ open class LieuDit(
 
     val commune: CommunePath
         get(): CommunePath = commune()
+
+    private lateinit var _contact: ContactPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.contact</code>
+     * table
+     */
+    fun contact(): ContactPath {
+        if (!this::_contact.isInitialized) {
+            _contact = ContactPath(this, null, CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY.inverseKey)
+        }
+
+        return _contact
+    }
+
+    val contact: ContactPath
+        get(): ContactPath = contact()
 
     private lateinit var _pei: PeiPath
 

@@ -29,10 +29,13 @@ data class Contact(
     val contactPrenom: String?,
     val contactNumeroVoie: String?,
     val contactSuffixeVoie: String?,
-    val contactLieuDit: String?,
-    val contactVoie: String?,
+    val contactLieuDitText: String?,
+    val contactLieuDitId: UUID?,
+    val contactVoieText: String?,
+    val contactVoieId: UUID?,
     val contactCodePostal: String?,
-    val contactVille: String?,
+    val contactCommuneText: String?,
+    val contactCommuneId: UUID?,
     val contactPays: String?,
     val contactTelephone: String?,
     val contactEmail: String?,
@@ -97,18 +100,32 @@ data class Contact(
         } else if (this.contactSuffixeVoie != o.contactSuffixeVoie) {
             return false
         }
-        if (this.contactLieuDit == null) {
-            if (o.contactLieuDit != null) {
+        if (this.contactLieuDitText == null) {
+            if (o.contactLieuDitText != null) {
                 return false
             }
-        } else if (this.contactLieuDit != o.contactLieuDit) {
+        } else if (this.contactLieuDitText != o.contactLieuDitText) {
             return false
         }
-        if (this.contactVoie == null) {
-            if (o.contactVoie != null) {
+        if (this.contactLieuDitId == null) {
+            if (o.contactLieuDitId != null) {
                 return false
             }
-        } else if (this.contactVoie != o.contactVoie) {
+        } else if (this.contactLieuDitId != o.contactLieuDitId) {
+            return false
+        }
+        if (this.contactVoieText == null) {
+            if (o.contactVoieText != null) {
+                return false
+            }
+        } else if (this.contactVoieText != o.contactVoieText) {
+            return false
+        }
+        if (this.contactVoieId == null) {
+            if (o.contactVoieId != null) {
+                return false
+            }
+        } else if (this.contactVoieId != o.contactVoieId) {
             return false
         }
         if (this.contactCodePostal == null) {
@@ -118,11 +135,18 @@ data class Contact(
         } else if (this.contactCodePostal != o.contactCodePostal) {
             return false
         }
-        if (this.contactVille == null) {
-            if (o.contactVille != null) {
+        if (this.contactCommuneText == null) {
+            if (o.contactCommuneText != null) {
                 return false
             }
-        } else if (this.contactVille != o.contactVille) {
+        } else if (this.contactCommuneText != o.contactCommuneText) {
+            return false
+        }
+        if (this.contactCommuneId == null) {
+            if (o.contactCommuneId != null) {
+                return false
+            }
+        } else if (this.contactCommuneId != o.contactCommuneId) {
             return false
         }
         if (this.contactPays == null) {
@@ -160,10 +184,13 @@ data class Contact(
         result = prime * result + (if (this.contactPrenom == null) 0 else this.contactPrenom.hashCode())
         result = prime * result + (if (this.contactNumeroVoie == null) 0 else this.contactNumeroVoie.hashCode())
         result = prime * result + (if (this.contactSuffixeVoie == null) 0 else this.contactSuffixeVoie.hashCode())
-        result = prime * result + (if (this.contactLieuDit == null) 0 else this.contactLieuDit.hashCode())
-        result = prime * result + (if (this.contactVoie == null) 0 else this.contactVoie.hashCode())
+        result = prime * result + (if (this.contactLieuDitText == null) 0 else this.contactLieuDitText.hashCode())
+        result = prime * result + (if (this.contactLieuDitId == null) 0 else this.contactLieuDitId.hashCode())
+        result = prime * result + (if (this.contactVoieText == null) 0 else this.contactVoieText.hashCode())
+        result = prime * result + (if (this.contactVoieId == null) 0 else this.contactVoieId.hashCode())
         result = prime * result + (if (this.contactCodePostal == null) 0 else this.contactCodePostal.hashCode())
-        result = prime * result + (if (this.contactVille == null) 0 else this.contactVille.hashCode())
+        result = prime * result + (if (this.contactCommuneText == null) 0 else this.contactCommuneText.hashCode())
+        result = prime * result + (if (this.contactCommuneId == null) 0 else this.contactCommuneId.hashCode())
         result = prime * result + (if (this.contactPays == null) 0 else this.contactPays.hashCode())
         result = prime * result + (if (this.contactTelephone == null) 0 else this.contactTelephone.hashCode())
         result = prime * result + (if (this.contactEmail == null) 0 else this.contactEmail.hashCode())
@@ -181,10 +208,13 @@ data class Contact(
         sb.append(", ").append(contactPrenom)
         sb.append(", ").append(contactNumeroVoie)
         sb.append(", ").append(contactSuffixeVoie)
-        sb.append(", ").append(contactLieuDit)
-        sb.append(", ").append(contactVoie)
+        sb.append(", ").append(contactLieuDitText)
+        sb.append(", ").append(contactLieuDitId)
+        sb.append(", ").append(contactVoieText)
+        sb.append(", ").append(contactVoieId)
         sb.append(", ").append(contactCodePostal)
-        sb.append(", ").append(contactVille)
+        sb.append(", ").append(contactCommuneText)
+        sb.append(", ").append(contactCommuneId)
         sb.append(", ").append(contactPays)
         sb.append(", ").append(contactTelephone)
         sb.append(", ").append(contactEmail)

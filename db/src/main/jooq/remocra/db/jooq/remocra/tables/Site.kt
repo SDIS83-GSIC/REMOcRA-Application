@@ -28,11 +28,13 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.SITE_PKEY
 import remocra.db.jooq.remocra.keys.SITE_SITE_CODE_KEY
 import remocra.db.jooq.remocra.keys.SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
+import remocra.db.jooq.remocra.tables.LContactGestionnaire.LContactGestionnairePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -165,6 +167,23 @@ open class Site(
 
     val gestionnaire: GestionnairePath
         get(): GestionnairePath = gestionnaire()
+
+    private lateinit var _lContactGestionnaire: LContactGestionnairePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_contact_gestionnaire</code> table
+     */
+    fun lContactGestionnaire(): LContactGestionnairePath {
+        if (!this::_lContactGestionnaire.isInitialized) {
+            _lContactGestionnaire = LContactGestionnairePath(this, null, L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY.inverseKey)
+        }
+
+        return _lContactGestionnaire
+    }
+
+    val lContactGestionnaire: LContactGestionnairePath
+        get(): LContactGestionnairePath = lContactGestionnaire()
 
     private lateinit var _pei: PeiPath
 

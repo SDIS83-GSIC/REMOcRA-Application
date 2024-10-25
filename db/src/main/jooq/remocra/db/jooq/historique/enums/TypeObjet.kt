@@ -50,6 +50,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     MARQUE_PIBI("MARQUE_PIBI"),
     TYPE_RESEAU("TYPE_RESEAU"),
     NIVEAU("NIVEAU"),
+    CONTACT("CONTACT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
