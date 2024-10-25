@@ -1,6 +1,7 @@
 package remocra.web.gestionnaire
 
 import com.google.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -19,6 +20,7 @@ import remocra.data.Params
 import remocra.data.SiteData
 import remocra.db.SiteRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.gestionnaire.DeleteSiteUseCase
 import remocra.usecase.gestionnaire.UpdateSiteUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -31,6 +33,9 @@ class SiteEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateSiteUseCase: UpdateSiteUseCase
+
+    @Inject
+    lateinit var deleteSiteUseCase: DeleteSiteUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -80,5 +85,22 @@ class SiteEndpoint : AbstractEndpoint() {
 
         @FormParam("siteActif")
         var siteActif: Boolean = true
+    }
+
+    @DELETE
+    @Path("/delete/{siteId}")
+    @RequireDroits([Droit.GEST_SITE_A])
+    fun delete(@PathParam("siteId") siteId: UUID): Response {
+        val site = siteRepository.getById(siteId)
+        return deleteSiteUseCase.execute(
+            securityContext.userInfo,
+            SiteData(
+                siteId = siteId,
+                siteCode = site.siteCode,
+                siteActif = site.siteActif,
+                siteLibelle = site.siteLibelle,
+                siteGestionnaireId = site.siteGestionnaireId,
+            ),
+        ).wrap()
     }
 }

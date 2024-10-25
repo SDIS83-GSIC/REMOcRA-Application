@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Site
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
 
@@ -103,4 +104,16 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) {
             .set(SITE.ACTIF, siteActif)
             .where(SITE.ID.eq(siteId))
             .execute()
+
+    fun deleteSite(siteId: UUID) =
+        dsl.delete(SITE)
+            .where(SITE.ID.eq(siteId))
+            .execute()
+
+    fun siteUsedInPei(siteId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(PEI.ID)
+                .from(PEI)
+                .where(PEI.SITE_ID.eq(siteId)),
+        )
 }

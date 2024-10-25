@@ -39,6 +39,14 @@ const ListSite = () => {
       href: (siteId) => URLS.UPDATE_SITE(siteId),
       type: TYPE_BUTTON.UPDATE,
     });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      path: url`/api/site/delete/`,
+    });
   }
 
   return (
