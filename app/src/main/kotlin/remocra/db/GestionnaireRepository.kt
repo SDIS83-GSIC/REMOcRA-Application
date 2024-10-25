@@ -73,4 +73,9 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
             .set(GESTIONNAIRE.ACTIF, gestionnaire.gestionnaireActif)
             .where(GESTIONNAIRE.ID.eq(gestionnaire.gestionnaireId))
             .execute()
+
+    fun insertGestionnaire(gestionnaire: Gestionnaire) =
+        dsl.insertInto(GESTIONNAIRE)
+            .set(dsl.newRecord(GESTIONNAIRE, gestionnaire))
+            .execute()
 }

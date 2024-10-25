@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
 import {
@@ -40,7 +41,18 @@ const ListGestionnaire = () => {
   return (
     <>
       <Container>
-        <PageTitle icon={<IconList />} title={"Liste des gestionnaires"} />
+        <PageTitle
+          icon={<IconList />}
+          title={"Liste des gestionnaires"}
+          right={
+            hasDroit(user, TYPE_DROIT.GEST_SITE_A) && (
+              <CreateButton
+                href={URLS.ADD_GESTIONNAIRE}
+                title={"Ajouter un gestionnaire"}
+              />
+            )
+          }
+        />
         <QueryTable
           query={url`/api/gestionnaire`}
           columns={[

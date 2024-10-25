@@ -335,6 +335,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     SITE_FORBIDDEN_DELETE(10001, "Vous n'avez pas les droits de suppression des sites", Status.FORBIDDEN),
     SITE_USED(10002, "Un ou plusieurs PEI sont rattachés à ce site."),
     GESTIONNAIRE_FORBIDDEN_UPDATE(10003, "Vous n'avez pas les droits de modification des gestionnaires", Status.FORBIDDEN),
+    GESTIONNAIRE_FORBIDDEN_INSERT(10004, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

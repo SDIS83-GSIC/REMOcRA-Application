@@ -19,6 +19,7 @@ import remocra.data.Params
 import remocra.db.GestionnaireRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
+import remocra.usecase.gestionnaire.CreateGestionnaireUseCase
 import remocra.usecase.gestionnaire.UpdateGestionnaireUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -32,6 +33,9 @@ class GestionnaireEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateGestionnaireUseCase: UpdateGestionnaireUseCase
+
+    @Inject
+    lateinit var createGestionnaireUseCase: CreateGestionnaireUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -79,6 +83,21 @@ class GestionnaireEndpoint : AbstractEndpoint() {
         @FormParam("gestionnaireActif")
         var gestionnaireActif: Boolean = true
     }
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.GEST_SITE_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun create(gestionnaireInput: GestionnaireInput): Response =
+        createGestionnaireUseCase.execute(
+            securityContext.userInfo,
+            Gestionnaire(
+                gestionnaireId = UUID.randomUUID(),
+                gestionnaireActif = gestionnaireInput.gestionnaireActif,
+                gestionnaireCode = gestionnaireInput.gestionnaireCode,
+                gestionnaireLibelle = gestionnaireInput.gestionnaireLibelle,
+            ),
+        ).wrap()
 
     @GET
     @Path("/{gestionnaireId}")

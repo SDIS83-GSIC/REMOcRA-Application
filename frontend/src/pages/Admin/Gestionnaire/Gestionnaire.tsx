@@ -13,7 +13,7 @@ type GestionnaireType = {
   gestionnaireActif: boolean;
 };
 
-export const getInitialValues = (data: GestionnaireType) => ({
+export const getInitialValues = (data?: GestionnaireType) => ({
   gestionnaireCode: data?.gestionnaireCode ?? null,
   gestionnaireLibelle: data?.gestionnaireLibelle ?? null,
   gestionnaireActif: data?.gestionnaireActif ?? null,

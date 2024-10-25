@@ -13,6 +13,7 @@ import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
 import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
+import CreateGestionnaire from "./pages/Admin/Gestionnaire/CreateGestionnaire.tsx";
 import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
 import UpdateGestionnaire from "./pages/Admin/Gestionnaire/UpdateGestionnaire.tsx";
 import CreateMarquePibi from "./pages/Admin/marquePibi/CreateMarquePibi.tsx";
@@ -203,6 +204,7 @@ export const URLS = {
   UPDATE_SITE: (siteId: string) => url`/admin/site/update/` + siteId,
 
   LIST_GESTIONNAIRE: url`/admin/gestionnaire`,
+  ADD_GESTIONNAIRE: url`/admin/gestionnaire/create`,
   UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
     url`/admin/gestionnaire/update/` + gestionnaireId,
 };
@@ -905,6 +907,15 @@ export default [
         element: (
           <Authorization
             Component={UpdateGestionnaire}
+            droits={[TYPE_DROIT.GEST_SITE_A]}
+          />
+        ),
+      },
+      {
+        path: "gestionnaire/create",
+        element: (
+          <Authorization
+            Component={CreateGestionnaire}
             droits={[TYPE_DROIT.GEST_SITE_A]}
           />
         ),
