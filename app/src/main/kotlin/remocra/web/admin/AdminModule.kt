@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object AdminModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(AdminEndpoint::class, DiametreEndpoint::class, NatureEndpoint::class, OrganismeEndpoint::class)
+        binder.registerResources(AdminEndpoint::class, NatureEndpoint::class, OrganismeEndpoint::class)
     }
 }
