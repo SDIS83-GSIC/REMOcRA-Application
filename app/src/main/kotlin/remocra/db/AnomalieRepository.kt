@@ -25,6 +25,9 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
 
     override fun getMapById(): Map<UUID, Anomalie> = dsl.selectFrom(ANOMALIE).where(ANOMALIE.ACTIF.isTrue).fetchInto<Anomalie>().associateBy { it.anomalieId }
 
+    fun getAnomalieById(anomalieId: UUID): Anomalie =
+        dsl.selectFrom(ANOMALIE).where(ANOMALIE.ID.eq(anomalieId)).fetchSingleInto()
+
     /**
      * Retourne l'ensemble des anomalies
      */
@@ -42,6 +45,74 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      */
     fun getAllAnomalieCategorieForAdmin(): Collection<AnomalieCategorie> =
         dsl.selectFrom(ANOMALIE_CATEGORIE).fetchInto()
+
+    /**
+     * Retourne l'ensemble des poids/anomalies pour une anomalie
+     */
+    fun getAnomaliePoidsByAnomalieId(anomalieId: UUID): Collection<PoidsAnomalie> =
+        dsl.selectFrom(POIDS_ANOMALIE).where(POIDS_ANOMALIE.ANOMALIE_ID.eq(anomalieId)).fetchInto()
+
+    /**
+     * Créer une nouvelle anomalie
+     */
+    fun insertAnomalie(anomalie: Anomalie): Int =
+        dsl.insertInto(ANOMALIE).set(dsl.newRecord(ANOMALIE, anomalie)).execute()
+
+    /**
+     * Modifier une anomalie
+     */
+    fun updateAnomalie(anomalie: Anomalie): Int =
+        dsl.update(ANOMALIE)
+            .set(ANOMALIE.CODE, anomalie.anomalieCode)
+            .set(ANOMALIE.LIBELLE, anomalie.anomalieLibelle)
+            .set(ANOMALIE.COMMENTAIRE, anomalie.anomalieCommentaire)
+            .set(ANOMALIE.ANOMALIE_CATEGORIE_ID, anomalie.anomalieAnomalieCategorieId)
+            .set(ANOMALIE.ACTIF, anomalie.anomalieActif)
+            .set(ANOMALIE.REND_NON_CONFORME, anomalie.anomalieRendNonConforme)
+            .where(ANOMALIE.ID.eq(anomalie.anomalieId))
+            .execute()
+
+    /**
+     * Ajouter/modifier un poids/anomalie
+     */
+    fun upsertPoidsAnomalie(poidsAnomalie: PoidsAnomalie): Int =
+        dsl.insertInto(POIDS_ANOMALIE)
+            .set(POIDS_ANOMALIE.ID, poidsAnomalie.poidsAnomalieId)
+            .set(POIDS_ANOMALIE.ANOMALIE_ID, poidsAnomalie.poidsAnomalieAnomalieId)
+            .set(POIDS_ANOMALIE.NATURE_ID, poidsAnomalie.poidsAnomalieNatureId)
+            .set(POIDS_ANOMALIE.TYPE_VISITE, poidsAnomalie.poidsAnomalieTypeVisite)
+            .set(POIDS_ANOMALIE.VAL_INDISPO_HBE, poidsAnomalie.poidsAnomalieValIndispoHbe)
+            .set(POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE, poidsAnomalie.poidsAnomalieValIndispoTerrestre)
+            .onDuplicateKeyUpdate()
+            .set(POIDS_ANOMALIE.TYPE_VISITE, poidsAnomalie.poidsAnomalieTypeVisite)
+            .set(POIDS_ANOMALIE.VAL_INDISPO_HBE, poidsAnomalie.poidsAnomalieValIndispoHbe)
+            .set(POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE, poidsAnomalie.poidsAnomalieValIndispoTerrestre)
+            .execute()
+
+    /**
+     * Supprimer un poids/anomalie
+     */
+    fun deletePoidsAnomalieByAnomalieId(anomalieId: UUID, excluded: Collection<UUID>? = listOf()): Int =
+        dsl.deleteFrom(POIDS_ANOMALIE).where(POIDS_ANOMALIE.ANOMALIE_ID.eq(anomalieId)).and(POIDS_ANOMALIE.ANOMALIE_ID.notIn(excluded)).execute()
+
+    /**
+     * Vérifier l''utilisation d'une anomalie
+     */
+    fun isAnomalieInUse(anomalieId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(L_VISITE_ANOMALIE.ANOMALIE_ID)
+                .where(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(anomalieId))
+                .union(
+                    dsl.select(L_PEI_ANOMALIE.ANOMALIE_ID)
+                        .where(L_PEI_ANOMALIE.ANOMALIE_ID.eq(anomalieId)),
+                ),
+        )
+
+    /**
+     * Supprimer une anomalie
+     */
+    fun deleteAnomalie(anomalieId: UUID): Int =
+        dsl.deleteFrom(ANOMALIE).where(ANOMALIE.ID.eq(anomalieId)).execute()
 
     /** Supprimer de la table remocra.l_pei_anomalie toutes les anomalies non-protégées du PEI renseigné
      * @param peiId : UUID

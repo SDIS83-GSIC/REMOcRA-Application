@@ -95,6 +95,8 @@ import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
 import CreateBlocDocument from "./pages/Admin/blocDocument/CreateBlocDocument.tsx";
 import UpdateBlocDocument from "./pages/Admin/blocDocument/UpdateBlocDocument.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
+import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
+import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -251,6 +253,10 @@ export const URLS = {
   LIST_BLOC_DOCUMENT: url`/admin/bloc-document`,
   UPDATE_BLOC_DOCUMENT: (blocDocumentId: string) =>
     url`/admin/bloc-document/update/` + blocDocumentId,
+
+  ANOMALIE: url`/admin/anomalie`,
+  ANOMALIE_CREATE: url`/admin/anomalie/create`,
+  ANOMALIE_UPDATE: (anomalieId) => url`/admin/anomalie/${anomalieId}`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1078,6 +1084,24 @@ export default [
         element: (
           <Authorization
             Component={AnomalieList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "anomalie/create",
+        element: (
+          <Authorization
+            Component={AnomalieCreate}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "anomalie/:anomalieId",
+        element: (
+          <Authorization
+            Component={AnomalieUpdate}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

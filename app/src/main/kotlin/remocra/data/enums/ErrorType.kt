@@ -357,6 +357,16 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     BLOC_DOCUMENT_FORBIDDEN_DELETE(10013, "Vous n'avez pas les droits de suppression des blocs documents.", Status.FORBIDDEN),
     BLOC_DOCUMENT_DOCUMENT_NOT_FOUND(10014, "Impossible de trouver le document associé au bloc document."),
 
+    //
+    // ********************************************************************************
+    // Anomalie
+    // ********************************************************************************
+    //
+    ADMIN_ANOMALIE_FORBIDDEN_INSERT(12001, "Vous n'avez pas les droits de création des anomalies", Status.FORBIDDEN),
+    ADMIN_ANOMALIE_FORBIDDEN_UPDATE(12002, "Vous n'avez pas les droits de modification des anomalies", Status.FORBIDDEN),
+    ADMIN_ANOMALIE_FORBIDDEN_DELETE(12003, "Vous n'avez pas les droits de suppression des anomalies", Status.FORBIDDEN),
+    ADMIN_ANOMALIE_IS_PROTECTED(12004, "Cette anomalie est protégée"),
+    ADMIN_ANOMALIE_IN_USE(12005, "Cette anomalie est utilisée"),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

@@ -1,0 +1,51 @@
+package remocra.usecase.admin.anomalie
+
+import com.google.inject.Inject
+import remocra.auth.UserInfo
+import remocra.data.AuteurTracabiliteData
+import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeSourceModification
+import remocra.db.AnomalieRepository
+import remocra.db.jooq.historique.enums.TypeObjet
+import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.tables.pojos.Anomalie
+import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractCUDUseCase
+
+class DeleteAnomalieUseCase : AbstractCUDUseCase<Anomalie>(TypeOperation.DELETE) {
+
+    @Inject
+    lateinit var anomalieRepository: AnomalieRepository
+
+    override fun checkDroits(userInfo: UserInfo) {
+        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+            throw RemocraResponseException(ErrorType.ADMIN_ANOMALIE_FORBIDDEN_DELETE)
+        }
+    }
+
+    override fun postEvent(element: Anomalie, userInfo: UserInfo) {
+        eventBus.post(
+            TracabiliteEvent(
+                pojo = element,
+                pojoId = element.anomalieId,
+                typeOperation = typeOperation,
+                typeObjet = TypeObjet.ANOMALIE,
+                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                date = dateUtils.now(),
+            ),
+        )
+    }
+
+    override fun execute(userInfo: UserInfo?, element: Anomalie): Anomalie {
+        anomalieRepository.deletePoidsAnomalieByAnomalieId(element.anomalieId)
+        anomalieRepository.deleteAnomalie(element.anomalieId)
+        return element
+    }
+
+    override fun checkContraintes(userInfo: UserInfo?, element: Anomalie) {
+        if (element.anomalieProtected) throw RemocraResponseException(ErrorType.ADMIN_ANOMALIE_IS_PROTECTED)
+        if (anomalieRepository.isAnomalieInUse(element.anomalieId)) throw RemocraResponseException(ErrorType.ADMIN_ANOMALIE_IN_USE)
+    }
+}

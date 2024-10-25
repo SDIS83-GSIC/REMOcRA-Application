@@ -1,14 +1,24 @@
-import { Badge, Table } from "react-bootstrap";
+import { useState } from "react";
+import { Badge, Button, Table } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconAnomalie } from "../../../components/Icon/Icon.tsx";
+import {
+  IconAnomalie,
+  IconDelete,
+  IconEdit,
+} from "../../../components/Icon/Icon.tsx";
+import { URLS } from "../../../routes.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import DeleteModal from "../../../components/Modal/DeleteModal.tsx";
+import useModal from "../../../components/Modal/ModalUtils.tsx";
 
 const AnomalieList = () => {
   const anomalieListState = useGet(url`/api/anomalie/list`);
+  const { visible, show, close, ref } = useModal();
+  const [anomalieidToDelete, setAnomalieidToDelete] = useState<string>();
 
   if (!anomalieListState.isResolved) {
     return <Loading />;
@@ -26,7 +36,20 @@ const AnomalieList = () => {
 
   return (
     <Container>
-      <PageTitle title="Liste des anomalies" icon={<IconAnomalie />} />
+      <PageTitle
+        title="Liste des anomalies"
+        icon={<IconAnomalie />}
+        right={
+          <Button
+            type="button"
+            variant="primary"
+            href={URLS.ANOMALIE_CREATE}
+            className="mb-1"
+          >
+            Ajouter une anomalie
+          </Button>
+        }
+      />
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -58,7 +81,27 @@ const AnomalieList = () => {
               )
               .map(({ anomalie, anomaliePoidsList }, idxA) => (
                 <tr key={idxA}>
-                  <th>{anomalie.anomalieLibelle}</th>
+                  <th>
+                    {anomalie.anomalieLibelle}&nbsp;
+                    <Button
+                      variant="link"
+                      href={URLS.ANOMALIE_UPDATE(anomalie.anomalieId)}
+                    >
+                      <IconEdit />
+                    </Button>
+                    {!anomalie.anomalieProtected && (
+                      <Button
+                        variant={"link"}
+                        className={"text-danger"}
+                        onClick={() => {
+                          setAnomalieidToDelete(anomalie.anomalieId);
+                          show();
+                        }}
+                      >
+                        <IconDelete />
+                      </Button>
+                    )}
+                  </th>
                   {natureList.map((nature, idxN) => (
                     <td key={`${idxA}${idxN}`}>
                       {anomaliePoidsList
@@ -98,6 +141,18 @@ const AnomalieList = () => {
           </tbody>
         ))}
       </Table>
+      {visible && anomalieidToDelete && (
+        <DeleteModal
+          visible={visible}
+          closeModal={close}
+          query={url`/api/anomalie/delete/` + anomalieidToDelete}
+          ref={ref}
+          onDelete={() => {
+            setAnomalieidToDelete(null);
+            anomalieListState.reload();
+          }}
+        />
+      )}
     </Container>
   );
 };

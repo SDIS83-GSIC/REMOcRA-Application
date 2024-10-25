@@ -57,7 +57,7 @@ const SelectForm = ({
           {disabled ? optionDisabled : "Aucune valeur saisie"}
         </option>
         {list.map((e, key) => (
-          <option key={key} value={e.id} selected={defaultValue === e}>
+          <option key={key} value={e.id} selected={defaultValue?.id === e.id}>
             {e.libelle}
           </option>
         ))}

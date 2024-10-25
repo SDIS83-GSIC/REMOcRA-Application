@@ -55,6 +55,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     FONCTION_CONTACT("FONCTION_CONTACT"),
     THEMATIQUE("THEMATIQUE"),
     BLOC_DOCUMENT("BLOC_DOCUMENT"),
+    ANOMALIE("ANOMALIE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
