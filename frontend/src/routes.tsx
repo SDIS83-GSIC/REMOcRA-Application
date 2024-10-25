@@ -13,6 +13,7 @@ import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
 import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
+import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
 import CreateMarquePibi from "./pages/Admin/marquePibi/CreateMarquePibi.tsx";
 import ListMarquePibi from "./pages/Admin/marquePibi/ListMarquePibi.tsx";
 import UpdateMarquePibi from "./pages/Admin/marquePibi/UpdateMarquePibi.tsx";
@@ -882,6 +883,15 @@ export default [
           <Authorization
             Component={UpdateSite}
             droits={[TYPE_DROIT.GEST_SITE_A]}
+          />
+        ),
+      },
+      {
+        path: "gestionnaire",
+        element: (
+          <Authorization
+            Component={ListGestionnaire}
+            droits={[TYPE_DROIT.GEST_SITE_R]}
           />
         ),
       },
