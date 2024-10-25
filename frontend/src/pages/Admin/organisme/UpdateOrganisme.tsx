@@ -26,7 +26,7 @@ const UpdateOrganisme = () => {
         validationSchema={organismeValidationSchema}
         submitUrl={`/api/organisme/update/` + organismeId}
         isPost={false}
-        redirectUrl={URLS.ORGANISME}
+        redirectUrl={URLS.LIST_ORGANISME}
         onSubmit={() => true}
       >
         <OrganismeForm />

@@ -193,7 +193,7 @@ export const OrganismeForm = () => {
       <Button
         type="button"
         variant="primary"
-        href={URLS.ORGANISME}
+        href={URLS.LIST_ORGANISME}
         className="mx-1"
       >
         Annuler

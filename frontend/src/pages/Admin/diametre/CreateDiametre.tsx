@@ -6,7 +6,7 @@ const CreateDiametre = () => {
   return (
     <CreateNomenclature
       typeNomenclature={NOMENCLATURE.DIAMETRE}
-      redirectLink={URLS.DIAMETRE}
+      redirectLink={URLS.LIST_DIAMETRE}
     />
   );
 };

@@ -28,7 +28,7 @@ const CreateOrganisme = () => {
         validationSchema={organismeValidationSchema}
         submitUrl={`/api/organisme/create/`}
         isPost={true}
-        redirectUrl={URLS.ORGANISME}
+        redirectUrl={URLS.LIST_ORGANISME}
         onSubmit={() => true}
       >
         <OrganismeForm />

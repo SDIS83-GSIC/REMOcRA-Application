@@ -19,6 +19,7 @@ import UpdateMarquePibi from "./pages/Admin/marquePibi/UpdateMarquePibi.tsx";
 import CreateMateriau from "./pages/Admin/materiau/CreateMateriau.tsx";
 import ListMateriau from "./pages/Admin/materiau/ListMateriau.tsx";
 import UpdateMateriau from "./pages/Admin/materiau/UpdateMateriau.tsx";
+import MenuAdmin from "./pages/Admin/MenuAdmin.tsx";
 import CreateModelePibi from "./pages/Admin/modelePibi/CreateModelePibi.tsx";
 import ListModelePibi from "./pages/Admin/modelePibi/ListModelePibi.tsx";
 import UpdateModelePibi from "./pages/Admin/modelePibi/UpdateModelePibi.tsx";
@@ -120,9 +121,9 @@ export const URLS = {
     url`/couverture-hydraulique/etudes/open/` + etudeId,
 
   // MODULE ADMIN
-  MODULE_ADMIN: url`/admin`,
+  MODULE_ADMIN: url`/admin/menu`,
   UPDATE_DIAMETRE: (diametreId: string) => url`/admin/diametre/` + diametreId,
-  DIAMETRE: url`/admin/diametre/`,
+  LIST_DIAMETRE: url`/admin/diametre/`,
   ADD_DIAMETRE: url`/admin/diametre/create/`,
   ADD_NATURE: url`/admin/nature/create`,
   UPDATE_NATURE: (natureId: string) => url`/admin/nature/update/` + natureId,
@@ -130,7 +131,7 @@ export const URLS = {
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
     url`/admin/organisme/update/` + organismeId,
-  ORGANISME: url`/admin/organisme`,
+  LIST_ORGANISME: url`/admin/organisme`,
 
   ADD_NATURE_DECI: url`/admin/nature-deci/create`,
   UPDATE_NATURE_DECI: (natureDeciId: string) =>
@@ -424,6 +425,15 @@ export default [
       />
     ),
     children: [
+      {
+        path: "menu",
+        element: (
+          <Authorization
+            Component={MenuAdmin}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
       {
         path: "diametre",
         element: (

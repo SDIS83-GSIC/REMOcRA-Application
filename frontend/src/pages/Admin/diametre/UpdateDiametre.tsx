@@ -11,7 +11,7 @@ const UpdateDiametre = () => {
       <UpdateNomenclature
         nomenclatureId={diametreId}
         typeNomenclature={NOMENCLATURE.DIAMETRE}
-        redirectLink={URLS.DIAMETRE}
+        redirectLink={URLS.LIST_DIAMETRE}
       />
     )
   );
