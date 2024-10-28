@@ -15,6 +15,7 @@ data class PeiForCalculDispoData(
 
     val penaCapacite: Int?,
     val penaCapaciteIllimitee: Boolean?,
+    val penaCapaciteIncertaine: Boolean?,
 
     var nature: Nature? = null,
     var diametre: Diametre? = null,

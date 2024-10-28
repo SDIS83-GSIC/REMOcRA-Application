@@ -133,6 +133,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                         pressionDynamique = lastVisite?.visiteCtrlDebitPressionPressionDyn?.toDouble(),
                         penaCapacite = null,
                         penaCapaciteIllimitee = null,
+                        penaCapaciteIncertaine = null,
                     )
 
                     elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)
@@ -149,6 +150,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                         pressionDynamique = null,
                         penaCapacite = elementConcret.penaCapacite,
                         penaCapaciteIllimitee = elementConcret.penaCapaciteIllimitee,
+                        penaCapaciteIncertaine = elementConcret.penaCapaciteIncertaine,
                     )
 
                     elementConcret.peiDisponibiliteTerrestre = calculDispoUseCase.execute(peiForCalculDispoData)

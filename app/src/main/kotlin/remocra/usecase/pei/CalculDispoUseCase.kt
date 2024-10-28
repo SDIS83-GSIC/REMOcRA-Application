@@ -202,7 +202,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 return false
             }
 
-            CodeSdis.SDIS_42 -> false
+            CodeSdis.SDIS_42 -> pei.penaCapacite == null || pei.penaCapacite < 2
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> TODO()
@@ -233,7 +233,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
-            CodeSdis.SDIS_42 -> false
+            CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> TODO()
@@ -260,7 +260,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
-            CodeSdis.SDIS_42 -> isPressionInsuffisanteDefault(pei)
+            CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_58 -> TODO()
@@ -350,7 +350,15 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> isPressionDynamiqueInsuffisanteDefault(pei)
+            CodeSdis.SDIS_42 -> {
+                if (isNaturePIBI(pei)) {
+                    if (pei.pressionDynamique != null && pei.pressionDynamique < 0.6) {
+                        return true
+                    }
+                }
+
+                return false
+            }
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> TODO()
@@ -386,7 +394,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> false
+            CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> TODO()
@@ -441,7 +449,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_38 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_39 -> (pei.debit == null || pei.debit <= 29)
-            CodeSdis.SDIS_42 -> isDebitInsuffisantDefault(pei)
+            CodeSdis.SDIS_42 -> pei.debit == null
             CodeSdis.SDIS_49 -> {
                 if (isDiametre80(pei) &&
                     isNaturePI(pei) &&
@@ -558,7 +566,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit in 30..59
             CodeSdis.SDIS_38 -> pei.debit != null && pei.debit in 15..29
             CodeSdis.SDIS_39 -> pei.debit != null && (pei.debit in 30..59)
-            CodeSdis.SDIS_42 -> isDebitNonConformeDefault(pei)
+            CodeSdis.SDIS_42 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_49 -> {
                 if (isDiametre80(pei) &&
                     isNaturePI(pei) &&
@@ -648,7 +656,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> isDebitTropEleveDefault(pei)
+            CodeSdis.SDIS_42 -> pei.debit != null && pei.debit > 500
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.debit != null && pei.debit > 1000
             CodeSdis.SDIS_58 -> TODO()
