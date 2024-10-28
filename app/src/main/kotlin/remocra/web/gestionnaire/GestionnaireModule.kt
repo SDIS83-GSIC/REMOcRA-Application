@@ -2,8 +2,8 @@ package remocra.web.gestionnaire
 
 import com.google.inject.Binder
 import com.google.inject.Module
-import remocra.web.gestionnaire.contact.ContactEndPoint
-import remocra.web.gestionnaire.contact.RoleEndPoint
+import remocra.web.contact.ContactEndPoint
+import remocra.web.contact.RoleEndPoint
 import remocra.web.registerResources
 
 object GestionnaireModule : Module {

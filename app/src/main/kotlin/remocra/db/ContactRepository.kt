@@ -13,9 +13,12 @@ import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.LContactGestionnaire
+import remocra.db.jooq.remocra.tables.pojos.LContactOrganisme
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.db.jooq.remocra.tables.references.CONTACT
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
@@ -43,6 +46,11 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             .set(dsl.newRecord(L_CONTACT_GESTIONNAIRE, lContactGestionnaire))
             .execute()
 
+    fun insertLContactOrganisme(lContactOrganisme: LContactOrganisme) =
+        dsl.insertInto(L_CONTACT_ORGANISME)
+            .set(dsl.newRecord(L_CONTACT_ORGANISME, lContactOrganisme))
+            .execute()
+
     fun insertLContactRole(lContactRole: LContactRole) =
         dsl.insertInto(L_CONTACT_ROLE)
             .set(dsl.newRecord(L_CONTACT_ROLE, lContactRole))
@@ -57,13 +65,17 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         dsl.delete(L_CONTACT_GESTIONNAIRE)
             .where(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(contactId))
             .execute()
+    fun deleteLContactOrganisme(contactId: UUID) =
+        dsl.delete(L_CONTACT_ORGANISME)
+            .where(L_CONTACT_ORGANISME.CONTACT_ID.eq(contactId))
+            .execute()
 
     fun deleteContact(contactId: UUID) =
         dsl.delete(CONTACT)
             .where(CONTACT.ID.eq(contactId))
             .execute()
 
-    fun getAllForAdmin(params: Params<Filter, Sort>, gestionnaireId: UUID): Collection<ContactWithSite> =
+    fun getAllForAdmin(params: Params<Filter, Sort>, appartenanceId: UUID, isGestionnaire: Boolean): Collection<ContactWithSite> =
         dsl.select(
             CONTACT.ID,
             CONTACT.CIVILITE,
@@ -73,28 +85,54 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             CONTACT.FONCTION,
             CONTACT.TELEPHONE,
             CONTACT.EMAIL,
-            SITE.LIBELLE,
         )
+            .let {
+                if (isGestionnaire) {
+                    it.select(SITE.LIBELLE)
+                }
+                it
+            }
             .from(CONTACT)
-            .join(L_CONTACT_GESTIONNAIRE)
-            .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
-            .leftJoin(SITE)
-            .on(SITE.ID.eq(L_CONTACT_GESTIONNAIRE.SITE_ID))
+            .let {
+                if (isGestionnaire) {
+                    it.join(L_CONTACT_GESTIONNAIRE)
+                        .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+                        .leftJoin(SITE)
+                        .on(SITE.ID.eq(L_CONTACT_GESTIONNAIRE.SITE_ID))
+                } else {
+                    it.join(L_CONTACT_ORGANISME)
+                        .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+                }
+            }
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .and(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .let {
+                if (isGestionnaire) {
+                    it.and(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(appartenanceId))
+                } else {
+                    it.and(L_CONTACT_ORGANISME.ORGANISME_ID.eq(appartenanceId))
+                }
+            }
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(CONTACT.NOM))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
 
-    fun countAllForAdmin(filterBy: Filter?, gestionnaireId: UUID) =
+    fun countAllForAdmin(filterBy: Filter?, appartenanceId: UUID, isGestionnaire: Boolean) =
         dsl.select(CONTACT.ID)
             .from(CONTACT)
-            .join(L_CONTACT_GESTIONNAIRE)
-            .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
-            .leftJoin(SITE)
-            .on(SITE.ID.eq(L_CONTACT_GESTIONNAIRE.SITE_ID))
-            .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .let {
+                if (isGestionnaire) {
+                    it.join(L_CONTACT_GESTIONNAIRE)
+                        .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+                        .leftJoin(SITE)
+                        .on(SITE.ID.eq(L_CONTACT_GESTIONNAIRE.SITE_ID))
+                        .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(appartenanceId))
+                } else {
+                    it.join(L_CONTACT_ORGANISME)
+                        .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+                        .where(L_CONTACT_ORGANISME.ORGANISME_ID.eq(appartenanceId))
+                }
+            }
             .and(filterBy?.toCondition() ?: DSL.trueCondition())
             .count()
 
@@ -158,10 +196,9 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         )
     }
 
-    fun getById(contactId: UUID): ContactData =
+    fun getById(contactId: UUID, isGestionnaire: Boolean): ContactData =
         dsl.select(
             *CONTACT.fields(),
-            L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`as`("appartenanceId"),
             multiset(
                 selectDistinct(L_CONTACT_ROLE.ROLE_ID)
                     .from(L_CONTACT_ROLE)
@@ -172,9 +209,26 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
                 }
             }.`as`("listRoleId"),
         )
+            .let {
+                if (isGestionnaire) {
+                    it.select(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`as`("appartenanceId"))
+                } else {
+                    it.select(L_CONTACT_ORGANISME.ORGANISME_ID.`as`("appartenanceId"))
+                }
+            }
             .from(CONTACT)
-            .leftJoin(L_CONTACT_GESTIONNAIRE)
-            .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+            .let {
+                if (isGestionnaire) {
+                    it.join(L_CONTACT_GESTIONNAIRE)
+                        .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+                } else {
+                    it.join(L_CONTACT_ORGANISME)
+                        .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+                }
+            }
             .where(CONTACT.ID.eq(contactId))
             .fetchSingleInto()
+
+    fun checkIsGestionnaire(appartenanceId: UUID) =
+        dsl.fetchExists(dsl.select(GESTIONNAIRE.ID).from(GESTIONNAIRE).where(GESTIONNAIRE.ID.eq(appartenanceId)))
 }

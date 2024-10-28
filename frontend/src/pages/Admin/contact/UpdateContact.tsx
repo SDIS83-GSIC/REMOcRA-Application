@@ -13,8 +13,10 @@ import Contact, {
 } from "./Contact.tsx";
 
 const UpdateContact = () => {
-  const { gestionnaireId, contactId } = useParams();
-  const { data } = useGet(url`/api/contact/get/` + contactId);
+  const { appartenanceId, contactId, appartenance } = useParams();
+  const { data } = useGet(
+    url`/api/contact/` + appartenanceId + `/get/` + contactId,
+  );
   return (
     <Container>
       <PageTitle icon={<IconEdit />} title={"Mise à jour d'un contact"} />
@@ -22,9 +24,9 @@ const UpdateContact = () => {
         initialValues={getInitialValues(data)}
         validationSchema={validationSchema}
         isPost={false}
-        submitUrl={`/api/contact/` + gestionnaireId + `/update/` + contactId}
+        submitUrl={`/api/contact/` + appartenanceId + `/update/` + contactId}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.LIST_CONTACT(gestionnaireId)}
+        redirectUrl={URLS.LIST_CONTACT(appartenanceId, appartenance)}
       >
         <Contact />
       </MyFormik>

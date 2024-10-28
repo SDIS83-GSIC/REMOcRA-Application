@@ -56,7 +56,8 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      href: (gestionnaireId) => URLS.ADD_CONTACT(gestionnaireId),
+      href: (gestionnaireId) =>
+        URLS.ADD_CONTACT(gestionnaireId, "gestionnaire"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconAddContact />,
       textEnable: "Ajouter un contact",
@@ -67,7 +68,8 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      href: (gestionnaireId) => URLS.LIST_CONTACT(gestionnaireId),
+      href: (gestionnaireId) =>
+        URLS.LIST_CONTACT(gestionnaireId, "gestionnaire"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconGererContact />,
       textEnable: "Afficher les contacts",

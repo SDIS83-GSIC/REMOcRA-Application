@@ -1,5 +1,6 @@
 import { useFormikContext } from "formik";
 import { Col, Row } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { object } from "yup";
 import AccordionCustom, {
   useAccordionState,
@@ -101,6 +102,8 @@ export const prepareVariables = (values: ContactType) => ({
 });
 
 const Contact = () => {
+  const { appartenance } = useParams();
+
   const roleState = useGet(url`/api/role/`);
   const siteState = useGet(url`/api/site/actifs`);
 
@@ -274,17 +277,19 @@ const Contact = () => {
                     )}
                   </Col>
 
-                  <Col>
-                    <SelectForm
-                      name={"siteId"}
-                      listIdCodeLibelle={siteState.data}
-                      label="Site"
-                      defaultValue={siteState?.data?.find(
-                        (e) => e.id === values.siteId,
-                      )}
-                      setValues={setValues}
-                    />
-                  </Col>
+                  {appartenance === "gestionnaire" && (
+                    <Col>
+                      <SelectForm
+                        name={"siteId"}
+                        listIdCodeLibelle={siteState.data}
+                        label="Site"
+                        defaultValue={siteState?.data?.find(
+                          (e) => e.id === values.siteId,
+                        )}
+                        setValues={setValues}
+                      />
+                    </Col>
+                  )}
                 </Row>
                 <Row className="mt-3">
                   <Col>

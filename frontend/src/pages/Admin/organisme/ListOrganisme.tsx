@@ -1,20 +1,70 @@
 import { Button, Container } from "react-bootstrap";
-import { URLS } from "../../../routes.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconPei } from "../../../components/Icon/Icon.tsx";
+import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
+import {
+  IconAddContact,
+  IconGererContact,
+  IconPei,
+} from "../../../components/Icon/Icon.tsx";
+import {
+  ActionColumn,
+  BooleanColumn,
+} from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import FilterInput from "../../../components/Filter/FilterInput.tsx";
-import url from "../../../module/fetch.tsx";
-import EditColumn, {
-  BooleanColumn,
-} from "../../../components/Table/columns.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../../Entities/UtilisateurEntity.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
-import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import filterValuesOrganisme from "./FilterOrganisme.tsx";
 
 const ListOrganisme = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
+  const listeButton: ButtonType[] = [];
+  if (hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (organismeId) => URLS.UPDATE_ORGANISME(organismeId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconAddContact />,
+      textEnable: "Ajouter un contact",
+      classEnable: "warning",
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconGererContact />,
+      textEnable: "Afficher les contacts",
+      textDisable: "Aucun contact pour cet organisme",
+      disable: (row) => !row.original.hasContact,
+      classEnable: "warning",
+    });
+  }
   return (
     <>
       <PageTitle title="Liste des organismes" icon={<IconPei />} />
@@ -83,11 +133,10 @@ const ListOrganisme = () => {
                 <SelectEnumOption name="organismeActif" options={VRAI_FAUX} />
               ),
             }),
-            EditColumn({
-              to: (data) => URLS.UPDATE_ORGANISME(data),
+            ActionColumn({
+              Header: "Actions",
               accessor: "organismeId",
-              title: false,
-              canEdit: true, // TODO mettre les droits
+              buttons: listeButton,
             }),
           ]}
         />

@@ -39,7 +39,11 @@ class DeleteContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.DELET
 
     override fun execute(userInfo: UserInfo?, element: ContactData): ContactData {
         contactRepository.deleteLContactRole(element.contactId)
-        contactRepository.deleteLContactGestionnaire(element.contactId)
+        if (element.isGestionnaire) {
+            contactRepository.deleteLContactGestionnaire(element.contactId)
+        } else {
+            contactRepository.deleteLContactOrganisme(element.contactId)
+        }
         contactRepository.deleteContact(element.contactId)
 
         return element

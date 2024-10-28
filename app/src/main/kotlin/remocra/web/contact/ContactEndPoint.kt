@@ -1,4 +1,4 @@
-package remocra.web.gestionnaire.contact
+package remocra.web.contact
 
 import com.google.inject.Inject
 import jakarta.ws.rs.DELETE
@@ -55,8 +55,10 @@ class ContactEndPoint : AbstractEndpoint() {
         @PathParam("appartenanceId")
         appartenanceId: UUID,
         contactInput: ContactInput,
-    ): Response =
-        createContactUseCase.execute(
+    ): Response {
+        val isGestionnaire = contactRepository.checkIsGestionnaire(appartenanceId)
+
+        return createContactUseCase.execute(
             securityContext.userInfo,
             ContactData(
                 contactId = UUID.randomUUID(),
@@ -80,8 +82,10 @@ class ContactEndPoint : AbstractEndpoint() {
                 contactTelephone = contactInput.contactTelephone,
                 contactEmail = contactInput.contactEmail,
                 listRoleId = contactInput.listRoleId,
+                isGestionnaire = isGestionnaire,
             ),
         ).wrap()
+    }
 
     @PUT
     @Path("{appartenanceId}/update/{contactId}")
@@ -93,8 +97,9 @@ class ContactEndPoint : AbstractEndpoint() {
         @PathParam("contactId")
         contactId: UUID,
         contactInput: ContactInput,
-    ): Response =
-        updateContactUseCase.execute(
+    ): Response {
+        val isGestionnaire = contactRepository.checkIsGestionnaire(appartenanceId)
+        return updateContactUseCase.execute(
             securityContext.userInfo,
             ContactData(
                 contactId = contactId,
@@ -118,8 +123,10 @@ class ContactEndPoint : AbstractEndpoint() {
                 contactTelephone = contactInput.contactTelephone,
                 contactEmail = contactInput.contactEmail,
                 listRoleId = contactInput.listRoleId,
+                isGestionnaire = isGestionnaire,
             ),
         ).wrap()
+    }
 
     class ContactInput {
         @FormParam("contactActif")
@@ -181,42 +188,52 @@ class ContactEndPoint : AbstractEndpoint() {
     }
 
     @POST
-    @Path("/{gestionnaireId}")
+    @Path("/{appartenanceId}")
     @RequireDroits([Droit.GEST_SITE_R])
     fun getAllForAdmin(
-        @PathParam("gestionnaireId")
-        gestionnaireId: UUID,
+        @PathParam("appartenanceId")
+        appartenanceId: UUID,
 
         params: Params<ContactRepository.Filter, ContactRepository.Sort>,
-    ): Response =
-        Response.ok(
+    ): Response {
+        val isGestionnaire = contactRepository.checkIsGestionnaire(appartenanceId)
+        return Response.ok(
             DataTableau(
-                list = contactRepository.getAllForAdmin(params, gestionnaireId),
-                count = contactRepository.countAllForAdmin(params.filterBy, gestionnaireId),
+                list = contactRepository.getAllForAdmin(params, appartenanceId, isGestionnaire),
+                count = contactRepository.countAllForAdmin(params.filterBy, appartenanceId, isGestionnaire),
             ),
         ).build()
+    }
 
     @GET
-    @Path("/get/{contactId}")
+    @Path("{appartenanceId}/get/{contactId}")
     @RequireDroits([Droit.GEST_SITE_R])
     fun getById(
+        @PathParam("appartenanceId")
+        appartenanceId: UUID,
         @PathParam("contactId")
         contactId: UUID,
     ): Response =
         Response.ok(
-            contactRepository.getById(contactId),
+            contactRepository.getById(contactId, contactRepository.checkIsGestionnaire(appartenanceId)),
         ).build()
 
     @DELETE
-    @Path("/delete/{contactId}")
+    @Path("{appartenanceId}/delete/{contactId}")
     @RequireDroits([Droit.GEST_SITE_A])
     fun delete(
         @PathParam("contactId")
         contactId: UUID,
-    ): Response =
-        deleteContactUseCase.execute(
+        @PathParam("appartenanceId")
+        appartenanceId: UUID,
+    ): Response {
+        val isGestionnaire = contactRepository.checkIsGestionnaire(appartenanceId)
+        return deleteContactUseCase.execute(
             securityContext.userInfo,
-            contactRepository.getById(contactId),
+            contactRepository.getById(contactId, isGestionnaire).copy(
+                isGestionnaire = isGestionnaire,
+            ),
         )
             .wrap()
+    }
 }

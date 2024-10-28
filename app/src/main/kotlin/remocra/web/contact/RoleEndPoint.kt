@@ -1,4 +1,4 @@
-package remocra.web.gestionnaire.contact
+package remocra.web.contact
 
 import com.google.inject.Inject
 import jakarta.ws.rs.GET

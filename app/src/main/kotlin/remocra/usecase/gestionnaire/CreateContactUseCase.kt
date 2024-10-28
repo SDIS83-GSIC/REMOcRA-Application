@@ -12,6 +12,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.LContactGestionnaire
+import remocra.db.jooq.remocra.tables.pojos.LContactOrganisme
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
@@ -64,14 +65,23 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
             ),
         )
 
-        // insertion du lien entre le gestionnaire et le contact
-        contactRepository.insertLContactGestionnaire(
-            LContactGestionnaire(
-                contactId = element.contactId,
-                gestionnaireId = element.appartenanceId,
-                siteId = element.siteId,
-            ),
-        )
+        if (element.isGestionnaire) {
+            // insertion du lien entre le gestionnaire et le contact
+            contactRepository.insertLContactGestionnaire(
+                LContactGestionnaire(
+                    contactId = element.contactId,
+                    gestionnaireId = element.appartenanceId,
+                    siteId = element.siteId,
+                ),
+            )
+        } else {
+            contactRepository.insertLContactOrganisme(
+                LContactOrganisme(
+                    contactId = element.contactId,
+                    organismeId = element.appartenanceId,
+                ),
+            )
+        }
 
         // Puis des rôles
         element.listRoleId.forEach {

@@ -18,6 +18,7 @@ import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
@@ -168,6 +169,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
         val profilOrganismeLibelle: String,
         val zoneIntegrationLibelle: String?,
         val parentLibelle: String?,
+        val hasContact: Boolean,
     )
 
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<OrganismeComplet> {
@@ -182,6 +184,15 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             ZONE_INTEGRATION.LIBELLE,
             TYPE_ORGANISME.LIBELLE,
             parent.LIBELLE.`as`("parent_libelle"),
+            DSL.field(
+                DSL.exists(
+                    dsl.select(L_CONTACT_ORGANISME.CONTACT_ID)
+                        .from(
+                            L_CONTACT_ORGANISME,
+                        )
+                        .where(L_CONTACT_ORGANISME.ORGANISME_ID.eq(ORGANISME.ID)),
+                ),
+            ).`as`("hasContact"),
         ).from(ORGANISME)
             .leftJoin(PROFIL_ORGANISME).on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
             .leftJoin(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))

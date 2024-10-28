@@ -29,16 +29,22 @@ import { URLS } from "../../../routes.tsx";
 import FilterValues from "./FilterContact.tsx";
 
 const ListContact = () => {
-  const { gestionnaireId } = useParams();
+  const { appartenanceId, appartenance } = useParams();
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
+  // TODO vérifier si c'est un gestionnaire pour l'affichage de la colonne site
+
   const listeButton: ButtonType[] = [];
-  if (hasDroit(user, TYPE_DROIT.GEST_SITE_A)) {
+  if (
+    hasDroit(user, TYPE_DROIT.GEST_SITE_A) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_DROITS)
+  ) {
     listeButton.push({
       row: (row) => {
         return row;
       },
-      href: (contactId) => URLS.UPDATE_CONTACT(gestionnaireId, contactId),
+      href: (contactId) =>
+        URLS.UPDATE_CONTACT(appartenanceId, contactId, appartenance),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -47,7 +53,7 @@ const ListContact = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/contact/delete/`,
+      path: url`/api/contact/` + appartenanceId + `/delete/`,
     });
   }
   return (
@@ -57,16 +63,17 @@ const ListContact = () => {
           icon={<IconList />}
           title={"Liste des contacts"}
           right={
-            hasDroit(user, TYPE_DROIT.GEST_SITE_A) && (
+            (hasDroit(user, TYPE_DROIT.GEST_SITE_A) ||
+              hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) && (
               <CreateButton
-                href={URLS.ADD_CONTACT(gestionnaireId)}
+                href={URLS.ADD_CONTACT(appartenanceId, appartenance)}
                 title={"Ajouter un contact"}
               />
             )
           }
         />
         <QueryTable
-          query={url`/api/contact/` + gestionnaireId}
+          query={url`/api/contact/` + appartenanceId}
           columns={[
             BooleanColumn({
               Header: "Actif",
@@ -124,12 +131,14 @@ const ListContact = () => {
                 />
               ),
             },
-            {
-              Header: "Site",
-              accessor: "siteLibelle",
-              sortField: "siteLibelle",
-              Filter: <FilterInput type="text" name="siteLibelle" />,
-            },
+            appartenance === "gestionnaire"
+              ? {
+                  Header: "Site",
+                  accessor: "siteLibelle",
+                  sortField: "siteLibelle",
+                  Filter: <FilterInput type="text" name="siteLibelle" />,
+                }
+              : {},
             {
               Header: "Téléphone",
               accessor: "contactTelephone",

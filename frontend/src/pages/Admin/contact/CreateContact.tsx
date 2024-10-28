@@ -11,7 +11,7 @@ import Contact, {
 } from "./Contact.tsx";
 
 const CreateContact = () => {
-  const { gestionnaireId } = useParams();
+  const { appartenanceId } = useParams();
   return (
     <Container>
       <PageTitle icon={<IconCreate />} title={"Création d'un contact"} />
@@ -19,9 +19,9 @@ const CreateContact = () => {
         initialValues={getInitialValues()}
         validationSchema={validationSchema}
         isPost={true}
-        submitUrl={`/api/contact/` + gestionnaireId + `/create/`}
+        submitUrl={`/api/contact/` + appartenanceId + `/create/`}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.LIST_CONTACT(gestionnaireId)}
+        redirectUrl={URLS.LIST_CONTACT(appartenanceId)}
       >
         <Contact />
       </MyFormik>

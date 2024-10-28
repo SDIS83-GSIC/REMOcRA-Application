@@ -63,8 +63,10 @@ class UpdateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.UPDAT
             ),
         )
 
-        // Update site
-        contactRepository.updateSite(element.contactId, element.siteId)
+        if (element.isGestionnaire) {
+            // Update site
+            contactRepository.updateSite(element.contactId, element.siteId)
+        }
 
         // On supprime les rôles et on les remets
         contactRepository.deleteLContactRole(element.contactId)

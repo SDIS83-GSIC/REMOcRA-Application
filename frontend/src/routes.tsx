@@ -13,11 +13,11 @@ import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
 import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
-import CreateContact from "./pages/Admin/Gestionnaire/CreateContact.tsx";
+import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import CreateGestionnaire from "./pages/Admin/Gestionnaire/CreateGestionnaire.tsx";
-import ListContact from "./pages/Admin/Gestionnaire/ListContact.tsx";
+import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
-import UpdateContact from "./pages/Admin/Gestionnaire/UpdateContact.tsx";
+import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
 import UpdateGestionnaire from "./pages/Admin/Gestionnaire/UpdateGestionnaire.tsx";
 import CreateMarquePibi from "./pages/Admin/marquePibi/CreateMarquePibi.tsx";
 import ListMarquePibi from "./pages/Admin/marquePibi/ListMarquePibi.tsx";
@@ -219,12 +219,21 @@ export const URLS = {
   UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
     url`/admin/gestionnaire/update/` + gestionnaireId,
 
-  ADD_CONTACT: (gestionnaireId: string) =>
-    url`/admin/gestionnaire/` + gestionnaireId + `/contact/create/`,
-  LIST_CONTACT: (gestionnaireId: string) =>
-    url`/admin/gestionnaire/` + gestionnaireId + `/contact/`,
-  UPDATE_CONTACT: (gestionnaireId: string, contactId: string) =>
-    url`/admin/gestionnaire/` + gestionnaireId + `/contact/update/` + contactId,
+  ADD_CONTACT: (appartenanceId: string, appartenance: string) =>
+    url`/admin/` + appartenance + `/` + appartenanceId + `/contact/create/`,
+  LIST_CONTACT: (appartenanceId: string, appartenance: string) =>
+    url`/admin/` + appartenance + `/` + appartenanceId + `/contact/`,
+  UPDATE_CONTACT: (
+    appartenanceId: string,
+    contactId: string,
+    appartenance: string,
+  ) =>
+    url`/admin/` +
+    appartenance +
+    `/` +
+    appartenanceId +
+    `/contact/update/` +
+    contactId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -966,29 +975,29 @@ export default [
         ),
       },
       {
-        path: "gestionnaire/:gestionnaireId/contact/create",
+        path: ":appartenance/:appartenanceId/contact/create",
         element: (
           <Authorization
             Component={CreateContact}
-            droits={[TYPE_DROIT.GEST_SITE_A]}
+            droits={[TYPE_DROIT.GEST_SITE_A, TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "gestionnaire/:gestionnaireId/contact",
+        path: ":appartenance/:appartenanceId/contact",
         element: (
           <Authorization
             Component={ListContact}
-            droits={[TYPE_DROIT.GEST_SITE_R]}
+            droits={[TYPE_DROIT.GEST_SITE_R, TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "gestionnaire/:gestionnaireId/contact/update/:contactId",
+        path: ":appartenance/:appartenanceId/contact/update/:contactId",
         element: (
           <Authorization
             Component={UpdateContact}
-            droits={[TYPE_DROIT.GEST_SITE_A]}
+            droits={[TYPE_DROIT.GEST_SITE_A, TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
