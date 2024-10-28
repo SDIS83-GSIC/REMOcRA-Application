@@ -2,7 +2,9 @@ package remocra.web.gestionnaire.contact
 
 import com.google.inject.Inject
 import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -20,6 +22,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.usecase.gestionnaire.CreateContactUseCase
+import remocra.usecase.gestionnaire.UpdateContactUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -29,6 +32,9 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createContactUseCase: CreateContactUseCase
+
+    @Inject
+    lateinit var updateContactUseCase: UpdateContactUseCase
 
     @Inject
     lateinit var contactRepository: ContactRepository
@@ -49,6 +55,44 @@ class ContactEndPoint : AbstractEndpoint() {
             securityContext.userInfo,
             ContactData(
                 contactId = UUID.randomUUID(),
+                appartenanceId = appartenanceId,
+                siteId = contactInput.siteId,
+                contactActif = contactInput.contactActif,
+                contactCivilite = contactInput.contactCivilite,
+                contactFonction = contactInput.contactFonction,
+                contactNom = contactInput.contactNom,
+                contactPrenom = contactInput.contactPrenom,
+                contactNumeroVoie = contactInput.contactNumeroVoie,
+                contactSuffixe = contactInput.contactSuffixeVoie,
+                contactLieuDitText = contactInput.contactLieuDitText,
+                contactLieuDitId = contactInput.contactLieuDitId,
+                contactVoieText = contactInput.contactVoieText,
+                contactVoieId = contactInput.contactVoieId,
+                contactCommuneId = contactInput.contactCommuneId,
+                contactCommuneText = contactInput.contactCommuneText,
+                contactCodePostal = contactInput.contactCodePostal,
+                contactPays = contactInput.contactPays,
+                contactTelephone = contactInput.contactTelephone,
+                contactEmail = contactInput.contactEmail,
+                listRoleId = contactInput.listRoleId,
+            ),
+        ).wrap()
+
+    @PUT
+    @Path("{appartenanceId}/update/{contactId}")
+    @RequireDroits([Droit.GEST_SITE_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun update(
+        @PathParam("appartenanceId")
+        appartenanceId: UUID,
+        @PathParam("contactId")
+        contactId: UUID,
+        contactInput: ContactInput,
+    ): Response =
+        updateContactUseCase.execute(
+            securityContext.userInfo,
+            ContactData(
+                contactId = contactId,
                 appartenanceId = appartenanceId,
                 siteId = contactInput.siteId,
                 contactActif = contactInput.contactActif,
@@ -145,5 +189,16 @@ class ContactEndPoint : AbstractEndpoint() {
                 list = contactRepository.getAllForAdmin(params, gestionnaireId),
                 count = contactRepository.countAllForAdmin(params.filterBy, gestionnaireId),
             ),
+        ).build()
+
+    @GET
+    @Path("/get/{contactId}")
+    @RequireDroits([Droit.GEST_SITE_R])
+    fun getById(
+        @PathParam("contactId")
+        contactId: UUID,
+    ): Response =
+        Response.ok(
+            contactRepository.getById(contactId),
         ).build()
 }

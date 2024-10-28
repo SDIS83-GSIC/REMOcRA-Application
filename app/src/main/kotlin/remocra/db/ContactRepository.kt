@@ -5,9 +5,10 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.selectDistinct
+import remocra.data.ContactData
 import remocra.data.Params
-import remocra.db.GestionnaireRepository.Filter
-import remocra.db.GestionnaireRepository.Sort
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.db.jooq.remocra.tables.pojos.Contact
@@ -25,6 +26,18 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             .set(dsl.newRecord(CONTACT, contact))
             .execute()
 
+    fun updateContact(contact: Contact) =
+        dsl.update(CONTACT)
+            .set(dsl.newRecord(CONTACT, contact))
+            .where(CONTACT.ID.eq(contact.contactId))
+            .execute()
+
+    fun updateSite(contactId: UUID, siteId: UUID?) =
+        dsl.update(L_CONTACT_GESTIONNAIRE)
+            .set(SITE.ID, siteId)
+            .where(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(contactId))
+            .execute()
+
     fun insertLContactGestionnaire(lContactGestionnaire: LContactGestionnaire) =
         dsl.insertInto(L_CONTACT_GESTIONNAIRE)
             .set(dsl.newRecord(L_CONTACT_GESTIONNAIRE, lContactGestionnaire))
@@ -33,6 +46,11 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
     fun insertLContactRole(lContactRole: LContactRole) =
         dsl.insertInto(L_CONTACT_ROLE)
             .set(dsl.newRecord(L_CONTACT_ROLE, lContactRole))
+            .execute()
+
+    fun deleteLContactRole(contactId: UUID) =
+        dsl.delete(L_CONTACT_ROLE)
+            .where(L_CONTACT_ROLE.CONTACT_ID.eq(contactId))
             .execute()
 
     fun getAllForAdmin(params: Params<Filter, Sort>, gestionnaireId: UUID): Collection<ContactWithSite> =
@@ -129,4 +147,24 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             SITE.LIBELLE.getSortField(siteLibelle),
         )
     }
+
+    fun getById(contactId: UUID): ContactData =
+        dsl.select(
+            *CONTACT.fields(),
+            L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`as`("appartenanceId"),
+            multiset(
+                selectDistinct(L_CONTACT_ROLE.ROLE_ID)
+                    .from(L_CONTACT_ROLE)
+                    .where(L_CONTACT_ROLE.CONTACT_ID.eq(CONTACT.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1().let { it as UUID }
+                }
+            }.`as`("listRoleId"),
+        )
+            .from(CONTACT)
+            .leftJoin(L_CONTACT_GESTIONNAIRE)
+            .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+            .where(CONTACT.ID.eq(contactId))
+            .fetchSingleInto()
 }

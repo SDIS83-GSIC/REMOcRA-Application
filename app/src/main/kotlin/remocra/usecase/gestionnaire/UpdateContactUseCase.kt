@@ -11,13 +11,12 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Contact
-import remocra.db.jooq.remocra.tables.pojos.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSERT) {
+class UpdateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var contactRepository: ContactRepository
 
@@ -41,7 +40,7 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
     }
 
     override fun execute(userInfo: UserInfo?, element: ContactData): ContactData {
-        contactRepository.insertContact(
+        contactRepository.updateContact(
             Contact(
                 contactId = element.contactId,
                 contactActif = element.contactActif,
@@ -64,14 +63,11 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
             ),
         )
 
-        // insertion du lien entre le gestionnaire et le contact
-        contactRepository.insertLContactGestionnaire(
-            LContactGestionnaire(
-                contactId = element.contactId,
-                gestionnaireId = element.appartenanceId,
-                siteId = element.siteId,
-            ),
-        )
+        // Update site
+        contactRepository.updateSite(element.contactId, element.siteId)
+
+        // On supprime les rôles et on les remets
+        contactRepository.deleteLContactRole(element.contactId)
 
         // Puis des rôles
         element.listRoleId.forEach {

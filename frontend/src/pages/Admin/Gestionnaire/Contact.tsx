@@ -149,7 +149,7 @@ const Contact = () => {
                       listIdCodeLibelle={listFonction}
                       label="Fonction"
                       defaultValue={listFonction?.find(
-                        (e) => e.code === values.contactFonction,
+                        (e) => e.id === values.contactFonction,
                       )}
                       required={false}
                       setValues={setValues}
@@ -161,7 +161,7 @@ const Contact = () => {
                       listIdCodeLibelle={listCivilite}
                       label="Civilité"
                       defaultValue={listCivilite?.find(
-                        (e) => e.code === values.contactCivilite,
+                        (e) => e.id === values.contactCivilite,
                       )}
                       required={false}
                       setValues={setValues}
