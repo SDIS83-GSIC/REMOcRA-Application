@@ -53,6 +53,16 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             .where(L_CONTACT_ROLE.CONTACT_ID.eq(contactId))
             .execute()
 
+    fun deleteLContactGestionnaire(contactId: UUID) =
+        dsl.delete(L_CONTACT_GESTIONNAIRE)
+            .where(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(contactId))
+            .execute()
+
+    fun deleteContact(contactId: UUID) =
+        dsl.delete(CONTACT)
+            .where(CONTACT.ID.eq(contactId))
+            .execute()
+
     fun getAllForAdmin(params: Params<Filter, Sort>, gestionnaireId: UUID): Collection<ContactWithSite> =
         dsl.select(
             CONTACT.ID,

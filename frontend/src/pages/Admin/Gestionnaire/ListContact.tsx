@@ -41,6 +41,14 @@ const ListContact = () => {
       href: (contactId) => URLS.UPDATE_CONTACT(gestionnaireId, contactId),
       type: TYPE_BUTTON.UPDATE,
     });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      path: url`/api/contact/delete/`,
+    });
   }
   return (
     <>

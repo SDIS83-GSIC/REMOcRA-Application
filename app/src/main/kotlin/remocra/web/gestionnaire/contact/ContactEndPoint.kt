@@ -1,6 +1,7 @@
 package remocra.web.gestionnaire.contact
 
 import com.google.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -22,6 +23,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.usecase.gestionnaire.CreateContactUseCase
+import remocra.usecase.gestionnaire.DeleteContactUseCase
 import remocra.usecase.gestionnaire.UpdateContactUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -35,6 +37,9 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateContactUseCase: UpdateContactUseCase
+
+    @Inject
+    lateinit var deleteContactUseCase: DeleteContactUseCase
 
     @Inject
     lateinit var contactRepository: ContactRepository
@@ -201,4 +206,17 @@ class ContactEndPoint : AbstractEndpoint() {
         Response.ok(
             contactRepository.getById(contactId),
         ).build()
+
+    @DELETE
+    @Path("/delete/{contactId}")
+    @RequireDroits([Droit.GEST_SITE_A])
+    fun delete(
+        @PathParam("contactId")
+        contactId: UUID,
+    ): Response =
+        deleteContactUseCase.execute(
+            securityContext.userInfo,
+            contactRepository.getById(contactId),
+        )
+            .wrap()
 }
