@@ -41,7 +41,7 @@ import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.LContactRole.LContactRolePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
-import remocra.db.jooq.remocra.tables.Role.RolePath
+import remocra.db.jooq.remocra.tables.RoleContact.RoleContactPath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -331,11 +331,11 @@ open class Contact(
         get(): OrganismePath = lContactOrganisme().organisme()
 
     /**
-     * Get the implicit many-to-many join path to the <code>remocra.role</code>
-     * table
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.role_contact</code> table
      */
-    val role: RolePath
-        get(): RolePath = lContactRole().role()
+    val roleContact: RoleContactPath
+        get(): RoleContactPath = lContactRole().roleContact()
     override fun `as`(alias: String): Contact = Contact(DSL.name(alias), this)
     override fun `as`(alias: Name): Contact = Contact(alias, this)
     override fun `as`(alias: Table<*>): Contact = Contact(alias.qualifiedName, this)

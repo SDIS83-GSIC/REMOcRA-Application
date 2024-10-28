@@ -47,6 +47,9 @@ import UpdateProfilOrganisme from "./pages/Admin/profilOrganisme/UpdateProfilOrg
 import CreateProfilUtilisateur from "./pages/Admin/profilUtilisateur/CreateProfilUtilisateur.tsx";
 import ListProfilUtilisateur from "./pages/Admin/profilUtilisateur/ListProfilUtilisateur.tsx";
 import UpdateProfilUtilisateur from "./pages/Admin/profilUtilisateur/UpdateProfilUtilisateur.tsx";
+import CreateRoleContact from "./pages/Admin/roleContact/CreateRoleContact.tsx";
+import ListRoleContact from "./pages/Admin/roleContact/ListRoleContact.tsx";
+import UpdateRoleContact from "./pages/Admin/roleContact/UpdateRolecontact.tsx";
 import ListSite from "./pages/Admin/site/ListSite.tsx";
 import UpdateSite from "./pages/Admin/site/UpdateSite.tsx";
 import CreateTypeCanalisation from "./pages/Admin/typeCanalisation/CreateTypeCanalisation.tsx";
@@ -202,6 +205,11 @@ export const URLS = {
   UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>
     url`/admin/profil-utilisateur/update/` + profilUtilisateurId,
   LIST_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur`,
+
+  ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
+  UPDATE_ROLE_CONTACT: (roleContactId: string) =>
+    url`/admin/role-contact/update/` + roleContactId,
+  LIST_ROLE_CONTACT: url`/admin/role-contact`,
 
   LIST_SITE: url`/admin/site`,
   UPDATE_SITE: (siteId: string) => url`/admin/site/update/` + siteId,
@@ -872,6 +880,33 @@ export default [
         element: (
           <Authorization
             Component={CreateProfilUtilisateur}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "role-contact/update/:roleContactId",
+        element: (
+          <Authorization
+            Component={UpdateRoleContact}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "role-contact",
+        element: (
+          <Authorization
+            Component={ListRoleContact}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "role-contact/create",
+        element: (
+          <Authorization
+            Component={CreateRoleContact}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

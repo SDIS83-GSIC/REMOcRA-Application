@@ -57,7 +57,7 @@ import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.Reservoir
-import remocra.db.jooq.remocra.tables.Role
+import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
@@ -153,8 +153,8 @@ val PROFIL_UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Profil
 val PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(ProfilUtilisateur.PROFIL_UTILISATEUR, DSL.name("profil_utilisateur_profil_utilisateur_code_key"), arrayOf(ProfilUtilisateur.PROFIL_UTILISATEUR.CODE), true)
 val RESERVOIR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_pkey"), arrayOf(Reservoir.RESERVOIR.ID), true)
 val RESERVOIR_RESERVOIR_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_reservoir_code_key"), arrayOf(Reservoir.RESERVOIR.CODE), true)
-val ROLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Role.ROLE, DSL.name("role_pkey"), arrayOf(Role.ROLE.ID), true)
-val ROLE_ROLE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Role.ROLE, DSL.name("role_role_code_key"), arrayOf(Role.ROLE.CODE), true)
+val ROLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(RoleContact.ROLE_CONTACT, DSL.name("role_pkey"), arrayOf(RoleContact.ROLE_CONTACT.ID), true)
+val ROLE_ROLE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(RoleContact.ROLE_CONTACT, DSL.name("role_role_code_key"), arrayOf(RoleContact.ROLE_CONTACT.CODE), true)
 val SITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_pkey"), arrayOf(Site.SITE.ID), true)
 val SITE_SITE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_site_code_key"), arrayOf(Site.SITE.CODE), true)
 val TASK_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_pkey"), arrayOf(Task.TASK.ID), true)
@@ -197,7 +197,7 @@ val L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY: ForeignKey<Reco
 val L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_CONTACT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_contact_id_fkey"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.CONTACT_ID), remocra.db.jooq.remocra.keys.CONTACT_PKEY, arrayOf(Contact.CONTACT.ID), true)
 val L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactOrganisme.L_CONTACT_ORGANISME, DSL.name("l_contact_organisme_organisme_id_fkey"), arrayOf(LContactOrganisme.L_CONTACT_ORGANISME.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val L_CONTACT_ROLE__L_CONTACT_ROLE_CONTACT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_contact_id_fkey"), arrayOf(LContactRole.L_CONTACT_ROLE.CONTACT_ID), remocra.db.jooq.remocra.keys.CONTACT_PKEY, arrayOf(Contact.CONTACT.ID), true)
-val L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_role_id_fkey"), arrayOf(LContactRole.L_CONTACT_ROLE.ROLE_ID), remocra.db.jooq.remocra.keys.ROLE_PKEY, arrayOf(Role.ROLE.ID), true)
+val L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_role_id_fkey"), arrayOf(LContactRole.L_CONTACT_ROLE.ROLE_ID), remocra.db.jooq.remocra.keys.ROLE_PKEY, arrayOf(RoleContact.ROLE_CONTACT.ID), true)
 val L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCoucheDroit.L_COUCHE_DROIT, DSL.name("l_couche_droit_couche_id_fkey"), arrayOf(LCoucheDroit.L_COUCHE_DROIT.COUCHE_ID), remocra.db.jooq.remocra.keys.COUCHE_PKEY, arrayOf(Couche.COUCHE.ID), true)
 val L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCoucheDroit.L_COUCHE_DROIT, DSL.name("l_couche_droit_profil_droit_id_fkey"), arrayOf(LCoucheDroit.L_COUCHE_DROIT.PROFIL_DROIT_ID), remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY, arrayOf(ProfilDroit.PROFIL_DROIT.ID), true)
 val L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_DIAMETRE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LDiametreNature.L_DIAMETRE_NATURE, DSL.name("l_diametre_nature_diametre_id_fkey"), arrayOf(LDiametreNature.L_DIAMETRE_NATURE.DIAMETRE_ID), remocra.db.jooq.remocra.keys.DIAMETRE_PKEY, arrayOf(Diametre.DIAMETRE.ID), true)

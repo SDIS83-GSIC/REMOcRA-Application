@@ -13,6 +13,7 @@ enum class TypeNomenclatureCodeLibelle {
     NIVEAU,
     PROFIL_ORGANISME,
     PROFIL_UTILISATEUR,
+    ROLE_CONTACT,
     TYPE_CANALISATION,
     TYPE_ETUDE,
     TYPE_ORGANISME,

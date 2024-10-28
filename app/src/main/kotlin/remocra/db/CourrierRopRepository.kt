@@ -39,7 +39,7 @@ import remocra.db.jooq.remocra.tables.references.PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.RESERVOIR
-import remocra.db.jooq.remocra.tables.references.ROLE
+import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -402,9 +402,9 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
             .join(L_CONTACT_ROLE)
             .on(L_CONTACT_ROLE.CONTACT_ID.eq(CONTACT.ID))
-            .join(ROLE)
-            .on(ROLE.ID.eq(L_CONTACT_ROLE.ROLE_ID))
-            .where(ROLE.CODE.eq(GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP))
+            .join(ROLE_CONTACT)
+            .on(ROLE_CONTACT.ID.eq(L_CONTACT_ROLE.ROLE_ID))
+            .where(ROLE_CONTACT.CODE.eq(GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP))
             .and(L_CONTACT_ORGANISME.ORGANISME_ID.eq(organismeId))
             .fetchOneInto()
 
@@ -417,9 +417,9 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
             .join(L_CONTACT_ROLE)
             .on(L_CONTACT_ROLE.CONTACT_ID.eq(CONTACT.ID))
-            .join(ROLE)
-            .on(ROLE.ID.eq(L_CONTACT_ROLE.ROLE_ID))
-            .where(ROLE.CODE.eq(GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP))
+            .join(ROLE_CONTACT)
+            .on(ROLE_CONTACT.ID.eq(L_CONTACT_ROLE.ROLE_ID))
+            .where(ROLE_CONTACT.CODE.eq(GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP))
             .and(L_CONTACT_ORGANISME.ORGANISME_ID.eq(organismeId))
             .fetchOneInto()
 

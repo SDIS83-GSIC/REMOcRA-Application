@@ -56,7 +56,7 @@ import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.Reservoir
-import remocra.db.jooq.remocra.tables.Role
+import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Tournee
@@ -339,9 +339,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val RESERVOIR: Reservoir get() = Reservoir.RESERVOIR
 
     /**
-     * The table <code>remocra.role</code>.
+     * The table <code>remocra.role_contact</code>.
      */
-    val ROLE: Role get() = Role.ROLE
+    val ROLE_CONTACT: RoleContact get() = RoleContact.ROLE_CONTACT
 
     /**
      * The table <code>remocra.site</code>.
@@ -460,7 +460,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         ProfilOrganisme.PROFIL_ORGANISME,
         ProfilUtilisateur.PROFIL_UTILISATEUR,
         Reservoir.RESERVOIR,
-        Role.ROLE,
+        RoleContact.ROLE_CONTACT,
         Site.SITE,
         Task.TASK,
         Tournee.TOURNEE,

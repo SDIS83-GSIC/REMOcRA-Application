@@ -29,7 +29,7 @@ import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE_PKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
-import remocra.db.jooq.remocra.tables.Role.RolePath
+import remocra.db.jooq.remocra.tables.RoleContact.RoleContactPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -140,21 +140,22 @@ open class LContactRole(
     val contact: ContactPath
         get(): ContactPath = contact()
 
-    private lateinit var _role: RolePath
+    private lateinit var _roleContact: RoleContactPath
 
     /**
-     * Get the implicit join path to the <code>remocra.role</code> table.
+     * Get the implicit join path to the <code>remocra.role_contact</code>
+     * table.
      */
-    fun role(): RolePath {
-        if (!this::_role.isInitialized) {
-            _role = RolePath(this, L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY, null)
+    fun roleContact(): RoleContactPath {
+        if (!this::_roleContact.isInitialized) {
+            _roleContact = RoleContactPath(this, L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY, null)
         }
 
-        return _role
+        return _roleContact
     }
 
-    val role: RolePath
-        get(): RolePath = role()
+    val roleContact: RoleContactPath
+        get(): RoleContactPath = roleContact()
     override fun `as`(alias: String): LContactRole = LContactRole(DSL.name(alias), this)
     override fun `as`(alias: Name): LContactRole = LContactRole(alias, this)
     override fun `as`(alias: Table<*>): LContactRole = LContactRole(alias.qualifiedName, this)

@@ -51,6 +51,8 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     TYPE_RESEAU("TYPE_RESEAU"),
     NIVEAU("NIVEAU"),
     CONTACT("CONTACT"),
+    ROLE("ROLE"),
+    ROLE_CONTACT("ROLE_CONTACT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
