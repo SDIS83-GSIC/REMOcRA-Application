@@ -47,7 +47,7 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
                 contactId = element.contactId,
                 contactActif = element.contactActif,
                 contactCivilite = element.contactCivilite,
-                contactFonction = element.contactFonction,
+                contactFonctionContactId = element.contactFonctionContactId,
                 contactNom = element.contactNom,
                 contactPrenom = element.contactPrenom,
                 contactNumeroVoie = element.contactNumeroVoie,

@@ -19,9 +19,9 @@ import remocra.data.ContactData
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.db.ContactRepository
+import remocra.db.FonctionContactRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
-import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.usecase.gestionnaire.CreateContactUseCase
 import remocra.usecase.gestionnaire.DeleteContactUseCase
 import remocra.usecase.gestionnaire.UpdateContactUseCase
@@ -43,6 +43,9 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var contactRepository: ContactRepository
+
+    @Inject
+    lateinit var fonctionContactRepository: FonctionContactRepository
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -66,7 +69,7 @@ class ContactEndPoint : AbstractEndpoint() {
                 siteId = contactInput.siteId,
                 contactActif = contactInput.contactActif,
                 contactCivilite = contactInput.contactCivilite,
-                contactFonction = contactInput.contactFonction,
+                contactFonctionContactId = contactInput.contactFonctionContactId,
                 contactNom = contactInput.contactNom,
                 contactPrenom = contactInput.contactPrenom,
                 contactNumeroVoie = contactInput.contactNumeroVoie,
@@ -107,7 +110,7 @@ class ContactEndPoint : AbstractEndpoint() {
                 siteId = contactInput.siteId,
                 contactActif = contactInput.contactActif,
                 contactCivilite = contactInput.contactCivilite,
-                contactFonction = contactInput.contactFonction,
+                contactFonctionContactId = contactInput.contactFonctionContactId,
                 contactNom = contactInput.contactNom,
                 contactPrenom = contactInput.contactPrenom,
                 contactNumeroVoie = contactInput.contactNumeroVoie,
@@ -136,7 +139,7 @@ class ContactEndPoint : AbstractEndpoint() {
         var contactCivilite: TypeCivilite? = null
 
         @FormParam("contactFonction")
-        var contactFonction: TypeFonction? = null
+        var contactFonctionContactId: UUID? = null
 
         @FormParam("contactNom")
         var contactNom: String? = null
@@ -236,4 +239,10 @@ class ContactEndPoint : AbstractEndpoint() {
         )
             .wrap()
     }
+
+    @GET
+    @Path("/fonctions")
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
+    fun getAllFonctions() =
+        Response.ok(fonctionContactRepository.getAll()).build()
 }

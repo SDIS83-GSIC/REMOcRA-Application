@@ -4,7 +4,6 @@
 package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.TypeCivilite
-import remocra.db.jooq.remocra.enums.TypeFonction
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -24,7 +23,6 @@ data class Contact(
     val contactId: UUID,
     val contactActif: Boolean,
     val contactCivilite: TypeCivilite?,
-    val contactFonction: TypeFonction?,
     val contactNom: String?,
     val contactPrenom: String?,
     val contactNumeroVoie: String?,
@@ -39,6 +37,7 @@ data class Contact(
     val contactPays: String?,
     val contactTelephone: String?,
     val contactEmail: String?,
+    val contactFonctionContactId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -63,13 +62,6 @@ data class Contact(
                 return false
             }
         } else if (this.contactCivilite != o.contactCivilite) {
-            return false
-        }
-        if (this.contactFonction == null) {
-            if (o.contactFonction != null) {
-                return false
-            }
-        } else if (this.contactFonction != o.contactFonction) {
             return false
         }
         if (this.contactNom == null) {
@@ -170,6 +162,13 @@ data class Contact(
         } else if (this.contactEmail != o.contactEmail) {
             return false
         }
+        if (this.contactFonctionContactId == null) {
+            if (o.contactFonctionContactId != null) {
+                return false
+            }
+        } else if (this.contactFonctionContactId != o.contactFonctionContactId) {
+            return false
+        }
         return true
     }
 
@@ -179,7 +178,6 @@ data class Contact(
         result = prime * result + this.contactId.hashCode()
         result = prime * result + this.contactActif.hashCode()
         result = prime * result + (if (this.contactCivilite == null) 0 else this.contactCivilite.hashCode())
-        result = prime * result + (if (this.contactFonction == null) 0 else this.contactFonction.hashCode())
         result = prime * result + (if (this.contactNom == null) 0 else this.contactNom.hashCode())
         result = prime * result + (if (this.contactPrenom == null) 0 else this.contactPrenom.hashCode())
         result = prime * result + (if (this.contactNumeroVoie == null) 0 else this.contactNumeroVoie.hashCode())
@@ -194,6 +192,7 @@ data class Contact(
         result = prime * result + (if (this.contactPays == null) 0 else this.contactPays.hashCode())
         result = prime * result + (if (this.contactTelephone == null) 0 else this.contactTelephone.hashCode())
         result = prime * result + (if (this.contactEmail == null) 0 else this.contactEmail.hashCode())
+        result = prime * result + (if (this.contactFonctionContactId == null) 0 else this.contactFonctionContactId.hashCode())
         return result
     }
 
@@ -203,7 +202,6 @@ data class Contact(
         sb.append(contactId)
         sb.append(", ").append(contactActif)
         sb.append(", ").append(contactCivilite)
-        sb.append(", ").append(contactFonction)
         sb.append(", ").append(contactNom)
         sb.append(", ").append(contactPrenom)
         sb.append(", ").append(contactNumeroVoie)
@@ -218,6 +216,7 @@ data class Contact(
         sb.append(", ").append(contactPays)
         sb.append(", ").append(contactTelephone)
         sb.append(", ").append(contactEmail)
+        sb.append(", ").append(contactFonctionContactId)
 
         sb.append(")")
         return sb.toString()

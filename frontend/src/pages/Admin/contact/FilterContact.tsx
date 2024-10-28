@@ -1,12 +1,11 @@
 import TYPE_CIVILITE from "../../../enums/CiviliteEnum.tsx";
-import TYPE_FONCTION from "../../../enums/FonctionContactEnum.tsx";
 
 type FilterContactType = {
   contactActif?: boolean | undefined;
   contactCivilite?: TYPE_CIVILITE | undefined;
   contactNom?: string | undefined;
   contactPrenom?: string | undefined;
-  contactFonction: TYPE_FONCTION | undefined;
+  fonctionContactLibelle: string | undefined;
   contactTelephone: string | undefined;
   contactEmail: string | undefined;
   siteLibelle: string | undefined;
@@ -17,7 +16,7 @@ const FilterValues = ({
   contactCivilite,
   contactActif,
   contactPrenom,
-  contactFonction,
+  fonctionContactLibelle,
   contactTelephone,
   contactEmail,
   siteLibelle,
@@ -28,7 +27,7 @@ const FilterValues = ({
   filterProperty(filter, contactCivilite, "contactCivilite");
   filterProperty(filter, contactActif, "contactActif");
   filterProperty(filter, contactPrenom, "contactPrenom");
-  filterProperty(filter, contactFonction, "contactFonction");
+  filterProperty(filter, fonctionContactLibelle, "fonctionContactLibelle");
   filterProperty(filter, contactTelephone, "contactTelephone");
   filterProperty(filter, siteLibelle, "siteLibelle");
   filterProperty(filter, contactEmail, "contactEmail");

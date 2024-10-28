@@ -1,7 +1,6 @@
 package remocra.data
 
 import remocra.db.jooq.remocra.enums.TypeCivilite
-import remocra.db.jooq.remocra.enums.TypeFonction
 import java.util.UUID
 
 data class ContactData(
@@ -10,7 +9,7 @@ data class ContactData(
     val siteId: UUID?,
     val contactActif: Boolean,
     val contactCivilite: TypeCivilite?,
-    val contactFonction: TypeFonction?,
+    val contactFonctionContactId: UUID?,
     val contactNom: String?,
     val contactPrenom: String?,
     val contactNumeroVoie: String?,

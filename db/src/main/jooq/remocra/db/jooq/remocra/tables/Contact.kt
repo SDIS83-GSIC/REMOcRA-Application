@@ -26,15 +26,16 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeCivilite
-import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.db.jooq.remocra.keys.CONTACT_PKEY
 import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_FONCTION_FKEY
 import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.FonctionContact.FonctionContactPath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LContactGestionnaire.LContactGestionnairePath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
@@ -108,11 +109,6 @@ open class Contact(
     val CIVILITE: TableField<Record, TypeCivilite?> = createField(DSL.name("contact_civilite"), SQLDataType.VARCHAR.asEnumDataType(TypeCivilite::class.java), this, "")
 
     /**
-     * The column <code>remocra.contact.contact_fonction</code>.
-     */
-    val FONCTION: TableField<Record, TypeFonction?> = createField(DSL.name("contact_fonction"), SQLDataType.VARCHAR.asEnumDataType(TypeFonction::class.java), this, "")
-
-    /**
      * The column <code>remocra.contact.contact_nom</code>.
      */
     val NOM: TableField<Record, String?> = createField(DSL.name("contact_nom"), SQLDataType.CLOB, this, "")
@@ -182,6 +178,11 @@ open class Contact(
      */
     val EMAIL: TableField<Record, String?> = createField(DSL.name("contact_email"), SQLDataType.CLOB, this, "")
 
+    /**
+     * The column <code>remocra.contact.contact_fonction_contact_id</code>.
+     */
+    val FONCTION_CONTACT_ID: TableField<Record, UUID?> = createField(DSL.name("contact_fonction_contact_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -215,7 +216,7 @@ open class Contact(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = CONTACT_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY, CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY, CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY, CONTACT__CONTACT_CONTACT_FONCTION_FKEY, CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY, CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY)
 
     private lateinit var _commune: CommunePath
 
@@ -232,6 +233,23 @@ open class Contact(
 
     val commune: CommunePath
         get(): CommunePath = commune()
+
+    private lateinit var _fonctionContact: FonctionContactPath
+
+    /**
+     * Get the implicit join path to the <code>remocra.fonction_contact</code>
+     * table.
+     */
+    fun fonctionContact(): FonctionContactPath {
+        if (!this::_fonctionContact.isInitialized) {
+            _fonctionContact = FonctionContactPath(this, CONTACT__CONTACT_CONTACT_FONCTION_FKEY, null)
+        }
+
+        return _fonctionContact
+    }
+
+    val fonctionContact: FonctionContactPath
+        get(): FonctionContactPath = fonctionContact()
 
     private lateinit var _lieuDit: LieuDitPath
 

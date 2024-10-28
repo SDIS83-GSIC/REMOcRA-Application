@@ -45,7 +45,7 @@ class UpdateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.UPDAT
                 contactId = element.contactId,
                 contactActif = element.contactActif,
                 contactCivilite = element.contactCivilite,
-                contactFonction = element.contactFonction,
+                contactFonctionContactId = element.contactFonctionContactId,
                 contactNom = element.contactNom,
                 contactPrenom = element.contactPrenom,
                 contactNumeroVoie = element.contactNumeroVoie,

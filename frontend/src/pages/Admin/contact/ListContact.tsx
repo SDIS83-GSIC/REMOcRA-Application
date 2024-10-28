@@ -22,7 +22,6 @@ import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_CIVILITE from "../../../enums/CiviliteEnum.tsx";
-import TYPE_FONCTION from "../../../enums/FonctionContactEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
@@ -115,21 +114,9 @@ const ListContact = () => {
             },
             {
               Header: "Fonction",
-              accessor: "contactFonction",
-              sortField: "contactFonction",
-              Cell: (value) => {
-                return (
-                  <div>
-                    {value?.value != null && TYPE_FONCTION[value.value]}
-                  </div>
-                );
-              },
-              Filter: (
-                <SelectEnumOption
-                  options={TYPE_FONCTION}
-                  name={"contactFonction"}
-                />
-              ),
+              accessor: "fonctionContactLibelle",
+              sortField: "fonctionContactLibelle",
+              Filter: <FilterInput type="text" name="fonctionContactLibelle" />,
             },
             appartenance === "gestionnaire"
               ? {

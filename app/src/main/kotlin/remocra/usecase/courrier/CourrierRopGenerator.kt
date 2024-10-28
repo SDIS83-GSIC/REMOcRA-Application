@@ -306,7 +306,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
         val expediteurGroupement = courrierRopRepository.getExpediteurGroupement(organismeId)
             ?: throw IllegalArgumentException("Aucun contact pour le groupement ${groupementData.libelle} : le contact doit être associé au rôle ${GlobalConstants.ROLE_SIGNATAIRE_GROUPEMENT}")
 
-        expediteur = "${expediteurGroupement.contactFonction} ${expediteurGroupement.contactPrenom} ${expediteurGroupement.contactNom?.uppercase()}"
+        expediteur = "${expediteurGroupement.fonctionContactLibelle} ${expediteurGroupement.contactPrenom} ${expediteurGroupement.contactNom?.uppercase()}"
 
         derniereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedByDescending { it }.firstOrNull())
         premiereDateReco = dateUtils.formatDateOnly(listPeiWithLastRop.values.sortedBy { it }.firstOrNull())

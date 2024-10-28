@@ -15,7 +15,6 @@ import {
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import TYPE_CIVILITE from "../../../enums/CiviliteEnum.tsx";
-import TYPE_FONCTION from "../../../enums/FonctionContactEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { email } from "../../../module/validators.tsx";
 import { URLS } from "../../../routes.tsx";
@@ -24,7 +23,7 @@ import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 type ContactType = {
   contactActif: boolean;
   contactCivilite: string;
-  contactFonction: string;
+  contactFonctionContactId: string;
   contactNom: string;
   contactPrenom: string;
   contactNumeroVoie: string;
@@ -49,7 +48,7 @@ type ContactType = {
 export const getInitialValues = (data?: ContactType) => ({
   contactActif: data?.contactActif ?? true,
   contactCivilite: data?.contactCivilite ?? null,
-  contactFonction: data?.contactFonction ?? null,
+  contactFonctionContactId: data?.contactFonctionContactId ?? null,
   contactNom: data?.contactNom ?? null,
   contactPrenom: data?.contactPrenom ?? null,
   contactNumeroVoie: data?.contactNumeroVoie ?? null,
@@ -82,7 +81,7 @@ export const validationSchema = object({
 export const prepareVariables = (values: ContactType) => ({
   contactActif: values.contactActif,
   contactCivilite: values.contactCivilite,
-  contactFonction: values.contactFonction,
+  contactFonctionContactId: values.contactFonctionContactId,
   contactNom: values.contactNom,
   contactPrenom: values.contactPrenom,
   contactNumeroVoie: values.contactNumeroVoie,
@@ -106,6 +105,7 @@ const Contact = () => {
 
   const roleState = useGet(url`/api/role/`);
   const siteState = useGet(url`/api/site/actifs`);
+  const fonctionContactState = useGet(url`/api/contact/fonctions`);
 
   const voieState = useGet(url`/api/voie/get`);
   const communeState = useGet(url`/api/commune/get-libelle-commune`);
@@ -113,13 +113,6 @@ const Contact = () => {
 
   const { values, setValues, setFieldValue } = useFormikContext<ContactType>();
 
-  const listFonction = Object.entries(TYPE_FONCTION).map(([key, value]) => {
-    return {
-      id: key,
-      code: value,
-      libelle: value,
-    };
-  });
   const listCivilite = Object.entries(TYPE_CIVILITE).map(([key, value]) => {
     return {
       id: key,
@@ -148,11 +141,11 @@ const Contact = () => {
                 <Row className="mt-3">
                   <Col>
                     <SelectForm
-                      name={"contactFonction"}
-                      listIdCodeLibelle={listFonction}
+                      name={"contactFonctionContactId"}
+                      listIdCodeLibelle={fonctionContactState.data}
                       label="Fonction"
-                      defaultValue={listFonction?.find(
-                        (e) => e.id === values.contactFonction,
+                      defaultValue={fonctionContactState.data?.find(
+                        (e) => e.id === values.contactFonctionContactId,
                       )}
                       required={false}
                       setValues={setValues}

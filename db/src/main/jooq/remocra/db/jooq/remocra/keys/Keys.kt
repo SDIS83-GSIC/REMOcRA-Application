@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
+import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
@@ -92,6 +93,8 @@ val DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Document.DOCUMEN
 val DOMAINE_DOMAINE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_domaine_code_key"), arrayOf(Domaine.DOMAINE.CODE), true)
 val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_pkey"), arrayOf(Domaine.DOMAINE.ID), true)
 val FICHE_RESUME_BLOC_PKEY: UniqueKey<Record> = Internal.createUniqueKey(FicheResumeBloc.FICHE_RESUME_BLOC, DSL.name("fiche_resume_bloc_pkey"), arrayOf(FicheResumeBloc.FICHE_RESUME_BLOC.ID), true)
+val FONCTION_CONTACT_FONCTION_CONTACT_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(FonctionContact.FONCTION_CONTACT, DSL.name("fonction_contact_fonction_contact_code_key"), arrayOf(FonctionContact.FONCTION_CONTACT.CODE), true)
+val FONCTION_CONTACT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(FonctionContact.FONCTION_CONTACT, DSL.name("fonction_contact_pkey"), arrayOf(FonctionContact.FONCTION_CONTACT.ID), true)
 val GESTIONNAIRE_GESTIONNAIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_gestionnaire_code_key"), arrayOf(Gestionnaire.GESTIONNAIRE.CODE), true)
 val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire.GESTIONNAIRE, DSL.name("gestionnaire_pkey"), arrayOf(Gestionnaire.GESTIONNAIRE.ID), true)
 val GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_groupe_couche_code_key"), arrayOf(GroupeCouche.GROUPE_COUCHE.CODE), true)
@@ -185,6 +188,7 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_commune_id_fkey"), arrayOf(Contact.CONTACT.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
+val CONTACT__CONTACT_CONTACT_FONCTION_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_fonction_fkey"), arrayOf(Contact.CONTACT.FONCTION_CONTACT_ID), remocra.db.jooq.remocra.keys.FONCTION_CONTACT_PKEY, arrayOf(FonctionContact.FONCTION_CONTACT.ID), true)
 val CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_lieu_dit_id_fkey"), arrayOf(Contact.CONTACT.LIEU_DIT_ID), remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY, arrayOf(LieuDit.LIEU_DIT.ID), true)
 val CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_voie_id_fkey"), arrayOf(Contact.CONTACT.VOIE_ID), remocra.db.jooq.remocra.keys.VOIE_PKEY, arrayOf(Voie.VOIE.ID), true)
 val COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Couche.COUCHE, DSL.name("couche_couche_groupe_couche_id_fkey"), arrayOf(Couche.COUCHE.GROUPE_COUCHE_ID), remocra.db.jooq.remocra.keys.GROUPE_COUCHE_PKEY, arrayOf(GroupeCouche.GROUPE_COUCHE.ID), true)

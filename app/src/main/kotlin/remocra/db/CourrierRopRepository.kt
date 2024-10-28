@@ -11,6 +11,7 @@ import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.enums.Disponibilite
+import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.Commune
@@ -23,6 +24,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
@@ -408,11 +410,14 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .and(L_CONTACT_ORGANISME.ORGANISME_ID.eq(organismeId))
             .fetchOneInto()
 
-    fun getExpediteurGroupement(organismeId: UUID): Contact? =
+    fun getExpediteurGroupement(organismeId: UUID): ExpediteurGroupement? =
         dsl.select(
-            CONTACT.fields().asList(),
+            *CONTACT.fields(),
+            FONCTION_CONTACT.LIBELLE.`as`("fonction"),
         )
             .from(CONTACT)
+            .join(FONCTION_CONTACT)
+            .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
             .join(L_CONTACT_ORGANISME)
             .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
             .join(L_CONTACT_ROLE)
@@ -422,6 +427,28 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
             .where(ROLE_CONTACT.CODE.eq(GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP))
             .and(L_CONTACT_ORGANISME.ORGANISME_ID.eq(organismeId))
             .fetchOneInto()
+
+    data class ExpediteurGroupement(
+        val contactId: UUID,
+        val contactActif: Boolean,
+        val contactCivilite: TypeCivilite?,
+        val contactNom: String?,
+        val contactPrenom: String?,
+        val contactNumeroVoie: String?,
+        val contactSuffixeVoie: String?,
+        val contactLieuDitText: String?,
+        val contactLieuDitId: UUID?,
+        val contactVoieText: String?,
+        val contactVoieId: UUID?,
+        val contactCodePostal: String?,
+        val contactCommuneText: String?,
+        val contactCommuneId: UUID?,
+        val contactPays: String?,
+        val contactTelephone: String?,
+        val contactEmail: String?,
+        val contactFonctionContactId: UUID?,
+        val fonctionContactLibelle: String?,
+    )
 
     /**
      * Pour le SDIS 01, les CIS ont forcément un parent de type GROUPEMENT

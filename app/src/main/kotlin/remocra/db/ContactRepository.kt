@@ -10,12 +10,12 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.ContactData
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypeCivilite
-import remocra.db.jooq.remocra.enums.TypeFonction
 import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactOrganisme
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.db.jooq.remocra.tables.references.CONTACT
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
@@ -82,7 +82,9 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             CONTACT.ACTIF,
             CONTACT.NOM,
             CONTACT.PRENOM,
-            CONTACT.FONCTION,
+            FONCTION_CONTACT.ID,
+            FONCTION_CONTACT.LIBELLE,
+            FONCTION_CONTACT.ID,
             CONTACT.TELEPHONE,
             CONTACT.EMAIL,
         )
@@ -104,6 +106,8 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
                         .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
                 }
             }
+            .leftJoin(FONCTION_CONTACT)
+            .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
             .let {
                 if (isGestionnaire) {
@@ -120,6 +124,8 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
     fun countAllForAdmin(filterBy: Filter?, appartenanceId: UUID, isGestionnaire: Boolean) =
         dsl.select(CONTACT.ID)
             .from(CONTACT)
+            .leftJoin(FONCTION_CONTACT)
+            .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
             .let {
                 if (isGestionnaire) {
                     it.join(L_CONTACT_GESTIONNAIRE)
@@ -142,10 +148,12 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         val contactCivilite: TypeCivilite?,
         val contactNom: String?,
         val contactPrenom: String?,
-        val contactFonction: TypeFonction?,
+        val fonctionContactLibelle: String?,
+        val fonctionContactId: UUID?,
         val contactTelephone: String?,
         val contactEmail: String?,
         val siteLibelle: String?,
+        val siteId: UUID?,
     )
 
     data class Filter(
@@ -153,7 +161,7 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         val contactActif: Boolean?,
         val contactNom: String?,
         val contactPrenom: String?,
-        val contactFonction: TypeFonction?,
+        val fonctionContactLibelle: String?,
         val contactTelephone: String?,
         val contactEmail: String?,
         val siteLibelle: String?,
@@ -165,7 +173,7 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
                     contactActif?.let { DSL.and(CONTACT.ACTIF.eq(it)) },
                     contactNom?.let { DSL.and(CONTACT.NOM.contains(it)) },
                     contactPrenom?.let { DSL.and(CONTACT.PRENOM.contains(it)) },
-                    contactFonction?.let { DSL.and(CONTACT.FONCTION.eq(it)) },
+                    fonctionContactLibelle?.let { DSL.and(FONCTION_CONTACT.LIBELLE.contains(it)) },
                     contactTelephone?.let { DSL.and(CONTACT.TELEPHONE.contains(it)) },
                     contactEmail?.let { DSL.and(CONTACT.EMAIL.contains(it)) },
                     siteLibelle?.let { DSL.and(SITE.LIBELLE.contains(it)) },
@@ -178,7 +186,7 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         val contactActif: Int?,
         val contactNom: Int?,
         val contactPrenom: Int?,
-        val contactFonction: Int?,
+        val contactFonctionLibelle: Int?,
         val contactTelephone: Int?,
         val contactEmail: Int?,
         val siteLibelle: Int?,
@@ -189,7 +197,7 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
             CONTACT.ACTIF.getSortField(contactActif),
             CONTACT.NOM.getSortField(contactNom),
             CONTACT.PRENOM.getSortField(contactPrenom),
-            CONTACT.FONCTION.getSortField(contactFonction),
+            FONCTION_CONTACT.LIBELLE.getSortField(contactFonctionLibelle),
             CONTACT.TELEPHONE.getSortField(contactTelephone),
             CONTACT.EMAIL.getSortField(contactEmail),
             SITE.LIBELLE.getSortField(siteLibelle),
@@ -211,7 +219,10 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) {
         )
             .let {
                 if (isGestionnaire) {
-                    it.select(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`as`("appartenanceId"))
+                    it.select(
+                        L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`as`("appartenanceId"),
+                        L_CONTACT_GESTIONNAIRE.SITE_ID.`as`("siteId"),
+                    )
                 } else {
                     it.select(L_CONTACT_ORGANISME.ORGANISME_ID.`as`("appartenanceId"))
                 }
