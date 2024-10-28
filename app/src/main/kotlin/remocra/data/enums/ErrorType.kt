@@ -342,6 +342,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_USED_IN_PEI(10006, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
     GESTIONNAIRE_USED_IN_SITE(10007, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
 
+    // Contact
+    CONTACT_FORBIDDEN_UPDATE(10008, "Vous n'avez pas les droits de modification des contacts", Status.FORBIDDEN),
+    CONTACT_FORBIDDEN_INSERT(10009, "Vous n'avez pas les droits de création des contacts", Status.FORBIDDEN),
+    CONTACT_FORBIDDEN_DELETE(10010, "Vous n'avez pas les droits de suppression des contacts", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

@@ -52,7 +52,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("{appartenanceId}/create")
-    @RequireDroits([Droit.GEST_SITE_A])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
     @Produces(MediaType.APPLICATION_JSON)
     fun create(
         @PathParam("appartenanceId")
@@ -92,7 +92,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("{appartenanceId}/update/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_A])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
     @Produces(MediaType.APPLICATION_JSON)
     fun update(
         @PathParam("appartenanceId")
@@ -192,7 +192,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/{appartenanceId}")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_DROITS])
     fun getAllForAdmin(
         @PathParam("appartenanceId")
         appartenanceId: UUID,
@@ -210,7 +210,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("{appartenanceId}/get/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_DROITS])
     fun getById(
         @PathParam("appartenanceId")
         appartenanceId: UUID,
@@ -223,7 +223,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @DELETE
     @Path("{appartenanceId}/delete/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_A])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
     fun delete(
         @PathParam("contactId")
         contactId: UUID,

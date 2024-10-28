@@ -21,9 +21,7 @@ class UpdateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.UPDAT
     @Inject lateinit var contactRepository: ContactRepository
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.GEST_SITE_A)) {
-            throw RemocraResponseException(ErrorType.GESTIONNAIRE_FORBIDDEN_UPDATE)
-        }
+        // Les droits sont gérés dans le checkContraintes puisqu'on a besoin de savoir si c'est un gestionnaire ou organisme
     }
 
     override fun postEvent(element: ContactData, userInfo: UserInfo) {
@@ -85,6 +83,10 @@ class UpdateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.UPDAT
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: ContactData) {
-        // Pas de contraintes
+        if ((element.isGestionnaire && !userInfo!!.droits.contains(Droit.GEST_SITE_A)) ||
+            (!element.isGestionnaire && !userInfo!!.droits.contains(Droit.ADMIN_DROITS))
+        ) {
+            throw RemocraResponseException(ErrorType.CONTACT_FORBIDDEN_UPDATE)
+        }
     }
 }
