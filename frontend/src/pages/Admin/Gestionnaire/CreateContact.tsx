@@ -21,7 +21,7 @@ const CreateContact = () => {
         isPost={true}
         submitUrl={`/api/contact/` + gestionnaireId + `/create/`}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.LIST_GESTIONNAIRE}
+        redirectUrl={URLS.LIST_CONTACT(gestionnaireId)}
       >
         <Contact />
       </MyFormik>

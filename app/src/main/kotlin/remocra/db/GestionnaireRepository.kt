@@ -9,6 +9,7 @@ import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
@@ -21,14 +22,33 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
             .where(GESTIONNAIRE.ACTIF)
             .fetchInto()
 
-    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<Gestionnaire> =
-        dsl.select(GESTIONNAIRE.fields().asList())
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<GestionnaireWithHasContact> =
+        dsl.select(
+            *GESTIONNAIRE.fields(),
+            DSL.field(
+                DSL.exists(
+                    dsl.select(L_CONTACT_GESTIONNAIRE.CONTACT_ID)
+                        .from(
+                            L_CONTACT_GESTIONNAIRE,
+                        )
+                        .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
+                ),
+            ).`as`("hasContact"),
+        )
             .from(GESTIONNAIRE)
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(GESTIONNAIRE.LIBELLE))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
+
+    data class GestionnaireWithHasContact(
+        val gestionnaireId: UUID,
+        val gestionnaireActif: Boolean,
+        val gestionnaireCode: String,
+        val gestionnaireLibelle: String,
+        val hasContact: Boolean,
+    )
 
     fun countAllForAdmin(filterBy: Filter?) =
         dsl.select(GESTIONNAIRE.ID)

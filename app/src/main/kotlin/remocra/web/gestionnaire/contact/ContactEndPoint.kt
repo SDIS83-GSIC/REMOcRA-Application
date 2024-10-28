@@ -13,6 +13,9 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.ContactData
+import remocra.data.DataTableau
+import remocra.data.Params
+import remocra.db.ContactRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypeFonction
@@ -26,6 +29,9 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createContactUseCase: CreateContactUseCase
+
+    @Inject
+    lateinit var contactRepository: ContactRepository
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -124,4 +130,20 @@ class ContactEndPoint : AbstractEndpoint() {
         @FormParam("siteId")
         var siteId: UUID? = null
     }
+
+    @POST
+    @Path("/{gestionnaireId}")
+    @RequireDroits([Droit.GEST_SITE_R])
+    fun getAllForAdmin(
+        @PathParam("gestionnaireId")
+        gestionnaireId: UUID,
+
+        params: Params<ContactRepository.Filter, ContactRepository.Sort>,
+    ): Response =
+        Response.ok(
+            DataTableau(
+                list = contactRepository.getAllForAdmin(params, gestionnaireId),
+                count = contactRepository.countAllForAdmin(params.filterBy, gestionnaireId),
+            ),
+        ).build()
 }

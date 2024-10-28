@@ -4,7 +4,11 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconAddContact, IconList } from "../../../components/Icon/Icon.tsx";
+import {
+  IconAddContact,
+  IconGererContact,
+  IconList,
+} from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -42,6 +46,8 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
+      textDisable: "Ce gestionnaire a des contacts.",
+      disable: (row) => row.original.hasContact,
       type: TYPE_BUTTON.DELETE,
       path: url`/api/gestionnaire/delete/`,
     });
@@ -54,6 +60,19 @@ const ListGestionnaire = () => {
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconAddContact />,
       textEnable: "Ajouter un contact",
+      classEnable: "warning",
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (gestionnaireId) => URLS.LIST_CONTACT(gestionnaireId),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconGererContact />,
+      textEnable: "Afficher les contacts",
+      textDisable: "Aucun contact pour ce gestionnaire",
+      disable: (row) => !row.original.hasContact,
       classEnable: "warning",
     });
   }
