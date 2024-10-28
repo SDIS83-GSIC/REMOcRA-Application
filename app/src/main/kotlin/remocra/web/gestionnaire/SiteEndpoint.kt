@@ -103,4 +103,11 @@ class SiteEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
     }
+
+    @GET
+    @Path("/actifs")
+    @RequireDroits([Droit.GEST_SITE_R])
+    fun getAllActifs(): Response {
+        return Response.ok(siteRepository.getAll()).build()
+    }
 }

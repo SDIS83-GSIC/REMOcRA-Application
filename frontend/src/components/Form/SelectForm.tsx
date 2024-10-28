@@ -24,6 +24,7 @@ const SelectForm = ({
   required = false,
   disabled = false,
   onChange: onChangeCustom,
+  optionDisabled,
   setValues,
   setOtherValues,
 }: SelectFormType) => {
@@ -52,7 +53,9 @@ const SelectForm = ({
             : onChange({ name: name, value: e.target.value });
         }}
       >
-        <option value={""}>Aucune valeur saisie</option>
+        <option value={""}>
+          {disabled ? optionDisabled : "Aucune valeur saisie"}
+        </option>
         {list.map((e, key) => (
           <option key={key} value={e.id} selected={defaultValue === e}>
             {e.libelle}

@@ -20,6 +20,7 @@ export type SelectFormType = SelectType & {
   label?: string;
   required?: boolean;
   disabled?: boolean;
+  optionDisabled?: string;
   setValues: (e: any) => void;
   setOtherValues?: () => void;
 };

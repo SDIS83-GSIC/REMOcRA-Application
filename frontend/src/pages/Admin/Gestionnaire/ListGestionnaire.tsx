@@ -4,7 +4,7 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
+import { IconAddContact, IconList } from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -44,6 +44,17 @@ const ListGestionnaire = () => {
       },
       type: TYPE_BUTTON.DELETE,
       path: url`/api/gestionnaire/delete/`,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (gestionnaireId) => URLS.ADD_CONTACT(gestionnaireId),
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconAddContact />,
+      textEnable: "Ajouter un contact",
+      classEnable: "warning",
     });
   }
   return (

@@ -17,6 +17,10 @@ export const requiredEmail = requiredIf(
   string().email("Format de l'adresse e-mail non valide."),
 );
 
+export const email = string()
+  ?.nullable()
+  ?.email("Format de l'adresse e-mail non valide.");
+
 export const number = numberYup().typeError("Ce champ doit être un nombre.");
 export const requiredNumber = requiredIf(true, number);
 

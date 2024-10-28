@@ -23,6 +23,7 @@ import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.image.ImageModule
 import remocra.web.indisponibiliteTemporaire.IndisponibiliteTemporaireModule
+import remocra.web.lieudit.LieuDitModule
 import remocra.web.marque.MarquePibiModule
 import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
@@ -34,6 +35,7 @@ import remocra.web.pei.PeiModule
 import remocra.web.profilOrganisme.ProfilOrganismeModule
 import remocra.web.typeOrganisme.TypeOrganismeModule
 import remocra.web.visite.VisiteModule
+import remocra.web.voie.VoieModule
 import remocra.web.zoneIntegration.ZoneIntegrationModule
 import kotlin.reflect.KClass
 
@@ -64,6 +66,8 @@ object WebModule : RemocraModule() {
         install(ImageModule)
         install(MarquePibiModule)
         install(GestionnaireModule)
+        install(VoieModule)
+        install(LieuDitModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

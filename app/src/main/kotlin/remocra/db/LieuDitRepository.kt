@@ -16,6 +16,12 @@ class LieuDitRepository @Inject constructor(private val dsl: DSLContext) {
             .orderBy(LIEU_DIT.LIBELLE)
             .fetchInto()
 
+    fun getLieuDitWithCommune(): Collection<LieuDitWithCommune> =
+        dsl.select(LIEU_DIT.ID.`as`("id"), LIEU_DIT.LIBELLE.`as`("libelle"), LIEU_DIT.COMMUNE_ID.`as`("communeId"))
+            .from(LIEU_DIT)
+            .orderBy(LIEU_DIT.LIBELLE)
+            .fetchInto()
+
     data class LieuDitWithCommune(
         val id: UUID,
         val libelle: String,

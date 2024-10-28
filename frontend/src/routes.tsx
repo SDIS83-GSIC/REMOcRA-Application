@@ -13,6 +13,7 @@ import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
 import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
+import CreateContact from "./pages/Admin/Gestionnaire/CreateContact.tsx";
 import CreateGestionnaire from "./pages/Admin/Gestionnaire/CreateGestionnaire.tsx";
 import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
 import UpdateGestionnaire from "./pages/Admin/Gestionnaire/UpdateGestionnaire.tsx";
@@ -207,6 +208,9 @@ export const URLS = {
   ADD_GESTIONNAIRE: url`/admin/gestionnaire/create`,
   UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
     url`/admin/gestionnaire/update/` + gestionnaireId,
+
+  ADD_CONTACT: (gestionnaireId: string) =>
+    url`/admin/gestionnaire/` + gestionnaireId + `/contact/create/`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -916,6 +920,15 @@ export default [
         element: (
           <Authorization
             Component={CreateGestionnaire}
+            droits={[TYPE_DROIT.GEST_SITE_A]}
+          />
+        ),
+      },
+      {
+        path: "gestionnaire/:gestionnaireId/contact/create",
+        element: (
+          <Authorization
+            Component={CreateContact}
             droits={[TYPE_DROIT.GEST_SITE_A]}
           />
         ),

@@ -43,6 +43,9 @@ export const IconCentPourcent = () => <i className="fi fi-br-percent-100" />;
 export const IconLock = () => <i className="fi fi-br-lock" />;
 export const IconUnlock = () => <i className="fi fi-br-unlock" />;
 
+export const IconAddContact = () => <i className="fi fi-br-user-add" />;
+export const IconGererContact = () => <i className="fi fi-br-users-gear" />;
+
 export const IconNextPage = () => <i className="fi fi-rr-angle-circle-right" />;
 export const IconPreviousPage = () => (
   <i className="fi fi-rr-angle-circle-left" />

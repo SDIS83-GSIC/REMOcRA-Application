@@ -45,6 +45,17 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) {
         val communeId: UUID,
     )
 
+    fun getVoies(): List<VoieWithCommune> =
+        dsl.select(
+            VOIE.ID.`as`("id"),
+            VOIE.LIBELLE.`as`("code"),
+            VOIE.LIBELLE.`as`("libelle"),
+            VOIE.COMMUNE_ID.`as`("communeId"),
+        )
+            .from(VOIE)
+            .orderBy(VOIE.LIBELLE)
+            .fetchInto()
+
     private fun getConditions(codeInsee: String?, libelleVoie: String?): Condition {
         var condition: Condition = DSL.trueCondition()
         if (codeInsee != null) {

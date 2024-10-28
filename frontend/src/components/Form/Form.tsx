@@ -317,6 +317,7 @@ export const Multiselect = ({
       <FormLabel label={label} required={required} />
       <ReactSelect
         isMulti={true}
+        placeholder={"Sélectionnez"}
         name={name}
         options={options}
         getOptionValue={getOptionValue}
