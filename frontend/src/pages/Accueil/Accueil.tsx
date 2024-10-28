@@ -97,6 +97,20 @@ function getLinks(
           label: "Administrer l'application",
           link: URLS.MODULE_ADMIN,
         },
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
+            hasDroit(user, TYPE_DROIT.GEST_SITE_A),
+          label: "Liste des gestionnaires",
+          link: URLS.LIST_GESTIONNAIRE,
+        },
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
+            hasDroit(user, TYPE_DROIT.GEST_SITE_A),
+          label: "Liste des sites",
+          link: URLS.LIST_SITE,
+        },
       ];
     case TypeModuleRemocra.COURRIER:
     case TypeModuleRemocra.DOCUMENT:
