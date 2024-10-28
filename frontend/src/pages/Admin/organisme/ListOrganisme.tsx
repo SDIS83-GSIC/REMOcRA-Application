@@ -1,7 +1,8 @@
-import { Button, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconAddContact,
@@ -67,16 +68,19 @@ const ListOrganisme = () => {
   }
   return (
     <>
-      <PageTitle title="Liste des organismes" icon={<IconPei />} />
       <Container>
-        <Button
-          type="button"
-          variant="primary"
-          href={URLS.ADD_ORGANISME}
-          className="mb-1"
-        >
-          Ajouter un organisme
-        </Button>
+        <PageTitle
+          title="Liste des organismes"
+          icon={<IconPei />}
+          right={
+            <CreateButton
+              title={"Ajouter un organisme"}
+              href={URLS.ADD_ORGANISME}
+            />
+          }
+        />
+      </Container>
+      <Container fluid className={"px-5"}>
         <QueryTable
           query={url`/api/organisme/get`}
           filterValuesToVariable={filterValuesOrganisme}

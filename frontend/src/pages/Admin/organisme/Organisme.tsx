@@ -1,21 +1,21 @@
 import { useFormikContext } from "formik";
-import { Button } from "react-bootstrap";
 import { object } from "yup";
-import { URLS } from "../../../routes.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
-import SelectForm from "../../../components/Form/SelectForm.tsx";
-import {
-  requiredBoolean,
-  requiredString,
-} from "../../../module/validators.tsx";
 import {
   CheckBoxInput,
   FormContainer,
   FormLabel,
   TextInput,
 } from "../../../components/Form/Form.tsx";
+import SelectForm from "../../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import url from "../../../module/fetch.tsx";
+import {
+  requiredBoolean,
+  requiredString,
+} from "../../../module/validators.tsx";
+import { URLS } from "../../../routes.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { OrganismeCompleteType } from "./OrganismeEntity.tsx";
 
 export const prepareOrganismeValues = (values: OrganismeCompleteType) => ({
@@ -190,17 +190,7 @@ export const OrganismeForm = () => {
         defaultValue={defaultOrganismeParent}
       />
       <CheckBoxInput name="organismeActif" label="Actif" />
-      <Button
-        type="button"
-        variant="primary"
-        href={URLS.LIST_ORGANISME}
-        className="mx-1"
-      >
-        Annuler
-      </Button>
-      <Button type="submit" variant="primary">
-        Valider
-      </Button>
+      <SubmitFormButtons returnLink={URLS.LIST_ORGANISME} />
     </FormContainer>
   );
 };
