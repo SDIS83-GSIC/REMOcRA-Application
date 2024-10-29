@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
+import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.references.BLOC_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_BLOC_DOCUMENT
@@ -110,4 +111,12 @@ class BlocDocumentRepository @Inject constructor(private val dsl: DSLContext) {
         val listeThematique: String?,
         val listeProfilDroit: String?,
     )
+
+    fun getDocumentByBlocDocument(blocDocumentId: UUID): Document? =
+        dsl.select(DOCUMENT.fields().asList())
+            .from(DOCUMENT)
+            .join(BLOC_DOCUMENT)
+            .on(BLOC_DOCUMENT.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .where(BLOC_DOCUMENT.ID.eq(blocDocumentId))
+            .fetchOneInto()
 }

@@ -1,23 +1,39 @@
 package remocra.web.documents
 
 import com.google.inject.Inject
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import org.slf4j.LoggerFactory
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.db.BlocDocumentRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.security.NoCsrf
+import remocra.usecase.document.DocumentUtils
+import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
+import java.io.File
+import java.nio.file.Paths
+import java.util.UUID
+import kotlin.io.path.pathString
 
 @Path("/bloc-document")
 @Produces(MediaType.APPLICATION_JSON)
 class BlocDocumentEndpoint : AbstractEndpoint() {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Inject
     lateinit var blocDocumentRepository: BlocDocumentRepository
+
+    @Inject
+    lateinit var documentUtils: DocumentUtils
 
     @POST
     @Path("/")
@@ -29,4 +45,27 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
                 count = blocDocumentRepository.countAllForAdmin(params.filterBy),
             ),
         ).build()
+
+    /**
+     * Télécharge le document.
+     * @param documentId l'identifiant du document à télécharger
+     * @return La réponse HTTP contenant le fichier à télécharger.
+     */
+    @GET
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
+    @Public("Le téléchargement des documents n'est pas dépendant d'un droit particulier")
+    @Path("/telecharger/{blocDocumentId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    fun telechargerBlocDocument(@PathParam("blocDocumentId") blocDocumentId: UUID): Response {
+        val document = blocDocumentRepository.getDocumentByBlocDocument(blocDocumentId)
+
+        if (document == null) {
+            logger.error("Le bloc document $blocDocumentId n'a pas été trouvé.")
+            return notFound().build()
+        }
+
+        return documentUtils.checkFile(
+            File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
+        )
+    }
 }

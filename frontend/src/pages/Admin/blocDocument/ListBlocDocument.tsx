@@ -1,19 +1,44 @@
 import { Container } from "react-bootstrap";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFilterFromList.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
+import { IconExport, IconList } from "../../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../../Entities/UtilisateurEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import FilterValues from "./FilterBlocDocument.tsx";
 
 const ListBlocDocument = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const thematiqueState = useGet(url`/api/thematique/`);
   const profilDroitState = useGet(url`/api/profil-droit`);
+  const listeButton: ButtonType[] = [];
+  if (hasDroit(user, TYPE_DROIT.DOCUMENTS_R)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      href: (blocDocumentId) =>
+        url`/api/bloc-document/telecharger/` + blocDocumentId,
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconExport />,
+      textEnable: "Télécharger le document",
+      classEnable: "warning",
+    });
+  }
   return (
     <>
       <Container>
@@ -59,6 +84,11 @@ const ListBlocDocument = () => {
                 );
               },
             },
+            ActionColumn({
+              Header: "Actions",
+              accessor: "blocDocumentId",
+              buttons: listeButton,
+            }),
           ]}
           idName={"tableBlocDocument"}
           filterValuesToVariable={FilterValues}
