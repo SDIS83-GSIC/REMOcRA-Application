@@ -21,7 +21,17 @@ data class IndisponibiliteTemporaireData(
 
     val indisponibiliteTemporaireBasculeAutoIndisponible: Boolean = false,
 
-    val indisponibiliteTemporaireDateFin: ZonedDateTime?,
+    val indisponibiliteTemporaireNotificationDebut: ZonedDateTime? = null,
+
+    val indisponibiliteTemporaireNotificationFin: ZonedDateTime? = null,
+
+    val indisponibiliteTemporaireNotificationResteIndispo: ZonedDateTime? = null,
+
+    val indisponibiliteTemporaireBasculeDebut: Boolean = false,
+
+    val indisponibiliteTemporaireBasculeFin: Boolean = false,
+
+    val indisponibiliteTemporaireDateFin: ZonedDateTime? = null,
 
     val indisponibiliteTemporaireListePeiId: Collection<UUID>,
 

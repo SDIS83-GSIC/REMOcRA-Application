@@ -134,6 +134,44 @@ open class IndisponibiliteTemporaire(
      */
     val MAIL_APRES_INDISPONIBILITE: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_mail_apres_indisponibilite"), SQLDataType.BOOLEAN.nullable(false), this, "")
 
+    /**
+     * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_notification_debut</code>.
+     * Date à laquelle le début de l'indisponibilité temporaire a été notifié
+     */
+    val NOTIFICATION_DEBUT: TableField<Record, ZonedDateTime?> = createField(DSL.name("indisponibilite_temporaire_notification_debut"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date à laquelle le début de l'indisponibilité temporaire a été notifié", ZonedDateTimeBinding())
+
+    /**
+     * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_notification_fin</code>.
+     * Date à laquelle la fin de l'indisponibilité temporaire a été notifié
+     */
+    val NOTIFICATION_FIN: TableField<Record, ZonedDateTime?> = createField(DSL.name("indisponibilite_temporaire_notification_fin"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date à laquelle la fin de l'indisponibilité temporaire a été notifié", ZonedDateTimeBinding())
+
+    /**
+     * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_bascule_debut</code>.
+     * Le calcul_dispo au début de l'indisponibilité temporaire a-t-il déjà été
+     * lancé ?
+     */
+    val BASCULE_DEBUT: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_bascule_debut"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "Le calcul_dispo au début de l'indisponibilité temporaire a-t-il déjà été lancé ?")
+
+    /**
+     * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_bascule_fin</code>.
+     * Le calcul_dispo à la fin de l'indisponibilité temporaire a-t-il déjà été
+     * lancé ?
+     */
+    val BASCULE_FIN: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_bascule_fin"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "Le calcul_dispo à la fin de l'indisponibilité temporaire a-t-il déjà été lancé ?")
+
+    /**
+     * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_notification_reste_indispo</code>.
+     * Date à laquelle les pei restés indispo d'une indisponibilité temporaire
+     * ont été notifiés
+     */
+    val NOTIFICATION_RESTE_INDISPO: TableField<Record, ZonedDateTime?> = createField(DSL.name("indisponibilite_temporaire_notification_reste_indispo"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date à laquelle les pei restés indispo d'une indisponibilité temporaire ont été notifiés", ZonedDateTimeBinding())
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

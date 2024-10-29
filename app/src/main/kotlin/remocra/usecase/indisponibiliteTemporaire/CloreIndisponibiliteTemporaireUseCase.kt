@@ -49,6 +49,11 @@ class CloreIndisponibiliteTemporaireUseCase
             indisponibiliteTemporaireDateFin = dateUtils.now(), // date actuelle pour "clore" l'indispo
             indisponibiliteTemporaireBasculeAutoDisponible = element.indisponibiliteTemporaireBasculeAutoDisponible,
             indisponibiliteTemporaireBasculeAutoIndisponible = element.indisponibiliteTemporaireBasculeAutoIndisponible,
+            indisponibiliteTemporaireNotificationDebut = element.indisponibiliteTemporaireNotificationDebut,
+            indisponibiliteTemporaireNotificationFin = element.indisponibiliteTemporaireNotificationFin,
+            indisponibiliteTemporaireNotificationResteIndispo = element.indisponibiliteTemporaireNotificationResteIndispo,
+            indisponibiliteTemporaireBasculeDebut = element.indisponibiliteTemporaireBasculeDebut,
+            indisponibiliteTemporaireBasculeFin = element.indisponibiliteTemporaireBasculeFin,
         )
         indisponibiliteTemporaireRepository.upsert(indisponibiliteTemporaire)
 

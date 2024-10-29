@@ -50,6 +50,11 @@ class UpdateIndisponibiliteTemporaireUseCase
             indisponibiliteTemporaireDateFin = element.indisponibiliteTemporaireDateFin,
             indisponibiliteTemporaireBasculeAutoDisponible = element.indisponibiliteTemporaireBasculeAutoDisponible,
             indisponibiliteTemporaireBasculeAutoIndisponible = element.indisponibiliteTemporaireBasculeAutoIndisponible,
+            indisponibiliteTemporaireNotificationDebut = element.indisponibiliteTemporaireNotificationDebut,
+            indisponibiliteTemporaireNotificationFin = element.indisponibiliteTemporaireNotificationFin,
+            indisponibiliteTemporaireNotificationResteIndispo = element.indisponibiliteTemporaireNotificationResteIndispo,
+            indisponibiliteTemporaireBasculeDebut = element.indisponibiliteTemporaireBasculeDebut,
+            indisponibiliteTemporaireBasculeFin = element.indisponibiliteTemporaireBasculeFin,
         )
         indisponibiliteTemporaireRepository.upsert(indisponibiliteTemporaire)
 

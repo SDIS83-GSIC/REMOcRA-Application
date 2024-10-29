@@ -29,6 +29,11 @@ data class IndisponibiliteTemporaire(
     val indisponibiliteTemporaireBasculeAutoDisponible: Boolean,
     val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean,
     val indisponibiliteTemporaireMailApresIndisponibilite: Boolean,
+    val indisponibiliteTemporaireNotificationDebut: ZonedDateTime?,
+    val indisponibiliteTemporaireNotificationFin: ZonedDateTime?,
+    val indisponibiliteTemporaireBasculeDebut: Boolean?,
+    val indisponibiliteTemporaireBasculeFin: Boolean?,
+    val indisponibiliteTemporaireNotificationResteIndispo: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -77,6 +82,41 @@ data class IndisponibiliteTemporaire(
         if (this.indisponibiliteTemporaireMailApresIndisponibilite != o.indisponibiliteTemporaireMailApresIndisponibilite) {
             return false
         }
+        if (this.indisponibiliteTemporaireNotificationDebut == null) {
+            if (o.indisponibiliteTemporaireNotificationDebut != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireNotificationDebut != o.indisponibiliteTemporaireNotificationDebut) {
+            return false
+        }
+        if (this.indisponibiliteTemporaireNotificationFin == null) {
+            if (o.indisponibiliteTemporaireNotificationFin != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireNotificationFin != o.indisponibiliteTemporaireNotificationFin) {
+            return false
+        }
+        if (this.indisponibiliteTemporaireBasculeDebut == null) {
+            if (o.indisponibiliteTemporaireBasculeDebut != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireBasculeDebut != o.indisponibiliteTemporaireBasculeDebut) {
+            return false
+        }
+        if (this.indisponibiliteTemporaireBasculeFin == null) {
+            if (o.indisponibiliteTemporaireBasculeFin != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireBasculeFin != o.indisponibiliteTemporaireBasculeFin) {
+            return false
+        }
+        if (this.indisponibiliteTemporaireNotificationResteIndispo == null) {
+            if (o.indisponibiliteTemporaireNotificationResteIndispo != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireNotificationResteIndispo != o.indisponibiliteTemporaireNotificationResteIndispo) {
+            return false
+        }
         return true
     }
 
@@ -92,6 +132,11 @@ data class IndisponibiliteTemporaire(
         result = prime * result + this.indisponibiliteTemporaireBasculeAutoDisponible.hashCode()
         result = prime * result + this.indisponibiliteTemporaireMailAvantIndisponibilite.hashCode()
         result = prime * result + this.indisponibiliteTemporaireMailApresIndisponibilite.hashCode()
+        result = prime * result + (if (this.indisponibiliteTemporaireNotificationDebut == null) 0 else this.indisponibiliteTemporaireNotificationDebut.hashCode())
+        result = prime * result + (if (this.indisponibiliteTemporaireNotificationFin == null) 0 else this.indisponibiliteTemporaireNotificationFin.hashCode())
+        result = prime * result + (if (this.indisponibiliteTemporaireBasculeDebut == null) 0 else this.indisponibiliteTemporaireBasculeDebut.hashCode())
+        result = prime * result + (if (this.indisponibiliteTemporaireBasculeFin == null) 0 else this.indisponibiliteTemporaireBasculeFin.hashCode())
+        result = prime * result + (if (this.indisponibiliteTemporaireNotificationResteIndispo == null) 0 else this.indisponibiliteTemporaireNotificationResteIndispo.hashCode())
         return result
     }
 
@@ -107,6 +152,11 @@ data class IndisponibiliteTemporaire(
         sb.append(", ").append(indisponibiliteTemporaireBasculeAutoDisponible)
         sb.append(", ").append(indisponibiliteTemporaireMailAvantIndisponibilite)
         sb.append(", ").append(indisponibiliteTemporaireMailApresIndisponibilite)
+        sb.append(", ").append(indisponibiliteTemporaireNotificationDebut)
+        sb.append(", ").append(indisponibiliteTemporaireNotificationFin)
+        sb.append(", ").append(indisponibiliteTemporaireBasculeDebut)
+        sb.append(", ").append(indisponibiliteTemporaireBasculeFin)
+        sb.append(", ").append(indisponibiliteTemporaireNotificationResteIndispo)
 
         sb.append(")")
         return sb.toString()
