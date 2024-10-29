@@ -18,6 +18,7 @@ import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
 import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
+import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
@@ -349,6 +350,22 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .set(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_FIN, dateNotification)
             .execute()
 
+    /** Remonte toutes les Indispo Temp terminées dont la date NOTIFICATION_RESTE_INDISPO est null
+     * @return une liste d'indisponibiliteTemporaire
+     */
+    fun getAllResteIndispoNotNotified(): List<IndisponibiliteTemporaire> =
+        dsl.selectFrom(INDISPONIBILITE_TEMPORAIRE)
+            .where(INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE.isTrue)
+            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.le(dateUtils.now()))
+            .and(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_RESTE_INDISPO.isNull)
+            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_FIN)
+            .fetchInto()
+
+    fun setNotificationResteIndispo(dateNotification: ZonedDateTime) =
+        dsl.update(INDISPONIBILITE_TEMPORAIRE)
+            .set(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_RESTE_INDISPO, dateNotification)
+            .execute()
+
     fun getPeiFromListIt(listItId: List<UUID>): List<PeiForItMoulinette> =
         dsl.select(
             PEI.ID,
@@ -357,6 +374,17 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
             .join(PEI).on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
             .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(listItId))
+            .fetchInto()
+
+    fun getPeiResteIndispoFromItId(listItId: List<UUID>): List<PeiForItMoulinette> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+        )
+            .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .join(PEI).on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+            .where(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE))
+            .and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(listItId))
             .fetchInto()
 
     data class PeiForItMoulinette(
