@@ -4,6 +4,7 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFilterFromList.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import { IconExport, IconList } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
@@ -18,6 +19,7 @@ import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../../../Entities/UtilisateurEntity.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import FilterValues from "./FilterBlocDocument.tsx";
 
@@ -42,7 +44,18 @@ const ListBlocDocument = () => {
   return (
     <>
       <Container>
-        <PageTitle icon={<IconList />} title={"Liste des blocs documents"} />
+        <PageTitle
+          icon={<IconList />}
+          title={"Liste des blocs documents"}
+          right={
+            hasDroit(user, TYPE_DROIT.DOCUMENTS_A) && (
+              <CreateButton
+                href={URLS.ADD_BLOC_DOCUMENT}
+                title={"Ajouter un bloc document"}
+              />
+            )
+          }
+        />
         <QueryTable
           query={url`/api/bloc-document/`}
           columns={[

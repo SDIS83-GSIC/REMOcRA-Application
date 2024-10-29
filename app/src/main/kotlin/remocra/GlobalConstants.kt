@@ -54,6 +54,7 @@ object GlobalConstants {
     const val DOSSIER_MODELES_COURRIERS = DOSSIER_DATA + "modeles/courriers/"
 
     const val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
+    const val DOSSIER_BLOC_DOCUMENT = DOSSIER_DOCUMENT + "bloc-document/"
 
     const val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
 

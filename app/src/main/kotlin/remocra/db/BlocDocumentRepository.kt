@@ -8,7 +8,10 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
+import remocra.db.jooq.remocra.tables.pojos.BlocDocument
 import remocra.db.jooq.remocra.tables.pojos.Document
+import remocra.db.jooq.remocra.tables.pojos.LProfilDroitBlocDocument
+import remocra.db.jooq.remocra.tables.pojos.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.references.BLOC_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_BLOC_DOCUMENT
@@ -119,4 +122,19 @@ class BlocDocumentRepository @Inject constructor(private val dsl: DSLContext) {
             .on(BLOC_DOCUMENT.DOCUMENT_ID.eq(DOCUMENT.ID))
             .where(BLOC_DOCUMENT.ID.eq(blocDocumentId))
             .fetchOneInto()
+
+    fun insertBlocDocument(blocDocument: BlocDocument) =
+        dsl.insertInto(BLOC_DOCUMENT)
+            .set(dsl.newRecord(BLOC_DOCUMENT, blocDocument))
+            .execute()
+
+    fun insertThematiqueBlocDocument(lThematiqueBlocDocument: LThematiqueBlocDocument) =
+        dsl.insertInto(L_THEMATIQUE_BLOC_DOCUMENT)
+            .set(dsl.newRecord(L_THEMATIQUE_BLOC_DOCUMENT, lThematiqueBlocDocument))
+            .execute()
+
+    fun insertProfilDroitBlocDocument(LProfilDroitBlocDocument: LProfilDroitBlocDocument) =
+        dsl.insertInto(L_PROFIL_DROIT_BLOC_DOCUMENT)
+            .set(dsl.newRecord(L_PROFIL_DROIT_BLOC_DOCUMENT, LProfilDroitBlocDocument))
+            .execute()
 }

@@ -347,6 +347,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     CONTACT_FORBIDDEN_INSERT(10009, "Vous n'avez pas les droits de création des contacts", Status.FORBIDDEN),
     CONTACT_FORBIDDEN_DELETE(10010, "Vous n'avez pas les droits de suppression des contacts", Status.FORBIDDEN),
 
+    //
+    // ********************************************************************************
+    // Document
+    // ********************************************************************************
+    //
+    BLOC_DOCUMENT_FORBIDDEN_INSERT(10011, "Vous n'avez pas les droits de création des blocs documents.", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

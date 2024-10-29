@@ -22,4 +22,10 @@ class ThematiqueEndpoint : AbstractEndpoint() {
     @Public("Les thématiques ne sont pas liées à un droit")
     fun getThematique() =
         Response.ok(thematiqueRepository.getAll()).build()
+
+    @GET
+    @Path("/actif")
+    @Public("Les thématiques ne sont pas liées à un droit")
+    fun getThematiquesActives() =
+        Response.ok(thematiqueRepository.getAll(true)).build()
 }
