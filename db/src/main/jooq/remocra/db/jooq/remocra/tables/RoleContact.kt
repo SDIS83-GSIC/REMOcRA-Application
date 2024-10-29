@@ -100,11 +100,6 @@ open class RoleContact(
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("role_contact_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.role_contact.role_protected</code>.
-     */
-    val ROLE_PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("role_protected"), SQLDataType.BOOLEAN, this, "")
-
-    /**
      * The column <code>remocra.role_contact.role_contact_protected</code>.
      */
     val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("role_contact_protected"), SQLDataType.BOOLEAN, this, "")

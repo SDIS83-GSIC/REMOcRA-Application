@@ -23,7 +23,6 @@ data class RoleContact(
     val roleContactActif: Boolean,
     val roleContactCode: String,
     val roleContactLibelle: String,
-    val roleProtected: Boolean?,
     val roleContactProtected: Boolean?,
 ) : Serializable {
 
@@ -50,13 +49,6 @@ data class RoleContact(
         if (this.roleContactLibelle != o.roleContactLibelle) {
             return false
         }
-        if (this.roleProtected == null) {
-            if (o.roleProtected != null) {
-                return false
-            }
-        } else if (this.roleProtected != o.roleProtected) {
-            return false
-        }
         if (this.roleContactProtected == null) {
             if (o.roleContactProtected != null) {
                 return false
@@ -74,7 +66,6 @@ data class RoleContact(
         result = prime * result + this.roleContactActif.hashCode()
         result = prime * result + this.roleContactCode.hashCode()
         result = prime * result + this.roleContactLibelle.hashCode()
-        result = prime * result + (if (this.roleProtected == null) 0 else this.roleProtected.hashCode())
         result = prime * result + (if (this.roleContactProtected == null) 0 else this.roleContactProtected.hashCode())
         return result
     }
@@ -86,7 +77,6 @@ data class RoleContact(
         sb.append(", ").append(roleContactActif)
         sb.append(", ").append(roleContactCode)
         sb.append(", ").append(roleContactLibelle)
-        sb.append(", ").append(roleProtected)
         sb.append(", ").append(roleContactProtected)
 
         sb.append(")")
