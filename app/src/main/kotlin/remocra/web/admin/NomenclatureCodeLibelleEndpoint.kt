@@ -71,6 +71,7 @@ class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
     fun get(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, params: Params<NomenclatureCodeLibelleRepository.Filter, NomenclatureCodeLibelleRepository.Sort>): Response {
         val type = getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString)
         params.filterBy?.type = type
+        params.sortBy?.type = type
         return Response.ok(DataTableau(nomenclatureCodeLibelleRepository.getAllForAdmin(type, params), nomenclatureCodeLibelleRepository.getCountForAdmin(type, params))).build()
     }
 

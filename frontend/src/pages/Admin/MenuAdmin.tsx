@@ -35,6 +35,8 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.LIST_ROLE_CONTACT}>Rôles des contacts</a>
           <br />
+          <a href={URLS.LIST_THEMATIQUE}>Thématiques</a>
+          <br />
           <a href={URLS.LIST_TYPE_RESEAU}>Types de réseaux</a>
           <br />
         </Col>

@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.references.NIVEAU
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
+import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
@@ -52,6 +53,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION
@@ -69,6 +71,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME.ID
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR.ID
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.ID
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.ID
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.ID
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.ID
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.ID
@@ -88,6 +91,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME.CODE
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR.CODE
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.CODE
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.CODE
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.CODE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.CODE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.CODE
@@ -107,6 +111,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME.LIBELLE
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR.LIBELLE
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.LIBELLE
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.LIBELLE
@@ -126,6 +131,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME.ACTIF
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR.ACTIF
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.ACTIF
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.ACTIF
@@ -139,6 +145,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.NATURE_DECI -> NATURE_DECI.PROTECTED
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.PROTECTED
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.PROTECTED
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.PROTECTED
                 else -> null
             }
 
@@ -199,14 +206,14 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val actif: Int?,
         val protected: Int?,
         val libelleFk: String?,
-        val type: TypeNomenclatureCodeLibelle?,
+        var type: TypeNomenclatureCodeLibelle?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             getCodeField(type!!).getSortField(code),
-            getLibelleField(type).getSortField(libelle),
-            getActifField(type).getSortField(actif),
-            getProtectedField(type)?.getSortField(protected),
-            getInfosFk(type)?.libelleCible?.getSortField(libelleFk),
+            getLibelleField(type!!).getSortField(libelle),
+            getActifField(type!!).getSortField(actif),
+            getProtectedField(type!!)?.getSortField(protected),
+            getInfosFk(type!!)?.libelleCible?.getSortField(libelleFk),
         )
     }
 

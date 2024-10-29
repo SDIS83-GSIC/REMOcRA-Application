@@ -17,6 +17,7 @@ export enum NOMENCLATURE {
   PROFIL_ORGANISME = "profil_organisme",
   PROFIL_UTILISATEUR = "profil_utilisateur",
   ROLE_CONTACT = "role_contact",
+  THEMATIQUE = "thematique",
   TYPE_ETUDE = "type_etude",
   TYPE_CANALISATION = "type_canalisation",
   TYPE_ORGANISME = "type_organisme",

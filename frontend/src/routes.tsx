@@ -88,6 +88,9 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
+import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
+import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
+import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -205,6 +208,11 @@ export const URLS = {
   UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>
     url`/admin/profil-utilisateur/update/` + profilUtilisateurId,
   LIST_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur`,
+
+  ADD_THEMATIQUE: url`/admin/thematique/create`,
+  UPDATE_THEMATIQUE: (thematiqueId: string) =>
+    url`/admin/thematique/update/` + thematiqueId,
+  LIST_THEMATIQUE: url`/admin/thematique`,
 
   ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
   UPDATE_ROLE_CONTACT: (roleContactId: string) =>
@@ -790,6 +798,34 @@ export default [
         element: (
           <Authorization
             Component={CreateTypePenaAspiration}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+
+      {
+        path: "thematique",
+        element: (
+          <Authorization
+            Component={ListThematique}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "thematique/update/:thematiqueId",
+        element: (
+          <Authorization
+            Component={UpdateThematique}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "thematique/create",
+        element: (
+          <Authorization
+            Component={CreateThematique}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
