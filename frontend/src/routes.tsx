@@ -91,6 +91,7 @@ import Visite from "./pages/Visite/Visite.tsx";
 import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
 import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
+import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1034,6 +1035,15 @@ export default [
           <Authorization
             Component={UpdateContact}
             droits={[TYPE_DROIT.GEST_SITE_A, TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "bloc-document",
+        element: (
+          <Authorization
+            Component={ListBlocDocument}
+            droits={[TYPE_DROIT.DOCUMENTS_R]}
           />
         ),
       },
