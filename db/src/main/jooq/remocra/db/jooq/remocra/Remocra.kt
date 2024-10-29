@@ -10,6 +10,7 @@ import remocra.db.jooq.DefaultCatalog
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -32,7 +33,9 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
+import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -60,6 +63,7 @@ import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
+import remocra.db.jooq.remocra.tables.Thematique
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
@@ -108,6 +112,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.api</code>.
      */
     val API: Api get() = Api.API
+
+    /**
+     * The table <code>remocra.bloc_document</code>.
+     */
+    val BLOC_DOCUMENT: BlocDocument get() = BlocDocument.BLOC_DOCUMENT
 
     /**
      * The table <code>remocra.commune</code>.
@@ -220,9 +229,19 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
 
     /**
+     * The table <code>remocra.l_profil_droit_bloc_document</code>.
+     */
+    val L_PROFIL_DROIT_BLOC_DOCUMENT: LProfilDroitBlocDocument get() = LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT
+
+    /**
      * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
      */
     val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit get() = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+
+    /**
+     * The table <code>remocra.l_thematique_bloc_document</code>.
+     */
+    val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument get() = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
 
     /**
      * The table <code>remocra.l_tournee_pei</code>.
@@ -360,6 +379,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TASK: Task get() = Task.TASK
 
     /**
+     * The table <code>remocra.thematique</code>.
+     */
+    val THEMATIQUE: Thematique get() = Thematique.THEMATIQUE
+
+    /**
      * The table <code>remocra.tournee</code>.
      */
     val TOURNEE: Tournee get() = Tournee.TOURNEE
@@ -420,6 +444,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Anomalie.ANOMALIE,
         AnomalieCategorie.ANOMALIE_CATEGORIE,
         Api.API,
+        BlocDocument.BLOC_DOCUMENT,
         Commune.COMMUNE,
         Contact.CONTACT,
         Couche.COUCHE,
@@ -442,7 +467,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
+        LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
+        LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT,
         LTourneePei.L_TOURNEE_PEI,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
@@ -470,6 +497,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         RoleContact.ROLE_CONTACT,
         Site.SITE,
         Task.TASK,
+        Thematique.THEMATIQUE,
         Tournee.TOURNEE,
         TypeCanalisation.TYPE_CANALISATION,
         TypeOrganisme.TYPE_ORGANISME,

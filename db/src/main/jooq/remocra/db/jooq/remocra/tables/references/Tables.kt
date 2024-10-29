@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables.references
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -28,7 +29,9 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
+import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -56,6 +59,7 @@ import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
+import remocra.db.jooq.remocra.tables.Thematique
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
@@ -82,6 +86,11 @@ val ANOMALIE_CATEGORIE: AnomalieCategorie = AnomalieCategorie.ANOMALIE_CATEGORIE
  * The table <code>remocra.api</code>.
  */
 val API: Api = Api.API
+
+/**
+ * The table <code>remocra.bloc_document</code>.
+ */
+val BLOC_DOCUMENT: BlocDocument = BlocDocument.BLOC_DOCUMENT
 
 /**
  * The table <code>remocra.commune</code>.
@@ -194,9 +203,19 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 
 /**
+ * The table <code>remocra.l_profil_droit_bloc_document</code>.
+ */
+val L_PROFIL_DROIT_BLOC_DOCUMENT: LProfilDroitBlocDocument = LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT
+
+/**
  * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
  */
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+
+/**
+ * The table <code>remocra.l_thematique_bloc_document</code>.
+ */
+val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
 
 /**
  * The table <code>remocra.l_tournee_pei</code>.
@@ -332,6 +351,11 @@ val SITE: Site = Site.SITE
  * The table <code>remocra.task</code>.
  */
 val TASK: Task = Task.TASK
+
+/**
+ * The table <code>remocra.thematique</code>.
+ */
+val THEMATIQUE: Thematique = Thematique.THEMATIQUE
 
 /**
  * The table <code>remocra.tournee</code>.

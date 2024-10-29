@@ -29,8 +29,10 @@ import remocra.db.jooq.couverturehydraulique.keys.L_ETUDE_DOCUMENT__L_ETUDE_DOCU
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.couverturehydraulique.tables.LEtudeDocument.LEtudeDocumentPath
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.time.ZonedDateTime
@@ -153,6 +155,23 @@ open class Document(
 
     val lEtudeDocument: LEtudeDocumentPath
         get(): LEtudeDocumentPath = lEtudeDocument()
+
+    private lateinit var _blocDocument: BlocDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.bloc_document</code> table
+     */
+    fun blocDocument(): BlocDocumentPath {
+        if (!this::_blocDocument.isInitialized) {
+            _blocDocument = BlocDocumentPath(this, null, BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _blocDocument
+    }
+
+    val blocDocument: BlocDocumentPath
+        get(): BlocDocumentPath = blocDocument()
 
     private lateinit var _lPeiDocument: LPeiDocumentPath
 

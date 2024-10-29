@@ -11,6 +11,7 @@ import org.jooq.impl.Internal
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -33,7 +34,9 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
+import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -61,6 +64,7 @@ import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
+import remocra.db.jooq.remocra.tables.Thematique
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
@@ -81,6 +85,7 @@ val ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Anomalie.ANOMALI
 val ANOMALIE_CATEGORIE_ANOMALIE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AnomalieCategorie.ANOMALIE_CATEGORIE, DSL.name("anomalie_categorie_anomalie_categorie_code_key"), arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.CODE), true)
 val ANOMALIE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AnomalieCategorie.ANOMALIE_CATEGORIE, DSL.name("anomalie_categorie_pkey"), arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Api.API, DSL.name("api_pkey"), arrayOf(Api.API.ORGANISME_ID), true)
+val BLOC_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(BlocDocument.BLOC_DOCUMENT, DSL.name("bloc_document_pkey"), arrayOf(BlocDocument.BLOC_DOCUMENT.ID), true)
 val COMMUNE_COMMUNE_CODE_INSEE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Commune.COMMUNE, DSL.name("commune_commune_code_insee_key"), arrayOf(Commune.COMMUNE.CODE_INSEE), true)
 val COMMUNE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Commune.COMMUNE, DSL.name("commune_pkey"), arrayOf(Commune.COMMUNE.ID), true)
 val CONTACT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Contact.CONTACT, DSL.name("contact_pkey"), arrayOf(Contact.CONTACT.ID), true)
@@ -114,7 +119,9 @@ val L_INDISPONIBILITE_TEMPORAIRE_PEI_PKEY: UniqueKey<Record> = Internal.createUn
 val L_MODELE_COURRIER_PROFIL_DROIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT, DSL.name("l_modele_courrier_profil_droit_pkey"), arrayOf(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID, LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID), true)
 val L_PEI_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID, LPeiAnomalie.L_PEI_ANOMALIE.ANOMALIE_ID), true)
 val L_PEI_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID, LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), true)
+val L_PROFIL_DROIT_BLOC_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT, DSL.name("l_profil_droit_bloc_document_pkey"), arrayOf(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID, LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID), true)
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT, DSL.name("l_profil_utilisateur_organisme_droit_pkey"), arrayOf(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID, LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID), true)
+val L_THEMATIQUE_BLOC_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT, DSL.name("l_thematique_bloc_document_pkey"), arrayOf(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID, LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT.BLOC_DOCUMENT_ID), true)
 val L_TOURNEE_PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_pkey"), arrayOf(LTourneePei.L_TOURNEE_PEI.TOURNEE_ID, LTourneePei.L_TOURNEE_PEI.PEI_ID), true)
 val L_TOURNEE_PEI_TOURNEE_ID_L_TOURNEE_PEI_ORDRE_KEY: UniqueKey<Record> = Internal.createUniqueKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_tournee_id_l_tournee_pei_ordre_key"), arrayOf(LTourneePei.L_TOURNEE_PEI.TOURNEE_ID, LTourneePei.L_TOURNEE_PEI.ORDRE), true)
 val L_VISITE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_pkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID, LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), true)
@@ -162,6 +169,8 @@ val SITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name(
 val SITE_SITE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_site_code_key"), arrayOf(Site.SITE.CODE), true)
 val TASK_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_pkey"), arrayOf(Task.TASK.ID), true)
 val TASK_TASK_TYPE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_task_type_key"), arrayOf(Task.TASK.TYPE), true)
+val THEMATIQUE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Thematique.THEMATIQUE, DSL.name("thematique_pkey"), arrayOf(Thematique.THEMATIQUE.ID), true)
+val THEMATIQUE_THEMATIQUE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Thematique.THEMATIQUE, DSL.name("thematique_thematique_code_key"), arrayOf(Thematique.THEMATIQUE.CODE), true)
 val TOURNEE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Tournee.TOURNEE, DSL.name("tournee_pkey"), arrayOf(Tournee.TOURNEE.ID), true)
 val TOURNEE_TOURNEE_ORGANISME_ID_TOURNEE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Tournee.TOURNEE, DSL.name("tournee_tournee_organisme_id_tournee_libelle_key"), arrayOf(Tournee.TOURNEE.ORGANISME_ID, Tournee.TOURNEE.LIBELLE), true)
 val TYPE_CANALISATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCanalisation.TYPE_CANALISATION, DSL.name("type_canalisation_pkey"), arrayOf(TypeCanalisation.TYPE_CANALISATION.ID), true)
@@ -187,6 +196,7 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
+val BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(BlocDocument.BLOC_DOCUMENT, DSL.name("bloc_document_document_id_fkey"), arrayOf(BlocDocument.BLOC_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_commune_id_fkey"), arrayOf(Contact.CONTACT.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
 val CONTACT__CONTACT_CONTACT_FONCTION_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_fonction_fkey"), arrayOf(Contact.CONTACT.FONCTION_CONTACT_ID), remocra.db.jooq.remocra.keys.FONCTION_CONTACT_PKEY, arrayOf(FonctionContact.FONCTION_CONTACT.ID), true)
 val CONTACT__CONTACT_CONTACT_LIEU_DIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_lieu_dit_id_fkey"), arrayOf(Contact.CONTACT.LIEU_DIT_ID), remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY, arrayOf(LieuDit.LIEU_DIT.ID), true)
@@ -214,9 +224,13 @@ val L_PEI_ANOMALIE__L_PEI_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> 
 val L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pei_id_fkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_document_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pei_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
+val L_PROFIL_DROIT_BLOC_DOCUMENT__L_PROFIL_DROIT_BLOC_DOCUMENT_BLOC_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT, DSL.name("l_profil_droit_bloc_document_bloc_document_id_fkey"), arrayOf(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID), remocra.db.jooq.remocra.keys.BLOC_DOCUMENT_PKEY, arrayOf(BlocDocument.BLOC_DOCUMENT.ID), true)
+val L_PROFIL_DROIT_BLOC_DOCUMENT__L_PROFIL_DROIT_BLOC_DOCUMENT_PROFIL_DROIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT, DSL.name("l_profil_droit_bloc_document_profil_droit_id_fkey"), arrayOf(LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID), remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY, arrayOf(ProfilDroit.PROFIL_DROIT.ID), true)
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT, DSL.name("l_profil_utilisateur_organisme_droit_profil_droit_id_fkey"), arrayOf(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID), remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY, arrayOf(ProfilDroit.PROFIL_DROIT.ID), true)
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT, DSL.name("l_profil_utilisateur_organisme_droit_profil_organisme_id_fkey"), arrayOf(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID), remocra.db.jooq.remocra.keys.PROFIL_ORGANISME_PKEY, arrayOf(ProfilOrganisme.PROFIL_ORGANISME.ID), true)
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT, DSL.name("l_profil_utilisateur_organisme_droit_profil_utilisateur_id_fkey"), arrayOf(LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID), remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PKEY, arrayOf(ProfilUtilisateur.PROFIL_UTILISATEUR.ID), true)
+val L_THEMATIQUE_BLOC_DOCUMENT__L_THEMATIQUE_BLOC_DOCUMENT_BLOC_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT, DSL.name("l_thematique_bloc_document_bloc_document_id_fkey"), arrayOf(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT.BLOC_DOCUMENT_ID), remocra.db.jooq.remocra.keys.BLOC_DOCUMENT_PKEY, arrayOf(BlocDocument.BLOC_DOCUMENT.ID), true)
+val L_THEMATIQUE_BLOC_DOCUMENT__L_THEMATIQUE_BLOC_DOCUMENT_THEMATIQUE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT, DSL.name("l_thematique_bloc_document_thematique_id_fkey"), arrayOf(LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID), remocra.db.jooq.remocra.keys.THEMATIQUE_PKEY, arrayOf(Thematique.THEMATIQUE.ID), true)
 val L_TOURNEE_PEI__L_TOURNEE_PEI_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_pei_id_fkey"), arrayOf(LTourneePei.L_TOURNEE_PEI.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val L_TOURNEE_PEI__L_TOURNEE_PEI_TOURNEE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_tournee_id_fkey"), arrayOf(LTourneePei.L_TOURNEE_PEI.TOURNEE_ID), remocra.db.jooq.remocra.keys.TOURNEE_PKEY, arrayOf(Tournee.TOURNEE.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_anomalie_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_PKEY, arrayOf(Anomalie.ANOMALIE.ID), true)
