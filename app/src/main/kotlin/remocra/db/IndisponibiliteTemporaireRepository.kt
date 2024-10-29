@@ -332,6 +332,23 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .set(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_DEBUT, dateNotification)
             .execute()
 
+    fun getITToNotifyFin(delta: Long): List<IndisponibiliteTemporaire> =
+        dsl.selectFrom(INDISPONIBILITE_TEMPORAIRE)
+            .where(INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE.isTrue)
+            .and(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_FIN.isNull)
+            .and(
+                INDISPONIBILITE_TEMPORAIRE.DATE_FIN
+                    .sub(field("INTERVAL '$delta minute'", String::class.java))
+                    .lessThan(dateUtils.now()),
+            )
+            .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
+            .fetchInto()
+
+    fun setNotificationFin(dateNotification: ZonedDateTime) =
+        dsl.update(INDISPONIBILITE_TEMPORAIRE)
+            .set(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_FIN, dateNotification)
+            .execute()
+
     fun getPeiFromListIt(listItId: List<UUID>): List<PeiForItMoulinette> =
         dsl.select(
             PEI.ID,

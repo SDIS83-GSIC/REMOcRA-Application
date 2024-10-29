@@ -4,6 +4,7 @@ import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
 import remocra.tasks.ChangementEtatPeiTask
 import remocra.tasks.NotifAvantDebutIndispoTempTask
+import remocra.tasks.NotifAvantFinIndispoTempTask
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
@@ -24,6 +25,7 @@ object ScheduleModule : RemocraModule() {
             addBinding().to<SynchroUtilisateurTask>().asEagerSingleton()
             addBinding().to<ChangementEtatPeiTask>().asEagerSingleton()
             addBinding().to<NotifAvantDebutIndispoTempTask>().asEagerSingleton()
+            addBinding().to<NotifAvantFinIndispoTempTask>().asEagerSingleton()
         }
     }
 }
