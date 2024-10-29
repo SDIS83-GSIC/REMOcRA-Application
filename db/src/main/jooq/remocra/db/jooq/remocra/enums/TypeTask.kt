@@ -57,6 +57,9 @@ enum class TypeTask(@get:JvmName("literal") public val literal: String) : EnumTy
     SYNCHRONISER_AVEC_PREVARISC("SYNCHRONISER_AVEC_PREVARISC"),
     TELECHARGEMENT_DES_FICHES_ATLAS("TELECHARGEMENT_DES_FICHES_ATLAS"),
     SYNCHRO_UTILISATEUR("SYNCHRO_UTILISATEUR"),
+    IT_NOTIF_AVANT_DEBUT("IT_NOTIF_AVANT_DEBUT"),
+    IT_NOTIF_AVANT_FIN("IT_NOTIF_AVANT_FIN"),
+    IT_NOTIF_RESTE_INDISPO("IT_NOTIF_RESTE_INDISPO"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

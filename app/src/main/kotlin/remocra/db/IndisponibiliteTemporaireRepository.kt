@@ -314,4 +314,36 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull.or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now))),
         )
     }
+
+    fun getITToNotifyDebut(delta: Long): List<IndisponibiliteTemporaire> =
+        dsl.selectFrom(INDISPONIBILITE_TEMPORAIRE)
+            .where(INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE.isTrue)
+            .and(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_DEBUT.isNull)
+            .and(
+                INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT
+                    .sub(field("INTERVAL '$delta minute'", String::class.java))
+                    .lessThan(dateUtils.now()),
+            )
+            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()))
+            .fetchInto()
+
+    fun setNotificationDebut(dateNotification: ZonedDateTime) =
+        dsl.update(INDISPONIBILITE_TEMPORAIRE)
+            .set(INDISPONIBILITE_TEMPORAIRE.NOTIFICATION_DEBUT, dateNotification)
+            .execute()
+
+    fun getPeiFromListIt(listItId: List<UUID>): List<PeiForItMoulinette> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+        )
+            .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .join(PEI).on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(listItId))
+            .fetchInto()
+
+    data class PeiForItMoulinette(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
+    )
 }
