@@ -6,9 +6,8 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.auth.RequireDroits
+import remocra.auth.Public
 import remocra.db.ProfilDroitRepository
-import remocra.db.jooq.remocra.enums.Droit
 import remocra.web.AbstractEndpoint
 
 @Path("/profil-droit")
@@ -20,7 +19,7 @@ class ProfilDroitEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/")
-    @RequireDroits([Droit.DOCUMENTS_R])
+    @Public("L'affichage des profils droits n'est pas lié à un droit (par exemple : les filtres)")
     fun getProfilDroit() =
         Response.ok(profilDroitRepository.getAll()).build()
 }

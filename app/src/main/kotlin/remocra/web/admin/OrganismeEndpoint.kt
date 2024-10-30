@@ -11,6 +11,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
@@ -69,6 +70,14 @@ class OrganismeEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.ADMIN_DROITS])
     fun get(params: Params<OrganismeRepository.Filter, OrganismeRepository.Sort>): Response {
         return Response.ok(DataTableau(organismeRepository.getAllForAdmin(params), organismeRepository.getCountForAdmin(params)))
+            .build()
+    }
+
+    @GET
+    @Path("/get-all")
+    @Public("L'affichage des organismes n'est pas lié à un droit (par exemple : les filtres)")
+    fun getAll(): Response {
+        return Response.ok(organismeRepository.getAll())
             .build()
     }
 

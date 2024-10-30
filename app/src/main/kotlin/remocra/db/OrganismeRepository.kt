@@ -47,6 +47,16 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .and(TYPE_ORGANISME.ACTIF.isTrue).and(codeTypeOrganisme?.let { TYPE_ORGANISME.CODE.eq(codeTypeOrganisme) })
             .limit(limit).offset(offset).fetchInto()
 
+    fun getAll(): Collection<IdCodeLibelleData> =
+        dsl.select(
+            ORGANISME.ID.`as`("id"),
+            ORGANISME.CODE.`as`("code"),
+            ORGANISME.LIBELLE.`as`("libelle"),
+        )
+            .from(ORGANISME)
+            .where(ORGANISME.ACTIF.isTrue)
+            .fetchInto()
+
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
 
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(conditionAutoriteDeci)

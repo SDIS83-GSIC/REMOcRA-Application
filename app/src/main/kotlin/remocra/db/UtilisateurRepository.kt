@@ -2,11 +2,19 @@ package remocra.db
 
 import com.google.inject.Inject
 import kotlinx.coroutines.selects.select
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
+import org.jooq.impl.DSL
+import remocra.GlobalConstants
+import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
+import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
@@ -146,4 +154,118 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
                     record.get(PEI.ID)
                 },
             )
+
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<UtilisateurComplet> =
+        dsl.select(
+            *UTILISATEUR.fields(),
+            ORGANISME.LIBELLE,
+            PROFIL_UTILISATEUR.LIBELLE,
+            PROFIL_DROIT.LIBELLE,
+        )
+            .from(UTILISATEUR)
+            .join(ORGANISME)
+            .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
+            .join(PROFIL_UTILISATEUR)
+            .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .on(
+                L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
+                    .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
+            )
+            .leftJoin(PROFIL_DROIT)
+            .on(PROFIL_DROIT.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(UTILISATEUR.USERNAME))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
+
+    data class UtilisateurComplet(
+        val utilisateurId: UUID,
+        val utilisateurActif: Boolean,
+        val utilisateurEmail: String,
+        val utilisateurNom: String,
+        val utilisateurPrenom: String,
+        val utilisateurUsername: String,
+        val utilisateurTelephone: String?,
+        val utilisateurCanBeNotified: Boolean?,
+        val utilisateurProfilUtilisateurId: UUID?,
+        val utilisateurOrganismeId: UUID?,
+        val organismeLibelle: String,
+        val profilUtilisateurLibelle: String,
+        val profilDroitLibelle: String,
+    )
+
+    fun countAllForAdmin(filterBy: Filter?) =
+        dsl.select(UTILISATEUR.ID)
+            .from(UTILISATEUR)
+            .join(ORGANISME)
+            .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
+            .join(PROFIL_UTILISATEUR)
+            .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .on(
+                L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
+                    .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
+            )
+            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
+            .count()
+
+    data class Filter(
+        val utilisateurActif: Boolean?,
+        val utilisateurEmail: String?,
+        val utilisateurNom: String?,
+        val utilisateurPrenom: String?,
+        val utilisateurUsername: String?,
+        val utilisateurTelephone: String?,
+        val utilisateurCanBeNotified: Boolean?,
+        val utilisateurProfilUtilisateurId: UUID?,
+        val utilisateurOrganismeId: UUID?,
+        val profilDroitId: UUID?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    utilisateurActif?.let { DSL.and(UTILISATEUR.ACTIF.eq(it)) },
+                    utilisateurEmail?.let { DSL.and(UTILISATEUR.EMAIL.containsIgnoreCase(it)) },
+                    utilisateurNom?.let { DSL.and(UTILISATEUR.NOM.containsIgnoreCase(it)) },
+                    utilisateurPrenom?.let { DSL.and(UTILISATEUR.PRENOM.containsIgnoreCase(it)) },
+                    utilisateurUsername?.let { DSL.and(UTILISATEUR.USERNAME.containsIgnoreCase(it)) },
+                    utilisateurTelephone?.let { DSL.and(UTILISATEUR.TELEPHONE.containsIgnoreCase(it)) },
+                    utilisateurCanBeNotified?.let { DSL.and(UTILISATEUR.CAN_BE_NOTIFIED.eq(it)) },
+                    utilisateurProfilUtilisateurId?.let { DSL.and(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(it)) },
+                    utilisateurOrganismeId?.let { DSL.and(UTILISATEUR.ORGANISME_ID.eq(it)) },
+                    profilDroitId?.let { DSL.and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(it)) },
+                ),
+            )
+    }
+
+    data class Sort(
+        val utilisateurActif: Int?,
+        val utilisateurEmail: Int?,
+        val utilisateurNom: Int?,
+        val utilisateurPrenom: Int?,
+        val utilisateurUsername: Int?,
+        val utilisateurTelephone: Int?,
+        val utilisateurCanBeNotified: Int?,
+        val profilUtilisateurLibelle: Int?,
+        val organismeLibelle: Int?,
+        val profilDroitLibelle: Int?,
+    ) {
+
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            UTILISATEUR.ACTIF.getSortField(utilisateurActif),
+            UTILISATEUR.EMAIL.getSortField(utilisateurEmail),
+            UTILISATEUR.NOM.getSortField(utilisateurNom),
+            UTILISATEUR.PRENOM.getSortField(utilisateurPrenom),
+            UTILISATEUR.USERNAME.getSortField(utilisateurUsername),
+            UTILISATEUR.TELEPHONE.getSortField(utilisateurTelephone),
+            UTILISATEUR.CAN_BE_NOTIFIED.getSortField(utilisateurCanBeNotified),
+            PROFIL_UTILISATEUR.LIBELLE.getSortField(profilUtilisateurLibelle),
+            ORGANISME.LIBELLE.getSortField(organismeLibelle),
+            PROFIL_DROIT.LIBELLE.getSortField(profilDroitLibelle),
+        )
+    }
 }

@@ -34,8 +34,10 @@ import remocra.web.parametres.ParametreModule
 import remocra.web.pei.PeiModule
 import remocra.web.profilOrganisme.ProfilOrganismeModule
 import remocra.web.profildroit.ProfilDroitModule
+import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.typeOrganisme.TypeOrganismeModule
+import remocra.web.utilisateur.UtilisateurModule
 import remocra.web.visite.VisiteModule
 import remocra.web.voie.VoieModule
 import remocra.web.zoneIntegration.ZoneIntegrationModule
@@ -63,6 +65,7 @@ object WebModule : RemocraModule() {
         install(ParametreModule)
         install(FicheResumeModule)
         install(ProfilDroitModule)
+        install(ProfilUtilisateurModule)
         install(ProfilOrganismeModule)
         install(TypeOrganismeModule)
         install(ZoneIntegrationModule)
@@ -72,6 +75,7 @@ object WebModule : RemocraModule() {
         install(VoieModule)
         install(LieuDitModule)
         install(ThematiqueModule)
+        install(UtilisateurModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
