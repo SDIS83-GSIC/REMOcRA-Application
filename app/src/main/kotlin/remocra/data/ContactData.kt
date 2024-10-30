@@ -26,4 +26,5 @@ data class ContactData(
     val contactEmail: String?,
     val listRoleId: List<UUID>,
     val isGestionnaire: Boolean = false,
+    val contactIsCompteService: Boolean = false,
 )

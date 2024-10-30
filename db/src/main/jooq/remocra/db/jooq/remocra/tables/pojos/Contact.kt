@@ -38,6 +38,7 @@ data class Contact(
     val contactTelephone: String?,
     val contactEmail: String?,
     val contactFonctionContactId: UUID?,
+    val contactIsCompteService: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -169,6 +170,13 @@ data class Contact(
         } else if (this.contactFonctionContactId != o.contactFonctionContactId) {
             return false
         }
+        if (this.contactIsCompteService == null) {
+            if (o.contactIsCompteService != null) {
+                return false
+            }
+        } else if (this.contactIsCompteService != o.contactIsCompteService) {
+            return false
+        }
         return true
     }
 
@@ -193,6 +201,7 @@ data class Contact(
         result = prime * result + (if (this.contactTelephone == null) 0 else this.contactTelephone.hashCode())
         result = prime * result + (if (this.contactEmail == null) 0 else this.contactEmail.hashCode())
         result = prime * result + (if (this.contactFonctionContactId == null) 0 else this.contactFonctionContactId.hashCode())
+        result = prime * result + (if (this.contactIsCompteService == null) 0 else this.contactIsCompteService.hashCode())
         return result
     }
 
@@ -217,6 +226,7 @@ data class Contact(
         sb.append(", ").append(contactTelephone)
         sb.append(", ").append(contactEmail)
         sb.append(", ").append(contactFonctionContactId)
+        sb.append(", ").append(contactIsCompteService)
 
         sb.append(")")
         return sb.toString()

@@ -183,6 +183,11 @@ open class Contact(
      */
     val FONCTION_CONTACT_ID: TableField<Record, UUID?> = createField(DSL.name("contact_fonction_contact_id"), SQLDataType.UUID, this, "")
 
+    /**
+     * The column <code>remocra.contact.contact_is_compte_service</code>.
+     */
+    val IS_COMPTE_SERVICE: TableField<Record, Boolean?> = createField(DSL.name("contact_is_compte_service"), SQLDataType.BOOLEAN, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -60,6 +60,7 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
                 contactPays = element.contactPays,
                 contactTelephone = element.contactTelephone,
                 contactEmail = element.contactEmail,
+                contactIsCompteService = element.contactIsCompteService,
             ),
         )
 

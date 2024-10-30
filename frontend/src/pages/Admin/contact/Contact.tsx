@@ -43,6 +43,7 @@ type ContactType = {
   communeSaisieLibre: boolean;
   lieuDitSaisieLibre: boolean;
   listRoleId: string[];
+  contactIsCompteService: boolean;
 };
 
 export const getInitialValues = (data?: ContactType) => ({
@@ -65,6 +66,7 @@ export const getInitialValues = (data?: ContactType) => ({
   contactEmail: data?.contactEmail ?? null,
   siteId: data?.siteId ?? null,
   listRoleId: data?.listRoleId ?? [],
+  contactIsCompteService: data?.contactIsCompteService ?? false,
 
   voieSaisieLibre:
     data?.contactVoieText != null && data?.contactVoieText?.trim() !== "",
@@ -98,6 +100,7 @@ export const prepareVariables = (values: ContactType) => ({
   contactEmail: values.contactEmail,
   siteId: values.siteId,
   listRoleId: values.listRoleId,
+  contactIsCompteService: values.contactIsCompteService,
 });
 
 const Contact = () => {
@@ -176,6 +179,12 @@ const Contact = () => {
                       label="Prénom"
                       name="contactPrenom"
                       required={false}
+                    />
+                  </Col>
+                  <Col>
+                    <CheckBoxInput
+                      name="contactIsCompteService"
+                      label="Compte de service ?"
                     />
                   </Col>
                 </Row>

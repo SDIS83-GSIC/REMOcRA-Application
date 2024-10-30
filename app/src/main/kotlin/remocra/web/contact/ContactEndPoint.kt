@@ -86,6 +86,7 @@ class ContactEndPoint : AbstractEndpoint() {
                 contactEmail = contactInput.contactEmail,
                 listRoleId = contactInput.listRoleId,
                 isGestionnaire = isGestionnaire,
+                contactIsCompteService = contactInput.contactIsCompteService,
             ),
         ).wrap()
     }
@@ -127,6 +128,7 @@ class ContactEndPoint : AbstractEndpoint() {
                 contactEmail = contactInput.contactEmail,
                 listRoleId = contactInput.listRoleId,
                 isGestionnaire = isGestionnaire,
+                contactIsCompteService = contactInput.contactIsCompteService,
             ),
         ).wrap()
     }
@@ -188,6 +190,9 @@ class ContactEndPoint : AbstractEndpoint() {
 
         @FormParam("siteId")
         var siteId: UUID? = null
+
+        @FormParam("contactIsCompteService")
+        var contactIsCompteService: Boolean = false
     }
 
     @POST

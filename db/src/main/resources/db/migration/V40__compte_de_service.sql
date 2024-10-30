@@ -1,0 +1,1 @@
+ALTER TABLE remocra.contact ADD COLUMN contact_is_compte_service BOOLEAN;
