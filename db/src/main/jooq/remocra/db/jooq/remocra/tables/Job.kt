@@ -30,9 +30,11 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.EtatJob
 import remocra.db.jooq.remocra.keys.JOB_PKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_TASK_ID_FKEY
+import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.LOG_LINE__LOG_LINE_LOG_LINE_JOB_ID_FKEY
 import remocra.db.jooq.remocra.tables.LogLine.LogLinePath
 import remocra.db.jooq.remocra.tables.Task.TaskPath
+import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -113,6 +115,11 @@ open class Job(
      */
     val PARAMETRES: TableField<Record, JSONB?> = createField(DSL.name("job_parametres"), SQLDataType.JSONB, this, "")
 
+    /**
+     * The column <code>remocra.job.job_utilisateur_id</code>.
+     */
+    val UTILISATEUR_ID: TableField<Record, UUID?> = createField(DSL.name("job_utilisateur_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -146,7 +153,7 @@ open class Job(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = JOB_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(JOB__JOB_JOB_TASK_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(JOB__JOB_JOB_TASK_ID_FKEY, JOB__JOB_JOB_UTILISATEUR_ID_FKEY)
 
     private lateinit var _task: TaskPath
 
@@ -163,6 +170,22 @@ open class Job(
 
     val task: TaskPath
         get(): TaskPath = task()
+
+    private lateinit var _utilisateur: UtilisateurPath
+
+    /**
+     * Get the implicit join path to the <code>remocra.utilisateur</code> table.
+     */
+    fun utilisateur(): UtilisateurPath {
+        if (!this::_utilisateur.isInitialized) {
+            _utilisateur = UtilisateurPath(this, JOB__JOB_JOB_UTILISATEUR_ID_FKEY, null)
+        }
+
+        return _utilisateur
+    }
+
+    val utilisateur: UtilisateurPath
+        get(): UtilisateurPath = utilisateur()
 
     private lateinit var _logLine: LogLinePath
 

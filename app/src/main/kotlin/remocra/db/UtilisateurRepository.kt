@@ -1,7 +1,6 @@
 package remocra.db
 
 import com.google.inject.Inject
-import kotlinx.coroutines.selects.select
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
@@ -312,4 +311,10 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             .from(UTILISATEUR)
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .fetchSingleInto()
+
+    fun getUtilisateurSysteme(): Utilisateur {
+        return dsl.selectFrom(UTILISATEUR)
+            .where(UTILISATEUR.USERNAME.eq(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
+            .fetchSingleInto()
+    }
 }

@@ -28,6 +28,7 @@ data class Job(
     val jobDateDebut: ZonedDateTime,
     val jobDateFin: ZonedDateTime?,
     val jobParametres: JSONB?,
+    val jobUtilisateurId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -67,6 +68,13 @@ data class Job(
         } else if (this.jobParametres != o.jobParametres) {
             return false
         }
+        if (this.jobUtilisateurId == null) {
+            if (o.jobUtilisateurId != null) {
+                return false
+            }
+        } else if (this.jobUtilisateurId != o.jobUtilisateurId) {
+            return false
+        }
         return true
     }
 
@@ -79,6 +87,7 @@ data class Job(
         result = prime * result + this.jobDateDebut.hashCode()
         result = prime * result + (if (this.jobDateFin == null) 0 else this.jobDateFin.hashCode())
         result = prime * result + (if (this.jobParametres == null) 0 else this.jobParametres.hashCode())
+        result = prime * result + (if (this.jobUtilisateurId == null) 0 else this.jobUtilisateurId.hashCode())
         return result
     }
 
@@ -91,6 +100,7 @@ data class Job(
         sb.append(", ").append(jobDateDebut)
         sb.append(", ").append(jobDateFin)
         sb.append(", ").append(jobParametres)
+        sb.append(", ").append(jobUtilisateurId)
 
         sb.append(")")
         return sb.toString()

@@ -18,6 +18,7 @@ import remocra.db.NiveauRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
+import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
@@ -52,6 +53,7 @@ constructor(
     private val typeCanalisationRepository: TypeCanalisationRepository,
     private val typeReseauRepository: TypeReseauRepository,
     private val reservoirRepository: ReservoirRepository,
+    private val utilisateurRepository: UtilisateurRepository,
 
 ) : Provider<DataCache> {
     private lateinit var dataCache: DataCache
@@ -102,6 +104,7 @@ constructor(
         val typeCanalisation = typeCanalisationRepository.getMapById()
         val typeReseau = typeReseauRepository.getMapById()
         val reservoir = reservoirRepository.getMapById()
+        val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
 
         return DataCache(
             mapAnomalie = anomalies,
@@ -117,6 +120,7 @@ constructor(
             mapTypeCanalisation = typeCanalisation,
             mapTypeReseau = typeReseau,
             mapReservoir = reservoir,
+            utilisateurSysteme = utilisateurSysteme,
         )
     }
 

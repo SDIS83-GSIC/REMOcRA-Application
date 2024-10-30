@@ -25,12 +25,14 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.tables.Job.JobPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
@@ -202,6 +204,22 @@ open class Utilisateur(
 
     val profilUtilisateur: ProfilUtilisateurPath
         get(): ProfilUtilisateurPath = profilUtilisateur()
+
+    private lateinit var _job: JobPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.job</code> table
+     */
+    fun job(): JobPath {
+        if (!this::_job.isInitialized) {
+            _job = JobPath(this, null, JOB__JOB_JOB_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _job
+    }
+
+    val job: JobPath
+        get(): JobPath = job()
 
     private lateinit var _tournee: TourneePath
 

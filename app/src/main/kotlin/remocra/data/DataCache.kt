@@ -12,6 +12,7 @@ import remocra.db.jooq.remocra.tables.pojos.Niveau
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
+import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import java.util.UUID
 
 data class DataCache(
@@ -28,4 +29,5 @@ data class DataCache(
     var mapTypeCanalisation: Map<UUID, TypeCanalisation>,
     var mapTypeReseau: Map<UUID, TypeReseau>,
     var mapReservoir: Map<UUID, Reservoir>,
+    var utilisateurSysteme: Utilisateur,
 )

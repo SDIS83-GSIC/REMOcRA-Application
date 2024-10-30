@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.inject.Inject
 import org.jooq.exception.IOException
 import remocra.auth.AuthModule
+import remocra.auth.UserInfo
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.keycloak.KeycloakApi
@@ -25,7 +26,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
 
     @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
 
-    override fun execute(parameters: SynchroUtilisateurTaskParameters?): SchedulableTaskResults? {
+    override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: UserInfo): SchedulableTaskResults? {
         var i = 0
         var fini = false
 

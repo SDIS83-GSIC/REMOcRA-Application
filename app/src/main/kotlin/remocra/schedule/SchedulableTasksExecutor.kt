@@ -6,16 +6,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.logging.log4j.core.util.CronExpression
 import org.slf4j.LoggerFactory
+import remocra.app.DataCacheProvider
+import remocra.auth.UserInfo
 import remocra.data.ParametresData
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.log.LogManagerFactory
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
 import java.text.ParseException
-import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.Locale
 
 class SchedulableTasksExecutor
 @Inject
@@ -23,12 +24,10 @@ constructor(
     private var tasks: Set<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>,
     private val logManagerFactory: LogManagerFactory,
     private val parametresProvider: Provider<ParametresData>,
+    private val dataCacheProvider: DataCacheProvider,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    private val parser: DateTimeFormatter
-        get() = DateTimeFormatter.ofPattern("H[:mm]", Locale.getDefault())
 
     fun start() {
         tasks.forEach { task ->
@@ -53,7 +52,16 @@ constructor(
             val nextExecution = scheduleTime.getNextValidTimeAfter(now) ?: return@launch
             val millis = nextExecution.time - now.time
             delay(millis)
-            start(logManagerFactory.create())
+            // Par défaut c'est l'utilisateur système qui exécute les tâches,
+            // on reconstruit son UserInfo car c'est lui qui sera fourni aux useCases appelés dans les traitements.
+            val userInfoSysteme = UserInfo()
+            val utilisateurSysteme = dataCacheProvider.get().utilisateurSysteme
+            userInfoSysteme.utilisateur = utilisateurSysteme
+            userInfoSysteme.id = utilisateurSysteme.utilisateurId.toString()
+            userInfoSysteme.droits = Droit.entries
+            userInfoSysteme.addAttribute("given_name", userInfoSysteme.utilisateur.utilisateurPrenom)
+
+            start(logManagerFactory.create(), userInfoSysteme)
             schedule(scheduleTime)
         }
     }

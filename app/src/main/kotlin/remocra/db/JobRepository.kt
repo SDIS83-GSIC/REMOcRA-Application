@@ -21,7 +21,7 @@ import java.util.UUID
 
 class JobRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) {
 
-    fun createJob(idJob: UUID, idTask: UUID, parameters: JSONB? = null): Int =
+    fun createJob(idJob: UUID, idTask: UUID, userId: UUID, parameters: JSONB? = null): Int =
         dsl.insertInto(JOB)
             .set(
                 dsl.newRecord(
@@ -33,6 +33,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
                         dateUtils.now(),
                         null,
                         parameters,
+                        userId,
                     ),
                 ),
             )

@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jooq.JSONB
 import remocra.app.AppSettings
+import remocra.auth.UserInfo
 import remocra.data.ParametresData
 import remocra.data.enums.Environment
 import remocra.db.JobRepository
@@ -61,7 +62,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
      * Méthode exécutant le code de la tâche à proprement parler.
      * Doit être fait de manière bloquante, pas d'appels asynchrones, car la notification est faite dans la foulée
      */
-    protected abstract fun execute(parameters: T?): U?
+    protected abstract fun execute(parameters: T?, userInfo: UserInfo): U?
 
     /** Environnements autorisés à exécuter la tâche : par défaut, tous. A overrider au besoin */
     open fun getAuthorizedEnvironments(): Collection<Environment> = Environment.entries
@@ -92,7 +93,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
 
     abstract fun getTaskParametersClass(): Class<T>
 
-    fun start(logManager: LogManager, parameters: T? = null): Boolean {
+    fun start(logManager: LogManager, userInfo: UserInfo, parameters: T? = null): Boolean {
         // Si l'environnement n'est pas compatible avec la tâche, on ne fait rien
         if (!getAuthorizedEnvironments().contains(settings.environment)) {
             return false
@@ -113,6 +114,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                 jobRepository.createJob(
                     logManager.idJob,
                     parametresProvider.get().mapTasksInfo[getType()]!!.taskId,
+                    userInfo.utilisateurId,
                     taskParameters?.let { JSONB.valueOf(objectMapper.writeValueAsString(it)) },
                 )
             }
@@ -127,7 +129,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
             launch {
                 try {
                     checkParameters(taskParameters)
-                    notify(taskParameters, execute(taskParameters), logManager.idJob)
+                    notify(taskParameters, execute(taskParameters, userInfo), logManager.idJob)
                 } catch (e: Exception) {
                     if (latestJob != null) {
                         transactionManager.transactionResult {
