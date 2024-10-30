@@ -41,7 +41,7 @@ const CreateNomenclature = ({
         initialValues={getInitialValue()}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/` + typeNomenclature + "/create/"}
+        submitUrl={`/api/nomenclature/` + typeNomenclature + "/create/"}
         isPost={true}
         redirectUrl={redirectLink}
         onSubmit={() => true}

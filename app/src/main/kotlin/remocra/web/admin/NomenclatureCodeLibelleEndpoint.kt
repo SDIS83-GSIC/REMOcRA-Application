@@ -31,7 +31,7 @@ import java.util.UUID
  * Endpoint permettant de gérer toutes les nomenclatures de type code-libellé-actif(-protected?) de manière générique
  */
 @Produces("application/json; charset=UTF-8")
-@Path("/{typeObjet}")
+@Path("nomenclature/{typeObjet}")
 class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository

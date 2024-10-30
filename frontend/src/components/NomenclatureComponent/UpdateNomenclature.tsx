@@ -49,7 +49,9 @@ const UpdateNomenclature = ({
         initialValues={getInitialValue(nomenclatureState.data)}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/` + typeNomenclature + "/update/" + nomenclatureId}
+        submitUrl={
+          `/api/nomenclature/` + typeNomenclature + "/update/" + nomenclatureId
+        }
         isPost={false}
         redirectUrl={redirectLink}
         onSubmit={() => true}

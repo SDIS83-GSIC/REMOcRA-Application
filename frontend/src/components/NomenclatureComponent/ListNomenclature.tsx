@@ -74,7 +74,7 @@ const ListNomenclature = ({
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/` + typeNomenclature + "/delete/",
+      path: url`/api/nomenclature/` + typeNomenclature + "/delete/",
     });
   }
 
@@ -113,7 +113,7 @@ const ListNomenclature = ({
       />
       <QueryTable
         filterValuesToVariable={FilterValues}
-        query={url`/api/` + typeNomenclature + "/get"}
+        query={url`/api/nomenclature/` + typeNomenclature + "/get"}
         columns={[
           {
             Header: "Code",
