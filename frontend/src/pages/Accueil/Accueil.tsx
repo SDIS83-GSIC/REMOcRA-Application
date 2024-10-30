@@ -111,6 +111,11 @@ function getLinks(
           label: "Liste des sites",
           link: URLS.LIST_SITE,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
+          label: "Liste des blocs documents",
+          link: URLS.LIST_BLOC_DOCUMENT,
+        },
       ];
     case TypeModuleRemocra.COURRIER:
     case TypeModuleRemocra.DOCUMENT:
