@@ -28,6 +28,17 @@ const ListBlocDocument = () => {
   const thematiqueState = useGet(url`/api/thematique/`);
   const profilDroitState = useGet(url`/api/profil-droit`);
   const listeButton: ButtonType[] = [];
+
+  if (hasDroit(user, TYPE_DROIT.DOCUMENTS_A)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      path: url`/api/bloc-document/delete/`,
+    });
+  }
+
   if (hasDroit(user, TYPE_DROIT.DOCUMENTS_R)) {
     listeButton.push({
       row: (row) => {

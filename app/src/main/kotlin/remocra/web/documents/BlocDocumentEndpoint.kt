@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
@@ -25,6 +26,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.document.blocdocument.CreateBlocDocumentUseCase
+import remocra.usecase.document.blocdocument.DeleteBlocDocumentUseCase
 import remocra.utils.getTextPart
 import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
@@ -43,6 +45,9 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createBlocDocumentUseCase: CreateBlocDocumentUseCase
+
+    @Inject
+    lateinit var deleteBlocDocumentUseCase: DeleteBlocDocumentUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -108,4 +113,17 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
             blocDocumentData,
         ).wrap()
     }
+
+    @DELETE
+    @Path("/delete/{blocDocumentId}")
+    @RequireDroits([Droit.DOCUMENTS_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun delete(
+        @PathParam("blocDocumentId")
+        blocDocumentId: UUID,
+    ): Response =
+        deleteBlocDocumentUseCase.execute(
+            securityContext.userInfo,
+            blocDocumentRepository.getById(blocDocumentId),
+        ).wrap()
 }

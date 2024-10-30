@@ -353,6 +353,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     BLOC_DOCUMENT_FORBIDDEN_INSERT(10011, "Vous n'avez pas les droits de création des blocs documents.", Status.FORBIDDEN),
+    BLOC_DOCUMENT_FORBIDDEN_DELETE(10012, "Vous n'avez pas les droits de suppression des blocs documents.", Status.FORBIDDEN),
+    BLOC_DOCUMENT_DOCUMENT_NOT_FOUND(10013, "Impossible de trouver le document associé au bloc document."),
 
     ;
     override fun toString(): String {
