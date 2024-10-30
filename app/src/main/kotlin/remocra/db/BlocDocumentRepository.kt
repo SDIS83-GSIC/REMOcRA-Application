@@ -129,6 +129,14 @@ class BlocDocumentRepository @Inject constructor(private val dsl: DSLContext) {
             .set(dsl.newRecord(BLOC_DOCUMENT, blocDocument))
             .execute()
 
+    fun updateBlocDocument(blocDocument: BlocDocument) =
+        dsl.update(BLOC_DOCUMENT)
+            .set(BLOC_DOCUMENT.LIBELLE, blocDocument.blocDocumentLibelle)
+            .set(BLOC_DOCUMENT.DATE_MAJ, blocDocument.blocDocumentDateMaj)
+            .set(BLOC_DOCUMENT.DESCRIPTION, blocDocument.blocDocumentDescription)
+            .where(BLOC_DOCUMENT.ID.eq(blocDocument.blocDocumentId))
+            .execute()
+
     fun insertThematiqueBlocDocument(lThematiqueBlocDocument: LThematiqueBlocDocument) =
         dsl.insertInto(L_THEMATIQUE_BLOC_DOCUMENT)
             .set(dsl.newRecord(L_THEMATIQUE_BLOC_DOCUMENT, lThematiqueBlocDocument))

@@ -22,7 +22,7 @@ const CreateBlocDocument = () => {
         prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={URLS.LIST_BLOC_DOCUMENT}
       >
-        <BlocDocument />
+        <BlocDocument isNew={true} />
       </MyFormik>
     </Container>
   );

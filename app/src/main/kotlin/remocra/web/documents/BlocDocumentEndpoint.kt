@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -27,7 +28,9 @@ import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.document.blocdocument.CreateBlocDocumentUseCase
 import remocra.usecase.document.blocdocument.DeleteBlocDocumentUseCase
+import remocra.usecase.document.blocdocument.UpdateBlocDocumentUseCase
 import remocra.utils.getTextPart
+import remocra.utils.getTextPartOrNull
 import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
 import java.io.File
@@ -48,6 +51,9 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var deleteBlocDocumentUseCase: DeleteBlocDocumentUseCase
+
+    @Inject
+    lateinit var updateBlocDocumentUseCase: UpdateBlocDocumentUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -101,8 +107,8 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
     ): Response {
         val blocDocumentData = BlocDocumentData(
             blocDocumentId = UUID.randomUUID(),
-            blocDocumentLibelle = httpRequest.getTextPart("blocDocumentLibelle"),
-            blocDocumentDecription = httpRequest.getTextPart("blocDocumentDecription"),
+            blocDocumentLibelle = httpRequest.getTextPartOrNull("blocDocumentLibelle"),
+            blocDocumentDescription = httpRequest.getTextPartOrNull("blocDocumentDescription"),
             listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
             listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
             document = httpRequest.getPart("document"),
@@ -125,5 +131,36 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
         deleteBlocDocumentUseCase.execute(
             securityContext.userInfo,
             blocDocumentRepository.getById(blocDocumentId),
+        ).wrap()
+
+    @GET
+    @Path("/get/{blocDocumentId}")
+    @RequireDroits([Droit.DOCUMENTS_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun get(
+        @PathParam("blocDocumentId")
+        blocDocumentId: UUID,
+    ): Response =
+        Response.ok(blocDocumentRepository.getById(blocDocumentId)).build()
+
+    @PUT
+    @Path("/update/{blocDocumentId}")
+    @RequireDroits([Droit.DOCUMENTS_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun update(
+        @PathParam("blocDocumentId")
+        blocDocumentId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ): Response =
+        updateBlocDocumentUseCase.execute(
+            securityContext.userInfo,
+            BlocDocumentData(
+                blocDocumentId = blocDocumentId,
+                blocDocumentLibelle = httpRequest.getTextPartOrNull("blocDocumentLibelle"),
+                blocDocumentDescription = httpRequest.getTextPartOrNull("blocDocumentDescription"),
+                listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
+                listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
+                document = if (httpRequest.getPart("document").submittedFileName != null) httpRequest.getPart("document") else null,
+            ),
         ).wrap()
 }

@@ -15,7 +15,7 @@ import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type BlocDocumentType = {
   blocDocumentLibelle: string;
-  blocDocumentDecription: string;
+  blocDocumentDescription: string;
   listeThematiqueId: string[];
   listeProfilDroitId: string[];
   document: any;
@@ -23,7 +23,7 @@ type BlocDocumentType = {
 
 export const getInitialValues = (data?: BlocDocumentType) => ({
   blocDocumentLibelle: data?.blocDocumentLibelle ?? null,
-  blocDocumentDecription: data?.blocDocumentDecription ?? null,
+  blocDocumentDescription: data?.blocDocumentDescription ?? null,
   listeThematiqueId: data?.listeThematiqueId ?? null,
   listeProfilDroitId: data?.listeProfilDroitId ?? null,
   document: null,
@@ -36,7 +36,7 @@ export const prepareVariables = (values: BlocDocumentType) => {
 
   formData.append("document", values.document);
   formData.append("blocDocumentLibelle", values.blocDocumentLibelle);
-  formData.append("blocDocumentDecription", values.blocDocumentDecription);
+  formData.append("blocDocumentDescription", values.blocDocumentDescription);
   formData.append(
     "listeThematiqueId",
     JSON.stringify(values.listeThematiqueId),
@@ -49,7 +49,7 @@ export const prepareVariables = (values: BlocDocumentType) => {
   return formData;
 };
 
-const BlocDocument = () => {
+const BlocDocument = ({ isNew = false }: { isNew?: boolean }) => {
   const { values, setFieldValue } = useFormikContext<BlocDocumentType>();
   const thematiqueState = useGet(url`/api/thematique/actif`);
   const profilDroitState = useGet(url`/api/profil-droit`);
@@ -66,7 +66,7 @@ const BlocDocument = () => {
         name="document"
         accept="*.*"
         label="Document"
-        required={true}
+        required={isNew}
         onChange={(e) => setFieldValue("document", e.target.files[0])}
       />
 

@@ -93,6 +93,7 @@ import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
 import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
 import CreateBlocDocument from "./pages/Admin/blocDocument/CreateBlocDocument.tsx";
+import UpdateBlocDocument from "./pages/Admin/blocDocument/UpdateBlocDocument.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -247,6 +248,8 @@ export const URLS = {
 
   ADD_BLOC_DOCUMENT: url`/admin/bloc-document/create`,
   LIST_BLOC_DOCUMENT: url`/admin/bloc-document`,
+  UPDATE_BLOC_DOCUMENT: (blocDocumentId: string) =>
+    url`/admin/bloc-document/update/` + blocDocumentId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1056,6 +1059,15 @@ export default [
         element: (
           <Authorization
             Component={CreateBlocDocument}
+            droits={[TYPE_DROIT.DOCUMENTS_A]}
+          />
+        ),
+      },
+      {
+        path: "bloc-document/update/:blocDocumentId",
+        element: (
+          <Authorization
+            Component={UpdateBlocDocument}
             droits={[TYPE_DROIT.DOCUMENTS_A]}
           />
         ),

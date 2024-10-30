@@ -34,6 +34,14 @@ const ListBlocDocument = () => {
       row: (row) => {
         return row;
       },
+      href: (blocDocumentId) => URLS.UPDATE_BLOC_DOCUMENT(blocDocumentId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
       type: TYPE_BUTTON.DELETE,
       path: url`/api/bloc-document/delete/`,
     });

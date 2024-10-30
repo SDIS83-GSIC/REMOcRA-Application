@@ -50,3 +50,11 @@ fun <E> Collection<E>.limitOffset(limit: Long?, offset: Long?): MutableSet<E>? {
 
 fun HttpServletRequest.getTextPart(part: String) =
     this.getPart(part).inputStream.reader().readText()
+
+fun HttpServletRequest.getTextPartOrNull(part: String): String? {
+    val partText = this.getPart(part).inputStream.reader().readText()
+    if (partText == "null") {
+        return null
+    }
+    return partText
+}

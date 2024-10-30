@@ -13,16 +13,14 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.BlocDocument
-import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.pojos.LThematiqueBlocDocument
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
-import java.util.UUID
 
-class CreateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOperation.INSERT) {
+class UpdateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var documentRepository: DocumentRepository
 
@@ -32,7 +30,7 @@ class CreateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOpera
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.DOCUMENTS_A)) {
-            throw RemocraResponseException(ErrorType.BLOC_DOCUMENT_FORBIDDEN_INSERT)
+            throw RemocraResponseException(ErrorType.BLOC_DOCUMENT_FORBIDDEN_UPDATE)
         }
     }
 
@@ -52,32 +50,34 @@ class CreateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOpera
     }
 
     override fun execute(userInfo: UserInfo?, element: BlocDocumentData): BlocDocumentData {
-        val documentId = UUID.randomUUID()
+        val document = blocDocumentRepository.getDocumentByBlocDocument(element.blocDocumentId)
+            ?: throw RemocraResponseException(ErrorType.BLOC_DOCUMENT_DOCUMENT_NOT_FOUND)
 
-        // On sauvegarde le document sur le disque
-        val repertoire = GlobalConstants.DOSSIER_BLOC_DOCUMENT + "/${element.blocDocumentId}"
-        documentUtils.saveFile(element.document!!.inputStream.readAllBytes(), element.document.submittedFileName, repertoire)
+        // Si l'utilisateur a changé de document
+        if (element.document != null) {
+            // On supprime le fichier sur le disque et on remet le bon
+            documentUtils.deleteFile(document.documentNomFichier, document.documentRepertoire)
+            val repertoire = GlobalConstants.DOSSIER_BLOC_DOCUMENT + "/${element.blocDocumentId}"
+            documentUtils.saveFile(
+                element.document.inputStream.readAllBytes(),
+                element.document.submittedFileName,
+                repertoire,
+            )
+            // On met à jour le nom du fichier
+            documentRepository.updateDocument(element.document.submittedFileName)
+        }
 
-        // On récupère le document et on l'enregistre
-        documentRepository.insertDocument(
-            Document(
-                documentId = documentId,
-                documentDate = dateUtils.now(),
-                documentNomFichier = element.document.submittedFileName,
-                documentRepertoire = repertoire,
-            ),
-        )
-
-        blocDocumentRepository.insertBlocDocument(
+        blocDocumentRepository.updateBlocDocument(
             BlocDocument(
                 blocDocumentId = element.blocDocumentId,
-                documentId = documentId,
+                documentId = document.documentId,
                 blocDocumentLibelle = element.blocDocumentLibelle,
                 blocDocumentDescription = element.blocDocumentDescription,
-                blocDocumentDateMaj = null,
+                blocDocumentDateMaj = dateUtils.now(),
             ),
         )
 
+        blocDocumentRepository.deleteThematiqueBlocDocument(element.blocDocumentId)
         element.listeThematiqueId?.forEach {
             blocDocumentRepository.insertThematiqueBlocDocument(
                 LThematiqueBlocDocument(
@@ -87,6 +87,7 @@ class CreateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOpera
             )
         }
 
+        blocDocumentRepository.deleteProfilDroitBlocDocument(element.blocDocumentId)
         element.listeProfilDroitId?.forEach {
             blocDocumentRepository.insertProfilDroitBlocDocument(
                 LProfilDroitBlocDocument(
