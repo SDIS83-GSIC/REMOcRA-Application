@@ -391,4 +391,39 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val peiId: UUID,
         val peiNumeroComplet: String,
     )
+
+    fun getItEnCoursToCalculIndispo(): List<UUID> =
+        dsl.select(INDISPONIBILITE_TEMPORAIRE.ID)
+            .from(INDISPONIBILITE_TEMPORAIRE)
+            .where(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
+            .and((INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now())).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull))
+            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE)
+            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_DEBUT.isFalse)
+            .fetchInto()
+
+    fun getItTermineeToCalculIndispo(): List<UUID> =
+        dsl.select(INDISPONIBILITE_TEMPORAIRE.ID)
+            .from(INDISPONIBILITE_TEMPORAIRE)
+            .where(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.le(dateUtils.now()))
+            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE)
+            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_FIN.isFalse)
+            .fetchInto()
+
+    fun getAllPeiIdFromItId(itId: UUID): List<UUID> =
+        dsl.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID)
+            .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(itId))
+            .fetchInto()
+
+    fun setBasculeDebutTrue(itId: UUID) =
+        dsl.update(INDISPONIBILITE_TEMPORAIRE)
+            .set(INDISPONIBILITE_TEMPORAIRE.BASCULE_DEBUT, true)
+            .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(itId))
+            .execute()
+
+    fun setBasculeFinTrue(itId: UUID) =
+        dsl.update(INDISPONIBILITE_TEMPORAIRE)
+            .set(INDISPONIBILITE_TEMPORAIRE.BASCULE_FIN, true)
+            .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(itId))
+            .execute()
 }

@@ -1,6 +1,7 @@
 package remocra.usecase.pei
 
 import com.google.inject.Inject
+import com.google.inject.Provider
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
@@ -50,7 +51,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject
-    lateinit var parametresProvider: ParametresProvider
+    lateinit var parametresProvider: Provider<ParametresProvider>
 
     @Inject lateinit var peiRepository: PeiRepository
 
@@ -87,7 +88,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         if (typeOperation != TypeOperation.DELETE) {
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
             if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
-                parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
+                parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
                 needComputeNumeroInterne(element)
             ) {
                 // Création de l'objet data pour le calcul
@@ -203,7 +204,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_ZONE_COMPETENCE)
         }
 
-        val isSaisieLibreEnabled = parametresProvider.getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!
+        val isSaisieLibreEnabled = parametresProvider.get().getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!
         // Normalement impossible, sauf sur changement du paramètre sans nettoyage
         if (!isSaisieLibreEnabled && element.peiVoieTexte != null) {
             throw RemocraResponseException(ErrorType.PEI_VOIE_SAISIE_LIBRE_FORBIDDEN)
