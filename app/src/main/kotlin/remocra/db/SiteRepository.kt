@@ -22,6 +22,15 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) {
             .and(GESTIONNAIRE.ACTIF)
             .fetchInto()
 
+    fun getAllSiteByGestionnaire(gestionnaireId: UUID): Collection<SiteWithGestionnaireId> =
+        dsl.select(SITE.ID.`as`("id"), SITE.LIBELLE.`as`("libelle"), GESTIONNAIRE.ID)
+            .from(SITE)
+            .leftJoin(GESTIONNAIRE)
+            .on(GESTIONNAIRE.ID.eq(SITE.GESTIONNAIRE_ID))
+            .where(SITE.ACTIF)
+            .and(GESTIONNAIRE.ID.eq(gestionnaireId))
+            .fetchInto()
+
     fun getById(siteId: UUID): Site =
         dsl.selectFrom(SITE).where(SITE.ID.eq(siteId)).fetchSingleInto()
 

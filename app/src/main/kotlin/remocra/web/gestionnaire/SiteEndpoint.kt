@@ -105,9 +105,12 @@ class SiteEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/actifs")
+    @Path("gestionnaire/{gestionnaireId}")
     @RequireDroits([Droit.GEST_SITE_R])
-    fun getAllActifs(): Response {
-        return Response.ok(siteRepository.getAll()).build()
+    fun getAllSiteByGestionnaire(
+        @PathParam("gestionnaireId")
+        gestionnaireId: UUID,
+    ): Response {
+        return Response.ok(siteRepository.getAllSiteByGestionnaire(gestionnaireId)).build()
     }
 }

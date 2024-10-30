@@ -104,10 +104,10 @@ export const prepareVariables = (values: ContactType) => ({
 });
 
 const Contact = () => {
-  const { appartenance } = useParams();
+  const { appartenance, appartenanceId } = useParams();
 
   const roleState = useGet(url`/api/role/`);
-  const siteState = useGet(url`/api/site/actifs`);
+  const siteState = useGet(url`/api/site/gestionnaire/` + appartenanceId);
   const fonctionContactState = useGet(url`/api/contact/fonctions`);
 
   const voieState = useGet(url`/api/voie/get`);
