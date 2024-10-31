@@ -365,6 +365,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     UTILISATEUR_ACTION_EMAIL(10020, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
     UTILISATEUR_TOURNEE_RESERVEE(10021, "L'utilisateur a réservé une tournée."),
     UTILISATEUR_SUPPRESSION_KEYCLOAK(10022, "Impossible de supprimer l'utilisateur dans keycloak."),
+    UTILISATEUR_MAJ_KEYCLOAK(10023, "Impossible de modifier l'utilisateur dans keycloak."),
 
     //
     // ********************************************************************************

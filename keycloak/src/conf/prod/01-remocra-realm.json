@@ -65,5 +65,6 @@
   ],
   "internationalizationEnabled" : true,
   "supportedLocales" : [ "fr" ],
-  "defaultLocale" : "fr"
+  "defaultLocale" : "fr",
+  "editUsernameAllowed": true
 }

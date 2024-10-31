@@ -301,6 +301,12 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .execute()
 
+    fun updateUtilisateur(utilisateur: Utilisateur) =
+        dsl.update(UTILISATEUR)
+            .set(dsl.newRecord(UTILISATEUR, utilisateur))
+            .where(UTILISATEUR.ID.eq(utilisateur.utilisateurId))
+            .execute()
+
     fun getById(utilisateurId: UUID): UtilisateurData =
         dsl.select(*UTILISATEUR.fields())
             .from(UTILISATEUR)

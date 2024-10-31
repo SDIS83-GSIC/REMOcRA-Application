@@ -3,7 +3,9 @@ package remocra.web.utilisateur
 import com.google.inject.Inject
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -21,6 +23,7 @@ import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.utilisateur.CreateUtilisateurUseCase
 import remocra.usecase.utilisateur.DeleteUtilisateurUseCase
+import remocra.usecase.utilisateur.UpdateUtilisateurUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -36,6 +39,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var deleteUtilisateurUseCase: DeleteUtilisateurUseCase
+
+    @Inject
+    lateinit var updateUtilisateurUseCase: UpdateUtilisateurUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -116,5 +122,37 @@ class UtilisateurEndpoint : AbstractEndpoint() {
         deleteUtilisateurUseCase.execute(
             securityContext.userInfo,
             utilisateurRepository.getById(utilisateurId),
+        ).wrap()
+
+    @GET
+    @Path("/get/{utilisateurId}")
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R])
+    fun get(@PathParam("utilisateurId") utilisateurId: UUID): Response {
+        return Response.ok(utilisateurRepository.getById(utilisateurId)).build()
+    }
+
+    @PUT
+    @Path("/update/{utilisateurId}")
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
+    fun update(
+        @PathParam("utilisateurId")
+        utilisateurId: UUID,
+        utilisateurInput: UtilisateurInput,
+    ) =
+        updateUtilisateurUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = UtilisateurData(
+                utilisateurId = utilisateurId,
+                utilisateurActif = utilisateurInput.utilisateurActif,
+                utilisateurEmail = utilisateurInput.utilisateurEmail,
+                utilisateurNom = utilisateurInput.utilisateurNom,
+                utilisateurPrenom = utilisateurInput.utilisateurPrenom,
+                utilisateurUsername = utilisateurInput.utilisateurUsername,
+                utilisateurTelephone = utilisateurInput.utilisateurTelephone,
+                utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
+                utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
+                utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
+                uri = null,
+            ),
         ).wrap()
 }

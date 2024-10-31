@@ -52,4 +52,11 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Path("id") userId: String,
     ): Call<Void>
+
+    @PUT("users/{id}")
+    fun updateUser(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Path("id") userId: String,
+        @Body user: UserRepresentation,
+    ): Call<Void>
 }

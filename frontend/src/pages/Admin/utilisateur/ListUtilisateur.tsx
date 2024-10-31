@@ -39,6 +39,14 @@ const ListUtilisateur = () => {
       row: (row) => {
         return row;
       },
+      href: (utilisateurId) => URLS.UPDATE_UTILISATEUR(utilisateurId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
       type: TYPE_BUTTON.DELETE,
       disable: (v) => {
         return v.value === user.utilisateurId;
