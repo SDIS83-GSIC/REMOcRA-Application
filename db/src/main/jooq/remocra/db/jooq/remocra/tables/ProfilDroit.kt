@@ -108,6 +108,11 @@ open class ProfilDroit(
      */
     val DROITS: TableField<Record, Array<Droit?>?> = createField(DSL.name("profil_droit_droits"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(Droit::class.java).array(), this, "")
 
+    /**
+     * The column <code>remocra.profil_droit.profil_droit_actif</code>.
+     */
+    val ACTIF: TableField<Record, Boolean?> = createField(DSL.name("profil_droit_actif"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

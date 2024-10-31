@@ -25,6 +25,8 @@ export const IconExport = () => <i className="fi fi-br-download" />;
 
 export const IconAnomalie = () => <i className="fi fi-br-bug" />;
 
+export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
+
 export const IconIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-time-delete" />
 );

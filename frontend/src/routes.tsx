@@ -103,6 +103,13 @@ import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import ListModuleDocumentCourrier from "./pages/ModuleDocumentCourrier/ListModuleDocumentCourrier.tsx";
+import ProfilDroitList from "./pages/Admin/droit/ProfilDroitList.tsx";
+import ProfilDroitCreate from "./pages/Admin/droit/ProfilDroitCreate.tsx";
+import ProfilDroitUpdate from "./pages/Admin/droit/ProfilDroitUpdate.tsx";
+import LienProfilDroitList from "./pages/Admin/droit/LienProfilDroitList.tsx";
+import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonctionnaliteList.tsx";
+import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
+import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -153,6 +160,22 @@ export const URLS = {
   ADD_NATURE: url`/admin/nature/create`,
   UPDATE_NATURE: (natureId: string) => url`/admin/nature/update/` + natureId,
   LIST_NATURE: url`/admin/nature`,
+
+  PROFIL_DROIT_LIST: url`/admin/profil-droit`,
+  PROFIL_DROIT_CREATE: url`/admin/profil-droit/create`,
+  PROFIL_DROIT_UPDATE: (profilDroitId) =>
+    url`/admin/profil-droit/${profilDroitId}`,
+
+  LIEN_DROIT_LIST: url`/admin/lien-profil-droit`,
+
+  LIEN_PROFIL_FONCTIONNALITE_LIST: url`/admin/lien-profil-fonctionnalite`,
+  LIEN_PROFIL_FONCTIONNALITE_CREATE: url`/admin/lien-profil-fonctionnalite/create`,
+  LIEN_PROFIL_FONCTIONNALITE_UPDATE: ({
+    profilOrganismeId,
+    profilUtilisateurId,
+  }) =>
+    url`/admin/lien-profil-fonctionnalite/${profilOrganismeId}/${profilUtilisateurId}`,
+
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
     url`/admin/organisme/update/` + organismeId,
@@ -260,6 +283,10 @@ export const URLS = {
   LIST_BLOC_DOCUMENT: url`/admin/bloc-document`,
   UPDATE_BLOC_DOCUMENT: (blocDocumentId: string) =>
     url`/admin/bloc-document/update/` + blocDocumentId,
+
+  ANOMALIE: url`/admin/anomalie`,
+  ANOMALIE_CREATE: url`/admin/anomalie/create`,
+  ANOMALIE_UPDATE: (anomalieId) => url`/admin/anomalie/${anomalieId}`,
 
   ADD_UTILISATEUR: url`/admin/utilisateur/create`,
   LIST_UTILISATEUR: url`/admin/utilisateur`,
@@ -834,7 +861,69 @@ export default [
           />
         ),
       },
-
+      {
+        path: "profil-droit",
+        element: (
+          <Authorization
+            Component={ProfilDroitList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-droit/create",
+        element: (
+          <Authorization
+            Component={ProfilDroitCreate}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "profil-droit/:profilDroitId",
+        element: (
+          <Authorization
+            Component={ProfilDroitUpdate}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "lien-profil-droit",
+        element: (
+          <Authorization
+            Component={LienProfilDroitList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "lien-profil-fonctionnalite",
+        element: (
+          <Authorization
+            Component={LienProfilFonctionnaliteList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "lien-profil-fonctionnalite/create",
+        element: (
+          <Authorization
+            Component={LienProfilFonctionnaliteCreate}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "lien-profil-fonctionnalite/:profilOrganismeId/:profilUtilisateurId",
+        element: (
+          <Authorization
+            Component={LienProfilFonctionnaliteUpdate}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
       {
         path: "thematique",
         element: (

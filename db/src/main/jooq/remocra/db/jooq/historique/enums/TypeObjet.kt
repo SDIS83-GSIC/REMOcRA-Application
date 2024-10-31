@@ -59,6 +59,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     UTILISATEUR("UTILISATEUR"),
     FICHE_RESUME("FICHE_RESUME"),
     MODULE_ACCUEIL("MODULE_ACCUEIL"),
+    PROFIL_DROIT("PROFIL_DROIT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

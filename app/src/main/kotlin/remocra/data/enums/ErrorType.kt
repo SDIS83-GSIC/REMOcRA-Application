@@ -390,6 +390,19 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_ANOMALIE_FORBIDDEN_DELETE(12003, "Vous n'avez pas les droits de suppression des anomalies", Status.FORBIDDEN),
     ADMIN_ANOMALIE_IS_PROTECTED(12004, "Cette anomalie est protégée"),
     ADMIN_ANOMALIE_IN_USE(12005, "Cette anomalie est utilisée"),
+
+    //
+    // ********************************************************************************
+    // Gestion des droits
+    // ********************************************************************************
+    //
+    PROFIL_DROIT_FORBIDDEN_UPDATE(13001, "Vous n'avez pas les droits de modification de profil de droit", Status.FORBIDDEN),
+    PROFIL_DROIT_FORBIDDEN_INSERT(13002, "Vous n'avez pas les droits de création de profil de droit", Status.FORBIDDEN),
+    PROFIL_DROIT_FORBIDDEN_DELETE(13003, "Vous n'avez pas les droits de suppression de profil de droit", Status.FORBIDDEN),
+
+    LIEN_PROFIL_FONCTIONNALITE_EXISTS(13011, "La combinaison profil organisme / utilisateur existe déjà", Status.BAD_REQUEST),
+    LIEN_PROFIL_FONCTIONNALITE_WRONG_TYPE(13012, "La combinaison profil organisme / utilisateur doit avoir le même type d'organisme", Status.BAD_REQUEST),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

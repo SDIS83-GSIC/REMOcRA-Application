@@ -386,8 +386,8 @@ type QueryTableType = {
 export type columnType = {
   Header?: string | ReactNode;
   Filter?: ReactNode;
-  accessor: string | ReactNode;
-  sortField?: () => string | string;
+  accessor: string | (() => ReactNode);
+  sortField?: (() => string) | string;
   Cell?: (value: any) => ReactNode;
   className?: string;
   classNameHeader?: string;

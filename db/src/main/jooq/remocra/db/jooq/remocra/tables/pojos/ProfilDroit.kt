@@ -25,6 +25,7 @@ data class ProfilDroit(
     val profilDroitCode: String,
     val profilDroitLibelle: String,
     val profilDroitDroits: Array<Droit?>,
+    val profilDroitActif: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -50,6 +51,9 @@ data class ProfilDroit(
         if (!Arrays.deepEquals(this.profilDroitDroits, o.profilDroitDroits)) {
             return false
         }
+        if (this.profilDroitActif != o.profilDroitActif) {
+            return false
+        }
         return true
     }
 
@@ -60,6 +64,7 @@ data class ProfilDroit(
         result = prime * result + this.profilDroitCode.hashCode()
         result = prime * result + this.profilDroitLibelle.hashCode()
         result = prime * result + Arrays.deepHashCode(this.profilDroitDroits)
+        result = prime * result + this.profilDroitActif.hashCode()
         return result
     }
 
@@ -70,6 +75,7 @@ data class ProfilDroit(
         sb.append(", ").append(profilDroitCode)
         sb.append(", ").append(profilDroitLibelle)
         sb.append(", ").append(Arrays.deepToString(profilDroitDroits))
+        sb.append(", ").append(profilDroitActif)
 
         sb.append(")")
         return sb.toString()
