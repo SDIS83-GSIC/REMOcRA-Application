@@ -115,6 +115,9 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: UtilisateurData) {
+        if (element.utilisateurUsername.trim().length < 3) {
+            throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_LENGTH)
+        }
         if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }

@@ -249,7 +249,7 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
       row={row}
       disabled={_button.disable ? _button.disable(row) : false}
       textDisable={_button.textDisable}
-      textEnable={"Supprimer"}
+      textEnable={_button.textEnable ?? "Supprimer"}
       classEnable={"danger"}
       deleteModale={deleteModale}
       icon={<IconDelete />}

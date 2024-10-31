@@ -4,6 +4,7 @@ import com.google.common.net.HttpHeaders
 import remocra.keycloak.representations.UserRepresentation
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -43,5 +44,12 @@ interface KeycloakApi {
         @Query("client_id") clientId: String = "remocra",
         @Query("redirect_uri") redirectUri: URI,
         @Body actions: Set<String>,
+    ): Call<Void>
+
+    @DELETE("users/{id}")
+    @Headers("Content-Type: application/json")
+    fun deleteUser(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Path("id") userId: String,
     ): Call<Void>
 }

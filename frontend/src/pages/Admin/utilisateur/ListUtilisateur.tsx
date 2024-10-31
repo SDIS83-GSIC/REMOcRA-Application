@@ -7,10 +7,17 @@ import SelectFilterFromList from "../../../components/Filter/SelectFilterFromLis
 import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconGererContact } from "../../../components/Icon/Icon.tsx";
-import { BooleanColumn } from "../../../components/Table/columns.tsx";
+import {
+  ActionColumn,
+  BooleanColumn,
+} from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import UtilisateurEntity, {
   TYPE_DROIT,
@@ -25,6 +32,23 @@ const ListUtilisateur = () => {
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: profilDroitList } = useGet(url`/api/profil-droit`);
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
+
+  const listeButton: ButtonType[] = [];
+  if (hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      disable: (v) => {
+        return v.value === user.utilisateurId;
+      },
+      textDisable: "Impossible de supprimer votre propre compte.",
+      path: url`/api/utilisateur/delete/`,
+      textEnable:
+        "Attention, si l'utilisateur vient d'un annuaire, le compte sera de nouveau présent lors de la synchronisation. Si vous souhaitez le supprimer, supprimer-le de la synchronisation.",
+    });
+  }
 
   return (
     <>
@@ -128,6 +152,11 @@ const ListUtilisateur = () => {
                   name={"utilisateurActif"}
                 />
               ),
+            }),
+            ActionColumn({
+              Header: "Actions",
+              accessor: "utilisateurId",
+              buttons: listeButton,
             }),
           ]}
           idName={"tableUtilisateurId"}

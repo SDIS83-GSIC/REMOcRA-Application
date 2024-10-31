@@ -8,6 +8,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
 import remocra.data.Params
+import remocra.data.UtilisateurData
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
@@ -15,6 +16,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
@@ -286,4 +288,22 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
         dsl.insertInto(UTILISATEUR)
             .set(dsl.newRecord(UTILISATEUR, utilisateur))
             .execute()
+
+    fun checkExistsInTournee(utilisateurId: UUID) =
+        dsl.fetchExists(
+            dsl.select(TOURNEE.RESERVATION_UTILISATEUR_ID)
+                .from(TOURNEE)
+                .where(TOURNEE.RESERVATION_UTILISATEUR_ID.eq(utilisateurId)),
+        )
+
+    fun deleteUtilisateur(utilisateurId: UUID): Int =
+        dsl.deleteFrom(UTILISATEUR)
+            .where(UTILISATEUR.ID.eq(utilisateurId))
+            .execute()
+
+    fun getById(utilisateurId: UUID): UtilisateurData =
+        dsl.select(*UTILISATEUR.fields())
+            .from(UTILISATEUR)
+            .where(UTILISATEUR.ID.eq(utilisateurId))
+            .fetchSingleInto()
 }

@@ -1,9 +1,11 @@
 package remocra.web.utilisateur
 
 import com.google.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -18,6 +20,7 @@ import remocra.data.UtilisateurData
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.utilisateur.CreateUtilisateurUseCase
+import remocra.usecase.utilisateur.DeleteUtilisateurUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -30,6 +33,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createUtilisateurUseCase: CreateUtilisateurUseCase
+
+    @Inject
+    lateinit var deleteUtilisateurUseCase: DeleteUtilisateurUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -98,4 +104,17 @@ class UtilisateurEndpoint : AbstractEndpoint() {
         @FormParam("utilisateurActif")
         var utilisateurActif: Boolean = true
     }
+
+    @DELETE
+    @Path("/delete/{utilisateurId}")
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun delete(
+        @PathParam("utilisateurId")
+        utilisateurId: UUID,
+    ): Response =
+        deleteUtilisateurUseCase.execute(
+            securityContext.userInfo,
+            utilisateurRepository.getById(utilisateurId),
+        ).wrap()
 }
