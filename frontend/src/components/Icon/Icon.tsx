@@ -48,6 +48,7 @@ export const IconUnlock = () => <i className="fi fi-br-unlock" />;
 
 export const IconAddContact = () => <i className="fi fi-br-user-add" />;
 export const IconGererContact = () => <i className="fi fi-br-users-gear" />;
+export const IconPlus = () => <i className="fi fi-rr-add" />;
 
 export const IconNextPage = () => <i className="fi fi-rr-angle-circle-right" />;
 export const IconPreviousPage = () => (

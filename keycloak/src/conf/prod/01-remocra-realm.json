@@ -1,6 +1,33 @@
 {
   "realm": "remocra",
   "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "default-roles-remocra",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ],
+          "client": {
+            "realm-management": [
+              "realm-admin"
+            ],
+            "account": [
+              "manage-account",
+              "view-profile"
+            ]
+          }
+        },
+        "clientRole": false,
+        "containerId": "5b0e39ca-d1b7-48ce-9469-04fd53cec0f7",
+        "attributes": {}
+      }
+    ]
+  },
   "clientScopes": [
     {
       "name": "groups",
@@ -35,5 +62,8 @@
     "web-origins",
     "acr",
     "groups"
-  ]
+  ],
+  "internationalizationEnabled" : true,
+  "supportedLocales" : [ "fr" ],
+  "defaultLocale" : "fr"
 }

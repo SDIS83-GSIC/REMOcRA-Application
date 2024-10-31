@@ -26,7 +26,8 @@
       "publicClient": false,
       "baseUrl": "$(env:REMOCRA_URL)",
       "redirectUris": [
-        "$(env:REMOCRA_URL)/callback"
+        "$(env:REMOCRA_URL)/callback",
+        "$(env:REMOCRA_URL)/*"
       ],
       "defaultClientScopes": [
         "web-origins",

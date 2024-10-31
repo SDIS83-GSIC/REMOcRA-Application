@@ -357,6 +357,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     BLOC_DOCUMENT_FORBIDDEN_DELETE(10013, "Vous n'avez pas les droits de suppression des blocs documents.", Status.FORBIDDEN),
     BLOC_DOCUMENT_DOCUMENT_NOT_FOUND(10014, "Impossible de trouver le document associé au bloc document."),
 
+    // Utilisateur
+    UTILISATEUR_FORBIDDEN(10015, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),
+    UTILISATEUR_USERNAME_LENGTH(10016, "L'identifiant doit avoir au minimum 3 caractères."),
+    UTILISATEUR_USERNAME_EXISTS(10018, "L'identifiant saisi est déjà utilisé par un autre utilisateur."),
+    UTILISATEUR_EMAIL_EXISTS(10019, "L'adresse email saisie est déjà utilisée par un autre utilisateur."),
+    UTILISATEUR_ACTION_EMAIL(10020, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
+
     //
     // ********************************************************************************
     // Anomalie

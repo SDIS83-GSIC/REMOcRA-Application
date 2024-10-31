@@ -3,12 +3,24 @@ package remocra.keycloak
 import com.google.common.net.HttpHeaders
 import remocra.keycloak.representations.UserRepresentation
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.net.URI
 
 interface KeycloakApi {
+
+    @POST("users")
+    @Headers("Content-Type: application/json")
+    fun createUser(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Body user: UserRepresentation,
+    ): Call<Void?>
 
     @GET("users")
     fun getUsers(
@@ -23,4 +35,13 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String,
         @Path("role-name") roleName: String = "inactif",
     ): Call<List<UserRepresentation>>
+
+    @PUT("users/{id}/execute-actions-email")
+    fun executeActionsEmail(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Path("id") userId: String,
+        @Query("client_id") clientId: String = "remocra",
+        @Query("redirect_uri") redirectUri: URI,
+        @Body actions: Set<String>,
+    ): Call<Void>
 }

@@ -1,19 +1,27 @@
 import { Container } from "react-bootstrap";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
+import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconGererContact } from "../../../components/Icon/Icon.tsx";
 import { BooleanColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import UtilisateurEntity, {
+  TYPE_DROIT,
+} from "../../../Entities/UtilisateurEntity.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import FilterValues from "./FilterUtilisateur.tsx";
 
 const ListUtilisateur = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: profilDroitList } = useGet(url`/api/profil-droit`);
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
@@ -24,6 +32,14 @@ const ListUtilisateur = () => {
         <PageTitle
           icon={<IconGererContact />}
           title={"Liste des utilisateurs"}
+          right={
+            hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) && (
+              <CreateButton
+                href={URLS.ADD_UTILISATEUR}
+                title={"Ajouter un utilisateur"}
+              />
+            )
+          }
         />
         <QueryTable
           query={url`/api/utilisateur`}
@@ -59,7 +75,7 @@ const ListUtilisateur = () => {
               Filter: <FilterInput type="text" name="utilisateurTelephone" />,
             },
             BooleanColumn({
-              Header: "Peut être notifier ?",
+              Header: "Peut être notifié ?",
               accessor: "utilisateurCanBeNotified",
               sortField: "utilisateurCanBeNotified",
               Filter: (

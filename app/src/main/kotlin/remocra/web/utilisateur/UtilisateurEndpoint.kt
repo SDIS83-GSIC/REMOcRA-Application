@@ -1,17 +1,25 @@
 package remocra.web.utilisateur
 
 import com.google.inject.Inject
+import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
+import jakarta.ws.rs.core.UriInfo
 import remocra.auth.RequireDroits
+import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.Params
+import remocra.data.UtilisateurData
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.utilisateur.CreateUtilisateurUseCase
 import remocra.web.AbstractEndpoint
+import java.util.UUID
 
 @Path("/utilisateur")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,6 +27,15 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var utilisateurRepository: UtilisateurRepository
+
+    @Inject
+    lateinit var createUtilisateurUseCase: CreateUtilisateurUseCase
+
+    @Context
+    lateinit var securityContext: SecurityContext
+
+    @Context
+    lateinit var uriInfo: UriInfo
 
     @POST
     @Path("/")
@@ -30,4 +47,55 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 count = utilisateurRepository.countAllForAdmin(params.filterBy),
             ),
         ).build()
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.GEST_SITE_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun create(utilisateurInput: UtilisateurInput): Response =
+        createUtilisateurUseCase.execute(
+            securityContext.userInfo,
+            UtilisateurData(
+                utilisateurId = UUID.randomUUID(),
+                utilisateurActif = utilisateurInput.utilisateurActif,
+                utilisateurEmail = utilisateurInput.utilisateurEmail,
+                utilisateurNom = utilisateurInput.utilisateurNom,
+                utilisateurPrenom = utilisateurInput.utilisateurPrenom,
+                utilisateurUsername = utilisateurInput.utilisateurUsername,
+                utilisateurTelephone = utilisateurInput.utilisateurTelephone,
+                utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
+                utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
+                utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
+                uri = uriInfo.baseUri,
+            ),
+        ).wrap()
+
+    class UtilisateurInput {
+        @FormParam("utilisateurEmail")
+        lateinit var utilisateurEmail: String
+
+        @FormParam("utilisateurNom")
+        lateinit var utilisateurNom: String
+
+        @FormParam("utilisateurPrenom")
+        lateinit var utilisateurPrenom: String
+
+        @FormParam("utilisateurUsername")
+        lateinit var utilisateurUsername: String
+
+        @FormParam("utilisateurTelephone")
+        val utilisateurTelephone: String? = null
+
+        @FormParam("utilisateurOrganismeId")
+        lateinit var utilisateurOrganismeId: UUID
+
+        @FormParam("utilisateurProfilUtilisateurId")
+        lateinit var utilisateurProfilUtilisateurId: UUID
+
+        @FormParam("utilisateurCanBeNotified")
+        var utilisateurCanBeNotified: Boolean = true
+
+        @FormParam("utilisateurActif")
+        var utilisateurActif: Boolean = true
+    }
 }

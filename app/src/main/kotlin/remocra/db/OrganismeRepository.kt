@@ -11,6 +11,7 @@ import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
+import remocra.data.GlobalData
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.OrganismeData
 import remocra.data.Params
@@ -47,11 +48,12 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
             .and(TYPE_ORGANISME.ACTIF.isTrue).and(codeTypeOrganisme?.let { TYPE_ORGANISME.CODE.eq(codeTypeOrganisme) })
             .limit(limit).offset(offset).fetchInto()
 
-    fun getAll(): Collection<IdCodeLibelleData> =
+    fun getAll(): Collection<GlobalData.IdCodeLibelleLienData> =
         dsl.select(
             ORGANISME.ID.`as`("id"),
             ORGANISME.CODE.`as`("code"),
             ORGANISME.LIBELLE.`as`("libelle"),
+            ORGANISME.PROFIL_ORGANISME_ID.`as`("lienId"),
         )
             .from(ORGANISME)
             .where(ORGANISME.ACTIF.isTrue)

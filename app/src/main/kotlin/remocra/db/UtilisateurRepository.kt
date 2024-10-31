@@ -268,4 +268,22 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
             PROFIL_DROIT.LIBELLE.getSortField(profilDroitLibelle),
         )
     }
+
+    fun checkExistsUsername(username: String) =
+        dsl.fetchExists(
+            dsl.select(UTILISATEUR.ID)
+                .from(UTILISATEUR)
+                .where(UTILISATEUR.USERNAME.eq(username)),
+        )
+    fun checkExistsEmail(email: String) =
+        dsl.fetchExists(
+            dsl.select(UTILISATEUR.ID)
+                .from(UTILISATEUR)
+                .where(UTILISATEUR.EMAIL.eq(email)),
+        )
+
+    fun insertUtilisateur(utilisateur: Utilisateur) =
+        dsl.insertInto(UTILISATEUR)
+            .set(dsl.newRecord(UTILISATEUR, utilisateur))
+            .execute()
 }

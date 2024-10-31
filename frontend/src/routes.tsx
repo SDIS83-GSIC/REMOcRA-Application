@@ -98,6 +98,7 @@ import ListUtilisateur from "./pages/Admin/utilisateur/ListUtilisateur.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
 import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
 import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
+import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1109,6 +1110,15 @@ export default [
           <Authorization
             Component={ListUtilisateur}
             droits={[TYPE_DROIT.ADMIN_UTILISATEURS_R]}
+          />
+        ),
+      },
+      {
+        path: "utilisateur/create",
+        element: (
+          <Authorization
+            Component={CreateUtilisateur}
+            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
           />
         ),
       },
