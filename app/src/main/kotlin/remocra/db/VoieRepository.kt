@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
@@ -66,4 +67,28 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         }
         return condition
     }
+
+    fun updateGeomFromEntrepotSig() =
+        dsl.update(VOIE)
+            .set(VOIE.GEOMETRIE, V_VOIE_SIG.GEOMETRIE)
+            .from(V_VOIE_SIG)
+            .where(VOIE.LIBELLE.eq(V_VOIE_SIG.LIBELLE))
+            .and(VOIE.COMMUNE_ID.eq(V_VOIE_SIG.COMMUNE_ID))
+
+    fun getAllNewElementFromEntrepotSig(): List<Voie?> =
+        dsl.select(
+            V_VOIE_SIG.ID.`as`("voieId"),
+            V_VOIE_SIG.LIBELLE.`as`("voieLibelle"),
+            V_VOIE_SIG.GEOMETRIE.`as`("voieGeometrie"),
+            V_VOIE_SIG.COMMUNE_ID.`as`("voieCommuneId"),
+        )
+            .from(V_VOIE_SIG)
+            .whereNotExists(
+                dsl.selectOne()
+                    .from(VOIE)
+                    .where(VOIE.LIBELLE.eq(V_VOIE_SIG.LIBELLE)).and(VOIE.COMMUNE_ID.eq(V_VOIE_SIG.COMMUNE_ID)),
+            )
+            .fetchInto()
+
+    fun insertVoie(newVoie: Voie) = dsl.insertInto(VOIE).set(dsl.newRecord(VOIE, newVoie)).execute()
 }

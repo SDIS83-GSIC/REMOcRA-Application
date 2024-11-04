@@ -83,6 +83,8 @@ class ArchitectureTest {
         .and()
         .doNotHaveSimpleName("SigRepository")
         .and()
+        .doNotHaveSimpleName("EntrepotSigRepository")
+        .and()
         .doNotHaveSimpleName("NomenclatureRepository")
         .should()
         .beAssignableTo(AbstractRepository::class.java)

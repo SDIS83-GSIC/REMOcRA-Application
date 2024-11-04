@@ -12,6 +12,7 @@ import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
 import remocra.tasks.SimpleTask
 import remocra.tasks.SynchroUtilisateurTask
+import remocra.tasks.SynchronisationSIGTask
 import remocra.tasks.TaskParameters
 
 object ScheduleModule : RemocraModule() {
@@ -30,6 +31,7 @@ object ScheduleModule : RemocraModule() {
             addBinding().to<NotifAvantFinIndispoTempTask>().asEagerSingleton()
             addBinding().to<NotifResteIndispoIndispoTempTask>().asEagerSingleton()
             addBinding().to<BasculeAutoIndispoTempTask>().asEagerSingleton()
+            addBinding().to<SynchronisationSIGTask>().asEagerSingleton()
         }
     }
 }

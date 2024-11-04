@@ -2,6 +2,9 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Record
+import org.jooq.Result
 import javax.annotation.Nullable
 
 /**
@@ -13,5 +16,28 @@ import javax.annotation.Nullable
  * dans le cas contraire, une RuntimeException est justifiée.
 */
 class SigRepository @Inject constructor(@Sig @Nullable private val dsl: DSLContext?) {
-    // TODO: Ajouter les services au besoin
+
+    fun getMetaStructureTable(schemaName: String, tableName: String): List<ColumnInfo> =
+        dsl!!.meta().tables
+            .first { table ->
+                table.schema!!.name == schemaName && table.name == tableName
+            }.fields()
+            .map { field ->
+                ColumnInfo(
+                    schemaName = schemaName,
+                    columnName = field.name,
+                    columnType = field.dataType.typeName,
+                    columnNullable = field.dataType.nullable(),
+                )
+            }
+
+    data class ColumnInfo(
+        val schemaName: String,
+        val columnName: String,
+        val columnType: String,
+        val columnNullable: Boolean,
+    )
+
+    fun selectAll(listFields: List<Field<out Any>>, schemaSource: String, tableSource: String): Result<Record> =
+        dsl!!.select(listFields).from("$schemaSource.$tableSource").fetch()
 }

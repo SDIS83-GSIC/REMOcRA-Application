@@ -5,6 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import remocra.data.GlobalData
+import remocra.db.jooq.entrepotsig.tables.references.V_COMMUNE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.utils.ST_DWithin
@@ -57,4 +58,32 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .fetchOneInto()
 
     fun getById(id: UUID): Commune = dsl.selectFrom(COMMUNE).where(COMMUNE.ID.eq(id)).fetchSingleInto()
+
+    fun updateFromEntrepotSig(listeChampsAUpdate: List<String>) =
+        dsl.update(COMMUNE)
+            .set(COMMUNE.LIBELLE, if (listeChampsAUpdate.contains("libelle")) { V_COMMUNE_SIG.LIBELLE } else { COMMUNE.LIBELLE })
+            .set(COMMUNE.CODE_POSTAL, if (listeChampsAUpdate.contains("code_postal")) { V_COMMUNE_SIG.CODE_POSTAL } else { COMMUNE.CODE_POSTAL })
+            .set(COMMUNE.GEOMETRIE, if (listeChampsAUpdate.contains("geometrie")) { V_COMMUNE_SIG.GEOMETRIE } else { COMMUNE.GEOMETRIE })
+            .set(COMMUNE.PPRIF, if (listeChampsAUpdate.contains("pprif")) { V_COMMUNE_SIG.PPRIF } else { COMMUNE.PPRIF })
+            .from(V_COMMUNE_SIG)
+            .where(COMMUNE.CODE_INSEE.eq(V_COMMUNE_SIG.CODE_INSEE))
+            .execute()
+
+    fun getAllCodeInsee(): List<String> = dsl.select(COMMUNE.CODE_INSEE).from(COMMUNE).fetchInto()
+
+    fun insertFromEntrepotSig(listCodeInseeDejaPresent: List<String>) =
+        dsl.insertInto(COMMUNE)
+            .select(
+                DSL.select(
+                    V_COMMUNE_SIG.ID,
+                    V_COMMUNE_SIG.LIBELLE,
+                    V_COMMUNE_SIG.CODE_INSEE,
+                    V_COMMUNE_SIG.CODE_POSTAL,
+                    V_COMMUNE_SIG.GEOMETRIE,
+                    V_COMMUNE_SIG.PPRIF,
+                )
+                    .from(V_COMMUNE_SIG)
+                    .where(V_COMMUNE_SIG.CODE_INSEE.notIn(listCodeInseeDejaPresent)),
+            )
+            .execute()
 }
