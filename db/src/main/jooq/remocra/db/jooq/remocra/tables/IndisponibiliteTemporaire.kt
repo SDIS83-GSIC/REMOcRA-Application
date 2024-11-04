@@ -150,6 +150,14 @@ open class IndisponibiliteTemporaire(
 
     /**
      * The column
+     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_notification_reste_indispo</code>.
+     * Date à laquelle les pei restés indispo d'une indisponibilité temporaire
+     * ont été notifiés
+     */
+    val NOTIFICATION_RESTE_INDISPO: TableField<Record, ZonedDateTime?> = createField(DSL.name("indisponibilite_temporaire_notification_reste_indispo"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date à laquelle les pei restés indispo d'une indisponibilité temporaire ont été notifiés", ZonedDateTimeBinding())
+
+    /**
+     * The column
      * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_bascule_debut</code>.
      * Le calcul_dispo au début de l'indisponibilité temporaire a-t-il déjà été
      * lancé ?
@@ -163,14 +171,6 @@ open class IndisponibiliteTemporaire(
      * lancé ?
      */
     val BASCULE_FIN: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_bascule_fin"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "Le calcul_dispo à la fin de l'indisponibilité temporaire a-t-il déjà été lancé ?")
-
-    /**
-     * The column
-     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_notification_reste_indispo</code>.
-     * Date à laquelle les pei restés indispo d'une indisponibilité temporaire
-     * ont été notifiés
-     */
-    val NOTIFICATION_RESTE_INDISPO: TableField<Record, ZonedDateTime?> = createField(DSL.name("indisponibilite_temporaire_notification_reste_indispo"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date à laquelle les pei restés indispo d'une indisponibilité temporaire ont été notifiés", ZonedDateTimeBinding())
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

@@ -31,9 +31,9 @@ data class IndisponibiliteTemporaire(
     val indisponibiliteTemporaireMailApresIndisponibilite: Boolean,
     val indisponibiliteTemporaireNotificationDebut: ZonedDateTime?,
     val indisponibiliteTemporaireNotificationFin: ZonedDateTime?,
+    val indisponibiliteTemporaireNotificationResteIndispo: ZonedDateTime?,
     val indisponibiliteTemporaireBasculeDebut: Boolean?,
     val indisponibiliteTemporaireBasculeFin: Boolean?,
-    val indisponibiliteTemporaireNotificationResteIndispo: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -96,6 +96,13 @@ data class IndisponibiliteTemporaire(
         } else if (this.indisponibiliteTemporaireNotificationFin != o.indisponibiliteTemporaireNotificationFin) {
             return false
         }
+        if (this.indisponibiliteTemporaireNotificationResteIndispo == null) {
+            if (o.indisponibiliteTemporaireNotificationResteIndispo != null) {
+                return false
+            }
+        } else if (this.indisponibiliteTemporaireNotificationResteIndispo != o.indisponibiliteTemporaireNotificationResteIndispo) {
+            return false
+        }
         if (this.indisponibiliteTemporaireBasculeDebut == null) {
             if (o.indisponibiliteTemporaireBasculeDebut != null) {
                 return false
@@ -108,13 +115,6 @@ data class IndisponibiliteTemporaire(
                 return false
             }
         } else if (this.indisponibiliteTemporaireBasculeFin != o.indisponibiliteTemporaireBasculeFin) {
-            return false
-        }
-        if (this.indisponibiliteTemporaireNotificationResteIndispo == null) {
-            if (o.indisponibiliteTemporaireNotificationResteIndispo != null) {
-                return false
-            }
-        } else if (this.indisponibiliteTemporaireNotificationResteIndispo != o.indisponibiliteTemporaireNotificationResteIndispo) {
             return false
         }
         return true
@@ -134,9 +134,9 @@ data class IndisponibiliteTemporaire(
         result = prime * result + this.indisponibiliteTemporaireMailApresIndisponibilite.hashCode()
         result = prime * result + (if (this.indisponibiliteTemporaireNotificationDebut == null) 0 else this.indisponibiliteTemporaireNotificationDebut.hashCode())
         result = prime * result + (if (this.indisponibiliteTemporaireNotificationFin == null) 0 else this.indisponibiliteTemporaireNotificationFin.hashCode())
+        result = prime * result + (if (this.indisponibiliteTemporaireNotificationResteIndispo == null) 0 else this.indisponibiliteTemporaireNotificationResteIndispo.hashCode())
         result = prime * result + (if (this.indisponibiliteTemporaireBasculeDebut == null) 0 else this.indisponibiliteTemporaireBasculeDebut.hashCode())
         result = prime * result + (if (this.indisponibiliteTemporaireBasculeFin == null) 0 else this.indisponibiliteTemporaireBasculeFin.hashCode())
-        result = prime * result + (if (this.indisponibiliteTemporaireNotificationResteIndispo == null) 0 else this.indisponibiliteTemporaireNotificationResteIndispo.hashCode())
         return result
     }
 
@@ -154,9 +154,9 @@ data class IndisponibiliteTemporaire(
         sb.append(", ").append(indisponibiliteTemporaireMailApresIndisponibilite)
         sb.append(", ").append(indisponibiliteTemporaireNotificationDebut)
         sb.append(", ").append(indisponibiliteTemporaireNotificationFin)
+        sb.append(", ").append(indisponibiliteTemporaireNotificationResteIndispo)
         sb.append(", ").append(indisponibiliteTemporaireBasculeDebut)
         sb.append(", ").append(indisponibiliteTemporaireBasculeFin)
-        sb.append(", ").append(indisponibiliteTemporaireNotificationResteIndispo)
 
         sb.append(")")
         return sb.toString()
