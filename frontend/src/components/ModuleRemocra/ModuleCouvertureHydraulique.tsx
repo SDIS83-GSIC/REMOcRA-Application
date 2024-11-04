@@ -9,7 +9,7 @@ const ModuleCouvertureHydraulique = () => {
   ];
 
   return (
-    <SquelettePage header={<Header links={navLinks} />}>
+    <SquelettePage navbar={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
     </SquelettePage>

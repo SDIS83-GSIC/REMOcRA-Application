@@ -65,7 +65,7 @@ const TooltipMapPei = ({
   const pointId = featureSelect?.getProperties().pointId;
 
   return (
-    <div ref={ref} className="z-3">
+    <div ref={ref}>
       {featureSelect?.getProperties().typePointCarte ===
       TYPE_POINT_CARTE.PEI ? (
         <Tooltip
@@ -452,7 +452,7 @@ const useTooltipMap = ({
   const [overlay, setOverlay] = useState<Overlay | undefined>(
     new Overlay({
       positioning: "bottom-center",
-      stopEvent: false,
+      stopEvent: true,
     }),
   );
 

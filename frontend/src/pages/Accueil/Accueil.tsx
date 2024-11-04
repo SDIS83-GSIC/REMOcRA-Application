@@ -29,7 +29,7 @@ const Accueil = () => {
   );
 
   return (
-    <SquelettePage header={<Header />} fluid={false}>
+    <SquelettePage navbar={<Header />} fluid={false} banner={true}>
       <Row>
         {Object.entries(mapColonneRow).map(([key, values]) => (
           <Col key={key}>

@@ -6,7 +6,6 @@ import Navbar from "react-bootstrap/Navbar";
 import { NavLink } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
-import BanniereHeader from "./BanniereHeader.tsx";
 
 export interface NavToProps {
   path: string;
@@ -24,8 +23,7 @@ const NavTo = ({ path, label }: NavToProps) => {
 };
 const Header = ({ links }: { links?: NavToProps[] }) => {
   return (
-    <Row className={"header"}>
-      <BanniereHeader />
+    <Row>
       <Navbar className="mb-3" expand="lg" bg={"primary"} data-bs-theme="dark">
         <Container>
           <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>

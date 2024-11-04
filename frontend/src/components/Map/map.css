@@ -13,3 +13,28 @@
   padding: 0.2em 0.8em;
   text-decoration: none;
 }
+
+.map-wrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-areas:
+    "toolbar toolbar"
+    "map layers";
+  grid-template-rows: min-content auto;
+  grid-template-columns: auto min-content;
+  gap: 16px;
+}
+
+.map-toolbar {
+  grid-area: toolbar;
+}
+
+.map-map {
+  grid-area: map;
+}
+
+.map-layers {
+  grid-area: layers;
+  width: 270px;
+}

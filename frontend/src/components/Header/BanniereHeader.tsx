@@ -22,7 +22,7 @@ const BanniereHeader = () => {
     listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE].parametreValeur;
   const typeEnvironment = useGet(url`/api/app-settings/environment`);
   return (
-    <Row className={"bg-primary m-0 p-0"}>
+    <Row className={"bg-primary h-100 p-0"}>
       <Col
         xs={1}
         className={"d-flex justify-content-center align-items-center"}
@@ -37,21 +37,18 @@ const BanniereHeader = () => {
         >
           {messageEntete}
         </p>
-        <Image fluid alt={"Bandeau d'En-tête"} src={banniereChemin} />
-      </Col>
-      <Col xs={1} className={"mt-3 text-center"}>
         {typeEnvironment &&
-          (TYPE_ENVIRONNEMENT[typeEnvironment.value] !==
-          TYPE_ENVIRONNEMENT.PRODUCTION ? (
-            <p className={"h4"}>
+          TYPE_ENVIRONNEMENT[typeEnvironment.value] !==
+            TYPE_ENVIRONNEMENT.PRODUCTION && (
+            <p className={"fs-4 m-2 position-absolute top-0 end-0"}>
               <Badge pill bg={getBadgeEnvironment(typeEnvironment.value)?.bg}>
                 {getBadgeEnvironment(typeEnvironment.value)?.libelle}
               </Badge>
             </p>
-          ) : (
-            <></>
-          ))}
+          )}
+        <Image fluid alt={"Bandeau d'En-tête"} src={banniereChemin} />
       </Col>
+      <Col xs={1} className={"mt-3 text-center"} />
     </Row>
   );
 };

@@ -1,7 +1,6 @@
 import "ol/ol.css";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useRef } from "react";
-import { Container } from "react-bootstrap";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
@@ -90,40 +89,38 @@ const MapCouvertureHydraulique = ({
   });
 
   return (
-    <Container fluid className="z-n1">
-      <MapComponent
-        map={map}
-        workingLayer={workingLayer}
-        mapElement={mapElement}
-        availableLayers={availableLayers}
-        addOrRemoveLayer={addOrRemoveLayer}
-        layerListRef={layerListRef}
-        mapToolbarRef={mapToolbarRef}
-        toggleTool={toggleTool}
-        activeTool={activeTool}
-        toolbarElement={
-          mapToolbarRef.current && (
-            <MapToolbarCouvertureHydraulique
-              map={map}
-              etudeId={etudeId}
-              dataPeiProjetLayer={dataPeiProjetLayer}
-              disabledEditPeiProjet={disabledEditPeiProjet}
-              calculCouverture={calculCouverture}
-              clearCouverture={clearCouverture}
-              handleClosePeiProjet={handleClosePeiProjet}
-              showCreatePeiProjet={showCreatePeiProjet}
-              pointPeiProjet={pointPeiProjet}
-              handleCloseTraceeCouverture={handleCloseTraceeCouverture}
-              showTraceeCouverture={showTraceeCouverture}
-              listePeiId={listePeiId}
-              listePeiProjetId={listePeiProjetId}
-              toggleTool={toggleTool}
-              activeTool={activeTool}
-            />
-          )
-        }
-      />
-    </Container>
+    <MapComponent
+      map={map}
+      workingLayer={workingLayer}
+      mapElement={mapElement}
+      availableLayers={availableLayers}
+      addOrRemoveLayer={addOrRemoveLayer}
+      layerListRef={layerListRef}
+      mapToolbarRef={mapToolbarRef}
+      toggleTool={toggleTool}
+      activeTool={activeTool}
+      toolbarElement={
+        mapToolbarRef.current && (
+          <MapToolbarCouvertureHydraulique
+            map={map}
+            etudeId={etudeId}
+            dataPeiProjetLayer={dataPeiProjetLayer}
+            disabledEditPeiProjet={disabledEditPeiProjet}
+            calculCouverture={calculCouverture}
+            clearCouverture={clearCouverture}
+            handleClosePeiProjet={handleClosePeiProjet}
+            showCreatePeiProjet={showCreatePeiProjet}
+            pointPeiProjet={pointPeiProjet}
+            handleCloseTraceeCouverture={handleCloseTraceeCouverture}
+            showTraceeCouverture={showTraceeCouverture}
+            listePeiId={listePeiId}
+            listePeiProjetId={listePeiProjetId}
+            toggleTool={toggleTool}
+            activeTool={activeTool}
+          />
+        )
+      }
+    />
   );
 };
 

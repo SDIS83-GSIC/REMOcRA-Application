@@ -8,7 +8,7 @@ const ModuleAdmin = () => {
     { path: URLS.MODULE_ADMIN, label: "Administrer" },
   ];
   return (
-    <SquelettePage header={<Header links={navLinks} />}>
+    <SquelettePage navbar={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
     </SquelettePage>

@@ -1,23 +1,37 @@
 import { Container } from "react-bootstrap";
 import { ReactNode } from "react";
 import Footer from "../components/Footer/Footer.tsx";
+import BanniereHeader from "../components/Header/BanniereHeader.tsx";
 
-type SquelettePageType = { children?; header?: ReactNode; fluid?: boolean };
+type SquelettePageType = {
+  children?;
+  navbar?: ReactNode;
+  fluid?: boolean;
+  banner?: boolean;
+};
 const SquelettePage = ({
   children,
-  header,
+  navbar,
   fluid = true,
+  banner = false,
 }: SquelettePageType) => {
   return (
-    <>
-      <Container fluid>{header}</Container>
-      <Container fluid={fluid} className={"main"}>
-        {children}
+    <div id={"page"}>
+      {banner && (
+        <Container fluid id={"banner"}>
+          <BanniereHeader />
+        </Container>
+      )}
+      <Container fluid id={"navbar"}>
+        {navbar}
       </Container>
-      <Container fluid>
+      <Container fluid={fluid} id={"main"}>
+        <div className={"d-flex flex-column h-100"}>{children}</div>
+      </Container>
+      <Container fluid id={"footer"}>
         <Footer />
       </Container>
-    </>
+    </div>
   );
 };
 

@@ -17,7 +17,7 @@ import FilterValues from "./FilterModuleDocument.tsx";
 const ListModuleDocument = () => {
   const { moduleType, moduleId } = useParams();
   return (
-    <SquelettePage header={<Header />}>
+    <SquelettePage navbar={<Header />}>
       <Container>
         <PageTitle
           icon={<IconList />}

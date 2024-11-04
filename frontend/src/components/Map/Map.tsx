@@ -18,7 +18,6 @@ import { Circle, Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { ReactNode, useEffect, useMemo, useRef } from "react";
-import { Col, Container, Row } from "react-bootstrap";
 import url from "../../module/fetch.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
@@ -129,9 +128,9 @@ const MapComponent = ({
     toggleTool("move-view");
   }, [map]);
   return (
-    <Container fluid>
+    <div className={"map-wrapper"}>
       {map && mapElement && (
-        <>
+        <div className={"map-toolbar"}>
           {/* Commun à toutes les cartes */}
           <MapToolbar
             ref={mapToolbarRef}
@@ -141,21 +140,20 @@ const MapComponent = ({
             activeTool={activeTool}
           />
           {toolbarElement && toolbarElement}
-        </>
+        </div>
       )}
-      <Row className={"gutt-0"}>
-        <Col>
-          <div ref={mapElement} style={{ width: "100%", height: "800px" }} />
-        </Col>
-        <Col xs={3}>
-          <MapLegend
-            ref={layerListRef}
-            layers={availableLayers}
-            addOrRemoveLayer={addOrRemoveLayer}
-          />
-        </Col>
-      </Row>
-    </Container>
+      <div
+        ref={mapElement}
+        className={"map-map"}
+      />
+      <div className={"map-layers"}>
+        <MapLegend
+          ref={layerListRef}
+          layers={availableLayers}
+          addOrRemoveLayer={addOrRemoveLayer}
+        />
+      </div>
+    </div>
   );
 };
 

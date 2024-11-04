@@ -7,26 +7,46 @@ $danger: #d9534f;
 $light: #f8f9fa;
 $dark: #343a40;
 
+$banner-size: 200px;
+$navbar-size: 75px;
 $footer-size: 55px;
-$header-size: 275px;
-$main-size: calc(100vh - $footer-size - $header-size);
 @import "../node_modules/bootstrap/scss/bootstrap";
 
-.header {
-  height: $header-size;
+#page {
+  display: grid;
+  grid-template-rows: min-content min-content auto min-content;
+  grid-template-areas:
+    "banner"
+    "navbar"
+    "main"
+    "footer";
+  width: 100vw;
+  min-height: 100vh;
 }
+
+#banner {
+  height: $banner-size;
+  grid-area: banner;
+}
+
 /*permet de limiter la hauteur des image en gardant le ratio*/
-.header img {
-  max-height: 200px;
-  height: auto;
+#banner img {
+  max-height: 100%;
+  width: auto;
 }
 
-.main {
-  min-height: $main-size;
+#navbar {
+  height: $navbar-size;
+  grid-area: navbar;
 }
 
-.footer {
+#main {
+  grid-area: main;
+}
+
+#footer {
   height: $footer-size;
+  grid-area: footer;
 }
 
 .copyright {

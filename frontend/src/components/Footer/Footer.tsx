@@ -11,7 +11,7 @@ import atolcd from "../../img/atolcd.png";
 const Footer = () => {
   const version = useGet(url`/api/app-settings/version`);
   return (
-    <Row className={"footer bg-primary"}>
+    <Row className={"bg-primary h-100"}>
       <Col className={"h-100 text-light"}>
         <Image className={"h-100 p-1"} fluid src={europesengage} />
         <Image className={"h-100 p-1"} fluid src={logo_prt3} />
@@ -19,7 +19,7 @@ const Footer = () => {
         <Image className={"h-100 p-1"} fluid src={atolcd} />
       </Col>
       <Col xs={2} className={"text-light"}>
-        <p className={"copyright text-end"}>Copyright © 2015 SDIS 83</p>
+        <p className={"copyright mb-2 text-end"}>Copyright © 2015 SDIS 83</p>
         {version.value && (
           <Badge pill bg="info">
             {version.value.version}
