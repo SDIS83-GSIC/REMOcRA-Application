@@ -179,4 +179,18 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) {
             .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
             .and(TYPE_ORGANISME.CODE.eq(GlobalConstants.TYPE_ORGANISME_CASERNE))
             .fetchOneInto()
+
+    fun upsertFicheResume(ficheResumeBloc: FicheResumeBloc) {
+        val record = dsl.newRecord(FICHE_RESUME_BLOC, ficheResumeBloc)
+        dsl.insertInto(FICHE_RESUME_BLOC)
+            .set(record)
+            .onConflict(FICHE_RESUME_BLOC.ID)
+            .doUpdate()
+            .set(record)
+            .execute()
+    }
+
+    fun deleteFicheResumeBloc() =
+        dsl.deleteFrom(FICHE_RESUME_BLOC)
+            .execute()
 }

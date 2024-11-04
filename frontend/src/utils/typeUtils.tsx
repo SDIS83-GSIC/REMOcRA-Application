@@ -47,4 +47,5 @@ export type SubmitButtonType = {
   update?: boolean;
   returnLink: string;
   onClick?: (...args: any[]) => void;
+  disabledValide?: boolean;
 };

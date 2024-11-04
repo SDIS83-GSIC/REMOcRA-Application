@@ -294,6 +294,7 @@ type MultiselectType = InputType & {
   getOptionValue: (e: any) => string;
   getOptionLabel: (e: any) => string;
   isClearable?: boolean;
+  defaultValue?: any;
   onChange: (e: any) => any;
 };
 
@@ -326,6 +327,41 @@ export const Multiselect = ({
         value={value}
         onChange={onChange}
         isDisabled={readOnly}
+      />
+    </DivWithError>
+  );
+};
+
+export const SelectInput = ({
+  name,
+  label,
+  options,
+  getOptionValue,
+  getOptionLabel,
+  isClearable = false,
+  required = true,
+  readOnly = false,
+  defaultValue,
+  onChange,
+}: MultiselectType) => {
+  const [, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+
+  return (
+    <DivWithError name={name} error={error}>
+      <FormLabel label={label} required={required} />
+      <ReactSelect
+        isMulti={false}
+        placeholder={"Sélectionnez"}
+        options={options}
+        getOptionValue={getOptionValue}
+        getOptionLabel={getOptionLabel}
+        isClearable={isClearable}
+        value={defaultValue}
+        onChange={onChange}
+        required={required}
+        isDisabled={readOnly}
+        name={name}
       />
     </DivWithError>
   );

@@ -7,6 +7,7 @@ const SubmitFormButtons = ({
   update = false,
   returnLink,
   onClick,
+  disabledValide = false,
 }: SubmitButtonType) => {
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
@@ -20,6 +21,7 @@ const SubmitFormButtons = ({
           type="submit"
           variant={update ? "info" : "primary"}
           onClick={onClick}
+          disabled={disabledValide}
         >
           {update ? "Modifier" : "Valider"}
         </Button>

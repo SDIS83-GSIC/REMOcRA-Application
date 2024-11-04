@@ -94,6 +94,7 @@ import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
 import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
 import CreateBlocDocument from "./pages/Admin/blocDocument/CreateBlocDocument.tsx";
 import UpdateBlocDocument from "./pages/Admin/blocDocument/UpdateBlocDocument.tsx";
+import AdminFicheResume from "./pages/Admin/resume/AdminFicheResume.tsx";
 import ListUtilisateur from "./pages/Admin/utilisateur/ListUtilisateur.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
 import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
@@ -1134,6 +1135,15 @@ export default [
           <Authorization
             Component={UpdateUtilisateur}
             droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+          />
+        ),
+      },
+      {
+        path: "fiche-resume",
+        element: (
+          <Authorization
+            Component={AdminFicheResume}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
