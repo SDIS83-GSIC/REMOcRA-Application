@@ -262,6 +262,8 @@ export const URLS = {
   LIST_UTILISATEUR: url`/admin/utilisateur`,
   UPDATE_UTILISATEUR: (utilisateurId: string) =>
     url`/admin/utilisateur/update/` + utilisateurId,
+
+  ADMIN_FICHE_RESUME: url`/admin/fiche-resume`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
