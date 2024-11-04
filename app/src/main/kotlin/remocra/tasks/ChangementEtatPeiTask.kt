@@ -170,7 +170,6 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
 
     private fun getLastExecDate(taskType: TypeTask, jobId: UUID): ZonedDateTime {
         // Remonte la date de dernière exécution, sinon le moment qu'il était il y a 5mn
-        val test = jobRepository.getPreviousExecution(taskType, jobId)?.jobDateDebut
         return jobRepository.getPreviousExecution(taskType, jobId)?.jobDateDebut ?: dateUtils.now().minusMinutes(5)
     }
 }
