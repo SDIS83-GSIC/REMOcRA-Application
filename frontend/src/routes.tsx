@@ -101,6 +101,7 @@ import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
 import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
 import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
+import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1145,6 +1146,15 @@ export default [
         element: (
           <Authorization
             Component={AdminFicheResume}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "module-accueil",
+        element: (
+          <Authorization
+            Component={AdminAccueil}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

@@ -1,25 +1,50 @@
 package remocra.web.module
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
+import remocra.GlobalConstants
 import remocra.auth.Public
+import remocra.auth.RequireDroits
+import remocra.auth.userInfo
+import remocra.data.ListModuleWithImage
+import remocra.data.ModuleAccueilData
+import remocra.db.ModuleRepository
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.security.NoCsrf
+import remocra.usecase.module.ModuleAccueilUpsertUseCase
 import remocra.usecase.module.ModuleUseCase
+import remocra.utils.getTextPart
+import remocra.web.AbstractEndpoint
 import java.io.File
+import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/modules")
-class ModuleEndPoint {
+class ModuleEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var moduleUseCase: ModuleUseCase
 
+    @Inject lateinit var moduleAccueilUpsertUseCase: ModuleAccueilUpsertUseCase
+
+    @Inject lateinit var moduleRepository: ModuleRepository
+
+    @Inject lateinit var objectMapper: ObjectMapper
+
     @Context lateinit var uriInfo: UriInfo
+
+    @Context lateinit var securityContext: SecurityContext
 
     @GET
     @Path("/")
@@ -37,11 +62,30 @@ class ModuleEndPoint {
     @GET
     @Path("/get-image")
     @Produces("image/png", "image/jpeg", "image/jpg")
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
     @Public("Pas de droit particulier pour charger une image")
-    fun getUriImage(@QueryParam("imagePath") imagePath: String?): Response {
+    fun getUriImage(@QueryParam("moduleId") moduleId: UUID): Response {
+        val module = moduleRepository.getById(moduleId)
         return Response.ok(
-            imagePath?.let { File(it) },
+            module.moduleImage?.let { File(GlobalConstants.DOSSIER_IMAGE_MODULE + it) },
         )
             .build()
+    }
+
+    @PUT
+    @Path("/upsert")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun upsert(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val liste = ListModuleWithImage(
+            objectMapper.readValue<Collection<ModuleAccueilData>>(httpRequest.getTextPart("listeModule")),
+            httpRequest.parts.filter { it.name.contains("image_") },
+        )
+        return moduleAccueilUpsertUseCase.execute(
+            securityContext.userInfo,
+            liste,
+        ).wrap()
     }
 }

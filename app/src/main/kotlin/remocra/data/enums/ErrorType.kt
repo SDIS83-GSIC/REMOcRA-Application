@@ -308,7 +308,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_NATURE_IS_PROTECTED(8102, "Cette nature est protégée"),
     ADMIN_NATURE_FORBIDDEN_REMOVAL(8103, "Vous n'avez pas les droits de suppression des natures", Status.FORBIDDEN),
     ADMIN_NATURE_FORBIDDEN_PEI_TYPE(8104, "Le type de PEI doit être PENA ou PENA"),
-    ADMIN_FICHE_RESUME_FORBIDDEN(8105, "Vous n'avez pas les droits de modification de la fiche résumé."),
+    ADMIN_FICHE_RESUME_FORBIDDEN(8105, "Vous n'avez pas les droits de modification de la fiche résumé.", Status.FORBIDDEN),
+    ADMIN_MODULE_RESUME_FORBIDDEN(8106, "Vous n'avez pas les droits de modification de la page d'accueil.", Status.FORBIDDEN),
 
     //
     // ********************************************************************************

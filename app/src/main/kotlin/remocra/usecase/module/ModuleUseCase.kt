@@ -2,11 +2,10 @@ package remocra.usecase.module
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
-import remocra.GlobalConstants
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
-import java.nio.file.Paths
+import java.util.UUID
 
 class ModuleUseCase : AbstractUseCase() {
     @Inject lateinit var moduleRepository: ModuleRepository
@@ -16,11 +15,13 @@ class ModuleUseCase : AbstractUseCase() {
 
         return listeModule.map {
             ModuleWithImageLink(
+                moduleId = it.moduleId,
                 moduleType = it.moduleType,
                 moduleTitre = it.moduleTitre,
-                moduleLinkImage = it.moduleImage?.let {
+                moduleLinkImage = it.moduleImage?.let { image ->
                     uriInfo
-                        .queryParam("imagePath", Paths.get(GlobalConstants.DOSSIER_IMAGE_MODULE, it).toString())
+                        .clone()
+                        .queryParam("moduleId", it.moduleId)
                         .build()
                         .toString()
                 },
@@ -32,6 +33,7 @@ class ModuleUseCase : AbstractUseCase() {
     }
 
     data class ModuleWithImageLink(
+        val moduleId: UUID,
         val moduleType: TypeModule,
         val moduleTitre: String?,
         val moduleLinkImage: String?,
