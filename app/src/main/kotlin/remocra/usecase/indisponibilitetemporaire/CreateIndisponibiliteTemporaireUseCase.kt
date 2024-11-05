@@ -1,4 +1,4 @@
-package remocra.usecase.indisponibiliteTemporaire
+package remocra.usecase.indisponibilitetemporaire
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
@@ -17,12 +17,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 
-class UpdateIndisponibiliteTemporaireUseCase
+class CreateIndisponibiliteTemporaireUseCase
 @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val peiRepository: PeiRepository,
 ) :
-    AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.UPDATE) {
+    AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
     override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
@@ -61,8 +61,8 @@ class UpdateIndisponibiliteTemporaireUseCase
         )
         indisponibiliteTemporaireRepository.upsert(indisponibiliteTemporaire)
 
-        indisponibiliteTemporaireRepository.deleteLiaisonByIndisponibiliteTemporaire(element.indisponibiliteTemporaireId)
         element.indisponibiliteTemporaireListePeiId.forEach { peiId ->
+
             indisponibiliteTemporaireRepository.insertLiaisonIndisponibiliteTemporairePei(
                 indisponibiliteTemporaireId = indisponibiliteTemporaire.indisponibiliteTemporaireId,
                 peiId,
@@ -85,8 +85,8 @@ class UpdateIndisponibiliteTemporaireUseCase
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_U)) {
-            throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_UPDATE)
+        if (!userInfo.droits.contains(Droit.PEI_C)) {
+            throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE)
         }
     }
 }

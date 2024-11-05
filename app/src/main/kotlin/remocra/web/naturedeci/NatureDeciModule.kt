@@ -1,11 +1,11 @@
-package remocra.web.profilOrganisme
+package remocra.web.naturedeci
 
 import com.google.inject.Binder
 import com.google.inject.Module
 import remocra.web.registerResources
 
-object ProfilOrganismeModule : Module {
+object NatureDeciModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(ProfilOrganismeEndPoint::class)
+        binder.registerResources(NatureDeciEndPoint::class)
     }
 }

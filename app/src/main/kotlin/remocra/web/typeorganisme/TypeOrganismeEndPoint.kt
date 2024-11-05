@@ -1,4 +1,4 @@
-package remocra.web.profilOrganisme
+package remocra.web.typeorganisme
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -7,20 +7,20 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
-import remocra.db.ProfilOrganismeRepository
+import remocra.db.TypeOrganismeRepository
 import remocra.security.NoCsrf
 
-@Path("/profil-organisme")
+@Path("/type-organisme")
 @Produces(MediaType.APPLICATION_JSON)
-class ProfilOrganismeEndPoint {
+class TypeOrganismeEndPoint {
     @Inject
-    lateinit var profilOrganismeRepository: ProfilOrganismeRepository
+    lateinit var typeOrganismeRepository: TypeOrganismeRepository
 
     @GET
     @Path("/get-active")
     @NoCsrf("")
-    @Public("Les profils organisme ne sont pas liés à un droit")
+    @Public("Les types organisme ne sont pas liés à un droit")
     fun getActive(): Response {
-        return Response.ok(profilOrganismeRepository.getActive()).build()
+        return Response.ok(typeOrganismeRepository.getAll()).build()
     }
 }

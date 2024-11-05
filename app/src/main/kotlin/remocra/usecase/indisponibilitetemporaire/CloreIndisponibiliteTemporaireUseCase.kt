@@ -1,28 +1,24 @@
-package remocra.usecase.indisponibiliteTemporaire
+package remocra.usecase.indisponibilitetemporaire
 
 import jakarta.inject.Inject
-import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.IndisponibiliteTemporaireRepository
-import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.AbstractCUDUseCase
 
-class CreateIndisponibiliteTemporaireUseCase
+class CloreIndisponibiliteTemporaireUseCase
 @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
-    private val peiRepository: PeiRepository,
-) :
-    AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
+) : AbstractCUDUseCase<IndisponibiliteTemporaireData>(TypeOperation.UPDATE) {
     override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
@@ -50,7 +46,7 @@ class CreateIndisponibiliteTemporaireUseCase
             indisponibiliteTemporaireMailApresIndisponibilite = element.indisponibiliteTemporaireMailApresIndisponibilite,
             indisponibiliteTemporaireMailAvantIndisponibilite = element.indisponibiliteTemporaireMailAvantIndisponibilite,
             indisponibiliteTemporaireDateDebut = element.indisponibiliteTemporaireDateDebut,
-            indisponibiliteTemporaireDateFin = element.indisponibiliteTemporaireDateFin,
+            indisponibiliteTemporaireDateFin = dateUtils.now(), // date actuelle pour "clore" l'indispo
             indisponibiliteTemporaireBasculeAutoDisponible = element.indisponibiliteTemporaireBasculeAutoDisponible,
             indisponibiliteTemporaireBasculeAutoIndisponible = element.indisponibiliteTemporaireBasculeAutoIndisponible,
             indisponibiliteTemporaireNotificationDebut = element.indisponibiliteTemporaireNotificationDebut,
@@ -61,8 +57,8 @@ class CreateIndisponibiliteTemporaireUseCase
         )
         indisponibiliteTemporaireRepository.upsert(indisponibiliteTemporaire)
 
+        indisponibiliteTemporaireRepository.deleteLiaisonByIndisponibiliteTemporaire(element.indisponibiliteTemporaireId)
         element.indisponibiliteTemporaireListePeiId.forEach { peiId ->
-
             indisponibiliteTemporaireRepository.insertLiaisonIndisponibiliteTemporairePei(
                 indisponibiliteTemporaireId = indisponibiliteTemporaire.indisponibiliteTemporaireId,
                 peiId,
@@ -80,13 +76,9 @@ class CreateIndisponibiliteTemporaireUseCase
         }
     }
 
-    override fun getListGeometrie(element: IndisponibiliteTemporaireData): Collection<Geometry> {
-        return peiRepository.getGeometriesPei(element.indisponibiliteTemporaireListePeiId)
-    }
-
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_C)) {
-            throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE)
+        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_U)) {
+            throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_UPDATE)
         }
     }
 }

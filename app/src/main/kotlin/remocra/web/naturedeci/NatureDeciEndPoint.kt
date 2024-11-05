@@ -1,4 +1,4 @@
-package remocra.web.natureDeci
+package remocra.web.naturedeci
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -7,7 +7,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
-import remocra.usecase.natureDeci.NatureDeciUseCase
+import remocra.usecase.naturedeci.NatureDeciUseCase
 
 @Path("/natureDeci")
 @Produces(MediaType.APPLICATION_JSON)

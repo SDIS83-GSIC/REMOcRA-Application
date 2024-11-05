@@ -1,4 +1,4 @@
-package remocra.usecase.indisponibiliteTemporaire
+package remocra.usecase.indisponibilitetemporaire
 
 import jakarta.inject.Inject
 import remocra.auth.UserInfo

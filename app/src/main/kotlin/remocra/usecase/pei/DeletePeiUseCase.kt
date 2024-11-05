@@ -15,8 +15,8 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.exception.RemocraResponseException
 import remocra.usecase.document.UpsertDocumentPeiUseCase
-import remocra.usecase.indisponibiliteTemporaire.DeleteIndisponibiliteTemporaireUseCase
-import remocra.usecase.indisponibiliteTemporaire.UpdateIndisponibiliteTemporaireUseCase
+import remocra.usecase.indisponibilitetemporaire.DeleteIndisponibiliteTemporaireUseCase
+import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
 import java.util.UUID
 

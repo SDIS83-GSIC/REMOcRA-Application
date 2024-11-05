@@ -1,4 +1,4 @@
-package remocra.usecase.indisponibiliteTemporaire
+package remocra.usecase.indisponibilitetemporaire
 
 import com.google.inject.Inject
 import remocra.auth.UserInfo

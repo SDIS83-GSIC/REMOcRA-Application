@@ -1,4 +1,4 @@
-package remocra.web.zoneIntegration
+package remocra.web.zoneintegration
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET

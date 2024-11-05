@@ -22,25 +22,25 @@ import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.image.ImageModule
-import remocra.web.indisponibiliteTemporaire.IndisponibiliteTemporaireModule
+import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
 import remocra.web.lieudit.LieuDitModule
 import remocra.web.marque.MarquePibiModule
 import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
-import remocra.web.natureDeci.NatureDeciModule
+import remocra.web.naturedeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
 import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
 import remocra.web.pei.PeiModule
-import remocra.web.profilOrganisme.ProfilOrganismeModule
 import remocra.web.profildroit.ProfilDroitModule
+import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.thematique.ThematiqueModule
-import remocra.web.typeOrganisme.TypeOrganismeModule
+import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
 import remocra.web.visite.VisiteModule
 import remocra.web.voie.VoieModule
-import remocra.web.zoneIntegration.ZoneIntegrationModule
+import remocra.web.zoneintegration.ZoneIntegrationModule
 import kotlin.reflect.KClass
 
 object WebModule : RemocraModule() {

@@ -1,11 +1,11 @@
-package remocra.web.typeOrganisme
+package remocra.web.profilorganisme
 
 import com.google.inject.Binder
 import com.google.inject.Module
 import remocra.web.registerResources
 
-object TypeOrganismeModule : Module {
+object ProfilOrganismeModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(TypeOrganismeEndPoint::class)
+        binder.registerResources(ProfilOrganismeEndPoint::class)
     }
 }
