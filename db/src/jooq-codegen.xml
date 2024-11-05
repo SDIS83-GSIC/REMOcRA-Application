@@ -22,6 +22,9 @@
         <schema>
           <inputSchema>couverturehydraulique</inputSchema>
         </schema>
+        <schema>
+          <inputSchema>entrepotsig</inputSchema>
+        </schema>
       </schemata>
       <excludes>flyway_schema_history|flyway_data_history|pgp_armor_headers</excludes>
       <includeRoutines>false</includeRoutines>

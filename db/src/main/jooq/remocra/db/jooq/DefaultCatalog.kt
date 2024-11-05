@@ -7,6 +7,7 @@ import org.jooq.Constants
 import org.jooq.Schema
 import org.jooq.impl.CatalogImpl
 import remocra.db.jooq.couverturehydraulique.Couverturehydraulique
+import remocra.db.jooq.entrepotsig.Entrepotsig
 import remocra.db.jooq.historique.Historique
 import remocra.db.jooq.remocra.Remocra
 import javax.annotation.processing.Generated
@@ -38,6 +39,11 @@ open class DefaultCatalog : CatalogImpl("") {
     val COUVERTUREHYDRAULIQUE: Couverturehydraulique get(): Couverturehydraulique = Couverturehydraulique.COUVERTUREHYDRAULIQUE
 
     /**
+     * The schema <code>entrepotsig</code>.
+     */
+    val ENTREPOTSIG: Entrepotsig get(): Entrepotsig = Entrepotsig.ENTREPOTSIG
+
+    /**
      * The schema <code>historique</code>.
      */
     val HISTORIQUE: Historique get(): Historique = Historique.HISTORIQUE
@@ -49,6 +55,7 @@ open class DefaultCatalog : CatalogImpl("") {
 
     override fun getSchemas(): List<Schema> = listOf(
         Couverturehydraulique.COUVERTUREHYDRAULIQUE,
+        Entrepotsig.ENTREPOTSIG,
         Historique.HISTORIQUE,
         Remocra.REMOCRA,
     )
