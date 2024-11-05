@@ -32,6 +32,7 @@ import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
+import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -216,6 +217,11 @@ val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LPr
  * The table <code>remocra.l_thematique_bloc_document</code>.
  */
 val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
+
+/**
+ * The table <code>remocra.l_thematique_module</code>.
+ */
+val L_THEMATIQUE_MODULE: LThematiqueModule = LThematiqueModule.L_THEMATIQUE_MODULE
 
 /**
  * The table <code>remocra.l_tournee_pei</code>.

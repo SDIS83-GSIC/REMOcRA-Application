@@ -8,6 +8,7 @@ import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
 import org.jooq.PlainSQL
 import org.jooq.QueryPart
 import org.jooq.Record
@@ -20,11 +21,15 @@ import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
+import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.keys.L_THEMATIQUE_MODULE__L_THEMATIQUE_MODULE_MODULE_ID_FKEY
 import remocra.db.jooq.remocra.keys.MODULE_PKEY
+import remocra.db.jooq.remocra.tables.LThematiqueModule.LThematiqueModulePath
+import remocra.db.jooq.remocra.tables.Thematique.ThematiquePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -109,6 +114,11 @@ open class Module(
      */
     val LIGNE: TableField<Record, Int?> = createField(DSL.name("module_ligne"), SQLDataType.INTEGER.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.module.module_nb_document</code>.
+     */
+    val NB_DOCUMENT: TableField<Record, Int?> = createField(DSL.name("module_nb_document"), SQLDataType.INTEGER, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -127,8 +137,45 @@ open class Module(
      * Create a <code>remocra.module</code> table reference
      */
     constructor() : this(DSL.name("module"), null)
+
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, Record>?, parentPath: InverseForeignKey<out Record, Record>?) : this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, MODULE, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class ModulePath : Module, Path<Record> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, Record>?, parentPath: InverseForeignKey<out Record, Record>?) : super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<Record>) : super(alias, aliased)
+        override fun `as`(alias: String): ModulePath = ModulePath(DSL.name(alias), this)
+        override fun `as`(alias: Name): ModulePath = ModulePath(alias, this)
+        override fun `as`(alias: Table<*>): ModulePath = ModulePath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = MODULE_PKEY
+
+    private lateinit var _lThematiqueModule: LThematiqueModulePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_thematique_module</code> table
+     */
+    fun lThematiqueModule(): LThematiqueModulePath {
+        if (!this::_lThematiqueModule.isInitialized) {
+            _lThematiqueModule = LThematiqueModulePath(this, null, L_THEMATIQUE_MODULE__L_THEMATIQUE_MODULE_MODULE_ID_FKEY.inverseKey)
+        }
+
+        return _lThematiqueModule
+    }
+
+    val lThematiqueModule: LThematiqueModulePath
+        get(): LThematiqueModulePath = lThematiqueModule()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.thematique</code> table
+     */
+    val thematique: ThematiquePath
+        get(): ThematiquePath = lThematiqueModule().thematique()
     override fun `as`(alias: String): Module = Module(DSL.name(alias), this)
     override fun `as`(alias: Name): Module = Module(alias, this)
     override fun `as`(alias: Table<*>): Module = Module(alias.qualifiedName, this)

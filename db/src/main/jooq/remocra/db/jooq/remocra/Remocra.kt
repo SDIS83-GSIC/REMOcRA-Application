@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
+import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -242,6 +243,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_thematique_bloc_document</code>.
      */
     val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument get() = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_thematique_module</code>.
+     */
+    val L_THEMATIQUE_MODULE: LThematiqueModule get() = LThematiqueModule.L_THEMATIQUE_MODULE
 
     /**
      * The table <code>remocra.l_tournee_pei</code>.
@@ -470,6 +476,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
         LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT,
+        LThematiqueModule.L_THEMATIQUE_MODULE,
         LTourneePei.L_TOURNEE_PEI,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,

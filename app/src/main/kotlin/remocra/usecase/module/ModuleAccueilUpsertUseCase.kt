@@ -93,6 +93,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                         moduleContenuHtml = if (it.moduleType == TypeModule.PERSONNALISE) it.moduleContenuHtml else null,
                         moduleColonne = it.moduleColonne,
                         moduleLigne = it.moduleLigne,
+                        moduleNbDocument = null,
                     ),
                 )
             } else {
