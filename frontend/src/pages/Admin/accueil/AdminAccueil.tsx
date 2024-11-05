@@ -5,11 +5,14 @@ import GridDragAndDrop from "../../../components/DragNDrop/GridDragAndDrop.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   FileInput,
+  Multiselect,
+  NumberInput,
   SelectInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
 import url from "../../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type ModuleType = {
   moduleId: string;
@@ -20,6 +23,8 @@ type ModuleType = {
   moduleColonne: number;
   moduleLigne: number;
   moduleContenuHtml: string;
+  listeThematiqueId: string[];
+  moduleNbDocument: number;
 };
 
 export const getInitialValues = (data) => ({
@@ -41,6 +46,8 @@ export const prepareVariables = (values) => {
         moduleColonne: e.moduleColonne,
         moduleLigne: e.moduleLigne,
         moduleContenuHtml: e.moduleContenuHtml,
+        moduleNbDocument: e.moduleNbDocument,
+        listeThematiqueId: e.listeThematiqueId,
       })),
     ),
   );
@@ -81,8 +88,12 @@ const AdminAccueil = () => {
           moduleLigne: null,
           imageRetiree: false,
         }}
-        disabledSuivant={(e: Module) =>
-          e.moduleTitre == null || e.moduleTitre == null
+        disabledSuivant={(e: ModuleType) =>
+          e.moduleType == null ||
+          e.moduleTitre == null ||
+          ((e.moduleType === TypeModuleRemocra.COURRIER ||
+            e.moduleType === TypeModuleRemocra.DOCUMENT) &&
+            e.moduleNbDocument == null)
         }
       />
     )
@@ -98,6 +109,7 @@ const ComposantToRepeat = ({
   index: number;
   listeElements: ModuleType[];
 }) => {
+  const thematiqueState = useGet(url`/api/thematique/actif`);
   const typesFicheResumeElement = Object.entries(TypeModuleRemocra).map(
     ([key, value]) => {
       return {
@@ -181,6 +193,50 @@ const ComposantToRepeat = ({
           )}
         </Col>
       </Row>
+      {(listeElements[index].moduleType === TypeModuleRemocra.DOCUMENT ||
+        listeElements[index].moduleType === TypeModuleRemocra.COURRIER) && (
+        <Row>
+          <Col>
+            <Multiselect
+              name={`listeModule[${index}].listeThematiqueId`}
+              label="Thématiques à afficher"
+              options={thematiqueState?.data}
+              getOptionValue={(t) => t.id}
+              getOptionLabel={(t) => t.libelle}
+              value={
+                listeElements[index]?.listeThematiqueId?.map((e) =>
+                  thematiqueState?.data?.find(
+                    (r: IdCodeLibelleType) => r.id === e,
+                  ),
+                ) ?? undefined
+              }
+              onChange={(thematique) => {
+                const thematiqueId = thematique.map((e) => e.id);
+                thematiqueId.length > 0
+                  ? setFieldValue(
+                      `listeModule[${index}].listeThematiqueId`,
+                      thematiqueId,
+                    )
+                  : setFieldValue(
+                      `listeModule[${index}].listeThematiqueId`,
+                      undefined,
+                    );
+              }}
+              isClearable={true}
+              required={false}
+            />
+          </Col>
+          <Col>
+            <NumberInput
+              name={`listeModule[${index}].moduleNbDocument`}
+              label="Nombre à afficher"
+              required={true}
+              min={0}
+              step={1}
+            />
+          </Col>
+        </Row>
+      )}
     </Row>
   );
 };

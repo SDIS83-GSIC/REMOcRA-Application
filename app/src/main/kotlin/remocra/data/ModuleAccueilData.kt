@@ -12,6 +12,8 @@ data class ModuleAccueilData(
     val moduleColonne: Int,
     val moduleLigne: Int,
     val imageName: String?,
+    val listeThematiqueId: List<UUID>? = null,
+    val moduleNbDocument: Int?,
 )
 data class ListModuleWithImage(
     val listeModuleAccueilData: Collection<ModuleAccueilData>,

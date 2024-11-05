@@ -3,7 +3,9 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.tables.pojos.LThematiqueModule
 import remocra.db.jooq.remocra.tables.pojos.Module
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
 import remocra.db.jooq.remocra.tables.references.MODULE
 import java.util.UUID
 
@@ -11,6 +13,9 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) {
     fun getModules(): Collection<Module> =
         dsl.selectFrom(MODULE)
             .orderBy(MODULE.COLONNE, MODULE.LIGNE).fetchInto()
+
+    fun getModuleThematique(): Collection<LThematiqueModule> =
+        dsl.selectFrom(L_THEMATIQUE_MODULE).fetchInto()
 
     fun getById(moduleId: UUID): Module =
         dsl.selectFrom(MODULE)
@@ -25,6 +30,7 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) {
         moduleContenuHtml: String?,
         moduleType: TypeModule,
         moduleImage: String?,
+        moduleNbDocument: Int?,
     ) =
         dsl.update(MODULE)
             .set(MODULE.COLONNE, moduleColonne)
@@ -33,6 +39,7 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) {
             .set(MODULE.TITRE, moduleTitre)
             .set(MODULE.CONTENU_HTML, moduleContenuHtml)
             .set(MODULE.IMAGE, moduleImage)
+            .set(MODULE.NB_DOCUMENT, moduleNbDocument)
             .where(MODULE.ID.eq(moduleId))
             .execute()
 
@@ -44,5 +51,16 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) {
     fun delete(moduleId: UUID) =
         dsl.deleteFrom(MODULE)
             .where(MODULE.ID.eq(moduleId))
+            .execute()
+
+    fun deleteLThematiqueModule(listModuleId: List<UUID>) =
+        dsl.deleteFrom(L_THEMATIQUE_MODULE)
+            .where(L_THEMATIQUE_MODULE.MODULE_ID.`in`(listModuleId))
+            .execute()
+
+    fun insertLThematiqueModule(moduleId: UUID, thematiqueId: UUID) =
+        dsl.insertInto(L_THEMATIQUE_MODULE)
+            .set(L_THEMATIQUE_MODULE.MODULE_ID, moduleId)
+            .set(L_THEMATIQUE_MODULE.THEMATIQUE_ID, thematiqueId)
             .execute()
 }

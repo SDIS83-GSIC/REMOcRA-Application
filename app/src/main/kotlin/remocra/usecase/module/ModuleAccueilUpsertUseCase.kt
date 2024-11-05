@@ -51,6 +51,8 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
     ): ListModuleWithImage {
         val modulesAvant = moduleRepository.getModules()
 
+        moduleRepository.deleteLThematiqueModule(element.listeModuleAccueilData.mapNotNull { it.moduleId })
+
         val listeDelete = modulesAvant.filter { !element.listeModuleAccueilData.map { it.moduleId }.contains(it.moduleId) }
 
         listeDelete.forEach {
@@ -93,7 +95,11 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                         moduleContenuHtml = if (it.moduleType == TypeModule.PERSONNALISE) it.moduleContenuHtml else null,
                         moduleColonne = it.moduleColonne,
                         moduleLigne = it.moduleLigne,
-                        moduleNbDocument = null,
+                        moduleNbDocument = if (it.moduleType == TypeModule.DOCUMENT || it.moduleType == TypeModule.COURRIER) {
+                            it.moduleNbDocument
+                        } else {
+                            null
+                        },
                     ),
                 )
             } else {
@@ -104,8 +110,13 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                     moduleTitre = it.moduleTitre,
                     moduleContenuHtml = if (it.moduleType == TypeModule.PERSONNALISE) it.moduleContenuHtml else null,
                     moduleType = it.moduleType,
+                    moduleNbDocument = it.moduleNbDocument,
                     moduleImage = if (it.imageName != null) Paths.get(moduleId.toString(), it.imageName).toString() else imageAvant,
                 )
+            }
+
+            it.listeThematiqueId?.forEach { thematiqueId ->
+                moduleRepository.insertLThematiqueModule(moduleId = moduleId, thematiqueId = thematiqueId)
             }
         }
 
