@@ -2,6 +2,7 @@ package remocra.usecase.module
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
+import remocra.auth.UserInfo
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
@@ -10,10 +11,10 @@ import java.util.UUID
 class ModuleUseCase : AbstractUseCase() {
     @Inject lateinit var moduleRepository: ModuleRepository
 
-    fun execute(uriInfo: UriBuilder): List<ModuleWithImageLink> {
-        val listeModule = moduleRepository.getModules()
+    @Inject lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
 
-        val listeLThematiqueModule = moduleRepository.getModuleThematique()
+    fun execute(uriInfo: UriBuilder, userInfo: UserInfo?): List<ModuleWithImageLink> {
+        val listeModule = moduleRepository.getModules()
 
         return listeModule.map {
             ModuleWithImageLink(
@@ -31,7 +32,12 @@ class ModuleUseCase : AbstractUseCase() {
                 moduleColonne = it.moduleColonne,
                 moduleLigne = it.moduleLigne,
                 moduleNbDocument = it.moduleNbDocument,
-                listeThematiqueId = listeLThematiqueModule.filter { l -> l.moduleId == it.moduleId }.map { it.thematiqueId },
+                listeDocument = moduleDocumentCourrierUseCase.execute(
+                    moduleId = it.moduleId,
+                    params = null,
+                    moduleType = it.moduleType.toString(),
+                    userInfo = userInfo,
+                ),
             )
         }
     }
@@ -45,6 +51,6 @@ class ModuleUseCase : AbstractUseCase() {
         val moduleColonne: Int,
         val moduleLigne: Int,
         val moduleNbDocument: Int?,
-        val listeThematiqueId: Collection<UUID>?,
+        val listeDocument: Collection<ModuleDocumentCourrierUseCase.DocumentCourrier>,
     )
 }

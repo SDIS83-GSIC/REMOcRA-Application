@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -18,12 +19,16 @@ import remocra.GlobalConstants
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.DataTableau
 import remocra.data.ListModuleWithImage
 import remocra.data.ModuleAccueilData
+import remocra.data.Params
 import remocra.db.ModuleRepository
+import remocra.db.ThematiqueRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.module.ModuleAccueilUpsertUseCase
+import remocra.usecase.module.ModuleDocumentCourrierUseCase
 import remocra.usecase.module.ModuleUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -32,6 +37,7 @@ import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/modules")
+@Produces(MediaType.APPLICATION_JSON)
 class ModuleEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var moduleUseCase: ModuleUseCase
@@ -41,6 +47,9 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Inject lateinit var moduleRepository: ModuleRepository
 
     @Inject lateinit var objectMapper: ObjectMapper
+
+    @Inject
+    lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
 
     @Context lateinit var uriInfo: UriInfo
 
@@ -56,6 +65,7 @@ class ModuleEndPoint : AbstractEndpoint() {
                 uriInfo.baseUriBuilder
                     .path(ModuleEndPoint::class.java)
                     .path(ModuleEndPoint::getUriImage.javaMethod),
+                securityContext.userInfo,
             ),
         ).build()
 
@@ -88,4 +98,30 @@ class ModuleEndPoint : AbstractEndpoint() {
             liste,
         ).wrap()
     }
+
+    @POST
+    @Path("/documents/all")
+    @Public("Les documents ne sont pas liés à un droit")
+    fun getDocumentsForListWithThematique(
+        @QueryParam("moduleId")
+        moduleId: UUID?,
+        @QueryParam("moduleType")
+        moduleType: String,
+        params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>,
+    ) =
+        Response.ok(
+            DataTableau(
+                list = moduleDocumentCourrierUseCase.execute(
+                    moduleId,
+                    moduleType,
+                    securityContext.userInfo,
+                    params,
+                ),
+                count = moduleDocumentCourrierUseCase.count(
+                    moduleType,
+                    securityContext.userInfo,
+                    params,
+                ),
+            ),
+        ).build()
 }

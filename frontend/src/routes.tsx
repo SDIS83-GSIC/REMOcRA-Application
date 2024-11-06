@@ -102,6 +102,7 @@ import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
 import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
+import ListModuleDocumentCourrier from "./pages/ModuleDocumentCourrier/ListModuleDocumentCourrier.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -266,6 +267,12 @@ export const URLS = {
 
   ADMIN_FICHE_RESUME: url`/admin/fiche-resume`,
   ADMIN_ACCUEIL: url`/admin/module-accueil`,
+
+  LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
+    url`/documents/` +
+    moduleType.toLocaleLowerCase() +
+    "/thematiques/" +
+    moduleId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1161,6 +1168,17 @@ export default [
         ),
       },
     ],
+  },
+
+  {
+    path: "/documents/:moduleType/thematiques/:moduleId",
+    element: (
+      <Authorization
+        Component={ListModuleDocumentCourrier}
+        // TODO courrier droit
+        droits={[TYPE_DROIT.DOCUMENTS_R]}
+      />
+    ),
   },
   {
     path: "*",

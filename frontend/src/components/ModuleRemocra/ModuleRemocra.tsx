@@ -1,15 +1,23 @@
-import { Col, Image, Row } from "react-bootstrap";
+import { Button, Col, Image, Row, Table } from "react-bootstrap";
+import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/Accueil.tsx";
+import { URLS } from "../../routes.tsx";
+import formatDateTime from "../../utils/formatDateUtils.tsx";
+import CustomLinkButton from "../Form/CustomLinkButton.tsx";
+import { IconExport } from "../Icon/Icon.tsx";
 
 /**
  * Permet d'afficher un module dans la page d'accueil
  */
 
 const ModuleRemocra = ({
+  moduleId,
+  type,
   titre,
   image,
   contenuHtml,
   listeLink,
+  listeDocument,
 }: ModuleRemocra) => {
   return (
     <div className="bg-light p-2 border rounded">
@@ -21,6 +29,14 @@ const ModuleRemocra = ({
           </Col>
         )}
         <Col>
+          {(type === TypeModuleRemocra.DOCUMENT ||
+            type === TypeModuleRemocra.COURRIER) && (
+            <ModuleDocumentCourrier
+              listeDocument={listeDocument}
+              moduleId={moduleId}
+              moduleType={type}
+            />
+          )}
           {listeLink && <BuildLinks listeLink={listeLink} />}
           {contenuHtml && (
             <div dangerouslySetInnerHTML={{ __html: contenuHtml }} />
@@ -28,6 +44,63 @@ const ModuleRemocra = ({
         </Col>
       </Row>
     </div>
+  );
+};
+
+const ModuleDocumentCourrier = ({
+  listeDocument,
+  moduleId,
+  moduleType,
+}: {
+  listeDocument: {
+    id: string;
+    libelle: string;
+    date: Date;
+  }[];
+  moduleId: string;
+  moduleType: TypeModuleRemocra;
+}) => {
+  return (
+    <>
+      <Table bordered striped>
+        <thead>
+          <tr>
+            <th>Libellé</th>
+            <th>Date de dernière mise à jour</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {listeDocument?.map((e, index) => {
+            return (
+              <tr key={index}>
+                <td>{e.libelle}</td>
+                <td>{e.date && formatDateTime(e.date)}</td>
+                <td>
+                  <CustomLinkButton
+                    className={"text-warning"}
+                    // TODO prendre en compte le cas des courriers
+                    href={
+                      moduleType === TypeModuleRemocra.DOCUMENT
+                        ? url`/api/bloc-document/telecharger/` + e.id
+                        : url`/api/courrier/` + e.id
+                    }
+                  >
+                    <IconExport />
+                  </CustomLinkButton>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+      <Button
+        variant="link"
+        href={URLS.LIST_MODULE_DOCUMENT_COURRIER(moduleType, moduleId)}
+      >
+        Voir plus
+      </Button>
+    </>
   );
 };
 
@@ -50,10 +123,17 @@ const BuildLinks = ({ listeLink }: { listeLink: LinkType[] }) => {
 export default ModuleRemocra;
 
 type ModuleRemocra = {
+  moduleId: string;
+  type: TypeModuleRemocra;
   titre: string;
   image: string;
   contenuHtml: string;
   listeLink: LinkType[] | undefined;
+  listeDocument: {
+    id: string;
+    libelle: string;
+    date: Date;
+  }[];
 };
 
 export enum TypeModuleRemocra {

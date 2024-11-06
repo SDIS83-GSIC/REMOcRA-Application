@@ -37,13 +37,18 @@ const Accueil = () => {
               const listeLink = getLinks(e.moduleType, user);
               return (
                 (listeLink?.find((e) => e.aLeDroit === true) != null ||
-                  e.moduleContenuHtml != null) && (
+                  e.moduleContenuHtml != null ||
+                  e.moduleType === TypeModuleRemocra.DOCUMENT ||
+                  e.moduleType === TypeModuleRemocra.COURRIER) && (
                   <Row className="m-3">
                     <ModuleRemocra
+                      moduleId={e.moduleId}
+                      type={e.moduleType}
                       titre={e.moduleTitre}
                       image={e.moduleLinkImage}
                       contenuHtml={e.moduleContenuHtml}
                       listeLink={listeLink}
+                      listeDocument={e.listeDocument}
                     />
                   </Row>
                 )
@@ -135,12 +140,18 @@ export type LinkType = {
 };
 
 type Module = {
+  moduleId: string;
   moduleType: string;
   moduleTitre: string;
   moduleLinkImage: string;
   moduleColonne: number;
   moduleLigne: number;
   moduleContenuHtml: string;
+  listeDocument: {
+    id: string;
+    libelle: string;
+    date: Date;
+  }[];
 };
 
 export default Accueil;
