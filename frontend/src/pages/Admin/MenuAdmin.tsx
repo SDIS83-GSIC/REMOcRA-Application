@@ -13,6 +13,8 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.ADMIN_FICHE_RESUME}>Configurer la fiche de résumé</a>
           <br />
+          <a href={URLS.ADMIN_ACCUEIL}>Configurer la page d&apos;accueil</a>
+          <br />
           <a href={URLS.LIST_TYPE_PENA_ASPIRATION}>
             Types de dispositifs d&apos;aspiration
           </a>

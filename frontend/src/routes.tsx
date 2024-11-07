@@ -265,6 +265,7 @@ export const URLS = {
     url`/admin/utilisateur/update/` + utilisateurId,
 
   ADMIN_FICHE_RESUME: url`/admin/fiche-resume`,
+  ADMIN_ACCUEIL: url`/admin/module-accueil`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
