@@ -29,6 +29,7 @@ data class Utilisateur(
     val utilisateurCanBeNotified: Boolean?,
     val utilisateurProfilUtilisateurId: UUID?,
     val utilisateurOrganismeId: UUID?,
+    val utilisateurIsSuperAdmin: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -88,6 +89,13 @@ data class Utilisateur(
         } else if (this.utilisateurOrganismeId != o.utilisateurOrganismeId) {
             return false
         }
+        if (this.utilisateurIsSuperAdmin == null) {
+            if (o.utilisateurIsSuperAdmin != null) {
+                return false
+            }
+        } else if (this.utilisateurIsSuperAdmin != o.utilisateurIsSuperAdmin) {
+            return false
+        }
         return true
     }
 
@@ -104,6 +112,7 @@ data class Utilisateur(
         result = prime * result + (if (this.utilisateurCanBeNotified == null) 0 else this.utilisateurCanBeNotified.hashCode())
         result = prime * result + (if (this.utilisateurProfilUtilisateurId == null) 0 else this.utilisateurProfilUtilisateurId.hashCode())
         result = prime * result + (if (this.utilisateurOrganismeId == null) 0 else this.utilisateurOrganismeId.hashCode())
+        result = prime * result + (if (this.utilisateurIsSuperAdmin == null) 0 else this.utilisateurIsSuperAdmin.hashCode())
         return result
     }
 
@@ -120,6 +129,7 @@ data class Utilisateur(
         sb.append(", ").append(utilisateurCanBeNotified)
         sb.append(", ").append(utilisateurProfilUtilisateurId)
         sb.append(", ").append(utilisateurOrganismeId)
+        sb.append(", ").append(utilisateurIsSuperAdmin)
 
         sb.append(")")
         return sb.toString()

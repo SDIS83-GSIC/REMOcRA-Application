@@ -136,6 +136,11 @@ open class Utilisateur(
      */
     val ORGANISME_ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_organisme_id"), SQLDataType.UUID, this, "")
 
+    /**
+     * The column <code>remocra.utilisateur.utilisateur_is_super_admin</code>.
+     */
+    val IS_SUPER_ADMIN: TableField<Record, Boolean?> = createField(DSL.name("utilisateur_is_super_admin"), SQLDataType.BOOLEAN, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
