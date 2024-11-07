@@ -48,6 +48,7 @@ UserInfo : KeycloakOidcProfile() {
             username = this.username,
             organismeId = this.organismeId,
             droits = this.droits,
+            isSuperAdmin = this.isSuperAdmin,
         )
     }
 
@@ -62,5 +63,6 @@ UserInfo : KeycloakOidcProfile() {
         val username: String,
         val organismeId: UUID?,
         val droits: Collection<Droit>,
+        val isSuperAdmin: Boolean = false,
     )
 }

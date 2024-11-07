@@ -18,6 +18,9 @@ import {
 import url from "../../../module/fetch.tsx";
 import { requiredEmail } from "../../../module/validators.tsx";
 import { URLS } from "../../../routes.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 type UtilisateurType = {
   utilisateurActif: boolean;
@@ -29,6 +32,7 @@ type UtilisateurType = {
   utilisateurCanBeNotified: boolean;
   utilisateurProfilUtilisateurId: string;
   utilisateurOrganismeId: string;
+  utilisateurIsSuperAdmin: boolean;
 };
 
 export const getInitialValues = (data?: UtilisateurType) => ({
@@ -41,6 +45,7 @@ export const getInitialValues = (data?: UtilisateurType) => ({
   utilisateurCanBeNotified: data?.utilisateurCanBeNotified ?? true,
   utilisateurProfilUtilisateurId: data?.utilisateurProfilUtilisateurId ?? null,
   utilisateurOrganismeId: data?.utilisateurOrganismeId ?? null,
+  utilisateurIsSuperAdmin: data?.utilisateurIsSuperAdmin ?? false,
 });
 
 export const validationSchema = object({
@@ -57,9 +62,12 @@ export const prepareVariables = (values: UtilisateurType) => ({
   utilisateurCanBeNotified: values.utilisateurCanBeNotified,
   utilisateurProfilUtilisateurId: values.utilisateurProfilUtilisateurId,
   utilisateurOrganismeId: values.utilisateurOrganismeId,
+  utilisateurIsSuperAdmin: values.utilisateurIsSuperAdmin,
 });
 
 const Utilisateur = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
   const [profilDroitDeduit, setProfilDroitDeduit] = useState<string>();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
@@ -127,53 +135,71 @@ const Utilisateur = () => {
           <TextInput label="Prénom" name="utilisateurPrenom" required={true} />
         </Col>
       </Row>
-      <Row className="mt-3">
-        <Col>
-          <SelectForm
-            name={"utilisateurOrganismeId"}
-            listIdCodeLibelle={organismeList}
-            label="Organisme"
-            defaultValue={organismeList?.find(
-              (e) => e.id === values.utilisateurOrganismeId,
-            )}
-            required={true}
-            setValues={setValues}
-          />
-        </Col>
-        <Col className="mt-3  d-flex align-items-center justify-content-center display-6">
-          <IconPlus />
-        </Col>
-        <Col>
-          <SelectForm
-            name={"utilisateurProfilUtilisateurId"}
-            listIdCodeLibelle={profilUtilisateurList}
-            label="Profil utilisateur"
-            defaultValue={profilUtilisateurList?.find(
-              (e) => e.id === values.utilisateurProfilUtilisateurId,
-            )}
-            required={true}
-            setValues={setValues}
-          />
-        </Col>
-        <Col className="text-center d-flex align-items-center justify-content-center display-6">
-          <IconNextPage />
-        </Col>
-        <Col className="bg-light p-3 border rounded">
-          <div className="fw-bold p-2 text-center">
-            <IconInfo /> Profil droit
-          </div>
-          <div className="text-center">
-            {profilDroitDeduit != null ? (
-              <>
-                Le profil droit qui sera utilisé pour cet utilisateur sera :{" "}
-                <b>{profilDroitDeduit}</b>
-              </>
-            ) : (
-              "Aucun profil droit trouvé."
-            )}
-          </div>
-        </Col>
-      </Row>
+      {user.isSuperAdmin && (
+        <TooltipCustom
+          tooltipId={"superAdmin"}
+          tooltipText={
+            "Si vous cochez cette case, l'utilisateur aura tous les droits sur l'application indépendamment d'une zone de compétence."
+          }
+        >
+          <Row className="mt-3">
+            <CheckBoxInput
+              name="utilisateurIsSuperAdmin"
+              label="Est super administrateur ?"
+            />
+          </Row>
+        </TooltipCustom>
+      )}
+      {((!values.utilisateurIsSuperAdmin && user.isSuperAdmin) ||
+        !values.utilisateurIsSuperAdmin) && (
+        <Row className="mt-3">
+          <Col>
+            <SelectForm
+              name={"utilisateurOrganismeId"}
+              listIdCodeLibelle={organismeList}
+              label="Organisme"
+              defaultValue={organismeList?.find(
+                (e) => e.id === values.utilisateurOrganismeId,
+              )}
+              required={true}
+              setValues={setValues}
+            />
+          </Col>
+          <Col className="mt-3  d-flex align-items-center justify-content-center display-6">
+            <IconPlus />
+          </Col>
+          <Col>
+            <SelectForm
+              name={"utilisateurProfilUtilisateurId"}
+              listIdCodeLibelle={profilUtilisateurList}
+              label="Profil utilisateur"
+              defaultValue={profilUtilisateurList?.find(
+                (e) => e.id === values.utilisateurProfilUtilisateurId,
+              )}
+              required={true}
+              setValues={setValues}
+            />
+          </Col>
+          <Col className="text-center d-flex align-items-center justify-content-center display-6">
+            <IconNextPage />
+          </Col>
+          <Col className="bg-light p-3 border rounded">
+            <div className="fw-bold p-2 text-center">
+              <IconInfo /> Profil droit
+            </div>
+            <div className="text-center">
+              {profilDroitDeduit != null ? (
+                <>
+                  Le profil droit qui sera utilisé pour cet utilisateur sera :{" "}
+                  <b>{profilDroitDeduit}</b>
+                </>
+              ) : (
+                "Aucun profil droit trouvé."
+              )}
+            </div>
+          </Col>
+        </Row>
+      )}
       <SubmitFormButtons returnLink={URLS.LIST_UTILISATEUR} />
     </FormContainer>
   );

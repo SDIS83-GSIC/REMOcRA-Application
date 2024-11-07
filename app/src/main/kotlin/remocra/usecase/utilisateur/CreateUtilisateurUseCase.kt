@@ -108,7 +108,7 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                 utilisateurCanBeNotified = element.utilisateurCanBeNotified,
                 utilisateurProfilUtilisateurId = element.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = element.utilisateurOrganismeId,
-                utilisateurIsSuperAdmin = false, // TODO
+                utilisateurIsSuperAdmin = element.utilisateurIsSuperAdmin,
             ),
         )
 

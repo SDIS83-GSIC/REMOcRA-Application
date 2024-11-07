@@ -5,6 +5,7 @@ type UtilisateurEntity = {
   username: string;
   organismeId: string;
   droits: TYPE_DROIT[];
+  isSuperAdmin: boolean;
 };
 
 export default UtilisateurEntity;

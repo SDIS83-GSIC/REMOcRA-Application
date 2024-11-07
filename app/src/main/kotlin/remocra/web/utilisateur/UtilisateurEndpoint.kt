@@ -78,6 +78,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
                 utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
+                utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
                 uri = uriInfo.baseUri,
             ),
         ).wrap()
@@ -109,6 +110,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
         @FormParam("utilisateurActif")
         var utilisateurActif: Boolean = true
+
+        @FormParam("utilisateurIsSuperAdmin")
+        var utilisateurIsSuperAdmin: Boolean = false
     }
 
     @DELETE
@@ -152,6 +156,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
                 utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
+                utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
                 uri = null,
             ),
         ).wrap()

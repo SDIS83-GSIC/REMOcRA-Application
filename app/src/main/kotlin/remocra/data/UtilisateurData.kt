@@ -14,5 +14,6 @@ data class UtilisateurData(
     val utilisateurCanBeNotified: Boolean?,
     val utilisateurProfilUtilisateurId: UUID?,
     val utilisateurOrganismeId: UUID?,
+    val utilisateurIsSuperAdmin: Boolean = false,
     val uri: URI? = null,
 )
