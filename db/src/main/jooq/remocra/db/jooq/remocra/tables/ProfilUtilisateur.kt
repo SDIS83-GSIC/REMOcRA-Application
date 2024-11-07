@@ -25,11 +25,13 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.L_DASHBOARD_PROFIL__L_DASHBOARD_PROFIL_PROFIL_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_CODE_KEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.tables.LDashboardProfil.LDashboardProfilPath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
@@ -164,6 +166,23 @@ open class ProfilUtilisateur(
 
     val typeOrganisme: TypeOrganismePath
         get(): TypeOrganismePath = typeOrganisme()
+
+    private lateinit var _lDashboardProfil: LDashboardProfilPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_dashboard_profil</code> table
+     */
+    fun lDashboardProfil(): LDashboardProfilPath {
+        if (!this::_lDashboardProfil.isInitialized) {
+            _lDashboardProfil = LDashboardProfilPath(this, null, L_DASHBOARD_PROFIL__L_DASHBOARD_PROFIL_PROFIL_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _lDashboardProfil
+    }
+
+    val lDashboardProfil: LDashboardProfilPath
+        get(): LDashboardProfilPath = lDashboardProfil()
 
     private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
 

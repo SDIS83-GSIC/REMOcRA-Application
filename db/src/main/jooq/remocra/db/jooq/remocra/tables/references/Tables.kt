@@ -11,6 +11,10 @@ import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
+import remocra.db.jooq.remocra.tables.Dashboard
+import remocra.db.jooq.remocra.tables.DashboardComponent
+import remocra.db.jooq.remocra.tables.DashboardConfig
+import remocra.db.jooq.remocra.tables.DashboardQuery
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
@@ -28,6 +32,7 @@ import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
+import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
@@ -123,6 +128,26 @@ val COUCHE: Couche = Couche.COUCHE
 val COURRIER: Courrier = Courrier.COURRIER
 
 /**
+ * The table <code>remocra.dashboard</code>.
+ */
+val DASHBOARD: Dashboard = Dashboard.DASHBOARD
+
+/**
+ * The table <code>remocra.dashboard_component</code>.
+ */
+val DASHBOARD_COMPONENT: DashboardComponent = DashboardComponent.DASHBOARD_COMPONENT
+
+/**
+ * The table <code>remocra.dashboard_config</code>.
+ */
+val DASHBOARD_CONFIG: DashboardConfig = DashboardConfig.DASHBOARD_CONFIG
+
+/**
+ * The table <code>remocra.dashboard_query</code>.
+ */
+val DASHBOARD_QUERY: DashboardQuery = DashboardQuery.DASHBOARD_QUERY
+
+/**
  * The table <code>remocra.debit_simultane</code>.
  */
 val DEBIT_SIMULTANE: DebitSimultane = DebitSimultane.DEBIT_SIMULTANE
@@ -206,6 +231,11 @@ val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
  * The table <code>remocra.l_courrier_utilisateur</code>.
  */
 val L_COURRIER_UTILISATEUR: LCourrierUtilisateur = LCourrierUtilisateur.L_COURRIER_UTILISATEUR
+
+/**
+ * The table <code>remocra.l_dashboard_profil</code>.
+ */
+val L_DASHBOARD_PROFIL: LDashboardProfil = LDashboardProfil.L_DASHBOARD_PROFIL
 
 /**
  * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
