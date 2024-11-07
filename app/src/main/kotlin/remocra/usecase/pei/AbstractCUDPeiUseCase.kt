@@ -201,7 +201,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
         )
         if (!isInZoneCompetence) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_ZONE_COMPETENCE)
+            throw RemocraResponseException(ErrorType.FORBIDDEN_ZONE_COMPETENCE)
         }
 
         val isSaisieLibreEnabled = parametresProvider.get().getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!

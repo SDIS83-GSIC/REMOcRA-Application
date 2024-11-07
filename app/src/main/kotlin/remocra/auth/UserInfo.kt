@@ -3,6 +3,7 @@ package remocra.auth
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
+import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.security.Principal
 import java.util.UUID
 
@@ -11,6 +12,8 @@ UserInfo : KeycloakOidcProfile() {
     lateinit var utilisateur: Utilisateur
 
     lateinit var droits: Collection<Droit>
+
+    var zoneCompetence: ZoneIntegration? = null
 
     val utilisateurId: UUID
         get() = UUID.fromString(subject)
@@ -29,6 +32,9 @@ UserInfo : KeycloakOidcProfile() {
 
     val isActif: Boolean
         get() = !this.roles.contains("inactif")
+
+    val isSuperAdmin: Boolean
+        get() = utilisateur.utilisateurIsSuperAdmin ?: false
 
     override fun asPrincipal(): Principal {
         return UserPrincipal(this)

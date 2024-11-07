@@ -9,7 +9,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventBus
 import remocra.exception.RemocraResponseException
 
-abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : AbstractUseCase() {
+abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation) : AbstractUseCase() {
     @Inject lateinit var transactionManager: TransactionManager
 
     @Inject lateinit var eventBus: EventBus
@@ -45,7 +45,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : A
      * @return Result : dans le cas d'un success, on peut au besoin faire retourner n'importe quoi
      * dans le success, pour le faire transiter côté client, mais ce n'est pas obligatoire.
      */
-    fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager? = null): Result {
+    open fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager? = null): Result {
         try {
             // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
             if (userInfo == null) {
@@ -53,6 +53,7 @@ abstract class AbstractCUDUseCase<T : Any>(val typeOperation: TypeOperation) : A
             }
             checkDroits(userInfo)
             checkContraintes(userInfo, element)
+
             var result: Result? = null
             var savedElement: T? = null
             // On utilise le transactionManager parent s'il est fourni, sinon fallback sur celui qui est injecté

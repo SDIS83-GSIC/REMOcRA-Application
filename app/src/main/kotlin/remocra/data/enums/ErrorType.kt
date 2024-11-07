@@ -15,6 +15,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     BAD_UUID(100, "Cette chaîne ne représente pas un UUID valide"),
 
+    FORBIDDEN_ZONE_COMPETENCE(101, "L'élément n'est pas dans votre zone de compétence", Status.FORBIDDEN),
+
     /**
      * Pour la gestion des PEI
      */
@@ -24,7 +26,6 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_FORBIDDEN_D(1003, "Vous n'avez pas les droits de suppression de PEI", Status.FORBIDDEN),
     PEI_DOCUMENT_MEME_NOM(1004, "Les documents d'un même PEI ne doivent pas avoir le même nom."),
     PEI_DOCUMENT_PHOTO(1005, "Un seul document peut représenter la photo du PEI"),
-    PEI_FORBIDDEN_ZONE_COMPETENCE(1006, "Le PEI n'est pas dans votre zone de compétence", Status.FORBIDDEN),
     PEI_VOIE_SAISIE_LIBRE_FORBIDDEN(1007, "La saisie libre d'une voie n'est pas autorisée pour votre SDIS"),
     PEI_VOIE_OBLIGATOIRE(1008, "La saisie d'une voie est obligatoire"),
     PEI_VOIE_XOR(1009, "Vous ne pouvez pas à la fois sélectionner une voie et saisir une valeur textuelle"),
