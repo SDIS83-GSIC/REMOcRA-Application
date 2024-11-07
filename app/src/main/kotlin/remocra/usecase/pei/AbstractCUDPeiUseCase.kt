@@ -2,6 +2,7 @@ package remocra.usecase.pei
 
 import com.google.inject.Inject
 import com.google.inject.Provider
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
@@ -26,7 +27,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -34,7 +35,7 @@ import remocra.usecase.AbstractCUDUseCase
  * Dans le cadre d'une insertion, on ne peut en aucun cas renseigner ses visites. Le PEI sera donc mis en indisponible.
  * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
-abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDUseCase<PeiData>(typeOperation) {
+abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDGeometrieUseCase<PeiData>(typeOperation) {
     @Inject
     lateinit var appSettings: AppSettings
 
@@ -82,6 +83,10 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         return calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
             calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
             calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial)
+    }
+
+    override fun getListGeometrie(element: PeiData): Collection<Geometry> {
+        return listOf(element.peiGeometrie)
     }
 
     override fun execute(userInfo: UserInfo?, element: PeiData): PeiData {

@@ -1,25 +1,28 @@
 package remocra.usecase.indisponibiliteTemporaire
 
 import jakarta.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.IndisponibiliteTemporaireRepository
+import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 
 class CreateIndisponibiliteTemporaireUseCase
 @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
+    private val peiRepository: PeiRepository,
 ) :
-    AbstractCUDUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
+    AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
     override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
@@ -75,6 +78,10 @@ class CreateIndisponibiliteTemporaireUseCase
                 throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FIN_AVANT_DEBUT)
             }
         }
+    }
+
+    override fun getListGeometrie(element: IndisponibiliteTemporaireData): Collection<Geometry> {
+        return peiRepository.getGeometriesPei(element.indisponibiliteTemporaireListePeiId)
     }
 
     override fun checkDroits(userInfo: UserInfo) {

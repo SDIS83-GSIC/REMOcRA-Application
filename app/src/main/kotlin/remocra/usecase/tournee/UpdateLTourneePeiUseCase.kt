@@ -1,10 +1,12 @@
 package remocra.usecase.tournee
 
 import com.google.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.PeiRepository
 import remocra.db.TourneeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -12,16 +14,24 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 import java.util.UUID
 
 class UpdateLTourneePeiUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
-) : AbstractCUDUseCase<UpdateLTourneePeiUseCase.LTourneePeiToInsert>(TypeOperation.UPDATE) {
+    private val peiRepository: PeiRepository,
+) : AbstractCUDGeometrieUseCase<UpdateLTourneePeiUseCase.LTourneePeiToInsert>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.TOURNEE_GESTION_FORBIDDEN)
         }
+    }
+
+    override fun getListGeometrie(element: LTourneePeiToInsert): Collection<Geometry> {
+        if (element.listLTourneePei.isNullOrEmpty()) {
+            return listOf()
+        }
+        return peiRepository.getGeometriesPei(element.listLTourneePei.map { it.peiId })
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: LTourneePeiToInsert) {

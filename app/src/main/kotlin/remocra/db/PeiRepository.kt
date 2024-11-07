@@ -585,6 +585,12 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
+
+    fun getGeometriesPei(listPeiId: Collection<UUID>): Collection<Point> =
+        dsl.select(PEI.GEOMETRIE)
+            .from(PEI)
+            .where(PEI.ID.`in`(listPeiId))
+            .fetchInto()
 }
 
 data class IdNumeroComplet(
