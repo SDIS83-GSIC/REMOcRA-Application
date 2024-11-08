@@ -10,6 +10,7 @@ import picocli.CommandLine.Command
 import remocra.app.AppModule
 import remocra.auth.AuthModule
 import remocra.db.DatabaseModule
+import remocra.db.SigDatabaseModule
 import remocra.eventbus.EventBusModule
 import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
@@ -101,6 +102,7 @@ class Main : Runnable {
                 SentryModule.create(config.getConfig("remocra.sentry")),
                 HttpServerModule.create(config.getConfig("remocra.http")),
                 DatabaseModule.create(config.getConfig("remocra.database")),
+                SigDatabaseModule.create(config.getConfig("remocra.database-sig")),
                 ScheduleModule,
             )
                 .getInstance(Serve::class.java)
