@@ -23,7 +23,7 @@ import remocra.tasks.Destinataire
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
+class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getUtilisateurById(idUtilisateur: UUID): Utilisateur? =
         dsl.selectFrom(UTILISATEUR)
             .where(UTILISATEUR.ID.eq(idUtilisateur))

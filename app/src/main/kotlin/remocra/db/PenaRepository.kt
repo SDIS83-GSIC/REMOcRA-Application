@@ -13,7 +13,7 @@ import java.util.UUID
 
 class PenaRepository @Inject constructor(
     private val dsl: DSLContext,
-) {
+) : AbstractRepository() {
 
     fun getInfoPena(penaId: UUID): PenaData =
         dsl.select(peiData).select(

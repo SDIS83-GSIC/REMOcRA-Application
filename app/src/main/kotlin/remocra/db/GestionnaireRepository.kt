@@ -19,7 +19,7 @@ import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.tasks.Destinataire
 import java.util.UUID
 
-class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) {
+class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getAll(): Collection<GlobalData.IdCodeLibelleData> =
         dsl.select(GESTIONNAIRE.ID.`as`("id"), GESTIONNAIRE.CODE.`as`("code"), GESTIONNAIRE.LIBELLE.`as`("libelle"))

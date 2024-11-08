@@ -53,7 +53,7 @@ import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) {
+class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     companion object {
         const val NATURE_DECI_PRIVE = "PRIVE"

@@ -35,6 +35,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
         organismeId: UUID,
         etudeId: UUID?,
         typePointCarte: TypePointCarte,
+        isSuperAdmin: Boolean,
     ): LayersRes {
         val zoneCompetence = utilisateurRepository.getZoneByOrganismeId(organismeId)
 
@@ -45,7 +46,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
                 }
                 if (it.isNullOrEmpty()) {
-                    carteRepository.getPeiWithinZone(zoneCompetence.zoneIntegrationId)
+                    carteRepository.getPeiWithinZone(zoneCompetence.zoneIntegrationId, isSuperAdmin)
                 } else {
                     val geom = geometryFromBBox(bbox, srid) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
                     carteRepository.getPeiWithinZoneAndBbox(zoneCompetence.zoneIntegrationId, geom.toGeomFromText())

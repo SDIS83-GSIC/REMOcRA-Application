@@ -4,6 +4,8 @@ import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
+import remocra.auth.UserInfo
+import remocra.auth.userInfo
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.Params
 import remocra.data.PeiData
@@ -72,8 +74,8 @@ class PeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, organismeId: UUID): List<PeiRepository.PeiForTableau> {
-        val listePei = peiRepository.getPeiWithFilter(params, organismeId)
+    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: UserInfo): List<PeiRepository.PeiForTableau> {
+        val listePei = peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
 
         /*
          * Le libelle de la tournée est un multiset qui concatène toutes les tournées
@@ -84,7 +86,7 @@ class PeiUseCase : AbstractUseCase() {
             return listePei.filter { it.tourneeLibelle?.contains(tourneeSearch) == true }
         }
 
-        return peiRepository.getPeiWithFilter(params, organismeId)
+        return peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
     }
 
     fun getPeiWithFilterByIndisponibiliteTemporaire(
@@ -93,8 +95,8 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idIndisponibiliteTemporaire: UUID,
-        organismeId: UUID,
-    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, organismeId, idIndisponibiliteTemporaire)
+        userInfo: UserInfo,
+    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
 
     fun getPeiWithFilterByTournee(
         param: Params<
@@ -102,11 +104,11 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idTournee: UUID,
-        organismeId: UUID,
+        userInfo: UserInfo,
     ): List<PeiRepository.PeiForTableau> {
         param.filterBy?.idTournee = idTournee
         param.sortBy?.ordreTournee = 1
-        return peiRepository.getPeiWithFilterByTournee(param, organismeId, idTournee)
+        return peiRepository.getPeiWithFilterByTournee(param, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
     }
 
     fun getInfoPei(idPei: UUID): PeiData {

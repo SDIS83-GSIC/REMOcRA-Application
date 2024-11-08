@@ -11,7 +11,7 @@ import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER_PARAMETRE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
-class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) {
+class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getByCode(code: String): ModeleCourrier =
         dsl.selectFrom(MODELE_COURRIER)

@@ -16,7 +16,7 @@ import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_BLOC_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import java.util.UUID
 
-class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) {
+class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(actif: Boolean? = null): List<GlobalData.IdCodeLibelleData> =
         dsl.select(
             THEMATIQUE.ID.`as`("id"),

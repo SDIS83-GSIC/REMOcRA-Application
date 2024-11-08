@@ -46,8 +46,8 @@ import java.util.UUID
 class TourneeRepository
 @Inject constructor(
     private val dsl: DSLContext,
-) {
-    fun getAllTourneeComplete(filter: Filter?): List<TourneeComplete> {
+) : AbstractRepository() {
+    fun getAllTourneeComplete(filter: Filter?, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): List<TourneeComplete> {
         val peiCounterCteName = name("PEI_COUNTER_CTE")
         val peiCounterCte = peiCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_PEI").`as`(
             select(
@@ -55,6 +55,11 @@ class TourneeRepository
                 count(L_TOURNEE_PEI.PEI_ID).`as`("TOURNEE_NB_PEI"),
             )
                 .from(L_TOURNEE_PEI)
+                .join(PEI)
+                .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+                .leftJoin(ZONE_INTEGRATION)
+                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+                .where(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 

@@ -1,6 +1,7 @@
 package remocra.usecase.indisponibiliteTemporaire
 
 import com.google.inject.Inject
+import remocra.auth.UserInfo
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
@@ -14,8 +15,8 @@ class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
     @Inject
     lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
 
-    fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
-        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getAllWithListPei(params)
+    fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>, userInfo: UserInfo): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getAllWithListPei(params, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
 
         // Le statut est calculé en kotlin ce n'est pas une info stockée en base
         // On filtre côté back pour éviter de réimplémenter le calcul en BDD
@@ -27,7 +28,7 @@ class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
         return listeIndisponibiliteTemporaire
     }
 
-    fun getAllWithListPeiByPei(idPei: UUID): List<IndisponibiliteTemporaireData>? {
+    fun getAllWithListPeiByPei(idPei: UUID): List<IndisponibiliteTemporaireData> {
         val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getWithListPeiByPei(idPei)
 
         return listeIndisponibiliteTemporaire

@@ -9,7 +9,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
-class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) {
+class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(
             PROFIL_DROIT.ID.`as`("id"),

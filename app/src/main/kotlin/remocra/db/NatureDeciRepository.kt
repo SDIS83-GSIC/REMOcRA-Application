@@ -6,7 +6,7 @@ import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import java.util.UUID
 
-class NatureDeciRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<NatureDeci> {
+class NatureDeciRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<NatureDeci>, AbstractRepository() {
 
     fun getNatureDeciForSelect(): List<IdLibelleNatureDeci> =
         dsl.select(NATURE_DECI.ID, NATURE_DECI.LIBELLE)

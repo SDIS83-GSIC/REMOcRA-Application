@@ -7,7 +7,7 @@ import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import java.util.UUID
 
-class DiametreRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Diametre> {
+class DiametreRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Diametre>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Diametre> =
         dsl.selectFrom(DIAMETRE).where(DIAMETRE.ACTIF.isTrue).fetchInto<Diametre>().associateBy { it.diametreId }

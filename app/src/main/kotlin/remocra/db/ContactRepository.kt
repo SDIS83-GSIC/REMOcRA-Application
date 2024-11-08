@@ -23,7 +23,7 @@ import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
 
-class ContactRepository @Inject constructor(private val dsl: DSLContext) {
+class ContactRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun insertContact(contact: Contact) =
         dsl.insertInto(CONTACT)
             .set(dsl.newRecord(CONTACT, contact))

@@ -10,7 +10,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.utils.ST_DWithin
 import java.util.UUID
 
-class CommuneRepository @Inject constructor(private val dsl: DSLContext) {
+class CommuneRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getMapById(): Map<UUID, Commune> = dsl.selectFrom(COMMUNE).fetchInto<Commune>().associateBy { it.communeId }
 
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Commune> =

@@ -45,7 +45,7 @@ import java.util.UUID
 class PeiRepository
 @Inject constructor(
     private val dsl: DSLContext,
-) {
+) : AbstractRepository() {
     companion object {
 
         // Alias de table
@@ -89,28 +89,29 @@ class PeiRepository
         LISTE_PEI,
     }
 
-    fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID, organismeId: UUID): List<PeiForTableau> {
+    fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
         param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
-        return getAllWithFilterAndConditionalJoin(param, organismeId, PageFilter.INDISPONIBILITE_TEMPORAIRE).fetchInto()
+        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.INDISPONIBILITE_TEMPORAIRE, isSuperAdmin).fetchInto()
     }
-    fun countAllPeiWithFilterByIndisponibiliteTemporaire(filterBy: Filter?, idIndisponibiliteTemporaire: UUID, organismeId: UUID): Int {
+    fun countAllPeiWithFilterByIndisponibiliteTemporaire(filterBy: Filter?, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
         filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
-        return countAllPeiWithFilter(filterBy, organismeId, PageFilter.INDISPONIBILITE_TEMPORAIRE)
+        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.INDISPONIBILITE_TEMPORAIRE)
     }
 
-    fun getPeiWithFilterByTournee(param: Params<Filter, Sort>, idTournee: UUID, organismeId: UUID): List<PeiForTableau> {
-        return getAllWithFilterAndConditionalJoin(param, organismeId, PageFilter.TOURNEE).fetchInto()
+    fun getPeiWithFilterByTournee(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
+        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.TOURNEE, isSuperAdmin).fetchInto()
     }
 
     // Très peu de données donc peu d'impact d'utiliser le count jooq plutôt que la primitive SQL
-    fun countAllPeiWithFilterByTournee(filterBy: Filter?, idTournee: UUID, organismeId: UUID): Int {
+    fun countAllPeiWithFilterByTournee(filterBy: Filter?, idTournee: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
         filterBy?.idTournee = idTournee
-        return countAllPeiWithFilter(filterBy, organismeId, PageFilter.TOURNEE)
+        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.TOURNEE)
     }
 
-    fun getPeiWithFilter(param: Params<Filter, Sort>, organismeId: UUID): List<PeiForTableau> = getAllWithFilterAndConditionalJoin(param, organismeId).fetchInto()
+    fun getPeiWithFilter(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> =
+        getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.LISTE_PEI, isSuperAdmin).fetchInto()
 
-    fun countAllPeiWithFilter(filterBy: Filter?, organismeId: UUID, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int {
+    fun countAllPeiWithFilter(filterBy: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int {
         val requete = dsl.selectDistinct(PEI.ID)
             .from(PEI)
             .join(NATURE)
@@ -125,10 +126,8 @@ class PeiRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .leftJoin(TOURNEE)
             .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .join(ORGANISME)
-            .on(ORGANISME.ID.eq(organismeId))
-            .join(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+            .leftJoin(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
 
         when (pageFilter) {
             PageFilter.INDISPONIBILITE_TEMPORAIRE -> requete.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
@@ -143,8 +142,8 @@ class PeiRepository
 
         return requete
             .where(filterBy?.toCondition() ?: DSL.noCondition())
-            // Et la zone de compétence de l'utilisateur
-            .and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            // Et la zone de compétence de l'utilisateur s'il n'est pas super admin
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .count()
     }
 
@@ -171,8 +170,9 @@ class PeiRepository
 
     private fun getAllWithFilterAndConditionalJoin(
         param: Params<Filter, Sort>,
-        organismeId: UUID,
+        zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
+        isSuperAdmin: Boolean,
     ): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> {
         val requete = dsl.select(
             PEI.ID,
@@ -240,10 +240,8 @@ class PeiRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .leftJoin(TOURNEE)
             .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .join(ORGANISME)
-            .on(ORGANISME.ID.eq(organismeId))
-            .join(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+            .leftJoin(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
 
         // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
         // pour les indispos temporaires)
@@ -259,7 +257,7 @@ class PeiRepository
         }
 
         return requete.where(param.filterBy?.toCondition() ?: DSL.noCondition())
-            .and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .groupBy(
                 PEI.ID,
                 PEI.NUMERO_COMPLET,

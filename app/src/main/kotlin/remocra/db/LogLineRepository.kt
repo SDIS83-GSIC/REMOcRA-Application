@@ -6,7 +6,7 @@ import remocra.db.jooq.remocra.tables.pojos.LogLine
 import remocra.db.jooq.remocra.tables.references.LOG_LINE
 import java.util.UUID
 
-class LogLineRepository @Inject constructor(private val dsl: DSLContext) {
+class LogLineRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun writeLogLine(logLine: LogLine): Int {
         return dsl.insertInto(LOG_LINE).set(dsl.newRecord(LOG_LINE, logLine)).execute()

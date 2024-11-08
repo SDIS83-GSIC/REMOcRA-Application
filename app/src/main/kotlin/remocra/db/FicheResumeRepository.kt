@@ -30,7 +30,7 @@ import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) {
+class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getFicheResume(): Collection<FicheResumeBloc> =
         dsl.selectFrom(FICHE_RESUME_BLOC)

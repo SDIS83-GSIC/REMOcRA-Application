@@ -8,7 +8,7 @@ import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import java.util.UUID
 
-class PoidsAnomalieRepository @Inject constructor(private val dsl: DSLContext) {
+class PoidsAnomalieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getPoidsAnomalies(anomaliesIds: Collection<UUID>, natureId: UUID, typeVisite: TypeVisite?): Collection<PoidsAnomalie> =
         dsl.selectFrom(POIDS_ANOMALIE)

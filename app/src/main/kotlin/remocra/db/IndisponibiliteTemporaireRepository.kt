@@ -23,12 +23,14 @@ import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.exception.RemocraResponseException
 import remocra.utils.DateUtils
+import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) {
+class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) : AbstractRepository() {
 
     /**
      * Récupère une collection d'objets IndisponibiliteTemporaireWithPei filtrée et triée en fonction des paramètres fournis.
@@ -36,8 +38,8 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @param params Les paramètres de filtrage et de tri.
      * @return Une collection d'IndisponibiliteTemporaireWithPei correspondant aux critères.
      */
-    fun getAllWithListPei(params: Params<Filter, Sort>): Collection<IndisponibiliteTemporaireWithPei> {
-        return internalWithListPei(params)
+    fun getAllWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): Collection<IndisponibiliteTemporaireWithPei> {
+        return internalWithListPei(params, isSuperAdmin, zoneCompetenceId)
             .fetchInto()
     }
 
@@ -47,8 +49,12 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @param params Les paramètres de filtrage et de tri.
      * @return Le nombre d'éléments correspondants.
      */
-    fun countAllWithListPei(filterBy: Filter?): Int =
-        internalWithListPei(Params(limit = null, offset = null, filterBy = filterBy, sortBy = null)).count()
+    fun countAllWithListPei(filterBy: Filter?, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): Int =
+        internalWithListPei(
+            Params(limit = null, offset = null, filterBy = filterBy, sortBy = null),
+            isSuperAdmin,
+            zoneCompetenceId,
+        ).count()
 
     /**
      * Crée une requête SQL pour récupérer des enregistrements d'indisponibilités temporaires
@@ -57,7 +63,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @param params Les paramètres de filtrage et de tri.
      * @return Une étape de requête SQL pour les résultats filtrés et triés.
      */
-    private fun internalWithListPei(params: Params<Filter, Sort>): SelectSeekStepN<Record> {
+    private fun internalWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): SelectSeekStepN<Record> {
         val nomCte = name("listePei")
         val cte = nomCte.fields("idIT", "listeNumeroPei").`as`(
             dsl.select(
@@ -70,9 +76,12 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
                 .join(INDISPONIBILITE_TEMPORAIRE)
                 .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .leftJoin(ZONE_INTEGRATION)
+                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
                 .where(
                     L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID),
                 )
+                .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
                 .groupBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID),
 
         )

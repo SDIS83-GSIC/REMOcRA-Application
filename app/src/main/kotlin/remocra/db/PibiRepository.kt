@@ -23,7 +23,7 @@ import java.util.UUID
 
 class PibiRepository @Inject constructor(
     private val dsl: DSLContext,
-) {
+) : AbstractRepository() {
 
     fun getInfoPibi(pibiId: UUID): PibiData =
         dsl.select(peiData).select(

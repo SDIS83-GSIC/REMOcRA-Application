@@ -10,7 +10,7 @@ import remocra.db.jooq.historique.tables.references.TRACABILITE
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) {
+class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun insertTracabilite(
         typeOperation: TypeOperation,

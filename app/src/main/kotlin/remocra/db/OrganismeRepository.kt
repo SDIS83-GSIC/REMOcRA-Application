@@ -34,7 +34,7 @@ import remocra.utils.ST_DWithin
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class OrganismeRepository @Inject constructor(private val dsl: DSLContext) {
+class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     companion object {
         val conditionAutoriteDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries))

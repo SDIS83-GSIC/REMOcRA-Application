@@ -7,7 +7,7 @@ import remocra.db.jooq.remocra.tables.references.L_COMMUNE_CIS
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import java.util.UUID
 
-class CisCommuneRepository @Inject constructor(private val dsl: DSLContext) {
+class CisCommuneRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getCisCommune(): Collection<GlobalData.IdCodeLibelleLienData> =
         dsl.select(

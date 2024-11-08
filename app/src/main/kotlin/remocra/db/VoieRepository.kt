@@ -10,7 +10,7 @@ import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.utils.ST_DistanceInferieurStrict
 import java.util.UUID
 
-class VoieRepository @Inject constructor(private val dsl: DSLContext) {
+class VoieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Voie> =
         dsl.select(*VOIE.fields())
             .from(VOIE).innerJoin(COMMUNE).on(VOIE.COMMUNE_ID.eq(COMMUNE.ID))

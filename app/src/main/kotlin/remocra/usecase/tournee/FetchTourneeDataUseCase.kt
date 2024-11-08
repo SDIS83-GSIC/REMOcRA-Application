@@ -1,6 +1,7 @@
 package remocra.usecase.tournee
 
 import com.google.inject.Inject
+import remocra.auth.UserInfo
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.data.enums.DeltaDate
@@ -13,8 +14,8 @@ import remocra.utils.limitOffset
 class FetchTourneeDataUseCase : AbstractUseCase() {
     @Inject lateinit var tourneeRepository: TourneeRepository
 
-    fun fetchTourneeData(params: Params<Filter, Sort>): DataTableau<TourneeRepository.TourneeComplete>? {
-        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy)
+    fun fetchTourneeData(params: Params<Filter, Sort>, userInfo: UserInfo): DataTableau<TourneeRepository.TourneeComplete>? {
+        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete
         if (!filterTourneeDeltaDate.isNullOrEmpty()) {
@@ -46,6 +47,6 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
         // Application de limit et offset à notre liste
         val filteredShortedList = filteredList.limitOffset(params.limit!!.toLong(), params.offset!!.toLong())
         // Tri en fonction sortBy + return
-        return params.sortBy?.toCondition(filteredShortedList ?: listOf<TourneeRepository.TourneeComplete>())?.let { DataTableau(it, count) }
+        return params.sortBy?.toCondition(filteredShortedList ?: listOf())?.let { DataTableau(it, count) }
     }
 }

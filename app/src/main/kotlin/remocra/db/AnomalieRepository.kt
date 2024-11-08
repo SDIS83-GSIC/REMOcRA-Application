@@ -21,7 +21,7 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import java.util.UUID
 
-class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Anomalie> {
+class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Anomalie>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Anomalie> = dsl.selectFrom(ANOMALIE).where(ANOMALIE.ACTIF.isTrue).fetchInto<Anomalie>().associateBy { it.anomalieId }
 

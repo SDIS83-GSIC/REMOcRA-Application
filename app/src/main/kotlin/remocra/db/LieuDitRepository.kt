@@ -5,7 +5,7 @@ import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import java.util.UUID
 
-class LieuDitRepository @Inject constructor(private val dsl: DSLContext) {
+class LieuDitRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getLieuDitWithCommunePei(
         listIdCommune: List<UUID>,

@@ -5,7 +5,7 @@ import org.jooq.DSLContext
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 
-class ProfilUtilisateurRepository @Inject constructor(private val dsl: DSLContext) {
+class ProfilUtilisateurRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(
             PROFIL_UTILISATEUR.ID.`as`("id"),

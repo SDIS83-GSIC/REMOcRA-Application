@@ -32,6 +32,7 @@ import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
+import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -76,8 +77,12 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
-    fun fetchTourneeData(params: Params<TourneeRepository.Filter, TourneeRepository.Sort>): Response =
-        Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params)).build()
+    fun fetchTourneeData(params: Params<TourneeRepository.Filter, TourneeRepository.Sort>): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        return Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params, securityContext.userInfo!!)).build()
+    }
 
     @GET
     @Path("/{tourneeId}")

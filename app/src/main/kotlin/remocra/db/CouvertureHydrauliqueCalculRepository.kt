@@ -20,7 +20,7 @@ import java.util.UUID
 
 class CouvertureHydrauliqueCalculRepository @Inject constructor(
     private val dsl: DSLContext,
-) {
+) : AbstractRepository() {
 
     fun executeInsererJoinctionPei(
         distanceMaxAuReseau: Int,

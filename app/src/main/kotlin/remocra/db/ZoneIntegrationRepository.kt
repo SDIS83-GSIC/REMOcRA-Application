@@ -7,7 +7,7 @@ import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import java.util.UUID
 
-class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext) {
+class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getById(id: UUID): ZoneIntegration = dsl.selectFrom(ZONE_INTEGRATION)
         .where(ZONE_INTEGRATION.ID.eq(id)).fetchSingleInto()

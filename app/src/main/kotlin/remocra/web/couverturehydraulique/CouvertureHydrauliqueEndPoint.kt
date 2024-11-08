@@ -361,6 +361,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 securityContext.userInfo!!.organismeId!!,
                 etudeId,
                 TypePointCarte.PEI_PROJET,
+                securityContext.userInfo!!.isSuperAdmin,
             ),
         ).build()
     }

@@ -14,7 +14,7 @@ import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class CarteRepository @Inject constructor(private val dsl: DSLContext) {
+class CarteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     /**
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
@@ -35,15 +35,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) {
     /**
      * Récupère les PEI selon la zone de compétence
      */
-    fun getPeiWithinZone(zoneId: UUID): Collection<PeiCarte> {
+    fun getPeiWithinZone(zoneId: UUID, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(PEI.GEOMETRIE.`as`("pointGeometrie"), PEI.ID.`as`("pointId"))
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE),
+                repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin),
             )
             .fetchInto()
     }

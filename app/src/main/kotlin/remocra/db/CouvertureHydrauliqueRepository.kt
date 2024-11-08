@@ -32,7 +32,7 @@ import java.util.UUID
 class CouvertureHydrauliqueRepository @Inject constructor(
     private val dsl: DSLContext,
     private val dateUtils: DateUtils,
-) {
+) : AbstractRepository() {
 
     fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>): Collection<EtudeComplete> =
         dsl.select(

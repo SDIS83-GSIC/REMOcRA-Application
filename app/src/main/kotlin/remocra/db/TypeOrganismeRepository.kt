@@ -5,7 +5,7 @@ import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 
-class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) {
+class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(limit: Int?, offset: Int?): Collection<TypeOrganisme> =
         dsl.selectFrom(TYPE_ORGANISME)
             .where(TYPE_ORGANISME.ACTIF.isTrue)

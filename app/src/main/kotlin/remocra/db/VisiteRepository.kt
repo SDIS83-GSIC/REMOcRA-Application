@@ -25,7 +25,7 @@ import java.util.UUID
 class VisiteRepository
 @Inject constructor(
     private val dsl: DSLContext,
-) {
+) : AbstractRepository() {
 
     fun getLastVisite(peiId: UUID): Visite? = dsl.selectFrom(VISITE)
         .where(VISITE.PEI_ID.eq(peiId))

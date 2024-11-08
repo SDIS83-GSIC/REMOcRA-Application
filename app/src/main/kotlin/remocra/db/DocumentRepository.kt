@@ -7,7 +7,7 @@ import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import java.util.UUID
 
-class DocumentRepository @Inject constructor(private val dsl: DSLContext) {
+class DocumentRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getDocumentByPei(peiId: UUID): Collection<DocumentPei> =
         dsl.select(

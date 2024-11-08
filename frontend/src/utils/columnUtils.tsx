@@ -470,7 +470,7 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
         },
         textDisable:
           "Impossible de modifier une indisponibilité temporaire terminée",
-        onClick: (indisponibiliteTemporaireId) =>
+        href: (indisponibiliteTemporaireId) =>
           URLS.UPDATE_INDISPONIBILITE_TEMPORAIRE(indisponibiliteTemporaireId),
       });
     }

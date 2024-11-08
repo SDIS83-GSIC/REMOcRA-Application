@@ -19,7 +19,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class JobRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) {
+class JobRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) : AbstractRepository() {
 
     fun createJob(idJob: UUID, idTask: UUID, userId: UUID, parameters: JSONB? = null): Int =
         dsl.insertInto(JOB)

@@ -6,7 +6,7 @@ import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import java.util.UUID
 
-class CalculDispoRepository@Inject constructor(private val dsl: DSLContext) {
+class CalculDispoRepository@Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun deleteAnomalies(peiId: UUID, listAnomalieIds: Collection<UUID>) {
         dsl.deleteFrom(L_PEI_ANOMALIE).where(L_PEI_ANOMALIE.PEI_ID.eq(peiId)).and(L_PEI_ANOMALIE.ANOMALIE_ID.`in`(listAnomalieIds)).execute()

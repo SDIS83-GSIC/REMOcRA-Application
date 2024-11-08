@@ -22,7 +22,7 @@ import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class BlocDocumentRepository @Inject constructor(private val dsl: DSLContext) {
+class BlocDocumentRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<BlocDocumentThematiqueProfilDroit> =
         dsl

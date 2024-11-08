@@ -9,7 +9,7 @@ import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
 import remocra.db.jooq.remocra.tables.references.MODULE
 import java.util.UUID
 
-class ModuleRepository @Inject constructor(private val dsl: DSLContext) {
+class ModuleRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getModules(): Collection<Module> =
         dsl.selectFrom(MODULE)
             .orderBy(MODULE.COLONNE, MODULE.LIGNE).fetchInto()

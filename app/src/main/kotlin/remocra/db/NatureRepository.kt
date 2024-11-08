@@ -13,7 +13,7 @@ import remocra.db.jooq.remocra.tables.references.NATURE
 import java.util.UUID
 
 @Produces("application/json; charset=UTF-8")
-class NatureRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Nature> {
+class NatureRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Nature>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Nature> =
         dsl.selectFrom(NATURE).where(NATURE.ACTIF.isTrue).fetchInto<Nature>().associateBy { it.natureId }

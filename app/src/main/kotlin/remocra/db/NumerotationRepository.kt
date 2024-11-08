@@ -8,7 +8,7 @@ import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.PEI
 import java.util.UUID
 
-class NumerotationRepository @Inject constructor(private val dsl: DSLContext) {
+class NumerotationRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getNextPeiNumeroInterneMethodeA(peiCommuneId: UUID): Int = dsl
         .select(DSL.coalesce(DSL.max(PEI.NUMERO_INTERNE), 0))
         .from(PEI)

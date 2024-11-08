@@ -12,7 +12,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
-class DroitsRepository @Inject constructor(private val dsl: DSLContext) {
+class DroitsRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getDroitsFromUser(userId: UUID): Set<Droit> {
         return dsl.select(PROFIL_DROIT.DROITS)

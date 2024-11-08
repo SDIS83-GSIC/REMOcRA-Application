@@ -75,10 +75,12 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
-        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
-        val listPei = peiUseCase.getPeiWithFilter(params, organismeId)
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        val listPei = peiUseCase.getPeiWithFilter(params, securityContext.userInfo!!)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, organismeId)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId, securityContext.userInfo!!.isSuperAdmin)),
         )
             .build()
     }
@@ -94,15 +96,18 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
-        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, organismeId)
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, securityContext.userInfo!!)
         return Response.ok(
             DataTableau(
                 listPei,
                 peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(
                     params.filterBy,
-                    organismeId,
                     idIndisponibiliteTemporaire,
+                    securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId,
+                    securityContext.userInfo!!.isSuperAdmin,
                 ),
             ),
         )
@@ -120,10 +125,20 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val organismeId = securityContext.organismeUserId ?: return forbidden().build()
-        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, organismeId)
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, securityContext.userInfo!!)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilterByTournee(params.filterBy, idTournee, organismeId)),
+            DataTableau(
+                listPei,
+                peiRepository.countAllPeiWithFilterByTournee(
+                    params.filterBy,
+                    idTournee,
+                    securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId,
+                    securityContext.userInfo!!.isSuperAdmin,
+                ),
+            ),
         )
             .build()
     }
@@ -263,6 +278,7 @@ class PeiEndPoint : AbstractEndpoint() {
                 securityContext.userInfo!!.organismeId!!,
                 null,
                 TypePointCarte.PEI,
+                securityContext.userInfo!!.isSuperAdmin,
             ),
         ).build()
     }

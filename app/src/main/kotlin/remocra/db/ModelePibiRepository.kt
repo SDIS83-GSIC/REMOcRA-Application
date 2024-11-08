@@ -6,7 +6,7 @@ import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import java.util.UUID
 
-class ModelePibiRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<ModelePibi> {
+class ModelePibiRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<ModelePibi>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, ModelePibi> = dsl.selectFrom(MODELE_PIBI).where(MODELE_PIBI.ACTIF.isTrue).fetchInto<ModelePibi>().associateBy { it.modelePibiId }
 

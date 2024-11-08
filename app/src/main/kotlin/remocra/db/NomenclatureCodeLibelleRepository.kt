@@ -33,7 +33,7 @@ import java.util.UUID
  * Repository "générique" des nomenclatures code-libellé-actif(-protected?).
  * Puisqu'on ne peut pas avoir un type hérité dans nos POJO générés par jooq, on feinte en créant autant d'accesseurs que nécessaire
  */
-class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSLContext) {
+class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     /**
      * Besoin du contexte "statique" pour pouvoir appeler ces méthodes dans les classes Data (sort + filterBy)

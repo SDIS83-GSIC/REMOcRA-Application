@@ -10,7 +10,7 @@ import remocra.db.jooq.remocra.tables.references.GROUPE_COUCHE
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_DROIT
 import java.util.UUID
 
-class CoucheRepository @Inject constructor(private val dsl: DSLContext) {
+class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getCoucheMap(profilDroit: ProfilDroit?): Map<UUID, List<Couche>> =
         dsl.select(*COUCHE.fields())
             .from(COUCHE)

@@ -12,7 +12,7 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
 
-class SiteRepository @Inject constructor(private val dsl: DSLContext) {
+class SiteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(): Collection<SiteWithGestionnaireId> =
         dsl.select(SITE.ID.`as`("id"), SITE.LIBELLE.`as`("libelle"), GESTIONNAIRE.ID)
             .from(SITE)

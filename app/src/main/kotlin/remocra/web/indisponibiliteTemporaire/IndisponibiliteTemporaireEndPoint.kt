@@ -26,6 +26,7 @@ import remocra.usecase.indisponibiliteTemporaire.CreateIndisponibiliteTemporaire
 import remocra.usecase.indisponibiliteTemporaire.DeleteIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibiliteTemporaire.IndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibiliteTemporaire.UpdateIndisponibiliteTemporaireUseCase
+import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -65,10 +66,14 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
     )
     @Produces(MediaType.APPLICATION_JSON)
     fun getAllIndisponibiliteTemporaire(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        val user = securityContext.userInfo!!
         return Response.ok(
             DataTableau(
-                list = indisponibiliteTemporaireUseCase.getAllWithListPei(params),
-                count = indisponibiliteTemporaireRepository.countAllWithListPei(params.filterBy),
+                list = indisponibiliteTemporaireUseCase.getAllWithListPei(params, user),
+                count = indisponibiliteTemporaireRepository.countAllWithListPei(params.filterBy, user.isSuperAdmin, user.zoneCompetence?.zoneIntegrationId),
             ),
         )
             .build()

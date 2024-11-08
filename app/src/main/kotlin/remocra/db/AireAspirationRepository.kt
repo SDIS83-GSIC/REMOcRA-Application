@@ -11,7 +11,7 @@ import remocra.db.jooq.remocra.tables.references.PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import java.util.UUID
 
-class AireAspirationRepository @Inject constructor(private val dsl: DSLContext) {
+class AireAspirationRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun getAiresAspiration(penaId: UUID): Collection<AireAspirationUpsertData> =
         dsl.select(
