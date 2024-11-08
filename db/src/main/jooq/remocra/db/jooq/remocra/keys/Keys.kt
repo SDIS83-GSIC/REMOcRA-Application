@@ -189,6 +189,7 @@ val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUni
 val VISITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Visite.VISITE, DSL.name("visite_pkey"), arrayOf(Visite.VISITE.ID), true)
 val VISITE_CTRL_DEBIT_PRESSION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION, DSL.name("visite_ctrl_debit_pression_pkey"), arrayOf(VisiteCtrlDebitPression.VISITE_CTRL_DEBIT_PRESSION.VISITE_ID), true)
 val VOIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Voie.VOIE, DSL.name("voie_pkey"), arrayOf(Voie.VOIE.ID), true)
+val VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(Voie.VOIE, DSL.name("voie_voie_libelle_voie_commune_id_key"), arrayOf(Voie.VOIE.LIBELLE, Voie.VOIE.COMMUNE_ID), true)
 val ZONE_INTEGRATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ZoneIntegration.ZONE_INTEGRATION, DSL.name("zone_integration_pkey"), arrayOf(ZoneIntegration.ZONE_INTEGRATION.ID), true)
 val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(ZoneIntegration.ZONE_INTEGRATION, DSL.name("zone_integration_zone_integration_code_key"), arrayOf(ZoneIntegration.ZONE_INTEGRATION.CODE), true)
 

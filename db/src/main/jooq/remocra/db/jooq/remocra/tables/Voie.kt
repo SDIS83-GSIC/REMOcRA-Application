@@ -32,6 +32,7 @@ import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_CROISEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE_PKEY
+import remocra.db.jooq.remocra.keys.VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
@@ -138,6 +139,7 @@ open class Voie(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = VOIE_PKEY
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(VOIE__VOIE_VOIE_COMMUNE_ID_FKEY)
 
     private lateinit var _commune: CommunePath
