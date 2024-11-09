@@ -44,7 +44,7 @@
     "react-pdf": "^7.7.3",
     "react-router-dom": "^6.26.2",
     "react-select": "^5.8.2",
-    "recharts": "^2.13.0",
+    "recharts": "^2.13.3",
     "regenerator-runtime": "^0.14.1",
     "sass": "1.77.6",
     "use-debounce": "^10.0.3",
