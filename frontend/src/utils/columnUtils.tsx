@@ -465,11 +465,12 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
           return (
             STATUT_INDISPONIBILITE_TEMPORAIRE[
               v.original.indisponibiliteTemporaireStatut
-            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE
+            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE ||
+            !v.original.isModifiable
           );
         },
         textDisable:
-          "Impossible de modifier une indisponibilité temporaire terminée",
+          "L'indisponibilité temporaire est terminée ou contient des PEI en dehors de votre zone de compétence",
         href: (indisponibiliteTemporaireId) =>
           URLS.UPDATE_INDISPONIBILITE_TEMPORAIRE(indisponibiliteTemporaireId),
       });
@@ -484,10 +485,12 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
           return (
             STATUT_INDISPONIBILITE_TEMPORAIRE[
               v.original.indisponibiliteTemporaireStatut
-            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
+            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS ||
+            !v.original.isModifiable
           );
         },
-        textDisable: "Impossible de supprimer une IT en cours",
+        textDisable:
+          "L'indisponibilité temporaire est en cours ou contient des PEI en dehors de votre zone de compétence",
         path: url`/api/indisponibilite-temporaire/delete/`,
       });
 

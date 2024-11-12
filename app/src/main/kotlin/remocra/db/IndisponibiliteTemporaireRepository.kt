@@ -76,26 +76,34 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
                 .join(INDISPONIBILITE_TEMPORAIRE)
                 .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
-                .leftJoin(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
                 .where(
                     L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID),
                 )
-                .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
                 .groupBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID),
 
         )
+
         val indisponibiliteTemporaireId = field(name("listePei", "idIT"), SQLDataType.UUID)
         val listeNumeroPei = field(name("listePei", "listeNumeroPei"), SQLDataType.VARCHAR)
 
-        return dsl.with(cte).select(
+        return dsl.with(cte).selectDistinct(
             *INDISPONIBILITE_TEMPORAIRE.fields(),
             listeNumeroPei,
         )
             .from(INDISPONIBILITE_TEMPORAIRE)
             .join(table(nomCte))
             .on(indisponibiliteTemporaireId.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .on(
+                L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID)
+                    .and(indisponibiliteTemporaireId.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)),
+            )
+            .join(PEI)
+            .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
+            .leftJoin(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .where(params.filterBy?.toCondition(listeNumeroPei) ?: DSL.noCondition())
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .orderBy(
                 params.sortBy?.toCondition(listeNumeroPei) ?: listOf(
                     INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.asc(),
@@ -103,6 +111,25 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 ),
             )
     }
+
+    fun getIndispoTemporaireHorsZC(isSuperAdmin: Boolean, zoneCompetenceId: UUID?, listItId: List<UUID>): List<UUID> =
+        if (isSuperAdmin) {
+            listOf()
+        } else {
+            dsl.select(
+                L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID,
+            )
+                .from(PEI)
+                .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .leftJoin(ZONE_INTEGRATION)
+                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+                .where(
+                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isFalse,
+                )
+                .and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(listItId))
+                .fetchInto()
+        }
 
     fun upsert(element: IndisponibiliteTemporaire) = dsl.insertInto(
         INDISPONIBILITE_TEMPORAIRE,
@@ -205,6 +232,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean,
         val indisponibiliteTemporaireMailApresIndisponibilite: Boolean,
         val listeNumeroPei: String?,
+        var isModifiable: Boolean = false,
     ) {
         val indisponibiliteTemporaireStatut: StatutIndisponibiliteTemporaireEnum
             get() {
