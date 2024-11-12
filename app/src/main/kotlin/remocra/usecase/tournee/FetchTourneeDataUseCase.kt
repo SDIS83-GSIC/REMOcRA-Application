@@ -16,6 +16,7 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
 
     fun fetchTourneeData(params: Params<Filter, Sort>, userInfo: UserInfo): DataTableau<TourneeRepository.TourneeComplete>? {
         val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
+
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete
         if (!filterTourneeDeltaDate.isNullOrEmpty()) {
@@ -46,6 +47,17 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
         val count = filteredList.size
         // Application de limit et offset à notre liste
         val filteredShortedList = filteredList.limitOffset(params.limit!!.toLong(), params.offset!!.toLong())
+
+        val tourneeNonModifiable = tourneeRepository.getTourneeHorsZc(
+            userInfo.isSuperAdmin,
+            userInfo.zoneCompetence?.zoneIntegrationId,
+            filteredShortedList?.map { it.tourneeId } ?: listOf(),
+        )
+
+        filteredShortedList?.forEach {
+            it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
+        }
+
         // Tri en fonction sortBy + return
         return params.sortBy?.toCondition(filteredShortedList ?: listOf())?.let { DataTableau(it, count) }
     }

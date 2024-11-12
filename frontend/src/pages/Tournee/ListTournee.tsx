@@ -114,6 +114,8 @@ const ListTournee = () => {
 
   const listeButton: ButtonType[] = [];
 
+  const textDisable =
+    "La tournée est réservée ou contient des PEI qui sont en dehors de votre zone de compétence";
   if (hasDroit(user, TYPE_DROIT.TOURNEE_A)) {
     listeButton.push({
       row: (row) => {
@@ -124,14 +126,14 @@ const ListTournee = () => {
         return isDisabled(v);
       },
       href: (idTournee) => URLS.UPDATE_TOURNEE(idTournee),
-      textDisable: "Impossible de modifier une tournée réservée",
+      textDisable: textDisable,
     });
 
     listeButton.push({
       disable: (v) => {
         return isDisabled(v);
       },
-      textDisable: "Impossible de supprimer une tournée réservée",
+      textDisable: textDisable,
       row: (row) => {
         return row;
       },
@@ -147,7 +149,7 @@ const ListTournee = () => {
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconSortList />,
       textEnable: "Gérer les PEI et leur ordre dans une tournée",
-      textDisable: "Impossible de modifier une tournée réservée",
+      textDisable: textDisable,
       classEnable: "warning",
       disable: (v) => {
         return isDisabled(v);
@@ -155,7 +157,10 @@ const ListTournee = () => {
     });
   }
   function isDisabled(v: any): boolean {
-    return v.original.tourneeUtilisateurReservationLibelle != null;
+    return (
+      v.original.tourneeUtilisateurReservationLibelle != null ||
+      !v.original.isModifiable
+    );
   }
 
   // Bouton d'accès à la saisie en masse des visites
@@ -177,7 +182,7 @@ const ListTournee = () => {
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconTournee />,
       textEnable: "Saisir toutes les visites de la tournée",
-      textDisable: "Impossible de saisir les visites d'une tournée réservée",
+      textDisable: textDisable,
       classEnable: "warning",
       disable: (v) => {
         return isDisabled(v);
