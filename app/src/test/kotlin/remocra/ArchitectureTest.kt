@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
+import remocra.db.AbstractRepository
 import remocra.db.TransactionManager
 import remocra.usecase.AbstractUseCase
 import remocra.web.AbstractEndpoint
@@ -73,6 +74,18 @@ class ArchitectureTest {
         .haveNameMatching(".*UseCase")
         .should()
         .beAssignableTo(AbstractUseCase::class.java)
+
+    // Tous les Repository doivent hériter de AbstractRepository
+    @ArchTest
+    val inheritsRepository: ArchRule = classes()
+        .that()
+        .haveNameMatching(".*Repository")
+        .and()
+        .doNotHaveSimpleName("SigRepository")
+        .and()
+        .doNotHaveSimpleName("NomenclatureRepository")
+        .should()
+        .beAssignableTo(AbstractRepository::class.java)
 }
 
 /**
