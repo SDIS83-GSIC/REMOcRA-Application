@@ -273,6 +273,13 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             .set(getLibelleField(type), nomenclatureCodeLibelleData.libelle)
             .set(getActifField(type), nomenclatureCodeLibelleData.actif)
             .let {
+                if (getProtectedField(type) != null) {
+                    it.set(getProtectedField(type), nomenclatureCodeLibelleData.protected)
+                } else {
+                    it
+                }
+            }
+            .let {
                 if (getInfosFk(type) != null) {
                     it.set(getInfosFk(type)!!.idFk, nomenclatureCodeLibelleData.idFk)
                 }

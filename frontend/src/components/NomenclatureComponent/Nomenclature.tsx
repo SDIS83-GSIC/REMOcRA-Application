@@ -18,7 +18,7 @@ export const getInitialValue = (data?: NomenclatureType) => ({
   code: data?.code ?? null,
   libelle: data?.libelle ?? null,
   actif: data?.actif ?? false,
-  protected: data?.protected ?? null,
+  protected: data?.protected ?? false,
   idFk: data?.idFk ?? null,
 });
 

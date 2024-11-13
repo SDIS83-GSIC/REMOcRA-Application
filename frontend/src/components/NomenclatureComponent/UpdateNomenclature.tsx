@@ -24,7 +24,7 @@ const UpdateNomenclature = ({
   redirectLink: string;
 }) => {
   const nomenclatureState = useGet(
-    url`/api/` + typeNomenclature + "/get/" + nomenclatureId,
+    url`/api/nomenclature/` + typeNomenclature + "/get/" + nomenclatureId,
   );
 
   const { state } = useLocation();
