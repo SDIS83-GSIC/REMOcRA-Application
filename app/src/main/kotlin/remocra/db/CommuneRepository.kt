@@ -48,5 +48,13 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
 
+    fun getCommunePei(coordonneeX: String, coordonneeY: String, srid: Int): UUID? =
+        dsl.select(COMMUNE.ID)
+            .from(COMMUNE)
+            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), 0)
+            .orderBy(COMMUNE.LIBELLE)
+            .limit(1)
+            .fetchOneInto()
+
     fun getById(id: UUID): Commune = dsl.selectFrom(COMMUNE).where(COMMUNE.ID.eq(id)).fetchSingleInto()
 }

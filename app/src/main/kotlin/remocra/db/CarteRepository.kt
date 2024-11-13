@@ -54,7 +54,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les PEI en projet dans une BBOX selon l'étude
      */
     fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<org.locationtech.jts.geom.Geometry?>, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
             .from(PEI_PROJET)
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),

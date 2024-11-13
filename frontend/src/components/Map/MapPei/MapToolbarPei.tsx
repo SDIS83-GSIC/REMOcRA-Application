@@ -1,21 +1,22 @@
-import { useNavigate } from "react-router-dom";
 import { shiftKeyOnly } from "ol/events/condition";
 import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
-import { forwardRef, useMemo } from "react";
 import CircleStyle from "ol/style/Circle";
+import { forwardRef, useMemo } from "react";
 import { ButtonGroup } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
+import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
-import { hasDroit } from "../../../droits.tsx";
 
 export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
   const navigate = useNavigate();
-  const { error: errorToast } = useToastContext();
+  const { success: successToast, error: errorToast } = useToastContext();
 
   const tools = useMemo(() => {
     if (!map) {
@@ -132,12 +133,29 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
       }
     }
 
+    const selectPeiCtrl = new Select();
+
+    function toggleDeplacerPei(active = false) {
+      toggleDeplacerPoint(
+        active,
+        selectPeiCtrl,
+        map,
+        `/api/pei/deplacer/`,
+        dataPeiLayer,
+        successToast,
+        errorToast,
+      );
+    }
+
     const tools = {
       "select-pei": {
         action: toggleSelect,
       },
       "create-pei": {
         action: toggleCreate,
+      },
+      "deplacer-pei": {
+        action: toggleDeplacerPei,
       },
     };
 
@@ -170,7 +188,15 @@ const MapToolbarPei = forwardRef(
         {hasDroit(user, TYPE_DROIT.PEI_C) && (
           <ToolbarButton
             toolName={"create-pei"}
-            toolLabel={"Créer"}
+            toolLabel={"Créer un PEI"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+        )}
+        {hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U) && (
+          <ToolbarButton
+            toolName={"deplacer-pei"}
+            toolLabel={"Déplacer un PEI"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />

@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
-import { DragBox, Draw, Modify, Select } from "ol/interaction";
+import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -14,6 +14,7 @@ import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/Tra
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
 import Volet from "../../Volet/Volet.tsx";
+import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
 
@@ -364,70 +365,18 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     }
 
     const selectProjetCtrl = new Select();
-    const modifyCtrl = new Modify({
-      features: selectProjetCtrl.getFeatures(),
-      source: dataPeiProjetLayer,
-      snapToPointer: true,
-    });
 
     function toggleDeplacerPeiProjet(active = false) {
-      const idx1 = map?.getInteractions().getArray().indexOf(selectProjetCtrl);
-      const idx2 = map?.getInteractions().getArray().indexOf(modifyCtrl);
-
-      if (active) {
-        if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(selectProjetCtrl);
-          map.addInteraction(modifyCtrl);
-
-          selectProjetCtrl.on("select", function (evt) {
-            evt.selected.forEach(async function (feature) {
-              // Si ce n'est pas un PEI en projet, on n'autorise pas le déplacement
-              if (feature.getProperties().typePointCarte !== "PEI_PROJET") {
-                map.removeInteraction(modifyCtrl);
-              } else {
-                map.addInteraction(modifyCtrl);
-              }
-            });
-          });
-
-          modifyCtrl.on("modifyend", function (evt) {
-            evt.features.forEach(async function (feature) {
-              if (feature.getProperties().typePointCarte === "PEI_PROJET") {
-                const coordinate = feature.getGeometry().getCoordinates();
-                (
-                  await fetch(
-                    url`/api/couverture-hydraulique/pei-projet/move/` +
-                      feature.getProperties().pointId,
-                    getFetchOptions({
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        coordonneeX: coordinate[0],
-                        coordonneeY: coordinate[1],
-                        srid: map
-                          .getView()
-                          .getProjection()
-                          .getCode()
-                          .split(":")[1],
-                      }),
-                    }),
-                  )
-                )
-                  .text()
-                  .then(() => {
-                    successToast("Le PEI a bien été déplacé.");
-                  })
-                  .catch((reason: string) => {
-                    errorToast(reason);
-                  });
-              }
-            });
-          });
-        }
-      } else {
-        map.removeInteraction(selectProjetCtrl);
-        map.removeInteraction(modifyCtrl);
-      }
+      toggleDeplacerPoint(
+        active,
+        selectProjetCtrl,
+        map,
+        `/api/couverture-hydraulique/pei-projet/move/`,
+        dataPeiProjetLayer,
+        successToast,
+        errorToast,
+        (feature) => feature.getProperties().typePointCarte === "PEI_PROJET",
+      );
     }
 
     const tools = {

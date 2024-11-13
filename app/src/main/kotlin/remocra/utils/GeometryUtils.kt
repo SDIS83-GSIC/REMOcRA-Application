@@ -7,6 +7,7 @@ import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKTReader
 import org.locationtech.jts.io.WKTWriter
+import remocra.CoordonneesXYSrid
 
 fun org.jooq.Geometry.toGeomFromText(srid: String): Field<Geometry?> = DSL.field("ST_GeomFromText('${this.data()}', '${sridFromEpsgCode(srid)}')", Geometry::class.java)
 
@@ -43,3 +44,11 @@ fun sridFromEpsgCode(coupleOrCode: String): Int =
 
 fun sridFromGeom(coupleOrCode: String): Int =
     coupleOrCode.split("=".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray()[1].toInt()
+
+fun formatPoint(coordonneesXYSrid: CoordonneesXYSrid): Geometry {
+    val geometry = WKTReader().read("POINT(${coordonneesXYSrid.coordonneeX} ${coordonneesXYSrid.coordonneeY})")
+        ?: throw IllegalArgumentException("Impossible de convertir les coordonnées en point : $coordonneesXYSrid")
+
+    geometry.srid = coordonneesXYSrid.srid
+    return geometry
+}

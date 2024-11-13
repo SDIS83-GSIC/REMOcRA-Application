@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.CoordonneesXYSrid
 import remocra.auth.RequireDroits
 import remocra.auth.organismeUserId
 import remocra.auth.userInfo
@@ -37,6 +38,7 @@ import remocra.usecase.document.UpsertDocumentPeiUseCase
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.pei.DeletePeiUseCase
 import remocra.usecase.pei.GetCoordonneesBySrid
+import remocra.usecase.pei.MovePeiUseCase
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
 import remocra.utils.forbidden
@@ -53,6 +55,8 @@ class PeiEndPoint : AbstractEndpoint() {
     @Inject lateinit var peiRepository: PeiRepository
 
     @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
+
+    @Inject lateinit var movePeiUseCase: MovePeiUseCase
 
     @Inject lateinit var createPeiUseCase: CreatePeiUseCase
 
@@ -194,6 +198,17 @@ class PeiEndPoint : AbstractEndpoint() {
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
         ).wrap()
+    }
+
+    @PUT
+    @Path("/deplacer/{peiId}")
+    @RequireDroits([Droit.PEI_DEPLACEMENT_U])
+    fun updateLocalisation(
+        @PathParam("peiId") peiId: UUID,
+        coordonnees: CoordonneesXYSrid,
+    ): Response {
+        val peiData = movePeiUseCase.execute(coordonnees, peiId)
+        return updatePeiUseCase.execute(securityContext.userInfo, peiData).wrap()
     }
 
     @DELETE

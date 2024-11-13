@@ -22,9 +22,4 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
         }
     }
-    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        super.checkContraintes(userInfo, element)
-
-        // TODO vérifier que la géométrie est bien dans la zone de compétence de l'utilisateur connecté
-    }
 }

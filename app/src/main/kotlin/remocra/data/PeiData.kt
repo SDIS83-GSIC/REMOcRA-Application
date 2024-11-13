@@ -146,7 +146,7 @@ data class PibiData(
     peiDomaineIdInitial,
 )
 
-class PenaData(
+data class PenaData(
     override val peiId: UUID = UUID.randomUUID(),
     override var peiNumeroComplet: String?,
     override var peiNumeroInterne: Int?,

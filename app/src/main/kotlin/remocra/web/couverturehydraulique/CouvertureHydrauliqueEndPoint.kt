@@ -21,6 +21,7 @@ import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
+import remocra.CoordonneesXYSrid
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
@@ -178,7 +179,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     fun movePeiProjet(
         @PathParam("peiProjetId")
         peiProjetId: UUID,
-        coordonnees: Coordonnees,
+        coordonnees: CoordonneesXYSrid,
     ): Response {
         val peiProjetData = couvertureHydrauliqueRepository.getPeiProjet(peiProjetId)
         return updatePeiProjetUseCase.execute(
@@ -193,12 +194,6 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             ),
         ).wrap()
     }
-
-    data class Coordonnees(
-        val coordonneeX: Double,
-        val coordonneeY: Double,
-        val srid: Int,
-    )
 
     @DELETE
     @Path("/pei-projet/{peiProjetId}")
