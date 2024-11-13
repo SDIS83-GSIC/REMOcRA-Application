@@ -1,12 +1,13 @@
 import { Feature, Map, Overlay } from "ol";
-import { Ref, useEffect, useRef, useState } from "react";
+import { ReactNode, Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import { URLS } from "../../routes.tsx";
 import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
-import { IconClose, IconEdit } from "../Icon/Icon.tsx";
+import { IconClose, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
+import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -30,6 +31,9 @@ const TooltipMapPei = ({
   const navigate = useNavigate();
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
 
+  const [showFichePei, setShowFichePei] = useState(false);
+  const handleCloseFichePei = () => setShowFichePei(false);
+
   const peiId = featureSelect?.getProperties().pointId;
   return (
     <div ref={ref}>
@@ -45,7 +49,19 @@ const TooltipMapPei = ({
           overlay?.setPosition(undefined);
         }}
         disabled={disabledTooltip}
+        autreActionBouton={
+          <Button variant="primary" onClick={() => setShowFichePei(true)}>
+            <IconSee />
+          </Button>
+        }
       />
+      <Volet
+        handleClose={handleCloseFichePei}
+        show={showFichePei}
+        className="w-auto"
+      >
+        <FicheResume peiId={peiId} />
+      </Volet>
     </div>
   );
 };
@@ -62,6 +78,7 @@ const Tooltip = ({
   deletePath,
   disabled = false,
   href = undefined,
+  autreActionBouton,
 }: {
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
@@ -72,6 +89,7 @@ const Tooltip = ({
   deletePath: string;
   disabled: boolean;
   href: string;
+  autreActionBouton: ReactNode | undefined;
 }) => {
   return (
     <>
@@ -107,27 +125,39 @@ const Tooltip = ({
                   </div>
                 ),
             )}
-            {displayButtonEdit && (
-              <Row className="mt-3">
-                <Col className="ms-auto" xs={"auto"}>
-                  <Button variant="primary" onClick={onClickEdit} href={href}>
-                    <IconEdit /> Modifier
-                  </Button>
-                </Col>
-              </Row>
-            )}
-            {displayButtonDelete && (
-              <Row className="mt-3">
-                <Col className="ms-auto" xs={"auto"}>
-                  <DeleteButtonWithModale
-                    path={deletePath}
-                    disabled={!displayButtonDelete}
-                    title={true}
-                    reload={onClickDelete}
-                  />
-                </Col>
-              </Row>
-            )}
+            <Row className="mt-3">
+              <Col className="ms-auto" xs={"auto"}>
+                <Row>
+                  {autreActionBouton && (
+                    <Col className="p-1" xs={"auto"}>
+                      {autreActionBouton}
+                    </Col>
+                  )}
+                  {displayButtonEdit && (
+                    <Col className="p-1" xs={"auto"}>
+                      <Button
+                        variant="info"
+                        className={"text-white"}
+                        onClick={onClickEdit}
+                        href={href}
+                      >
+                        <IconEdit />
+                      </Button>
+                    </Col>
+                  )}
+                  {displayButtonDelete && (
+                    <Col className="p-1" xs={"auto"}>
+                      <DeleteButtonWithModale
+                        path={deletePath}
+                        disabled={!displayButtonDelete}
+                        title={false}
+                        reload={onClickDelete}
+                      />
+                    </Col>
+                  )}
+                </Row>
+              </Col>
+            </Row>
           </Popover.Body>
         </Popover>
       )}

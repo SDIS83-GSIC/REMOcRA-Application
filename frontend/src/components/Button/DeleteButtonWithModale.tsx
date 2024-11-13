@@ -18,10 +18,10 @@ const DeleteButtonWithModale = ({
   return (
     <>
       <Button
-        variant={"link"}
-        className={disabled ? "" : "text-danger"}
+        variant={"danger"}
         disabled={disabled}
         onClick={show}
+        className={"text-white"}
       >
         <IconDelete />
         {title && <>&nbsp;Supprimer</>}
