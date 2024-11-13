@@ -1,3 +1,4 @@
+import { Map } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
@@ -6,13 +7,14 @@ import { forwardRef, useMemo } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
-import { hasDroit } from "../../../droits.tsx";
+import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
+import TooltipMapPei from "../TooltipsMap.tsx";
 
 export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
   const navigate = useNavigate();
@@ -171,9 +173,13 @@ const MapToolbarPei = forwardRef(
   ({
     toggleTool: toggleToolCallback,
     activeTool,
+    map,
+    dataPeiLayer,
   }: {
     toggleTool: (toolId: string) => void;
     activeTool: string;
+    map: Map;
+    dataPeiLayer: any;
   }) => {
     const { user } = useAppContext();
 
@@ -201,6 +207,18 @@ const MapToolbarPei = forwardRef(
             activeTool={activeTool}
           />
         )}
+        <TooltipMapPei
+          map={map}
+          dataPeiLayer={dataPeiLayer}
+          displayButtonDelete={hasDroit(user, TYPE_DROIT.PEI_D)}
+          displayButtonEdit={isAuthorized(user, [
+            TYPE_DROIT.PEI_U,
+            TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+            TYPE_DROIT.PEI_DEPLACEMENT_U,
+            TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+          ])}
+          disabledTooltip={activeTool === "deplacer-pei"}
+        />
       </ButtonGroup>
     );
   },

@@ -41,7 +41,12 @@ const MapPei = () => {
       activeTool={activeTool}
       toolbarElement={
         mapToolbarRef.current && (
-          <MapToolbarPei toggleTool={toggleTool} activeTool={activeTool} />
+          <MapToolbarPei
+            toggleTool={toggleTool}
+            activeTool={activeTool}
+            map={map}
+            dataPeiLayer={dataPeiLayer}
+          />
         )
       }
     />

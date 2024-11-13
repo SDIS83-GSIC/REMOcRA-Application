@@ -524,7 +524,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           map={map}
           disabledEditPeiProjet={disabledEditPeiProjet}
           dataPeiProjetLayer={dataPeiProjetLayer}
-          disabled={activeTool === "deplacer"}
+          disabled={activeTool === "deplacer-pei-projet"}
         />
       </>
     );

@@ -1,28 +1,56 @@
 import { Feature, Map, Overlay } from "ol";
 import { Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
+import { URLS } from "../../routes.tsx";
+import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
 import { IconClose, IconEdit } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
-import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
  * @param map : la carte
  * @returns la tooltip
  */
-const TooltipMapInfo = ({ map }: { map: Map }) => {
+const TooltipMapPei = ({
+  map,
+  displayButtonEdit,
+  displayButtonDelete,
+  dataPeiLayer,
+  disabledTooltip = false,
+}: {
+  map: Map;
+  displayButtonEdit: boolean;
+  displayButtonDelete: boolean;
+  dataPeiLayer: any;
+  disabledTooltip: boolean;
+}) => {
   const ref = useRef(null);
+  const navigate = useNavigate();
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
 
+  const peiId = featureSelect?.getProperties().pointId;
   return (
     <div ref={ref}>
-      <Tooltip featureSelect={featureSelect} overlay={overlay} />
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        displayButtonEdit={displayButtonEdit}
+        deletePath={`/api/pei/delete/` + peiId}
+        displayButtonDelete={displayButtonDelete}
+        onClickEdit={() => navigate(URLS.UPDATE_PEI(peiId))}
+        onClickDelete={() => {
+          dataPeiLayer.getSource().refresh();
+          overlay?.setPosition(undefined);
+        }}
+        disabled={disabledTooltip}
+      />
     </div>
   );
 };
 
-export default TooltipMapInfo;
+export default TooltipMapPei;
 
 const Tooltip = ({
   featureSelect,
@@ -33,6 +61,7 @@ const Tooltip = ({
   onClickDelete,
   deletePath,
   disabled = false,
+  href = undefined,
 }: {
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
@@ -42,6 +71,7 @@ const Tooltip = ({
   onClickDelete?: () => void;
   deletePath: string;
   disabled: boolean;
+  href: string;
 }) => {
   return (
     <>
@@ -80,7 +110,7 @@ const Tooltip = ({
             {displayButtonEdit && (
               <Row className="mt-3">
                 <Col className="ms-auto" xs={"auto"}>
-                  <Button variant="primary" onClick={onClickEdit}>
+                  <Button variant="primary" onClick={onClickEdit} href={href}>
                     <IconEdit /> Modifier
                   </Button>
                 </Col>
