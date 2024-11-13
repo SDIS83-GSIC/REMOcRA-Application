@@ -518,6 +518,20 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_CTP_CODE_INSEE_MANQUANT(22000, "Code INSEE manquant"),
     IMPORT_CTP_NOT_XLSX(22001, "Le fichier fourni n'est pas un .xlsx"),
     IMPORT_CTP_NO_TEMPLATE_PROVIDED(22002, "Aucun modèle d'export CTP n'a été fourni à l'application"),
+
+    //
+    // ********************************************************************************
+    // Dashboard
+    // ********************************************************************************
+    //
+    DASHBOARD_INVALID_KEYWORD(23000, "Requête invalide : contient un mot-clé interdit."),
+    DASHBOARD_INVALID_FIRST_KEYWORD(23001, "Requête invalide : doit commencer par 'SELECT' ou 'WITH'."),
+    DASHBOARD_INVALID_MULTIPLE_INSTRUCTION(23002, "Requête invalide : contient des instructions SQL dangereuses (ex. : commentaires ou commandes multiples)."),
+    DASHBOARD_NO_TABLE_IN_PARSED_QUERY(23003, "Aucune table trouvée dans la requête"),
+    DASHBOARD_NO_SELECT_KEYWORD(23004, "Impossible de trouver la clause SELECT dans la requête originale."),
+    DASHBOARD_FIELD_REQUIRE(23005, "Aucune donnée"),
+    DASHBOARD_VALIDATE_QUERY(23006, "Erreur de validation de la requête."),
+    DASHBOARD_FORBIDDEN_CUD(23007, "Vous n'avez pas les droits de d'éditer", Status.FORBIDDEN),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

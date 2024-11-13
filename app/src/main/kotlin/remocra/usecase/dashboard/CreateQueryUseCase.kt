@@ -1,0 +1,73 @@
+package remocra.usecase.dashboard
+
+import com.google.inject.Inject
+import remocra.auth.UserInfo
+import remocra.data.AuteurTracabiliteData
+import remocra.data.DashboardQueryData
+import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeSourceModification
+import remocra.db.DashboardRepository
+import remocra.db.jooq.historique.enums.TypeObjet
+import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.tables.pojos.DashboardComponent
+import remocra.db.jooq.remocra.tables.pojos.DashboardQuery
+import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
+import remocra.usecase.AbstractCUDUseCase
+import remocra.utils.RequestUtils
+
+class CreateQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeOperation.INSERT) {
+
+    @Inject
+    lateinit var dashboardRepository: DashboardRepository
+
+    @Inject
+    lateinit var requestUtils: RequestUtils
+
+    override fun checkDroits(userInfo: UserInfo) {
+        if (!userInfo.droits.contains(Droit.DASHBOARD_A)) {
+            throw RemocraResponseException(ErrorType.DASHBOARD_FORBIDDEN_CUD)
+        }
+    }
+
+    override fun execute(userInfo: UserInfo?, element: DashboardQueryData): DashboardQueryData {
+        dashboardRepository.insertQuery(
+            DashboardQuery(
+                dashboardQueryId = element.queryId,
+                dashboardQueryTitle = element.queryTitle,
+                dashboardQueryQuery = element.queryQuery,
+            ),
+        )
+
+        element.queryComponents.forEach { component ->
+            dashboardRepository.insertComponent(
+                DashboardComponent(
+                    dashboardComponentId = component.componentId,
+                    dashboardComponentDahsboardQueryId = element.queryId,
+                    dashboardComponentKey = component.componentKey,
+                    dashboardComponentConfig = component.componentConfig,
+                    dashboardComponentTitle = component.componentTitle,
+                ),
+            )
+        }
+        return element
+    }
+
+    override fun postEvent(element: DashboardQueryData, userInfo: UserInfo) {
+        eventBus.post(
+            TracabiliteEvent(
+                pojo = element,
+                pojoId = element.queryId,
+                typeOperation = typeOperation,
+                typeObjet = TypeObjet.DASHBOARD,
+                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                date = dateUtils.now(),
+            ),
+        )
+    }
+
+    override fun checkContraintes(userInfo: UserInfo?, element: DashboardQueryData) {
+        requestUtils.validateReadOnlyQuery(element.queryQuery)
+    }
+}

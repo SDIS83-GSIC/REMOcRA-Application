@@ -18,6 +18,7 @@ import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
 import remocra.web.courrier.CourrierModule
 import remocra.web.couverturehydraulique.CouvertureHydrauliqueModule
+import remocra.web.dashboard.DashboardModule
 import remocra.web.debitsimultane.DebitSimultaneModule
 import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
@@ -86,6 +87,7 @@ object WebModule : RemocraModule() {
         install(DebitSimultaneModule)
         install(RapportPersonnaliseModule)
         install(ImportCtpModule)
+        install(DashboardModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
