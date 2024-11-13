@@ -9,6 +9,7 @@ import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
   IconSee,
+  IconVisite,
 } from "../components/Icon/Icon.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
 import {
@@ -262,6 +263,18 @@ function getColumnPeiByStringArray(
         },
         type: TYPE_BUTTON.DELETE,
         path: url`/api/pei/delete/`,
+      });
+    }
+    if (hasDroit(user, TYPE_DROIT.VISITE_R)) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        href: (idPei) => URLS.VISITE(idPei),
+        type: TYPE_BUTTON.CUSTOM,
+        icon: <IconVisite />,
+        textEnable: "Gérer les visites",
+        classEnable: "warning",
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {

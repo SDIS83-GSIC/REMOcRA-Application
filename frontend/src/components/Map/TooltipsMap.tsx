@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import { URLS } from "../../routes.tsx";
 import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
-import { IconClose, IconEdit, IconSee } from "../Icon/Icon.tsx";
+import { IconClose, IconEdit, IconSee, IconVisite } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 
@@ -48,11 +48,20 @@ const TooltipMapPei = ({
           dataPeiLayer.getSource().refresh();
           overlay?.setPosition(undefined);
         }}
+        onClickSee={() => setShowFichePei(true)}
+        displayButtonSee={true}
         disabled={disabledTooltip}
         autreActionBouton={
-          <Button variant="primary" onClick={() => setShowFichePei(true)}>
-            <IconSee />
-          </Button>
+          <>
+            <Col className="p-1" xs={"auto"}>
+              <Button
+                variant="warning"
+                onClick={() => navigate(URLS.VISITE(peiId))}
+              >
+                <IconVisite />
+              </Button>
+            </Col>
+          </>
         }
       />
       <Volet
@@ -75,6 +84,8 @@ const Tooltip = ({
   onClickEdit,
   displayButtonDelete = false,
   onClickDelete,
+  displayButtonSee = false,
+  onClickSee,
   deletePath,
   disabled = false,
   href = undefined,
@@ -86,6 +97,8 @@ const Tooltip = ({
   onClickEdit?: () => void;
   displayButtonDelete: boolean;
   onClickDelete?: () => void;
+  displayButtonSee: boolean;
+  onClickSee?: () => void;
   deletePath: string;
   disabled: boolean;
   href: string;
@@ -128,9 +141,11 @@ const Tooltip = ({
             <Row className="mt-3">
               <Col className="ms-auto" xs={"auto"}>
                 <Row>
-                  {autreActionBouton && (
+                  {displayButtonSee && (
                     <Col className="p-1" xs={"auto"}>
-                      {autreActionBouton}
+                      <Button variant="primary" onClick={onClickSee}>
+                        <IconSee />
+                      </Button>
                     </Col>
                   )}
                   {displayButtonEdit && (
@@ -155,6 +170,7 @@ const Tooltip = ({
                       />
                     </Col>
                   )}
+                  {autreActionBouton && autreActionBouton}
                 </Row>
               </Col>
             </Row>

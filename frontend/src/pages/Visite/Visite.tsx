@@ -7,9 +7,17 @@ import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
+import CreateButton from "../../components/Form/CreateButton.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconDelete, IconOverview } from "../../components/Icon/Icon.tsx";
+import {
+  IconDelete,
+  IconOverview,
+  IconVisite,
+} from "../../components/Icon/Icon.tsx";
+import DeleteModal from "../../components/Modal/DeleteModal.tsx";
+import useModal from "../../components/Modal/ModalUtils.tsx";
 import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 import UtilisateurEntity, {
@@ -20,8 +28,6 @@ import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
-import DeleteModal from "../../components/Modal/DeleteModal.tsx";
-import useModal from "../../components/Modal/ModalUtils.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
@@ -136,20 +142,23 @@ const Visite = () => {
   };
   return (
     <Container>
+      <PageTitle
+        title={"Visite du PEI"}
+        icon={<IconVisite />}
+        right={
+          hasRightToCreate && (
+            <CreateButton
+              title={"Ajouter une visite"}
+              onClick={() => {
+                setNewVisite(true);
+                setCurrentVisite(null);
+              }}
+            />
+          )
+        }
+      />
       <Row>
         <Col xs="5">
-          <div>
-            {hasRightToCreate && (
-              <Button
-                onClick={() => {
-                  setNewVisite(true);
-                  setCurrentVisite(null);
-                }}
-              >
-                Nouvelle visite
-              </Button>
-            )}
-          </div>
           <Table striped bordered size="sm">
             <thead>
               <tr>
