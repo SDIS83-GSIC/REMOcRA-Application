@@ -16,7 +16,13 @@ const MapPei = () => {
     mapToolbarRef,
   } = useMapComponent({ mapElement: mapElement });
 
-  const { tools: extraTools } = useToolbarPeiContext({
+  const {
+    tools: extraTools,
+    createIndispoTemp,
+    handleCloseIndispoTemp,
+    listePeiId,
+    showCreateIndispoTemp,
+  } = useToolbarPeiContext({
     map,
     workingLayer,
     dataPeiLayer,
@@ -46,6 +52,10 @@ const MapPei = () => {
             activeTool={activeTool}
             map={map}
             dataPeiLayer={dataPeiLayer}
+            showCreateIndispoTemp={showCreateIndispoTemp}
+            handleCloseIndispoTemp={handleCloseIndispoTemp}
+            listePeiId={listePeiId}
+            createIndispoTemp={createIndispoTemp}
           />
         )
       }

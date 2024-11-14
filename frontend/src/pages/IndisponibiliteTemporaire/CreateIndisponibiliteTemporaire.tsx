@@ -6,10 +6,16 @@ import IndisponibiliteTemporaireForm, {
   validationSchema,
 } from "./IndisponibiliteTemporaireForm.tsx";
 
-const CreateIndisponibiliteTemporaire = () => {
+const CreateIndisponibiliteTemporaire = ({
+  listePeiId,
+}: {
+  listePeiId?: string[];
+}) => {
   return (
     <MyFormik
-      initialValues={getInitialValues({})}
+      initialValues={getInitialValues({
+        indisponibiliteTemporaireListePeiId: listePeiId,
+      })}
       validationSchema={validationSchema}
       isPost={true}
       submitUrl={`/api/indisponibilite-temporaire/create`}
