@@ -2,6 +2,7 @@ import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import CreateButton from "../../components/Form/CreateButton.tsx";
 import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
 import { useFilterContext } from "../../components/Table/QueryTable.tsx";
@@ -10,15 +11,20 @@ import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibilite
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
-import { getColumnIndisponibiliteTemporaireByStringArray } from "../../utils/columnUtils.tsx";
-import CreateButton from "../../components/Form/CreateButton.tsx";
+import { GetColumnIndisponibiliteTemporaireByStringArray } from "../../utils/columnUtils.tsx";
 import filterValuesToVariable from "./FilterIndisponibiliteTemporaire.tsx";
 
-const ListIndisponibiliteTemporaire = () => {
+const ListIndisponibiliteTemporaire = ({
+  peiId,
+  colonnes,
+}: {
+  peiId?: string;
+  colonnes?: COLUMN_INDISPONIBILITE_TEMPORAIRE[];
+}) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
   //TODO a aller chercher en base
-  const column: COLUMN_INDISPONIBILITE_TEMPORAIRE[] = [
+  const column: COLUMN_INDISPONIBILITE_TEMPORAIRE[] = colonnes ?? [
     COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF,
     COLUMN_INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT,
     COLUMN_INDISPONIBILITE_TEMPORAIRE.DATE_FIN,
@@ -59,7 +65,7 @@ const ListIndisponibiliteTemporaire = () => {
       {
         //pas besoin de container il est dans le composant QueryTableWithListingPei
         <QueryTableWithListingPei
-          column={getColumnIndisponibiliteTemporaireByStringArray({
+          column={GetColumnIndisponibiliteTemporaireByStringArray({
             user: user,
             parametres: column,
             handleButtonClick: handleButtonClick,
@@ -83,7 +89,7 @@ const ListIndisponibiliteTemporaire = () => {
             indisponibiliteTemporaireBasculeAutoDisponible: undefined,
             indisponibiliteTemporaireMailAvantIndisponibilite: undefined,
             indisponibiliteTemporaireMailApresIndisponibilite: undefined,
-            listeNumeroPei: undefined,
+            listePeiId: peiId ? [peiId]: undefined,
           })}
         />
       }

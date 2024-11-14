@@ -102,7 +102,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-            .where(params.filterBy?.toCondition(listeNumeroPei) ?: DSL.noCondition())
+            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
             .orderBy(
                 params.sortBy?.toCondition(listeNumeroPei) ?: listOf(
@@ -309,10 +309,10 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireBasculeAutoDisponible: Boolean?,
         val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean?,
         val indisponibiliteTemporaireMailApresIndisponibilite: Boolean?,
-        val listeNumeroPei: String?,
+        val listePeiId: List<UUID>?,
     ) {
 
-        fun toCondition(listeNumeroPeiField: Field<String>): Condition =
+        fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
                     // TODO voir pour les unaccents
@@ -322,7 +322,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                             INDISPONIBILITE_TEMPORAIRE.OBSERVATION.containsIgnoreCase(it),
                         )
                     },
-                    this.listeNumeroPei?.let { DSL.and(listeNumeroPeiField.containsIgnoreCase(it)) },
+                    listePeiId?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.`in`(it)) },
                     indisponibiliteTemporaireMailApresIndisponibilite
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE) },
                     indisponibiliteTemporaireMailAvantIndisponibilite

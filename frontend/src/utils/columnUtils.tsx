@@ -1,7 +1,9 @@
 import UtilisateurEntity, {
   TYPE_DROIT,
 } from "../Entities/UtilisateurEntity.tsx";
+import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
+import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFromList.tsx";
 import SelectFilterFromUrl from "../components/Filter/SelectFilterFromUrl.tsx";
 import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
 import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
@@ -305,7 +307,7 @@ function getColumnPeiByStringArray(
 }
 
 /***********************INDISPO_TEMPORARIE******************/
-export function getColumnIndisponibiliteTemporaireByStringArray({
+export function GetColumnIndisponibiliteTemporaireByStringArray({
   user,
   parametres,
   handleButtonClick,
@@ -314,6 +316,7 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
   parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>;
   handleButtonClick: (value: string) => any;
 }): Array<columnType> {
+  const listePeiState = useGet(url`/api/pei/get-id-numero`);
   const column: Array<columnType> = [];
   {
     column.push(
@@ -437,7 +440,17 @@ export function getColumnIndisponibiliteTemporaireByStringArray({
           Header: "PEI concerné",
           accessor: "listeNumeroPei",
           sortField: "listeNumeroPei",
-          Filter: <FilterInput type="text" name="listeNumeroPei" />,
+          Filter: (
+            <MultiSelectFilterFromList
+              name={"listePeiId"}
+              listIdCodeLibelle={listePeiState?.data?.map((e) => ({
+                id: e.peiId,
+                code: e.peiId,
+                libelle: e.peiNumeroComplet,
+              }))}
+            />
+          ),
+          width: 200,
         });
         break;
 

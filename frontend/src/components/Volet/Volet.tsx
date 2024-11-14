@@ -1,7 +1,13 @@
 import { ReactNode } from "react";
 import { Offcanvas } from "react-bootstrap";
 
-const Volet = ({ show, handleClose, className, children }: VoletType) => {
+const Volet = ({
+  show,
+  handleClose,
+  className,
+  backdrop = false,
+  children,
+}: VoletType) => {
   return (
     <Offcanvas
       show={show}
@@ -9,8 +15,8 @@ const Volet = ({ show, handleClose, className, children }: VoletType) => {
       placement="end"
       className={className}
       scroll={true}
-      backdrop={false}
-      autoFocus={false}
+      backdrop={backdrop}
+      autoFocus={true}
     >
       <Offcanvas.Header closeButton />
       <Offcanvas.Body>{children}</Offcanvas.Body>
@@ -23,6 +29,7 @@ type VoletType = {
   handleClose: () => void;
   className?: string;
   children: ReactNode;
+  backdrop?: boolean;
 };
 
 export default Volet;

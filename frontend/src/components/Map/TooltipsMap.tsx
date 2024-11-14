@@ -2,12 +2,20 @@ import { Feature, Map, Overlay } from "ol";
 import { ReactNode, Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
+import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
+import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../../routes.tsx";
 import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
-import { IconClose, IconEdit, IconSee, IconVisite } from "../Icon/Icon.tsx";
+import {
+  IconClose,
+  IconEdit,
+  IconIndisponibiliteTemporaire,
+  IconSee,
+  IconVisite,
+} from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
-import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -33,6 +41,9 @@ const TooltipMapPei = ({
 
   const [showFichePei, setShowFichePei] = useState(false);
   const handleCloseFichePei = () => setShowFichePei(false);
+
+  const [showIndispoTemp, setShowIndispoTemp] = useState(false);
+  const handleCloseIndispoTemp = () => setShowIndispoTemp(false);
 
   const peiId = featureSelect?.getProperties().pointId;
   return (
@@ -61,6 +72,19 @@ const TooltipMapPei = ({
                 <IconVisite />
               </Button>
             </Col>
+            {featureSelect?.getProperties().hasIndispoTemp && (
+              <Col className="p-1" xs={"auto"}>
+                <Button
+                  variant="warning"
+                  onClick={() => {
+                    setShowIndispoTemp(true);
+                    overlay?.setPosition(undefined);
+                  }}
+                >
+                  <IconIndisponibiliteTemporaire />
+                </Button>
+              </Col>
+            )}
           </>
         }
       />
@@ -70,6 +94,27 @@ const TooltipMapPei = ({
         className="w-auto"
       >
         <FicheResume peiId={peiId} />
+      </Volet>
+      <Volet
+        handleClose={() => {
+          handleCloseIndispoTemp();
+
+          navigate(
+            {
+              pathname: location.pathname,
+              search: "",
+            },
+            { replace: true },
+          );
+        }}
+        show={showIndispoTemp}
+        className="w-auto"
+        backdrop={true}
+      >
+        <ListIndisponibiliteTemporaire
+          peiId={peiId}
+          colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
+        />
       </Volet>
     </div>
   );
