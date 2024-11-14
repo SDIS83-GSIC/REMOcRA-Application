@@ -25,6 +25,14 @@ export const IconExport = () => <i className="fi fi-br-download" />;
 
 export const IconAnomalie = () => <i className="fi fi-br-bug" />;
 export const IconVisite = () => <i className="fi fi-bs-grate-droplet" />;
+export const IconMoveObjet = () => <i className="fi fi-bs-route" />;
+export const IconSelect = () => <i className="fi fi-bs-square-dashed" />;
+export const IconMoveCarte = () => <i className="fi fi-br-arrows" />;
+export const IconDistance = () => <i className="fi fi-bs-ruler-combined" />;
+export const IconSurface = () => <i className="fi fi-bs-chart-area" />;
+export const IconZoomIn = () => <i className="fi fi-br-zoom-in" />;
+export const IconZoomOut = () => <i className="fi fi-br-zoom-out" />;
+export const IconPeiPlusProche = () => <i className="fi fi-rr-career-path" />;
 
 export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 

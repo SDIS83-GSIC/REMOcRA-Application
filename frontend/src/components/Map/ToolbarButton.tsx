@@ -1,32 +1,40 @@
 import { ReactNode } from "react";
 import { ToggleButton } from "react-bootstrap";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 const ToolbarButton = ({
   toolName,
-  toolLabel,
+  toolIcon,
+  toolLabelTooltip,
   toggleTool,
   activeTool,
   disabled = false,
+  variant = "primary",
 }: {
   toolName: string;
-  toolLabel: ReactNode | string;
+  toolLabelTooltip: ReactNode | string;
+  toolIcon: ReactNode;
   toggleTool: (tool: string) => void;
   activeTool: string | undefined;
   disabled?: boolean;
+  variant?: string;
 }) => {
   return (
-    <ToggleButton
-      name={"tool"}
-      disabled={disabled}
-      onClick={() => toggleTool(toolName)}
-      id={toolName}
-      value={toolName}
-      type={"radio"}
-      variant={"outline-primary"}
-      checked={activeTool === toolName}
-    >
-      {toolLabel}
-    </ToggleButton>
+    <TooltipCustom tooltipText={toolLabelTooltip} tooltipId={toolName}>
+      <ToggleButton
+        name={"tool"}
+        disabled={disabled}
+        onClick={() => toggleTool(toolName)}
+        id={toolName}
+        value={toolName}
+        type={"radio"}
+        variant={"outline-" + variant}
+        checked={activeTool === toolName}
+        className="m-2"
+      >
+        {toolIcon}
+      </ToggleButton>
+    </TooltipCustom>
   );
 };
 

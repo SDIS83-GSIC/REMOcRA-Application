@@ -1,3 +1,11 @@
+import { Overlay } from "ol";
+import Map from "ol/Map";
+import { unByKey } from "ol/Observable";
+import { LineString, Polygon } from "ol/geom";
+import { DragPan, Draw } from "ol/interaction";
+import { getArea, getLength } from "ol/sphere";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import {
   forwardRef,
   useEffect,
@@ -6,15 +14,14 @@ import {
   useState,
 } from "react";
 import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
-import Map from "ol/Map";
-import { DragPan, Draw } from "ol/interaction";
-import { Fill, Stroke, Style } from "ol/style";
-import CircleStyle from "ol/style/Circle";
-import { LineString, Polygon } from "ol/geom";
-import { getArea, getLength } from "ol/sphere";
-import { Overlay } from "ol";
-import { unByKey } from "ol/Observable";
 import Row from "react-bootstrap/Row";
+import {
+  IconDistance,
+  IconMoveCarte,
+  IconSurface,
+  IconZoomIn,
+  IconZoomOut,
+} from "../Icon/Icon.tsx";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
 
@@ -262,22 +269,25 @@ const MapToolbar = forwardRef(
         <ButtonToolbar>
           <ButtonGroup>
             <Button
+              className="m-1 rounded"
               onClick={zoomIn}
               disabled={zoom >= map.getView().getMaxZoom()}
             >
-              Zoom +
+              <IconZoomIn />
             </Button>
             <Button
+              className="m-1 rounded"
               onClick={zoomOut}
               disabled={zoom <= map.getView().getMinZoom()}
             >
-              Zoom -
+              <IconZoomOut />
             </Button>
           </ButtonGroup>
           <ButtonGroup>
             <ToolbarButton
               toolName={"move-view"}
-              toolLabel={"Déplacer"}
+              toolIcon={<IconMoveCarte />}
+              toolLabelTooltip={"Déplacer"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />
@@ -286,13 +296,15 @@ const MapToolbar = forwardRef(
           <ButtonGroup>
             <ToolbarButton
               toolName={"measure-length"}
-              toolLabel={"Distance"}
+              toolIcon={<IconDistance />}
+              toolLabelTooltip={"Distance"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"measure-area"}
-              toolLabel={"Superficie"}
+              toolIcon={<IconSurface />}
+              toolLabelTooltip={"Superficie"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />

@@ -13,6 +13,12 @@ import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
+import {
+  IconCreate,
+  IconMoveObjet,
+  IconPeiPlusProche,
+  IconSelect,
+} from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
@@ -452,32 +458,37 @@ const MapToolbarCouvertureHydraulique = forwardRef(
         {/**Pour la couverture hydraulique */}
         <ToolbarButton
           toolName={"select-etude"}
-          toolLabel={"Sélectionner"}
+          toolIcon={<IconSelect />}
+          toolLabelTooltip={"Sélectionner"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
         <ToolbarButton
           toolName={"create-pei-projet"}
-          toolLabel={"Créer un PEI en projet"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
-        <ToolbarButton
-          toolName={"pei-plus-proche"}
-          toolLabel={"Trouver le PEI le plus proche"}
+          toolIcon={<IconCreate />}
+          toolLabelTooltip={"Créer un PEI en projet"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
           disabled={disabledEditPeiProjet}
         />
         <ToolbarButton
           toolName={"deplacer-pei-projett"}
-          toolLabel={"Déplacer un PEI en projet"}
+          toolIcon={<IconMoveObjet />}
+          toolLabelTooltip={"Déplacer un PEI en projet"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+          disabled={disabledEditPeiProjet}
+        />
+        <ToolbarButton
+          toolName={"pei-plus-proche"}
+          toolIcon={<IconPeiPlusProche />}
+          toolLabelTooltip={"Trouver le PEI le plus proche"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
           disabled={disabledEditPeiProjet}
         />
         <Button
+          className="me-1"
           variant="outline-primary"
           onClick={calculCouverture}
           disabled={disabledEditPeiProjet}

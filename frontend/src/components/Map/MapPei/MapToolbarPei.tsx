@@ -15,6 +15,7 @@ import { useAppContext } from "../../App/AppProvider.tsx";
 import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
+import { IconCreate, IconMoveObjet, IconSelect } from "../../Icon/Icon.tsx";
 
 export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
   const navigate = useNavigate();
@@ -187,14 +188,16 @@ const MapToolbarPei = forwardRef(
       <ButtonGroup>
         <ToolbarButton
           toolName={"select-pei"}
-          toolLabel={"Sélectionner"}
+          toolIcon={<IconSelect />}
+          toolLabelTooltip={"Sélectionner"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
         {hasDroit(user, TYPE_DROIT.PEI_C) && (
           <ToolbarButton
             toolName={"create-pei"}
-            toolLabel={"Créer un PEI"}
+            toolIcon={<IconCreate />}
+            toolLabelTooltip={"Créer un PEI"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />
@@ -202,7 +205,8 @@ const MapToolbarPei = forwardRef(
         {hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U) && (
           <ToolbarButton
             toolName={"deplacer-pei"}
-            toolLabel={"Déplacer un PEI"}
+            toolIcon={<IconMoveObjet />}
+            toolLabelTooltip={"Déplacer un PEI"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />
