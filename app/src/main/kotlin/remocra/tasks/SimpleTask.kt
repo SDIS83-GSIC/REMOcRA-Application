@@ -130,6 +130,12 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                 try {
                     checkParameters(taskParameters)
                     notify(taskParameters, execute(taskParameters, userInfo), logManager.idJob)
+                    if (latestJob != null) {
+                        transactionManager.transactionResult {
+                            jobRepository.endJobSuccess(latestJob.jobId)
+                        }
+                    }
+                    logManager.info("Tâche terminée")
                 } catch (e: Exception) {
                     if (latestJob != null) {
                         transactionManager.transactionResult {
@@ -137,13 +143,6 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                         }
                     }
                     logManager.error("Tâche terminée en erreur : ${e.message}")
-                } finally {
-                    if (latestJob != null) {
-                        transactionManager.transactionResult {
-                            jobRepository.endJobSuccess(latestJob.jobId)
-                        }
-                    }
-                    logManager.info("Tâche terminée")
                 }
             }
 
