@@ -37,7 +37,7 @@ import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
-const ListTournee = () => {
+const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
   const column: Array<columnType> = [
@@ -287,6 +287,7 @@ const ListTournee = () => {
             tourneeLibelle: undefined,
             tourneeOrganismeLibelle: undefined,
             tourneeUtilisateurReservationLibelle: undefined,
+            peiId: peiId,
           })}
         />
       }

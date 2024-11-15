@@ -89,7 +89,7 @@ const ListIndisponibiliteTemporaire = ({
             indisponibiliteTemporaireBasculeAutoDisponible: undefined,
             indisponibiliteTemporaireMailAvantIndisponibilite: undefined,
             indisponibiliteTemporaireMailApresIndisponibilite: undefined,
-            listePeiId: peiId ? [peiId]: undefined,
+            listePeiId: peiId ? [peiId] : undefined,
           })}
         />
       }

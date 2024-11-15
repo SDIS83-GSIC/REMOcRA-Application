@@ -90,6 +90,8 @@ object GlobalConstants {
         TYPE_DOCUMENT_HYDRANT("HYDRANT"),
     }
 
+    const val NATURE_DECI_PRIVE = "PRIVE"
+
     /** Code des Rôles Contact Protected */
     const val CHANGEMENT_ETAT_PEI: String = "CHANGEMENT_ETAT_PEI"
     const val IT_NOTIF_AVANT_DEBUT: String = "IT_NOTIF_AVANT_DEBUT"

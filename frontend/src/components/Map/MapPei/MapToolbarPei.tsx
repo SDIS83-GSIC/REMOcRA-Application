@@ -8,9 +8,11 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
+import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import CreateIndisponibiliteTemporaire from "../../../pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
+import AffecterPeiTourneeMap from "../../../pages/Tournee/AffecterPeiTourneeMap.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import {
@@ -18,7 +20,9 @@ import {
   IconIndisponibiliteTemporaire,
   IconMoveObjet,
   IconSelect,
+  IconTournee,
 } from "../../Icon/Icon.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
@@ -28,8 +32,17 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
   const navigate = useNavigate();
   const { success: successToast, error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
+  const [listePeiIdTourneePublic, setListePeiIdTourneePublic] = useState<
+    string[]
+  >([]);
+  const [listePeiIdTourneePrive, setListePeiIdTourneePrive] = useState<
+    string[]
+  >([]);
   const [showCreateIndispoTemp, setShowCreateIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowCreateIndispoTemp(false);
+
+  const [showCreateTournee, setShowCreateTournee] = useState(false);
+  const handleCloseTournee = () => setShowCreateTournee(false);
 
   const tools = useMemo(() => {
     if (!map) {
@@ -122,11 +135,32 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
       selectCtrl.getFeatures().extend(boxFeatures);
 
       listePeiId.splice(0, listePeiId.length);
+      listePeiIdTourneePrive.splice(0, listePeiIdTourneePrive.length);
+      listePeiIdTourneePublic.splice(0, listePeiIdTourneePublic.length);
+
+      const prives: string[] = [];
+      const publics: string[] = [];
 
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
         listePeiId.push(point.pointId);
+
+        if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
+          prives.push(point.pointId);
+        } else {
+          publics.push(point.pointId);
+        }
       });
+
+      // A retirer en 3.1 => ticket #126505
+      if (prives.length > 0 && publics.length === 0) {
+        setListePeiIdTourneePrive(prives);
+      } else if (publics.length > 0 && prives.length === 0) {
+        setListePeiIdTourneePublic(publics);
+      } else {
+        setListePeiIdTourneePrive([]);
+        setListePeiIdTourneePublic([]);
+      }
     });
 
     function toggleSelect(active = false) {
@@ -138,6 +172,8 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
           map.addInteraction(dragBoxCtrl);
         }
       } else {
+        listePeiIdTourneePrive.splice(0, listePeiIdTourneePrive.length);
+        listePeiIdTourneePublic.splice(0, listePeiIdTourneePublic.length);
         map.removeInteraction(selectCtrl);
         map.removeInteraction(dragBoxCtrl);
       }
@@ -183,6 +219,10 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
     return tools;
   }, [map]);
 
+  function createUpdateTournee() {
+    setShowCreateTournee(true);
+  }
+
   function createIndispoTemp() {
     setShowCreateIndispoTemp(true);
   }
@@ -193,6 +233,11 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
     handleCloseIndispoTemp,
     listePeiId,
     createIndispoTemp,
+    createUpdateTournee,
+    showCreateTournee,
+    handleCloseTournee,
+    listePeiIdTourneePublic,
+    listePeiIdTourneePrive,
   };
 };
 
@@ -206,6 +251,11 @@ const MapToolbarPei = forwardRef(
     handleCloseIndispoTemp,
     listePeiId,
     createIndispoTemp,
+    createUpdateTournee,
+    showCreateTournee,
+    handleCloseTournee,
+    listePeiIdTourneePrive,
+    listePeiIdTourneePublic,
   }: {
     toggleTool: (toolId: string) => void;
     activeTool: string;
@@ -215,6 +265,11 @@ const MapToolbarPei = forwardRef(
     handleCloseIndispoTemp: () => void;
     listePeiId: string[];
     createIndispoTemp: () => void;
+    createUpdateTournee: () => void;
+    showCreateTournee: boolean;
+    handleCloseTournee: () => void;
+    listePeiIdTourneePrive: string[];
+    listePeiIdTourneePublic: string[];
   }) => {
     const { user } = useAppContext();
 
@@ -260,6 +315,41 @@ const MapToolbarPei = forwardRef(
               className="w-auto"
             >
               <CreateIndisponibiliteTemporaire listePeiId={listePeiId} />
+            </Volet>
+          </>
+        )}
+        {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
+          <>
+            <TooltipCustom
+              tooltipText={"Ajouter des PEI de même nature DECI à une tournée"}
+              tooltipId={"affecter-pei-tournee-carte"}
+            >
+              <Button
+                variant="outline-primary"
+                onClick={createUpdateTournee}
+                className="rounded m-2"
+                disabled={
+                  listePeiIdTourneePrive.length === 0 &&
+                  listePeiIdTourneePublic.length === 0
+                }
+              >
+                <IconTournee />
+              </Button>
+            </TooltipCustom>
+            <Volet
+              handleClose={handleCloseTournee}
+              show={showCreateTournee}
+              className="w-auto"
+            >
+              <AffecterPeiTourneeMap
+                listePeiId={
+                  listePeiIdTourneePrive.length !== 0
+                    ? listePeiIdTourneePrive
+                    : listePeiIdTourneePublic
+                }
+                isPrive={listePeiIdTourneePrive.length !== 0}
+                closeVolet={handleCloseTournee}
+              />
             </Volet>
           </>
         )}

@@ -10,15 +10,30 @@ import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 
-const TourneePei = () => {
+const TourneePei = ({
+  tourneeMapId,
+  listePeiId,
+  closeVolet,
+}: {
+  tourneeMapId?: string;
+  listePeiId?: string[];
+  closeVolet: () => void;
+}) => {
   const { tourneeId } = useParams();
 
+  const tourneeIdToUse = tourneeMapId ?? tourneeId;
+
   const tourneePeiInfo = useGet(
-    url`/api/tournee/listPeiTournee/` + tourneeId,
-    {},
+    url`/api/tournee/listPeiTournee/${tourneeIdToUse}?${{
+      listePeiId: JSON.stringify(listePeiId),
+    }}`,
   );
 
-  const allPeiInfoSource = useGet(url`/api/tournee/listPei/` + tourneeId, {});
+  // TODO ajouter la liste des PEI en plus
+  const allPeiInfoSource = useGet(
+    url`/api/tournee/listPei/` + tourneeIdToUse,
+    {},
+  );
 
   const [data, setData] = useState<PeiInfoEntity[]>(null);
   const [errorMessage, setErrorMessage] = useState<string>(null);
@@ -38,18 +53,18 @@ const TourneePei = () => {
           peiNumeroVoie: e.peiNumeroVoie,
           voieLibelle: e.voieLibelle,
           communeLibelle: e.communeLibelle,
-          tourneeId: tourneeId,
+          tourneeId: tourneeIdToUse,
         };
       }),
     );
   }
 
   const execute = usePut(
-    url`/api/tournee/listPeiTournee/update/` + tourneeId,
+    url`/api/tournee/listPeiTournee/update/` + tourneeIdToUse,
     {
       onResolve: () => {
         // TODO: Ajouter un toast
-        navigate(URLS.LIST_TOURNEE);
+        closeVolet ? closeVolet() : navigate(URLS.LIST_TOURNEE);
       },
       onReject: async (error: {
         text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
@@ -99,7 +114,7 @@ const TourneePei = () => {
         peiNumeroVoie: e.peiNumeroVoie,
         voieLibelle: e.voieLibelle,
         communeLibelle: e.communeLibelle,
-        tourneeId: tourneeId,
+        tourneeId: tourneeIdToUse,
       };
     });
   };

@@ -49,7 +49,7 @@ export const useMyFormik = (
   submitUrl: string,
   isPost: boolean,
   onSubmit: any,
-  redirectUrl: string,
+  redirectUrl?: string,
   isMultipartFormData: boolean,
   isPartialSuccess?: (result: any) => boolean,
   successToastMessage?: string | undefined,
@@ -100,7 +100,7 @@ type MyFormikProps = {
   validationSchema: object;
   submitUrl: string;
   isPost: boolean;
-  redirectUrl: string;
+  redirectUrl?: string;
   onSubmit: (...args: any[]) => any;
   isPartialSuccess?: (...args: any[]) => boolean;
   successToastMessage?: string;

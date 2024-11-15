@@ -22,6 +22,11 @@ const MapPei = () => {
     handleCloseIndispoTemp,
     listePeiId,
     showCreateIndispoTemp,
+    listePeiIdTourneePrive,
+    listePeiIdTourneePublic,
+    createUpdateTournee,
+    handleCloseTournee,
+    showCreateTournee,
   } = useToolbarPeiContext({
     map,
     workingLayer,
@@ -56,6 +61,11 @@ const MapPei = () => {
             handleCloseIndispoTemp={handleCloseIndispoTemp}
             listePeiId={listePeiId}
             createIndispoTemp={createIndispoTemp}
+            listePeiIdTourneePrive={listePeiIdTourneePrive}
+            listePeiIdTourneePublic={listePeiIdTourneePublic}
+            createUpdateTournee={createUpdateTournee}
+            handleCloseTournee={handleCloseTournee}
+            showCreateTournee={showCreateTournee}
           />
         )
       }

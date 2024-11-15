@@ -75,7 +75,7 @@ class TourneeRepository
         )
 
         return dsl.with(peiCounterCte, nextRecopCte)
-            .select(
+            .selectDistinct(
                 TOURNEE.ID,
                 TOURNEE.LIBELLE,
                 TOURNEE.ORGANISME_ID,
@@ -102,6 +102,8 @@ class TourneeRepository
             .on(TOURNEE.ID.eq(field(name("PEI_COUNTER_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(table(nextRecopCteName))
             .on(TOURNEE.ID.eq(field(name("NEXT_RECOP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
+            .leftJoin(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
             .where(filter?.toCondition() ?: DSL.noCondition())
             .fetchInto()
     }
@@ -130,13 +132,37 @@ class TourneeRepository
         }
 
     private fun getTourneeByIdOrPei() =
-        dsl.select(TOURNEE.fields().asList())
+        dsl.selectDistinct(TOURNEE.fields().asList())
             .from(TOURNEE)
 
     fun getTourneeById(tourneeId: UUID): Tournee =
         getTourneeByIdOrPei()
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchSingleInto()
+
+    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean): List<Tournee> =
+        getTourneeByIdOrPei()
+            .leftJoin(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .leftJoin(PEI)
+            .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+            .leftJoin(NATURE_DECI)
+            .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
+            .where(TOURNEE.ACTIF.isTrue)
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    isSuperAdmin = isSuperAdmin,
+                    condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
+                ),
+            )
+            .let {
+                if (isPrive) {
+                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
+                } else {
+                    it.and(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
+                }
+            }
+            .fetchInto()
 
     fun getTourneeByPei(peiId: UUID): List<Tournee> =
         getTourneeByIdOrPei()
@@ -164,6 +190,7 @@ class TourneeRepository
         val tourneeOrganismeLibelle: String?,
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDeltaDate: String?,
+        val peiId: UUID?,
     ) {
         /** Retourne une chaine regroupant toutes les possibilités d'enchainements de trois champs : ABCABACBAC
          *  @param f1: TableField<Record, String?>
@@ -180,6 +207,7 @@ class TourneeRepository
                     tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCase(it)) },
                     tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCase(it)) },
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
+                    peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
                 ),
             )
     }
@@ -293,7 +321,7 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchInto()
 
-    fun getAllPeiByTourneeIdForDnD(tourneeId: UUID): List<PeiTourneeForDnD> =
+    fun getAllPeiByTourneeIdForDnD(tourneeId: UUID, listePeiId: Set<UUID>?): List<PeiTourneeForDnD> =
         dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -302,15 +330,22 @@ class TourneeRepository
             PEI.NUMERO_VOIE,
             VOIE.LIBELLE,
             COMMUNE.LIBELLE,
-        )
+            L_TOURNEE_PEI.ORDRE,
+        ).distinctOn(PEI.ID)
             .from(L_TOURNEE_PEI)
-            .join(PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .leftJoin(PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID).or(PEI.ID.`in`(listePeiId)))
             .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
-            .orderBy(L_TOURNEE_PEI.ORDRE)
+            .let {
+                if (!listePeiId.isNullOrEmpty()) {
+                    it.or(PEI.ID.`in`(listePeiId))
+                } else {
+                    it
+                }
+            }
             .fetchInto()
 
     data class PeiTourneeForDnD(
@@ -321,6 +356,7 @@ class TourneeRepository
         val peiNumeroVoie: Int?,
         val voieLibelle: String?,
         val communeLibelle: String,
+        val lTourneePeiOrdre: Int?,
     )
 
     fun getTourneeLibelleById(tourneeId: UUID): String =

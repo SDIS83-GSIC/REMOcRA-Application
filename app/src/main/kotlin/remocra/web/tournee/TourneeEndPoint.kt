@@ -12,6 +12,7 @@ import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -77,11 +78,33 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
-    fun fetchTourneeData(params: Params<TourneeRepository.Filter, TourneeRepository.Sort>): Response {
+    fun fetchTourneeData(
+        params: Params<TourneeRepository.Filter, TourneeRepository.Sort>,
+    ): Response {
         if (securityContext.userInfo == null) {
             return forbidden().build()
         }
         return Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params, securityContext.userInfo!!)).build()
+    }
+
+    @GET
+    @Path("/actives")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
+    fun getTournees(
+        @QueryParam("isPrive")
+        isPrive: Boolean,
+    ): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        return Response.ok().entity(
+            tourneeRepository.getTourneesActives(
+                securityContext.userInfo!!.isSuperAdmin,
+                securityContext.userInfo!!.affiliatedOrganismeIds,
+                isPrive,
+            ),
+        ).build()
     }
 
     @GET
@@ -138,12 +161,15 @@ class TourneeEndPoint : AbstractEndpoint() {
     @GET
     @Path("/listPeiTournee/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_A])
-    fun getListPeiTournee(@PathParam("tourneeId") tourneeId: UUID): Response =
+    fun getListPeiTournee(
+        @PathParam("tourneeId") tourneeId: UUID,
+        @QueryParam("listePeiId") listePeiId: Set<UUID>?,
+    ): Response =
         Response.ok().entity(
             DataToSendTourneePei(
                 tourneeLibelle = tourneeRepository.getTourneeLibelleById(tourneeId = tourneeId),
                 organismeLibelle = tourneeRepository.getTourneeOrganismeLibelleById(tourneeId = tourneeId),
-                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId),
+                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId, listePeiId).sortedBy { it.lTourneePeiOrdre },
             ),
         ).build()
 
@@ -156,7 +182,9 @@ class TourneeEndPoint : AbstractEndpoint() {
     @GET
     @Path("/listPei/{tourneeId}")
     @RequireDroits([Droit.TOURNEE_A])
-    fun getPeiForDnD(@PathParam("tourneeId") tourneeId: UUID): Response =
+    fun getPeiForDnD(
+        @PathParam("tourneeId") tourneeId: UUID,
+    ): Response =
         Response.ok().entity(tourneeRepository.getPeiForDnD(tourneeId)).build()
 
     @PUT

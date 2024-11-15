@@ -5,16 +5,23 @@ import TourneeForm, {
   prepareVariables,
 } from "./TourneeForm.tsx";
 
-const CreateTournee = () => {
+const CreateTournee = ({
+  isFromMap = false,
+  setTourneeId,
+}: {
+  isFromMap?: boolean;
+  setTourneeId: (e: string) => void;
+}) => {
   return (
     <MyFormik
-      initialValues={getInitialValues}
+      initialValues={getInitialValues()}
       isPost={true}
       submitUrl={`/api/tournee/createTournee`}
       prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={URLS.LIST_TOURNEE}
+      redirectUrl={!isFromMap ? URLS.LIST_TOURNEE : undefined}
+      onSubmit={(e) => setTourneeId && setTourneeId(e.tourneeId)}
     >
-      <TourneeForm isCreation={true} />
+      <TourneeForm isCreation={true} isFromMap={isFromMap} />
     </MyFormik>
   );
 };

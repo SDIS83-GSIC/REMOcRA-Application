@@ -13,9 +13,11 @@ import {
   IconEdit,
   IconIndisponibiliteTemporaire,
   IconSee,
+  IconTournee,
   IconVisite,
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
+import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -44,6 +46,9 @@ const TooltipMapPei = ({
 
   const [showIndispoTemp, setShowIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowIndispoTemp(false);
+
+  const [showTournee, setShowTournee] = useState(false);
+  const handleCloseTournee = () => setShowTournee(false);
 
   const peiId = featureSelect?.getProperties().pointId;
   return (
@@ -85,6 +90,19 @@ const TooltipMapPei = ({
                 </Button>
               </Col>
             )}
+            {featureSelect?.getProperties().hasTournee && (
+              <Col className="p-1" xs={"auto"}>
+                <Button
+                  variant="warning"
+                  onClick={() => {
+                    setShowTournee(true);
+                    overlay?.setPosition(undefined);
+                  }}
+                >
+                  <IconTournee />
+                </Button>
+              </Col>
+            )}
           </>
         }
       />
@@ -115,6 +133,24 @@ const TooltipMapPei = ({
           peiId={peiId}
           colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
         />
+      </Volet>
+      <Volet
+        handleClose={() => {
+          handleCloseTournee();
+
+          navigate(
+            {
+              pathname: location.pathname,
+              search: "",
+            },
+            { replace: true },
+          );
+        }}
+        show={showTournee}
+        className="w-auto"
+        backdrop={true}
+      >
+        <ListTournee peiId={peiId} />
       </Volet>
     </div>
   );

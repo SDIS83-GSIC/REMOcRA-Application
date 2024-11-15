@@ -24,9 +24,11 @@ export const prepareVariables = (values: TourneeFormEntity) => ({
 
 const TourneeForm = ({
   isCreation = false,
+  isFromMap = false,
   tourneeLibelle = null,
 }: {
   isCreation?: boolean;
+  isFromMap: boolean;
   tourneeLibelle?: string;
 }) => {
   const { setValues }: { values: TourneeFormEntity } = useFormikContext();
@@ -60,7 +62,7 @@ const TourneeForm = ({
           )}
         </Col>
         <SubmitFormButtons
-          returnLink={URLS.LIST_TOURNEE}
+          returnLink={isFromMap ? undefined : URLS.LIST_TOURNEE}
           update={!isCreation}
         />
       </Container>

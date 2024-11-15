@@ -203,7 +203,7 @@ const ComposantToRepeat = ({
               options={thematiqueState?.data}
               getOptionValue={(t) => t.id}
               getOptionLabel={(t) => t.libelle}
-              value={
+              defaultValue={
                 listeElements[index]?.listeThematiqueId?.map((e) =>
                   thematiqueState?.data?.find(
                     (r: IdCodeLibelleType) => r.id === e,

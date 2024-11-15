@@ -11,6 +11,7 @@ import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
+import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
@@ -25,6 +26,10 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
                 .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)),
         ).`as`("hasIndispoTemp")
+        val hasTournee = DSL.exists(
+            DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
+                .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)),
+        ).`as`("hasTournee")
     }
 
     /**
@@ -35,6 +40,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
             PEI.ID.`as`("pointId"),
             hasIndispoTemp,
+            hasTournee,
+            NATURE_DECI.CODE,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -56,6 +63,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
             PEI.ID.`as`("pointId"),
             hasIndispoTemp,
+            hasTournee,
+            NATURE_DECI.CODE,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -104,6 +113,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val pointGeometrie: Point,
         override val pointId: UUID,
         val hasIndispoTemp: Boolean = false,
+        val hasTournee: Boolean = false,
+        val natureDeciCode: String,
 
         // TODO à compléter au besoin
 

@@ -11,11 +11,13 @@ const SubmitFormButtons = ({
 }: SubmitButtonType) => {
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
-      <Col sm={"auto"}>
-        <Button variant={"secondary"} href={returnLink}>
-          Retour
-        </Button>
-      </Col>
+      {returnLink && (
+        <Col sm={"auto"}>
+          <Button variant={"secondary"} href={returnLink}>
+            Retour
+          </Button>
+        </Col>
+      )}
       <Col sm={"auto"}>
         <Button
           type="submit"
