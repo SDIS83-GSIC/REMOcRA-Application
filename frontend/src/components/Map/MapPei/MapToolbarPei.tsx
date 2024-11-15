@@ -302,13 +302,18 @@ const MapToolbarPei = forwardRef(
         )}
         {hasDroit(user, TYPE_DROIT.INDISPO_TEMP_C) && (
           <>
-            <Button
-              variant="outline-primary"
-              onClick={createIndispoTemp}
-              className="rounded m-2"
+            <TooltipCustom
+              tooltipText={"Créer une indisponibilité temporaire"}
+              tooltipId={"indispo-temp-carte"}
             >
-              <IconIndisponibiliteTemporaire />
-            </Button>
+              <Button
+                variant="outline-primary"
+                onClick={createIndispoTemp}
+                className="rounded m-2"
+              >
+                <IconIndisponibiliteTemporaire />
+              </Button>
+            </TooltipCustom>
             <Volet
               handleClose={handleCloseIndispoTemp}
               show={showCreateIndispoTemp}
