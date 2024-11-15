@@ -16,6 +16,8 @@ class ModuleUseCase : AbstractUseCase() {
     fun execute(uriInfo: UriBuilder, userInfo: UserInfo?): List<ModuleWithImageLink> {
         val listeModule = moduleRepository.getModules()
 
+        val listeLThematiqueModule = moduleRepository.getModuleThematique()
+
         return listeModule.map {
             ModuleWithImageLink(
                 moduleId = it.moduleId,
@@ -38,6 +40,8 @@ class ModuleUseCase : AbstractUseCase() {
                     moduleType = it.moduleType.toString(),
                     userInfo = userInfo,
                 ),
+                listeThematiqueId = listeLThematiqueModule.filter { l -> l.moduleId == it.moduleId }.map { it.thematiqueId },
+
             )
         }
     }
@@ -52,5 +56,7 @@ class ModuleUseCase : AbstractUseCase() {
         val moduleLigne: Int,
         val moduleNbDocument: Int?,
         val listeDocument: Collection<ModuleDocumentCourrierUseCase.DocumentCourrier>,
+        val listeThematiqueId: Collection<UUID>?,
+
     )
 }
