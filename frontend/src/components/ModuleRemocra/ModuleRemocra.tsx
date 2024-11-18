@@ -83,7 +83,7 @@ const ModuleDocumentCourrier = ({
                     href={
                       moduleType === TypeModuleRemocra.DOCUMENT
                         ? url`/api/bloc-document/telecharger/` + e.id
-                        : url`/api/courrier/` + e.id
+                        : url`/api/courriers/telecharger/` + e.id
                     }
                   >
                     <IconExport />

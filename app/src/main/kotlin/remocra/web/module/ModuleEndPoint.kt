@@ -104,7 +104,7 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Public("Les documents ne sont pas liés à un droit")
     fun getDocumentsForListWithThematique(
         @QueryParam("moduleId")
-        moduleId: UUID?,
+        moduleId: UUID,
         @QueryParam("moduleType")
         moduleType: String,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>,
@@ -118,6 +118,7 @@ class ModuleEndPoint : AbstractEndpoint() {
                     params,
                 ),
                 count = moduleDocumentCourrierUseCase.count(
+                    moduleId,
                     moduleType,
                     securityContext.userInfo,
                     params,

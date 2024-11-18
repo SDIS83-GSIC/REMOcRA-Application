@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
@@ -11,24 +12,38 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
+import org.slf4j.LoggerFactory
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.courrier.form.ParametreCourrierInput
+import remocra.db.CourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierGenerator
 import remocra.usecase.courrier.CourrierRopGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
+import remocra.usecase.document.DocumentUtils
 import java.io.File
+import java.nio.file.Paths
+import java.util.UUID
+import kotlin.io.path.pathString
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/courriers")
 class CourrierEndPoint {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Inject lateinit var courrierRopGenerator: CourrierRopGenerator
 
     @Inject lateinit var courrierGenerator: CourrierGenerator
 
     @Inject lateinit var getCourriersWithParametresUseCase: GetCourriersWithParametresUseCase
+
+    @Inject lateinit var courrierRepository: CourrierRepository
+
+    @Inject
+    lateinit var documentUtils: DocumentUtils
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -71,5 +86,23 @@ class CourrierEndPoint {
             courrierPath?.let { File(it) },
         )
             .build()
+    }
+
+    /**
+     * Télécharge le courrier.
+     * @param courrierId l'identifiant du courrier à télécharger
+     * @return La réponse HTTP contenant le fichier à télécharger.
+     */
+    @GET
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
+    @Public("Le téléchargement des courriers n'est pas dépendant d'un droit particulier")
+    @Path("/telecharger/{courrierId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    fun telechargerCourrier(@PathParam("courrierId") courrierId: UUID): Response {
+        val document = courrierRepository.getDocumentByCourrier(courrierId)
+
+        return documentUtils.checkFile(
+            File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
+        )
     }
 }

@@ -5,15 +5,21 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.selectDistinct
+import remocra.auth.UserInfo
+import remocra.data.DocumentCourrierData
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.BlocDocument
 import remocra.db.jooq.remocra.tables.references.BLOC_DOCUMENT
+import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_BLOC_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_BLOC_DOCUMENT
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
 class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -81,6 +87,52 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .and(L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId))
             .and(params?.filterBy?.toCondition() ?: DSL.noCondition())
             .count()
+
+    fun getCourrierWithThematiqueForAccueil(
+        listeThematiqueId: Collection<UUID>,
+        limit: Int?,
+        userInfo: UserInfo,
+    ): Collection<DocumentCourrierData> =
+        // Pour l'accueil pas besoin d'info courrier, mais vraiment juste document
+        // Mais on parle bien du document venant d'un courrier.
+        dsl.selectDistinct(
+            DOCUMENT.ID.`as`("id"),
+            DOCUMENT.NOM_FICHIER.`as`("libelle"),
+            DOCUMENT.DATE.`as`("date"),
+        )
+            .from(COURRIER)
+            .join(DOCUMENT)
+            .on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .join(L_THEMATIQUE_COURRIER)
+            .on(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(COURRIER.ID))
+            .leftJoin(L_COURRIER_UTILISATEUR)
+            .on(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(COURRIER.ID))
+            /**Permet d'aller chercher les courriers**/
+            .leftJoin(UTILISATEUR)
+            .on(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
+            .or(COURRIER.EXPEDITEUR.eq(UTILISATEUR.ID))
+            .leftJoin(ORGANISME)
+            .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
+            .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
+            /**
+             Si superAdmin ou que tu es expéditeur ou que tu es destinataire ou que l'organisme d'un des destinataires
+             t'es affilié
+             **/
+            .and(
+                repositoryUtils
+                    .checkIsSuperAdminOrCondition(
+                        UTILISATEUR.ID.eq(userInfo.utilisateurId).or(
+                            ORGANISME.ID
+                                .`in`(userInfo.affiliatedOrganismeIds),
+                        ),
+                        userInfo.isSuperAdmin,
+                    ),
+            )
+            .orderBy(
+                listOf(DOCUMENT.DATE.desc()),
+            )
+            .limit(limit)
+            .fetchInto()
 
     data class Filter(
         val libelle: String?,

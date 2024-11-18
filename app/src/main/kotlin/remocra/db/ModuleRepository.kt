@@ -17,6 +17,9 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     fun getModuleThematique(): Collection<LThematiqueModule> =
         dsl.selectFrom(L_THEMATIQUE_MODULE).fetchInto()
 
+    fun getModuleThematiqueByModuleId(moduleId: UUID): Collection<LThematiqueModule> =
+        dsl.selectFrom(L_THEMATIQUE_MODULE).where(L_THEMATIQUE_MODULE.MODULE_ID.eq(moduleId)).fetchInto()
+
     fun getById(moduleId: UUID): Module =
         dsl.selectFrom(MODULE)
             .where(MODULE.ID.eq(moduleId))

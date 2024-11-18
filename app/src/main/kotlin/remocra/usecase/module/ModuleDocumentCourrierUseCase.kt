@@ -3,13 +3,13 @@ package remocra.usecase.module
 import jakarta.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import remocra.auth.UserInfo
+import remocra.data.DocumentCourrierData
 import remocra.data.Params
 import remocra.db.ModuleRepository
 import remocra.db.ProfilDroitRepository
 import remocra.db.ThematiqueRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class ModuleDocumentCourrierUseCase : AbstractUseCase() {
@@ -24,21 +24,21 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
     lateinit var thematiqueRepository: ThematiqueRepository
 
     fun execute(
-        moduleId: UUID?,
+        moduleId: UUID,
         moduleType: String,
         userInfo: UserInfo?,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
-    ): Collection<DocumentCourrier> {
+    ): Collection<DocumentCourrierData> {
         if (userInfo == null) {
             throw ForbiddenException()
         }
         // on va chercher le profil droit de l'utilisateur connecté
         val profilDroitId = getProfilDroit(userInfo)
 
-        val listeThematiqueId = moduleRepository.getModuleThematique().map { it.thematiqueId }
+        val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
         // Puis on va chercher le nombre d'élément à afficher
-        val nbDocument = if (moduleId != null) {
+        val nbDocument = if (params != null) {
             moduleRepository.getById(moduleId).moduleNbDocument ?: 5
         } else {
             null
@@ -48,30 +48,37 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
         if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
             return thematiqueRepository.getBlocDocumentWithThematique(listeThematiqueId, nbDocument, profilDroitId, params)
                 .map {
-                    DocumentCourrier(
+                    DocumentCourrierData(
                         id = it.blocDocumentId,
                         libelle = it.blocDocumentLibelle,
                         date = it.blocDocumentDateMaj,
                     )
                 }
+            // COURRIER
         } else {
-            // TODO gérer les courriers, pour l'instant on renvoir une liste vide
-            return listOf()
+            return thematiqueRepository.getCourrierWithThematiqueForAccueil(listeThematiqueId, nbDocument, userInfo)
+                .map {
+                    DocumentCourrierData(
+                        id = it.id,
+                        libelle = it.libelle,
+                        date = it.date,
+                    )
+                }
         }
     }
 
     fun count(
+        moduleId: UUID,
         moduleType: String,
         userInfo: UserInfo?,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
     ): Int {
-        val listeThematiqueId = moduleRepository.getModuleThematique().map { it.thematiqueId }
-        if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
-            return thematiqueRepository.countBlocDocumentWithThematique(listeThematiqueId, getProfilDroit(userInfo), params)
+        if (userInfo == null) {
+            throw ForbiddenException()
         }
+        val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
-        // TODO courrier
-        return 10
+        return thematiqueRepository.countBlocDocumentWithThematique(listeThematiqueId, getProfilDroit(userInfo), params)
     }
 
     private fun getProfilDroit(userInfo: UserInfo?): UUID {
@@ -81,10 +88,4 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
         // on va chercher le profil droit de l'utilisateur connecté
         return profilDroitRepository.getProfilUtilisateurByUtilisateurId(userInfo.utilisateurId)
     }
-
-    data class DocumentCourrier(
-        val id: UUID,
-        val libelle: String?,
-        val date: ZonedDateTime?,
-    )
 }

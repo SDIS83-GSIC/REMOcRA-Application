@@ -3,6 +3,7 @@ package remocra.usecase.module
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.UserInfo
+import remocra.data.DocumentCourrierData
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
@@ -55,7 +56,7 @@ class ModuleUseCase : AbstractUseCase() {
         val moduleColonne: Int,
         val moduleLigne: Int,
         val moduleNbDocument: Int?,
-        val listeDocument: Collection<ModuleDocumentCourrierUseCase.DocumentCourrier>,
+        val listeDocument: Collection<DocumentCourrierData>,
         val listeThematiqueId: Collection<UUID>?,
 
     )
