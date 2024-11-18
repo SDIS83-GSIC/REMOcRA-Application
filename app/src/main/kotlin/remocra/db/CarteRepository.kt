@@ -4,6 +4,8 @@ import com.google.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.data.enums.TypePointCarte
@@ -11,6 +13,8 @@ import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
+import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
+import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
@@ -111,6 +115,20 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         return dsl.select(
             ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("pointGeometrie"),
             DEBIT_SIMULTANE.ID.`as`("pointId"),
+            DEBIT_SIMULTANE.NUMERO_DOSSIER,
+            multiset(
+                selectDistinct(PEI.NUMERO_COMPLET)
+                    .from(PEI)
+                    .join(L_DEBIT_SIMULTANE_MESURE_PEI)
+                    .on(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID.eq(PEI.ID))
+                    .join(DEBIT_SIMULTANE_MESURE)
+                    .on(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID.eq(DEBIT_SIMULTANE_MESURE.ID))
+                    .where(DEBIT_SIMULTANE_MESURE.DEBIT_SIMULTANE_ID.eq(DEBIT_SIMULTANE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1()
+                }?.joinToString()
+            }.`as`("listeNumeroPei"),
         )
             .from(DEBIT_SIMULTANE)
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
@@ -128,11 +146,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         abstract val pointGeometrie: Point
         abstract val pointId: UUID
         abstract val typePointCarte: TypePointCarte
+
+        // Propriétés à afficher dans la tooltip
+        abstract val propertiesToDisplay: String?
     }
 
     data class PeiCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
+        override val propertiesToDisplay: String? = null,
         val hasIndispoTemp: Boolean = false,
         val hasTournee: Boolean = false,
         val natureDeciCode: String,
@@ -147,8 +169,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class PeiProjetCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
-
-        // TODO à compléter au besoin
+        override val propertiesToDisplay: String? = null,
 
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
@@ -158,9 +179,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class DebitSimultaneCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
+        val listeNumeroPei: String?,
+        val debitSimultaneNumeroDossier: String,
+
+        // TODO à compléter au besoin
 
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.DEBIT_SIMULTANE
+
+        override val propertiesToDisplay: String =
+            "Numéro du dossier : $debitSimultaneNumeroDossier \n Liste des PEI concernés : $listeNumeroPei"
     }
 }

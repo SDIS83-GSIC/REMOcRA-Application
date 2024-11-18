@@ -221,14 +221,12 @@ const Tooltip = ({
             </Row>
           </Popover.Header>
           <Popover.Body>
-            {Object.entries(featureSelect.getProperties()).map(
-              ([key, value]) =>
-                key !== "geometry" && (
-                  <div key={key}>
-                    <span className="fw-bold">{key}</span> : {value}{" "}
-                  </div>
-                ),
-            )}
+            {featureSelect
+              .getProperties()
+              .propertiesToDisplay.split("\n")
+              .map((e, key) => (
+                <div key={key}>{e}</div>
+              ))}
             <Row className="mt-3">
               <Col className="ms-auto" xs={"auto"}>
                 <Row>
