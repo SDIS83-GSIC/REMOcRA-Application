@@ -1,6 +1,7 @@
 package remocra.usecase.pei
 
 import com.google.inject.Inject
+import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.data.PeiForNumerotationData
 import remocra.data.enums.CodeSdis
@@ -484,7 +485,9 @@ class NumerotationUseCase : AbstractUseCase() {
         checkNature(pei)
 
         val commune = ensureCommune(pei)
-        return pei.nature!!.natureCode + commune.communeCodeInsee + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        // Si c'est un PEA, on le préfixe d'un A, sinon on prend la nature
+        val prefixe = if (pei.nature!!.natureCode == GlobalConstants.NATURE_PEA) "A" else pei.nature.natureCode
+        return prefixe + commune.communeCodeInsee + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     private fun computeNumero53(pei: PeiForNumerotationData): String {

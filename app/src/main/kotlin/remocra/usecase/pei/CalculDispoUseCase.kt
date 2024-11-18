@@ -18,9 +18,6 @@ import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-// TODO spécifique au 39, mais on aimerait que ça saute, c'est a priori juste une problématique de numérotation ; en attendant, on constantise pour en garder trace
-const val NATURE_PEI_A = "A"
-
 /**
  * But du usecase (pour l'instant) : tabula rasa sur les anomalies système, recalcul des ano système, mise à jour du statut de disponibilité du PEI.
  * Doit être morcelé (morcelable) afin de s'intégrer dans l'enregistrement transactionnel d'un PEI.
@@ -91,10 +88,8 @@ class CalculDispoUseCase : AbstractUseCase() {
     }
 
     fun execute(pei: PeiForCalculDispoData): Disponibilite {
-        // TODO à voir si on morcelle (les citeaux) ou si on laisse en monolithique, avec le service d'enregistrement du PEI
         deleteAnomaliesDebitPression(pei)
         val anomaliesDebitPression = computeAnomaliesDebitPression(pei)
-        // TODO idem ici, laisser private si possible, sinon exposer et ne pas appeler dans le execute.
         insertAnomaliesDebitPression(pei, anomaliesDebitPression)
 
         // Si le PEI a une IT en cours, il est indispo de toute façon
@@ -170,9 +165,6 @@ class CalculDispoUseCase : AbstractUseCase() {
             mapPredicats[TypePredicatDispo.VOLUME_NON_CONFORME] = isVolumeNonConforme(pei)
         }
 
-        // TODO cas des anomalies spéficiques, comme au 38 ? voir si on peut les éliminer, sinon prendre en compte ici, quitte à avoir une méthode is[Whatever]Specific qui retourne un booléen qu'on ajoute à la liste
-        // TODO POur l'instant on a que "si on ne trouve pas de visite avec CDP, on pose une ano CDP_NON_REALISEE", mais ne veut-on pas qu'un PEI soit indispo tant qu'on est pas certain qu'il l'est ???
-
         // On ne retourne que les prédicats retournant TRUE, sous forme d'ID d'anomalie pour insertion directe en base
         return mapPredicats.entries.filter { it.value }.map { getAnomalieIdFromCode(it.key.name) }.toSet()
     }
@@ -193,7 +185,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                     return true
                 }
                 if (
-                    pei.nature!!.natureCode == NATURE_PEI_A &&
+                    pei.nature!!.natureCode == GlobalConstants.NATURE_PEA &&
                     (pei.penaCapacite == null || pei.penaCapacite < 60)
                 ) {
                     return true

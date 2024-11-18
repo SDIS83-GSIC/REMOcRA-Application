@@ -29,8 +29,12 @@ object GlobalConstants {
     const val DIAMETRE_100 = "DIAM100"
     const val DIAMETRE_150 = "DIAM150"
 
+    /**  Nature des PEI */
     const val NATURE_PI = "PI"
     const val NATURE_BI = "BI"
+
+    const val NATURE_PEN = "PEN"
+    const val NATURE_PEA = "PEA"
 
     // Clés des paramètres
     const val PARAM_PEI_RENUMEROTATION_INTERNE_AUTO = "PEI_RENUMEROTATION_INTERNE_AUTO"
