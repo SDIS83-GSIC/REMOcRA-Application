@@ -1,6 +1,7 @@
 package remocra.eventbus.pei
 
 import com.google.inject.Inject
+import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.Event
 import java.util.UUID
 
@@ -11,4 +12,5 @@ import java.util.UUID
  */
 class PeiModifiedEvent @Inject constructor(
     val peiId: UUID,
+    val typeOperation: TypeOperation,
 ) : Event

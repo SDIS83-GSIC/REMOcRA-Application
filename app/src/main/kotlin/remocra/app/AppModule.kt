@@ -8,12 +8,14 @@ import remocra.data.DataCache
 import remocra.data.ParametresData
 import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
+import remocra.getStringOrNull
 import remocra.utils.DateUtils
 import java.time.Clock
 import java.time.ZoneId
 
 class AppModule(private val settings: AppSettings) : RemocraModule() {
-    @Provides @Singleton
+    @Provides
+    @Singleton
     fun provideClock() = Clock.system(ZoneId.systemDefault())
 
     @Provides @Singleton
@@ -38,6 +40,14 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                         )
                     },
                     version = config.getString("version"),
+                    nexsis = Nexsis(
+                        mock = config.getBoolean("nexsis.mock"),
+                        codeStructure = config.getStringOrNull("nexsis.codeStructure"),
+                        enabled = config.getBoolean("nexsis.enabled"),
+                        url = config.getString("nexsis.url"),
+                        user = config.getStringOrNull("nexsis.user"),
+                        password = config.getStringOrNull("nexsis.password"),
+                    ),
                 ),
             )
     }

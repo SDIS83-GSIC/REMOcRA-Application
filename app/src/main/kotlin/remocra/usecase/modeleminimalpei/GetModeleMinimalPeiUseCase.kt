@@ -2,6 +2,7 @@ package remocra.usecase.modeleminimalpei
 
 import jakarta.inject.Inject
 import org.locationtech.jts.io.geojson.GeoJsonWriter
+import remocra.app.AppSettings
 import remocra.data.ModeleMinimalPeiData
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
@@ -13,6 +14,8 @@ import remocra.usecase.AbstractUseCase
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
 import remocra.utils.DiametreDecorator
+import java.util.Collections
+import java.util.UUID
 
 class GetModeleMinimalPeiUseCase : AbstractUseCase() {
 
@@ -34,6 +37,9 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var adresseDecorator: AdresseDecorator
 
+    @Inject
+    lateinit var appSettings: AppSettings
+
     fun execute(
         codeInsee: String?,
         type: TypePei?,
@@ -45,6 +51,10 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
         // TODO Accessibilité de chaque PEI ; soit dans la requête, soit en post-traitement avec le getPeiAccessibilite
         val listePei = peiRepository.getListPeiForApi(codeInsee, type, codeNature, codeNatureDECI, limit, offset)
         return getModeleMinimalPei(listePei)
+    }
+
+    fun execute(peiId: UUID): ModeleMinimalPeiData {
+        return getModeleMinimalPei(Collections.singletonList(peiRepository.getPeiForApi(peiId))).first()
     }
 
     private fun getModeleMinimalPei(listePei: Collection<PeiRepository.PeiDataForApi>): Collection<ModeleMinimalPeiData> {
@@ -60,6 +70,7 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
                 .maxByOrNull { it.visiteDate }
 
             ModeleMinimalPeiData(
+                codeStructure = appSettings.codeSdis.name,
                 peiId = it.peiId,
                 peiNumeroComplet = it.peiNumeroComplet,
                 natureCode = it.natureCode,

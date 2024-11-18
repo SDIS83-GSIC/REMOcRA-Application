@@ -707,14 +707,7 @@ class PeiRepository
             .where(PEI.ID.`in`(listePeiId))
             .fetchInto()
 
-    fun getListPeiForApi(
-        codeInsee: String?,
-        type: TypePei?,
-        codeNature: String?,
-        codeNatureDECI: String?,
-        limit: Int?,
-        offset: Int?,
-    ): Collection<PeiDataForApi> =
+    private fun getListPeiForApiRequete() =
         dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -766,6 +759,16 @@ class PeiRepository
             .on(VOIE.ID.eq(PEI.VOIE_ID))
             .leftJoin(SITE)
             .on(SITE.ID.eq(PEI.SITE_ID))
+
+    fun getListPeiForApi(
+        codeInsee: String?,
+        type: TypePei?,
+        codeNature: String?,
+        codeNatureDECI: String?,
+        limit: Int?,
+        offset: Int?,
+    ): Collection<PeiDataForApi> =
+        getListPeiForApiRequete()
             .where(
                 DSL.and(
                     listOfNotNull(
@@ -780,6 +783,17 @@ class PeiRepository
             .limit(limit)
             .offset(offset)
             .fetchInto()
+
+    fun getPeiForApi(
+        peiId: UUID,
+    ): PeiDataForApi =
+        getListPeiForApiRequete()
+            .where(
+                peiId?.let {
+                    PEI.ID.eq(it)
+                },
+            )
+            .fetchSingleInto()
 
     data class PeiDataForApi(
         val peiId: UUID,

@@ -5,6 +5,8 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 data class ModeleMinimalPeiData(
+    val codeStructure: String,
+
     @JsonProperty("id")
     val peiId: UUID,
     @JsonProperty("idSdis")

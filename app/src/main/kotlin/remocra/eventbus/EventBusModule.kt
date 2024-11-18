@@ -8,6 +8,7 @@ import remocra.RemocraModule
 import remocra.app.ParametresProvider
 import remocra.eventbus.mobile.IntegrationTourneeEventListener
 import remocra.eventbus.notification.NotificationEventListener
+import remocra.eventbus.pei.PeiModifiedEventListener
 import remocra.eventbus.tracabilite.TracabiliteEventListener
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -19,6 +20,7 @@ object EventBusModule : RemocraModule() {
             addBinding().to<NotificationEventListener>()
             addBinding().to<IntegrationTourneeEventListener>()
             addBinding().to<TracabiliteEventListener<*>>()
+            addBinding().to<PeiModifiedEventListener>()
             addBinding().to<ParametresProvider>()
         }
 

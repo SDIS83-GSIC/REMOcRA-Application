@@ -71,7 +71,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                 date = dateUtils.now(),
             ),
         )
-        eventBus.post(PeiModifiedEvent(element.peiId))
+        eventBus.post(PeiModifiedEvent(element.peiId, typeOperation))
     }
 
     /**
