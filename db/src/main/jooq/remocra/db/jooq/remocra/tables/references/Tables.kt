@@ -10,6 +10,8 @@ import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.DebitSimultane
+import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
@@ -24,6 +26,8 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument
+import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
@@ -109,6 +113,16 @@ val CONTACT: Contact = Contact.CONTACT
 val COUCHE: Couche = Couche.COUCHE
 
 /**
+ * The table <code>remocra.debit_simultane</code>.
+ */
+val DEBIT_SIMULTANE: DebitSimultane = DebitSimultane.DEBIT_SIMULTANE
+
+/**
+ * The table <code>remocra.debit_simultane_mesure</code>.
+ */
+val DEBIT_SIMULTANE_MESURE: DebitSimultaneMesure = DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE
+
+/**
  * The table <code>remocra.diametre</code>.
  */
 val DIAMETRE: Diametre = Diametre.DIAMETRE
@@ -177,6 +191,16 @@ val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
  * The table <code>remocra.l_couche_droit</code>.
  */
 val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
+
+/**
+ * The table <code>remocra.l_debit_simultane_document</code>.
+ */
+val L_DEBIT_SIMULTANE_DOCUMENT: LDebitSimultaneDocument = LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT
+
+/**
+ * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
+ */
+val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei = LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI
 
 /**
  * The table <code>remocra.l_diametre_nature</code>.

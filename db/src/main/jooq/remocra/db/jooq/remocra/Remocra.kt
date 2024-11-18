@@ -14,6 +14,8 @@ import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.DebitSimultane
+import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.Domaine
@@ -28,6 +30,8 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument
+import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
@@ -135,6 +139,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val COUCHE: Couche get() = Couche.COUCHE
 
     /**
+     * The table <code>remocra.debit_simultane</code>.
+     */
+    val DEBIT_SIMULTANE: DebitSimultane get() = DebitSimultane.DEBIT_SIMULTANE
+
+    /**
+     * The table <code>remocra.debit_simultane_mesure</code>.
+     */
+    val DEBIT_SIMULTANE_MESURE: DebitSimultaneMesure get() = DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE
+
+    /**
      * The table <code>remocra.diametre</code>.
      */
     val DIAMETRE: Diametre get() = Diametre.DIAMETRE
@@ -203,6 +217,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_couche_droit</code>.
      */
     val L_COUCHE_DROIT: LCoucheDroit get() = LCoucheDroit.L_COUCHE_DROIT
+
+    /**
+     * The table <code>remocra.l_debit_simultane_document</code>.
+     */
+    val L_DEBIT_SIMULTANE_DOCUMENT: LDebitSimultaneDocument get() = LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
+     */
+    val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei get() = LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI
 
     /**
      * The table <code>remocra.l_diametre_nature</code>.
@@ -454,6 +478,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Commune.COMMUNE,
         Contact.CONTACT,
         Couche.COUCHE,
+        DebitSimultane.DEBIT_SIMULTANE,
+        DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE,
         Diametre.DIAMETRE,
         Document.DOCUMENT,
         Domaine.DOMAINE,
@@ -468,6 +494,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
         LCoucheDroit.L_COUCHE_DROIT,
+        LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT,
+        LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
         LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,

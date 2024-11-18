@@ -28,11 +28,13 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE__DEBIT_SIMULTANE_DEBIT_SIMULTANE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.SITE_PKEY
 import remocra.db.jooq.remocra.keys.SITE_SITE_CODE_KEY
 import remocra.db.jooq.remocra.keys.SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY
+import remocra.db.jooq.remocra.tables.DebitSimultane.DebitSimultanePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LContactGestionnaire.LContactGestionnairePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
@@ -167,6 +169,23 @@ open class Site(
 
     val gestionnaire: GestionnairePath
         get(): GestionnairePath = gestionnaire()
+
+    private lateinit var _debitSimultane: DebitSimultanePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.debit_simultane</code> table
+     */
+    fun debitSimultane(): DebitSimultanePath {
+        if (!this::_debitSimultane.isInitialized) {
+            _debitSimultane = DebitSimultanePath(this, null, DEBIT_SIMULTANE__DEBIT_SIMULTANE_DEBIT_SIMULTANE_SITE_ID_FKEY.inverseKey)
+        }
+
+        return _debitSimultane
+    }
+
+    val debitSimultane: DebitSimultanePath
+        get(): DebitSimultanePath = debitSimultane()
 
     private lateinit var _lContactGestionnaire: LContactGestionnairePath
 

@@ -30,6 +30,7 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.keys.L_DEBIT_SIMULTANE_MESURE_PEI__L_DEBIT_SIMULTANE_MESURE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY
@@ -55,10 +56,12 @@ import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_ID_FKEY
 import remocra.db.jooq.remocra.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.Domaine.DomainePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire.IndisponibiliteTemporairePath
+import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei.LDebitSimultaneMesurePeiPath
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei.LIndisponibiliteTemporairePeiPath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
@@ -530,6 +533,23 @@ open class Pei(
     val zoneIntegration: ZoneIntegrationPath
         get(): ZoneIntegrationPath = zoneIntegration()
 
+    private lateinit var _lDebitSimultaneMesurePei: LDebitSimultaneMesurePeiPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_debit_simultane_mesure_pei</code> table
+     */
+    fun lDebitSimultaneMesurePei(): LDebitSimultaneMesurePeiPath {
+        if (!this::_lDebitSimultaneMesurePei.isInitialized) {
+            _lDebitSimultaneMesurePei = LDebitSimultaneMesurePeiPath(this, null, L_DEBIT_SIMULTANE_MESURE_PEI__L_DEBIT_SIMULTANE_MESURE_PEI_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _lDebitSimultaneMesurePei
+    }
+
+    val lDebitSimultaneMesurePei: LDebitSimultaneMesurePeiPath
+        get(): LDebitSimultaneMesurePeiPath = lDebitSimultaneMesurePei()
+
     private lateinit var _lIndisponibiliteTemporairePei: LIndisponibiliteTemporairePeiPath
 
     /**
@@ -646,6 +666,13 @@ open class Pei(
 
     val visite: VisitePath
         get(): VisitePath = visite()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.debit_simultane_mesure</code> table
+     */
+    val debitSimultaneMesure: DebitSimultaneMesurePath
+        get(): DebitSimultaneMesurePath = lDebitSimultaneMesurePei().debitSimultaneMesure()
 
     /**
      * Get the implicit many-to-many join path to the

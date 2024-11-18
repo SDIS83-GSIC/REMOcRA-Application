@@ -31,8 +31,11 @@ import remocra.db.jooq.couverturehydraulique.tables.LEtudeDocument.LEtudeDocumen
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
+import remocra.db.jooq.remocra.keys.L_DEBIT_SIMULTANE_DOCUMENT__L_DEBIT_SIMULTANE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
+import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
+import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument.LDebitSimultaneDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.time.ZonedDateTime
@@ -173,6 +176,23 @@ open class Document(
     val blocDocument: BlocDocumentPath
         get(): BlocDocumentPath = blocDocument()
 
+    private lateinit var _lDebitSimultaneDocument: LDebitSimultaneDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_debit_simultane_document</code> table
+     */
+    fun lDebitSimultaneDocument(): LDebitSimultaneDocumentPath {
+        if (!this::_lDebitSimultaneDocument.isInitialized) {
+            _lDebitSimultaneDocument = LDebitSimultaneDocumentPath(this, null, L_DEBIT_SIMULTANE_DOCUMENT__L_DEBIT_SIMULTANE_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lDebitSimultaneDocument
+    }
+
+    val lDebitSimultaneDocument: LDebitSimultaneDocumentPath
+        get(): LDebitSimultaneDocumentPath = lDebitSimultaneDocument()
+
     private lateinit var _lPeiDocument: LPeiDocumentPath
 
     /**
@@ -196,6 +216,13 @@ open class Document(
      */
     val etude: EtudePath
         get(): EtudePath = lEtudeDocument().etude()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.debit_simultane_mesure</code> table
+     */
+    val debitSimultaneMesure: DebitSimultaneMesurePath
+        get(): DebitSimultaneMesurePath = lDebitSimultaneDocument().debitSimultaneMesure()
 
     /**
      * Get the implicit many-to-many join path to the <code>remocra.pei</code>
