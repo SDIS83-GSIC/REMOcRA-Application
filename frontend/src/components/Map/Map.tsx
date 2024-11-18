@@ -1,3 +1,4 @@
+import { getUid } from "ol";
 import Map from "ol/Map";
 import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
@@ -8,23 +9,22 @@ import { GeoJSON } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import "ol/ol.css";
 import { fromLonLat, get as getProjection } from "ol/proj";
 import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
-import { getUid } from "ol";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { ReactNode, useEffect, useMemo, useRef } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import url from "../../module/fetch.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import MapLegend from "./MapLegend.tsx";
 import MapToolbar from "./MapToolbar.tsx";
+import { createPointLayer } from "./MapUtils.tsx";
 import "./map.css";
 
 const EPSG_3857 = "EPSG:3857"; // Web Mercator par défaut
@@ -262,38 +262,14 @@ export const useMapComponent = ({ mapElement }) => {
   }
 
   function createDataPeiLayer() {
-    const vectorSource = toOpenLayer({
-      source: "GSON",
-      loader: async (extent, resolution, projection, success, failure) => {
-        const res = await fetch(
-          url`/api/pei/layer?bbox=` +
-            extent.join(",") +
-            "&srid=" +
-            projection.getCode(),
-          getFetchOptions({ method: "GET" }),
-        );
-        res
-          .text()
-          .then((text) => {
-            const features = vectorSource
-              .getFormat()
-              .readFeatures(JSON.parse(text));
-            vectorSource.addFeatures(features);
-            success(features);
-          })
-          .catch(() => {
-            vectorSource.removeLoadedExtent(extent);
-            failure();
-          });
-      },
-      extent: map?.getView().calculateExtent(),
-      projection: projection.name,
-      strategy: bboxStrategy,
-    });
-
-    const dl = new VectorLayer({
-      source: vectorSource,
-      style: new Style({
+    return createPointLayer(
+      map,
+      (extent, projection) =>
+        url`/api/pei/layer?bbox=` +
+        extent.join(",") +
+        "&srid=" +
+        projection.getCode(),
+      new Style({
         image: new Circle({
           radius: 5,
           fill: new Fill({ color: "black" }),
@@ -303,17 +279,8 @@ export const useMapComponent = ({ mapElement }) => {
           }),
         }),
       }),
-      extent: map?.getView().calculateExtent(),
-      opacity: 1,
-      visible: true,
-      minResolution: 0,
-      maxResolution: 99999,
-      zIndex: 9999,
-    });
-
-    map?.addLayer(dl);
-
-    return dl;
+      projection,
+    );
   }
 
   const workingLayer = useMemo(() => {

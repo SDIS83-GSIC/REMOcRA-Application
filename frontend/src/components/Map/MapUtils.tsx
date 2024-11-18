@@ -1,6 +1,10 @@
 import { Map } from "ol";
 import { Modify, Select } from "ol/interaction";
+import VectorLayer from "ol/layer/Vector";
+import { bbox as bboxStrategy } from "ol/loadingstrategy";
+import { Style } from "ol/style";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
+import { toOpenLayer } from "./Map.tsx";
 
 /**
  * Permet de déplacer un objet
@@ -79,6 +83,68 @@ function toggleDeplacerPoint(
     map.removeInteraction(modifyCtrl);
     modifyCtrl = null;
   }
+}
+
+/**
+ * Permet d'ajouter une couche de points à la carte
+ * @param map : carte
+ * @param urlApi : url pour récupérer les points à afficher
+ * @param style : style du point
+ * @param projection : projection
+ * @returns
+ */
+export function createPointLayer(
+  map: Map,
+  urlApi: (extent, projection) => string,
+  style: Style,
+  projection: { name: string },
+) {
+  const vectorSource = toOpenLayer({
+    source: "GSON",
+    loader: async (
+      extent: any,
+      resolution: any,
+      projection: any,
+      success: (arg0: any) => void,
+      failure: () => void,
+    ) => {
+      const res = await fetch(
+        url`${urlApi(extent, projection)}`,
+        getFetchOptions({ method: "GET" }),
+      );
+      res
+        .text()
+        .then((text) => {
+          const features = vectorSource
+            .getFormat()
+            .readFeatures(JSON.parse(text));
+          vectorSource.addFeatures(features);
+          success(features);
+        })
+        .catch(() => {
+          vectorSource.removeLoadedExtent(extent);
+          failure();
+        });
+    },
+    extent: map.getView().calculateExtent(),
+    projection: projection.name,
+    strategy: bboxStrategy,
+  });
+
+  const dl = new VectorLayer({
+    source: vectorSource,
+    style: style,
+    extent: map.getView().calculateExtent(),
+    opacity: 1,
+    visible: true,
+    minResolution: 0,
+    maxResolution: 99999,
+    zIndex: 9999,
+  });
+
+  map.addLayer(dl);
+
+  return dl;
 }
 
 export default toggleDeplacerPoint;
