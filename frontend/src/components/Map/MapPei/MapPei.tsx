@@ -1,6 +1,8 @@
-import { useRef } from "react";
+import { Circle, Fill, Stroke, Style } from "ol/style";
+import { useMemo, useRef } from "react";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
+import { createPointLayer } from "../MapUtils.tsx";
 import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
@@ -14,6 +16,7 @@ const MapPei = () => {
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
+    projection,
   } = useMapComponent({ mapElement: mapElement });
 
   const {
@@ -32,6 +35,36 @@ const MapPei = () => {
     workingLayer,
     dataPeiLayer,
   });
+
+  /**
+   * Permet d'afficher les PEI en projet
+   * @param etudeId l'étude concernée
+   * @returns
+   */
+  useMemo(() => {
+    if (!map) {
+      return;
+    }
+    return createPointLayer(
+      map,
+      (extent, projection) =>
+        `/api/debit-simultane/layer?bbox=` +
+        extent.join(",") +
+        "&srid=" +
+        projection.getCode(),
+      new Style({
+        image: new Circle({
+          radius: 5,
+          fill: new Fill({ color: "pink" }),
+          stroke: new Stroke({
+            color: [90, 0, 90],
+            width: 1,
+          }),
+        }),
+      }),
+      projection,
+    );
+  }, [map, projection]);
 
   const { toggleTool, activeTool } = useToolbarContext({
     map: map,

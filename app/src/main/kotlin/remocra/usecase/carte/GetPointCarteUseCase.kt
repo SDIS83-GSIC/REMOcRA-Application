@@ -2,6 +2,7 @@ package remocra.usecase.carte
 
 import com.google.inject.Inject
 import org.slf4j.LoggerFactory
+import remocra.auth.UserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypePointCarte
 import remocra.db.CarteRepository
@@ -26,36 +27,33 @@ class GetPointCarteUseCase : AbstractUseCase() {
      * Permet de retourner des points au format GeoJSON pour assurer les interactions sur la carte
      * @param bbox : la bbox si elle existe
      * @param srid de la carte
-     * @param organismeId: identifiant de l'organisme de l'utilisateur connecté
      * @param etudeId: Id de l'étude s'il s'agit des PEI en projet
      * @param typePointCarte : Permet de spécifier le type de points (PEI, PEI en projet, PEI prescrit ...)
      */
     fun execute(
         bbox: String,
         sridSource: String,
-        organismeId: UUID,
         etudeId: UUID?,
         typePointCarte: TypePointCarte,
-        isSuperAdmin: Boolean,
+        userInfo: UserInfo,
     ): LayersRes {
-        val zoneCompetence = utilisateurRepository.getZoneByOrganismeId(organismeId)
         val srid = sridFromEpsgCode(sridSource)
 
         val feature = when (typePointCarte) {
             TypePointCarte.PEI -> bbox.let {
-                if (zoneCompetence == null) {
+                if (userInfo.zoneCompetence == null && !userInfo.isSuperAdmin) {
                     logger.error("L'utilisateur n'a pas de zone de compétence.")
                     throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
                 }
-                if (it.isNullOrEmpty()) {
-                    carteRepository.getPeiWithinZone(zoneCompetence.zoneIntegrationId, srid)
+                if (it.isEmpty()) {
+                    carteRepository.getPeiWithinZone(userInfo.zoneCompetence?.zoneIntegrationId, srid, userInfo.isSuperAdmin)
                 } else {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getPeiWithinZoneAndBbox(zoneCompetence.zoneIntegrationId, geom.toGeomFromText(), srid)
+                    carteRepository.getPeiWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
             TypePointCarte.PEI_PROJET -> bbox.let {
-                if (it.isNullOrEmpty()) {
+                if (it.isEmpty()) {
                     carteRepository.getPeiProjetWithinEtude(etudeId!!, srid)
                 } else {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
@@ -63,6 +61,14 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 }
             }
             TypePointCarte.PEI_PRESCRIT -> TODO()
+            TypePointCarte.DEBIT_SIMULTANE -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
         }
 
         return LayersRes(

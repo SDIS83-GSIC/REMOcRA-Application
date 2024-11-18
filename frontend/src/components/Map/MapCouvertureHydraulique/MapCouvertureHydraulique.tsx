@@ -90,7 +90,7 @@ const MapCouvertureHydraulique = ({
   });
 
   return (
-    <Container fluid>
+    <Container fluid className="z-n1">
       <MapComponent
         map={map}
         workingLayer={workingLayer}

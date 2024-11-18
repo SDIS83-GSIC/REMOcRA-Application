@@ -10,6 +10,7 @@ import remocra.data.enums.TypePointCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
@@ -35,7 +36,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
-    fun getPeiWithinZoneAndBbox(zoneId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<PeiCarte> {
+    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
             PEI.ID.`as`("pointId"),
@@ -47,10 +48,13 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
-                    .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                        .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
+                    isSuperAdmin,
+                ),
             )
             .fetchInto()
     }
@@ -58,7 +62,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI selon la zone de compétence
      */
-    fun getPeiWithinZone(zoneId: UUID, srid: Int): Collection<PeiCarte> {
+    fun getPeiWithinZone(zoneId: UUID?, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
             PEI.ID.`as`("pointId"),
@@ -70,9 +74,9 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE),
+                repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin),
             )
             .fetchInto()
     }
@@ -80,7 +84,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI en projet dans une BBOX selon l'étude
      */
-    fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<org.locationtech.jts.geom.Geometry?>, srid: Int): Collection<PeiProjetCarte> {
+    fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<PeiProjetCarte> {
         return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
             .from(PEI_PROJET)
             .where(
@@ -99,6 +103,23 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .from(PEI_PROJET)
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
+            )
+            .fetchInto()
+    }
+
+    fun getDebitSimultaneWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DebitSimultaneCarte> {
+        return dsl.select(
+            ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("pointGeometrie"),
+            DEBIT_SIMULTANE.ID.`as`("pointId"),
+        )
+            .from(DEBIT_SIMULTANE)
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                        .and(bbox?.let { ST_Within(ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
             )
             .fetchInto()
     }
@@ -132,5 +153,14 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.PEI_PROJET
+    }
+
+    data class DebitSimultaneCarte(
+        override val pointGeometrie: Point,
+        override val pointId: UUID,
+
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.DEBIT_SIMULTANE
     }
 }

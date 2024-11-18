@@ -340,23 +340,22 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
      */
     @GET
     @Path("/layer")
-    @RequireDroits([Droit.PEI_R])
+    @RequireDroits([Droit.ETUDE_R])
     fun layer(
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
         @QueryParam("etudeId") etudeId: UUID,
     ): Response {
-        if (securityContext.userInfo == null || securityContext.userInfo?.organismeId == null) {
+        if (securityContext.userInfo == null) {
             return forbidden().build()
         }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox,
                 srid,
-                securityContext.userInfo!!.organismeId!!,
                 etudeId,
                 TypePointCarte.PEI_PROJET,
-                securityContext.userInfo!!.isSuperAdmin,
+                securityContext.userInfo!!,
             ),
         ).build()
     }

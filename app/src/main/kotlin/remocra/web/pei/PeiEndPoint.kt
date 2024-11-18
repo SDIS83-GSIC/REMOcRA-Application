@@ -283,17 +283,16 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/layer")
     @RequireDroits([Droit.PEI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response {
-        if (securityContext.userInfo == null || securityContext.userInfo?.organismeId == null) {
+        if (securityContext.userInfo == null) {
             return forbidden().build()
         }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox,
                 srid,
-                securityContext.userInfo!!.organismeId!!,
                 null,
                 TypePointCarte.PEI,
-                securityContext.userInfo!!.isSuperAdmin,
+                securityContext.userInfo!!,
             ),
         ).build()
     }

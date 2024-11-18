@@ -3,9 +3,11 @@ import { ReactNode, Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
+import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
+import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
 import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
 import {
@@ -17,7 +19,6 @@ import {
   IconVisite,
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
-import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -51,107 +52,116 @@ const TooltipMapPei = ({
   const handleCloseTournee = () => setShowTournee(false);
 
   const peiId = featureSelect?.getProperties().pointId;
+
   return (
-    <div ref={ref}>
-      <Tooltip
-        featureSelect={featureSelect}
-        overlay={overlay}
-        displayButtonEdit={displayButtonEdit}
-        deletePath={`/api/pei/delete/` + peiId}
-        displayButtonDelete={displayButtonDelete}
-        onClickEdit={() => navigate(URLS.UPDATE_PEI(peiId))}
-        onClickDelete={() => {
-          dataPeiLayer.getSource().refresh();
-          overlay?.setPosition(undefined);
-        }}
-        onClickSee={() => setShowFichePei(true)}
-        displayButtonSee={true}
-        disabled={disabledTooltip}
-        autreActionBouton={
-          <>
-            <Col className="p-1" xs={"auto"}>
-              <Button
-                variant="warning"
-                onClick={() => navigate(URLS.VISITE(peiId))}
+    <div ref={ref} className="z-3">
+      {featureSelect?.getProperties().typePointCarte ===
+      TYPE_POINT_CARTE.PEI ? (
+        <Tooltip
+          featureSelect={featureSelect}
+          overlay={overlay}
+          displayButtonEdit={displayButtonEdit}
+          deletePath={`/api/pei/delete/` + peiId}
+          displayButtonDelete={displayButtonDelete}
+          onClickEdit={() => navigate(URLS.UPDATE_PEI(peiId))}
+          onClickDelete={() => {
+            dataPeiLayer.getSource().refresh();
+            overlay?.setPosition(undefined);
+          }}
+          onClickSee={() => setShowFichePei(true)}
+          displayButtonSee={true}
+          disabled={disabledTooltip}
+          autreActionBouton={
+            <>
+              <Col className="p-1" xs={"auto"}>
+                <Button
+                  variant="warning"
+                  onClick={() => navigate(URLS.VISITE(peiId))}
+                >
+                  <IconVisite />
+                </Button>
+              </Col>
+              {featureSelect?.getProperties().hasIndispoTemp && (
+                <Col className="p-1" xs={"auto"}>
+                  <Button
+                    variant="warning"
+                    onClick={() => {
+                      setShowIndispoTemp(true);
+                      overlay?.setPosition(undefined);
+                    }}
+                  >
+                    <IconIndisponibiliteTemporaire />
+                  </Button>
+                </Col>
+              )}
+              {featureSelect?.getProperties().hasTournee && (
+                <Col className="p-1" xs={"auto"}>
+                  <Button
+                    variant="warning"
+                    onClick={() => {
+                      setShowTournee(true);
+                      overlay?.setPosition(undefined);
+                    }}
+                  >
+                    <IconTournee />
+                  </Button>
+                </Col>
+              )}
+              <Volet
+                handleClose={handleCloseFichePei}
+                show={showFichePei}
+                className="w-auto"
               >
-                <IconVisite />
-              </Button>
-            </Col>
-            {featureSelect?.getProperties().hasIndispoTemp && (
-              <Col className="p-1" xs={"auto"}>
-                <Button
-                  variant="warning"
-                  onClick={() => {
-                    setShowIndispoTemp(true);
-                    overlay?.setPosition(undefined);
-                  }}
-                >
-                  <IconIndisponibiliteTemporaire />
-                </Button>
-              </Col>
-            )}
-            {featureSelect?.getProperties().hasTournee && (
-              <Col className="p-1" xs={"auto"}>
-                <Button
-                  variant="warning"
-                  onClick={() => {
-                    setShowTournee(true);
-                    overlay?.setPosition(undefined);
-                  }}
-                >
-                  <IconTournee />
-                </Button>
-              </Col>
-            )}
-          </>
-        }
-      />
-      <Volet
-        handleClose={handleCloseFichePei}
-        show={showFichePei}
-        className="w-auto"
-      >
-        <FicheResume peiId={peiId} />
-      </Volet>
-      <Volet
-        handleClose={() => {
-          handleCloseIndispoTemp();
+                <FicheResume peiId={peiId} />
+              </Volet>
+              <Volet
+                handleClose={() => {
+                  handleCloseIndispoTemp();
 
-          navigate(
-            {
-              pathname: location.pathname,
-              search: "",
-            },
-            { replace: true },
-          );
-        }}
-        show={showIndispoTemp}
-        className="w-auto"
-        backdrop={true}
-      >
-        <ListIndisponibiliteTemporaire
-          peiId={peiId}
-          colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
+                  navigate(
+                    {
+                      pathname: location.pathname,
+                      search: "",
+                    },
+                    { replace: true },
+                  );
+                }}
+                show={showIndispoTemp}
+                className="w-auto"
+                backdrop={true}
+              >
+                <ListIndisponibiliteTemporaire
+                  peiId={peiId}
+                  colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
+                />
+              </Volet>
+              <Volet
+                handleClose={() => {
+                  handleCloseTournee();
+
+                  navigate(
+                    {
+                      pathname: location.pathname,
+                      search: "",
+                    },
+                    { replace: true },
+                  );
+                }}
+                show={showTournee}
+                className="w-auto"
+                backdrop={true}
+              >
+                <ListTournee peiId={peiId} />
+              </Volet>
+            </>
+          }
         />
-      </Volet>
-      <Volet
-        handleClose={() => {
-          handleCloseTournee();
-
-          navigate(
-            {
-              pathname: location.pathname,
-              search: "",
-            },
-            { replace: true },
-          );
-        }}
-        show={showTournee}
-        className="w-auto"
-        backdrop={true}
-      >
-        <ListTournee peiId={peiId} />
-      </Volet>
+      ) : featureSelect?.getProperties().typePointCarte ===
+        TYPE_POINT_CARTE.DEBIT_SIMULTANE ? (
+        <Tooltip featureSelect={featureSelect} overlay={overlay} />
+      ) : (
+        ""
+      )}
     </div>
   );
 };
@@ -176,13 +186,13 @@ const Tooltip = ({
   overlay: Overlay | undefined;
   displayButtonEdit?: boolean;
   onClickEdit?: () => void;
-  displayButtonDelete: boolean;
+  displayButtonDelete?: boolean;
   onClickDelete?: () => void;
-  displayButtonSee: boolean;
+  displayButtonSee?: boolean;
   onClickSee?: () => void;
   deletePath: string;
   disabled: boolean;
-  href: string;
+  href?: string;
   autreActionBouton: ReactNode | undefined;
 }) => {
   return (
@@ -369,7 +379,11 @@ const useTooltipMap = ({
             element: ref.current,
             positioning: "bottom-center",
             position: coordinate,
-            stopEvent: false,
+            autoPan: {
+              animation: {
+                duration: 250,
+              },
+            },
           });
 
           map.addOverlay(over);

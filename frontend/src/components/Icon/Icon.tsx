@@ -33,6 +33,9 @@ export const IconSurface = () => <i className="fi fi-bs-chart-area" />;
 export const IconZoomIn = () => <i className="fi fi-br-zoom-in" />;
 export const IconZoomOut = () => <i className="fi fi-br-zoom-out" />;
 export const IconPeiPlusProche = () => <i className="fi fi-rr-career-path" />;
+export const IconDebitSimultane = () => (
+  <i className="fi fi-br-gauge-circle-bolt" />
+);
 
 export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 
