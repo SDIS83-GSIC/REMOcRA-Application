@@ -7,6 +7,7 @@ import remocra.tasks.ChangementEtatPeiTask
 import remocra.tasks.NotifAvantDebutIndispoTempTask
 import remocra.tasks.NotifAvantFinIndispoTempTask
 import remocra.tasks.NotifResteIndispoIndispoTempTask
+import remocra.tasks.PurgerTask
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
@@ -32,6 +33,7 @@ object ScheduleModule : RemocraModule() {
             addBinding().to<NotifResteIndispoIndispoTempTask>().asEagerSingleton()
             addBinding().to<BasculeAutoIndispoTempTask>().asEagerSingleton()
             addBinding().to<SynchronisationSIGTask>().asEagerSingleton()
+            addBinding().to<PurgerTask>().asEagerSingleton()
         }
     }
 }

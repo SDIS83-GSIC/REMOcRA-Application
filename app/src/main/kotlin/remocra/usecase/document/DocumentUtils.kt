@@ -1,16 +1,23 @@
 package remocra.usecase.document
 
+import jakarta.inject.Inject
 import jakarta.ws.rs.core.Response
 import org.slf4j.LoggerFactory
+import remocra.utils.DateUtils
 import remocra.utils.notFound
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.attribute.FileTime
+import java.time.ZonedDateTime
 import kotlin.io.path.pathString
 
 class DocumentUtils {
+
+    @Inject lateinit var dateUtils: DateUtils
+
     private val logger = LoggerFactory.getLogger(javaClass)
 
     /**
@@ -105,5 +112,23 @@ class DocumentUtils {
         } else {
             throw SecurityException("Impossible de supprimer le répertoire $repertoireFile")
         }
+    }
+
+    fun cleanDirectoryFileOlderThan(repertoire: String, fileOlderThan: ZonedDateTime) {
+        val repertoireFile = File(repertoire)
+        if (!repertoireFile.exists()) {
+            throw IllegalArgumentException("Le répertoire n'existe pas : ${repertoireFile.absolutePath}")
+        }
+        if (!repertoireFile.isDirectory) {
+            throw IllegalArgumentException("Le fichier n'est pas un répertoire : ${repertoireFile.absolutePath}")
+        }
+        repertoireFile.listFiles()?.forEach { file ->
+            val fileLastModificationTime: FileTime = Files.getLastModifiedTime(file.toPath())
+            if (fileLastModificationTime.toInstant().isBefore(fileOlderThan.toInstant())) {
+                if (!file.delete()) {
+                    throw IOException("Impossible de supprimer le fichier ! ${file.absolutePath}")
+                }
+            }
+        } ?: throw IOException("Impossible de lister le contenu du répertoire : ${repertoireFile.absolutePath}")
     }
 }

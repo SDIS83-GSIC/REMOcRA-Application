@@ -19,4 +19,7 @@ class LogLineRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     fun getLogLinesWithIdObject(idObject: UUID): Collection<LogLine> {
         return dsl.selectFrom(LOG_LINE).where(LOG_LINE.OBJECT_ID.eq(idObject)).fetchInto()
     }
+
+    fun purgeLogLineFromListJobId(setJobId: Set<UUID>) =
+        dsl.deleteFrom(LOG_LINE).where(LOG_LINE.JOB_ID.`in`(setJobId)).execute()
 }

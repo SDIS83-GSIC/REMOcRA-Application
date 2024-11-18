@@ -5,6 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.JSONB
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.field
 import remocra.data.JobData
 import remocra.db.jooq.remocra.enums.EtatJob
 import remocra.db.jooq.remocra.enums.TypeTask
@@ -123,4 +124,18 @@ class JobRepository @Inject constructor(private val dsl: DSLContext, private val
                 ),
             )
     }
+
+    fun getIdJobsOlderThanDays(nbDays: Long): List<UUID> =
+        dsl.selectDistinct(JOB.ID)
+            .from(JOB)
+            .where(JOB.ETAT_JOB.`in`(EtatJob.TERMINE, EtatJob.NOTIFIE))
+            .and(
+                JOB.DATE_FIN
+                    .plus(field("INTERVAL '$nbDays days'", String::class.java))
+                    .lessThan(dateUtils.now()),
+            )
+            .fetchInto()
+
+    fun purgeJobFromSetJobId(setJobId: Set<UUID>) =
+        dsl.deleteFrom(JOB).where(JOB.ID.`in`(setJobId)).execute()
 }

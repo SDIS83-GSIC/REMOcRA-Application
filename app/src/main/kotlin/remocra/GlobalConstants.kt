@@ -97,6 +97,9 @@ object GlobalConstants {
 
     const val NATURE_DECI_PRIVE = "PRIVE"
 
+    /** Constante utilisée dans PurgerTask indiquant l'ancienneté min des documents_tmp à purger (en heure) */
+    const val DELAI_PURGE_FICHIER_TEMPORAIRE: Long = 24
+
     /** Code des Rôles Contact Protected */
     const val CHANGEMENT_ETAT_PEI: String = "CHANGEMENT_ETAT_PEI"
     const val IT_NOTIF_AVANT_DEBUT: String = "IT_NOTIF_AVANT_DEBUT"
