@@ -174,6 +174,12 @@ const TooltipMapPei = ({
             overlay={overlay}
             displayButtonEdit={displayButtonEditDebitSimultane}
             onClickEdit={() => setShowUpdateDebitSimultane(true)}
+            displayButtonDelete={displayButtonEditDebitSimultane}
+            onClickDelete={() => {
+              dataDebitSimultaneLayer.getSource().refresh();
+              overlay?.setPosition(undefined);
+            }}
+            deletePath={`/api/debit-simultane/delete/` + pointId}
           />
 
           <Volet

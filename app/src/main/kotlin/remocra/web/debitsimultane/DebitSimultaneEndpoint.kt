@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
@@ -24,6 +25,7 @@ import remocra.data.enums.TypePointCarte
 import remocra.db.DebitSimultaneRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.carte.GetPointCarteUseCase
+import remocra.usecase.debitsimultane.DeleteDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.GetDebitSimultaneCompletUseCase
 import remocra.usecase.debitsimultane.UpdateDebitSimultaneUseCase
 import remocra.utils.forbidden
@@ -49,6 +51,9 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateDebitSimultaneUseCase: UpdateDebitSimultaneUseCase
+
+    @Inject
+    lateinit var deleteDebitSimultaneUseCase: DeleteDebitSimultaneUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -112,6 +117,25 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
             typeReseauId,
         ),
     ).build()
+
+    @DELETE
+    @Path("/delete/{debitSimultaneId}")
+    @RequireDroits([Droit.DEBITS_SIMULTANES_A])
+    fun delete(
+        @PathParam("debitSimultaneId")
+        debitSimultaneId: UUID,
+    ): Response {
+        val debit = getDebitSimultaneCompletUseCase.execute(debitSimultaneId = debitSimultaneId, userInfo = securityContext.userInfo)
+        return deleteDebitSimultaneUseCase.execute(
+            securityContext.userInfo,
+            DebitSimultaneData(
+                debitSimultaneId = debit.debitSimultaneId,
+                debitSimultaneNumeroDossier = debit.debitSimultaneNumeroDossier,
+                listeDebitSimultaneMesure = debit.listeDebitSimultaneMesure.toList(),
+                listeDocument = null,
+            ),
+        ).wrap()
+    }
 
     @PUT
     @Path("/update/{debitSimultaneId}")
