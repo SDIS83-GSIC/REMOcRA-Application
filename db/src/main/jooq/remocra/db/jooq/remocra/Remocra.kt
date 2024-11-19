@@ -30,7 +30,6 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
-import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
@@ -217,11 +216,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_couche_droit</code>.
      */
     val L_COUCHE_DROIT: LCoucheDroit get() = LCoucheDroit.L_COUCHE_DROIT
-
-    /**
-     * The table <code>remocra.l_debit_simultane_document</code>.
-     */
-    val L_DEBIT_SIMULTANE_DOCUMENT: LDebitSimultaneDocument get() = LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT
 
     /**
      * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
@@ -494,7 +488,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
         LCoucheDroit.L_COUCHE_DROIT,
-        LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,

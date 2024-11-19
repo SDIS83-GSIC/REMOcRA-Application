@@ -28,6 +28,7 @@ data class DebitSimultaneMesure(
     val debitSimultaneMesureDateMesure: ZonedDateTime,
     val debitSimultaneMesureCommentaire: String?,
     val debitSimultaneMesureIdentiqueReseauVille: Boolean?,
+    val debitSimultaneMesureDocumentId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -85,6 +86,13 @@ data class DebitSimultaneMesure(
         } else if (this.debitSimultaneMesureIdentiqueReseauVille != o.debitSimultaneMesureIdentiqueReseauVille) {
             return false
         }
+        if (this.debitSimultaneMesureDocumentId == null) {
+            if (o.debitSimultaneMesureDocumentId != null) {
+                return false
+            }
+        } else if (this.debitSimultaneMesureDocumentId != o.debitSimultaneMesureDocumentId) {
+            return false
+        }
         return true
     }
 
@@ -99,6 +107,7 @@ data class DebitSimultaneMesure(
         result = prime * result + this.debitSimultaneMesureDateMesure.hashCode()
         result = prime * result + (if (this.debitSimultaneMesureCommentaire == null) 0 else this.debitSimultaneMesureCommentaire.hashCode())
         result = prime * result + (if (this.debitSimultaneMesureIdentiqueReseauVille == null) 0 else this.debitSimultaneMesureIdentiqueReseauVille.hashCode())
+        result = prime * result + (if (this.debitSimultaneMesureDocumentId == null) 0 else this.debitSimultaneMesureDocumentId.hashCode())
         return result
     }
 
@@ -113,6 +122,7 @@ data class DebitSimultaneMesure(
         sb.append(", ").append(debitSimultaneMesureDateMesure)
         sb.append(", ").append(debitSimultaneMesureCommentaire)
         sb.append(", ").append(debitSimultaneMesureIdentiqueReseauVille)
+        sb.append(", ").append(debitSimultaneMesureDocumentId)
 
         sb.append(")")
         return sb.toString()

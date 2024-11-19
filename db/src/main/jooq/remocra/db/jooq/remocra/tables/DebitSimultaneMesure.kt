@@ -28,11 +28,10 @@ import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE_PKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_DEBIT_SIMULTANE_DOCUMENT__L_DEBIT_SIMULTANE_DOCUMENT_DEBIT_SIMULTANE_MESURE_ID_FKEY
+import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_DEBIT_SIMULTANE_MESURE_PEI__L_DEBIT_SIMULTANE_MESURE_PEI_DEBIT_SIMULTANE_MESURE_ID_FKEY
 import remocra.db.jooq.remocra.tables.DebitSimultane.DebitSimultanePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
-import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument.LDebitSimultaneDocumentPath
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei.LDebitSimultaneMesurePeiPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.time.ZonedDateTime
@@ -133,6 +132,12 @@ open class DebitSimultaneMesure(
      */
     val IDENTIQUE_RESEAU_VILLE: TableField<Record, Boolean?> = createField(DSL.name("debit_simultane_mesure_identique_reseau_ville"), SQLDataType.BOOLEAN, this, "")
 
+    /**
+     * The column
+     * <code>remocra.debit_simultane_mesure.debit_simultane_mesure_document_id</code>.
+     */
+    val DOCUMENT_ID: TableField<Record, UUID?> = createField(DSL.name("debit_simultane_mesure_document_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -168,7 +173,7 @@ open class DebitSimultaneMesure(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = DEBIT_SIMULTANE_MESURE_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_ID_FKEY, DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY)
 
     private lateinit var _debitSimultane: DebitSimultanePath
 
@@ -187,22 +192,21 @@ open class DebitSimultaneMesure(
     val debitSimultane: DebitSimultanePath
         get(): DebitSimultanePath = debitSimultane()
 
-    private lateinit var _lDebitSimultaneDocument: LDebitSimultaneDocumentPath
+    private lateinit var _document: DocumentPath
 
     /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_debit_simultane_document</code> table
+     * Get the implicit join path to the <code>remocra.document</code> table.
      */
-    fun lDebitSimultaneDocument(): LDebitSimultaneDocumentPath {
-        if (!this::_lDebitSimultaneDocument.isInitialized) {
-            _lDebitSimultaneDocument = LDebitSimultaneDocumentPath(this, null, L_DEBIT_SIMULTANE_DOCUMENT__L_DEBIT_SIMULTANE_DOCUMENT_DEBIT_SIMULTANE_MESURE_ID_FKEY.inverseKey)
+    fun document(): DocumentPath {
+        if (!this::_document.isInitialized) {
+            _document = DocumentPath(this, DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY, null)
         }
 
-        return _lDebitSimultaneDocument
+        return _document
     }
 
-    val lDebitSimultaneDocument: LDebitSimultaneDocumentPath
-        get(): LDebitSimultaneDocumentPath = lDebitSimultaneDocument()
+    val document: DocumentPath
+        get(): DocumentPath = document()
 
     private lateinit var _lDebitSimultaneMesurePei: LDebitSimultaneMesurePeiPath
 
@@ -220,13 +224,6 @@ open class DebitSimultaneMesure(
 
     val lDebitSimultaneMesurePei: LDebitSimultaneMesurePeiPath
         get(): LDebitSimultaneMesurePeiPath = lDebitSimultaneMesurePei()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.document</code> table
-     */
-    val document: DocumentPath
-        get(): DocumentPath = lDebitSimultaneDocument().document()
 
     /**
      * Get the implicit many-to-many join path to the <code>remocra.pei</code>

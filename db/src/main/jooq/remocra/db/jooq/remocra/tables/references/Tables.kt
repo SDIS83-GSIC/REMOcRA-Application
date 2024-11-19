@@ -26,7 +26,6 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
-import remocra.db.jooq.remocra.tables.LDebitSimultaneDocument
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
@@ -191,11 +190,6 @@ val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
  * The table <code>remocra.l_couche_droit</code>.
  */
 val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
-
-/**
- * The table <code>remocra.l_debit_simultane_document</code>.
- */
-val L_DEBIT_SIMULTANE_DOCUMENT: LDebitSimultaneDocument = LDebitSimultaneDocument.L_DEBIT_SIMULTANE_DOCUMENT
 
 /**
  * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
