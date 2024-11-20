@@ -59,18 +59,18 @@ const TableActionColumn = ({
               </>
             ) : confirmModale != null ? (
               <>
-                <TooltipCustom
-                  tooltipText={disabled ? textDisable : textEnable}
-                  tooltipId={row.value}
+                <CustomLinkButton
+                  className={disabled ? "text-muted" : "text-" + classEnable}
+                  disabled={disabled}
+                  onClick={confirmModale?.show}
                 >
-                  <CustomLinkButton
-                    className={disabled ? "text-muted" : "text-" + classEnable}
-                    disabled={disabled}
-                    onClick={confirmModale?.show}
+                  <TooltipCustom
+                    tooltipText={disabled ? textDisable : textEnable}
+                    tooltipId={row.value}
                   >
                     {icon}
-                  </CustomLinkButton>
-                </TooltipCustom>
+                  </TooltipCustom>
+                </CustomLinkButton>
                 {!disabled && (
                   <ConfirmModal
                     isPost={isPost}
@@ -93,33 +93,33 @@ const TableActionColumn = ({
                   ref={simpleModal.ref}
                   visible={simpleModal.visible}
                 />
+                <CustomLinkButton
+                  className={disabled ? "text-muted" : "text-" + classEnable}
+                  disabled={disabled}
+                  onClick={simpleModal?.show}
+                >
+                  <TooltipCustom
+                    tooltipText={disabled ? textDisable : textEnable}
+                    tooltipId={row.value}
+                  >
+                    {icon}
+                  </TooltipCustom>
+                </CustomLinkButton>
+              </>
+            ) : (
+              <CustomLinkButton
+                className={disabled ? "text-muted" : "text-" + classEnable}
+                disabled={disabled}
+                href={href}
+                onClick={onClick}
+              >
                 <TooltipCustom
                   tooltipText={disabled ? textDisable : textEnable}
                   tooltipId={row.value}
                 >
-                  <CustomLinkButton
-                    className={disabled ? "text-muted" : "text-" + classEnable}
-                    disabled={disabled}
-                    onClick={simpleModal?.show}
-                  >
-                    {icon}
-                  </CustomLinkButton>
-                </TooltipCustom>
-              </>
-            ) : (
-              <TooltipCustom
-                tooltipText={disabled ? textDisable : textEnable}
-                tooltipId={row.value}
-              >
-                <CustomLinkButton
-                  className={disabled ? "text-muted" : "text-" + classEnable}
-                  disabled={disabled}
-                  href={href}
-                  onClick={onClick}
-                >
                   {icon}
-                </CustomLinkButton>
-              </TooltipCustom>
+                </TooltipCustom>
+              </CustomLinkButton>
             )}
           </>
         ))}

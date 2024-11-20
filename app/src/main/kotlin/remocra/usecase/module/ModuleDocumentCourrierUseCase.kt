@@ -69,7 +69,6 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
 
     fun count(
         moduleId: UUID,
-        moduleType: String,
         userInfo: UserInfo?,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
     ): Int {

@@ -102,7 +102,7 @@ import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
 import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
-import ListModuleDocumentCourrier from "./pages/ModuleDocumentCourrier/ListModuleDocumentCourrier.tsx";
+import ListModuleCourrier from "./pages/ModuleDocumentCourrier/ListModuleCourrier.tsx";
 import ProfilDroitList from "./pages/Admin/droit/ProfilDroitList.tsx";
 import ProfilDroitCreate from "./pages/Admin/droit/ProfilDroitCreate.tsx";
 import ProfilDroitUpdate from "./pages/Admin/droit/ProfilDroitUpdate.tsx";
@@ -110,6 +110,7 @@ import LienProfilDroitList from "./pages/Admin/droit/LienProfilDroitList.tsx";
 import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonctionnaliteList.tsx";
 import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
 import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
+import ListModuleDocument from "./pages/ModuleDocumentCourrier/ListModuleDocument.tsx";
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
@@ -1300,12 +1301,21 @@ export default [
   },
 
   {
-    path: "/documents/:moduleType/thematiques/:moduleId",
+    path: "/documents/document/thematiques/:moduleId",
     element: (
       <Authorization
-        Component={ListModuleDocumentCourrier}
+        Component={ListModuleDocument}
         // TODO courrier droit
         droits={[TYPE_DROIT.DOCUMENTS_R]}
+      />
+    ),
+  },
+  {
+    path: "/documents/courrier/thematiques/:moduleId",
+    element: (
+      <Authorization
+        Component={ListModuleCourrier}
+        droits={[TYPE_DROIT.COURRIER_UTILISATEUR_R]}
       />
     ),
   },

@@ -123,7 +123,6 @@ class ModuleEndPoint : AbstractEndpoint() {
                 ),
                 count = moduleDocumentCourrierUseCase.count(
                     moduleId,
-                    moduleType,
                     securityContext.userInfo,
                     params,
                 ),

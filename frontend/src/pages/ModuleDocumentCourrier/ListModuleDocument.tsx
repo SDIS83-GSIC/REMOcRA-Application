@@ -4,7 +4,6 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import Header from "../../components/Header/Header.tsx";
 import { IconExport, IconList } from "../../components/Icon/Icon.tsx";
-import { TypeModuleRemocra } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import { ActionColumn } from "../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
@@ -13,9 +12,9 @@ import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import SquelettePage from "../SquelettePage.tsx";
-import FilterValues from "./FilterModuleDocumentCourrier.tsx";
+import FilterValues from "./FilterModuleDocument.tsx";
 
-const ListModuleDocumentCourrier = () => {
+const ListModuleDocument = () => {
   const { moduleType, moduleId } = useParams();
   return (
     <SquelettePage header={<Header />}>
@@ -25,7 +24,7 @@ const ListModuleDocumentCourrier = () => {
           title={"Liste des " + moduleType?.toLowerCase() + "s"}
         />
         <QueryTable
-          query={url`/api/modules/documents/all?${{
+          query={url`/api/modules/document/all?${{
             moduleId: moduleId,
             moduleType: moduleType,
           }}`}
@@ -56,11 +55,7 @@ const ListModuleDocumentCourrier = () => {
                   row: (row) => {
                     return row;
                   },
-                  href: (id) =>
-                    moduleType?.toUpperCase() === TypeModuleRemocra.DOCUMENT
-                      ? url`/api/bloc-document/telecharger/` + id
-                      : // TODO prendre en compte pour les courriers
-                        url`/api/courrier/telecharger/` + id,
+                  href: (id) => url`/api/document/telecharger/` + id,
                   type: TYPE_BUTTON.CUSTOM,
                   icon: <IconExport />,
                   textEnable: "Télécharger le document",
@@ -78,4 +73,4 @@ const ListModuleDocumentCourrier = () => {
   );
 };
 
-export default ListModuleDocumentCourrier;
+export default ListModuleDocument;

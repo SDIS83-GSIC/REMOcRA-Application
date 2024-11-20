@@ -79,7 +79,6 @@ const ModuleDocumentCourrier = ({
                 <td>
                   <CustomLinkButton
                     className={"text-warning"}
-                    // TODO prendre en compte le cas des courriers
                     href={
                       moduleType === TypeModuleRemocra.DOCUMENT
                         ? url`/api/bloc-document/telecharger/` + e.id

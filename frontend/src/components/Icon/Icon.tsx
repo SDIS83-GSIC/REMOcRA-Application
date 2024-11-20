@@ -17,6 +17,7 @@ export const IconPei = () => <i className="fi fi-ss-fire-hydrant" />;
 
 export const IconDocument = () => <i className="fi fi-br-document" />;
 export const IconInfo = () => <i className="fi fi-br-interrogation" />;
+export const IconAccuse = () => <i className="fi fi-br-comment-alt-check" />;
 
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
