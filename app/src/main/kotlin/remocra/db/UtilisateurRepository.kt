@@ -317,4 +317,15 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.USERNAME.eq(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .fetchSingleInto()
     }
+
+    fun getIdMailForFilter(): Collection<IdMailData> =
+        dsl.select(UTILISATEUR.ID, UTILISATEUR.EMAIL)
+            .from(UTILISATEUR)
+            .where(UTILISATEUR.USERNAME.notEqualIgnoreCase(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
+            .fetchInto()
+
+    data class IdMailData(
+        val utilisateurId: UUID,
+        val utilisateurEmail: String,
+    )
 }

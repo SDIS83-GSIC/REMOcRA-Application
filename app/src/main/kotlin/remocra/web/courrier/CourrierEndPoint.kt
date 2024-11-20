@@ -21,7 +21,6 @@ import remocra.db.CourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierGenerator
-import remocra.usecase.courrier.CourrierRopGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import remocra.usecase.document.DocumentUtils
 import java.io.File
@@ -33,8 +32,6 @@ import kotlin.reflect.jvm.javaMethod
 @Path("/courriers")
 class CourrierEndPoint {
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    @Inject lateinit var courrierRopGenerator: CourrierRopGenerator
 
     @Inject lateinit var courrierGenerator: CourrierGenerator
 

@@ -23,10 +23,12 @@ import remocra.data.DataTableau
 import remocra.data.ListModuleWithImage
 import remocra.data.ModuleAccueilData
 import remocra.data.Params
+import remocra.db.CourrierRepository
 import remocra.db.ModuleRepository
 import remocra.db.ThematiqueRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
+import remocra.usecase.courrier.CourrierUsecase
 import remocra.usecase.module.ModuleAccueilUpsertUseCase
 import remocra.usecase.module.ModuleDocumentCourrierUseCase
 import remocra.usecase.module.ModuleUseCase
@@ -54,6 +56,8 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Context lateinit var uriInfo: UriInfo
 
     @Context lateinit var securityContext: SecurityContext
+
+    @Inject lateinit var courrierUsecase: CourrierUsecase
 
     @GET
     @Path("/")
@@ -108,7 +112,7 @@ class ModuleEndPoint : AbstractEndpoint() {
         @QueryParam("moduleType")
         moduleType: String,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>,
-    ) =
+    ): Response =
         Response.ok(
             DataTableau(
                 list = moduleDocumentCourrierUseCase.execute(
@@ -123,6 +127,21 @@ class ModuleEndPoint : AbstractEndpoint() {
                     securityContext.userInfo,
                     params,
                 ),
+            ),
+        ).build()
+
+    @POST
+    @Path("/courriers/all")
+    @Public("Les courrier ne sont pas liés à un droit")
+    fun getCourriersForListWithThematique(
+        @QueryParam("moduleId")
+        moduleId: UUID,
+        params: Params<CourrierRepository.Filter, CourrierRepository.Sort>,
+    ): Response =
+        Response.ok(
+            DataTableau(
+                list = courrierUsecase.getCourrierCompletWithThematique(moduleId, securityContext.userInfo, params),
+                count = courrierUsecase.countCourrierCompletWithThematique(moduleId, securityContext.userInfo, params),
             ),
         ).build()
 }

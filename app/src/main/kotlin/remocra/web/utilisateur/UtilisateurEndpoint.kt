@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
@@ -133,6 +134,13 @@ class UtilisateurEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.ADMIN_UTILISATEURS_R])
     fun get(@PathParam("utilisateurId") utilisateurId: UUID): Response {
         return Response.ok(utilisateurRepository.getById(utilisateurId)).build()
+    }
+
+    @GET
+    @Path("/get-id-mail")
+    @Public("Pas de droit particulier pour les filtres")
+    fun getIdMailForSelect(): Response {
+        return Response.ok(utilisateurRepository.getIdMailForFilter()).build()
     }
 
     @PUT
