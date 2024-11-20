@@ -58,7 +58,7 @@ constructor(private val properties: Properties?) :
 
     companion object {
         fun create(config: Config): SigDatabaseModule {
-            if (config.toProperties().all { it.value != "" }) {
+            if (config.toProperties().isNotEmpty()) {
                 return SigDatabaseModule(config.toProperties())
             }
             return SigDatabaseModule(null)
