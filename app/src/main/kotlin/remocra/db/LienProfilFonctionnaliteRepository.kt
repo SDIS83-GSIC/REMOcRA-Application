@@ -44,7 +44,7 @@ class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DS
         dsl.selectFrom(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
             .where(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(profilOrganismeId))
             .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID.eq(profilUtilisateurId))
-            .fetchSingleInto()
+            .fetchOneInto()
 
     fun insert(element: LProfilUtilisateurOrganismeDroit): Int =
         dsl.insertInto(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
