@@ -19,7 +19,7 @@ const ListTypeOrganisme = () => {
         lienPageAjout={URLS.ADD_TYPE_ORGANISME}
         typeNomenclature={NOMENCLATURE.TYPE_ORGANISME}
         lienPageUpdate={URLS.UPDATE_TYPE_ORGANISME}
-        libelleFk={"Organisme parent"}
+        libelleFk={"Type organisme parent"}
         listeFk={data}
       />
     </>

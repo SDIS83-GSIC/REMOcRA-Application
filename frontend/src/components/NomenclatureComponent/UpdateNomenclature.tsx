@@ -19,11 +19,13 @@ const UpdateNomenclature = ({
   typeNomenclature,
   redirectLink,
   titrePage = "Modification",
+  isFkRequired = false,
 }: {
   nomenclatureId: string;
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
   titrePage: string;
+  isFkRequired: boolean;
 }) => {
   const nomenclatureState = useGet(
     url`/api/nomenclature/` + typeNomenclature + "/get/" + nomenclatureId,
@@ -63,6 +65,7 @@ const UpdateNomenclature = ({
           hasProtectedValue={initialValues.hasProtectedValue}
           listeFk={initialValues.listeFk}
           libelleFk={initialValues.libelleFk}
+          isFkRequired={isFkRequired}
         />
       </MyFormik>
     </Container>

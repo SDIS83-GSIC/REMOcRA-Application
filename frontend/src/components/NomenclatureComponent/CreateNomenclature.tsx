@@ -16,10 +16,12 @@ const CreateNomenclature = ({
   typeNomenclature,
   redirectLink,
   titrePage = "Création",
+  isFkRequired = false,
 }: {
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
   titrePage: string;
+  isFkRequired: boolean;
 }) => {
   const { state } = useLocation();
   let initialValues: {
@@ -53,6 +55,7 @@ const CreateNomenclature = ({
           hasProtectedValue={initialValues.hasProtectedValue}
           listeFk={initialValues.listeFk}
           libelleFk={initialValues.libelleFk}
+          isFkRequired={isFkRequired}
         />
       </MyFormik>
     </Container>

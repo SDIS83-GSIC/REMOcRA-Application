@@ -7,6 +7,8 @@ const CreateProfilOrganisme = () => {
     <CreateNomenclature
       typeNomenclature={NOMENCLATURE.PROFIL_ORGANISME}
       redirectLink={URLS.LIST_PROFIL_ORGANISME}
+      titrePage="Création d'un profil d'organisme"
+      isFkRequired={true}
     />
   );
 };

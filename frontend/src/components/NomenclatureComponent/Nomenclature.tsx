@@ -41,14 +41,15 @@ export const Nomenclature = ({
   hasProtectedValue = true,
   listeFk,
   libelleFk,
+  isFkRequired,
 }: {
   returnLink: string;
   hasProtectedValue?: boolean;
   listeFk: IdCodeLibelleType[] | null;
   libelleFk: string | null;
+  isFkRequired: boolean;
 }) => {
   const { values, setValues } = useFormikContext<NomenclatureType>();
-
   return (
     <FormContainer>
       <TextInput
@@ -69,6 +70,7 @@ export const Nomenclature = ({
           listIdCodeLibelle={listeFk}
           setValues={setValues}
           defaultValue={listeFk?.find((e) => e.id === values.idFk)}
+          required={isFkRequired}
         />
       )}
       <SubmitFormButtons returnLink={returnLink} />

@@ -7,6 +7,8 @@ const CreateTypeOrganisme = () => {
     <CreateNomenclature
       typeNomenclature={NOMENCLATURE.TYPE_ORGANISME}
       redirectLink={URLS.LIST_TYPE_ORGANISME}
+      isFkRequired={true}
+      titrePage="Création d'un type d'organisme"
     />
   );
 };

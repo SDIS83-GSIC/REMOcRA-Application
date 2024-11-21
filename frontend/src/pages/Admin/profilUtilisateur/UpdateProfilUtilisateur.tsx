@@ -12,6 +12,7 @@ const UpdateProfilUtilisateur = () => {
         nomenclatureId={profilUtilisateurId}
         typeNomenclature={NOMENCLATURE.PROFIL_UTILISATEUR}
         redirectLink={URLS.LIST_PROFIL_UTILISATEUR}
+        titrePage="Modification d'un profil utilisateur"
       />
     )
   );
