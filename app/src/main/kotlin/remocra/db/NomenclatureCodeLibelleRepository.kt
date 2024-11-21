@@ -191,8 +191,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         fun toCondition(): Condition = DSL.and(
             listOfNotNull(
                 actif?.let { DSL.and(getActifField(type!!).eq(actif)) },
-                code?.let { DSL.and(getCodeField(type!!).contains(code)) },
-                libelle?.let { DSL.and(getLibelleField(type!!).contains(libelle)) },
+                code?.let { DSL.and(getCodeField(type!!).containsIgnoreCase(code)) },
+                libelle?.let { DSL.and(getLibelleField(type!!).containsIgnoreCase(libelle)) },
                 protected?.let { DSL.and(getProtectedField(type!!)?.eq(protected) ?: DSL.noCondition()) },
                 idFk?.let { DSL.and(getInfosFk(type!!)?.idFk?.eq(idFk) ?: DSL.noCondition()) },
             ),
@@ -314,7 +314,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
     fun checkCodeExists(type: TypeNomenclatureCodeLibelle, code: String, id: UUID?) = dsl.fetchExists(
         dsl.select(getIdField(type))
             .from(getTableFromType(type))
-            .where(getCodeField(type).eq(code))
+            .where(getCodeField(type).equalIgnoreCase(code))
             .and(id?.let { DSL.and(getIdField(type).notEqual(id) ?: DSL.noCondition()) }),
     )
 }
