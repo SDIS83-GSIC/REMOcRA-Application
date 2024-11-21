@@ -68,6 +68,7 @@ export const Nomenclature = ({
           label={libelleFk}
           listIdCodeLibelle={listeFk}
           setValues={setValues}
+          defaultValue={listeFk?.find((e) => e.id === values.idFk)}
         />
       )}
       <SubmitFormButtons returnLink={returnLink} />
