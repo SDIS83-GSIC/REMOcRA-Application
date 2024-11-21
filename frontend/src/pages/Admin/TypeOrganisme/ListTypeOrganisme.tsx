@@ -15,7 +15,7 @@ const ListTypeOrganisme = () => {
       <ListNomenclature
         pageTitle="Liste des types d'organisme"
         pageIcon={<IconPei />}
-        hasProtectedValue={false}
+        hasProtectedValue={true}
         lienPageAjout={URLS.ADD_TYPE_ORGANISME}
         typeNomenclature={NOMENCLATURE.TYPE_ORGANISME}
         lienPageUpdate={URLS.UPDATE_TYPE_ORGANISME}
