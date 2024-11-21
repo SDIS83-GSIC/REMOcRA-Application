@@ -15,9 +15,11 @@ import {
 const CreateNomenclature = ({
   typeNomenclature,
   redirectLink,
+  titrePage = "Création",
 }: {
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
+  titrePage: string;
 }) => {
   const { state } = useLocation();
   let initialValues: {
@@ -36,7 +38,7 @@ const CreateNomenclature = ({
 
   return (
     <Container>
-      <PageTitle title="Création" icon={<IconCreate />} />
+      <PageTitle title={titrePage} icon={<IconCreate />} />
       <MyFormik
         initialValues={getInitialValue()}
         prepareVariables={(values) => prepareValues(values)}

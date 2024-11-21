@@ -12,6 +12,7 @@ const UpdateTypeOrganisme = () => {
         nomenclatureId={typeOrganismeId}
         typeNomenclature={NOMENCLATURE.TYPE_ORGANISME}
         redirectLink={URLS.LIST_TYPE_ORGANISME}
+        titrePage="Modification d'un type d'organisme"
       />
     )
   );

@@ -18,10 +18,12 @@ const UpdateNomenclature = ({
   nomenclatureId,
   typeNomenclature,
   redirectLink,
+  titrePage = "Modification",
 }: {
   nomenclatureId: string;
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
+  titrePage: string;
 }) => {
   const nomenclatureState = useGet(
     url`/api/nomenclature/` + typeNomenclature + "/get/" + nomenclatureId,
@@ -44,7 +46,7 @@ const UpdateNomenclature = ({
 
   return (
     <Container>
-      <PageTitle title="Modification" icon={<IconEdit />} />
+      <PageTitle title={titrePage} icon={<IconEdit />} />
       <MyFormik
         initialValues={getInitialValue(nomenclatureState.data)}
         prepareVariables={(values) => prepareValues(values)}
