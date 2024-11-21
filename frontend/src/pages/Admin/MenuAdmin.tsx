@@ -44,22 +44,21 @@ const MenuAdmin = () => {
           <a href={URLS.LIST_TYPE_RESEAU}>Types de réseaux</a>
           <br />
         </Col>
-        {/* TODO à adapter quand on fera la page des droits */}
         <Col className="bg-light p-2 border rounded mx-2">
           <div className="fw-bold text-center p-2">Gérer les droits</div>
           <a href={URLS.PROFIL_DROIT_LIST}>Groupes de fonctionnalités</a>
           <br />
           <a href={URLS.LIEN_DROIT_LIST}>Attribution des fonctionnalités</a>
           <br />
-          <a href={URLS.LIEN_PROFIL_FONCTIONNALITE_LIST}>
-            Liens profils / groupes de fonctionnalités
-          </a>
+          <a href={URLS.LIST_TYPE_ORGANISME}>Types d&apos;organismes</a>
           <br />
           <a href={URLS.LIST_PROFIL_ORGANISME}>Profils d&apos;organismes</a>
           <br />
           <a href={URLS.LIST_PROFIL_UTILISATEUR}>Profils d&apos;utilisateurs</a>
           <br />
-          <a href={URLS.LIST_TYPE_ORGANISME}>Types d&apos;organismes</a>
+          <a href={URLS.LIEN_PROFIL_FONCTIONNALITE_LIST}>
+            Liens profils / groupes de fonctionnalités
+          </a>
           <br />
         </Col>
       </Row>
