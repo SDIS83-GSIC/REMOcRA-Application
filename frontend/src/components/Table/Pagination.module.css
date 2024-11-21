@@ -1,6 +1,6 @@
 @value cssPrimary, cssBlueDark, cssGrayDark, cssGrayLight, cssWhite from "../../variable.module.css";
 
-@value flexBasisForCenterPaginationBlock: 250px;
+@value flexBasisForCenterPaginationBlock: 400px;
 
 .pagination {
   display: flex;
