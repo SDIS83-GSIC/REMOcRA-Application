@@ -299,9 +299,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 }
                 it
             }
-            .set(getActifField(type), nomenclatureCodeLibelleData.actif)
             .where(getIdField(type).eq(nomenclatureCodeLibelleData.id))
-            .and(getProtectedField(type)?.isFalse ?: DSL.noCondition())
             .execute()
 
     fun delete(type: TypeNomenclatureCodeLibelle, id: UUID): Int =
