@@ -6,6 +6,7 @@ import remocra.utils.notFound
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.io.path.pathString
 
@@ -63,14 +64,18 @@ class DocumentUtils {
      */
     @Throws(Exception::class)
     fun deleteFile(nomFichier: String, repertoire: String) {
-        val fichierPath = Paths.get(repertoire, nomFichier).pathString
+        val fichierPath = Paths.get(repertoire, nomFichier)
         val repertoireFile = File(repertoire)
 
-        if (repertoireFile.canWrite()) {
-            // Suppression du fichier
-            File(fichierPath).delete()
+        if (Files.exists(fichierPath)) {
+            if (repertoireFile.canWrite()) {
+                // Suppression du fichier s'il existe
+                File(fichierPath.toUri()).delete()
+            } else {
+                throw SecurityException("Impossible de supprimer le fichier ${fichierPath.pathString}")
+            }
         } else {
-            throw SecurityException("Impossible de supprimer le fichier $fichierPath")
+            logger.warn("Fichier ${fichierPath.pathString} non présent sur le disque")
         }
     }
 
