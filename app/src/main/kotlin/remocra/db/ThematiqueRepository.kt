@@ -49,7 +49,9 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .on(L_THEMATIQUE_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
             .leftJoin(L_PROFIL_DROIT_BLOC_DOCUMENT)
             .on(L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
-            .where(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
+            .leftJoin(THEMATIQUE).on(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.eq(THEMATIQUE.ID))
+            .where(THEMATIQUE.ACTIF.isTrue)
+            .and(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId))
             .and(params?.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(
