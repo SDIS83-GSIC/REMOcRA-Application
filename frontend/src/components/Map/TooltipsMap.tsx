@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
+import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
@@ -31,12 +32,16 @@ const TooltipMapPei = ({
   displayButtonDelete,
   dataPeiLayer,
   disabledTooltip = false,
+  displayButtonEditDebitSimultane,
+  dataDebitSimultaneLayer,
 }: {
   map: Map;
   displayButtonEdit: boolean;
   displayButtonDelete: boolean;
   dataPeiLayer: any;
   disabledTooltip: boolean;
+  displayButtonEditDebitSimultane: boolean;
+  dataDebitSimultaneLayer: any;
 }) => {
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -51,7 +56,12 @@ const TooltipMapPei = ({
   const [showTournee, setShowTournee] = useState(false);
   const handleCloseTournee = () => setShowTournee(false);
 
-  const peiId = featureSelect?.getProperties().pointId;
+  const [showUpdateDebitSimultane, setShowUpdateDebitSimultane] =
+    useState(false);
+  const handleCloseUpdateDebitSimultane = () =>
+    setShowUpdateDebitSimultane(false);
+
+  const pointId = featureSelect?.getProperties().pointId;
 
   return (
     <div ref={ref} className="z-3">
@@ -61,9 +71,9 @@ const TooltipMapPei = ({
           featureSelect={featureSelect}
           overlay={overlay}
           displayButtonEdit={displayButtonEdit}
-          deletePath={`/api/pei/delete/` + peiId}
+          deletePath={`/api/pei/delete/` + pointId}
           displayButtonDelete={displayButtonDelete}
-          onClickEdit={() => navigate(URLS.UPDATE_PEI(peiId))}
+          onClickEdit={() => navigate(URLS.UPDATE_PEI(pointId))}
           onClickDelete={() => {
             dataPeiLayer.getSource().refresh();
             overlay?.setPosition(undefined);
@@ -76,7 +86,7 @@ const TooltipMapPei = ({
               <Col className="p-1" xs={"auto"}>
                 <Button
                   variant="warning"
-                  onClick={() => navigate(URLS.VISITE(peiId))}
+                  onClick={() => navigate(URLS.VISITE(pointId))}
                 >
                   <IconVisite />
                 </Button>
@@ -112,7 +122,7 @@ const TooltipMapPei = ({
                 show={showFichePei}
                 className="w-auto"
               >
-                <FicheResume peiId={peiId} />
+                <FicheResume peiId={pointId} />
               </Volet>
               <Volet
                 handleClose={() => {
@@ -131,7 +141,7 @@ const TooltipMapPei = ({
                 backdrop={true}
               >
                 <ListIndisponibiliteTemporaire
-                  peiId={peiId}
+                  peiId={pointId}
                   colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
                 />
               </Volet>
@@ -151,14 +161,45 @@ const TooltipMapPei = ({
                 className="w-auto"
                 backdrop={true}
               >
-                <ListTournee peiId={peiId} />
+                <ListTournee peiId={pointId} />
               </Volet>
             </>
           }
         />
       ) : featureSelect?.getProperties().typePointCarte ===
         TYPE_POINT_CARTE.DEBIT_SIMULTANE ? (
-        <Tooltip featureSelect={featureSelect} overlay={overlay} />
+        <>
+          <Tooltip
+            featureSelect={featureSelect}
+            overlay={overlay}
+            displayButtonEdit={displayButtonEditDebitSimultane}
+            onClickEdit={() => setShowUpdateDebitSimultane(true)}
+          />
+
+          <Volet
+            handleClose={() => {
+              handleCloseUpdateDebitSimultane();
+            }}
+            show={showUpdateDebitSimultane}
+            className="w-50"
+          >
+            <UpdateDebitSimultane
+              debitSimultaneId={pointId}
+              onSubmit={() => {
+                dataDebitSimultaneLayer.getSource().refresh();
+                handleCloseUpdateDebitSimultane();
+              }}
+              typeReseauId={featureSelect?.getProperties().typeReseauId}
+              coordonneeX={
+                featureSelect?.getProperties().geometry.flatCoordinates[0]
+              }
+              coordonneeY={
+                featureSelect?.getProperties().geometry.flatCoordinates[1]
+              }
+              srid={map.getView().getProjection().getCode().split(":")[1]}
+            />
+          </Volet>
+        </>
       ) : (
         ""
       )}
@@ -223,10 +264,8 @@ const Tooltip = ({
           <Popover.Body>
             {featureSelect
               .getProperties()
-              .propertiesToDisplay.split("\n")
-              .map((e, key) => (
-                <div key={key}>{e}</div>
-              ))}
+              .propertiesToDisplay?.split("\n")
+              ?.map((e, key) => <div key={key}>{e}</div>)}
             <Row className="mt-3">
               <Col className="ms-auto" xs={"auto"}>
                 <Row>

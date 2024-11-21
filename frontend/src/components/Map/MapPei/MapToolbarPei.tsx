@@ -256,6 +256,7 @@ const MapToolbarPei = forwardRef(
     handleCloseTournee,
     listePeiIdTourneePrive,
     listePeiIdTourneePublic,
+    dataDebitSimultaneLayer,
   }: {
     toggleTool: (toolId: string) => void;
     activeTool: string;
@@ -270,6 +271,7 @@ const MapToolbarPei = forwardRef(
     handleCloseTournee: () => void;
     listePeiIdTourneePrive: string[];
     listePeiIdTourneePublic: string[];
+    dataDebitSimultaneLayer: any;
   }) => {
     const { user } = useAppContext();
 
@@ -369,6 +371,11 @@ const MapToolbarPei = forwardRef(
             TYPE_DROIT.PEI_NUMERO_INTERNE_U,
           ])}
           disabledTooltip={activeTool === "deplacer-pei"}
+          displayButtonEditDebitSimultane={hasDroit(
+            user,
+            TYPE_DROIT.DEBITS_SIMULTANES_A,
+          )}
+          dataDebitSimultaneLayer={dataDebitSimultaneLayer}
         />
       </ButtonGroup>
     );

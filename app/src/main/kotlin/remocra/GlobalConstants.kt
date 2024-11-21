@@ -51,6 +51,9 @@ object GlobalConstants {
     const val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
 
     const val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
+
+    const val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT + "debits_simultanes/"
+
     const val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
 
     const val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT + "etudes/"

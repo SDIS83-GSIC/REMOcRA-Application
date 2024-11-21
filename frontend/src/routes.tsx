@@ -110,6 +110,7 @@ import LienProfilDroitList from "./pages/Admin/droit/LienProfilDroitList.tsx";
 import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonctionnaliteList.tsx";
 import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
 import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
+import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -301,6 +302,9 @@ export const URLS = {
     moduleType.toLocaleLowerCase() +
     "/thematiques/" +
     moduleId,
+
+  UPDATE_DEBIT_SIMULTANE: (debitSimultaneId: string) =>
+    url`/deci/debit-simultane/update/` + debitSimultaneId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -435,6 +439,15 @@ export default [
           <Authorization
             Component={UpdateIndisponibiliteTemporaire}
             droits={[TYPE_DROIT.INDISPO_TEMP_U]}
+          />
+        ),
+      },
+      {
+        path: "debit-simultane/update/:debitSimultaneId",
+        element: (
+          <Authorization
+            Component={UpdateDebitSimultane}
+            droits={[TYPE_DROIT.DEBITS_SIMULTANES_A]}
           />
         ),
       },

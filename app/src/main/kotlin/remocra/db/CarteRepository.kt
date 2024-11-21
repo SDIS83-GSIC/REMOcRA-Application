@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
+import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
@@ -116,6 +117,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("pointGeometrie"),
             DEBIT_SIMULTANE.ID.`as`("pointId"),
             DEBIT_SIMULTANE.NUMERO_DOSSIER,
+            PIBI.TYPE_RESEAU_ID.`as`("typeReseauId"),
             multiset(
                 selectDistinct(PEI.NUMERO_COMPLET)
                     .from(PEI)
@@ -131,6 +133,12 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             }.`as`("listeNumeroPei"),
         )
             .from(DEBIT_SIMULTANE)
+            .join(DEBIT_SIMULTANE_MESURE)
+            .on(DEBIT_SIMULTANE_MESURE.DEBIT_SIMULTANE_ID.eq(DEBIT_SIMULTANE.ID))
+            .join(L_DEBIT_SIMULTANE_MESURE_PEI)
+            .on(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID.eq(DEBIT_SIMULTANE_MESURE.ID))
+            .join(PIBI)
+            .on(PIBI.ID.eq(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
@@ -181,6 +189,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val pointId: UUID,
         val listeNumeroPei: String?,
         val debitSimultaneNumeroDossier: String,
+        val typeReseauId: UUID,
 
         // TODO à compléter au besoin
 

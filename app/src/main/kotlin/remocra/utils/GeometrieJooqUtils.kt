@@ -91,3 +91,11 @@ fun ST_Transform(
     srid: Int?,
 ): Field<Geometry?> =
     DSL.field("ST_Transform($geometrieField, $srid)", Geometry::class.java)
+
+fun ST_Distance(
+    geometrieField: Field<Geometry?>,
+    srid: Int,
+    coordonneeX: Double,
+    coordonneeY: Double,
+): Field<Double?> =
+    DSL.field("ST_Distance($geometrieField, ST_PointFromText('POINT ($coordonneeX $coordonneeY)', $srid))", Double::class.java)

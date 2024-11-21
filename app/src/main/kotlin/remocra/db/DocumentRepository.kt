@@ -47,9 +47,11 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .set(dsl.newRecord(DOCUMENT, document))
             .execute()
 
-    fun updateDocument(documentNomFichier: String) =
+    fun updateDocument(documentNomFichier: String, repertoire: String, documentId: UUID) =
         dsl.update(DOCUMENT)
             .set(DOCUMENT.NOM_FICHIER, documentNomFichier)
+            .set(DOCUMENT.REPERTOIRE, repertoire)
+            .where(DOCUMENT.ID.eq(documentId))
             .execute()
 
     fun insertDocumentPei(peiId: UUID, documentId: UUID, isPhotoPei: Boolean) =

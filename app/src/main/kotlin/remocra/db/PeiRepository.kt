@@ -595,6 +595,14 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.`in`(listPeiId))
             .fetchInto()
+
+    fun getSiteId(listePeiId: Collection<UUID>): UUID? =
+        dsl.select(PEI.SITE_ID)
+            .from(PEI)
+            .where(PEI.ID.`in`(listePeiId))
+            .and(PEI.SITE_ID.isNotNull)
+            .limit(1)
+            .fetchOneInto()
 }
 
 data class IdNumeroComplet(

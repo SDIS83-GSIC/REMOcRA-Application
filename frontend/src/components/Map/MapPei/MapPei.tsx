@@ -41,7 +41,7 @@ const MapPei = () => {
    * @param etudeId l'étude concernée
    * @returns
    */
-  useMemo(() => {
+  const dataDebitSimultaneLayer = useMemo(() => {
     if (!map) {
       return;
     }
@@ -99,6 +99,7 @@ const MapPei = () => {
             createUpdateTournee={createUpdateTournee}
             handleCloseTournee={handleCloseTournee}
             showCreateTournee={showCreateTournee}
+            dataDebitSimultaneLayer={dataDebitSimultaneLayer}
           />
         )
       }

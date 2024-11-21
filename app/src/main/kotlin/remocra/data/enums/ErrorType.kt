@@ -417,6 +417,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     LIEN_PROFIL_FONCTIONNALITE_EXISTS(13011, "La combinaison profil organisme / utilisateur existe déjà", Status.BAD_REQUEST),
     LIEN_PROFIL_FONCTIONNALITE_WRONG_TYPE(13012, "La combinaison profil organisme / utilisateur doit avoir le même type d'organisme", Status.BAD_REQUEST),
 
+    //
+    // ********************************************************************************
+    // Débits simultanés
+    // ********************************************************************************
+    //
+    DEBIT_SIMULTANE_FORBIDDEN(14000, "Vous n'avez pas les droits de gestion des débits simultanés", Status.FORBIDDEN),
+    DEBIT_SIMULTANE_MESURE(14001, "Au moins une mesure doit être rensignée."),
+    DEBIT_SIMULTANE_MESURE_PEI(14002, "Une mesure de débit simultané doit concernés au moins 2 PEI."),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

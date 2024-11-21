@@ -64,7 +64,7 @@ class UpdateBlocDocumentUseCase : AbstractCUDUseCase<BlocDocumentData>(TypeOpera
                 repertoire,
             )
             // On met à jour le nom du fichier
-            documentRepository.updateDocument(element.document.submittedFileName)
+            documentRepository.updateDocument(element.document.submittedFileName, repertoire, document.documentId)
         }
 
         blocDocumentRepository.updateBlocDocument(
