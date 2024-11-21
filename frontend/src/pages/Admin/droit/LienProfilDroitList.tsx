@@ -39,15 +39,15 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
   return (
     <FormContainer>
       <PageTitle
-        title="Liste des liens profil/droit"
+        title="Attribution des fonctionnalités"
         icon={<IconUtilisateurs />}
         right={
           <>
+            <Button variant={"secondary"} onClick={() => resetForm()}>
+              Annuler
+            </Button>
             <Button type="submit" variant={"info"}>
               Valider
-            </Button>
-            <Button variant={"info"} onClick={() => resetForm()}>
-              Annuler
             </Button>
           </>
         }
