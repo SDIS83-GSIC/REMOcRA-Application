@@ -44,6 +44,8 @@ class UpdateGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: Gestionnaire) {
-        // Pas de contraintes
+        if (gestionnaireRepository.checkCodeExists(element.gestionnaireCode, element.gestionnaireId)) {
+            throw RemocraResponseException(ErrorType.ADMIN_GESTIONNAIRE_CODE_EXISTS)
+        }
     }
 }

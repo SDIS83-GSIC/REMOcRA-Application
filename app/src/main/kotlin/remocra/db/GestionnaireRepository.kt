@@ -125,6 +125,14 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
                 .where(SITE.GESTIONNAIRE_ID.eq(gestionnaireId)),
         )
 
+    fun checkCodeExists(code: String, id: UUID?) =
+        dsl.fetchExists(
+            dsl.select(GESTIONNAIRE.CODE)
+                .from(GESTIONNAIRE)
+                .where(GESTIONNAIRE.CODE.eq(code))
+                .and(id?.let { DSL.and(GESTIONNAIRE.ID.notEqual(id)) }),
+        )
+
     fun getDestinataireContactGestionnaire(
         listePeiId: List<UUID>,
         contactRole: String,
