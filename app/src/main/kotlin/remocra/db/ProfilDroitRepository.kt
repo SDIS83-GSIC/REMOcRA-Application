@@ -121,6 +121,7 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
         dsl.update(PROFIL_DROIT)
             .set(PROFIL_DROIT.LIBELLE, profilDroit.profilDroitLibelle)
             .set(PROFIL_DROIT.CODE, profilDroit.profilDroitCode)
+            .set(PROFIL_DROIT.ACTIF, profilDroit.profilDroitActif)
             .where(PROFIL_DROIT.ID.eq(profilDroit.profilDroitId))
             .execute()
 

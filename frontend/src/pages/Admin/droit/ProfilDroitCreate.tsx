@@ -12,7 +12,10 @@ import ProfilDroitForm, {
 const ProfilDroitCreate = () => {
   return (
     <Container>
-      <PageTitle title="Création d'un profil droit" icon={<IconEdit />} />
+      <PageTitle
+        title="Création d'un groupe de fonctionnalités"
+        icon={<IconEdit />}
+      />
       <MyFormik
         initialValues={getInitialValues()}
         prepareVariables={(values) => prepareValues(values)}

@@ -190,11 +190,11 @@ const Utilisateur = () => {
             <div className="text-center">
               {profilDroitDeduit != null ? (
                 <>
-                  Le profil droit qui sera utilisé pour cet utilisateur sera :{" "}
-                  <b>{profilDroitDeduit}</b>
+                  Le groupe de fonctionnalités qui sera utilisé pour cet
+                  utilisateur sera : <b>{profilDroitDeduit}</b>
                 </>
               ) : (
-                "Aucun profil droit trouvé."
+                "Aucun groupe de fonctionnalités trouvé."
               )}
             </div>
           </Col>

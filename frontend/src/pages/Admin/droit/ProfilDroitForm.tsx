@@ -10,7 +10,7 @@ import { requiredString } from "../../../module/validators.tsx";
 export const getInitialValues = (data?: any) => ({
   profilDroitCode: data?.profilDroitCode ?? null,
   profilDroitLibelle: data?.profilDroitLibelle ?? null,
-  profilDroitActif: data?.profilDroitActif ?? null,
+  profilDroitActif: data?.profilDroitActif ?? false,
 });
 
 export const prepareValues = (values: any) => ({

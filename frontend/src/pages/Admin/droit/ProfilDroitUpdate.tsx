@@ -24,7 +24,10 @@ const ProfilDroitUpdate = () => {
 
   return (
     <Container>
-      <PageTitle title="Modification d'un profil droit" icon={<IconEdit />} />
+      <PageTitle
+        title="Modification d'un groupe de fonctionnalités"
+        icon={<IconEdit />}
+      />
       <MyFormik
         initialValues={getInitialValues(profilDroitState.data)}
         prepareVariables={(values) => prepareValues(values)}
