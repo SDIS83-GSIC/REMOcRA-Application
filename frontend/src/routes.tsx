@@ -233,12 +233,12 @@ export const URLS = {
   ADD_TYPE_ORGANISME: url`/admin/type-organisme/create`,
   UPDATE_TYPE_ORGANISME: (typeOrganismeId: string) =>
     url`/admin/type-organisme/update/` + typeOrganismeId,
-  LIST_TYPE_ORGANSIME: url`/admin/type-organisme`,
+  LIST_TYPE_ORGANISME: url`/admin/type-organisme`,
 
   ADD_PROFIL_ORGANISME: url`/admin/profil-organisme/create`,
   UPDATE_PROFIL_ORGANISME: (profilOrganismeId: string) =>
     url`/admin/profil-organisme/update/` + profilOrganismeId,
-  LIST_PROFIL_ORGANSIME: url`/admin/profil-organisme`,
+  LIST_PROFIL_ORGANISME: url`/admin/profil-organisme`,
 
   ADD_PROFIL_UTILISATEUR: url`/admin/profil-utilisateur/create`,
   UPDATE_PROFIL_UTILISATEUR: (profilUtilisateurId: string) =>

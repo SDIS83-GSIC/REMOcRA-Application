@@ -11,7 +11,7 @@ const UpdateProfilOrganisme = () => {
       <UpdateNomenclature
         nomenclatureId={profilOrganismeId}
         typeNomenclature={NOMENCLATURE.PROFIL_ORGANISME}
-        redirectLink={URLS.LIST_PROFIL_ORGANSIME}
+        redirectLink={URLS.LIST_PROFIL_ORGANISME}
       />
     )
   );
