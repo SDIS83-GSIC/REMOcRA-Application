@@ -45,6 +45,10 @@ class CreateNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: NomenclatureCodeLibelleData) {
+        if (nomenclatureCodeLibelleDataRepository.checkCodeExists(typeNomenclatureCodeLibelle, element.code, null)) {
+            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_CODE_EXISTS)
+        }
+
         // Pour le(s) type(s) concerné(s) par de l'auto-jointure (hiérarchie) : vérification que la FK de même type n'est pas l'objet lui-même
         // Ca n'a aucun sens pour les autres cas, mais ça n'est pas néfaste non plus puisque les UUID sont tous uniques
         if (element.idFk != null && element.id == element.idFk) {

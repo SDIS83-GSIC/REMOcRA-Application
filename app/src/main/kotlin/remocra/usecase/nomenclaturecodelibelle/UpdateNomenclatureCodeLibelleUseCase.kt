@@ -52,6 +52,10 @@ class UpdateNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: NomenclatureCodeLibelleData) {
+        if (nomenclatureCodeLibelleRepository.checkCodeExists(typeNomenclatureCodeLibelle, element.code, element.id)) {
+            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_CODE_EXISTS)
+        }
+
         if (element.protected) {
             // On va récupérer l'objet courant pour vérifier que les propriétés n'ont pas été changées
             val persistedElement = nomenclatureCodeLibelleRepository.getById(typeNomenclatureCodeLibelle, element.id)

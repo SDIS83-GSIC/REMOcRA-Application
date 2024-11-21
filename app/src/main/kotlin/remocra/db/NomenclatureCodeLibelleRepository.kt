@@ -307,4 +307,14 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             .where(getIdField(type).eq(id))
             .and(getProtectedField(type)?.isFalse ?: DSL.noCondition())
             .execute()
+
+    /**
+     * Vérifie s'il existe déjà un élément avec ce *code*. En modification, on regarde si le code existe pour un autre élément que lui-même
+     */
+    fun checkCodeExists(type: TypeNomenclatureCodeLibelle, code: String, id: UUID?) = dsl.fetchExists(
+        dsl.select(getIdField(type))
+            .from(getTableFromType(type))
+            .where(getCodeField(type).eq(code))
+            .and(id?.let { DSL.and(getIdField(type).notEqual(id) ?: DSL.noCondition()) }),
+    )
 }
