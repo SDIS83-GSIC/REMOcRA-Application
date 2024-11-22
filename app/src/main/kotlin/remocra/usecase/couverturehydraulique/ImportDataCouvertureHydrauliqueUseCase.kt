@@ -20,11 +20,10 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import remocra.utils.ImportShapeUtils
 import java.io.File
 import java.io.InputStream
 import java.util.UUID
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatimentPeiProjet>(TypeOperation.UPDATE) {
 
@@ -35,6 +34,9 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     @Inject lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject lateinit var appSettings: AppSettings
+
+    @Inject
+    lateinit var importShapeUtils: ImportShapeUtils
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ETUDE_U)) {
@@ -63,7 +65,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importReseau(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = readZipFile(inputStream)
+        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
 
         val store = FileDataStoreFinder.getDataStore(fileShp)
@@ -110,7 +112,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importBatiment(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = readZipFile(inputStream)
+        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
         val store = FileDataStoreFinder.getDataStore(fileShp)
         val source = store.featureSource
@@ -145,7 +147,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importPeiProjet(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = readZipFile(inputStream)
+        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
 
         val store = FileDataStoreFinder.getDataStore(fileShp)
@@ -254,33 +256,6 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
         // Puis on supprime les anciennes valeurs et on insère les nouvelles
         couvertureHydrauliqueRepository.deletePeiProjetByEtudeId(etudeId)
         couvertureHydrauliqueRepository.insertPeiProjet(listPeiProjet)
-    }
-
-    private fun readZipFile(inputStream: InputStream): File? {
-        var fileShp: File? = null
-        ZipInputStream(inputStream).use { zipInputStream ->
-            var zipEntry: ZipEntry? = zipInputStream.nextEntry
-
-            while (zipEntry != null) {
-                documentUtils.ensureDirectory(
-                    GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE,
-                )
-
-                val file = File(GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE + zipEntry.name)
-
-                zipInputStream.readBytes().inputStream().use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                if (zipEntry.name.contains(".shp")) {
-                    fileShp = file
-                }
-                zipInputStream.closeEntry()
-                zipEntry = zipInputStream.nextEntry
-            }
-        }
-        return fileShp
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: ReseauBatimentPeiProjet) {

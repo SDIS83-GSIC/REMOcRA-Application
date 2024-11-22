@@ -38,7 +38,7 @@ class ArchitectureTest {
         .resideInAPackage("..usecase..")
         .should()
         .onlyHaveDependentClassesThat()
-        .resideInAnyPackage("..usecase..", "..web..", "..auth..", "..endpoint..", "..eventbus..", "..tasks..")
+        .resideInAnyPackage("..usecase..", "..web..", "..auth..", "..endpoint..", "..eventbus..", "..tasks..", "..utils..")
 
     @ArchTest
     val onlyUsecasesManageTransactions: ArchRule = classes()

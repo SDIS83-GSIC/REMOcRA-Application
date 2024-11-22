@@ -23,16 +23,18 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
+import remocra.utils.ImportShapeUtils
 import java.io.File
 import java.io.InputStream
 import java.util.UUID
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 class ImportSitesUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var documentUtils: DocumentUtils
+
+    @Inject
+    lateinit var importShapeUtils: ImportShapeUtils
 
     @Inject
     lateinit var siteRepository: SiteRepository
@@ -71,7 +73,7 @@ class ImportSitesUseCase : AbstractUseCase() {
     }
 
     private fun importSites(inputStream: InputStream, userInfo: UserInfo) {
-        val fileShp: File = readZipFile(inputStream)
+        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_SHP_INTROUVABLE)
 
         val store = FileDataStoreFinder.getDataStore(fileShp)
@@ -113,33 +115,5 @@ class ImportSitesUseCase : AbstractUseCase() {
 
         // On supprime les fichiers du disque
         documentUtils.deleteDirectory(GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
-    }
-
-    // TODO au Directory près, peut être utilitarisé
-    private fun readZipFile(inputStream: InputStream): File? {
-        var fileShp: File? = null
-        ZipInputStream(inputStream).use { zipInputStream ->
-            var zipEntry: ZipEntry? = zipInputStream.nextEntry
-
-            while (zipEntry != null) {
-                documentUtils.ensureDirectory(
-                    GlobalConstants.DOSSIER_TMP_IMPORT_SITES,
-                )
-
-                val file = File(GlobalConstants.DOSSIER_TMP_IMPORT_SITES + zipEntry.name)
-
-                zipInputStream.readBytes().inputStream().use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                if (zipEntry.name.contains(".shp")) {
-                    fileShp = file
-                }
-                zipInputStream.closeEntry()
-                zipEntry = zipInputStream.nextEntry
-            }
-        }
-        return fileShp
     }
 }
