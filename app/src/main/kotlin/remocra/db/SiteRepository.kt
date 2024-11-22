@@ -52,7 +52,7 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .from(SITE)
             .leftJoin(GESTIONNAIRE)
             .on(GESTIONNAIRE.ID.eq(SITE.GESTIONNAIRE_ID))
-            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(SITE.LIBELLE))
             .limit(params.limit)
             .offset(params.offset)
@@ -74,8 +74,8 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    siteCode?.let { DSL.and(SITE.CODE.contains(it)) },
-                    siteLibelle?.let { DSL.and(SITE.LIBELLE.contains(it)) },
+                    siteCode?.let { DSL.and(SITE.CODE.containsIgnoreCase(it)) },
+                    siteLibelle?.let { DSL.and(SITE.LIBELLE.containsIgnoreCase(it)) },
                     siteActif?.let { DSL.and(SITE.ACTIF.eq(it)) },
                     siteGestionnaireId?.let { DSL.and(SITE.GESTIONNAIRE_ID.eq(it)) },
                 ),

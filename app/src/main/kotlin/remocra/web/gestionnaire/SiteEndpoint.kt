@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
-import remocra.data.ImportSitesData
+import remocra.data.ImportGeometriesCodeLibelleData
 import remocra.data.Params
 import remocra.data.SiteData
 import remocra.db.SiteRepository
@@ -132,7 +132,7 @@ class SiteEndpoint : AbstractEndpoint() {
         return Response.ok(
             importSitesUseCase.execute(
                 securityContext.userInfo,
-                ImportSitesData(
+                ImportGeometriesCodeLibelleData(
                     httpRequest.getPart("fileSites").inputStream,
                 ),
             ),

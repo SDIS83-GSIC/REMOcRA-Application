@@ -376,6 +376,18 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     //
     // ********************************************************************************
+    // Zones d'intégration
+    // ********************************************************************************
+    //
+    ZONE_INTEGRATION_FORBIDDEN_UPDATE(9200, "Vous n'avez pas les droits de modification des zones d'intégration", Status.FORBIDDEN),
+    IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE(9208, "Aucun fichier .shp n'a été trouvé."),
+    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE(9209, "La géométrie ne doit pas être nulle."),
+    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE_POINT(9210, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_ZONES_INTEGRATION_CODE_NULL(9211, "Le code ne doit pas être nul."),
+    IMPORT_ZONES_INTEGRATION_LIBELLE_NULL(9212, "Le libellé ne doit pas être nul."),
+
+    //
+    // ********************************************************************************
     // Document
     // ********************************************************************************
     //

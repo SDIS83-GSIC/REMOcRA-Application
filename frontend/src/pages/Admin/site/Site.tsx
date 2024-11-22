@@ -22,7 +22,7 @@ export const getInitialValues = (data: SiteType) => ({
   siteGestionnaireId: data?.siteGestionnaireId ?? null,
   siteCode: data?.siteCode ?? null,
   siteLibelle: data?.siteLibelle ?? null,
-  siteActif: data?.siteActif ?? null,
+  siteActif: data?.siteActif ?? false,
 });
 
 export const validationSchema = object({});

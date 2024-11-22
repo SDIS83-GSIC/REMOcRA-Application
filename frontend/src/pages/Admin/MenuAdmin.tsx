@@ -16,6 +16,7 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.ADMIN_ACCUEIL}>Configurer la page d&apos;accueil</a>
           <br />
+          <a href={URLS.LIST_ZONE_INTEGRATION}>Zones de compétence</a>
         </Col>
 
         <Col className="bg-light p-2 border rounded mx-2">

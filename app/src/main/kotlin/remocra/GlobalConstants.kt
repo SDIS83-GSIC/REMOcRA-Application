@@ -65,6 +65,7 @@ object GlobalConstants {
 
     const val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
     const val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA + "sites/tmp/"
+    const val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA + "zones_integration/tmp/"
 
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"

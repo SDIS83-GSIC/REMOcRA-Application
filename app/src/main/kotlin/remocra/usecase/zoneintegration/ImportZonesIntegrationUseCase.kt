@@ -1,4 +1,4 @@
-package remocra.usecase.site
+package remocra.usecase.zoneintegration
 
 import com.google.inject.Inject
 import jakarta.ws.rs.ForbiddenException
@@ -13,11 +13,12 @@ import remocra.data.AuteurTracabiliteData
 import remocra.data.ImportGeometriesCodeLibelleData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
-import remocra.db.SiteRepository
+import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.Site
+import remocra.db.jooq.remocra.enums.TypeZoneIntegration
+import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.eventbus.EventBus
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
@@ -28,7 +29,7 @@ import java.io.File
 import java.io.InputStream
 import java.util.UUID
 
-class ImportSitesUseCase : AbstractUseCase() {
+class ImportZonesIntegrationUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var documentUtils: DocumentUtils
@@ -37,7 +38,7 @@ class ImportSitesUseCase : AbstractUseCase() {
     lateinit var importShapeUtils: ImportShapeUtils
 
     @Inject
-    lateinit var siteRepository: SiteRepository
+    lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
@@ -49,8 +50,9 @@ class ImportSitesUseCase : AbstractUseCase() {
     lateinit var appSettings: AppSettings
 
     fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.GEST_SITE_A)) {
-            throw RemocraResponseException(ErrorType.SITE_FORBIDDEN_UPDATE)
+        // TODO quel droit pour l'administration des zones de compétence / intégration ?
+        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+            throw RemocraResponseException(ErrorType.ZONE_INTEGRATION_FORBIDDEN_UPDATE)
         }
     }
 
@@ -63,7 +65,7 @@ class ImportSitesUseCase : AbstractUseCase() {
 
         var result: Result? = null
         try {
-            importSites(element.fileGeometries, userInfo)
+            importZonesIntegration(element.fileGeometries, userInfo)
         } catch (rre: RemocraResponseException) {
             result = Result.Error(rre.message)
         } catch (e: Exception) {
@@ -72,9 +74,9 @@ class ImportSitesUseCase : AbstractUseCase() {
         return result
     }
 
-    private fun importSites(inputStream: InputStream, userInfo: UserInfo) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
-            ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_SHP_INTROUVABLE)
+    private fun importZonesIntegration(inputStream: InputStream, userInfo: UserInfo) {
+        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_ZONES_INTEGRATION)
+            ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE)
 
         val store = FileDataStoreFinder.getDataStore(fileShp)
         val source = store.featureSource
@@ -86,26 +88,35 @@ class ImportSitesUseCase : AbstractUseCase() {
 
                 val geometrie: Geometry =
                     (next.properties.find { it.name.localPart == "the_geom" }?.value as Geometry?)?.getGeometryN(0)
-                        ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_GEOMETRIE_NULLE)
+                        ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE)
 
                 geometrie.srid = appSettings.srid
 
                 val code: String =
                     next.properties.find { it.name.localPart == "code" }?.value?.toString()
-                        ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_CODE_NULL)
+                        ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_CODE_NULL)
 
                 val libelle: String =
                     next.properties.find { it.name.localPart == "libelle" }?.value?.toString()
-                        ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_LIBELLE_NULL)
+                        ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_LIBELLE_NULL)
 
-                val site = siteRepository.upsertSite(Site(siteId = UUID.randomUUID(), siteActif = true, siteCode = code, siteLibelle = libelle, siteGeometrie = geometrie, null))
+                val zoneIntegration = zoneIntegrationRepository.upsertZoneIntegration(
+                    ZoneIntegration(
+                        zoneIntegrationId = UUID.randomUUID(),
+                        zoneIntegrationActif = true,
+                        zoneIntegrationCode = code,
+                        zoneIntegrationLibelle = libelle,
+                        zoneIntegrationGeometrie = geometrie,
+                        TypeZoneIntegration.ZONE_COMPETENCE,
+                    ),
+                )
 
                 eventBus.post(
                     TracabiliteEvent(
-                        pojo = site,
-                        pojoId = site.siteId,
+                        pojo = zoneIntegration,
+                        pojoId = zoneIntegration.zoneIntegrationId,
                         typeOperation = TypeOperation.UPDATE,
-                        typeObjet = TypeObjet.SITE,
+                        typeObjet = TypeObjet.ZONE_INTEGRATION,
                         auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
                         date = dateUtils.now(),
                     ),
@@ -114,6 +125,6 @@ class ImportSitesUseCase : AbstractUseCase() {
         }
 
         // On supprime les fichiers du disque
-        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
+        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_TMP_IMPORT_ZONES_INTEGRATION)
     }
 }

@@ -111,6 +111,8 @@ import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonction
 import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
 import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
+import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
+import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -258,6 +260,10 @@ export const URLS = {
 
   LIST_SITE: url`/admin/site`,
   UPDATE_SITE: (siteId: string) => url`/admin/site/update/` + siteId,
+
+  LIST_ZONE_INTEGRATION: url`/admin/zone-integration`,
+  UPDATE_ZONE_INTEGRATION: (zoneIntegrationId: string) =>
+    url`/admin/zone-integration/update/` + zoneIntegrationId,
 
   LIST_GESTIONNAIRE: url`/admin/gestionnaire`,
   ADD_GESTIONNAIRE: url`/admin/gestionnaire/create`,
@@ -1267,6 +1273,26 @@ export default [
           <Authorization
             Component={AdminAccueil}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "zone-integration",
+        element: (
+          <Authorization
+            Component={ListZoneIntegration}
+            // TODO
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+          />
+        ),
+      },
+      {
+        path: "zone-integration/update/:zoneIntegrationId",
+        element: (
+          <Authorization
+            Component={UpdateZoneIntegration}
+            // TODO
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
