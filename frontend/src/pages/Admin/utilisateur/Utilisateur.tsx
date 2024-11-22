@@ -136,19 +136,23 @@ const Utilisateur = () => {
         </Col>
       </Row>
       {user.isSuperAdmin && (
-        <TooltipCustom
-          tooltipId={"superAdmin"}
-          tooltipText={
-            "Si vous cochez cette case, l'utilisateur aura tous les droits sur l'application indépendamment d'une zone de compétence."
-          }
-        >
-          <Row className="mt-3">
-            <CheckBoxInput
-              name="utilisateurIsSuperAdmin"
-              label="Est super administrateur ?"
-            />
-          </Row>
-        </TooltipCustom>
+        <Row className="mt-3">
+          <Col>
+            <TooltipCustom
+              tooltipId={"superAdmin"}
+              tooltipText={
+                "Si vous cochez cette case, l'utilisateur aura tous les droits sur l'application indépendamment d'une zone de compétence."
+              }
+            >
+              <CheckBoxInput
+                name="utilisateurIsSuperAdmin"
+                label="Est super administrateur ?"
+              />
+            </TooltipCustom>
+          </Col>
+          {/* TODO trouver mieux pour que la tooltip soit en phase avec l'élément */}
+          <Col> </Col> <Col> </Col>
+        </Row>
       )}
       {((!values.utilisateurIsSuperAdmin && user.isSuperAdmin) ||
         !values.utilisateurIsSuperAdmin) && (
