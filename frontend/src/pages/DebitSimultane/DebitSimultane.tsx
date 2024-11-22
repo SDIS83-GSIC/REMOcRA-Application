@@ -44,16 +44,20 @@ type DebitSimultaneMesureType = {
 };
 
 export const getInitialValues = (
-  data: DebitSimultaneType,
+  data: DebitSimultaneType | null,
   listePeiSelectionnable: { id: string; code: string; libelle: string }[],
+  vitesseEau: number | undefined,
+  siteLibelle: string | undefined,
+  typeReseauLibelle: string | undefined,
+  maxDiametreCanalisation: number | undefined,
 ) => ({
   debitSimultaneNumeroDossier: data?.debitSimultaneNumeroDossier ?? null,
-  siteLibelle: data?.siteLibelle ?? null,
-  maxDiametreCanalisation: data?.maxDiametreCanalisation ?? null,
-  typeReseauLibelle: data?.typeReseauLibelle ?? null,
+  siteLibelle: siteLibelle ?? null,
+  maxDiametreCanalisation: maxDiametreCanalisation ?? null,
+  typeReseauLibelle: typeReseauLibelle ?? null,
   listeDebitSimultaneMesure: data?.listeDebitSimultaneMesure ?? [],
   listePeiSelectionnable: listePeiSelectionnable,
-  vitesseEau: data?.vitesseEau,
+  vitesseEau: vitesseEau,
 });
 
 export const validationSchema = object({});

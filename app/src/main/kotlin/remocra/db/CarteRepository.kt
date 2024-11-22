@@ -36,6 +36,10 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
                 .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)),
         ).`as`("hasTournee")
+        val hasDebitSimultane = DSL.exists(
+            DSL.select(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID).from(L_DEBIT_SIMULTANE_MESURE_PEI)
+                .where(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID.eq(PEI.ID)),
+        ).`as`("hasDebitSimultane")
     }
 
     /**
@@ -47,12 +51,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             PEI.ID.`as`("pointId"),
             hasIndispoTemp,
             hasTournee,
+            hasDebitSimultane,
             NATURE_DECI.CODE,
+            PIBI.TYPE_RESEAU_ID,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
@@ -73,12 +81,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             PEI.ID.`as`("pointId"),
             hasIndispoTemp,
             hasTournee,
+            hasDebitSimultane,
             NATURE_DECI.CODE,
+            PIBI.TYPE_RESEAU_ID,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin),
@@ -165,7 +177,9 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val propertiesToDisplay: String? = null,
         val hasIndispoTemp: Boolean = false,
         val hasTournee: Boolean = false,
+        val hasDebitSimultane: Boolean = false,
         val natureDeciCode: String,
+        val pibiTypeReseauId: UUID?,
 
         // TODO à compléter au besoin
 

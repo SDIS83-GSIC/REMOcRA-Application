@@ -1,5 +1,6 @@
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import DebitSimultane, {
   getInitialValues,
@@ -7,29 +8,31 @@ import DebitSimultane, {
   validationSchema,
 } from "./DebitSimultane.tsx";
 
-const UpdateDebitSimultane = ({
-  debitSimultaneId,
+const CreateDebitSimultane = ({
   typeReseauId,
-  coordonneeX,
-  coordonneeY,
-  srid,
+  listePibiId,
   onSubmit,
 }: {
-  debitSimultaneId: string;
   typeReseauId: string;
   onSubmit: () => void;
-  coordonneeX: number;
-  coordonneeY: number;
-  srid: string;
+  listePibiId: string[];
 }) => {
-  const { data } = useGet(url`/api/debit-simultane/get/` + debitSimultaneId);
+  const { data: vitesseEau } = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(PARAMETRE.VITESSE_EAU),
+    }}`,
+  );
 
   const { data: listePeiSelectionnable } = useGet(
     url`/api/debit-simultane/pei?${{
-      coordonneeX: coordonneeX,
-      coordonneeY: coordonneeY,
-      srid: srid,
+      listePibiId: JSON.stringify(listePibiId),
       typeReseauId: typeReseauId,
+    }}`,
+  );
+
+  const { data } = useGet(
+    url`/api/debit-simultane/get-infos?${{
+      listePibiId: JSON.stringify(listePibiId),
     }}`,
   );
 
@@ -37,17 +40,24 @@ const UpdateDebitSimultane = ({
     data && (
       <MyFormik
         initialValues={getInitialValues(
-          data,
+          {
+            listeDebitSimultaneMesure: [
+              {
+                debitSimultaneMesureDateMesure: new Date(),
+                listePeiId: listePibiId,
+              },
+            ],
+          },
           listePeiSelectionnable,
-          data.vitesseEau,
+          vitesseEau,
           data.siteLibelle,
           data.typeReseauLibelle,
-          data.maxDiametreCanalisation,
+          data.pibiDiametreCanalisation,
         )}
         validationSchema={validationSchema}
-        isPost={false}
+        isPost={true}
         isMultipartFormData={true}
-        submitUrl={`/api/debit-simultane/update/` + debitSimultaneId}
+        submitUrl={`/api/debit-simultane/create/`}
         prepareVariables={(values) => prepareVariables(values)}
         onSubmit={onSubmit}
       >
@@ -57,4 +67,4 @@ const UpdateDebitSimultane = ({
   );
 };
 
-export default UpdateDebitSimultane;
+export default CreateDebitSimultane;

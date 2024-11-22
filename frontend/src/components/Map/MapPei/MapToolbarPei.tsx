@@ -4,32 +4,43 @@ import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, useMemo, useState } from "react";
-import { Button, ButtonGroup } from "react-bootstrap";
+import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import CreateDebitSimultane from "../../../pages/DebitSimultane/CreateDebitSimultane.tsx";
 import CreateIndisponibiliteTemporaire from "../../../pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import AffecterPeiTourneeMap from "../../../pages/Tournee/AffecterPeiTourneeMap.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import {
   IconCreate,
+  IconDebitSimultane,
   IconIndisponibiliteTemporaire,
   IconMoveObjet,
   IconSelect,
   IconTournee,
 } from "../../Icon/Icon.tsx";
+import useModal from "../../Modal/ModalUtils.tsx";
+import SimpleModal from "../../Modal/SimpleModal.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
 
-export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
+export const useToolbarPeiContext = ({
+  map,
+  workingLayer,
+  dataPeiLayer,
+}: {
+  map: Map;
+}) => {
   const navigate = useNavigate();
+  const { visible, show, close, ref } = useModal();
   const { success: successToast, error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
   const [listePeiIdTourneePublic, setListePeiIdTourneePublic] = useState<
@@ -43,6 +54,16 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
 
   const [showCreateTournee, setShowCreateTournee] = useState(false);
   const handleCloseTournee = () => setShowCreateTournee(false);
+
+  const [showCreateDebitSimultane, setShowCreateDebitSimultane] =
+    useState(false);
+  const handleCloseDebitSimultane = () => setShowCreateDebitSimultane(false);
+
+  const [listePeiIdDebitSimultane, setListePeiIdDebitSimultane] = useState<
+    string[]
+  >([]);
+
+  const [typeReseauId, setTypeReseauId] = useState<string>();
 
   const tools = useMemo(() => {
     if (!map) {
@@ -122,6 +143,7 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
       }),
       minArea: 25,
     });
+
     dragBoxCtrl.on("boxend", function (e) {
       if (!shiftKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
@@ -141,16 +163,41 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
       const prives: string[] = [];
       const publics: string[] = [];
 
+      const peiPrivesDebitSimultane: any[] = [];
+
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
         listePeiId.push(point.pointId);
 
         if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
           prives.push(point.pointId);
+
+          if (point.pibiTypeReseauId != null) {
+            peiPrivesDebitSimultane.push(point);
+          }
         } else {
           publics.push(point.pointId);
         }
       });
+
+      const distinctTypeReseau = peiPrivesDebitSimultane
+        .map((pei) => pei.pibiTypeReseauId)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      const hasDebitSimultane = peiPrivesDebitSimultane
+        .map((pei) => pei.hasDebitSimultane)
+        .find((e) => e === true);
+
+      // Si les PEI ont le même type de réseau et n'ont pas de débit simultané alors on autorise la création
+      if (distinctTypeReseau.length === 1 && hasDebitSimultane === null) {
+        setListePeiIdDebitSimultane(
+          peiPrivesDebitSimultane.map((e) => e.pointId),
+        );
+        setTypeReseauId(distinctTypeReseau.at(0));
+      } else {
+        setListePeiIdDebitSimultane([]);
+        setTypeReseauId(null);
+      }
 
       // A retirer en 3.1 => ticket #126505
       if (prives.length > 0 && publics.length === 0) {
@@ -227,6 +274,31 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
     setShowCreateIndispoTemp(true);
   }
 
+  async function createDebitSimultane() {
+    // On regarde si les PEI sélectionné sont à moins de 500 mètres
+    (
+      await fetch(
+        url`/api/debit-simultane/check-distance?${{ listePibiId: JSON.stringify(listePeiIdDebitSimultane) }}`,
+        getFetchOptions({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        }),
+      )
+    )
+      .text()
+      .then((text) => {
+        if (text === "true") {
+          setShowCreateDebitSimultane(true);
+        } else {
+          show();
+        }
+      })
+      .catch(() => {
+        show();
+      });
+  }
+
   return {
     tools,
     showCreateIndispoTemp,
@@ -238,6 +310,14 @@ export const useToolbarPeiContext = ({ map, workingLayer, dataPeiLayer }) => {
     handleCloseTournee,
     listePeiIdTourneePublic,
     listePeiIdTourneePrive,
+    createDebitSimultane,
+    handleCloseDebitSimultane,
+    showCreateDebitSimultane,
+    listePeiIdDebitSimultane,
+    typeReseauId,
+    ref,
+    visible,
+    close,
   };
 };
 
@@ -257,6 +337,14 @@ const MapToolbarPei = forwardRef(
     listePeiIdTourneePrive,
     listePeiIdTourneePublic,
     dataDebitSimultaneLayer,
+    createDebitSimultane,
+    handleCloseDebitSimultane,
+    showCreateDebitSimultane,
+    listePeiIdDebitSimultane,
+    typeReseauId,
+    closeModal,
+    refModal,
+    visibleModal,
   }: {
     toggleTool: (toolId: string) => void;
     activeTool: string;
@@ -272,6 +360,14 @@ const MapToolbarPei = forwardRef(
     listePeiIdTourneePrive: string[];
     listePeiIdTourneePublic: string[];
     dataDebitSimultaneLayer: any;
+    createDebitSimultane: () => void;
+    handleCloseDebitSimultane: () => void;
+    showCreateDebitSimultane: boolean;
+    listePeiIdDebitSimultane: string[];
+    typeReseauId: string | undefined;
+    visibleModal: boolean;
+    closeModal: () => void;
+    refModal: any;
   }) => {
     const { user } = useAppContext();
 
@@ -358,6 +454,61 @@ const MapToolbarPei = forwardRef(
                 closeVolet={handleCloseTournee}
               />
             </Volet>
+          </>
+        )}
+        {hasDroit(user, TYPE_DROIT.DEBITS_SIMULTANES_A) && (
+          <>
+            <TooltipCustom
+              tooltipText={
+                <>
+                  <Row className="p-2">
+                    <b>Créer un débit simultané</b>
+                  </Row>
+                  <Row className="p-2">
+                    Les PIBI sélectionnés doivent :
+                    <ul>
+                      <li>avoir la nature DECI privé </li>
+                      <li>avoir le même type de réseau</li>
+                      <li>n&apos;avoir aucun débit simultané associé</li>
+                      <li>être à moins de 500m</li>
+                    </ul>
+                  </Row>
+                </>
+              }
+              tooltipId={"debit-simultane-carte"}
+            >
+              <Button
+                variant="outline-primary"
+                onClick={createDebitSimultane}
+                className="rounded m-2"
+                disabled={
+                  listePeiIdDebitSimultane.length < 2 || typeReseauId === null
+                }
+              >
+                <IconDebitSimultane />
+              </Button>
+            </TooltipCustom>
+            <Volet
+              handleClose={handleCloseDebitSimultane}
+              show={showCreateDebitSimultane}
+              className="w-auto"
+            >
+              <CreateDebitSimultane
+                listePibiId={listePeiIdDebitSimultane}
+                typeReseauId={typeReseauId!}
+                onSubmit={() => {
+                  dataDebitSimultaneLayer.getSource().refresh();
+                  handleCloseDebitSimultane();
+                }}
+              />
+            </Volet>
+            <SimpleModal
+              closeModal={closeModal}
+              content={"Tous les PEI doivent être à moins de 500 mètres."}
+              header={"Impossible de créer un débit simultané"}
+              ref={refModal}
+              visible={visibleModal}
+            />
           </>
         )}
         <TooltipMapPei

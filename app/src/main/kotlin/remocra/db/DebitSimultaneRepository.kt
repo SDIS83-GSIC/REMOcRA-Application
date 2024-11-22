@@ -45,6 +45,19 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .where(DEBIT_SIMULTANE.ID.eq(debitSimultaneId))
             .execute()
 
+    fun insertDebitSimultane(
+        siteId: UUID?,
+        pointGeometrie: Point,
+        numeroDossier: String,
+        debitSimultaneId: UUID,
+    ) =
+        dsl.insertInto(DEBIT_SIMULTANE)
+            .set(DEBIT_SIMULTANE.ID, debitSimultaneId)
+            .set(DEBIT_SIMULTANE.SITE_ID, siteId)
+            .set(DEBIT_SIMULTANE.GEOMETRIE, pointGeometrie)
+            .set(DEBIT_SIMULTANE.NUMERO_DOSSIER, numeroDossier)
+            .execute()
+
     fun deleteDebitSimultane(debitSimultaneId: UUID) =
         dsl.deleteFrom(DEBIT_SIMULTANE)
             .where(DEBIT_SIMULTANE.ID.eq(debitSimultaneId))
@@ -203,4 +216,32 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .join(DEBIT_SIMULTANE_MESURE)
             .on(DEBIT_SIMULTANE_MESURE.DOCUMENT_ID.eq(DOCUMENT.ID))
             .fetchMap(DEBIT_SIMULTANE_MESURE.ID, Document::class.java)
+
+    fun getDistance(listePibiId: Set<UUID>, coordonneesXYSrid: CoordonneesXYSrid): Collection<Boolean> =
+        dsl.select(
+            ST_Distance(PEI.GEOMETRIE, coordonneesXYSrid.srid, coordonneesXYSrid.coordonneeX, coordonneesXYSrid.coordonneeY).lt(
+                DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
+            ),
+        )
+            .from(PEI)
+            .where(PEI.ID.`in`(listePibiId))
+            .fetchInto()
+
+    fun getInfosGenerales(listePibiId: Set<UUID>): Collection<TypeReseauMaxCanalisationSite> =
+        dsl.select(SITE.LIBELLE, TYPE_RESEAU.LIBELLE, PIBI.DIAMETRE_CANALISATION)
+            .from(PEI)
+            .join(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .leftJoin(SITE)
+            .on(PEI.SITE_ID.eq(SITE.ID))
+            .leftJoin(TYPE_RESEAU)
+            .on(PIBI.TYPE_RESEAU_ID.eq(TYPE_RESEAU.ID))
+            .where(PIBI.ID.`in`(listePibiId))
+            .fetchInto()
+
+    data class TypeReseauMaxCanalisationSite(
+        val siteLibelle: String?,
+        val typeReseauLibelle: String,
+        val pibiDiametreCanalisation: Int?,
+    )
 }

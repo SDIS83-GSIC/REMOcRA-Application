@@ -30,6 +30,14 @@ const MapPei = () => {
     createUpdateTournee,
     handleCloseTournee,
     showCreateTournee,
+    createDebitSimultane,
+    handleCloseDebitSimultane,
+    showCreateDebitSimultane,
+    listePeiIdDebitSimultane,
+    typeReseauId,
+    close,
+    ref,
+    visible,
   } = useToolbarPeiContext({
     map,
     workingLayer,
@@ -100,6 +108,14 @@ const MapPei = () => {
             handleCloseTournee={handleCloseTournee}
             showCreateTournee={showCreateTournee}
             dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+            createDebitSimultane={createDebitSimultane}
+            handleCloseDebitSimultane={handleCloseDebitSimultane}
+            showCreateDebitSimultane={showCreateDebitSimultane}
+            listePeiIdDebitSimultane={listePeiIdDebitSimultane}
+            typeReseauId={typeReseauId}
+            closeModal={close}
+            refModal={ref}
+            visibleModal={visible}
           />
         )
       }

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -22,11 +23,12 @@ import remocra.auth.userInfo
 import remocra.data.DebitSimultaneData
 import remocra.data.DebitSimultaneMesureData
 import remocra.data.enums.TypePointCarte
-import remocra.db.DebitSimultaneRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.carte.GetPointCarteUseCase
+import remocra.usecase.debitsimultane.CreateDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.DeleteDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.GetDebitSimultaneCompletUseCase
+import remocra.usecase.debitsimultane.GetPibiForDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.UpdateDebitSimultaneUseCase
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
@@ -44,13 +46,16 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
     lateinit var getDebitSimultaneCompletUseCase: GetDebitSimultaneCompletUseCase
 
     @Inject
-    lateinit var debitSimultaneRepository: DebitSimultaneRepository
+    lateinit var getPibiForDebitSimultaneUseCase: GetPibiForDebitSimultaneUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
 
     @Inject
     lateinit var updateDebitSimultaneUseCase: UpdateDebitSimultaneUseCase
+
+    @Inject
+    lateinit var createDebitSimultaneUseCase: CreateDebitSimultaneUseCase
 
     @Inject
     lateinit var deleteDebitSimultaneUseCase: DeleteDebitSimultaneUseCase
@@ -96,27 +101,52 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
     ).build()
 
     @GET
+    @Path("/get-infos")
+    @RequireDroits([Droit.DEBITS_SIMULTANES_A])
+    fun getInfos(
+        @QueryParam("listePibiId")
+        listePibiId: Set<UUID>,
+    ) = Response.ok(
+        getPibiForDebitSimultaneUseCase.getInfosTypeReseauMaxDiametre(
+            listePibiId,
+        ),
+    ).build()
+
+    @GET
     @Path("/pei")
     @RequireDroits([Droit.DEBITS_SIMULTANES_R])
     fun getPei(
         @QueryParam("coordonneeX")
-        coordonneeX: Double,
+        coordonneeX: Double?,
         @QueryParam("coordonneeY")
-        coordonneeY: Double,
+        coordonneeY: Double?,
         @QueryParam("srid")
-        srid: Int,
+        srid: Int?,
         @QueryParam("typeReseauId")
         typeReseauId: UUID,
-    ) = Response.ok(
-        debitSimultaneRepository.getPibiForDebitSimultane(
-            CoordonneesXYSrid(
-                coordonneeX,
-                coordonneeY,
-                srid,
-            ),
-            typeReseauId,
-        ),
-    ).build()
+        @QueryParam("listePibiId")
+        listePibiId: Set<UUID>?,
+    ): Response {
+        val listePibi =
+            if (listePibiId != null) {
+                getPibiForDebitSimultaneUseCase.execute(
+                    null,
+                    listePibiId,
+                    typeReseauId,
+                )
+            } else {
+                getPibiForDebitSimultaneUseCase.execute(
+                    CoordonneesXYSrid(
+                        coordonneeX!!,
+                        coordonneeY!!,
+                        srid!!,
+                    ),
+                    null,
+                    typeReseauId,
+                )
+            }
+        return Response.ok(listePibi).build()
+    }
 
     @DELETE
     @Path("/delete/{debitSimultaneId}")
@@ -155,5 +185,33 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
         )
 
         return updateDebitSimultaneUseCase.execute(securityContext.userInfo, debitSimultaneData).wrap()
+    }
+
+    @POST
+    @Path("/check-distance")
+    @RequireDroits([Droit.DEBITS_SIMULTANES_A])
+    fun checkDistance(
+        @QueryParam("listePibiId")
+        listePibiId: Set<UUID>,
+    ): Response {
+        return Response.ok(getPibiForDebitSimultaneUseCase.checkDistance(listePibiId)).build()
+    }
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.DEBITS_SIMULTANES_A])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun create(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val debitSimultaneData = DebitSimultaneData(
+            debitSimultaneId = UUID.randomUUID(),
+            debitSimultaneNumeroDossier = httpRequest.getTextPart("debitSimultaneNumeroDossier"),
+            listeDocument = httpRequest.parts.filter { it.name.contains("document_") },
+            listeDebitSimultaneMesure = objectMapper.readValue<List<DebitSimultaneMesureData>>
+                (httpRequest.getTextPart("listeDebitSimultaneMesure")),
+        )
+
+        return createDebitSimultaneUseCase.execute(securityContext.userInfo, debitSimultaneData).wrap()
     }
 }
