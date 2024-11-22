@@ -4,6 +4,7 @@ import ReactSelect from "react-select";
 import { Button } from "react-bootstrap";
 import useQueryParams from "../Fetch/useQueryParams.tsx";
 import { IconNextPage, IconPreviousPage } from "../Icon/Icon.tsx";
+import decorateInteger from "../../utils/formatNumberUtils.tsx";
 import styles from "./Pagination.module.css";
 const PAGINATION = [10, 25, 50, 100];
 const PAGINATION_DEFAULT = "10";
@@ -128,11 +129,14 @@ const Pagination = ({
       <div className={styles.resultsDisplayed}>
         {dataLength > 0 && (
           <>
-            Affichage des r&eacute;sultats {itemsPerPage * currentPage + 1} à{" "}
-            {currentPage > 0
-              ? itemsPerPage * (currentPage + 1) - (itemsPerPage - dataLength)
-              : dataLength}
-            &nbsp;sur {count}
+            Affichage des r&eacute;sultats{" "}
+            {decorateInteger(itemsPerPage * currentPage + 1)} à{" "}
+            {decorateInteger(
+              currentPage > 0
+                ? itemsPerPage * (currentPage + 1) - (itemsPerPage - dataLength)
+                : dataLength,
+            )}
+            &nbsp;sur {decorateInteger(count)}
           </>
         )}
       </div>
