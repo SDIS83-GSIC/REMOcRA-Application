@@ -425,6 +425,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DEBIT_SIMULTANE_FORBIDDEN(14000, "Vous n'avez pas les droits de gestion des débits simultanés", Status.FORBIDDEN),
     DEBIT_SIMULTANE_MESURE(14001, "Au moins une mesure doit être rensignée."),
     DEBIT_SIMULTANE_MESURE_PEI(14002, "Une mesure de débit simultané doit concernés au moins 2 PEI."),
+    PEI_DELETE_DEBIT_SIMULTANE(
+        14003,
+        """
+        Le PEI que vous tentez de supprimer est lié à un débit simultané.
+        """.trimIndent(),
+    ),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

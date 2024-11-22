@@ -6,6 +6,7 @@ import remocra.data.PeiData
 import remocra.data.enums.ErrorType
 import remocra.db.AireAspirationRepository
 import remocra.db.AnomalieRepository
+import remocra.db.DebitSimultaneRepository
 import remocra.db.DocumentRepository
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.TourneeRepository
@@ -24,6 +25,9 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
 
     @Inject
     lateinit var indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository
+
+    @Inject
+    lateinit var debitSimultaneRepository: DebitSimultaneRepository
 
     @Inject
     lateinit var deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase
@@ -135,6 +139,11 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         }
         if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
+        }
+
+        // Si le PEI a un débit simultané, on n'autorise pas sa suppression
+        if (debitSimultaneRepository.existDebitSimultaneWithPibi(element.peiId) && element.peiTypePei == TypePei.PIBI) {
+            throw RemocraResponseException(ErrorType.PEI_DELETE_DEBIT_SIMULTANE)
         }
     }
 }

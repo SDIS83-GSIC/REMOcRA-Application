@@ -244,4 +244,14 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
         val typeReseauLibelle: String,
         val pibiDiametreCanalisation: Int?,
     )
+
+    fun existDebitSimultaneWithPibi(pibiId: UUID) =
+        dsl.fetchExists(
+            dsl.select(DEBIT_SIMULTANE.ID).from(DEBIT_SIMULTANE)
+                .join(DEBIT_SIMULTANE_MESURE)
+                .on(DEBIT_SIMULTANE_MESURE.DEBIT_SIMULTANE_ID.eq(DEBIT_SIMULTANE.ID))
+                .join(L_DEBIT_SIMULTANE_MESURE_PEI)
+                .on(DEBIT_SIMULTANE_MESURE.ID.eq(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID))
+                .where(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID.eq(pibiId)),
+        )
 }
