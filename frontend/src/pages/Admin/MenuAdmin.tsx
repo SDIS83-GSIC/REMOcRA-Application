@@ -5,45 +5,19 @@ const MenuAdmin = () => {
   return (
     <Container>
       <Row>
-        <Col className="bg-light p-2 border rounded">
-          <div className="fw-bold text-center p-2">Gérer les nomenclatures</div>
-          <a href={URLS.LIST_TYPE_CANALISATION}>Types de canalisations</a>
+        <Col className="bg-light p-2 border rounded mx-2">
+          <div className="fw-bold text-center p-2">Administration générale</div>
+
+          <a href="TODO">Paramètres applicatifs</a>
           <br />
-          <a href={URLS.LIST_DIAMETRE}>Types de diamètres</a>
-          <br />
-          <a href={URLS.ADMIN_FICHE_RESUME}>Configurer la fiche de résumé</a>
+          <a href={URLS.ADMIN_FICHE_RESUME}>
+            Configurer la fiche de résumé des PEI
+          </a>
           <br />
           <a href={URLS.ADMIN_ACCUEIL}>Configurer la page d&apos;accueil</a>
           <br />
-          <a href={URLS.LIST_TYPE_PENA_ASPIRATION}>
-            Types de dispositifs d&apos;aspiration
-          </a>
-          <br />
-          <a href={URLS.LIST_DOMAINE}>Domaines</a>
-          <br />
-          <a href={URLS.LIST_TYPE_ETUDE}>Types d&apos;études</a>
-          <br />
-          <a href={URLS.LIST_MARQUE_PIBI}>Marques de PIBI</a>
-          <br />
-          <a href={URLS.LIST_MATERIAU}>Matériaux</a>
-          <br />
-          <a href={URLS.LIST_MODELE_PIBI}>Modèles PIBI</a>
-          <br />
-          <a href={URLS.LIST_NATURE}>Natures de PEI</a>
-          <br />
-          <a href={URLS.LIST_NATURE_DECI}>Natures DECI</a>
-          <br />
-          <a href={URLS.LIST_NIVEAU}>Niveaux</a>
-          <br />
-          <a href={URLS.LIST_ORGANISME}>Organismes</a>
-          <br />
-          <a href={URLS.LIST_ROLE_CONTACT}>Rôles des contacts</a>
-          <br />
-          <a href={URLS.LIST_THEMATIQUE}>Thématiques</a>
-          <br />
-          <a href={URLS.LIST_TYPE_RESEAU}>Types de réseaux</a>
-          <br />
         </Col>
+
         <Col className="bg-light p-2 border rounded mx-2">
           <div className="fw-bold text-center p-2">Gérer les droits</div>
           <a href={URLS.PROFIL_DROIT_LIST}>Groupes de fonctionnalités</a>
@@ -60,8 +34,56 @@ const MenuAdmin = () => {
             Liens profils / groupes de fonctionnalités
           </a>
           <br />
+          <br />
+          <a href={URLS.LIST_ORGANISME}>Organismes</a>
+          <br />
+          <a href={URLS.LIST_UTILISATEUR}>Utilisateurs</a>
+          <br />
         </Col>
+
+        <Col className="bg-light p-2 border rounded">
+          <div className="fw-bold text-center p-2">Gérer les nomenclatures</div>
+
+          <a href={URLS.LIST_DOMAINE}>Domaines</a>
+          <br />
+          <a href={URLS.LIST_MARQUE_PIBI}>Marques de PIBI</a>
+          <br />
+          <a href={URLS.LIST_MATERIAU}>Matériaux</a>
+          <br />
+          <a href={URLS.LIST_MODELE_PIBI}>Modèles PIBI</a>
+          <br />
+          <a href={URLS.LIST_NATURE}>Natures de PEI</a>
+          <br />
+          <a href={URLS.LIST_NATURE_DECI}>Natures DECI</a>
+          <br />
+          <a href={URLS.LIST_NIVEAU}>Niveaux</a>
+          <br />
+          <a href={URLS.LIST_ROLE_CONTACT}>Rôles des contacts</a>
+          <br />
+          <a href={URLS.LIST_THEMATIQUE}>Thématiques</a>
+          <br />
+          <a href={URLS.LIST_TYPE_CANALISATION}>Types de canalisations</a>
+          <br />
+          <a href={URLS.LIST_DIAMETRE}>Types de diamètres</a>
+          <br />
+          <a href={URLS.LIST_TYPE_PENA_ASPIRATION}>
+            Types de dispositifs d&apos;aspiration
+          </a>
+          <br />
+          <a href={URLS.LIST_TYPE_ETUDE}>Types d&apos;études</a>
+          <br />
+          <a href={URLS.LIST_TYPE_RESEAU}>Types de réseaux</a>
+          <br />
+        </Col>
+
       </Row>
+
+      <Row>
+        <Col className="bg-light p-2 border rounded mx-2">
+        <div className="fw-bold text-center p-2">Paramétrage des traitements</div>
+        TODO
+        </Col>
+        </Row>
     </Container>
   );
 };
