@@ -105,6 +105,17 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         val gestionnaireLibelle: String?,
     )
 
+    fun upsertSite(site: Site): Site {
+        val record = dsl.newRecord(SITE, site)
+        return dsl.insertInto(SITE)
+            .set(record)
+            .onConflict(SITE.CODE)
+            .doUpdate()
+            .set(SITE.LIBELLE, site.siteLibelle)
+            .set(SITE.GEOMETRIE, site.siteGeometrie)
+            .returning().fetchSingleInto()
+    }
+
     fun updateSite(siteId: UUID, siteGestionnaireId: UUID?, siteCode: String, siteLibelle: String, siteActif: Boolean) =
         dsl.update(SITE)
             .set(SITE.GESTIONNAIRE_ID, siteGestionnaireId)

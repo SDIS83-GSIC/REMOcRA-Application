@@ -1,11 +1,14 @@
-import { Container } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { useFormikContext } from "formik";
+import { object } from "yup";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
+import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -24,7 +27,23 @@ import UtilisateurEntity, {
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
+import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import FilterValues from "./FilterSite.tsx";
+
+export const getInitialValues = () => ({
+  fileSites: null,
+});
+
+export const validationSchema = object({});
+export const prepareVariables = (values) => {
+  const formData = new FormData();
+  formData.append("fileSites", values.fileSites);
+  return formData;
+};
 
 const ListSite = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
@@ -49,10 +68,44 @@ const ListSite = () => {
     });
   }
 
+  const { handleShowClose, activesKeys } = useAccordionState([false]);
+
   return (
     <>
       <Container>
         <PageTitle icon={<IconList />} title={"Liste des sites"} />
+
+        <AccordionCustom
+          activesKeys={activesKeys}
+          handleShowClose={handleShowClose}
+          list={[
+            {
+              header: "Importer des sites ",
+              content: (
+                <>
+                  <p>
+                    Permet d&apos;importer un fichier SHAPE contenant des sites
+                    ; l&apos;identification se fait sur le code, avec un
+                    mécanisme d&apos;insertion / mise à jour.
+                  </p>
+                  <MyFormik
+                    initialValues={getInitialValues()}
+                    validationSchema={validationSchema}
+                    isPost={false}
+                    isMultipartFormData={true}
+                    submitUrl={`/api/site/import/`}
+                    prepareVariables={(values) => prepareVariables(values)}
+                    redirectUrl={URLS.LIST_SITE}
+                  >
+                    <FormImportShape />
+                  </MyFormik>
+                </>
+              ),
+            },
+          ]}
+        />
+        <br />
+
         <QueryTable
           query={url`/api/site`}
           columns={[
@@ -105,6 +158,69 @@ const ListSite = () => {
         />
       </Container>
     </>
+  );
+};
+
+const FormImportShape = () => {
+  const { setFieldValue } = useFormikContext();
+
+  return (
+    <FormContainer>
+      <FileInput
+        name="fileSites"
+        accept=".zip"
+        label={
+          <>
+            Fichier zip contenant les sites
+            <TooltipCustom
+              placement="right"
+              tooltipText={
+                <>
+                  <Row>
+                    <strong>
+                      the_geom <span className="text-danger">*</span>
+                    </strong>
+                    <div className="ms-2">La géométrie en Polygon</div>
+                  </Row>
+                  <Row>
+                    <strong>
+                      code <span className="text-danger">*</span>
+                    </strong>
+                    <div className="ms-2">Code (unique) du site</div>
+                  </Row>
+                  <Row>
+                    <strong>
+                      libelle <span className="text-danger">*</span>
+                    </strong>
+                    <div className="ms-2">Libellé du site</div>
+                  </Row>
+                  <br />
+                  <Row>
+                    <div>
+                      <span className="text-danger">*</span> : Champs
+                      obligatoires
+                    </div>
+                  </Row>
+                </>
+              }
+              tooltipHeader="Colonnes attendues"
+              tooltipId={"site"}
+            >
+              <IconInfo />
+            </TooltipCustom>
+          </>
+        }
+        required={false}
+        onChange={(e) => setFieldValue("fileSites", e.target.files[0])}
+      />
+      <Row className="mt-3">
+        <Col className="text-center">
+          <Button type="submit" variant="primary">
+            Valider
+          </Button>
+        </Col>
+      </Row>
+    </FormContainer>
   );
 };
 

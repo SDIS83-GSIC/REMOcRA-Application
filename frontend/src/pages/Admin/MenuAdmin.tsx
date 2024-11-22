@@ -75,15 +75,25 @@ const MenuAdmin = () => {
           <a href={URLS.LIST_TYPE_RESEAU}>Types de réseaux</a>
           <br />
         </Col>
-
       </Row>
 
       <Row>
         <Col className="bg-light p-2 border rounded mx-2">
-        <div className="fw-bold text-center p-2">Paramétrage des traitements</div>
-        TODO
+          <div className="fw-bold text-center p-2">
+            Paramétrage des traitements
+          </div>
+          TODO
         </Col>
-        </Row>
+        <Col className="bg-light p-2 border rounded mx-2">
+          <div className="fw-bold text-center p-2">
+            Gestionnaires &amp; sites
+          </div>
+          <a href={URLS.LIST_GESTIONNAIRE}>Gestionnaires</a>
+          <br />
+          <a href={URLS.LIST_SITE}>Sites</a>
+          <br />
+        </Col>
+      </Row>
     </Container>
   );
 };

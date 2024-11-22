@@ -354,19 +354,25 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // Site et gestionnaire
     // ********************************************************************************
     //
-    SITE_FORBIDDEN_UPDATE(10000, "Vous n'avez pas les droits de modification des sites", Status.FORBIDDEN),
-    SITE_FORBIDDEN_DELETE(10001, "Vous n'avez pas les droits de suppression des sites", Status.FORBIDDEN),
-    SITE_USED(10002, "Un ou plusieurs PEI sont rattachés à ce site."),
-    GESTIONNAIRE_FORBIDDEN_UPDATE(10003, "Vous n'avez pas les droits de modification des gestionnaires", Status.FORBIDDEN),
-    GESTIONNAIRE_FORBIDDEN_INSERT(10004, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
-    GESTIONNAIRE_FORBIDDEN_DELETE(10005, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
-    GESTIONNAIRE_USED_IN_PEI(10006, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
-    GESTIONNAIRE_USED_IN_SITE(10007, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
+    SITE_FORBIDDEN_UPDATE(9100, "Vous n'avez pas les droits de modification des sites", Status.FORBIDDEN),
+    SITE_FORBIDDEN_DELETE(9101, "Vous n'avez pas les droits de suppression des sites", Status.FORBIDDEN),
+    SITE_USED(9102, "Un ou plusieurs PEI sont rattachés à ce site."),
+    GESTIONNAIRE_FORBIDDEN_UPDATE(9103, "Vous n'avez pas les droits de modification des gestionnaires", Status.FORBIDDEN),
+    GESTIONNAIRE_FORBIDDEN_INSERT(9104, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
+    GESTIONNAIRE_FORBIDDEN_DELETE(9105, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
+    GESTIONNAIRE_USED_IN_PEI(9106, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
+    GESTIONNAIRE_USED_IN_SITE(9107, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
+
+    IMPORT_SITES_SHP_INTROUVABLE(9108, "Aucun fichier .shp n'a été trouvé."),
+    IMPORT_SITES_GEOMETRIE_NULLE(9109, "La géométrie ne doit pas être nulle."),
+    IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul."),
+    IMPORT_SITES_LIBELLE_NULL(9112, "Le libellé ne doit pas être nul."),
 
     // Contact
-    CONTACT_FORBIDDEN_UPDATE(10008, "Vous n'avez pas les droits de modification des contacts", Status.FORBIDDEN),
-    CONTACT_FORBIDDEN_INSERT(10009, "Vous n'avez pas les droits de création des contacts", Status.FORBIDDEN),
-    CONTACT_FORBIDDEN_DELETE(10010, "Vous n'avez pas les droits de suppression des contacts", Status.FORBIDDEN),
+    CONTACT_FORBIDDEN_UPDATE(9113, "Vous n'avez pas les droits de modification des contacts", Status.FORBIDDEN),
+    CONTACT_FORBIDDEN_INSERT(9114, "Vous n'avez pas les droits de création des contacts", Status.FORBIDDEN),
+    CONTACT_FORBIDDEN_DELETE(9115, "Vous n'avez pas les droits de suppression des contacts", Status.FORBIDDEN),
 
     //
     // ********************************************************************************

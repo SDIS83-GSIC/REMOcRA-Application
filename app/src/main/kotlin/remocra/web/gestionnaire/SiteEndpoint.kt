@@ -1,6 +1,8 @@
 package remocra.web.gestionnaire
 
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
@@ -16,12 +18,14 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.ImportSitesData
 import remocra.data.Params
 import remocra.data.SiteData
 import remocra.db.SiteRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.gestionnaire.DeleteSiteUseCase
 import remocra.usecase.gestionnaire.UpdateSiteUseCase
+import remocra.usecase.site.ImportSitesUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -39,6 +43,9 @@ class SiteEndpoint : AbstractEndpoint() {
 
     @Context
     lateinit var securityContext: SecurityContext
+
+    @Inject
+    lateinit var importSitesUseCase: ImportSitesUseCase
 
     @POST
     @Path("/")
@@ -112,5 +119,23 @@ class SiteEndpoint : AbstractEndpoint() {
         gestionnaireId: UUID,
     ): Response {
         return Response.ok(siteRepository.getAllSiteByGestionnaire(gestionnaireId)).build()
+    }
+
+    @PUT
+    @Path("/import/")
+    @RequireDroits([Droit.GEST_SITE_A])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importData(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importSitesUseCase.execute(
+                securityContext.userInfo,
+                ImportSitesData(
+                    httpRequest.getPart("fileSites").inputStream,
+                ),
+            ),
+        ).build()
     }
 }
