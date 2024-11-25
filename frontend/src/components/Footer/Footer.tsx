@@ -1,13 +1,15 @@
+import { Badge, Image } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import React from "react";
-import { Image } from "react-bootstrap";
+import { useGet } from "../Fetch/useFetch.tsx";
+import url from "../../module/fetch.tsx";
 import europesengage from "../../img/europesengage.png";
 import logo_prt3 from "../../img/logo_prt3.png";
 import europe from "../../img/europe.png";
 import atolcd from "../../img/atolcd.png";
 
 const Footer = () => {
+  const version = useGet(url`/api/app-settings/version`);
   return (
     <Row className={"footer bg-primary"}>
       <Col className={"h-100 text-light"}>
@@ -18,6 +20,11 @@ const Footer = () => {
       </Col>
       <Col xs={2} className={"text-light"}>
         <p className={"copyright text-end"}>Copyright © 2015 SDIS 83</p>
+        {version.value && (
+          <Badge pill bg="info">
+            {version.value.version}
+          </Badge>
+        )}
       </Col>
     </Row>
   );

@@ -25,4 +25,10 @@ class AppSettingsEndPoint {
     @Public("L'environment n'est pas lié à un droit")
     fun getEnvironment(): Response =
         Response.ok().entity(appSettings.environment).build()
+
+    @GET
+    @Path("/version")
+    @Public("Le paramètre version n'est pas lié à un droit")
+    fun getVersion() =
+        Response.ok(object { val version: String = appSettings.version }).build()
 }

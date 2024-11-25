@@ -37,6 +37,7 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                             projection = it.getString("projection"),
                         )
                     },
+                    version = config.getString("version"),
                 ),
             )
     }
