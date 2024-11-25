@@ -46,6 +46,7 @@ import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
+import kotlin.properties.Delegates
 
 @Path("/couverture-hydraulique")
 @Produces(MediaType.APPLICATION_JSON)
@@ -115,8 +116,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 peiProjetCapacite = peiProjetInput.peiProjetCapacite,
                 peiProjetDebit = peiProjetInput.peiProjetDebit,
                 peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
-                // TODO Géométrie à prendre en compte quand on aura la carto
-                peiProjetGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(
+                peiProjetGeometrie = GeometryFactory(PrecisionModel(), peiProjetInput.peiProjetSrid).createPoint(
                     Coordinate(
                         peiProjetInput.peiProjetCoordonneeX.toDouble(),
                         peiProjetInput.peiProjetCoordonneeY.toDouble(),
@@ -161,8 +161,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 peiProjetCapacite = peiProjetInput.peiProjetCapacite,
                 peiProjetDebit = peiProjetInput.peiProjetDebit,
                 peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
-                // TODO Géométrie à prendre en compte quand on aura la carto
-                peiProjetGeometrie = GeometryFactory(PrecisionModel(), 2154).createPoint(
+                peiProjetGeometrie = GeometryFactory(PrecisionModel(), peiProjetInput.peiProjetSrid).createPoint(
                     Coordinate(
                         peiProjetInput.peiProjetCoordonneeX.toDouble(),
                         peiProjetInput.peiProjetCoordonneeY.toDouble(),
@@ -230,6 +229,9 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
 
         @FormParam("peiProjetCoordonneeY")
         lateinit var peiProjetCoordonneeY: String
+
+        @get:FormParam("peiProjetSrid")
+        var peiProjetSrid by Delegates.notNull<Int>()
     }
 
     @GET
