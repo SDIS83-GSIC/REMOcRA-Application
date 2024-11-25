@@ -20,6 +20,7 @@ import {
   IconVisite,
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -68,53 +69,71 @@ const TooltipMapPei = ({
       {featureSelect?.getProperties().typePointCarte ===
       TYPE_POINT_CARTE.PEI ? (
         <Tooltip
+          disabled={disabledTooltip}
           featureSelect={featureSelect}
           overlay={overlay}
           displayButtonEdit={displayButtonEdit}
-          deletePath={`/api/pei/delete/` + pointId}
-          displayButtonDelete={displayButtonDelete}
           onClickEdit={() => navigate(URLS.UPDATE_PEI(pointId))}
+          labelEdit={"Modifier le PEI"}
+          displayButtonDelete={displayButtonDelete}
+          deletePath={`/api/pei/delete/` + pointId}
           onClickDelete={() => {
             dataPeiLayer.getSource().refresh();
             overlay?.setPosition(undefined);
           }}
-          onClickSee={() => setShowFichePei(true)}
+          labelDelete={"Supprimer le PEI"}
           displayButtonSee={true}
-          disabled={disabledTooltip}
+          onClickSee={() => setShowFichePei(true)}
+          labelSee={"Voir la fiche de résumé du PEI"}
           autreActionBouton={
             <>
               <Col className="p-1" xs={"auto"}>
-                <Button
-                  variant="warning"
-                  onClick={() => navigate(URLS.VISITE(pointId))}
+                <TooltipCustom
+                  tooltipText={"Voir les visites du PEI"}
+                  tooltipId={"tournees-carte"}
                 >
-                  <IconVisite />
-                </Button>
+                  <Button
+                    variant="warning"
+                    onClick={() => navigate(URLS.VISITE(pointId))}
+                  >
+                    <IconVisite />
+                  </Button>
+                </TooltipCustom>
               </Col>
               {featureSelect?.getProperties().hasIndispoTemp && (
                 <Col className="p-1" xs={"auto"}>
-                  <Button
-                    variant="warning"
-                    onClick={() => {
-                      setShowIndispoTemp(true);
-                      overlay?.setPosition(undefined);
-                    }}
+                  <TooltipCustom
+                    tooltipText={"Voir les indisponibilités temporaires du PEI"}
+                    tooltipId={"indispo-temp-carte"}
                   >
-                    <IconIndisponibiliteTemporaire />
-                  </Button>
+                    <Button
+                      variant="warning"
+                      onClick={() => {
+                        setShowIndispoTemp(true);
+                        overlay?.setPosition(undefined);
+                      }}
+                    >
+                      <IconIndisponibiliteTemporaire />
+                    </Button>
+                  </TooltipCustom>
                 </Col>
               )}
               {featureSelect?.getProperties().hasTournee && (
                 <Col className="p-1" xs={"auto"}>
-                  <Button
-                    variant="warning"
-                    onClick={() => {
-                      setShowTournee(true);
-                      overlay?.setPosition(undefined);
-                    }}
+                  <TooltipCustom
+                    tooltipText={"Voir les tournées associées"}
+                    tooltipId={"tournees-carte"}
                   >
-                    <IconTournee />
-                  </Button>
+                    <Button
+                      variant="warning"
+                      onClick={() => {
+                        setShowTournee(true);
+                        overlay?.setPosition(undefined);
+                      }}
+                    >
+                      <IconTournee />
+                    </Button>
+                  </TooltipCustom>
                 </Col>
               )}
               <Volet
@@ -216,29 +235,42 @@ const TooltipMapPei = ({
 export default TooltipMapPei;
 
 const Tooltip = ({
+  disabled = false,
   featureSelect,
   overlay,
+
   displayButtonEdit = false,
   onClickEdit,
+  labelEdit = "Modifier l'élément",
+
   displayButtonDelete = false,
   onClickDelete,
+  deletePath,
+  labelDelete = "Supprimer l'élément",
+
   displayButtonSee = false,
   onClickSee,
-  deletePath,
-  disabled = false,
+  labelSee = "Voir l'élément",
+
   href = undefined,
   autreActionBouton,
 }: {
+  disabled: boolean;
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
   displayButtonEdit?: boolean;
   onClickEdit?: () => void;
+  labelEdit: string;
+
   displayButtonDelete?: boolean;
+  deletePath: string;
   onClickDelete?: () => void;
+  labelDelete: string;
+
   displayButtonSee?: boolean;
   onClickSee?: () => void;
-  deletePath: string;
-  disabled: boolean;
+  labelSee: string;
+
   href?: string;
   autreActionBouton: ReactNode | undefined;
 }) => {
@@ -256,7 +288,7 @@ const Tooltip = ({
         >
           <Popover.Header>
             <Row>
-              <Col>Information</Col>
+              <Col>Informations</Col>
               <Col className="ms-auto" xs={"auto"}>
                 <Button
                   variant="link"
@@ -277,31 +309,46 @@ const Tooltip = ({
                 <Row>
                   {displayButtonSee && (
                     <Col className="p-1" xs={"auto"}>
-                      <Button variant="primary" onClick={onClickSee}>
-                        <IconSee />
-                      </Button>
+                      <TooltipCustom
+                        tooltipText={labelSee}
+                        tooltipId={"fiche-resume-carte"}
+                      >
+                        <Button variant="primary" onClick={onClickSee}>
+                          <IconSee />
+                        </Button>
+                      </TooltipCustom>
                     </Col>
                   )}
                   {displayButtonEdit && (
                     <Col className="p-1" xs={"auto"}>
-                      <Button
-                        variant="info"
-                        className={"text-white"}
-                        onClick={onClickEdit}
-                        href={href}
+                      <TooltipCustom
+                        tooltipText={labelEdit}
+                        tooltipId={"edit-carte"}
                       >
-                        <IconEdit />
-                      </Button>
+                        <Button
+                          variant="info"
+                          className={"text-white"}
+                          onClick={onClickEdit}
+                          href={href}
+                        >
+                          <IconEdit />
+                        </Button>
+                      </TooltipCustom>
                     </Col>
                   )}
                   {displayButtonDelete && (
                     <Col className="p-1" xs={"auto"}>
-                      <DeleteButtonWithModale
-                        path={deletePath}
-                        disabled={!displayButtonDelete}
-                        title={false}
-                        reload={onClickDelete}
-                      />
+                      <TooltipCustom
+                        tooltipText={labelDelete}
+                        tooltipId={"supprimer-carte"}
+                      >
+                        <DeleteButtonWithModale
+                          path={deletePath}
+                          disabled={!displayButtonDelete}
+                          title={false}
+                          reload={onClickDelete}
+                        />
+                      </TooltipCustom>
                     </Col>
                   )}
                   {autreActionBouton && autreActionBouton}
