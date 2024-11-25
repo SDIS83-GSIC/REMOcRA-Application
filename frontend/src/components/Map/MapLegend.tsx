@@ -22,6 +22,10 @@ const MapLegend = forwardRef(
       },
     }));
 
+    function isChecked(layer) {
+      return activeLayers.some((l) => getUid(layer.openlayer) === l);
+    }
+
     return (
       <>
         {layers
@@ -31,12 +35,13 @@ const MapLegend = forwardRef(
               <Card.Header>{group.libelle}</Card.Header>
               <ListGroup className="list-group-flush">
                 {group.layers.map((layer: any, layerIdx: number) => (
-                  <ListGroup.Item key={layerIdx}>
+                  <ListGroup.Item
+                    key={layerIdx}
+                    className={isChecked(layer) ? "" : "noprint"}
+                  >
                     <Form.Group controlId={getUid(layer.openlayer)}>
                       <Form.Switch
-                        checked={activeLayers.some(
-                          (l) => getUid(layer.openlayer) === l,
-                        )}
+                        checked={isChecked(layer)}
                         onClick={() => {
                           addOrRemoveLayer(layer);
                         }}
@@ -51,9 +56,8 @@ const MapLegend = forwardRef(
                       />
                     </Form.Group>
                     <FormRange
-                      disabled={
-                        !activeLayers.some((l) => getUid(layer.openlayer) === l)
-                      }
+                      className={"noprint"}
+                      disabled={!isChecked(layer)}
                       min={0}
                       max={1}
                       step={0.1}

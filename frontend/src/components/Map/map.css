@@ -26,6 +26,14 @@
   gap: 16px;
 }
 
+@media print {
+  .map-wrapper {
+    grid-template-areas: "map layers";
+    grid-template-rows: auto;
+    grid-template-columns: auto min-content;
+  }
+}
+
 .map-toolbar {
   grid-area: toolbar;
 }

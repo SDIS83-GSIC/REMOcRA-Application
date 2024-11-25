@@ -87,6 +87,7 @@ import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
 import ListTournee from "./pages/Tournee/ListTournee.tsx";
 import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
+import MapPerso from "./components/Map/MapPerso/MapPerso.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
 import AdminParametres from "./pages/Admin/adminParametres/AdminParametres.tsx";
@@ -168,6 +169,9 @@ export const URLS = {
     peiProjetId,
   OUVRIR_ETUDE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/open/` + etudeId,
+
+  // Module carto perso
+  CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -578,7 +582,15 @@ export default [
       },
     ],
   },
-
+  {
+    path: "/cartographie-personnalisee",
+    element: (
+      <Authorization
+        Component={MapPerso}
+        droits={[TYPE_DROIT.CARTOGRAPHIES_E]}
+      />
+    ),
+  },
   {
     path: "/admin/",
     element: (

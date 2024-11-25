@@ -9,7 +9,7 @@ type TitlePageModel = {
 
 const PageTitle = ({ title, icon, right }: TitlePageModel) => {
   return (
-    <Row className="my-3 mx-2">
+    <Row className="my-3 mx-2 noprint">
       <Col>
         <h1 className="fw-bold">
           {icon} {title}

@@ -52,3 +52,13 @@ $footer-size: 55px;
 .copyright {
   font-size: 0.7rem;
 }
+
+@media print {
+  .noprint {
+    display: none;
+  }
+  .printable-no-margin {
+    margin: 0;
+    padding: 0;
+  }
+}

@@ -34,4 +34,12 @@ export function formatDate(dateToFormat: Date) {
   return formatDateWithPattern(dateToFormat, "dd/MM/yyyy");
 }
 
+/** Retourne une date/heure pour affichage textuel au format 'dd/MM/yyyy à HH:mm'
+ * @param dateToFormat: Date
+ * @returns: string
+ */
+export function formatDateHeure(dateToFormat: Date) {
+  return formatDateWithPattern(dateToFormat, "dd/MM/yyyy à HH:mm");
+}
+
 export default formatDateTime;

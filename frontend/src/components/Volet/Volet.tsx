@@ -6,6 +6,7 @@ const Volet = ({
   handleClose,
   className,
   backdrop = false,
+  title,
   children,
 }: VoletType) => {
   return (
@@ -18,7 +19,9 @@ const Volet = ({
       backdrop={backdrop}
       autoFocus={true}
     >
-      <Offcanvas.Header closeButton />
+      <Offcanvas.Header closeButton>
+        {title && <Offcanvas.Title>{title}</Offcanvas.Title>}
+      </Offcanvas.Header>
       <Offcanvas.Body>{children}</Offcanvas.Body>
     </Offcanvas>
   );
@@ -30,6 +33,7 @@ type VoletType = {
   className?: string;
   children: ReactNode;
   backdrop?: boolean;
+  title?: string;
 };
 
 export default Volet;

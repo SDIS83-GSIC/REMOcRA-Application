@@ -94,6 +94,13 @@ function getLinks(
         },
       ];
     case TypeModuleRemocra.CARTOGRAPHIE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.CARTOGRAPHIES_E),
+          label: "Cartographie personnalisée",
+          link: URLS.CARTOGRAPHIE_PERSONNALISEE,
+        },
+      ];
     case TypeModuleRemocra.OLDEBS:
     case TypeModuleRemocra.PERMIS:
     case TypeModuleRemocra.RCI:

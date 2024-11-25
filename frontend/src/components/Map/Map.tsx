@@ -15,7 +15,6 @@ import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Circle, Fill, Stroke, Style } from "ol/style";
-import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { ReactNode, useEffect, useMemo, useRef } from "react";
 import url from "../../module/fetch.tsx";
@@ -130,7 +129,7 @@ const MapComponent = ({
   return (
     <div className={"map-wrapper"}>
       {map && mapElement && (
-        <div className={"map-toolbar"}>
+        <div className={"map-toolbar noprint"}>
           {/* Commun à toutes les cartes */}
           <MapToolbar
             ref={mapToolbarRef}
@@ -178,6 +177,7 @@ export const useMapComponent = ({
         new MousePosition({
           coordinateFormat: createStringXY(4),
           projection: projection.name,
+          className: "ol-mouse-position noprint",
         }),
         scaleControl,
       ]),
@@ -237,23 +237,6 @@ export const useMapComponent = ({
   function createWorkingLayer() {
     const wl = new VectorLayer({
       source: new VectorSource(),
-      style: () => {
-        return new Style({
-          fill: new Fill({
-            color: "rgba(255, 255, 255, 0.2)",
-          }),
-          stroke: new Stroke({
-            color: "blue",
-            width: 2,
-          }),
-          image: new CircleStyle({
-            radius: 7,
-            fill: new Fill({
-              color: "#ffcc33",
-            }),
-          }),
-        });
-      },
       visibility: true,
       opacity: 1,
       zIndex: 9000,

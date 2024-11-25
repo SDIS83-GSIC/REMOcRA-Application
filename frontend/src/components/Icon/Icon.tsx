@@ -8,6 +8,7 @@ export const IconOverview = () => <i className="fi fi-br-overview" />;
 export const Toggle = ({ toggled = false }: { toggled: boolean }) => (
   <i className={toggled ? "fi fi-rr-toggle-on" : "fi fi-rr-toggle-off"} />
 );
+export const IconReturn = () => <i className="fi fi-br-arrow-left" />;
 
 export const IconEdit = () => <i className="fi fi-br-pencil" />;
 export const IconDelete = () => <i className="fi fi-br-trash" />;
@@ -43,6 +44,20 @@ export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 export const IconIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-time-delete" />
 );
+
+export const IconCarte = () => <i className="fi fi-br-map" />;
+
+export const IconPoint = () => <i className="fi fi-br-dot-circle" />;
+
+export const IconLine = () => <i className="fi fi-br-highlighter-line" />;
+
+export const IconPolygon = () => <i className="fi fi-br-draw-polygon" />;
+
+export const IconStyle = () => <i className="fi fi-br-palette" />;
+
+export const IconPrint = () => <i className="fi fi-br-print" />;
+
+export const IconRotate = () => <i className="fi fi-br-group-arrows-rotate" />;
 
 export const IconCloseIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-hourglass-end" />
