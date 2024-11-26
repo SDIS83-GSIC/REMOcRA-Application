@@ -47,6 +47,8 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.LIST_UTILISATEUR}>Utilisateurs</a>
           <br />
+          <a href={URLS.COUCHES_LIST}>Couches cartographiques</a>
+          <br />
         </Col>
 
         <Col className="bg-light p-2 border rounded">

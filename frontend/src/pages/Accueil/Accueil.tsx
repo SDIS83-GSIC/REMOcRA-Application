@@ -143,6 +143,11 @@ function getLinks(
           label: "Liste des blocs documents",
           link: URLS.LIST_BLOC_DOCUMENT,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
+          label: "Gestion des couches",
+          link: URLS.COUCHES_LIST,
+        },
       ];
     case TypeModuleRemocra.COURRIER:
       return;

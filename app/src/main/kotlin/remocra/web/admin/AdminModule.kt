@@ -14,6 +14,7 @@ object AdminModule : Module {
             ProfilDroitEndpoint::class,
             LienProfilDroitEndpoint::class,
             LienProfilFonctionnaliteEndpoint::class,
+            CoucheEndpoint::class,
         )
     }
 }

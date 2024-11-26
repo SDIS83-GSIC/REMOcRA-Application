@@ -30,6 +30,12 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(L_COUCHE_DROIT.COUCHE_ID.eq(coucheId))
             .fetchInto<ProfilDroit>()
 
+    fun getModuleList(coucheId: UUID): List<TypeModule> =
+        dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
+            .from(L_COUCHE_MODULE)
+            .where(L_COUCHE_MODULE.COUCHE_ID.eq(coucheId))
+            .fetchInto<TypeModule>()
+
     fun getCoucheList(groupeCoucheId: UUID): List<Couche> = dsl.selectFrom(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchInto<Couche>()
 
     fun getGroupeCoucheList(): List<GroupeCouche> = dsl.selectFrom(GROUPE_COUCHE).fetchInto<GroupeCouche>()
@@ -54,9 +60,29 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(this)
             .onConflict()
             .doUpdate()
-            .set(this)
+            .set(COUCHE.GROUPE_COUCHE_ID, couche.coucheGroupeCoucheId)
+            .set(COUCHE.LIBELLE, couche.coucheLibelle)
+            .set(COUCHE.ORDRE, couche.coucheOrdre)
+            .set(COUCHE.SOURCE, couche.coucheSource)
+            .set(COUCHE.PROJECTION, couche.coucheProjection)
+            .set(COUCHE.URL, couche.coucheUrl)
+            .set(COUCHE.FORMAT, couche.coucheFormat)
+            .set(COUCHE.PUBLIC, couche.couchePublic)
+            .set(COUCHE.ACTIVE, couche.coucheActive)
             .execute()
     }
+
+    fun updateIcone(coucheId: UUID, icone: ByteArray?) =
+        dsl.update(COUCHE)
+            .set(COUCHE.ICONE, icone)
+            .where(COUCHE.ID.eq(coucheId))
+            .execute()
+
+    fun updateLegende(coucheId: UUID, legende: ByteArray?) =
+        dsl.update(COUCHE)
+            .set(COUCHE.LEGENDE, legende)
+            .where(COUCHE.ID.eq(coucheId))
+            .execute()
 
     fun removeOldCouche(toKeep: Collection<UUID>): Int = dsl.deleteFrom(COUCHE).where(COUCHE.ID.notIn(toKeep)).execute()
 
@@ -64,9 +90,17 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
 
     fun clearProfilDroit(): Int = dsl.deleteFrom(L_COUCHE_DROIT).execute()
 
+    fun clearModule(): Int = dsl.deleteFrom(L_COUCHE_MODULE).execute()
+
     fun insertProfilDroit(coucheId: UUID, profilDroitId: UUID): Int =
         dsl.insertInto(L_COUCHE_DROIT)
             .set(L_COUCHE_DROIT.COUCHE_ID, coucheId)
             .set(L_COUCHE_DROIT.PROFIL_DROIT_ID, profilDroitId)
+            .execute()
+
+    fun insertModule(coucheId: UUID, moduleType: TypeModule): Int =
+        dsl.insertInto(L_COUCHE_MODULE)
+            .set(L_COUCHE_MODULE.COUCHE_ID, coucheId)
+            .set(L_COUCHE_MODULE.MODULE_TYPE, moduleType)
             .execute()
 }

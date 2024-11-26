@@ -112,6 +112,7 @@ import LienProfilDroitList from "./pages/Admin/droit/LienProfilDroitList.tsx";
 import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonctionnaliteList.tsx";
 import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
 import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
+import CoucheList from "./pages/Admin/couche/CoucheList.tsx";
 import ListModuleDocument from "./pages/ModuleDocumentCourrier/ListModuleDocument.tsx";
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
@@ -213,6 +214,8 @@ export const URLS = {
     profilUtilisateurId,
   }) =>
     url`/admin/lien-profil-fonctionnalite/${profilOrganismeId}/${profilUtilisateurId}`,
+
+  COUCHES_LIST: url`/admin/couches`,
 
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
@@ -1101,6 +1104,15 @@ export default [
         element: (
           <Authorization
             Component={CreateThematique}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "couches",
+        element: (
+          <Authorization
+            Component={CoucheList}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
