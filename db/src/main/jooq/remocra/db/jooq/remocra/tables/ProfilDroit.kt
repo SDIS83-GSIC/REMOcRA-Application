@@ -30,6 +30,7 @@ import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_DROIT_BLOC_DOCUMENT__L_PROFIL_DROIT_BLOC_DOCUMENT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_RAPPORT_PERSONNALISE_PROFIL_DROIT__L_RAPPORT_PERSONNALISE_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PROFIL_DROIT_CODE_KEY
 import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
@@ -38,7 +39,9 @@ import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument.LProfilDroitBlocDocumentPath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
+import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit.LRapportPersonnaliseProfilDroitPath
 import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
+import remocra.db.jooq.remocra.tables.RapportPersonnalise.RapportPersonnalisePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -216,6 +219,23 @@ open class ProfilDroit(
     val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
         get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
 
+    private lateinit var _lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroitPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_rapport_personnalise_profil_droit</code> table
+     */
+    fun lRapportPersonnaliseProfilDroit(): LRapportPersonnaliseProfilDroitPath {
+        if (!this::_lRapportPersonnaliseProfilDroit.isInitialized) {
+            _lRapportPersonnaliseProfilDroit = LRapportPersonnaliseProfilDroitPath(this, null, L_RAPPORT_PERSONNALISE_PROFIL_DROIT__L_RAPPORT_PERSONNALISE_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY.inverseKey)
+        }
+
+        return _lRapportPersonnaliseProfilDroit
+    }
+
+    val lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroitPath
+        get(): LRapportPersonnaliseProfilDroitPath = lRapportPersonnaliseProfilDroit()
+
     /**
      * Get the implicit many-to-many join path to the
      * <code>remocra.couche</code> table
@@ -236,6 +256,13 @@ open class ProfilDroit(
      */
     val blocDocument: BlocDocumentPath
         get(): BlocDocumentPath = lProfilDroitBlocDocument().blocDocument()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.rapport_personnalise</code> table
+     */
+    val rapportPersonnalise: RapportPersonnalisePath
+        get(): RapportPersonnalisePath = lRapportPersonnaliseProfilDroit().rapportPersonnalise()
     override fun `as`(alias: String): ProfilDroit = ProfilDroit(DSL.name(alias), this)
     override fun `as`(alias: Name): ProfilDroit = ProfilDroit(alias, this)
     override fun `as`(alias: Table<*>): ProfilDroit = ProfilDroit(alias.qualifiedName, this)

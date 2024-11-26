@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
+import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueModule
@@ -62,6 +63,8 @@ import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
+import remocra.db.jooq.remocra.tables.RapportPersonnalise
+import remocra.db.jooq.remocra.tables.RapportPersonnaliseParametre
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
@@ -245,6 +248,11 @@ val L_PROFIL_DROIT_BLOC_DOCUMENT: LProfilDroitBlocDocument = LProfilDroitBlocDoc
 val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 
 /**
+ * The table <code>remocra.l_rapport_personnalise_profil_droit</code>.
+ */
+val L_RAPPORT_PERSONNALISE_PROFIL_DROIT: LRapportPersonnaliseProfilDroit = LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
+
+/**
  * The table <code>remocra.l_thematique_bloc_document</code>.
  */
 val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
@@ -373,6 +381,16 @@ val PROFIL_ORGANISME: ProfilOrganisme = ProfilOrganisme.PROFIL_ORGANISME
  * The table <code>remocra.profil_utilisateur</code>.
  */
 val PROFIL_UTILISATEUR: ProfilUtilisateur = ProfilUtilisateur.PROFIL_UTILISATEUR
+
+/**
+ * The table <code>remocra.rapport_personnalise</code>.
+ */
+val RAPPORT_PERSONNALISE: RapportPersonnalise = RapportPersonnalise.RAPPORT_PERSONNALISE
+
+/**
+ * The table <code>remocra.rapport_personnalise_parametre</code>.
+ */
+val RAPPORT_PERSONNALISE_PARAMETRE: RapportPersonnaliseParametre = RapportPersonnaliseParametre.RAPPORT_PERSONNALISE_PARAMETRE
 
 /**
  * The table <code>remocra.reservoir</code>.

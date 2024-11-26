@@ -62,6 +62,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     PROFIL_DROIT("PROFIL_DROIT"),
     DEBIT_SIMULTANE("DEBIT_SIMULTANE"),
     ZONE_INTEGRATION("ZONE_INTEGRATION"),
+    RAPPORT_PERSONNALISE("RAPPORT_PERSONNALISE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
