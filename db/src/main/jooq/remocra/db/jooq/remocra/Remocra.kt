@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
@@ -30,6 +31,7 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
@@ -39,6 +41,7 @@ import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
+import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
@@ -138,6 +141,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val COUCHE: Couche get() = Couche.COUCHE
 
     /**
+     * The table <code>remocra.courrier</code>.
+     */
+    val COURRIER: Courrier get() = Courrier.COURRIER
+
+    /**
      * The table <code>remocra.debit_simultane</code>.
      */
     val DEBIT_SIMULTANE: DebitSimultane get() = DebitSimultane.DEBIT_SIMULTANE
@@ -218,6 +226,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_COUCHE_DROIT: LCoucheDroit get() = LCoucheDroit.L_COUCHE_DROIT
 
     /**
+     * The table <code>remocra.l_courrier_utilisateur</code>.
+     */
+    val L_COURRIER_UTILISATEUR: LCourrierUtilisateur get() = LCourrierUtilisateur.L_COURRIER_UTILISATEUR
+
+    /**
      * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
      */
     val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei get() = LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI
@@ -261,6 +274,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_thematique_bloc_document</code>.
      */
     val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument get() = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_thematique_courrier</code>.
+     */
+    val L_THEMATIQUE_COURRIER: LThematiqueCourrier get() = LThematiqueCourrier.L_THEMATIQUE_COURRIER
 
     /**
      * The table <code>remocra.l_thematique_module</code>.
@@ -472,6 +490,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Commune.COMMUNE,
         Contact.CONTACT,
         Couche.COUCHE,
+        Courrier.COURRIER,
         DebitSimultane.DEBIT_SIMULTANE,
         DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE,
         Diametre.DIAMETRE,
@@ -488,6 +507,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
         LCoucheDroit.L_COUCHE_DROIT,
+        LCourrierUtilisateur.L_COURRIER_UTILISATEUR,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
@@ -497,6 +517,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
         LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT,
+        LThematiqueCourrier.L_THEMATIQUE_COURRIER,
         LThematiqueModule.L_THEMATIQUE_MODULE,
         LTourneePei.L_TOURNEE_PEI,
         LVisiteAnomalie.L_VISITE_ANOMALIE,

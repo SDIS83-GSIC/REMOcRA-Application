@@ -26,11 +26,14 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_BLOC_DOCUMENT__L_THEMATIQUE_BLOC_DOCUMENT_THEMATIQUE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_THEMATIQUE_COURRIER__L_THEMATIQUE_COURRIER_THEMATIQUE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_MODULE__L_THEMATIQUE_MODULE_THEMATIQUE_ID_FKEY
 import remocra.db.jooq.remocra.keys.THEMATIQUE_PKEY
 import remocra.db.jooq.remocra.keys.THEMATIQUE_THEMATIQUE_CODE_KEY
 import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
+import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument.LThematiqueBlocDocumentPath
+import remocra.db.jooq.remocra.tables.LThematiqueCourrier.LThematiqueCourrierPath
 import remocra.db.jooq.remocra.tables.LThematiqueModule.LThematiqueModulePath
 import remocra.db.jooq.remocra.tables.Module.ModulePath
 import java.util.UUID
@@ -159,6 +162,23 @@ open class Thematique(
     val lThematiqueBlocDocument: LThematiqueBlocDocumentPath
         get(): LThematiqueBlocDocumentPath = lThematiqueBlocDocument()
 
+    private lateinit var _lThematiqueCourrier: LThematiqueCourrierPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_thematique_courrier</code> table
+     */
+    fun lThematiqueCourrier(): LThematiqueCourrierPath {
+        if (!this::_lThematiqueCourrier.isInitialized) {
+            _lThematiqueCourrier = LThematiqueCourrierPath(this, null, L_THEMATIQUE_COURRIER__L_THEMATIQUE_COURRIER_THEMATIQUE_ID_FKEY.inverseKey)
+        }
+
+        return _lThematiqueCourrier
+    }
+
+    val lThematiqueCourrier: LThematiqueCourrierPath
+        get(): LThematiqueCourrierPath = lThematiqueCourrier()
+
     private lateinit var _lThematiqueModule: LThematiqueModulePath
 
     /**
@@ -182,6 +202,13 @@ open class Thematique(
      */
     val blocDocument: BlocDocumentPath
         get(): BlocDocumentPath = lThematiqueBlocDocument().blocDocument()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.courrier</code> table
+     */
+    val courrier: CourrierPath
+        get(): CourrierPath = lThematiqueCourrier().courrier()
 
     /**
      * Get the implicit many-to-many join path to the

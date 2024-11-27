@@ -10,6 +10,7 @@ import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
@@ -26,6 +27,7 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
@@ -35,6 +37,7 @@ import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
+import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
@@ -110,6 +113,11 @@ val CONTACT: Contact = Contact.CONTACT
  * The table <code>remocra.couche</code>.
  */
 val COUCHE: Couche = Couche.COUCHE
+
+/**
+ * The table <code>remocra.courrier</code>.
+ */
+val COURRIER: Courrier = Courrier.COURRIER
 
 /**
  * The table <code>remocra.debit_simultane</code>.
@@ -192,6 +200,11 @@ val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
 val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
 
 /**
+ * The table <code>remocra.l_courrier_utilisateur</code>.
+ */
+val L_COURRIER_UTILISATEUR: LCourrierUtilisateur = LCourrierUtilisateur.L_COURRIER_UTILISATEUR
+
+/**
  * The table <code>remocra.l_debit_simultane_mesure_pei</code>.
  */
 val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei = LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI
@@ -235,6 +248,11 @@ val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LPr
  * The table <code>remocra.l_thematique_bloc_document</code>.
  */
 val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
+
+/**
+ * The table <code>remocra.l_thematique_courrier</code>.
+ */
+val L_THEMATIQUE_COURRIER: LThematiqueCourrier = LThematiqueCourrier.L_THEMATIQUE_COURRIER
 
 /**
  * The table <code>remocra.l_thematique_module</code>.

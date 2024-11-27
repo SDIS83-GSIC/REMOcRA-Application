@@ -28,6 +28,7 @@ import remocra.db.jooq.couverturehydraulique.keys.ETUDE__ETUDE_ETUDE_ORGANISME_I
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.API__API_API_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME_ORGANISME_CODE_KEY
@@ -45,6 +46,7 @@ import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANIS
 import remocra.db.jooq.remocra.tables.Api.ApiPath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Contact.ContactPath
+import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -286,6 +288,23 @@ open class Organisme(
 
     val api: ApiPath
         get(): ApiPath = api()
+
+    private lateinit var _courrier: CourrierPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.courrier</code>
+     * table
+     */
+    fun courrier(): CourrierPath {
+        if (!this::_courrier.isInitialized) {
+            _courrier = CourrierPath(this, null, COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY.inverseKey)
+        }
+
+        return _courrier
+    }
+
+    val courrier: CourrierPath
+        get(): CourrierPath = courrier()
 
     private lateinit var _lCommuneCis: LCommuneCisPath
 

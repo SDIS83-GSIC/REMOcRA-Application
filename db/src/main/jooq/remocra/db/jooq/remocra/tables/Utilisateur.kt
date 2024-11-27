@@ -26,13 +26,16 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.Job.JobPath
+import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
@@ -226,6 +229,23 @@ open class Utilisateur(
     val job: JobPath
         get(): JobPath = job()
 
+    private lateinit var _lCourrierUtilisateur: LCourrierUtilisateurPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_utilisateur</code> table
+     */
+    fun lCourrierUtilisateur(): LCourrierUtilisateurPath {
+        if (!this::_lCourrierUtilisateur.isInitialized) {
+            _lCourrierUtilisateur = LCourrierUtilisateurPath(this, null, L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierUtilisateur
+    }
+
+    val lCourrierUtilisateur: LCourrierUtilisateurPath
+        get(): LCourrierUtilisateurPath = lCourrierUtilisateur()
+
     private lateinit var _tournee: TourneePath
 
     /**
@@ -242,6 +262,13 @@ open class Utilisateur(
 
     val tournee: TourneePath
         get(): TourneePath = tournee()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.courrier</code> table
+     */
+    val courrier: CourrierPath
+        get(): CourrierPath = lCourrierUtilisateur().courrier()
     override fun `as`(alias: String): Utilisateur = Utilisateur(DSL.name(alias), this)
     override fun `as`(alias: Name): Utilisateur = Utilisateur(alias, this)
     override fun `as`(alias: Table<*>): Utilisateur = Utilisateur(alias.qualifiedName, this)

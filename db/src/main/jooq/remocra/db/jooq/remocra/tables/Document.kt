@@ -30,10 +30,12 @@ import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.couverturehydraulique.tables.LEtudeDocument.LEtudeDocumentPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
+import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
@@ -174,6 +176,23 @@ open class Document(
 
     val blocDocument: BlocDocumentPath
         get(): BlocDocumentPath = blocDocument()
+
+    private lateinit var _courrier: CourrierPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.courrier</code>
+     * table
+     */
+    fun courrier(): CourrierPath {
+        if (!this::_courrier.isInitialized) {
+            _courrier = CourrierPath(this, null, COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _courrier
+    }
+
+    val courrier: CourrierPath
+        get(): CourrierPath = courrier()
 
     private lateinit var _debitSimultaneMesure: DebitSimultaneMesurePath
 
