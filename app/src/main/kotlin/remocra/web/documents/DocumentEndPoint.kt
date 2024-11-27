@@ -1,14 +1,19 @@
 package remocra.web.documents
 
 import com.google.inject.Inject
+import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 import org.slf4j.LoggerFactory
 import remocra.auth.Public
+import remocra.auth.userInfo
+import remocra.db.CourrierRepository
 import remocra.db.DocumentRepository
 import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
@@ -27,6 +32,11 @@ class DocumentEndPoint {
 
     @Inject lateinit var documentUtils: DocumentUtils
 
+    @Inject lateinit var courrierRepository: CourrierRepository
+
+    @Context
+    lateinit var securityContext: SecurityContext
+
     /**
      * Télécharge le document.
      * @param documentId l'identifiant du document à télécharger
@@ -39,14 +49,27 @@ class DocumentEndPoint {
     @Produces(MediaType.TEXT_PLAIN)
     fun telechargerRessource(@PathParam("documentId") documentId: UUID): Response {
         val document = documentRepository.getById(documentId)
-
+        /* si c'est un courrier on passe par le EndPoint "Courrier" pour gérer les accusés
+         de la même façon partout */
+        val courierId: UUID? = documentRepository.getCourrierIdByDocumentId(documentId)
+        val idUtilisateur = securityContext.userInfo?.utilisateurId
         if (document == null) {
             logger.error("Le document $documentId n'a pas été trouvé.")
             return notFound().build()
         }
+        // Il faut quand même être connecté pour télécharger un document et set l'accuse
+        if (idUtilisateur == null) {
+            throw ForbiddenException()
+        }
 
-        return documentUtils.checkFile(
+        val response = documentUtils.checkFile(
             File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
         )
+        if (courierId != null) {
+            if (response.status == Response.Status.OK.statusCode) {
+                courrierRepository.setAccuse(courierId, idUtilisateur)
+            }
+        }
+        return response
     }
 }

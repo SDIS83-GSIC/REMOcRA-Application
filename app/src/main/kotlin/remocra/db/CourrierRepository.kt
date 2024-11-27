@@ -26,6 +26,12 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         private val expediteurAlias: Table<*> = ORGANISME.`as`("EXPEDITEUR")
     }
 
+    fun setAccuse(courrierId: UUID, userId: UUID) = dsl.update(L_COURRIER_UTILISATEUR)
+        .set(L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION, dateUtils.now())
+        .where(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(userId))
+        .and(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(courrierId))
+        .execute()
+
     fun getDocumentByCourrier(courrierId: UUID): Document =
         dsl.select(*DOCUMENT.fields())
             .from(COURRIER)
@@ -47,6 +53,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             COURRIER.OBJET,
 //            Infos Document
             DOCUMENT.DATE,
+            COURRIER.DOCUMENT_ID,
 //        Infos Destinataire
             multiset(
                 selectDistinct(UTILISATEUR.EMAIL, L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION)
@@ -182,6 +189,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
 
     data class CourrierComplet(
         val courrierId: UUID,
+        val courrierDocumentId: UUID,
         val courrierReference: String,
         val courrierObjet: String,
         val courrierExpediteur: String?,

@@ -3,6 +3,7 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.Document
+import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import java.util.UUID
@@ -76,4 +77,10 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
 
     fun upsertDocument() {
     }
+
+    fun getCourrierIdByDocumentId(documentId: UUID): UUID? =
+        dsl.select(COURRIER.ID)
+            .from(COURRIER)
+            .where(COURRIER.DOCUMENT_ID.eq(documentId))
+            .fetchOneInto()
 }
