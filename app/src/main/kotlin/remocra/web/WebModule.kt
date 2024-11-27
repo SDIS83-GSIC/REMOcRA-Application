@@ -36,6 +36,7 @@ import remocra.web.pei.PeiModule
 import remocra.web.profildroit.ProfilDroitModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
+import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
@@ -78,6 +79,7 @@ object WebModule : RemocraModule() {
         install(ThematiqueModule)
         install(UtilisateurModule)
         install(DebitSimultaneModule)
+        install(RapportPersonnaliseModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

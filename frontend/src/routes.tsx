@@ -114,6 +114,7 @@ import ListModuleDocument from "./pages/ModuleDocumentCourrier/ListModuleDocumen
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
+import ListRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ListRapportPersonnalise.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -312,6 +313,8 @@ export const URLS = {
 
   UPDATE_DEBIT_SIMULTANE: (debitSimultaneId: string) =>
     url`/deci/debit-simultane/update/` + debitSimultaneId,
+
+  LIST_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1294,6 +1297,15 @@ export default [
             Component={UpdateZoneIntegration}
             // TODO
             droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+          />
+        ),
+      },
+      {
+        path: "rapport-personnalise",
+        element: (
+          <Authorization
+            Component={ListRapportPersonnalise}
+            droits={[TYPE_DROIT.ADMIN_RAPPORTS_PERSO]}
           />
         ),
       },
