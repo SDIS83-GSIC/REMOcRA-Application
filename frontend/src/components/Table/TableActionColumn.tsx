@@ -205,7 +205,7 @@ export const ActionButton = ({
                 textEnable={_button.textEnable}
                 icon={_button.icon}
                 href={_button.href?.(row.value)}
-                onClick={_button.onClick?.(row.value)}
+                onClick={() => _button.onClick?.(row.value)}
                 hide={_button.hide}
                 query={_button.query}
                 disabled={_button.disable ? _button.disable(row) : false}
