@@ -14,13 +14,12 @@ import remocra.db.jooq.remocra.tables.pojos.Job
 import remocra.db.jooq.remocra.tables.pojos.LogLine
 import remocra.db.jooq.remocra.tables.references.LOG_LINE
 import remocra.db.jooq.remocra.tables.references.TASK
-import remocra.utils.DateUtils
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class JobRepository @Inject constructor(private val dsl: DSLContext, private val dateUtils: DateUtils) : AbstractRepository() {
+class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     fun createJob(idJob: UUID, idTask: UUID, userId: UUID, parameters: JSONB? = null): Int =
         dsl.insertInto(JOB)

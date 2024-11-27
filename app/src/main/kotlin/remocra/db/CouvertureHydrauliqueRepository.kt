@@ -25,13 +25,11 @@ import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
-import remocra.utils.DateUtils
 import java.time.ZonedDateTime
 import java.util.UUID
 
 class CouvertureHydrauliqueRepository @Inject constructor(
     private val dsl: DSLContext,
-    private val dateUtils: DateUtils,
 ) : AbstractRepository() {
 
     fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>): Collection<EtudeComplete> =
