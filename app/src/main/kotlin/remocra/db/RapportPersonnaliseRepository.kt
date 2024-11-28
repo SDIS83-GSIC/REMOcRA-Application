@@ -10,9 +10,13 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
+import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.db.jooq.remocra.tables.references.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE
+import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE_PARAMETRE
 import java.util.UUID
 
 class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -114,5 +118,41 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val rapportPersonnaliseDescription: String?,
         val rapportPersonnaliseModule: TypeModuleRapportCourrier,
         val listeProfilDroit: String?,
+    )
+
+    data class IdLibelleRapportPersonnalise(
+        val id: String,
+        val value: String?,
+    )
+
+    fun executeSqlParametre(requete: String): List<IdLibelleRapportPersonnalise> =
+        dsl.fetch(requete).into(IdLibelleRapportPersonnalise::class.java)
+
+    fun executeSqlRapport(requete: String): Any =
+        dsl.fetch(requete).into(Any::class.java)
+
+    fun insertRapportPersonnalise(rapportPersonnalise: RapportPersonnalise) =
+        dsl.insertInto(RAPPORT_PERSONNALISE)
+            .set(dsl.newRecord(RAPPORT_PERSONNALISE, rapportPersonnalise))
+            .execute()
+
+    fun insertLRapportPersonnaliseProfilDroit(lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroit) =
+        dsl.insertInto(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+            .set(dsl.newRecord(L_RAPPORT_PERSONNALISE_PROFIL_DROIT, lRapportPersonnaliseProfilDroit))
+            .execute()
+
+    fun insertRapportPersonnaliseParametre(rapportPersonnaliseParametre: RapportPersonnaliseParametre) =
+        dsl.insertInto(RAPPORT_PERSONNALISE_PARAMETRE)
+            .set(dsl.newRecord(RAPPORT_PERSONNALISE_PARAMETRE, rapportPersonnaliseParametre))
+            .execute()
+
+    /**
+     * Vérifie s'il existe déjà un élément avec ce *code*. En modification, on regarde si le code existe pour un autre élément que lui-même
+     */
+    fun checkCodeExists(rapportPersonnaliseCode: String, rapportPersonnaliseId: UUID?) = dsl.fetchExists(
+        dsl.select(RAPPORT_PERSONNALISE.CODE)
+            .from(RAPPORT_PERSONNALISE)
+            .where(RAPPORT_PERSONNALISE.CODE.equalIgnoreCase(rapportPersonnaliseCode))
+            .and(RAPPORT_PERSONNALISE.ID.notEqual(rapportPersonnaliseId)),
     )
 }
