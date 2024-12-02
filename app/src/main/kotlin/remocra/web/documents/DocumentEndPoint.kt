@@ -1,8 +1,11 @@
 package remocra.web.documents
 
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -12,11 +15,14 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import org.slf4j.LoggerFactory
 import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.db.CourrierRepository
 import remocra.db.DocumentRepository
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
+import remocra.usecase.pei.InsertDocumentUseCase
 import remocra.utils.notFound
 import java.io.File
 import java.nio.file.Paths
@@ -33,6 +39,8 @@ class DocumentEndPoint {
     @Inject lateinit var documentUtils: DocumentUtils
 
     @Inject lateinit var courrierRepository: CourrierRepository
+
+    @Inject lateinit var insertDocumentUseCase: InsertDocumentUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -67,5 +75,21 @@ class DocumentEndPoint {
             }
         }
         return response
+    }
+
+    @PUT
+    @Path("/import/")
+    @RequireDroits([Droit.DECLARATION_PEI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importDocument(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            insertDocumentUseCase.execute(
+                securityContext.userInfo,
+                httpRequest.getPart("document"),
+            ),
+        ).build()
     }
 }

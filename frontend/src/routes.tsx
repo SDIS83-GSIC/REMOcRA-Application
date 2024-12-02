@@ -121,6 +121,7 @@ import ModuleRapportPersonnalise from "./components/ModuleRemocra/ModuleRapportP
 import ExecuteRapportPersonnalise from "./pages/RapportPersonnalise/ExecuteRapportPersonnalise.tsx";
 import DuplicateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/DuplicateRapportPersonnalise.tsx";
 import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportRapportPersonnalise.tsx";
+import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -132,6 +133,7 @@ export const URLS = {
   DECI_CARTE: url`/deci/carte`,
 
   PEI: url`/deci/pei`,
+  DECLARATION_PEI: url`/deci/declaration-pei`,
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
     url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
@@ -473,6 +475,15 @@ export default [
           <Authorization
             Component={UpdateDebitSimultane}
             droits={[TYPE_DROIT.DEBITS_SIMULTANES_A]}
+          />
+        ),
+      },
+      {
+        path: "declaration-pei",
+        element: (
+          <Authorization
+            Component={DeclarationPei}
+            droits={[TYPE_DROIT.DECLARATION_PEI]}
           />
         ),
       },

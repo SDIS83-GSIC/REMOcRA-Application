@@ -79,6 +79,11 @@ function getLinks(
           label: "Gestion des points d'eau",
           link: URLS.PEI,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DECLARATION_PEI),
+          label: "Déclarer un PEI",
+          link: URLS.DECLARATION_PEI,
+        },
       ];
     case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
       return [

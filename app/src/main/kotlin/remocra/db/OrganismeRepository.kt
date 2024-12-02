@@ -323,4 +323,10 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                     record.get(PEI.ID)
                 },
             )
+
+    fun getLibelleById(organismeId: UUID): String =
+        dsl.select(ORGANISME.LIBELLE)
+            .from(ORGANISME)
+            .where(ORGANISME.ID.eq(organismeId))
+            .fetchSingleInto()
 }
