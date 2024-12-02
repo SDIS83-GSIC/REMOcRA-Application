@@ -212,6 +212,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
             .execute()
 
+    fun deleteRapportPersonnaliseParametre(rapportPersonnaliseId: UUID) =
+        dsl.deleteFrom(RAPPORT_PERSONNALISE_PARAMETRE)
+            .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
+            .execute()
+
+    fun deleteRapportPersonnalise(rapportPersonnaliseId: UUID) =
+        dsl.deleteFrom(RAPPORT_PERSONNALISE)
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
+            .execute()
+
     fun insertLRapportPersonnaliseProfilDroit(lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroit) =
         dsl.insertInto(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
             .set(dsl.newRecord(L_RAPPORT_PERSONNALISE_PROFIL_DROIT, lRapportPersonnaliseProfilDroit))

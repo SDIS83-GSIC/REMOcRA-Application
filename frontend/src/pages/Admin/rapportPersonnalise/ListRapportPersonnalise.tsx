@@ -153,6 +153,13 @@ const ListRapportPersonnalise = () => {
                     URLS.UPDATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
                   type: TYPE_BUTTON.UPDATE,
                 },
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  type: TYPE_BUTTON.DELETE,
+                  path: url`/api/rapport-personnalise/delete/`,
+                },
               ],
             }),
           ]}

@@ -1,6 +1,7 @@
 package remocra.web.rapportpersonnalise
 
 import jakarta.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -21,6 +22,7 @@ import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -37,6 +39,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateRapportPersonnaliseUseCase: UpdateRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var deleteRapportPersonnaliseUseCase: DeleteRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -101,6 +106,18 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
                 listeProfilDroitId = element.listeProfilDroitId,
                 listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre,
             ),
+        ).wrap()
+
+    @Path("/delete/{rapportPersonnaliseId}")
+    @DELETE
+    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    fun delete(
+        @PathParam("rapportPersonnaliseId")
+        rapportPersonnaliseId: UUID,
+    ): Response =
+        deleteRapportPersonnaliseUseCase.execute(
+            securityContext.userInfo,
+            rapportPersonnaliseRepository.getRapportPersonnalise(rapportPersonnaliseId),
         ).wrap()
 
     class RapportPersonnaliseInput {
