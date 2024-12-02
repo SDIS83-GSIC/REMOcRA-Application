@@ -1,6 +1,7 @@
 package remocra.data.enums
 
 import jakarta.ws.rs.core.Response.Status
+import remocra.GlobalConstants
 import remocra.db.jooq.remocra.enums.TypeVisite
 
 /**
@@ -9,7 +10,7 @@ import remocra.db.jooq.remocra.enums.TypeVisite
  * Le *status* permet d'interpréter proprement l'exception au moyen d'un *wrap* générique, il est par défaut à [Status.BAD_REQUEST]
  *
  */
-enum class ErrorType(val code: Int, val libelle: String, val status: Status = Status.BAD_REQUEST) {
+enum class ErrorType(val code: Int, val libelle: String, val status: Status = Status.BAD_REQUEST, val replacement: String? = null) {
     // ********************************************************************************
     // Erreurs générales
     // ********************************************************************************
@@ -185,6 +186,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ETUDE_TYPE_FORBIDDEN_C(4000, "Vous n'avez pas les droits de création d'une étude.", Status.FORBIDDEN),
     ETUDE_TYPE_FORBIDDEN_U(4001, "Vous n'avez pas les droits pour mettre à jour une étude.", Status.FORBIDDEN),
     ETUDE_DOCUMENT_MEME_NOM(4002, "Les documents d'une même étude ne doivent pas avoir le même nom."),
+    ETUDE_CAPACITE_MANQUANTE(4003, "La capacité doit être renseignée."),
+    ETUDE_DEBIT_MANQUANT(4004, "Le débit doit être renseigné."),
+    ETUDE_DIAMETRE_MANQUANT(4005, "Le diamètre doit être renseigné."),
+    ETUDE_DIAMETRE_CANALISATION_MANQUANT(4006, "Le diamètre doit être renseigné."),
+    ETUDE_NUMERO_UNIQUE(4007, "Une étude avec ce numéro existe déjà."),
+    CALCUL_COUVERTURE_PARAMETRE_PROFONDEUR_MANQUANT(4008, "Le paramètre ${ParametreEnum.PROFONDEUR_COUVERTURE} doit être renseigné."),
+    CALCUL_COUVERTURE_DECI_DISTANCE_MAX_PARCOURS_MANQUANT(4009, "Le paramètre ${ParametreEnum.DECI_DISTANCE_MAX_PARCOURS} doit être renseigné."),
+    CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT(4010, "Le paramètre ${ParametreEnum.DECI_ISODISTANCES} doit être renseigné."),
 
     IMPORT_SHP_ETUDE_SHP_INTROUVABLE(4100, "Aucun fichier .shp n'a été trouvé."),
     IMPORT_SHP_ETUDE_GEOMETRIE_NULLE(4101, "La géométrie ne doit pas être nulle."),
@@ -195,16 +204,15 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SHP_ETUDE_CAPACITE_MANQUANTE(4106, "La capacité doit être renseignée pour une réserve."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_PA(4107, "Le débit doit être renseigné pour un PA."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_RESERVE(4108, "Le débit doit être renseigné pour une réserve."),
-    ETUDE_NUMERO_UNIQUE(4007, "Une étude avec ce numéro existe déjà."),
-
-    ETUDE_CAPACITE_MANQUANTE(4003, "La capacité doit être renseignée."),
-    ETUDE_DEBIT_MANQUANT(4004, "Le débit doit être renseigné."),
-    ETUDE_DIAMETRE_MANQUANT(4005, "Le diamètre doit être renseigné."),
-    ETUDE_DIAMETRE_CANALISATION_MANQUANT(4006, "Le diamètre doit être renseigné."),
-
-    CALCUL_COUVERTURE_PARAMETRE_PROFONDEUR_MANQUANT(4008, "Le paramètre ${ParametreEnum.PROFONDEUR_COUVERTURE} doit être renseigné."),
-    CALCUL_COUVERTURE_DECI_DISTANCE_MAX_PARCOURS_MANQUANT(4009, "Le paramètre ${ParametreEnum.DECI_DISTANCE_MAX_PARCOURS} doit être renseigné."),
-    CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT(4010, "Le paramètre ${ParametreEnum.DECI_ISODISTANCES} doit être renseigné."),
+    IMPORT_SHP_TYPE_PEI_ABSENT(4109, "Le type du PEI n'est pas dans la liste : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    IMPORT_SHP_CODE_NATURE_DECI_ABSENT(
+        4110,
+        "Le code de la nature DECI n'est pas présent dans la base. Les valeurs possibles sont : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}",
+    ),
+    IMPORT_SHP_CODE_DIAMETRE_ABSENT(
+        4111,
+        "Le code du diamètre n'est pas présent dans la base. Les valeurs possibles sont : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}",
+    ),
 
     /***
      * ***********************************************************************
@@ -231,6 +239,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     COURRIER_ORGANISME_COMMUNE(
         5005,
         "Aucun organisme de type COMMUNE ne correspond à la commune sélectionnée. La géométrie de la commune doit être contenu dans celle de l'organisme",
+    ),
+    COURRIER_MANQUE_MAIRE(
+        5006,
+        "Aucun destinataire Maire pour cette commune. Vérifier que le contact existe et qu'il a bien le rôle '${GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP}'",
+        Status.BAD_REQUEST,
     ),
 
     //
@@ -366,7 +379,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SITES_SHP_INTROUVABLE(9108, "Aucun fichier .shp n'a été trouvé."),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, "La géométrie ne doit pas être nulle."),
     IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, "La géométrie ne doit pas être nulle et doit être de type Point."),
-    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul."),
+    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul. ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     IMPORT_SITES_LIBELLE_NULL(9112, "Le libellé ne doit pas être nul."),
 
     // Contact
@@ -399,6 +412,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // Utilisateur
     UTILISATEUR_FORBIDDEN(10015, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),
     UTILISATEUR_USERNAME_LENGTH(10016, "L'identifiant doit avoir au minimum 3 caractères."),
+    UTILISATEUR_ERROR_INSERT(
+        10017,
+        "Erreur lors de l'insertion de l'identifiant : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",
+    ),
     UTILISATEUR_USERNAME_EXISTS(10018, "L'identifiant saisi est déjà utilisé par un autre utilisateur."),
     UTILISATEUR_EMAIL_EXISTS(10019, "L'adresse email saisie est déjà utilisée par un autre utilisateur."),
     UTILISATEUR_ACTION_EMAIL(10020, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),

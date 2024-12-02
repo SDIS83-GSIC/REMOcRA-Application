@@ -188,13 +188,12 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
 
                 // On vérifie que le type et la nature DECI sont cohérents
                 val typePeiProjet: TypePeiProjet = TypePeiProjet.entries.find { it.name == type }
-                    ?: throw RemocraResponseException(4500, "Le type du PEI n'est pas dans la liste : ${TypePeiProjet.entries}")
+                    ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_TYPE_PEI_ABSENT, TypePeiProjet.entries.toString())
 
                 val natureDeciId = dataCacheProvider.getNaturesDeci().values.firstOrNull { it.natureDeciCode == codeNatureDeci }?.natureDeciId
                     ?: throw RemocraResponseException(
-                        4600,
-                        "Le code de la nature DECI n'est pas présent dans la base. Les valeurs possibles sont : " +
-                            "${dataCacheProvider.getNaturesDeci().values.map { it.natureDeciCode }}",
+                        ErrorType.IMPORT_SHP_CODE_NATURE_DECI_ABSENT,
+                        dataCacheProvider.getNaturesDeci().values.map { it.natureDeciCode }.toString(),
                     )
 
                 // On vérifie toutes les contraintes selon le type
@@ -203,9 +202,8 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
                     TypePeiProjet.PIBI -> {
                         diametreId = dataCacheProvider.getDiametres().values.firstOrNull { it.diametreCode == codeDiametre }?.diametreId
                             ?: throw RemocraResponseException(
-                                4700,
-                                "Le code du diamètre n'est pas présent dans la base. Les valeurs possibles sont : " +
-                                    "${dataCacheProvider.getDiametres().values.map { it.diametreCode }}",
+                                ErrorType.IMPORT_SHP_CODE_DIAMETRE_ABSENT,
+                                dataCacheProvider.getDiametres().values.map { it.diametreCode }.toString(),
                             )
 
                         if (diametreCanalisation == null) {

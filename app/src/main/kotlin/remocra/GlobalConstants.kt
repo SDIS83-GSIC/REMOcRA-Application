@@ -108,4 +108,6 @@ object GlobalConstants {
     // TODO : A agrémenter petit à petit
 
     const val SCHEMA_ENTREPOT_SIG: String = "ENTREPOTSIG"
+
+    const val PLACEHOLDER_ERROR_TYPE: String = "#PLACEHOLDER#"
 }

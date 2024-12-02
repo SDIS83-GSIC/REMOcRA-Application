@@ -1,7 +1,6 @@
 package remocra.usecase.courrier
 
 import com.google.inject.Inject
-import jakarta.ws.rs.core.Response
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
 import remocra.app.AppSettings
@@ -480,7 +479,7 @@ class CourrierRopGenerator : AbstractCourrierGenerator<CourrierParametresRopData
 
     private fun ensureDestinataireRop(organismeId: UUID) =
         courrierRopRepository.getDestinataireMaire(organismeId)
-            ?: throw RemocraResponseException(5006, "Aucun destinataire Maire pour cette commune. Vérifier que le contact existe et qu'il a bien le rôle '${GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP}'", Response.Status.BAD_REQUEST)
+            ?: throw RemocraResponseException(ErrorType.COURRIER_MANQUE_MAIRE)
 
     private fun setDonneesCtp(listePibiRop: Collection<CourrierRopRepository.PibiRop>, mapPibiByDateCtp: Map<UUID?, ZonedDateTime?>) {
         val ctrlDebitPression = courrierRopRepository.getLastCtrlDebitPression(mapPibiByDateCtp)

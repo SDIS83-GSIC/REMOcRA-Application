@@ -67,13 +67,11 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             ).execute()
 
             if (response.errorBody() != null) {
-                throw RemocraResponseException(
-                    10017,
-                    "Erreur lors de l'insertion de l'identifiant : ${response.message()} - " +
-                        "(${
-                            response.errorBody()!!.source()
-                        }. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",
-                )
+                val replacement = "${response.message()} - " +
+                    "(${
+                        response.errorBody()!!.source()
+                    }"
+                throw RemocraResponseException(ErrorType.UTILISATEUR_ERROR_INSERT, replacement)
             }
 
             logger.info("Utilisateur ${element.utilisateurUsername} inséré dans keycloak")
