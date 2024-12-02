@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import org.apache.commons.mail.EmailException
 import org.apache.commons.mail.HtmlEmail
+import org.slf4j.LoggerFactory
 import remocra.db.JobRepository
 import remocra.eventbus.EventListener
 import remocra.eventbus.MailSettings
@@ -13,17 +14,19 @@ class NotificationEventListener @Inject constructor() :
     EventListener<NotificationEvent> {
 
     @Inject
-    protected lateinit var logManagerFactory: LogManagerFactory
+    private lateinit var logManagerFactory: LogManagerFactory
 
     @Inject
-    protected lateinit var jobRepository: JobRepository
+    private lateinit var jobRepository: JobRepository
 
     @Inject
-    protected lateinit var settings: MailSettings
+    private lateinit var settings: MailSettings
 
     @Subscribe
     override fun onEvent(event: NotificationEvent) {
-        val logManager = logManagerFactory.create(event.idJob)
+        val idJob = event.idJob
+
+        val logManager = idJob?.let { logManagerFactory.create(idJob) }
         try {
             val email = HtmlEmail()
             email.hostName = settings.smtpUrl
@@ -42,11 +45,17 @@ class NotificationEventListener @Inject constructor() :
 
             email.send()
 
-            // Mise à jour du job après notification
-            logManager.info("${event.notificationData}")
-            jobRepository.setNotifie(event.idJob)
+            if (idJob != null) {
+                // Mise à jour du job après notification
+                logManager!!.info("${event.notificationData}")
+                jobRepository.setNotifie(event.idJob)
+            }
         } catch (ee: EmailException) {
-            logManager.error("Problème d'envoi du mail : ${ee.message}")
+            if (idJob != null) {
+                logManager!!.error("Problème d'envoi du mail : ${ee.message}")
+            } else {
+                LoggerFactory.getLogger(NotificationEventListener::class.java).error("Problème d'envoi du mail : ${ee.message}")
+            }
         }
     }
 }
