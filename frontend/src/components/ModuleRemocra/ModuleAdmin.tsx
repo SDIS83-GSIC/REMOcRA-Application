@@ -1,10 +1,14 @@
 import { Outlet } from "react-router-dom";
 import SquelettePage from "../../pages/SquelettePage.tsx";
-import Header from "../Header/Header.tsx";
+import Header, { NavToProps } from "../Header/Header.tsx";
+import { URLS } from "../../routes.tsx";
 
 const ModuleAdmin = () => {
+  const navLinks: NavToProps[] = [
+    { path: URLS.MODULE_ADMIN, label: "Administer" },
+  ];
   return (
-    <SquelettePage header={<Header />}>
+    <SquelettePage header={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
     </SquelettePage>
