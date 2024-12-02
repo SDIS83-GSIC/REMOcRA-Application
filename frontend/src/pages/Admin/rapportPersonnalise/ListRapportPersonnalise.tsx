@@ -8,12 +8,14 @@ import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
 import {
+  ActionColumn,
   BooleanColumn,
   ProtectedColumn,
 } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -138,6 +140,20 @@ const ListRapportPersonnalise = () => {
                   name={"rapportPersonnaliseProtected"}
                 />
               ),
+            }),
+            ActionColumn({
+              Header: "Actions",
+              accessor: "rapportPersonnaliseId",
+              buttons: [
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  href: (rapportPersonnaliseId) =>
+                    URLS.UPDATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
+                  type: TYPE_BUTTON.UPDATE,
+                },
+              ],
             }),
           ]}
           idName={"tableRapportPersonnalise"}

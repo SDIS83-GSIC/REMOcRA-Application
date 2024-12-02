@@ -57,12 +57,37 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   rapportPersonnaliseActif: data?.rapportPersonnaliseActif ?? true,
   rapportPersonnaliseCode: data?.rapportPersonnaliseCode ?? null,
   rapportPersonnaliseLibelle: data?.rapportPersonnaliseLibelle ?? null,
-  rapportPersonnaliseIsSpatial: data?.rapportPersonnaliseIsSpatial ?? false,
+  rapportPersonnaliseIsSpatial: data?.rapportPersonnaliseChampGeometrie != null,
+  rapportPersonnaliseModule: data?.rapportPersonnaliseModule ?? null,
   rapportPersonnaliseChampGeometrie:
     data?.rapportPersonnaliseChampGeometrie ?? null,
   listeProfilDroitId: data?.listeProfilDroitId ?? [],
   listeRapportPersonnaliseParametre:
-    data?.listeRapportPersonnaliseParametre ?? [],
+    data?.listeRapportPersonnaliseParametre.map((e) => ({
+      rapportPersonnaliseParametreSourceSqlDebut:
+        e.rapportPersonnaliseParametreSourceSql?.split(
+          e.rapportPersonnaliseParametreSourceSqlId,
+        )[0],
+      rapportPersonnaliseParametreSourceSqlFin:
+        e.rapportPersonnaliseParametreSourceSql
+          ?.split(
+            e.rapportPersonnaliseParametreSourceSqlLibelle + " as libelle ",
+          )
+          .slice(-1)[0],
+      ...e,
+    })) ?? [],
+  rapportPersonnaliseSourceSql:
+    data?.rapportPersonnaliseChampGeometrie == null
+      ? data?.rapportPersonnaliseSourceSql
+      : null,
+  rapportPersonnaliseSourceSqlDebut:
+    data?.rapportPersonnaliseChampGeometrie !== null
+      ? data?.rapportPersonnaliseSourceSql.split("ST_astext(")[0]
+      : null,
+  rapportPersonnaliseSourceSqlFin:
+    data?.rapportPersonnaliseChampGeometrie !== null
+      ? data?.rapportPersonnaliseSourceSql.split(") as geometrie ").slice(-1)[0]
+      : null,
 });
 
 export const validationSchema = object({});
@@ -83,18 +108,20 @@ export const prepareVariables = (values: RapportPersonnaliseType) => ({
   rapportPersonnaliseModule: values.rapportPersonnaliseModule,
   listeProfilDroitId: values.listeProfilDroitId,
   listeRapportPersonnaliseParametre:
-    values.listeRapportPersonnaliseParametre.map((e, index) => ({
-      rapportPersonnaliseParametreOrdre: index,
-      rapportPersonnaliseParametreSourceSql:
-        e.rapportPersonnaliseParametreSourceSqlDebut +
-        " " +
-        e.rapportPersonnaliseParametreSourceSqlId +
-        " as id, " +
-        e.rapportPersonnaliseParametreSourceSqlLibelle +
-        " as libelle " +
-        e.rapportPersonnaliseParametreSourceSqlFin,
-      ...e,
-    })),
+    values.listeRapportPersonnaliseParametre.map((e, index) => {
+      return {
+        rapportPersonnaliseParametreOrdre: index,
+        rapportPersonnaliseParametreSourceSql:
+          e.rapportPersonnaliseParametreSourceSqlDebut +
+          " " +
+          e.rapportPersonnaliseParametreSourceSqlId +
+          " as id, " +
+          e.rapportPersonnaliseParametreSourceSqlLibelle +
+          " as libelle " +
+          e.rapportPersonnaliseParametreSourceSqlFin,
+        ...e,
+      };
+    }),
 });
 
 const RapportPersonnalise = () => {
@@ -276,6 +303,8 @@ const RapportPersonnalise = () => {
                       "SELECT",
                     );
                     setFieldValue("rapportPersonnaliseSourceSqlFin", "FROM");
+                  } else {
+                    setFieldValue("rapportPersonnaliseChampGeometrie", null);
                   }
                 }}
               />

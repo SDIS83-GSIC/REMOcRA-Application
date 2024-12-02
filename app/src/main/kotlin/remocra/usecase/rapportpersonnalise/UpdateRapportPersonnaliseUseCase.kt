@@ -19,7 +19,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.INSERT) {
+class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.UPDATE) {
 
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
@@ -48,7 +48,7 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
 
     override fun execute(userInfo: UserInfo?, element: RapportPersonnaliseData): RapportPersonnaliseData {
         // On insère le rapport personnalisé
-        rapportPersonnaliseRepository.insertRapportPersonnalise(
+        rapportPersonnaliseRepository.updateRapportPersonnalise(
             RapportPersonnalise(
                 rapportPersonnaliseId = element.rapportPersonnaliseId,
                 rapportPersonnaliseActif = element.rapportPersonnaliseActif,
@@ -62,7 +62,10 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
             ),
         )
 
-        // Puis les profils droit
+        // On delete les profils droit
+        rapportPersonnaliseRepository.deleteLRapportPersonnaliseProfilDroit(element.rapportPersonnaliseId)
+
+        // Puis on les remet
         element.listeProfilDroitId.forEach {
             rapportPersonnaliseRepository.insertLRapportPersonnaliseProfilDroit(
                 LRapportPersonnaliseProfilDroit(
@@ -72,7 +75,7 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
             )
         }
 
-        // Les paramètres
+        // Les paramètres UPSERT
         element.listeRapportPersonnaliseParametre.forEach { param ->
             rapportPersonnaliseRepository.upsertRapportPersonnaliseParametre(
                 RapportPersonnaliseParametre(

@@ -116,6 +116,7 @@ import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegrati
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
 import ListRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ListRapportPersonnalise.tsx";
 import CreateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/CreateRapportPersonnalise.tsx";
+import UpdateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/UpdateRapportPersonnalise.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -317,6 +318,8 @@ export const URLS = {
 
   LIST_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise`,
   CREATE_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise/create`,
+  UPDATE_RAPPORT_PERSONNALISE: (rapportPersonnaliseId: string) =>
+    url`/admin/rapport-personnalise/update/` + rapportPersonnaliseId,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1316,6 +1319,15 @@ export default [
         element: (
           <Authorization
             Component={CreateRapportPersonnalise}
+            droits={[TYPE_DROIT.ADMIN_RAPPORTS_PERSO]}
+          />
+        ),
+      },
+      {
+        path: "rapport-personnalise/update/:rapportPersonnaliseId",
+        element: (
+          <Authorization
+            Component={UpdateRapportPersonnalise}
             droits={[TYPE_DROIT.ADMIN_RAPPORTS_PERSO]}
           />
         ),

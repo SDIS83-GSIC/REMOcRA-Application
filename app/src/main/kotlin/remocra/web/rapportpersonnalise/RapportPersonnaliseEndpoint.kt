@@ -3,7 +3,9 @@ package remocra.web.rapportpersonnalise
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -19,6 +21,7 @@ import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -31,6 +34,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createRapportPersonnaliseUseCase: CreateRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var updateRapportPersonnaliseUseCase: UpdateRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -59,7 +65,32 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         createRapportPersonnaliseUseCase.execute(
             securityContext.userInfo,
             RapportPersonnaliseData(
-                rapportPersonnaliseId = element.rapportPersonnaliseId ?: UUID.randomUUID(),
+                rapportPersonnaliseId = UUID.randomUUID(),
+                rapportPersonnaliseActif = element.rapportPersonnaliseActif,
+                rapportPersonnaliseCode = element.rapportPersonnaliseCode,
+                rapportPersonnaliseLibelle = element.rapportPersonnaliseLibelle,
+                rapportPersonnaliseChampGeometrie = element.rapportPersonnaliseChampGeometrie,
+                rapportPersonnaliseDescription = element.rapportPersonnaliseDescription,
+                rapportPersonnaliseSourceSql = element.rapportPersonnaliseSourceSql,
+                rapportPersonnaliseModule = element.rapportPersonnaliseModule,
+                listeProfilDroitId = element.listeProfilDroitId,
+                listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre,
+            ),
+        ).wrap()
+
+    @Path("/update/{rapportPersonnaliseId}")
+    @PUT
+    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    fun update(
+        @PathParam("rapportPersonnaliseId")
+        rapportPersonnaliseId: UUID,
+
+        element: RapportPersonnaliseInput,
+    ): Response =
+        updateRapportPersonnaliseUseCase.execute(
+            securityContext.userInfo,
+            RapportPersonnaliseData(
+                rapportPersonnaliseId = rapportPersonnaliseId,
                 rapportPersonnaliseActif = element.rapportPersonnaliseActif,
                 rapportPersonnaliseCode = element.rapportPersonnaliseCode,
                 rapportPersonnaliseLibelle = element.rapportPersonnaliseLibelle,
@@ -73,7 +104,6 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         ).wrap()
 
     class RapportPersonnaliseInput {
-        var rapportPersonnaliseId: UUID? = null
         val rapportPersonnaliseActif: Boolean = false
         lateinit var rapportPersonnaliseCode: String
         lateinit var rapportPersonnaliseLibelle: String
@@ -84,4 +114,13 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         var listeProfilDroitId: Collection<UUID> = listOf()
         val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData> = listOf()
     }
+
+    @GET
+    @Path("/get/{rapportPersonnaliseId}")
+    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    fun getRapportPersonnalise(
+        @PathParam("rapportPersonnaliseId")
+        rapportPersonnaliseId: UUID,
+    ) =
+        Response.ok(rapportPersonnaliseRepository.getRapportPersonnalise(rapportPersonnaliseId)).build()
 }

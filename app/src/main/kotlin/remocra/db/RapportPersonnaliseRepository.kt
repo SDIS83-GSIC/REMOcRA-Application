@@ -8,8 +8,11 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
+import remocra.data.RapportPersonnaliseData
+import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
@@ -120,6 +123,68 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val listeProfilDroit: String?,
     )
 
+    fun getRapportPersonnalise(rapportPersonnaliseId: UUID): RapportPersonnaliseData =
+        dsl.select(
+            RAPPORT_PERSONNALISE.ID,
+            RAPPORT_PERSONNALISE.CODE,
+            RAPPORT_PERSONNALISE.ACTIF,
+            RAPPORT_PERSONNALISE.LIBELLE,
+            RAPPORT_PERSONNALISE.SOURCE_SQL,
+            RAPPORT_PERSONNALISE.DESCRIPTION,
+            RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE,
+            RAPPORT_PERSONNALISE.MODULE,
+            multiset(
+                selectDistinct(PROFIL_DROIT.ID)
+                    .from(PROFIL_DROIT)
+                    .join(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+                    .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
+                    .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1()
+                }
+            }.`as`("listeProfilDroitId"),
+            multiset(
+                selectDistinct(
+                    RAPPORT_PERSONNALISE_PARAMETRE.CODE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.LIBELLE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.DESCRIPTION,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL_ID,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL_LIBELLE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.VALEUR_DEFAUT,
+                    RAPPORT_PERSONNALISE_PARAMETRE.IS_REQUIRED,
+                    RAPPORT_PERSONNALISE_PARAMETRE.TYPE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.ORDRE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.ID,
+                )
+                    .from(RAPPORT_PERSONNALISE_PARAMETRE)
+                    .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+                    .orderBy(RAPPORT_PERSONNALISE_PARAMETRE.ORDRE),
+            ).`as`("listeRapportPersonnaliseParametre").convertFrom { record ->
+                record.map {
+                    RapportPersonnaliseParametreData(
+                        rapportPersonnaliseParametreId = it.value11().let { it as UUID },
+                        rapportPersonnaliseParametreCode = it.value1() as String,
+                        rapportPersonnaliseParametreLibelle = it.value2() as String,
+                        rapportPersonnaliseParametreDescription = it.value3(),
+                        rapportPersonnaliseParametreSourceSql = it.value4(),
+                        rapportPersonnaliseParametreSourceSqlId = it.value5(),
+                        rapportPersonnaliseParametreSourceSqlLibelle = it.value6(),
+                        rapportPersonnaliseParametreValeurDefaut = it.value7(),
+                        rapportPersonnaliseParametreIsRequired = it.value8() as Boolean,
+                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportPersonnalise,
+                        rapportPersonnaliseParametreOrdre = it.value10() as Int,
+                    )
+                }
+            },
+        )
+            .from(RAPPORT_PERSONNALISE)
+            .leftJoin(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
+            .fetchSingleInto()
+
     data class IdLibelleRapportPersonnalise(
         val id: String,
         val value: String?,
@@ -136,13 +201,27 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .set(dsl.newRecord(RAPPORT_PERSONNALISE, rapportPersonnalise))
             .execute()
 
+    fun updateRapportPersonnalise(rapportPersonnalise: RapportPersonnalise) =
+        dsl.update(RAPPORT_PERSONNALISE)
+            .set(dsl.newRecord(RAPPORT_PERSONNALISE, rapportPersonnalise))
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnalise.rapportPersonnaliseId))
+            .execute()
+
+    fun deleteLRapportPersonnaliseProfilDroit(rapportPersonnaliseId: UUID) =
+        dsl.deleteFrom(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+            .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
+            .execute()
+
     fun insertLRapportPersonnaliseProfilDroit(lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroit) =
         dsl.insertInto(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
             .set(dsl.newRecord(L_RAPPORT_PERSONNALISE_PROFIL_DROIT, lRapportPersonnaliseProfilDroit))
             .execute()
 
-    fun insertRapportPersonnaliseParametre(rapportPersonnaliseParametre: RapportPersonnaliseParametre) =
+    fun upsertRapportPersonnaliseParametre(rapportPersonnaliseParametre: RapportPersonnaliseParametre) =
         dsl.insertInto(RAPPORT_PERSONNALISE_PARAMETRE)
+            .set(dsl.newRecord(RAPPORT_PERSONNALISE_PARAMETRE, rapportPersonnaliseParametre))
+            .onConflict(RAPPORT_PERSONNALISE_PARAMETRE.ID)
+            .doUpdate()
             .set(dsl.newRecord(RAPPORT_PERSONNALISE_PARAMETRE, rapportPersonnaliseParametre))
             .execute()
 

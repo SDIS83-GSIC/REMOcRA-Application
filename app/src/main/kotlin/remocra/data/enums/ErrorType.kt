@@ -466,6 +466,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_RAPPORT_PERSO_REQUETE_INVALID_CUD(15002, "La requête doit être un SELECT (et non CREATE / UPDATE / DELETE / DROP)."),
     ADMIN_RAPPORT_PERSO_REQUETE_INVALID(15003, "La requête n'est pas valide : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE(15005, "Chaque code des paramètres doit être unique."),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
