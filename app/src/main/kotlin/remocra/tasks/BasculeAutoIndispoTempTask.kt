@@ -2,6 +2,7 @@ package remocra.tasks
 
 import jakarta.inject.Inject
 import remocra.auth.UserInfo
+import remocra.data.NotificationMailData
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
@@ -86,5 +87,5 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
 }
 
 class BasculeAutoIndispoTempTaskParameter(
-    override val notification: NotificationMail?,
+    override val notification: NotificationMailData?,
 ) : SchedulableTaskParameters(notification)

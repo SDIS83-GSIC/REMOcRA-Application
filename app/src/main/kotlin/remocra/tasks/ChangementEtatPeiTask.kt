@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.NotificationMailData
 import remocra.data.PeiData
 import remocra.db.JobRepository
 import remocra.db.TracabiliteRepository
@@ -71,7 +72,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
         val initialObjet = notificationRaw.objet
         val initialCorps = notificationRaw.corps
 
-        val objetsANotifier: MutableList<NotificationMail> = mutableListOf()
+        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
         // Placeholders degré 1 : entête/footer (genre logo du sdis et autres)
         val genericCorps = initialCorps.replace(
             "#FOOTER#",
@@ -92,7 +93,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
             corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état Disponible #liste#.\n", listePeiNonConforme)
 
             objetsANotifier.add(
-                NotificationMail(
+                NotificationMailData(
                     destinataires = setOf(destinataire.destinataireEmail),
                     objet = initialObjet,
                     corps = corps,
@@ -175,7 +176,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
 }
 
 class ChangementEtatPeiTaskParameter(
-    override val notification: NotificationMail?,
+    override val notification: NotificationMailData?,
 ) : SchedulableTaskParameters(notification)
 
 class ChangementEtatPeiJobResult(

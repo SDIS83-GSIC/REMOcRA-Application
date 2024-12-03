@@ -3,6 +3,7 @@ package remocra.tasks
 import com.google.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.NotificationMailData
 import remocra.db.JobRepository
 import remocra.db.LogLineRepository
 import remocra.db.jooq.remocra.enums.TypeTask
@@ -68,7 +69,7 @@ class PurgerTask : SchedulableTask<PurgerTaskParameter, SchedulableTaskResults>(
 }
 
 class PurgerTaskParameter(
-    override val notification: NotificationMail?,
+    override val notification: NotificationMailData?,
     val purgerDocumentTemp: Boolean = false,
     val purgerJobTermine: Boolean = false,
     val purgerJobJours: Long?,

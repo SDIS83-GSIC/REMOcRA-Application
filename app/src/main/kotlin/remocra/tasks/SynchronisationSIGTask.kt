@@ -5,6 +5,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.NotificationMailData
 import remocra.db.CommuneRepository
 import remocra.db.EntrepotSigRepository
 import remocra.db.SigRepository
@@ -169,7 +170,7 @@ class SynchronisationSIGTask : SchedulableTask<SynchronisationSIGTaskParameter, 
 }
 
 class SynchronisationSIGTaskParameter(
-    override val notification: NotificationMail?,
+    override val notification: NotificationMailData?,
     val listeTableASynchroniser: Set<TableASynchroniser>,
 ) : SchedulableTaskParameters(notification)
 

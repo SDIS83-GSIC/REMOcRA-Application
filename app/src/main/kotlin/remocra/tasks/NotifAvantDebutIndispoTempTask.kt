@@ -3,6 +3,7 @@ package remocra.tasks
 import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.NotificationMailData
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
@@ -64,7 +65,7 @@ class NotifAvantDebutIndispoTempTask : SchedulableTask<NotifAvantDebutIndispoTem
         }
 
         /** Remplacement des PlaceHolders */
-        val objetsANotifier: MutableList<NotificationMail> = mutableListOf()
+        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
         // Placeholders degré 1
         val genericCorps = notificationRaw.corps.replace(
             "#FOOTER#",
@@ -76,7 +77,7 @@ class NotifAvantDebutIndispoTempTask : SchedulableTask<NotifAvantDebutIndispoTem
             val specificCorps = genericCorps.replace("#LISTE_PEI_DEBUT_INDISPO#", formatedListPei)
 
             objetsANotifier.add(
-                NotificationMail(
+                NotificationMailData(
                     destinataires = setOf(destinataire.destinataireEmail),
                     objet = notificationRaw.objet,
                     corps = specificCorps,
@@ -114,7 +115,7 @@ class NotifAvantDebutIndispoTempTask : SchedulableTask<NotifAvantDebutIndispoTem
 }
 
 class NotifAvantDebutIndispoTempTaskParameter(
-    override val notification: NotificationMail?,
+    override val notification: NotificationMailData?,
     val deltaMinuteNotificationDebut: Long,
 ) : SchedulableTaskParameters(notification)
 

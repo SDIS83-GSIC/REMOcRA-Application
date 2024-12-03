@@ -34,8 +34,7 @@ class DocumentEndPoint {
 
     @Inject lateinit var courrierRepository: CourrierRepository
 
-    @Context
-    lateinit var securityContext: SecurityContext
+    @Context lateinit var securityContext: SecurityContext
 
     /**
      * Télécharge le document.
@@ -49,23 +48,20 @@ class DocumentEndPoint {
     @Produces(MediaType.TEXT_PLAIN)
     fun telechargerRessource(@PathParam("documentId") documentId: UUID): Response {
         val document = documentRepository.getById(documentId)
-        /* si c'est un courrier on passe par le EndPoint "Courrier" pour gérer les accusés
-         de la même façon partout */
-        val courierId: UUID? = documentRepository.getCourrierIdByDocumentId(documentId)
-        val idUtilisateur = securityContext.userInfo?.utilisateurId
         if (document == null) {
             logger.error("Le document $documentId n'a pas été trouvé.")
             return notFound().build()
-        }
-        // Il faut quand même être connecté pour télécharger un document et set l'accuse
-        if (idUtilisateur == null) {
-            throw ForbiddenException()
         }
 
         val response = documentUtils.checkFile(
             File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
         )
+
+        val courierId: UUID? = documentRepository.getCourrierIdByDocumentId(documentId)
+        // si c'est un courrier, on passe par le EndPoint "Courrier" pour gérer les accusés de la même façon partout
         if (courierId != null) {
+            // Il faut être connecté pour télécharger un courrier et set l'accusé réception
+            val idUtilisateur = securityContext.userInfo?.utilisateurId ?: throw ForbiddenException()
             if (response.status == Response.Status.OK.statusCode) {
                 courrierRepository.setAccuse(courierId, idUtilisateur)
             }

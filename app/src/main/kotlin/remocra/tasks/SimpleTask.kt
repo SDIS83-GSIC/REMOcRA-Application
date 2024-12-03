@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import org.jooq.JSONB
 import remocra.app.AppSettings
 import remocra.auth.UserInfo
+import remocra.data.NotificationMailData
 import remocra.data.ParametresData
 import remocra.data.enums.Environment
 import remocra.db.JobRepository
@@ -231,18 +232,8 @@ open class JobResults()
  */
 open class TaskParameters(
     // Le champ "notification" sera set uniquement si la task est lancée manuellement
-    open val notification: NotificationMail?,
+    open val notification: NotificationMailData?,
 )
-
-/**
- * Classe permettant de stocker les éléments de base pour déclencher une notification par mail au niveau d'un [Job].
- * Ces éléments sont <b>concrets</b>, il convient de les "calculer" par rapport au précâblage défini dans la tâche.
- */
-data class NotificationMail(val destinataires: Set<String>, val objet: String, val corps: String) {
-    override fun toString(): String {
-        return "Destinataires: ${destinataires.joinToString()}, Objet : $objet, Corps : $corps"
-    }
-}
 
 data class TypeDestinataire(
     val contactOrganisme: Set<String>,
