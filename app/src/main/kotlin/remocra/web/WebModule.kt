@@ -32,6 +32,7 @@ import remocra.web.naturedeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
 import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
+import remocra.web.parametres.TaskModule
 import remocra.web.pei.PeiModule
 import remocra.web.profildroit.ProfilDroitModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
@@ -70,6 +71,7 @@ object WebModule : RemocraModule() {
         install(ProfilUtilisateurModule)
         install(ProfilOrganismeModule)
         install(TypeOrganismeModule)
+        install(TaskModule)
         install(ZoneIntegrationModule)
         install(ImageModule)
         install(MarquePibiModule)

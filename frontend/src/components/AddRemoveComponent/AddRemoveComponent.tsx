@@ -4,6 +4,7 @@ import { Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import CreateButton from "../Form/CreateButton.tsx";
 import DeleteButton from "../Form/DeleteButton.tsx";
+import { FormLabel } from "../Form/Form.tsx";
 
 /**
  * ATTENTION : doit être utiliser dans un <MyFormik>
@@ -22,6 +23,7 @@ const AddRemoveComponent = ({
   listeElements,
   canAdd = true,
   createComponentToRepeat,
+  label,
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
@@ -33,6 +35,11 @@ const AddRemoveComponent = ({
           <>
             {canAdd && (
               <Row>
+                {label && (
+                  <Col>
+                    <FormLabel name={name} label={label} required={false} />
+                  </Col>
+                )}
                 <Col xs={"auto"} className={"ms-auto"}>
                   <CreateButton
                     title={"Ajouter"}
@@ -76,6 +83,7 @@ type AddRemoveComponentType = {
   defaultElement?: any;
   listeElements: any[];
   canAdd?: boolean;
+  label?: string;
 };
 
 export default AddRemoveComponent;

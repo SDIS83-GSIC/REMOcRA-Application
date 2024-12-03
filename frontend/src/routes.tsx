@@ -123,6 +123,8 @@ import ExecuteRapportPersonnalise from "./pages/RapportPersonnalise/ExecuteRappo
 import DuplicateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/DuplicateRapportPersonnalise.tsx";
 import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportRapportPersonnalise.tsx";
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
+import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
+import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -332,6 +334,7 @@ export const URLS = {
   DUPLICATE_RAPPORT_PERSONNALISE: (rapportPersonnaliseId: string) =>
     url`/admin/rapport-personnalise/duplicate/` + rapportPersonnaliseId,
   IMPORTER_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise/import`,
+  TASK: url`/admin/tache-planifiee`,
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
@@ -1386,6 +1389,15 @@ export default [
           <Authorization
             Component={DuplicateRapportPersonnalise}
             droits={[TYPE_DROIT.ADMIN_RAPPORTS_PERSO]}
+          />
+        ),
+      },
+      {
+        path: "tache-planifiee",
+        element: (
+          <Authorization
+            Component={ListeTask}
+            droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
           />
         ),
       },
