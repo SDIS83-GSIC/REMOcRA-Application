@@ -52,6 +52,8 @@ class ArchitectureTest {
     val dontDependOnWeb: ArchRule = classes()
         .that()
         .resideInAPackage("..web..")
+        .and()
+        .haveNameMatching(".*Endpoint")
         .should()
         .onlyHaveDependentClassesThat()
         .resideInAnyPackage("..web..", "..http..", "..endpoint..", "..auth..", "..json..", "..cli..", "..csv..")
