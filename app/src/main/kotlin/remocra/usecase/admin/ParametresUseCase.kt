@@ -45,6 +45,8 @@ class ParametresUseCase : AbstractUseCase() {
             caracteristiquesPibi = mapParametres.getListOfString(ParametreEnum.CARACTERISTIQUE_PIBI.name, objectMapper),
             dureeValiditeToken = mapParametres.getInt(ParametreEnum.DUREE_VALIDITE_TOKEN.name),
             gestionAgent = mapParametres.getStringOrNull(ParametreEnum.GESTION_AGENT.name),
+            mdpAdministrateur = mapParametres.getStringOrNull(ParametreEnum.MDP_ADMINISTRATEUR.name),
+            modeDeconnecte = mapParametres.getBooleanOrNull(ParametreEnum.MODE_DECONNECTE.name),
         )
 
         val cartographie = ParametresSectionCartographie(
@@ -92,6 +94,8 @@ class ParametresUseCase : AbstractUseCase() {
         updateParametre(ParametreEnum.CARACTERISTIQUE_PIBI, objectMapper.writeValueAsString(parametresData.mobile.caracteristiquesPibi))
         updateParametre(ParametreEnum.DUREE_VALIDITE_TOKEN, parametresData.mobile.dureeValiditeToken.toString())
         updateParametre(ParametreEnum.GESTION_AGENT, parametresData.mobile.gestionAgent)
+        updateParametre(ParametreEnum.MDP_ADMINISTRATEUR, parametresData.mobile.mdpAdministrateur)
+        updateParametre(ParametreEnum.MODE_DECONNECTE, parametresData.mobile.modeDeconnecte?.toString())
 
         // Cartographie
         updateParametre(ParametreEnum.COORDONNEES_FORMAT_AFFICHAGE, parametresData.cartographie.coordonneesFormatAffichage)
@@ -148,6 +152,8 @@ data class ParametresSectionMobile(
     val caracteristiquesPibi: List<String>?,
     val dureeValiditeToken: Int,
     val gestionAgent: String?,
+    val mdpAdministrateur: String?,
+    val modeDeconnecte: Boolean?,
 
 )
 
