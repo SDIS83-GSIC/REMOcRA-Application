@@ -11,9 +11,9 @@ import {
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import {
+  IconAdd,
   IconInfo,
   IconNextPage,
-  IconPlus,
 } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredEmail } from "../../../module/validators.tsx";
@@ -170,7 +170,7 @@ const Utilisateur = () => {
             />
           </Col>
           <Col className="mt-3  d-flex align-items-center justify-content-center display-6">
-            <IconPlus />
+            <IconAdd />
           </Col>
           <Col>
             <SelectForm

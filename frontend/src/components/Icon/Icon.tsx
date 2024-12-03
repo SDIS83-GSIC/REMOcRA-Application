@@ -10,6 +10,10 @@ export const Toggle = ({ toggled = false }: { toggled: boolean }) => (
 );
 export const IconReturn = () => <i className="fi fi-br-arrow-left" />;
 
+export const IconPlus = () => <i className="fi fi-br-plus" />;
+
+export const IconMinus = () => <i className="fi fi-br-minus" />;
+
 export const IconEdit = () => <i className="fi fi-br-pencil" />;
 export const IconDelete = () => <i className="fi fi-br-trash" />;
 export const IconCreate = () => <i className="fi fi-br-add" />;
@@ -82,7 +86,7 @@ export const IconUnlock = () => <i className="fi fi-br-unlock" />;
 
 export const IconAddContact = () => <i className="fi fi-br-user-add" />;
 export const IconGererContact = () => <i className="fi fi-br-users-gear" />;
-export const IconPlus = () => <i className="fi fi-rr-add" />;
+export const IconAdd = () => <i className="fi fi-rr-add" />;
 
 export const IconNextPage = () => <i className="fi fi-rr-angle-circle-right" />;
 export const IconPreviousPage = () => (
