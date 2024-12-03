@@ -2,6 +2,8 @@ import { Field, Form as FormikForm, useField } from "formik";
 import { ReactNode } from "react";
 import Form from "react-bootstrap/Form";
 import ReactSelect from "react-select";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import { IconInfo } from "../Icon/Icon.tsx";
 
 type InputType = {
   name: string;
@@ -16,6 +18,7 @@ type InputType = {
   required?: boolean;
   readOnly?: boolean;
   value?: string;
+  tooltipText?: string;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -41,27 +44,38 @@ type DivWithErrorType = {
 };
 
 export const FormLabel = ({
+  name,
   label,
   className,
   required = true,
   disabled = false,
+  tooltipText = undefined,
 }: {
+  name: string;
   label?: string;
   className?: string;
   required?: boolean;
   disabled?: boolean;
+  tooltipText?: string;
 }) => {
   return (
     label && (
-      <Form.Label
-        className={
-          !disabled
-            ? "fw-bold mt-2 " + className
-            : "text-muted mt-2 " + className
-        }
-      >
-        {label} {required === true && <span className="text-danger">*</span>}
-      </Form.Label>
+      <>
+        <Form.Label
+          className={
+            !disabled
+              ? "fw-bold mt-2 " + className
+              : "text-muted mt-2 " + className
+          }
+        >
+          {label} {required === true && <span className="text-danger">*</span>}
+        </Form.Label>
+        {tooltipText && (
+          <TooltipCustom tooltipText={tooltipText} tooltipId={name}>
+            <IconInfo />
+          </TooltipCustom>
+        )}
+      </>
     )
   );
 };
@@ -74,12 +88,18 @@ export const TextInput = ({
   disabled = false,
   value,
   placeholder,
+  tooltipText,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Form.Control
         required={required}
         type="text"
@@ -100,12 +120,18 @@ export const TextAreaInput = ({
   readOnly = false,
   disabled = false,
   value,
+  tooltipText,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Form.Control
         required={required}
         as="textarea"
@@ -124,6 +150,8 @@ type CheckBoxInputType = {
   label: string | ReactNode;
   required?: boolean;
   disabled?: boolean;
+  checked?: boolean;
+  tooltipText?: string;
   onChange?: (...args: any[]) => void;
 };
 
@@ -132,6 +160,8 @@ export const CheckBoxInput = ({
   label,
   required = false,
   disabled = false,
+  checked = false,
+  tooltipText,
   onChange,
 }: CheckBoxInputType) => {
   const [field, meta] = useField(name);
@@ -143,12 +173,15 @@ export const CheckBoxInput = ({
         type="checkbox"
         disabled={disabled}
         onChange={(v: boolean) => (onChange ? onChange(v) : field.onChange(v))}
+        checked={field.value ?? checked}
       />
       <FormLabel
         className="p-1"
         label={label}
         required={required}
         disabled={disabled}
+        tooltipText={tooltipText}
+        name={name}
       />
     </DivWithError>
   );
@@ -167,12 +200,18 @@ export const FileInput = ({
   disabled = false,
   accept,
   onChange,
+  tooltipText,
 }: FileInputType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Form.Control
         required={required}
         type="file"
@@ -191,13 +230,19 @@ export const NumberInput = ({
   required = true,
   readOnly = false,
   value,
+  tooltipText,
   ...rest
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Form.Control
         type="number"
         min={rest.min ?? 1}
@@ -217,6 +262,7 @@ const PositiveNumberInput = ({
   required = true,
   readOnly = false,
   value,
+  tooltipText,
   ...rest
 }: InputType) => {
   const handleBlur = (e: React.FormEvent<EventTarget>) => {
@@ -247,7 +293,12 @@ const PositiveNumberInput = ({
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Form.Control
         type="number"
         onKeyDown={handleKeypress}
@@ -271,13 +322,20 @@ export const DateTimeInput = ({
   label,
   required = true,
   readOnly = false,
+  tooltipText,
   ...rest
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} className={"me-2"} />
+      <FormLabel
+        label={label}
+        required={required}
+        className={"me-2"}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <input
         type="datetime-local"
         required={required}
@@ -296,6 +354,7 @@ type MultiselectType = InputType & {
   isClearable?: boolean;
   defaultValue?: any;
   onChange: (e: any) => any;
+  tooltipText?: string;
 };
 
 export const Multiselect = ({
@@ -309,13 +368,19 @@ export const Multiselect = ({
   required = true,
   readOnly = false,
   onChange,
+  tooltipText,
 }: MultiselectType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
 
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <ReactSelect
         isMulti={true}
         placeholder={"Sélectionnez"}
@@ -342,6 +407,7 @@ export const SelectInput = ({
   required = true,
   readOnly = false,
   defaultValue,
+  tooltipText,
   onChange,
 }: MultiselectType) => {
   const [, meta] = useField(name);
@@ -349,7 +415,12 @@ export const SelectInput = ({
 
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel label={label} required={required} />
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <ReactSelect
         isMulti={false}
         placeholder={"Sélectionnez"}
