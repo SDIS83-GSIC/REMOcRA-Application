@@ -59,6 +59,7 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   rapportPersonnaliseLibelle: data?.rapportPersonnaliseLibelle ?? null,
   rapportPersonnaliseIsSpatial: data?.rapportPersonnaliseChampGeometrie != null,
   rapportPersonnaliseModule: data?.rapportPersonnaliseModule ?? null,
+  rapportPersonnaliseDescription: data?.rapportPersonnaliseDescription ?? null,
   rapportPersonnaliseChampGeometrie:
     data?.rapportPersonnaliseChampGeometrie ?? null,
   listeProfilDroitId: data?.listeProfilDroitId ?? [],
@@ -74,6 +75,8 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
             e.rapportPersonnaliseParametreSourceSqlLibelle + " as libelle ",
           )
           .slice(-1)[0],
+      // Le composant drag and drop a besoin d'un identifiant unique, donc on passe par un random
+      id: Math.random(),
       ...e,
     })) ?? [],
   rapportPersonnaliseSourceSql:
@@ -110,6 +113,7 @@ export const prepareVariables = (values: RapportPersonnaliseType) => ({
   listeRapportPersonnaliseParametre:
     values.listeRapportPersonnaliseParametre.map((e, index) => {
       return {
+        ...e,
         rapportPersonnaliseParametreOrdre: index,
         rapportPersonnaliseParametreSourceSql:
           e.rapportPersonnaliseParametreSourceSqlDebut +
@@ -119,7 +123,6 @@ export const prepareVariables = (values: RapportPersonnaliseType) => ({
           e.rapportPersonnaliseParametreSourceSqlLibelle +
           " as libelle " +
           e.rapportPersonnaliseParametreSourceSqlFin,
-        ...e,
       };
     }),
 });

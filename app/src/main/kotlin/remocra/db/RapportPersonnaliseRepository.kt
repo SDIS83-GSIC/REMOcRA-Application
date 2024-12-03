@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.Params
 import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
@@ -16,10 +17,13 @@ import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 import remocra.db.jooq.remocra.tables.references.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE_PARAMETRE
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
 class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -185,11 +189,6 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
             .fetchSingleInto()
 
-    data class IdLibelleRapportPersonnalise(
-        val id: String,
-        val value: String?,
-    )
-
     fun executeSqlParametre(requete: String): List<IdLibelleRapportPersonnalise> =
         dsl.fetch(requete).into(IdLibelleRapportPersonnalise::class.java)
 
@@ -243,5 +242,76 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .from(RAPPORT_PERSONNALISE)
             .where(RAPPORT_PERSONNALISE.CODE.equalIgnoreCase(rapportPersonnaliseCode))
             .and(RAPPORT_PERSONNALISE.ID.notEqual(rapportPersonnaliseId)),
+    )
+
+    fun getListeRapportPersonnalise(
+        utilisateurId: UUID,
+        isSuperAdmin: Boolean,
+    ): Collection<RapportPersonnaliseGenere> =
+        dsl.select(
+            RAPPORT_PERSONNALISE.ID,
+            RAPPORT_PERSONNALISE.LIBELLE,
+            RAPPORT_PERSONNALISE.DESCRIPTION,
+            multiset(
+                selectDistinct(
+                    RAPPORT_PERSONNALISE_PARAMETRE.CODE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.LIBELLE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.DESCRIPTION,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL_ID,
+                    RAPPORT_PERSONNALISE_PARAMETRE.SOURCE_SQL_LIBELLE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.VALEUR_DEFAUT,
+                    RAPPORT_PERSONNALISE_PARAMETRE.IS_REQUIRED,
+                    RAPPORT_PERSONNALISE_PARAMETRE.TYPE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.ORDRE,
+                    RAPPORT_PERSONNALISE_PARAMETRE.ID,
+                )
+                    .from(RAPPORT_PERSONNALISE_PARAMETRE)
+                    .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+                    .orderBy(RAPPORT_PERSONNALISE_PARAMETRE.ORDRE),
+            ).`as`("listeRapportPersonnaliseParametre").convertFrom { record ->
+                record.map {
+                    RapportPersonnaliseParametreData(
+                        rapportPersonnaliseParametreId = it.value11().let { it as UUID },
+                        rapportPersonnaliseParametreCode = it.value1() as String,
+                        rapportPersonnaliseParametreLibelle = it.value2() as String,
+                        rapportPersonnaliseParametreDescription = it.value3(),
+                        rapportPersonnaliseParametreSourceSql = it.value4(),
+                        rapportPersonnaliseParametreSourceSqlId = it.value5(),
+                        rapportPersonnaliseParametreSourceSqlLibelle = it.value6(),
+                        rapportPersonnaliseParametreValeurDefaut = it.value7(),
+                        rapportPersonnaliseParametreIsRequired = it.value8() as Boolean,
+                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportPersonnalise,
+                        rapportPersonnaliseParametreOrdre = it.value10() as Int,
+                    )
+                }
+            },
+        )
+            .from(RAPPORT_PERSONNALISE)
+            .join(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+            .join(UTILISATEUR)
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .join(ORGANISME)
+            .on(
+                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+            )
+            .where(RAPPORT_PERSONNALISE.ACTIF.isTrue)
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    UTILISATEUR.ID.eq(utilisateurId),
+                    isSuperAdmin = isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+
+    data class RapportPersonnaliseGenere(
+        val rapportPersonnaliseId: UUID,
+        val rapportPersonnaliseLibelle: String,
+        val rapportPersonnaliseDescription: String?,
+        val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData>,
     )
 }

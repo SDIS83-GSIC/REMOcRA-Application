@@ -30,3 +30,8 @@ data class RapportPersonnaliseParametreData(
     val rapportPersonnaliseParametreType: TypeParametreRapportPersonnalise,
     val rapportPersonnaliseParametreOrdre: Int,
 )
+
+data class IdLibelleRapportPersonnalise(
+    val id: String,
+    val libelle: String?,
+)

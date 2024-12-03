@@ -21,6 +21,7 @@ import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.rapportpersonnalise.BuildFormRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
@@ -42,6 +43,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var deleteRapportPersonnaliseUseCase: DeleteRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var buildFormRapportPersonnaliseUseCase: BuildFormRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -140,4 +144,10 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         rapportPersonnaliseId: UUID,
     ) =
         Response.ok(rapportPersonnaliseRepository.getRapportPersonnalise(rapportPersonnaliseId)).build()
+
+    @GET
+    @Path("/parametres")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    fun getRapportPersonnaliseWithParametre() =
+        Response.ok(buildFormRapportPersonnaliseUseCase.execute(securityContext.userInfo)).build()
 }

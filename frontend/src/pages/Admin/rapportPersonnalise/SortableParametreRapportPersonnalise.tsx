@@ -159,7 +159,7 @@ const SortableParametre: FC<SortableParametre> = ({
                   name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlLibelle`}
                 />
               </Col>
-              <Col>as value</Col>
+              <Col>as libelle</Col>
             </Row>
 
             <Col>

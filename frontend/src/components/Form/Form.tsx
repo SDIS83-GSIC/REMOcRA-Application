@@ -1,9 +1,10 @@
 import { Field, Form as FormikForm, useField } from "formik";
 import { ReactNode } from "react";
+import { Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import ReactSelect from "react-select";
-import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import { IconInfo } from "../Icon/Icon.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 type InputType = {
   name: string;
@@ -336,21 +337,25 @@ export const DateTimeInput = ({
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel
-        label={label}
-        required={required}
-        className={"me-2"}
-        tooltipText={tooltipText}
-        name={name}
-      />
-      <input
-        id={name}
-        type="datetime-local"
-        required={required}
-        {...field}
-        {...rest}
-        disabled={readOnly}
-      />
+      <Row>
+        <FormLabel
+          label={label}
+          required={required}
+          className={"me-2"}
+          tooltipText={tooltipText}
+          name={name}
+        />
+      </Row>
+      <Row className="mx-1">
+        <input
+          id={name}
+          type="datetime-local"
+          required={required}
+          {...field}
+          {...rest}
+          disabled={readOnly}
+        />
+      </Row>
     </DivWithError>
   );
 };

@@ -1,6 +1,7 @@
 package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
+import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.ErrorType
@@ -13,7 +14,7 @@ class RapportPersonnaliseUtils {
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
-    private fun testParametreRequeteSql(parametreRequete: RapportPersonnaliseParametreData): List<RapportPersonnaliseRepository.IdLibelleRapportPersonnalise> {
+    private fun testParametreRequeteSql(parametreRequete: RapportPersonnaliseParametreData): List<IdLibelleRapportPersonnalise> {
         try {
             return rapportPersonnaliseRepository.executeSqlParametre(parametreRequete.rapportPersonnaliseParametreSourceSql!!)
         } catch (e: Exception) {

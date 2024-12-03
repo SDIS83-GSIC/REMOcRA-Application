@@ -124,6 +124,14 @@ function getLinks(
       ];
     case TypeModuleRemocra.COURRIER:
     case TypeModuleRemocra.DOCUMENT:
+    case TypeModuleRemocra.RAPPORT_PERSONNALISE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E),
+          label: "Exécuter un rapport personnalisé",
+          link: URLS.EXECUTER_RAPPORT_PERSONNALISE,
+        },
+      ];
     case TypeModuleRemocra.PERSONNALISE:
   }
 }

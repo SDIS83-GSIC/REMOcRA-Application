@@ -117,6 +117,8 @@ import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneInteg
 import ListRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ListRapportPersonnalise.tsx";
 import CreateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/CreateRapportPersonnalise.tsx";
 import UpdateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/UpdateRapportPersonnalise.tsx";
+import ModuleRapportPersonnalise from "./components/ModuleRemocra/ModuleRapportPersonnalise.tsx";
+import ExecuteRapportPersonnalise from "./pages/RapportPersonnalise/ExecuteRapportPersonnalise.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -320,6 +322,9 @@ export const URLS = {
   CREATE_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise/create`,
   UPDATE_RAPPORT_PERSONNALISE: (rapportPersonnaliseId: string) =>
     url`/admin/rapport-personnalise/update/` + rapportPersonnaliseId,
+
+  // Module Rapports personnalisés
+  EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1353,6 +1358,27 @@ export default [
         droits={[TYPE_DROIT.COURRIER_UTILISATEUR_R]}
       />
     ),
+  },
+  {
+    path: "/rapport-personnalise/",
+    element: (
+      <Authorization
+        Component={ModuleRapportPersonnalise}
+        // TODO
+        droits={Object.values(TYPE_DROIT)}
+      />
+    ),
+    children: [
+      {
+        path: "execute/",
+        element: (
+          <Authorization
+            Component={ExecuteRapportPersonnalise}
+            droits={[TYPE_DROIT.RAPPORT_PERSONNALISE_E]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "*",
