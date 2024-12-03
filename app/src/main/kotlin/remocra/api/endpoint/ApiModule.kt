@@ -2,6 +2,7 @@ package remocra.api.endpoint
 
 import com.google.inject.Binder
 import com.google.inject.Module
+import remocra.apimobile.endpoint.MobileReferentielEndpoint
 import remocra.web.api.OpenApiEndpoint
 import remocra.web.registerResources
 
@@ -15,5 +16,8 @@ object ApiModule : Module {
         binder.registerResources(ApiReferentielsPenaEndpoint::class)
         binder.registerResources(ApiPeiEndpoint::class)
         binder.registerResources(ApiVisitesEndpoint::class)
+
+        // API Mobile
+        binder.registerResources(MobileReferentielEndpoint::class)
     }
 }

@@ -75,9 +75,6 @@ object GlobalConstants {
     const val ROLE_SIGNATAIRE_GROUPEMENT = "SIGNATAIRE_GROUPEMENT"
     const val COURRIER_CODE_ROP = "ROP"
 
-    /** Tag pour les endpoints de l'application mobile  */
-    const val REMOCRA_MOBILE_TAG: String = "REMOcRA Mobile"
-
     const val DOSSIER_DOC_HYDRANT: String = "DOSSIER_DOC_HYDRANT"
 
     /** Clé de la table "Parametre" pour la gestion des agents dans l'application mobile  */

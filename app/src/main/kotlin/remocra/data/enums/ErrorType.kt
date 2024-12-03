@@ -470,6 +470,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
     RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
 
+    API_SYNCHRO_ERREUR_RESERVATION(20000, "Erreur lors de la réservation des tournées ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_NO_COMMUNE(20001, "Impossible d'insérer le PEI : il n'est sur aucune commune connue."),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

@@ -140,7 +140,31 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchSingleInto()
 
-    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean): List<Tournee> =
+    /**
+     * Retourne les tournées dont l'ID fait partie de la liste passée en paramètre
+     *
+     * @param idsTournees liste des idTournee
+     * @return List<Tournee>
+     */
+    fun getTourneesByIds(idsTournees: List<UUID>): List<Tournee> {
+        return dsl
+            .selectFrom(TOURNEE)
+            .where(TOURNEE.ID.`in`(idsTournees))
+            .fetchInto()
+    }
+
+    /**
+     * Permet de réserver les tournées dont l'ID est passé en paramètre
+     *
+     * @param idsTournees: List<UUID>
+     * @param idUtilisateur id de l'utilisateur connecté
+     */
+    fun reserveTournees(idsTournees: List<UUID>, idUtilisateur: UUID): Int = dsl.update(TOURNEE)
+        .set(TOURNEE.RESERVATION_UTILISATEUR_ID, idUtilisateur)
+        .where(TOURNEE.ID.`in`(idsTournees))
+        .execute()
+
+    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, onlyAvailable: Boolean?, onlyNonTerminees: Boolean?): List<Tournee> =
         getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
@@ -155,11 +179,20 @@ class TourneeRepository
                     condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
                 ),
             )
-            .let {
-                if (isPrive) {
-                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
-                } else {
-                    it.and(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
+            .also {
+                if (isPrive != null) {
+                    if (isPrive) {
+                        it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
+                    } else {
+                        it.and(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
+                    }
+                }
+                // TODO vérifier que ces 2 conditions sont prises en compte, c'était un let avant
+                if (onlyAvailable == true) {
+                    it.and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNull)
+                }
+                if (onlyNonTerminees == true) {
+                    it.and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100))
                 }
             }
             .fetchInto()
@@ -521,6 +554,27 @@ class TourneeRepository
             .setNull(TOURNEE.RESERVATION_UTILISATEUR_ID)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
+
+    /**
+     * Permet de récupérer les PEI associés aux tournées passées en paramètre
+     *
+     * @param listTourneeId : id des tournées dont on veut connaître les PEI
+     * @return une map <idTournee, List<peiId>
+     */
+    fun getListPeiByListTournee(listTourneeId: List<UUID>) = dsl
+        .select(L_TOURNEE_PEI.TOURNEE_ID, L_TOURNEE_PEI.PEI_ID)
+        .from(L_TOURNEE_PEI)
+        .where(L_TOURNEE_PEI.TOURNEE_ID.`in`(listTourneeId))
+        .fetchGroups(L_TOURNEE_PEI.TOURNEE_ID, L_TOURNEE_PEI.PEI_ID)
+
+    fun annuleReservation(idTournee: UUID, idUtilisateur: UUID): Boolean {
+        return dsl
+            .update(TOURNEE)
+            .setNull(TOURNEE.RESERVATION_UTILISATEUR_ID)
+            .where(TOURNEE.ID.eq(idTournee))
+            .and(TOURNEE.RESERVATION_UTILISATEUR_ID.eq(idUtilisateur))
+            .execute() == 1
+    }
 
     data class CDPByPeiId(
         val peiId: UUID,

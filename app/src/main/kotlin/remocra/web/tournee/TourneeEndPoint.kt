@@ -103,6 +103,8 @@ class TourneeEndPoint : AbstractEndpoint() {
                 securityContext.userInfo!!.isSuperAdmin,
                 securityContext.userInfo!!.affiliatedOrganismeIds,
                 isPrive,
+                null,
+                null,
             ),
         ).build()
     }
