@@ -8,7 +8,7 @@ const MenuAdmin = () => {
         <Col className="bg-light p-2 border rounded mx-2">
           <div className="fw-bold text-center p-2">Administration générale</div>
 
-          <a href="TODO">Paramètres applicatifs</a>
+          <a href={URLS.ADMIN_PARAMETRE}>Paramètres applicatifs</a>
           <br />
           <a href={URLS.ADMIN_FICHE_RESUME}>
             Configurer la fiche de résumé des PEI

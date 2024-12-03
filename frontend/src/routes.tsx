@@ -80,6 +80,7 @@ import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/Lis
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
 import AccueilPei from "./pages/Pei/AccueilPei.tsx";
 import CreatePei from "./pages/Pei/CreatePei.tsx";
+import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
 import UpdatePei from "./pages/Pei/UpdatePei.tsx";
 import AireAspiration from "./pages/Pena/AireAspiration.tsx";
 import CreateTournee from "./pages/Tournee/CreateTournee.tsx";
@@ -88,6 +89,7 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
+import AdminParametres from "./pages/Admin/AdminParametres/AdminParametres.tsx";
 import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
 import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
@@ -101,7 +103,6 @@ import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
 import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
 import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
-import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import ListModuleCourrier from "./pages/ModuleDocumentCourrier/ListModuleCourrier.tsx";
 import ProfilDroitList from "./pages/Admin/droit/ProfilDroitList.tsx";
 import ProfilDroitCreate from "./pages/Admin/droit/ProfilDroitCreate.tsx";
@@ -149,6 +150,7 @@ export const URLS = {
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
   TOURNEE_VISITE: (tourneeId: string) =>
     url`/deci/tournee/visite-tournee/` + tourneeId,
+  FICHE_RESUME: (peiId: string) => url`/deci/pei/fiche/` + peiId,
 
   // Module couverture hydraulique
   CREATE_ETUDE: url`/couverture-hydraulique/etudes/create`,
@@ -312,6 +314,7 @@ export const URLS = {
 
   ADMIN_FICHE_RESUME: url`/admin/fiche-resume`,
   ADMIN_ACCUEIL: url`/admin/module-accueil`,
+  ADMIN_PARAMETRE: url`/admin/parametres`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
@@ -370,6 +373,12 @@ export default [
               TYPE_DROIT.PEI_DEPLACEMENT_U,
             ]}
           />
+        ),
+      },
+      {
+        path: "pei/fiche/:peiId",
+        element: (
+          <Authorization Component={FicheResume} droits={[TYPE_DROIT.PEI_R]} />
         ),
       },
       {
@@ -581,6 +590,15 @@ export default [
         element: (
           <Authorization
             Component={MenuAdmin}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "/admin/parametres",
+        element: (
+          <Authorization
+            Component={AdminParametres}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
