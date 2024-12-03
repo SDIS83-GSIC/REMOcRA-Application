@@ -52,7 +52,9 @@ enum class ParametreEnum(val section: ParametreSection) {
     PEI_RENUMEROTATION_INTERNE_AUTO(ParametreSection.PEI),
     VOIE_SAISIE_LIBRE(ParametreSection.PEI),
     TYPE_VISITE_CDP(ParametreSection.PEI),
-
+    DECLARATION_PEI_DESTINATAIRE_EMAIL(ParametreSection.PEI),
+    DECLARATION_PEI_OBJET_EMAIL(ParametreSection.PEI),
+    DECLARATION_PEI_CORPS_EMAIL(ParametreSection.PEI),
     ;
 
     enum class ParametreSection {
