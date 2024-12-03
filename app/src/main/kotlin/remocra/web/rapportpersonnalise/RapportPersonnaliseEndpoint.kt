@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.GenererRapportPersonnaliseData
 import remocra.data.Params
 import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
@@ -24,6 +25,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.rapportpersonnalise.BuildFormRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.GenereRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -46,6 +48,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var buildFormRapportPersonnaliseUseCase: BuildFormRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var genereRapportPersonnaliseUseCase: GenereRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -150,4 +155,10 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
     fun getRapportPersonnaliseWithParametre() =
         Response.ok(buildFormRapportPersonnaliseUseCase.execute(securityContext.userInfo)).build()
+
+    @PUT
+    @Path("/generer")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    fun genererRapportPersonnalise(element: GenererRapportPersonnaliseData) =
+        Response.ok(genereRapportPersonnaliseUseCase.execute(securityContext.userInfo, element)).build()
 }

@@ -35,3 +35,13 @@ data class IdLibelleRapportPersonnalise(
     val id: String,
     val libelle: String?,
 )
+
+data class GenererRapportPersonnaliseData(
+    val rapportPersonnaliseId: UUID,
+    val listeParametre: Collection<Parametre>,
+)
+
+data class Parametre(
+    val rapportPersonnaliseParametreCode: String,
+    val value: String?,
+)

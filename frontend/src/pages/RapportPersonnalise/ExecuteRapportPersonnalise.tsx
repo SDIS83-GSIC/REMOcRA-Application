@@ -1,37 +1,121 @@
 import { useFormikContext } from "formik";
-import { Col, Container, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   DateTimeInput,
+  FormContainer,
   NumberInput,
   SelectInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconList } from "../../components/Icon/Icon.tsx";
+import PaginationFront, {
+  LIMIT,
+} from "../../components/PaginationFront/PaginationFront.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredString } from "../../module/validators.tsx";
 import { TYPE_PARAMETRE_RAPPORT_PERSONNALISE } from "../Admin/rapportPersonnalise/SortableParametreRapportPersonnalise.tsx";
 
+type RapportPersoWithParametreType = {
+  rapportPersonnaliseDescription: string | undefined;
+  rapportPersonnaliseId: string | undefined;
+  rapportPersonnaliseLibelle: string | undefined;
+  listeParametre: {
+    listeSelectInput: { id: string; libelle: string }[];
+    rapportPersonnaliseParametreCode: string;
+    rapportPersonnaliseParametreDescription: string | undefined;
+    rapportPersonnaliseParametreId: string;
+    rapportPersonnaliseParametreIsRequired: boolean;
+    rapportPersonnaliseParametreLibelle: string;
+    rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_PERSONNALISE;
+  };
+};
 const ExecuteRapportPersonnalise = () => {
+  const { data: listeRapportPersoWithParametre } = useGet(
+    url`/api/rapport-personnalise/parametres`,
+  );
+
+  const [tableau, setTableau] = useState();
+
+  const [offset, setOffset] = useState<number>(0);
+
   return (
-    <Container>
+    <Container fluid>
       <PageTitle
         icon={<IconList />}
         title={"Exécuter des rapports personnalisés"}
       />
-      <MyFormik
-        initialValues={getInitialValues()}
-        validationSchema={validationSchema}
-        isPost={false}
-        submitUrl={`/api/rapport-personnalise/execute`}
-        prepareVariables={(values) => prepareVariables(values)}
-      >
-        <ExecuteRapportPersonnaliseForm />
-      </MyFormik>
+      <Row>
+        <Col xs={12} lg={3}>
+          <MyFormik
+            initialValues={getInitialValues()}
+            validationSchema={validationSchema}
+            isPost={false}
+            submitUrl={`/api/rapport-personnalise/generer`}
+            prepareVariables={(values) =>
+              prepareVariables(values, listeRapportPersoWithParametre)
+            }
+            onSubmit={(e) => setTableau(e)}
+          >
+            <ExecuteRapportPersonnaliseForm
+              listeRapportPersoWithParametre={listeRapportPersoWithParametre}
+            />
+          </MyFormik>
+        </Col>
+        <Col xs={12} lg={9}>
+          <Tabs>
+            <Tab
+              eventKey="tableau"
+              title="Données"
+              className="overflow-scroll h-75"
+            >
+              {tableau === null ? (
+                <Row className="m-3 text-center">
+                  <Col className="text-center">Aucune donnée à afficher</Col>
+                </Row>
+              ) : (
+                <>
+                  <Table bordered striped>
+                    <thead>
+                      <tr>
+                        {tableau?.headers?.map((e, index) => (
+                          <th key={index}>{e}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tableau?.values
+                        ?.slice(offset, offset + LIMIT)
+                        ?.map((ligne, index) => {
+                          return (
+                            <tr key={index}>
+                              {ligne.map((e, key) => (
+                                <td key={key}>{e?.toString()}</td>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </Table>
+                  {tableau?.values && (
+                    <PaginationFront
+                      values={tableau?.values}
+                      offset={offset}
+                      setOffset={setOffset}
+                    />
+                  )}
+                </>
+              )}
+            </Tab>
+          </Tabs>
+        </Col>
+      </Row>
     </Container>
   );
 };
@@ -43,14 +127,33 @@ export const getInitialValues = () => ({
 export const validationSchema = object({
   rapportPersonnaliseId: requiredString,
 });
-export const prepareVariables = () => ({
-  // TODO
-});
+export const prepareVariables = (
+  values,
+  listeRapportPersoWithParametre: RapportPersoWithParametreType[],
+) => {
+  // on va récupérer que les paramètres du rapport personnalisé
+  const listeParametre = listeRapportPersoWithParametre
+    .find((e) => values.rapportPersonnaliseId === e.rapportPersonnaliseId)
+    ?.listeParametre?.map((e) => {
+      return {
+        rapportPersonnaliseParametreCode: e.rapportPersonnaliseParametreCode,
+        value:
+          values[e.rapportPersonnaliseParametreCode]?.toString() ??
+          e.rapportPersonnaliseParametreValeurDefaut?.toString(),
+      };
+    });
 
-const ExecuteRapportPersonnaliseForm = () => {
-  const { data: listeRapportPersoWithParametre } = useGet(
-    url`/api/rapport-personnalise/parametres`,
-  );
+  return {
+    rapportPersonnaliseId: values.rapportPersonnaliseId,
+    listeParametre: listeParametre,
+  };
+};
+
+const ExecuteRapportPersonnaliseForm = ({
+  listeRapportPersoWithParametre,
+}: {
+  listeRapportPersoWithParametre: RapportPersoWithParametreType[];
+}) => {
   const { setFieldValue, values } = useFormikContext();
 
   const listeRapportPerso = listeRapportPersoWithParametre?.map((e) => ({
@@ -63,7 +166,7 @@ const ExecuteRapportPersonnaliseForm = () => {
   );
 
   return (
-    <>
+    <FormContainer>
       <Row>
         <SelectInput
           name={`rapportPersonnaliseId`}
@@ -97,11 +200,16 @@ const ExecuteRapportPersonnaliseForm = () => {
           return buildComponent(element, values, setFieldValue);
         })}
       </Row>
-    </>
+      <SubmitFormButtons />
+    </FormContainer>
   );
 };
 
-function buildComponent(element, values, setFieldValue) {
+function buildComponent(
+  element: RapportPersoWithParametreType,
+  values: any,
+  setFieldValue: (name: string, e: any) => void,
+) {
   switch (
     TYPE_PARAMETRE_RAPPORT_PERSONNALISE[
       element.rapportPersonnaliseParametreType

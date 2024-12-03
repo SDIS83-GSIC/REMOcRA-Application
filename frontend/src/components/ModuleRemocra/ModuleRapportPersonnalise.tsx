@@ -12,7 +12,7 @@ const ModuleRapportPersonnalise = () => {
   ];
 
   return (
-    <SquelettePage header={<Header links={navLinks} />}>
+    <SquelettePage fluid header={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
     </SquelettePage>

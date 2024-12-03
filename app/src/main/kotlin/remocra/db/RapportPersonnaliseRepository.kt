@@ -192,8 +192,8 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
     fun executeSqlParametre(requete: String): List<IdLibelleRapportPersonnalise> =
         dsl.fetch(requete).into(IdLibelleRapportPersonnalise::class.java)
 
-    fun executeSqlRapport(requete: String): Any =
-        dsl.fetch(requete).into(Any::class.java)
+    fun executeSqlRapport(requete: String) =
+        dsl.fetch(requete)
 
     fun insertRapportPersonnalise(rapportPersonnalise: RapportPersonnalise) =
         dsl.insertInto(RAPPORT_PERSONNALISE)
@@ -314,4 +314,24 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val rapportPersonnaliseDescription: String?,
         val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData>,
     )
+
+    fun checkDroitRapportPersonnalise(utilisateurId: UUID, rapportPersonnaliseId: UUID) =
+        dsl.fetchExists(
+            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID)
+                .from(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
+                .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+                .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID))
+                .join(ORGANISME)
+                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                .join(UTILISATEUR)
+                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                .where(UTILISATEUR.ID.eq(utilisateurId))
+                .and(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId)),
+        )
+
+    fun getSqlRequete(rapportPersonnaliseId: UUID): String =
+        dsl.select(RAPPORT_PERSONNALISE.SOURCE_SQL)
+            .from(RAPPORT_PERSONNALISE)
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
+            .fetchSingleInto()
 }
