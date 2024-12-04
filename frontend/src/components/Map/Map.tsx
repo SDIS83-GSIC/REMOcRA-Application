@@ -159,7 +159,12 @@ const MapComponent = ({
   );
 };
 
-export const useMapComponent = ({ mapElement }) => {
+export const useMapComponent = ({
+  mapElement,
+  displayPei = true,
+}: {
+  displayPei: boolean;
+}) => {
   const { epsg: projection } = useAppContext();
   const layersState = useGet(url`/api/layers`, {});
   const layerListRef = useRef<MapLegend>();
@@ -290,7 +295,7 @@ export const useMapComponent = ({ mapElement }) => {
   }, [map, projection]);
 
   const dataPeiLayer = useMemo(() => {
-    if (map && projection) {
+    if (map && projection && displayPei) {
       return createDataPeiLayer();
     }
   }, [map, projection]);

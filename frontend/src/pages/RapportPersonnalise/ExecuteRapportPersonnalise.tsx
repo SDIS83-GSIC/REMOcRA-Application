@@ -15,6 +15,7 @@ import {
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconList } from "../../components/Icon/Icon.tsx";
+import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/MapRapportPersonnalise.tsx";
 import PaginationFront, {
   LIMIT,
 } from "../../components/PaginationFront/PaginationFront.tsx";
@@ -41,9 +42,14 @@ const ExecuteRapportPersonnalise = () => {
     url`/api/rapport-personnalise/parametres`,
   );
 
-  const [tableau, setTableau] = useState();
+  const [tableau, setTableau] = useState<{
+    headers: string[];
+    values: any[];
+    geometries: string[];
+  }>();
 
   const [offset, setOffset] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<string>("data");
 
   return (
     <Container fluid>
@@ -61,7 +67,10 @@ const ExecuteRapportPersonnalise = () => {
             prepareVariables={(values) =>
               prepareVariables(values, listeRapportPersoWithParametre)
             }
-            onSubmit={(e) => setTableau(e)}
+            onSubmit={(e) => {
+              setTableau(e);
+              setActiveTab("data");
+            }}
           >
             <ExecuteRapportPersonnaliseForm
               listeRapportPersoWithParametre={listeRapportPersoWithParametre}
@@ -69,9 +78,9 @@ const ExecuteRapportPersonnalise = () => {
           </MyFormik>
         </Col>
         <Col xs={12} lg={9}>
-          <Tabs>
+          <Tabs activeKey={activeTab} onSelect={(k: string) => setActiveTab(k)}>
             <Tab
-              eventKey="tableau"
+              eventKey="data"
               title="Données"
               className="overflow-scroll h-75"
             >
@@ -112,6 +121,15 @@ const ExecuteRapportPersonnalise = () => {
                   )}
                 </>
               )}
+            </Tab>
+            <Tab
+              eventKey="map"
+              title="Carte"
+              disabled={
+                tableau?.geometries == null || tableau.geometries.length === 0
+              }
+            >
+              <MapRapportPersonnalise wkt={tableau?.geometries} />
             </Tab>
           </Tabs>
         </Col>

@@ -16,6 +16,10 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
+    companion object {
+        private const val FIELD_GEOMETRIE = "geometrie"
+    }
+
     private fun checkProfilDroit(userInfo: UserInfo, rapportPersonnaliseId: UUID) {
         if (userInfo.isSuperAdmin) {
             return
@@ -45,7 +49,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
         return infosForTableRapportPerso(rapportPersonnaliseRepository.executeSqlRapport(requete))
     }
 
-    fun infosForTableRapportPerso(data: org.jooq.Result<Record>?): RapportPersonnaliseTableau? {
+    private fun infosForTableRapportPerso(data: org.jooq.Result<Record>?): RapportPersonnaliseTableau? {
         // Extraction des noms de champs
         if (data.isNullOrEmpty()) {
             return null
@@ -54,12 +58,15 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
         return RapportPersonnaliseTableau(
             headers = fields,
             values = data.map { it.intoList() },
+            // On oblige que le champ géométrie s'appelle "geometrie"
+            geometries = data.map { it.field(FIELD_GEOMETRIE)?.getValue(it) as String? }.filterNotNull(),
         )
     }
 
     /**
      * @property header : liste des header du tableau
      * @property values : liste des valeurs
+     * @property geometries : liste des géoémtries
      * Par exemple
      *      "headers": [
      *         "diametre_id",
@@ -76,11 +83,18 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
      *             "70",
      *             true
      *         ],
+     *     "geometries": [
+     *         [
+     *             "POINT(1 2)",
+     *             "POINT(1 3)",
+     *         ],
      */
     data class RapportPersonnaliseTableau(
         // liste des header du tableau
         val headers: Collection<String>,
         // Valeurs
         val values: Collection<Collection<Any>>?,
+        // Liste des géométries
+        val geometries: Collection<String>?,
     )
 }

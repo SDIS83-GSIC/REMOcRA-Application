@@ -1,8 +1,10 @@
 import { Map } from "ol";
+import { WKT } from "ol/format";
 import { Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
-import { Style } from "ol/style";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { toOpenLayer } from "./Map.tsx";
 
@@ -148,3 +150,55 @@ export function createPointLayer(
 }
 
 export default toggleDeplacerPoint;
+
+export function addWktLayer(
+  map: Map,
+  wktString: string,
+  workingLayer: any,
+  projection: { name: string },
+) {
+  workingLayer.getSource().clear();
+
+  const wktFormat = new WKT();
+  const feature = wktFormat.readFeature(wktString, {
+    dataProjection: projection.name, // Projection du WKT
+    featureProjection: projection.name, // Projection de la carte
+  });
+
+  workingLayer.getSource().addFeature(feature);
+
+  const vectorLayer = new VectorLayer({
+    source: workingLayer.getSource(),
+    style: new Style({
+      stroke: new Stroke({
+        color: "green",
+        width: 2,
+      }),
+      fill: new Fill({
+        color: "rgba(0, 255, 0, 0.2)",
+      }),
+      image: new CircleStyle({
+        radius: 8,
+        fill: new Fill({
+          color: "#ffb412",
+        }),
+      }),
+    }),
+    zIndex: 9999,
+  });
+
+  // Ajouter la couche à la carte existante
+  map.addLayer(vectorLayer);
+
+  // On zoom sur la carte avce un maxZoom
+  const extent = workingLayer.getSource().getExtent();
+  if (map.getSize()?.every((e) => e === 0)) {
+    map.setSize([1000, 800]);
+  }
+
+  map.getView().fit(extent, {
+    padding: [50, 50, 50, 50],
+    maxZoom: 18,
+    size: map.getSize(),
+  });
+}
