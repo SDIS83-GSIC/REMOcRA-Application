@@ -42,14 +42,21 @@ class RapportPersonnaliseUtils {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID)
         }
 
-        // On vérifie déjà s'il y a des requêtes dans les paramètres
-        val parametresRequetes = element.listeRapportPersonnaliseParametre.filter { it.rapportPersonnaliseParametreType == TypeParametreRapportPersonnalise.SELECT_INPUT }
         var requete = element.rapportPersonnaliseSourceSql
-        if (parametresRequetes.isNotEmpty()) {
-            // On vérifie chaque requête
-            parametresRequetes.forEach {
-                testParametreRequeteSql(it).firstOrNull()
-                requete = requete.replace(it.rapportPersonnaliseParametreCode, testParametreRequeteSql(it).firstOrNull()?.id ?: "null")
+
+        // On doit aussi remplacer les paramètres pour pouvoir vérifier que la requête est correcte
+        element.listeRapportPersonnaliseParametre.forEach {
+            when (it.rapportPersonnaliseParametreType) {
+                TypeParametreRapportPersonnalise.CHECKBOX_INPUT ->
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, "true")
+                TypeParametreRapportPersonnalise.DATE_INPUT ->
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "2024-01-01 00:00:00")
+                TypeParametreRapportPersonnalise.NUMBER_INPUT ->
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "10")
+                TypeParametreRapportPersonnalise.SELECT_INPUT ->
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, testParametreRequeteSql(it).firstOrNull()?.id ?: "null")
+                TypeParametreRapportPersonnalise.TEXT_INPUT ->
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "")
             }
         }
 
