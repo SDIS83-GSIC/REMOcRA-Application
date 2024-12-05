@@ -25,13 +25,14 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.rapportpersonnalise.BuildFormRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.ExportDataRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.GenereRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
+import remocra.utils.DateUtils
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/rapport-personnalise")
-@Produces(MediaType.APPLICATION_JSON)
 class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
@@ -52,12 +53,19 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var genereRapportPersonnaliseUseCase: GenereRapportPersonnaliseUseCase
 
+    @Inject
+    lateinit var exportDataRapportPersonnaliseUseCase: ExportDataRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var dateUtils: DateUtils
+
     @Context
     lateinit var securityContext: SecurityContext
 
     @POST
     @Path("/")
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun getAll(params: Params<RapportPersonnaliseRepository.Filter, RapportPersonnaliseRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -69,12 +77,14 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @GET
     @Path("/get-type-module")
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun getTypeModule() =
         Response.ok(TypeModuleRapportCourrier.entries).build()
 
     @Path("/create")
     @POST
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun create(element: RapportPersonnaliseInput): Response =
         createRapportPersonnaliseUseCase.execute(
             securityContext.userInfo,
@@ -95,6 +105,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @Path("/update/{rapportPersonnaliseId}")
     @PUT
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun update(
         @PathParam("rapportPersonnaliseId")
         rapportPersonnaliseId: UUID,
@@ -120,6 +131,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @Path("/delete/{rapportPersonnaliseId}")
     @DELETE
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun delete(
         @PathParam("rapportPersonnaliseId")
         rapportPersonnaliseId: UUID,
@@ -144,6 +156,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @GET
     @Path("/get/{rapportPersonnaliseId}")
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
     fun getRapportPersonnalise(
         @PathParam("rapportPersonnaliseId")
         rapportPersonnaliseId: UUID,
@@ -153,12 +166,25 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @GET
     @Path("/parametres")
     @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.APPLICATION_JSON)
     fun getRapportPersonnaliseWithParametre() =
         Response.ok(buildFormRapportPersonnaliseUseCase.execute(securityContext.userInfo)).build()
 
     @PUT
     @Path("/generer")
     @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.APPLICATION_JSON)
     fun genererRapportPersonnalise(element: GenererRapportPersonnaliseData) =
         Response.ok(genereRapportPersonnaliseUseCase.execute(securityContext.userInfo, element)).build()
+
+    @POST
+    @Path("/export-data")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.TEXT_PLAIN)
+    fun exportData(
+        element: GenererRapportPersonnaliseData,
+    ): Response =
+        Response.ok(exportDataRapportPersonnaliseUseCase.execute(element))
+            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
+            .build()
 }

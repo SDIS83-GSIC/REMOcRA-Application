@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
 import { useState } from "react";
-import { Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Button, Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -14,12 +14,12 @@ import {
 } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { IconList } from "../../components/Icon/Icon.tsx";
+import { IconExport, IconList } from "../../components/Icon/Icon.tsx";
 import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/MapRapportPersonnalise.tsx";
 import PaginationFront, {
   LIMIT,
 } from "../../components/PaginationFront/PaginationFront.tsx";
-import url from "../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { requiredString } from "../../module/validators.tsx";
 import { TYPE_PARAMETRE_RAPPORT_PERSONNALISE } from "../Admin/rapportPersonnalise/SortableParametreRapportPersonnalise.tsx";
 
@@ -50,6 +50,7 @@ const ExecuteRapportPersonnalise = () => {
 
   const [offset, setOffset] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>("data");
+  const [valuesFormik, setValuesFormik] = useState();
 
   return (
     <Container fluid>
@@ -58,15 +59,58 @@ const ExecuteRapportPersonnalise = () => {
         title={"Exécuter des rapports personnalisés"}
       />
       <Row>
+        <Col xs="auto" className="ms-auto">
+          <Button
+            onClick={() => {
+              // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
+              fetch(
+                url`/api/rapport-personnalise/export-data`,
+                getFetchOptions({
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
+                    listeParametre: valuesFormik?.listeParametre,
+                  }),
+                }),
+              )
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Erreur lors du téléchargement");
+                  }
+                  return response.blob();
+                })
+                .then((blob) => {
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "rapport-personnalise.csv"; // Nom du fichier à télécharger
+
+                  a.click();
+                  window.URL.revokeObjectURL(url); // Libération de la mémoire
+                });
+            }}
+            disabled={valuesFormik == null || tableau == null}
+          >
+            Exporter les données <IconExport />
+          </Button>
+        </Col>
+      </Row>
+      <Row>
         <Col xs={12} lg={3}>
           <MyFormik
             initialValues={getInitialValues()}
             validationSchema={validationSchema}
             isPost={false}
             submitUrl={`/api/rapport-personnalise/generer`}
-            prepareVariables={(values) =>
-              prepareVariables(values, listeRapportPersoWithParametre)
-            }
+            prepareVariables={(values) => {
+              const value = prepareVariables(
+                values,
+                listeRapportPersoWithParametre,
+              );
+              setValuesFormik(value);
+              return value;
+            }}
             onSubmit={(e) => {
               setTableau(e);
               setActiveTab("data");
@@ -81,7 +125,7 @@ const ExecuteRapportPersonnalise = () => {
           <Tabs activeKey={activeTab} onSelect={(k: string) => setActiveTab(k)}>
             <Tab
               eventKey="data"
-              title="Données"
+              title={"Données"}
               className="overflow-scroll h-75"
             >
               {tableau === null ? (

@@ -37,7 +37,14 @@ class RapportPersonnaliseUtils {
         if (element.rapportPersonnaliseSourceSql.contains("CREATE", true) ||
             element.rapportPersonnaliseSourceSql.contains("UPDATE", true) ||
             element.rapportPersonnaliseSourceSql.contains("DROP", true) ||
-            element.rapportPersonnaliseSourceSql.contains("DELETE", true)
+            element.rapportPersonnaliseSourceSql.contains("DELETE", true) ||
+            element.rapportPersonnaliseSourceSql.contains("TRUNCATE", true)
+        ) {
+            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID)
+        }
+
+        if (element.rapportPersonnaliseSourceSql.startsWith("SELECT", ignoreCase = true) ||
+            element.rapportPersonnaliseSourceSql.startsWith("WITH", ignoreCase = true)
         ) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID)
         }
