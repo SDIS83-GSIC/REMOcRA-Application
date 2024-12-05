@@ -54,7 +54,7 @@ class ArchitectureTest {
         .resideInAPackage("..web..")
         .should()
         .onlyHaveDependentClassesThat()
-        .resideInAnyPackage("..web..", "..http..", "..endpoint..", "..auth..", "..json..", "..cli..")
+        .resideInAnyPackage("..web..", "..http..", "..endpoint..", "..auth..", "..json..", "..cli..", "..csv..")
 
     // Tous les Endpoint doivent hériter de AbstractEndpoint
     @ArchTest
