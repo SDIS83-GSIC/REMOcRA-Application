@@ -6,6 +6,8 @@ package remocra.db.jooq.remocra.tables.references
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.CadastreParcelle
+import remocra.db.jooq.remocra.tables.CadastreSection
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -59,6 +61,26 @@ import remocra.db.jooq.remocra.tables.Module
 import remocra.db.jooq.remocra.tables.Nature
 import remocra.db.jooq.remocra.tables.NatureDeci
 import remocra.db.jooq.remocra.tables.Niveau
+import remocra.db.jooq.remocra.tables.Oldeb
+import remocra.db.jooq.remocra.tables.OldebCaracteristique
+import remocra.db.jooq.remocra.tables.OldebLocataire
+import remocra.db.jooq.remocra.tables.OldebProprietaire
+import remocra.db.jooq.remocra.tables.OldebPropriete
+import remocra.db.jooq.remocra.tables.OldebTypeAcces
+import remocra.db.jooq.remocra.tables.OldebTypeAction
+import remocra.db.jooq.remocra.tables.OldebTypeAnomalie
+import remocra.db.jooq.remocra.tables.OldebTypeAvis
+import remocra.db.jooq.remocra.tables.OldebTypeCaracteristique
+import remocra.db.jooq.remocra.tables.OldebTypeCategorieAnomalie
+import remocra.db.jooq.remocra.tables.OldebTypeCategorieCaracteristique
+import remocra.db.jooq.remocra.tables.OldebTypeDebroussaillement
+import remocra.db.jooq.remocra.tables.OldebTypeResidence
+import remocra.db.jooq.remocra.tables.OldebTypeSuite
+import remocra.db.jooq.remocra.tables.OldebTypeZoneUrbanisme
+import remocra.db.jooq.remocra.tables.OldebVisite
+import remocra.db.jooq.remocra.tables.OldebVisiteAnomalie
+import remocra.db.jooq.remocra.tables.OldebVisiteDocument
+import remocra.db.jooq.remocra.tables.OldebVisiteSuite
 import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
@@ -103,6 +125,16 @@ val ANOMALIE_CATEGORIE: AnomalieCategorie = AnomalieCategorie.ANOMALIE_CATEGORIE
  * The table <code>remocra.api</code>.
  */
 val API: Api = Api.API
+
+/**
+ * The table <code>remocra.cadastre_parcelle</code>.
+ */
+val CADASTRE_PARCELLE: CadastreParcelle = CadastreParcelle.CADASTRE_PARCELLE
+
+/**
+ * The table <code>remocra.cadastre_section</code>.
+ */
+val CADASTRE_SECTION: CadastreSection = CadastreSection.CADASTRE_SECTION
 
 /**
  * The table <code>remocra.commune</code>.
@@ -368,6 +400,106 @@ val NATURE_DECI: NatureDeci = NatureDeci.NATURE_DECI
  * The table <code>remocra.niveau</code>.
  */
 val NIVEAU: Niveau = Niveau.NIVEAU
+
+/**
+ * The table <code>remocra.oldeb</code>.
+ */
+val OLDEB: Oldeb = Oldeb.OLDEB
+
+/**
+ * The table <code>remocra.oldeb_caracteristique</code>.
+ */
+val OLDEB_CARACTERISTIQUE: OldebCaracteristique = OldebCaracteristique.OLDEB_CARACTERISTIQUE
+
+/**
+ * The table <code>remocra.oldeb_locataire</code>.
+ */
+val OLDEB_LOCATAIRE: OldebLocataire = OldebLocataire.OLDEB_LOCATAIRE
+
+/**
+ * The table <code>remocra.oldeb_proprietaire</code>.
+ */
+val OLDEB_PROPRIETAIRE: OldebProprietaire = OldebProprietaire.OLDEB_PROPRIETAIRE
+
+/**
+ * The table <code>remocra.oldeb_propriete</code>.
+ */
+val OLDEB_PROPRIETE: OldebPropriete = OldebPropriete.OLDEB_PROPRIETE
+
+/**
+ * The table <code>remocra.oldeb_type_acces</code>.
+ */
+val OLDEB_TYPE_ACCES: OldebTypeAcces = OldebTypeAcces.OLDEB_TYPE_ACCES
+
+/**
+ * The table <code>remocra.oldeb_type_action</code>.
+ */
+val OLDEB_TYPE_ACTION: OldebTypeAction = OldebTypeAction.OLDEB_TYPE_ACTION
+
+/**
+ * The table <code>remocra.oldeb_type_anomalie</code>.
+ */
+val OLDEB_TYPE_ANOMALIE: OldebTypeAnomalie = OldebTypeAnomalie.OLDEB_TYPE_ANOMALIE
+
+/**
+ * The table <code>remocra.oldeb_type_avis</code>.
+ */
+val OLDEB_TYPE_AVIS: OldebTypeAvis = OldebTypeAvis.OLDEB_TYPE_AVIS
+
+/**
+ * The table <code>remocra.oldeb_type_caracteristique</code>.
+ */
+val OLDEB_TYPE_CARACTERISTIQUE: OldebTypeCaracteristique = OldebTypeCaracteristique.OLDEB_TYPE_CARACTERISTIQUE
+
+/**
+ * The table <code>remocra.oldeb_type_categorie_anomalie</code>.
+ */
+val OLDEB_TYPE_CATEGORIE_ANOMALIE: OldebTypeCategorieAnomalie = OldebTypeCategorieAnomalie.OLDEB_TYPE_CATEGORIE_ANOMALIE
+
+/**
+ * The table <code>remocra.oldeb_type_categorie_caracteristique</code>.
+ */
+val OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE: OldebTypeCategorieCaracteristique = OldebTypeCategorieCaracteristique.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE
+
+/**
+ * The table <code>remocra.oldeb_type_debroussaillement</code>.
+ */
+val OLDEB_TYPE_DEBROUSSAILLEMENT: OldebTypeDebroussaillement = OldebTypeDebroussaillement.OLDEB_TYPE_DEBROUSSAILLEMENT
+
+/**
+ * The table <code>remocra.oldeb_type_residence</code>.
+ */
+val OLDEB_TYPE_RESIDENCE: OldebTypeResidence = OldebTypeResidence.OLDEB_TYPE_RESIDENCE
+
+/**
+ * The table <code>remocra.oldeb_type_suite</code>.
+ */
+val OLDEB_TYPE_SUITE: OldebTypeSuite = OldebTypeSuite.OLDEB_TYPE_SUITE
+
+/**
+ * The table <code>remocra.oldeb_type_zone_urbanisme</code>.
+ */
+val OLDEB_TYPE_ZONE_URBANISME: OldebTypeZoneUrbanisme = OldebTypeZoneUrbanisme.OLDEB_TYPE_ZONE_URBANISME
+
+/**
+ * The table <code>remocra.oldeb_visite</code>.
+ */
+val OLDEB_VISITE: OldebVisite = OldebVisite.OLDEB_VISITE
+
+/**
+ * The table <code>remocra.oldeb_visite_anomalie</code>.
+ */
+val OLDEB_VISITE_ANOMALIE: OldebVisiteAnomalie = OldebVisiteAnomalie.OLDEB_VISITE_ANOMALIE
+
+/**
+ * The table <code>remocra.oldeb_visite_document</code>.
+ */
+val OLDEB_VISITE_DOCUMENT: OldebVisiteDocument = OldebVisiteDocument.OLDEB_VISITE_DOCUMENT
+
+/**
+ * The table <code>remocra.oldeb_visite_suite</code>.
+ */
+val OLDEB_VISITE_SUITE: OldebVisiteSuite = OldebVisiteSuite.OLDEB_VISITE_SUITE
 
 /**
  * The table <code>remocra.organisme</code>.

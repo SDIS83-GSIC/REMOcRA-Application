@@ -1,0 +1,3 @@
+ALTER TYPE remocra.TYPE_MODULE ADD VALUE 'OLDEB';
+ALTER TYPE historique.type_objet ADD VALUE 'OLDEB';
+ALTER TYPE historique.type_objet ADD VALUE 'OLDEB_PROPRIETAIRE';

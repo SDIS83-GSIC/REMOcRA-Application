@@ -33,8 +33,10 @@ import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -189,6 +191,23 @@ open class LieuDit(
 
     val newPei: NewPeiPath
         get(): NewPeiPath = newPei()
+
+    private lateinit var _oldeb: OldebPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.oldeb</code>
+     * table
+     */
+    fun oldeb(): OldebPath {
+        if (!this::_oldeb.isInitialized) {
+            _oldeb = OldebPath(this, null, OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY.inverseKey)
+        }
+
+        return _oldeb
+    }
+
+    val oldeb: OldebPath
+        get(): OldebPath = oldeb()
 
     private lateinit var _pei: PeiPath
 

@@ -39,6 +39,7 @@ enum class TypeModule(@get:JvmName("literal") public val literal: String) : Enum
     OPERATIONS_DIVERSES("OPERATIONS_DIVERSES"),
     CRISE("CRISE"),
     PEI_PRESCRIT("PEI_PRESCRIT"),
+    OLDEB("OLDEB"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
