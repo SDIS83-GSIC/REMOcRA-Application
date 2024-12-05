@@ -75,7 +75,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-security": "^3.0.1",
     "eslint-plugin-storybook": "0.8.0",
-    "mini-css-extract-plugin": "^2.9.1",
+    "mini-css-extract-plugin": "^2.9.2",
     "npm-run-all2": "^6.2.6",
     "parcel": "^2.12.0",
     "postcss": "^8.4.49",
