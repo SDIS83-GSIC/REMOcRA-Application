@@ -286,7 +286,7 @@ function buildComponent(
           required={element.rapportPersonnaliseParametreIsRequired}
           checked={
             values[element.rapportPersonnaliseParametreCode] ??
-            element.rapportPersonnaliseParametreValeurDefaut
+            element.rapportPersonnaliseParametreValeurDefaut === "true"
           }
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />

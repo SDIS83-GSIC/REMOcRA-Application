@@ -6,7 +6,11 @@ import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFil
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
 import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
+import {
+  IconDuplicate,
+  IconInfo,
+  IconList,
+} from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -159,6 +163,17 @@ const ListRapportPersonnalise = () => {
                   },
                   type: TYPE_BUTTON.DELETE,
                   path: url`/api/rapport-personnalise/delete/`,
+                },
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  href: (rapportPersonnaliseId) =>
+                    URLS.DUPLICATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
+                  type: TYPE_BUTTON.CUSTOM,
+                  textEnable: "Dupliquer le rapport",
+                  icon: <IconDuplicate />,
+                  classEnable: "warning",
                 },
               ],
             }),
