@@ -106,8 +106,15 @@ class DocumentUtils {
     fun deleteDirectory(repertoire: String) {
         val repertoireFile = File(repertoire)
 
+        if (!repertoireFile.exists()) {
+            return
+        }
+
         if (repertoireFile.canWrite()) {
             // Suppression du fichier
+            repertoireFile.listFiles()?.forEach {
+                it.delete()
+            }
             repertoireFile.delete()
         } else {
             throw SecurityException("Impossible de supprimer le répertoire $repertoireFile")

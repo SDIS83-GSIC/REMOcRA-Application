@@ -468,6 +468,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE(15005, "Chaque code des paramètres doit être unique."),
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
+    RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
 
     ;
     override fun toString(): String {

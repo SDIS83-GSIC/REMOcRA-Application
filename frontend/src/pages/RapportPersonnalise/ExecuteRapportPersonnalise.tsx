@@ -22,22 +22,27 @@ import PaginationFront, {
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { requiredString } from "../../module/validators.tsx";
 import { TYPE_PARAMETRE_RAPPORT_PERSONNALISE } from "../Admin/rapportPersonnalise/SortableParametreRapportPersonnalise.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+
+type RapportPersonnaliseParametreType = {
+  listeSelectInput: { id: string; libelle: string }[];
+  rapportPersonnaliseParametreCode: string;
+  rapportPersonnaliseParametreDescription: string | undefined;
+  rapportPersonnaliseParametreId: string;
+  rapportPersonnaliseParametreIsRequired: boolean;
+  rapportPersonnaliseParametreLibelle: string;
+  rapportPersonnaliseParametreValeurDefaut: string;
+  rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_PERSONNALISE;
+};
 
 type RapportPersoWithParametreType = {
   rapportPersonnaliseDescription: string | undefined;
   rapportPersonnaliseId: string | undefined;
   rapportPersonnaliseLibelle: string | undefined;
-  listeParametre: {
-    listeSelectInput: { id: string; libelle: string }[];
-    rapportPersonnaliseParametreCode: string;
-    rapportPersonnaliseParametreDescription: string | undefined;
-    rapportPersonnaliseParametreId: string;
-    rapportPersonnaliseParametreIsRequired: boolean;
-    rapportPersonnaliseParametreLibelle: string;
-    rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_PERSONNALISE;
-  };
+  listeParametre: RapportPersonnaliseParametreType[];
 };
 const ExecuteRapportPersonnalise = () => {
+  const { success: successToast, error: errorToast } = useToastContext();
   const { data: listeRapportPersoWithParametre } = useGet(
     url`/api/rapport-personnalise/parametres`,
   );
@@ -61,38 +66,34 @@ const ExecuteRapportPersonnalise = () => {
       <Row>
         <Col xs="auto" className="ms-auto">
           <Button
-            onClick={() => {
-              // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
-              fetch(
-                url`/api/rapport-personnalise/export-data`,
-                getFetchOptions({
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
-                    listeParametre: valuesFormik?.listeParametre,
-                  }),
-                }),
+            onClick={() =>
+              getFile(
+                "/api/rapport-personnalise/export-data",
+                valuesFormik,
+                "csv",
+                successToast,
+                errorToast,
               )
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Erreur lors du téléchargement");
-                  }
-                  return response.blob();
-                })
-                .then((blob) => {
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = "rapport-personnalise.csv"; // Nom du fichier à télécharger
-
-                  a.click();
-                  window.URL.revokeObjectURL(url); // Libération de la mémoire
-                });
-            }}
+            }
             disabled={valuesFormik == null || tableau == null}
           >
             Exporter les données <IconExport />
+          </Button>
+        </Col>
+        <Col xs="auto">
+          <Button
+            onClick={() =>
+              getFile(
+                "/api/rapport-personnalise/export-shp",
+                valuesFormik,
+                "zip",
+                successToast,
+                errorToast,
+              )
+            }
+            disabled={valuesFormik == null || tableau == null}
+          >
+            Exporter les données carto <IconExport />
           </Button>
         </Col>
       </Row>
@@ -122,7 +123,7 @@ const ExecuteRapportPersonnalise = () => {
           </MyFormik>
         </Col>
         <Col xs={12} lg={9}>
-          <Tabs activeKey={activeTab} onSelect={(k: string) => setActiveTab(k)}>
+          <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
             <Tab
               eventKey="data"
               title={"Données"}
@@ -268,7 +269,7 @@ const ExecuteRapportPersonnaliseForm = ({
 };
 
 function buildComponent(
-  element: RapportPersoWithParametreType,
+  element: RapportPersonnaliseParametreType,
   values: any,
   setFieldValue: (name: string, e: any) => void,
 ) {
@@ -344,6 +345,43 @@ function buildComponent(
     default:
       return;
   }
+}
+
+function getFile(
+  urlApi: string,
+  valuesFormik: any,
+  extension: string,
+  successToast: (e: string) => void,
+  errorToast: (e) => void,
+) {
+  // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
+  fetch(
+    url`${urlApi}`,
+    getFetchOptions({
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
+        listeParametre: valuesFormik?.listeParametre,
+      }),
+    }),
+  )
+    .then((response) => {
+      if (!response.ok) {
+        errorToast(response.text());
+      }
+      return response.blob();
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "rapport-personnalise." + extension; // Nom du fichier à télécharger
+
+      a.click();
+      window.URL.revokeObjectURL(url); // Libération de la mémoire
+      successToast("Import terminé");
+    });
 }
 
 export default ExecuteRapportPersonnalise;

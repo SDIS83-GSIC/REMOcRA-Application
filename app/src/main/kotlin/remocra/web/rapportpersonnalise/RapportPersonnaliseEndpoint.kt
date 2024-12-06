@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.rapportpersonnalise.BuildFormRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.ExportDataCarteRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.ExportDataRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.GenereRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
@@ -58,6 +59,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dateUtils: DateUtils
+
+    @Inject
+    lateinit var exportDataCarteRapportPersonnaliseUseCase: ExportDataCarteRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -186,5 +190,16 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     ): Response =
         Response.ok(exportDataRapportPersonnaliseUseCase.execute(element))
             .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
+            .build()
+
+    @POST
+    @Path("/export-shp")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.TEXT_PLAIN)
+    fun exportShp(
+        element: GenererRapportPersonnaliseData,
+    ): Response =
+        Response.ok(exportDataCarteRapportPersonnaliseUseCase.execute(element))
+            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.zip")
             .build()
 }
