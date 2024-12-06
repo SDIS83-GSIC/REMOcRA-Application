@@ -22,9 +22,11 @@ import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.security.NoCsrf
 import remocra.usecase.rapportpersonnalise.BuildFormRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.CreateRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.DeleteRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.ExportConfRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.ExportDataCarteRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.ExportDataRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.GenereRapportPersonnaliseUseCase
@@ -62,6 +64,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var exportDataCarteRapportPersonnaliseUseCase: ExportDataCarteRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var exportConfRapportPersonnaliseUseCase: ExportConfRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -202,4 +207,18 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         Response.ok(exportDataCarteRapportPersonnaliseUseCase.execute(element))
             .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.zip")
             .build()
+
+    @GET
+    @Path("/export/{rapportPersonnaliseId}")
+    @NoCsrf("Téléchargement d'un fichier")
+    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun exportRapportPersonnalise(
+        @PathParam("rapportPersonnaliseId")
+        rapportPersonnaliseId: UUID,
+    ): Response {
+        return Response.ok(exportConfRapportPersonnaliseUseCase.execute(rapportPersonnaliseId))
+            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise.zip\"")
+            .build()
+    }
 }

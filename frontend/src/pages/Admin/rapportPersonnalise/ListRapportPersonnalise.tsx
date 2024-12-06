@@ -8,6 +8,7 @@ import CreateButton from "../../../components/Form/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconDuplicate,
+  IconExport,
   IconInfo,
   IconList,
 } from "../../../components/Icon/Icon.tsx";
@@ -173,6 +174,20 @@ const ListRapportPersonnalise = () => {
                   type: TYPE_BUTTON.CUSTOM,
                   textEnable: "Dupliquer le rapport",
                   icon: <IconDuplicate />,
+                  classEnable: "warning",
+                },
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  href: (rapportPersonnaliseId) =>
+                    url`/api/rapport-personnalise/export/` +
+                    rapportPersonnaliseId,
+                  type: TYPE_BUTTON.CUSTOM,
+                  textEnable: "Exporter le rapport",
+                  icon: <IconExport />,
+                  disable: (row) => row.original.rapportPersonnaliseProtected,
+                  textDisable: "Impossible d'exporter un rapport protégé",
                   classEnable: "warning",
                 },
               ],

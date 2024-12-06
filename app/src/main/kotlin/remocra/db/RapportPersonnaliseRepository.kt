@@ -244,6 +244,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .and(RAPPORT_PERSONNALISE.ID.notEqual(rapportPersonnaliseId)),
     )
 
+    fun getRapportPersonnalisePojo(rapportPersonnaliseId: UUID): RapportPersonnalise =
+        dsl.selectFrom(RAPPORT_PERSONNALISE)
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
+            .fetchSingleInto()
+
+    fun getRapportPersonnaliseParametrePojo(rapportPersonnaliseId: UUID): Collection<RapportPersonnaliseParametre> =
+        dsl.selectFrom(RAPPORT_PERSONNALISE_PARAMETRE)
+            .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
+            .fetchInto()
+
     fun getListeRapportPersonnalise(
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
