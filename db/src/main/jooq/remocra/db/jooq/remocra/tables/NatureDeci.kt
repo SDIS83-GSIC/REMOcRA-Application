@@ -26,6 +26,8 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.couverturehydraulique.keys.PEI_PROJET__PEI_PROJET_PEI_PROJET_NATURE_DECI_ID_FKEY
 import remocra.db.jooq.couverturehydraulique.tables.PeiProjet.PeiProjetPath
+import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY
+import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.NATURE_DECI_NATURE_DECI_CODE_KEY
 import remocra.db.jooq.remocra.keys.NATURE_DECI_PKEY
@@ -156,6 +158,23 @@ open class NatureDeci(
 
     val peiProjet: PeiProjetPath
         get(): PeiProjetPath = peiProjet()
+
+    private lateinit var _newPei: NewPeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.new_pei</code>
+     * table
+     */
+    fun newPei(): NewPeiPath {
+        if (!this::_newPei.isInitialized) {
+            _newPei = NewPeiPath(this, null, NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY.inverseKey)
+        }
+
+        return _newPei
+    }
+
+    val newPei: NewPeiPath
+        get(): NewPeiPath = newPei()
 
     private lateinit var _pei: PeiPath
 

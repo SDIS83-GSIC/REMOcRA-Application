@@ -9,6 +9,7 @@ import org.jooq.impl.CatalogImpl
 import remocra.db.jooq.couverturehydraulique.Couverturehydraulique
 import remocra.db.jooq.entrepotsig.Entrepotsig
 import remocra.db.jooq.historique.Historique
+import remocra.db.jooq.incoming.Incoming
 import remocra.db.jooq.remocra.Remocra
 import javax.annotation.processing.Generated
 import kotlin.collections.List
@@ -49,6 +50,11 @@ open class DefaultCatalog : CatalogImpl("") {
     val HISTORIQUE: Historique get(): Historique = Historique.HISTORIQUE
 
     /**
+     * The schema <code>incoming</code>.
+     */
+    val INCOMING: Incoming get(): Incoming = Incoming.INCOMING
+
+    /**
      * The schema <code>remocra</code>.
      */
     val REMOCRA: Remocra get(): Remocra = Remocra.REMOCRA
@@ -57,6 +63,7 @@ open class DefaultCatalog : CatalogImpl("") {
         Couverturehydraulique.COUVERTUREHYDRAULIQUE,
         Entrepotsig.ENTREPOTSIG,
         Historique.HISTORIQUE,
+        Incoming.INCOMING,
         Remocra.REMOCRA,
     )
 

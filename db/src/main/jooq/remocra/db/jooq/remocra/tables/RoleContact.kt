@@ -24,12 +24,12 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.incoming.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY
+import remocra.db.jooq.incoming.tables.Contact.ContactPath
+import remocra.db.jooq.incoming.tables.LContactRole.LContactRolePath
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY
 import remocra.db.jooq.remocra.keys.ROLE_PKEY
 import remocra.db.jooq.remocra.keys.ROLE_ROLE_CODE_KEY
-import remocra.db.jooq.remocra.tables.Contact.ContactPath
-import remocra.db.jooq.remocra.tables.LContactRole.LContactRolePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -143,7 +143,7 @@ open class RoleContact(
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_contact_role</code> table
+     * <code>incoming.l_contact_role</code> table
      */
     fun lContactRole(): LContactRolePath {
         if (!this::_lContactRole.isInitialized) {
@@ -158,7 +158,7 @@ open class RoleContact(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.contact</code> table
+     * <code>incoming.contact</code> table
      */
     val contact: ContactPath
         get(): ContactPath = lContactRole().contact()

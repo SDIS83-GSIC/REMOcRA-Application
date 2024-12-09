@@ -29,15 +29,17 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.couverturehydraulique.keys.L_ETUDE_COMMUNE__L_ETUDE_COMMUNE_COMMUNE_ID_FKEY
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.couverturehydraulique.tables.LEtudeCommune.LEtudeCommunePath
+import remocra.db.jooq.incoming.keys.CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY
+import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY
+import remocra.db.jooq.incoming.tables.Contact.ContactPath
+import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
-import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
-import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -177,7 +179,7 @@ open class Commune(
     private lateinit var _contact: ContactPath
 
     /**
-     * Get the implicit to-many join path to the <code>remocra.contact</code>
+     * Get the implicit to-many join path to the <code>incoming.contact</code>
      * table
      */
     fun contact(): ContactPath {
@@ -190,6 +192,23 @@ open class Commune(
 
     val contact: ContactPath
         get(): ContactPath = contact()
+
+    private lateinit var _newPei: NewPeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.new_pei</code>
+     * table
+     */
+    fun newPei(): NewPeiPath {
+        if (!this::_newPei.isInitialized) {
+            _newPei = NewPeiPath(this, null, NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY.inverseKey)
+        }
+
+        return _newPei
+    }
+
+    val newPei: NewPeiPath
+        get(): NewPeiPath = newPei()
 
     private lateinit var _lCommuneCis: LCommuneCisPath
 

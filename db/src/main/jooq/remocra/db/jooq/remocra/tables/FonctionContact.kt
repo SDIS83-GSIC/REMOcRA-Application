@@ -24,11 +24,11 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.incoming.keys.CONTACT__CONTACT_CONTACT_FONCTION_CONTACT_ID_FKEY
+import remocra.db.jooq.incoming.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_FONCTION_FKEY
 import remocra.db.jooq.remocra.keys.FONCTION_CONTACT_FONCTION_CONTACT_CODE_KEY
 import remocra.db.jooq.remocra.keys.FONCTION_CONTACT_PKEY
-import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -143,12 +143,12 @@ open class FonctionContact(
     private lateinit var _contact: ContactPath
 
     /**
-     * Get the implicit to-many join path to the <code>remocra.contact</code>
+     * Get the implicit to-many join path to the <code>incoming.contact</code>
      * table
      */
     fun contact(): ContactPath {
         if (!this::_contact.isInitialized) {
-            _contact = ContactPath(this, null, CONTACT__CONTACT_CONTACT_FONCTION_FKEY.inverseKey)
+            _contact = ContactPath(this, null, CONTACT__CONTACT_CONTACT_FONCTION_CONTACT_ID_FKEY.inverseKey)
         }
 
         return _contact

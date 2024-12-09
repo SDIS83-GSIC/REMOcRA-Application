@@ -24,20 +24,20 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.incoming.keys.L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY
+import remocra.db.jooq.incoming.tables.LVisiteAnomalie.LVisiteAnomaliePath
+import remocra.db.jooq.incoming.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.ANOMALIE_ANOMALIE_CODE_KEY
 import remocra.db.jooq.remocra.keys.ANOMALIE_PKEY
 import remocra.db.jooq.remocra.keys.ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_ANOMALIE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.POIDS_ANOMALIE__POIDS_ANOMALIE_POIDS_ANOMALIE_ANOMALIE_ID_FKEY
 import remocra.db.jooq.remocra.tables.AnomalieCategorie.AnomalieCategoriePath
 import remocra.db.jooq.remocra.tables.LPeiAnomalie.LPeiAnomaliePath
-import remocra.db.jooq.remocra.tables.LVisiteAnomalie.LVisiteAnomaliePath
 import remocra.db.jooq.remocra.tables.Nature.NaturePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.PoidsAnomalie.PoidsAnomaliePath
-import remocra.db.jooq.remocra.tables.Visite.VisitePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -185,6 +185,23 @@ open class Anomalie(
     val anomalieCategorie: AnomalieCategoriePath
         get(): AnomalieCategoriePath = anomalieCategorie()
 
+    private lateinit var _lVisiteAnomalie: LVisiteAnomaliePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>incoming.l_visite_anomalie</code> table
+     */
+    fun lVisiteAnomalie(): LVisiteAnomaliePath {
+        if (!this::_lVisiteAnomalie.isInitialized) {
+            _lVisiteAnomalie = LVisiteAnomaliePath(this, null, L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY.inverseKey)
+        }
+
+        return _lVisiteAnomalie
+    }
+
+    val lVisiteAnomalie: LVisiteAnomaliePath
+        get(): LVisiteAnomaliePath = lVisiteAnomalie()
+
     private lateinit var _lPeiAnomalie: LPeiAnomaliePath
 
     /**
@@ -201,23 +218,6 @@ open class Anomalie(
 
     val lPeiAnomalie: LPeiAnomaliePath
         get(): LPeiAnomaliePath = lPeiAnomalie()
-
-    private lateinit var _lVisiteAnomalie: LVisiteAnomaliePath
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_visite_anomalie</code> table
-     */
-    fun lVisiteAnomalie(): LVisiteAnomaliePath {
-        if (!this::_lVisiteAnomalie.isInitialized) {
-            _lVisiteAnomalie = LVisiteAnomaliePath(this, null, L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY.inverseKey)
-        }
-
-        return _lVisiteAnomalie
-    }
-
-    val lVisiteAnomalie: LVisiteAnomaliePath
-        get(): LVisiteAnomaliePath = lVisiteAnomalie()
 
     private lateinit var _poidsAnomalie: PoidsAnomaliePath
 
@@ -237,18 +237,18 @@ open class Anomalie(
         get(): PoidsAnomaliePath = poidsAnomalie()
 
     /**
+     * Get the implicit many-to-many join path to the
+     * <code>incoming.visite</code> table
+     */
+    val visite: VisitePath
+        get(): VisitePath = lVisiteAnomalie().visite()
+
+    /**
      * Get the implicit many-to-many join path to the <code>remocra.pei</code>
      * table
      */
     val pei: PeiPath
         get(): PeiPath = lPeiAnomalie().pei()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.visite</code> table
-     */
-    val visite: VisitePath
-        get(): VisitePath = lVisiteAnomalie().visite()
 
     /**
      * Get the implicit many-to-many join path to the

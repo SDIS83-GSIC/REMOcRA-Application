@@ -27,15 +27,17 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
+import remocra.db.jooq.incoming.keys.CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY
+import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY
+import remocra.db.jooq.incoming.tables.Contact.ContactPath
+import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_CROISEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE_PKEY
 import remocra.db.jooq.remocra.keys.VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
-import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -161,7 +163,7 @@ open class Voie(
     private lateinit var _contact: ContactPath
 
     /**
-     * Get the implicit to-many join path to the <code>remocra.contact</code>
+     * Get the implicit to-many join path to the <code>incoming.contact</code>
      * table
      */
     fun contact(): ContactPath {
@@ -174,6 +176,23 @@ open class Voie(
 
     val contact: ContactPath
         get(): ContactPath = contact()
+
+    private lateinit var _newPei: NewPeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.new_pei</code>
+     * table
+     */
+    fun newPei(): NewPeiPath {
+        if (!this::_newPei.isInitialized) {
+            _newPei = NewPeiPath(this, null, NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY.inverseKey)
+        }
+
+        return _newPei
+    }
+
+    val newPei: NewPeiPath
+        get(): NewPeiPath = newPei()
 
     private lateinit var _peiPeiCroisementIdFkey: PeiPath
 

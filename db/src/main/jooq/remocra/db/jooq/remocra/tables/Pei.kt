@@ -27,6 +27,10 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
+import remocra.db.jooq.incoming.keys.PHOTO_PEI__PHOTO_PEI_PEI_ID_FKEY
+import remocra.db.jooq.incoming.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
+import remocra.db.jooq.incoming.tables.PhotoPei.PhotoPeiPath
+import remocra.db.jooq.incoming.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
@@ -53,7 +57,6 @@ import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_ID_FKEY
-import remocra.db.jooq.remocra.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
@@ -75,7 +78,6 @@ import remocra.db.jooq.remocra.tables.Pena.PenaPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.Site.SitePath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
-import remocra.db.jooq.remocra.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
 import java.util.UUID
@@ -533,6 +535,40 @@ open class Pei(
     val zoneIntegration: ZoneIntegrationPath
         get(): ZoneIntegrationPath = zoneIntegration()
 
+    private lateinit var _photoPei: PhotoPeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.photo_pei</code>
+     * table
+     */
+    fun photoPei(): PhotoPeiPath {
+        if (!this::_photoPei.isInitialized) {
+            _photoPei = PhotoPeiPath(this, null, PHOTO_PEI__PHOTO_PEI_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _photoPei
+    }
+
+    val photoPei: PhotoPeiPath
+        get(): PhotoPeiPath = photoPei()
+
+    private lateinit var _visite: VisitePath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.visite</code>
+     * table
+     */
+    fun visite(): VisitePath {
+        if (!this::_visite.isInitialized) {
+            _visite = VisitePath(this, null, VISITE__VISITE_VISITE_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _visite
+    }
+
+    val visite: VisitePath
+        get(): VisitePath = visite()
+
     private lateinit var _lDebitSimultaneMesurePei: LDebitSimultaneMesurePeiPath
 
     /**
@@ -649,23 +685,6 @@ open class Pei(
 
     val pibi: PibiPath
         get(): PibiPath = pibi()
-
-    private lateinit var _visite: VisitePath
-
-    /**
-     * Get the implicit to-many join path to the <code>remocra.visite</code>
-     * table
-     */
-    fun visite(): VisitePath {
-        if (!this::_visite.isInitialized) {
-            _visite = VisitePath(this, null, VISITE__VISITE_VISITE_PEI_ID_FKEY.inverseKey)
-        }
-
-        return _visite
-    }
-
-    val visite: VisitePath
-        get(): VisitePath = visite()
 
     /**
      * Get the implicit many-to-many join path to the
