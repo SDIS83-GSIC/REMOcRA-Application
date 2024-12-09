@@ -3,6 +3,7 @@ package remocra.csv
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.google.inject.Inject
+import remocra.GlobalConstants
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
@@ -16,7 +17,7 @@ class CsvWriter {
 
     inline fun <reified T> writeCsvStream(
         data: Collection<T>,
-        delimiter: Char = ';',
+        delimiter: Char = GlobalConstants.DELIMITER_CSV,
     ): ByteArrayOutputStream {
         val os = ByteArrayOutputStream()
         OutputStreamWriter(os, StandardCharsets.UTF_8).use { writer ->

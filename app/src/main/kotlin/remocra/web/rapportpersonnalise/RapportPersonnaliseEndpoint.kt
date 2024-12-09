@@ -1,6 +1,8 @@
 package remocra.web.rapportpersonnalise
 
 import jakarta.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -30,6 +32,7 @@ import remocra.usecase.rapportpersonnalise.ExportConfRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.ExportDataCarteRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.ExportDataRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.GenereRapportPersonnaliseUseCase
+import remocra.usecase.rapportpersonnalise.ImportConfRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
 import remocra.utils.DateUtils
 import remocra.web.AbstractEndpoint
@@ -67,6 +70,9 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var exportConfRapportPersonnaliseUseCase: ExportConfRapportPersonnaliseUseCase
+
+    @Inject
+    lateinit var importConfRapportPersonnaliseUseCase: ImportConfRapportPersonnaliseUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -220,5 +226,16 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         return Response.ok(exportConfRapportPersonnaliseUseCase.execute(rapportPersonnaliseId))
             .header("Content-Disposition", "attachment; filename=\"rapport-personnalise.zip\"")
             .build()
+    }
+
+    @PUT
+    @Path("/import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
+    fun import(@Context httpRequest: HttpServletRequest): Response {
+        importConfRapportPersonnaliseUseCase.execute(
+            httpRequest.getPart("zipFile").inputStream,
+        )
+        return Response.ok().build()
     }
 }

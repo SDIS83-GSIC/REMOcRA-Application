@@ -40,13 +40,13 @@ class RapportPersonnaliseUtils {
             element.rapportPersonnaliseSourceSql.contains("DELETE", true) ||
             element.rapportPersonnaliseSourceSql.contains("TRUNCATE", true)
         ) {
-            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID)
+            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID, "Ne doit pas contenir de CREATE, UPDATE, DROP, DELETE ou TRUNCATE")
         }
 
-        if (element.rapportPersonnaliseSourceSql.startsWith("SELECT", ignoreCase = true) ||
-            element.rapportPersonnaliseSourceSql.startsWith("WITH", ignoreCase = true)
+        if (!element.rapportPersonnaliseSourceSql.startsWith("SELECT", ignoreCase = true) &&
+            !element.rapportPersonnaliseSourceSql.startsWith("WITH", ignoreCase = true)
         ) {
-            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID)
+            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID, "doit commencer par un 'SELECT' ou un 'WITH'")
         }
 
         var requete = element.rapportPersonnaliseSourceSql

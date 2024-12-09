@@ -2,6 +2,7 @@ package remocra.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.google.inject.Inject
+import remocra.GlobalConstants
 import java.io.File
 import java.io.InputStream
 
@@ -21,11 +22,15 @@ class CsvReader {
 
     inline fun <reified T> readCsvFile(
         inputStream: InputStream,
+        delimiter: Char = GlobalConstants.DELIMITER_CSV,
     ): MutableList<T>? {
         try {
             return csvMapper
                 .readerWithTypedSchemaFor(T::class.java)
-                .with(csvMapper.typedSchemaFor(T::class.java).withHeader())
+                .with(
+                    csvMapper.typedSchemaFor(T::class.java).withHeader()
+                        .withColumnSeparator(delimiter),
+                )
                 .readValues<T>(inputStream)
                 .readAll()
         } catch (e: Exception) {

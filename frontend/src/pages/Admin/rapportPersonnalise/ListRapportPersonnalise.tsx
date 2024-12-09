@@ -1,4 +1,4 @@
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
@@ -39,12 +39,23 @@ const ListRapportPersonnalise = () => {
           icon={<IconList />}
           title={"Liste des rapports personnalisés"}
           right={
-            <CreateButton
-              href={URLS.CREATE_RAPPORT_PERSONNALISE}
-              title={"Ajouter un rapport personnalisé"}
-            />
+            <Row>
+              <Col>
+                <CreateButton
+                  href={URLS.CREATE_RAPPORT_PERSONNALISE}
+                  title={"Ajouter"}
+                />
+              </Col>
+              <Col>
+                <CreateButton
+                  href={URLS.IMPORTER_RAPPORT_PERSONNALISE}
+                  title={"Importer"}
+                />
+              </Col>
+            </Row>
           }
         />
+
         <QueryTable
           query={url`/api/rapport-personnalise`}
           columns={[

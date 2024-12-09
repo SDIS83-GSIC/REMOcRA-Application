@@ -20,13 +20,18 @@ class ExportConfRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var csvWriter: CsvWriter
 
+    companion object {
+        const val NOM_FICHIER_RAPPORT_PERSO = "remocra-rapport-personnalise.csv"
+        const val NOM_FICHIER_RAPPORT_PERSO_PARAM = "remocra-rapport-personnalise-parametre.csv"
+    }
+
     fun execute(rapportPersonnaliseId: UUID): StreamingOutput {
         val output =
             StreamingOutput { output ->
                 val out = ZipOutputStream(output)
 
                 val baosRapportPersonnalise = getFileRapportPersonnalise(rapportPersonnaliseId)
-                out.putNextEntry(ZipEntry("remocra-rapport-personnalise.csv"))
+                out.putNextEntry(ZipEntry(NOM_FICHIER_RAPPORT_PERSO))
                 baosRapportPersonnalise.writeTo(out)
                 baosRapportPersonnalise.close()
                 out.closeEntry()
@@ -34,7 +39,7 @@ class ExportConfRapportPersonnaliseUseCase : AbstractUseCase() {
                 val baosRapportPersonnaliseParametre =
                     getFileRapportPersonnaliseParametre(rapportPersonnaliseId)
                 if (baosRapportPersonnaliseParametre != null) {
-                    out.putNextEntry(ZipEntry("remocra-rapport-personnalise-parametre.csv"))
+                    out.putNextEntry(ZipEntry(NOM_FICHIER_RAPPORT_PERSO_PARAM))
                     baosRapportPersonnaliseParametre.writeTo(out)
                     baosRapportPersonnaliseParametre.close()
                     out.closeEntry()

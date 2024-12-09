@@ -110,4 +110,6 @@ object GlobalConstants {
     const val SCHEMA_ENTREPOT_SIG: String = "ENTREPOTSIG"
 
     const val PLACEHOLDER_ERROR_TYPE: String = "#PLACEHOLDER#"
+
+    const val DELIMITER_CSV = ';'
 }
