@@ -175,7 +175,7 @@ const Pagination = ({
                     type="button"
                     key={i}
                     className={classnames(styles.linkA, {
-                      "text-primary": currentPage === page,
+                      "text-info": currentPage === page,
                     })}
                     onClick={() => {
                       setPagination({
