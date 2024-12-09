@@ -62,6 +62,7 @@ export const FormLabel = ({
     label && (
       <>
         <Form.Label
+          htmlFor={name}
           className={
             !disabled
               ? "fw-bold mt-2 " + className
@@ -101,6 +102,7 @@ export const TextInput = ({
         name={name}
       />
       <Form.Control
+        id={name}
         required={required}
         type="text"
         readOnly={readOnly}
@@ -133,6 +135,7 @@ export const TextAreaInput = ({
         name={name}
       />
       <Form.Control
+        id={name}
         required={required}
         as="textarea"
         rows={3}
@@ -169,6 +172,7 @@ export const CheckBoxInput = ({
   return (
     <DivWithError name={name} error={error}>
       <Field
+        id={name}
         name={name}
         type="checkbox"
         disabled={disabled}
@@ -213,6 +217,7 @@ export const FileInput = ({
         name={name}
       />
       <Form.Control
+        id={name}
         required={required}
         type="file"
         accept={accept}
@@ -244,6 +249,7 @@ export const NumberInput = ({
         name={name}
       />
       <Form.Control
+        id={name}
         type="number"
         min={rest.min ?? 1}
         step={rest.step ?? 0.1}
@@ -300,6 +306,7 @@ const PositiveNumberInput = ({
         name={name}
       />
       <Form.Control
+        id={name}
         type="number"
         onKeyDown={handleKeypress}
         onBlur={handleBlur}
@@ -337,6 +344,7 @@ export const DateTimeInput = ({
         name={name}
       />
       <input
+        id={name}
         type="datetime-local"
         required={required}
         {...field}
@@ -382,6 +390,7 @@ export const Multiselect = ({
         name={name}
       />
       <ReactSelect
+        id={name}
         isMulti={true}
         placeholder={"Sélectionnez"}
         name={name}
@@ -422,6 +431,7 @@ export const SelectInput = ({
         name={name}
       />
       <ReactSelect
+        id={name}
         isMulti={false}
         placeholder={"Sélectionnez"}
         options={options}
