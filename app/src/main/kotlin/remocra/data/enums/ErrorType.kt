@@ -472,6 +472,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     API_SYNCHRO_ERREUR_RESERVATION(20000, "Erreur lors de la réservation des tournées ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     API_SYNCHRO_NO_COMMUNE(20001, "Impossible d'insérer le PEI : il n'est sur aucune commune connue."),
+    API_SYNCHRO_PEI_EXISTE(20002, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
+    API_SYNCHRO_PEI_ERROR(20003, "Impossible d'insérer le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans incoming."),
+    API_SYNCHRO_PEI_FORBIDDEN(20004, "Vous n'avez pas les droits de création de PEI depuis l'application mobile.", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
