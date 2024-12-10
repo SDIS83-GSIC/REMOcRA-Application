@@ -12,9 +12,11 @@ import jakarta.ws.rs.core.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import remocra.apimobile.data.ContactForApiMobileData
+import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
+import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
 import remocra.app.ParametresProvider
@@ -45,6 +47,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroContactUseCase: SynchroContactUseCase
+
+    @Inject
+    lateinit var synchroContactRoleUseCase: SynchroContactRoleUseCase
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroEndpoint::class.java)
@@ -185,4 +190,20 @@ class SynchroEndpoint : AbstractEndpoint() {
                 contactEmail = contactEmail,
             ),
         ).wrap()
+
+    @AuthDevice
+    @Path("/contacts-roles")
+    @POST
+    @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun getContactRole(
+        @FormParam("contactId") contactId: UUID,
+        @FormParam("roleId") roleId: UUID,
+    ) = synchroContactRoleUseCase.execute(
+        currentUser!!.get(),
+        ContactRoleForApiMobileData(
+            contactId = contactId,
+            roleId = roleId,
+        ),
+    ).wrap()
 }

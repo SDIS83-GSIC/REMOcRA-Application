@@ -481,6 +481,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE(20008, "Le gestionnaire associé au contact n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     API_SYNCHRO_CONTACT_EXISTE(20009, "Le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
     API_SYNCHRO_CONTACT_ERROR(20010, "Impossible d'insérer le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
+    API_SYNCHRO_CONTACT_ROLE_NO_EXISTE(20011, "Le contact associé au rôle n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_CONTACT_ROLE_EXISTE(20012, "Le lien entre le contact et rôle est déjà dans le schéma incoming."),
+    API_SYNCHRO_CONTACT_ROLE_ERROR(20013, "Impossible d'insérer le contact role dans le schéma incoming."),
 
     ;
     override fun toString(): String {

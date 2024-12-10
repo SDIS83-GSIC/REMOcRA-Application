@@ -9,6 +9,7 @@ import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
 import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
+import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
@@ -141,4 +142,17 @@ class IncomingRepository @Inject constructor(
             .set(CONTACT.TELEPHONE, contact.contactTelephone)
             .onConflictDoNothing()
             .execute()
+
+    fun checkContactExist(idContact: UUID?): Boolean {
+        return dsl.fetchExists(dsl.selectFrom(CONTACT).where(CONTACT.ID.eq(idContact)))
+    }
+
+    fun insertContactRole(contactId: UUID, roleId: UUID): Int {
+        return dsl
+            .insertInto(L_CONTACT_ROLE)
+            .set(L_CONTACT_ROLE.CONTACT_ID, contactId)
+            .set(L_CONTACT_ROLE.ROLE_ID, roleId)
+            .onConflictDoNothing()
+            .execute()
+    }
 }
