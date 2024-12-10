@@ -488,7 +488,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_TOURNEE_ERROR(20015, "Impossible d'insérer la tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
     API_SYNCHRO_VISITE_EXISTE(20016, "La visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
     API_SYNCHRO_VISITE_ERROR(20017, "Impossible d'insérer la visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
-    API_SYNCHRO_VISITE_PEI_NO_REMOCRA(20020, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
+    API_SYNCHRO_VISITE_PEI_NO_REMOCRA(20018, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
+    API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA(20019, "L'anomalie ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
+    API_SYNCHRO_VISITE_ANOMALIE_EXISTE(20020, "Le lien entre l'anomalie et la visite est déjà dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_VISITE_ANOMALIE_ERROR(20021, "Impossible d'insérer le lien entre l'anomalie et la viste dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
 
     ;
     override fun toString(): String {

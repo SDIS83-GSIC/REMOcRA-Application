@@ -12,6 +12,7 @@ import remocra.db.fetchOneInto
 import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
+import remocra.db.jooq.incoming.tables.references.L_VISITE_ANOMALIE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
 import remocra.db.jooq.incoming.tables.references.TOURNEE
 import remocra.db.jooq.incoming.tables.references.VISITE
@@ -192,6 +193,14 @@ class IncomingRepository @Inject constructor(
             .set(VISITE_CTRL_DEBIT_PRESSION.DEBIT, visiteData.visiteCtrlDebitPressionDebit)
             .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION, visiteData.visiteCtrlDebitPressionPression.toBigDecimal())
             .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN, visiteData.visiteCtrlDebitPressionPressionDyn.toBigDecimal())
+            .onConflictDoNothing()
+            .execute()
+
+    fun insertVisiteAnomalie(visiteId: UUID, anomalieId: UUID): Int =
+        dsl
+            .insertInto(L_VISITE_ANOMALIE)
+            .set(L_VISITE_ANOMALIE.VISITE_ID, visiteId)
+            .set(L_VISITE_ANOMALIE.ANOMALIE_ID, anomalieId)
             .onConflictDoNothing()
             .execute()
 }

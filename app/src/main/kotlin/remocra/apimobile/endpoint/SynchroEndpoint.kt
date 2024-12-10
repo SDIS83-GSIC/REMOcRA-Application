@@ -13,6 +13,7 @@ import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
+import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
@@ -20,6 +21,7 @@ import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
 import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
+import remocra.apimobile.usecase.synchrovisite.SynchroVisiteAnomalieUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.AuthDevice
@@ -59,6 +61,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroVisiteUseCase: SynchroVisiteUseCase
+
+    @Inject
+    lateinit var synchroVisiteAnomalieUseCase: SynchroVisiteAnomalieUseCase
 
     //    @CurrentUser
     @Inject
@@ -268,4 +273,21 @@ class SynchroEndpoint : AbstractEndpoint() {
             hasAnomalieChanges = hasAnomalieChanges,
         ),
     ).wrap()
+
+    @AuthDevice
+    @Path("/synchro-visite-anomalie")
+    @POST
+    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun synchroHydrantVisiteAnomalies(
+        @FormParam("visiteId") visiteId: UUID,
+        @FormParam("anomalieId") anomalieId: UUID,
+    ): Response =
+        synchroVisiteAnomalieUseCase.execute(
+            currentUser!!.get(),
+            VisiteAnomalieForApiMobileData(
+                visiteId,
+                anomalieId,
+            ),
+        ).wrap()
 }
