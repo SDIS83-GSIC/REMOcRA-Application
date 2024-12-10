@@ -11,6 +11,7 @@ abstract class AbstractUseCase {
         data class Forbidden(val message: String?) : Result()
         data class Error(val message: String?) : Result()
         data class BadRequest(val message: String?) : Result()
+        data class Conflict(val message: String?) : Result()
     }
 
     @Inject lateinit var dateUtils: DateUtils

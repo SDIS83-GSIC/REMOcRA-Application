@@ -32,6 +32,7 @@ import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
 import remocra.web.naturedeci.NatureDeciModule
 import remocra.web.nomenclatures.NomenclatureModule
+import remocra.web.oldeb.OldebModule
 import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
 import remocra.web.parametres.TaskModule
@@ -70,6 +71,7 @@ object WebModule : RemocraModule() {
         install(CouvertureHydrauliqueModule)
         install(PeiPrescritModule)
         install(IndisponibiliteTemporaireModule)
+        install(OldebModule)
         install(ModuleModule)
         install(ParametreModule)
         install(FicheResumeModule)

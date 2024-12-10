@@ -553,6 +553,17 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // Paramètres API
     DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),
 
+    //
+    // ********************************************************************************
+    // OLD
+    // ********************************************************************************
+    //
+    OLDEB_PROPRIETAIRE_FORBIDDEN(27000, "Vous n'avez pas les droits de gestion des propriétaires", Status.FORBIDDEN),
+    OLDEB_PROPRIETAIRE_FORBIDDEN_INSERT(27001, "Vous n'avez pas les droits de création des propriétaires", Status.FORBIDDEN),
+    OLDEB_PROPRIETAIRE_FORBIDDEN_UPDATE(27002, "Vous n'avez pas les droits de modification des propriétaires", Status.FORBIDDEN),
+    OLDEB_PROPRIETAIRE_FORBIDDEN_DELETE(27003, "Vous n'avez pas les droits de suppression des propriétaires", Status.FORBIDDEN),
+    OLDEB_PROPRIETAIRE_IN_USE(27004, "Le propriétaire est associé à une ou plusieurs obligations légales de débroussaillement", Status.CONFLICT),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

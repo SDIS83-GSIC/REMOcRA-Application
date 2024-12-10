@@ -14,6 +14,7 @@ import { DivWithError, FormLabel } from "./Form.tsx";
  * @param {string} label - Label du select.
  * @param {boolean} required - Valeur obligatoire ?
  * @param {Function} setValues - Permet de mettre à jour la valeur du select
+ * @param {Function} setFieldValue - Permet de mettre à jour individuellement la valeur du select
  * @param {Function} setOtherValues - Permet de mettre à jour une / des autres valeurs du formulaire
  */
 const SelectForm = ({
@@ -26,16 +27,19 @@ const SelectForm = ({
   onChange: onChangeCustom,
   optionDisabled,
   setValues,
+  setFieldValue,
   setOtherValues,
 }: SelectFormType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
 
   const onChange = ({ name, value }) => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    setValues != null &&
+      setValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    setFieldValue != null && setFieldValue(name, value);
     setOtherValues != null && setOtherValues();
   };
 

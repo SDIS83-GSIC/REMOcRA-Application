@@ -141,6 +141,10 @@ import ModuleOperationsDiverses from "./components/ModuleRemocra/ModuleOperation
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import UpdateTypeOrganismeDroitApi from "./pages/Admin/TypeOrganisme/UpdateTypeOrganismeDroitApi.tsx";
 import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
+import ModuleOldeb from "./components/ModuleRemocra/ModuleOldeb.tsx";
+import OldebProprietaireList from "./pages/Oldeb/OldebProprietaireList.tsx";
+import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
+import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -195,6 +199,12 @@ export const URLS = {
 
   // Module Carte pei prescrit
   PEI_PRESCRIT: url`/pei-prescrit`,
+
+  // MODULE OLDEB
+  OLDEB_PROPRIETAIRE_LIST: url`/oldeb/proprietaire`,
+  OLDEB_PROPRIETAIRE_CREATE: url`/oldeb/proprietaire/create`,
+  OLDEB_PROPRIETAIRE_UPDATE: (oldebProprietaireId) =>
+    url`/oldeb/proprietaire/${oldebProprietaireId}`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -642,6 +652,39 @@ export default [
           <Authorization
             Component={UpdatePeiProjet}
             droits={[TYPE_DROIT.ETUDE_U]}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    path: "/oldeb/",
+    element: <ModuleOldeb />,
+    children: [
+      {
+        path: "proprietaire",
+        element: (
+          <Authorization
+            Component={OldebProprietaireList}
+            droits={[TYPE_DROIT.OLDEB_R]}
+          />
+        ),
+      },
+      {
+        path: "proprietaire/create",
+        element: (
+          <Authorization
+            Component={OldebProprietaireCreate}
+            droits={[TYPE_DROIT.OLDEB_C]}
+          />
+        ),
+      },
+      {
+        path: "proprietaire/:proprietaireId",
+        element: (
+          <Authorization
+            Component={OldebProprietaireUpdate}
+            droits={[TYPE_DROIT.OLDEB_U]}
           />
         ),
       },

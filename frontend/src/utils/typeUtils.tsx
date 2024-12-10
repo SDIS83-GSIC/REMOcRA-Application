@@ -21,7 +21,8 @@ export type SelectFormType = SelectType & {
   required?: boolean;
   disabled?: boolean;
   optionDisabled?: string;
-  setValues: (e: any) => void;
+  setValues?: (e: any) => void;
+  setFieldValue?: (name: string, value: any) => void;
   setOtherValues?: () => void;
 };
 
