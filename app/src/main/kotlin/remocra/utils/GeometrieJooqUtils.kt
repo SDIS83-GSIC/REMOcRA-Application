@@ -92,6 +92,12 @@ fun ST_Transform(
 ): Field<Geometry?> =
     DSL.field("ST_Transform($geometrieField, $srid)", Geometry::class.java)
 
+fun ST_SetSrid(
+    geometrieField: Field<Geometry?>,
+    srid: Int,
+): Field<Geometry?> =
+    DSL.field("ST_SetSrid($geometrieField, $srid)", Geometry::class.java)
+
 fun ST_Distance(
     geometrieField: Field<Geometry?>,
     srid: Int,
