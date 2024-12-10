@@ -7,7 +7,7 @@ class ContactForApiMobileData(
     val contactId: UUID,
     val gestionnaireId: UUID,
     val contactFonctionContactId: UUID?,
-    val contactCivilite: TypeCivilite,
+    val contactCivilite: TypeCivilite?,
     val contactNom: String?,
     val contactPrenom: String?,
 

@@ -475,10 +475,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_PEI_EXISTE(20002, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
     API_SYNCHRO_PEI_ERROR(20003, "Impossible d'insérer le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans incoming."),
     API_SYNCHRO_PEI_FORBIDDEN(20004, "Vous n'avez pas les droits de création de PEI depuis l'application mobile.", Status.FORBIDDEN),
-    API_SYNCHRO_GESTIONNAIRE_NO_IN_REMOCRA(20005, "Le gestionnaire avec l'id ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas dans REMOcRA."),
-    API_SYNCHRO_GESTIONNAIRE_EXISTE(20006, "Le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_GESTIONNAIRE_ERROR(20007, "Impossible d'insérer le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
-    API_SYNCHRO_GESTIONNAIRE_FORBIDDEN(20008, "Vous n'avez pas les droits de création de gestionnaire depuis l'application mobile"),
+    API_SYNCHRO_GESTIONNAIRE_EXISTE(20005, "Le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
+    API_SYNCHRO_GESTIONNAIRE_ERROR(20006, "Impossible d'insérer le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
+    API_SYNCHRO_GESTIONNAIRE_FORBIDDEN(20007, "Vous n'avez pas les droits de création de gestionnaire depuis l'application mobile"),
+    API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE(20008, "Le gestionnaire associé au contact n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_CONTACT_EXISTE(20009, "Le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
+    API_SYNCHRO_CONTACT_ERROR(20010, "Impossible d'insérer le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
 
     ;
     override fun toString(): String {

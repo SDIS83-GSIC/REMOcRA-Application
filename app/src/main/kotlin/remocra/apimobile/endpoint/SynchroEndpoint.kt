@@ -11,9 +11,11 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
+import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.AuthDevice
@@ -22,6 +24,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.UserInfo
 import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -39,6 +42,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroNewPeiUseCase: SynchroNewPeiUseCase
+
+    @Inject
+    lateinit var synchroContactUseCase: SynchroContactUseCase
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroEndpoint::class.java)
@@ -132,4 +138,51 @@ class SynchroEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
     }
+
+    @AuthDevice
+    @Path("/contacts")
+    @POST
+    @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun getContact(
+        @FormParam("contactId") contactId: UUID,
+        @FormParam("gestionnaireId") gestionnaireId: UUID,
+        @FormParam("contactNom") contactNom: String?,
+        @FormParam("contactPrenom") contactPrenom: String?,
+        @FormParam("contactFonctionContactId") contactFonctionContactId: UUID?,
+        @FormParam("contactCivilite") contactCivilite: TypeCivilite?,
+        @FormParam("contactCodePostal") contactCodePostal: String?,
+        @FormParam("contactVoieText") contactVoieText: String?,
+        @FormParam("contactSuffixeVoie") contactSuffixeVoie: String?,
+        @FormParam("contactNumeroVoie") contactNumeroVoie: String?,
+        @FormParam("contactLieuDitText") contactLieuDitText: String?,
+        @FormParam("contactTelephone") contactTelephone: String?,
+        @FormParam("contactEmail") contactEmail: String?,
+        @FormParam("contactCommuneText") contactCommuneText: String?,
+        @FormParam("contactPays") contactPays: String?,
+    ) =
+        // TODO voir pour les id commune, voie et lieu dit
+        synchroContactUseCase.execute(
+            currentUser!!.get(),
+            ContactForApiMobileData(
+                contactId = contactId,
+                gestionnaireId = gestionnaireId,
+                contactFonctionContactId = contactFonctionContactId,
+                contactCivilite = contactCivilite,
+                contactNom = contactNom,
+                contactPrenom = contactPrenom,
+                contactNumeroVoie = contactNumeroVoie,
+                contactSuffixeVoie = contactSuffixeVoie,
+                contactLieuDitText = contactLieuDitText,
+                contactLieuDitId = null,
+                contactVoieText = contactVoieText,
+                contactVoieId = null,
+                contactCodePostal = contactCodePostal,
+                contactCommuneText = contactCommuneText,
+                contactCommuneId = null,
+                contactPays = contactPays,
+                contactTelephone = contactTelephone,
+                contactEmail = contactEmail,
+            ),
+        ).wrap()
 }

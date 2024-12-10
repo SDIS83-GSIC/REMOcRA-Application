@@ -1,10 +1,13 @@
 package remocra.apimobile.repository
 
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
+import remocra.apimobile.data.ContactForApiMobileData
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
+import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
 import remocra.db.jooq.remocra.enums.TypePei
@@ -110,6 +113,32 @@ class IncomingRepository @Inject constructor(
             .set(GESTIONNAIRE.ID, gestionnaireId)
             .set(GESTIONNAIRE.CODE, gestionnaireCode)
             .set(GESTIONNAIRE.LIBELLE, gestionnaireLibelle)
+            .onConflictDoNothing()
+            .execute()
+
+    fun checkGestionnaireExist(gestionnaireId: UUID) =
+        dsl.fetchExists(
+            dsl.selectFrom<Record>(GESTIONNAIRE).where(GESTIONNAIRE.ID.eq(gestionnaireId)),
+        )
+
+    fun insertContact(contact: ContactForApiMobileData): Int =
+        dsl
+            .insertInto(CONTACT)
+            .set(CONTACT.ID, contact.contactId)
+            .set(CONTACT.GESTIONNAIRE_ID, contact.gestionnaireId)
+            .set(CONTACT.FONCTION_CONTACT_ID, contact.contactFonctionContactId)
+            .set(CONTACT.CIVILITE, contact.contactCivilite)
+            .set(CONTACT.NOM, contact.contactNom)
+            .set(CONTACT.PRENOM, contact.contactPrenom)
+            .set(CONTACT.CODE_POSTAL, contact.contactCodePostal)
+            .set(CONTACT.COMMUNE_TEXT, contact.contactCommuneText)
+            .set(CONTACT.NUMERO_VOIE, contact.contactNumeroVoie)
+            .set(CONTACT.SUFFIXE_VOIE, contact.contactSuffixeVoie)
+            .set(CONTACT.VOIE_TEXT, contact.contactVoieText)
+            .set(CONTACT.LIEU_DIT_TEXT, contact.contactLieuDitText)
+            .set(CONTACT.PAYS, contact.contactPays)
+            .set(CONTACT.EMAIL, contact.contactEmail)
+            .set(CONTACT.TELEPHONE, contact.contactTelephone)
             .onConflictDoNothing()
             .execute()
 }
