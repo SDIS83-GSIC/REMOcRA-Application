@@ -162,6 +162,8 @@ dependencies {
     implementation(libs.pac4j.oidc)
     implementation(libs.pac4j.jakartaee)
 
+    implementation(libs.apache.poi)
+
     // jasper
     implementation(libs.jasperreports)
     implementation(libs.jasperreports.pdf)

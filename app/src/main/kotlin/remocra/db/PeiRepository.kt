@@ -166,6 +166,27 @@ class PeiRepository
                 ),
         )
 
+    fun isPeiInZoneCompetence(
+        srid: Int,
+        coordonneeX: Double,
+        coordonneeY: Double,
+        idPEI: UUID,
+        idZoneCompetence: UUID,
+    ): Boolean =
+        dsl.fetchExists(
+            dsl.select(PEI.ID)
+                .from(PEI)
+                .join(ZONE_INTEGRATION)
+                .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+                .ST_DWithin(
+                    srid = srid,
+                    distance = 0,
+                    geometrieField = ZONE_INTEGRATION.GEOMETRIE,
+                    coordonneeX = coordonneeX,
+                    coordonneeY = coordonneeY,
+                ),
+        )
+
     private fun getAllWithFilterAndConditionalJoin(
         param: Params<Filter, Sort>,
         zoneCompetenceId: UUID?,
@@ -607,6 +628,27 @@ class PeiRepository
                 .from(PEI)
                 .where(PEI.ID.eq(peiId)),
         )
+
+    /**
+     * Vérifie que la cohérence du triplet (id, numéroInterne, codeInsee) pour le PEI
+     *
+     * @param id UUID
+     * @param numeroInterne int
+     * @param codeInsee String
+     * @return true si le résultat est cohérent, false sinon
+     */
+    fun checkForImportCTP(id: UUID, numeroInterne: Int, codeInsee: String): Boolean {
+        return dsl.fetchExists(
+            dsl
+                .select(PEI.ID)
+                .from(PEI)
+                .join(COMMUNE)
+                .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+                .where(COMMUNE.CODE_INSEE.eq(codeInsee))
+                .and(PEI.NUMERO_INTERNE.eq(numeroInterne))
+                .and(PEI.ID.eq(id)),
+        )
+    }
 }
 
 data class IdNumeroComplet(

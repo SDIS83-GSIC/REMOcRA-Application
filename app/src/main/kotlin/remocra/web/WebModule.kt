@@ -23,6 +23,7 @@ import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.image.ImageModule
+import remocra.web.importctp.ImportCtpModule
 import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
 import remocra.web.lieudit.LieuDitModule
 import remocra.web.marque.MarquePibiModule
@@ -82,6 +83,7 @@ object WebModule : RemocraModule() {
         install(UtilisateurModule)
         install(DebitSimultaneModule)
         install(RapportPersonnaliseModule)
+        install(ImportCtpModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

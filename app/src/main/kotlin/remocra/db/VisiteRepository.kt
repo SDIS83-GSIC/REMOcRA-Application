@@ -32,6 +32,16 @@ class VisiteRepository
         .orderBy(VISITE.DATE.desc())
         .fetchAnyInto()
 
+    fun getLastVisiteBefore(peiId: UUID, instant: ZonedDateTime): Visite {
+        return dsl
+            .selectFrom(VISITE)
+            .where(VISITE.PEI_ID.eq(peiId))
+            .and(VISITE.DATE.lessThan(instant))
+            .orderBy(VISITE.DATE.desc())
+            .limit(1)
+            .fetchSingleInto()
+    }
+
     fun getAnomaliesFromVisite(visiteId: UUID): Collection<UUID> = dsl
         .select(L_VISITE_ANOMALIE.ANOMALIE_ID)
         .from(L_VISITE_ANOMALIE)
@@ -241,4 +251,32 @@ class VisiteRepository
                 ),
             )
         }
+
+    fun getNbVisitesCtrlAfter(idPei: UUID, instant: ZonedDateTime): Int {
+        return dsl
+            .selectCount()
+            .from(VISITE)
+            .where(
+                VISITE.PEI_ID.eq(idPei)
+                    .and(VISITE.TYPE_VISITE.eq(TypeVisite.CTP))
+                    .and(VISITE.DATE.gt(instant)),
+            )
+            .fetchSingleInto()
+    }
+
+    /**
+     * Retourne le nombre de visites de contrôle effectuées à un instant donné pour le PEI
+     *
+     * @param idPei UUID
+     * @param instant Instant
+     * @return int
+     */
+    fun getNbVisitesEqInstant(idPei: UUID, instant: ZonedDateTime): Int {
+        return dsl
+            .selectCount()
+            .from(VISITE)
+            .where(VISITE.PEI_ID.eq(idPei))
+            .and(VISITE.DATE.eq(instant))
+            .fetchSingleInto()
+    }
 }

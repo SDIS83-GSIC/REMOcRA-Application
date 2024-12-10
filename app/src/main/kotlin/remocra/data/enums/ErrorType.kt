@@ -505,6 +505,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_PARAMETRE_FORBIDDEN(21000, "Vous n'avez pas les droits d'administration", Status.FORBIDDEN),
     ADMIN_PARAMETRE_ISODISTANCE_FORMAT(21001, "Les isodistances n'ont pas le format attendu "),
 
+    //
+    // ********************************************************************************
+    // Imports CTP
+    // ********************************************************************************
+    //
+    IMPORT_CTP_CODE_INSEE_MANQUANT(22000, "Code INSEE manquant"),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

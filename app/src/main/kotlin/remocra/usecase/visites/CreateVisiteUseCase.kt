@@ -57,6 +57,13 @@ class CreateVisiteUseCase @Inject constructor(
             throw RemocraResponseException(errorType = ErrorType.VISITE_C_FORBIDDEN)
         }
 
+        // Si l'on se trouve ici en venant d'un Import CTP,
+        // les vérifications faites en amont garantissent la véracité des données
+        // On peut donc directement passer à la suite
+        if (element.isFromImportCtp) {
+            return
+        }
+
         val nbVisite = visiteRepository.getCountVisite(element.visitePeiId)
         if (!arrayOf(TypeVisite.RECO_INIT, TypeVisite.RECEPTION).contains(element.visiteTypeVisite)) {
             if (nbVisite == 0) {
@@ -152,7 +159,6 @@ class CreateVisiteUseCase @Inject constructor(
                 visiteObservation = element.visiteObservation,
             ),
         )
-
         // Insertion du CDP, si nécessaire : remocra.visite_ctrl_debit_pression
         if (element.isCtrlDebitPression && peiRepository.getTypePei(element.visitePeiId) == TypePei.PIBI) {
             visiteRepository.insertCDP(
@@ -165,18 +171,38 @@ class CreateVisiteUseCase @Inject constructor(
             )
         }
 
+        // Verification de si la visite courante est la dernière en date
+        var isLastVisiteToDate = true
+        // Seulement pour les visites provenant d'un import CTP
+        // Si la visite que l'on insert n'est pas la dernière en date, ne pas mettre à jour les anomalies courantes du PEI
+        if (element.isFromImportCtp) {
+            val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
+            if (lastVisite != null && element.visiteDate.isBefore(lastVisite.visiteDate)) {
+                isLastVisiteToDate = false
+            }
+        }
+
+        // Si dernière visite en date :
+        //  - Suppression de toutes les anomalies non-protégées du pei : l_pei_anomalie
+        //  - Ajout des anomalies de la visite au pei : l_pei_anomalie
         // Gestion des anomalies
-        // 1- Suppression de toutes les anomalies non-protégées du pei : remocra.l_pei_anomalie
-        anomalieRepository.deleteAnomalieNonSystemByPeiId(element.visitePeiId)
+        if (isLastVisiteToDate) {
+            // 1- Suppression de toutes les anomalies non-protégées du pei : remocra.l_pei_anomalie
+            anomalieRepository.deleteAnomalieNonSystemByPeiId(element.visitePeiId)
+            // 2- Si la visite contient des anomalies :
+            element.listeAnomalie.let { anomalies ->
+                // 2.1- remocra.l_pei_anomalie
+                // 2.1.1- Création d'une liste d'objets l_pei_anomalie à insérer
+                val peiAnomalieToInsert = anomalies.map { anomalieId ->
+                    LPeiAnomalie(element.visitePeiId, anomalieId)
+                }
+                // 2.1.2- Insertion en masse
+                anomalieRepository.batchInsertLPeiAnomalie(peiAnomalieToInsert)
+            }
+        }
+        // Dans tous les cas, insérer dans l_visite_anomalie
         // 2- Si la visite contient des anomalies :
         element.listeAnomalie.let { anomalies ->
-            // 2.1- remocra.l_pei_anomalie
-            // 2.1.1- Création d'une liste d'objets l_pei_anomalie à insérer
-            val peiAnomalieToInsert = anomalies.map { anomalieId ->
-                LPeiAnomalie(element.visitePeiId, anomalieId)
-            }
-            // 2.1.2- Insertion en masse
-            anomalieRepository.batchInsertLPeiAnomalie(peiAnomalieToInsert)
             // 2.2- remocra.l_visite_anomalie
             // 2.2.1- Création d'une liste d'objets l_visite_anomalie à insérer
             val visiteAnomalieToInsert = anomalies.map { anomalieId ->
@@ -186,16 +212,24 @@ class CreateVisiteUseCase @Inject constructor(
             anomalieRepository.batchInsertLVisiteAnomalie(visiteAnomalieToInsert)
         }
 
-        // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
-        val typePei = peiRepository.getTypePei(element.visitePeiId)
-        val peiData = if (TypePei.PIBI == typePei) pibiRepository.getInfoPibi(element.visitePeiId) else penaRepository.getInfoPena(element.visitePeiId)
+        // Si dernière visite en date :
+        //  - Prévenir d'un changement sur le PEI : updatePeiUseCase.execute()
+        if (isLastVisiteToDate) {
+            // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
+            val typePei = peiRepository.getTypePei(element.visitePeiId)
+            val peiData =
+                if (TypePei.PIBI == typePei) {
+                    pibiRepository.getInfoPibi(element.visitePeiId)
+                } else penaRepository.getInfoPena(
+                    element.visitePeiId,
+                )
 
-        updatePeiUseCase.execute(
-            userInfo = userInfo,
-            element = peiData,
-            mainTransactionManager = transactionManager,
-        )
-
+            updatePeiUseCase.execute(
+                userInfo = userInfo,
+                element = peiData,
+                mainTransactionManager = transactionManager,
+            )
+        }
         return element
     }
 }

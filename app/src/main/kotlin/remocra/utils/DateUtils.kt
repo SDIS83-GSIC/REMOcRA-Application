@@ -4,6 +4,7 @@ import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -42,6 +43,18 @@ class DateUtils(val clock: Clock) {
             dateString,
             DateTimeFormatter.ofPattern(PATTERN_MINUTE, Locale.getDefault()).withZone(clock.zone),
         )
+    }
+
+    /**
+     * Retourne un moment (ZoneDateTime) à partir d'une chaîne de date
+     *
+     * @param dateString String
+     * @return ZonedDateTime
+     * @throws DateTimeParseException si le format PATTERN_MINUTE n'est pas respecté
+     */
+    @Throws(DateTimeParseException::class)
+    fun getInstant(localDateTime: LocalDateTime): ZonedDateTime {
+        return localDateTime.atZone(clock.zone)
     }
 
     /**

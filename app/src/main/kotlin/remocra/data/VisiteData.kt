@@ -16,6 +16,8 @@ data class VisiteData(
     var listeAnomalie: List<UUID>,
     val isCtrlDebitPression: Boolean,
     var ctrlDebitPression: CreationVisiteCtrl?,
+
+    val isFromImportCtp: Boolean = false,
 )
 
 /** Reprend les attributs du Pojo VisiteCtrlDebitPression

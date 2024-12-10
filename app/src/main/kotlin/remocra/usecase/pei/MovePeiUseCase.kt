@@ -1,7 +1,14 @@
 package remocra.usecase.pei
 
 import com.google.inject.Inject
+import org.geotools.geometry.jts.JTS
+import org.geotools.referencing.CRS
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.geom.PrecisionModel
 import remocra.CoordonneesXYSrid
+import remocra.app.AppSettings
 import remocra.data.PeiData
 import remocra.db.CommuneRepository
 import remocra.db.PeiRepository
@@ -26,24 +33,37 @@ class MovePeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var communeRepository: CommuneRepository
 
+    @Inject
+    lateinit var appSettings: AppSettings
+
     fun execute(
         coordonnees: CoordonneesXYSrid,
         peiId: UUID,
     ): PeiData {
         val type = peiRepository.getTypePei(peiId)
-
         val communeActuelle = peiRepository.getCommune(peiId)
+
+        val point: Point = GeometryFactory(PrecisionModel()).createPoint(
+            Coordinate(coordonnees.coordonneeX, coordonnees.coordonneeY),
+        )
+        val sourceCRS = CRS.decode("EPSG:${coordonnees.srid}")
+        val targetCRS = CRS.decode(appSettings.epsg.name)
+        val transform = CRS.findMathTransform(sourceCRS, targetCRS)
+        val geometryProjectionTo = JTS.transform(point, transform)
+            ?: throw IllegalArgumentException("Impossible de convertir la géometrie $point en ${appSettings.srid}")
+
+        geometryProjectionTo.coordinate.x.toString()
 
         // On récupère la commune correspondante
         val communeId = communeRepository.getCommunePei(
-            coordonneeX = coordonnees.coordonneeX.toString(),
-            coordonneeY = coordonnees.coordonneeY.toString(),
-            srid = coordonnees.srid,
+            coordonneeX = geometryProjectionTo.coordinate.x.toString(),
+            coordonneeY = geometryProjectionTo.coordinate.y.toString(),
+            srid = appSettings.srid,
         ) ?: throw IllegalArgumentException("Aucune commune n'a été trouvée")
 
         return when (type) {
             TypePei.PIBI -> pibiRepository.getInfoPibi(peiId).copy(
-                peiGeometrie = formatPoint(coordonnees),
+                peiGeometrie = geometryProjectionTo,
                 peiCommuneId = communeId,
             ).let {
                 if (communeActuelle != communeId) {
