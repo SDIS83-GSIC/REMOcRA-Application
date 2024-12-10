@@ -14,11 +14,13 @@ import org.slf4j.LoggerFactory
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
+import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
+import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.AuthDevice
 import remocra.auth.Public
@@ -50,6 +52,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroContactRoleUseCase: SynchroContactRoleUseCase
+
+    @Inject
+    lateinit var synchroTourneeUseCase: SynchroTourneeUseCase
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroEndpoint::class.java)
@@ -206,4 +211,23 @@ class SynchroEndpoint : AbstractEndpoint() {
             roleId = roleId,
         ),
     ).wrap()
+
+    @AuthDevice
+    @Path("/synchro-tournee")
+    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun synchroTournee(
+        @FormParam("tourneeId")
+        tourneeId: UUID,
+        @FormParam("nom")
+        tourneeLibelle: String?,
+    ): Response =
+        synchroTourneeUseCase.execute(
+            currentUser!!.get(),
+            TourneeSynchroForApiMobileData(
+                tourneeId,
+                tourneeLibelle,
+            ),
+        ).wrap()
 }

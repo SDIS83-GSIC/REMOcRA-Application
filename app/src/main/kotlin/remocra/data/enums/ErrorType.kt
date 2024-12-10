@@ -484,6 +484,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_CONTACT_ROLE_NO_EXISTE(20011, "Le contact associé au rôle n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
     API_SYNCHRO_CONTACT_ROLE_EXISTE(20012, "Le lien entre le contact et rôle est déjà dans le schéma incoming."),
     API_SYNCHRO_CONTACT_ROLE_ERROR(20013, "Impossible d'insérer le contact role dans le schéma incoming."),
+    API_SYNCHRO_TOURNEE_EXISTE(20014, "La tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
+    API_SYNCHRO_TOURNEE_ERROR(20015, "Impossible d'insérer la tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
 
     ;
     override fun toString(): String {

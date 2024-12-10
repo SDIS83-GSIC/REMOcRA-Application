@@ -5,12 +5,14 @@ import org.jooq.Record
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.apimobile.data.ContactForApiMobileData
+import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
 import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
+import remocra.db.jooq.incoming.tables.references.TOURNEE
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
@@ -155,4 +157,13 @@ class IncomingRepository @Inject constructor(
             .onConflictDoNothing()
             .execute()
     }
+
+    fun insertTournee(tourneeData: TourneeSynchroForApiMobileData): Int =
+        dsl
+            .insertInto(TOURNEE)
+            .set(TOURNEE.ID, tourneeData.tourneeId)
+            .set(TOURNEE.LIBELLE, tourneeData.tourneeLibelle)
+            .set(TOURNEE.DATE_DEBUT_SYNCHRO, dateUtils.now())
+            .onConflictDoNothing()
+            .execute()
 }
