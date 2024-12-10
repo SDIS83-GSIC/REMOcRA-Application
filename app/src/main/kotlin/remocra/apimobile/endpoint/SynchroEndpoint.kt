@@ -14,11 +14,13 @@ import org.slf4j.LoggerFactory
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
+import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.AuthDevice
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.UserInfo
+import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.web.AbstractEndpoint
@@ -31,6 +33,9 @@ import javax.inject.Provider
 class SynchroEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var tourneeUseCase: TourneeUseCase
+
+    @Inject
+    lateinit var synchroGestionnaireUseCase: SynchroGestionnaireUseCase
 
     @Inject
     lateinit var synchroNewPeiUseCase: SynchroNewPeiUseCase
@@ -107,4 +112,24 @@ class SynchroEndpoint : AbstractEndpoint() {
                 peiObservation,
             ),
         ).wrap()
+
+    @AuthDevice
+    @Path("/gestionnaires")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
+    fun getGestionnaire(
+        @FormParam("gestionanireId") gestionanireId: UUID,
+        @FormParam("gestionnaireLibelle") gestionnaireLibelle: String,
+        @FormParam("gestionnaireCode") gestionnaireCode: String,
+    ): Response {
+        return synchroGestionnaireUseCase.execute(
+            currentUser!!.get(),
+            Gestionnaire(
+                gestionnaireId = gestionanireId,
+                gestionnaireCode = gestionnaireCode,
+                gestionnaireLibelle = gestionnaireLibelle,
+            ),
+        ).wrap()
+    }
 }

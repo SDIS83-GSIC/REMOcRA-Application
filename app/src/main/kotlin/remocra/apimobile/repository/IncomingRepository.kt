@@ -5,6 +5,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
+import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
@@ -98,4 +99,17 @@ class IncomingRepository @Inject constructor(
                 ),
             )
             .fetchOneInto()
+
+    fun insertGestionnaireIncoming(
+        gestionnaireCode: String?,
+        gestionnaireLibelle: String?,
+        gestionnaireId: UUID,
+    ) =
+        dsl
+            .insertInto(GESTIONNAIRE)
+            .set(GESTIONNAIRE.ID, gestionnaireId)
+            .set(GESTIONNAIRE.CODE, gestionnaireCode)
+            .set(GESTIONNAIRE.LIBELLE, gestionnaireLibelle)
+            .onConflictDoNothing()
+            .execute()
 }

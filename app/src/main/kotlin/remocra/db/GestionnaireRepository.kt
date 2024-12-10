@@ -133,6 +133,13 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
                 .and(id?.let { DSL.and(GESTIONNAIRE.ID.notEqual(id)) }),
         )
 
+    fun checkExists(gestionnaireId: UUID) =
+        dsl.fetchExists(
+            dsl.select(GESTIONNAIRE.CODE)
+                .from(GESTIONNAIRE)
+                .where(GESTIONNAIRE.ID.eq(gestionnaireId)),
+        )
+
     fun getDestinataireContactGestionnaire(
         listePeiId: List<UUID>,
         contactRole: String,
