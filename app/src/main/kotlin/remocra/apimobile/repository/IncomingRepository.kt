@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
+import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
 import remocra.db.jooq.incoming.tables.references.CONTACT
@@ -13,6 +14,8 @@ import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
 import remocra.db.jooq.incoming.tables.references.TOURNEE
+import remocra.db.jooq.incoming.tables.references.VISITE
+import remocra.db.jooq.incoming.tables.references.VISITE_CTRL_DEBIT_PRESSION
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
@@ -20,6 +23,7 @@ import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import remocra.utils.toGeomFromText
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -164,6 +168,30 @@ class IncomingRepository @Inject constructor(
             .set(TOURNEE.ID, tourneeData.tourneeId)
             .set(TOURNEE.LIBELLE, tourneeData.tourneeLibelle)
             .set(TOURNEE.DATE_DEBUT_SYNCHRO, dateUtils.now())
+            .onConflictDoNothing()
+            .execute()
+
+    fun insertVisite(visiteData: VisiteForApiMobileData, date: ZonedDateTime): Int =
+        dsl
+            .insertInto(VISITE)
+            .set(VISITE.ID, visiteData.visiteId)
+            .set(VISITE.TYPE_VISITE, visiteData.visiteTypeVisite)
+            .set(VISITE.AGENT1, visiteData.visiteAgent1)
+            .set(VISITE.AGENT2, visiteData.visiteAgent2)
+            .set(VISITE.DATE, date)
+            .set(VISITE.TOURNEE_ID, visiteData.tourneeId)
+            .set(VISITE.OBSERVATION, visiteData.visiteObservations)
+            .set(VISITE.HAS_ANOMALIE_CHANGES, visiteData.hasAnomalieChanges)
+            .onConflictDoNothing()
+            .execute()
+
+    fun insertVisiteCtrlDebitPression(visiteData: VisiteForApiMobileData): Int =
+        dsl
+            .insertInto(VISITE_CTRL_DEBIT_PRESSION)
+            .set(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID, visiteData.visiteId)
+            .set(VISITE_CTRL_DEBIT_PRESSION.DEBIT, visiteData.visiteCtrlDebitPressionDebit)
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION, visiteData.visiteCtrlDebitPressionPression.toBigDecimal())
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN, visiteData.visiteCtrlDebitPressionPressionDyn.toBigDecimal())
             .onConflictDoNothing()
             .execute()
 }

@@ -486,6 +486,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_CONTACT_ROLE_ERROR(20013, "Impossible d'insérer le contact role dans le schéma incoming."),
     API_SYNCHRO_TOURNEE_EXISTE(20014, "La tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
     API_SYNCHRO_TOURNEE_ERROR(20015, "Impossible d'insérer la tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
+    API_SYNCHRO_VISITE_EXISTE(20016, "La visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
+    API_SYNCHRO_VISITE_ERROR(20017, "Impossible d'insérer la visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
+    API_SYNCHRO_VISITE_PEI_NO_REMOCRA(20020, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
 
     ;
     override fun toString(): String {

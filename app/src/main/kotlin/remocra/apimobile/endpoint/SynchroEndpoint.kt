@@ -9,18 +9,18 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
+import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
 import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
+import remocra.apimobile.usecase.synchrovisite.SynchroVisiteUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.AuthDevice
 import remocra.auth.Public
@@ -30,6 +30,7 @@ import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 import javax.inject.Provider
@@ -56,9 +57,8 @@ class SynchroEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var synchroTourneeUseCase: SynchroTourneeUseCase
 
-    companion object {
-        private val logger: Logger = LoggerFactory.getLogger(SynchroEndpoint::class.java)
-    }
+    @Inject
+    lateinit var synchroVisiteUseCase: SynchroVisiteUseCase
 
     //    @CurrentUser
     @Inject
@@ -230,4 +230,42 @@ class SynchroEndpoint : AbstractEndpoint() {
                 tourneeLibelle,
             ),
         ).wrap()
+
+    @AuthDevice
+    @Path("/synchro-visite")
+    @POST
+    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun synchroVisite(
+        @FormParam("visiteId") visiteId: UUID,
+        @FormParam("tourneeId") tourneeId: UUID,
+        @FormParam("peiId") peiId: UUID,
+        @FormParam("visiteDate") visiteDate: String,
+        @FormParam("visiteTypeVisite") visiteTypeVisite: TypeVisite,
+        @FormParam("ctrDebitPression") ctrDebitPression: Boolean,
+        @FormParam("visiteAgent1") visiteAgent1: String?,
+        @FormParam("visiteAgent2") visiteAgent2: String?,
+        @FormParam("visiteCtrlDebitPressionDebit") visiteCtrlDebitPressionDebit: Int,
+        @FormParam("visiteCtrlDebitPressionPression") visiteCtrlDebitPressionPression: Double,
+        @FormParam("visiteCtrlDebitPressionPressionDyn") visiteCtrlDebitPressionPressionDyn: Double,
+        @FormParam("visiteObservations") visiteObservations: String?,
+        @FormParam("hasAnomalieChanges") hasAnomalieChanges: Boolean,
+    ) = synchroVisiteUseCase.execute(
+        userInfo = currentUser!!.get(),
+        element = VisiteForApiMobileData(
+            visiteId = visiteId,
+            tourneeId = tourneeId,
+            peiId = peiId,
+            visiteDate = visiteDate,
+            visiteTypeVisite = visiteTypeVisite,
+            ctrDebitPression = ctrDebitPression,
+            visiteAgent1 = visiteAgent1,
+            visiteAgent2 = visiteAgent2,
+            visiteCtrlDebitPressionDebit = visiteCtrlDebitPressionDebit,
+            visiteCtrlDebitPressionPression = visiteCtrlDebitPressionPression,
+            visiteCtrlDebitPressionPressionDyn = visiteCtrlDebitPressionPressionDyn,
+            visiteObservations = visiteObservations,
+            hasAnomalieChanges = hasAnomalieChanges,
+        ),
+    ).wrap()
 }

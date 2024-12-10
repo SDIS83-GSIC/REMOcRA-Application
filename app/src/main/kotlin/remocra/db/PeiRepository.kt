@@ -603,6 +603,13 @@ class PeiRepository
             .and(PEI.SITE_ID.isNotNull)
             .limit(1)
             .fetchOneInto()
+
+    fun checkExists(peiId: UUID) =
+        dsl.fetchExists(
+            dsl.select(PEI.ID)
+                .from(PEI)
+                .where(PEI.ID.eq(peiId)),
+        )
 }
 
 data class IdNumeroComplet(
