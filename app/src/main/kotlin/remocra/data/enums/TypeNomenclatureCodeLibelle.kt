@@ -4,6 +4,7 @@ package remocra.data.enums
  * Enumération de tous les tables de type "nomenclature code-libellé-actif(-protected?)"
  */
 enum class TypeNomenclatureCodeLibelle {
+    ANOMALIE_CATEGORIE,
     DIAMETRE,
     DOMAINE,
     MARQUE_PIBI,

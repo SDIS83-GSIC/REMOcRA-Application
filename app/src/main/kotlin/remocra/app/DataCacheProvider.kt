@@ -4,7 +4,10 @@ import com.google.inject.Provider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import remocra.data.DataCache
+import remocra.data.NomenclatureCodeLibelleData
+import remocra.data.Params
 import remocra.data.enums.TypeDataCache
+import remocra.data.enums.TypeNomenclatureCodeLibelle
 import remocra.db.AnomalieRepository
 import remocra.db.CommuneRepository
 import remocra.db.DiametreRepository
@@ -15,6 +18,7 @@ import remocra.db.ModelePibiRepository
 import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
+import remocra.db.NomenclatureCodeLibelleRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
@@ -54,6 +58,7 @@ constructor(
     private val typeReseauRepository: TypeReseauRepository,
     private val reservoirRepository: ReservoirRepository,
     private val utilisateurRepository: UtilisateurRepository,
+    private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
 
 ) : Provider<DataCache> {
     private lateinit var dataCache: DataCache
@@ -70,6 +75,7 @@ constructor(
     fun reload(typeToReload: TypeDataCache) {
         when (typeToReload) {
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
+            TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = nomenclatureCodeLibelleRepository.getAllForAdmin(TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE, Params(null, null, null, null)).filter { it.actif }.associateBy { it.id }
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -92,6 +98,7 @@ constructor(
      */
     private fun buildDataCache(): DataCache {
         val anomalies = anomalieRepository.getMapById()
+        val anomaliesCategories = nomenclatureCodeLibelleRepository.getAllForAdmin(TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE, Params(null, null, null, null)).filter { it.actif }.associateBy { it.id }
 //        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
@@ -108,6 +115,7 @@ constructor(
 
         return DataCache(
             mapAnomalie = anomalies,
+            mapAnomalieCategorie = anomaliesCategories,
             // mapCommune = communes,
             mapDiametre = diametres,
             mapDomaine = domaines,
@@ -129,6 +137,7 @@ constructor(
      */
     fun getData(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> getAnomalies()
+        TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -145,6 +154,8 @@ constructor(
     }
 
     fun getAnomalies() = get().mapAnomalie
+
+    fun getAnomaliesCategories() = get().mapAnomalieCategorie
 
     fun getDiametres() = get().mapDiametre
 
@@ -169,6 +180,7 @@ constructor(
      */
     fun getPojoClassFromType(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> Anomalie::class.java
+        TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java

@@ -12,6 +12,7 @@ import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.Params
 import remocra.data.enums.TypeNomenclatureCodeLibelle
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
+import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
@@ -41,6 +42,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
     companion object {
         private fun getTableFromType(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI
@@ -61,6 +63,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getIdField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ID
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ID
@@ -81,6 +84,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getCodeField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.CODE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.CODE
@@ -101,6 +105,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getLibelleField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.LIBELLE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.LIBELLE
@@ -121,6 +126,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getActifField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ACTIF
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ACTIF
