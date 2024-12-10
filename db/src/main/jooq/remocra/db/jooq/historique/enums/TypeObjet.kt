@@ -64,6 +64,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     ZONE_INTEGRATION("ZONE_INTEGRATION"),
     RAPPORT_PERSONNALISE("RAPPORT_PERSONNALISE"),
     DOCUMENT("DOCUMENT"),
+    TASK("TASK"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
