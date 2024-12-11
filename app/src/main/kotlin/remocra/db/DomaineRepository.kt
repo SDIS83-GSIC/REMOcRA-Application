@@ -9,4 +9,9 @@ import java.util.UUID
 class DomaineRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Domaine>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Domaine> = dsl.selectFrom(DOMAINE).where(DOMAINE.ACTIF.isTrue).fetchInto<Domaine>().associateBy { it.domaineId }
+
+    fun getFistDomaineId(): UUID =
+        dsl.select(DOMAINE.ID)
+            .from(DOMAINE)
+            .fetchSingleInto()
 }

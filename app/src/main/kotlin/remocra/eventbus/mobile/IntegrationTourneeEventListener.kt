@@ -13,7 +13,7 @@ class IntegrationTourneeEventListener : EventListener<IntegrationTourneeEvent> {
 
     override fun onEvent(event: IntegrationTourneeEvent) {
         logger.info("Traitement de la tournée ${event.tourneeId}")
-        valideIncomingTournee.execute(event.tourneeId)
+        valideIncomingTournee.execute(event.tourneeId, event.userInfo)
         logger.info("Fin de traitement de la tournée ${event.tourneeId}")
     }
 }
