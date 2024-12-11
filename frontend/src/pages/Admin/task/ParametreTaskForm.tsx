@@ -29,6 +29,7 @@ import TaskType from "../../../enums/TaskTypeEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { TypeOrganismeType } from "../organisme/Organisme.tsx";
+import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 
 export const getInitialValues = (currentTask: TaskEntity) => ({
   taskId: currentTask.taskId,
@@ -99,6 +100,7 @@ const ParametreTaskForm = () => {
             name={"taskParametres[" + key + "]"}
             label={value.label}
             required={value.required}
+            tooltipText={value.tooltipMessage}
           />,
         );
         break;
@@ -108,6 +110,7 @@ const ParametreTaskForm = () => {
           <CheckBoxInput
             name={"taskParametres[" + key + "]"}
             label={value.label}
+            tooltipText={value.tooltipMessage}
           />,
         );
         break;
@@ -436,7 +439,7 @@ const ParametreSynchroSIGIterableForm = ({
     }));
 
   return (
-    <>
+    <Col>
       <Row>
         <TextInput
           name={`taskParametres[listeTableASynchroniser][${index}].schemaSource`}
@@ -473,6 +476,39 @@ const ParametreSynchroSIGIterableForm = ({
           }}
           required={true}
         />
+        <SeeMoreButton id={"infoSynchroSig"}>
+          {
+            <>
+              <p>
+                Le type de synchronisation permet de définir le traitement à
+                effectuer sur les données récupérées :
+              </p>
+              <ul>
+                <li>
+                  <strong>MISE_A_JOUR_REMOCRA_COMMUNE</strong> : Met à jour les
+                  informations de la table <code>remocra.commune</code>, en
+                  ajoutant de nouveaux éléments si nécessaire.
+                  L&apos;identification se fait sur le{" "}
+                  <strong>Code INSEE</strong>.
+                </li>
+                <li>
+                  <strong>MISE_A_JOUR_REMOCRA_VOIE</strong> : Met à jour les
+                  informations de la table <code>remocra.voie</code>. Ici, seule
+                  la géométrie est mise à jour. L&apos;identification se fait
+                  sur le <strong>nom de la voie ET la commune</strong>.
+                </li>
+                <li>
+                  <strong>STOCKAGE_SIMPLE</strong> : Permet d&apos;obtenir des
+                  données d&apos;une table source pour les intégrer dans la base
+                  de données REMOcRA. Après récupération, un{" "}
+                  <strong>script SQL</strong> est exécuté pour, par exemple,
+                  transformer les données géographiques afin de les mettre en
+                  conformité avec le format attendu par REMOcRA.
+                </li>
+              </ul>
+            </>
+          }
+        </SeeMoreButton>
       </Row>
       {TYPE_SYNCHRONISATION_TABLE_SIG[
         listeElements[index]?.typeSynchronisation
@@ -505,6 +541,7 @@ const ParametreSynchroSIGIterableForm = ({
             }}
             isClearable={false}
             required={false}
+            tooltipText="REMOcRA mettra à jour uniquement les informations sélectionnées, à partir des données extraites de la base SIG."
           />
         </Row>
       )}
@@ -517,7 +554,7 @@ const ParametreSynchroSIGIterableForm = ({
           />
         </Row>
       )}
-    </>
+    </Col>
   );
 };
 
