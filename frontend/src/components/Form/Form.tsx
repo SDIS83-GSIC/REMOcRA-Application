@@ -204,6 +204,40 @@ export const CheckBoxInput = ({
   );
 };
 
+type RadioInputType = {
+  name: string;
+  label: ReactNode;
+  value: string;
+  required?: boolean;
+  disabled?: boolean;
+  tooltipText?: string;
+};
+
+export const RadioInput = ({
+  name,
+  label,
+  value,
+  required = false,
+  disabled = false,
+  tooltipText,
+}: RadioInputType) => {
+  const [, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+  return (
+    <DivWithError name={name} error={error}>
+      <Field name={name} type="radio" value={value} disabled={disabled} />
+      <FormLabel
+        className="p-1"
+        label={label}
+        required={required}
+        disabled={disabled}
+        tooltipText={tooltipText}
+        name={name}
+      />
+    </DivWithError>
+  );
+};
+
 type FileInputType = InputType & {
   accept: string;
   onChange: (e) => any;
