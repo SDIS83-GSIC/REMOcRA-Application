@@ -14,6 +14,7 @@ import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.incoming.tables.references.L_VISITE_ANOMALIE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
+import remocra.db.jooq.incoming.tables.references.PHOTO_PEI
 import remocra.db.jooq.incoming.tables.references.TOURNEE
 import remocra.db.jooq.incoming.tables.references.VISITE
 import remocra.db.jooq.incoming.tables.references.VISITE_CTRL_DEBIT_PRESSION
@@ -201,6 +202,17 @@ class IncomingRepository @Inject constructor(
             .insertInto(L_VISITE_ANOMALIE)
             .set(L_VISITE_ANOMALIE.VISITE_ID, visiteId)
             .set(L_VISITE_ANOMALIE.ANOMALIE_ID, anomalieId)
+            .onConflictDoNothing()
+            .execute()
+
+    fun insertPhotoPei(peiId: UUID, photoId: UUID, photoDate: ZonedDateTime, photoPath: String, photoLibelle: String): Int =
+        dsl
+            .insertInto(PHOTO_PEI)
+            .set(PHOTO_PEI.PHOTO_ID, photoId)
+            .set(PHOTO_PEI.PEI_ID, peiId)
+            .set(PHOTO_PEI.PHOTO_DATE, photoDate)
+            .set(PHOTO_PEI.PHOTO_PATH, photoPath)
+            .set(PHOTO_PEI.PHOTO_LIBELLE, photoLibelle)
             .onConflictDoNothing()
             .execute()
 }

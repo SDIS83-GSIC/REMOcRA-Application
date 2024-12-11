@@ -1,17 +1,21 @@
 package remocra.apimobile.endpoint
 
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.Part
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
+import remocra.apimobile.data.PhotoPeiForApiMobileData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
@@ -20,6 +24,7 @@ import remocra.apimobile.usecase.TourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
+import remocra.apimobile.usecase.synchrophotopei.SynchroPhotoPeiUseCase
 import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteAnomalieUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteUseCase
@@ -64,6 +69,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroVisiteAnomalieUseCase: SynchroVisiteAnomalieUseCase
+
+    @Inject
+    lateinit var synchroPhotoPeiUseCase: SynchroPhotoPeiUseCase
 
     //    @CurrentUser
     @Inject
@@ -290,4 +298,30 @@ class SynchroEndpoint : AbstractEndpoint() {
                 anomalieId,
             ),
         ).wrap()
+
+    @AuthDevice
+    @Path("/synchro-photo")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    fun synchroPhotoPei(
+        @FormParam("photoId") photoId: UUID,
+        @FormParam("peiId") peiId: UUID,
+        @FormParam("photoDate") photoDate: String,
+        @Context httpServletRequest: HttpServletRequest,
+    ): Response {
+        val partPhoto: Part = httpServletRequest.getPart("photo")
+        val photoBytes: ByteArray = partPhoto.inputStream.readAllBytes()
+
+        return synchroPhotoPeiUseCase.execute(
+            currentUser!!.get(),
+            PhotoPeiForApiMobileData(
+                photoId = photoId,
+                peiId = peiId,
+                photoDate = photoDate,
+                photoInputStream = photoBytes,
+                photoLibelle = partPhoto.submittedFileName,
+            ),
+        ).wrap()
+    }
 }
