@@ -4,9 +4,11 @@ import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.UserInfo
+import remocra.data.CreationVisiteCtrl
 import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
+import remocra.data.VisiteData
 import remocra.db.ContactRepository
 import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
@@ -17,6 +19,7 @@ import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.usecase.pei.CreatePeiUseCase
+import remocra.usecase.visites.CreateVisiteUseCase
 import java.util.UUID
 
 class ValideIncomingTournee {
@@ -39,6 +42,9 @@ class ValideIncomingTournee {
     @Inject
     private lateinit var createPeiUseCase: CreatePeiUseCase
 
+    @Inject
+    private lateinit var createVisiteUseCase: CreateVisiteUseCase
+
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun execute(tourneeId: UUID, userInfo: UserInfo) {
@@ -53,6 +59,9 @@ class ValideIncomingTournee {
 
             logger.info("Gestion des nouveaux PEI")
             gestionNewPei(userInfo)
+
+            logger.info("Gestion des visites")
+            gestionVisites(tourneeId, userInfo)
         }
     }
 
@@ -234,6 +243,38 @@ class ValideIncomingTournee {
             createPeiUseCase.execute(
                 userInfo,
                 peiData,
+                transactionManager,
+            )
+        }
+    }
+
+    private fun gestionVisites(tourneeId: UUID, userInfo: UserInfo) {
+        val visites = incomingRepository.getVisites(tourneeId)
+        val visitesCtrlDebitPression = incomingRepository.getVisitesCtrlDebitPression(tourneeId)
+        val visiteAnomalie = incomingRepository.getVisitesAnomalie(tourneeId)
+
+        visites.forEach {
+            val ctrl = visitesCtrlDebitPression
+                .firstOrNull { v -> v.visiteCtrlDebitPressionVisiteId == it.visiteId }
+
+            createVisiteUseCase.execute(
+                userInfo,
+                VisiteData(
+                    visiteId = it.visiteId,
+                    visitePeiId = it.visitePeiId,
+                    visiteDate = it.visiteDate,
+                    visiteTypeVisite = it.visiteTypeVisite,
+                    visiteAgent1 = it.visiteAgent1,
+                    visiteAgent2 = it.visiteAgent2,
+                    visiteObservation = it.visiteObservation,
+                    listeAnomalie = visiteAnomalie.filter { va -> va.visiteId == it.visiteId }.map { it.anomalieId },
+                    isCtrlDebitPression = visitesCtrlDebitPression.map { it.visiteCtrlDebitPressionVisiteId }.contains(it.visiteId),
+                    ctrlDebitPression = CreationVisiteCtrl(
+                        ctrl?.visiteCtrlDebitPressionDebit,
+                        ctrl?.visiteCtrlDebitPressionPression,
+                        ctrl?.visiteCtrlDebitPressionPressionDyn,
+                    ),
+                ),
                 transactionManager,
             )
         }

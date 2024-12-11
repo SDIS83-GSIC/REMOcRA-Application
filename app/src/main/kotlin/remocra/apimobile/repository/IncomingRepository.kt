@@ -13,7 +13,10 @@ import remocra.db.fetchOneInto
 import remocra.db.jooq.incoming.tables.pojos.Contact
 import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.incoming.tables.pojos.LContactRole
+import remocra.db.jooq.incoming.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.pojos.NewPei
+import remocra.db.jooq.incoming.tables.pojos.Visite
+import remocra.db.jooq.incoming.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
@@ -232,4 +235,21 @@ class IncomingRepository @Inject constructor(
 
     fun getNewPei(): Collection<NewPei> =
         dsl.selectFrom(NEW_PEI).fetchInto()
+
+    fun getVisites(tourneeId: UUID): Collection<Visite> =
+        dsl.selectFrom(VISITE).where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
+
+    fun getVisitesCtrlDebitPression(tourneeId: UUID): Collection<VisiteCtrlDebitPression> =
+        dsl.select(VISITE_CTRL_DEBIT_PRESSION.fields().asList())
+            .from(VISITE_CTRL_DEBIT_PRESSION)
+            .join(VISITE)
+            .on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
+            .where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
+
+    fun getVisitesAnomalie(tourneeId: UUID): Collection<LVisiteAnomalie> =
+        dsl.select(L_VISITE_ANOMALIE.fields().asList())
+            .from(L_VISITE_ANOMALIE)
+            .join(VISITE)
+            .on(VISITE.ID.eq(L_VISITE_ANOMALIE.VISITE_ID))
+            .where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
 }
