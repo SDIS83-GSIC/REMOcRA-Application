@@ -300,4 +300,10 @@ class IncomingRepository @Inject constructor(
         dsl.deleteFrom(PHOTO_PEI)
             .where(PHOTO_PEI.PHOTO_ID.`in`(listePhotoPeiId))
             .execute()
+
+    fun updateDateSynchroFin(date: ZonedDateTime, tourneeId: UUID) =
+        dsl.update(TOURNEE)
+            .set(TOURNEE.DATE_FIN_SYNCHRO, date)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
 }

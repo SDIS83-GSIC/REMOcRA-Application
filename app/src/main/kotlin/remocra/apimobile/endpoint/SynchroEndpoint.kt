@@ -8,6 +8,7 @@ import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -21,6 +22,7 @@ import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
+import remocra.apimobile.usecase.synchrofintournee.SynchroFinTourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
@@ -72,6 +74,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroPhotoPeiUseCase: SynchroPhotoPeiUseCase
+
+    @Inject
+    lateinit var synchroFinTourneeUseCase: SynchroFinTourneeUseCase
 
     //    @CurrentUser
     @Inject
@@ -323,5 +328,16 @@ class SynchroEndpoint : AbstractEndpoint() {
                 photoLibelle = partPhoto.submittedFileName,
             ),
         ).wrap()
+    }
+
+    @AuthDevice
+    @Path("/incoming-to-remocra/{tourneeId}")
+    @POST
+    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    fun endSynchroTournee(
+        @PathParam("tourneeId")
+        tourneeId: UUID,
+    ): Response {
+        return Response.ok(synchroFinTourneeUseCase.execute(tourneeId, currentUser!!.get())).build()
     }
 }
