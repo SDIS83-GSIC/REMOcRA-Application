@@ -46,6 +46,7 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
     fun insertDocument(document: Document) =
         dsl.insertInto(DOCUMENT)
             .set(dsl.newRecord(DOCUMENT, document))
+            .onConflictDoNothing()
             .execute()
 
     fun updateDocument(documentNomFichier: String, repertoire: String, documentId: UUID) =
@@ -60,6 +61,7 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .set(L_PEI_DOCUMENT.PEI_ID, peiId)
             .set(L_PEI_DOCUMENT.DOCUMENT_ID, documentId)
             .set(L_PEI_DOCUMENT.IS_PHOTO_PEI, isPhotoPei)
+            .onConflictDoNothing()
             .execute()
 
     fun updateIsPhotoPei(listDocumentId: List<UUID>, isPhotoPei: Boolean) =

@@ -15,6 +15,7 @@ import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.incoming.tables.pojos.LContactRole
 import remocra.db.jooq.incoming.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.pojos.NewPei
+import remocra.db.jooq.incoming.tables.pojos.PhotoPei
 import remocra.db.jooq.incoming.tables.pojos.Visite
 import remocra.db.jooq.incoming.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.incoming.tables.references.CONTACT
@@ -238,6 +239,13 @@ class IncomingRepository @Inject constructor(
 
     fun getVisites(tourneeId: UUID): Collection<Visite> =
         dsl.selectFrom(VISITE).where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
+
+    fun getPhotoPei(tourneeId: UUID): Collection<PhotoPei> =
+        dsl.select(PHOTO_PEI.fields().asList())
+            .from(PHOTO_PEI)
+            .join(VISITE)
+            .on(VISITE.PEI_ID.eq(PHOTO_PEI.PEI_ID))
+            .where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
 
     fun getVisitesCtrlDebitPression(tourneeId: UUID): Collection<VisiteCtrlDebitPression> =
         dsl.select(VISITE_CTRL_DEBIT_PRESSION.fields().asList())

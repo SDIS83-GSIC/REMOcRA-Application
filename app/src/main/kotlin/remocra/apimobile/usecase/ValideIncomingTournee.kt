@@ -10,12 +10,14 @@ import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.VisiteData
 import remocra.db.ContactRepository
+import remocra.db.DocumentRepository
 import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.TransactionManager
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Contact
+import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.usecase.pei.CreatePeiUseCase
@@ -32,6 +34,9 @@ class ValideIncomingTournee {
 
     @Inject
     private lateinit var contactRepository: ContactRepository
+
+    @Inject
+    private lateinit var documentRepository: DocumentRepository
 
     @Inject
     private lateinit var domaineRepository: DomaineRepository
@@ -62,6 +67,9 @@ class ValideIncomingTournee {
 
             logger.info("Gestion des visites")
             gestionVisites(tourneeId, userInfo)
+
+            logger.info("Gestion des photos")
+            gestionPhoto(tourneeId)
         }
     }
 
@@ -74,8 +82,8 @@ class ValideIncomingTournee {
                 Gestionnaire(
                     gestionnaireId = it.gestionnaireId,
                     gestionnaireActif = true,
-                    gestionnaireCode = it.gestionnaireCode!!,
-                    gestionnaireLibelle = it.gestionnaireLibelle!!,
+                    gestionnaireCode = it.gestionnaireCode,
+                    gestionnaireLibelle = it.gestionnaireLibelle,
                 ),
             )
         }
@@ -276,6 +284,29 @@ class ValideIncomingTournee {
                     ),
                 ),
                 transactionManager,
+            )
+        }
+    }
+
+    private fun gestionPhoto(tourneeId: UUID) {
+        val listePhotoPei = incomingRepository.getPhotoPei(tourneeId)
+
+        listePhotoPei.forEach {
+            logger.info("CREATION document ${it.photoId}")
+            documentRepository.insertDocument(
+                Document(
+                    documentId = it.photoId,
+                    documentDate = it.photoDate,
+                    documentNomFichier = it.photoLibelle,
+                    documentRepertoire = it.photoPath,
+                ),
+            )
+
+            // On insère ensuite le lien avec isPhotoPei
+            documentRepository.insertDocumentPei(
+                peiId = it.peiId,
+                documentId = it.photoId,
+                isPhotoPei = true,
             )
         }
     }
