@@ -260,4 +260,44 @@ class IncomingRepository @Inject constructor(
             .join(VISITE)
             .on(VISITE.ID.eq(L_VISITE_ANOMALIE.VISITE_ID))
             .where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
+
+    fun deleteNewPei(listeNewPeiId: Collection<UUID>) =
+        dsl.deleteFrom(NEW_PEI)
+            .where(NEW_PEI.ID.`in`(listeNewPeiId))
+            .execute()
+
+    fun deleteVisiteAnomalie(listeVisiteId: Collection<UUID>) =
+        dsl.deleteFrom(L_VISITE_ANOMALIE)
+            .where(L_VISITE_ANOMALIE.VISITE_ID.`in`(listeVisiteId))
+            .execute()
+
+    fun deleteVisite(listeVisiteId: Collection<UUID>) =
+        dsl.deleteFrom(VISITE)
+            .where(VISITE.ID.`in`(listeVisiteId))
+            .execute()
+
+    fun deleteVisiteCtrlDebitPression(listeVisiteId: Collection<UUID>) =
+        dsl.deleteFrom(VISITE_CTRL_DEBIT_PRESSION)
+            .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.`in`(listeVisiteId))
+            .execute()
+
+    fun deleteContact(listeContactId: Collection<UUID>) =
+        dsl.deleteFrom(CONTACT)
+            .where(CONTACT.ID.`in`(listeContactId))
+            .execute()
+
+    fun deleteContactRole(listeContactId: Collection<UUID>) =
+        dsl.deleteFrom(L_CONTACT_ROLE)
+            .where(L_CONTACT_ROLE.CONTACT_ID.`in`(listeContactId))
+            .execute()
+
+    fun deleteGestionnaire(listeGestionnaireId: Collection<UUID>) =
+        dsl.deleteFrom(GESTIONNAIRE)
+            .where(GESTIONNAIRE.ID.`in`(listeGestionnaireId))
+            .execute()
+
+    fun deletePhotoPei(listePhotoPeiId: Collection<UUID>) =
+        dsl.deleteFrom(PHOTO_PEI)
+            .where(PHOTO_PEI.PHOTO_ID.`in`(listePhotoPeiId))
+            .execute()
 }

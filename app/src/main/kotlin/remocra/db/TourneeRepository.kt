@@ -583,4 +583,9 @@ class TourneeRepository
         val visiteCtrlDebitPressionPression: BigDecimal?,
         val visiteCtrlDebitPressionPressionDyn: BigDecimal?,
     )
+
+    fun updateDateSynchronisation(dateSynchronisation: ZonedDateTime, tourneeId: UUID): Int = dsl.update(TOURNEE)
+        .set(TOURNEE.DATE_SYNCHRONISATION, dateSynchronisation)
+        .where(TOURNEE.ID.eq(tourneeId))
+        .execute()
 }

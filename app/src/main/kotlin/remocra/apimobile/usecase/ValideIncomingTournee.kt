@@ -13,6 +13,7 @@ import remocra.db.ContactRepository
 import remocra.db.DocumentRepository
 import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
+import remocra.db.TourneeRepository
 import remocra.db.TransactionManager
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
@@ -20,11 +21,12 @@ import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
+import remocra.usecase.AbstractUseCase
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.visites.CreateVisiteUseCase
 import java.util.UUID
 
-class ValideIncomingTournee {
+class ValideIncomingTournee : AbstractUseCase() {
 
     @Inject
     private lateinit var incomingRepository: IncomingRepository
@@ -40,6 +42,9 @@ class ValideIncomingTournee {
 
     @Inject
     private lateinit var domaineRepository: DomaineRepository
+
+    @Inject
+    private lateinit var tourneeRepository: TourneeRepository
 
     @Inject
     private lateinit var transactionManager: TransactionManager
@@ -62,6 +67,9 @@ class ValideIncomingTournee {
             logger.info("Gestion des contacts")
             gestionContact(gestionnaires)
 
+            logger.info("Suppression des gestionnaires")
+            incomingRepository.deleteGestionnaire(gestionnaires.map { it.gestionnaireId })
+
             logger.info("Gestion des nouveaux PEI")
             gestionNewPei(userInfo)
 
@@ -70,6 +78,12 @@ class ValideIncomingTournee {
 
             logger.info("Gestion des photos")
             gestionPhoto(tourneeId)
+
+            logger.info("Mise à jour de la tournée $tourneeId")
+            tourneeRepository.setAvancementTournee(tourneeId, 100)
+            tourneeRepository.desaffectationTournee(tourneeId)
+
+            tourneeRepository.updateDateSynchronisation(dateUtils.now(), tourneeId)
         }
     }
 
@@ -143,6 +157,12 @@ class ValideIncomingTournee {
                 )
             }
         }
+
+        // Suppression des contacts
+        logger.info("Suppression des contacts")
+        val listeContactId = contacts.map { it.contactId }
+        incomingRepository.deleteContactRole(listeContactId)
+        incomingRepository.deleteContact(listeContactId)
     }
 
     private fun gestionNewPei(userInfo: UserInfo) {
@@ -254,6 +274,10 @@ class ValideIncomingTournee {
                 transactionManager,
             )
         }
+
+        // Suppression des newPei
+        logger.info("Suppression des nouveaux PEI")
+        incomingRepository.deleteNewPei(listeNewPei.map { it.newPeiId })
     }
 
     private fun gestionVisites(tourneeId: UUID, userInfo: UserInfo) {
@@ -286,6 +310,13 @@ class ValideIncomingTournee {
                 transactionManager,
             )
         }
+
+        // Suppression des visites
+        logger.info("Suppression des visites")
+        val visitesId = visites.map { it.visiteId }
+        incomingRepository.deleteVisiteAnomalie(visitesId)
+        incomingRepository.deleteVisiteCtrlDebitPression(visitesId)
+        incomingRepository.deleteVisite(visitesId)
     }
 
     private fun gestionPhoto(tourneeId: UUID) {
@@ -309,5 +340,8 @@ class ValideIncomingTournee {
                 isPhotoPei = true,
             )
         }
+
+        logger.info("Suppression des photos")
+        incomingRepository.deletePhotoPei(listePhotoPei.map { it.photoId })
     }
 }
