@@ -12,6 +12,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Task
+import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -47,6 +48,7 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
     }
 
     override fun postEvent(element: TaskInputData, userInfo: UserInfo) {
+        // Ajout Traçabilité
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
@@ -62,6 +64,10 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
                 ),
                 date = dateUtils.now(),
             ),
+        )
+        // Invalidation du cache pour prendre en compte les changements
+        eventBus.post(
+            ParametresModifiedEvent(),
         )
     }
 }
