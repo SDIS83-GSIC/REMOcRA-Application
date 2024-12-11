@@ -11,7 +11,13 @@ export type TaskEntity = {
     string | boolean | number | ParametreTableSynchroSIG[]
   >;
   taskNotification: NotificationRawEntity;
+
   isPlanificationEnabled: boolean;
+  radioPlanification: PARAMETRE_TASK_PLANIFICATION;
+  everyXMinute: number;
+  everyHourAtMinuteX: number;
+  specifiedTimeHoure: number;
+  specifiedTimeMinute: number;
 };
 
 export type SqueletteTaskEntity = {

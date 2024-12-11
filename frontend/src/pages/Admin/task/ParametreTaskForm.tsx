@@ -11,6 +11,7 @@ import {
   FormContainer,
   Multiselect,
   NumberInput,
+  RadioInput,
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
@@ -23,6 +24,7 @@ import {
   TYPE_SYNCHRONISATION_TABLE_SIG,
   TYPE_TASK_PARAMETRE,
 } from "../../../Entities/TaskEntity.tsx";
+import PARAMETRE_TASK_PLANIFICATION from "../../../enums/RadioParametreTaskPlanificationEnum.tsx";
 import TaskType from "../../../enums/TaskTypeEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
@@ -36,16 +38,24 @@ export const getInitialValues = (currentTask: TaskEntity) => ({
   taskExecManuelle: currentTask.taskExecManuelle,
   taskParametres: currentTask.taskParametres,
   taskNotification: currentTask.taskNotification,
+
   isPlanificationEnabled: currentTask.isPlanificationEnabled,
+  radioPlanification: "personalized",
+
+  everyXMinute: null,
+  everyHourAtMinuteX: null,
+  specifiedTimeHoure: null,
+  specifiedTimeMinute: null,
 });
 
 export const prepareVariables = (values: TaskEntity) => ({
   taskId: values.taskId,
   taskType: values.taskType,
   taskActif: values.taskActif ?? false,
-  taskPlanification: values.isPlanificationEnabled
-    ? (values.taskPlanification ?? null)
-    : null,
+  taskPlanification:
+    values.isPlanificationEnabled && getCronTab(values).trim().length > 0
+      ? getCronTab(values).trim()
+      : null,
   taskExecManuelle: values.taskExecManuelle ?? false,
   taskParametres: JSON.stringify(values.taskParametres) ?? null,
   taskNotification: JSON.stringify(values.taskNotification) ?? null,
@@ -148,26 +158,96 @@ const ParametreTaskForm = () => {
                     label="Tâche planifiée :"
                   />
                 </div>
-                {/* TODO : Gestion des la planification "simplifiée" (dans un autre commit)
                 <div>
-                  <p>Radio: Toutes les X minutes</p>
-                  <NumberInput name="everyMinute" />
+                  <RadioInput
+                    name="radioPlanification"
+                    label="Toutes les X minutes"
+                    value={PARAMETRE_TASK_PLANIFICATION.EVERY_X_MINUTE}
+                  />
+                  <NumberInput
+                    name="everyXMinute"
+                    disabled={
+                      values.radioPlanification !==
+                        PARAMETRE_TASK_PLANIFICATION.EVERY_X_MINUTE ||
+                      !values.isPlanificationEnabled
+                    }
+                    min={0}
+                    max={59}
+                    step={1}
+                  />{" "}
+                  min
                 </div>
                 <div>
-                  <p>Radio: Toutes les heures à minute précise</p>
-                  <NumberInput name="everyMinute" />
+                  <RadioInput
+                    name="radioPlanification"
+                    label="Toutes les heures à minute précise"
+                    value={PARAMETRE_TASK_PLANIFICATION.EVERY_HOUR_AT_MINUTE_X}
+                  />
+                  <NumberInput
+                    name="everyHourAtMinuteX"
+                    disabled={
+                      values.radioPlanification !==
+                        PARAMETRE_TASK_PLANIFICATION.EVERY_HOUR_AT_MINUTE_X ||
+                      !values.isPlanificationEnabled
+                    }
+                    min={0}
+                    max={59}
+                    step={1}
+                  />{" "}
+                  min
                 </div>
                 <div>
-                  <p>Radio: Toutes les jours à heure précise</p>
-                  <NumberInput name="everyMinute" />
+                  <RadioInput
+                    name="radioPlanification"
+                    label="Tous les jours à heure précise"
+                    value={PARAMETRE_TASK_PLANIFICATION.SPECIFIED_TIME}
+                  />
+                  <Row className="d-flex align-items-center">
+                    <Col xs="3">
+                      <NumberInput
+                        name="specifiedTimeHoure"
+                        disabled={
+                          values.radioPlanification !==
+                            PARAMETRE_TASK_PLANIFICATION.SPECIFIED_TIME ||
+                          !values.isPlanificationEnabled
+                        }
+                        min={0}
+                        max={23}
+                        step={1}
+                      />
+                    </Col>
+                    <Col xs="auto" className={"p-0"}>
+                      <span className="mx-1">:</span>
+                    </Col>
+                    <Col xs="3">
+                      <NumberInput
+                        name="specifiedTimeMinute"
+                        disabled={
+                          values.radioPlanification !==
+                            PARAMETRE_TASK_PLANIFICATION.SPECIFIED_TIME ||
+                          !values.isPlanificationEnabled
+                        }
+                        min={0}
+                        max={59}
+                        step={1}
+                      />
+                    </Col>
+                  </Row>
                 </div>
-                */}
                 <div>
+                  <RadioInput
+                    name="radioPlanification"
+                    label="Personnalisé"
+                    value={PARAMETRE_TASK_PLANIFICATION.PERSONALIZED}
+                  />
                   <TextInput
                     name="taskPlanification"
-                    label="Radio: Personnalisé"
                     required={false}
-                    disabled={!values.isPlanificationEnabled}
+                    disabled={
+                      values.radioPlanification !==
+                        PARAMETRE_TASK_PLANIFICATION.PERSONALIZED ||
+                      !values.isPlanificationEnabled
+                    }
                   />
                 </div>
                 <div>
@@ -440,3 +520,21 @@ const ParametreSynchroSIGIterableForm = ({
     </>
   );
 };
+
+// * * * * * ?
+function getCronTab(values: TaskEntity) {
+  switch (values.radioPlanification) {
+    case PARAMETRE_TASK_PLANIFICATION.EVERY_X_MINUTE: {
+      return `0 /${values.everyXMinute ?? 0} * * * ?`;
+    }
+    case PARAMETRE_TASK_PLANIFICATION.EVERY_HOUR_AT_MINUTE_X: {
+      return `0 0 /${values.everyHourAtMinuteX ?? 0} * * ?`;
+    }
+    case PARAMETRE_TASK_PLANIFICATION.SPECIFIED_TIME: {
+      return `0 ${values.specifiedTimeMinute ?? 0} ${values.specifiedTimeHoure ?? 0} * * ?`;
+    }
+    case PARAMETRE_TASK_PLANIFICATION.PERSONALIZED: {
+      return values.taskPlanification;
+    }
+  }
+}
