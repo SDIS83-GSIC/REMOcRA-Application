@@ -93,18 +93,14 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         )
     }
 
-    fun updateGestionnaire(gestionnaire: Gestionnaire) =
-        dsl.update(GESTIONNAIRE)
-            .set(GESTIONNAIRE.CODE, gestionnaire.gestionnaireCode)
-            .set(GESTIONNAIRE.LIBELLE, gestionnaire.gestionnaireLibelle)
-            .set(GESTIONNAIRE.ACTIF, gestionnaire.gestionnaireActif)
-            .where(GESTIONNAIRE.ID.eq(gestionnaire.gestionnaireId))
-            .execute()
-
-    fun insertGestionnaire(gestionnaire: Gestionnaire) =
+    fun upsertGestionnaire(gestionnaire: Gestionnaire) = with(dsl.newRecord(GESTIONNAIRE, gestionnaire)) {
         dsl.insertInto(GESTIONNAIRE)
-            .set(dsl.newRecord(GESTIONNAIRE, gestionnaire))
+            .set(this)
+            .onConflict()
+            .doUpdate()
+            .set(this)
             .execute()
+    }
 
     fun deleteGestionnaire(gestionnaireId: UUID) =
         dsl.delete(GESTIONNAIRE)

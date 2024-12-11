@@ -38,7 +38,7 @@ class CreateGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation
     }
 
     override fun execute(userInfo: UserInfo?, element: Gestionnaire): Gestionnaire {
-        gestionnaireRepository.insertGestionnaire(element)
+        gestionnaireRepository.upsertGestionnaire(element)
 
         return element
     }

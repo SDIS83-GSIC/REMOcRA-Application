@@ -38,7 +38,7 @@ class UpdateGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation
     }
 
     override fun execute(userInfo: UserInfo?, element: Gestionnaire): Gestionnaire {
-        gestionnaireRepository.updateGestionnaire(element)
+        gestionnaireRepository.upsertGestionnaire(element)
 
         return element
     }

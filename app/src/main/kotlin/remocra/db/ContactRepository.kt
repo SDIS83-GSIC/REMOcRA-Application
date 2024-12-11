@@ -242,4 +242,10 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) : Abstr
 
     fun checkIsGestionnaire(appartenanceId: UUID) =
         dsl.fetchExists(dsl.select(GESTIONNAIRE.ID).from(GESTIONNAIRE).where(GESTIONNAIRE.ID.eq(appartenanceId)))
+
+    fun getContactWithGestionnaires(listeGestionnaireId: Collection<UUID>): Collection<UUID> =
+        dsl.select(L_CONTACT_GESTIONNAIRE.CONTACT_ID)
+            .from(L_CONTACT_GESTIONNAIRE)
+            .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.`in`(listeGestionnaireId))
+            .fetchInto()
 }

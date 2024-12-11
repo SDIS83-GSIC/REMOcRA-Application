@@ -8,7 +8,11 @@ import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.db.AbstractRepository
+import remocra.db.fetchInto
 import remocra.db.fetchOneInto
+import remocra.db.jooq.incoming.tables.pojos.Contact
+import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
+import remocra.db.jooq.incoming.tables.pojos.LContactRole
 import remocra.db.jooq.incoming.tables.references.CONTACT
 import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
@@ -215,4 +219,13 @@ class IncomingRepository @Inject constructor(
             .set(PHOTO_PEI.PHOTO_LIBELLE, photoLibelle)
             .onConflictDoNothing()
             .execute()
+
+    fun getGestionnaires(): Collection<Gestionnaire> =
+        dsl.selectFrom(GESTIONNAIRE).fetchInto()
+
+    fun getContacts(): Collection<Contact> =
+        dsl.selectFrom(CONTACT).fetchInto()
+
+    fun getContactRole(): Collection<LContactRole> =
+        dsl.selectFrom(L_CONTACT_ROLE).fetchInto()
 }

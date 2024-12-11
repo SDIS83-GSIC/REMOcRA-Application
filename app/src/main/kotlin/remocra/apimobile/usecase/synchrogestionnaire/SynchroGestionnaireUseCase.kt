@@ -57,6 +57,9 @@ class SynchroGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperatio
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: Gestionnaire) {
-        // pas de contraintes
+        // Check si code n'existe pas déjà en base
+        if (gestionnaireRepository.checkCodeExists(element.gestionnaireCode, element.gestionnaireId)) {
+            throw RemocraResponseException(ErrorType.ADMIN_GESTIONNAIRE_CODE_EXISTS)
+        }
     }
 }
