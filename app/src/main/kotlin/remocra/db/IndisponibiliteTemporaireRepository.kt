@@ -143,11 +143,11 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             element.indisponibiliteTemporaireBasculeAutoIndisponible,
         )
         .set(
-            INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailAvantIndisponibilite,
         )
         .set(
-            INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailApresIndisponibilite,
         )
         .onConflict(INDISPONIBILITE_TEMPORAIRE.ID)
@@ -162,11 +162,11 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             element.indisponibiliteTemporaireBasculeAutoIndisponible,
         )
         .set(
-            INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailAvantIndisponibilite,
         )
         .set(
-            INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailApresIndisponibilite,
         )
         .execute()
