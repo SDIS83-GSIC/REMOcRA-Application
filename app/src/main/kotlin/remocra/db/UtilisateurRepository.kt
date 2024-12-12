@@ -122,7 +122,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     fun getDestinataireUtilisateurOrganisme(
         listePeiId: List<UUID>,
-        typeOrganisme: List<String>,
+        typeOrganisme: List<UUID>,
     ): Map<Destinataire, List<UUID?>> =
         dsl.select(
             PEI.ID,
@@ -137,7 +137,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .join(PEI).on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
             .where(PEI.ID.`in`(listePeiId))
-            .and(TYPE_ORGANISME.CODE.`in`(typeOrganisme))
+            .and(TYPE_ORGANISME.ID.`in`(typeOrganisme))
             .and(UTILISATEUR.CAN_BE_NOTIFIED)
             .and(UTILISATEUR.EMAIL.isNotNull)
             .fetchGroups(

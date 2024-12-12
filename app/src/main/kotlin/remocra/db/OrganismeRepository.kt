@@ -283,7 +283,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getById(id: UUID): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchOneInto()
 
-    fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<String>, contactRole: String): Map<Destinataire, List<UUID?>> =
+    fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<UUID>, contactRole: String): Map<Destinataire, List<UUID?>> =
         dsl.select(
             PEI.ID,
             CONTACT.ID,
@@ -303,7 +303,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .join(ROLE_CONTACT).on(L_CONTACT_ROLE.ROLE_ID.eq(ROLE_CONTACT.ID))
             .leftJoin(FONCTION_CONTACT).on(CONTACT.FONCTION_CONTACT_ID.eq(FONCTION_CONTACT.ID))
             .where(PEI.ID.`in`(listePeiId))
-            .and(TYPE_ORGANISME.CODE.`in`(typeOrganisme))
+            .and(TYPE_ORGANISME.ID.`in`(typeOrganisme))
             .and(ROLE_CONTACT.CODE.eq(contactRole))
             .and(CONTACT.EMAIL.isNotNull)
             .fetchGroups(

@@ -236,9 +236,9 @@ open class TaskParameters(
 )
 
 data class TypeDestinataire(
-    val contactOrganisme: Set<String>,
+    val contactOrganisme: Set<UUID>,
     val contactGestionnaire: Boolean,
-    val utilisateurOrganisme: Set<String>,
+    val utilisateurOrganisme: Set<UUID>,
     val saisieLibre: Set<String>,
 )
 
