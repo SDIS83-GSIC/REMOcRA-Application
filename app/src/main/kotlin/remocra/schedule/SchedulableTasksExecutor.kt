@@ -47,7 +47,8 @@ constructor(
     }
 
     private fun SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>.schedule(scheduleTime: CronExpression) {
-        this.launch {
+        this.schedulableTask?.cancel()
+        this.schedulableTask = this.launch {
             val now = Date()
             val nextExecution = scheduleTime.getNextValidTimeAfter(now) ?: return@launch
             val millis = nextExecution.time - now.time
