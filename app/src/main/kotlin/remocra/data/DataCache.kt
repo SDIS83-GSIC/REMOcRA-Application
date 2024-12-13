@@ -1,6 +1,7 @@
 package remocra.data
 
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
+import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
@@ -17,7 +18,7 @@ import java.util.UUID
 
 data class DataCache(
     var mapAnomalie: Map<UUID, Anomalie>,
-    var mapAnomalieCategorie: Map<UUID, NomenclatureCodeLibelleData>,
+    var mapAnomalieCategorie: Map<UUID, AnomalieCategorie>,
 //    var mapCommune: Map<UUID, Commune>, // TODO 'tention, volume important, à qualifier (SANS géométrie si possible)
     var mapDiametre: Map<UUID, Diametre>,
     var mapDomaine: Map<UUID, Domaine>,

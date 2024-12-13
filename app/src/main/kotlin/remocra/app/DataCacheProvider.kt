@@ -5,9 +5,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import remocra.data.DataCache
 import remocra.data.NomenclatureCodeLibelleData
-import remocra.data.Params
 import remocra.data.enums.TypeDataCache
-import remocra.data.enums.TypeNomenclatureCodeLibelle
 import remocra.db.AnomalieRepository
 import remocra.db.CommuneRepository
 import remocra.db.DiametreRepository
@@ -75,7 +73,7 @@ constructor(
     fun reload(typeToReload: TypeDataCache) {
         when (typeToReload) {
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
-            TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = nomenclatureCodeLibelleRepository.getAllForAdmin(TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE, Params(null, null, null, null)).filter { it.actif }.associateBy { it.id }
+            TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -98,7 +96,7 @@ constructor(
      */
     private fun buildDataCache(): DataCache {
         val anomalies = anomalieRepository.getMapById()
-        val anomaliesCategories = nomenclatureCodeLibelleRepository.getAllForAdmin(TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE, Params(null, null, null, null)).filter { it.actif }.associateBy { it.id }
+        val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
 //        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()

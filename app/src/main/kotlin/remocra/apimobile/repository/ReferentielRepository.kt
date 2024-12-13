@@ -37,8 +37,8 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         return dsl
             .select(
                 PEI.ID,
-                PEI.NATURE_ID,
-                PEI.NATURE_DECI_ID,
+                PEI.NATURE_ID.`as`("natureId"),
+                PEI.NATURE_DECI_ID.`as`("natureDeciId"),
                 // TODO
                 DSL.noField().`as`("dispoHbe"),
                 PEI.DISPONIBILITE_TERRESTRE.`as`("dispoTerrestre"),

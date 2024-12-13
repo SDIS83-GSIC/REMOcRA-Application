@@ -7,6 +7,8 @@ enum class ParametreEnum(val section: ParametreSection) {
     TITRE_PAGE(ParametreSection.GENERAL),
     TOLERANCE_VOIES_METRES(ParametreSection.GENERAL),
     VITESSE_EAU(ParametreSection.GENERAL),
+    BANNIERE_CHEMIN(ParametreSection.GENERAL),
+    LOGO_CHEMIN(ParametreSection.GENERAL),
 
     // Mobile
     AFFICHAGE_INDISPO(ParametreSection.MOBILE),
@@ -47,6 +49,8 @@ enum class ParametreEnum(val section: ParametreSection) {
     PEI_RENOUVELLEMENT_RECO_PRIVE(ParametreSection.PEI),
     PEI_RENOUVELLEMENT_RECO_PUBLIC(ParametreSection.PEI),
     PEI_TOLERANCE_COMMUNE_METRES(ParametreSection.PEI),
+    PEI_RENUMEROTATION_INTERNE_AUTO(ParametreSection.PEI),
+    VOIE_SAISIE_LIBRE(ParametreSection.PEI),
     TYPE_VISITE_CDP(ParametreSection.PEI),
 
     ;

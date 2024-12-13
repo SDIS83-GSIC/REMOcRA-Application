@@ -10,7 +10,6 @@ import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.UserInfo
 import remocra.data.GlobalData
-import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.ParametreEnum
 import remocra.db.GestionnaireRepository
 import remocra.db.RoleRepository
@@ -18,11 +17,13 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
+import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.usecase.AbstractUseCase
+import java.util.UUID
 
 class BuildReferentielUseCase : AbstractUseCase() {
 
@@ -48,13 +49,14 @@ class BuildReferentielUseCase : AbstractUseCase() {
     lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
 
     fun execute(userInfo: UserInfo): ReferentielResponse {
-        val nomPrenom = userInfo.nom + " " + userInfo.prenom
+        val nomPrenom = userInfo.utilisateur.utilisateurNom + " " + userInfo.utilisateur.utilisateurPrenom
 
         // On va chercher tous les paramètres rattachés à la section "MOBILE"
         val paramsMobile = ParametreEnum.entries.filter { it.section == ParametreEnum.ParametreSection.MOBILE }
 
         // pour toutes les clés trouvées, on remonte la valeur correspondante en base
-        val parametresMobile = parametresProvider.get().mapParametres.values.filter { paramsMobile.contains(ParametreEnum.valueOf(it.parametreCode)) }
+        val parametresMobile = parametresProvider.get()
+            .mapParametres.values.filter { paramsMobile.contains(ParametreEnum.valueOf(it.parametreCode)) }
 
         val setTypeVisiteAutorisees: MutableSet<TypeVisite> = mutableSetOf()
         if (userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
@@ -88,7 +90,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listPoidsAnomalie = referentielRepository.getAnomaliePoidsList().filter { it.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.isNotEmpty() ?: false },
             listTypeVisite = TypeVisite.entries,
             listParametre = parametresMobile,
-            listDroit = userInfo.droits,
+            listDroit = userInfo.droits.map { it.name },
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiques(),
         )
@@ -105,14 +107,14 @@ class BuildReferentielUseCase : AbstractUseCase() {
         val listNature: Collection<Nature>,
         val listNatureDeci: Collection<NatureDeci>,
         val listAnomalie: Collection<Anomalie>,
-        val listAnomalieCategorie: Collection<NomenclatureCodeLibelleData>,
+        val listAnomalieCategorie: Collection<AnomalieCategorie>,
         val listPoidsAnomalie: Collection<PoidsAnomalie>,
         val listTypeVisite: Collection<TypeVisite>,
         val listParametre: Collection<Parametre>,
-        val listDroit: Collection<Droit>,
+        val listDroit: Collection<String>,
         // TODO ajouter les fonctions des contacts et sûrement d'autres choses
 
         val utilisateurConnecte: String,
-        val peiCaracteristiques: Map<Long, String>,
+        val peiCaracteristiques: Map<UUID, String>,
     )
 }

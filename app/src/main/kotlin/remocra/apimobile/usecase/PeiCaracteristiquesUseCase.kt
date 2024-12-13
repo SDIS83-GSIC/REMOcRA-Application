@@ -6,6 +6,7 @@ import remocra.app.ParametresProvider
 import remocra.data.enums.PeiCaracteristique
 import remocra.usecase.AbstractUseCase
 import java.time.Instant
+import java.util.UUID
 
 /**
  * UseCase permettant de gérer la récupération dynamique des caractéristiques des PEI, et leur
@@ -18,7 +19,7 @@ class PeiCaracteristiquesUseCase : AbstractUseCase() {
     @Inject
     lateinit var parametresProvider: ParametresProvider
 
-    fun getPeiCaracteristiques(): Map<Long, String> {
+    fun getPeiCaracteristiques(): Map<UUID, String> {
         return emptyMap()
 //        val pibiSelectedCaracteristiques = parametresProvider.getParametreString(GlobalConstants.PARAMETRE_CARACTERISTIQUE_PIBI)
 //        val penaSelectedCaracteristiques = parametresProvider.getParametreString(GlobalConstants.PARAMETRE_CARACTERISTIQUE_PENA)

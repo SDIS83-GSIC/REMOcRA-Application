@@ -263,4 +263,9 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             )
             .where(isActiveCondition(isActive = true))
             .fetchGroups(PEI.ID, CompletedAnomalie::class.java)
+
+    fun getAnomalieCategorie(): Collection<AnomalieCategorie> =
+        dsl.selectFrom(ANOMALIE_CATEGORIE)
+            .where(ANOMALIE_CATEGORIE.ACTIF.isTrue)
+            .fetchInto()
 }
