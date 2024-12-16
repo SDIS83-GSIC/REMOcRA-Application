@@ -2,6 +2,7 @@ package remocra.data.enums
 
 import jakarta.ws.rs.core.Response.Status
 import remocra.GlobalConstants
+import remocra.GlobalConstants.PLACEHOLDER_ERROR_TYPE
 import remocra.db.jooq.remocra.enums.TypeVisite
 
 /**
@@ -204,14 +205,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SHP_ETUDE_CAPACITE_MANQUANTE(4106, "La capacité doit être renseignée pour une réserve."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_PA(4107, "Le débit doit être renseigné pour un PA."),
     IMPORT_SHP_ETUDE_DEBIT_MANQUANT_RESERVE(4108, "Le débit doit être renseigné pour une réserve."),
-    IMPORT_SHP_TYPE_PEI_ABSENT(4109, "Le type du PEI n'est pas dans la liste : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    IMPORT_SHP_TYPE_PEI_ABSENT(4109, "Le type du PEI n'est pas dans la liste : $PLACEHOLDER_ERROR_TYPE"),
     IMPORT_SHP_CODE_NATURE_DECI_ABSENT(
         4110,
-        "Le code de la nature DECI n'est pas présent dans la base. Les valeurs possibles sont : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}",
+        "Le code de la nature DECI n'est pas présent dans la base. Les valeurs possibles sont : $PLACEHOLDER_ERROR_TYPE",
     ),
     IMPORT_SHP_CODE_DIAMETRE_ABSENT(
         4111,
-        "Le code du diamètre n'est pas présent dans la base. Les valeurs possibles sont : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}",
+        "Le code du diamètre n'est pas présent dans la base. Les valeurs possibles sont : $PLACEHOLDER_ERROR_TYPE",
     ),
 
     /***
@@ -379,7 +380,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SITES_SHP_INTROUVABLE(9108, "Aucun fichier .shp n'a été trouvé."),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, "La géométrie ne doit pas être nulle."),
     IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, "La géométrie ne doit pas être nulle et doit être de type Point."),
-    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul. ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul. $PLACEHOLDER_ERROR_TYPE"),
     IMPORT_SITES_LIBELLE_NULL(9112, "Le libellé ne doit pas être nul."),
 
     // Contact
@@ -414,7 +415,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     UTILISATEUR_USERNAME_LENGTH(10016, "L'identifiant doit avoir au minimum 3 caractères."),
     UTILISATEUR_ERROR_INSERT(
         10017,
-        "Erreur lors de l'insertion de l'identifiant : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",
+        "Erreur lors de l'insertion de l'identifiant : $PLACEHOLDER_ERROR_TYPE. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",
     ),
     UTILISATEUR_USERNAME_EXISTS(10018, "L'identifiant saisi est déjà utilisé par un autre utilisateur."),
     UTILISATEUR_EMAIL_EXISTS(10019, "L'adresse email saisie est déjà utilisée par un autre utilisateur."),
@@ -464,36 +465,36 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_RAPPORT_PERSO_FORBIDDEN(15000, "Vous n'avez pas les droits d'administration des rapports personnalisés.", Status.FORBIDDEN),
     ADMIN_RAPPORT_PERSO_CODE_UNIQUE(15001, "Le code doit être unique."),
     ADMIN_RAPPORT_PERSO_REQUETE_INVALID_CUD(15002, "La requête doit être un SELECT (et non CREATE / UPDATE / DELETE / DROP)."),
-    ADMIN_RAPPORT_PERSO_REQUETE_INVALID(15003, "La requête n'est pas valide : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
-    ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    ADMIN_RAPPORT_PERSO_REQUETE_INVALID(15003, "La requête n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
+    ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE(15005, "Chaque code des paramètres doit être unique."),
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
-    RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : $PLACEHOLDER_ERROR_TYPE"),
 
-    API_SYNCHRO_ERREUR_RESERVATION(20000, "Erreur lors de la réservation des tournées ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_ERREUR_RESERVATION(20000, "Erreur lors de la réservation des tournées $PLACEHOLDER_ERROR_TYPE"),
     API_SYNCHRO_NO_COMMUNE(20001, "Impossible d'insérer le PEI : il n'est sur aucune commune connue."),
-    API_SYNCHRO_PEI_EXISTE(20002, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_PEI_ERROR(20003, "Impossible d'insérer le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans incoming."),
+    API_SYNCHRO_PEI_EXISTE(20002, "Le PEI $PLACEHOLDER_ERROR_TYPE est déjà dans le schéma incoming."),
+    API_SYNCHRO_PEI_ERROR(20003, "Impossible d'insérer le PEI $PLACEHOLDER_ERROR_TYPE dans incoming."),
     API_SYNCHRO_PEI_FORBIDDEN(20004, "Vous n'avez pas les droits de création de PEI depuis l'application mobile.", Status.FORBIDDEN),
-    API_SYNCHRO_GESTIONNAIRE_EXISTE(20005, "Le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_GESTIONNAIRE_ERROR(20006, "Impossible d'insérer le gestionnaire ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
+    API_SYNCHRO_GESTIONNAIRE_EXISTE(20005, "Le gestionnaire $PLACEHOLDER_ERROR_TYPE est déjà dans le schéma incoming."),
+    API_SYNCHRO_GESTIONNAIRE_ERROR(20006, "Impossible d'insérer le gestionnaire $PLACEHOLDER_ERROR_TYPE dans le schéma incoming."),
     API_SYNCHRO_GESTIONNAIRE_FORBIDDEN(20007, "Vous n'avez pas les droits de création de gestionnaire depuis l'application mobile"),
-    API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE(20008, "Le gestionnaire associé au contact n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
-    API_SYNCHRO_CONTACT_EXISTE(20009, "Le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_CONTACT_ERROR(20010, "Impossible d'insérer le contact ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
-    API_SYNCHRO_CONTACT_ROLE_NO_EXISTE(20011, "Le contact associé au rôle n'est pas dans REMOcRA : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE(20008, "Le gestionnaire associé au contact n'est pas dans REMOcRA : $PLACEHOLDER_ERROR_TYPE"),
+    API_SYNCHRO_CONTACT_EXISTE(20009, "Le contact $PLACEHOLDER_ERROR_TYPE est déjà dans le schéma incoming."),
+    API_SYNCHRO_CONTACT_ERROR(20010, "Impossible d'insérer le contact $PLACEHOLDER_ERROR_TYPE dans le schéma incoming."),
+    API_SYNCHRO_CONTACT_ROLE_NO_EXISTE(20011, "Le contact associé au rôle n'est pas dans REMOcRA : $PLACEHOLDER_ERROR_TYPE"),
     API_SYNCHRO_CONTACT_ROLE_EXISTE(20012, "Le lien entre le contact et rôle est déjà dans le schéma incoming."),
     API_SYNCHRO_CONTACT_ROLE_ERROR(20013, "Impossible d'insérer le contact role dans le schéma incoming."),
-    API_SYNCHRO_TOURNEE_EXISTE(20014, "La tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_TOURNEE_ERROR(20015, "Impossible d'insérer la tournée ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
-    API_SYNCHRO_VISITE_EXISTE(20016, "La visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} est déjà dans le schéma incoming."),
-    API_SYNCHRO_VISITE_ERROR(20017, "Impossible d'insérer la visite ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} dans le schéma incoming."),
-    API_SYNCHRO_VISITE_PEI_NO_REMOCRA(20018, "Le PEI ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
-    API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA(20019, "L'anomalie ${GlobalConstants.PLACEHOLDER_ERROR_TYPE} n'existe pas."),
-    API_SYNCHRO_VISITE_ANOMALIE_EXISTE(20020, "Le lien entre l'anomalie et la visite est déjà dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
-    API_SYNCHRO_VISITE_ANOMALIE_ERROR(20021, "Impossible d'insérer le lien entre l'anomalie et la viste dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
-    API_SYNCHRO_PHOTO_EXISTE(20022, "La photo est déjà dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
-    API_SYNCHRO_PHOTO_ERROR(20023, "Impossible d'insérer la photo dans le schéma incoming : ${GlobalConstants.PLACEHOLDER_ERROR_TYPE}"),
+    API_SYNCHRO_TOURNEE_EXISTE(20014, "La tournée $PLACEHOLDER_ERROR_TYPE est déjà dans le schéma incoming."),
+    API_SYNCHRO_TOURNEE_ERROR(20015, "Impossible d'insérer la tournée $PLACEHOLDER_ERROR_TYPE dans le schéma incoming."),
+    API_SYNCHRO_VISITE_EXISTE(20016, "La visite $PLACEHOLDER_ERROR_TYPE est déjà dans le schéma incoming."),
+    API_SYNCHRO_VISITE_ERROR(20017, "Impossible d'insérer la visite $PLACEHOLDER_ERROR_TYPE dans le schéma incoming."),
+    API_SYNCHRO_VISITE_PEI_NO_REMOCRA(20018, "Le PEI $PLACEHOLDER_ERROR_TYPE n'existe pas."),
+    API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA(20019, "L'anomalie $PLACEHOLDER_ERROR_TYPE n'existe pas."),
+    API_SYNCHRO_VISITE_ANOMALIE_EXISTE(20020, "Le lien entre l'anomalie et la visite est déjà dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
+    API_SYNCHRO_VISITE_ANOMALIE_ERROR(20021, "Impossible d'insérer le lien entre l'anomalie et la viste dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
+    API_SYNCHRO_PHOTO_EXISTE(20022, "La photo est déjà dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
+    API_SYNCHRO_PHOTO_ERROR(20023, "Impossible d'insérer la photo dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
 
     ;
     override fun toString(): String {
