@@ -19,6 +19,8 @@ const MenuAdmin = () => {
           <a href={URLS.LIST_ZONE_INTEGRATION}>Zones de compétence</a>
           <br />
           <a href={URLS.LIST_RAPPORT_PERSONNALISE}>Rapports personnalisés</a>
+          <br />
+          <a href={URLS.TASK}>Paramétrage des traitements</a>
         </Col>
 
         <Col className="bg-light p-2 border rounded mx-2">
@@ -81,12 +83,6 @@ const MenuAdmin = () => {
       </Row>
 
       <Row className="mt-2">
-        <Col className="bg-light p-2 border rounded">
-          <div className="fw-bold text-center p-2">
-            Paramétrage des traitements
-          </div>
-          TODO
-        </Col>
         <Col className="bg-light p-2 border rounded">
           <div className="fw-bold text-center p-2">
             Gestionnaires &amp; sites
