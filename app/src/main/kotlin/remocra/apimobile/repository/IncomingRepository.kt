@@ -1,5 +1,6 @@
 package remocra.apimobile.repository
 
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.locationtech.jts.geom.Geometry
@@ -36,7 +37,6 @@ import remocra.utils.ST_Within
 import remocra.utils.toGeomFromText
 import java.time.ZonedDateTime
 import java.util.UUID
-import javax.inject.Inject
 
 class IncomingRepository @Inject constructor(
     private val dsl: DSLContext,

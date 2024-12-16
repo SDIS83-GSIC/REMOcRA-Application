@@ -86,7 +86,7 @@ class SynchroEndpoint : AbstractEndpoint() {
     lateinit var parametresProvider: ParametresProvider
 
     @GET
-    @Path("/tourneesdispos")
+    @Path("/tournees-dispos")
     @AuthDevice
     // TODO
     @Public("TODO ")
