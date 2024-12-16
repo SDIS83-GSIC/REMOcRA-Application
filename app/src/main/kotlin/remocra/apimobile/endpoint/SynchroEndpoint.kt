@@ -109,7 +109,7 @@ class SynchroEndpoint : AbstractEndpoint() {
     }
 
     @AuthDevice
-    @Path("/annulereservation")
+    @Path("/annule-reservation")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @POST
     // TODO
