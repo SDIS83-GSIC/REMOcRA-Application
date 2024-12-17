@@ -243,7 +243,7 @@ const RapportPersonnalise = () => {
           <h3>Gestion des paramètres de la requête</h3>
           <p>
             Les codes des paramètres seront utilisé dans la requête. Eviter les
-            caractètres spéciaux et espace.
+            caractères spéciaux et espace.
           </p>
           <Row className="mt-3">
             <Col>

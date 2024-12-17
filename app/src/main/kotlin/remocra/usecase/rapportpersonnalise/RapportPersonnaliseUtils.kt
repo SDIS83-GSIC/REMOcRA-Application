@@ -8,11 +8,15 @@ import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
 import remocra.exception.RemocraResponseException
+import remocra.utils.DateUtils
 
 class RapportPersonnaliseUtils {
 
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
+
+    @Inject
+    private lateinit var dateUtils: DateUtils
 
     private fun testParametreRequeteSql(parametreRequete: RapportPersonnaliseParametreData): List<IdLibelleRapportPersonnalise> {
         try {
@@ -57,7 +61,7 @@ class RapportPersonnaliseUtils {
                 TypeParametreRapportPersonnalise.CHECKBOX_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, "true")
                 TypeParametreRapportPersonnalise.DATE_INPUT ->
-                    requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "2024-01-01 00:00:00")
+                    requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut.let { param -> if (param.isNullOrEmpty()) dateUtils.format(dateUtils.now()) else param })
                 TypeParametreRapportPersonnalise.NUMBER_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "10")
                 TypeParametreRapportPersonnalise.SELECT_INPUT ->

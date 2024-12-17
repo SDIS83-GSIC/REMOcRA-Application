@@ -317,7 +317,7 @@ function buildComponent(
           name={element.rapportPersonnaliseParametreCode}
           label={element.rapportPersonnaliseParametreLibelle}
           required={element.rapportPersonnaliseParametreIsRequired}
-          value={element.rapportPersonnaliseParametreValeurDefaut}
+          defaultValue={element.rapportPersonnaliseParametreValeurDefaut}
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />
       );
