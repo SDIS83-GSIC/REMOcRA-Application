@@ -143,6 +143,7 @@ class IncomingRepository @Inject constructor(
         dsl
             .insertInto(CONTACT)
             .set(CONTACT.ID, contact.contactId)
+            .set(CONTACT.ACTIF, true)
             .set(CONTACT.GESTIONNAIRE_ID, contact.gestionnaireId)
             .set(CONTACT.FONCTION_CONTACT_ID, contact.contactFonctionContactId)
             .set(CONTACT.CIVILITE, contact.contactCivilite)
@@ -185,6 +186,7 @@ class IncomingRepository @Inject constructor(
     fun insertVisite(visiteData: VisiteForApiMobileData, date: ZonedDateTime): Int =
         dsl
             .insertInto(VISITE)
+            .set(VISITE.PEI_ID, visiteData.peiId)
             .set(VISITE.ID, visiteData.visiteId)
             .set(VISITE.TYPE_VISITE, visiteData.visiteTypeVisite)
             .set(VISITE.AGENT1, visiteData.visiteAgent1)

@@ -1,5 +1,6 @@
 package remocra.eventbus.mobile
 
+import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.apimobile.usecase.ValideIncomingTournee
@@ -11,6 +12,7 @@ class IntegrationTourneeEventListener : EventListener<IntegrationTourneeEvent> {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Subscribe
     override fun onEvent(event: IntegrationTourneeEvent) {
         logger.info("Traitement de la tournée ${event.tourneeId}")
         valideIncomingTournee.execute(event.tourneeId, event.userInfo)

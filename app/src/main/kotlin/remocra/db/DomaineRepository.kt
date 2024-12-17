@@ -13,5 +13,6 @@ class DomaineRepository @Inject constructor(private val dsl: DSLContext) : Nomen
     fun getFistDomaineId(): UUID =
         dsl.select(DOMAINE.ID)
             .from(DOMAINE)
+            .limit(1)
             .fetchSingleInto()
 }

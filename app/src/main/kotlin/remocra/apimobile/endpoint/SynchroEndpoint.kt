@@ -153,14 +153,14 @@ class SynchroEndpoint : AbstractEndpoint() {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
     fun getGestionnaire(
-        @FormParam("gestionanireId") gestionanireId: UUID,
+        @FormParam("gestionnaireId") gestionnaireId: UUID,
         @FormParam("gestionnaireLibelle") gestionnaireLibelle: String,
         @FormParam("gestionnaireCode") gestionnaireCode: String,
     ): Response {
         return synchroGestionnaireUseCase.execute(
             currentUser!!.get(),
             Gestionnaire(
-                gestionnaireId = gestionanireId,
+                gestionnaireId = gestionnaireId,
                 gestionnaireCode = gestionnaireCode,
                 gestionnaireLibelle = gestionnaireLibelle,
             ),
@@ -238,7 +238,7 @@ class SynchroEndpoint : AbstractEndpoint() {
     fun synchroTournee(
         @FormParam("tourneeId")
         tourneeId: UUID,
-        @FormParam("nom")
+        @FormParam("tourneeLibelle")
         tourneeLibelle: String?,
     ): Response =
         synchroTourneeUseCase.execute(

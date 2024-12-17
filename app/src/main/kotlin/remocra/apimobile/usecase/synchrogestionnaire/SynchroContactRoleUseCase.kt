@@ -36,8 +36,7 @@ class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData
 
         when (result) {
             0 -> {
-                logger.error("Le lien entre le rôle ${element.roleId} et le contact ${element.contactId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_CONTACT_ROLE_EXISTE)
+                logger.warn("Le lien entre le rôle ${element.roleId} et le contact ${element.contactId} est déjà dans le schéma incoming")
             }
             1 -> Unit // OK
             else -> {

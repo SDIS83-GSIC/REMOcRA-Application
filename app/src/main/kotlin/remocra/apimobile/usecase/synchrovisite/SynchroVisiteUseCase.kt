@@ -43,8 +43,7 @@ class SynchroVisiteUseCase : AbstractCUDUseCase<VisiteForApiMobileData>(TypeOper
 
         when (result) {
             0 -> {
-                logger.error("La visite ${element.visiteId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_VISITE_EXISTE, element.visiteId.toString())
+                logger.warn("La visite ${element.visiteId} est déjà dans le schéma incoming")
             }
             1 -> Unit // OK
             else -> {

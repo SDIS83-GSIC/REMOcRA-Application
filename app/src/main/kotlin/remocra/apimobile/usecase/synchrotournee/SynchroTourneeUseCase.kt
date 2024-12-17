@@ -33,8 +33,7 @@ class SynchroTourneeUseCase : AbstractCUDUseCase<TourneeSynchroForApiMobileData>
 
         when (result) {
             0 -> {
-                logger.error("La tournée ${element.tourneeId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_TOURNEE_EXISTE, element.tourneeId.toString())
+                logger.warn("La tournée ${element.tourneeId} est déjà dans le schéma incoming")
             }
             1 -> Unit // OK
             else -> {

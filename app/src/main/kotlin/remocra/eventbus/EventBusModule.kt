@@ -7,6 +7,7 @@ import com.typesafe.config.Config
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
 import remocra.app.ParametresProvider
+import remocra.eventbus.mobile.IntegrationTourneeEventListener
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.tracabilite.TracabiliteEventListener
 import remocra.getStringOrNull
@@ -18,6 +19,7 @@ class EventBusModule(private val settings: MailSettings) : RemocraModule() {
         val multibinder = KotlinMultibinder.newSetBinder<EventListener<*>>(kotlinBinder)
         multibinder.apply {
             addBinding().to<NotificationEventListener>()
+            addBinding().to<IntegrationTourneeEventListener>()
             addBinding().to<TracabiliteEventListener<*>>()
             addBinding().to<ParametresProvider>()
         }

@@ -44,8 +44,7 @@ class SynchroGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperatio
 
         when (result) {
             0 -> {
-                logger.error("Le gestionnaire ${element.gestionnaireId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_EXISTE, element.gestionnaireId.toString())
+                logger.warn("Le gestionnaire ${element.gestionnaireId} est déjà dans le schéma incoming")
             }
             1 -> Unit // OK
             else -> {

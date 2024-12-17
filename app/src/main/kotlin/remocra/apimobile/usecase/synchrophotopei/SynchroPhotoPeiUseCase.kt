@@ -45,8 +45,7 @@ class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(Type
 
         when (result) {
             0 -> {
-                logger.error("La photo ${element.photoId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_PHOTO_EXISTE, element.photoId.toString())
+                logger.warn("La photo ${element.photoId} est déjà dans le schéma incoming")
             }
             1 -> {
                 // On le sauvegarde sur le disque

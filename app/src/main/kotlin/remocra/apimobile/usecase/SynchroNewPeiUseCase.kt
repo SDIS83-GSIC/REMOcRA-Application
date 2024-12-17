@@ -70,8 +70,7 @@ class SynchroNewPeiUseCase : AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOper
             )
         when (result) {
             0 -> {
-                logger.error("Le PEI ${element.peiId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_PEI_EXISTE, element.peiId.toString())
+                logger.warn("Le PEI ${element.peiId} est déjà dans le schéma incoming")
             }
 
             1 -> Unit // OK

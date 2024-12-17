@@ -37,8 +37,7 @@ class SynchroVisiteAnomalieUseCase : AbstractCUDUseCase<VisiteAnomalieForApiMobi
 
         when (result) {
             0 -> {
-                logger.error("Le lien entre la visite et l'anomalie est déjà dans le schéma incoming : anomalieId: ${element.anomalieId}, visiteId: ${element.visiteId}")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_VISITE_ANOMALIE_EXISTE, "anomalieId: ${element.anomalieId}, visiteId: ${element.visiteId}")
+                logger.warn("Le lien entre la visite et l'anomalie est déjà dans le schéma incoming : anomalieId: ${element.anomalieId}, visiteId: ${element.visiteId}")
             }
             1 -> Unit // OK
             else -> {

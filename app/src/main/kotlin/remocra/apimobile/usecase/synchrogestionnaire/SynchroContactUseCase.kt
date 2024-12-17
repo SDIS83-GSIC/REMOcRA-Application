@@ -37,7 +37,6 @@ class SynchroContactUseCase : AbstractCUDUseCase<ContactForApiMobileData>(TypeOp
         when (result) {
             0 -> {
                 logger.error("Le contact ${element.contactId} est déjà dans le schéma incoming")
-                throw RemocraResponseException(ErrorType.API_SYNCHRO_CONTACT_EXISTE, element.contactId.toString())
             }
             1 -> Unit // OK
             else -> {

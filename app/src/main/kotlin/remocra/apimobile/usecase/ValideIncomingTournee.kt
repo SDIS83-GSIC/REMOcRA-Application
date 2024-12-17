@@ -73,11 +73,11 @@ class ValideIncomingTournee : AbstractUseCase() {
             logger.info("Gestion des nouveaux PEI")
             gestionNewPei(userInfo)
 
-            logger.info("Gestion des visites")
-            gestionVisites(tourneeId, userInfo)
-
             logger.info("Gestion des photos")
             gestionPhoto(tourneeId)
+
+            logger.info("Gestion des visites")
+            gestionVisites(tourneeId, userInfo)
 
             logger.info("Mise à jour de la tournée $tourneeId")
             tourneeRepository.setAvancementTournee(tourneeId, 100)
@@ -89,7 +89,7 @@ class ValideIncomingTournee : AbstractUseCase() {
 
     private fun gestionGestionnaire(gestionnaires: Collection<remocra.db.jooq.incoming.tables.pojos.Gestionnaire>) {
         gestionnaires.forEach {
-            logger.info("UPSERT du gestionnaire ${it.gestionnaireId} (${it.gestionnaireCode} - ${it.gestionnaireLibelle}")
+            logger.info("UPSERT du gestionnaire ${it.gestionnaireId} (${it.gestionnaireCode} - ${it.gestionnaireLibelle})")
 
             // on doit faire l'insert ou on update
             gestionnaireRepository.upsertGestionnaire(
