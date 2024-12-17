@@ -127,7 +127,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .on(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(COURRIER.ID))
             .leftJoin(L_COURRIER_UTILISATEUR)
             .on(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(COURRIER.ID))
-            .leftJoin(UTILISATEUR)
+            .join(UTILISATEUR)
             .on(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
             .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))

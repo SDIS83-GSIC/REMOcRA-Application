@@ -2,15 +2,21 @@ package remocra.usecase.admin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
+import remocra.data.ParametresAdminData
+import remocra.data.ParametresSectionCartographie
+import remocra.data.ParametresSectionCouvertureHydraulique
+import remocra.data.ParametresSectionGeneral
+import remocra.data.ParametresSectionMobile
+import remocra.data.ParametresSectionPei
+import remocra.data.ParametresSectionPermis
 import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
-import remocra.eventbus.EventBus
-import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.usecase.AbstractUseCase
 import remocra.utils.getBooleanOrNull
 import remocra.utils.getInt
 import remocra.utils.getIntOrNull
 import remocra.utils.getListOfInt
+import remocra.utils.getListOfPeiCaracteristique
 import remocra.utils.getListOfString
 import remocra.utils.getStringOrNull
 
@@ -24,11 +30,8 @@ class ParametresUseCase : AbstractUseCase() {
     @Inject
     private lateinit var objectMapper: ObjectMapper
 
-    @Inject
-    private lateinit var eventBus: EventBus
-
     // TODO la gestion des valeurs par défaut / NULL nécessitera certainement des ajustements
-    fun getParametresData(): ParametresData {
+    fun getParametresData(): ParametresAdminData {
         val mapParametres = parametreRepository.getMapParametres()
 
         val general = ParametresSectionGeneral(
@@ -36,17 +39,20 @@ class ParametresUseCase : AbstractUseCase() {
             messageEntete = mapParametres.getStringOrNull(ParametreEnum.MESSAGE_ENTETE.name),
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
+            banniereChemin = mapParametres.getStringOrNull(ParametreEnum.BANNIERE_CHEMIN.name),
+            logoChemin = mapParametres.getStringOrNull(ParametreEnum.LOGO_CHEMIN.name),
         )
 
         val mobile = ParametresSectionMobile(
             affichageIndispo = mapParametres.getBooleanOrNull(ParametreEnum.AFFICHAGE_INDISPO.name),
             affichageSymbolesNormalises = mapParametres.getBooleanOrNull(ParametreEnum.AFFICHAGE_SYMBOLES_NORMALISES.name),
-            caracteristiquesPena = mapParametres.getListOfString(ParametreEnum.CARACTERISTIQUE_PENA.name, objectMapper),
-            caracteristiquesPibi = mapParametres.getListOfString(ParametreEnum.CARACTERISTIQUE_PIBI.name, objectMapper),
+            caracteristiquesPena = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUE_PENA.name, objectMapper),
+            caracteristiquesPibi = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUE_PIBI.name, objectMapper),
             dureeValiditeToken = mapParametres.getInt(ParametreEnum.DUREE_VALIDITE_TOKEN.name),
             gestionAgent = mapParametres.getStringOrNull(ParametreEnum.GESTION_AGENT.name),
             mdpAdministrateur = mapParametres.getStringOrNull(ParametreEnum.MDP_ADMINISTRATEUR.name),
             modeDeconnecte = mapParametres.getBooleanOrNull(ParametreEnum.MODE_DECONNECTE.name),
+            creationPeiMobile = mapParametres.getBooleanOrNull(ParametreEnum.CREATION_PEI_MOBILE.name),
         )
 
         val cartographie = ParametresSectionCartographie(
@@ -62,14 +68,29 @@ class ParametresUseCase : AbstractUseCase() {
         val permis = ParametresSectionPermis(
             permisToleranceChargementMetres = mapParametres.getIntOrNull(ParametreEnum.PERMIS_TOLERANCE_CHARGEMENT_METRES.name),
         )
-
         val pei = ParametresSectionPei(
             bufferCarte = mapParametres.getIntOrNull(ParametreEnum.BUFFER_CARTE.name),
             peiColonnes = mapParametres.getListOfString(ParametreEnum.PEI_COLONNES.name, objectMapper),
+            peiDelaiCtrlUrgent = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_CTRL_URGENT.name),
+            peiDelaiCtrlWarn = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_CTRL_WARN.name),
+            peiDelaiRecoUrgent = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_RECO_URGENT.name),
+            peiDelaiRecoWarn = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_RECO_WARN.name),
+            peiDeplacementDistWarn = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DEPLACEMENT_DIST_WARN.name),
+            peiGenerationCarteTournee = mapParametres.getBooleanOrNull(ParametreEnum.PEI_GENERATION_CARTE_TOURNEE.name),
+            peiMethodeTriAlphanumerique = mapParametres.getBooleanOrNull(ParametreEnum.PEI_METHODE_TRI_ALPHANUMERIQUE.name),
+            peiRenouvellementCtrlPrive = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_CTRL_PRIVE.name),
+            vitesseEau = mapParametres.getIntOrNull(ParametreEnum.VITESSE_EAU.name),
+            peiRenouvellementCtrlPublic = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_CTRL_PUBLIC.name),
+            peiRenouvellementRecoPrive = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_RECO_PRIVE.name),
+            peiRenouvellementRecoPublic = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_RECO_PUBLIC.name),
+            peiToleranceCommuneMetres = mapParametres.getIntOrNull(ParametreEnum.PEI_TOLERANCE_COMMUNE_METRES.name),
+            peiHighlightDuree = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_DUREE.name),
+            peiRenumerotationInterneAuto = mapParametres.getBooleanOrNull(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO.name),
+            voieSaisieLibre = mapParametres.getBooleanOrNull(ParametreEnum.VOIE_SAISIE_LIBRE.name),
 
         )
 
-        return ParametresData(
+        return ParametresAdminData(
             general = general,
             mobile = mobile,
             cartographie = cartographie,
@@ -79,45 +100,6 @@ class ParametresUseCase : AbstractUseCase() {
 
         )
     }
-
-    fun updateParametres(parametresData: ParametresData) {
-        // Général
-        updateParametre(ParametreEnum.MENTION_CNIL, parametresData.general.mentionCnil)
-        updateParametre(ParametreEnum.MESSAGE_ENTETE, parametresData.general.messageEntete)
-        updateParametre(ParametreEnum.TITRE_PAGE, parametresData.general.titrePage)
-        updateParametre(ParametreEnum.TOLERANCE_VOIES_METRES, parametresData.general.toleranceVoiesMetres?.toString())
-
-        // Mobile
-        updateParametre(ParametreEnum.AFFICHAGE_INDISPO, parametresData.mobile.affichageIndispo?.toString())
-        updateParametre(ParametreEnum.AFFICHAGE_SYMBOLES_NORMALISES, parametresData.mobile.affichageSymbolesNormalises?.toString())
-        updateParametre(ParametreEnum.CARACTERISTIQUE_PENA, objectMapper.writeValueAsString(parametresData.mobile.caracteristiquesPena))
-        updateParametre(ParametreEnum.CARACTERISTIQUE_PIBI, objectMapper.writeValueAsString(parametresData.mobile.caracteristiquesPibi))
-        updateParametre(ParametreEnum.DUREE_VALIDITE_TOKEN, parametresData.mobile.dureeValiditeToken.toString())
-        updateParametre(ParametreEnum.GESTION_AGENT, parametresData.mobile.gestionAgent)
-        updateParametre(ParametreEnum.MDP_ADMINISTRATEUR, parametresData.mobile.mdpAdministrateur)
-        updateParametre(ParametreEnum.MODE_DECONNECTE, parametresData.mobile.modeDeconnecte?.toString())
-
-        // Cartographie
-        updateParametre(ParametreEnum.COORDONNEES_FORMAT_AFFICHAGE, parametresData.cartographie.coordonneesFormatAffichage)
-
-        // Couverture hydraulique
-        updateParametre(ParametreEnum.DECI_DISTANCE_MAX_PARCOURS, parametresData.couvertureHydraulique.deciDistanceMaxParcours?.toString())
-        updateParametre(ParametreEnum.DECI_ISODISTANCES, objectMapper.writeValueAsString(parametresData.couvertureHydraulique.deciIsodistances))
-        updateParametre(ParametreEnum.PROFONDEUR_COUVERTURE, parametresData.couvertureHydraulique.profondeurCouverture?.toString())
-
-        // Permis
-        updateParametre(ParametreEnum.PERMIS_TOLERANCE_CHARGEMENT_METRES, parametresData.permis.permisToleranceChargementMetres?.toString())
-
-        // PEI
-        updateParametre(ParametreEnum.BUFFER_CARTE, parametresData.pei.bufferCarte?.toString())
-        updateParametre(ParametreEnum.PEI_COLONNES, objectMapper.writeValueAsString(parametresData.pei.peiColonnes))
-
-        eventBus.post(ParametresModifiedEvent())
-    }
-
-    private fun updateParametre(parametreEnum: ParametreEnum, value: String?): Boolean {
-        return parametreRepository.updateParametre(parametreEnum.name, value)
-    }
 }
 
 private fun <String, Parametre> Map<String, Parametre>.getParam(key: String): Parametre {
@@ -125,53 +107,3 @@ private fun <String, Parametre> Map<String, Parametre>.getParam(key: String): Pa
 
     return value
 }
-
-data class ParametresData(
-    val general: ParametresSectionGeneral,
-
-    val mobile: ParametresSectionMobile,
-    val cartographie: ParametresSectionCartographie,
-    val couvertureHydraulique: ParametresSectionCouvertureHydraulique,
-    val permis: ParametresSectionPermis,
-    val pei: ParametresSectionPei,
-
-)
-
-data class ParametresSectionGeneral(
-    val mentionCnil: String?,
-    val messageEntete: String?,
-    val titrePage: String?,
-    val toleranceVoiesMetres: Int?,
-
-)
-
-data class ParametresSectionMobile(
-    val affichageIndispo: Boolean?,
-    val affichageSymbolesNormalises: Boolean?,
-    val caracteristiquesPena: List<String>?,
-    val caracteristiquesPibi: List<String>?,
-    val dureeValiditeToken: Int,
-    val gestionAgent: String?,
-    val mdpAdministrateur: String?,
-    val modeDeconnecte: Boolean?,
-
-)
-
-data class ParametresSectionCartographie(
-    val coordonneesFormatAffichage: String?,
-)
-
-data class ParametresSectionCouvertureHydraulique(
-    val deciDistanceMaxParcours: Int?,
-    val deciIsodistances: List<Int>?,
-    val profondeurCouverture: Int?,
-)
-
-data class ParametresSectionPermis(
-    val permisToleranceChargementMetres: Int?,
-)
-
-data class ParametresSectionPei(
-    val bufferCarte: Int?,
-    val peiColonnes: List<String>?,
-)

@@ -1,28 +1,27 @@
 package remocra.data.enums
 
-import java.util.Arrays
-
 /**
  * Cette énumération définit les différentes caractéristiques d'un PEI. Bien faire attention à
  * utiliser des codes UNIQUE
  */
-enum class PeiCaracteristique(val code: String, val libelle: String) {
+enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCaracterique) {
     // Général
-    TYPE_PEI("typePei", "Type du PEI"),
-    NATURE_PEI("naturePei", "Nature du PEI"),
-    AUTORITE_POLICE("autoritePolice", "Autorité de police DECI"),
-    TYPE_DECI("typeDeci", "Type de DECI"),
-    SERVICE_PUBLIC("servicePublic", "Service public DECI"),
-    MAINTENANCE_CTP("maintenanceCtp", "Maintenance et CTP"), // Localisation
+    TYPE_PEI("Type du PEI", TypeCaracterique.GENERAL),
+    NATURE_PEI("Nature du PEI", TypeCaracterique.GENERAL),
+    AUTORITE_POLICE("Autorité de police DECI", TypeCaracterique.GENERAL),
+    TYPE_DECI("Type de DECI", TypeCaracterique.GENERAL),
+    SERVICE_PUBLIC("Service public DECI", TypeCaracterique.GENERAL),
+    MAINTENANCE_CTP("Maintenance et CTP", TypeCaracterique.GENERAL), // Localisation
+    COMPLEMENT("Complément d'adresse", TypeCaracterique.GENERAL),
+    DATE_RECEPTION("Date de réception", TypeCaracterique.GENERAL),
 
-    // Caractéristiques techniques
-    DIAMETRE_NOMINAL("diametreNominal", "Diamètre nominal"),
-    DEBIT("debit", "Débit"),
-    CAPACITE("capacite", "Capacité"),
+    // PIBI
+    DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracterique.PIBI),
+    DEBIT("Débit", TypeCaracterique.PIBI),
 
-    COMPLEMENT("complement", "Complément d'adresse"),
+    // PENA
+    CAPACITE("Capacité", TypeCaracterique.PENA),
 
-    DATE_RECEPTION("dateReception", "Date de réception"),
     ;
 
     companion object {
@@ -34,15 +33,14 @@ enum class PeiCaracteristique(val code: String, val libelle: String) {
          * @throws IllegalArgumentException Si la valeur n'a pas été trouvée.
          */
         fun fromString(stringValue: String): PeiCaracteristique {
-            val opt =
-                Arrays.stream(entries.toTypedArray())
-                    .filter { it: PeiCaracteristique -> it.code == stringValue }
-                    .findFirst()
-            if (opt.isPresent) return opt.get()
-
-            throw IllegalArgumentException(
-                "PeiCaracteristique : valeur '$stringValue' non trouvée",
-            )
+            return entries.find { it.libelle == stringValue }
+                ?: throw IllegalArgumentException("PeiCaracteristique : valeur '$stringValue' non trouvée")
         }
     }
+}
+
+enum class TypeCaracterique {
+    GENERAL,
+    PENA,
+    PIBI,
 }

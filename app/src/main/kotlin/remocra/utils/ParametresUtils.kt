@@ -1,7 +1,9 @@
 package remocra.utils
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import remocra.data.enums.PeiCaracteristique
 import remocra.db.jooq.remocra.enums.TypeParametre
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import java.util.Base64
@@ -159,6 +161,11 @@ fun Map<String, Parametre>.getString(key: String): String {
 fun Map<String, Parametre>.getListOfString(key: String, objectMapper: ObjectMapper): List<String>? {
     val paramString = getStringOrNull(key) ?: return null
     return objectMapper.readValue(paramString, List::class.java) as List<String>
+}
+
+fun Map<String, Parametre>.getListOfPeiCaracteristique(key: String, objectMapper: ObjectMapper): List<PeiCaracteristique>? {
+    val paramString = getStringOrNull(key) ?: return null
+    return objectMapper.readValue<List<PeiCaracteristique>>(paramString)
 }
 
 @Suppress("UNCHECKED_CAST")
