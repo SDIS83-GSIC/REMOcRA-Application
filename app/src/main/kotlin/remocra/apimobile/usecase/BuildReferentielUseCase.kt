@@ -11,6 +11,7 @@ import remocra.app.ParametresProvider
 import remocra.auth.UserInfo
 import remocra.data.GlobalData
 import remocra.data.enums.ParametreEnum
+import remocra.db.FonctionContactRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.RoleRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -35,6 +36,9 @@ class BuildReferentielUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var gestionnaireRepository: GestionnaireRepository
+
+    @Inject
+    lateinit var fonctionContactRepository: FonctionContactRepository
 
     @Inject
     lateinit var roleRepository: RoleRepository
@@ -93,6 +97,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listDroit = userInfo.droits.map { it.name },
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiques(),
+            listFonctionContact = fonctionContactRepository.getAll(),
         )
     }
 
@@ -112,7 +117,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
         val listTypeVisite: Collection<TypeVisite>,
         val listParametre: Collection<Parametre>,
         val listDroit: Collection<String>,
-        // TODO ajouter les fonctions des contacts et sûrement d'autres choses
+        val listFonctionContact: Collection<GlobalData.IdCodeLibelleData>,
 
         val utilisateurConnecte: String,
         val peiCaracteristiques: Map<UUID, String>,
