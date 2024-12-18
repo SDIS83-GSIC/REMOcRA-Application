@@ -6,9 +6,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { object } from "yup";
 import { PeiEntity } from "../../Entities/PeiEntity.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
@@ -27,19 +25,20 @@ import FormDocuments, {
 } from "../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../droits.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
-import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
-import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { URLS } from "../../routes.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
   peiId: data?.peiId ?? null,

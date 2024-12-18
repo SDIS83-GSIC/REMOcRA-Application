@@ -20,10 +20,9 @@ import DeleteModal from "../../components/Modal/DeleteModal.tsx";
 import useModal from "../../components/Modal/ModalUtils.tsx";
 import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";

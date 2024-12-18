@@ -19,9 +19,8 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";

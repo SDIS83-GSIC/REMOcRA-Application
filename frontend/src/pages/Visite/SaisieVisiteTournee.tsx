@@ -17,13 +17,12 @@ import { IconTournee } from "../../components/Icon/Icon.tsx";
 import { Forbidden, hasDroit, isAuthorized } from "../../droits.tsx";
 import { MapAnomalieCompleteByPeiId } from "../../Entities/AnomalieEntity.tsx";
 import { PeiVisiteTourneeInformationEntity } from "../../Entities/PeiEntity.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import {
   SimplifiedVisiteEntity,
   VisiteTourneeEntity,
 } from "../../Entities/VisiteEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import referenceTypeVisite, {
   TYPE_VISITE,

@@ -1,6 +1,4 @@
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../Entities/UtilisateurEntity.tsx";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFromList.tsx";
@@ -27,6 +25,7 @@ import { hasDroit } from "../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
 import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
+import TYPE_DROIT from "../enums/DroitEnum.tsx";
 import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";

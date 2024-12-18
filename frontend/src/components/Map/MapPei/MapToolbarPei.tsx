@@ -6,7 +6,7 @@ import CircleStyle from "ol/style/Circle";
 import { forwardRef, useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { TYPE_DROIT } from "../../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";

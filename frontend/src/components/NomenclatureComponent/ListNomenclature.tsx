@@ -2,9 +2,8 @@ import { ReactNode } from "react";
 import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";

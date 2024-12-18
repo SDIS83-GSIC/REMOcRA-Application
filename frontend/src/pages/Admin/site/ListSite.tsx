@@ -1,12 +1,16 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
 import { useFormikContext } from "formik";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
+import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
 import {
@@ -20,18 +24,13 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import FilterValues from "./FilterSite.tsx";
 
 export const getInitialValues = () => ({

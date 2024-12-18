@@ -7,12 +7,11 @@ import ModuleRemocra, {
 } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { hasDroit } from "../../droits.tsx";
 import SquelettePage from "../SquelettePage.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 
 const Accueil = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();

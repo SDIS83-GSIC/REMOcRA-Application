@@ -4,7 +4,7 @@ import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouver
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import NoMatch from "./components/Router/NoMatch.tsx";
 import { Authorization } from "./droits.tsx";
-import { TYPE_DROIT } from "./Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "./enums/DroitEnum.tsx";
 import url from "./module/fetch.tsx";
 import Accueil from "./pages/Accueil/Accueil.tsx";
 import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";

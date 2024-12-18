@@ -27,10 +27,9 @@ import {
   TYPE_BUTTON,
 } from "../../components/Table/TableActionColumn.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";

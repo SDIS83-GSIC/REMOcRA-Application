@@ -1,7 +1,6 @@
 import { useAppContext } from "./components/App/AppProvider.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "./Entities/UtilisateurEntity.tsx";
+import UtilisateurEntity from "./Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "./enums/DroitEnum.tsx";
 
 export const Authorization = (
   { Component, droits, isPublic = false }: AuthorizationEntity,

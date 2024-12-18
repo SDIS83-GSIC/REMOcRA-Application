@@ -1,31 +1,30 @@
-import { useFormikContext } from "formik";
-import { Button, Col, Row } from "react-bootstrap";
-import { ReactNode } from "react";
 import classNames from "classnames";
+import { useFormikContext } from "formik";
+import { ReactNode } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
+import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
-import PositiveNumberInput, {
-  CheckBoxInput,
-  FormContainer,
-  TextAreaInput,
-  TextInput,
-  DateTimeInput,
-} from "../../components/Form/Form.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import PositiveNumberInput, {
+  CheckBoxInput,
+  DateTimeInput,
+  FormContainer,
+  TextAreaInput,
+  TextInput,
+} from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import referenceTypeVisite, {
   TYPE_VISITE,
 } from "../../enums/TypeVisiteEnum.tsx";
-import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
-import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
-import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
-import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity, {
-  TYPE_DROIT,
-} from "../../Entities/UtilisateurEntity.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
 
 export const getInitialValues = (
