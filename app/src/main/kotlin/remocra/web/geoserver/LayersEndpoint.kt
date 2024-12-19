@@ -13,6 +13,8 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.db.CoucheRepository
+import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.security.NoCsrf
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -30,10 +32,12 @@ class LayersEndpoint : AbstractEndpoint() {
     lateinit var coucheRepository: CoucheRepository
 
     @Public("Les couches peuvent être accessibles publiquement")
+    @Path("/{module}")
     @GET
-    fun getLayers(): Response =
-        Response.ok(layersRetriever.getData(securityContext.userInfo)).build()
+    fun getLayers(@PathParam("module") module: TypeModule): Response =
+        Response.ok(layersRetriever.getData(module, securityContext.userInfo)).build()
 
+    @NoCsrf("Les couches peuvent être accessibles publiquement")
     @Public("Les couches peuvent être accessibles publiquement")
     @GET
     @Path("/{idCouche}/icone")
@@ -41,6 +45,7 @@ class LayersEndpoint : AbstractEndpoint() {
     fun getIcone(@PathParam("idCouche") idCouche: UUID): Response =
         Response.ok().entity(coucheRepository.getIcone(idCouche)).build()
 
+    @NoCsrf("Les couches peuvent être accessibles publiquement")
     @Public("Les couches peuvent être accessibles publiquement")
     @GET
     @Path("/{idCouche}/legende")

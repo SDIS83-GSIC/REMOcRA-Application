@@ -1,6 +1,7 @@
 import "ol/ol.css";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useRef } from "react";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
@@ -28,7 +29,10 @@ const MapCouvertureHydraulique = ({
     layerListRef,
     mapToolbarRef,
     projection,
-  } = useMapComponent({ mapElement: mapElement });
+  } = useMapComponent({
+    mapElement: mapElement,
+    typeModule: TypeModuleRemocra.COUVERTURE_HYDRAULIQUE,
+  });
 
   /**
    * Permet d'afficher les PEI en projet

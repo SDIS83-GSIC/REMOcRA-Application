@@ -30,8 +30,10 @@ import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_ORDRE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_PKEY
 import remocra.db.jooq.remocra.keys.COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COUCHE_MODULE__L_COUCHE_MODULE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.tables.GroupeCouche.GroupeCouchePath
 import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
+import remocra.db.jooq.remocra.tables.LCoucheModule.LCoucheModulePath
 import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -228,6 +230,23 @@ open class Couche(
 
     val lCoucheDroit: LCoucheDroitPath
         get(): LCoucheDroitPath = lCoucheDroit()
+
+    private lateinit var _lCoucheModule: LCoucheModulePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_couche_module</code> table
+     */
+    fun lCoucheModule(): LCoucheModulePath {
+        if (!this::_lCoucheModule.isInitialized) {
+            _lCoucheModule = LCoucheModulePath(this, null, L_COUCHE_MODULE__L_COUCHE_MODULE_COUCHE_ID_FKEY.inverseKey)
+        }
+
+        return _lCoucheModule
+    }
+
+    val lCoucheModule: LCoucheModulePath
+        get(): LCoucheModulePath = lCoucheModule()
 
     /**
      * Get the implicit many-to-many join path to the

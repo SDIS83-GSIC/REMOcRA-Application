@@ -15,11 +15,13 @@ import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Circle, Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
 import url from "../../module/fetch.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
+import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
 import MapLegend from "./MapLegend.tsx";
 import MapToolbar from "./MapToolbar.tsx";
 import { createPointLayer } from "./MapUtils.tsx";
@@ -157,10 +159,12 @@ export const useMapComponent = ({
   mapElement,
   displayPei = true,
 }: {
-  displayPei: boolean;
+  mapElement: MutableRefObject<HTMLDivElement | undefined>;
+  typeModule: TypeModuleRemocra;
+  displayPei?: boolean;
 }) => {
   const { epsg: projection } = useAppContext();
-  const layersState = useGet(url`/api/layers`, {});
+  const layersState = useGet(url`/api/layers/${typeModule}`, {});
   const layerListRef = useRef<MapLegend>();
   const mapToolbarRef = useRef<MapToolbar>();
 
@@ -174,7 +178,6 @@ export const useMapComponent = ({
         new MousePosition({
           coordinateFormat: createStringXY(4),
           projection: projection.name,
-          className: "ol-mouse-position noprint",
         }),
         scaleControl,
       ]),
@@ -234,6 +237,23 @@ export const useMapComponent = ({
   function createWorkingLayer() {
     const wl = new VectorLayer({
       source: new VectorSource(),
+      style: () => {
+        return new Style({
+          fill: new Fill({
+            color: "rgba(255, 255, 255, 0.2)",
+          }),
+          stroke: new Stroke({
+            color: "blue",
+            width: 2,
+          }),
+          image: new CircleStyle({
+            radius: 7,
+            fill: new Fill({
+              color: "#ffcc33",
+            }),
+          }),
+        });
+      },
       visibility: true,
       opacity: 1,
       zIndex: 9000,

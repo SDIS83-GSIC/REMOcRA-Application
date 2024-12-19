@@ -6,6 +6,7 @@ import remocra.auth.AuthnConstants
 import remocra.auth.UserInfo
 import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
+import remocra.db.jooq.remocra.enums.TypeModule
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
@@ -16,12 +17,12 @@ class LayersRetriever {
     @Inject
     private lateinit var coucheRepository: CoucheRepository
 
-    fun getData(userInfo: UserInfo?): List<LayerGroupData> {
+    fun getData(module: TypeModule, userInfo: UserInfo?): List<LayerGroupData> {
         val profil = userInfo?.utilisateurId?.let {
             droitsRepository.getProfilDroitListFromUser(it)
         }
 
-        val coucheMap = coucheRepository.getCoucheMap(profil)
+        val coucheMap = coucheRepository.getCoucheMap(module, profil)
         val groupeCoucheList = coucheRepository.getGroupeCoucheList()
 
         return groupeCoucheList.map { group ->
