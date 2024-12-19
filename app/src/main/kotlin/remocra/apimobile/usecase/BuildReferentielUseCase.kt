@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.usecase.AbstractUseCase
+import remocra.utils.getLibelleTypeVisite
 import java.util.UUID
 
 class BuildReferentielUseCase : AbstractUseCase() {
@@ -92,7 +93,12 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listAnomalie = dataCacheProvider.getAnomalies().values,
             listAnomalieCategorie = dataCacheProvider.getAnomaliesCategories().values,
             listPoidsAnomalie = referentielRepository.getAnomaliePoidsList().filter { it.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.isNotEmpty() ?: false },
-            listTypeVisite = TypeVisite.entries,
+            listTypeVisite = TypeVisite.entries.map {
+                CodeLibelleTypeVisite(
+                    codeTypeVisite = it,
+                    libelleTypeVisite = getLibelleTypeVisite(it),
+                )
+            },
             listParametre = parametresMobile,
             listDroit = userInfo.droits.map { it.name },
             utilisateurConnecte = nomPrenom,
@@ -114,12 +120,17 @@ class BuildReferentielUseCase : AbstractUseCase() {
         val listAnomalie: Collection<Anomalie>,
         val listAnomalieCategorie: Collection<AnomalieCategorie>,
         val listPoidsAnomalie: Collection<PoidsAnomalie>,
-        val listTypeVisite: Collection<TypeVisite>,
+        val listTypeVisite: Collection<CodeLibelleTypeVisite>,
         val listParametre: Collection<Parametre>,
         val listDroit: Collection<String>,
         val listFonctionContact: Collection<GlobalData.IdCodeLibelleData>,
 
         val utilisateurConnecte: String,
         val peiCaracteristiques: Map<UUID, String>,
+    )
+
+    data class CodeLibelleTypeVisite(
+        val codeTypeVisite: TypeVisite,
+        val libelleTypeVisite: String,
     )
 }
