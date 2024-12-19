@@ -8,6 +8,7 @@ data class PeiForApiMobileData(
     val peiId: UUID,
     val natureId: UUID,
     val natureDeciId: UUID,
+    val domaineId: UUID,
     val dispoHbe: Disponibilite?,
     val dispoTerrestre: Disponibilite,
     val x: Double,

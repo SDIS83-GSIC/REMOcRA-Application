@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.VOIE
 
@@ -39,8 +40,8 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 PEI.ID,
                 PEI.NATURE_ID.`as`("natureId"),
                 PEI.NATURE_DECI_ID.`as`("natureDeciId"),
-                // TODO
-                DSL.noField().`as`("dispoHbe"),
+                PEI.DOMAINE_ID.`as`("domaineId"),
+                PENA.DISPONIBILITE_HBE.`as`("dispoHbe"),
                 PEI.DISPONIBILITE_TERRESTRE.`as`("dispoTerrestre"),
                 X,
                 Y,
@@ -63,6 +64,8 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 PEI.GESTIONNAIRE_ID,
             )
             .from(PEI)
+            .leftJoin(PENA)
+            .on(PENA.ID.eq(PEI.ID))
             .join(COMMUNE)
             .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))

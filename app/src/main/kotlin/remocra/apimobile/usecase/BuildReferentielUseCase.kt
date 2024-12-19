@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
+import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Parametre
@@ -104,6 +105,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiques(),
             listFonctionContact = fonctionContactRepository.getAll(),
+            listDomaine = dataCacheProvider.getDomaines().values.filter { it.domaineActif },
         )
     }
 
@@ -124,6 +126,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
         val listParametre: Collection<Parametre>,
         val listDroit: Collection<String>,
         val listFonctionContact: Collection<GlobalData.IdCodeLibelleData>,
+        val listDomaine: Collection<Domaine>,
 
         val utilisateurConnecte: String,
         val peiCaracteristiques: Map<UUID, String>,
