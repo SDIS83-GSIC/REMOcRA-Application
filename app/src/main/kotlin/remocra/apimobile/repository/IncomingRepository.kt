@@ -72,7 +72,7 @@ class IncomingRepository @Inject constructor(
             .set(NEW_PEI.TYPE_PEI, peiTypePei)
             .set(NEW_PEI.COMMUNE_ID, communeId)
             .set(NEW_PEI.VOIE_ID, peiVoieId)
-            .set(NEW_PEI.NATURE_ID, natureDeciId)
+            .set(NEW_PEI.NATURE_DECI_ID, natureDeciId)
             .set(NEW_PEI.NATURE_ID, natureId)
             .set(NEW_PEI.GESTIONNAIRE_ID, gestionnaireId)
             .set(NEW_PEI.OBSERVATION, peiObservation)

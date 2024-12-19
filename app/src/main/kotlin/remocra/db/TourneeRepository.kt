@@ -565,7 +565,7 @@ class TourneeRepository
         .select(L_TOURNEE_PEI.TOURNEE_ID, L_TOURNEE_PEI.PEI_ID)
         .from(L_TOURNEE_PEI)
         .where(L_TOURNEE_PEI.TOURNEE_ID.`in`(listTourneeId))
-        .fetchGroups(L_TOURNEE_PEI.TOURNEE_ID, L_TOURNEE_PEI.PEI_ID)
+        .fetchGroups(L_TOURNEE_PEI.TOURNEE_ID, LTourneePei::class.java)
 
     fun annuleReservation(idTournee: UUID, idUtilisateur: UUID): Boolean {
         return dsl
