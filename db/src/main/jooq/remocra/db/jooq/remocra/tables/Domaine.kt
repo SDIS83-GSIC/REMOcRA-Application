@@ -24,6 +24,8 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY
+import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.DOMAINE_DOMAINE_CODE_KEY
 import remocra.db.jooq.remocra.keys.DOMAINE_PKEY
@@ -132,6 +134,23 @@ open class Domaine(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = DOMAINE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(DOMAINE_DOMAINE_CODE_KEY)
+
+    private lateinit var _newPei: NewPeiPath
+
+    /**
+     * Get the implicit to-many join path to the <code>incoming.new_pei</code>
+     * table
+     */
+    fun newPei(): NewPeiPath {
+        if (!this::_newPei.isInitialized) {
+            _newPei = NewPeiPath(this, null, NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY.inverseKey)
+        }
+
+        return _newPei
+    }
+
+    val newPei: NewPeiPath
+        get(): NewPeiPath = newPei()
 
     private lateinit var _pei: PeiPath
 

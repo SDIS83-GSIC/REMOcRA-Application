@@ -30,6 +30,7 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.incoming.Incoming
 import remocra.db.jooq.incoming.keys.NEW_PEI_PKEY
 import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY
+import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY
 import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_GESTIONNAIRE_ID_FKEY
 import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY
@@ -37,6 +38,7 @@ import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_NATURE_ID_FKEY
 import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.Domaine.DomainePath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Nature.NaturePath
@@ -141,6 +143,11 @@ open class NewPei(
      */
     val GESTIONNAIRE_ID: TableField<Record, UUID?> = createField(DSL.name("new_pei_gestionnaire_id"), SQLDataType.UUID, this, "")
 
+    /**
+     * The column <code>incoming.new_pei.new_pei_domaine_id</code>.
+     */
+    val DOMAINE_ID: TableField<Record, UUID?> = createField(DSL.name("new_pei_domaine_id"), SQLDataType.UUID.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -174,7 +181,7 @@ open class NewPei(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Incoming.INCOMING
     override fun getPrimaryKey(): UniqueKey<Record> = NEW_PEI_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_GESTIONNAIRE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_NATURE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_GESTIONNAIRE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_NATURE_ID_FKEY, NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY)
 
     private lateinit var _commune: CommunePath
 
@@ -191,6 +198,22 @@ open class NewPei(
 
     val commune: CommunePath
         get(): CommunePath = commune()
+
+    private lateinit var _domaine: DomainePath
+
+    /**
+     * Get the implicit join path to the <code>remocra.domaine</code> table.
+     */
+    fun domaine(): DomainePath {
+        if (!this::_domaine.isInitialized) {
+            _domaine = DomainePath(this, NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY, null)
+        }
+
+        return _domaine
+    }
+
+    val domaine: DomainePath
+        get(): DomainePath = domaine()
 
     private lateinit var _gestionnaire: GestionnairePath
 

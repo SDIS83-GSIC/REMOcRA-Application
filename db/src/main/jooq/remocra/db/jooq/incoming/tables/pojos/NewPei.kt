@@ -31,6 +31,7 @@ data class NewPei(
     val newPeiNatureId: UUID,
     val newPeiNatureDeciId: UUID,
     val newPeiGestionnaireId: UUID?,
+    val newPeiDomaineId: UUID,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -90,6 +91,9 @@ data class NewPei(
         } else if (this.newPeiGestionnaireId != o.newPeiGestionnaireId) {
             return false
         }
+        if (this.newPeiDomaineId != o.newPeiDomaineId) {
+            return false
+        }
         return true
     }
 
@@ -106,6 +110,7 @@ data class NewPei(
         result = prime * result + this.newPeiNatureId.hashCode()
         result = prime * result + this.newPeiNatureDeciId.hashCode()
         result = prime * result + (if (this.newPeiGestionnaireId == null) 0 else this.newPeiGestionnaireId.hashCode())
+        result = prime * result + this.newPeiDomaineId.hashCode()
         return result
     }
 
@@ -122,6 +127,7 @@ data class NewPei(
         sb.append(", ").append(newPeiNatureId)
         sb.append(", ").append(newPeiNatureDeciId)
         sb.append(", ").append(newPeiGestionnaireId)
+        sb.append(", ").append(newPeiDomaineId)
 
         sb.append(")")
         return sb.toString()

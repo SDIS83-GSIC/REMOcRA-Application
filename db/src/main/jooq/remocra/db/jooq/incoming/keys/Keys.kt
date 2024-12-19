@@ -19,6 +19,7 @@ import remocra.db.jooq.incoming.tables.Visite
 import remocra.db.jooq.incoming.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.keys.ANOMALIE_PKEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
+import remocra.db.jooq.remocra.keys.DOMAINE_PKEY
 import remocra.db.jooq.remocra.keys.FONCTION_CONTACT_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY
 import remocra.db.jooq.remocra.keys.NATURE_DECI_PKEY
@@ -28,6 +29,7 @@ import remocra.db.jooq.remocra.keys.ROLE_PKEY
 import remocra.db.jooq.remocra.keys.VOIE_PKEY
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.Commune
+import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.Nature
@@ -63,6 +65,7 @@ val L_CONTACT_ROLE__L_CONTACT_ROLE_ROLE_ID_FKEY: ForeignKey<Record, Record> = In
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_anomalie_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), ANOMALIE_PKEY, arrayOf(Anomalie.ANOMALIE.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_VISITE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_visite_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID), remocra.db.jooq.incoming.keys.VISITE_PKEY, arrayOf(Visite.VISITE.ID), true)
 val NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_commune_id_fkey"), arrayOf(NewPei.NEW_PEI.COMMUNE_ID), COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
+val NEW_PEI__NEW_PEI_NEW_PEI_DOMAINE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_domaine_id_fkey"), arrayOf(NewPei.NEW_PEI.DOMAINE_ID), DOMAINE_PKEY, arrayOf(Domaine.DOMAINE.ID), true)
 val NEW_PEI__NEW_PEI_NEW_PEI_GESTIONNAIRE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_gestionnaire_id_fkey"), arrayOf(NewPei.NEW_PEI.GESTIONNAIRE_ID), remocra.db.jooq.remocra.keys.GESTIONNAIRE_PKEY, arrayOf(remocra.db.jooq.remocra.tables.Gestionnaire.GESTIONNAIRE.ID), true)
 val NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_lieu_dit_id_fkey"), arrayOf(NewPei.NEW_PEI.LIEU_DIT_ID), LIEU_DIT_PKEY, arrayOf(LieuDit.LIEU_DIT.ID), true)
 val NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_nature_deci_id_fkey"), arrayOf(NewPei.NEW_PEI.NATURE_DECI_ID), NATURE_DECI_PKEY, arrayOf(NatureDeci.NATURE_DECI.ID), true)
