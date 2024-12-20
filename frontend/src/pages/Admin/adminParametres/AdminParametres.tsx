@@ -1,0 +1,836 @@
+import React, { ReactNode, useMemo } from "react";
+import { useFormikContext } from "formik";
+import { object } from "yup";
+import { Badge, Col, Container, Row } from "react-bootstrap";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import url from "../../../module/fetch.tsx";
+import PositiveNumberInput, {
+  CheckBoxInput,
+  FormContainer,
+  SelectInput,
+  TextInput,
+} from "../../../components/Form/Form.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { URLS } from "../../../routes.tsx";
+import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
+import TransferList, {
+  useTransferList,
+} from "../../../components/Form/TransferList.tsx";
+import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
+import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
+import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
+
+type ParametresSectionGeneral = {
+  mentionCnil: string;
+  messageEntete: string;
+  titrePage: string;
+  toleranceVoiesMetres: number;
+};
+
+type ParametresSectionMobile = {
+  affichageIndispo: boolean;
+  modeDeconnecte: boolean;
+  creationPeiMobile: boolean;
+  affichageSymbolesNormalises: boolean;
+  caracteristiquesPena: string[];
+  caracteristiquesPibi: string[];
+  dureeValiditeToken: number;
+  gestionAgent: string;
+};
+
+type ParametresSectionCartographie = {
+  coordonneesFormatAffichage: string;
+};
+
+type ParametresSectionCouvertureHydraulique = {
+  deciDistanceMaxParcours: number;
+  deciIsodistances: string;
+  profondeurCouverture: number;
+};
+
+type ParametresSectionPermis = {
+  permisToleranceChargementMetres: number;
+};
+
+type ParametresSectionPei = {
+  peiColonnes: string[] | undefined;
+  bufferCarte: number;
+};
+
+type AdminParametresValue = {
+  general: ParametresSectionGeneral;
+  mobile: ParametresSectionMobile;
+  cartographie: ParametresSectionCartographie;
+  couvertureHydraulique: ParametresSectionCouvertureHydraulique;
+  permis: ParametresSectionPermis;
+  pei: ParametresSectionPei;
+};
+
+export const getInitialValues = (
+  data: AdminParametresValue,
+): {
+  general: ParametresSectionGeneral;
+  mobile: ParametresSectionMobile;
+  cartographie: ParametresSectionCartographie;
+  couvertureHydraulique: ParametresSectionCouvertureHydraulique;
+  permis: ParametresSectionPermis;
+  pei: ParametresSectionPei;
+} => ({
+  general: data?.general,
+  mobile: {
+    ...data?.mobile,
+    caracteristiquesPibi: data?.mobile.caracteristiquesPibi.map((e) => ({
+      id: e,
+    })),
+    caracteristiquesPena: data?.mobile.caracteristiquesPena.map((e) => ({
+      id: e,
+    })),
+  },
+  cartographie: data?.cartographie,
+  couvertureHydraulique: data?.couvertureHydraulique,
+  permis: data?.permis,
+  pei: {
+    ...data?.pei,
+    peiColonnes: data?.pei.peiColonnes?.map((e) => ({ id: e, libelle: e })),
+  },
+});
+
+export const validationSchema = object({});
+
+export const prepareVariables = (values: AdminParametresValue) => {
+  return {
+    general: values.general,
+    mobile: {
+      ...values.mobile,
+      caracteristiquesPena:
+        values.mobile.caracteristiquesPena?.map((e) => e.id) ?? [],
+      caracteristiquesPibi:
+        values.mobile.caracteristiquesPibi?.map((e) => e.id) ?? [],
+    },
+    cartographie: values.cartographie,
+    couvertureHydraulique: {
+      ...values.couvertureHydraulique,
+      deciIsodistances:
+        values.couvertureHydraulique.deciIsodistances.toString(),
+    },
+    permis: values.permis,
+    pei: {
+      ...values.pei,
+      peiColonnes: values.pei.peiColonnes?.map((e) => e.id) ?? [],
+    },
+  };
+};
+
+const AdminParametres = () => {
+  const adminParametresState = useGet(url`/api/admin/parametres`);
+  const { data } = adminParametresState;
+
+  return (
+    <MyFormik
+      initialValues={getInitialValues(data)}
+      validationSchema={validationSchema}
+      isPost={false}
+      submitUrl={`/api/admin/parametres`}
+      prepareVariables={(values) => prepareVariables(values)}
+    >
+      <AdminParametresInterne />
+    </MyFormik>
+  );
+};
+
+export const AdminParametresInterne = () => {
+  const { values, setValues, setFieldValue }: { values: AdminParametresValue } =
+    useFormikContext();
+  const { activesKeys, handleShowClose } = useAccordionState(
+    Array(6).fill(false),
+  );
+
+  return (
+    values && (
+      <FormContainer>
+        <Container>
+          <h1>Paramètres de l&apos;application</h1>
+
+          <AccordionCustom
+            activesKeys={activesKeys}
+            list={[
+              {
+                header: "Général",
+                content: (
+                  <AdminGeneral
+                    values={values.general}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "Application mobile",
+                content: (
+                  <AdminApplicationMobile
+                    values={values.mobile}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "Cartographie",
+                content: (
+                  <AdminCartographie
+                    values={values.cartographie}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "Couverture hydraulique",
+                content: (
+                  <AdminCouvertureHydraulique
+                    values={values.couvertureHydraulique}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "Permis",
+                content: (
+                  <AdminPermis
+                    values={values.permis}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "PEI",
+                content: (
+                  <AdminPei
+                    values={values.pei}
+                    setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+            ]}
+            handleShowClose={handleShowClose}
+          />
+
+          <br />
+          <SubmitFormButtons returnLink={URLS.MODULE_ADMIN} />
+        </Container>
+      </FormContainer>
+    )
+  );
+};
+
+export const AdminParametre = ({
+  type = TYPE_PARAMETRE.STRING,
+  children,
+}: AdminParametreTypes) => {
+  let bg = "primary";
+  let text = "light";
+  switch (type) {
+    case TYPE_PARAMETRE.INTEGER:
+      bg = "success";
+      text = "dark";
+      break;
+    case TYPE_PARAMETRE.BOOLEAN:
+      bg = "info";
+      text = "light";
+      break;
+    case TYPE_PARAMETRE.BINARY:
+      bg = "dark";
+      text = "light";
+      break;
+    case TYPE_PARAMETRE.DOUBLE:
+      bg = "warning";
+      text = "dark";
+      break;
+    case TYPE_PARAMETRE.GEOMETRY:
+      bg = "danger";
+      text = "light";
+      break;
+    case TYPE_PARAMETRE.MULTI_STRING:
+    case TYPE_PARAMETRE.MULTI_INT:
+      bg = "secondary";
+      text = "dark";
+      break;
+    case TYPE_PARAMETRE.SELECT:
+      bg = "light";
+      text = "dark";
+      break;
+  }
+  return (
+    <>
+      <Row>
+        <Col xs={12} lg={8} className={"mx-auto"}>
+          <Badge bg={bg} text={text} pill className={"mt-3"}>
+            {type}
+          </Badge>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12} lg={8} className={"mx-auto"}>
+          {children}
+        </Col>
+      </Row>
+    </>
+  );
+};
+
+type AdminParametreTypes = {
+  type: ReactNode;
+  children: ReactNode;
+};
+
+export default AdminParametres;
+
+const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="general.mentionCnil"
+            label="Mention CNIL"
+            tooltipText={
+              "Mention CNIL affichée en bas de page (peut être vide)"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="general.messageEntete"
+            label="Message d'entête"
+            defaultValue={values?.messageEntete}
+            tooltipText={"Message affiché dans le cartouche d'entête"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="general.titrePage"
+            label="Titre de la page"
+            defaultValue={values?.titrePage}
+            tooltipText={"Titre affiché dans l'entête du navigateur"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="general.toleranceVoiesMetres"
+            label="Tolérance (en m) de chargement des voies"
+            defaultValue={values?.titrePage}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="general.banniereChemin"
+            label="Chemin de la bannière"
+            defaultValue={values?.banniereChemin}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="general.logoChemin"
+            label="Chemin du logo"
+            defaultValue={values?.logoChemin}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminApplicationMobile = ({
+  values,
+}: {
+  values: ParametresSectionMobile;
+}) => {
+  const { setFieldValue } = useFormikContext();
+  // Charger toutes les caractéristiques
+
+  const {
+    availableOptions: availablePibiOptions,
+    setAvailableOptions: setAvailablePibiOptions,
+    selectedOptions: selectedPibiOptions,
+    setSelectedOptions: setSelectedPibiOptions,
+  } = useTransferList({
+    listeDisponible: null,
+    listeSelectionne: null,
+    nameFormik: "mobile.caracteristiquesPibi",
+  });
+
+  const {
+    availableOptions: availablePenaOptions,
+    setAvailableOptions: setAvailablePenaOptions,
+    selectedOptions: selectedPenaOptions,
+    setSelectedOptions: setSelectedPenaOptions,
+  } = useTransferList({
+    listeDisponible: null,
+    listeSelectionne: null,
+    nameFormik: "mobile.caracteristiquesPena",
+  });
+
+  const allCaracteristiqueState = useGet(
+    url`/api/admin/pei-caracteristique`,
+  )?.data;
+  useMemo(() => {
+    if (
+      !allCaracteristiqueState ||
+      !values?.caracteristiquesPibi ||
+      !values?.caracteristiquesPena
+    ) {
+      return;
+    }
+    //PIBI
+    if (availablePibiOptions == null) {
+      setAvailablePibiOptions(
+        allCaracteristiqueState.filter(
+          (item: any) => item.type === "PIBI" || item.type === "GENERAL",
+        ),
+      );
+    }
+    if (selectedPibiOptions == null) {
+      setSelectedPibiOptions(
+        allCaracteristiqueState.filter((item: any) => {
+          return values?.caracteristiquesPibi
+            ?.map((e) => e.id)
+            .includes(item.id);
+        }),
+      );
+    }
+    //PENA
+    if (availablePenaOptions == null) {
+      setAvailablePenaOptions(
+        allCaracteristiqueState.filter(
+          (item: any) => item.type === "PENA" || item.type === "GENERAL",
+        ),
+      );
+    }
+    if (selectedPenaOptions == null) {
+      setSelectedPenaOptions(
+        allCaracteristiqueState.filter((item: any) => {
+          return values?.caracteristiquesPena
+            ?.map((e) => e.id)
+            .includes(item.id);
+        }),
+      );
+    }
+  }, [
+    values,
+    availablePenaOptions,
+    availablePibiOptions,
+    selectedPenaOptions,
+    selectedPibiOptions,
+    setAvailablePenaOptions,
+    setAvailablePibiOptions,
+    setSelectedPenaOptions,
+    setSelectedPibiOptions,
+    allCaracteristiqueState,
+  ]);
+
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.affichageIndispo"
+            label="Afficher l'état de disponibilité du PEI"
+            defaultCheck={values?.affichageIndispo}
+            tooltipText={
+              "Ajout d'une croix rouge sur le symbole du PEI pour signifier l'indisponibilité"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.affichageSymbolesNormalises"
+            label="Utiliser la symbologie du RNDECI ?"
+            defaultCheck={values?.affichageSymbolesNormalises}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availablePenaOptions}
+            selectedOptions={selectedPenaOptions}
+            setAvailableOptions={setAvailablePenaOptions}
+            setSelectedOptions={setSelectedPenaOptions}
+            label={"Caractéristiques à afficher pour les PENA"}
+            tooltipText={
+              "Dans l'infobulle d'un PEI sur l'application mobile, " +
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
+              "et dans quel ordre ils se présentent"
+            }
+            require={true}
+            name={"mobile.caracteristiquePena"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availablePibiOptions}
+            selectedOptions={selectedPibiOptions}
+            setAvailableOptions={setAvailablePibiOptions}
+            setSelectedOptions={setSelectedPibiOptions}
+            label={"Caractéristiques à afficher pour les PIBI"}
+            tooltipText={
+              "Dans l'infobulle d'un PEI sur l'application mobile, " +
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
+              "et dans quel ordre ils se présentent"
+            }
+            require={true}
+            name={"mobile.caracteristiquePibi"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="mobile.dureeValiditeToken"
+            label="Durée de validité du token"
+            tooltipText={
+              "Durée (en heures) de validité du jeton de connexion à " +
+              "l'application mobile."
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SeeMoreButton id={"infoAgent"}>
+            <>
+              <p className="m-2">
+                C&apos;est un champ texte mixé avec une liste déroulante, comme
+                par exemple les listes déroulantes de l&apos;accès rapide du
+                module point d&apos;eau (application web remocra). Par défaut il
+                est vide. L&apos;utilisateur saisit ce qu&apos;il veut ( Michel
+                Dupont par exemple, ou toto@sdisXX.fr ), on va stocker cette
+                valeur dans les propriétés de l&apos;application (commun à tous
+                les utilisateurs de cette tablette) A la prochaine saisie,
+                l&apos;utilisateur peut soit rajouter un autre agent, soit
+                retrouver les valeurs précédemment saisies. La liste des agents
+                disponibles pour le composant n&apos;est pas envoyée au serveur,
+                c&apos;est un facilitateur de saisie ; la tablette enverra le
+                résultat de la saisie pour chaque PEI.
+                <br />
+                Pour l&apos;instant les scénarios suivants ont été identifiés
+              </p>
+              <div className="h5">Cas 1 - Utilisateur connecté obligatoire</div>
+              <p className="m-2">
+                L&apos;agent 1 est toujours l&apos;utilisateur connecté, on
+                préremplit donc le champ avec ses informations. On rend le champ
+                inaccessible pour éviter une modification manuelle
+              </p>
+              <p className="m-2">L&apos;agent 2 utilise le composant Agent</p>
+
+              <div className="h5">Cas 2 - Utilisateur connecté</div>
+              <p className="m-2">
+                L&apos;agent 1 est toujours l&apos;utilisateur connecté, on
+                préremplit donc le champ avec ses informations. On laisse
+                possible la saisie manuelle
+              </p>
+              <p className="m-2">L&apos;agent 2 utilise le composant Agent</p>
+
+              <div className="h5">Cas 3 - Liste des agents</div>
+              <p className="m-2">
+                Les 2 champs de formulaire sont vides par défaut, et on propose
+                l&apos;utilisation du composant Agent pour les 2
+              </p>
+
+              <div className="h5">Cas 4 - Valeur précédente</div>
+              <p className="m-2">
+                Idem cas 2, mais les valeurs par défaut correspondent à la
+                valeur précédemment sélectionnée
+              </p>
+            </>
+          </SeeMoreButton>
+          <SelectInput
+            name="mobile.gestionAgent"
+            label="Type d'agent sélectionné"
+            options={typeAgent}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            onChange={(e) =>
+              setFieldValue(
+                `mobile.gestionAgent`,
+                typeAgent.find((type) => type.id === e.id)?.id,
+              )
+            }
+            defaultValue={typeAgent.find((e) => e.id === values.gestionAgent)}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="mobile.mdpAdministrateur"
+            label="Mot de passe administrateur"
+            tooltipText={"Mot de passe pour l'administration de l'appli mobile"}
+            password
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.modeDeconnecte"
+            label="Activer le mode déconnecté"
+            defaultCheck={values?.modeDeconnecte}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.creationPeiMobile"
+            label="Autoriser la création de PEI"
+            defaultCheck={values?.creationPeiMobile}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminCartographie = ({
+  values,
+}: {
+  values: ParametresSectionCartographie;
+}) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="cartographie.coordonneesFormatAffichage"
+            label="Format d'affichage des coordonnées"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminCouvertureHydraulique = ({
+  values,
+}: {
+  values: ParametresSectionCouvertureHydraulique;
+}) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="couvertureHydraulique.deciDistanceMaxParcours"
+            label="Distance max de parcours (en m)"
+          />
+        </AdminParametre>
+        <AdminParametre explication="" type={TYPE_PARAMETRE.MULTI_INT}>
+          {/*Séparation par des virgule vérifié en backend*/}
+          <TextInput
+            name="couvertureHydraulique.deciIsodistances"
+            label="Isodistances à prendre en compte (en m)"
+            tooltipText={"Plusieurs valeurs séparées par des virgules"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="couvertureHydraulique.profondeurCouverture"
+            label="Profondeur de couverture (en m)"
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
+  //Pour les colonnes PEI
+
+  const listPossible = Object.values(COLUMN_PEI).map((option: any) => ({
+    id: option,
+    libelle: option,
+  }));
+  const {
+    availableOptions,
+    setAvailableOptions,
+    selectedOptions,
+    setSelectedOptions,
+  } = useTransferList({
+    listeDisponible: listPossible,
+    listeSelectionne: values?.peiColonnes,
+    nameFormik: "pei.peiColonnes",
+  });
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.bufferCarte"
+            label="Espace tampon pour la génération de carte (carte des tournées)"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiDelaiCtrlUrgent"
+            label="Nombre de jours avant échéance où un contrôle est considéré comme urgent"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiDelaiCtrlWarn"
+            label="Nombre de jours avant échéance où un contrôle est considéré comme à faire bientôt"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiDelaiRecoUrgent"
+            label="Nombre de jours avant échéance où une reconnaisance est considérée comme urgente"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiDelaiRecoWarn"
+            label="Nombre de jours avant échéance où une reconnaisance est considérée comme à faire bientôt"
+          />
+        </AdminParametre>
+
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availableOptions}
+            selectedOptions={selectedOptions}
+            setAvailableOptions={setAvailableOptions}
+            setSelectedOptions={setSelectedOptions}
+            require={true}
+            label={"Colonnes affichées dans la fiche PEI"}
+            name={"pei.peiColonnes"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.peiDeplacementDistWarn"
+            label="Distance minimale avertissement import CTP"
+            defaultCheck={values?.peiDeplacementDistWarn}
+            tooltipText={
+              "Distance de déplacement minimale pour laquelle afficher un avertissement lors de " +
+              "l'import de Contrôles Techniques Périodiques"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.peiGenerationCarteTournee"
+            label="Active le module de génération de carte des tournées dans le module Point d’eau"
+            defaultCheck={values?.peiGenerationCarteTournee}
+            tooltipText={
+              <>
+                <ul>
+                  <li>
+                    Le module de génération nécessite qu’une aggrégation de
+                    couche nommée TOURNEE soit configurée sur le serveur
+                    Geoserver. Il est recommandé que l’aggrégation de couche
+                    contienne a minima :
+                    <ul>
+                      <li>Un fond de plan</li>
+                      <li>
+                        La couche des hydrants. Le module enverra l’identifiant
+                        de la tournée via le VIEWPARAM tournee_id permettant de
+                        discriminer les hydrants à retourner
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+                Par défaut : false
+              </>
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiMethodeTriAlphanumerique"
+            label="Activer le tri alphanumérique pour les PEI"
+            defaultCheck={values?.peiMethodeTriAlphanumerique}
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementCtrlPrive"
+            label="Nombre de jours pour le renouvellement des contrôles privés"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementCtrlPublic"
+            label="Nombre de jours pour le renouvellement des contrôles publics"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementRecoPrive"
+            label="Nombre de jours pour le renouvellement des reconnaissances privées"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementRecoPublic"
+            label="Nombre de jours pour le renouvellement des reconnaissances publiques"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.vitesseEau"
+            label="Vitesse de l'eau en m/s"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiToleranceCommuneMetres"
+            label="Tolérance en mètres pour les communes"
+            tooltipText={"TODO"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiHighlightDuree"
+            label="Durée en secondes de mise en surbrillance"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiRenumerotationInterneAuto"
+            label="Activer la renumérotation interne automatique des PEI"
+            defaultCheck={values?.peiRenumerotationInterneAuto}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.voieSaisieLibre"
+            label="Autoriser la saisie libre pour les voies"
+            defaultCheck={values?.voieSaisieLibre}
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+const AdminPermis = ({ values }: { values: ParametresSectionPermis }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="permis.permisToleranceChargementMetres"
+            label="Tolérance de chargement (en m)"
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};

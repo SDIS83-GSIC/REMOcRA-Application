@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Col, Row } from "react-bootstrap";
+import { useFormikContext } from "formik";
 import { FormLabel } from "./Form.tsx";
 
 const TransferList = ({
@@ -78,36 +79,43 @@ const TransferList = ({
   };
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <FormLabel
-        name={name}
-        label={label}
-        required={required}
-        tooltipText={tooltipText}
-      />
-      <Row className={"bg-secondary p-3"}>
-        {/* Liste des options disponibles */}
-        <Col
-          className={"border border-2 border-primary-subtle rounded-2 m-2 p-2"}
-        >
-          <DroppableList
-            id="available"
-            items={availableOptions}
-            title="Options disponibles"
-          />
-        </Col>
-        {/* Liste des options sélectionnées */}
-        <Col
-          className={"border border-2 rounded-2 border-primary-subtle m-2 p-2"}
-        >
-          <SortableList
-            id="selected"
-            items={selectedOptions}
-            title="Options sélectionnées"
-          />
-        </Col>
-      </Row>
-    </DndContext>
+    availableOptions &&
+    selectedOptions && (
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <FormLabel
+          name={name}
+          label={label}
+          required={required}
+          tooltipText={tooltipText}
+        />
+        <Row className={"bg-secondary p-3"}>
+          {/* Liste des options disponibles */}
+          <Col
+            className={
+              "border border-2 border-primary-subtle rounded-2 m-2 p-2"
+            }
+          >
+            <DroppableList
+              id="available"
+              items={availableOptions}
+              title="Options disponibles"
+            />
+          </Col>
+          {/* Liste des options sélectionnées */}
+          <Col
+            className={
+              "border border-2 rounded-2 border-primary-subtle m-2 p-2"
+            }
+          >
+            <SortableList
+              id="selected"
+              items={selectedOptions}
+              title="Options sélectionnées"
+            />
+          </Col>
+        </Row>
+      </DndContext>
+    )
   );
 };
 
@@ -115,16 +123,18 @@ const DroppableList = ({ id, items, title }: DroppableSortType) => {
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <>
-      <Col xs={12} className={"text-center m-2 h5"}>
-        {title}
-      </Col>
-      <Col xs={12} ref={setNodeRef} className="list-group">
-        {items.map((item) => (
-          <DraggableItem key={item} item={item} />
-        ))}
-      </Col>
-    </>
+    items && (
+      <>
+        <Col xs={12} className={"text-center m-2 h5"}>
+          {title}
+        </Col>
+        <Col xs={12} ref={setNodeRef} className="list-group">
+          {items.map((item) => (
+            <DraggableItem key={item} item={item} />
+          ))}
+        </Col>
+      </>
+    )
   );
 };
 const DraggableItem = ({ item }: { item: ItemType }) => {
@@ -217,3 +227,54 @@ type DroppableSortType = {
   title: string;
 };
 export default TransferList;
+
+/**
+ * Hook personnalisé pour gérer une liste transférable entre une liste disponible et une liste sélectionnée.
+ * Doit être utilisé dans un contexte Formik absolument.
+ *
+ * @param listeDisponible Liste des options disponibles (doit être préfiltrée par rapport à la liste sélectionnée).
+ * @param listeSelectionne Les options déjà sélectionnées (paramètre en base par exemple).
+ * @param nameFormik Le nom du champ Formik lié à la liste sélectionnée.
+ */
+
+export const useTransferList = ({
+  listeDisponible,
+  listeSelectionne,
+  nameFormik,
+}: {
+  listeDisponible: [];
+  listeSelectionne: [];
+  nameFormik: string;
+}) => {
+  const { setFieldValue } = useFormikContext();
+  const [availableOptions, setAvailableOptions] = useState(listeDisponible);
+  const [selectedOptions, setSelectedOptions] = useState(listeSelectionne);
+
+  useEffect(() => {
+    if (
+      listeSelectionne != null &&
+      selectedOptions?.length !== listeSelectionne?.length
+    ) {
+      setSelectedOptions(listeSelectionne ? listeSelectionne : []);
+    }
+  }, [listeSelectionne, selectedOptions, setSelectedOptions]);
+
+  useEffect(() => {
+    setFieldValue(nameFormik, selectedOptions);
+
+    const filteredOptions = availableOptions?.filter(
+      (option) =>
+        !selectedOptions?.some((selected) => selected.id === option.id),
+    );
+    if (availableOptions?.length !== filteredOptions?.length) {
+      setAvailableOptions(filteredOptions);
+    }
+  }, [selectedOptions, availableOptions, nameFormik, setFieldValue]);
+
+  return {
+    availableOptions,
+    selectedOptions,
+    setAvailableOptions,
+    setSelectedOptions,
+  };
+};

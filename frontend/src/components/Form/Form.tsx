@@ -14,12 +14,8 @@ type InputType = {
   value?: string;
   disabled?: boolean;
   placeholder?: string;
-  name: string;
-  label?: string;
-  required?: boolean;
-  readOnly?: boolean;
-  value?: string;
   tooltipText?: string;
+  password?: boolean;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -91,6 +87,7 @@ export const TextInput = ({
   value,
   placeholder,
   tooltipText,
+  password = false,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -105,13 +102,28 @@ export const TextInput = ({
       <Form.Control
         id={name}
         required={required}
-        type="text"
+        type={password ? "password" : "text"}
         readOnly={readOnly}
         disabled={disabled}
         defaultValue={value ?? ""}
         placeholder={placeholder}
         {...field}
       />
+      {password && (
+        <button
+          type="button"
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "0",
+          }}
+        />
+      )}
     </DivWithError>
   );
 };

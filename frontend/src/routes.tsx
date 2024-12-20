@@ -89,7 +89,7 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
-import AdminParametres from "./pages/Admin/AdminParametres/AdminParametres.tsx";
+import AdminParametres from "./pages/Admin/adminParametres/AdminParametres.tsx";
 import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
 import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
