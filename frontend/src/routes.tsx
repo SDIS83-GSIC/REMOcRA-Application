@@ -125,6 +125,7 @@ import ExecuteRapportPersonnalise from "./pages/RapportPersonnalise/ExecuteRappo
 import DuplicateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/DuplicateRapportPersonnalise.tsx";
 import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportRapportPersonnalise.tsx";
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
+import DFCI from "./pages/DFCI/DFCI.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import Dashboard from "./pages/Dashboard/DashBoard.tsx";
@@ -367,6 +368,9 @@ export const URLS = {
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
 
+  // Module DFCI
+  CARTE_DFCI: url`/dfci`,
+
   // Module dashboard
   DASHBOARD_ADMIN_QUERY: url`/dashboard/admin/query`,
   DASHBOARD_ADMIN_DASHBOARD: url`/dashboard/admin/dashboard`,
@@ -385,6 +389,10 @@ export default [
     element: (
       <Authorization Component={Accueil} droits={Object.values(TYPE_DROIT)} />
     ),
+  },
+  {
+    path: "/dfci",
+    element: <Authorization Component={DFCI} droits={[TYPE_DROIT.DFCI_R]} />,
   },
   {
     path: "/deci/",

@@ -118,10 +118,17 @@ function getLinks(
           link: URLS.RESULTATS_EXECUTION,
         },
       ];
+    case TypeModuleRemocra.DFCI:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_R),
+          label: "Carte DFCI",
+          link: URLS.CARTE_DFCI,
+        },
+      ];
     case TypeModuleRemocra.OLDEBS:
     case TypeModuleRemocra.PERMIS:
     case TypeModuleRemocra.RCI:
-    case TypeModuleRemocra.DFCI:
     case TypeModuleRemocra.ADRESSES:
     case TypeModuleRemocra.RISQUES:
       return;
