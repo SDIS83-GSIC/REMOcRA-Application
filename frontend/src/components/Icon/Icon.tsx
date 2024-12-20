@@ -86,3 +86,7 @@ export const IconPreviousPage = () => (
   <i className="fi fi-rr-angle-circle-left" />
 );
 export const IconQuestionMark = () => <i className="fi fi-br-interrogation" />;
+
+export const IconValidation = () => (
+  <i className="fi fi-rr-registration-paper" />
+);

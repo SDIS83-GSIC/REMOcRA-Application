@@ -83,6 +83,11 @@ function getLinks(
           label: "Déclarer un PEI",
           link: URLS.DECLARATION_PEI,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.IMPORT_CTP_PEI_DEPLACEMENT_U),
+          label: "Import CTP",
+          link: URLS.IMPORT_CTP,
+        },
       ];
     case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
       return [

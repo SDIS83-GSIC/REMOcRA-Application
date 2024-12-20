@@ -127,6 +127,8 @@ import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
+import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
+import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -139,6 +141,8 @@ export const URLS = {
 
   PEI: url`/deci/pei`,
   DECLARATION_PEI: url`/deci/declaration-pei`,
+  IMPORT_CTP: url`/deci/import-ctp`,
+  RESULTAT_VERIF_IMPORT_CTP: url`/deci/import-ctp/verification`,
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
     url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
@@ -502,6 +506,24 @@ export default [
           <Authorization
             Component={DeclarationPei}
             droits={[TYPE_DROIT.DECLARATION_PEI]}
+          />
+        ),
+      },
+      {
+        path: "import-ctp",
+        element: (
+          <Authorization
+            Component={ImportCTP}
+            droits={[TYPE_DROIT.IMPORT_CTP_A]}
+          />
+        ),
+      },
+      {
+        path: "import-ctp/verification",
+        element: (
+          <Authorization
+            Component={VerificationImportCTP}
+            droits={[TYPE_DROIT.IMPORT_CTP_A]}
           />
         ),
       },
