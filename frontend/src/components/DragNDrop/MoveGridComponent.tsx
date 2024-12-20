@@ -8,7 +8,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { IconCreate } from "../Icon/Icon.tsx";
@@ -89,30 +89,30 @@ const MoveGridComponent = ({
         newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
       }
 
+      const overContainerValue = [
+        ...prev[overContainer].slice(0, newIndex),
+        items[activeContainer][activeIndex],
+        ...prev[overContainer].slice(newIndex, prev[overContainer].length),
+      ];
+
+      const activeContainerValue = [
+        ...prev[activeContainer].filter((item) => item !== active.id),
+      ];
+
+      if (activeContainer === keyPossibilites) {
+        setPossibilites(activeContainerValue);
+      }
+
+      if (overContainer === keyPossibilites) {
+        setPossibilites(overContainerValue);
+      }
+
       return {
         ...prev,
-        [activeContainer]: [
-          ...prev[activeContainer].filter((item) => item !== active.id),
-        ],
-        [overContainer]: [
-          ...prev[overContainer].slice(0, newIndex),
-          items[activeContainer][activeIndex],
-          ...prev[overContainer].slice(newIndex, prev[overContainer].length),
-        ],
+        [activeContainer]: activeContainerValue,
+        [overContainer]: overContainerValue,
       };
     });
-
-    if (activeContainer === keyPossibilites) {
-      setPossibilites(
-        items[activeContainer].filter((item) => item !== active.id),
-      );
-    }
-
-    if (overContainer === keyPossibilites) {
-      const tabPossibilites = items[overContainer];
-      tabPossibilites.push(active.id);
-      setPossibilites(tabPossibilites);
-    }
   }
 
   function handleDragEnd(event) {
@@ -128,20 +128,6 @@ const MoveGridComponent = ({
       activeContainer !== overContainer
     ) {
       return;
-    }
-
-    const activeIndex = items[activeContainer].indexOf(active.id);
-    const overIndex = items[overContainer].indexOf(overId);
-
-    if (activeIndex !== overIndex) {
-      setItems((items) => ({
-        ...items,
-        [overContainer]: arrayMove(
-          items[overContainer],
-          activeIndex,
-          overIndex,
-        ),
-      }));
     }
 
     setActiveId(null);
