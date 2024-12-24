@@ -5,7 +5,7 @@ import { URLS } from "../../routes.tsx";
 
 const ModuleAdmin = () => {
   const navLinks: NavToProps[] = [
-    { path: URLS.MODULE_ADMIN, label: "Administer" },
+    { path: URLS.MODULE_ADMIN, label: "Administrer" },
   ];
   return (
     <SquelettePage header={<Header links={navLinks} />}>
