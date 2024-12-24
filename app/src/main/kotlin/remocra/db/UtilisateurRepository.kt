@@ -164,9 +164,9 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             PROFIL_DROIT.LIBELLE,
         )
             .from(UTILISATEUR)
-            .join(ORGANISME)
+            .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
-            .join(PROFIL_UTILISATEUR)
+            .leftJoin(PROFIL_UTILISATEUR)
             .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
             .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
             .on(
@@ -193,17 +193,17 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurCanBeNotified: Boolean?,
         val utilisateurProfilUtilisateurId: UUID?,
         val utilisateurOrganismeId: UUID?,
-        val organismeLibelle: String,
-        val profilUtilisateurLibelle: String,
-        val profilDroitLibelle: String,
+        val organismeLibelle: String?,
+        val profilUtilisateurLibelle: String?,
+        val profilDroitLibelle: String?,
     )
 
     fun countAllForAdmin(filterBy: Filter?) =
         dsl.select(UTILISATEUR.ID)
             .from(UTILISATEUR)
-            .join(ORGANISME)
+            .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
-            .join(PROFIL_UTILISATEUR)
+            .leftJoin(PROFIL_UTILISATEUR)
             .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
             .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
             .on(
@@ -275,6 +275,15 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             dsl.select(UTILISATEUR.ID)
                 .from(UTILISATEUR)
                 .where(UTILISATEUR.USERNAME.eq(username)),
+        )
+    fun checkExistsUsername(username: String, id: UUID) =
+        dsl.fetchExists(
+            dsl.select(UTILISATEUR.ID)
+                .from(UTILISATEUR)
+                .where(UTILISATEUR.USERNAME.eq(username))
+                .and(
+                    UTILISATEUR.ID.ne(id),
+                ),
         )
     fun checkExistsEmail(email: String) =
         dsl.fetchExists(
