@@ -37,6 +37,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
             .where(UTILISATEUR.ID.eq(idUtilisateur))
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .execute()
     }
 
@@ -47,18 +48,27 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
             .where(UTILISATEUR.ID.eq(idUtilisateur))
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .execute()
     }
 
+    /**
+     * Dans le cadre de la synchro des utilisateurs, désactive tous les utilisateurs sauf SYSTEME qui est hors scope
+     */
     fun desactiveAllUsers() {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, false)
+            .where(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .execute()
     }
 
+    /**
+     * Dans le cadre de la synchro des utilisateurs, supprime tous les utilisateurs restés inactifs sauf SYSTEME qui est hors scope
+     */
     fun deleteUtilisateurInactif(): Int =
         dsl.deleteFrom(UTILISATEUR)
             .where(UTILISATEUR.ACTIF.isFalse)
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .execute()
 
     fun insertUtilisateur(
