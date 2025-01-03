@@ -272,16 +272,12 @@ export const AdminParametre = ({
   return (
     <>
       <Row>
-        <Col xs={12} lg={8} className={"mx-auto"}>
-          <Badge bg={bg} text={text} pill className={"mt-3"}>
+        <Col xs={2} className="text-end">
+          <Badge bg={bg} text={text} pill className={"mt-3 ms-auto"}>
             {type}
           </Badge>
         </Col>
-      </Row>
-      <Row>
-        <Col xs={12} lg={8} className={"mx-auto"}>
-          {children}
-        </Col>
+        <Col xs={10}>{children}</Col>
       </Row>
     </>
   );
@@ -305,6 +301,7 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             tooltipText={
               "Mention CNIL affichée en bas de page (peut être vide)"
             }
+            required={false}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
@@ -313,6 +310,7 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             label="Message d'entête"
             defaultValue={values?.messageEntete}
             tooltipText={"Message affiché dans le cartouche d'entête"}
+            required={false}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
@@ -328,6 +326,9 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             name="general.toleranceVoiesMetres"
             label="Tolérance (en m) de chargement des voies"
             defaultValue={values?.titrePage}
+            tooltipText={
+              "Utilisé dans le chargement des listes déroulantes des voies lorsque les géométries ne sont pas parfaitement en phase"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
@@ -335,7 +336,7 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             name="general.banniereChemin"
             label="Chemin de la bannière"
             defaultValue={values?.banniereChemin}
-            tooltipText={"TODO"}
+            tooltipText={"TODO déplacer"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
@@ -343,7 +344,7 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             name="general.logoChemin"
             label="Chemin du logo"
             defaultValue={values?.logoChemin}
-            tooltipText={"TODO"}
+            tooltipText={"TODO déplacer"}
           />
         </AdminParametre>
       </>
@@ -446,7 +447,7 @@ const AdminApplicationMobile = ({
           <CheckBoxInput
             name="mobile.affichageIndispo"
             label="Afficher l'état de disponibilité du PEI"
-            defaultCheck={values?.affichageIndispo}
+            checked={values?.affichageIndispo}
             tooltipText={
               "Ajout d'une croix rouge sur le symbole du PEI pour signifier l'indisponibilité"
             }
@@ -456,8 +457,10 @@ const AdminApplicationMobile = ({
           <CheckBoxInput
             name="mobile.affichageSymbolesNormalises"
             label="Utiliser la symbologie du RNDECI ?"
-            defaultCheck={values?.affichageSymbolesNormalises}
-            tooltipText={"TODO"}
+            checked={values?.affichageSymbolesNormalises}
+            tooltipText={
+              "Utiliser la symbologie définie dans le RNDECI plutôt que des cercles"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
@@ -472,7 +475,7 @@ const AdminApplicationMobile = ({
               "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
               "et dans quel ordre ils se présentent"
             }
-            require={true}
+            required={false}
             name={"mobile.caracteristiquePena"}
           />
         </AdminParametre>
@@ -488,7 +491,7 @@ const AdminApplicationMobile = ({
               "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
               "et dans quel ordre ils se présentent"
             }
-            require={true}
+            required={false}
             name={"mobile.caracteristiquePibi"}
           />
         </AdminParametre>
@@ -569,24 +572,31 @@ const AdminApplicationMobile = ({
           <TextInput
             name="mobile.mdpAdministrateur"
             label="Mot de passe administrateur"
-            tooltipText={"Mot de passe pour l'administration de l'appli mobile"}
+            tooltipText={
+              "Mot de passe permettant de déverrouiller l'administration de l'appli mobile, à savoir la configuration du serveur ; inutile lors d'un paramétrage via MDM"
+            }
             password
+            required={false}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="mobile.modeDeconnecte"
             label="Activer le mode déconnecté"
-            defaultCheck={values?.modeDeconnecte}
-            tooltipText={"TODO"}
+            checked={values?.modeDeconnecte}
+            tooltipText={
+              "Si la couverture Internet du département n'est pas satisfaisante, vous pouvez passer par le 'mode déconnecté' pour permettre une connexion d'un utilisateur sur une longue durée."
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="mobile.creationPeiMobile"
             label="Autoriser la création de PEI"
-            defaultCheck={values?.creationPeiMobile}
-            tooltipText={"TODO"}
+            checked={values?.creationPeiMobile}
+            tooltipText={
+              "Active ou non la fonctionnalité de création de PEI depuis l'application mobile ; si activée, l'utilisateur devra toujours posséder le droit adéquat."
+            }
           />
         </AdminParametre>
       </>
@@ -704,7 +714,7 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
             selectedOptions={selectedOptions}
             setAvailableOptions={setAvailableOptions}
             setSelectedOptions={setSelectedOptions}
-            require={true}
+            required={true}
             label={"Colonnes affichées dans la fiche PEI"}
             name={"pei.peiColonnes"}
           />
@@ -713,7 +723,7 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
           <CheckBoxInput
             name="mobile.peiDeplacementDistWarn"
             label="Distance minimale avertissement import CTP"
-            defaultCheck={values?.peiDeplacementDistWarn}
+            checked={values?.peiDeplacementDistWarn}
             tooltipText={
               "Distance de déplacement minimale pour laquelle afficher un avertissement lors de " +
               "l'import de Contrôles Techniques Périodiques"
@@ -724,26 +734,19 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
           <CheckBoxInput
             name="mobile.peiGenerationCarteTournee"
             label="Active le module de génération de carte des tournées dans le module Point d’eau"
-            defaultCheck={values?.peiGenerationCarteTournee}
+            checked={values?.peiGenerationCarteTournee}
             tooltipText={
               <>
+                Le module de génération nécessite qu’une aggrégation de couche
+                nommée <b>TOURNEE</b> soit configurée sur Geoserver. Il est
+                recommandé que l’aggrégation de couche contienne <i>a minima</i>{" "}
+                :
                 <ul>
-                  <li>
-                    Le module de génération nécessite qu’une aggrégation de
-                    couche nommée TOURNEE soit configurée sur le serveur
-                    Geoserver. Il est recommandé que l’aggrégation de couche
-                    contienne a minima :
-                    <ul>
-                      <li>Un fond de plan</li>
-                      <li>
-                        La couche des hydrants. Le module enverra l’identifiant
-                        de la tournée via le VIEWPARAM tournee_id permettant de
-                        discriminer les hydrants à retourner
-                      </li>
-                    </ul>
-                  </li>
+                  <li>Un fond de plan</li>
+                  <li>La couche des PEI</li>
                 </ul>
-                Par défaut : false
+                Le module enverra l’identifiant de la tournée via le VIEWPARAM
+                tournee_id permettant de discriminer les PEI à retourner
               </>
             }
           />
@@ -752,70 +755,85 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
           <CheckBoxInput
             name="pei.peiMethodeTriAlphanumerique"
             label="Activer le tri alphanumérique pour les PEI"
-            defaultCheck={values?.peiMethodeTriAlphanumerique}
-            tooltipText={"TODO"}
+            checked={values?.peiMethodeTriAlphanumerique}
+            tooltipText={
+              "Un tri alphanumérique compare un à un les caractères de chaque chaîne, alors qu'un tri 'naturel' va d'abord comparer la longueur de chaque chaîne"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiRenouvellementCtrlPrive"
             label="Nombre de jours pour le renouvellement des contrôles privés"
-            tooltipText={"TODO"}
+            tooltipText={
+              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiRenouvellementCtrlPublic"
             label="Nombre de jours pour le renouvellement des contrôles publics"
-            tooltipText={"TODO"}
+            tooltipText={
+              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiRenouvellementRecoPrive"
             label="Nombre de jours pour le renouvellement des reconnaissances privées"
-            tooltipText={"TODO"}
+            tooltipText={
+              "Permet de calculer la prochaine date de la RECOP par rapport à la dernière saisie"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiRenouvellementRecoPublic"
             label="Nombre de jours pour le renouvellement des reconnaissances publiques"
-            tooltipText={"TODO"}
+            tooltipText={
+              "Permet de calculer la prochaine date de la RECOP par rapport à la dernière saisie"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.vitesseEau"
             label="Vitesse de l'eau en m/s"
-            tooltipText={"TODO"}
+            tooltipText={"Utile pour avoir un calcul fin des débits simultanés"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiToleranceCommuneMetres"
             label="Tolérance en mètres pour les communes"
-            tooltipText={"TODO"}
+            tooltipText={
+              "Permet de charger dans la liste déroulante des communes certaines dont le polygone n'est pas parfaitement en phase avec l'attendu"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiHighlightDuree"
-            label="Durée en secondes de mise en surbrillance"
+            label="Durée (en secondes) de mise en surbrillance des PEI"
+            tooltipText={
+              "Lors d'une sélection multiple de PEI depuis une source extérieure (PEI, IT, ...), on met en évidence brièvement les PEI concernés"
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="pei.peiRenumerotationInterneAuto"
             label="Activer la renumérotation interne automatique des PEI"
-            defaultCheck={values?.peiRenumerotationInterneAuto}
+            checked={values?.peiRenumerotationInterneAuto}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="pei.voieSaisieLibre"
             label="Autoriser la saisie libre pour les voies"
-            defaultCheck={values?.voieSaisieLibre}
+            checked={values?.voieSaisieLibre}
           />
         </AdminParametre>
       </>
@@ -830,6 +848,7 @@ const AdminPermis = ({ values }: { values: ParametresSectionPermis }) => {
           <PositiveNumberInput
             name="permis.permisToleranceChargementMetres"
             label="Tolérance de chargement (en m)"
+            tooltipText={"TODO"}
           />
         </AdminParametre>
       </>
