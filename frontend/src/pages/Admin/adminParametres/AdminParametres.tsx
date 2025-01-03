@@ -83,19 +83,21 @@ export const getInitialValues = (
   general: data?.general,
   mobile: {
     ...data?.mobile,
-    caracteristiquesPibi: data?.mobile.caracteristiquesPibi.map((e) => ({
-      id: e,
-    })),
-    caracteristiquesPena: data?.mobile.caracteristiquesPena.map((e) => ({
-      id: e,
-    })),
+    caracteristiquesPibi:
+      data?.mobile?.caracteristiquesPibi?.map((e) => ({
+        id: e,
+      })) ?? [],
+    caracteristiquesPena:
+      data?.mobile?.caracteristiquesPena?.map((e) => ({
+        id: e,
+      })) ?? [],
   },
   cartographie: data?.cartographie,
   couvertureHydraulique: data?.couvertureHydraulique,
   permis: data?.permis,
   pei: {
     ...data?.pei,
-    peiColonnes: data?.pei.peiColonnes?.map((e) => ({ id: e, libelle: e })),
+    peiColonnes: data?.pei?.peiColonnes?.map((e) => ({ id: e, libelle: e })),
   },
 });
 
@@ -103,24 +105,24 @@ export const validationSchema = object({});
 
 export const prepareVariables = (values: AdminParametresValue) => {
   return {
-    general: values.general,
+    general: values?.general,
     mobile: {
-      ...values.mobile,
+      ...values?.mobile,
       caracteristiquesPena:
-        values.mobile.caracteristiquesPena?.map((e) => e.id) ?? [],
+        values?.mobile?.caracteristiquesPena?.map((e) => e.id) ?? [],
       caracteristiquesPibi:
-        values.mobile.caracteristiquesPibi?.map((e) => e.id) ?? [],
+        values?.mobile?.caracteristiquesPibi?.map((e) => e.id) ?? [],
     },
-    cartographie: values.cartographie,
+    cartographie: values?.cartographie,
     couvertureHydraulique: {
-      ...values.couvertureHydraulique,
+      ...values?.couvertureHydraulique,
       deciIsodistances:
-        values.couvertureHydraulique.deciIsodistances.toString(),
+        values?.couvertureHydraulique?.deciIsodistances?.toString(),
     },
-    permis: values.permis,
+    permis: values?.permis,
     pei: {
-      ...values.pei,
-      peiColonnes: values.pei.peiColonnes?.map((e) => e.id) ?? [],
+      ...values?.pei,
+      peiColonnes: values?.pei?.peiColonnes?.map((e) => e.id) ?? [],
     },
   };
 };
