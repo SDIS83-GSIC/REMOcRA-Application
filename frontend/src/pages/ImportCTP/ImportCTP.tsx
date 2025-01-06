@@ -28,6 +28,7 @@ const ImportCTP = () => {
         icon={<IconImport />}
         title={"Importer un fichier de saisie CTP"}
       />
+      <Button href={URLS.EXPORT_CTP}>Réaliser un export CTP</Button>
       <MyFormik
         initialValues={getInitialValues()}
         validationSchema={validationSchema}

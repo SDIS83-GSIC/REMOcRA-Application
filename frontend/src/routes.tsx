@@ -128,6 +128,7 @@ import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
+import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
 import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
 
 export const URLS = {
@@ -143,6 +144,7 @@ export const URLS = {
   DECLARATION_PEI: url`/deci/declaration-pei`,
   IMPORT_CTP: url`/deci/import-ctp`,
   RESULTAT_VERIF_IMPORT_CTP: url`/deci/import-ctp/verification`,
+  EXPORT_CTP: url`/deci/export-ctp`,
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
     url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
@@ -523,6 +525,15 @@ export default [
         element: (
           <Authorization
             Component={VerificationImportCTP}
+            droits={[TYPE_DROIT.IMPORT_CTP_A]}
+          />
+        ),
+      },
+      {
+        path: "export-ctp",
+        element: (
+          <Authorization
+            Component={ExportCTP}
             droits={[TYPE_DROIT.IMPORT_CTP_A]}
           />
         ),
