@@ -6,6 +6,8 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.`when`
 import remocra.GlobalConstants
+import remocra.data.GlobalData
+import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
@@ -17,6 +19,7 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.L_VISITE_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import java.util.UUID
@@ -267,5 +270,22 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
     fun getAnomalieCategorie(): Collection<AnomalieCategorie> =
         dsl.selectFrom(ANOMALIE_CATEGORIE)
             .where(ANOMALIE_CATEGORIE.ACTIF.isTrue)
+            .fetchInto()
+
+    fun getAnomalieForExportCTP(): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            ANOMALIE.ID.`as`("id"),
+            ANOMALIE.CODE.`as`("code"),
+            ANOMALIE.LIBELLE.`as`("libelle"),
+        )
+            .distinctOn(
+                ANOMALIE.CODE,
+                ANOMALIE.LIBELLE,
+            )
+            .from(ANOMALIE)
+            .join(POIDS_ANOMALIE).on(ANOMALIE.ID.eq(POIDS_ANOMALIE.ANOMALIE_ID))
+            .join(NATURE).on(POIDS_ANOMALIE.NATURE_ID.eq(NATURE.ID))
+            .where(NATURE.TYPE_PEI.eq(TypePei.PIBI))
+            .and(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.CTP))
             .fetchInto()
 }

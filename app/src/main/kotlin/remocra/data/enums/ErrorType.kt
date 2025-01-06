@@ -512,6 +512,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     //
     IMPORT_CTP_CODE_INSEE_MANQUANT(22000, "Code INSEE manquant"),
     IMPORT_CTP_NOT_XLSX(22001, "Le fichier fourni n'est pas un .xlsx"),
+    IMPORT_CTP_NO_TEMPLATE_PROVIDED(22002, "Aucun modèle d'export CTP n'a été fourni à l'application"),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

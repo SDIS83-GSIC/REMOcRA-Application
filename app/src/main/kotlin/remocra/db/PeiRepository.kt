@@ -13,6 +13,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Point
+import remocra.GlobalConstants
 import remocra.data.Params
 import remocra.data.PeiData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -35,6 +36,7 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
+import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
@@ -649,6 +651,58 @@ class PeiRepository
                 .and(PEI.ID.eq(id)),
         )
     }
+
+    fun exportCTP(communeId: UUID?, organismeId: UUID?): List<ExportCTPData> =
+        dsl.select(
+            PEI.ID,
+            COMMUNE.LIBELLE,
+            COMMUNE.CODE_INSEE,
+            PEI.NUMERO_INTERNE,
+            PEI.EN_FACE,
+            PEI.NUMERO_VOIE,
+            PEI.SUFFIXE_VOIE,
+            VOIE.LIBELLE,
+            PEI.VOIE_TEXTE,
+            DSL.field("St_Y(St_transform(${PEI.GEOMETRIE}, ${GlobalConstants.SRID_4326}))").`as`("peiLatitude"),
+            DSL.field("St_X(St_transform(${PEI.GEOMETRIE}, ${GlobalConstants.SRID_4326}))").`as`("peiLongitude"),
+            NATURE_DECI.LIBELLE,
+            NATURE.LIBELLE,
+            DIAMETRE.LIBELLE,
+        )
+            .from(PEI)
+            .join(PIBI).on(PEI.ID.eq(PIBI.ID))
+            .leftJoin(DIAMETRE).on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .leftJoin(ORGANISME).on(ORGANISME.ID.eq(organismeId))
+            .leftJoin(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .where(
+                if (communeId != null) {
+                    COMMUNE.ID.eq(communeId)
+                } else
+                    DSL.noCondition(),
+            ).and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .orderBy(COMMUNE.LIBELLE.asc(), PEI.NUMERO_INTERNE.asc())
+            .fetchInto()
+
+    data class ExportCTPData(
+        val peiId: UUID,
+        val communeLibelle: String,
+        val communeCodeInsee: String,
+        val peiNumeroInterne: Int,
+        val peiEnFace: Boolean = false,
+        val peiNumeroVoie: Int?,
+        val peiSuffixeVoie: String?,
+        val voieLibelle: String?,
+        val peiVoieTexte: String?,
+        val peiLatitude: Double,
+        val peiLongitude: Double,
+        val natureDeciLibelle: String,
+        val natureLibelle: String,
+        val diametreLibelle: String?,
+    )
 }
 
 data class IdNumeroComplet(
