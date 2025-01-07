@@ -40,6 +40,7 @@ import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
 import remocra.web.thematique.ThematiqueModule
+import remocra.web.tracabilite.TracabiliteModule
 import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
 import remocra.web.visite.VisiteModule
@@ -58,6 +59,7 @@ object WebModule : RemocraModule() {
         install(ApiModule)
         install(VisiteModule)
         install(AnomalieModule)
+        install(TracabiliteModule)
         install(NomenclatureModule)
         install(AppSettingsModule)
         install(DocumentModule)
