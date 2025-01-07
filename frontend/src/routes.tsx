@@ -126,6 +126,7 @@ import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportR
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
+import HistoriqueTracabilite from "./pages/Admin/Tracabilite/HistoriqueTracabilite.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
@@ -350,6 +351,7 @@ export const URLS = {
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
+  TRACABILITE: url`/admin/tracabilite`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1454,6 +1456,15 @@ export default [
           <Authorization
             Component={ListeTask}
             droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
+          />
+        ),
+      },
+      {
+        path: "tracabilite",
+        element: (
+          <Authorization
+            Component={HistoriqueTracabilite}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
