@@ -22,9 +22,7 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.TASK}>Paramétrage des traitements</a>
           <br />
-          <a href={URLS.ADMIN_IMPORT_RESSOURCES}>
-            Import des ressources images
-          </a>
+          <a href={URLS.ADMIN_IMPORT_RESSOURCES}>Import des ressources</a>
           <br />
         </Col>
 

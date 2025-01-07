@@ -58,7 +58,13 @@ object GlobalConstants {
 
     const val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT + "etudes/"
 
-    const val DOSSIER_MODELES_COURRIERS = DOSSIER_DATA + "modeles/courriers/"
+    const val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
+
+    const val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"
+
+    const val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES + "export_ctp/"
+    const val TEMPLATE_EXPORT_CTP_FILE_NAME = "template_export_ctp.xlsx"
+    const val TEMPLATE_EXPORT_CTP_FULL_PATH = DOSSIER_MODELES_EXPORT_CTP + TEMPLATE_EXPORT_CTP_FILE_NAME
 
     const val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
     const val DOSSIER_BLOC_DOCUMENT = DOSSIER_DOCUMENT + "bloc-document/"

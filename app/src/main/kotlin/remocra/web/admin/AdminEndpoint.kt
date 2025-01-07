@@ -117,6 +117,22 @@ class AdminEndpoint : AbstractEndpoint() {
             ),
         ).build()
     }
+
+    @PUT
+    @Path("/depot-template-ctp")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importTemplateExportCtp(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importTemplateExportCtp(
+                securityContext.userInfo,
+                httpRequest.getPart("templateExportCtp"),
+            ),
+        ).build()
+    }
 }
 private data class PeiCaracteristique(
     val libelle: String,

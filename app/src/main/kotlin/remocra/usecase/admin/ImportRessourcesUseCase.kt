@@ -82,4 +82,22 @@ class ImportRessourcesUseCase : AbstractUseCase() {
             }
         }
     }
+
+    fun importTemplateExportCtp(userInfo: UserInfo?, templateExportCtpPart: Part) {
+        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
+        if (userInfo == null) {
+            throw ForbiddenException()
+        }
+        checkDroits(userInfo)
+        /** Vérification type du fichier */
+        if (!templateExportCtpPart.submittedFileName.lowercase().endsWith(".xlsx")) {
+            throw RemocraResponseException(ErrorType.IMPORT_CTP_NOT_XLSX)
+        }
+        /** Enregistrement sur le disque */
+        documentUtils.saveFile(
+            templateExportCtpPart.inputStream.readAllBytes(),
+            GlobalConstants.TEMPLATE_EXPORT_CTP_FILE_NAME,
+            GlobalConstants.DOSSIER_MODELES_EXPORT_CTP,
+        )
+    }
 }

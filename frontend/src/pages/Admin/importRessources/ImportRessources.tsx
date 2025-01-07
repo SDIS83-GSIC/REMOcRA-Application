@@ -12,6 +12,7 @@ export const getInitialValues = () => ({
   banniere: null,
   logo: null,
   symbologie: null,
+  templateExportCtp: null,
 });
 
 export const validationSchema = object({});
@@ -20,12 +21,13 @@ export const prepareVariables = (values) => {
   formData.append("banniere", values.banniere);
   formData.append("logo", values.logo);
   formData.append("symbologie", values.symbologie);
+  formData.append("templateExportCtp", values.templateExportCtp);
   return formData;
 };
 
 export const ImportRessources = () => {
   const { handleShowClose, activesKeys } = useAccordionState(
-    Array(3).fill(false),
+    Array(4).fill(false),
   );
 
   return (
@@ -118,6 +120,37 @@ export const ImportRessources = () => {
               </>
             ),
           },
+          {
+            header: "Importer le modèle d'Import-CTP",
+            content: (
+              <>
+                <p>
+                  Permet d&apos;importer le fichier .xlsx utilisé pour la
+                  fonctionnalité d&apos;import CTP.
+                  <br />
+                  Ce fichier sera ensuite complété automatiquement par
+                  l&apos;application à l&apos;aide des informations générales
+                  des PEI lors d&apos;un export.
+                  <br />
+                  Attention, cette fonctionnalité s&apos;appuyant sur un fichier
+                  XLSX avec des pseudo-contrats qui ne peuvent pas être
+                  garantis, elle est à utiliser uniquement lorsque les méthodes
+                  plus robustes ne sont pas applicables.
+                </p>
+                <MyFormik
+                  initialValues={getInitialValues()}
+                  validationSchema={validationSchema}
+                  isPost={false}
+                  isMultipartFormData={true}
+                  submitUrl={`/api/admin/depot-template-ctp`}
+                  prepareVariables={(values) => prepareVariables(values)}
+                  redirectUrl={URLS.ADMIN_IMPORT_RESSOURCES}
+                >
+                  <FormImportTemplateExportCTP />
+                </MyFormik>
+              </>
+            ),
+          },
         ]}
       />
     </>
@@ -181,6 +214,28 @@ const FormImportSymbologie = () => {
         <Col className="text-center">
           <Button type="submit" variant="primary">
             Importer la symbologie
+          </Button>
+        </Col>
+      </Row>
+    </FormContainer>
+  );
+};
+
+const FormImportTemplateExportCTP = () => {
+  const { setFieldValue } = useFormikContext();
+
+  return (
+    <FormContainer>
+      <FileInput
+        name="templateExportCtp"
+        accept=".xlsx"
+        required={true}
+        onChange={(e) => setFieldValue("templateExportCtp", e.target.files[0])}
+      />
+      <Row className="mt-3">
+        <Col className="text-center">
+          <Button type="submit" variant="primary">
+            Importer le support
           </Button>
         </Col>
       </Row>
