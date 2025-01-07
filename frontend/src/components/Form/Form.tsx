@@ -371,14 +371,23 @@ const PositiveNumberInput = ({
 
 export default PositiveNumberInput;
 
+type DateType = InputType & {
+  dateType?: "datetime-local" | "date";
+};
+
+export const DateInput = (props: InputType) => (
+  <DateTimeInput dateType="date" {...props} />
+);
+
 export const DateTimeInput = ({
   name,
   label,
   required = true,
   readOnly = false,
   tooltipText,
+  dateType = "datetime-local",
   ...rest
-}: InputType) => {
+}: DateType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
@@ -395,7 +404,7 @@ export const DateTimeInput = ({
       <Row className="mx-1">
         <input
           id={name}
-          type="datetime-local"
+          type={dateType}
           required={required}
           {...field}
           {...rest}
