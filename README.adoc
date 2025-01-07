@@ -9,22 +9,38 @@ L'application ne gère pas elle-même la migration de schéma,
 celle-ci est effectuée indépendamment.
 L'application doit par contre vérifier la version du schéma au démarrage.
 
+link:app/README.adoc[`app`]:: contient le code applicatif serveur, en Kotlin
+
+link:frontend/README.adoc[`frontend`]:: contient le code frontend, en JavaScript avec React.
+
 == Gradle
 
 Le build est piloté par https://www.gradle.org[Gradle], avec des scripts écrits en Kotlin.
+Ce build Gradle ne se préoccupe pas du code frontend, qui doit être buildé indépendamment, ni du packaging final sous forme d'image Docker.
 
 Toutes les commandes doivent être lancées depuis le répertoire racine du projet (celui dans lequel se trouve ce fichier).
 
 
 Les tâches les plus courantes sont :
 
-`./gradlew assemble`:: Compile et _assemble_ le code (créer les JARs) ; ou `./gradlew :db:assemble` pour n'assembler que le module `db`.
-`./gradlew check`:: Vérifie le code : compile, lance les tests, vérifie le formattage du code, etc mais pas shellcheck.
-`./gradlew shellcheck`:: Vérifie le code shell, ce n'est pas dans la tâche `check` car elle ne fonctionne pas sur Jenkins (ca essaie de lancer une commande `docker run …`)
+`./gradlew assemble`:: Compile et _assemble_ le code (crée les JARs) ; ou `./gradlew :db:assemble` pour n'assembler que le module `db`.
+`./gradlew check`:: Vérifie le code : compile, lance les tests, vérifie le formattage du code serveur
 `./gradlew build`:: Équivalent à lancer les deux précédentes tâches.
 `./gradlew spotlessApply`:: Reformatte le code (**sauf** le code frontend)
 
 D'autres tâches spécifiques à chaque module sont documentées dans leur `README.adoc` respectif.
+
+== Docker
+
+L'application est livrée sous forme d'image Docker.
+Pour créer l'image, il faut :
+
+. builder l'application
+  * builder le code frontend avec `cd frontend && npm ci && npm run build`
+  * builder le code backend avec `./gradlew assemble`
+. builder l'image avec `docker build -f docker/Dockerfile .` (arguments additionnels au besoin)
+
+Une image Keycloak est également nécessaire, à builder avec `docker build keycloak/` (arguments additionnels au besoin).
 
 == Docker Compose
 
@@ -32,9 +48,21 @@ Les services nécessaires pour développer sont gérés par Docker Compose :
 
 `db`:: un serveur PostgreSQL (base de données `remocra`, utilisateur `remocra`, mot de passe `remocra`)
 +
-Les données sont stockées dans un répertoire `docker/postgresql_data` par défaut.
-Une variable d'environnement $DOSSIER_BDD peut être utilisée pour spécifie un autre emplacement.
+Les données sont stockées dans un répertoire `.docker/postgresql_data` par défaut.
+Une variable d'environnement $DOSSIER_BDD peut être utilisée pour spécifier un autre emplacement.
 Les permissions sont définies par défaut à l'utilisateur d'UID 1000 et GID 1000.
 Ces permissions peuvent être configurées en définissant les variables d'environnement `$UID` et `$GID`,
 ou de façon moins intrusive _via_ un https://docs.docker.com/compose/env-file/[fichier d'environnement `.env`]
 (ce fichier peut également définir https://docs.docker.com/compose/reference/envvars/#compose_project_name[`COMPOSE_PROJECT_NAME`], utilisé comme préfixe des noms des conteneurs)
+
+`keycloak`:: un serveur Keycloak (utilisateur `kcadmin`, mot de passe `kcadmin`)
++
+Les données sont stockées dans un répertoire `.docker/keycloak`, et sont initialisées par le conteneur `keycloak-config`.
+
+`keycloak-config`:: initialise les données du serveur Keycloak à partir des fichiers de configurations dans `keycloak/src/conf`, puis s'arrête (ce n'est donc pas un _service_ à proprement parler).
++
+Crée notamment un _realm_ `remocra`, un client `remocra` pour l'application, et un utilisateur `remocra` (mot de passe `admin`)
+
+`maildev`:: un serveur MailDev pour recevoir les mails envoyés par Keycloak et par l'application, de sorte qu'aucun message n'est envoyé vers une réelle boîte mail lors du développement.
++
+L'interface web de lecture et gestion des mails est accessible sur http://localhost:1080/.

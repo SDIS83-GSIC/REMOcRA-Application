@@ -4,7 +4,7 @@ Ce projet contient le code serveur (écrit en Kotlin)
 
 == Tâches gradle CLI
 
-L'application se connecte par défaut à la base de données locale (`jdbc:postgresql:remocra`, utilisateur `remocra`, mot de passe `remocra`).
+L'application se connecte par défaut à la base de données locale (`jdbc:postgresql:remocra`, utilisateur `remocra`, mot de passe `remocra`) et envoie ses mails vers le serveur SMTP à `localhost:1025` (le service `maildev` de Docker Compose).
 
 La configuration peut être surchargée avec un fichier `local.conf` placé à la racine du projet,
 ou par des propriétés (`-P`) : toutes les propriétés dont le nom commence par `remocra.` sont automatiquement passées en _system properties_ à l'application.

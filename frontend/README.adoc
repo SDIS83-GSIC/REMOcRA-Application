@@ -4,11 +4,11 @@ Contrairement à Gradle, les commandes NPM sont à lancer dans le répertoire du
 
 On part du principe que Node et NPM sont tous deux installés dans des versions récentes
 
-`npm install` ou `npm ci`  Installe les dépendances Node.js
+`npm ci`::  Installe les dépendances NPM
 `npm run build` :: Build le frontend avec Parcel
 `npm run lint`:: Valide le code (ESLint, StyleLint, Prettier)
 `npm run lint:js`:: Valide le code JS (avec ESLint).
-`npm run lint:css`:: Valide le code CSS (avec StyleLint);.
+`npm run lint:css`:: Valide le code CSS (avec StyleLint).
 `npm run format`:: Reformatte le code (avec Prettier)
 `npm run watch`:: Lance Parcel en mode _watch_.
 +

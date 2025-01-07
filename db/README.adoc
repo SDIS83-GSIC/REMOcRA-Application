@@ -27,6 +27,13 @@ De manière similaire :
 `:db:flywayClean`:: permet remettre à zéro une base de données (avant un `:db:flywayMigrate` pour recréer le schéma)
 `:db:flywayInfo`:: indique les détails des migrations appliquées à une base de données
 `:db:flywayMigrateData`:: joue les scripts de migration spécifiques à l'ajout de données (scripts SQL dans `src/data`) ; il n'est pas prévu que ces scripts soient exécutés sur les serveurs (scripts non packagés), ces scripts sont là pour avoir un jeu de données pour le développement.
++
+Il est nécessaire que l'utilisateur `remocra` existe en base de données, il faut donc :
+
+. initialiser le schéma de la base de données (tâche `:db:flywayMigrate`)
+. lancer l'application (avec `./gradlew :run`)
+. se connecter avec l'utilisateur `remocra` via Keycloak
+. initialiser les données (cette tâche `:db:flywayMigrateData`)
 
 == Régénérer le mapping des classes par rapport à la base de données
 
