@@ -16,7 +16,7 @@ pipeline {
         withSidecarContainers(
           pg: [ imageName: 'postgis/postgis', imageVersion: '16-3.4', args: '-e "POSTGRES_DB=remocra" -e "POSTGRES_USER=remocra" -e "POSTGRES_PASSWORD=remocra"' ]
         ) {
-          gradleInsideDocker(imageVersion: '8.6-jdk21') {
+          gradleInsideDocker(imageVersion: '8.11.1-jdk21') {
             sh '''
                 gradle --stacktrace build
                 gradle --stacktrace cyclonedxBom
