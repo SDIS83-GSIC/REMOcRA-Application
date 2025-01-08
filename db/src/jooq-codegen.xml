@@ -7,9 +7,6 @@
   </jdbc>
   <generator>
     <name>org.jooq.codegen.KotlinGenerator</name>
-    <strategy>
-      <name>remocra.db.jooq.codegen.RemocraGeneratorStrategy</name>
-    </strategy>
     <database>
       <name>org.jooq.meta.postgres.PostgresDatabase</name>
       <schemata>
@@ -83,24 +80,15 @@
     </generate>
     <strategy>
       <matchers>
-        <tables>
-          <table>
-            <!-- Préfixe les tables de jointure dans les noms de classes -->
-            <expression>^l_(.*)$</expression>
-            <tableClass>
-              <expression>Lien_$1</expression>
-              <transform>PASCAL</transform>
-            </tableClass>
-            <recordClass>
-              <expression>$1</expression>
-              <transform>PASCAL</transform>
-            </recordClass>
-            <pojoClass>
-              <expression>$1</expression>
-              <transform>PASCAL</transform>
-            </pojoClass>
-          </table>
-        </tables>
+        <fields>
+          <field>
+            <expression>^(?:.*\.)?([^.]*)\.\1_(.*)$</expression>
+            <fieldIdentifier>
+              <expression>$2</expression>
+              <transform>UPPER</transform>
+            </fieldIdentifier>
+          </field>
+        </fields>
       </matchers>
     </strategy>
     <target>

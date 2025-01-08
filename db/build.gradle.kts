@@ -37,7 +37,6 @@ val jooqCodegen: Configuration by configurations.creating
 
 dependencies {
     api(libs.jooq.kotlin)
-    api(libs.jooq.codegen)
 
     api(libs.guava)
     implementation(libs.locationtech.jts.core)
@@ -76,7 +75,6 @@ tasks {
             project.delete(jooqOutputDir)
         }
         classpath = jooqCodegen
-        classpath += sourceSets["main"].runtimeClasspath
         mainClass = "org.jooq.codegen.GenerationTool"
         systemProperties = mapOf(
             "db.url" to dbUrl,
