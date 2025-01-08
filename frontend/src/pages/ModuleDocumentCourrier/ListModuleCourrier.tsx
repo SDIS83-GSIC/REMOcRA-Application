@@ -27,7 +27,7 @@ const ListModuleCourrier = () => {
   const { moduleId } = useParams();
   const listeIdMailUtilisateur = useGet(url`/api/utilisateur/get-id-mail`);
   return (
-    <SquelettePage header={<Header />}>
+    <SquelettePage navbar={<Header />}>
       <Container>
         <PageTitle icon={<IconList />} title={"Liste des courriers"} />
         <QueryTable

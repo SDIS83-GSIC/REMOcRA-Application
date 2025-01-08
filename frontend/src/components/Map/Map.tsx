@@ -141,10 +141,7 @@ const MapComponent = ({
           {toolbarElement && toolbarElement}
         </div>
       )}
-      <div
-        ref={mapElement}
-        className={"map-map"}
-      />
+      <div ref={mapElement} className={"map-map"} />
       <div className={"map-layers"}>
         <MapLegend
           ref={layerListRef}
