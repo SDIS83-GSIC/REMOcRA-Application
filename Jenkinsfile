@@ -1,4 +1,13 @@
 library 'atolcd-jenkins'
+
+// Cette version doit être synchronisée :
+// - avec le gradle/wrapper/gradle-wrapper.properties
+// - avec les autres Jenkinsfiles
+// La version dans les Jenkinsfiles n'est validée que lorsque leurs jobs sont exécutés,
+// il faut donc s'assurer que la version est synchro par relecture de code lors des reviews
+// (tous les Jenkinsfiles devraient être modifiés en même temps que le gradle-wrapper.properties)
+def gradleImageVersion = '8.11.1-jdk21'
+
 pipeline {
   options {
     disableConcurrentBuilds()
@@ -9,6 +18,18 @@ pipeline {
     stage('Validate Jenkinsfiles') {
       steps {
         validateJenkinsfiles 'Jenkinsfile-*'
+
+        gradleInsideDocker(imageVersion: gradleImageVersion) {
+          sh 'gradle wrapper'
+        }
+        verifyUnmodified('gradle/wrapper/gradle-wrapper.properties') {
+          setGerritReview unsuccessfulMessage: 'La version de Gradle a été mise à jour mais les Jenkinsfiles ne la reflètent pas'
+        }
+      }
+      post {
+        unsuccessful {
+          sh 'git restore -- gradlew* gradle/wrapper/'
+        }
       }
     }
     stage('Build Gradle') {
@@ -16,7 +37,7 @@ pipeline {
         withSidecarContainers(
           pg: [ imageName: 'postgis/postgis', imageVersion: '16-3.4', args: '-e "POSTGRES_DB=remocra" -e "POSTGRES_USER=remocra" -e "POSTGRES_PASSWORD=remocra"' ]
         ) {
-          gradleInsideDocker(imageVersion: '8.11.1-jdk21') {
+          gradleInsideDocker(imageVersion: gradleImageVersion) {
             sh '''
                 gradle --stacktrace build
                 gradle --stacktrace cyclonedxBom
