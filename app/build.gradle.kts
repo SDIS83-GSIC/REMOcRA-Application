@@ -57,9 +57,6 @@ licensee {
     allowUrl("https://jdbc.postgresql.org/about/license.html") {
         because("BSD-2-Clause")
     }
-    allowUrl("https://projectlombok.org/LICENSE") {
-        because("MIT")
-    }
     allowDependency("aopalliance", "aopalliance", "1.0") {
         because("Public Domain")
     }
