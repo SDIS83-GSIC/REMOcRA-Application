@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
+import remocra.GlobalConstants
 import remocra.app.ParametresProvider
 import remocra.auth.Public
 import remocra.security.NoCsrf
@@ -29,28 +30,20 @@ class ImageEndPoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Public("Les images ne sont pas lié aux droits")
     fun getImageHeader(): Response {
-// Liste des clés à chercher dans les paramètres (ici, les chemins d'images)
-        val listImageHeader = listOf("BANNIERE_CHEMIN", "LOGO_CHEMIN")
-
-// Filtrage des paramètres pour ne garder que ceux présents dans listImageHeader
-        val mapParam = parametresProvider.get().mapParametres.filter { it.key in listImageHeader }
-
         val codeUri = mutableMapOf<String, String>() // Liste mutable pour stocker les objets CodeUri
+        codeUri["BANNIERE_CHEMIN"] = uriInfo.baseUriBuilder // Construction de l'URI en utilisant le paramètre
+            .path(ImageEndPoint::class.java)
+            .path(ImageEndPoint::getUri.javaMethod)
+            .queryParam("path", GlobalConstants.BANNIERE_FULL_PATH) // Ajout du paramètre dans la query string
+            .build()
+            .toString()
 
-// Si aucun paramètre correspondant n'est trouvé, on lance une exception
-        if (mapParam.isEmpty()) {
-            throw IllegalArgumentException("Aucun paramètre n'a été trouvé : $listImageHeader")
-        }
-
-// Pour chaque paramètre filtré, on crée une map key => parametreCode value => uri
-        mapParam.forEach { param ->
-            codeUri[param.value.parametreCode] = uriInfo.baseUriBuilder // Construction de l'URI en utilisant le paramètre
-                .path(ImageEndPoint::class.java)
-                .path(ImageEndPoint::getUri.javaMethod)
-                .queryParam("path", param.value.parametreValeur) // Ajout du paramètre dans la query string
-                .build()
-                .toString()
-        }
+        codeUri["LOGO_CHEMIN"] = uriInfo.baseUriBuilder // Construction de l'URI en utilisant le paramètre
+            .path(ImageEndPoint::class.java)
+            .path(ImageEndPoint::getUri.javaMethod)
+            .queryParam("path", GlobalConstants.LOGO_FULL_PATH) // Ajout du paramètre dans la query string
+            .build()
+            .toString()
 
         return Response.ok().entity(codeUri).build()
     }

@@ -50,8 +50,6 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
         updateParametre(ParametreEnum.MESSAGE_ENTETE, parametresAdminData.general.messageEntete)
         updateParametre(ParametreEnum.TITRE_PAGE, parametresAdminData.general.titrePage)
         updateParametre(ParametreEnum.TOLERANCE_VOIES_METRES, parametresAdminData.general.toleranceVoiesMetres?.toString())
-        updateParametre(ParametreEnum.BANNIERE_CHEMIN, parametresAdminData.general.banniereChemin)
-        updateParametre(ParametreEnum.LOGO_CHEMIN, parametresAdminData.general.logoChemin)
 
         // Mobile
         updateParametre(ParametreEnum.AFFICHAGE_INDISPO, parametresAdminData.mobile.affichageIndispo?.toString())

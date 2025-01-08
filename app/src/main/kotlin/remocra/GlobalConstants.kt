@@ -67,6 +67,11 @@ object GlobalConstants {
     const val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA + "sites/tmp/"
     const val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA + "zones_integration/tmp/"
 
+    // Ressources "statiques", logo, bannière & co
+    const val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES + "ressources/"
+    const val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "banniere"
+    const val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "logo"
+
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
 

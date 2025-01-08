@@ -39,8 +39,6 @@ class ParametresUseCase : AbstractUseCase() {
             messageEntete = mapParametres.getStringOrNull(ParametreEnum.MESSAGE_ENTETE.name),
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
-            banniereChemin = mapParametres.getStringOrNull(ParametreEnum.BANNIERE_CHEMIN.name),
-            logoChemin = mapParametres.getStringOrNull(ParametreEnum.LOGO_CHEMIN.name),
         )
 
         val mobile = ParametresSectionMobile(

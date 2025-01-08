@@ -21,6 +21,11 @@ const MenuAdmin = () => {
           <a href={URLS.LIST_RAPPORT_PERSONNALISE}>Rapports personnalisés</a>
           <br />
           <a href={URLS.TASK}>Paramétrage des traitements</a>
+          <br />
+          <a href={URLS.ADMIN_IMPORT_RESSOURCES}>
+            Import des ressources images
+          </a>
+          <br />
         </Col>
 
         <Col className="bg-light p-2 border rounded mx-2">

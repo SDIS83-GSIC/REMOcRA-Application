@@ -126,6 +126,7 @@ import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportR
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
+import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -321,6 +322,7 @@ export const URLS = {
   ADMIN_FICHE_RESUME: url`/admin/fiche-resume`,
   ADMIN_ACCUEIL: url`/admin/module-accueil`,
   ADMIN_PARAMETRE: url`/admin/parametres`,
+  ADMIN_IMPORT_RESSOURCES: url`/admin/import-ressources`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
@@ -615,6 +617,15 @@ export default [
           <Authorization
             Component={AdminParametres}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "/admin/import-ressources",
+        element: (
+          <Authorization
+            Component={ImportRessources}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },

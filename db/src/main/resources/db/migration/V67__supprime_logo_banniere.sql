@@ -1,0 +1,1 @@
+DELETE FROM parametre where parametre_code IN ('BANNIERE_CHEMIN', 'LOGO_CHEMIN');

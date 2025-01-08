@@ -331,22 +331,6 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             }
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <TextInput
-            name="general.banniereChemin"
-            label="Chemin de la bannière"
-            defaultValue={values?.banniereChemin}
-            tooltipText={"TODO déplacer"}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <TextInput
-            name="general.logoChemin"
-            label="Chemin du logo"
-            defaultValue={values?.logoChemin}
-            tooltipText={"TODO déplacer"}
-          />
-        </AdminParametre>
       </>
     )
   );

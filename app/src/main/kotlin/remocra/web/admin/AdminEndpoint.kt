@@ -1,6 +1,8 @@
 package remocra.web.admin
 
 import jakarta.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
@@ -15,6 +17,7 @@ import remocra.data.ParametresAdminDataInput
 import remocra.data.enums.PeiCaracteristique
 import remocra.data.enums.TypeCaracterique
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.admin.ImportRessourcesUseCase
 import remocra.usecase.admin.ParametresUseCase
 import remocra.usecase.admin.UpdateParametresUseCase
 import remocra.web.AbstractEndpoint
@@ -31,6 +34,9 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var updateParametresUseCase: UpdateParametresUseCase
+
+    @Inject
+    private lateinit var importRessourcesUseCase: ImportRessourcesUseCase
 
     @GET
     @Path("/parametres")
@@ -62,6 +68,38 @@ class AdminEndpoint : AbstractEndpoint() {
             userInfo = securityContext.userInfo,
             element = parametres,
         ).wrap()
+    }
+
+    @PUT
+    @Path("/import-banniere")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importBanniere(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importBanniere(
+                securityContext.userInfo,
+                httpRequest.getPart("banniere"),
+            ),
+        ).build()
+    }
+
+    @PUT
+    @Path("/import-logo")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importLogo(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importLogo(
+                securityContext.userInfo,
+                httpRequest.getPart("logo"),
+            ),
+        ).build()
     }
 }
 private data class PeiCaracteristique(

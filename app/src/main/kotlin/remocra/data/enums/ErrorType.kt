@@ -363,6 +363,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_ORGANISME_FORBIDDEN_INSERT(9000, "Vous n'avez pas les droits de création des organimes", Status.FORBIDDEN),
     ADMIN_ORGANISME_FORBIDDEN_UPDATE(9001, "Vous n'avez pas les droits de modification des organimes", Status.FORBIDDEN),
 
+    ADMIN_IMPORT_RESSOURCE_FORBIDDEN(9010, "Vous n'avez pas les droits d'importer des ressource", Status.FORBIDDEN),
+
     //
     // ********************************************************************************
     // Site et gestionnaire
