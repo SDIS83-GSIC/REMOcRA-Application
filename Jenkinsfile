@@ -41,10 +41,20 @@ pipeline {
             sh '''
                 gradle --stacktrace build
                 gradle --stacktrace cyclonedxBom
+                # Exécute jooq *après* build pour ne pas reformater les src/main/kotlin et avoir spotlessCheck qui passe sans erreur alors qu'il ne devrait pas
+                gradle --stacktrace jooq -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
               '''
           }
+          verifyUnmodified('db/src/main/jooq/') {
+            setGerritReview unsuccessfulMessage: "La génération jOOQ n'est pas à jour par rapport aux migrations FlywayDB"
+          }
+        }
+      }
+      post {
+        unsuccessful {
+          sh 'git restore -- db/src/main/jooq/'
         }
       }
     }

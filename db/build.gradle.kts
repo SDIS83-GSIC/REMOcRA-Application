@@ -66,7 +66,7 @@ tasks {
         val jooqConfigFile = file("src/jooq-codegen.xml")
 
         dependsOn(flywayMigrate)
-        finalizedBy("spotlessApply", "spotlessKotlin", "spotlessXml")
+        finalizedBy(spotlessKotlinApply)
 
         inputs.dir("src/main/resources/db/migration").withPathSensitivity(PathSensitivity.RELATIVE)
         inputs.file(jooqConfigFile).withPathSensitivity(PathSensitivity.NONE)
@@ -85,6 +85,9 @@ tasks {
             "outputdir" to jooqOutputDir.path,
         )
         args(jooqConfigFile)
+    }
+    spotlessKotlin {
+        mustRunAfter(jooq)
     }
 }
 sourceSets {
