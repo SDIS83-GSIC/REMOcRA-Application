@@ -39,4 +39,9 @@ class CadastreEndpoint : AbstractEndpoint() {
     @Path("/section/{sectionId}/parcelle")
     @RequireDroits([Droit.OLDEB_R])
     fun parcelle(@PathParam("sectionId") sectionId: UUID): Response = Response.ok(cadastreRepository.getParcelleBySectionId(sectionId)).build()
+
+    @GET
+    @Path("/section/{sectionId}/parcelle-old/")
+    @RequireDroits([Droit.OLDEB_R])
+    fun parcelleWithOld(@PathParam("sectionId") sectionId: UUID): Response = Response.ok(cadastreRepository.getParcelleWithOldBySectionId(sectionId)).build()
 }

@@ -6,6 +6,10 @@ import SquelettePage from "../../pages/SquelettePage.tsx";
 const ModuleOldeb = () => {
   const navLinks: NavToProps[] = [
     {
+      path: URLS.OLDEB_ACCES_RAPIDE,
+      label: "Accès rapide",
+    },
+    {
       path: URLS.OLDEB_LIST,
       label: "Liste des Obligations Légales de Débroussaillement",
     },

@@ -16,6 +16,7 @@ const SelectFilterFromUrl = ({
   name,
   url,
   defaultValue,
+  disabled = false,
 }: SelectFilterFromUrlType) => {
   const stateData = useGet(url);
 
@@ -34,6 +35,7 @@ const SelectFilterFromUrl = ({
         listIdCodeLibelle={listData}
         onChange={onChange}
         defaultValue={defaultValue}
+        disabled={disabled}
       />
     );
   }

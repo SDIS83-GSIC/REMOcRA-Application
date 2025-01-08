@@ -142,6 +142,7 @@ import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import UpdateTypeOrganismeDroitApi from "./pages/Admin/TypeOrganisme/UpdateTypeOrganismeDroitApi.tsx";
 import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
 import ModuleOldeb from "./components/ModuleRemocra/ModuleOldeb.tsx";
+import OldebSearch from "./pages/Oldeb/OldebSearch.tsx";
 import OldebList from "./pages/Oldeb/OldebList.tsx";
 import OldebCreate from "./pages/Oldeb/OldebCreate.tsx";
 import OldebUpdate from "./pages/Oldeb/OldebUpdate.tsx";
@@ -205,6 +206,7 @@ export const URLS = {
   PEI_PRESCRIT: url`/pei-prescrit`,
 
   // MODULE OLDEB
+  OLDEB_ACCES_RAPIDE: url`/oldeb/recherche`,
   OLDEB_LIST: url`/oldeb/liste`,
   OLDEB_CREATE: url`/oldeb/create`,
   OLDEB_UPDATE: (oldebId) => url`/oldeb/${oldebId}`,
@@ -669,6 +671,15 @@ export default [
     path: "/oldeb/",
     element: <ModuleOldeb />,
     children: [
+      {
+        path: "recherche",
+        element: (
+          <Authorization
+            Component={OldebSearch}
+            droits={[TYPE_DROIT.OLDEB_R]}
+          />
+        ),
+      },
       {
         path: "liste",
         element: (

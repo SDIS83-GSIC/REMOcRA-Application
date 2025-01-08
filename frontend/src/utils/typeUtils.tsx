@@ -4,6 +4,7 @@ export type SelectType = {
   onChange?: any;
   name: string;
   defaultValue?: IdCodeLibelleType;
+  disabled?: boolean;
 };
 export type SelectNomenclaturesType = SelectType & {
   nomenclature: NOMENCLATURE;

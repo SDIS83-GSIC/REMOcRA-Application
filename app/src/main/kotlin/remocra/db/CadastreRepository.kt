@@ -7,6 +7,7 @@ import remocra.db.jooq.remocra.tables.pojos.CadastreSection
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.OLDEB
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -23,5 +24,11 @@ class CadastreRepository @Inject constructor(private val dsl: DSLContext) : Abst
     fun getParcelleBySectionId(sectionId: UUID): List<CadastreParcelle> =
         dsl.selectFrom(CADASTRE_PARCELLE)
             .where(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(sectionId))
+            .fetchInto()
+
+    fun getParcelleWithOldBySectionId(sectionId: UUID): List<CadastreParcelle> =
+        dsl.selectFrom(CADASTRE_PARCELLE)
+            .where(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(sectionId))
+            .and(CADASTRE_PARCELLE.ID.`in`(dsl.select(OLDEB.CADASTRE_PARCELLE_ID).from(OLDEB)))
             .fetchInto()
 }

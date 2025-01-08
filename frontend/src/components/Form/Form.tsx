@@ -1,4 +1,5 @@
 import { Field, Form as FormikForm, useField } from "formik";
+import { Typeahead } from "react-bootstrap-typeahead";
 import { ReactNode } from "react";
 import { Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -6,6 +7,9 @@ import ReactSelect from "react-select";
 import { IconInfo } from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import "./form.css";
+import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
 
 type InputType = {
   name: string;
@@ -520,6 +524,41 @@ export const SelectInput = ({
       />
     </DivWithError>
   );
+};
+
+export const AsyncTypeahead = ({
+  onChange,
+  url,
+  disabled = false,
+  labelKey = "libelle",
+}: SelectFilterFromUrlType) => {
+  const stateData = useGet(url);
+
+  const {
+    isResolved: isResolvedListData,
+    // eslint-disable-next-line no-empty-pattern
+    data: listData = ([] = {}),
+  } = stateData;
+
+  if (!isResolvedListData) {
+    return <Loading />;
+  } else {
+    return (
+      <Typeahead
+        className="d-flex"
+        placeholder={"Sélectionnez..."}
+        size={"sm"}
+        options={listData}
+        labelKey={labelKey}
+        onChange={(data) => {
+          onChange(data && data[0]);
+        }}
+        defaultSelected={[]}
+        clearButton
+        disabled={disabled}
+      />
+    );
+  }
 };
 
 export const FieldSet = ({

@@ -18,6 +18,7 @@ const SelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
+  disabled = false,
 }: SelectFilterFromListType) => {
   const defaultValue: IdCodeLibelleType = {
     id: "",
@@ -38,6 +39,7 @@ const SelectFilterFromList = ({
         onChange={(data) => {
           onChange({ name: name, value: data.id });
         }}
+        isDisabled={disabled}
       />
     </>
   );
