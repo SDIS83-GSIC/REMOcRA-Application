@@ -11,23 +11,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import { useRefs } from "./useRefs.ts";
-
-type SelectOption = {
-  label: string;
-  value: string;
-};
-
-export type Refs = {
-  typeOperations: SelectOption[];
-  typeObjets: SelectOption[];
-  typeUtilisateurs: SelectOption[];
-};
-
-export const stringToSelectOption = (s: string) => ({
-  label: s,
-  value: s,
-});
+import { SelectOption, useRefs } from "./useRefs.ts";
 
 type FormValues = {
   typeObjet: string | null; // null plutôt qu'un optional à cause de URLSearchParams (cf. en dessous)
@@ -57,7 +41,7 @@ const Tracabilite = () => {
   };
 
   const handleSubmit = (values: FormValues) => {
-    // @ts-expect-error url n'est pas content si on passe une variable string et non object 🤔
+    //@ts-expect-error url n'est pas content si on passe une variable string et non object 🤔
     navigate(url`${URLS.TRACABILITE}?${values}`);
   };
 

@@ -1,5 +1,16 @@
 import { useGet } from "../../../components/Fetch/useFetch";
-import { Refs, stringToSelectOption } from "./HistoriqueTracabilite";
+
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+
+export type Refs = {
+  typeOperations: SelectOption[];
+  typeObjets: SelectOption[];
+  typeUtilisateurs: SelectOption[];
+  isLoading: boolean;
+};
 
 export const useRefs = (): Refs => {
   const { data } = useGet("/api/tracabilite/refs");
@@ -20,3 +31,8 @@ export const useRefs = (): Refs => {
     typeUtilisateurs,
   };
 };
+
+const stringToSelectOption = (s: string) => ({
+  label: s,
+  value: s,
+});
