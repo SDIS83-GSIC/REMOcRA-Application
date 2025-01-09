@@ -13,20 +13,19 @@ services:
     network_mode: host
 
   keycloak:
-    image: docker-registry.priv.atolcd.com/keycloak/base:24
+    image: docker-registry.priv.atolcd.com/keycloak/base:26
     user: "${UID:-1000}:${GID:-1000}"
     command: [ "start-dev" ]
     ports:
       - 8080:8080
     environment:
-      - KEYCLOAK_ADMIN=kcadmin
-      - KEYCLOAK_ADMIN_PASSWORD=kcadmin
-      - KC_HEALTH_ENABLED=true
+      - KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME=kcadmin
+      - KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD=kcadmin
     volumes:
       - ./.docker/keycloak:/opt/keycloak/data
 
   keycloak-config:
-    image: docker-registry.priv.atolcd.com/keycloak/base:24
+    image: docker-registry.priv.atolcd.com/keycloak/base:26
     command: [ "keycloak-config-cli" ]
     environment:
       # configuration de keycloak-config-cli (https://gerrit.priv.atolcd.com/plugins/gitiles/atolcd/docker#keycloak_base)
