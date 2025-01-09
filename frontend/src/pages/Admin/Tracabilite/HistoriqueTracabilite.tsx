@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button, Col, Container, Row, Stack, Table } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Formik, useFormikContext } from "formik";
@@ -10,7 +11,9 @@ import {
   SelectInput,
 } from "../../../components/Form/Form.tsx";
 import url from "../../../module/fetch.tsx";
+import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import { URLS } from "../../../routes.tsx";
+import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import { SelectOption, useRefs } from "./useRefs.ts";
 
 type FormValues = {
@@ -23,9 +26,25 @@ type FormValues = {
 };
 
 const Tracabilite = () => {
-  const { typeOperations, typeObjets, typeUtilisateurs } = useRefs();
+  const { typeOperations, typeObjets, typeUtilisateurs, isLoading } = useRefs();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { run, data } = useGetRun(
+    url`/api/tracabilite/search?${searchParams}`,
+    {},
+  );
+  const tracabilites: Tracabilite[] = searchParams.size ? data || [] : [];
+
+  useEffect(() => {
+    if (!searchParams.size) {
+      return;
+    }
+    run();
+  }, [searchParams]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const initialValues: FormValues = {
     typeObjet: searchParams.get("typeObjet"),
@@ -37,12 +56,12 @@ const Tracabilite = () => {
     fin: isValid(parseISO(searchParams.get("fin") ?? ""))
       ? searchParams.get("fin")
       : "",
-    utilisateur: "",
+    utilisateur: searchParams.get("utilisateur") ?? "",
   };
 
   const handleSubmit = (values: FormValues) => {
     //@ts-expect-error url n'est pas content si on passe une variable string et non object 🤔
-    navigate(url`${URLS.TRACABILITE}?${values}`);
+    navigate(url`${URLS.TRACABILITE}?${nullifyEmptyValue(values)}`);
   };
 
   return (
@@ -75,22 +94,22 @@ const Tracabilite = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>PEI</td>
-              <td>Création</td>
-              <td>01/01/2025 09/00</td>
-              <td>
-                login: johndoe
-                <br />
-                email: john@doe.com
-              </td>
-              <td>
-                <pre>
-                  id: XXX numéro: 1234 5678 commune: Dijon localisation:
-                  Boulevard Carnot
-                </pre>
-              </td>
-            </tr>
+            {tracabilites.length > 0 &&
+              tracabilites.map((d, i) => (
+                <tr key={i}>
+                  <td>{d.tracabiliteTypeObjet}</td>
+                  <td>{d.tracabiliteTypeOperation}</td>
+                  <td>{d.tracabiliteDate}</td>
+                  <td>
+                    login: {d.tracabiliteAuteurData.nom}
+                    <br />
+                    email: {d.tracabiliteAuteurData.email}
+                  </td>
+                  <td>
+                    <pre>{JSON.stringify(d.tracabiliteObjetData, null, 2)}</pre>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       </Row>
@@ -123,13 +142,15 @@ const SearchForm = ({
       <FormLabel label="Type d'objet" name="typeObjets" required={false} />
       <SelectInput
         name="typeObjet"
+        required={false}
+        isClearable
         options={typeObjets}
         getOptionLabel={(d) => d.label}
         getOptionValue={(d) => d.value}
         onChange={(e) =>
           setFieldValue(
             "typeObjet",
-            typeObjets.find((to) => to.value === e.value)?.value,
+            typeObjets.find((to) => to.value === e?.value)?.value,
           )
         }
         defaultValue={
@@ -143,13 +164,15 @@ const SearchForm = ({
       />
       <SelectInput
         name="typeOperation"
+        required={false}
+        isClearable
         options={typeOperations}
         getOptionLabel={(d) => d.label}
         getOptionValue={(d) => d.value}
         onChange={(e) =>
           setFieldValue(
             "typeOperation",
-            typeOperations.find((to) => to.value === e.value)?.value,
+            typeOperations.find((to) => to.value === e?.value)?.value,
           )
         }
         defaultValue={
@@ -159,10 +182,18 @@ const SearchForm = ({
       <FormLabel label="Période" name="periode" required={false} />
       <Row>
         <Col>
-          <DateTimeInput name="debut" dateType="date" required={false} />
+          <DateTimeInput
+            name="debut"
+            dateType="date"
+            required={values.fin !== ""}
+          />
         </Col>
         <Col>
-          <DateTimeInput name="fin" dateType="date" required={false} />
+          <DateTimeInput
+            name="fin"
+            dateType="date"
+            required={values.debut !== ""}
+          />
         </Col>
       </Row>
       <FormLabel
@@ -172,15 +203,17 @@ const SearchForm = ({
       />
       <SelectInput
         name="typeUtilisateur"
+        required={false}
+        isClearable
         options={typeUtilisateurs}
         getOptionLabel={(d) => d.label}
         getOptionValue={(d) => d.value}
-        onChange={(e) =>
+        onChange={(e) => {
           setFieldValue(
             "typeUtilisateur",
-            typeUtilisateurs.find((to) => to.value === e.value)?.value,
-          )
-        }
+            typeUtilisateurs.find((to) => to.value === e?.value)?.value,
+          );
+        }}
         defaultValue={
           typeUtilisateurs.find((to) => to.value === values.typeUtilisateur) ??
           null
@@ -201,3 +234,23 @@ const SearchForm = ({
     </FormContainer>
   );
 };
+
+type Tracabilite = {
+  tracabiliteTypeObjet: string;
+  tracabiliteTypeOperation: string;
+  tracabiliteDate: string;
+  tracabiliteAuteurData: { nom: string; email: string };
+  tracabiliteObjetData: any;
+};
+
+const nullifyEmptyValue = (values: FormValues): FormValues =>
+  Object.keys(values).reduce(
+    (acc, k) => ({
+      ...acc,
+      [k]:
+        values[k as keyof FormValues] === ""
+          ? null
+          : values[k as keyof FormValues],
+    }),
+    values,
+  );

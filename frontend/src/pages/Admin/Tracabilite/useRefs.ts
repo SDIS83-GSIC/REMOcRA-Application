@@ -13,7 +13,7 @@ export type Refs = {
 };
 
 export const useRefs = (): Refs => {
-  const { data } = useGet("/api/tracabilite/refs");
+  const { data, isLoading } = useGet("/api/tracabilite/refs");
 
   const typeOperations = data
     ? data.typeOperations.map(stringToSelectOption)
@@ -29,6 +29,7 @@ export const useRefs = (): Refs => {
     typeOperations,
     typeObjets,
     typeUtilisateurs,
+    isLoading,
   };
 };
 
