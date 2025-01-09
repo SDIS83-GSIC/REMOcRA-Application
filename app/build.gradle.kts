@@ -166,31 +166,11 @@ dependencies {
     implementation(libs.jasperreports)
     implementation(libs.jasperreports.pdf)
     implementation(libs.jasperreports.fronts)
-
-    // Tests
-    testCompileOnly(libs.forbiddenapis)
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.archunit.junit5)
 }
 
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"
 
 tasks {
-    test {
-        useJUnitPlatform {
-            excludeTags("postgres")
-        }
-    }
-    register<Test>("pgTest") {
-        description = "Lance les tests nécessitant Postgresql"
-        group = LifecycleBasePlugin.VERIFICATION_GROUP
-
-        systemProperties = project.properties.filterKeys { it.startsWith("remocra.") }
-        useJUnitPlatform {
-            includeTags("postgres")
-        }
-    }
     fun JavaExec.cli(vararg extraArgs: String) {
         group = "cli"
         description = "Lance l'application"
@@ -212,5 +192,18 @@ tasks {
         setIncludeConfigs(listOf("runtimeClasspath"))
         // Specified the type of project being built. Defaults to 'library'
         projectType = "application"
+    }
+}
+
+testing {
+    suites {
+        withType<JvmTestSuite> {
+            useJUnitJupiter(libs.versions.junit)
+        }
+        named<JvmTestSuite>("test") {
+            dependencies {
+                implementation(libs.archunit.junit5)
+            }
+        }
     }
 }

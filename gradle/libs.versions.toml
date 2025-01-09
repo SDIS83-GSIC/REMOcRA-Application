@@ -9,6 +9,7 @@ sentry= "7.14.0"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
+junit = "5.11.0"
 ktlint = "0.49.0"
 
 [libraries]
@@ -19,7 +20,6 @@ guice-bom = "com.google.inject:guice-bom:7.0.0"
 jetty-bom ="org.eclipse.jetty:jetty-bom:11.0.24"
 jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet" }
 jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets" }
-junit-bom = "org.junit:junit-bom:5.11.0"
 forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
@@ -51,9 +51,6 @@ jackson-datatype-guava = "com.fasterxml.jackson.datatype:jackson-datatype-guava:
 jackson-datatype-jdk8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2"
 jackson-datatype-jsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2"
 jackson-dataformat-csv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2"
-
-junit-jupiter-api = "org.junit.jupiter:junit-jupiter-api:5.11.0"
-junit-jupiter-engine = "org.junit.jupiter:junit-jupiter-engine:5.11.0"
 
 pac4j-oidc = "org.pac4j:pac4j-oidc:6.0.6"
 jakartaee-pac4j = "org.pac4j:jakartaee-pac4j:8.0.1"

@@ -33,8 +33,12 @@ tasks.withType<Jar>().configureEach {
     archiveVersion.set(null as String?)
 }
 
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+testing {
+    suites {
+        withType<JvmTestSuite> {
+            useJUnitJupiter(versionCatalogs.named("libs").findVersion("junit").orElseThrow().requiredVersion)
+        }
+    }
 }
 
 forbiddenApis {
