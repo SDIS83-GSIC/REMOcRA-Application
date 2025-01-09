@@ -3,6 +3,8 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.JSONB
+import org.jooq.impl.DSL
+import remocra.data.tracabilite.Search
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.historique.tables.pojos.Tracabilite
@@ -59,4 +61,34 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
             .and(TRACABILITE.OBJET_ID.eq(peiId))
             .orderBy(TRACABILITE.DATE.desc())
             .fetchAnyInto()
+
+    fun searchTracabilite(search: Search): List<Tracabilite> =
+        dsl.selectFrom(TRACABILITE)
+            .where(
+                DSL.and(
+                    listOfNotNull(
+                        search.typeObjet?.let { TRACABILITE.TYPE_OBJET.eq(it) },
+                        search.typeUtilisateur?.let {
+                            DSL.jsonbGetAttributeAsText(TRACABILITE.AUTEUR_DATA, "typeSourceModification")
+                                .eq(it.name)
+                        },
+                        search.utilisateur?.let {
+                            val cndNom = DSL.jsonbGetAttributeAsText(TRACABILITE.AUTEUR_DATA, "nom")
+                                .containsIgnoreCase(it)
+                            val cndPrenom = DSL.jsonbGetAttributeAsText(TRACABILITE.AUTEUR_DATA, "prenom")
+                                .containsIgnoreCase(it)
+                            cndNom.or(cndPrenom)
+                        },
+                        search.typeOperation?.let { TRACABILITE.TYPE_OPERATION.eq(it) },
+                        if (search.debut != null && search.fin != null) {
+                            val debut = dateUtils.getMoment(search.debut)
+                            val fin = dateUtils.getMoment(search.fin)
+                            TRACABILITE.DATE.between(debut, fin)
+                        } else {
+                            null
+                        },
+                    ),
+                ),
+            )
+            .fetchInto()
 }
