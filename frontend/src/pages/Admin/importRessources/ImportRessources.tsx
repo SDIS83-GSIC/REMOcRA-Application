@@ -11,6 +11,7 @@ import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
 export const getInitialValues = () => ({
   banniere: null,
   logo: null,
+  symbologie: null,
 });
 
 export const validationSchema = object({});
@@ -18,6 +19,7 @@ export const prepareVariables = (values) => {
   const formData = new FormData();
   formData.append("banniere", values.banniere);
   formData.append("logo", values.logo);
+  formData.append("symbologie", values.symbologie);
   return formData;
 };
 
@@ -91,6 +93,31 @@ export const ImportRessources = () => {
               </>
             ),
           },
+          {
+            header: "Importer la symbologie",
+            content: (
+              <>
+                <p>
+                  Cette fonctionnalité permet d&apos;envoyer sur le serveur les
+                  images correspondant à la symbologie des PEI ; <br />
+                  l&apos;archive à envoyer contiendra à plat tous les fichiers
+                  image correctement nommés afin que le mécanisme Geoserver
+                  puisse correctement faire le mapping sur la carte.
+                </p>
+                <MyFormik
+                  initialValues={getInitialValues()}
+                  validationSchema={validationSchema}
+                  isPost={false}
+                  isMultipartFormData={true}
+                  submitUrl={`/api/admin/import-symbologie`}
+                  prepareVariables={(values) => prepareVariables(values)}
+                  redirectUrl={URLS.ADMIN_IMPORT_RESSOURCES}
+                >
+                  <FormImportSymbologie />
+                </MyFormik>
+              </>
+            ),
+          },
         ]}
       />
     </>
@@ -132,6 +159,28 @@ const FormImportLogo = () => {
         <Col className="text-center">
           <Button type="submit" variant="primary">
             Importer le logo
+          </Button>
+        </Col>
+      </Row>
+    </FormContainer>
+  );
+};
+
+const FormImportSymbologie = () => {
+  const { setFieldValue } = useFormikContext();
+
+  return (
+    <FormContainer>
+      <FileInput
+        name="symbologie"
+        required={true}
+        accept=".zip"
+        onChange={(e) => setFieldValue("symbologie", e.target.files[0])}
+      />
+      <Row className="mt-3">
+        <Col className="text-center">
+          <Button type="submit" variant="primary">
+            Importer la symbologie
           </Button>
         </Col>
       </Row>

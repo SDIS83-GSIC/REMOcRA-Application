@@ -72,6 +72,9 @@ object GlobalConstants {
     const val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "banniere"
     const val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "logo"
 
+    // Toutes les images participant à la symbologie des PEI
+    const val DOSSIER_IMAGES_SYMBOLOGIE = DOSSIER_IMAGES + "symbologie/"
+
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"
 

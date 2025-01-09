@@ -10,6 +10,9 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
+import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 /**
  * Usecase permettant de gérer les imports des différentes ressources (graphiques) via l'admin.
@@ -53,6 +56,30 @@ class ImportRessourcesUseCase : AbstractUseCase() {
         documentUtils.saveFile(logoPart.inputStream.readAllBytes(), "logo", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
     }
 
-    fun importSymbologie() {
+    fun importSymbologie(userInfo: UserInfo?, symbologiePart: Part) {
+        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
+        if (userInfo == null) {
+            throw ForbiddenException()
+        }
+        checkDroits(userInfo)
+
+        ZipInputStream(symbologiePart.inputStream).use { zipInputStream ->
+            var zipEntry: ZipEntry? = zipInputStream.nextEntry
+
+            while (zipEntry != null) {
+                documentUtils.ensureDirectory(GlobalConstants.DOSSIER_IMAGES_SYMBOLOGIE)
+
+                val file = File(GlobalConstants.DOSSIER_IMAGES_SYMBOLOGIE + zipEntry.name)
+
+                zipInputStream.readBytes().inputStream().use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                zipInputStream.closeEntry()
+                zipEntry = zipInputStream.nextEntry
+            }
+        }
     }
 }

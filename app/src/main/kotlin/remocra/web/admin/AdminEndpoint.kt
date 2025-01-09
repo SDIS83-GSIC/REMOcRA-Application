@@ -101,6 +101,22 @@ class AdminEndpoint : AbstractEndpoint() {
             ),
         ).build()
     }
+
+    @PUT
+    @Path("/import-symbologie")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importSymbologie(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importSymbologie(
+                securityContext.userInfo,
+                httpRequest.getPart("symbologie"),
+            ),
+        ).build()
+    }
 }
 private data class PeiCaracteristique(
     val libelle: String,
