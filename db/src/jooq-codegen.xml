@@ -30,11 +30,6 @@
       <includeRoutines>false</includeRoutines>
       <forcedTypes>
         <forcedType>
-          <userType>com.google.common.collect.Range&lt;java.time.ZonedDateTime&gt;</userType>
-          <binding>remocra.db.jooq.bindings.PostgresTSTZRangeBinding</binding>
-          <types>TSTZRANGE</types>
-        </forcedType>
-        <forcedType>
           <userType>org.locationtech.jts.geom.Geometry</userType>
           <binding>remocra.db.jooq.bindings.GeometryBinding</binding>
           <types>Geometry</types>
