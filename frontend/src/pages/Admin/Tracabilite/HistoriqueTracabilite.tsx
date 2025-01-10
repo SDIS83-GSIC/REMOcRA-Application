@@ -36,17 +36,6 @@ const Tracabilite = () => {
   );
   const tracabilites: Tracabilite[] = searchParams.size ? data || [] : [];
 
-  useEffect(() => {
-    if (!searchParams.size) {
-      return;
-    }
-    run();
-  }, [searchParams]);
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
   const initialValues: FormValues = {
     typeObjet: searchParams.get("typeObjet"),
     typeOperation: searchParams.get("typeOperation"),
@@ -60,6 +49,23 @@ const Tracabilite = () => {
     utilisateur: searchParams.get("utilisateur") ?? "",
     objetId: searchParams.get("objetId") ?? "",
   };
+
+  useEffect(() => {
+    if (!searchParams.size) {
+      return;
+    }
+    const hasSomeValueFiltered = searchParams
+      .keys()
+      .some((k) => Object.keys(initialValues).includes(k));
+
+    if (hasSomeValueFiltered) {
+      run();
+    }
+  }, [searchParams]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const handleSubmit = (values: FormValues) => {
     //@ts-expect-error url n'est pas content si on passe une variable string et non object 🤔

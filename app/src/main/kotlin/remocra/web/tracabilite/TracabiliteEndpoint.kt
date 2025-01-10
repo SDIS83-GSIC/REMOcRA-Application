@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.tracabilite.TracabiliteUseCase
 import remocra.web.AbstractEndpoint
 import java.time.LocalDateTime
+import java.time.format.DateTimeParseException
 import java.util.UUID
 
 @Path("/tracabilite")
@@ -47,13 +48,28 @@ class TracabiliteEndpoint : AbstractEndpoint() {
     // TODO: trouver le bon droit !
     @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     fun search(@BeanParam searchParams: SearchParams): Response {
+        val debut = searchParams.debut?.let {
+            try {
+                LocalDateTime.parse(it)
+            } catch (e: DateTimeParseException) {
+                null
+            }
+        }
+        val fin = searchParams.fin?.let {
+            try {
+                LocalDateTime.parse(it)
+            } catch (e: DateTimeParseException) {
+                null
+            }
+        }
+
         val s =
             Search(
                 searchParams.typeObjet,
                 searchParams.typeOperation,
                 searchParams.typeUtilisateur,
-                searchParams.debut?.let { LocalDateTime.parse(it) },
-                searchParams.fin?.let { LocalDateTime.parse(it) },
+                debut,
+                fin,
                 searchParams.utilisateur,
                 searchParams.objetId,
             )
