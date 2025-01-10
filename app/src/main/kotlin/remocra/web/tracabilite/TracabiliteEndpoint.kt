@@ -51,8 +51,8 @@ class TracabiliteEndpoint : AbstractEndpoint() {
                 searchParams.typeObjet,
                 searchParams.typeOperation,
                 searchParams.typeUtilisateur,
-                LocalDateTime.parse(searchParams.debut),
-                LocalDateTime.parse(searchParams.fin),
+                searchParams.debut?.let { LocalDateTime.parse(it) },
+                searchParams.fin?.let { LocalDateTime.parse(it) },
                 searchParams.utilisateur,
             )
 
