@@ -17,7 +17,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.tracabilite.TracabiliteUseCase
 import remocra.web.AbstractEndpoint
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Path("/tracabilite")
 @Produces(MediaType.APPLICATION_JSON)
@@ -51,8 +51,8 @@ class TracabiliteEndpoint : AbstractEndpoint() {
                 searchParams.typeObjet,
                 searchParams.typeOperation,
                 searchParams.typeUtilisateur,
-                searchParams.debut,
-                searchParams.fin,
+                LocalDateTime.parse(searchParams.debut),
+                LocalDateTime.parse(searchParams.fin),
                 searchParams.utilisateur,
             )
 
@@ -70,10 +70,10 @@ class TracabiliteEndpoint : AbstractEndpoint() {
         var typeUtilisateur: TypeSourceModification? = null
 
         @QueryParam("debut")
-        var debut: LocalDate? = null
+        var debut: String? = null
 
         @QueryParam("fin")
-        var fin: LocalDate? = null
+        var fin: String? = null
 
         @QueryParam("utilisateur")
         var utilisateur: String? = null

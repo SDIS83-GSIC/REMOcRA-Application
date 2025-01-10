@@ -184,14 +184,14 @@ const SearchForm = ({
         <Col>
           <DateTimeInput
             name="debut"
-            dateType="date"
+            dateType="datetime-local"
             required={values.fin !== ""}
           />
         </Col>
         <Col>
           <DateTimeInput
             name="fin"
-            dateType="date"
+            dateType="datetime-local"
             required={values.debut !== ""}
           />
         </Col>

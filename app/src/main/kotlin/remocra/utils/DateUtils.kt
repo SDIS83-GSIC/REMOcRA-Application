@@ -51,11 +51,21 @@ class DateUtils(val clock: Clock) {
      *
      * @param localDate LocalDate
      * @return ZonedDateTime
-     * @throws DateTimeParseException si le format PATTERN_MINUTE n'est pas respecté
      */
     @Throws(DateTimeParseException::class)
     fun getMoment(localDate: LocalDate): ZonedDateTime {
         return localDate.atStartOfDay(clock.zone)
+    }
+
+    /**
+     * Retourne un moment (ZoneDateTime) à partir d'une date
+     *
+     * @param localDateTime LocalDateTime
+     * @return ZonedDateTime
+     */
+    @Throws(DateTimeParseException::class)
+    fun getMoment(localDateTime: LocalDateTime): ZonedDateTime {
+        return localDateTime.atZone(clock.zone)
     }
 
     /**
