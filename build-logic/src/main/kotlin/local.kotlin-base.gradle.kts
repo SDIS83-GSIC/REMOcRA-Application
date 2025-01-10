@@ -1,6 +1,3 @@
-import gradle.kotlin.dsl.accessors._1cd57f1730507bf1765dcbcf508dc5fb.spotless
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     id("local.base")
     id("local.dependency-management")
@@ -17,7 +14,7 @@ kotlin {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(project.the<VersionCatalogsExtension>().named("libs").findVersion("javaToolchain").orElseThrow().requiredVersion))
+        languageVersion.set(JavaLanguageVersion.of(versionCatalogs.named("libs").findVersion("javaToolchain").orElseThrow().requiredVersion))
     }
 }
 
@@ -53,6 +50,6 @@ lint {
 
 spotless {
     kotlin {
-        ktlint(project.the<VersionCatalogsExtension>().named("libs").findVersion("ktlint").orElseThrow().requiredVersion)
+        ktlint(versionCatalogs.named("libs").findVersion("ktlint").orElseThrow().requiredVersion)
     }
 }
