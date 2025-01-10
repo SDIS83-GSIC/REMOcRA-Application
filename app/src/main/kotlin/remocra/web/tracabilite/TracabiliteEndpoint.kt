@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.tracabilite.TracabiliteUseCase
 import remocra.web.AbstractEndpoint
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Path("/tracabilite")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,6 +55,7 @@ class TracabiliteEndpoint : AbstractEndpoint() {
                 searchParams.debut?.let { LocalDateTime.parse(it) },
                 searchParams.fin?.let { LocalDateTime.parse(it) },
                 searchParams.utilisateur,
+                searchParams.objetId,
             )
 
         return Response.ok(tracabiliteUseCase.search(s)).build()
@@ -77,5 +79,8 @@ class TracabiliteEndpoint : AbstractEndpoint() {
 
         @QueryParam("utilisateur")
         var utilisateur: String? = null
+
+        @QueryParam("objetId")
+        var objetId: UUID? = null
     }
 }

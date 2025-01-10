@@ -87,6 +87,7 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
                         } else {
                             null
                         },
+                        search.objetId?.let { TRACABILITE.OBJET_ID.eq(it) },
                     ),
                 ),
             )

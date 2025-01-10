@@ -4,6 +4,7 @@ import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class Search(
     val typeObjet: TypeObjet? = null,
@@ -12,4 +13,5 @@ data class Search(
     val debut: LocalDateTime? = null,
     val fin: LocalDateTime? = null,
     var utilisateur: String? = null,
+    var objetId: UUID? = null,
 )

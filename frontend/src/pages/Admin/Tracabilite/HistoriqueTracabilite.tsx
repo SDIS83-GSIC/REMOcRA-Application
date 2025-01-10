@@ -23,6 +23,7 @@ type FormValues = {
   debut: string | null;
   fin: string | null;
   utilisateur: string | null;
+  objetId: string | null;
 };
 
 const Tracabilite = () => {
@@ -57,6 +58,7 @@ const Tracabilite = () => {
       ? searchParams.get("fin")
       : "",
     utilisateur: searchParams.get("utilisateur") ?? "",
+    objetId: searchParams.get("objetId") ?? "",
   };
 
   const handleSubmit = (values: FormValues) => {
@@ -221,6 +223,8 @@ const SearchForm = ({
       />
       <FormLabel label="Utilisateur" name="utilisateur" required={false} />
       <TextInput name="utilisateur" required={false} />
+      <FormLabel label="Id de l'objet" name="objetId" required={false} />
+      <TextInput name="objetId" required={false} />
       <Stack
         direction="horizontal"
         gap={2}
