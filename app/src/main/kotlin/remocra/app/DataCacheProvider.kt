@@ -18,6 +18,7 @@ import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.NomenclatureCodeLibelleRepository
 import remocra.db.OldebRepository
+import remocra.db.RcciRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
@@ -43,6 +44,11 @@ import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
+import remocra.db.jooq.remocra.tables.pojos.RcciTypeDegreCertitude
+import remocra.db.jooq.remocra.tables.pojos.RcciTypeOrigineAlerte
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeCategorie
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
@@ -57,6 +63,7 @@ constructor(
     private val anomalieRepository: AnomalieRepository,
     private val communeRepository: CommuneRepository,
     private val diametreRepository: DiametreRepository,
+    private val rcciRepository: RcciRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
     private val materiauRepository: MateriauRepository,
@@ -87,6 +94,11 @@ constructor(
         when (typeToReload) {
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
             TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
+            TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> dataCache.mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
+            TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
+            TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -124,6 +136,11 @@ constructor(
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
 //        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
+        val mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
+        val mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
+        val mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
+        val mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
+        val mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
         val materiaux = materiauRepository.getMapById()
@@ -153,6 +170,11 @@ constructor(
             mapAnomalieCategorie = anomaliesCategories,
             // mapCommune = communes,
             mapDiametre = diametres,
+            mapRcciTypePrometheeFamille = mapRcciTypePrometheeFamille,
+            mapRcciTypePrometheePartition = mapRcciTypePrometheePartition,
+            mapRcciTypePrometheeCategorie = mapRcciTypePrometheeCategorie,
+            mapRcciTypeOrigineAlerte = mapRcciTypeOrigineAlerte,
+            mapRcciTypeDegreCertitude = mapRcciTypeDegreCertitude,
             mapDomaine = domaines,
             mapMateriau = materiaux,
             mapMarquePibi = marquesPibi,
@@ -185,6 +207,11 @@ constructor(
     fun getData(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> getAnomalies()
         TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> getMapRcciTypePrometheeFamille()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> getMapRcciTypePrometheePartition()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> getMapRcciTypePrometheeCategorie()
+        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> getMapRcciTypeOrigineAlerte()
+        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> getMapRcciTypeDegreCertitude()
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -216,6 +243,16 @@ constructor(
 
     fun getAnomaliesCategories() = get().mapAnomalieCategorie
 
+    fun getMapRcciTypePrometheeFamille() = get().mapRcciTypePrometheeFamille
+
+    fun getMapRcciTypePrometheePartition() = get().mapRcciTypePrometheePartition
+
+    fun getMapRcciTypePrometheeCategorie() = get().mapRcciTypePrometheeCategorie
+
+    fun getMapRcciTypeOrigineAlerte() = get().mapRcciTypeOrigineAlerte
+
+    fun getMapRcciTypeDegreCertitude() = get().mapRcciTypeDegreCertitude
+
     fun getDiametres() = get().mapDiametre
 
     fun getNatures() = get().mapNature
@@ -242,6 +279,11 @@ constructor(
     fun getPojoClassFromType(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> Anomalie::class.java
         TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> RcciTypePrometheeFamille::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> RcciTypePrometheePartition::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> RcciTypePrometheeCategorie::class.java
+        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> RcciTypeOrigineAlerte::class.java
+        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> RcciTypeDegreCertitude::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java
@@ -268,5 +310,14 @@ constructor(
         TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> OldebTypeZoneUrbanisme::class.java
         TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> OldebTypeCaracteristique::class.java
         TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> OldebTypeCategorieCaracteristique::class.java
+    }
+
+    /**
+     * Fonction permettant de retourner la classe liée à un POJO
+     */
+    fun getLinkedPojoClassFromType(typeDataCache: TypeDataCache) = when (typeDataCache) {
+        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> RcciTypePrometheeFamille::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> RcciTypePrometheePartition::class.java
+        else -> null
     }
 }

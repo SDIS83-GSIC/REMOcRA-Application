@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.UtilisateurData
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
@@ -347,4 +348,26 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurId: UUID,
         val utilisateurEmail: String,
     )
+
+    private fun getUtilisteurListByTypeOrganisme(vararg typeOrganismeList: String): List<GlobalData.IdCodeLibelleData> =
+        dsl
+            .select(UTILISATEUR.ID.`as`("id"))
+            .select(DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM).`as`("code"))
+            .select(DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM).`as`("libelle"))
+            .from(UTILISATEUR)
+            .join(PROFIL_UTILISATEUR).on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
+            .join(TYPE_ORGANISME).on(TYPE_ORGANISME.ID.eq(PROFIL_UTILISATEUR.TYPE_ORGANISME_ID).and(TYPE_ORGANISME.CODE.`in`(*typeOrganismeList)))
+            .fetchInto()
+
+    //  Direction départementale des Territoires et de la Mer + Office National des Forêts
+    fun getUtilisateurDdtmonf() = getUtilisteurListByTypeOrganisme("DDTM", "ONF")
+
+    // SDIS, CIS et affiliés
+    fun getUtilisateurSdis() = getUtilisteurListByTypeOrganisme("SDIS", "CIS", "CIS-ETAPE-1", "CIS-ETAPE-2")
+
+    // Gendarmerie
+    fun getUtilisateurGendarmerie() = getUtilisteurListByTypeOrganisme("GENDARMERIE")
+
+    // Police
+    fun getUtilisateurPolice() = getUtilisteurListByTypeOrganisme("POLICE")
 }

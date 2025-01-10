@@ -46,10 +46,10 @@ fun geometryFromBBox(bbox: String?, epsg: String?): Geometry? {
     return geometry
 }
 fun sridFromEpsgCode(coupleOrCode: String): Int =
-    coupleOrCode.split(":".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray()[1].toInt()
+    coupleOrCode.split(":".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
 
 fun sridFromGeom(coupleOrCode: String): Int =
-    coupleOrCode.split("=".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray()[1].toInt()
+    coupleOrCode.split("=".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
 
 fun formatPoint(coordonneesXYSrid: CoordonneesXYSrid): Geometry {
     val geometry = WKTReader().read("POINT(${coordonneesXYSrid.coordonneeX} ${coordonneesXYSrid.coordonneeY})")

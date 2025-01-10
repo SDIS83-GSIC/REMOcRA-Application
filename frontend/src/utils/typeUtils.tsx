@@ -43,6 +43,7 @@ export type IdCodeLibelleType = {
   id: string | undefined;
   code: string | undefined;
   libelle: string;
+  lienId?: string | undefined;
 };
 
 export type SubmitButtonType = {

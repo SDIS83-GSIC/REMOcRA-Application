@@ -5,6 +5,7 @@ import MyFormik from "../Form/MyFormik.tsx";
 import { FormContainer } from "../Form/Form.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
 
 const EditModalBody = ({
   prepareVariables,
@@ -17,15 +18,21 @@ const EditModalBody = ({
   closeModal,
   children,
   submitLabel,
+  value,
+  isMultipartFormData = false,
 }: EditModalBodyType) => {
   const isAdd = id == null;
-  const submitUrl = query;
+  const submitUrl = query + "/" + (id ? id : "create");
   let initialData = {};
 
   if (!isAdd) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const editState = useGet(submitUrl, {});
-    const { isResolved, data = {} } = editState;
+    const { isLoading, isResolved, data = {} } = editState;
+
+    if (isLoading) {
+      return <Loading />;
+    }
 
     if (!isResolved) {
       closeModal(); // FIXME : mettre un message d'erreur ?
@@ -41,10 +48,14 @@ const EditModalBody = ({
     initialData = data;
   }
 
+  if (isAdd && value) {
+    initialData = value;
+  }
+
   return (
     <MyFormik
       validationSchema={validationSchema}
-      isPost={true}
+      isPost={isAdd}
       initialValues={
         getInitialValues ? getInitialValues(initialData) : initialData
       }
@@ -53,9 +64,8 @@ const EditModalBody = ({
         onSubmit && onSubmit(values);
         closeModal();
       }}
-      prepareVariables={(values: any) =>
-        isAdd ? prepareVariables(values) : prepareVariables(id, values)
-      }
+      prepareVariables={(values: any) => prepareVariables(values)}
+      isMultipartFormData={isMultipartFormData}
     >
       <FormContainer>
         <Modal.Body>{children}</Modal.Body>
@@ -99,9 +109,14 @@ const EditModal = ({
   getInitialValues,
   canModify = true,
   submitLabel = "Valider",
-}: EditModalBodyType & { visible: boolean }) => {
+  value = {},
+  isMultipartFormData = false,
+}: EditModalBodyType & {
+  visible: boolean;
+  header: ReactNode;
+}) => {
   return (
-    <Modal show={visible} onHide={closeModal}>
+    <Modal show={visible} onHide={closeModal} size={"xl"} backdrop={false}>
       <Modal.Header>
         <Modal.Title>{header}</Modal.Title>
       </Modal.Header>
@@ -115,6 +130,8 @@ const EditModal = ({
         prepareVariables={prepareVariables}
         getInitialValues={getInitialValues}
         submitLabel={submitLabel}
+        value={value}
+        isMultipartFormData={isMultipartFormData}
       >
         {children}
       </EditModalBody>
@@ -123,8 +140,6 @@ const EditModal = ({
 };
 
 type EditModalBodyType = {
-  visible: boolean;
-  header: ReactNode;
   closeModal: () => void;
   id?: string;
   children: ReactNode;
@@ -135,6 +150,8 @@ type EditModalBodyType = {
   canModify: boolean;
   query: string;
   submitLabel: string;
+  value?: object;
+  isMultipartFormData?: boolean;
 };
 
 export default EditModal;

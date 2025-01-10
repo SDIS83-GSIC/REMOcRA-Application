@@ -88,6 +88,8 @@ import ListTournee from "./pages/Tournee/ListTournee.tsx";
 import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import MapPerso from "./components/Map/MapPerso/MapPerso.tsx";
+import Rcci from "./pages/Rcci/Rcci.tsx";
+import ModuleRcci from "./components/ModuleRemocra/ModuleRcci.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
 import AdminParametres from "./pages/Admin/adminParametres/AdminParametres.tsx";
@@ -215,6 +217,9 @@ export const URLS = {
   OLDEB_PROPRIETAIRE_CREATE: url`/oldeb/proprietaire/create`,
   OLDEB_PROPRIETAIRE_UPDATE: (oldebProprietaireId) =>
     url`/oldeb/proprietaire/${oldebProprietaireId}`,
+
+  // Module RCCI
+  RCCI_MAP: url`/rcci`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -771,6 +776,21 @@ export default [
         droits={[TYPE_DROIT.PEI_PRESCRIT_R]}
       />
     ),
+  },
+  {
+    path: "/rcci/",
+    element: <ModuleRcci />,
+    children: [
+      {
+        path: "",
+        element: (
+          <Authorization
+            Component={Rcci}
+            droits={[TYPE_DROIT.RCCI_A, TYPE_DROIT.RCCI_R]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "/admin/",

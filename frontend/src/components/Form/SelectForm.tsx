@@ -2,7 +2,6 @@ import { Form } from "react-bootstrap";
 import { useField } from "formik";
 import { SelectFormType } from "../../utils/typeUtils.tsx";
 import { DivWithError, FormLabel } from "./Form.tsx";
-
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
  *     pour faire un select dans les formulaires
@@ -32,7 +31,6 @@ const SelectForm = ({
 }: SelectFormType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
-
   const onChange = ({ name, value }) => {
     setValues != null &&
       setValues((prevValues) => ({
@@ -42,7 +40,6 @@ const SelectForm = ({
     setFieldValue != null && setFieldValue(name, value);
     setOtherValues != null && setOtherValues();
   };
-
   const list = listIdCodeLibelle ?? [];
   return (
     <DivWithError name={name} error={error}>
@@ -69,5 +66,4 @@ const SelectForm = ({
     </DivWithError>
   );
 };
-
 export default SelectForm;

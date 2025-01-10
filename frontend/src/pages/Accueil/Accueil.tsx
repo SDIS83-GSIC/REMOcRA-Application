@@ -124,6 +124,16 @@ function getLinks(
           link: URLS.CARTOGRAPHIE_PERSONNALISEE,
         },
       ];
+    case TypeModuleRemocra.RCI:
+      return [
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.RCCI_A) ||
+            hasDroit(user, TYPE_DROIT.RCCI_R),
+          label: "Carte des départs de feu",
+          link: URLS.RCCI_MAP,
+        },
+      ];
     case TypeModuleRemocra.OPERATIONS_DIVERSES:
       return [
         {
@@ -154,7 +164,6 @@ function getLinks(
         },
       ];
     case TypeModuleRemocra.PERMIS:
-    case TypeModuleRemocra.RCI:
     case TypeModuleRemocra.ADRESSES:
     case TypeModuleRemocra.RISQUES:
       return;

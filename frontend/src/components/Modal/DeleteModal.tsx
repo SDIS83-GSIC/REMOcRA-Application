@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { useDelete } from "../Fetch/useFetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
 
 const DeleteModalBody = ({
   query,

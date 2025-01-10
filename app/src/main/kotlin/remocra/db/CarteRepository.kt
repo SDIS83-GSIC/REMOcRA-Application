@@ -24,9 +24,11 @@ import remocra.db.jooq.remocra.tables.references.OLDEB
 import remocra.db.jooq.remocra.tables.references.OLDEB_TYPE_DEBROUSSAILLEMENT
 import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.RCCI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
+import java.util.Date
 import java.util.UUID
 
 class CarteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -204,6 +206,26 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             )
             .fetchInto()
 
+    /**
+     * Récupère les RCCI selon la zone de compétence
+     */
+    fun getRcciWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<RcciCarte> =
+        dsl.select(
+            ST_Transform(RCCI.GEOMETRIE, srid).`as`("pointGeometrie"),
+            RCCI.ID.`as`("pointId"),
+            RCCI.DATE_INCENDIE,
+        )
+            .from(RCCI)
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(RCCI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                        .and(bbox?.let { ST_Within(ST_Transform(RCCI.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+
     abstract class PointCarte {
         abstract val pointGeometrie: Geometry
         abstract val pointId: UUID
@@ -277,5 +299,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             get() = TypePointCarte.OLDEB
 
         override val propertiesToDisplay: String = "$etatDebroussaillement"
+    }
+
+    data class RcciCarte(
+        override val pointGeometrie: Point,
+        override val pointId: UUID,
+        val rcciDateIncendie: Date?,
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.RCCI
+
+        override val propertiesToDisplay: String = "$rcciDateIncendie"
     }
 }

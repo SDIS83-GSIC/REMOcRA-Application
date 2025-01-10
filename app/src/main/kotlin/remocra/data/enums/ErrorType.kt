@@ -569,6 +569,17 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     OLDEB_FORBIDDEN_DELETE(27008, "Vous n'avez pas les droits de suppression des obligations légales de débrousaillement", Status.FORBIDDEN),
     OLDEB_GEOMETRY_FORBIDDEN_UPDATE(27009, "Vous n'avez pas les droits de modification de la géométrie des obligations légales de débrousaillement", Status.FORBIDDEN),
 
+    //
+    // ********************************************************************************
+    // RCCI
+    // ********************************************************************************
+    //
+    RCCI_FORBIDDEN(28000, "Vous n'avez pas les droits de gestion des RCCI", Status.FORBIDDEN),
+    RCCI_CREATE_FORBIDDEN(28001, "Vous n'avez pas les droits de création des RCCI", Status.FORBIDDEN),
+    RCCI_UPDATE_FORBIDDEN(28002, "Vous n'avez pas les droits de modification des RCCI", Status.FORBIDDEN),
+    RCCI_DELETE_FORBIDDEN(28003, "Vous n'avez pas les droits de suppression des RCCI", Status.FORBIDDEN),
+    RCCI_GEOMETRY_UPDATE_FORBIDDEN(28004, "Vous n'avez pas les droits de modification de la géométrie des RCCI", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

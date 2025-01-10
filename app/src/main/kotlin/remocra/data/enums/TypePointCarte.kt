@@ -6,4 +6,5 @@ enum class TypePointCarte {
     PEI_PRESCRIT,
     DEBIT_SIMULTANE,
     OLDEB,
+    RCCI,
 }

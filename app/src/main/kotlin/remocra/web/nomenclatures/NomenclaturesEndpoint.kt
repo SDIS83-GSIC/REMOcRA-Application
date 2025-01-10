@@ -57,20 +57,35 @@ class NomenclaturesEndpoint : AbstractEndpoint() {
         val typeNomenclature = getTypeNomenclatureFromString(typeNomenclatureString)
 
         val clazz = dataCacheProvider.getPojoClassFromType(typeNomenclature)
+        val linkedClazz = dataCacheProvider.getLinkedPojoClassFromType(typeNomenclature)
 
         // On veut identifier les attributs nommés maclasseId et maclasseLibelle dans Maclasse, pour les invoquer plus tard
         val fieldId = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
         val fieldLibelle = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_LIBELLE, true) }.also { it?.isAccessible = true }
         val fieldCode = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_CODE, true) }.also { it?.isAccessible = true }
+        val fieldLink = if (linkedClazz != null) {
+            clazz.declaredFields.find { it.name.contains(clazz.simpleName + linkedClazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
+        } else {
+            null
+        }
 
         // On invoque sur chaque objet et on met le résultat dans un data pour fourniture au front
         return Response.ok(
             dataCacheProvider.getData(typeNomenclature).values.map {
-                GlobalData.IdCodeLibelleData(
-                    fieldId?.get(it) as UUID,
-                    fieldCode?.get(it) as String,
-                    fieldLibelle?.get(it) as String,
-                )
+                if (linkedClazz != null) {
+                    GlobalData.IdCodeLibelleLienData(
+                        fieldId?.get(it) as UUID,
+                        fieldCode?.get(it) as String,
+                        fieldLibelle?.get(it) as String,
+                        fieldLink?.get(it) as UUID,
+                    )
+                } else {
+                    GlobalData.IdCodeLibelleData(
+                        fieldId?.get(it) as UUID,
+                        fieldCode?.get(it) as String,
+                        fieldLibelle?.get(it) as String,
+                    )
+                }
             },
         ).build()
     }

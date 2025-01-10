@@ -21,6 +21,11 @@ import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
+import remocra.db.jooq.remocra.tables.pojos.RcciTypeDegreCertitude
+import remocra.db.jooq.remocra.tables.pojos.RcciTypeOrigineAlerte
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeCategorie
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
+import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
@@ -31,6 +36,11 @@ data class DataCache(
     var mapAnomalie: Map<UUID, Anomalie>,
     var mapAnomalieCategorie: Map<UUID, AnomalieCategorie>,
 //    var mapCommune: Map<UUID, Commune>, // TODO 'tention, volume important, à qualifier (SANS géométrie si possible)
+    var mapRcciTypePrometheeFamille: Map<UUID, RcciTypePrometheeFamille>,
+    var mapRcciTypePrometheePartition: Map<UUID, RcciTypePrometheePartition>,
+    var mapRcciTypePrometheeCategorie: Map<UUID, RcciTypePrometheeCategorie>,
+    var mapRcciTypeOrigineAlerte: Map<UUID, RcciTypeOrigineAlerte>,
+    var mapRcciTypeDegreCertitude: Map<UUID, RcciTypeDegreCertitude>,
     var mapDiametre: Map<UUID, Diametre>,
     var mapDomaine: Map<UUID, Domaine>,
     var mapMarquePibi: Map<UUID, MarquePibi>,
