@@ -68,15 +68,12 @@ class ImportCtpEndpoint : AbstractEndpoint() {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     fun exportData(paramExportCTPInput: ParamExportCTPInput): Response =
-        Response.ok(exportCtpUseCase.execute(paramExportCTPInput.myObject.communeId, securityContext.userInfo!!))
+        Response.ok(exportCtpUseCase.execute(paramExportCTPInput.communeId, securityContext.userInfo!!))
             .header("Content-Disposition", "attachment; filename=\"file.xlsx\"")
             .build()
 
     class ParamExportCTPInput {
         @FormParam("communeId")
-        lateinit var myObject: MyObject
-    }
-    class MyObject {
         val communeId: UUID? = null
     }
 }

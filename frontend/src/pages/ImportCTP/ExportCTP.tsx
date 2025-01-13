@@ -7,8 +7,9 @@ import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import { IconExport } from "../../components/Icon/Icon.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
+import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 
 export const getInitialValues = () => ({
   communeId: null,
@@ -65,10 +66,11 @@ const FormExportCTP = () => {
         <Col className="text-center">
           <Button
             onClick={() =>
-              getFile(
+              downloadOutputFile(
                 "/api/importctp/export",
-                { communeId: values.communeId ?? null },
+                JSON.stringify({ communeId: values.communeId ?? null }),
                 `export-ctp${values.communeId ? `_${listeCommune.data.find((e) => e.id === values.communeId)?.code}` : ""}.xlsx`,
+                "Export terminé",
                 successToast,
                 errorToast,
               )
@@ -82,37 +84,3 @@ const FormExportCTP = () => {
     </FormContainer>
   );
 };
-
-function getFile(
-  urlApi: string,
-  myObject: any,
-  fileName: string,
-  successToast: (e: string) => void,
-  errorToast: (e) => void,
-) {
-  // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
-  fetch(
-    url`${urlApi}`,
-    getFetchOptions({
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ myObject }),
-    }),
-  )
-    .then((response) => {
-      if (!response.ok) {
-        errorToast(response.text());
-      }
-      return response.blob();
-    })
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = fileName; // Nom du fichier à télécharger
-
-      a.click();
-      window.URL.revokeObjectURL(url); // Libération de la mémoire
-      successToast("Export terminé");
-    });
-}

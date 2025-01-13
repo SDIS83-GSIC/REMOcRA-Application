@@ -19,10 +19,11 @@ import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/
 import PaginationFront, {
   LIMIT,
 } from "../../components/PaginationFront/PaginationFront.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
+import url from "../../module/fetch.tsx";
 import { requiredString } from "../../module/validators.tsx";
 import { TYPE_PARAMETRE_RAPPORT_PERSONNALISE } from "../Admin/rapportPersonnalise/SortableParametreRapportPersonnalise.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 
 type RapportPersonnaliseParametreType = {
   listeSelectInput: { id: string; libelle: string }[];
@@ -67,10 +68,14 @@ const ExecuteRapportPersonnalise = () => {
         <Col xs="auto" className="ms-auto">
           <Button
             onClick={() =>
-              getFile(
+              downloadOutputFile(
                 "/api/rapport-personnalise/export-data",
-                valuesFormik,
-                "csv",
+                JSON.stringify({
+                  rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
+                  listeParametre: valuesFormik?.listeParametre,
+                }),
+                "rapport-personnalise.csv",
+                "Import terminé",
                 successToast,
                 errorToast,
               )
@@ -83,10 +88,14 @@ const ExecuteRapportPersonnalise = () => {
         <Col xs="auto">
           <Button
             onClick={() =>
-              getFile(
+              downloadOutputFile(
                 "/api/rapport-personnalise/export-shp",
-                valuesFormik,
-                "zip",
+                JSON.stringify({
+                  rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
+                  listeParametre: valuesFormik?.listeParametre,
+                }),
+                "rapport-personnalise.zip",
+                "Import terminé",
                 successToast,
                 errorToast,
               )
@@ -345,43 +354,6 @@ function buildComponent(
     default:
       return;
   }
-}
-
-function getFile(
-  urlApi: string,
-  valuesFormik: any,
-  extension: string,
-  successToast: (e: string) => void,
-  errorToast: (e) => void,
-) {
-  // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
-  fetch(
-    url`${urlApi}`,
-    getFetchOptions({
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rapportPersonnaliseId: valuesFormik?.rapportPersonnaliseId,
-        listeParametre: valuesFormik?.listeParametre,
-      }),
-    }),
-  )
-    .then((response) => {
-      if (!response.ok) {
-        errorToast(response.text());
-      }
-      return response.blob();
-    })
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "rapport-personnalise." + extension; // Nom du fichier à télécharger
-
-      a.click();
-      window.URL.revokeObjectURL(url); // Libération de la mémoire
-      successToast("Import terminé");
-    });
 }
 
 export default ExecuteRapportPersonnalise;
