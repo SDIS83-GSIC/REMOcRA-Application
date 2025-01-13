@@ -1,12 +1,12 @@
 import { useFormikContext } from "formik";
-import React from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { CSVLink } from "react-csv";
 import { useLocation, useNavigate } from "react-router-dom";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
-import { IconValidation } from "../../components/Icon/Icon.tsx";
+import { IconExport, IconValidation } from "../../components/Icon/Icon.tsx";
 import { URLS } from "../../routes.tsx";
 
 export const getInitialValues = (initialValues) => ({
@@ -68,6 +68,43 @@ const ResultatsVerificationImportCTP = () => {
     (e) => e.bilanStyle === "INFO",
   ).length;
 
+  const dataCsv: DataCsvImportCTP[] = [];
+  values.bilanVerifications.map((element) => {
+    dataCsv.push({
+      numeroLigne: element.numeroLigne,
+      codeInsee: element.codeInsee,
+      numeroInterne: element.numeroInterne,
+      dateCtp: element.dateCtp,
+      warnings:
+        element.warnings.length > 0
+          ? element.warnings.toString()
+          : element.bilan,
+    });
+  });
+
+  const headers = [
+    {
+      label: "N°Ligne",
+      key: "numeroLigne",
+    },
+    {
+      label: "Code INSEE",
+      key: "codeInsee",
+    },
+    {
+      label: "N° interne du PEI",
+      key: "numeroInterne",
+    },
+    {
+      label: "Date du CT",
+      key: "dateCtp",
+    },
+    {
+      label: "Bilan du contrôle",
+      key: "warnings",
+    },
+  ];
+
   return (
     <FormContainer>
       <Row>
@@ -126,6 +163,16 @@ const ResultatsVerificationImportCTP = () => {
           <Button onClick={() => navigate(URLS.ACCUEIL)}>Annuler</Button>
         </Col>
         <Col>
+          <CSVLink
+            data={dataCsv}
+            headers={headers}
+            filename={"resultats_import_ctp.csv"}
+          >
+            <IconExport />
+            Exporter le rapport
+          </CSVLink>
+        </Col>
+        <Col>
           <Button type="submit" variant="primary">
             Importer les visites
           </Button>
@@ -133,4 +180,12 @@ const ResultatsVerificationImportCTP = () => {
       </Row>
     </FormContainer>
   );
+};
+
+type DataCsvImportCTP = {
+  numeroLigne: string;
+  codeInsee: string;
+  numeroInterne: string;
+  dateCtp: string;
+  warnings: string;
 };
