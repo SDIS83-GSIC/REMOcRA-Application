@@ -13,6 +13,7 @@ import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.api.usecase.ApiAnomalieNatureUseCase
+import remocra.api.usecase.ApiDiametreNatureUseCase
 import remocra.app.DataCacheProvider
 import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
@@ -35,6 +36,9 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var apiAnomalieNatureUseCase: ApiAnomalieNatureUseCase
 
+    @Inject
+    lateinit var apiDiametreNatureUseCase: ApiDiametreNatureUseCase
+
     @GET
     @Path("/naturesPEI")
     @Operation(summary = "Retourne les natures de PEI possibles pour les PEI de type PIBI", tags = ["DECI - Référentiels PIBI"])
@@ -52,24 +56,18 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
         ).build()
     }
 
-    // TODO nature : voir si on a toujours besoin de discriminer les diamètres par nature, et si oui, comment
-    // en attendant, on retourne tous les diamètres
     @GET
-    @Path("/diametres")
-//    @Path("/diametres/{codeNature}")
+    @Path("/diametres/{natureCode}")
     @Operation(summary = "Retourne les diamètres de demi-raccord possibles une nature de PIBI", tags = ["DECI - Référentiels PIBI"])
     @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielDiametres(
-//        @Parameter(description = "Code de nature PIBI") @PathParam("codeNature") codeNature: String?,
+        @Parameter(description = "Code de nature PIBI") @PathParam("natureCode") naturecode: String,
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            dataCacheProvider.getData(TypeDataCache.DIAMETRE)
-                .values
-                .filter { TypePei.PIBI == (it as Nature).natureTypePei }
-                .limitOffset(limit, offset),
+            apiDiametreNatureUseCase.execute(naturecode, limit, offset),
         ).build()
     }
 
