@@ -2,6 +2,7 @@ package remocra.usecase.pena
 
 import com.google.inject.Inject
 import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.app.AppSettings
@@ -17,10 +18,10 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 import java.util.UUID
 
-class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
+class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 
     @Inject lateinit var appSettings: AppSettings
@@ -29,6 +30,20 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
         val listeAireAspiration: List<AireAspirationUpsertData>,
         val penaId: UUID,
     )
+
+    override fun getListGeometrie(element: PenaAspirationData): Collection<Geometry> {
+        val geometries: MutableList<Geometry> = mutableListOf()
+        element.listeAireAspiration.map {
+            if (it.estDeporte) {
+                geometries.add(
+                    GeometryFactory(PrecisionModel(), appSettings.srid)
+                        .createPoint(Coordinate(it.coordonneeX!!.toDouble(), it.coordonneeY!!.toDouble())),
+                )
+            }
+        }
+
+        return geometries
+    }
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) ||
@@ -86,7 +101,5 @@ class AireAspirationUseCase : AbstractCUDUseCase<AireAspirationUseCase.PenaAspir
         if (element.listeAireAspiration.filter { it.estDeporte && (it.coordonneeX == null || it.coordonneeY == null) }.isNotEmpty()) {
             throw IllegalArgumentException("Si une aire d'aspiration est déportée, les coordonnées doivent être renseignées.")
         }
-
-        // TODO vérifier la géométrie (bien dans la zone de compétence de l'utilisateur connecté)
     }
 }
