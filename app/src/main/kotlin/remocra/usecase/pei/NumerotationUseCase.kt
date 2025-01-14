@@ -121,7 +121,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_78 -> computeNumero78(pei)
             CodeSdis.SDIS_91 -> computeNumero91(pei)
             CodeSdis.SDIS_95 -> computeNumero95(pei)
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> computeNumero973(pei)
         }
     }
 
@@ -150,6 +150,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_38,
             CodeSdis.SDIS_77,
             CodeSdis.SDIS_89,
+            CodeSdis.SDIS_973,
             -> computeNumeroInterneMethodeB(pei)
             // TODO trouver comment est numérotée la PROD, actuellement c'est le fallback sur le 83
             CodeSdis.SDIS_14 -> TODO()
@@ -162,7 +163,6 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroInterne83(pei)
             CodeSdis.SDIS_91 -> computeNumeroInterne91(pei)
             CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
-            CodeSdis.SDIS_973 -> TODO()
         }
     }
 
@@ -746,6 +746,20 @@ class NumerotationUseCase : AbstractUseCase() {
 
         val commune = ensureCommune(pei)
         return commune.communeCodeInsee + " " + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
+     * <code insee commune><PI.BI.PA><numéro interne>
+     * sans espace
+     * Exemple : 97309PI10, 97304PI122, 97314PA1
+     *
+     */
+    private fun computeNumero973(pei: PeiForNumerotationData): String {
+        checkCommuneId(pei)
+        checkNature(pei)
+
+        val commune = ensureCommune(pei)
+        return commune.communeCodeInsee + pei.nature!!.natureCode + pei.peiNumeroInterne
     }
 
     /**
