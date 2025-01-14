@@ -7,10 +7,12 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import remocra.api.usecase.ApiAnomalieNatureUseCase
 import remocra.app.DataCacheProvider
 import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
@@ -27,6 +29,9 @@ class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
+
+    @Inject
+    lateinit var apiAnomalieWithNatureUseCase: ApiAnomalieNatureUseCase
 
     @GET
     @Path("/naturesPEI")
@@ -62,7 +67,7 @@ class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("{codeNature}/naturesAnomalies")
+    @Path("{natureCode}/naturesAnomalies")
     @Operation(
         summary = "Retourne les types d'anomalies pouvant être constatées pour une nature de PENA et un contexte " +
             "(type de visite) spécifiques",
@@ -71,11 +76,10 @@ class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
     @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielNaturesAnomalies(
-//        @Parameter(description = "Nature du PIBI") @PathParam("codeNature") codeNature: String?,
-//        @Parameter(description = "Contexte (code) de la visite") @QueryParam("contexteVisite") contexteVisite: String?,
-//        @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Int?,
-//        @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Int?,
-    ): Response {
-        TODO()
-    }
+        @Parameter(description = "Nature du PENA") @PathParam("natureCode") natureCode: String,
+        @Parameter(description = "Type de la visite") @QueryParam("typeVisite") typeVisite: String?,
+        @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Int?,
+        @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Int?,
+    ): Response =
+        Response.ok(apiAnomalieWithNatureUseCase.execute(natureCode, typeVisite, TypePei.PENA, limit, offset)).build()
 }

@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.`when`
 import remocra.GlobalConstants
+import remocra.data.ApiAnomalieWithNature
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
@@ -287,5 +288,27 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .join(NATURE).on(POIDS_ANOMALIE.NATURE_ID.eq(NATURE.ID))
             .where(NATURE.TYPE_PEI.eq(TypePei.PIBI))
             .and(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.CTP))
+            .fetchInto()
+
+    fun getAnomalieWithNature(natureCode: String, typeVisite: TypeVisite?, typePei: TypePei, limit: Int?, offset: Int?): Collection<ApiAnomalieWithNature> =
+        dsl.select(
+            ANOMALIE.CODE,
+            ANOMALIE.LIBELLE,
+            POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE,
+            POIDS_ANOMALIE.TYPE_VISITE.`as`("listTypeVisite"),
+        ).from(ANOMALIE)
+            .join(POIDS_ANOMALIE)
+            .on(POIDS_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+            .join(NATURE)
+            .on(NATURE.ID.eq(POIDS_ANOMALIE.NATURE_ID))
+            .where(
+                typeVisite?.let {
+                    POIDS_ANOMALIE.TYPE_VISITE.contains(typeVisite)
+                } ?: DSL.noCondition(),
+            )
+            .and(NATURE.CODE.equalIgnoreCase(natureCode))
+            .and(NATURE.TYPE_PEI.eq(typePei))
+            .limit(limit)
+            .offset(offset)
             .fetchInto()
 }
