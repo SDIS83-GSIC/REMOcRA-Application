@@ -148,7 +148,7 @@ constructor(
         TypeDataCache.NIVEAU -> get().mapNiveau
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
-        TypeDataCache.RESERVOIR -> get().mapReservoir
+        TypeDataCache.RESERVOIR -> getReservoirs()
     }
 
     fun getAnomalies() = get().mapAnomalie
@@ -166,6 +166,8 @@ constructor(
     fun getMarquesPibi() = get().mapMarquePibi
 
     fun getModelesPibi() = get().mapModelePibi
+
+    fun getReservoirs() = get().mapReservoir
 
     fun getTypesReseau() = get().mapTypeReseau
 

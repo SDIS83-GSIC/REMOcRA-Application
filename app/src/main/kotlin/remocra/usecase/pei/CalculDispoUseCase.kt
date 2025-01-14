@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
@@ -61,6 +62,11 @@ class CalculDispoUseCase : AbstractUseCase() {
             throw IllegalArgumentException("Pas de diamètre pour le calcul de dispo")
         }
     }
+    private fun checkReservoirId(pei: PeiForCalculDispoData) {
+        if (pei.reservoirId == null) {
+            throw IllegalArgumentException("Pas de réservoir pour le calcul de dispo")
+        }
+    }
 
     /**
      * Garantit que l'objet PEI a bien son objet *diametre* chargé, soit parce qu'il l'est déjà, soit en le faisant au travers du *peiDiametreId*
@@ -73,6 +79,19 @@ class CalculDispoUseCase : AbstractUseCase() {
             pei.diametre = dataCacheProvider.getDiametres()[pei.diametreId!!] as Diametre
         }
         return pei.diametre!!
+    }
+
+    /**
+     * Garantit que l'objet PEI a bien son objet *reservoir* chargé, soit parce qu'il l'est déjà, soit en le faisant au travers du *reservoirId*
+     * Modifie le paramètre d'entrée *pei* pour éviter tout appel ultérieur
+     * @return Reservoir
+     */
+    private fun ensureReservoir(pei: PeiForCalculDispoData): Reservoir {
+        checkReservoirId(pei)
+        if (pei.reservoir == null) {
+            pei.reservoir = dataCacheProvider.getReservoirs()[pei.reservoirId!!] as Reservoir
+        }
+        return pei.reservoir!!
     }
 
     /**
