@@ -51,6 +51,9 @@ private const val CODE_DOMAINE_AUTOROUTE = "AUTOROUTE"
 // SDIS 83
 private const val NATURE_RESERVE_INCENDIE = "RI"
 
+// Puisard (SDIS 58)
+const val NATURE_PUISARD = "PU"
+
 /**
  * Usecase permettant de gérer tous les cas de la numérotation d'un PEI. Le point de départ est le *codeSdis* défini dans les paramètres système, et injecté dans les *appSettings*.
  *
@@ -104,7 +107,7 @@ class NumerotationUseCase : AbstractUseCase() {
 
             CodeSdis.SDIS_49 -> computeNumero49(pei)
             CodeSdis.SDIS_53 -> computeNumero53(pei)
-            CodeSdis.SDIS_58 -> TODO()
+            CodeSdis.SDIS_58 -> computeNumero58(pei)
             CodeSdis.SDIS_66 -> computeNumero66(pei)
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
@@ -153,7 +156,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
-            CodeSdis.SDIS_58 -> TODO()
+            CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
@@ -161,6 +164,39 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
             CodeSdis.SDIS_973 -> TODO()
         }
+    }
+
+    private fun computeNumeroInterne58(pei: PeiForNumerotationData): Int {
+        checkCommuneId(pei)
+
+        val seed: Int
+        val maxValue: Int
+
+        val typePei = pei.nature!!.natureTypePei
+
+        if (typePei == TypePei.PIBI) {
+            // On part de 1, on finit à 599
+            seed = 1
+            maxValue = 599
+        } else {
+            if (pei.nature.natureCode == NATURE_PUISARD) {
+                seed = 600
+                maxValue = 799
+            } else {
+                seed = 800
+                maxValue = 999
+            }
+        }
+
+        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
+            typePei = typePei,
+            peiNatureId = pei.nature.natureId,
+            peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
+            peiZoneSpecialeId = pei.peiZoneSpecialeId,
+            peiNatureDeciId = null,
+        )
+
+        return listPeiNumeroInterne.getNextNumeroInterneWhile(seed, maxValue)
     }
 
     /**
@@ -697,6 +733,22 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * <code insee commune> <numéro interne>
+     * numéro interne sur 3 chiffres:
+     * - 0 à 599 : PIBI
+     * - 600 à 799 : PUISARDS
+     * - 800 à 999 : PENA
+     * Exemple : 58267 805 - PEA sur commune de SAINT-SAULGE
+     *
+     */
+    private fun computeNumero58(pei: PeiForNumerotationData): String {
+        checkCommuneId(pei)
+
+        val commune = ensureCommune(pei)
+        return commune.communeCodeInsee + " " + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
      * <code insee commune>.<numéro interne>
      * avec num_interne sur 4 chiffres
      * et un point (.) entre les deux
@@ -835,7 +887,7 @@ class NumerotationUseCase : AbstractUseCase() {
             // TODO trouver comment est numérotée la PROD, actuellement c'est le fallback sur le 83
             CodeSdis.SDIS_14 -> TODO()
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_58 -> TODO()
+            CodeSdis.SDIS_58 -> true
             CodeSdis.SDIS_973 -> TODO()
         }
     }
