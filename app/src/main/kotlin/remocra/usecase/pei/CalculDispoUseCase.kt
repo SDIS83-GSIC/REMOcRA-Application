@@ -226,7 +226,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite < 10
         }
@@ -257,7 +257,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite in 10..29
         }
@@ -293,7 +293,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_95 -> isPressionInsuffisanteDefault(pei)
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -320,7 +320,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -347,7 +347,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -391,7 +391,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> isPressionDynamiqueInsuffisanteDefault(pei)
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> pei.pressionDynamique == null
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -418,7 +418,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -446,7 +446,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
@@ -541,7 +541,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 return false
             }
 
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> pei.debit == null || pei.debit < 30
             CodeSdis.BSPP -> pei.debit == null || pei.debit < 60
             CodeSdis.SDMIS -> false
         }
@@ -653,7 +653,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 return false
             }
 
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> pei.debit != null && pei.debit < 60
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.debit != null && pei.debit < 30
         }
@@ -696,7 +696,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_973 -> TODO()
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
