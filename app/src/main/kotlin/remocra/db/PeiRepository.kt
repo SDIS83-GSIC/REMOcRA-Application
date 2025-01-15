@@ -27,6 +27,8 @@ import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
+import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
+import remocra.db.jooq.remocra.tables.references.MATERIAU
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
@@ -517,7 +519,7 @@ class PeiRepository
         dsl.selectFrom(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : PeiData> getPeiCaracteristiques(numero: String): T {
+    fun <T : ApiPeiData> getPeiCaracteristiques(numero: String): T {
         val idTypePei: IdTypePei =
             dsl
                 .select(PEI.ID, PEI.TYPE_PEI)
@@ -547,40 +549,57 @@ class PeiRepository
                 PIBI.RENVERSABLE.`as`("renversable"),
                 PIBI.DISPOSITIF_INVIOLABILITE.`as`("dispositifInviolabilite"),
                 PIBI.DEBIT_RENFORCE.`as`("debitRenforce"),
-                PIBI.SURPRESSE,
+                PIBI.SURPRESSE.`as`("surpresse"),
                 PIBI.ADDITIVE.`as`("additive"),
             )
             .select(COMMUNE.CODE_INSEE).select(DOMAINE.CODE).select(NATURE.CODE).select(NATURE_DECI.CODE)
-            .select(DIAMETRE.CODE).select(ORGANISME.CODE).select(MODELE_PIBI.CODE)
+            .select(DIAMETRE.CODE).select(MODELE_PIBI.CODE)
             .select(TYPE_CANALISATION.CODE)
+            .select(MARQUE_PIBI.CODE)
+            .select(TYPE_RESEAU.CODE)
+            .select(ORGANISME.CODE.`as`("serviceEauCode"))
+            .select(PEI.`as`("PEI_JUMELE").NUMERO_COMPLET.`as`("pibiJumele"))
             .from(PEI)
-            .leftJoin(PIBI).on(PEI.ID.eq(PIBI.ID))
+            .innerJoin(PIBI).on(PEI.ID.eq(PIBI.ID))
             // jointures PEI
-            .leftJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
-            .leftJoin(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
-            .leftJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .leftJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             // jointures PIBI
             .leftJoin(DIAMETRE).on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
             .leftJoin(ORGANISME).on(PIBI.SERVICE_EAU_ID.eq(ORGANISME.ID))
             .leftJoin(MODELE_PIBI).on(PIBI.MODELE_PIBI_ID.eq(MODELE_PIBI.ID))
+            .leftJoin(MARQUE_PIBI).on(MARQUE_PIBI.ID.eq(PIBI.MARQUE_PIBI_ID))
             .leftJoin(TYPE_CANALISATION).on(PIBI.TYPE_CANALISATION_ID.eq(TYPE_CANALISATION.ID))
             .leftJoin(TYPE_RESEAU).on(PIBI.TYPE_RESEAU_ID.eq(TYPE_RESEAU.ID))
+            // Jointure pour le PIBI jumelé
+            .leftJoin(PIBI.`as`("PIBI_JUMELE")).on(PIBI.`as`("PIBI_JUMELE").ID.eq(PIBI.JUMELE_ID))
+            .leftJoin(PEI.`as`("PEI_JUMELE")).on(PEI.`as`("PEI_JUMELE").ID.eq(PIBI.`as`("PIBI_JUMELE").ID))
             .where(PEI.ID.eq(id))
-            // Tous les flags "actif"
-            .and(DOMAINE.ACTIF.isTrue)
-            .and(NATURE.ACTIF.isTrue)
-            .and(NATURE_DECI.ACTIF.isTrue)
-            .and(DOMAINE.ACTIF.isTrue)
-            .and(DOMAINE.ACTIF.isTrue)
-            .and(DOMAINE.ACTIF.isTrue)
             .fetchSingleInto<ApiPibiData>()
     }
 
-    // TODO requête à étoffer !
     private fun getPenaCaracteristiques(id: UUID): ApiPenaData =
-        dsl.select(PEI.ANNEE_FABRICATION, PENA.CAPACITE, PENA.CAPACITE_ILLIMITEE)
+        dsl.select(
+            PEI.ID.`as`("id"),
+            PEI.NUMERO_COMPLET.`as`("numeroComplet"),
+            PEI.NUMERO_INTERNE.`as`("numeroInterne"),
+            PEI.ANNEE_FABRICATION,
+            PENA.CAPACITE.`as`("capacite"),
+            PENA.CAPACITE_ILLIMITEE.`as`("capaciteIllimite"),
+            PENA.QUANTITE_APPOINT.`as`("quantiteAppoint"),
+            PENA.DISPONIBILITE_HBE.`as`("disponibiliteHbe"),
+            MATERIAU.CODE,
+        )
+            .select(COMMUNE.CODE_INSEE).select(DOMAINE.CODE).select(NATURE.CODE).select(NATURE_DECI.CODE)
             .from(PEI).innerJoin(PENA).on(PEI.ID.eq(PENA.ID))
+            .leftJoin(MATERIAU).on(MATERIAU.ID.eq(PENA.MATERIAU_ID))
+            // jointures PEI
+            .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .where(PEI.ID.eq(id))
             .fetchSingleInto<ApiPenaData>()
 
@@ -737,10 +756,10 @@ open class ApiPeiData {
     lateinit var id: String
     lateinit var numeroComplet: String
     lateinit var numeroInterne: String
-    var codeInseeCommune: String? = null
-    var codeDomaine: String? = null
-    var codeNature: String? = null
-    var codeNatureDeci: String? = null
+    var communeCodeInsee: String? = null
+    var domaineCode: String? = null
+    var natureCode: String? = null
+    var natureDeciCode: String? = null
     var anneeFabrication: Int? = null
 }
 
@@ -748,26 +767,29 @@ open class ApiPeiData {
 // TODO benchmark entre remontée objets complexes (commune, ...) et simplement le "code" à aller chercher dans un référentiel froid
 // faire une option pour permettre les 2 au cas par cas ?
 class ApiPibiData : ApiPeiData() {
-    var codeDiametre: String? = null
-    var codeServiceEau: String? = null
+    var diametreCode: String? = null
+    var serviceEauCode: String? = null
     var numeroScp: String? = null
     var renversable: Boolean? = false
     var dispositifInviolabilite: Boolean = false
-    var codeModele: String? = null
+    var modelePibiCode: String? = null
 
-    // TODO liens PENA / jumelé
-    var codeReservoir: String? = null
+    var reservoirCode: String? = null
     var debitRenforce: Boolean? = false
-    var codeTypeCanalisation: String? = null
-    var codeTypeReseau: String? = null
+    var typeCanalisationCode: String? = null
+    var typeReseauCode: String? = null
     var diametreCanalisation: Int? = null
     var surpresse: Boolean? = false
     var additive: Boolean? = false
+
+    var pibiJumele: String? = null
+    var marquePibiCode: String? = null
 }
 
 class ApiPenaData : ApiPeiData() {
     var disponibiliteHbe: Disponibilite? = null
     var capacite: Int? = null
     var capaciteIllimitee: Boolean? = null
-    var codeMateriau: String? = null
+    var materiauCode: String? = null
+    var quantiteAppoint: Double? = null
 }
