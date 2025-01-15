@@ -51,7 +51,7 @@ pipeline {
         nodejsInsideDocker() {
           dir(path: 'frontend/') {
             sh '''
-                npm install
+                npm ci
                 npm run lint
                 npm run build
               '''
