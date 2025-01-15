@@ -6,6 +6,7 @@ import remocra.data.AuteurTracabiliteData
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -14,10 +15,17 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.pei.UpdatePeiUseCase
 
 class DeleteVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.DELETE) {
+
+    @Inject
+    lateinit var updatePeiUseCase: UpdatePeiUseCase
+
+    @Inject
+    lateinit var peiRepository: PeiRepository
 
     override fun checkDroits(userInfo: UserInfo) {
     }
@@ -33,8 +41,6 @@ class DeleteVisiteUseCase @Inject constructor(
                 date = dateUtils.now(),
             ),
         )
-        // TODO : Gestion du calcul debit/pression
-        // TODO : Gestion du calcul indispo
         // TODO : Gestion "notification changement état" et autres jobs
     }
 
@@ -71,6 +77,13 @@ class DeleteVisiteUseCase @Inject constructor(
         visiteRepository.deleteAllVisiteAnomalies(element.visiteId)
         visiteRepository.deleteVisiteCtrl(element.visiteId)
         visiteRepository.deleteVisite(element.visiteId)
+
+        // On met à jour le PEI pour le calcul débit pression  / volume et le calcul d'insdispo
+        updatePeiUseCase.updatePeiWithId(
+            peiId = element.visitePeiId,
+            userInfo = userInfo,
+            transactionManager = transactionManager,
+        )
         return element
     }
 }

@@ -5,9 +5,6 @@ import remocra.auth.UserInfo
 import remocra.data.NotificationMailData
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PeiRepository
-import remocra.db.PenaRepository
-import remocra.db.PibiRepository
-import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.usecase.pei.UpdatePeiUseCase
 import java.util.UUID
@@ -17,10 +14,6 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
     @Inject lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
 
     @Inject lateinit var peiRepository: PeiRepository
-
-    @Inject lateinit var pibiRepository: PibiRepository
-
-    @Inject lateinit var penaRepository: PenaRepository
 
     @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
 
@@ -36,11 +29,7 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
                 val listPeiId = indisponibiliteTemporaireRepository.getAllPeiIdFromItId(it)
                 logManager.info("[$identificationJob] Les PEIs liés sont : $listPeiId")
                 listPeiId.forEach { currentPeiId ->
-                    if (peiRepository.getTypePei(currentPeiId) == TypePei.PIBI) {
-                        updatePeiUseCase.execute(userInfo, pibiRepository.getInfoPibi(currentPeiId), transactionManager)
-                    } else {
-                        updatePeiUseCase.execute(userInfo, penaRepository.getInfoPena(currentPeiId), transactionManager)
-                    }
+                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo, transactionManager)
                 }
                 logManager.info("[$identificationJob] Mise à jour du flag BASCULE_DEBUT pour l'IT $it")
                 indisponibiliteTemporaireRepository.setBasculeDebutTrue(it)
@@ -55,11 +44,7 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
                 val listPeiId = indisponibiliteTemporaireRepository.getAllPeiIdFromItId(it)
                 logManager.info("[$identificationJob] Les PEIs liés sont : $listPeiId")
                 listPeiId.forEach { currentPeiId ->
-                    if (peiRepository.getTypePei(currentPeiId) == TypePei.PIBI) {
-                        updatePeiUseCase.execute(userInfo, pibiRepository.getInfoPibi(currentPeiId), transactionManager)
-                    } else {
-                        updatePeiUseCase.execute(userInfo, penaRepository.getInfoPena(currentPeiId), transactionManager)
-                    }
+                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo, transactionManager)
                 }
                 logManager.info("[$identificationJob] Mise à jour du flag BASCULE_FIN pour l'IT $it")
                 indisponibiliteTemporaireRepository.setBasculeFinTrue(it)

@@ -8,8 +8,6 @@ import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
-import remocra.db.PenaRepository
-import remocra.db.PibiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -30,8 +28,6 @@ class CreateVisiteUseCase @Inject constructor(
     private val anomalieRepository: AnomalieRepository,
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val peiRepository: PeiRepository,
-    private val pibiRepository: PibiRepository,
-    private val penaRepository: PenaRepository,
 
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
@@ -216,18 +212,10 @@ class CreateVisiteUseCase @Inject constructor(
         //  - Prévenir d'un changement sur le PEI : updatePeiUseCase.execute()
         if (isLastVisiteToDate) {
             // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
-            val typePei = peiRepository.getTypePei(element.visitePeiId)
-            val peiData =
-                if (TypePei.PIBI == typePei) {
-                    pibiRepository.getInfoPibi(element.visitePeiId)
-                } else penaRepository.getInfoPena(
-                    element.visitePeiId,
-                )
-
-            updatePeiUseCase.execute(
+            updatePeiUseCase.updatePeiWithId(
+                peiId = element.visitePeiId,
                 userInfo = userInfo,
-                element = peiData,
-                mainTransactionManager = transactionManager,
+                transactionManager = transactionManager,
             )
         }
         return element
