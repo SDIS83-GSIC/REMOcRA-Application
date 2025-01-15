@@ -120,7 +120,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
     }
 
     override fun execute(parameters: ChangementEtatPeiTaskParameter?, userInfo: UserInfo): ChangementEtatPeiJobResult? {
-        /** TODO: La moulinette doit permettre de notifier au choix, les PEI passant à l'état Dispo, Indispo et Non conforme
+        /** La moulinette doit permettre de notifier au choix, les PEI passant à l'état Dispo, Indispo et Non conforme
          *  Au choix signifit que ca peut etre les trois, deux ou un seul cas
          */
 

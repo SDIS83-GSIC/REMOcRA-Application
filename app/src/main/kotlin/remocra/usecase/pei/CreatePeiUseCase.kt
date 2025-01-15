@@ -18,10 +18,4 @@ class CreatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.INS
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_C)
         }
     }
-
-    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        super.checkContraintes(userInfo, element)
-
-        // TODO Vérifier zone de compétence
-    }
 }
