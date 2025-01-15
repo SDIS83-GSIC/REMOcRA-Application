@@ -1,5 +1,5 @@
 -- Création du schéma entrepotsig
-CREATE SCHEMA entrepotsig;
+CREATE SCHEMA IF NOT EXISTS entrepotsig;
 
 -- Création de la vue permettant la synchronisation de la table commune
 ---- Cette vue pose les champs pouvant être mis à jour ou servant à la mise à jour coté remocra

@@ -1,4 +1,4 @@
-CREATE SCHEMA incoming;
+CREATE SCHEMA IF NOT EXISTS incoming;
 
 CREATE TABLE incoming.gestionnaire (
    gestionnaire_id  UUID      PRIMARY KEY,

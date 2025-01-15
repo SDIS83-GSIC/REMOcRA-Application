@@ -44,6 +44,9 @@ pipeline {
                 # Exécute jooq *après* build pour ne pas reformater les src/main/kotlin et avoir spotlessCheck qui passe sans erreur alors qu'il ne devrait pas
                 gradle --stacktrace jooq -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                # On s'assure que flywayClean fonctionne les migrations sont utilisables après coup
+                gradle --stacktrace flywayClean -Pflyway.cleanDisabled=false -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
               '''
           }
           verifyUnmodified('db/src/main/jooq/') {
