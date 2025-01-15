@@ -82,7 +82,6 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     )
                 }
                 TypeResumeElement.CARACTERISTIQUES -> {
-                    // TODO Date de dernière ctp quand on aura ce qu'il faut dans la vue
                     var data = if (peiData.peiTypePei == TypePei.PIBI) {
                         """
                                Diamètre : ${peiData.diametreLibelle}
@@ -103,13 +102,19 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     data += """
                         
                         Dernière RECO : ${
-                        peiData.peiLastRecop?.let {
+                        peiData.lastRecop?.let {
                             dateUtils.format(
-                                peiData.peiLastRecop,
+                                it,
                                 DateUtils.PATTERN_NATUREL,
                             )
                         }
                     }
+                        Dernier CTP :  ${peiData.lastCtp?.let {
+                        dateUtils.format(
+                            it,
+                            DateUtils.PATTERN_NATUREL,
+                        )
+                    }}
                     """.trimIndent()
 
                     listeResumeElement.add(
