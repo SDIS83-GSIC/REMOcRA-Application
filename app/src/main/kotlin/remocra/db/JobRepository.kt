@@ -7,6 +7,7 @@ import org.jooq.JSONB
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
 import remocra.data.JobData
+import remocra.data.JobTask
 import remocra.db.jooq.remocra.enums.EtatJob
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.Job.Companion.JOB
@@ -90,6 +91,20 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
             .limit(limit)
             .offset(offset)
             .fetchInto()
+
+    fun listWithTask(limit: Int? = 10, offset: Int? = 0, filter: Filter?): List<JobTask> = dsl.select(
+        JOB.ID,
+        TASK.TYPE,
+        JOB.DATE_DEBUT,
+        JOB.DATE_FIN,
+        JOB.ETAT_JOB,
+    )
+        .from(JOB)
+        .innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID))
+        .where(filter?.toCondition())
+        .limit(limit)
+        .offset(offset)
+        .fetchInto<JobTask>()
 
     fun countJobs(filter: Filter?): Int =
         dsl.selectCount().from(JOB).innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID)).where(filter?.toCondition()).fetchSingleInto()
