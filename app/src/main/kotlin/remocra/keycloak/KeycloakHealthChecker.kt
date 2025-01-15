@@ -1,40 +1,56 @@
 package remocra.keycloak
 
 import com.google.inject.Inject
+import org.slf4j.LoggerFactory
+import remocra.auth.AuthModule
 import remocra.healthcheck.HealthChecker
 import remocra.healthcheck.HealthModule
-import java.net.HttpURLConnection
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 
 class KeycloakHealthChecker
 @Inject
-constructor(settings: HealthModule.HealthSettings, @HealthcheckUrl url: URI) : HealthChecker(critical = true) {
-    private val client: HttpClient
-    private val request: HttpRequest
+constructor(
+    private val settings: HealthModule.HealthSettings,
+    private val keycloakToken: KeycloakToken,
+    private val keycloakClient: AuthModule.KeycloakClient,
+) : HealthChecker(critical = true) {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
-    init {
-        this.client = HttpClient.newBuilder().connectTimeout(settings.checkTimeout).build()
-        request = HttpRequest.newBuilder(url).build()
+    private val revokeTokenCallback = object : Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        }
+
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            logger.error("Erreur à la révocation du token obtenu lors du healthcheck", t)
+        }
     }
 
     override fun check(): Health {
+        val getTokenCall = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret)
+        getTokenCall.timeout().timeout(settings.checkTimeout.toNanos(), TimeUnit.NANOSECONDS)
         val response =
             try {
-                client.send(request, HttpResponse.BodyHandlers.ofInputStream())
+                getTokenCall.execute()
+            } catch (e: SocketTimeoutException) {
+                return Health.Timeout
             } catch (e: Exception) {
                 if (e is InterruptedException) {
                     Thread.currentThread().interrupt()
                 }
                 return Health.Failure(e.message)
             }
-
-        return if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-            Health.Success(null)
+        if (response.isSuccessful) {
+            response.body()?.accessToken?.also {
+                keycloakToken.revokeToken(it, keycloakClient.clientId, keycloakClient.clientSecret)
+                    .enqueue(revokeTokenCallback)
+            }
+            return Health.Success(null)
         } else {
-            Health.Failure(response.body())
+            return Health.Failure(response.errorBody()!!.string())
         }
     }
 }

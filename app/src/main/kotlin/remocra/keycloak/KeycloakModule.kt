@@ -11,22 +11,14 @@ import remocra.RemocraModule
 import remocra.healthcheck.HealthModule
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.net.URI
 
 class KeycloakModule(
-    private val healthcheckUrl: URI,
     private val apiBaseUrl: HttpUrl,
-    private val urlToken: HttpUrl,
+    private val tokenBaseUrl: HttpUrl,
 ) : RemocraModule() {
 
     override fun configure() {
         HealthModule.addHealthCheck(binder(), "keycloak").to(KeycloakHealthChecker::class.java)
-    }
-
-    @Provides
-    @HealthcheckUrl
-    fun provideHealthcheckUrl(): URI {
-        return healthcheckUrl
     }
 
     @Provides
@@ -49,14 +41,13 @@ class KeycloakModule(
     @Provides
     @Singleton
     fun provideKeycloakToken(retrofit: Retrofit.Builder): KeycloakToken {
-        return retrofit.baseUrl(urlToken).build()
+        return retrofit.baseUrl(tokenBaseUrl).build()
             .create(KeycloakToken::class.java)
     }
 
     companion object {
         fun create(config: Config): KeycloakModule {
             return KeycloakModule(
-                URI(config.getString("base-uri")).resolve("health"),
                 HttpUrl.get(config.getString("base-uri"))
                     .newBuilder()
                     .addPathSegment("admin")
