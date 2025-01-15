@@ -1,7 +1,8 @@
 package remocra.healthcheck
 
-abstract class HealthChecker protected constructor() {
-    var critical: Boolean = true
+abstract class HealthChecker protected constructor(
+    val critical: Boolean = true,
+) {
 
     abstract fun check(): Health
 

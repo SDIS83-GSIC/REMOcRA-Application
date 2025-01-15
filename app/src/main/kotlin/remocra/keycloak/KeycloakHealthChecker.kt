@@ -11,14 +11,13 @@ import java.net.http.HttpResponse
 
 class KeycloakHealthChecker
 @Inject
-constructor(settings: HealthModule.HealthSettings, @HealthcheckUrl url: URI) : HealthChecker() {
+constructor(settings: HealthModule.HealthSettings, @HealthcheckUrl url: URI) : HealthChecker(critical = true) {
     private val client: HttpClient
     private val request: HttpRequest
 
     init {
         this.client = HttpClient.newBuilder().connectTimeout(settings.checkTimeout).build()
         request = HttpRequest.newBuilder(url).build()
-        critical = true
     }
 
     override fun check(): Health {
