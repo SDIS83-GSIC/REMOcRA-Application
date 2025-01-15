@@ -16,6 +16,7 @@ import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.ThreadLocalTransactionProvider
 import remocra.RemocraModule
+import remocra.healthcheck.HealthModule
 import java.util.Locale
 import java.util.Properties
 import javax.sql.DataSource
@@ -23,6 +24,10 @@ import javax.sql.DataSource
 class DatabaseModule
 private constructor(private val sqlDialect: SQLDialect, private val properties: Properties) :
     RemocraModule() {
+
+    override fun configure() {
+        HealthModule.addHealthCheck(binder(), "database").to(DatabaseHealthChecker::class.java)
+    }
 
     @Provides
     @Singleton
