@@ -73,7 +73,7 @@ class ParametresUseCase : AbstractUseCase() {
             peiDelaiCtrlWarn = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_CTRL_WARN.name),
             peiDelaiRecoUrgent = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_RECO_URGENT.name),
             peiDelaiRecoWarn = mapParametres.getIntOrNull(ParametreEnum.PEI_DELAI_RECO_WARN.name),
-            peiDeplacementDistWarn = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DEPLACEMENT_DIST_WARN.name),
+            peiDeplacementDistWarn = mapParametres.getIntOrNull(ParametreEnum.PEI_DEPLACEMENT_DIST_WARN.name),
             peiGenerationCarteTournee = mapParametres.getBooleanOrNull(ParametreEnum.PEI_GENERATION_CARTE_TOURNEE.name),
             peiMethodeTriAlphanumerique = mapParametres.getBooleanOrNull(ParametreEnum.PEI_METHODE_TRI_ALPHANUMERIQUE.name),
             peiRenouvellementCtrlPrive = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_CTRL_PRIVE.name),

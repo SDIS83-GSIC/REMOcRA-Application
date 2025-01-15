@@ -80,7 +80,7 @@ data class ParametresSectionPermis(
 )
 
 data class ParametresSectionPei(
-    val peiDeplacementDistWarn: Boolean?,
+    val peiDeplacementDistWarn: Int?,
     val peiGenerationCarteTournee: Boolean?,
     val bufferCarte: Int?,
     val peiDelaiCtrlUrgent: Int?,

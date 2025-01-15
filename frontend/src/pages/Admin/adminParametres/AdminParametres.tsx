@@ -704,12 +704,11 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="mobile.peiDeplacementDistWarn"
-            label="Distance minimale avertissement import CTP"
-            checked={values?.peiDeplacementDistWarn}
+          <PositiveNumberInput
+            name="pei.peiDeplacementDistWarn"
+            label="Seuil de déplacement d'un PEI import CTP"
             tooltipText={
-              "Distance de déplacement minimale pour laquelle afficher un avertissement lors de " +
+              "Distance de déplacement du PEI au-delà de laquelle afficher un avertissement lors de " +
               "l'import de Contrôles Techniques Périodiques"
             }
           />
