@@ -32,8 +32,8 @@ class TracabiliteEndpoint : AbstractEndpoint() {
     @Public("référentiels de données de recherche")
     fun getFormReferences(): Response {
         val typeOperations = enumValues<TypeOperation>().map { it.name }
-        val typeObjets = enumValues<TypeObjet>().map { it.name }
-        val typeUtilisateurs = enumValues<TypeSourceModification>().map { it.name }
+        val typeObjets = enumValues<TypeObjet>().map { it.name }.sorted()
+        val typeUtilisateurs = enumValues<TypeSourceModification>().map { it.name }.sorted()
         return Response.ok(
             mapOf(
                 "typeOperations" to typeOperations,

@@ -77,19 +77,21 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
                                 .containsIgnoreCase(it)
                             val cndPrenom = DSL.jsonbGetAttributeAsText(TRACABILITE.AUTEUR_DATA, "prenom")
                                 .containsIgnoreCase(it)
-                            cndNom.or(cndPrenom)
+                            val cndEmail = DSL.jsonbGetAttributeAsText(TRACABILITE.AUTEUR_DATA, "email")
+                                .containsIgnoreCase(it)
+                            cndNom.or(cndPrenom).or(cndEmail)
                         },
                         search.typeOperation?.let { TRACABILITE.TYPE_OPERATION.eq(it) },
-                        if (search.debut != null && search.fin != null) {
-                            val debut = dateUtils.getMoment(search.debut)
-                            val fin = dateUtils.getMoment(search.fin)
-                            TRACABILITE.DATE.between(debut, fin)
-                        } else {
-                            null
+                        search.debut?.let {
+                            TRACABILITE.DATE.ge(dateUtils.getMoment(it))
+                        },
+                        search.fin?.let {
+                            TRACABILITE.DATE.le(dateUtils.getMoment(it))
                         },
                         search.objetId?.let { TRACABILITE.OBJET_ID.eq(it) },
                     ),
                 ),
             )
+            .orderBy(TRACABILITE.DATE.desc())
             .fetchInto()
 }

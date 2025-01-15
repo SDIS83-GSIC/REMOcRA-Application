@@ -14,6 +14,7 @@ import url from "../../../module/fetch.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import { formatDateHeure } from "../../../utils/formatDateUtils.tsx";
 import { SelectOption, useRefs } from "./useRefs.ts";
 
 type FormValues = {
@@ -74,6 +75,7 @@ const Tracabilite = () => {
 
   return (
     <Container>
+      <h1>Historique des opérations</h1>
       <Row className="justify-content-md-center">
         <Col className="p-2 border rounded mx-2" xs={5}>
           <Formik
@@ -90,7 +92,7 @@ const Tracabilite = () => {
         </Col>
       </Row>
       <Row className="mt-5">
-        <h4>Résultat de la recherche</h4>
+        <h4>Résultats de la recherche</h4>
         <Table bordered striped>
           <thead>
             <tr>
@@ -107,11 +109,11 @@ const Tracabilite = () => {
                 <tr key={i}>
                   <td>{d.tracabiliteTypeObjet}</td>
                   <td>{d.tracabiliteTypeOperation}</td>
-                  <td>{d.tracabiliteDate}</td>
+                  <td>{formatDateHeure(d.tracabiliteDate)}</td>
                   <td>
-                    login: {d.tracabiliteAuteurData.nom}
+                    login : {d.tracabiliteAuteurData.nom}
                     <br />
-                    email: {d.tracabiliteAuteurData.email}
+                    email : {d.tracabiliteAuteurData.email}
                   </td>
                   <td>
                     <pre>{JSON.stringify(d.tracabiliteObjetData, null, 2)}</pre>
@@ -187,20 +189,34 @@ const SearchForm = ({
           typeOperations.find((to) => to.value === values.typeOperation) ?? null
         }
       />
-      <FormLabel label="Période" name="periode" required={false} />
+      <FormLabel
+        label="Période"
+        name="periode"
+        required={false}
+        tooltipText={
+          <>
+            Saisies possibles :
+            <ul>
+              <li>date de début uniquement</li>
+              <li>date de fin uniquement</li>
+              <li>date de début et date de fin</li>
+            </ul>
+          </>
+        }
+      />
       <Row>
         <Col>
           <DateTimeInput
             name="debut"
             dateType="datetime-local"
-            required={values.fin !== ""}
+            required={false}
           />
         </Col>
         <Col>
           <DateTimeInput
             name="fin"
             dateType="datetime-local"
-            required={values.debut !== ""}
+            required={false}
           />
         </Col>
       </Row>
@@ -227,7 +243,18 @@ const SearchForm = ({
           null
         }
       />
-      <FormLabel label="Utilisateur" name="utilisateur" required={false} />
+      <FormLabel
+        label="Utilisateur"
+        name="utilisateur"
+        required={false}
+        tooltipText={
+          <>
+            Recherche inclusive (=&quot;contient la saisie&quot;) insensible à
+            la casse sur le nom, le prénom et l&apos;email de l&apos;auteur de
+            la modification
+          </>
+        }
+      />
       <TextInput name="utilisateur" required={false} />
       <FormLabel label="Id de l'objet" name="objetId" required={false} />
       <TextInput name="objetId" required={false} />
