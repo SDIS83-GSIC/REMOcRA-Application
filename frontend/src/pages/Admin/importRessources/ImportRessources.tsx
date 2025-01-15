@@ -34,9 +34,9 @@ export const ImportRessources = () => {
     <>
       <h1>Import des ressources graphiques</h1>
       <p>
-        Cet écran permet d&apos;importer différentes ressources graphiques
-        utiles à l&apos;outil. Chaque bloc (<i>accordéon</i>) est indépendant,
-        et possède son propre bouton d&apos;import.
+        Cet écran permet d&apos;importer différentes ressources utiles à
+        l&apos;outil. Chaque bloc (<i>accordéon</i>) est indépendant, et possède
+        son propre bouton d&apos;import.
       </p>
 
       <AccordionCustom
