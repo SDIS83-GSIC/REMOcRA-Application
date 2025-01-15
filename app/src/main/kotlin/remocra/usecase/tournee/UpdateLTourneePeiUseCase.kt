@@ -35,8 +35,11 @@ class UpdateLTourneePeiUseCase @Inject constructor(
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: LTourneePeiToInsert) {
-        // TODO vérifier que tous les pei qu'on souhaite insérer sont bien de meme nature deci,
-        // a défaut public et privé sous convention ET privée et public sous convention
+        // On vérifie que tous les pei ont bien la même nature deci
+        val codesNatureDeci = peiRepository.getNatureDeciId(element.listLTourneePei?.map { it.peiId }?.toSet() ?: setOf())
+        if (codesNatureDeci.distinct().size > 1) {
+            throw RemocraResponseException(ErrorType.TOURNEE_NATURE_DECI)
+        }
     }
 
     override fun postEvent(element: LTourneePeiToInsert, userInfo: UserInfo) {

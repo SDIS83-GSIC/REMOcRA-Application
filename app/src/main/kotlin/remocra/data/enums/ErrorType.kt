@@ -261,6 +261,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     TOURNEE_LECTURE_SEULE(3002, "La tournée est réservée dans l'application mobile, elle ne peut être modifiée"),
     TOURNEE_REMOVE_AFFECTATION_FORBIDDEN(3003, "Vous ne disposez pas des droits suffisants pour désaffecter un utilisateur d'une tournée", Status.FORBIDDEN),
     TOURNEE_FORCER_AVANCEMENT_FORBIDDEN(3004, "Vous ne disposez pas des droits suffisants pour forcer l'avancement d'une tournée", Status.FORBIDDEN),
+    TOURNEE_NATURE_DECI(
+        3005,
+        "Tous les PEI doivent avoir la même nature DECI.",
+        Status.BAD_REQUEST,
+    ),
 
     //
     // ********************************************************************************
