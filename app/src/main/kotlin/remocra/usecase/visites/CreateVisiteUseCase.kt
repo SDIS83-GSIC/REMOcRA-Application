@@ -45,7 +45,6 @@ class CreateVisiteUseCase @Inject constructor(
                 date = dateUtils.now(),
             ),
         )
-        // TODO : Gestion "notification changement état" et autres jobs
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: VisiteData) {

@@ -46,7 +46,6 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     fun getPeiVisites(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Code du type de visite") @QueryParam("codeTypeVisite") codeTypeVisite: String?,
-        // TODO on exclut les secondes, mais est-ce vraiment voulu ? Voir si on peut pas n'avoir qu'un seul format de date !
         @Parameter(description = "Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm") @QueryParam("moment") moment: String?,
         @Parameter(description = "Renvoyer uniquement la dernière visite") @QueryParam("derniereOnly") derniereOnly: Boolean?,
         @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Int?,
