@@ -25,7 +25,7 @@ class GeometryBinding : Binding<Geometry, org.locationtech.jts.geom.Geometry> {
     override fun converter(): Converter<Geometry, org.locationtech.jts.geom.Geometry> {
         return object : Converter<Geometry, org.locationtech.jts.geom.Geometry> {
             override fun from(geom: Geometry?): org.locationtech.jts.geom.Geometry? {
-                if (geom == null) {
+                if (geom == null || geom.data() == "null") {
                     return null
                 }
                 return reader.read(WKBReader.hexToBytes(geom.data()))
