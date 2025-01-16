@@ -156,6 +156,14 @@ function getLinks(
           link: URLS.EXECUTER_RAPPORT_PERSONNALISE,
         },
       ];
+    case TypeModuleRemocra.PEI_PRESCRIT:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A),
+          label: "Carte des points d'eau prescrits",
+          link: URLS.PEI_PRESCRIT,
+        },
+      ];
     case TypeModuleRemocra.PERSONNALISE:
       return;
     case TypeModuleRemocra.DASHBOARD:

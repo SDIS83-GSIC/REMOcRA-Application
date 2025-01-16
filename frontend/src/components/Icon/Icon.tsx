@@ -22,6 +22,7 @@ export const IconAccuse = () => <i className="fi fi-br-comment-alt-check" />;
 
 export const IconAireAspiration = () => <i className="fi fi-rs-triangle" />;
 export const IconEtude = () => <i className="fi fi-br-survey-xmark" />;
+export const IconPrescrit = () => <i className="fi fi-br-survey-xmark" />;
 export const IconImport = () => <i className="fi fi-br-upload" />;
 export const IconExport = () => <i className="fi fi-br-download" />;
 

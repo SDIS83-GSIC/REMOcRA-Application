@@ -136,6 +136,7 @@ import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.
 import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAdmin.tsx";
 import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
 import ModuleOperationsDiverses from "./components/ModuleRemocra/ModuleOperationsDiverses.tsx";
+import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -185,6 +186,9 @@ export const URLS = {
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
+
+  // Module Carte pei prescrit
+  PEI_PRESCRIT: url`/pei-prescrit`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -638,6 +642,15 @@ export default [
       <Authorization
         Component={MapPerso}
         droits={[TYPE_DROIT.CARTOGRAPHIES_E]}
+      />
+    ),
+  },
+  {
+    path: "/pei-prescrit",
+    element: (
+      <Authorization
+        Component={MapPeiPrescrit}
+        droits={[TYPE_DROIT.PEI_PRESCRIT_R]}
       />
     ),
   },
