@@ -65,6 +65,7 @@ const Visite = () => {
 
   const listeVisite = visiteInformations.data.listVisite;
   const typePei = visiteInformations.data.typePei;
+  const numeroComplet = visiteInformations.data.numeroComplet;
   const lastCDP: CtrlDebitPressionEntity = {
     ctrlVisiteId: null,
     ctrlDebit: visiteInformations.data.lastCDP?.visiteCtrlDebitPressionDebit,
@@ -142,7 +143,7 @@ const Visite = () => {
   return (
     <Container>
       <PageTitle
-        title={"Visite du PEI"}
+        title={"Visites du PEI " + numeroComplet}
         icon={<IconVisite />}
         right={
           hasRightToCreate && (

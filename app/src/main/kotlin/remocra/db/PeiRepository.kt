@@ -404,6 +404,12 @@ class PeiRepository
             .where(PEI.ID.eq(idPei))
             .fetchSingleInto()
 
+    fun getNumeroCompletPei(idPei: UUID): String =
+        dsl.select(PEI.NUMERO_COMPLET)
+            .from(PEI)
+            .where(PEI.ID.eq(idPei))
+            .fetchSingleInto()
+
     fun getCommune(idPei: UUID): UUID =
         dsl.select(PEI.COMMUNE_ID)
             .from(PEI)
