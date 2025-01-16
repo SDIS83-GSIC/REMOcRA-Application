@@ -21,6 +21,13 @@ class MailService @Inject constructor(private val settings: MailSettings) {
         email.send()
     }
 
+    fun checkConnection(): Boolean {
+        createEmail().mailSession.transport.use {
+            it.connect()
+            return it.isConnected
+        }
+    }
+
     private fun createEmail(): HtmlEmail {
         val email = HtmlEmail()
         email.hostName = settings.smtpUrl
