@@ -204,7 +204,7 @@ function getColumnPeiByStringArray(
         break;
       case COLUMN_PEI.PEI_NEXT_RECOP:
         column.push({
-          Header: "Date Prochaine RECOP",
+          Header: "Date prochaine RECOP",
           accessor: "peiNextRecop",
           sortField: "peiNextRecop",
           Cell: (value) => {
