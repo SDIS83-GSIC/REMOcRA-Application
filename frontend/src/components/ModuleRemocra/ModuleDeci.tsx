@@ -8,7 +8,7 @@ const ModuleDeci = () => {
     { path: URLS.PEI, label: "Points d'eau" },
     {
       path: URLS.LIST_TOURNEE,
-      label: "Tournée",
+      label: "Tournées",
     },
     {
       path: URLS.LIST_INDISPONIBILITE_TEMPORAIRE,
