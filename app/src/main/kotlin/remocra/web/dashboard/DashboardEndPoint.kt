@@ -17,13 +17,16 @@ import remocra.auth.userInfo
 import remocra.data.DashboardConfigData
 import remocra.data.DashboardQueryData
 import remocra.data.DashboardQueryRequestData
+import remocra.data.QueryIds
 import remocra.db.DashboardRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.dashboard.CreateDashboardUseCase
 import remocra.usecase.dashboard.CreateQueryUseCase
+import remocra.usecase.dashboard.DeleteDashboardUseCase
 import remocra.usecase.dashboard.DeleteQueryUseCase
 import remocra.usecase.dashboard.GetDashboardQueryUseCase
 import remocra.usecase.dashboard.UpdateDashboardQueryUseCase
+import remocra.usecase.dashboard.UpdateDashboardUseCase
 import remocra.web.AbstractEndpoint
 import java.util.*
 
@@ -42,6 +45,10 @@ class DashboardEndPoint : AbstractEndpoint() {
     @Inject lateinit var deleteDashboardQueryUseCase: DeleteQueryUseCase
 
     @Inject lateinit var createDashboardDashboardUseCase: CreateDashboardUseCase
+
+    @Inject lateinit var updateDashboardUseCase: UpdateDashboardUseCase
+
+    @Inject lateinit var deleteDashboardUseCase: DeleteDashboardUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -74,6 +81,31 @@ class DashboardEndPoint : AbstractEndpoint() {
     fun getQueryList(): Response = Response.ok(dashboardRepository.getQueryList()).build()
 
     @GET
+    @Path("/get-list-dashboard")
+    @RequireDroits([Droit.DASHBOARD_R])
+    fun getDashboardList(): Response = Response.ok(dashboardRepository.getDashboardList()).build()
+
+    @GET
+    @Path("/get-dashboard-user")
+    @RequireDroits([Droit.DASHBOARD_R])
+    fun getDashboardUser(): Response = Response.ok(getDashboardQueryUseCase.getDashboardsUser(securityContext.userInfo)).build()
+
+    @GET
+    @Path("/get-dashboard-profil-available")
+    @RequireDroits([Droit.DASHBOARD_R])
+    fun getDashboardAvailableProfilList(): Response = Response.ok(dashboardRepository.getAvailableProfil()).build()
+
+    @GET
+    @Path("/get-dashboard-list-profil/{id}")
+    @RequireDroits([Droit.DASHBOARD_R])
+    fun getDashboardProfilList(@PathParam("id") dashboardId: UUID): Response = Response.ok(dashboardRepository.getDashboardProfil(dashboardId)).build()
+
+    @POST
+    @Path("/get-list-data-query")
+    @RequireDroits([Droit.DASHBOARD_A])
+    fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds)).build()
+
+    @GET
     @Path("/get-query-list-all")
     @RequireDroits([Droit.DASHBOARD_R])
     fun getQueryListAllComponents(): Response = Response.ok(dashboardRepository.getQueryListAllComponents()).build()
@@ -94,6 +126,11 @@ class DashboardEndPoint : AbstractEndpoint() {
     fun getComponentConfig(@PathParam("id") componentId: UUID): Response = Response.ok(dashboardRepository.getComponentsConfig(componentId)).build()
 
     @GET
+    @Path("/get-dashboard-config/{id}")
+    @RequireDroits([Droit.DASHBOARD_R])
+    fun getDashboardConfig(@PathParam("id") dashboardId: UUID): Response = Response.ok(dashboardRepository.getDashboardConfig(dashboardId)).build()
+
+    @GET
     @Path("/get-data-query/{id}")
     @RequireDroits([Droit.DASHBOARD_R])
     fun getDataQuery(@PathParam("id") queryId: UUID): Response = Response.ok(getDashboardQueryUseCase.getDataQuery(queryId)).build()
@@ -105,4 +142,17 @@ class DashboardEndPoint : AbstractEndpoint() {
     fun createDashboard(
         dashboardConfig: DashboardConfigData,
     ): Response = createDashboardDashboardUseCase.execute(securityContext.userInfo, dashboardConfig).wrap()
+
+    @PUT
+    @Path("/update-dashboard")
+    @RequireDroits([Droit.DASHBOARD_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun updateDashboard(
+        dashboardConfig: DashboardConfigData,
+    ): Response = updateDashboardUseCase.execute(securityContext.userInfo, dashboardConfig).wrap()
+
+    @DELETE
+    @Path("/delete-dashboard/{id}")
+    @RequireDroits([Droit.DASHBOARD_A])
+    fun deleteDashboard(@PathParam("id") id: UUID): Response = deleteDashboardUseCase.execute(securityContext.userInfo, id).wrap()
 }

@@ -11,15 +11,23 @@ data class DashboardQueryData(
     val queryComponents: Collection<DashboardComponentData>,
 )
 
+data class DashboardData(
+    val dashboardId: UUID?,
+    val dashboardTitle: String?,
+    val dashboardComponents: Collection<DashboardComponentData>?,
+)
+
 data class DashboardComponentData(
     val componentId: UUID = UUID.randomUUID(),
     val componentQueryId: UUID = UUID.randomUUID(),
     val componentKey: TypeDashboardComponents,
     val componentTitle: String,
     val componentConfig: JSONB,
+    val componentConfigPosition: JSONB?,
 )
 
 data class DashboardQueryRequestData(
+    val queryId: UUID?,
     val query: String,
     val queryTitle: String,
 )
@@ -40,10 +48,14 @@ data class DashboardConfigData(
     val dashboardId: UUID = UUID.randomUUID(),
     val dashboardTitle: String,
     val dashboardComponents: Collection<ComponentConfigData>,
-    val dashboardProfilsId: Collection<UUID>,
+    val dashboardProfilsId: Collection<UUID>?,
 )
 
 data class ComponentConfigData(
     val componentId: UUID,
     val componentConfig: JSONB,
+)
+
+data class QueryIds(
+    val dashboardQueryIds: Collection<UUID>,
 )

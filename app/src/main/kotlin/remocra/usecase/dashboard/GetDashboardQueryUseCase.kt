@@ -1,7 +1,10 @@
 package remocra.usecase.dashboard
 
 import com.google.inject.Inject
+import remocra.auth.UserInfo
+import remocra.data.DashboardData
 import remocra.data.DashboardQueryRequestData
+import remocra.data.QueryIds
 import remocra.db.DashboardRepository
 import remocra.usecase.AbstractUseCase
 import remocra.utils.RequestUtils
@@ -28,5 +31,27 @@ class GetDashboardQueryUseCase : AbstractUseCase() {
     fun getDataQuery(queryId: UUID): RequestUtils.FieldData? {
         val requestSql = dashboardRepository.getRequest(queryId)
         return requestSql?.let { getQuery(it) }
+    }
+
+    fun getDataQuerys(queryIds: QueryIds): MutableList<RequestUtils.FieldData> {
+        val results: MutableList<RequestUtils.FieldData> = mutableListOf() // Liste pour stocker les résultats
+
+        for (queryId in queryIds.dashboardQueryIds) {
+            val result = getDataQuery(queryId)
+            if (result != null) {
+                results.add(result)
+            }
+        }
+        return results
+    }
+
+    fun getDashboardsUser(userInfo: UserInfo?): DashboardData {
+        val dashboard = dashboardRepository.getDashboardUser(userInfo)
+        val components = dashboard?.let { dashboardRepository.getDashboardConfig(it.dashboardId) }
+        return DashboardData(
+            dashboardId = dashboard?.dashboardId,
+            dashboardTitle = dashboard?.dashboardTitle,
+            dashboardComponents = components,
+        )
     }
 }

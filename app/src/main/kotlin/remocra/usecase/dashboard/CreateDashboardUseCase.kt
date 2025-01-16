@@ -38,7 +38,7 @@ class CreateDashboardUseCase : AbstractCUDUseCase<DashboardConfigData>(TypeOpera
             ),
         )
 
-        element.dashboardProfilsId.forEach { profil ->
+        element.dashboardProfilsId?.forEach { profil ->
             dashboardRepository.insertProfil(
                 LDashboardProfil(
                     dashboardId = element.dashboardId,

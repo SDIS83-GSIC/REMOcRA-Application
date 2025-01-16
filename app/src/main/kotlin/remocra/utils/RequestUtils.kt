@@ -5,6 +5,7 @@ import org.jooq.Result
 import remocra.data.DashboardQueryRequestData
 import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
+import java.util.UUID
 
 class RequestUtils {
 
@@ -241,6 +242,7 @@ class RequestUtils {
         val fields = data.get(0).fields().map { it.getName() } as? List<String> ?: throw RemocraResponseException(ErrorType.DASHBOARD_FIELD_REQUIRE)
 
         return FieldData(
+            queryId = queryRequest.queryId,
             queryTitle = queryRequest.queryTitle,
             querySql = queryRequest.query,
             name = fields,
@@ -249,6 +251,7 @@ class RequestUtils {
     }
 
     data class FieldData(
+        val queryId: UUID?,
         val queryTitle: String,
         val querySql: String,
         val name: List<String>,

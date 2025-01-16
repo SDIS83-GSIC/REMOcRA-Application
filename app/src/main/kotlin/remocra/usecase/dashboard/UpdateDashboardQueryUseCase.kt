@@ -26,7 +26,7 @@ class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeO
     lateinit var requestUtils: RequestUtils
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.DASHBOARD_A)) {
             throw RemocraResponseException(ErrorType.DASHBOARD_FORBIDDEN_CUD)
         }
     }
@@ -40,7 +40,7 @@ class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeO
             ),
         )
 
-        val componentIdCollection = dashboardRepository.getComponentsIdByQuery(element.queryId)
+        val componentIds = dashboardRepository.getComponentsIdByQuery(element.queryId)
 
         element.queryComponents.forEach { component ->
             if (component.componentQueryId != element.queryId) {
@@ -57,20 +57,20 @@ class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeO
                 dashboardRepository.updateComponent(
                     DashboardComponent(
                         dashboardComponentId = component.componentId,
-                        dashboardComponentDahsboardQueryId = component.componentQueryId,
+                        dashboardComponentDahsboardQueryId = element.queryId,
                         dashboardComponentKey = component.componentKey,
                         dashboardComponentConfig = component.componentConfig,
                         dashboardComponentTitle = component.componentTitle,
                     ),
                 )
             }
-        }
 
-        val componentToRemove = componentIdCollection.filterNot { uuid ->
-            uuid in element.queryComponents.mapNotNull { it.componentId }
+            // Supprimer les composants qui ne sont plus présents dans la nouvelle liste
+            val newComponentIds = element.queryComponents.map { it.componentId }.toSet()
+            val componentsToDelete = componentIds - newComponentIds
+            dashboardRepository.deleteComponentsInDashboard(componentsToDelete)
+            dashboardRepository.deleteComponents(componentsToDelete)
         }
-        dashboardRepository.deleteComponentsByIds(componentToRemove)
-
         return element
     }
 
