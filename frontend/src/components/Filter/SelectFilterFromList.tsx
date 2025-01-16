@@ -41,6 +41,7 @@ const SelectFilterFromList = ({
         }}
         defaultSelected={value ? [value] : data[0]?.id === "" ? [data[0]] : []}
         clearButton
+        paginationText={"Charger plus de valeurs"}
       />
     </>
   );
