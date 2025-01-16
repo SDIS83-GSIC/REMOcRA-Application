@@ -137,7 +137,7 @@ const TourneePei = ({
         />
         <Row className="my-3 mx-2">
           <Col>
-            <div>Libelle tournée : {tourneePeiInfo.data.tourneeLibelle}</div>
+            <div>Libellé tournée : {tourneePeiInfo.data.tourneeLibelle}</div>
             <div>Organisme : {tourneePeiInfo.data.organismeLibelle}</div>
           </Col>
           <Col sm={"auto"}>
@@ -157,6 +157,7 @@ const TourneePei = ({
                 value={selectedPei}
                 onChange={setSelectedPei}
                 className="my-3 mx-2"
+                placeholder={"Sélectionner..."}
               />
             </Col>
             <Col sm={"auto"}>
@@ -165,7 +166,7 @@ const TourneePei = ({
                 className="my-3 mx-2"
                 disabled={selectedPei === null}
               >
-                Ajouter un pei
+                Ajouter un PEI
               </Button>
             </Col>
           </Row>
