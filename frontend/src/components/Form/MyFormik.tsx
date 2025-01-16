@@ -108,6 +108,7 @@ type MyFormikProps = {
   errorToastMessage?: string;
   warningToastMessage?: string;
   isMultipartFormData?: boolean;
+  innerRef: any;
 };
 
 const MyFormik = (props: MyFormikProps) => {
@@ -125,6 +126,7 @@ const MyFormik = (props: MyFormikProps) => {
 
   return (
     <Formik
+      innerRef={props.innerRef}
       enableReinitialize={true}
       initialValues={props.initialValues}
       initialStatus={props.initialStatus}

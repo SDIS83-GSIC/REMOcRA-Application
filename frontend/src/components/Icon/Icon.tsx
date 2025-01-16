@@ -90,3 +90,18 @@ export const IconQuestionMark = () => <i className="fi fi-br-interrogation" />;
 export const IconValidation = () => (
   <i className="fi fi-rr-registration-paper" />
 );
+
+export const IconPieChartComponent = () => <i className="fi fi-br-chart-pie" />;
+export const IconGaugeComponent = () => (
+  <i className="fi fi-br-gauge-circle-plus" />
+);
+export const IconHorizontalChartComponent = () => (
+  <i className="fi fi-br-chart-simple-horizontal" />
+);
+export const IconTableComponent = () => <i className="fi fi-br-table" />;
+export const IconCounterComponent = () => (
+  <i className="fi fi-br-concierge-bell" />
+);
+export const IconMapComponent = () => (
+  <i className="fi fi-br-land-layer-location" />
+);

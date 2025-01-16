@@ -112,6 +112,11 @@ const ConfirmModalBody = ({
                 });
               }
             } else {
+              if (onConfirm) {
+                // Si onConfirm est fourni, exécutez-le directement
+                onConfirm(id);
+              }
+
               closeModal();
             }
           }}

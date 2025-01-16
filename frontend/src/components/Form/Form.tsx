@@ -16,6 +16,8 @@ type InputType = {
   placeholder?: string;
   tooltipText?: string;
   password?: boolean;
+  onChange?: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -88,6 +90,8 @@ export const TextInput = ({
   placeholder,
   tooltipText,
   password = false,
+  onChange,
+  onBlur,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -108,6 +112,8 @@ export const TextInput = ({
         defaultValue={value ?? ""}
         placeholder={placeholder}
         {...field}
+        onBlur={(v: string) => (onBlur ? onBlur(v) : field.onBlur(v))}
+        onChange={(v: string) => (onChange ? onChange(v) : field.onChange(v))}
       />
       {password && (
         <button
@@ -136,6 +142,7 @@ export const TextAreaInput = ({
   disabled = false,
   value,
   tooltipText,
+  onChange,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -156,6 +163,7 @@ export const TextAreaInput = ({
         disabled={disabled}
         defaultValue={value ?? ""}
         {...field}
+        onChange={(v: string) => (onChange ? onChange(v) : field.onChange(v))}
       />
     </DivWithError>
   );

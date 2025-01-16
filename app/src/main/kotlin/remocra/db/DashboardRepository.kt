@@ -27,7 +27,7 @@ class DashboardRepository
     fun getQuery(query: String) = dsl.fetch(query)
 
     fun getRequest(queryId: UUID): DashboardQueryRequestData? =
-        dsl.select(DASHBOARD_QUERY.QUERY.`as`("query"), DASHBOARD_QUERY.TITLE.`as`("queryTitle")).from(DASHBOARD_QUERY).where(DASHBOARD_QUERY.ID.eq(queryId)).fetchOneInto()
+        dsl.select(DASHBOARD_QUERY.ID.`as`("queryId"), DASHBOARD_QUERY.QUERY.`as`("query"), DASHBOARD_QUERY.TITLE.`as`("queryTitle")).from(DASHBOARD_QUERY).where(DASHBOARD_QUERY.ID.eq(queryId)).fetchOneInto()
 
     fun getQueryList(): Collection<DashboardQuery> =
         dsl.select(*DASHBOARD_QUERY.fields()).from(DASHBOARD_QUERY).fetchInto()

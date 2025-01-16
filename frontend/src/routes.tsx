@@ -127,6 +127,7 @@ import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import HistoriqueTracabilite from "./pages/Admin/Tracabilite/HistoriqueTracabilite.tsx";
+import Dashboard from "./pages/Dashboard/DashBoard.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
@@ -352,6 +353,11 @@ export const URLS = {
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
   TRACABILITE: url`/admin/tracabilite`,
+
+  // Module dashboard
+  DASHBOARD_ADMIN_QUERY: url`/dashboard/admin/query`,
+  DASHBOARD_ADMIN_DASHBOARD: url`/dashboard/admin/dashboard`,
+  DASHBOARD_LIST: url`/dashboard/list`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1510,6 +1516,12 @@ export default [
         ),
       },
     ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <Authorization Component={Dashboard} droits={[TYPE_DROIT.DASHBOARD_A]} />
+    ),
   },
   {
     path: "*",
