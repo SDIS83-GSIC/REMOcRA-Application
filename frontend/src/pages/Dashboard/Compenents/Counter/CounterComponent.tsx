@@ -2,7 +2,7 @@ import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const CounterComponent = (data: any) => {
   const valueColor = "#8884d8";
-  const valueSize = "60px";
+  const valueSize = "40px";
   const labelSize = "20px";
 
   if (data.data) {
@@ -17,7 +17,7 @@ const CounterComponent = (data: any) => {
     });
 
     return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
+      <div style={{ textAlign: "center" }}>
         {/* Valeur en gros */}
         <div
           style={{

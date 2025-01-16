@@ -1,4 +1,11 @@
-import { Cell, Pie, PieChart, Sector, Text } from "recharts";
+import {
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Sector,
+  Text,
+} from "recharts";
 import { setGaugeValueMapped } from "../../MappedValueComponent.tsx";
 
 const GaugeComponent = (options: any) => {
@@ -44,13 +51,17 @@ const GaugeComponent = (options: any) => {
   ];
 
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center">
-      <PieChart width={400} height={250}>
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      className="d-flex flex-column justify-content-center align-items-center overflow-hidden"
+    >
+      <PieChart className="d-flex flex-column justify-content-center align-items-center">
         {/* Jauge extérieure (segments colorés) */}
         <Pie
           data={outerGaugeData}
-          cx={200}
-          cy={200}
+          cx="50%"
+          cy="100%"
           innerRadius={120} // Rayon intérieur de la jauge extérieure
           outerRadius={150} // Rayon extérieur de la jauge extérieure
           startAngle={180}
@@ -67,8 +78,8 @@ const GaugeComponent = (options: any) => {
         {/* Jauge intérieure (segments en fonction de la valeur) */}
         <Pie
           data={innerGaugeData}
-          cx={200}
-          cy={200}
+          cx="50%"
+          cy="100%"
           innerRadius={80} // Rayon intérieur de la jauge intérieure
           outerRadius={120} // Rayon extérieur de la jauge intérieure
           startAngle={180}
@@ -100,14 +111,15 @@ const GaugeComponent = (options: any) => {
         fontSize={24}
         fill="#000000"
         style={{
-          fontSize: "60px",
+          fontSize: "40px",
           fontWeight: "bold",
           color: "#8884d8",
+          marginBottom: "40px",
         }}
       >
         {percentage + "%"}
       </Text>
-    </div>
+    </ResponsiveContainer>
   );
 };
 
