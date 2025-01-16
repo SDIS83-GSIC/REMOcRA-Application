@@ -165,7 +165,7 @@ function getLinks(
           aLeDroit:
             hasDroit(user, TYPE_DROIT.DASHBOARD_A) ||
             hasDroit(user, TYPE_DROIT.DASHBOARD_R),
-          label: "Liste des dashboards",
+          label: "Mon Dashboard",
           link: URLS.DASHBOARD_LIST,
         },
       ];
