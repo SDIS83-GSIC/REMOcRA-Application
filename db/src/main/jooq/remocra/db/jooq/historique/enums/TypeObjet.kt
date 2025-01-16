@@ -66,6 +66,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     DOCUMENT("DOCUMENT"),
     TASK("TASK"),
     DASHBOARD("DASHBOARD"),
+    PEI_PRESCRIT("PEI_PRESCRIT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

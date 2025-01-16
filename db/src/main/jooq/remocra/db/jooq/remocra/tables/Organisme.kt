@@ -37,6 +37,7 @@ import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PARENT_ID_FKE
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PROFIL_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_ZONE_INTEGRATION_ID_FKEY
+import remocra.db.jooq.remocra.keys.PEI_PRESCRIT__PEI_PRESCRIT_PEI_PRESCRIT_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY
@@ -51,6 +52,7 @@ import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.PeiPrescrit.PeiPrescritPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
@@ -390,6 +392,23 @@ open class Organisme(
 
     val peiPeiServicePublicDeciIdFkey: PeiPath
         get(): PeiPath = peiPeiServicePublicDeciIdFkey()
+
+    private lateinit var _peiPrescrit: PeiPrescritPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.pei_prescrit</code> table
+     */
+    fun peiPrescrit(): PeiPrescritPath {
+        if (!this::_peiPrescrit.isInitialized) {
+            _peiPrescrit = PeiPrescritPath(this, null, PEI_PRESCRIT__PEI_PRESCRIT_PEI_PRESCRIT_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _peiPrescrit
+    }
+
+    val peiPrescrit: PeiPrescritPath
+        get(): PeiPrescritPath = peiPrescrit()
 
     private lateinit var _pibi: PibiPath
 

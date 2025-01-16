@@ -38,6 +38,7 @@ enum class TypeModule(@get:JvmName("literal") public val literal: String) : Enum
     DASHBOARD("DASHBOARD"),
     OPERATIONS_DIVERSES("OPERATIONS_DIVERSES"),
     CRISE("CRISE"),
+    PEI_PRESCRIT("PEI_PRESCRIT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

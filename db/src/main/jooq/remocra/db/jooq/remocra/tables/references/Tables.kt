@@ -61,6 +61,7 @@ import remocra.db.jooq.remocra.tables.Niveau
 import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
+import remocra.db.jooq.remocra.tables.PeiPrescrit
 import remocra.db.jooq.remocra.tables.Pena
 import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
@@ -376,6 +377,11 @@ val PARAMETRE: Parametre = Parametre.PARAMETRE
  * The table <code>remocra.pei</code>.
  */
 val PEI: Pei = Pei.PEI
+
+/**
+ * The table <code>remocra.pei_prescrit</code>.
+ */
+val PEI_PRESCRIT: PeiPrescrit = PeiPrescrit.PEI_PRESCRIT
 
 /**
  * The table <code>remocra.pena</code>.

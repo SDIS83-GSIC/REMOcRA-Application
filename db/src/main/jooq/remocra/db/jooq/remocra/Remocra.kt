@@ -65,6 +65,7 @@ import remocra.db.jooq.remocra.tables.Niveau
 import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.Parametre
 import remocra.db.jooq.remocra.tables.Pei
+import remocra.db.jooq.remocra.tables.PeiPrescrit
 import remocra.db.jooq.remocra.tables.Pena
 import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Pibi
@@ -404,6 +405,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val PEI: Pei get() = Pei.PEI
 
     /**
+     * The table <code>remocra.pei_prescrit</code>.
+     */
+    val PEI_PRESCRIT: PeiPrescrit get() = PeiPrescrit.PEI_PRESCRIT
+
+    /**
      * The table <code>remocra.pena</code>.
      */
     val PENA: Pena get() = Pena.PENA
@@ -589,6 +595,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Organisme.ORGANISME,
         Parametre.PARAMETRE,
         Pei.PEI,
+        PeiPrescrit.PEI_PRESCRIT,
         Pena.PENA,
         PenaAspiration.PENA_ASPIRATION,
         Pibi.PIBI,
