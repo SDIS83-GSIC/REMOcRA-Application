@@ -17,6 +17,7 @@ import remocra.healthcheck.HealthModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
 import remocra.keycloak.KeycloakModule
+import remocra.mail.MailModule
 import remocra.schedule.ScheduleModule
 import remocra.sentry.SentryModule
 import remocra.web.WebModule
@@ -96,7 +97,8 @@ class Main : Runnable {
                 WebModule,
                 JsonModule,
                 CsvModule,
-                EventBusModule.create(config.getConfig("remocra.mail")),
+                MailModule.create(config.getConfig("remocra.mail")),
+                EventBusModule,
                 AuthModule.create(config.getConfig("remocra.authn")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 GeoserverModule.create(config.getConfig("remocra.geoserver")),
