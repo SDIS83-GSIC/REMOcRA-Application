@@ -25,6 +25,7 @@ import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.importctp.ImportCtpModule
 import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
+import remocra.web.job.JobModule
 import remocra.web.lieudit.LieuDitModule
 import remocra.web.marque.MarquePibiModule
 import remocra.web.messagelongueindispo.MessagePeiLongueIndispoModule
@@ -63,6 +64,7 @@ object WebModule : RemocraModule() {
         install(VisiteModule)
         install(AnomalieModule)
         install(TracabiliteModule)
+        install(JobModule)
         install(NomenclatureModule)
         install(AppSettingsModule)
         install(DocumentModule)

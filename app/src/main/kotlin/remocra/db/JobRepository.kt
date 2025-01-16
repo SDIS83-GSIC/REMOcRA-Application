@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
 import remocra.data.JobData
 import remocra.data.JobTask
+import remocra.data.Params
 import remocra.db.jooq.remocra.enums.EtatJob
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.Job.Companion.JOB
@@ -92,19 +93,27 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
             .offset(offset)
             .fetchInto()
 
-    fun listWithTask(limit: Int? = 10, offset: Int? = 0, filter: Filter?): List<JobTask> = dsl.select(
-        JOB.ID,
-        TASK.TYPE,
-        JOB.DATE_DEBUT,
-        JOB.DATE_FIN,
-        JOB.ETAT_JOB,
-    )
-        .from(JOB)
-        .innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID))
-        .where(filter?.toCondition())
-        .limit(limit)
-        .offset(offset)
-        .fetchInto<JobTask>()
+    fun listWithTask(
+        params: Params<Filter, Sort>,
+    ): List<JobTask> {
+        val jobs = dsl.select(
+            JOB.ID,
+            TASK.TYPE.`as`("typeTask"),
+            JOB.DATE_DEBUT,
+            JOB.DATE_FIN,
+            JOB.ETAT_JOB,
+        )
+            .from(JOB)
+            .innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID))
+            .where(params.filterBy?.toCondition())
+            .groupBy(JOB.ID, TASK.TYPE)
+            .orderBy(params.sortBy?.toCondition())
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto<JobTask>()
+
+        return jobs
+    }
 
     fun countJobs(filter: Filter?): Int =
         dsl.selectCount().from(JOB).innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID)).where(filter?.toCondition()).fetchSingleInto()
@@ -120,7 +129,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
         val typeTask: TypeTask?,
         val dateDebutJob: LocalDate?,
         val dateFinJob: LocalDate?,
-        val etatsJob: Collection<EtatJob>?,
+        val etatJob: EtatJob?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -134,9 +143,23 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
                             ZonedDateTime.of(it.atStartOfDay().plusDays(1), ZoneOffset.UTC),
                         )
                     },
-                    etatsJob?.let { JOB.ETAT_JOB.`in`(etatsJob) },
+                    etatJob?.let { JOB.ETAT_JOB.`in`(etatJob) },
                 ),
             )
+    }
+
+    data class Sort(
+        val taskType: Int?,
+        val jobDateDebut: Int?,
+        val jobDateFin: Int?,
+        val jobEtatJob: Int?,
+    ) {
+        fun toCondition() = listOfNotNull(
+            TASK.TYPE.getSortField(taskType),
+            JOB.DATE_DEBUT.getSortField(jobDateDebut),
+            JOB.DATE_FIN.getSortField(jobDateFin),
+            JOB.ETAT_JOB.getSortField(jobEtatJob),
+        )
     }
 
     fun getIdJobsOlderThanDays(nbDays: Long): List<UUID> =

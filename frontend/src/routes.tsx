@@ -152,6 +152,7 @@ import OldebMap from "./pages/Oldeb/OldebMap.tsx";
 import OldebProprietaireList from "./pages/Oldeb/OldebProprietaireList.tsx";
 import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
 import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
+import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1699,6 +1700,15 @@ export default [
         element: (
           <Authorization
             Component={HistoriqueTracabilite}
+            droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
+          />
+        ),
+      },
+      {
+        path: "resultats-execution",
+        element: (
+          <Authorization
+            Component={ResultatsExecution}
             droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
           />
         ),

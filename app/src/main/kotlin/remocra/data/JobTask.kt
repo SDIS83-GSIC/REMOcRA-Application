@@ -7,7 +7,7 @@ import java.util.UUID
 
 data class JobTask(
     val jobId: UUID,
-    val taskType: TypeTask,
+    val typeTask: TypeTask,
     var jobDateDebut: ZonedDateTime,
     val jobDateFin: ZonedDateTime?,
     val jobEtatJob: EtatJob,
