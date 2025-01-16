@@ -42,33 +42,36 @@ const SimplifiedVisiteForm = ({
   if (typeVisite) {
     switch (typeVisite) {
       case TYPE_VISITE.RECEPTION: {
-        filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isReceptionAssignable === true,
-        );
+        filteredListAnomalie =
+          listeAnomaliesAssignable?.filter(
+            (e) => e.isReceptionAssignable === true,
+          ) ?? [];
         break;
       }
       case TYPE_VISITE.RECO_INIT: {
-        filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isRecoInitAssignable === true,
-        );
+        filteredListAnomalie =
+          listeAnomaliesAssignable?.filter(
+            (e) => e.isRecoInitAssignable === true,
+          ) ?? [];
         break;
       }
       case TYPE_VISITE.CTP: {
-        filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isCTPAssignable === true,
-        );
+        filteredListAnomalie =
+          listeAnomaliesAssignable?.filter((e) => e.isCTPAssignable === true) ??
+          [];
         break;
       }
       case TYPE_VISITE.RECOP: {
-        filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isRecopAssignable === true,
-        );
+        filteredListAnomalie =
+          listeAnomaliesAssignable?.filter(
+            (e) => e.isRecopAssignable === true,
+          ) ?? [];
         break;
       }
       case TYPE_VISITE.NP: {
-        filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isNPAssignable === true,
-        );
+        filteredListAnomalie =
+          listeAnomaliesAssignable?.filter((e) => e.isNPAssignable === true) ??
+          [];
         break;
       }
       default: {
@@ -76,7 +79,6 @@ const SimplifiedVisiteForm = ({
       }
     }
   }
-
   const groupedListeAnomalies = Object.groupBy(
     filteredListAnomalie,
     (item: {
@@ -160,7 +162,7 @@ const SimplifiedVisiteForm = ({
                     false,
                   );
                 } else {
-                  const listeAnomalieUnasigned = listeAnomaliesAssignable.map(
+                  const listeAnomalieUnassigned = listeAnomaliesAssignable?.map(
                     (anomalie) => ({
                       ...anomalie,
                       isAssigned: false,
@@ -168,7 +170,7 @@ const SimplifiedVisiteForm = ({
                   );
                   setFieldValue(
                     `listeSimplifiedVisite[${index}].listeAnomalie`,
-                    listeAnomalieUnasigned,
+                    listeAnomalieUnassigned,
                   );
                   setFieldValue(
                     `listeSimplifiedVisite[${index}].isModified`,
