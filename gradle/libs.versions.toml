@@ -88,7 +88,7 @@ android-lint = "com.android.lint:8.7.3"
 cyclonedx = "org.cyclonedx.bom:1.7.4"
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
+jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.1.2"
 kotlin = "org.jetbrains.kotlin.jvm:2.0.20"
 licensee = "app.cash.licensee:1.11.0"
-loggingCapabilities = "dev.jacomet.logging-capabilities:0.11.1"
 spotless = "com.diffplug.spotless:6.25.0"

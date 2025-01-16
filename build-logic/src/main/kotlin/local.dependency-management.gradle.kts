@@ -1,7 +1,15 @@
 plugins {
-    id("dev.jacomet.logging-capabilities")
+    id("org.gradlex.jvm-dependency-conflict-resolution")
 }
 
-loggingCapabilities {
-    enforceLog4J2()
+jvmDependencyConflicts {
+    logging {
+        enforceLog4J2()
+    }
+    patch {
+        // Cause un conflit entre javax.activation et jakarta.activation dans Android Lint
+        module("com.android.tools:repository") {
+            removeDependency("com.sun.activation:javax.activation")
+        }
+    }
 }
