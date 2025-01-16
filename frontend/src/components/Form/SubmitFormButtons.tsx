@@ -25,7 +25,7 @@ const SubmitFormButtons = ({
           onClick={onClick}
           disabled={disabledValide}
         >
-          {update ? "Modifier" : "Valider"}
+          Enregistrer
         </Button>
       </Col>
     </Row>
