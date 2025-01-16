@@ -54,6 +54,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             hasDebitSimultane,
             NATURE_DECI.CODE,
             PIBI.TYPE_RESEAU_ID,
+            PEI.NUMERO_COMPLET,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -84,6 +85,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             hasDebitSimultane,
             NATURE_DECI.CODE,
             PIBI.TYPE_RESEAU_ID,
+            PEI.NUMERO_COMPLET,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -180,6 +182,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         val hasDebitSimultane: Boolean = false,
         val natureDeciCode: String,
         val pibiTypeReseauId: UUID?,
+        val peiNumeroComplet: String,
 
         // TODO à compléter au besoin
 

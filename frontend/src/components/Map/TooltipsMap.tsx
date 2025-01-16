@@ -141,7 +141,13 @@ const TooltipMapPei = ({
                 show={showFichePei}
                 className="w-auto"
               >
-                <FicheResume peiId={pointId} />
+                <FicheResume
+                  peiId={pointId}
+                  titre={
+                    "Fiche résumée du PEI " +
+                    featureSelect?.getProperties().peiNumeroComplet
+                  }
+                />
               </Volet>
               <Volet
                 handleClose={() => {

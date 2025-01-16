@@ -156,7 +156,7 @@ type ModaleType = {
 };
 
 type SimpleModalType = ModaleType & {
-  header: string;
+  header: (row: any) => string;
   content: (id: string) => ReactNode;
 };
 export const ActionButton = ({
@@ -296,7 +296,7 @@ const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
     show: show,
     visible: visible,
     content: _button.simpleModal.content(row.value),
-    header: _button.simpleModal.header,
+    header: _button.simpleModal.header(row),
   };
   return (
     <TableActionColumn

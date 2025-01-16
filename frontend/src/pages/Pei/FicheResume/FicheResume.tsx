@@ -17,7 +17,13 @@ import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
 
-const FicheResume = ({ peiId }: { peiId: string }) => {
+const FicheResume = ({
+  peiId,
+  titre = "",
+}: {
+  peiId: string;
+  titre: string;
+}) => {
   const elementFicheResumeState = useGet(url`/api/fiche-resume/` + peiId);
 
   if (!elementFicheResumeState.isResolved) {
@@ -31,6 +37,7 @@ const FicheResume = ({ peiId }: { peiId: string }) => {
 
   return (
     <>
+      {titre.trim().length > 0 && <h1>{titre}</h1>}
       <Container>
         <Col>
           {Object.entries(mapLigneRow).map(([key, values]) => (
@@ -64,7 +71,7 @@ const ElementResume = ({
 }: ElementResumeType) => {
   return (
     <>
-      <h1>{titre}</h1>
+      <h2>{titre}</h2>
       <div>
         {typeResumeElement === TYPE_RESUME_ELEMENT.DISPONIBILITE ? (
           <ElementResumeDisponibilite value={value} />
