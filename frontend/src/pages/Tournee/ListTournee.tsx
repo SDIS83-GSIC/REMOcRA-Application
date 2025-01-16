@@ -34,6 +34,7 @@ import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
+import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = ({ peiId }: { peiId: string }) => {
@@ -78,7 +79,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           <Form.Check type="checkbox" disabled checked={value.value === true} />
         );
       },
-      sortField: "tourneeActif",
+      Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeActif"} />,
     },
     {
       Header: "Prochaine RECOP",

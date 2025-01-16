@@ -233,6 +233,7 @@ class TourneeRepository
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDeltaDate: String?,
         val peiId: UUID?,
+        val tourneeActif: Boolean?,
     ) {
         /** Retourne une chaine regroupant toutes les possibilités d'enchainements de trois champs : ABCABACBAC
          *  @param f1: TableField<Record, String?>
@@ -250,6 +251,7 @@ class TourneeRepository
                     tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCase(it)) },
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
+                    tourneeActif?.let { DSL.and(TOURNEE.ACTIF.eq(it)) },
                 ),
             )
     }
