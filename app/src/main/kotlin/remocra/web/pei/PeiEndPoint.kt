@@ -189,7 +189,7 @@ class PeiEndPoint : AbstractEndpoint() {
             return result.wrap()
         }
 
-        return upsertDocumentPeiUseCase.execute(
+        val resultInsertDoc = upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
             DocumentsPei(
                 objectId = pei.peiId,
@@ -197,7 +197,13 @@ class PeiEndPoint : AbstractEndpoint() {
                 listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
-        ).wrap()
+        )
+
+        // Le type de retour attendu n'est pas celui du useCase des documents, mais bien un PeiData
+        if (resultInsertDoc !is AbstractUseCase.Result.Success) {
+            return resultInsertDoc.wrap()
+        }
+        return result.wrap()
     }
 
     @PUT
