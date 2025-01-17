@@ -449,22 +449,6 @@ const AdminApplicationMobile = ({
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
           <TransferList
-            availableOptions={availablePenaOptions}
-            selectedOptions={selectedPenaOptions}
-            setAvailableOptions={setAvailablePenaOptions}
-            setSelectedOptions={setSelectedPenaOptions}
-            label={"Caractéristiques à afficher pour les PENA"}
-            tooltipText={
-              "Dans l'infobulle d'un PEI sur l'application mobile, " +
-              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
-              "et dans quel ordre ils se présentent"
-            }
-            required={false}
-            name={"mobile.caracteristiquePena"}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
-          <TransferList
             availableOptions={availablePibiOptions}
             selectedOptions={selectedPibiOptions}
             setAvailableOptions={setAvailablePibiOptions}
@@ -477,6 +461,22 @@ const AdminApplicationMobile = ({
             }
             required={false}
             name={"mobile.caracteristiquePibi"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availablePenaOptions}
+            selectedOptions={selectedPenaOptions}
+            setAvailableOptions={setAvailablePenaOptions}
+            setSelectedOptions={setSelectedPenaOptions}
+            label={"Caractéristiques à afficher pour les PENA"}
+            tooltipText={
+              "Dans l'infobulle d'un PEI sur l'application mobile, " +
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
+              "et dans quel ordre ils se présentent"
+            }
+            required={false}
+            name={"mobile.caracteristiquePena"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
