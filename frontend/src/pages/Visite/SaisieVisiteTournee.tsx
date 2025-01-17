@@ -311,7 +311,7 @@ export const VisiteTourneeForm = ({
           </Col>
         </Row>
       </Container>
-      <Container fluid className={"px-5"}>
+      <Container fluid>
         <IterableVisiteForm
           name="listeSimplifiedVisite"
           listeElements={values.listeSimplifiedVisite}

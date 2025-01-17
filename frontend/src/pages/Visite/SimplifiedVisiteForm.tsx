@@ -137,86 +137,88 @@ const SimplifiedVisiteForm = ({
     <>
       <Row>
         <Col>
-          <TooltipCustom
-            tooltipText={`Le PEI contrôlé ne présente aucune anomalie`}
-            tooltipId={`${index}.isNoAnomalieChecked`}
-          >
-            <CheckBoxInput
-              key={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
-              name={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
-              label={"Aucune anomalie"}
-              onChange={() => {
-                setFieldValue(
-                  `listeSimplifiedVisite[${index}].isNoAnomalieChecked`,
-                  !values.listeSimplifiedVisite[index].isNoAnomalieChecked,
-                );
-                // Pour l'appli, la valeur isNoAnomalieChecked n'est pas encore update quand on arrive au niveau du if
-                // il faut donc mettre à jour la liste d'anomalie en prenant pour référence la valeur avant update
-                if (values.listeSimplifiedVisite[index].isNoAnomalieChecked) {
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].listeAnomalie`,
-                    listeAnomaliesAssignable,
-                  );
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].isModified`,
-                    false,
-                  );
-                } else {
-                  const listeAnomalieUnassigned = listeAnomaliesAssignable?.map(
-                    (anomalie) => ({
-                      ...anomalie,
-                      isAssigned: false,
-                    }),
-                  );
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].listeAnomalie`,
-                    listeAnomalieUnassigned,
-                  );
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].isModified`,
-                    true,
-                  );
-                }
-              }}
-              disabled={
-                values.listeSimplifiedVisite[index].isSameAnomalieChecked
-              }
-            />
-          </TooltipCustom>
-        </Col>
-        <Col>
-          <TooltipCustom
-            tooltipText={`Les anomalies relevées lors du contrôle du PEI correspondent en tout point à celles du précédent contrôle`}
-            tooltipId={`${index}.isSameAnomalieChecked`}
-          >
-            <CheckBoxInput
-              key={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
-              name={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
-              label={"Rien à modifier"}
-              onChange={() => {
-                setFieldValue(
-                  `listeSimplifiedVisite[${index}].isSameAnomalieChecked`,
-                  !values.listeSimplifiedVisite[index].isSameAnomalieChecked,
-                );
+          <CheckBoxInput
+            key={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
+            name={`listeSimplifiedVisite[${index}].isNoAnomalieChecked`}
+            label={
+              <TooltipCustom
+                tooltipText={`Le PEI contrôlé ne présente aucune anomalie`}
+                tooltipId={`${index}.isNoAnomalieChecked`}
+              >
+                Aucune anomalie
+              </TooltipCustom>
+            }
+            onChange={() => {
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].isNoAnomalieChecked`,
+                !values.listeSimplifiedVisite[index].isNoAnomalieChecked,
+              );
+              // Pour l'appli, la valeur isNoAnomalieChecked n'est pas encore update quand on arrive au niveau du if
+              // il faut donc mettre à jour la liste d'anomalie en prenant pour référence la valeur avant update
+              if (values.listeSimplifiedVisite[index].isNoAnomalieChecked) {
                 setFieldValue(
                   `listeSimplifiedVisite[${index}].listeAnomalie`,
                   listeAnomaliesAssignable,
                 );
-                if (values.listeSimplifiedVisite[index].isSameAnomalieChecked) {
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].isModified`,
-                    false,
-                  );
-                } else {
-                  setFieldValue(
-                    `listeSimplifiedVisite[${index}].isModified`,
-                    true,
-                  );
-                }
-              }}
-              disabled={values.listeSimplifiedVisite[index].isNoAnomalieChecked}
-            />
-          </TooltipCustom>
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isModified`,
+                  false,
+                );
+              } else {
+                const listeAnomalieUnasigned = listeAnomaliesAssignable.map(
+                  (anomalie) => ({
+                    ...anomalie,
+                    isAssigned: false,
+                  }),
+                );
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].listeAnomalie`,
+                  listeAnomalieUnasigned,
+                );
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isModified`,
+                  true,
+                );
+              }
+            }}
+            disabled={values.listeSimplifiedVisite[index].isSameAnomalieChecked}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            key={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
+            name={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
+            label={
+              <TooltipCustom
+                tooltipText={`Les anomalies relevées lors du contrôle du PEI correspondent en tout point à celles du précédent contrôle`}
+                tooltipId={`${index}.isSameAnomalieChecked`}
+              >
+                Rien à modifier
+              </TooltipCustom>
+            }
+            onChange={() => {
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].isSameAnomalieChecked`,
+                !values.listeSimplifiedVisite[index].isSameAnomalieChecked,
+              );
+              setFieldValue(
+                `listeSimplifiedVisite[${index}].listeAnomalie`,
+                listeAnomaliesAssignable,
+              );
+              if (values.listeSimplifiedVisite[index].isSameAnomalieChecked) {
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isModified`,
+                  false,
+                );
+              } else {
+                setFieldValue(
+                  `listeSimplifiedVisite[${index}].isModified`,
+                  true,
+                );
+              }
+            }}
+            disabled={values.listeSimplifiedVisite[index].isNoAnomalieChecked}
+          />
         </Col>
         <Col xs={"auto"} className="text-align-center">
           <Button
