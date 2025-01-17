@@ -259,39 +259,43 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
   );
 
   return (
-    <Container>
-      <PageTitle
-        icon={<IconTournee />}
-        title={"Liste des tournées"}
-        right={
-          <CreateButton
-            href={URLS.CREATE_TOURNEE}
-            title={"Créer une tournée"}
+    <>
+      <Container>
+        <PageTitle
+          icon={<IconTournee />}
+          title={"Liste des tournées"}
+          right={
+            <CreateButton
+              href={URLS.CREATE_TOURNEE}
+              title={"Créer une tournée"}
+            />
+          }
+        />
+      </Container>
+      <Container fluid className={"px-5"}>
+        {
+          //pas besoin de container il est dans le composant QueryTableWithListingPei
+          <QueryTableWithListingPei
+            column={column}
+            query={url`/api/tournee`}
+            idName={"TourneeTable"}
+            filterPage={FILTER_PAGE.TOURNEE}
+            showTable={showTable}
+            filterId={idTournee}
+            //on envoie les constantes au composant enfant pour qu'il mette à jour le composant parent
+            setFilterId={setIdTournee}
+            setShowTable={setShowTable}
+            filterValuesToVariable={filterValuesToVariable}
+            useFilterContext={useFilterContext({
+              tourneeLibelle: undefined,
+              tourneeOrganismeLibelle: undefined,
+              tourneeUtilisateurReservationLibelle: undefined,
+              peiId: peiId,
+            })}
           />
         }
-      />
-      {
-        //pas besoin de container il est dans le composant QueryTableWithListingPei
-        <QueryTableWithListingPei
-          column={column}
-          query={url`/api/tournee`}
-          idName={"TourneeTable"}
-          filterPage={FILTER_PAGE.TOURNEE}
-          showTable={showTable}
-          filterId={idTournee}
-          //on envoie les constantes au composant enfant pour qu'il mette à jour le composant parent
-          setFilterId={setIdTournee}
-          setShowTable={setShowTable}
-          filterValuesToVariable={filterValuesToVariable}
-          useFilterContext={useFilterContext({
-            tourneeLibelle: undefined,
-            tourneeOrganismeLibelle: undefined,
-            tourneeUtilisateurReservationLibelle: undefined,
-            peiId: peiId,
-          })}
-        />
-      }
-    </Container>
+      </Container>
+    </>
   );
 };
 
