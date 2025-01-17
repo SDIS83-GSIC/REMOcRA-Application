@@ -1,8 +1,9 @@
-import { ReactNode, SetStateAction, useState } from "react";
 import { Formik } from "formik";
+import { ReactNode, SetStateAction, useState } from "react";
+import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { usePost, usePut } from "../Fetch/useFetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { usePost, usePut } from "../Fetch/useFetch.tsx";
 
 const ResolveReject = (
   onSubmit: any,
@@ -139,10 +140,10 @@ const MyFormik = (props: MyFormikProps) => {
         }
       }}
     >
-      <>
-        {errorMessage && errorMessage}
+      <Container>
+        {errorMessage && <div className="text-danger">{errorMessage}</div>}
         {props.children}
-      </>
+      </Container>
     </Formik>
   );
 };
