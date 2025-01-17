@@ -3,6 +3,7 @@ package remocra.api.endpoint
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
@@ -21,7 +22,6 @@ import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.exception.RemocraResponseException
 import remocra.web.AbstractEndpoint
 import java.io.IOException
-import javax.inject.Inject
 
 @Path("/api/deci/pei/{numeroComplet}/visites")
 @Produces("application/json; charset=UTF-8")

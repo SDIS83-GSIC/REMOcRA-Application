@@ -1,6 +1,7 @@
 package remocra.apimobile.endpoint
 
 import com.google.inject.Inject
+import jakarta.inject.Provider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.Part
 import jakarta.ws.rs.Consumes
@@ -42,7 +43,6 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.web.AbstractEndpoint
 import java.util.UUID
-import javax.inject.Provider
 
 @Path("/mobile/synchro")
 @Produces("application/json; charset=UTF-8")
