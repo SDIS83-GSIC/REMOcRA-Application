@@ -461,6 +461,7 @@ export const Multiselect = ({
         value={value}
         onChange={onChange}
         isDisabled={readOnly}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
       />
     </DivWithError>
   );
@@ -503,6 +504,7 @@ export const SelectInput = ({
         required={required}
         isDisabled={readOnly}
         name={name}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
       />
     </DivWithError>
   );
