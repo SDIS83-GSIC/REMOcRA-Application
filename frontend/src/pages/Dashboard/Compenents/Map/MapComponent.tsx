@@ -6,6 +6,7 @@ import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
 import { useEffect, useRef } from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { Fill, Stroke, Style } from "ol/style";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const MapDashboardComponent = (data: any) => {
@@ -15,6 +16,28 @@ const MapDashboardComponent = (data: any) => {
     data.data ? data.data : [],
     data.config ? data.config : [],
   );
+
+  // Fonction pour déterminer la couleur en fonction du pourcentage
+  const getColorForPercentage = (percentage: number, limits: any[]) => {
+    if (!limits || limits.length === 0) {
+      return "#000000";
+    }
+
+    // Trier les limites par valeur croissante
+    const sortedLimits = limits.sort(
+      (a, b) => parseFloat(a.value) - parseFloat(b.value),
+    );
+
+    // Trouver la couleur correspondante
+    for (const limit of sortedLimits) {
+      if (percentage <= parseFloat(limit.value)) {
+        return limit.color;
+      }
+    }
+
+    // Si le pourcentage dépasse toutes les limites, utiliser la dernière couleur
+    return sortedLimits[sortedLimits.length - 1].color;
+  };
 
   useEffect(() => {
     // Créer une couche de base (OSM)
@@ -26,7 +49,7 @@ const MapDashboardComponent = (data: any) => {
     const vectorLayers: any =
       Array.isArray(dataMapped) && dataMapped.length > 0
         ? dataMapped
-            .map((item: { geojson: string }) => {
+            .map((item: any) => {
               try {
                 const geojsonObject = JSON.parse(item.geojson);
                 const vectorSource = new VectorSource({
@@ -37,8 +60,31 @@ const MapDashboardComponent = (data: any) => {
                   }),
                 });
 
+                // Calculer le pourcentage
+                const value = parseFloat(item.value);
+                const max = parseFloat(item.max);
+                const percentage = (value / max) * 100;
+
+                // Obtenir la couleur en fonction du pourcentage
+                const color = getColorForPercentage(
+                  percentage,
+                  data.config?.limits || [],
+                );
+
+                // Créer un style dynamique pour la couche vectorielle
+                const style = new Style({
+                  stroke: new Stroke({
+                    color: color, // Couleur du contour
+                    width: 2,
+                  }),
+                  fill: new Fill({
+                    color: `${color}40`, // Couleur de remplissage avec transparence (ajout de '40' pour 25% d'opacité)
+                  }),
+                });
+
                 return new VectorLayer({
                   source: vectorSource,
+                  style: style,
                 });
               } catch (error) {
                 return null;

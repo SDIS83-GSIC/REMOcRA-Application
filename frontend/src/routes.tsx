@@ -128,10 +128,13 @@ import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import HistoriqueTracabilite from "./pages/Admin/Tracabilite/HistoriqueTracabilite.tsx";
 import Dashboard from "./pages/Dashboard/DashBoard.tsx";
+import ComponentBoardList from "./pages/Dashboard/DashboardUser.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
 import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
+import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAdmin.tsx";
+import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1522,6 +1525,35 @@ export default [
     element: (
       <Authorization Component={Dashboard} droits={[TYPE_DROIT.DASHBOARD_A]} />
     ),
+    children: [
+      {
+        path: "admin/query",
+        element: (
+          <Authorization
+            Component={ComponentBoardQueryAdmin}
+            droits={[TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
+      {
+        path: "admin/dashboard",
+        element: (
+          <Authorization
+            Component={ComponentBoardDashboardAdmin}
+            droits={[TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
+      {
+        path: "list",
+        element: (
+          <Authorization
+            Component={ComponentBoardList}
+            droits={[TYPE_DROIT.DASHBOARD_R, TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "*",

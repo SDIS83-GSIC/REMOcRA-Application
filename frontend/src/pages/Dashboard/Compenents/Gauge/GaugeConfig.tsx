@@ -90,6 +90,7 @@ const GaugeConfig = (options: any) => {
 
       {/* Configuration des limites (couleurs et max) */}
       <Form.Label className="fw-bold mt-2">Limites des sections :</Form.Label>
+      <br />
       {limits.map((limit, index) => (
         <div key={index} style={{ marginBottom: "10px" }}>
           <Form.Control
