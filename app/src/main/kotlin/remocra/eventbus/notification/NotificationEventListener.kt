@@ -3,7 +3,7 @@ package remocra.eventbus.notification
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
-import org.apache.commons.mail.EmailException
+import org.apache.commons.mail2.core.EmailException
 import org.slf4j.LoggerFactory
 import remocra.auth.AuthnConstants
 import remocra.db.JobRepository

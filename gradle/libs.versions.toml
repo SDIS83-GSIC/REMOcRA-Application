@@ -56,7 +56,7 @@ pac4j-oidc = "org.pac4j:pac4j-oidc:6.0.6"
 jakartaee-pac4j = "org.pac4j:jakartaee-pac4j:8.0.1"
 pac4j-jakartaee = "org.pac4j:pac4j-jakartaee:6.0.6"
 
-commons-email = "org.apache.commons:commons-email:1.6.0"
+commons-email = "org.apache.commons:commons-email2-jakarta:2.0.0-M1"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
 swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.27"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.27"

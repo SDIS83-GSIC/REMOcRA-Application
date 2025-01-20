@@ -1,8 +1,8 @@
 package remocra.mail
 
 import jakarta.inject.Inject
-import org.apache.commons.mail.EmailException
-import org.apache.commons.mail.HtmlEmail
+import org.apache.commons.mail2.core.EmailException
+import org.apache.commons.mail2.jakarta.HtmlEmail
 import kotlin.jvm.Throws
 
 class MailService @Inject constructor(private val settings: MailSettings) {
