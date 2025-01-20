@@ -539,6 +539,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     PEI_PRESCRIT_FORBIDDEN_INSERT(24000, "Vous n'avez pas les droits de création de prescription de PEI.", Status.FORBIDDEN),
+    PEI_PRESCRIT_FORBIDDEN_UPDATE(24001, "Vous n'avez pas les droits de modification de prescription de PEI.", Status.FORBIDDEN),
+    PEI_PRESCRIT_FORBIDDEN_DELETE(24002, "Vous n'avez pas les droits de suppression de prescription de PEI.", Status.FORBIDDEN),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

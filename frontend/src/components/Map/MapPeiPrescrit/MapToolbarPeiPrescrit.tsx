@@ -8,6 +8,7 @@ import CreatePeiPrescrit from "../../../pages/PeiPrescrit/CreatePeiPrescrit.tsx"
 import { IconCreate } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
+import { TooltipMapEditPeiPrescrit } from "../TooltipsMap.tsx";
 
 const defaultStyle = new Style({
   image: new Circle({
@@ -124,6 +125,12 @@ const MapToolbarPeiPrescrit = forwardRef(
             }}
           />
         </Volet>
+        <TooltipMapEditPeiPrescrit
+          map={map}
+          disabledEditPeiPrescrit={false}
+          dataPeiPrescritLayer={dataPeiPrescritLayer}
+          disabled={false}
+        />
       </>
     );
   },

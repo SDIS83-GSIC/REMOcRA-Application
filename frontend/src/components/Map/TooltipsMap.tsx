@@ -21,6 +21,7 @@ import {
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -440,6 +441,75 @@ export const TooltipMapEditPeiProjet = ({
         />
       </Volet>
     </>
+  );
+};
+
+export const TooltipMapEditPeiPrescrit = ({
+  map,
+  disabledEditPeiPrescrit = false,
+  dataPeiPrescritLayer,
+  disabled,
+}: {
+  map: Map;
+  disabledEditPeiPrescrit: boolean;
+  dataPeiPrescritLayer: any;
+  disabled: boolean;
+}) => {
+  const ref = useRef(null);
+  const [showUpdatePeiPrescrit, setShowUpdatePeiPrescrit] = useState(false);
+  const handleCloseUpdatePeiPrescrit = () => setShowUpdatePeiPrescrit(false);
+
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    disabled: disabled,
+  });
+  const displayEditDeleteButton =
+    !disabledEditPeiPrescrit &&
+    featureSelect?.getProperties().typePointCarte === "PEI_PRESCRIT" &&
+    featureSelect?.getProperties().pointId != null;
+
+  if (disabled) {
+    overlay?.setPosition(undefined);
+  }
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        onClickEdit={() => setShowUpdatePeiPrescrit(true)}
+        displayButtonEdit={displayEditDeleteButton}
+        displayButtonDelete={displayEditDeleteButton}
+        onClickDelete={() => {
+          dataPeiPrescritLayer.getSource().refresh();
+          overlay?.setPosition(undefined);
+        }}
+        deletePath={
+          "/api/pei-prescrit/" + featureSelect?.getProperties().pointId
+        }
+        disabled={disabled}
+      />
+      <Volet
+        handleClose={handleCloseUpdatePeiPrescrit}
+        show={showUpdatePeiPrescrit}
+        className="w-auto"
+      >
+        <UpdatePeiPrescrit
+          peiPrescritId={featureSelect?.getProperties().pointId}
+          coordonneeX={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
+          }
+          coordonneeY={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
+          }
+          srid={map.getView().getProjection().getCode().split(":")[1]}
+          onSubmit={() => {
+            handleCloseUpdatePeiPrescrit();
+            overlay?.setPosition(undefined);
+          }}
+        />
+      </Volet>
+    </div>
   );
 };
 
