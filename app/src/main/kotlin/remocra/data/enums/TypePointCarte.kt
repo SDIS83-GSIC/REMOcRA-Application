@@ -7,4 +7,5 @@ enum class TypePointCarte {
     DEBIT_SIMULTANE,
     OLDEB,
     RCCI,
+    ADRESSE,
 }

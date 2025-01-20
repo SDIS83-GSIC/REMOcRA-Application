@@ -11,7 +11,9 @@ import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.Polygon
 import remocra.data.enums.TypePointCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
+import remocra.db.jooq.remocra.enums.EtatAdresse
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
+import remocra.db.jooq.remocra.tables.references.ADRESSE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
@@ -144,6 +146,30 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                         .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) }),
                     isSuperAdmin,
                 ),
+            )
+            .fetchInto()
+    }
+
+// TODO zone compétence
+    fun getAdresse(srid: Int): Collection<AdresseCarte> {
+        return dsl.select(
+            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("pointGeometrie"),
+            ADRESSE.ID.`as`("pointId"),
+            ADRESSE.TYPE,
+        )
+            .from(ADRESSE)
+            .fetchInto()
+    }
+
+    fun getAdresseInBbox(bbox: Field<Geometry?>, srid: Int): Collection<AdresseCarte> {
+        return dsl.select(
+            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("pointGeometrie"),
+            ADRESSE.ID.`as`("pointId"),
+            ADRESSE.TYPE,
+        )
+            .from(ADRESSE)
+            .where(
+                ST_Within(ADRESSE.GEOMETRIE, bbox),
             )
             .fetchInto()
     }
@@ -289,6 +315,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val propertiesToDisplay: String =
             "Numéro du dossier : $debitSimultaneNumeroDossier \n Liste des PEI concernés : $listeNumeroPei"
     }
+
+    data class AdresseCarte(
+        override val pointGeometrie: Point,
+        override val pointId: UUID,
+        override val propertiesToDisplay: String?,
+        val adresseType: EtatAdresse,
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.ADRESSE }
 
     data class OldebCarte(
         override val pointGeometrie: Polygon,

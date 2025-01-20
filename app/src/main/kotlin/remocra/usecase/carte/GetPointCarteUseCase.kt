@@ -46,17 +46,29 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
                 }
                 if (it.isEmpty()) {
-                    carteRepository.getPeiWithinZone(userInfo.zoneCompetence?.zoneIntegrationId, srid, userInfo.isSuperAdmin)
+                    carteRepository.getPeiWithinZone(
+                        userInfo.zoneCompetence?.zoneIntegrationId,
+                        srid,
+                        userInfo.isSuperAdmin,
+                    )
                 } else {
-                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getPeiWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                    val geom =
+                        geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getPeiWithinZoneAndBbox(
+                        userInfo.zoneCompetence?.zoneIntegrationId,
+                        geom.toGeomFromText(),
+                        srid,
+                        userInfo.isSuperAdmin,
+                    )
                 }
             }
+
             TypePointCarte.PEI_PROJET -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getPeiProjetWithinEtude(etudeId!!, srid)
                 } else {
-                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    val geom =
+                        geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
                     carteRepository.getPeiProjetWithinEtudeAndBbox(etudeId!!, geom.toGeomFromText(), srid)
                 }
             }
@@ -70,10 +82,31 @@ class GetPointCarteUseCase : AbstractUseCase() {
             }
             TypePointCarte.DEBIT_SIMULTANE -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                    carteRepository.getDebitSimultaneWithinZoneAndBbox(
+                        userInfo.zoneCompetence?.zoneIntegrationId,
+                        null,
+                        srid,
+                        userInfo.isSuperAdmin,
+                    )
                 } else {
-                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                    val geom =
+                        geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getDebitSimultaneWithinZoneAndBbox(
+                        userInfo.zoneCompetence?.zoneIntegrationId,
+                        geom.toGeomFromText(),
+                        srid,
+                        userInfo.isSuperAdmin,
+                    )
+                }
+            }
+
+            TypePointCarte.ADRESSE -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getAdresse(srid)
+                } else {
+                    val geom =
+                        geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getAdresseInBbox(geom.toGeomFromText(), srid)
                 }
             }
             TypePointCarte.OLDEB -> bbox.let {

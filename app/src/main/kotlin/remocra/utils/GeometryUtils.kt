@@ -5,6 +5,7 @@ import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.MultiPolygon
+import org.locationtech.jts.geom.Point
 import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKTReader
@@ -88,4 +89,30 @@ fun checkZoneCompetence(userInfo: UserInfo?, geometries: Collection<Geometry>) {
             }
         }
     }
+}
+
+/**
+ * Calcule le centroid d'une liste de géométries.
+ *
+ * Cette méthode prend une liste de géométries, les combine en une collection géométrique
+ * et calcule le centroid de l'ensemble. Si la liste est vide, la fonction retourne `null`.
+ *
+ * @param geometries la liste des géométries dont on souhaite calculer le centroid.
+ *                   Chaque géométrie doit partager le même système de coordonnées (SRID).
+ * @return le centroid de la collection de géométries, ou `null` si la liste est vide.
+ *
+ * @throws IllegalArgumentException si les géométries ne partagent pas le même système de coordonnées (SRID).
+
+ */
+fun calculerCentroide(geometries: List<Geometry>): Point? {
+    // Vérification si la liste est vide
+    if (geometries.isEmpty()) return null
+
+    // Création d'une collection géométrique si besoin
+    val geometryFactory = geometries.first().factory
+    val collection = geometryFactory.createGeometryCollection(geometries.toTypedArray())
+    val centroide = collection.centroid
+    centroide.srid = geometryFactory.srid
+    // Calcul du centroide à partir de la collection
+    return centroide
 }

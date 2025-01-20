@@ -580,7 +580,16 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RCCI_DELETE_FORBIDDEN(28003, "Vous n'avez pas les droits de suppression des RCCI", Status.FORBIDDEN),
     RCCI_GEOMETRY_UPDATE_FORBIDDEN(28004, "Vous n'avez pas les droits de modification de la géométrie des RCCI", Status.FORBIDDEN),
 
+    //
+    // ********************************************************************************
+    // Adresse
+    // ********************************************************************************
+    //
+    ADRESSE_FORBIDDEN_INSERT(29000, "Vous n'avez pas les droits de création d'une adresse", Status.FORBIDDEN),
+    ADRESSE_ELEMENT_ADRESSE_NULL(29001, "Il manque l'id de l'adresse pour l'insertion de l'élément"),
+
     ;
+
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
     }

@@ -13,6 +13,7 @@ import remocra.resteasy.UUIDMessageBodyReader
 import remocra.resteasy.UnhandledExceptionMapper
 import remocra.security.CsrfFeature
 import remocra.web.admin.AdminModule
+import remocra.web.adresses.AdresseModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.commune.CommuneModule
@@ -92,6 +93,7 @@ object WebModule : RemocraModule() {
         install(DebitSimultaneModule)
         install(RapportPersonnaliseModule)
         install(ImportCtpModule)
+        install(AdresseModule)
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
