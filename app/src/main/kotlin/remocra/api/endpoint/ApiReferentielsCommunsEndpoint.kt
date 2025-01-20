@@ -43,9 +43,9 @@ class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne")
-        @QueryParam("start") start: Int?,
+        @QueryParam("offset") offset: Int?,
     ): Response {
-        return Response.ok(typeOrganismeRepository.getAll(limit, start)).build()
+        return Response.ok(typeOrganismeRepository.getAll(limit, offset)).build()
     }
 
     @GET
@@ -60,7 +60,7 @@ class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne")
-        @QueryParam("start") offset: Int?,
+        @QueryParam("offset") offset: Int?,
     ): Response {
         return Response.ok(communeRepository.getAll(codeInsee, libelle, limit, offset)).build()
     }
@@ -77,7 +77,7 @@ class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne")
-        @QueryParam("start") offset: Int?,
+        @QueryParam("offset") offset: Int?,
     ): Response {
         return Response.ok(voieRepository.getAll(codeInsee, libelle, limit, offset)).build()
     }
@@ -92,7 +92,7 @@ class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne")
-        @QueryParam("start") offset: Int?,
+        @QueryParam("offset") offset: Int?,
     ): Response {
         return Response.ok(organismesRepository.getAll(codeTypeOrganisme, limit, offset)).build()
     }
