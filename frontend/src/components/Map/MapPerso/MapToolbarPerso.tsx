@@ -414,6 +414,7 @@ const MapToolbarPerso = forwardRef(
                 type={"radio"}
                 variant={"outline-primary"}
                 checked={showPanel}
+                className="m-2"
               >
                 <IconStyle />
               </ToggleButton>
@@ -450,6 +451,7 @@ const MapToolbarPerso = forwardRef(
                 value={"delete-features"}
                 type={"radio"}
                 variant={"outline-primary"}
+                className="m-2"
               >
                 <IconDelete />
               </ToggleButton>
