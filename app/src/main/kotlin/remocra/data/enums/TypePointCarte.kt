@@ -3,6 +3,6 @@ package remocra.data.enums
 enum class TypePointCarte {
     PEI,
     PEI_PROJET,
-    PEI_PRESCRIT, // TODO à compléter
+    PEI_PRESCRIT,
     DEBIT_SIMULTANE,
 }

@@ -33,7 +33,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
     fun execute(
         bbox: String,
         sridSource: String,
-        etudeId: UUID?,
+        etudeId: UUID? = null,
         typePointCarte: TypePointCarte,
         userInfo: UserInfo,
     ): LayersRes {
@@ -60,7 +60,14 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getPeiProjetWithinEtudeAndBbox(etudeId!!, geom.toGeomFromText(), srid)
                 }
             }
-            TypePointCarte.PEI_PRESCRIT -> TODO()
+            TypePointCarte.PEI_PRESCRIT -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getPeiPrescritWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getPeiPrescritWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
             TypePointCarte.DEBIT_SIMULTANE -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)

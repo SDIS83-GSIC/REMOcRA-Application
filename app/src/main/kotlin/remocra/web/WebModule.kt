@@ -36,6 +36,7 @@ import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
 import remocra.web.parametres.TaskModule
 import remocra.web.pei.PeiModule
+import remocra.web.peiprescrits.PeiPrescritModule
 import remocra.web.profildroit.ProfilDroitModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
@@ -67,6 +68,7 @@ object WebModule : RemocraModule() {
         install(AdminModule)
         install(CourrierModule)
         install(CouvertureHydrauliqueModule)
+        install(PeiPrescritModule)
         install(IndisponibiliteTemporaireModule)
         install(ModuleModule)
         install(ParametreModule)

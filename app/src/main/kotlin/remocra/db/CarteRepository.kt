@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
+import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Transform
@@ -126,6 +127,22 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
+    fun getPeiPrescritWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PeiPrescritsCarte> {
+        return dsl.select(
+            ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid).`as`("pointGeometrie"),
+            PEI_PRESCRIT.ID.`as`("pointId"),
+        ).from(PEI_PRESCRIT)
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                        .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+    }
+
     fun getDebitSimultaneWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DebitSimultaneCarte> {
         return dsl.select(
             ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("pointGeometrie"),
@@ -199,6 +216,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.PEI_PROJET
+    }
+
+    data class PeiPrescritsCarte(
+        override val pointGeometrie: Point,
+        override val pointId: UUID,
+        override val propertiesToDisplay: String? = null,
+
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.PEI_PRESCRIT
     }
 
     data class DebitSimultaneCarte(

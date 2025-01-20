@@ -532,6 +532,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DASHBOARD_FIELD_REQUIRE(23005, "Aucune donnée"),
     DASHBOARD_VALIDATE_QUERY(23006, "Erreur de validation de la requête."),
     DASHBOARD_FORBIDDEN_CUD(23007, "Vous n'avez pas les droits de d'éditer", Status.FORBIDDEN),
+
+    //
+    // ********************************************************************************
+    // Pei Prescrit
+    // ********************************************************************************
+    //
+    PEI_PRESCRIT_FORBIDDEN_INSERT(24000, "Vous n'avez pas les droits de création de prescription de PEI.", Status.FORBIDDEN),
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle
