@@ -15,6 +15,7 @@ import remocra.app.DataCacheProvider
 import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.DroitApi
+import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 
@@ -76,6 +77,26 @@ class ApiReferentielsDeciEndpoint : AbstractEndpoint() {
             dataCacheProvider.getData(TypeDataCache.DOMAINE)
                 .values
                 .limitOffset(limit, offset),
+        ).build()
+    }
+
+    @GET
+    @Path("/typesVisites")
+    @Operation(
+        summary =
+        """
+            Retourne les types de visites possibles sur les PEI. Ces types sont définis par type d'organisme. Un service des eaux ne pourra par exemple pas renseigner des visites de type Contrôle Technique Périodique (CTP) ou Reconnaissance (ROI ou ROP)  mais pourra renseigner des visites non programmées (NP). Les types de visites déterminent également la liste des anomalies pouvant être constatées sur une nature de PEI
+        """,
+        tags = ["DECI - Référentiels communs"],
+    )
+    @RequireDroitsApi([DroitApi.RECEVOIR])
+    @Throws(JsonProcessingException::class)
+    fun getRefentielVisites(
+        @Parameter(description = "Nombre maximum de résultats à retourner") @QueryParam("limit") limit: Long?,
+        @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
+    ): Response {
+        return Response.ok(
+            TypeVisite.entries.limitOffset(limit, offset),
         ).build()
     }
 }
