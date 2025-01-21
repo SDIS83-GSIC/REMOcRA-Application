@@ -21,7 +21,6 @@ import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
 import remocra.db.jooq.remocra.tables.pojos.ModelePibi
-import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 
@@ -49,9 +48,8 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            dataCacheProvider.getData(TypeDataCache.NATURE)
+            dataCacheProvider.getData(TypeDataCache.NATURE_PIBI)
                 .values
-                .filter { TypePei.PIBI == (it as Nature).natureTypePei }
                 .limitOffset(limit, offset),
         ).build()
     }
@@ -74,8 +72,7 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
     @GET
     @Path("{natureCode}/naturesAnomalies")
     @Operation(
-        summary = "Retourne les types d'anomalies pouvant être constatées pour une nature de PIBI et un contexte " +
-            "(type de visite) spécifiques",
+        summary = "Retourne les types d'anomalies pouvant être constatées pour une nature de PIBI et un type de visite spécifiques",
         tags = ["DECI - Référentiels PIBI"],
     )
     @RequireDroitsApi([DroitApi.RECEVOIR])
@@ -142,7 +139,7 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/typeReseau")
-    @Operation(summary = "Retourne le type de réseau", tags = ["DECI - Référentiels PIBI"])
+    @Operation(summary = "Retourne les types de réseau", tags = ["DECI - Référentiels PIBI"])
     @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielTypesReseau(
@@ -158,7 +155,7 @@ class ApiReferentielsPibiEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/typeCanalisation")
-    @Operation(summary = "Retourne le type de canalisation", tags = ["DECI - Référentiels PIBI"])
+    @Operation(summary = "Retourne les types de canalisation", tags = ["DECI - Référentiels PIBI"])
     @RequireDroitsApi([DroitApi.RECEVOIR])
     @Throws(JsonProcessingException::class)
     fun getRefentielTypesCanalisation(

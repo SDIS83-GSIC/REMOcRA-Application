@@ -87,8 +87,8 @@ class ApiReferentielsCommunsEndpoint : AbstractEndpoint() {
     @Operation(summary = "Retourne les organismes susceptibles d'exploiter REMOcRA (utilisateurs nommés avec accès à l'interface applicative ou exploitation de l'API)", tags = ["Référentiels communs"])
     @RequireDroitsApi([DroitApi.RECEVOIR])
     fun getRefentielOrganismes(
-        @Parameter(description = "Code de la nature de l'organisme")
-        @QueryParam("codeType") codeTypeOrganisme: String?,
+        @Parameter(description = "Code du type de l'organisme")
+        @QueryParam("codeTypeOrganisme") codeTypeOrganisme: String?,
         @Parameter(description = "Nombre maximum de résultats à retourner")
         @QueryParam("limit") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne")

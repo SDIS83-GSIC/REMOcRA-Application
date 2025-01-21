@@ -18,7 +18,6 @@ import remocra.auth.RequireDroitsApi
 import remocra.data.enums.TypeDataCache
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 
@@ -43,9 +42,8 @@ class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Long?,
     ): Response {
         return Response.ok(
-            dataCacheProvider.getData(TypeDataCache.NATURE)
+            dataCacheProvider.getData(TypeDataCache.NATURE_PENA)
                 .values
-                .filter { TypePei.PENA == (it as Nature).natureTypePei }
                 .limitOffset(limit, offset),
         ).build()
     }
@@ -69,8 +67,8 @@ class ApiReferentielsPenaEndpoint : AbstractEndpoint() {
     @GET
     @Path("{natureCode}/naturesAnomalies")
     @Operation(
-        summary = "Retourne les types d'anomalies pouvant être constatées pour une nature de PENA et un contexte " +
-            "(type de visite) spécifiques",
+        summary = "Retourne les types d'anomalies pouvant être constatées pour une nature de PENA et un " +
+            "type de visite spécifiques",
         tags = ["DECI - Référentiels PENA"],
     )
     @RequireDroitsApi([DroitApi.RECEVOIR])
