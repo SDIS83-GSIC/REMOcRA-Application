@@ -16,7 +16,6 @@ import remocra.db.PibiRepository
 import remocra.db.TracabiliteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
-import remocra.db.jooq.remocra.enums.TypePei
 import remocra.exception.RemocraResponseException
 import remocra.usecase.pei.UpdatePeiUseCase
 import java.time.ZonedDateTime
@@ -42,18 +41,6 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
 
     @Inject
     lateinit var tracabiliteRepository: TracabiliteRepository
-
-    fun getListPei(
-        codeInsee: String?,
-        type: TypePei?,
-        codeNature: String?,
-        codeNatureDECI: String?,
-        limit: Int?,
-        offset: Int?,
-    ): Result {
-        // TODO Accessibilité de chaque PEI ; soit dans la requête, soit en post-traitement avec le getPeiAccessibilite
-        return Result.Success(peiRepository.getAll(codeInsee, type, codeNature, codeNatureDECI, limit, offset))
-    }
 
     fun getPeiCaracteristiques(numero: String): Result {
         val peiId = peiRepository.getPeiIdFromNumero(numero)

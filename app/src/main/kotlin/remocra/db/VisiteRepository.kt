@@ -55,6 +55,13 @@ class VisiteRepository
         .orderBy(VISITE.DATE.desc())
         .fetchAnyInto()
 
+    fun getLastVisiteDebitPression(listePeiId: List<UUID>): List<VisiteCtrlDebitPression> = dsl.select(*VISITE_CTRL_DEBIT_PRESSION.fields())
+        .from(VISITE_CTRL_DEBIT_PRESSION)
+        .innerJoin(VISITE).on(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(VISITE.ID))
+        .where(VISITE.PEI_ID.`in`(listePeiId))
+        .orderBy(VISITE.DATE.desc())
+        .fetchInto()
+
     fun getVisiteCompleteByVisiteId(visiteId: UUID): VisiteComplete =
         dsl.select(VISITE.fields().toList())
             .from(VISITE)
@@ -75,9 +82,12 @@ class VisiteRepository
             }
 
     fun getAllVisiteByPeiId(peiId: UUID): List<VisiteComplete> =
+        getAllVisiteByPeiId(listOf(peiId))
+
+    fun getAllVisiteByPeiId(listePeiId: List<UUID>): List<VisiteComplete> =
         dsl.select(VISITE.fields().toList())
             .from(VISITE)
-            .where(VISITE.PEI_ID.eq(peiId))
+            .where(VISITE.PEI_ID.`in`(listePeiId))
             .orderBy(VISITE.DATE.desc())
             .fetch()
             .map { record ->
@@ -232,7 +242,10 @@ class VisiteRepository
         //       visite précédente non présentes à cette visite
     }
 
-    fun getAllVisiteByPeiIdToDeletePei(peiId: UUID): List<VisiteData> = getAllVisiteByPeiId(peiId)
+    fun getAllVisiteByIdPei(peiId: UUID): List<VisiteData> =
+        getAllVisiteByIdPei(listOf(peiId))
+
+    fun getAllVisiteByIdPei(listePeiId: List<UUID>): List<VisiteData> = getAllVisiteByPeiId(listePeiId)
         .map { record ->
             VisiteData(
                 visiteId = record.visiteId,

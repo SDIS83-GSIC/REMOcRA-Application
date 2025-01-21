@@ -94,4 +94,13 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
             )
             .orderBy(TRACABILITE.DATE.desc())
             .fetchInto()
+
+    fun getLastDateByPei(listePeiId: List<UUID>): Map<UUID?, ZonedDateTime?> =
+        dsl.select(TRACABILITE.OBJET_ID, DSL.max(TRACABILITE.DATE)).from(TRACABILITE)
+            .where(
+                TRACABILITE.OBJET_ID.`in`(listePeiId),
+            )
+            .and(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))
+            .groupBy(TRACABILITE.OBJET_ID)
+            .fetchMap(TRACABILITE.OBJET_ID, DSL.max(TRACABILITE.DATE))
 }

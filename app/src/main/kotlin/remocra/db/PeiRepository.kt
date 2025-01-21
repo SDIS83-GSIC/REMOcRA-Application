@@ -35,6 +35,7 @@ import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
@@ -472,35 +473,6 @@ class PeiRepository
             .execute()
     }
 
-    fun getAll(
-        codeInsee: String?,
-        typePei: TypePei?,
-        codeNature: String?,
-        codeNatureDECI: String?,
-        limit: Int?,
-        offset: Int?,
-    ): Collection<Pei> {
-        return dsl.select(*PEI.fields())
-            .from(PEI)
-            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
-            .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
-            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .where(
-                DSL.and(
-                    listOfNotNull(
-                        codeInsee?.let { DSL.and(COMMUNE.CODE_INSEE.contains(it)) },
-                        typePei?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
-                        codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
-                        codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
-                    ),
-
-                ),
-            )
-            .limit(limit)
-            .offset(offset)
-            .fetchInto()
-    }
-
     /**
      * Indique si le PEI spécifié existe bien en base
      *
@@ -734,6 +706,109 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.`in`(listePeiId))
             .fetchInto()
+
+    fun getListPeiForApi(
+        codeInsee: String?,
+        type: TypePei?,
+        codeNature: String?,
+        codeNatureDECI: String?,
+        limit: Int?,
+        offset: Int?,
+    ): Collection<PeiDataForApi> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+            PEI.GEOMETRIE,
+            PEI.NUMERO_INTERNE,
+            PEI.DISPONIBILITE_TERRESTRE,
+            PEI.NUMERO_VOIE,
+            PEI.VOIE_TEXTE,
+            PEI.SUFFIXE_VOIE,
+            PEI.EN_FACE,
+            PEI.COMPLEMENT_ADRESSE,
+            NATURE.CODE,
+            NATURE.LIBELLE,
+            NATURE_DECI.CODE,
+            NATURE_DECI.LIBELLE,
+            COMMUNE.LIBELLE,
+            COMMUNE.CODE_INSEE,
+            ORGANISME.LIBELLE.`as`("serviceEauLibelle"),
+            DIAMETRE.CODE,
+            PIBI.DIAMETRE_CANALISATION,
+            SITE.LIBELLE,
+            PENA.CAPACITE,
+            PENA.DISPONIBILITE_HBE,
+            V_PEI_VISITE_DATE.LAST_CTP,
+            V_PEI_VISITE_DATE.LAST_RECOP,
+            V_PEI_VISITE_DATE.LAST_RECEPTION,
+            V_PEI_VISITE_DATE.LAST_RECO_INIT,
+        )
+            .from(PEI)
+            .leftJoin(V_PEI_VISITE_DATE)
+            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+            .join(COMMUNE)
+            .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+            .join(DOMAINE)
+            .on(DOMAINE.ID.eq(PEI.DOMAINE_ID))
+            .join(NATURE)
+            .on(NATURE.ID.eq(PEI.NATURE_ID))
+            .join(NATURE_DECI)
+            .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
+            .leftJoin(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .leftJoin(DIAMETRE)
+            .on(DIAMETRE.ID.eq(PIBI.DIAMETRE_ID))
+            .leftJoin(ORGANISME)
+            .on(ORGANISME.ID.eq(PIBI.SERVICE_EAU_ID))
+            .leftJoin(PENA)
+            .on(PENA.ID.eq(PEI.ID))
+            .leftJoin(VOIE)
+            .on(VOIE.ID.eq(PEI.VOIE_ID))
+            .leftJoin(SITE)
+            .on(SITE.ID.eq(PEI.SITE_ID))
+            .where(
+                DSL.and(
+                    listOfNotNull(
+                        codeInsee?.let { DSL.and(COMMUNE.CODE_INSEE.contains(it)) },
+                        type?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
+                        codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
+                        codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
+                    ),
+
+                ),
+            )
+            .limit(limit)
+            .offset(offset)
+            .fetchInto()
+
+    data class PeiDataForApi(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
+        val peiGeometrie: Point,
+        val peiNumeroInterne: String,
+        val peiDisponibiliteTerrestre: Disponibilite,
+        val peiNumeroVoie: String?,
+        val peiSuffixeVoie: String?,
+        val peiVoieTexte: String?,
+        val peiVoieId: UUID?,
+        val peiComplementAdresse: String?,
+        val peiEnFace: Boolean = false,
+        val natureCode: String,
+        val natureLibelle: String,
+        val natureDeciLibelle: String,
+        val communeLibelle: String,
+        val communeCodeInsee: String,
+        val serviceEauLibelle: String?,
+        val diametreCode: String?,
+        val pibiDiametreCanalisation: Int?,
+        val siteLibelle: String?,
+        val penaCapacite: Int?,
+        val penaDisponibiliteHbe: Disponibilite?,
+        val lastReception: ZonedDateTime?,
+        val lastRecoInit: ZonedDateTime?,
+        val lastCtp: ZonedDateTime?,
+        val lastRecop: ZonedDateTime?,
+    )
 }
 
 data class IdNumeroComplet(

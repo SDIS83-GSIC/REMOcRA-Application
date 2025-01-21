@@ -26,6 +26,7 @@ import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.modeleminimalpei.GetModeleMinimalPeiUseCase
 import remocra.web.AbstractEndpoint
 
 @Path("/deci/pei")
@@ -41,6 +42,9 @@ class ApiPeiEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var peiRepository: PeiRepository
+
+    @Inject
+    lateinit var getModeleMinimalPeiUseCase: GetModeleMinimalPeiUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -67,7 +71,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner (maximum fixé à 200 résultats)") @QueryParam("limit") @Max(value = 200) @DefaultValue("200") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("start") offset: Int?,
     ): Response {
-        return peiUseCase.getListPei(codeInsee, type, codeNature, codeNatureDECI, limit, offset).wrap()
+        return Response.ok().entity(getModeleMinimalPeiUseCase.execute(codeInsee, type, codeNature, codeNatureDECI, limit, offset)).build()
     }
 
     @GET

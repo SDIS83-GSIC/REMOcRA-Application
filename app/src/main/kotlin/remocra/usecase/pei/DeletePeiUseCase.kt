@@ -108,7 +108,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         upsertDocument.deleteLDocument(listeDocsToRemove)
 
         // Suppression des visites
-        visiteRepository.getAllVisiteByPeiIdToDeletePei(element.peiId).forEach {
+        visiteRepository.getAllVisiteByIdPei(element.peiId).forEach {
             deleteVisiteUseCase.execute(userInfo, it, transactionManager)
         }
 

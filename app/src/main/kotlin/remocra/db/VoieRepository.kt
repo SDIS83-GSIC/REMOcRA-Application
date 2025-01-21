@@ -20,6 +20,9 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .offset(offset)
             .fetchInto()
 
+    fun getAll(): Collection<Voie> =
+        getAll(null, null, null, null)
+
     fun getVoies(
         coordonneeX: String,
         coordonneeY: String,
