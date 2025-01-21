@@ -69,6 +69,9 @@ licensee {
     allowDependency("org.locationtech.jts", "jts-core", "1.20.0") {
         because("Dual-licensed EPL-2.0 ou EDL-1.0 (BSD-3-Clause)")
     }
+    allowDependency("org.locationtech.jts.io", "jts-io-common", "1.20.0") {
+        because("Dual-licensed EPL-2.0 ou EDL-1.0 (BSD-3-Clause)")
+    }
     // Dépendances javax.measurement
     allowDependency("javax.measure", "unit-api", "2.1.3") {
         because("BSD-3-Clause")
@@ -156,6 +159,7 @@ dependencies {
     implementation(libs.geotools.gt.main)
     implementation(libs.geotools.gt.referencing)
     implementation(libs.geotools.gt.epsg)
+    implementation(libs.locationtech.jts.io)
 
     // Pac4j (authn)
     implementation(libs.jakartaee.pac4j)
