@@ -10,6 +10,7 @@ import {
   IconClose,
   IconEtude,
   IconImport,
+  IconSee,
 } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
@@ -38,7 +39,9 @@ const ListEtude = () => {
       row: (row) => {
         return row;
       },
-      type: TYPE_BUTTON.SEE,
+      type: TYPE_BUTTON.CUSTOM,
+      icon: <IconSee />,
+      textEnable: "Ouvrir l'étude",
       href: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
     });
   }
