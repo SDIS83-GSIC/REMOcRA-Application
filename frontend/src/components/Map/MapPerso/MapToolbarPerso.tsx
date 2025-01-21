@@ -376,7 +376,7 @@ const MapToolbarPerso = forwardRef(
             <ToolbarButton
               toolName={"select-draw"}
               toolIcon={<IconSelect />}
-              toolLabelTooltip={"Sélectionner"}
+              toolLabelTooltip={"Sélectionner des éléments"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
@@ -385,27 +385,27 @@ const MapToolbarPerso = forwardRef(
             <ToolbarButton
               toolName={"draw-point"}
               toolIcon={<IconPoint />}
-              toolLabelTooltip={"Point"}
+              toolLabelTooltip={"Dessiner un point"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"draw-line"}
               toolIcon={<IconLine />}
-              toolLabelTooltip={"Ligne"}
+              toolLabelTooltip={"Dessiner une ligne"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"draw-polygon"}
               toolIcon={<IconPolygon />}
-              toolLabelTooltip={"Polygone"}
+              toolLabelTooltip={"Dessiner un polygone"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
           </ButtonGroup>
           <ButtonGroup>
-            <TooltipCustom tooltipText={"Style"} tooltipId={"pick-style"}>
+            <TooltipCustom tooltipText={"Modifier le style"} tooltipId={"pick-style"}>
               <ToggleButton
                 name={"pick-style"}
                 onClick={() => setShowPanel(!showPanel)}
@@ -422,26 +422,26 @@ const MapToolbarPerso = forwardRef(
             <ToolbarButton
               toolName={"edit-shape"}
               toolIcon={<IconEdit />}
-              toolLabelTooltip={"Modifier"}
+              toolLabelTooltip={"Modifier un élément"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"edit-scale-rotate"}
               toolIcon={<IconRotate />}
-              toolLabelTooltip={"Échelle / rotation"}
+              toolLabelTooltip={"Mettre à l'échelle / effectuer une rotation sur un élément"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"edit-translate"}
               toolIcon={<IconMoveCarte />}
-              toolLabelTooltip={"Déplacer"}
+              toolLabelTooltip={"Déplacer un élément"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
             <TooltipCustom
-              tooltipText={"Supprimer"}
+              tooltipText={"Supprimer un élément"}
               tooltipId={"delete-features"}
             >
               <ToggleButton

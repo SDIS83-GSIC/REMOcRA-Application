@@ -287,7 +287,7 @@ const MapToolbar = forwardRef(
             <ToolbarButton
               toolName={"move-view"}
               toolIcon={<IconMoveCarte />}
-              toolLabelTooltip={"Déplacer"}
+              toolLabelTooltip={"Se déplacer sur la carte"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />
@@ -297,14 +297,14 @@ const MapToolbar = forwardRef(
             <ToolbarButton
               toolName={"measure-length"}
               toolIcon={<IconDistance />}
-              toolLabelTooltip={"Distance"}
+              toolLabelTooltip={"Mesurer une distance"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />
             <ToolbarButton
               toolName={"measure-area"}
               toolIcon={<IconSurface />}
-              toolLabelTooltip={"Superficie"}
+              toolLabelTooltip={"Mesurer une superficie"}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />
