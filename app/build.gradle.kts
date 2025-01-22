@@ -186,6 +186,7 @@ tasks {
         systemProperties = mapOf(
             "remocra.http.static-dir" to frontendOutputDir,
             "remocra.http.session-store-dir" to "${project.layout.buildDirectory.asFile.get()}/session",
+            "remocra.fs.base-dir" to "$rootDir/.data",
             "config.file" to "$rootDir/dev.conf",
         ) + project.properties.filterKeys { it.startsWith("remocra.") || it.startsWith("log4j2") }
     }

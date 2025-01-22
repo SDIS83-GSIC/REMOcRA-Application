@@ -44,42 +44,44 @@ object GlobalConstants {
 
     const val SRID_4326 = 4326
 
-    const val DOSSIER_DATA = "/var/lib/remocra/"
+    // TODO: convertir en configuration injectable (valeur par défaut dans reference.conf)
+    // TODO: convertir en java.nio.file.Path
+    val DOSSIER_DATA = System.getProperty("remocra.fs.base-dir", "/var/lib/remocra/")
 
-    const val DOSSIER_IMAGES = DOSSIER_DATA + "images/"
+    val DOSSIER_IMAGES = DOSSIER_DATA + "images/"
 
-    const val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
+    val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
 
-    const val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
+    val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
 
-    const val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT + "debits_simultanes/"
+    val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT + "debits_simultanes/"
 
-    const val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
+    val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
 
-    const val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT + "etudes/"
+    val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT + "etudes/"
 
-    const val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
+    val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
 
-    const val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"
+    val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"
 
-    const val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES + "export_ctp/"
+    val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES + "export_ctp/"
     const val TEMPLATE_EXPORT_CTP_FILE_NAME = "template_export_ctp.xlsx"
-    const val TEMPLATE_EXPORT_CTP_FULL_PATH = DOSSIER_MODELES_EXPORT_CTP + TEMPLATE_EXPORT_CTP_FILE_NAME
+    val TEMPLATE_EXPORT_CTP_FULL_PATH = DOSSIER_MODELES_EXPORT_CTP + TEMPLATE_EXPORT_CTP_FILE_NAME
 
-    const val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
-    const val DOSSIER_BLOC_DOCUMENT = DOSSIER_DOCUMENT + "bloc-document/"
+    val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
+    val DOSSIER_BLOC_DOCUMENT = DOSSIER_DOCUMENT + "bloc-document/"
 
-    const val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
-    const val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA + "sites/tmp/"
-    const val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA + "zones_integration/tmp/"
+    val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
+    val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA + "sites/tmp/"
+    val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA + "zones_integration/tmp/"
 
     // Ressources "statiques", logo, bannière & co
-    const val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES + "ressources/"
-    const val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "banniere"
-    const val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "logo"
+    val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES + "ressources/"
+    val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "banniere"
+    val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "logo"
 
     // Toutes les images participant à la symbologie des PEI
-    const val DOSSIER_IMAGES_SYMBOLOGIE = DOSSIER_IMAGES + "symbologie/"
+    val DOSSIER_IMAGES_SYMBOLOGIE = DOSSIER_IMAGES + "symbologie/"
 
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"

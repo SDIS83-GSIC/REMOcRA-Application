@@ -44,7 +44,7 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var appSettings: AppSettings
 
     companion object {
-        private const val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA + "rapport_personnalise/"
+        private val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA + "rapport_personnalise/"
         private const val FILE_NAME = "rapport_personnalise_shapefile"
     }
 
