@@ -17,6 +17,7 @@ object ApiModule : Module {
         binder.registerResources(ApiReferentielsPenaEndpoint::class)
         binder.registerResources(ApiPeiEndpoint::class)
         binder.registerResources(ApiVisitesEndpoint::class)
+        binder.registerResources(ApiIndispoTemporaireEndpoint::class)
 
         // API Mobile
         binder.registerResources(MobileReferentielEndpoint::class)

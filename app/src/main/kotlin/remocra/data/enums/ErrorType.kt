@@ -22,7 +22,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     /**
      * Pour la gestion des PEI
      */
-    PEI_INEXISTANT(1000, "Le numéro spécifié ne correspond à aucun hydrant"),
+    PEI_INEXISTANT(1000, "Le numéro spécifié ne correspond à aucun PEI"),
     PEI_FORBIDDEN_C(1001, "Vous n'avez pas les droits de création de PEI.", Status.FORBIDDEN),
     PEI_FORBIDDEN_U(1002, "Vous n'avez pas les droits de modification de PEI", Status.FORBIDDEN),
     PEI_FORBIDDEN_D(1003, "Vous n'avez pas les droits de suppression de PEI", Status.FORBIDDEN),
@@ -291,6 +291,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Vous n'avez pas les droits de suppression des indisponibilités temporaires",
         Status.FORBIDDEN,
     ),
+    INDISPONIBILITE_TEMPORAIRE_STATUT(6007, "Le statut renseigné n'est pas valide. Il doit correspondre à une de ces valeurs : EN_COURS, PLANIFIEE ou TERMINEE"),
 
     /*************************************************************************************
      * Carte

@@ -103,4 +103,10 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
             .and(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))
             .groupBy(TRACABILITE.OBJET_ID)
             .fetchMap(TRACABILITE.OBJET_ID, DSL.max(TRACABILITE.DATE))
+
+    fun getIndispoTempTracabilite(listeIndispoTempId: List<UUID>): Collection<Tracabilite> =
+        dsl.selectFrom(TRACABILITE)
+            .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.INDISPONIBILITE_TEMPORAIRE))
+            .and(TRACABILITE.OBJET_ID.`in`(listeIndispoTempId))
+            .fetchInto()
 }
