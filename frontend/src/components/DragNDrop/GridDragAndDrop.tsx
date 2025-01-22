@@ -19,6 +19,7 @@ const GridDragAndDrop = ({
   colonneProperty,
   ligneProperty,
   titreProperty,
+  protectedProperty = false,
   pageTitle,
   urlToSubmit,
   validationSchema,
@@ -34,6 +35,7 @@ const GridDragAndDrop = ({
   colonneProperty: string;
   ligneProperty: string;
   titreProperty: string;
+  protectedProperty: string;
   pageTitle: string;
   urlToSubmit: string;
   validationSchema: any;
@@ -83,6 +85,7 @@ const GridDragAndDrop = ({
             defaultElement={defaultElement}
             ligneProperty={ligneProperty}
             titreProperty={titreProperty}
+            protectedProperty={protectedProperty}
             disabledSuivant={disabledSuivant}
           />
         </MyFormik>
@@ -102,6 +105,7 @@ const Form = ({
   colonneProperty,
   ligneProperty,
   titreProperty,
+  protectedProperty,
   disabledSuivant,
 }: {
   items: any;
@@ -112,6 +116,7 @@ const Form = ({
   colonneProperty: string;
   ligneProperty: string;
   titreProperty: string;
+  protectedProperty: string;
   disabledSuivant: (element: any) => boolean;
 }) => {
   const { values, setFieldValue } = useFormikContext();
@@ -128,6 +133,7 @@ const Form = ({
               name={name}
               createComponentToRepeat={createComponentToRepeat}
               defaultElement={defaultElement}
+              protectedProperty={protectedProperty}
               listeElements={values[name]}
             />
           </Row>

@@ -24,6 +24,7 @@ class ModuleUseCase : AbstractUseCase() {
                 moduleId = it.moduleId,
                 moduleType = it.moduleType,
                 moduleTitre = it.moduleTitre,
+                moduleProtected = it.moduleProtected,
                 moduleLinkImage = it.moduleImage?.let { image ->
                     uriInfo
                         .clone()
@@ -51,6 +52,7 @@ class ModuleUseCase : AbstractUseCase() {
         val moduleId: UUID,
         val moduleType: TypeModule,
         val moduleTitre: String?,
+        val moduleProtected: Boolean? = false,
         val moduleLinkImage: String?,
         val moduleContenuHtml: String?,
         val moduleColonne: Int,

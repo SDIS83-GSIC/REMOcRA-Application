@@ -20,6 +20,7 @@ import { FormLabel } from "../Form/Form.tsx";
 const AddRemoveComponent = ({
   name,
   defaultElement,
+  protectedProperty,
   listeElements,
   canAdd = true,
   createComponentToRepeat,
@@ -55,18 +56,29 @@ const AddRemoveComponent = ({
                   className="d-flex bg-light m-4 p-3 border rounded-3 align-items-center"
                 >
                   {createComponentToRepeat(index, listeElements)}
-                  <Col key={index} className="p-2 d-flex justify-content-end">
-                    <DeleteButton
-                      title={"Supprimer"}
-                      onClick={() => {
-                        elements.remove(index);
-                        setFieldValue(
-                          name,
-                          elements.form.values[name].filter((e) => e !== value),
-                        );
-                      }}
-                    />
-                  </Col>
+                  {
+                    // On n'affiche le bouton supprimer que si la propriété "protected" ne vaut pas TRUE
+                    (!protectedProperty ||
+                      value[protectedProperty] !== true) && (
+                      <Col
+                        key={index}
+                        className="p-2 d-flex justify-content-end"
+                      >
+                        <DeleteButton
+                          title={"Supprimer"}
+                          onClick={() => {
+                            elements.remove(index);
+                            setFieldValue(
+                              name,
+                              elements.form.values[name].filter(
+                                (e) => e !== value,
+                              ),
+                            );
+                          }}
+                        />
+                      </Col>
+                    )
+                  }
                 </span>
               );
             })}
@@ -80,6 +92,7 @@ const AddRemoveComponent = ({
 type AddRemoveComponentType = {
   name: string;
   createComponentToRepeat: (index: number, listeElements: any[]) => ReactNode;
+  protectedProperty?: string;
   defaultElement?: any;
   listeElements: any[];
   canAdd?: boolean;

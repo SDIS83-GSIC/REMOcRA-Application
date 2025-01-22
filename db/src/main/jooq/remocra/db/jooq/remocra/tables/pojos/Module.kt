@@ -28,6 +28,7 @@ data class Module(
     val moduleColonne: Int,
     val moduleLigne: Int,
     val moduleNbDocument: Int?,
+    val moduleProtected: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -81,6 +82,13 @@ data class Module(
         } else if (this.moduleNbDocument != o.moduleNbDocument) {
             return false
         }
+        if (this.moduleProtected == null) {
+            if (o.moduleProtected != null) {
+                return false
+            }
+        } else if (this.moduleProtected != o.moduleProtected) {
+            return false
+        }
         return true
     }
 
@@ -95,6 +103,7 @@ data class Module(
         result = prime * result + this.moduleColonne.hashCode()
         result = prime * result + this.moduleLigne.hashCode()
         result = prime * result + (if (this.moduleNbDocument == null) 0 else this.moduleNbDocument.hashCode())
+        result = prime * result + (if (this.moduleProtected == null) 0 else this.moduleProtected.hashCode())
         return result
     }
 
@@ -109,6 +118,7 @@ data class Module(
         sb.append(", ").append(moduleColonne)
         sb.append(", ").append(moduleLigne)
         sb.append(", ").append(moduleNbDocument)
+        sb.append(", ").append(moduleProtected)
 
         sb.append(")")
         return sb.toString()

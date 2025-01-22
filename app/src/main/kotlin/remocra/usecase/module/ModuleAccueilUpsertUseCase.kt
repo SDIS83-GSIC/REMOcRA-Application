@@ -100,6 +100,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                         } else {
                             null
                         },
+                        moduleProtected = false,
                     ),
                 )
             } else {
