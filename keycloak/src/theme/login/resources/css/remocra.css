@@ -1,0 +1,13 @@
+:root {
+  --remocra-banniere-url: url("../img/banniere")
+}
+
+.login-pf body {
+    background: var(--remocra-banniere-url) no-repeat top center;
+    background-size: contain;
+}
+
+.pf-v5-c-login__header {
+    /* Couleur de bg-primary de REMOcRA */
+    background: rgb(0,41,62);
+}

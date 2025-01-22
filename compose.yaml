@@ -22,6 +22,8 @@ services:
       - KEYCLOAK_BOOTSTRAP_ADMIN_USERNAME=kcadmin
       - KEYCLOAK_BOOTSTRAP_ADMIN_PASSWORD=kcadmin
     volumes:
+      - ./keycloak/src/theme:/opt/keycloak/themes/remocra:ro
+      - ./.data/images/ressources:/opt/keycloak/themes/remocra/login/resources/img:ro
       - ./.docker/keycloak:/opt/keycloak/data
 
   keycloak-config:

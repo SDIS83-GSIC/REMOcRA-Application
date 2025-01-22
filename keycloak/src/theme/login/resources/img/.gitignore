@@ -1,0 +1,2 @@
+# Masqué par le bind-mount, mais on s'assure d'avoir le répertoire existant
+# pour éviter que Docker le crée en root:root.

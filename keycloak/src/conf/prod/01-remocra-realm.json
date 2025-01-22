@@ -1,6 +1,8 @@
 {
   "realm": "remocra",
   "enabled": true,
+  "displayName": "REMOcRA",
+  "displayNameHtml": "<img alt='' src='$(env:REMOCRA_URL)/images/logo'><h1>REMOcRA</h1>",
   "roles": {
     "realm": [
       {
@@ -63,6 +65,7 @@
     "acr",
     "groups"
   ],
+  "loginTheme": "remocra",
   "internationalizationEnabled" : true,
   "supportedLocales" : [ "fr" ],
   "defaultLocale" : "fr",

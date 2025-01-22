@@ -6,5 +6,4 @@ app/dist
 /.env
 /local.conf
 /log4j-dev.xml
-/.data/
 node_modules/
