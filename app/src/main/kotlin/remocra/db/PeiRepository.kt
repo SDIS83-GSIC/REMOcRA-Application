@@ -801,6 +801,12 @@ class PeiRepository
             .where(PEI.NUMERO_COMPLET.eq(numeroComplet))
             .fetchOneInto()
 
+    fun getIdByNumeroComplet(listNumeroComplet: List<String>): List<UUID> =
+        dsl.select(PEI.ID)
+            .from(PEI)
+            .where(PEI.NUMERO_COMPLET.`in`(listNumeroComplet))
+            .fetchInto()
+
     data class PeiDataForApi(
         val peiId: UUID,
         val peiNumeroComplet: String,

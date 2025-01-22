@@ -3,7 +3,9 @@ package remocra.api.endpoint
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.inject.Inject
+import jakarta.validation.constraints.NotNull
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
@@ -11,6 +13,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.api.usecase.ApiIndisponibiliteTemporaireUseCase
 import remocra.auth.RequireDroitsApi
+import remocra.data.ApiIndispoTempFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.web.AbstractEndpoint
 
@@ -40,5 +43,16 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
             apiIndisponibiliteTemporaireUseCase.getAll(organismeAPI, numeroComplet, statut, limit, offset),
         )
             .build()
+    }
+
+    @POST
+    @Path("")
+    @Operation(summary = "Ajoute une nouvelle indisponibilité temporaire", tags = ["DECI - Indispo temporaire"])
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
+    fun addIndispoTemporaire(
+        @NotNull @Parameter(description = "Informations de l'indisponibilité temporaire")
+        indispoForm: ApiIndispoTempFormData,
+    ): Response {
+        return apiIndisponibiliteTemporaireUseCase.addIndispoTemp(indispoForm).wrap()
     }
 }

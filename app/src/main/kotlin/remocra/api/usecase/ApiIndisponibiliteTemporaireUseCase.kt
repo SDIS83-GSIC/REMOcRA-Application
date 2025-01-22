@@ -3,8 +3,10 @@ package remocra.api.usecase
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import remocra.data.ApiIndispoTempFormData
 import remocra.data.ApiIndispoTemporaireData
 import remocra.data.AuteurTracabiliteData
+import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
 import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
@@ -14,6 +16,8 @@ import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
+import java.util.UUID
 
 class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
 
@@ -25,6 +29,9 @@ class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var peiRepository: PeiRepository
+
+    @Inject
+    lateinit var createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -95,5 +102,31 @@ class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
         }
 
         return codeOrganisme?.let { liste.filter { it.organismeApiMaj != null && it.organismeApiMaj.equals(it) } } ?: liste
+    }
+
+    fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData): Result {
+        // avec les infos, on transforme l'objet pour appeler directement le createIndisponibiliteTemporaireUseCase
+        val listePeiId = peiRepository.getIdByNumeroComplet(apiIndispoTempFormData.listeNumeroPei)
+
+        return createIndisponibiliteTemporaireUseCase.execute(
+            null, // TODO userInfo
+            IndisponibiliteTemporaireData(
+                indisponibiliteTemporaireId = UUID.randomUUID(),
+                indisponibiliteTemporaireMotif = apiIndispoTempFormData.motif,
+                indisponibiliteTemporaireObservation = apiIndispoTempFormData.observation,
+                indisponibiliteTemporaireDateDebut = apiIndispoTempFormData.dateDebut,
+                indisponibiliteTemporaireMailAvantIndisponibilite = apiIndispoTempFormData.mailAvantIndisponibilite,
+                indisponibiliteTemporaireMailApresIndisponibilite = apiIndispoTempFormData.mailApresIndisponibilite,
+                indisponibiliteTemporaireBasculeAutoDisponible = apiIndispoTempFormData.basculeAutoDisponible,
+                indisponibiliteTemporaireBasculeAutoIndisponible = apiIndispoTempFormData.basculeAutoDisponible,
+                indisponibiliteTemporaireNotificationDebut = apiIndispoTempFormData.notificationDebut,
+                indisponibiliteTemporaireNotificationFin = apiIndispoTempFormData.notificationFin,
+                indisponibiliteTemporaireNotificationResteIndispo = apiIndispoTempFormData.notificationResteIndispo,
+                indisponibiliteTemporaireBasculeDebut = false,
+                indisponibiliteTemporaireBasculeFin = false,
+                indisponibiliteTemporaireDateFin = apiIndispoTempFormData.dateFin,
+                indisponibiliteTemporaireListePeiId = listePeiId,
+            ),
+        )
     }
 }
