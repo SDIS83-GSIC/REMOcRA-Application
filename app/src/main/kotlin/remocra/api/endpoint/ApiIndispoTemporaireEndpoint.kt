@@ -6,7 +6,9 @@ import jakarta.inject.Inject
 import jakarta.validation.constraints.NotNull
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.MediaType
@@ -16,6 +18,7 @@ import remocra.auth.RequireDroitsApi
 import remocra.data.ApiIndispoTempFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.web.AbstractEndpoint
+import java.util.UUID
 
 @Path("/deci/indispoTemporaire")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,5 +57,23 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
         indispoForm: ApiIndispoTempFormData,
     ): Response {
         return apiIndisponibiliteTemporaireUseCase.addIndispoTemp(indispoForm).wrap()
+    }
+
+    @PUT
+    @Path("/{idIndisponibiliteTemporaire}")
+    @Operation(
+        summary = "Modifie les informations relatives à une indisponibilité temporaire",
+        tags = ["DECI - Indispo temporaire"],
+    )
+    @RequireDroitsApi([DroitApi.TRANSMETTRE])
+    fun editIndispoTemporaire(
+        @Parameter(description = "Identifiant de l'indisponibilité temporaire)")
+        @PathParam("idIndisponibiliteTemporaire") idIndispo: UUID,
+        @Parameter(
+            description = "Informations d'indisponibilite temporaire",
+            required = true,
+        ) @NotNull apiIndispoTempFormData: ApiIndispoTempFormData,
+    ): Response {
+        return apiIndisponibiliteTemporaireUseCase.updateIndispoTemp(apiIndispoTempFormData, idIndispo).wrap()
     }
 }

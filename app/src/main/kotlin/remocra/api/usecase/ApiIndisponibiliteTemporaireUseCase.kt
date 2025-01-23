@@ -17,6 +17,7 @@ import remocra.db.TracabiliteRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
+import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import java.util.UUID
 
 class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
@@ -32,6 +33,9 @@ class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase
+
+    @Inject
+    lateinit var updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -105,28 +109,37 @@ class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
     }
 
     fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData): Result {
-        // avec les infos, on transforme l'objet pour appeler directement le createIndisponibiliteTemporaireUseCase
-        val listePeiId = peiRepository.getIdByNumeroComplet(apiIndispoTempFormData.listeNumeroPei)
-
         return createIndisponibiliteTemporaireUseCase.execute(
             null, // TODO userInfo
-            IndisponibiliteTemporaireData(
-                indisponibiliteTemporaireId = UUID.randomUUID(),
-                indisponibiliteTemporaireMotif = apiIndispoTempFormData.motif,
-                indisponibiliteTemporaireObservation = apiIndispoTempFormData.observation,
-                indisponibiliteTemporaireDateDebut = apiIndispoTempFormData.dateDebut,
-                indisponibiliteTemporaireMailAvantIndisponibilite = apiIndispoTempFormData.mailAvantIndisponibilite,
-                indisponibiliteTemporaireMailApresIndisponibilite = apiIndispoTempFormData.mailApresIndisponibilite,
-                indisponibiliteTemporaireBasculeAutoDisponible = apiIndispoTempFormData.basculeAutoDisponible,
-                indisponibiliteTemporaireBasculeAutoIndisponible = apiIndispoTempFormData.basculeAutoDisponible,
-                indisponibiliteTemporaireNotificationDebut = apiIndispoTempFormData.notificationDebut,
-                indisponibiliteTemporaireNotificationFin = apiIndispoTempFormData.notificationFin,
-                indisponibiliteTemporaireNotificationResteIndispo = apiIndispoTempFormData.notificationResteIndispo,
-                indisponibiliteTemporaireBasculeDebut = false,
-                indisponibiliteTemporaireBasculeFin = false,
-                indisponibiliteTemporaireDateFin = apiIndispoTempFormData.dateFin,
-                indisponibiliteTemporaireListePeiId = listePeiId,
-            ),
+            getIndisponibiliteTemporaiteData(apiIndispoTempFormData),
+        )
+    }
+
+    fun updateIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID): Result {
+        return updateIndisponibiliteTemporaireUseCase.execute(
+            null, // TODO userInfo
+            getIndisponibiliteTemporaiteData(apiIndispoTempFormData, indispoTemporaireId),
+        )
+    }
+
+    private fun getIndisponibiliteTemporaiteData(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID? = null): IndisponibiliteTemporaireData {
+        val listePeiId = peiRepository.getIdByNumeroComplet(apiIndispoTempFormData.listeNumeroPei)
+        return IndisponibiliteTemporaireData(
+            indisponibiliteTemporaireId = indispoTemporaireId ?: UUID.randomUUID(),
+            indisponibiliteTemporaireMotif = apiIndispoTempFormData.motif,
+            indisponibiliteTemporaireObservation = apiIndispoTempFormData.observation,
+            indisponibiliteTemporaireDateDebut = apiIndispoTempFormData.dateDebut,
+            indisponibiliteTemporaireMailAvantIndisponibilite = apiIndispoTempFormData.mailAvantIndisponibilite,
+            indisponibiliteTemporaireMailApresIndisponibilite = apiIndispoTempFormData.mailApresIndisponibilite,
+            indisponibiliteTemporaireBasculeAutoDisponible = apiIndispoTempFormData.basculeAutoDisponible,
+            indisponibiliteTemporaireBasculeAutoIndisponible = apiIndispoTempFormData.basculeAutoDisponible,
+            indisponibiliteTemporaireNotificationDebut = apiIndispoTempFormData.notificationDebut,
+            indisponibiliteTemporaireNotificationFin = apiIndispoTempFormData.notificationFin,
+            indisponibiliteTemporaireNotificationResteIndispo = apiIndispoTempFormData.notificationResteIndispo,
+            indisponibiliteTemporaireBasculeDebut = false,
+            indisponibiliteTemporaireBasculeFin = false,
+            indisponibiliteTemporaireDateFin = apiIndispoTempFormData.dateFin,
+            indisponibiliteTemporaireListePeiId = listePeiId,
         )
     }
 }
