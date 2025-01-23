@@ -157,6 +157,7 @@ const MapComponent = ({
 
 export const useMapComponent = ({
   mapElement,
+  typeModule,
   displayPei = true,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
