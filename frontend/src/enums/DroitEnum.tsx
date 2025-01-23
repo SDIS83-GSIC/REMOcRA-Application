@@ -49,6 +49,7 @@ enum TYPE_DROIT {
   OLDEB_D = "OLDEB_D",
   OLDEB_R = "OLDEB_R",
   OLDEB_U = "OLDEB_U",
+  OPERATIONS_DIVERSES_E = "OPERATIONS_DIVERSES_E",
   PEI_ADRESSE_C = "PEI_ADRESSE_C",
   PEI_C = "PEI_C",
   PEI_CARACTERISTIQUES_U = "PEI_CARACTERISTIQUES_U",
@@ -155,6 +156,7 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.OLDEB_D, SECTION_DROIT.OLDEB],
   [TYPE_DROIT.OLDEB_R, SECTION_DROIT.OLDEB],
   [TYPE_DROIT.OLDEB_U, SECTION_DROIT.OLDEB],
+  [TYPE_DROIT.OPERATIONS_DIVERSES_E, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.PEI_ADRESSE_C, SECTION_DROIT.PEI],
   [TYPE_DROIT.PEI_C, SECTION_DROIT.PEI],
   [TYPE_DROIT.PEI_CARACTERISTIQUES_U, SECTION_DROIT.PEI],
@@ -283,6 +285,10 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.OLDEB_D, "Supprimer des obligations"],
   [TYPE_DROIT.OLDEB_R, "Consulter des obligations"],
   [TYPE_DROIT.OLDEB_U, "Modifier des obligations"],
+  [
+    TYPE_DROIT.OPERATIONS_DIVERSES_E,
+    "Accéder au module des opérations diverses",
+  ],
   [TYPE_DROIT.PEI_ADRESSE_C, "Créer, éditer l'adresse des PEI"],
   [TYPE_DROIT.PEI_C, "Créer un PEI"],
   [

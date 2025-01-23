@@ -105,12 +105,26 @@ function getLinks(
           link: URLS.CARTOGRAPHIE_PERSONNALISEE,
         },
       ];
+    case TypeModuleRemocra.OPERATIONS_DIVERSES:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E),
+          label: "Historique des opérations",
+          link: URLS.HISTORIQUE_OPERATIONS,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E),
+          label: "Résultats d'exécutions",
+          link: URLS.RESULTATS_EXECUTION,
+        },
+      ];
     case TypeModuleRemocra.OLDEBS:
     case TypeModuleRemocra.PERMIS:
     case TypeModuleRemocra.RCI:
     case TypeModuleRemocra.DFCI:
     case TypeModuleRemocra.ADRESSES:
     case TypeModuleRemocra.RISQUES:
+      return;
     case TypeModuleRemocra.ADMIN:
       return [
         {
@@ -119,19 +133,11 @@ function getLinks(
           link: URLS.MODULE_ADMIN,
         },
         {
-          aLeDroit:
-            hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
-            hasDroit(user, TYPE_DROIT.GEST_SITE_A),
-          label: "Liste des gestionnaires",
-          link: URLS.LIST_GESTIONNAIRE,
+          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
+          label: "Opérations diverses",
+          link: URLS.MODULE_ADMIN,
         },
-        {
-          aLeDroit:
-            hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
-            hasDroit(user, TYPE_DROIT.GEST_SITE_A),
-          label: "Liste des sites",
-          link: URLS.LIST_SITE,
-        },
+
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
           label: "Liste des blocs documents",
@@ -139,7 +145,9 @@ function getLinks(
         },
       ];
     case TypeModuleRemocra.COURRIER:
+      return;
     case TypeModuleRemocra.DOCUMENT:
+      return;
     case TypeModuleRemocra.RAPPORT_PERSONNALISE:
       return [
         {
@@ -149,6 +157,7 @@ function getLinks(
         },
       ];
     case TypeModuleRemocra.PERSONNALISE:
+      return;
     case TypeModuleRemocra.DASHBOARD:
       return [
         {

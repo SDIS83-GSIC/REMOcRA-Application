@@ -27,7 +27,7 @@ type FormValues = {
   objetId: string | null;
 };
 
-const Tracabilite = () => {
+const HistoriqueOperations = () => {
   const { typeOperations, typeObjets, typeUtilisateurs, isLoading } = useRefs();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ const Tracabilite = () => {
 
   const handleSubmit = (values: FormValues) => {
     //@ts-expect-error url n'est pas content si on passe une variable string et non object 🤔
-    navigate(url`${URLS.TRACABILITE}?${nullifyEmptyValue(values)}`);
+    navigate(url`${URLS.HISTORIQUE_OPERATIONS}?${nullifyEmptyValue(values)}`);
   };
 
   return (
@@ -127,7 +127,7 @@ const Tracabilite = () => {
   );
 };
 
-export default Tracabilite;
+export default HistoriqueOperations;
 
 type SearchFormProps = {
   typeOperations: SelectOption[];
@@ -144,7 +144,7 @@ const SearchForm = ({
   const navigate = useNavigate();
 
   const handleReset = () => {
-    navigate(URLS.TRACABILITE);
+    navigate(URLS.HISTORIQUE_OPERATIONS);
   };
 
   return (

@@ -126,15 +126,16 @@ import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportR
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
-import HistoriqueTracabilite from "./pages/Admin/Tracabilite/HistoriqueTracabilite.tsx";
 import Dashboard from "./pages/Dashboard/DashBoard.tsx";
 import ComponentBoardList from "./pages/Dashboard/DashboardUser.tsx";
+import HistoriqueTracabilite from "./pages/Admin/Tracabilite/HistoriqueOperations.tsx";
 import { ImportRessources } from "./pages/Admin/importRessources/ImportRessources.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
 import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
 import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAdmin.tsx";
 import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
+import ModuleOperationsDiverses from "./components/ModuleRemocra/ModuleOperationsDiverses.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -355,12 +356,15 @@ export const URLS = {
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
-  TRACABILITE: url`/admin/tracabilite`,
 
   // Module dashboard
   DASHBOARD_ADMIN_QUERY: url`/dashboard/admin/query`,
   DASHBOARD_ADMIN_DASHBOARD: url`/dashboard/admin/dashboard`,
   DASHBOARD_LIST: url`/dashboard/list`,
+
+  // Module Opérations diverses
+  HISTORIQUE_OPERATIONS: url`/operations-diverses/historique-operations`,
+  RESULTATS_EXECUTION: url`/operations-diverses/resultats-execution`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1468,15 +1472,6 @@ export default [
           />
         ),
       },
-      {
-        path: "tracabilite",
-        element: (
-          <Authorization
-            Component={HistoriqueTracabilite}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
-          />
-        ),
-      },
     ],
   },
 
@@ -1520,6 +1515,28 @@ export default [
       },
     ],
   },
+
+  {
+    path: "/operations-diverses/",
+    element: (
+      <Authorization
+        Component={ModuleOperationsDiverses}
+        droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
+      />
+    ),
+    children: [
+      {
+        path: "historique-operations",
+        element: (
+          <Authorization
+            Component={HistoriqueTracabilite}
+            droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
+          />
+        ),
+      },
+    ],
+  },
+
   {
     path: "/dashboard",
     element: (
