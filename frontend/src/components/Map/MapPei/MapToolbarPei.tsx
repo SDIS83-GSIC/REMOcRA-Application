@@ -43,11 +43,11 @@ export const useToolbarPeiContext = ({
   const { visible, show, close, ref } = useModal();
   const { success: successToast, error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
-  const [listePeiIdTourneePublic, setListePeiIdTourneePublic] = useState<
-    string[]
+  const [listePeiTourneePublic, setListePeiTourneePublic] = useState<
+    { peiId: string; numeroComplet: string }[]
   >([]);
-  const [listePeiIdTourneePrive, setListePeiIdTourneePrive] = useState<
-    string[]
+  const [listePeiTourneePrive, setListePeiTourneePrive] = useState<
+    { peiId: string; numeroComplet: string }[]
   >([]);
   const [showCreateIndispoTemp, setShowCreateIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowCreateIndispoTemp(false);
@@ -157,11 +157,11 @@ export const useToolbarPeiContext = ({
       selectCtrl.getFeatures().extend(boxFeatures);
 
       listePeiId.splice(0, listePeiId.length);
-      listePeiIdTourneePrive.splice(0, listePeiIdTourneePrive.length);
-      listePeiIdTourneePublic.splice(0, listePeiIdTourneePublic.length);
+      listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
+      listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
 
-      const prives: string[] = [];
-      const publics: string[] = [];
+      const prives: { peiId: string; numeroComplet: string }[] = [];
+      const publics: { peiId: string; numeroComplet: string }[] = [];
 
       const peiPrivesDebitSimultane: any[] = [];
 
@@ -170,13 +170,19 @@ export const useToolbarPeiContext = ({
         listePeiId.push(point.pointId);
 
         if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
-          prives.push(point.pointId);
+          prives.push({
+            peiId: point.pointId,
+            numeroComplet: point.peiNumeroComplet,
+          });
 
           if (point.pibiTypeReseauId != null) {
             peiPrivesDebitSimultane.push(point);
           }
         } else {
-          publics.push(point.pointId);
+          publics.push({
+            peiId: point.pointId,
+            numeroComplet: point.peiNumeroComplet,
+          });
         }
       });
 
@@ -201,12 +207,12 @@ export const useToolbarPeiContext = ({
 
       // A retirer en 3.1 => ticket #126505
       if (prives.length > 0 && publics.length === 0) {
-        setListePeiIdTourneePrive(prives);
+        setListePeiTourneePrive(prives);
       } else if (publics.length > 0 && prives.length === 0) {
-        setListePeiIdTourneePublic(publics);
+        setListePeiTourneePublic(publics);
       } else {
-        setListePeiIdTourneePrive([]);
-        setListePeiIdTourneePublic([]);
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
       }
     });
 
@@ -219,8 +225,8 @@ export const useToolbarPeiContext = ({
           map.addInteraction(dragBoxCtrl);
         }
       } else {
-        listePeiIdTourneePrive.splice(0, listePeiIdTourneePrive.length);
-        listePeiIdTourneePublic.splice(0, listePeiIdTourneePublic.length);
+        listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
+        listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
         map.removeInteraction(selectCtrl);
         map.removeInteraction(dragBoxCtrl);
       }
@@ -308,8 +314,8 @@ export const useToolbarPeiContext = ({
     createUpdateTournee,
     showCreateTournee,
     handleCloseTournee,
-    listePeiIdTourneePublic,
-    listePeiIdTourneePrive,
+    listePeiTourneePublic,
+    listePeiTourneePrive,
     createDebitSimultane,
     handleCloseDebitSimultane,
     showCreateDebitSimultane,
@@ -334,8 +340,8 @@ const MapToolbarPei = forwardRef(
     createUpdateTournee,
     showCreateTournee,
     handleCloseTournee,
-    listePeiIdTourneePrive,
-    listePeiIdTourneePublic,
+    listePeiTourneePrive,
+    listePeiTourneePublic,
     dataDebitSimultaneLayer,
     createDebitSimultane,
     handleCloseDebitSimultane,
@@ -357,8 +363,8 @@ const MapToolbarPei = forwardRef(
     createUpdateTournee: () => void;
     showCreateTournee: boolean;
     handleCloseTournee: () => void;
-    listePeiIdTourneePrive: string[];
-    listePeiIdTourneePublic: string[];
+    listePeiTourneePrive: { peiId: string; numeroComplet: string }[];
+    listePeiTourneePublic: { peiId: string; numeroComplet: string }[];
     dataDebitSimultaneLayer: any;
     createDebitSimultane: () => void;
     handleCloseDebitSimultane: () => void;
@@ -432,8 +438,8 @@ const MapToolbarPei = forwardRef(
                 onClick={createUpdateTournee}
                 className="rounded m-2"
                 disabled={
-                  listePeiIdTourneePrive.length === 0 &&
-                  listePeiIdTourneePublic.length === 0
+                  listePeiTourneePrive.length === 0 &&
+                  listePeiTourneePublic.length === 0
                 }
               >
                 <IconTournee />
@@ -445,12 +451,12 @@ const MapToolbarPei = forwardRef(
               className="w-auto"
             >
               <AffecterPeiTourneeMap
-                listePeiId={
-                  listePeiIdTourneePrive.length !== 0
-                    ? listePeiIdTourneePrive
-                    : listePeiIdTourneePublic
+                listePei={
+                  listePeiTourneePrive.length !== 0
+                    ? listePeiTourneePrive
+                    : listePeiTourneePublic
                 }
-                isPrive={listePeiIdTourneePrive.length !== 0}
+                isPrive={listePeiTourneePrive.length !== 0}
                 closeVolet={handleCloseTournee}
               />
             </Volet>

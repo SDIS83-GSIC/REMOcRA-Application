@@ -15,11 +15,12 @@ import CreateTournee from "./CreateTournee.tsx";
 import TourneePei from "./TourneePei.tsx";
 
 const AffecterPeiTourneeMap = ({
-  listePeiId,
+  listePei,
   isPrive,
   closeVolet,
 }: {
-  listePeiId: string[];
+  listePei: { peiId: string; numeroComplet: string }[];
+  listePeiNumeroComplet: string[];
   isPrive: boolean;
   closeVolet: () => void;
 }) => {
@@ -30,7 +31,8 @@ const AffecterPeiTourneeMap = ({
 
   return (
     <Container>
-      {" "}
+      <b>PEI sélectionnés :</b>{" "}
+      {listePei.map((e) => e.numeroComplet).join(", ")}
       {!create && !update ? (
         <>
           <PageTitle
@@ -68,7 +70,7 @@ const AffecterPeiTourneeMap = ({
       ) : showListePei ? (
         <>
           <TourneePei
-            listePeiId={listePeiId}
+            listePeiId={listePei.map((e) => e.peiId)}
             tourneeMapId={tourneeId}
             closeVolet={closeVolet}
           />
