@@ -109,6 +109,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     DOCUMENTS_A("DOCUMENTS_A"),
     RAPPORT_PERSONNALISE_E("RAPPORT_PERSONNALISE_E"),
     DASHBOARD_R("DASHBOARD_R"),
+    OPERATIONS_DIVERSES_E("OPERATIONS_DIVERSES_E"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
