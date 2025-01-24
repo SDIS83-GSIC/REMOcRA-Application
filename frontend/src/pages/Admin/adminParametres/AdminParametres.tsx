@@ -648,16 +648,39 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
     id: option,
     libelle: option,
   }));
+
   const {
     availableOptions,
     setAvailableOptions,
     selectedOptions,
     setSelectedOptions,
   } = useTransferList({
-    listeDisponible: listPossible,
-    listeSelectionne: values?.peiColonnes,
+    listeDisponible: null,
+    listeSelectionne: null,
     nameFormik: "pei.peiColonnes",
   });
+
+  useMemo(() => {
+    if (!values?.peiColonnes) {
+      return;
+    }
+    if (availableOptions == null) {
+      setAvailableOptions(
+        listPossible.filter((e) => !values.peiColonnes?.includes(e)),
+      );
+    }
+    if (selectedOptions == null) {
+      setSelectedOptions(values?.peiColonnes);
+    }
+  }, [
+    values,
+    setSelectedOptions,
+    selectedOptions,
+    availableOptions,
+    setAvailableOptions,
+    listPossible,
+  ]);
+
   return (
     values && (
       <>
