@@ -9,6 +9,7 @@ import { IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 
 const TourneePei = ({
   tourneeMapId,
@@ -40,6 +41,9 @@ const TourneePei = ({
   const [displaySection, setDisplaySection] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<PeiInfoEntity[]>(null);
   const [selectedPei, setSelectedPei] = useState<PeiInfoEntity>(null);
+
+  const { success: successToast, error: errorToast } = useToastContext();
+
   const navigate = useNavigate();
 
   if (tourneePeiInfo.isResolved && data == null) {
@@ -63,13 +67,14 @@ const TourneePei = ({
     url`/api/tournee/listPeiTournee/update/` + tourneeIdToUse,
     {
       onResolve: () => {
-        // TODO: Ajouter un toast
         closeVolet ? closeVolet() : navigate(URLS.LIST_TOURNEE);
+        successToast("L'élément a bien été déplacé.");
       },
       onReject: async (error: {
         text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
       }) => {
         setErrorMessage(await error.text());
+        errorToast(error.text());
       },
     },
     true,
