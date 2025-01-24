@@ -44,10 +44,10 @@ const MapLegend = forwardRef(
                     return b.ordre - a.ordre;
                   })
                   .map((layer: any, layerIdx: number) => (
-<ListGroup.Item
-                    key={layerIdx}
-                    className={isChecked(layer) ? "" : "noprint"}
-                  >
+                    <ListGroup.Item
+                      key={layerIdx}
+                      className={isChecked(layer) ? "" : "noprint"}
+                    >
                       <Row>
                         <Col className={"icone-legende"}>
                           {layer.icone && (
@@ -59,19 +59,18 @@ const MapLegend = forwardRef(
                             <Row>
                               <Col>
                                 <Form.Switch
-                                                          checked={isChecked(layer)}
+                                  checked={isChecked(layer)}
                                   onClick={() => {
                                     addOrRemoveLayer(layer);
                                   }}
-
-                        label={
-                          <>
-                            {layer.libelle}
-                            {layer.legende && (
-                              <img src={layer.icone} height={24} />
-                            )}
-                          </>
-                        }
+                                  label={
+                                    <>
+                                      {layer.libelle}
+                                      {layer.legende && (
+                                        <img src={layer.icone} height={24} />
+                                      )}
+                                    </>
+                                  }
                                 />
                               </Col>
                               {layer.legende && (
@@ -99,8 +98,8 @@ const MapLegend = forwardRef(
                             </Row>
                           </Form.Group>
                           <FormRange
-                      className={"noprint"}
-                                                 disabled={!isChecked(layer)}
+                            className={"noprint"}
+                            disabled={!isChecked(layer)}
                             min={0}
                             max={1}
                             step={0.1}
