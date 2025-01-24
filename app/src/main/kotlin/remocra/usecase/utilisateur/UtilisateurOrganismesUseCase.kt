@@ -15,6 +15,8 @@ class UtilisateurOrganismesUseCase : AbstractUseCase() {
     fun execute(userInfo: UserInfo) {
         if (userInfo.organismeId != null) {
             userInfo.affiliatedOrganismeIds = organismeRepository.getOrganismeAndChildren(userInfo.organismeId!!).toSet()
+        } else {
+            userInfo.affiliatedOrganismeIds = organismeRepository.getAll().map { it.id }.toSet()
         }
     }
 }

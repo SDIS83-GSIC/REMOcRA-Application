@@ -37,7 +37,8 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
     fun getBlocDocumentWithThematique(
         listeThematiqueId: Collection<UUID>,
         limit: Int?,
-        profilDroitId: UUID,
+        profilDroitId: UUID?,
+        isSuperAdmin: Boolean = false,
         params: Params<Filter, Sort>?,
     ): Collection<BlocDocument> =
         dsl
@@ -58,7 +59,12 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .leftJoin(THEMATIQUE).on(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.eq(THEMATIQUE.ID))
             .where(THEMATIQUE.ACTIF.isTrue)
             .and(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
-            .and(L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId),
+                    isSuperAdmin,
+                ),
+            )
             .and(params?.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(
                 params?.sortBy?.toCondition()
@@ -69,7 +75,8 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
 
     fun countBlocDocumentWithThematique(
         listeThematiqueId: Collection<UUID>,
-        profilDroitId: UUID,
+        profilDroitId: UUID?,
+        isSuperAdmin: Boolean = false,
         params: Params<Filter, Sort>?,
     ): Int =
         dsl
@@ -84,7 +91,12 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .leftJoin(L_PROFIL_DROIT_BLOC_DOCUMENT)
             .on(L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
             .where(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
-            .and(L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId),
+                    isSuperAdmin,
+                ),
+            )
             .and(params?.filterBy?.toCondition() ?: DSL.noCondition())
             .count()
 

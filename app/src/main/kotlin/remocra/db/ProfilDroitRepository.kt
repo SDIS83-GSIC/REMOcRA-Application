@@ -37,7 +37,7 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
             .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
             .fetchInto()
 
-    fun getProfilUtilisateurByUtilisateurId(utilisateurId: UUID): UUID =
+    fun getProfilUtilisateurByUtilisateurId(utilisateurId: UUID): UUID? =
         dsl.select(
             PROFIL_DROIT.ID,
         )
@@ -52,7 +52,7 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
                     .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
             )
             .where(UTILISATEUR.ID.eq(utilisateurId))
-            .fetchSingleInto()
+            .fetchOneInto()
 
     data class ProfilDroitWithProfils(
         val id: UUID,
