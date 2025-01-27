@@ -98,13 +98,6 @@ const MenuAdmin = () => {
           <br />
         </Col>
       </Row>
-      <Row className="mt-2">
-        <Col className="bg-light p-2 border rounded">
-          <div className="fw-bold text-center p-2">Opérations diverses</div>
-          <a href={URLS.TRACABILITE}>Historique des opérations</a>
-          <br />
-        </Col>
-      </Row>
     </Container>
   );
 };

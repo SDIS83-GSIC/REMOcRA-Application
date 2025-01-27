@@ -133,12 +133,6 @@ function getLinks(
           link: URLS.MODULE_ADMIN,
         },
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
-          label: "Opérations diverses",
-          link: URLS.MODULE_ADMIN,
-        },
-
-        {
           aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
           label: "Liste des documents habilitables",
           link: URLS.LIST_DOCUMENT_HABILITABLE,
