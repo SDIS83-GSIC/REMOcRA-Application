@@ -3,7 +3,9 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import remocra.db.jooq.remocra.enums.DroitApi
 import java.io.Serializable
+import java.util.Arrays
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -25,6 +27,7 @@ data class TypeOrganisme(
     val typeOrganismeCode: String,
     val typeOrganismeLibelle: String,
     val typeOrganismeParentId: UUID?,
+    val typeOrganismeDroitApi: Array<DroitApi?>?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -60,6 +63,13 @@ data class TypeOrganisme(
         } else if (this.typeOrganismeParentId != o.typeOrganismeParentId) {
             return false
         }
+        if (this.typeOrganismeDroitApi == null) {
+            if (o.typeOrganismeDroitApi != null) {
+                return false
+            }
+        } else if (!Arrays.deepEquals(this.typeOrganismeDroitApi, o.typeOrganismeDroitApi)) {
+            return false
+        }
         return true
     }
 
@@ -72,6 +82,7 @@ data class TypeOrganisme(
         result = prime * result + this.typeOrganismeCode.hashCode()
         result = prime * result + this.typeOrganismeLibelle.hashCode()
         result = prime * result + (if (this.typeOrganismeParentId == null) 0 else this.typeOrganismeParentId.hashCode())
+        result = prime * result + (if (this.typeOrganismeDroitApi == null) 0 else Arrays.deepHashCode(this.typeOrganismeDroitApi))
         return result
     }
 
@@ -84,6 +95,7 @@ data class TypeOrganisme(
         sb.append(", ").append(typeOrganismeCode)
         sb.append(", ").append(typeOrganismeLibelle)
         sb.append(", ").append(typeOrganismeParentId)
+        sb.append(", ").append(Arrays.deepToString(typeOrganismeDroitApi))
 
         sb.append(")")
         return sb.toString()

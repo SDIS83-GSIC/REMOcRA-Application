@@ -25,6 +25,7 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME__PROFIL_ORGANISME_PROFIL_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY
@@ -115,6 +116,11 @@ open class TypeOrganisme(
      * The column <code>remocra.type_organisme.type_organisme_parent_id</code>.
      */
     val PARENT_ID: TableField<Record, UUID?> = createField(DSL.name("type_organisme_parent_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.type_organisme.type_organisme_droit_api</code>.
+     */
+    val DROIT_API: TableField<Record, Array<DroitApi?>?> = createField(DSL.name("type_organisme_droit_api"), SQLDataType.VARCHAR.asEnumDataType(DroitApi::class.java).array(), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
