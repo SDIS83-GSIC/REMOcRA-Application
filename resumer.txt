@@ -1,0 +1,17 @@
+REMOcRA est un projet SDIS du Var apportant une réponse aux problématiques suivantes :
+
+Mutualiser une infrastructure commune et adaptée aux acteurs « Risques » du département
+Offrir un outil décisionnel aux sapeurs-pompiers
+Répondre à la conformité de la directive Européenne INSPIRE
+Anticiper la collaboration avec les maires en matière de schémas communaux de défense
+incendie
+Optimiser la collaboration avec les partenaires institutionnels
+REMOcRA est une plate-forme collaborative destinée en premier lieu aux SDIS et aux CIS, mais également conçue pour simplifier et automatiser les échanges avec les partenaires institutionnels comme :
+
+Les communes et agglomérations
+Conseil Départemental
+DDT & DDTM
+Sociétés d'affermage
+ONF
+IGN & La poste
+Le grand public
