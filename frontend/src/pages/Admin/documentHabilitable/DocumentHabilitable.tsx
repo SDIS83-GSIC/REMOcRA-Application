@@ -89,13 +89,13 @@ const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
         value={
           values?.listeThematiqueId?.map((e) =>
             thematiqueState?.data?.find((r: IdCodeLibelleType) => r.id === e),
-          ) ?? undefined
+          ) ?? []
         }
         onChange={(thematique) => {
           const thematiqueId = thematique.map((e) => e.id);
           thematiqueId.length > 0
             ? setFieldValue("listeThematiqueId", thematiqueId)
-            : setFieldValue("listeThematiqueId", undefined);
+            : setFieldValue("listeThematiqueId", []);
         }}
         isClearable={true}
         required={false}
@@ -110,13 +110,13 @@ const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
         value={
           values?.listeProfilDroitId?.map((e) =>
             profilDroitState?.data?.find((r: IdCodeLibelleType) => r.id === e),
-          ) ?? undefined
+          ) ?? []
         }
         onChange={(profilDroit) => {
           const profilDroitId = profilDroit.map((e) => e.id);
           profilDroitId.length > 0
             ? setFieldValue("listeProfilDroitId", profilDroitId)
-            : setFieldValue("listeProfilDroitId", undefined);
+            : setFieldValue("listeProfilDroitId", []);
         }}
         isClearable={true}
         required={false}

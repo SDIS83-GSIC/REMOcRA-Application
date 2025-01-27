@@ -20,6 +20,9 @@ import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 import FilterValues from "./FilterDocumentHabilitable.tsx";
 
 const ListDocumentHabilitable = () => {
@@ -27,6 +30,7 @@ const ListDocumentHabilitable = () => {
   const thematiqueState = useGet(url`/api/thematique/`);
   const profilDroitState = useGet(url`/api/profil-droit`);
   const listeButton: ButtonType[] = [];
+  const { handleShowClose, activesKeys } = useAccordionState([false]);
 
   if (hasDroit(user, TYPE_DROIT.DOCUMENTS_A)) {
     listeButton.push({
@@ -75,6 +79,38 @@ const ListDocumentHabilitable = () => {
             )
           }
         />
+
+        <AccordionCustom
+          activesKeys={activesKeys}
+          handleShowClose={handleShowClose}
+          list={[
+            {
+              header: "Informations utiles",
+              content: (
+                <p>
+                  Les documents habilitables sont
+                  <ul>
+                    <li>
+                      rattachables à zéro ou plusieurs <b>thématiques</b>
+                    </li>
+                    <li>
+                      accessibles à zéro ou plusieurs <b>profils droit</b>
+                    </li>
+                  </ul>
+                  Ils remontent sur la page d&apos;accueil dans le bloc de type{" "}
+                  <b>document</b> idoine (donc en prenant en compte le
+                  paramétrage des thématiques de celui-ci, ainsi que les droits
+                  de l&apos;utilisateur connecté).
+                  <br />
+                  Attention, aucune thématique ou aucun profil droit
+                  sélectionnés --&gt; le document ne pourra pas remonter sur la
+                  page d&apos;accueil
+                </p>
+              ),
+            },
+          ]}
+        />
+
         <QueryTable
           query={url`/api/document-habilitable/`}
           columns={[
