@@ -47,6 +47,6 @@ tasks {
 
 idea {
     module {
-        excludeDirs.add(file(".docker"))
+        excludeDirs.addAll(arrayOf(file(".docker"), file("frontend/build"), file("frontend/node_modules")))
     }
 }
