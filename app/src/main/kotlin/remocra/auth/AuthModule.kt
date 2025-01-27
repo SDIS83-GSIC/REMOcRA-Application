@@ -56,6 +56,9 @@ class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
             if (AuthnConstants.HEALTH_SERVLET_NAME == servletName) {
                 return false
             }
+            if (AuthnConstants.IMAGES_SERVLET_NAME == servletName) {
+                return false
+            }
             // Si la requête ne matche pas la DefaultServlet, elle doit être authentifiée
             if (AuthnConstants.DEFAULT_SERVLET_NAME != servletName) {
                 return true

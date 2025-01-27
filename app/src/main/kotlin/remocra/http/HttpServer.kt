@@ -34,6 +34,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory
 import org.pac4j.jee.filter.CallbackFilter
 import org.pac4j.jee.filter.LogoutFilter
 import org.pac4j.jee.filter.SecurityFilter
+import remocra.GlobalConstants
 import remocra.auth.AuthnConstants
 import remocra.auth.UserInfoFilter
 import remocra.healthcheck.HealthServlet
@@ -153,6 +154,14 @@ constructor(
 
         // Servlet par défaut pour les ressources statiques
         context.addServlet(DefaultServlet::class.java, "/favicon.ico")
+        context.addServlet(
+            ServletHolder(AuthnConstants.IMAGES_SERVLET_NAME, DefaultServlet::class.java).apply {
+                setInitParameter("dirAllowed", "false")
+                setInitParameter("resourceBase", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+                setInitParameter("pathInfoOnly", "true")
+            },
+            "/images/*",
+        )
 
         val resource =
             ServletHolder(

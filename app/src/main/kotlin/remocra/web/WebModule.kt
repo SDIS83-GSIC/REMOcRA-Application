@@ -23,7 +23,6 @@ import remocra.web.debitsimultane.DebitSimultaneModule
 import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
-import remocra.web.image.ImageModule
 import remocra.web.importctp.ImportCtpModule
 import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
 import remocra.web.lieudit.LieuDitModule
@@ -79,7 +78,6 @@ object WebModule : RemocraModule() {
         install(TypeOrganismeModule)
         install(TaskModule)
         install(ZoneIntegrationModule)
-        install(ImageModule)
         install(MarquePibiModule)
         install(GestionnaireModule)
         install(VoieModule)

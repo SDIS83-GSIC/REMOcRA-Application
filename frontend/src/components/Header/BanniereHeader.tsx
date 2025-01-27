@@ -14,10 +14,6 @@ const BanniereHeader = () => {
     }}`,
   );
 
-  const imagesHeader = useGet(url`/api/image/get-image-header`).data;
-
-  const banniereChemin = imagesHeader?.[PARAMETRE.BANNIERE_CHEMIN];
-  const logo = imagesHeader?.[PARAMETRE.LOGO_CHEMIN];
   const messageEntete =
     listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE].parametreValeur;
   const typeEnvironment = useGet(url`/api/app-settings/environment`);
@@ -27,7 +23,7 @@ const BanniereHeader = () => {
         xs={1}
         className={"d-flex justify-content-center align-items-center"}
       >
-        {logo && <Image fluid alt={"Logo"} src={logo} />}
+        <Image fluid alt={"Logo"} src="/images/logo" />
       </Col>
       <Col className={"position-relative text-center"}>
         <p
@@ -46,7 +42,7 @@ const BanniereHeader = () => {
               </Badge>
             </p>
           )}
-        <Image fluid alt={"Bandeau d'En-tête"} src={banniereChemin} />
+        <Image fluid alt={"Bandeau d'En-tête"} src="/images/banniere" />
       </Col>
       <Col xs={1} className={"mt-3 text-center"} />
     </Row>

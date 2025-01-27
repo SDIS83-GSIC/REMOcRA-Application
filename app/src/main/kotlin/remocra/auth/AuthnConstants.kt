@@ -6,5 +6,6 @@ object AuthnConstants {
     const val CALLBACK_PATH = "/callback"
     const val LOGOUT_PATH = "/logout"
     const val DEFAULT_SERVLET_NAME = "resources"
+    const val IMAGES_SERVLET_NAME = "images"
     const val HEALTH_SERVLET_NAME = "/health"
 }
