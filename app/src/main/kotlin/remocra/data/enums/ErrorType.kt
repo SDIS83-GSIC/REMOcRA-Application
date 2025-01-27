@@ -550,6 +550,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     //
     ADMIN_COUCHES(25000, "Vous n'avez pas les droits de modification des couches", Status.FORBIDDEN),
 
+    // Paramètres API
+    DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),
+
     ;
     override fun toString(): String {
         return this.code.toString() + " : " + this.libelle

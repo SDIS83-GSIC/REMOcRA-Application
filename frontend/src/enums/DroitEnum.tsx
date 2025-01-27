@@ -361,3 +361,24 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.ZOOM_LIEU_R, "Zoomer sur un lieu"],
   [TYPE_DROIT.DOCUMENTS_A, "Administrer les documents"],
 ]);
+
+export enum TYPE_DROIT_API {
+  ADMINISTRER = "ADMINISTRER",
+  RECEVOIR = "RECEVOIR",
+  TRANSMETTRE = "TRANSMETTRE",
+}
+
+export const TypeDroitApiLabel = new Map<TYPE_DROIT_API, string>([
+  [
+    TYPE_DROIT_API.ADMINISTRER,
+    "Permet d'administer les données indépendamment de la zone de compétence de l'organisme.",
+  ],
+  [
+    TYPE_DROIT_API.RECEVOIR,
+    "Donne à l'organisme concerné les droits d'accès aux informations en lecture seule sur sa zone de compétence",
+  ],
+  [
+    TYPE_DROIT_API.TRANSMETTRE,
+    "Permet à l'organisme concerné de modifier des informations sur sa zone de compétence",
+  ],
+]);

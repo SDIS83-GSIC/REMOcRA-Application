@@ -138,6 +138,7 @@ import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAd
 import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
 import ModuleOperationsDiverses from "./components/ModuleRemocra/ModuleOperationsDiverses.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
+import UpdateTypeOrganismeDroitApi from "./pages/Admin/TypeOrganisme/UpdateTypeOrganismeDroitApi.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1494,6 +1495,15 @@ export default [
           <Authorization
             Component={ListeTask}
             droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
+          />
+        ),
+      },
+      {
+        path: "type-organisme-droits-api",
+        element: (
+          <Authorization
+            Component={UpdateTypeOrganismeDroitApi}
+            droits={[TYPE_DROIT.ADMIN_API]}
           />
         ),
       },

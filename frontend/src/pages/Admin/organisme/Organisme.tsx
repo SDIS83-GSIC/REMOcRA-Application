@@ -9,6 +9,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { TYPE_DROIT_API } from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import {
   requiredBoolean,
@@ -64,6 +65,7 @@ export type TypeOrganismeType = {
   typeOrganismeProtected: boolean;
   typeOrganismeCode: string;
   typeOrganismeLibelle: string;
+  typeOrganismeDroitApi: TYPE_DROIT_API[];
 };
 
 export type ZoneIntegrationType = {
