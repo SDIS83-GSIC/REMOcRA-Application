@@ -72,7 +72,7 @@ const GaugeConfig = (options: any) => {
       <SelectInput
         required={false}
         name={"value"}
-        label="Valeur initiale"
+        label="Numérateur"
         onChange={(value) => handleChange("value", value.value)}
         defaultValue={fieldValue}
         options={options.fieldOptions}
@@ -82,14 +82,14 @@ const GaugeConfig = (options: any) => {
       <SelectInput
         required={false}
         name={"max"}
-        label="Valeur maximum"
+        label="Dénominateur"
         onChange={(value) => handleChange("max", value.value)}
         defaultValue={fieldMax}
         options={options.fieldOptions}
       />
 
       {/* Configuration des limites (couleurs et max) */}
-      <Form.Label className="fw-bold mt-2">Limites des sections :</Form.Label>
+      <Form.Label className="fw-bold mt-2">Paliers des sections :</Form.Label>
       <br />
       {limits.map((limit, index) => (
         <div key={index} style={{ marginBottom: "10px" }}>

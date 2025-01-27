@@ -168,20 +168,10 @@ function getLinks(
     case TypeModuleRemocra.DASHBOARD:
       return [
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.DASHBOARD_A),
-          label: "Édition des requêtes et composants associés",
-          link: URLS.DASHBOARD_ADMIN_QUERY,
-        },
-        {
-          aLeDroit: hasDroit(user, TYPE_DROIT.DASHBOARD_A),
-          label: "Édition des dashbaords et profils associés",
-          link: URLS.DASHBOARD_ADMIN_DASHBOARD,
-        },
-        {
           aLeDroit:
             hasDroit(user, TYPE_DROIT.DASHBOARD_A) ||
             hasDroit(user, TYPE_DROIT.DASHBOARD_R),
-          label: "Mon Dashboard",
+          label: "Accéder au tableau de bord",
           link: URLS.DASHBOARD_LIST,
         },
       ];

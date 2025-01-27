@@ -221,20 +221,11 @@ class RequestUtils {
         val modifiedSelectPart = "SELECT ${modifiedColumns.joinToString(", ")} FROM"
 
         // Reconstruire la requête finale en réintégrant les clauses WITH si elles existent
-        val modifiedQuery = buildString {
-            if (!withPart.isNullOrEmpty()) {
-                appendLine("WITH $withPart")
-            }
-            append(
-                originalQuery.replaceRange(
-                    selectMatch.range.first,
-                    selectMatch.range.last + 1,
-                    modifiedSelectPart,
-                ),
-            )
-        }
-
-        return modifiedQuery.trim()
+        return originalQuery.replaceRange(
+            selectMatch.range.first,
+            selectMatch.range.last + 1,
+            modifiedSelectPart,
+        ).trim()
     }
 
     fun mapQueryToFieldData(data: Result<Record>, queryRequest: DashboardQueryRequestData): FieldData {

@@ -56,7 +56,7 @@ const MenuAdmin = () => {
           <br />
         </Col>
 
-        <Col className="bg-light p-2 border rounded">
+        <Col className="bg-light p-2 border rounded mx-2">
           <div className="fw-bold text-center p-2">Gérer les nomenclatures</div>
 
           <a href={URLS.LIST_DOMAINE}>Domaines</a>
@@ -93,13 +93,25 @@ const MenuAdmin = () => {
       </Row>
 
       <Row className="mt-2">
-        <Col className="bg-light p-2 border rounded">
+        <Col className="bg-light p-2 border rounded mx-2">
           <div className="fw-bold text-center p-2">
             Gestionnaires &amp; sites
           </div>
           <a href={URLS.LIST_GESTIONNAIRE}>Gestionnaires</a>
           <br />
           <a href={URLS.LIST_SITE}>Sites</a>
+          <br />
+        </Col>
+        <Col className="bg-light p-2 border rounded mx-2">
+          <div className="fw-bold text-center p-2">Tableaux de bord</div>
+          {/*  TODO type droit DASHBOARD_A */}
+          <a href={URLS.DASHBOARD_ADMIN_QUERY}>
+            Édition des requêtes et composants associés
+          </a>
+          <br />
+          <a href={URLS.DASHBOARD_ADMIN_DASHBOARD}>
+            Édition des tableaux de bord et profils associés
+          </a>
           <br />
         </Col>
       </Row>

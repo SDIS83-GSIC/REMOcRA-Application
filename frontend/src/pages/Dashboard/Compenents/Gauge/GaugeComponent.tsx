@@ -30,7 +30,7 @@ const GaugeComponent = (options: any) => {
     0,
   );
 
-  const percentage = sumMax === 0 ? 0 : (sumValues / sumMax) * 100;
+  const percentage = (sumMax === 0 ? 0 : (sumValues / sumMax) * 100).toFixed(2);
 
   // Calculer l'angle de la valeur par rapport au maximum (100 dans ce cas)
   const maxAngle = 180; // Demi-jauge (180 degrés)
