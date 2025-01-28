@@ -216,6 +216,8 @@ export const URLS = {
   }) =>
     url`/admin/lien-profil-fonctionnalite/${profilOrganismeId}/${profilUtilisateurId}`,
 
+  LIEN_TYPE_ORGANISME_DROIT_API: url`/admin/type-organisme-droits-api`,
+
   COUCHES_LIST: url`/admin/couches`,
 
   ADD_ORGANISME: url`/admin/organisme/create/`,

@@ -49,6 +49,11 @@ const MenuAdmin = () => {
           <br />
           <a href={URLS.COUCHES_LIST}>Couches cartographiques</a>
           <br />
+          <br />
+          <a href={URLS.LIEN_TYPE_ORGANISME_DROIT_API}>
+            Attribution des droits API pour les types organismes
+          </a>
+          <br />
         </Col>
 
         <Col className="bg-light p-2 border rounded">
