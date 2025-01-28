@@ -206,7 +206,7 @@ const QueryList = (props: QueryListProps) => {
       )
         .text()
         .then(() => {
-          successToast("La requête à bien été supprimé.");
+          successToast("La requête a bien été supprimée.");
           // Refresh la liste des requêtes
           fetchData.run();
         })

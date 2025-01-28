@@ -20,11 +20,7 @@ class GetDashboardQueryUseCase : AbstractUseCase() {
 
     fun getQuery(sqlQuery: DashboardQueryRequestData): RequestUtils.FieldData? {
         requestUtils.validateReadOnlyQuery(sqlQuery.query) // Vérifie que la requête SQL soit valide
-        val parseQuery = requestUtils.parseSQLQuery(sqlQuery.query) // Déconstruit la requête SQL brute
-        val queryGetGeometryCol = requestUtils.generateSQLQuery(parseQuery) // Génère requête qui retourne le type des colonnes
-        val dataGeometry = dashboardRepository.getQuery(queryGetGeometryCol) // Retourne le type des colonnes
-        val rewriteQuery = requestUtils.rewriteQueryWithGeoJSON(sqlQuery.query, dataGeometry) // Réécrit la requête en castant les colonnes de type geométrie
-        val dataSqlQuery = dashboardRepository.getQuery(rewriteQuery)
+        val dataSqlQuery = dashboardRepository.getQuery(sqlQuery.query)
         return requestUtils.mapQueryToFieldData(dataSqlQuery, sqlQuery)
     }
 
