@@ -35,6 +35,7 @@ import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_D
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Adresse.AdressePath
@@ -43,8 +44,10 @@ import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesureP
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LAdresseDocument.LAdresseDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
+import remocra.db.jooq.remocra.tables.LPermisDocument.LPermisDocumentPath
 import remocra.db.jooq.remocra.tables.OldebVisiteDocument.OldebVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.RcciDocument.RcciDocumentPath
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -252,6 +255,23 @@ open class Document(
     val lPeiDocument: LPeiDocumentPath
         get(): LPeiDocumentPath = lPeiDocument()
 
+    private lateinit var _lPermisDocument: LPermisDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_permis_document</code> table
+     */
+    fun lPermisDocument(): LPermisDocumentPath {
+        if (!this::_lPermisDocument.isInitialized) {
+            _lPermisDocument = LPermisDocumentPath(this, null, L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lPermisDocument
+    }
+
+    val lPermisDocument: LPermisDocumentPath
+        get(): LPermisDocumentPath = lPermisDocument()
+
     private lateinit var _oldebVisiteDocument: OldebVisiteDocumentPath
 
     /**
@@ -306,6 +326,13 @@ open class Document(
      */
     val pei: PeiPath
         get(): PeiPath = lPeiDocument().pei()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.permis</code> table
+     */
+    val permis: PermisPath
+        get(): PermisPath = lPermisDocument().permis()
     override fun `as`(alias: String): Document = Document(DSL.name(alias), this)
     override fun `as`(alias: Name): Document = Document(alias, this)
     override fun `as`(alias: Table<*>): Document = Document(alias.qualifiedName, this)

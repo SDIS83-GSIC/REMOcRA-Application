@@ -54,6 +54,8 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
+import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
@@ -99,6 +101,7 @@ import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.PeiPrescrit
 import remocra.db.jooq.remocra.tables.Pena
 import remocra.db.jooq.remocra.tables.PenaAspiration
+import remocra.db.jooq.remocra.tables.Permis
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilDroit
@@ -122,6 +125,8 @@ import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
+import remocra.db.jooq.remocra.tables.TypePermisAvis
+import remocra.db.jooq.remocra.tables.TypePermisInterservice
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.VPeiLastMesures
@@ -389,6 +394,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
 
     /**
+     * The table <code>remocra.l_permis_cadastre_parcelle</code>.
+     */
+    val L_PERMIS_CADASTRE_PARCELLE: LPermisCadastreParcelle get() = LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE
+
+    /**
+     * The table <code>remocra.l_permis_document</code>.
+     */
+    val L_PERMIS_DOCUMENT: LPermisDocument get() = LPermisDocument.L_PERMIS_DOCUMENT
+
+    /**
      * The table <code>remocra.l_profil_droit_document_habilitable</code>.
      */
     val L_PROFIL_DROIT_DOCUMENT_HABILITABLE: LProfilDroitDocumentHabilitable get() = LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
@@ -614,6 +629,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val PENA_ASPIRATION: PenaAspiration get() = PenaAspiration.PENA_ASPIRATION
 
     /**
+     * The table <code>remocra.permis</code>.
+     */
+    val PERMIS: Permis get() = Permis.PERMIS
+
+    /**
      * The table <code>remocra.pibi</code>.
      */
     val PIBI: Pibi get() = Pibi.PIBI
@@ -729,6 +749,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TYPE_PENA_ASPIRATION: TypePenaAspiration get() = TypePenaAspiration.TYPE_PENA_ASPIRATION
 
     /**
+     * The table <code>remocra.type_permis_avis</code>.
+     */
+    val TYPE_PERMIS_AVIS: TypePermisAvis get() = TypePermisAvis.TYPE_PERMIS_AVIS
+
+    /**
+     * The table <code>remocra.type_permis_interservice</code>.
+     */
+    val TYPE_PERMIS_INTERSERVICE: TypePermisInterservice get() = TypePermisInterservice.TYPE_PERMIS_INTERSERVICE
+
+    /**
      * The table <code>remocra.type_reseau</code>.
      */
     val TYPE_RESEAU: TypeReseau get() = TypeReseau.TYPE_RESEAU
@@ -818,6 +848,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
+        LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE,
+        LPermisDocument.L_PERMIS_DOCUMENT,
         LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE,
         LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
         LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT,
@@ -863,6 +895,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         PeiPrescrit.PEI_PRESCRIT,
         Pena.PENA,
         PenaAspiration.PENA_ASPIRATION,
+        Permis.PERMIS,
         Pibi.PIBI,
         PoidsAnomalie.POIDS_ANOMALIE,
         ProfilDroit.PROFIL_DROIT,
@@ -886,6 +919,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         TypeCanalisation.TYPE_CANALISATION,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,
+        TypePermisAvis.TYPE_PERMIS_AVIS,
+        TypePermisInterservice.TYPE_PERMIS_INTERSERVICE,
         TypeReseau.TYPE_RESEAU,
         Utilisateur.UTILISATEUR,
         VPeiLastMesures.V_PEI_LAST_MESURES,

@@ -27,12 +27,14 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_TYPE_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_SERVICE_INSTRUCTEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME__PROFIL_ORGANISME_PROFIL_ORGANISME_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR__PROFIL_UTILISATEUR_PROFIL_UTILISATEUR_TYPE_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME_TYPE_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.TYPE_ORGANISME__TYPE_ORGANISME_TYPE_ORGANISME_PARENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.ProfilOrganisme.ProfilOrganismePath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
@@ -191,6 +193,23 @@ open class TypeOrganisme(
 
     val organisme: OrganismePath
         get(): OrganismePath = organisme()
+
+    private lateinit var _permis: PermisPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.permis</code>
+     * table
+     */
+    fun permis(): PermisPath {
+        if (!this::_permis.isInitialized) {
+            _permis = PermisPath(this, null, PERMIS__PERMIS_PERMIS_SERVICE_INSTRUCTEUR_ID_FKEY.inverseKey)
+        }
+
+        return _permis
+    }
+
+    val permis: PermisPath
+        get(): PermisPath = permis()
 
     private lateinit var _profilOrganisme: ProfilOrganismePath
 

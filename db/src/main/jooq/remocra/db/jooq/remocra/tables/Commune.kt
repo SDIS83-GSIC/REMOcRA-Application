@@ -41,6 +41,7 @@ import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.CadastreSection.CadastreSectionPath
@@ -49,6 +50,7 @@ import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.Rcci.RcciPath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import java.util.UUID
@@ -299,6 +301,23 @@ open class Commune(
 
     val pei: PeiPath
         get(): PeiPath = pei()
+
+    private lateinit var _permis: PermisPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.permis</code>
+     * table
+     */
+    fun permis(): PermisPath {
+        if (!this::_permis.isInitialized) {
+            _permis = PermisPath(this, null, PERMIS__PERMIS_PERMIS_COMMUNE_ID_FKEY.inverseKey)
+        }
+
+        return _permis
+    }
+
+    val permis: PermisPath
+        get(): PermisPath = permis()
 
     private lateinit var _rcci: RcciPath
 

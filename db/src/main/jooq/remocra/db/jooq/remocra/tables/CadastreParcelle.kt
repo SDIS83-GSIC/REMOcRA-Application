@@ -29,9 +29,12 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE_PKEY
 import remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE__CADASTRE_PARCELLE_CADASTRE_PARCELLE_CADASTRE_SECTION_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_PERMIS_CADASTRE_PARCELLE__L_PERMIS_CADASTRE_PARCELLE_CADASTRE_PARCELLE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY
 import remocra.db.jooq.remocra.tables.CadastreSection.CadastreSectionPath
+import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle.LPermisCadastreParcellePath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -156,6 +159,23 @@ open class CadastreParcelle(
     val cadastreSection: CadastreSectionPath
         get(): CadastreSectionPath = cadastreSection()
 
+    private lateinit var _lPermisCadastreParcelle: LPermisCadastreParcellePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_permis_cadastre_parcelle</code> table
+     */
+    fun lPermisCadastreParcelle(): LPermisCadastreParcellePath {
+        if (!this::_lPermisCadastreParcelle.isInitialized) {
+            _lPermisCadastreParcelle = LPermisCadastreParcellePath(this, null, L_PERMIS_CADASTRE_PARCELLE__L_PERMIS_CADASTRE_PARCELLE_CADASTRE_PARCELLE_ID_FKEY.inverseKey)
+        }
+
+        return _lPermisCadastreParcelle
+    }
+
+    val lPermisCadastreParcelle: LPermisCadastreParcellePath
+        get(): LPermisCadastreParcellePath = lPermisCadastreParcelle()
+
     private lateinit var _oldeb: OldebPath
 
     /**
@@ -172,6 +192,13 @@ open class CadastreParcelle(
 
     val oldeb: OldebPath
         get(): OldebPath = oldeb()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.permis</code> table
+     */
+    val permis: PermisPath
+        get(): PermisPath = lPermisCadastreParcelle().permis()
     override fun `as`(alias: String): CadastreParcelle = CadastreParcelle(DSL.name(alias), this)
     override fun `as`(alias: Name): CadastreParcelle = CadastreParcelle(alias, this)
     override fun `as`(alias: Table<*>): CadastreParcelle = CadastreParcelle(alias.qualifiedName, this)

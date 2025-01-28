@@ -28,6 +28,7 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_INSTRUCTEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY
@@ -44,6 +45,7 @@ import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.Job.JobPath
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Rcci.RcciPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
@@ -270,6 +272,23 @@ open class Utilisateur(
 
     val lCourrierUtilisateur: LCourrierUtilisateurPath
         get(): LCourrierUtilisateurPath = lCourrierUtilisateur()
+
+    private lateinit var _permis: PermisPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.permis</code>
+     * table
+     */
+    fun permis(): PermisPath {
+        if (!this::_permis.isInitialized) {
+            _permis = PermisPath(this, null, PERMIS__PERMIS_PERMIS_INSTRUCTEUR_ID_FKEY.inverseKey)
+        }
+
+        return _permis
+    }
+
+    val permis: PermisPath
+        get(): PermisPath = permis()
 
     private lateinit var _rcciRcciRcciArriveeDdtmOnfIdFkey: RcciPath
 

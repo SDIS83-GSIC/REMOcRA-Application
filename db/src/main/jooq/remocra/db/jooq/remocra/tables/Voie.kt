@@ -35,12 +35,14 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_CROISEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_VOIE_ID_FKEY
+import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE_PKEY
 import remocra.db.jooq.remocra.keys.VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -246,6 +248,23 @@ open class Voie(
 
     val peiPeiVoieIdFkey: PeiPath
         get(): PeiPath = peiPeiVoieIdFkey()
+
+    private lateinit var _permis: PermisPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.permis</code>
+     * table
+     */
+    fun permis(): PermisPath {
+        if (!this::_permis.isInitialized) {
+            _permis = PermisPath(this, null, PERMIS__PERMIS_PERMIS_VOIE_ID_FKEY.inverseKey)
+        }
+
+        return _permis
+    }
+
+    val permis: PermisPath
+        get(): PermisPath = permis()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("line_or_multiline_voie"), "(((geometrytype(voie_geometrie) = 'LINESTRING'::text) OR (geometrytype(voie_geometrie) = 'MULTILINESTRING'::text)))", true),
     )

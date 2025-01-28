@@ -50,6 +50,8 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
+import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
@@ -95,6 +97,7 @@ import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.PeiPrescrit
 import remocra.db.jooq.remocra.tables.Pena
 import remocra.db.jooq.remocra.tables.PenaAspiration
+import remocra.db.jooq.remocra.tables.Permis
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.ProfilDroit
@@ -118,6 +121,8 @@ import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
+import remocra.db.jooq.remocra.tables.TypePermisAvis
+import remocra.db.jooq.remocra.tables.TypePermisInterservice
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.VPeiLastMesures
@@ -363,6 +368,16 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 
 /**
+ * The table <code>remocra.l_permis_cadastre_parcelle</code>.
+ */
+val L_PERMIS_CADASTRE_PARCELLE: LPermisCadastreParcelle = LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE
+
+/**
+ * The table <code>remocra.l_permis_document</code>.
+ */
+val L_PERMIS_DOCUMENT: LPermisDocument = LPermisDocument.L_PERMIS_DOCUMENT
+
+/**
  * The table <code>remocra.l_profil_droit_document_habilitable</code>.
  */
 val L_PROFIL_DROIT_DOCUMENT_HABILITABLE: LProfilDroitDocumentHabilitable = LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
@@ -588,6 +603,11 @@ val PENA: Pena = Pena.PENA
 val PENA_ASPIRATION: PenaAspiration = PenaAspiration.PENA_ASPIRATION
 
 /**
+ * The table <code>remocra.permis</code>.
+ */
+val PERMIS: Permis = Permis.PERMIS
+
+/**
  * The table <code>remocra.pibi</code>.
  */
 val PIBI: Pibi = Pibi.PIBI
@@ -701,6 +721,16 @@ val TYPE_ORGANISME: TypeOrganisme = TypeOrganisme.TYPE_ORGANISME
  * The table <code>remocra.type_pena_aspiration</code>.
  */
 val TYPE_PENA_ASPIRATION: TypePenaAspiration = TypePenaAspiration.TYPE_PENA_ASPIRATION
+
+/**
+ * The table <code>remocra.type_permis_avis</code>.
+ */
+val TYPE_PERMIS_AVIS: TypePermisAvis = TypePermisAvis.TYPE_PERMIS_AVIS
+
+/**
+ * The table <code>remocra.type_permis_interservice</code>.
+ */
+val TYPE_PERMIS_INTERSERVICE: TypePermisInterservice = TypePermisInterservice.TYPE_PERMIS_INTERSERVICE
 
 /**
  * The table <code>remocra.type_reseau</code>.
