@@ -202,7 +202,13 @@ function getLinks(
         },
       ];
     case TypeModuleRemocra.RISQUES:
-      return;
+      return [
+        {
+          aLeDroit: true, // est accessible en mode grand public
+          label: "Carte des risques",
+          link: URLS.RISQUE,
+        },
+      ];
     case TypeModuleRemocra.CRISE:
       return [
         {

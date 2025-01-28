@@ -191,6 +191,7 @@ import Visite from "./pages/Visite/Visite.tsx";
 import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListTypeCriseCategorie.tsx";
 import CreateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateTypeCriseCategorie.tsx";
 import UpdateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateTypeCriseCategorie.tsx";
+import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -272,6 +273,9 @@ export const URLS = {
 
   // Module Carte Permis
   CARTE_PERMIS: url`/permis`,
+
+  // Module Carte des risques
+  RISQUE: url`/risque`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -1009,6 +1013,10 @@ export default [
     element: (
       <Authorization Component={MapPermis} droits={[TYPE_DROIT.PERMIS_R]} />
     ),
+  },
+  {
+    path: "/risque",
+    element: <Authorization Component={MapRisque} isPublic={true} />,
   },
   {
     path: "/admin/",
