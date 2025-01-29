@@ -62,6 +62,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             throw IllegalArgumentException("Pas de diamètre pour le calcul de dispo")
         }
     }
+
     private fun checkReservoirId(pei: PeiForCalculDispoData) {
         if (pei.reservoirId == null) {
             throw IllegalArgumentException("Pas de réservoir pour le calcul de dispo")
@@ -370,6 +371,7 @@ class CalculDispoUseCase : AbstractUseCase() {
 
                 return false
             }
+
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> pei.pressionDynamique == null || pei.pressionDynamique < 1
@@ -436,7 +438,11 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> pei.pressionDynamique != null && pei.pressionDynamique > 8
-            CodeSdis.SDIS_61 -> pei.pressionDynamique != null && pei.pressionDynamique > 8
+            CodeSdis.SDIS_61 ->
+                pei.pression != null && pei.pressionDynamique != null &&
+                    pei.pression >= 1 && pei.pression <= 8 &&
+                    pei.pressionDynamique > 8
+
             CodeSdis.SDIS_66 -> false
             // TODO choix à faire (avec le SDIS) : seuil à 10 ou à 16 ?
             CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique > 16
@@ -479,16 +485,14 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> (pei.debit == null || pei.debit <= 15)
             CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 30
             CodeSdis.SDIS_61 -> {
-                if (listOf(GlobalConstants.DIAMETRE_80, GlobalConstants.DIAMETRE_100).contains(ensureDiametre(pei).diametreCode) &&
-                    (pei.debit == null || pei.debit < 30)
-                ) {
-                    return true
-                } else if (isDiametre150(pei) &&
-                    (pei.debit == null || pei.debit < 60)
-                ) {
-                    return true
+                if (pei.pressionDynamique == null || pei.pressionDynamique <= 8) {
+                    if (pei.pression != null && pei.pression >= 1 && pei.pression <= 8) {
+                        return pei.debit == null || pei.debit < 30
+                    }
                 }
-
+                if (pei.debit == null) {
+                    return pei.pressionDynamique == null || pei.pressionDynamique < 1
+                }
                 return false
             }
 
@@ -600,11 +604,13 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_61 -> {
                 if (isDiametre100(pei) &&
-                    (pei.debit != null && pei.debit < 60)
+                    isPressionsBetween1And8(pei) &&
+                    pei.debit != null && pei.debit >= 30 && pei.debit < 60
                 ) {
                     return true
                 } else if (isDiametre150(pei) &&
-                    (pei.debit != null && pei.debit < 120)
+                    isPressionsBetween1And8(pei) &&
+                    pei.debit != null && pei.debit >= 30 && pei.debit < 120
                 ) {
                     return true
                 }
@@ -672,16 +678,16 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> pei.debit != null && pei.debit > 1000
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_61 -> {
-                if (isDiametre80(pei) &&
-                    (pei.debit != null && pei.debit > 90)
+                if (isDiametre80(pei) && isPressionsBetween1And8(pei) &&
+                    (pei.debit != null && pei.debit >= 90)
                 ) {
                     return true
-                } else if (isDiametre100(pei) &&
-                    (pei.debit != null && pei.debit > 130)
+                } else if (isDiametre100(pei) && isPressionsBetween1And8(pei) &&
+                    (pei.debit != null && pei.debit > 150)
                 ) {
                     return true
-                } else if (isDiametre150(pei) &&
-                    (pei.debit != null && pei.debit > 180)
+                } else if (isDiametre150(pei) && isPressionsBetween1And8(pei) &&
+                    (pei.debit != null && pei.debit > 270)
                 ) {
                     return true
                 }
@@ -835,5 +841,13 @@ class CalculDispoUseCase : AbstractUseCase() {
         }
 
         return false
+    }
+
+    /**
+     * Utilitaire retournant TRUE si les pressions statiques et dynamiques sont non nulles et comprises entre 1 et 8
+     */
+    private fun isPressionsBetween1And8(pei: PeiForCalculDispoData): Boolean {
+        return pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
+            pei.pressionDynamique != null && pei.pressionDynamique >= 1 && pei.pressionDynamique <= 8
     }
 }
