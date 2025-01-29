@@ -1,0 +1,11 @@
+*
+!.gitignore
+!workspaces/
+workspaces/*
+!workspaces/remocra/
+workspaces/remocra/*
+!workspaces/remocra/styles/
+workspaces/remocra/styles/*
+!workspaces/remocra/styles/symbologie/
+workspaces/remocra/styles/symbologie/*
+!workspaces/remocra/styles/symbologie/.gitignore

@@ -1,0 +1,16 @@
+{
+  "dataStore": {
+    "name": "postgis",
+    "connectionParameters": {
+      "entry": [
+        { "@key": "host", "$": "{{POSTGIS_HOSTNAME:json}}" },
+        { "@key": "port", "$": "{{POSTGIS_PORT:json}}" },
+        { "@key": "user", "$": "{{POSTGIS_USERNAME:json}}" },
+        { "@key": "passwd", "$": "{{POSTGIS_PASSWORD:json}}" },
+        { "@key": "database", "$": "{{POSTGIS_DB:json}}" },
+        { "@key": "dbtype", "$": "postgis" },
+        { "@key": "Expose primary keys", "$": "true" }
+      ]
+    }
+  }
+}
