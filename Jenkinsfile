@@ -68,6 +68,7 @@ pipeline {
               npm ci
               npm run lint
               npm run build --no-cache
+              npm sbom --sbom-format cyclonedx --omit dev --sbom-type application --package-lock-only true > npm-sbom.json
               '''
           }
         }
@@ -82,20 +83,35 @@ pipeline {
         }
       }
     }
-    stage ('Generate application SBOM') {
-      steps {
-        nodejsInsideDocker {
-          sh 'cd frontend/ && npm sbom --sbom-format cyclonedx --omit dev --sbom-type application --package-lock-only true > npm-sbom.json'
-        }
-      }
-    }
 
-    stage('Build and Remove docker remocra') {
-      steps {
-        dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
-           dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
-         }
-        dockerBuildAndRemove(buildDir: 'keycloak/')
+    stage('Build docker') {
+      parallel {
+        stage('Build and Remove docker remocra') {
+          steps {
+            dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
+              dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+            }
+          }
+        }
+
+        stage('Build and Remove docker keycloak') {
+          when {
+            expression { !isGerritReview() || headChangeset('keycloak/**') || headChangeset('Jenkinsfile') }
+          }
+          steps {
+            dockerBuildAndRemove(buildDir: 'keycloak/') { imageId ->
+              withSidecarContainers([
+                keycloak: [ imageId: imageId, args: ' -e KC_DB=dev-file -e KC_BOOTSTRAP_ADMIN_USERNAME=kcadmin -e KC_BOOTSTRAP_ADMIN_PASSWORD=kcadmin', command: 'start-dev' ],
+              ]) {
+                insideDocker(imageId: imageId, runExtraParams: '-e KEYCLOAK_URL=http://keycloak:8080 -e KEYCLOAK_USER=kcadmin -e KEYCLOAK_PASSWORD=kcadmin '
+                    // configuration du realm "remocra"
+                    + '-e CLIENT_SECRET=remocra -e REMOCRA_URL=http://remocra:8881') {
+                  sh '/entrypoint.sh keycloak-config-cli'
+                }
+              }
+            }
+          }
+        }
       }
     }
 
