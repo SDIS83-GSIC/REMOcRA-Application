@@ -407,7 +407,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
+            CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique >= 0.6 && pei.pressionDynamique < 1
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> false
@@ -659,7 +659,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 return false
             }
 
-            CodeSdis.SDIS_973 -> pei.debit != null && pei.debit < 60
+            CodeSdis.SDIS_973 -> pei.debit != null && pei.debit >= 30 && pei.debit < 60
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.debit != null && pei.debit < 30
         }
