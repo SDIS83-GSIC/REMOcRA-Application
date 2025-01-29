@@ -140,8 +140,8 @@ function getLinks(
 
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
-          label: "Liste des blocs documents",
-          link: URLS.LIST_BLOC_DOCUMENT,
+          label: "Liste des documents habilitables",
+          link: URLS.LIST_DOCUMENT_HABILITABLE,
         },
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),

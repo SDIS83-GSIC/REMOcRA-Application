@@ -6,31 +6,36 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import BlocDocument, {
+import DocumentHabilitable, {
   getInitialValues,
   prepareVariables,
   validationSchema,
-} from "./BlocDocument.tsx";
+} from "./DocumentHabilitable.tsx";
 
-const UpdateBlocDocument = () => {
-  const { blocDocumentId } = useParams();
-  const { data } = useGet(url`/api/bloc-document/get/` + blocDocumentId);
+const UpdateDocumentHabilitable = () => {
+  const { documentHabilitableId } = useParams();
+  const { data } = useGet(
+    url`/api/document-habilitable/get/` + documentHabilitableId,
+  );
   return (
     <Container>
-      <PageTitle icon={<IconEdit />} title={"Mise à jour d'un bloc document"} />
+      <PageTitle
+        icon={<IconEdit />}
+        title={"Mise à jour d'un document habilitable"}
+      />
       <MyFormik
         initialValues={getInitialValues(data)}
         validationSchema={validationSchema}
         isPost={false}
         isMultipartFormData={true}
-        submitUrl={`/api/bloc-document/update/` + blocDocumentId}
+        submitUrl={`/api/document-habilitable/update/` + documentHabilitableId}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.LIST_BLOC_DOCUMENT}
+        redirectUrl={URLS.LIST_DOCUMENT_HABILITABLE}
       >
-        <BlocDocument />
+        <DocumentHabilitable />
       </MyFormik>
     </Container>
   );
 };
 
-export default UpdateBlocDocument;
+export default UpdateDocumentHabilitable;

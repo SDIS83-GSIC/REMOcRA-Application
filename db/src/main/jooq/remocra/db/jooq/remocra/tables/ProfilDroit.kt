@@ -28,16 +28,16 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_PROFIL_DROIT_BLOC_DOCUMENT__L_PROFIL_DROIT_BLOC_DOCUMENT_PROFIL_DROIT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_PROFIL_DROIT_DOCUMENT_HABILITABLE__L_PROFIL_DROIT_DOCUMENT_HABILITABLE_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_RAPPORT_PERSONNALISE_PROFIL_DROIT__L_RAPPORT_PERSONNALISE_PROFIL_DROIT_PROFIL_DROIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_DROIT_PROFIL_DROIT_CODE_KEY
-import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
 import remocra.db.jooq.remocra.tables.Couche.CouchePath
+import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
-import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument.LProfilDroitBlocDocumentPath
+import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable.LProfilDroitDocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
 import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit.LRapportPersonnaliseProfilDroitPath
 import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
@@ -185,22 +185,22 @@ open class ProfilDroit(
     val lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
         get(): LModeleCourrierProfilDroitPath = lModeleCourrierProfilDroit()
 
-    private lateinit var _lProfilDroitBlocDocument: LProfilDroitBlocDocumentPath
+    private lateinit var _lProfilDroitDocumentHabilitable: LProfilDroitDocumentHabilitablePath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_profil_droit_bloc_document</code> table
+     * <code>remocra.l_profil_droit_document_habilitable</code> table
      */
-    fun lProfilDroitBlocDocument(): LProfilDroitBlocDocumentPath {
-        if (!this::_lProfilDroitBlocDocument.isInitialized) {
-            _lProfilDroitBlocDocument = LProfilDroitBlocDocumentPath(this, null, L_PROFIL_DROIT_BLOC_DOCUMENT__L_PROFIL_DROIT_BLOC_DOCUMENT_PROFIL_DROIT_ID_FKEY.inverseKey)
+    fun lProfilDroitDocumentHabilitable(): LProfilDroitDocumentHabilitablePath {
+        if (!this::_lProfilDroitDocumentHabilitable.isInitialized) {
+            _lProfilDroitDocumentHabilitable = LProfilDroitDocumentHabilitablePath(this, null, L_PROFIL_DROIT_DOCUMENT_HABILITABLE__L_PROFIL_DROIT_DOCUMENT_HABILITABLE_PROFIL_DROIT_ID_FKEY.inverseKey)
         }
 
-        return _lProfilDroitBlocDocument
+        return _lProfilDroitDocumentHabilitable
     }
 
-    val lProfilDroitBlocDocument: LProfilDroitBlocDocumentPath
-        get(): LProfilDroitBlocDocumentPath = lProfilDroitBlocDocument()
+    val lProfilDroitDocumentHabilitable: LProfilDroitDocumentHabilitablePath
+        get(): LProfilDroitDocumentHabilitablePath = lProfilDroitDocumentHabilitable()
 
     private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
 
@@ -252,10 +252,10 @@ open class ProfilDroit(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.bloc_document</code> table
+     * <code>remocra.document_habilitable</code> table
      */
-    val blocDocument: BlocDocumentPath
-        get(): BlocDocumentPath = lProfilDroitBlocDocument().blocDocument()
+    val documentHabilitable: DocumentHabilitablePath
+        get(): DocumentHabilitablePath = lProfilDroitDocumentHabilitable().documentHabilitable()
 
     /**
      * Get the implicit many-to-many join path to the

@@ -46,12 +46,12 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
 
         // Puis on retourne la liste des documents / courrier
         if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
-            return thematiqueRepository.getBlocDocumentWithThematique(listeThematiqueId, nbDocument, profilDroitId, userInfo.isSuperAdmin, params)
+            return thematiqueRepository.getDocumentHabilitableWithThematique(listeThematiqueId, nbDocument, profilDroitId, userInfo.isSuperAdmin, params)
                 .map {
                     DocumentCourrierData(
-                        id = it.blocDocumentId,
-                        libelle = it.blocDocumentLibelle,
-                        date = it.blocDocumentDateMaj,
+                        id = it.documentHabilitableId,
+                        libelle = it.documentHabilitableLibelle,
+                        date = it.documentHabilitableDateMaj,
                     )
                 }
             // COURRIER
@@ -77,7 +77,7 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
         }
         val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
-        return thematiqueRepository.countBlocDocumentWithThematique(listeThematiqueId, getProfilDroit(userInfo), userInfo.isSuperAdmin, params)
+        return thematiqueRepository.countDocumentHabilitableWithThematique(listeThematiqueId, getProfilDroit(userInfo), userInfo.isSuperAdmin, params)
     }
 
     private fun getProfilDroit(userInfo: UserInfo?): UUID? {

@@ -9,14 +9,14 @@ import remocra.auth.UserInfo
 import remocra.data.DocumentCourrierData
 import remocra.data.GlobalData
 import remocra.data.Params
-import remocra.db.jooq.remocra.tables.pojos.BlocDocument
-import remocra.db.jooq.remocra.tables.references.BLOC_DOCUMENT
+import remocra.db.jooq.remocra.tables.pojos.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.db.jooq.remocra.tables.references.DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_BLOC_DOCUMENT
-import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_BLOC_DOCUMENT
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -34,46 +34,46 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .orderBy(THEMATIQUE.LIBELLE)
             .fetchInto()
 
-    fun getBlocDocumentWithThematique(
+    fun getDocumentHabilitableWithThematique(
         listeThematiqueId: Collection<UUID>,
         limit: Int?,
         profilDroitId: UUID?,
         isSuperAdmin: Boolean = false,
         params: Params<Filter, Sort>?,
-    ): Collection<BlocDocument> =
+    ): Collection<DocumentHabilitable> =
         dsl
             .selectDistinct(
-                BLOC_DOCUMENT.ID,
-                BLOC_DOCUMENT.LIBELLE,
-                BLOC_DOCUMENT.DATE_MAJ,
-                BLOC_DOCUMENT.DESCRIPTION,
+                DOCUMENT_HABILITABLE.ID,
+                DOCUMENT_HABILITABLE.LIBELLE,
+                DOCUMENT_HABILITABLE.DATE_MAJ,
+                DOCUMENT_HABILITABLE.DESCRIPTION,
                 DOCUMENT.ID,
             )
             .from(DOCUMENT)
-            .join(BLOC_DOCUMENT)
-            .on(BLOC_DOCUMENT.DOCUMENT_ID.eq(DOCUMENT.ID))
-            .leftJoin(L_THEMATIQUE_BLOC_DOCUMENT)
-            .on(L_THEMATIQUE_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
-            .leftJoin(L_PROFIL_DROIT_BLOC_DOCUMENT)
-            .on(L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
-            .leftJoin(THEMATIQUE).on(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.eq(THEMATIQUE.ID))
+            .join(DOCUMENT_HABILITABLE)
+            .on(DOCUMENT_HABILITABLE.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
+            .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
+            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(THEMATIQUE).on(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.eq(THEMATIQUE.ID))
             .where(THEMATIQUE.ACTIF.isTrue)
-            .and(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
+            .and(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId),
+                    L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(profilDroitId),
                     isSuperAdmin,
                 ),
             )
             .and(params?.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(
                 params?.sortBy?.toCondition()
-                    .takeIf { !it.isNullOrEmpty() } ?: listOf(BLOC_DOCUMENT.DATE_MAJ.desc()),
+                    .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT_HABILITABLE.DATE_MAJ.desc()),
             )
             .limit(params?.limit ?: limit)
             .fetchInto()
 
-    fun countBlocDocumentWithThematique(
+    fun countDocumentHabilitableWithThematique(
         listeThematiqueId: Collection<UUID>,
         profilDroitId: UUID?,
         isSuperAdmin: Boolean = false,
@@ -81,19 +81,19 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
     ): Int =
         dsl
             .selectDistinct(
-                BLOC_DOCUMENT.ID,
+                DOCUMENT_HABILITABLE.ID,
             )
             .from(DOCUMENT)
-            .join(BLOC_DOCUMENT)
-            .on(BLOC_DOCUMENT.DOCUMENT_ID.eq(DOCUMENT.ID))
-            .leftJoin(L_THEMATIQUE_BLOC_DOCUMENT)
-            .on(L_THEMATIQUE_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
-            .leftJoin(L_PROFIL_DROIT_BLOC_DOCUMENT)
-            .on(L_PROFIL_DROIT_BLOC_DOCUMENT.BLOC_DOCUMENT_ID.eq(BLOC_DOCUMENT.ID))
-            .where(L_THEMATIQUE_BLOC_DOCUMENT.THEMATIQUE_ID.`in`(listeThematiqueId))
+            .join(DOCUMENT_HABILITABLE)
+            .on(DOCUMENT_HABILITABLE.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
+            .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
+            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .where(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    L_PROFIL_DROIT_BLOC_DOCUMENT.PROFIL_DROIT_ID.eq(profilDroitId),
+                    L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(profilDroitId),
                     isSuperAdmin,
                 ),
             )
@@ -152,7 +152,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    libelle?.let { DSL.and(BLOC_DOCUMENT.LIBELLE.containsIgnoreCase(it)) },
+                    libelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCase(it)) },
                 ),
             )
     }
@@ -162,8 +162,8 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
         val date: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
-            BLOC_DOCUMENT.LIBELLE.getSortField(libelle),
-            BLOC_DOCUMENT.DATE_MAJ.getSortField(date),
+            DOCUMENT_HABILITABLE.LIBELLE.getSortField(libelle),
+            DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(date),
         )
     }
 }

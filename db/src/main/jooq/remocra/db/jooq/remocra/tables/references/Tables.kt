@@ -6,7 +6,6 @@ package remocra.db.jooq.remocra.tables.references
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
-import remocra.db.jooq.remocra.tables.BlocDocument
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -19,6 +18,7 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
+import remocra.db.jooq.remocra.tables.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
@@ -40,11 +40,11 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
-import remocra.db.jooq.remocra.tables.LProfilDroitBlocDocument
+import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
 import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
-import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
+import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
@@ -105,11 +105,6 @@ val ANOMALIE_CATEGORIE: AnomalieCategorie = AnomalieCategorie.ANOMALIE_CATEGORIE
 val API: Api = Api.API
 
 /**
- * The table <code>remocra.bloc_document</code>.
- */
-val BLOC_DOCUMENT: BlocDocument = BlocDocument.BLOC_DOCUMENT
-
-/**
  * The table <code>remocra.commune</code>.
  */
 val COMMUNE: Commune = Commune.COMMUNE
@@ -168,6 +163,11 @@ val DIAMETRE: Diametre = Diametre.DIAMETRE
  * The table <code>remocra.document</code>.
  */
 val DOCUMENT: Document = Document.DOCUMENT
+
+/**
+ * The table <code>remocra.document_habilitable</code>.
+ */
+val DOCUMENT_HABILITABLE: DocumentHabilitable = DocumentHabilitable.DOCUMENT_HABILITABLE
 
 /**
  * The table <code>remocra.domaine</code>.
@@ -275,9 +275,9 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
 
 /**
- * The table <code>remocra.l_profil_droit_bloc_document</code>.
+ * The table <code>remocra.l_profil_droit_document_habilitable</code>.
  */
-val L_PROFIL_DROIT_BLOC_DOCUMENT: LProfilDroitBlocDocument = LProfilDroitBlocDocument.L_PROFIL_DROIT_BLOC_DOCUMENT
+val L_PROFIL_DROIT_DOCUMENT_HABILITABLE: LProfilDroitDocumentHabilitable = LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
 
 /**
  * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
@@ -290,14 +290,14 @@ val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LPr
 val L_RAPPORT_PERSONNALISE_PROFIL_DROIT: LRapportPersonnaliseProfilDroit = LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
 
 /**
- * The table <code>remocra.l_thematique_bloc_document</code>.
- */
-val L_THEMATIQUE_BLOC_DOCUMENT: LThematiqueBlocDocument = LThematiqueBlocDocument.L_THEMATIQUE_BLOC_DOCUMENT
-
-/**
  * The table <code>remocra.l_thematique_courrier</code>.
  */
 val L_THEMATIQUE_COURRIER: LThematiqueCourrier = LThematiqueCourrier.L_THEMATIQUE_COURRIER
+
+/**
+ * The table <code>remocra.l_thematique_document_habilitable</code>.
+ */
+val L_THEMATIQUE_DOCUMENT_HABILITABLE: LThematiqueDocumentHabilitable = LThematiqueDocumentHabilitable.L_THEMATIQUE_DOCUMENT_HABILITABLE
 
 /**
  * The table <code>remocra.l_thematique_module</code>.

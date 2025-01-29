@@ -29,14 +29,14 @@ import remocra.db.jooq.couverturehydraulique.keys.L_ETUDE_DOCUMENT__L_ETUDE_DOCU
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.couverturehydraulique.tables.LEtudeDocument.LEtudeDocumentPath
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
-import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
+import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.time.ZonedDateTime
@@ -160,23 +160,6 @@ open class Document(
     val lEtudeDocument: LEtudeDocumentPath
         get(): LEtudeDocumentPath = lEtudeDocument()
 
-    private lateinit var _blocDocument: BlocDocumentPath
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.bloc_document</code> table
-     */
-    fun blocDocument(): BlocDocumentPath {
-        if (!this::_blocDocument.isInitialized) {
-            _blocDocument = BlocDocumentPath(this, null, BLOC_DOCUMENT__BLOC_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
-        }
-
-        return _blocDocument
-    }
-
-    val blocDocument: BlocDocumentPath
-        get(): BlocDocumentPath = blocDocument()
-
     private lateinit var _courrier: CourrierPath
 
     /**
@@ -210,6 +193,23 @@ open class Document(
 
     val debitSimultaneMesure: DebitSimultaneMesurePath
         get(): DebitSimultaneMesurePath = debitSimultaneMesure()
+
+    private lateinit var _documentHabilitable: DocumentHabilitablePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.document_habilitable</code> table
+     */
+    fun documentHabilitable(): DocumentHabilitablePath {
+        if (!this::_documentHabilitable.isInitialized) {
+            _documentHabilitable = DocumentHabilitablePath(this, null, DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _documentHabilitable
+    }
+
+    val documentHabilitable: DocumentHabilitablePath
+        get(): DocumentHabilitablePath = documentHabilitable()
 
     private lateinit var _lPeiDocument: LPeiDocumentPath
 

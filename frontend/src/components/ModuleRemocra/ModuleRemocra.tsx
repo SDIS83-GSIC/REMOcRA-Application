@@ -81,7 +81,7 @@ const ModuleDocumentCourrier = ({
                     className={"text-warning"}
                     href={
                       moduleType === TypeModuleRemocra.DOCUMENT
-                        ? url`/api/bloc-document/telecharger/` + e.id
+                        ? url`/api/document-habilitable/telecharger/` + e.id
                         : url`/api/documents/telecharger/` + e.id
                     }
                   >

@@ -20,9 +20,9 @@ import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
-import FilterValues from "./FilterBlocDocument.tsx";
+import FilterValues from "./FilterDocumentHabilitable.tsx";
 
-const ListBlocDocument = () => {
+const ListDocumentHabilitable = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
   const thematiqueState = useGet(url`/api/thematique/`);
   const profilDroitState = useGet(url`/api/profil-droit`);
@@ -33,7 +33,8 @@ const ListBlocDocument = () => {
       row: (row) => {
         return row;
       },
-      href: (blocDocumentId) => URLS.UPDATE_BLOC_DOCUMENT(blocDocumentId),
+      href: (documentHabilitableId) =>
+        URLS.UPDATE_DOCUMENT_HABILITABLE(documentHabilitableId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -42,7 +43,7 @@ const ListBlocDocument = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/bloc-document/delete/`,
+      path: url`/api/document-habilitable/delete/`,
     });
   }
 
@@ -51,8 +52,8 @@ const ListBlocDocument = () => {
       row: (row) => {
         return row;
       },
-      href: (blocDocumentId) =>
-        url`/api/bloc-document/telecharger/` + blocDocumentId,
+      href: (documentHabilitableId) =>
+        url`/api/document-habilitable/telecharger/` + documentHabilitableId,
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconExport />,
       textEnable: "Télécharger le document",
@@ -64,24 +65,26 @@ const ListBlocDocument = () => {
       <Container>
         <PageTitle
           icon={<IconList />}
-          title={"Liste des blocs documents"}
+          title={"Liste des documents habilitables"}
           right={
             hasDroit(user, TYPE_DROIT.DOCUMENTS_A) && (
               <CreateButton
-                href={URLS.ADD_BLOC_DOCUMENT}
-                title={"Ajouter un bloc document"}
+                href={URLS.ADD_DOCUMENT_HABILITABLE}
+                title={"Ajouter un document habilitable"}
               />
             )
           }
         />
         <QueryTable
-          query={url`/api/bloc-document/`}
+          query={url`/api/document-habilitable/`}
           columns={[
             {
               Header: "Libellé",
-              accessor: "blocDocumentLibelle",
-              sortField: "blocDocumentLibelle",
-              Filter: <FilterInput type="text" name="blocDocumentLibelle" />,
+              accessor: "documentHabilitableLibelle",
+              sortField: "documentHabilitableLibelle",
+              Filter: (
+                <FilterInput type="text" name="documentHabilitableLibelle" />
+              ),
             },
             {
               Header: "Thématiques",
@@ -105,8 +108,8 @@ const ListBlocDocument = () => {
             },
             {
               Header: "Mise à jour le",
-              accessor: "blocDocumentDateMaj",
-              sortField: "blocDocumentDateMaj",
+              accessor: "documentHabilitableDateMaj",
+              sortField: "documentHabilitableDateMaj",
               Cell: (value) => {
                 return (
                   <div>
@@ -117,11 +120,11 @@ const ListBlocDocument = () => {
             },
             ActionColumn({
               Header: "Actions",
-              accessor: "blocDocumentId",
+              accessor: "documentHabilitableId",
               buttons: listeButton,
             }),
           ]}
-          idName={"tableBlocDocument"}
+          idName={"tableDocumentHabilitable"}
           filterValuesToVariable={FilterValues}
           filterContext={useFilterContext({})}
         />
@@ -130,4 +133,4 @@ const ListBlocDocument = () => {
   );
 };
 
-export default ListBlocDocument;
+export default ListDocumentHabilitable;

@@ -13,17 +13,17 @@ import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
-type BlocDocumentType = {
-  blocDocumentLibelle: string;
-  blocDocumentDescription: string;
+type DocumentHabilitableType = {
+  documentHabilitableLibelle: string;
+  documentHabilitableDescription: string;
   listeThematiqueId: string[];
   listeProfilDroitId: string[];
   document: any;
 };
 
-export const getInitialValues = (data?: BlocDocumentType) => ({
-  blocDocumentLibelle: data?.blocDocumentLibelle ?? null,
-  blocDocumentDescription: data?.blocDocumentDescription ?? null,
+export const getInitialValues = (data?: DocumentHabilitableType) => ({
+  documentHabilitableLibelle: data?.documentHabilitableLibelle ?? null,
+  documentHabilitableDescription: data?.documentHabilitableDescription ?? null,
   listeThematiqueId: data?.listeThematiqueId ?? null,
   listeProfilDroitId: data?.listeProfilDroitId ?? null,
   document: null,
@@ -31,12 +31,18 @@ export const getInitialValues = (data?: BlocDocumentType) => ({
 
 export const validationSchema = object({});
 
-export const prepareVariables = (values: BlocDocumentType) => {
+export const prepareVariables = (values: DocumentHabilitableType) => {
   const formData = new FormData();
 
   formData.append("document", values.document);
-  formData.append("blocDocumentLibelle", values.blocDocumentLibelle);
-  formData.append("blocDocumentDescription", values.blocDocumentDescription);
+  formData.append(
+    "documentHabilitableLibelle",
+    values.documentHabilitableLibelle,
+  );
+  formData.append(
+    "documentHabilitableDescription",
+    values.documentHabilitableDescription,
+  );
   formData.append(
     "listeThematiqueId",
     JSON.stringify(values.listeThematiqueId),
@@ -49,17 +55,21 @@ export const prepareVariables = (values: BlocDocumentType) => {
   return formData;
 };
 
-const BlocDocument = ({ isNew = false }: { isNew?: boolean }) => {
-  const { values, setFieldValue } = useFormikContext<BlocDocumentType>();
+const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
+  const { values, setFieldValue } = useFormikContext<DocumentHabilitableType>();
   const thematiqueState = useGet(url`/api/thematique/actif`);
   const profilDroitState = useGet(url`/api/profil-droit`);
 
   return (
     <FormContainer>
-      <TextInput label="Libellé" name="blocDocumentLibelle" required={false} />
+      <TextInput
+        label="Libellé"
+        name="documentHabilitableLibelle"
+        required={false}
+      />
       <TextAreaInput
         label="Description"
-        name="blocDocumentDescription"
+        name="documentHabilitableDescription"
         required={false}
       />
       <FileInput
@@ -112,9 +122,9 @@ const BlocDocument = ({ isNew = false }: { isNew?: boolean }) => {
         required={false}
       />
 
-      <SubmitFormButtons returnLink={URLS.LIST_BLOC_DOCUMENT} />
+      <SubmitFormButtons returnLink={URLS.LIST_DOCUMENT_HABILITABLE} />
     </FormContainer>
   );
 };
 
-export default BlocDocument;
+export default DocumentHabilitable;

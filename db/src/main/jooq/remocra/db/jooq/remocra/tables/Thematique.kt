@@ -25,15 +25,15 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.L_THEMATIQUE_BLOC_DOCUMENT__L_THEMATIQUE_BLOC_DOCUMENT_THEMATIQUE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_COURRIER__L_THEMATIQUE_COURRIER_THEMATIQUE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_THEMATIQUE_DOCUMENT_HABILITABLE__L_THEMATIQUE_DOCUMENT_HABILITABLE_THEMATIQUE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_MODULE__L_THEMATIQUE_MODULE_THEMATIQUE_ID_FKEY
 import remocra.db.jooq.remocra.keys.THEMATIQUE_PKEY
 import remocra.db.jooq.remocra.keys.THEMATIQUE_THEMATIQUE_CODE_KEY
-import remocra.db.jooq.remocra.tables.BlocDocument.BlocDocumentPath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
-import remocra.db.jooq.remocra.tables.LThematiqueBlocDocument.LThematiqueBlocDocumentPath
+import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier.LThematiqueCourrierPath
+import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable.LThematiqueDocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LThematiqueModule.LThematiqueModulePath
 import remocra.db.jooq.remocra.tables.Module.ModulePath
 import java.util.UUID
@@ -145,23 +145,6 @@ open class Thematique(
     override fun getPrimaryKey(): UniqueKey<Record> = THEMATIQUE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(THEMATIQUE_THEMATIQUE_CODE_KEY)
 
-    private lateinit var _lThematiqueBlocDocument: LThematiqueBlocDocumentPath
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_thematique_bloc_document</code> table
-     */
-    fun lThematiqueBlocDocument(): LThematiqueBlocDocumentPath {
-        if (!this::_lThematiqueBlocDocument.isInitialized) {
-            _lThematiqueBlocDocument = LThematiqueBlocDocumentPath(this, null, L_THEMATIQUE_BLOC_DOCUMENT__L_THEMATIQUE_BLOC_DOCUMENT_THEMATIQUE_ID_FKEY.inverseKey)
-        }
-
-        return _lThematiqueBlocDocument
-    }
-
-    val lThematiqueBlocDocument: LThematiqueBlocDocumentPath
-        get(): LThematiqueBlocDocumentPath = lThematiqueBlocDocument()
-
     private lateinit var _lThematiqueCourrier: LThematiqueCourrierPath
 
     /**
@@ -178,6 +161,23 @@ open class Thematique(
 
     val lThematiqueCourrier: LThematiqueCourrierPath
         get(): LThematiqueCourrierPath = lThematiqueCourrier()
+
+    private lateinit var _lThematiqueDocumentHabilitable: LThematiqueDocumentHabilitablePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_thematique_document_habilitable</code> table
+     */
+    fun lThematiqueDocumentHabilitable(): LThematiqueDocumentHabilitablePath {
+        if (!this::_lThematiqueDocumentHabilitable.isInitialized) {
+            _lThematiqueDocumentHabilitable = LThematiqueDocumentHabilitablePath(this, null, L_THEMATIQUE_DOCUMENT_HABILITABLE__L_THEMATIQUE_DOCUMENT_HABILITABLE_THEMATIQUE_ID_FKEY.inverseKey)
+        }
+
+        return _lThematiqueDocumentHabilitable
+    }
+
+    val lThematiqueDocumentHabilitable: LThematiqueDocumentHabilitablePath
+        get(): LThematiqueDocumentHabilitablePath = lThematiqueDocumentHabilitable()
 
     private lateinit var _lThematiqueModule: LThematiqueModulePath
 
@@ -198,17 +198,17 @@ open class Thematique(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.bloc_document</code> table
-     */
-    val blocDocument: BlocDocumentPath
-        get(): BlocDocumentPath = lThematiqueBlocDocument().blocDocument()
-
-    /**
-     * Get the implicit many-to-many join path to the
      * <code>remocra.courrier</code> table
      */
     val courrier: CourrierPath
         get(): CourrierPath = lThematiqueCourrier().courrier()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.document_habilitable</code> table
+     */
+    val documentHabilitable: DocumentHabilitablePath
+        get(): DocumentHabilitablePath = lThematiqueDocumentHabilitable().documentHabilitable()
 
     /**
      * Get the implicit many-to-many join path to the

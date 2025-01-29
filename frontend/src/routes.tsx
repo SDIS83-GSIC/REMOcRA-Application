@@ -94,9 +94,9 @@ import AdminParametres from "./pages/Admin/adminParametres/AdminParametres.tsx";
 import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
 import UpdateThematique from "./pages/Admin/thematique/UpdateThematique.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
-import ListBlocDocument from "./pages/Admin/blocDocument/ListBlocDocument.tsx";
-import CreateBlocDocument from "./pages/Admin/blocDocument/CreateBlocDocument.tsx";
-import UpdateBlocDocument from "./pages/Admin/blocDocument/UpdateBlocDocument.tsx";
+import ListDocumentHabilitable from "./pages/Admin/documentHabilitable/ListDocumentHabilitable.tsx";
+import CreateDocumentHabilitable from "./pages/Admin/documentHabilitable/CreateDocumentHabilitable.tsx";
+import UpdateDocumentHabilitable from "./pages/Admin/documentHabilitable/UpdateDocumentHabilitable.tsx";
 import AdminFicheResume from "./pages/Admin/resume/AdminFicheResume.tsx";
 import ListUtilisateur from "./pages/Admin/utilisateur/ListUtilisateur.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
@@ -324,10 +324,10 @@ export const URLS = {
     `/contact/update/` +
     contactId,
 
-  ADD_BLOC_DOCUMENT: url`/admin/bloc-document/create`,
-  LIST_BLOC_DOCUMENT: url`/admin/bloc-document`,
-  UPDATE_BLOC_DOCUMENT: (blocDocumentId: string) =>
-    url`/admin/bloc-document/update/` + blocDocumentId,
+  ADD_DOCUMENT_HABILITABLE: url`/admin/document-habilitable/create`,
+  LIST_DOCUMENT_HABILITABLE: url`/admin/document-habilitable`,
+  UPDATE_DOCUMENT_HABILITABLE: (documentHabilitableId: string) =>
+    url`/admin/document-habilitable/update/` + documentHabilitableId,
 
   ANOMALIE: url`/admin/anomalie`,
   ANOMALIE_CREATE: url`/admin/anomalie/create`,
@@ -1325,28 +1325,28 @@ export default [
         ),
       },
       {
-        path: "bloc-document",
+        path: "document-habilitable",
         element: (
           <Authorization
-            Component={ListBlocDocument}
+            Component={ListDocumentHabilitable}
             droits={[TYPE_DROIT.DOCUMENTS_R]}
           />
         ),
       },
       {
-        path: "bloc-document/create",
+        path: "document-habilitable/create",
         element: (
           <Authorization
-            Component={CreateBlocDocument}
+            Component={CreateDocumentHabilitable}
             droits={[TYPE_DROIT.DOCUMENTS_A]}
           />
         ),
       },
       {
-        path: "bloc-document/update/:blocDocumentId",
+        path: "document-habilitable/update/:documentHabilitableId",
         element: (
           <Authorization
-            Component={UpdateBlocDocument}
+            Component={UpdateDocumentHabilitable}
             droits={[TYPE_DROIT.DOCUMENTS_A]}
           />
         ),

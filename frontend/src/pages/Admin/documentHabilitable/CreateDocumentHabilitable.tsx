@@ -3,29 +3,32 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconCreate } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
-import BlocDocument, {
+import DocumentHabilitable, {
   getInitialValues,
   prepareVariables,
   validationSchema,
-} from "./BlocDocument.tsx";
+} from "./DocumentHabilitable.tsx";
 
-const CreateBlocDocument = () => {
+const CreateDocumentHabilitable = () => {
   return (
     <Container>
-      <PageTitle icon={<IconCreate />} title={"Création d'un bloc document"} />
+      <PageTitle
+        icon={<IconCreate />}
+        title={"Création d'un document habilitable"}
+      />
       <MyFormik
         initialValues={getInitialValues()}
         validationSchema={validationSchema}
         isPost={true}
         isMultipartFormData={true}
-        submitUrl={`/api/bloc-document/create/`}
+        submitUrl={`/api/document-habilitable/create/`}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.LIST_BLOC_DOCUMENT}
+        redirectUrl={URLS.LIST_DOCUMENT_HABILITABLE}
       >
-        <BlocDocument isNew={true} />
+        <DocumentHabilitable isNew={true} />
       </MyFormik>
     </Container>
   );
 };
 
-export default CreateBlocDocument;
+export default CreateDocumentHabilitable;

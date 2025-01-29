@@ -1,17 +1,21 @@
-type FilterBlocDocumentType = {
-  blocDocumentLibelle?: string | undefined;
+type FilterDocumentHabilitableType = {
+  documentHabilitableLibelle?: string | undefined;
   listThematiqueId?: string[] | undefined;
   listProfilDroitId?: string[] | undefined;
 };
 
 const FilterValues = ({
-  blocDocumentLibelle,
+  documentHabilitableLibelle,
   listThematiqueId,
   listProfilDroitId,
-}: FilterBlocDocumentType) => {
-  const filter: FilterBlocDocumentType = {};
+}: FilterDocumentHabilitableType) => {
+  const filter: FilterDocumentHabilitableType = {};
 
-  filterProperty(filter, blocDocumentLibelle, "blocDocumentLibelle");
+  filterProperty(
+    filter,
+    documentHabilitableLibelle,
+    "documentHabilitableLibelle",
+  );
 
   if (listThematiqueId !== null && listThematiqueId?.length > 0) {
     filter.listThematiqueId = listThematiqueId;
@@ -24,7 +28,7 @@ const FilterValues = ({
 };
 
 function filterProperty(
-  filter: FilterBlocDocumentType,
+  filter: FilterDocumentHabilitableType,
   value: string | undefined,
   name: string,
 ) {

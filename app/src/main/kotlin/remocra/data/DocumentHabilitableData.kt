@@ -3,10 +3,10 @@ package remocra.data
 import jakarta.servlet.http.Part
 import java.util.UUID
 
-data class BlocDocumentData(
-    val blocDocumentId: UUID,
-    val blocDocumentLibelle: String?,
-    val blocDocumentDescription: String?,
+data class DocumentHabilitableData(
+    val documentHabilitableId: UUID,
+    val documentHabilitableLibelle: String?,
+    val documentHabilitableDescription: String?,
     val listeThematiqueId: Collection<UUID>?,
     val listeProfilDroitId: Collection<UUID>?,
     val document: Part? = null,

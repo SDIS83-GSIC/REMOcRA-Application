@@ -19,16 +19,16 @@ import org.slf4j.LoggerFactory
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.BlocDocumentData
 import remocra.data.DataTableau
+import remocra.data.DocumentHabilitableData
 import remocra.data.Params
-import remocra.db.BlocDocumentRepository
+import remocra.db.DocumentHabilitableRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
-import remocra.usecase.document.blocdocument.CreateBlocDocumentUseCase
-import remocra.usecase.document.blocdocument.DeleteBlocDocumentUseCase
-import remocra.usecase.document.blocdocument.UpdateBlocDocumentUseCase
+import remocra.usecase.document.documenthabilitable.CreateDocumentHabilitableUseCase
+import remocra.usecase.document.documenthabilitable.DeleteDocumentHabilitableUseCase
+import remocra.usecase.document.documenthabilitable.UpdateDocumentHabilitableUseCase
 import remocra.utils.getTextPart
 import remocra.utils.getTextPartOrNull
 import remocra.utils.notFound
@@ -38,22 +38,22 @@ import java.nio.file.Paths
 import java.util.UUID
 import kotlin.io.path.pathString
 
-@Path("/bloc-document")
+@Path("/document-habilitable")
 @Produces(MediaType.APPLICATION_JSON)
-class BlocDocumentEndpoint : AbstractEndpoint() {
+class DocumentHabilitableEndpoint : AbstractEndpoint() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Inject
-    lateinit var blocDocumentRepository: BlocDocumentRepository
+    lateinit var documentHabilitableRepository: DocumentHabilitableRepository
 
     @Inject
-    lateinit var createBlocDocumentUseCase: CreateBlocDocumentUseCase
+    lateinit var createDocumentHabilitableUseCase: CreateDocumentHabilitableUseCase
 
     @Inject
-    lateinit var deleteBlocDocumentUseCase: DeleteBlocDocumentUseCase
+    lateinit var deleteDocumentHabilitableUseCase: DeleteDocumentHabilitableUseCase
 
     @Inject
-    lateinit var updateBlocDocumentUseCase: UpdateBlocDocumentUseCase
+    lateinit var updateDocumentHabilitableUseCase: UpdateDocumentHabilitableUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -67,11 +67,11 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
     @POST
     @Path("/")
     @RequireDroits([Droit.DOCUMENTS_R])
-    fun getAll(params: Params<BlocDocumentRepository.Filter, BlocDocumentRepository.Sort>): Response =
+    fun getAll(params: Params<DocumentHabilitableRepository.Filter, DocumentHabilitableRepository.Sort>): Response =
         Response.ok(
             DataTableau(
-                list = blocDocumentRepository.getAllForAdmin(params),
-                count = blocDocumentRepository.countAllForAdmin(params.filterBy),
+                list = documentHabilitableRepository.getAllForAdmin(params),
+                count = documentHabilitableRepository.countAllForAdmin(params.filterBy),
             ),
         ).build()
 
@@ -83,13 +83,13 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
     @GET
     @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
     @Public("Le téléchargement des documents n'est pas dépendant d'un droit particulier")
-    @Path("/telecharger/{blocDocumentId}")
+    @Path("/telecharger/{documentHabilitableId}")
     @Produces(MediaType.TEXT_PLAIN)
-    fun telechargerBlocDocument(@PathParam("blocDocumentId") blocDocumentId: UUID): Response {
-        val document = blocDocumentRepository.getDocumentByBlocDocument(blocDocumentId)
+    fun telechargerDocumentHabilitable(@PathParam("documentHabilitableId") documentHabilitableId: UUID): Response {
+        val document = documentHabilitableRepository.getDocumentByDocumentHabilitable(documentHabilitableId)
 
         if (document == null) {
-            logger.error("Le bloc document $blocDocumentId n'a pas été trouvé.")
+            logger.error("Le document habilitable $documentHabilitableId n'a pas été trouvé.")
             return notFound().build()
         }
 
@@ -105,59 +105,59 @@ class BlocDocumentEndpoint : AbstractEndpoint() {
     fun create(
         @Context httpRequest: HttpServletRequest,
     ): Response {
-        val blocDocumentData = BlocDocumentData(
-            blocDocumentId = UUID.randomUUID(),
-            blocDocumentLibelle = httpRequest.getTextPartOrNull("blocDocumentLibelle"),
-            blocDocumentDescription = httpRequest.getTextPartOrNull("blocDocumentDescription"),
+        val documentHabilitableData = DocumentHabilitableData(
+            documentHabilitableId = UUID.randomUUID(),
+            documentHabilitableLibelle = httpRequest.getTextPartOrNull("documentHabilitableLibelle"),
+            documentHabilitableDescription = httpRequest.getTextPartOrNull("documentHabilitableDescription"),
             listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
             listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
             document = httpRequest.getPart("document"),
         )
 
-        return createBlocDocumentUseCase.execute(
+        return createDocumentHabilitableUseCase.execute(
             securityContext.userInfo,
-            blocDocumentData,
+            documentHabilitableData,
         ).wrap()
     }
 
     @DELETE
-    @Path("/delete/{blocDocumentId}")
+    @Path("/delete/{documentHabilitableId}")
     @RequireDroits([Droit.DOCUMENTS_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun delete(
-        @PathParam("blocDocumentId")
-        blocDocumentId: UUID,
+        @PathParam("documentHabilitableId")
+        documentHabilitableId: UUID,
     ): Response =
-        deleteBlocDocumentUseCase.execute(
+        deleteDocumentHabilitableUseCase.execute(
             securityContext.userInfo,
-            blocDocumentRepository.getById(blocDocumentId),
+            documentHabilitableRepository.getById(documentHabilitableId),
         ).wrap()
 
     @GET
-    @Path("/get/{blocDocumentId}")
+    @Path("/get/{documentHabilitableId}")
     @RequireDroits([Droit.DOCUMENTS_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun get(
-        @PathParam("blocDocumentId")
-        blocDocumentId: UUID,
+        @PathParam("documentHabilitableId")
+        documentHabilitableId: UUID,
     ): Response =
-        Response.ok(blocDocumentRepository.getById(blocDocumentId)).build()
+        Response.ok(documentHabilitableRepository.getById(documentHabilitableId)).build()
 
     @PUT
-    @Path("/update/{blocDocumentId}")
+    @Path("/update/{documentHabilitableId}")
     @RequireDroits([Droit.DOCUMENTS_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun update(
-        @PathParam("blocDocumentId")
-        blocDocumentId: UUID,
+        @PathParam("documentHabilitableId")
+        documentHabilitableId: UUID,
         @Context httpRequest: HttpServletRequest,
     ): Response =
-        updateBlocDocumentUseCase.execute(
+        updateDocumentHabilitableUseCase.execute(
             securityContext.userInfo,
-            BlocDocumentData(
-                blocDocumentId = blocDocumentId,
-                blocDocumentLibelle = httpRequest.getTextPartOrNull("blocDocumentLibelle"),
-                blocDocumentDescription = httpRequest.getTextPartOrNull("blocDocumentDescription"),
+            DocumentHabilitableData(
+                documentHabilitableId = documentHabilitableId,
+                documentHabilitableLibelle = httpRequest.getTextPartOrNull("documentHabilitableLibelle"),
+                documentHabilitableDescription = httpRequest.getTextPartOrNull("documentHabilitableDescription"),
                 listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
                 listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
                 document = if (httpRequest.getPart("document").submittedFileName != null) httpRequest.getPart("document") else null,
