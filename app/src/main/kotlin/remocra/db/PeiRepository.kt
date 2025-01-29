@@ -92,12 +92,30 @@ class PeiRepository
         INDISPONIBILITE_TEMPORAIRE,
         TOURNEE,
         LISTE_PEI,
+        PEI_LONGUE_INDISPO,
     }
 
     fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
         param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
         return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.INDISPONIBILITE_TEMPORAIRE, isSuperAdmin).fetchInto()
     }
+
+    // Pour les PEI indisponibles depuis trop longtemps
+    fun getPeiWithFilterByMessageAlerte(param: Params<Filter, Sort>, listePeiId: Set<UUID>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
+        param.filterBy?.listePeiId = listePeiId
+        return getAllWithFilterAndConditionalJoin(
+            param,
+            zoneCompetenceId,
+            PageFilter.PEI_LONGUE_INDISPO,
+            isSuperAdmin,
+        )
+            .fetchInto()
+    }
+    fun countAllPeiWithFilterByMessageAlerte(filterBy: Filter?, listePeiId: Set<UUID>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
+        filterBy?.listePeiId = listePeiId
+        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.PEI_LONGUE_INDISPO)
+    }
+
     fun countAllPeiWithFilterByIndisponibiliteTemporaire(filterBy: Filter?, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
         filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
         return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.INDISPONIBILITE_TEMPORAIRE)
@@ -143,6 +161,8 @@ class PeiRepository
 
                     // Si on vient de la page des pei pas de join supplémentaire
                     PageFilter.LISTE_PEI -> it
+
+                    PageFilter.PEI_LONGUE_INDISPO -> it
                 }
             }
             .where(filterBy?.toCondition() ?: DSL.noCondition())
@@ -278,6 +298,9 @@ class PeiRepository
 
                     // Si on vient de la page des pei pas de join supplémentaire
                     PageFilter.LISTE_PEI -> it
+
+                    // Pour les PEI indisponibles depuis trop longtemps
+                    PageFilter.PEI_LONGUE_INDISPO -> it
                 }
             }
             .where(param.filterBy?.toCondition() ?: DSL.noCondition())
@@ -337,6 +360,7 @@ class PeiRepository
         var idIndisponibiliteTemporaire: UUID?,
         var idTournee: UUID?,
         val tourneeLibelle: String?,
+        var listePeiId: Set<UUID>?,
     ) {
 
         fun toCondition(): Condition =
@@ -361,6 +385,7 @@ class PeiRepository
                         )
                     },
                     idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
+                    listePeiId?.let { DSL.and(PEI.ID.`in`(it)) },
                 ),
             )
     }
@@ -424,6 +449,11 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
+
+    fun getInfoPei(): List<PeiData> =
+        dsl.select(peiData)
+            .from(PEI)
+            .fetchInto()
 
     fun upsert(pei: PeiData) =
         dsl.insertInto(PEI).setPeiField(pei)
@@ -782,6 +812,12 @@ class PeiRepository
             )
             .limit(limit)
             .offset(offset)
+            .fetchInto()
+
+    fun getPeiIdIndisponibles(zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Collection<UUID> =
+        dsl.select(PEI.ID)
+            .from(PEI)
+            .where(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE))
             .fetchInto()
 
     fun getPeiForApi(

@@ -140,6 +140,7 @@ import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx"
 import ModuleOperationsDiverses from "./components/ModuleRemocra/ModuleOperationsDiverses.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import UpdateTypeOrganismeDroitApi from "./pages/Admin/TypeOrganisme/UpdateTypeOrganismeDroitApi.tsx";
+import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -171,6 +172,8 @@ export const URLS = {
   TOURNEE_VISITE: (tourneeId: string) =>
     url`/deci/tournee/visite-tournee/` + tourneeId,
   FICHE_RESUME: (peiId: string) => url`/deci/pei/fiche/` + peiId,
+
+  MESSAGE_PEI_LONGUE_INDISPO_LISTE_PEI: url`/deci/message-pei-longue-indispo/pei`,
 
   // Module couverture hydraulique
   CREATE_ETUDE: url`/couverture-hydraulique/etudes/create`,
@@ -568,6 +571,15 @@ export default [
           <Authorization
             Component={ExportCTP}
             droits={[TYPE_DROIT.IMPORT_CTP_A]}
+          />
+        ),
+      },
+      {
+        path: "message-pei-longue-indispo/pei",
+        element: (
+          <Authorization
+            Component={MessagePeiLongueIndispoListePei}
+            droits={[TYPE_DROIT.PEI_R]}
           />
         ),
       },

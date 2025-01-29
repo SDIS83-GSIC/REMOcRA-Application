@@ -27,6 +27,7 @@ import remocra.web.importctp.ImportCtpModule
 import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
 import remocra.web.lieudit.LieuDitModule
 import remocra.web.marque.MarquePibiModule
+import remocra.web.messagelongueindispo.MessagePeiLongueIndispoModule
 import remocra.web.module.ModuleModule
 import remocra.web.nature.NatureModule
 import remocra.web.naturedeci.NatureDeciModule
@@ -88,6 +89,7 @@ object WebModule : RemocraModule() {
         install(RapportPersonnaliseModule)
         install(ImportCtpModule)
         install(DashboardModule)
+        install(MessagePeiLongueIndispoModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

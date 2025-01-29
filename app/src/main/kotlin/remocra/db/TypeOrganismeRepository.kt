@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import java.util.UUID
 
@@ -27,4 +28,12 @@ class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) :
             .set(TYPE_ORGANISME.DROIT_API, listeDroitApi)
             .where(TYPE_ORGANISME.ID.eq(typeOrganismeId))
             .execute()
+
+    fun getUserTypeOrganisme(organismeId: UUID): String =
+        dsl.select(TYPE_ORGANISME.CODE)
+            .from(TYPE_ORGANISME)
+            .join(ORGANISME)
+            .on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .where(ORGANISME.ID.eq(organismeId))
+            .fetchSingleInto()
 }

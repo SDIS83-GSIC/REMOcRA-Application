@@ -9,6 +9,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.historique.tables.pojos.Tracabilite
 import remocra.db.jooq.historique.tables.references.TRACABILITE
+import remocra.db.jooq.remocra.enums.Disponibilite
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -108,5 +109,19 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
         dsl.selectFrom(TRACABILITE)
             .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.INDISPONIBILITE_TEMPORAIRE))
             .and(TRACABILITE.OBJET_ID.`in`(listeIndispoTempId))
+            .fetchInto()
+
+    /**
+     * Permet de retourner les PEI qui ont été disponibles entre aujourd'hui et aujourd'hui - nbJours
+     */
+    fun getPeiIdDisponibles(nbJours: Int): Collection<UUID> =
+        dsl.select(TRACABILITE.OBJET_ID)
+            .from(TRACABILITE)
+            .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))
+            .and(TRACABILITE.DATE.between(dateUtils.now().minusDays(nbJours.toLong()), dateUtils.now()))
+            .and(
+                DSL.jsonbGetAttributeAsText(TRACABILITE.OBJET_DATA, "peiDisponibiliteTerrestre")
+                    .eq(Disponibilite.DISPONIBLE.literal).or(TRACABILITE.TYPE_OPERATION.eq(TypeOperation.INSERT)),
+            )
             .fetchInto()
 }

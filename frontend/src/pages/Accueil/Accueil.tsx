@@ -1,22 +1,27 @@
-import { Col, Row } from "react-bootstrap";
+import { Alert, Button, Col, Row } from "react-bootstrap";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import Header from "../../components/Header/Header.tsx";
 import ModuleRemocra, {
   TypeModuleRemocra,
 } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
-import { hasDroit } from "../../droits.tsx";
 import SquelettePage from "../SquelettePage.tsx";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 
 const Accueil = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
+
   // On récupère les modules
   const modulesState = useGet(url`/api/modules/`);
+
+  const messagePeiLongueIndispoState = useGet(
+    url`/api/message-pei-longue-indispo/`,
+  );
 
   if (!modulesState.isResolved) {
     return <Loading />;
@@ -29,6 +34,20 @@ const Accueil = () => {
 
   return (
     <SquelettePage navbar={<Header />} fluid={false} banner={true}>
+      {messagePeiLongueIndispoState?.data && (
+        <Row>
+          <Alert variant="danger">
+            <Alert.Heading>PEI indisponibles</Alert.Heading>
+            {messagePeiLongueIndispoState?.data.message}
+            <Button
+              variant="link"
+              href={URLS.MESSAGE_PEI_LONGUE_INDISPO_LISTE_PEI}
+            >
+              Voir plus
+            </Button>
+          </Alert>
+        </Row>
+      )}
       <Row>
         {Object.entries(mapColonneRow).map(([key, values]) => (
           <Col key={key}>

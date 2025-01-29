@@ -5,7 +5,7 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
 import remocra.auth.UserInfo
-import remocra.auth.userInfo
+import remocra.data.DataTableau
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.Params
 import remocra.data.PeiData
@@ -23,6 +23,7 @@ import remocra.db.SiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.messagelongueindispo.GetMessagePeiLongueIndispoUseCase
 import java.util.UUID
 
 /**
@@ -70,6 +71,9 @@ class PeiUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var diametreRepository: DiametreRepository
+
+    @Inject
+    lateinit var getMessagePeiLongueIndispoUseCase: GetMessagePeiLongueIndispoUseCase
 
     @Inject
     lateinit var appSettings: AppSettings
@@ -179,6 +183,30 @@ class PeiUseCase : AbstractUseCase() {
             listServiceEau = organismeRepository.getServiceEauForSelect(),
             listPeiJumelage = listPeiJumelage,
             listDiametreWithNature = diametreRepository.getDiametreWithIdNature(),
+        )
+    }
+
+    fun getPeiWithFilterByMessageAlerteForDataTableau(
+        params: Params<
+            PeiRepository.Filter,
+            PeiRepository.Sort,
+            >,
+        userInfo: UserInfo,
+    ): DataTableau<PeiRepository.PeiForTableau> {
+        val listePeiId = getMessagePeiLongueIndispoUseCase.getListePeiAlerte(userInfo) ?: setOf()
+        return DataTableau(
+            list = peiRepository.getPeiWithFilterByMessageAlerte(
+                params,
+                listePeiId,
+                userInfo.zoneCompetence?.zoneIntegrationId,
+                userInfo.isSuperAdmin,
+            ),
+            count = peiRepository.countAllPeiWithFilterByMessageAlerte(
+                params.filterBy,
+                listePeiId,
+                userInfo.zoneCompetence?.zoneIntegrationId,
+                userInfo.isSuperAdmin,
+            ),
         )
     }
 

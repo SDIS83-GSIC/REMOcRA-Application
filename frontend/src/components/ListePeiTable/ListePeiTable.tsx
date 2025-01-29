@@ -77,6 +77,9 @@ const ListPei = ({
       }
       urlTable = url`/api/pei/get-by-tournee/` + filterId;
       break;
+    case FILTER_PAGE.PEI_LONGUE_INDISPO:
+      urlTable = url`/api/message-pei-longue-indispo/pei`;
+      break;
     default:
       urlTable = url`/api/pei`;
   }
