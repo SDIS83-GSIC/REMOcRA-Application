@@ -44,6 +44,10 @@ class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
         // On regarde si l'utilisateur connecté a un type organisme compris dans ceux à notifier
         val listePeiId = getListePeiAlerte(userInfo)
 
+        if (listePeiId.isNullOrEmpty()) {
+            return null
+        }
+
         // Puis on remplace dans le template le nombre de mois et le nombre de jours
         val period = Period.between(
             dateUtils.now().minusDays(nombreJoursIndispo.toLong()).toLocalDate(),

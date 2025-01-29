@@ -8,7 +8,9 @@ import url from "../../../module/fetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
   FormContainer,
+  Multiselect,
   SelectInput,
+  TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import AccordionCustom, {
@@ -61,6 +63,12 @@ type ParametresSectionPei = {
   bufferCarte: number;
 };
 
+type ParametresSectionPeiLongueIndispo = {
+  peiLongueIndisponibiliteMessage: string;
+  peiLongueIndisponibiliteJours: number;
+  peiLongueIndisponibiliteTypeOrganisme: [];
+};
+
 type AdminParametresValue = {
   general: ParametresSectionGeneral;
   mobile: ParametresSectionMobile;
@@ -68,6 +76,7 @@ type AdminParametresValue = {
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
+  peiLongueIndispo: ParametresSectionPeiLongueIndispo;
 };
 
 export const getInitialValues = (
@@ -99,6 +108,7 @@ export const getInitialValues = (
     ...data?.pei,
     peiColonnes: data?.pei?.peiColonnes?.map((e) => ({ id: e, libelle: e })),
   },
+  peiLongueIndispo: data?.peiLongueIndispo,
 });
 
 export const validationSchema = object({});
@@ -124,6 +134,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
       ...values?.pei,
       peiColonnes: values?.pei?.peiColonnes?.map((e) => e.id) ?? [],
     },
+    peiLongueIndispo: values.peiLongueIndispo,
   };
 };
 
@@ -216,6 +227,15 @@ export const AdminParametresInterne = () => {
                   <AdminPei
                     values={values.pei}
                     setValues={setValues}
+                    setFieldValue={setFieldValue}
+                  />
+                ),
+              },
+              {
+                header: "PEI longue indisponibilité",
+                content: (
+                  <AdminPeiLongueIndispo
+                    values={values.peiLongueIndispo}
                     setFieldValue={setFieldValue}
                   />
                 ),
@@ -846,6 +866,68 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
     )
   );
 };
+
+const AdminPeiLongueIndispo = ({
+  values,
+  setFieldValue,
+}: {
+  values: ParametresSectionPeiLongueIndispo;
+  setFieldValue: (name: string, value: any) => void;
+}) => {
+  const typeOrganismeState = useGet(url`/api/type-organisme/get-active`);
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="peiLongueIndispo.peiLongueIndisponibiliteMessage"
+            label="Message à afficher en cas de PEI indisponible depuis trop longtemps"
+            tooltipText={
+              "Vous pouvez utilise #MOIS# et #JOURS# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="peiLongueIndispo.peiLongueIndisponibiliteJours"
+            label="Nombre de jours avant de considérer un PEI comme indisponible depuis trop longtemps"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <Multiselect
+            name={"peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme"}
+            label="Types d'organismes concernés par le message à afficher en cas de PEI indisponible depuis trop longtemps"
+            options={typeOrganismeState?.data}
+            getOptionValue={(t) => t.typeOrganismeCode}
+            getOptionLabel={(t) => t.typeOrganismeLibelle}
+            value={
+              values?.peiLongueIndisponibiliteTypeOrganisme?.map((e) =>
+                typeOrganismeState?.data?.find(
+                  (r) => r.typeOrganismeCode === e,
+                ),
+              ) ?? undefined
+            }
+            onChange={(typeOrganisme) => {
+              const typeOrganismeCode = typeOrganisme.map(
+                (e) => e.typeOrganismeCode,
+              );
+              typeOrganismeCode.length > 0
+                ? setFieldValue(
+                    "alerte.peiLongueIndisponibiliteTypeOrganisme",
+                    typeOrganismeCode,
+                  )
+                : setFieldValue(
+                    "alerte.peiLongueIndisponibiliteTypeOrganisme",
+                    [],
+                  );
+            }}
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
 const AdminPermis = ({ values }: { values: ParametresSectionPermis }) => {
   return (
     values && (

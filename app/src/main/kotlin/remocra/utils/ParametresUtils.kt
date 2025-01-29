@@ -160,6 +160,9 @@ fun Map<String, Parametre>.getString(key: String): String {
 @Suppress("UNCHECKED_CAST")
 fun Map<String, Parametre>.getListOfString(key: String, objectMapper: ObjectMapper): List<String>? {
     val paramString = getStringOrNull(key) ?: return null
+    if (paramString.isBlank()) {
+        return null
+    }
     return objectMapper.readValue(paramString, List::class.java) as List<String>
 }
 

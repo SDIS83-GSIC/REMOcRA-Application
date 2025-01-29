@@ -43,6 +43,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             cartographie = element.cartographie,
             couvertureHydraulique = mapToParametresSectionCouvertureHydraulique(element.couvertureHydraulique),
             permis = element.permis,
+            peiLongueIndispo = element.peiLongueIndispo,
         )
 
         // Général
@@ -92,6 +93,11 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
         updateParametre(ParametreEnum.PEI_HIGHLIGHT_DUREE, parametresAdminData.pei.peiHighlightDuree?.toString())
         updateParametre(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO, parametresAdminData.pei.peiRenumerotationInterneAuto?.toString())
         updateParametre(ParametreEnum.VOIE_SAISIE_LIBRE, parametresAdminData.pei.voieSaisieLibre?.toString())
+
+        // ALERTE
+        updateParametre(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_MESSAGE, parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteMessage)
+        updateParametre(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_JOURS, parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteJours.toString())
+        updateParametre(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME, objectMapper.writeValueAsString(parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme))
 
         return element
     }

@@ -17,6 +17,7 @@ data class ParametresAdminData(
     val couvertureHydraulique: ParametresSectionCouvertureHydraulique,
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
+    val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
 
 )
 
@@ -27,6 +28,7 @@ data class ParametresAdminDataInput(
     val couvertureHydraulique: ParametresSectionCouvertureHydrauliqueInput,
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
+    val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
 )
 
 fun mapToParametresSectionCouvertureHydraulique(
@@ -62,6 +64,12 @@ data class ParametresSectionMobile(
 
 data class ParametresSectionCartographie(
     val coordonneesFormatAffichage: String?,
+)
+
+data class ParametresSectionPeiLongueIndispo(
+    val peiLongueIndisponibiliteMessage: String,
+    val peiLongueIndisponibiliteJours: Int?,
+    val peiLongueIndisponibiliteTypeOrganisme: List<String>?,
 )
 
 data class ParametresSectionCouvertureHydraulique(

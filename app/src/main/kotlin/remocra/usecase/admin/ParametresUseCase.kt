@@ -8,6 +8,7 @@ import remocra.data.ParametresSectionCouvertureHydraulique
 import remocra.data.ParametresSectionGeneral
 import remocra.data.ParametresSectionMobile
 import remocra.data.ParametresSectionPei
+import remocra.data.ParametresSectionPeiLongueIndispo
 import remocra.data.ParametresSectionPermis
 import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
@@ -18,6 +19,7 @@ import remocra.utils.getIntOrNull
 import remocra.utils.getListOfInt
 import remocra.utils.getListOfPeiCaracteristique
 import remocra.utils.getListOfString
+import remocra.utils.getString
 import remocra.utils.getStringOrNull
 
 /**
@@ -88,6 +90,12 @@ class ParametresUseCase : AbstractUseCase() {
 
         )
 
+        val peiLongueIndispo = ParametresSectionPeiLongueIndispo(
+            peiLongueIndisponibiliteJours = mapParametres.getInt(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_JOURS.name),
+            peiLongueIndisponibiliteMessage = mapParametres.getString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_MESSAGE.name),
+            peiLongueIndisponibiliteTypeOrganisme = mapParametres.getListOfString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME.name, objectMapper),
+        )
+
         return ParametresAdminData(
             general = general,
             mobile = mobile,
@@ -95,6 +103,7 @@ class ParametresUseCase : AbstractUseCase() {
             couvertureHydraulique = couvertureHydraulique,
             permis = permis,
             pei = pei,
+            peiLongueIndispo = peiLongueIndispo,
 
         )
     }
