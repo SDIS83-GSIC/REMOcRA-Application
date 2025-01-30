@@ -99,7 +99,7 @@ pipeline {
     always {
       sh '''
         git checkout -- .
-        git clean -f -d -x -e .m2/ -e .cache/npm/
+        git clean -f -d -x -e .gradle-user-home/ -e .cache/npm/
         '''
     }
   }
