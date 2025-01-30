@@ -7,6 +7,7 @@ import { IconPrescrit } from "../../Icon/Icon.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapToolbarPeiPrescrit, {
   useToolbarPeiPrescritContext,
 } from "./MapToolbarPeiPrescrit.tsx";
@@ -22,7 +23,11 @@ const MapPeiPrescrit = () => {
     layerListRef,
     mapToolbarRef,
     projection,
-  } = useMapComponent({ mapElement: mapElement, displayPei: false });
+  } = useMapComponent({
+    mapElement: mapElement,
+    typeModule: TypeModuleRemocra.PEI_PRESCRIT,
+    displayPei: false,
+  });
 
   /** Permet d'afficher les PEI prescrits */
   const dataPeiPrescritLayer = useMemo(() => {

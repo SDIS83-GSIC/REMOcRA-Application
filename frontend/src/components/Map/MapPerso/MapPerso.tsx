@@ -10,6 +10,7 @@ import { IconCarte, IconPrint, IconReturn } from "../../Icon/Icon.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { URLS } from "../../../routes.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapToolbarPerso, { useToolbarPersoContext } from "./MapToolbarPerso.tsx";
 import "./MapPerso.css";
 
@@ -25,7 +26,10 @@ const MapPerso = () => {
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
-  } = useMapComponent({ mapElement: mapElement });
+  } = useMapComponent({
+    mapElement: mapElement,
+    typeModule: TypeModuleRemocra.PERSONNALISE,
+  });
 
   const {
     tools: extraTools,
