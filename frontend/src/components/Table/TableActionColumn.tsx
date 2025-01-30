@@ -132,6 +132,7 @@ type TableActionButtonType = {
   disable?: (row?: any) => boolean;
   disabled?: boolean;
   textDisable?: string;
+  textDisableFunction?: (row?: any) => string;
   conditionnalTextDisable?: (row?: any) => string;
   textEnable?: string;
   icon?: ReactNode;
@@ -248,7 +249,7 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
     <TableActionColumn
       row={row}
       disabled={_button.disable ? _button.disable(row) : false}
-      textDisable={_button.textDisable}
+      textDisable={_button.textDisable ?? _button.textDisableFunction?.(row)}
       textEnable={_button.textEnable ?? "Supprimer"}
       classEnable={"danger"}
       deleteModale={deleteModale}

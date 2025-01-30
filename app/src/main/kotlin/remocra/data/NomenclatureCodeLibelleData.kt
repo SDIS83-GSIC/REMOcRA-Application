@@ -15,4 +15,7 @@ data class NomenclatureCodeLibelleData(
 
     val idFk: UUID?,
     val libelleFk: String?,
+
+    // propriété nullable permettant de gérer l'accessibilité du bouton "supprimer" de la liste en fonction de l'utilisation de l'élément en tant que FK ; le set est soit empty (pas de dépendance), soit rempli avec le nom des tables (à décorer)
+    var tablesDependantes: Set<String>? = null,
 )

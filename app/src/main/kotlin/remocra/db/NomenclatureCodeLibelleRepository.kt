@@ -11,15 +11,30 @@ import org.jooq.impl.TableImpl
 import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.Params
 import remocra.data.enums.TypeNomenclatureCodeLibelle
+import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
+import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
+import remocra.db.jooq.incoming.tables.references.NEW_PEI
+import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
+import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
+import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
 import remocra.db.jooq.remocra.tables.references.MATERIAU
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.NIVEAU
+import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.PENA
+import remocra.db.jooq.remocra.tables.references.PENA_ASPIRATION
+import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
@@ -28,6 +43,7 @@ import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
 /**
@@ -168,6 +184,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                     TYPE_ORGANISME.ID,
                     TYPE_ORGANISME.LIBELLE,
                 )
+
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME ->
                     InfosFk(
                         TYPE_ORGANISME.PARENT_ID,
@@ -175,7 +192,44 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                         TYPE_ORGANISME.`as`("typeOrganismeFk").ID,
                         TYPE_ORGANISME.`as`("typeOrganismeFk").LIBELLE,
                     )
+
                 else -> null
+            }
+
+        /**
+         * Retourne une liste des (tables + nom du champ) à requêter pour vérifier la supprimabilité d'un élément
+         */
+        private fun getInfosFkCible(type: TypeNomenclatureCodeLibelle) =
+            when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> setOf(InfosFkCible(ANOMALIE, ANOMALIE.ANOMALIE_CATEGORIE_ID))
+                TypeNomenclatureCodeLibelle.DIAMETRE -> setOf(InfosFkCible(PIBI, PIBI.DIAMETRE_ID), InfosFkCible(L_DIAMETRE_NATURE, L_DIAMETRE_NATURE.DIAMETRE_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.DIAMETRE_ID))
+                TypeNomenclatureCodeLibelle.DOMAINE -> setOf(InfosFkCible(PEI, PEI.DOMAINE_ID), InfosFkCible(NEW_PEI, NEW_PEI.DOMAINE_ID))
+                TypeNomenclatureCodeLibelle.MARQUE_PIBI -> setOf(InfosFkCible(MODELE_PIBI, MODELE_PIBI.MARQUE_ID), InfosFkCible(PIBI, PIBI.MARQUE_PIBI_ID))
+                TypeNomenclatureCodeLibelle.MATERIAU -> setOf(InfosFkCible(PENA, PENA.MATERIAU_ID))
+                TypeNomenclatureCodeLibelle.MODELE_PIBI -> setOf(InfosFkCible(PIBI, PIBI.MODELE_PIBI_ID))
+                TypeNomenclatureCodeLibelle.NATURE_DECI -> setOf(InfosFkCible(PEI, PEI.NATURE_DECI_ID), InfosFkCible(NEW_PEI, NEW_PEI.NATURE_DECI_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.NATURE_DECI_ID))
+                TypeNomenclatureCodeLibelle.NIVEAU -> setOf(InfosFkCible(PEI, PEI.NIVEAU_ID))
+                TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> setOf(InfosFkCible(PIBI, PIBI.TYPE_CANALISATION_ID))
+                TypeNomenclatureCodeLibelle.TYPE_RESEAU -> setOf(InfosFkCible(PIBI, PIBI.TYPE_RESEAU_ID))
+                TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> setOf(InfosFkCible(ORGANISME, ORGANISME.PROFIL_ORGANISME_ID), InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_DROIT, L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> setOf(
+                    InfosFkCible(L_DASHBOARD_PROFIL, L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID),
+                    InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_DROIT, L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID),
+                    InfosFkCible(UTILISATEUR, UTILISATEUR.PROFIL_UTILISATEUR_ID),
+                )
+                TypeNomenclatureCodeLibelle.ROLE_CONTACT -> setOf()
+                TypeNomenclatureCodeLibelle.THEMATIQUE -> setOf(
+                    InfosFkCible(L_THEMATIQUE_COURRIER, L_THEMATIQUE_COURRIER.THEMATIQUE_ID),
+                    InfosFkCible(L_THEMATIQUE_MODULE, L_THEMATIQUE_MODULE.THEMATIQUE_ID),
+                    InfosFkCible(L_THEMATIQUE_DOCUMENT_HABILITABLE, L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID),
+                )
+                TypeNomenclatureCodeLibelle.TYPE_ETUDE -> setOf(InfosFkCible(ETUDE, ETUDE.TYPE_ETUDE_ID))
+                TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> setOf(
+                    InfosFkCible(PROFIL_UTILISATEUR, PROFIL_UTILISATEUR.TYPE_ORGANISME_ID),
+                    InfosFkCible(PROFIL_ORGANISME, PROFIL_ORGANISME.TYPE_ORGANISME_ID),
+                    InfosFkCible(ORGANISME, ORGANISME.TYPE_ORGANISME_ID),
+                )
+                TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> setOf(InfosFkCible(PENA_ASPIRATION, PENA_ASPIRATION.TYPE_PENA_ASPIRATION_ID))
             }
     }
 
@@ -185,6 +239,16 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val idCible: TableField<Record, UUID?>,
         val libelleCible: TableField<Record, String?>,
     )
+
+    /**
+     * Pour vérifier la supprimabilité de l'élément, on doit stocker les éléments qui le référencent : table source, nom du field FK dans cette table
+     */
+    data class InfosFkCible(
+        val tableSource: TableImpl<Record>,
+        val idFkSource: TableField<Record, UUID?>,
+    )
+
+    // TODO pour chaque Type de nomenc, stocker N  InfosFkCible dans une map
 
     data class Filter(
         val code: String?,
@@ -247,7 +311,9 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 params.sortBy?.takeIf { it.type != null }?.toCondition()
                     ?: listOf(getCodeField(type)),
             ).limit(params.limit).offset(params.offset)
-            .fetchInto()
+            .fetchInto<NomenclatureCodeLibelleData>().map { nomenc ->
+                nomenc.copy(tablesDependantes = canDelete(type, nomenc.id))
+            }
 
     fun getCountForAdmin(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Int =
         dsl.selectCount().from(getTableFromType(type)).where(
@@ -328,4 +394,17 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             .where(getCodeField(type).equalIgnoreCase(code))
             .and(id?.let { DSL.and(getIdField(type).notEqual(id) ?: DSL.noCondition()) }),
     )
+
+    /**
+     * Vérifie si l'élément est utilisé comme FK, et retourne la liste des tables concernées le cas échéant, ou un conteneur vide sinon
+     */
+    private fun canDelete(type: TypeNomenclatureCodeLibelle, id: UUID): Set<String> {
+        val setRetour: MutableSet<String> = mutableSetOf()
+        getInfosFkCible(type).forEach { infoFkCible ->
+            // On construit le fetchExists dans chaque table
+            dsl.fetchExists(infoFkCible.tableSource, DSL.condition(infoFkCible.idFkSource.eq(id))).let { if (it) setRetour.add(infoFkCible.tableSource.name) }
+        }
+
+        return setRetour
+    }
 }

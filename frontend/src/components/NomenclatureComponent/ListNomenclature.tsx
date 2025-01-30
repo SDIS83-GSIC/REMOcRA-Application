@@ -66,9 +66,22 @@ const ListNomenclature = ({
 
     listeButton.push({
       disable: (v) => {
-        return hasProtectedValue ? v.original.protected : false;
+        // return hasProtectedValue ? v.original.protected : false;
+        return (
+          (hasProtectedValue && v.original.protected) ||
+          v.original.tablesDependantes?.length > 0
+        );
       },
-      textDisable: "Impossible de supprimer un élément protégé",
+      textDisableFunction: (v) => {
+        if (hasProtectedValue && v.original.protected) {
+          return "Impossible de supprimer un élément protégé";
+        } else {
+          return (
+            "Impossible de supprimer l'élément car il est utilisé dans les tables suivantes : " +
+            v.original.tablesDependantes?.join(", ")
+          );
+        }
+      },
       row: (row) => {
         return row;
       },
