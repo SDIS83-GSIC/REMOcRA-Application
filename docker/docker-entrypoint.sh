@@ -6,7 +6,7 @@ case "$1" in
     # shellcheck disable=SC2206 # pour GC_OPTS et JAVA_OPTS
     commande=( java $GC_OPTS $JAVA_OPTS -cp "/opt/remocra/classes:/opt/remocra/libs/*" remocra.cli.Main )
     if [[ "$(id -u)" == "0" ]]; then
-      commande=( setpriv --reuid=${} --regid=remocra --init-groups "${commande[@]}" )
+      commande=( setpriv --reuid=remocra --regid=remocra --init-groups "${commande[@]}" )
     fi
     exec "${commande[@]}" "$@"
     ;;
