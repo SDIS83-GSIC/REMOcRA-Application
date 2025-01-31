@@ -13,6 +13,7 @@ const MultiSelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
+  value,
 }: SelectFilterFromListType) => {
   return (
     <>
@@ -21,6 +22,10 @@ const MultiSelectFilterFromList = ({
         placeholder={"Sélectionnez"}
         name={name}
         options={listIdCodeLibelle}
+        value={
+          value?.map((e) => listIdCodeLibelle?.find((r) => r.id === e)) ??
+          undefined
+        }
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         onChange={(data) => {

@@ -3,7 +3,7 @@ import NOMENCLATURE from "../enums/NomenclaturesEnum.tsx";
 export type SelectType = {
   onChange?: any;
   name: string;
-  defaultValue?: IdCodeLibelleType;
+  value?: IdCodeLibelleType;
   disabled?: boolean;
 };
 export type SelectNomenclaturesType = SelectType & {

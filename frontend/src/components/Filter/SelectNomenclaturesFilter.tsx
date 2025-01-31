@@ -13,6 +13,7 @@ const SelectNomenclaturesFilter = ({
   onChange,
   name,
   nomenclature,
+  value,
 }: SelectNomenclaturesType) => {
   const response = useGet(url`/api/nomenclatures/list/` + nomenclature);
   return (
@@ -21,6 +22,7 @@ const SelectNomenclaturesFilter = ({
         name={name}
         listIdCodeLibelle={response.data}
         onChange={onChange}
+        value={value}
       />
     )
   );

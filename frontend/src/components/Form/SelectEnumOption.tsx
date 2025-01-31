@@ -15,6 +15,7 @@ function SelectEnumOption({
   options,
   name,
   onChange: onChangeCallback,
+  value,
 }: SelectEnumOptionType) {
   const optionsArray: OptionSelectType[] = [];
   for (const key in options) {
@@ -27,6 +28,7 @@ function SelectEnumOption({
     <ReactSelect
       placeholder={"Sélectionnez"}
       name={name}
+      value={optionsArray.find((e) => e.value === value)}
       options={optionsArray}
       getOptionValue={(t) => t.value}
       getOptionLabel={(t) => t.libelle}

@@ -34,8 +34,8 @@ const SelectFilterFromUrl = ({
         name={name}
         listIdCodeLibelle={listData}
         onChange={onChange}
-        defaultValue={defaultValue}
         disabled={disabled}
+        value={defaultValue}
       />
     );
   }

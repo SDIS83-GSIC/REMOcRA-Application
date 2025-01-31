@@ -18,15 +18,16 @@ const SelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
+  value,
   disabled = false,
 }: SelectFilterFromListType) => {
-  const defaultValue: IdCodeLibelleType = {
+  const defaultValueTous: IdCodeLibelleType = {
     id: "",
     code: "",
     libelle: "Tous",
   };
 
-  const data = [defaultValue].concat(listIdCodeLibelle);
+  const data = [defaultValueTous].concat(listIdCodeLibelle);
 
   return (
     <>
@@ -34,6 +35,7 @@ const SelectFilterFromList = ({
         placeholder={"Sélectionnez"}
         name={name}
         options={data}
+        value={data.find((e) => e.id === value)}
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         onChange={(data) => {

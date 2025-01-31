@@ -34,16 +34,17 @@ export const useFilterContext = (initialValues: any) => {
     validateOnBlur: true,
   });
 
-  const { values, setValues } = {
+  const { values, setValues, setFieldValue } = {
     values: formik.values,
     setValues: formik.setValues,
+    setFieldValue: formik.setFieldValue,
   };
 
   const handleChange = (e: any) => {
     formik.handleChange(e);
   };
 
-  return { values, setValues, formik, handleChange };
+  return { values, setValues, formik, handleChange, setFieldValue };
 };
 
 function QueryTable({
@@ -327,10 +328,7 @@ function QueryTable({
             <Col>
               {React.cloneElement(Filter, {
                 onChange: ({ name, value }) => {
-                  formik.setValues((prevValues) => ({
-                    ...prevValues,
-                    [name]: value,
-                  }));
+                  formik.setFieldValue(name, value);
                   // formik.handleChange(e)
                 },
                 onBlur: formik.handleBlur,
