@@ -36,9 +36,9 @@ const ListPei = ({
 
   if (listeParametre.isResolved) {
     // Le résultat est un String, on le parse pour récupérer le tableau
-    peiColonnes = JSON.parse(
-      listeParametre?.data?.[parametrePeiColonnes].parametreValeur,
-    );
+    peiColonnes = listeParametre?.data?.[parametrePeiColonnes].parametreValeur
+      ? JSON.parse(listeParametre?.data?.[parametrePeiColonnes].parametreValeur)
+      : peiColonnes;
   }
 
   const filter = {
