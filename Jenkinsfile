@@ -32,6 +32,20 @@ pipeline {
         }
       }
     }
+    stage('Validate scripts & Dockerfiles') {
+      steps {
+        insideDocker(imageName: 'koalaman/shellcheck-alpine', imageVersion:'stable') {
+          sh '''
+            find . -not \\( -name node_modules -prune \\) -name "*.sh" -exec shellcheck '{}' +
+            '''
+        }
+        insideDocker(imageName: 'hadolint/hadolint', imageVersion:'latest-alpine') {
+          sh '''
+            find . -not \\( -name node_modules -prune \\) -name Dockerfile -exec hadolint '{}' +
+            '''
+        }
+      }
+    }
     stage('Build Gradle') {
       steps {
         withSidecarContainers(
