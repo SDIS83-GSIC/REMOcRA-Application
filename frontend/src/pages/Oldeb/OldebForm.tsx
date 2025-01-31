@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
 import { FieldArray, useFormikContext } from "formik";
+import { useEffect, useState } from "react";
 import {
   Accordion,
   Badge,
+  Button,
   Card,
   Col,
   Form,
@@ -13,6 +14,8 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { array, boolean, object, string } from "yup";
+import DeleteButton from "../../components/Button/DeleteButton.tsx";
+import { useGet, useGetRun } from "../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -24,24 +27,25 @@ import {
   TextInput,
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
-import { useGet, useGetRun } from "../../components/Fetch/useFetch.tsx";
-import url from "../../module/fetch.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import {
+  IconAdd,
+  IconDelete,
+  IconExport,
+} from "../../components/Icon/Icon.tsx";
+import TYPE_CIVILITE from "../../enums/CiviliteEnum.tsx";
+import nomenclaturesEnum from "../../enums/NomenclaturesEnum.tsx";
+import url from "../../module/fetch.tsx";
 import {
   date,
   email,
   intPositif,
   requiredString,
 } from "../../module/validators.tsx";
-import nomenclaturesEnum from "../../enums/NomenclaturesEnum.tsx";
-import CreateButton from "../../components/Form/CreateButton.tsx";
 import {
   formatDate,
   formatDateTimeForDateTimeInput,
 } from "../../utils/formatDateUtils.tsx";
-import TYPE_CIVILITE from "../../enums/CiviliteEnum.tsx";
-import DeleteButton from "../../components/Form/DeleteButton.tsx";
-import { IconDelete, IconExport } from "../../components/Icon/Icon.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 type FormType = {
@@ -656,8 +660,8 @@ const OldebForm = ({ returnLink }: { returnLink: string }) => {
             name={"visiteList"}
             render={(arrayHelpers) => (
               <FieldSet title={"Visites"}>
-                <CreateButton
-                  title={"Ajouter une visite"}
+                <Button
+                  variant={"primary"}
                   onClick={() => {
                     const now = new Date();
                     arrayHelpers.push({
@@ -673,7 +677,9 @@ const OldebForm = ({ returnLink }: { returnLink: string }) => {
                       documentList: [],
                     });
                   }}
-                />
+                >
+                  <IconAdd /> Ajouter une visite
+                </Button>
                 {currentVisite != null && (
                   <DeleteButton
                     title={"Supprimer la visite"}
@@ -943,8 +949,8 @@ const VisiteForm = ({
             name={`visiteList.${currentVisite}.suiteList`}
             render={(arrayHelpers) => (
               <>
-                <CreateButton
-                  title={"Ajouter une suite"}
+                <Button
+                  variant={"primary"}
                   onClick={() =>
                     arrayHelpers.push({
                       oldebVisiteSuiteDate: new Date(),
@@ -952,7 +958,9 @@ const VisiteForm = ({
                       oldebVisiteSuiteObservation: undefined,
                     })
                   }
-                />
+                >
+                  <IconAdd /> Ajouter une suite
+                </Button>
                 {currentVisiteSuite != null && (
                   <DeleteButton
                     title={"Supprimer la suite"}

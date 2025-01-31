@@ -2,7 +2,7 @@ import Container from "react-bootstrap/Container";
 import url from "../../../module/fetch.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
-import CreateButton from "../../../components/Form/CreateButton.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { URLS } from "../../../routes.tsx";
 import QueryTable, {
   useFilterContext,

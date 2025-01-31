@@ -22,6 +22,7 @@ import {
 import Volet from "../Volet/Volet.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
+import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -93,12 +94,12 @@ const TooltipMapPei = ({
                   tooltipText={"Voir les visites du PEI"}
                   tooltipId={"tournees-carte"}
                 >
-                  <Button
+                  <CustomLinkButton
+                    href={URLS.VISITE(pointId)}
                     variant="warning"
-                    onClick={() => navigate(URLS.VISITE(pointId))}
                   >
                     <IconVisite />
-                  </Button>
+                  </CustomLinkButton>
                 </TooltipCustom>
               </Col>
               {featureSelect?.getProperties().hasIndispoTemp && (

@@ -1,11 +1,11 @@
-import React, { ReactNode } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ReactNode } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { NavLink } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
+import LinkButton from "../Button/LinkButton.tsx";
 
 export interface NavToProps {
   path: string;
@@ -15,9 +15,9 @@ export interface NavToProps {
 const NavTo = ({ path, label }: NavToProps) => {
   return (
     <Nav.Item>
-      <Nav.Link as={NavLink} to={path} className="nav-link">
+      <LinkButton href={path} classname="nav-link">
         {label}
-      </Nav.Link>
+      </LinkButton>
     </Nav.Item>
   );
 };

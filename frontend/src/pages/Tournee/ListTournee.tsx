@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
-import CreateButton from "../../components/Form/CreateButton.tsx";
+import CreateButton from "../../components/Button/CreateButton.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
   IconCentPourcent,
@@ -264,6 +264,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         <PageTitle
           icon={<IconTournee />}
           title={"Liste des tournées"}
+          displayReturnButton={peiId == null}
           right={
             <CreateButton
               href={URLS.CREATE_TOURNEE}

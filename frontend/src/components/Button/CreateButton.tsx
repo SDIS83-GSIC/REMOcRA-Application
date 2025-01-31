@@ -1,17 +1,11 @@
-import { Button } from "react-bootstrap";
 import { IconCreate } from "../Icon/Icon.tsx";
+import LinkButton from "./LinkButton.tsx";
 
 const CreateButton = ({ title, href, onClick }: CreateButtonType) => {
   return (
-    <Button
-      type="button"
-      variant="primary"
-      href={href}
-      onClick={onClick}
-      className="text-nowrap"
-    >
+    <LinkButton href={href} variant={"primary"} onClick={onClick}>
       <IconCreate /> {title}
-    </Button>
+    </LinkButton>
   );
 };
 

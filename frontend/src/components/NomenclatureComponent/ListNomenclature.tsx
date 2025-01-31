@@ -1,18 +1,19 @@
 import { ReactNode } from "react";
 import { Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import CreateButton from "../Button/CreateButton.tsx";
 import PageTitle from "../Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../Filter/FilterInput.tsx";
 import SelectFilterFromList from "../Filter/SelectFilterFromList.tsx";
-import CreateButton from "../Form/CreateButton.tsx";
 import SelectEnumOption from "../Form/SelectEnumOption.tsx";
 import {
   ActionColumn,
@@ -45,6 +46,7 @@ const ListNomenclature = ({
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const listeButton: ButtonType[] = [];
 
@@ -53,9 +55,11 @@ const ListNomenclature = ({
       row: (row) => {
         return row;
       },
+      href: lienPageUpdate,
       onClick: (nomenclatureId) =>
         navigate(lienPageUpdate(nomenclatureId), {
           state: {
+            ...location.state,
             hasProtectedValue: hasProtectedValue,
             listeFk: listeFk,
             libelleFk: libelleFk,
@@ -108,12 +112,15 @@ const ListNomenclature = ({
       <PageTitle
         title={pageTitle}
         icon={pageIcon}
+        urlRetour={URLS.MODULE_ADMIN}
         right={
           <CreateButton
             title={"Ajouter"}
+            href={lienPageAjout}
             onClick={() =>
               navigate(lienPageAjout, {
                 state: {
+                  ...location.state,
                   hasProtectedValue: hasProtectedValue,
                   listeFk: listeFk,
                   libelleFk: libelleFk,

@@ -1,5 +1,5 @@
+import { Button } from "react-bootstrap";
 import { IconDelete } from "../Icon/Icon.tsx";
-import CustomLinkButton from "./CustomLinkButton.tsx";
 
 const DeleteButton = ({
   className = "text-danger",
@@ -8,14 +8,14 @@ const DeleteButton = ({
   title,
 }: DeleteButtonType) => {
   return (
-    <CustomLinkButton
+    <Button
       variant={"link"}
       className={className}
       disabled={disabled}
       onClick={onClick}
     >
       <IconDelete /> {title}
-    </CustomLinkButton>
+    </Button>
   );
 };
 type DeleteButtonType = {

@@ -3,7 +3,7 @@ import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/Accueil.tsx";
 import { URLS } from "../../routes.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
-import CustomLinkButton from "../Form/CustomLinkButton.tsx";
+import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import { IconExport } from "../Icon/Icon.tsx";
 
 /**

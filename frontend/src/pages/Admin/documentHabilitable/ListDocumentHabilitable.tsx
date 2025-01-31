@@ -4,7 +4,7 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFilterFromList.tsx";
-import CreateButton from "../../../components/Form/CreateButton.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { IconExport, IconList } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {

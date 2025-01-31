@@ -1,7 +1,7 @@
 import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import CreateButton from "../../../components/Form/CreateButton.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,

@@ -238,7 +238,7 @@ function getColumnPeiByStringArray(
         type: TYPE_BUTTON.SIMPLE_MODAL,
         icon: <IconSee />,
         textEnable: "Voir le résumé",
-        simpleModal: {
+        simpleModale: {
           content: (peiId: string) => <FicheResume peiId={peiId} />,
           header: (row) =>
             "Fiche résumée du PEI " + row.original.peiNumeroComplet,

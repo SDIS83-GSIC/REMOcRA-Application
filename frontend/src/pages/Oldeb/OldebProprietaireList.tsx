@@ -1,21 +1,20 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import { URLS } from "../../routes.tsx";
-import url from "../../module/fetch.tsx";
+import { useNavigate } from "react-router-dom";
+import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import FilterInput from "../../components/Filter/FilterInput.tsx";
 import {
   IconDelete,
   IconEdit,
   IconProprietaire,
 } from "../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
-import FilterInput from "../../components/Filter/FilterInput.tsx";
-import { ActionColumn } from "../../components/Table/columns.tsx";
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
-import CreateButton from "../../components/Form/CreateButton.tsx";
+import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import filterValuesToVariable from "./OldebProprietaireFilter.tsx";
 
 const OldebProprietaireList = () => {

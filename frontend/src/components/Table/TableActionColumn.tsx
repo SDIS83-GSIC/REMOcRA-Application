@@ -1,14 +1,14 @@
-import { MutableRefObject, ReactNode } from "react";
+import { ReactNode } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
+import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
+import CustomLinkButton from "../Button/CustomLinkButton.tsx";
+import DeleteButton from "../Button/DeleteButton.tsx";
+import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
-import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
-import DeleteButton from "../Form/DeleteButton.tsx";
-import ConfirmModal from "../Modal/ConfirmModal.tsx";
-import CustomLinkButton from "../Form/CustomLinkButton.tsx";
-import SimpleModal from "../Modal/SimpleModal.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 const TableActionColumn = ({
   row,
@@ -17,8 +17,8 @@ const TableActionColumn = ({
   textEnable,
   classEnable = "primary",
   deleteModale = null,
-  confirmModale = null,
-  simpleModal = null,
+  confirmModale,
+  simpleModale,
   isPost = true,
   query,
   reload,
@@ -57,54 +57,31 @@ const TableActionColumn = ({
                   />
                 )}
               </>
-            ) : confirmModale != null ? (
+            ) : confirmModale ? (
               <>
-                <TooltipCustom
-                  tooltipText={disabled ? textDisable : textEnable}
+                <ConfirmButtonWithModal
+                  path={query}
+                  icon={icon}
+                  disabled={disabled}
+                  classEnable={classEnable}
+                  textDisable={textDisable}
+                  textEnable={textEnable}
                   tooltipId={row.value}
-                >
-                  <CustomLinkButton
-                    className={disabled ? "text-muted" : "text-" + classEnable}
-                    disabled={disabled}
-                    onClick={confirmModale?.show}
-                  >
-                    {icon}
-                  </CustomLinkButton>
-                </TooltipCustom>
-                {!disabled && (
-                  <ConfirmModal
-                    isPost={isPost}
-                    visible={confirmModale.visible}
-                    closeModal={confirmModale.close}
-                    query={query}
-                    ref={confirmModale.ref}
-                    onConfirm={() =>
-                      reload ? reload() : window.location.reload(false)
-                    }
-                  />
-                )}
-              </>
-            ) : simpleModal != null ? (
-              <>
-                <SimpleModal
-                  closeModal={simpleModal.close}
-                  content={simpleModal.content}
-                  header={simpleModal.header}
-                  ref={simpleModal.ref}
-                  visible={simpleModal.visible}
+                  isPost={isPost}
                 />
-                <TooltipCustom
-                  tooltipText={disabled ? textDisable : textEnable}
+              </>
+            ) : simpleModale != null ? (
+              <>
+                <ButtonWithSimpleModal
+                  icon={icon}
+                  disabled={disabled}
+                  classEnable={classEnable}
+                  textDisable={textDisable}
+                  textEnable={textEnable}
                   tooltipId={row.value}
-                >
-                  <CustomLinkButton
-                    className={disabled ? "text-muted" : "text-" + classEnable}
-                    disabled={disabled}
-                    onClick={simpleModal?.show}
-                  >
-                    {icon}
-                  </CustomLinkButton>
-                </TooltipCustom>
+                  header={simpleModale.header}
+                  content={simpleModale.content}
+                />
               </>
             ) : (
               <TooltipCustom
@@ -139,9 +116,9 @@ type TableActionButtonType = {
   classEnable?: "primary" | "danger" | "warning" | "info" | "success";
   query?;
   reload?;
-  confirmModale?: ModaleType | null;
-  deleteModale?: ModaleType | null;
-  simpleModal?: SimpleModalType | null;
+  confirmModale?: boolean | null;
+  deleteModale?: object | null;
+  simpleModale?: SimpleModalType | null;
   path?: string;
   href?: (param: any) => string;
   hide?: (param: any) => boolean;
@@ -149,14 +126,7 @@ type TableActionButtonType = {
   isPost?: boolean;
 };
 
-type ModaleType = {
-  visible?: boolean;
-  show?: (value?: any) => void;
-  close?: () => void;
-  ref?: MutableRefObject<HTMLDialogElement | null>;
-};
-
-type SimpleModalType = ModaleType & {
+type SimpleModalType = {
   header: (row: any) => string;
   content: (id: string) => ReactNode;
 };
@@ -239,7 +209,7 @@ export enum TYPE_BUTTON {
 type DeleteButtonType = { row: any; _button: ButtonType };
 const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
   const { visible, show, close, ref } = useModal();
-  const deleteModale: ModaleType = {
+  const deleteModale = {
     close: close,
     ref: ref,
     show: show,
@@ -261,13 +231,6 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
 
 type ConfirmeButtonType = { row: any; _button: ButtonType };
 const ConfirmButtonPrivate = ({ row, _button }: ConfirmeButtonType) => {
-  const { visible, show, close, ref } = useModal();
-  const confirmModale: ModaleType = {
-    close: close,
-    ref: ref,
-    show: show,
-    visible: visible,
-  };
   return (
     <TableActionColumn
       isPost={_button.isPost}
@@ -278,7 +241,7 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmeButtonType) => {
       }
       textEnable={_button.textEnable}
       classEnable={_button.classEnable}
-      confirmModale={confirmModale}
+      confirmModale={true}
       icon={_button.icon ?? <IconClose />}
       query={`${_button.path}${row.value}`}
     />
@@ -290,19 +253,14 @@ type SimpleModalButtonType = {
   _button: ButtonType;
 };
 const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
-  const { visible, show, close, ref } = useModal();
-  const simpleModal: SimpleModalType = {
-    close: close,
-    ref: ref,
-    show: show,
-    visible: visible,
-    content: _button.simpleModal.content(row.value),
-    header: _button.simpleModal.header(row),
+  const simpleModale: SimpleModalType = {
+    content: _button.simpleModale?.content(row.value),
+    header: _button.simpleModale?.header(row),
   };
   return (
     <TableActionColumn
       row={row}
-      simpleModal={simpleModal}
+      simpleModale={simpleModale}
       textEnable={_button.textEnable ?? "Voir plus"}
       icon={_button.icon ?? <IconClose />}
     />

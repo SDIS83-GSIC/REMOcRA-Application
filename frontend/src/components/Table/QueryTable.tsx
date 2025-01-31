@@ -2,10 +2,10 @@ import { default as classnames, default as classNames } from "classnames";
 import { useFormik } from "formik";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useDebouncedCallback } from "use-debounce";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDebouncedCallback } from "use-debounce";
 import url from "../../module/fetch.tsx";
 import { usePost } from "../Fetch/useFetch.tsx";
 import useQueryParams from "../Fetch/useQueryParams.tsx";
@@ -24,8 +24,9 @@ export const useSortBy = () => {
 };
 
 export const useFilterContext = (initialValues: any) => {
+  const { filterBy } = useQueryParams();
   const formik = useFormik({
-    initialValues: initialValues,
+    initialValues: filterBy ?? initialValues,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -34,8 +35,8 @@ export const useFilterContext = (initialValues: any) => {
   });
 
   const { values, setValues } = {
-    values: {},
-    setValues: () => {},
+    values: formik.values,
+    setValues: formik.setValues,
   };
 
   const handleChange = (e: any) => {
@@ -66,6 +67,8 @@ function QueryTable({
   const getIdForKey = (row: any, append = "") => row[idName] + "" + append;
 
   const navigate = useNavigate();
+  const { filterBy: initialFilterBy } = useQueryParams();
+  const location = useLocation();
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [sortBy, setSortBy] = useSortBy();
@@ -74,13 +77,23 @@ function QueryTable({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   setPagination = ({ offset, limit }: { offset: number; limit: number }) => {
     setPaginationTemp({ limit, offset });
-    navigate({
-      ...location,
-      search: setOffsetToSearchParams(location.search, limit, offset),
-    });
+    navigate(
+      {
+        search: setOffsetToSearchParams(
+          document.location.search,
+          limit,
+          offset,
+        ),
+      },
+      {
+        state: location.state,
+      },
+    );
   };
 
-  const [filterBy, setFilterBy] = useState(filterValuesToVariable({}));
+  const [filterBy, setFilterBy] = useState(
+    filterValuesToVariable(initialFilterBy ?? {}),
+  );
 
   const historyPush = () => {
     const f = filterValuesToVariable(formik?.values);
@@ -90,7 +103,7 @@ function QueryTable({
     const sort = Object.values(sortBy).filter(Boolean).length
       ? JSON.stringify(sortBy)
       : null;
-    const searchParams = new URLSearchParams(document.location?.search);
+    const searchParams = new URLSearchParams(location?.search);
     if (
       filter !== searchParams.get("filterBy") ||
       sort !== searchParams.get("sortBy")
@@ -107,10 +120,14 @@ function QueryTable({
       }
       searchParams.set("limit", pagination.limit);
       searchParams.set("offset", pagination.offset ?? "0");
-      navigate({
-        pathname: location.pathname,
-        search: decodeURIComponent(searchParams.toString()),
-      });
+      navigate(
+        {
+          search: decodeURIComponent(searchParams.toString()),
+        },
+        {
+          state: location.state,
+        },
+      );
       setFilterBy(filterValuesToVariable(formik?.values));
 
       // Si on change de filtres, on se remet à la première page
@@ -123,10 +140,11 @@ function QueryTable({
       searchParams.set("offset", pagination.offset ?? "0");
       navigate(
         {
-          pathname: location.pathname,
           search: decodeURIComponent(searchParams.toString()),
         },
-        { replace: true },
+        {
+          state: location.state,
+        },
       );
     }
   };
@@ -142,7 +160,7 @@ function QueryTable({
   }, [sortBy, pagination.offset, pagination.limit, ...watchedValues]);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(document.location?.search);
+    const searchParams = new URLSearchParams(location?.search);
     const filterByParams = searchParams.get("filterBy");
     const sortByParams = searchParams.get("sortBy");
     const offsetParams = searchParams.get("offset");
@@ -173,7 +191,7 @@ function QueryTable({
       (offsetParams !== pagination.offset.toString() ||
         limitParams !== pagination.limit.toString())
     ) {
-      navigate({ offset: offsetParams, limit: limitParams });
+      // navigate({ offset: offsetParams, limit: limitParams }, { replace: true });
     }
   }, [location]);
 
@@ -316,7 +334,8 @@ function QueryTable({
                   // formik.handleChange(e)
                 },
                 onBlur: formik.handleBlur,
-                value: formik?.values[Filter.name],
+                defaultValue: formik?.values[Filter?.props?.name],
+                value: formik?.values[Filter?.props?.name],
               })}
             </Col>
           )}

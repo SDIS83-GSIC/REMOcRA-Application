@@ -1,28 +1,26 @@
-import { Button } from "react-bootstrap";
 import classNames from "classnames";
-import Col from "react-bootstrap/Col";
-import type { ButtonVariant } from "react-bootstrap/types";
 import { ReactNode } from "react";
+import type { ButtonVariant } from "react-bootstrap/types";
+import LinkButton from "./LinkButton.tsx";
 
 const CustomLinkButton = ({
   className,
-  disabled,
+  disabled = false,
   href,
   children,
+  variant = "link",
   onClick,
 }: CustomLinkButtonType) => {
   return (
-    <Col>
-      <Button
-        variant={"link"}
-        className={classNames("text-decoration-none", className)}
-        disabled={disabled}
-        href={href}
-        onClick={onClick}
-      >
-        {children}
-      </Button>
-    </Col>
+    <LinkButton
+      variant={variant}
+      classname={classNames("text-decoration-none", className)}
+      disabled={disabled}
+      href={href}
+      onClick={onClick}
+    >
+      {children}
+    </LinkButton>
   );
 };
 

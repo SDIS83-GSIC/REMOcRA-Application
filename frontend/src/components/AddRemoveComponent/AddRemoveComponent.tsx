@@ -2,8 +2,8 @@ import { FieldArray, useFormikContext } from "formik";
 import { ReactNode } from "react";
 import { Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import CreateButton from "../Form/CreateButton.tsx";
-import DeleteButton from "../Form/DeleteButton.tsx";
+import CreateButton from "../Button/CreateButton.tsx";
+import DeleteButton from "../Button/DeleteButton.tsx";
 import { FormLabel } from "../Form/Form.tsx";
 
 /**

@@ -14,7 +14,7 @@ const CreatePei = () => {
   if (state) {
     initialValues = state;
     // On vide le state
-    window.history.replaceState(null, "");
+    window.history.replaceState({ from: state.from }, "");
   }
   return (
     <MyFormik

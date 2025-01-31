@@ -35,7 +35,7 @@ const CreateNomenclature = ({
   };
   if (state) {
     initialValues = state;
-    window.history.replaceState(null, "");
+    window.history.replaceState({ from: state.from }, "");
   }
 
   return (
