@@ -27,6 +27,11 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
@@ -38,6 +43,7 @@ import remocra.db.jooq.remocra.tables.Job.JobPath
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
+import remocra.db.jooq.remocra.tables.Rcci.RcciPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -245,6 +251,92 @@ open class Utilisateur(
 
     val lCourrierUtilisateur: LCourrierUtilisateurPath
         get(): LCourrierUtilisateurPath = lCourrierUtilisateur()
+
+    private lateinit var _rcciRcciRcciArriveeDdtmOnfIdFkey: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code>
+     * table, via the <code>rcci_rcci_rcci_arrivee_ddtm_onf_id_fkey</code> key
+     */
+    fun rcciRcciRcciArriveeDdtmOnfIdFkey(): RcciPath {
+        if (!this::_rcciRcciRcciArriveeDdtmOnfIdFkey.isInitialized) {
+            _rcciRcciRcciArriveeDdtmOnfIdFkey = RcciPath(this, null, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY.inverseKey)
+        }
+
+        return _rcciRcciRcciArriveeDdtmOnfIdFkey
+    }
+
+    val rcciRcciRcciArriveeDdtmOnfIdFkey: RcciPath
+        get(): RcciPath = rcciRcciRcciArriveeDdtmOnfIdFkey()
+
+    private lateinit var _rcciRcciRcciArriveeGendarmerieIdFkey: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code>
+     * table, via the <code>rcci_rcci_rcci_arrivee_gendarmerie_id_fkey</code>
+     * key
+     */
+    fun rcciRcciRcciArriveeGendarmerieIdFkey(): RcciPath {
+        if (!this::_rcciRcciRcciArriveeGendarmerieIdFkey.isInitialized) {
+            _rcciRcciRcciArriveeGendarmerieIdFkey = RcciPath(this, null, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY.inverseKey)
+        }
+
+        return _rcciRcciRcciArriveeGendarmerieIdFkey
+    }
+
+    val rcciRcciRcciArriveeGendarmerieIdFkey: RcciPath
+        get(): RcciPath = rcciRcciRcciArriveeGendarmerieIdFkey()
+
+    private lateinit var _rcciRcciRcciArriveePoliceIdFkey: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code>
+     * table, via the <code>rcci_rcci_rcci_arrivee_police_id_fkey</code> key
+     */
+    fun rcciRcciRcciArriveePoliceIdFkey(): RcciPath {
+        if (!this::_rcciRcciRcciArriveePoliceIdFkey.isInitialized) {
+            _rcciRcciRcciArriveePoliceIdFkey = RcciPath(this, null, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY.inverseKey)
+        }
+
+        return _rcciRcciRcciArriveePoliceIdFkey
+    }
+
+    val rcciRcciRcciArriveePoliceIdFkey: RcciPath
+        get(): RcciPath = rcciRcciRcciArriveePoliceIdFkey()
+
+    private lateinit var _rcciRcciRcciArriveeSdisIdFkey: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code>
+     * table, via the <code>rcci_rcci_rcci_arrivee_sdis_id_fkey</code> key
+     */
+    fun rcciRcciRcciArriveeSdisIdFkey(): RcciPath {
+        if (!this::_rcciRcciRcciArriveeSdisIdFkey.isInitialized) {
+            _rcciRcciRcciArriveeSdisIdFkey = RcciPath(this, null, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY.inverseKey)
+        }
+
+        return _rcciRcciRcciArriveeSdisIdFkey
+    }
+
+    val rcciRcciRcciArriveeSdisIdFkey: RcciPath
+        get(): RcciPath = rcciRcciRcciArriveeSdisIdFkey()
+
+    private lateinit var _rcciRcciUtilisateurIdFkey: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code>
+     * table, via the <code>rcci_rcci_utilisateur_id_fkey</code> key
+     */
+    fun rcciRcciUtilisateurIdFkey(): RcciPath {
+        if (!this::_rcciRcciUtilisateurIdFkey.isInitialized) {
+            _rcciRcciUtilisateurIdFkey = RcciPath(this, null, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _rcciRcciUtilisateurIdFkey
+    }
+
+    val rcciRcciUtilisateurIdFkey: RcciPath
+        get(): RcciPath = rcciRcciUtilisateurIdFkey()
 
     private lateinit var _tournee: TourneePath
 

@@ -35,12 +35,14 @@ import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_D
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.OldebVisiteDocument.OldebVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
+import remocra.db.jooq.remocra.tables.RcciDocument.RcciDocumentPath
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -246,6 +248,23 @@ open class Document(
 
     val oldebVisiteDocument: OldebVisiteDocumentPath
         get(): OldebVisiteDocumentPath = oldebVisiteDocument()
+
+    private lateinit var _rcciDocument: RcciDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.rcci_document</code> table
+     */
+    fun rcciDocument(): RcciDocumentPath {
+        if (!this::_rcciDocument.isInitialized) {
+            _rcciDocument = RcciDocumentPath(this, null, RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _rcciDocument
+    }
+
+    val rcciDocument: RcciDocumentPath
+        get(): RcciDocumentPath = rcciDocument()
 
     /**
      * Get the implicit many-to-many join path to the

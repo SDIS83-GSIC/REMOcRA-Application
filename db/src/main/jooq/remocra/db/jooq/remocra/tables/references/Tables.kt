@@ -8,6 +8,7 @@ import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
 import remocra.db.jooq.remocra.tables.CadastreParcelle
 import remocra.db.jooq.remocra.tables.CadastreSection
+import remocra.db.jooq.remocra.tables.CarroyageDfci
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
@@ -94,6 +95,13 @@ import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.RapportPersonnaliseParametre
+import remocra.db.jooq.remocra.tables.Rcci
+import remocra.db.jooq.remocra.tables.RcciDocument
+import remocra.db.jooq.remocra.tables.RcciTypeDegreCertitude
+import remocra.db.jooq.remocra.tables.RcciTypeOrigineAlerte
+import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
+import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille
+import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
@@ -135,6 +143,11 @@ val CADASTRE_PARCELLE: CadastreParcelle = CadastreParcelle.CADASTRE_PARCELLE
  * The table <code>remocra.cadastre_section</code>.
  */
 val CADASTRE_SECTION: CadastreSection = CadastreSection.CADASTRE_SECTION
+
+/**
+ * The table <code>remocra.carroyage_dfci</code>.
+ */
+val CARROYAGE_DFCI: CarroyageDfci = CarroyageDfci.CARROYAGE_DFCI
 
 /**
  * The table <code>remocra.commune</code>.
@@ -565,6 +578,41 @@ val RAPPORT_PERSONNALISE: RapportPersonnalise = RapportPersonnalise.RAPPORT_PERS
  * The table <code>remocra.rapport_personnalise_parametre</code>.
  */
 val RAPPORT_PERSONNALISE_PARAMETRE: RapportPersonnaliseParametre = RapportPersonnaliseParametre.RAPPORT_PERSONNALISE_PARAMETRE
+
+/**
+ * The table <code>remocra.rcci</code>.
+ */
+val RCCI: Rcci = Rcci.RCCI
+
+/**
+ * The table <code>remocra.rcci_document</code>.
+ */
+val RCCI_DOCUMENT: RcciDocument = RcciDocument.RCCI_DOCUMENT
+
+/**
+ * The table <code>remocra.rcci_type_degre_certitude</code>.
+ */
+val RCCI_TYPE_DEGRE_CERTITUDE: RcciTypeDegreCertitude = RcciTypeDegreCertitude.RCCI_TYPE_DEGRE_CERTITUDE
+
+/**
+ * The table <code>remocra.rcci_type_origine_alerte</code>.
+ */
+val RCCI_TYPE_ORIGINE_ALERTE: RcciTypeOrigineAlerte = RcciTypeOrigineAlerte.RCCI_TYPE_ORIGINE_ALERTE
+
+/**
+ * The table <code>remocra.rcci_type_promethee_categorie</code>.
+ */
+val RCCI_TYPE_PROMETHEE_CATEGORIE: RcciTypePrometheeCategorie = RcciTypePrometheeCategorie.RCCI_TYPE_PROMETHEE_CATEGORIE
+
+/**
+ * The table <code>remocra.rcci_type_promethee_famille</code>.
+ */
+val RCCI_TYPE_PROMETHEE_FAMILLE: RcciTypePrometheeFamille = RcciTypePrometheeFamille.RCCI_TYPE_PROMETHEE_FAMILLE
+
+/**
+ * The table <code>remocra.rcci_type_promethee_partition</code>.
+ */
+val RCCI_TYPE_PROMETHEE_PARTITION: RcciTypePrometheePartition = RcciTypePrometheePartition.RCCI_TYPE_PROMETHEE_PARTITION
 
 /**
  * The table <code>remocra.reservoir</code>.
