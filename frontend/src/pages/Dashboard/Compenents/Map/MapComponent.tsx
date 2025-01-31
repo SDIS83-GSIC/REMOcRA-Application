@@ -2,16 +2,22 @@ import { Map, View } from "ol";
 import { GeoJSON } from "ol/format";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import LayerGroup from "ol/layer/Group";
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Fill, Stroke, Style } from "ol/style";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
+import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
+
+const OSM_LAYER = new TileLayer({
+  source: new OSM(),
+});
 
 const MapDashboardComponent = (data: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
-
+  const { warning: warningToast } = useToastContext();
   const dataMapped = setSimpleValueMapped(
     data.data ? data.data : [],
     data.config ? data.config : [],
@@ -39,85 +45,114 @@ const MapDashboardComponent = (data: any) => {
     return sortedLimits[sortedLimits.length - 1].color;
   };
 
-  useEffect(() => {
-    // Créer une couche de base (OSM)
-    const baseLayer = new TileLayer({
-      source: new OSM(),
-    });
-
-    // Vérifiez que `data` est un tableau avant de parcourir
-    const vectorLayers: any =
-      Array.isArray(dataMapped) && dataMapped.length > 0
-        ? dataMapped
-            .map((item: any) => {
-              try {
-                const geojsonObject = JSON.parse(item.geojson);
-                const vectorSource = new VectorSource({
-                  features: new GeoJSON().readFeatures(geojsonObject, {
-                    dataProjection:
-                      geojsonObject?.crs?.properties?.name || "EPSG:4326",
-                    featureProjection: "EPSG:3857",
-                  }),
-                });
-
-                // Calculer le pourcentage
-                const value = parseFloat(item.value);
-                const max = parseFloat(item.max);
-                const percentage = (value / max) * 100;
-
-                // Obtenir la couleur en fonction du pourcentage
-                const color = getColorForPercentage(
-                  percentage,
-                  data.config?.limits || [],
-                );
-
-                // Créer un style dynamique pour la couche vectorielle
-                const style = new Style({
-                  stroke: new Stroke({
-                    color: color, // Couleur du contour
-                    width: 2,
-                  }),
-                  fill: new Fill({
-                    color: `${color}40`, // Couleur de remplissage avec transparence (ajout de '40' pour 25% d'opacité)
-                  }),
-                });
-
-                return new VectorLayer({
-                  source: vectorSource,
-                  style: style,
-                });
-              } catch (error) {
-                return null;
-              }
-            })
-            .filter(Boolean) // Supprime les couches nulles
-        : [];
-
-    // Créer la carte
+  // Hack Lint dependency array useMemo
+  const currentRef = mapRef.current;
+  const map = useMemo(() => {
+    if (!currentRef) {
+      return;
+    }
     const map = new Map({
-      target: mapRef.current!,
-      layers: [baseLayer, ...vectorLayers],
+      target: currentRef,
+      layers: [OSM_LAYER],
       view: new View({
-        zoom: 1,
+        zoom: 6,
+        projectiion: "EPSG:3857",
+        center: [244598, 5921729], // FIXME : récupérer la zone de l'utilisateur ?
+        padding: [50, 50, 50, 50],
       }),
     });
+    return map;
+  }, [currentRef]);
 
-    // Zoomer et centrer sur les données
-    if (vectorLayers.length > 0) {
-      const vectorSource = vectorLayers[0].getSource(); // Prend la première couche vectorielle
-      if (vectorSource) {
-        const extent = vectorSource.getExtent(); // Obtient l'étendue des données
-        map.getView().fit(extent, {
-          padding: [50, 50, 50, 50], // Marge autour des données (en pixels)
-          maxZoom: 15, // Zoom maximum pour éviter un zoom trop rapproché
-        });
-      }
+  useEffect(() => {
+    if (
+      !map ||
+      !dataMapped ||
+      !Array.isArray(dataMapped) ||
+      dataMapped.some((item) => !item.geojson)
+    ) {
+      return;
     }
 
-    return () => {
-      map.setTarget(null);
-    };
-  }, [data, dataMapped]);
+    // On rafraîchit la vue en supprimant les couches hors OSM
+    map
+      .getLayers()
+      .getArray()
+      .forEach((l) => {
+        if (l instanceof LayerGroup) {
+          map.removeLayer(l);
+        }
+      });
+
+    // JSONParseException
+    try {
+      // Transformation des données en FeatureCollection pour pouvoir créer une seule couche
+      const geojsonObject = {
+        type: "FeatureCollection",
+        features: dataMapped.map((item) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { geojson: _, ...properties } = item;
+          const geometry = JSON.parse(item.geojson);
+          return {
+            type: "Feature",
+            properties: { ...properties, epsg: geometry.crs.properties.name },
+            geometry: geometry,
+          };
+        }),
+      };
+
+      const vectorSource = new VectorSource({
+        // Garde-fou : conversion individuelle des géométries depuis leur propre EPSG
+        features: new GeoJSON().readFeatures(geojsonObject).map((feature) => {
+          feature
+            .getGeometry()
+            .transform(feature.getProperties().epsg, "EPSG:3857"); // EPSG par défaut de la View
+          return feature;
+        }),
+      });
+
+      const dataLayer = new VectorLayer({
+        source: vectorSource,
+        style: (feature) => {
+          const properties = feature.getProperties();
+
+          // Calculer le pourcentage
+          const value = parseFloat(properties.value);
+          const max = parseFloat(properties.max);
+          const percentage = (value / max) * 100;
+
+          // Obtenir la couleur en fonction du pourcentage
+          const color = getColorForPercentage(
+            percentage,
+            data.config?.limits || [],
+          );
+
+          // Créer un style dynamique pour la couche vectorielle
+          return new Style({
+            stroke: new Stroke({
+              color: color, // Couleur du contour
+              width: 2,
+            }),
+            fill: new Fill({
+              color: `${color}40`, // Couleur de remplissage avec transparence (ajout de '40' pour 25% d'opacité)
+            }),
+          });
+        },
+      });
+
+      // On ajoute la couche dans un groupe (pour la distinguer de la couche OSM)
+      map.addLayer(new LayerGroup({ layers: [dataLayer] }));
+
+      // Zoomer et centrer sur les données
+      const extent = vectorSource.getExtent(); // Obtient l'étendue des données
+      map.getView().fit(extent, {
+        padding: [50, 50, 50, 50], // Marge autour des données (en pixels)
+        maxZoom: 15, // Zoom maximum pour éviter un zoom trop rapproché
+      });
+    } catch (e) {
+      warningToast("Géométrie invalide");
+    }
+  }, [map, data.config, dataMapped, warningToast]);
 
   return (
     <Container fluid className="h-100">

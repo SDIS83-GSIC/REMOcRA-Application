@@ -104,7 +104,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   const handleAddDashboard = () => {
     const newDashboard = {
       index: null,
-      title: "Nouveau Dashbaord",
+      title: "Nouveau tableau de bord",
     };
 
     const newOpenListDashboard = props.openListDashboard

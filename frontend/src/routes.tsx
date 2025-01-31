@@ -405,9 +405,9 @@ export const URLS = {
   ADRESSE: url`/adresses`,
 
   // Module dashboard
-  DASHBOARD_ADMIN_QUERY: url`/dashboard/admin/query`,
-  DASHBOARD_ADMIN_DASHBOARD: url`/dashboard/admin/dashboard`,
-  DASHBOARD_LIST: url`/dashboard/list`,
+  DASHBOARD_ADMIN_QUERY: url`/admin/dashboard/query`,
+  DASHBOARD_ADMIN_DASHBOARD: url`/admin/dashboard/dashboard`,
+  DASHBOARD_LIST: url`/dashboard`,
 
   // Module Opérations diverses
   HISTORIQUE_OPERATIONS: url`/operations-diverses/historique-operations`,
@@ -1649,6 +1649,24 @@ export default [
           />
         ),
       },
+      {
+        path: "dashboard/query",
+        element: (
+          <Authorization
+            Component={ComponentBoardQueryAdmin}
+            droits={[TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
+      {
+        path: "dashboard/dashboard",
+        element: (
+          <Authorization
+            Component={ComponentBoardDashboardAdmin}
+            droits={[TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
     ],
   },
 
@@ -1724,31 +1742,13 @@ export default [
   },
 
   {
-    path: "/dashboard",
+    path: "/dashboard/",
     element: (
       <Authorization Component={Dashboard} droits={[TYPE_DROIT.DASHBOARD_A]} />
     ),
     children: [
       {
-        path: "admin/query",
-        element: (
-          <Authorization
-            Component={ComponentBoardQueryAdmin}
-            droits={[TYPE_DROIT.DASHBOARD_A]}
-          />
-        ),
-      },
-      {
-        path: "admin/dashboard",
-        element: (
-          <Authorization
-            Component={ComponentBoardDashboardAdmin}
-            droits={[TYPE_DROIT.DASHBOARD_A]}
-          />
-        ),
-      },
-      {
-        path: "list",
+        path: "",
         element: (
           <Authorization
             Component={ComponentBoardList}

@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import {
   Button,
   Card,
@@ -20,8 +26,6 @@ import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 
 type QueryListProps = {
   setData: (arg0: any) => void;
-  openListQuery: QueryParam[] | undefined | null;
-  setOpenListQuery: (arg0: any) => void;
   activeQuery: QueryParam | undefined | null;
   setActiveQuery: (arg0: any) => void;
   openListComponent: ComponentDashboard[] | undefined;
@@ -35,46 +39,54 @@ type QueryListProps = {
   setIsAdding: (arg0: boolean) => void;
 };
 
-const QueryList = (props: QueryListProps) => {
+const QueryList = forwardRef((props: QueryListProps, ref) => {
   const { error: errorToast, success: successToast } = useToastContext();
   const [disabledModal, setDisabledModal] = useState(false);
   const [idToRemove, setIdtoremove] = useState<string | null>();
+
+  const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
 
   const urlApiQueryList = url`/api/dashboard/get-list-query`;
   const urlApiGetQueryComponent = url`/api/dashboard/get-components/`;
   const urlApiDeleteQuery = url`/api/dashboard/delete-query/`;
   const urlApiQuery = url`/api/dashboard/validate-query`;
 
-  // Récupère la liste des requête en base
+  useImperativeHandle(ref, () => ({
+    setOpenListQuery(value: any) {
+      setOpenListQuery(value);
+    },
+  }));
+
+  // Récupère la liste des requêtes en base
   const fetchData = useGetRun(urlApiQueryList, {});
 
   useEffect(() => {
     if (fetchData.isResolved && fetchData.data) {
-      const queryList: { id: any; query: any; title: any }[] = [];
-      fetchData.data.forEach(
-        (element: {
-          dashboardQueryId: any;
-          dashboardQueryQuery: any;
-          dashboardQueryTitle: any;
-        }) => {
-          queryList.push({
-            id: element.dashboardQueryId,
-            query: element.dashboardQueryQuery,
-            title: element.dashboardQueryTitle,
-          });
-        },
-      );
-      props.setOpenListQuery(queryList);
+      const queryList: { id: any; query: any; title: any }[] =
+        fetchData.data.map(
+          (element: {
+            dashboardQueryId: any;
+            dashboardQueryQuery: any;
+            dashboardQueryTitle: any;
+          }) => {
+            return {
+              id: element.dashboardQueryId,
+              query: element.dashboardQueryQuery,
+              title: element.dashboardQueryTitle,
+            };
+          },
+        );
+      setOpenListQuery(queryList);
     }
-  }, [fetchData.data, fetchData.isResolved, props]);
+  }, [fetchData.data, fetchData.isResolved, setOpenListQuery]);
 
-  // Défini les propriétés par défaut pour l'ajout d'une nouvelle requête
+  // Définit les propriétés par défaut pour l'ajout d'une nouvelle requête
   const handleAddQuery = () => {
     const newQuery = {
       query: "",
       title: "Titre nouvelle requête",
     };
-    props.setIsAdding(true); // Défini le statut en cours d'édition
+    props.setIsAdding(true); // Définit le statut en cours d'édition
     props.setOpenListComponent([]);
     props.setData(null);
     props.setActiveQuery(newQuery);
@@ -83,11 +95,9 @@ const QueryList = (props: QueryListProps) => {
   // Met à jour la requête en cas d'édition
   const handleEditQuery = (id: string | undefined) => {
     // Active la requête dans la liste
-    props.setIsAdding(true); // Défini le statut en cours d'édition
+    props.setIsAdding(true); // Définit le statut en cours d'édition
     props.setActiveQuery(
-      props.openListQuery
-        ? props.openListQuery.find((query) => query.id === id)
-        : null,
+      openListQuery ? openListQuery.find((query) => query.id === id) : null,
     );
   };
 
@@ -112,17 +122,18 @@ const QueryList = (props: QueryListProps) => {
         formConfig: any;
         title: string;
         config: any;
-      }[] = [];
-      let index = 0;
-      fetchQueryComponent.data.forEach(
-        (element: {
-          dashboardComponentId: string;
-          dashboardComponentKey: string;
-          dashboardComponentTitle: string;
-          dashboardComponentConfig: any;
-          dashboardComponentDahsboardQueryId: string;
-        }) => {
-          componentList.push({
+      }[] = fetchQueryComponent.data.map(
+        (
+          element: {
+            dashboardComponentId: string;
+            dashboardComponentKey: string;
+            dashboardComponentTitle: string;
+            dashboardComponentConfig: any;
+            dashboardComponentDahsboardQueryId: string;
+          },
+          index: number,
+        ) => {
+          return {
             id: element.dashboardComponentId,
             queryId: element.dashboardComponentDahsboardQueryId || "",
             index: index,
@@ -137,13 +148,17 @@ const QueryList = (props: QueryListProps) => {
               ],
             title: element.dashboardComponentTitle,
             config: element.dashboardComponentConfig,
-          });
-          index++;
+          };
         },
       );
       props.setOpenListComponent(componentList);
     }
-  }, [fetchQueryComponent.data, fetchQueryComponent.isResolved, props]);
+  }, [
+    fetchQueryComponent.data,
+    fetchQueryComponent.isResolved,
+    props.openListComponent,
+    props.setOpenListComponent,
+  ]);
 
   // Valide la requête et récupère les datas correspondantes
   const fetchDataQuery = useCallback(async () => {
@@ -162,22 +177,29 @@ const QueryList = (props: QueryListProps) => {
     )
       .json()
       .then((res) => {
-        // Format les données pour exploitations par les composant
-        const dataFormated = formatData(res);
-        props.setAvailableOptions(Object.keys(dataFormated[0]));
-        props.setQueryGlobalData(dataFormated);
+        // Format les données pour exploitations par les composants
+        const dataFormatted = formatData(res);
+        props.setAvailableOptions(Object.keys(dataFormatted[0]));
+        props.setQueryGlobalData(dataFormatted);
         // Set les datas à afficher dans le premier composant, pour visualisation
         if (props.openListComponent && props.openListComponent.length > 0) {
-          const newData = null;
-          props.setData(newData);
+          props.setData(null);
           props.setSelectedComponent(props.openListComponent[0]);
         }
-        props.setOpenListComponent(props.openListComponent); // Set la liste des composants
       })
       .catch((reason: string) => {
         errorToast(reason);
       });
-  }, [errorToast, props, urlApiQuery]);
+  }, [
+    errorToast,
+    props.activeQuery,
+    props.setAvailableOptions,
+    props.setQueryGlobalData,
+    props.setData,
+    props.setSelectedComponent,
+    props.setOpenListComponent,
+    urlApiQuery,
+  ]);
 
   // Enregistre la config pour la requête
   const handleSaveQuery = () => {
@@ -188,7 +210,7 @@ const QueryList = (props: QueryListProps) => {
   const handleCancelQuery = () => {
     props.setIsAdding(false); // Désactive le mode "Ajout"
     props.setActiveQuery(null);
-    props.setSelectedComponent([]);
+    props.setSelectedComponent(null);
     props.setOpenListComponent(null);
   };
 
@@ -219,10 +241,10 @@ const QueryList = (props: QueryListProps) => {
 
   // Récupère les requêtes en base lors du premier chargement du composant
   useEffect(() => {
-    if (!props.openListQuery && !fetchData.isLoading) {
+    if (!openListQuery && !fetchData.isLoading) {
       fetchData.run();
     }
-  }, [fetchData, props.openListQuery]);
+  }, [fetchData, openListQuery]);
 
   // Récupère les composant de la requête éditer
   useEffect(() => {
@@ -236,7 +258,7 @@ const QueryList = (props: QueryListProps) => {
     }
   }, [fetchQueryComponent, props.activeQuery, props.openListComponent]);
 
-  // Récupères les datas de la requête éditer
+  // Récupères les datas de la requête éditée
   useEffect(() => {
     if (
       props.activeQuery &&
@@ -283,8 +305,8 @@ const QueryList = (props: QueryListProps) => {
           variant="flush"
           style={{ maxHeight: "400px", overflowY: "auto" }}
         >
-          {props.openListQuery && props.openListQuery.length > 0 ? (
-            props.openListQuery.map(({ id, title }) => (
+          {openListQuery && openListQuery.length > 0 ? (
+            openListQuery.map(({ id, title }) => (
               <ListGroup.Item
                 key={id}
                 className="justify-content-between align-items-center"
@@ -336,6 +358,8 @@ const QueryList = (props: QueryListProps) => {
       />
     </Card>
   );
-};
+});
+
+QueryList.displayName = "QueryList";
 
 export default QueryList;

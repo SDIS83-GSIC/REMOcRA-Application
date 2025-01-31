@@ -14,7 +14,7 @@ type ConfigDynamicComponentProps = {
   openListComponent: ComponentDashboard[] | undefined;
   setOpenListComponent: (arg0: any[]) => void;
   queryGlobalData: any[];
-  seletedComponent: ComponentDashboard | null;
+  selectedComponent: ComponentDashboard | null;
   setSelectedComponent: (arg0: any) => void;
 };
 
@@ -98,8 +98,8 @@ const ConfigDynamicComponent = (props: ConfigDynamicComponentProps) => {
                       eventKey={component.index}
                       onClick={() => handleTabClick(component.index || 0)}
                       className={
-                        props.seletedComponent &&
-                        props.seletedComponent.index === component.index
+                        props.selectedComponent &&
+                        props.selectedComponent.index === component.index
                           ? "active d-flex align-items-center"
                           : "d-flex align-items-center"
                       }
@@ -143,16 +143,16 @@ const ConfigDynamicComponent = (props: ConfigDynamicComponentProps) => {
 
           {/* Contenu des onglets */}
           <div className="flex-grow-1 mt-3" style={{ height: "400px" }}>
-            {props.seletedComponent && props.openListComponent ? (
+            {props.selectedComponent && props.openListComponent ? (
               props.openListComponent.map(
                 ({ index, key, component: Component, config: config }) =>
-                  index === props.seletedComponent?.index ? (
+                  index === props.selectedComponent?.index && (
                     <Component
                       key={key}
                       data={props.queryGlobalData}
                       config={config}
                     />
-                  ) : null,
+                  ),
               )
             ) : (
               <div className="alert alert-primary" role="alert">

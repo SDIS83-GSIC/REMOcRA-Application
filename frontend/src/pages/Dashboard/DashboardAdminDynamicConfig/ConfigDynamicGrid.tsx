@@ -85,10 +85,10 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
           const newActiveQuerysData: QueryData[] = [];
           // Formatte et stocke les datas des requête SQL pour usage des composants
           resData.forEach((dataQuery: any) => {
-            const dataFormated = formatData(dataQuery);
+            const dataFormatted = formatData(dataQuery);
             newActiveQuerysData.push({
               id: dataQuery ? dataQuery.queryId : componentSelected?.queryId,
-              data: dataFormated,
+              data: dataFormatted,
             });
           });
           setActiveQuerysData(
@@ -139,6 +139,7 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
     if (
       fetchDashboardConfig.isResolved &&
       fetchDashboardConfig.data &&
+      props.componentsListDashboard &&
       props.componentsListDashboard.length === 0 &&
       props.activeDashboard.id
     ) {
@@ -406,7 +407,6 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
           const dataQuery = activeQuerysData?.find(
             (query) => query.id === component.queryId,
           );
-          // console.log(activeQuerysData);
           if (dataQuery) {
             newComponentList.push({
               ...component,

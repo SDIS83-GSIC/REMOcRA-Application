@@ -89,14 +89,14 @@ const TourneePei = ({
 
   const submitList = () => {
     const formData = new FormData();
-    const formatedData = data.map((e, index) => {
+    const formattedData = data.map((e, index) => {
       return {
         tourneeId: e.tourneeId,
         peiId: e.id,
         lTourneePeiOrdre: index + 1,
       };
     });
-    formData.append("listTourneePei", JSON.stringify(formatedData));
+    formData.append("listTourneePei", JSON.stringify(formattedData));
     execute.run(formData);
   };
 

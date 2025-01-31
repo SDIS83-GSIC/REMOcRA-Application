@@ -1,18 +1,18 @@
-import { Alert, Row, Col, Button } from "react-bootstrap";
+import { Alert, Button, Col, Row } from "react-bootstrap";
 import { useFormikContext } from "formik";
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import {
   FormContainer,
-  TextInput,
   Multiselect,
   NumberInput,
+  TextInput,
 } from "../../../components/Form/Form.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import { ComponentDashboard } from "../Constants.tsx";
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
-import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 
 type ConfigFormDashboardProps = {
   editTabIndex: number | undefined | null;
@@ -30,25 +30,21 @@ type ConfigFormDashboardProps = {
   setDashboardProfil: (arg0: any) => void;
 };
 
+const MAX_SIZE = 4;
+
 const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
   const { values, setFieldValue } = useFormikContext<any>();
   const { error: errorToast } = useToastContext();
 
-  const [disabledModal, setDisabledModal] = useState(false); // Affiche la modal de confirmation
-
-  const [profilUtilisateurList, setProfilUtilisateurList] = useState<any[]>([]); // Liste des profils utilisateurs
-
-  const urlApiProfilUtilisateurList = url`/api/dashboard/get-dashboard-profil-available/`;
+  const [disabledModal, setDisabledModal] = useState(false); // Affiche la modale de confirmation
 
   // Récupère la liste de tous les profils utilisateur
-  const { run, isResolved, data } = useGetRun(urlApiProfilUtilisateurList, {});
-  useMemo(() => {
-    if (isResolved) {
-      setProfilUtilisateurList(data);
-    }
-  }, [data, isResolved]);
+  const { data: profilUtilisateurList } = useGet(
+    url`/api/dashboard/get-dashboard-profil-available`,
+    {},
+  );
 
-  const handleChangeSize = (size: string, id: number) => {
+  const handleChangeSize = (size: number, id: number) => {
     // Change la taille du composant
     if (props.componentsListDashboard) {
       const componentFiltered = props.componentsListDashboard.find(
@@ -58,11 +54,10 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
       if (
         componentFiltered &&
         componentFiltered.configPosition &&
-        componentFiltered.configPosition.x + parseInt(size) <= 4 &&
-        componentFiltered.configPosition.y + parseInt(size) <=
-          props.numberRowGrid
+        componentFiltered.configPosition.x + size <= MAX_SIZE &&
+        componentFiltered.configPosition.y + size <= props.numberRowGrid
       ) {
-        componentFiltered.configPosition.size = parseInt(size);
+        componentFiltered.configPosition.size = size;
         props.setComponentSelected(componentFiltered);
 
         const newComponentList = props.componentsListDashboard.map(
@@ -91,12 +86,6 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
       props.removeRowUnused(newComponentList);
     }
   };
-
-  useEffect(() => {
-    if (profilUtilisateurList.length === 0) {
-      run();
-    }
-  }, [profilUtilisateurList.length, run]);
 
   return (
     <FormContainer className="mb-3">
@@ -135,7 +124,7 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
                 options={profilUtilisateurList}
                 value={
                   values.profilsId
-                    ? profilUtilisateurList.filter((p) =>
+                    ? profilUtilisateurList?.filter((p) =>
                         values.profilsId.includes(p),
                       )
                     : props.dashboardProfilsUtilisateur
@@ -171,12 +160,15 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
             <NumberInput
               min={1}
               step={1}
-              max="4"
+              max={MAX_SIZE}
               required={false}
               name="sizeComponent"
-              label="Taille du composant (1-4) :"
+              label={`Taille du composant (1-${MAX_SIZE}) :`}
               onChange={(e: any) => {
-                handleChangeSize(e.target.value, props.componentSelected?.id);
+                const size = parseInt(e.target.value);
+                if (!isNaN(size)) {
+                  handleChangeSize(size, props.componentSelected?.id);
+                }
               }}
             />
             <Button

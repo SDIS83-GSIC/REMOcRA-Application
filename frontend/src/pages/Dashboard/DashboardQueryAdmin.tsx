@@ -12,12 +12,13 @@ import ConfigDynamicComponent from "./QueryAdminDynamicForm/ConfigDynamicCompone
 import { ComponentDashboard, QueryParam } from "./Constants.tsx";
 
 const ComponentBoardQueryAdmin = () => {
+  const queryListRef = useRef<HTMLDivElement>();
+
   const { error: errorToast } = useToastContext();
   const [queryGlobalData, setQueryGlobalData] = useState<any | null>(null); // Données globales retournées par la requête
   const [data, setData] = useState<any | null>(); // Données mappées pour le composant à l'écran
 
   const [activeQuery, setActiveQuery] = useState<QueryParam | null>(null); // Requête actif
-  const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
 
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentDashboard | null>(null); // Index composant ouvert actif
@@ -34,30 +35,24 @@ const ComponentBoardQueryAdmin = () => {
 
   const getPrepareVariables = () => {
     const componentData: { id: number; key: any; title: any; config: any }[] =
-      []; // Liste des onglets ouverts
+      openListComponent
+        ? openListComponent.map((component) => {
+            return {
+              ...(component.id && { componentId: component.id }),
+              ...(component.queryId && { componentQueryId: component.queryId }),
+              componentKey: component.key,
+              componentTitle: component.title,
+              componentConfig: JSON.stringify(component.config),
+            };
+          })
+        : null;
 
-    // Liste des composants paramétrés pour la requête
-    const components = openListComponent
-      ? openListComponent.map((component) => {
-          const componentInfo = {
-            ...(component.id && { componentId: component.id }),
-            ...(component.queryId && { componentQueryId: component.queryId }),
-            componentKey: component.key,
-            componentTitle: component.title,
-            componentConfig: JSON.stringify(component.config),
-          };
-
-          componentData.push(componentInfo); // Ajout au tableau global
-          return componentInfo; // Ajout au tableau local
-        })
-      : null;
-
-    if (components) {
+    if (componentData) {
       const queryComponentData = {
         ...(activeQuery?.id, { queryId: activeQuery?.id }),
         queryTitle: activeQuery?.title ?? "",
         queryQuery: activeQuery?.query ?? "",
-        queryComponents: components,
+        queryComponents: componentData,
       };
 
       return queryComponentData;
@@ -75,8 +70,8 @@ const ComponentBoardQueryAdmin = () => {
     setIsAdding(false);
     setSelectedComponent(null);
     setActiveQuery(null);
-    setOpenListComponent([]);
-    setOpenListQuery(null);
+    setOpenListComponent(null);
+    queryListRef.current.setOpenListQuery(null);
   };
 
   return (
@@ -86,9 +81,8 @@ const ComponentBoardQueryAdmin = () => {
       <Row>
         <Col sm={3}>
           <QueryList
+            ref={queryListRef}
             setData={setData}
-            openListQuery={openListQuery}
-            setOpenListQuery={setOpenListQuery}
             activeQuery={activeQuery}
             setActiveQuery={setActiveQuery}
             openListComponent={openListComponent}
@@ -103,16 +97,16 @@ const ComponentBoardQueryAdmin = () => {
           />
         </Col>
         <Col sm={9}>
-          {activeQuery ? (
+          {activeQuery && (
             <QueryForm
               activeQuery={activeQuery}
               setActiveQuery={setActiveQuery}
               setQueryData={setQueryGlobalData}
               setAvailableOptions={setAvailableOptions}
             />
-          ) : null}
+          )}
         </Col>
-        {activeQuery ? (
+        {activeQuery && (
           <MyFormik
             initialValues={getInitialValues()}
             innerRef={formikRef}
@@ -120,7 +114,7 @@ const ComponentBoardQueryAdmin = () => {
             prepareVariables={getPrepareVariables}
             submitUrl={activeQuery.id ? urlApiUpdateRegister : urlApiRegister}
             onSubmit={toSubmit}
-            successToastMessage="La requête à est correctement enregistré"
+            successToastMessage="La requête à été correctement enregistrée"
           >
             <FormContainer>
               <Row>
@@ -144,14 +138,14 @@ const ComponentBoardQueryAdmin = () => {
                     openListComponent={openListComponent}
                     setOpenListComponent={setOpenListComponent}
                     queryGlobalData={queryGlobalData}
-                    seletedComponent={selectedComponent}
+                    selectedComponent={selectedComponent}
                     setSelectedComponent={setSelectedComponent}
                   />
                 </Col>
               </Row>
             </FormContainer>
           </MyFormik>
-        ) : null}
+        )}
       </Row>
     </>
   );

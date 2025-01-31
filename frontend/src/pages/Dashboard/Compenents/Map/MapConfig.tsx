@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { useDebouncedCallback } from "use-debounce";
 import { SelectInput } from "../../../../components/Form/Form.tsx";
 
 const MapConfig = (options: any) => {
@@ -29,6 +30,13 @@ const MapConfig = (options: any) => {
     const updatedConfig = { ...options.config, [fieldName]: newValue };
     options.setConfig(updatedConfig);
   };
+
+  // Debounce pour le color picker pour limiter le nombre de refraîchissements OpenLayers
+  const debounceColorPick = useDebouncedCallback(
+    (index: number, field: string, value: string) =>
+      handleLimitsChange(index, field, value),
+    500,
+  );
 
   // Mettre à jour les limites
   const handleLimitsChange = (index: number, field: string, value: string) => {
@@ -106,7 +114,7 @@ const MapConfig = (options: any) => {
                 type="color"
                 value={limit.color}
                 onChange={(e) =>
-                  handleLimitsChange(index, "color", e.target.value)
+                  debounceColorPick(index, "color", e.target.value)
                 }
                 style={{ width: "100px", height: "40px", marginRight: "10px" }}
               />

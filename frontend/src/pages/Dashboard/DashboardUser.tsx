@@ -2,7 +2,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { useGetRun } from "../../components/Fetch/useFetch.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
   ComponentDashboard,
   DashboardComponentConfig,
@@ -24,10 +24,15 @@ const ComponentBoardList = () => {
   const [numberRowGrid, setNumberRowGrid] = useState<number>(0);
   const heightRow = 200;
 
-  const urlApiDashboardUser = url`/api/dashboard/get-dashboard-user/`;
   const urlApiDataQuerys = url`/api/dashboard/get-list-data-query/`;
 
-  // Récupère en base les datas lié à une requête et les set sur les composants
+  // Récupère tous les dashboards en base liés au profil utilisateur
+  const fetchDataDashboard = useGet(
+    url`/api/dashboard/get-dashboard-user/`,
+    {},
+  );
+
+  // Récupère en base les données liées à une requête et les set sur les composants
   const fetchDataQuery = useCallback(
     async (queryIds?: string[] | undefined) => {
       (
@@ -43,12 +48,12 @@ const ComponentBoardList = () => {
         .json()
         .then((resData) => {
           const newActiveQuerysData: QueryData[] = [];
-          // Formatte et stocke les datas des requête SQL pour usage des composants
+          // Formatte et stocke les datas des requêtes SQL pour usage des composants
           resData.forEach((dataQuery: any) => {
-            const dataFormated = formatData(dataQuery);
+            const dataFormatted = formatData(dataQuery);
             newActiveQuerysData.push({
               id: dataQuery.queryId,
-              data: dataFormated,
+              data: dataFormatted,
             });
           });
           setListQuerysData(newActiveQuerysData);
@@ -72,11 +77,8 @@ const ComponentBoardList = () => {
     [componentsListDashboard, errorToast, urlApiDataQuerys],
   );
 
-  // Récupère tous les dashboard en base liés au profil utilisateur
-  const fetchDataDashboard = useGetRun(urlApiDashboardUser, {});
-
   useEffect(() => {
-    if ((fetchDataDashboard.isResolved, fetchDataDashboard.data)) {
+    if (fetchDataDashboard.isResolved && fetchDataDashboard.data) {
       setDashoardUser({
         id: fetchDataDashboard.data.dashboardId,
         title: fetchDataDashboard.data.dashboardTitle,
@@ -105,8 +107,10 @@ const ComponentBoardList = () => {
           });
         },
       );
-      calculateRows(newComponentList);
-      setComponentsListDashboard(newComponentList);
+      if (newComponentList.length > 0) {
+        calculateRows(newComponentList);
+        setComponentsListDashboard(newComponentList);
+      }
     }
   }, [fetchDataDashboard.data, fetchDataDashboard.isResolved]);
 

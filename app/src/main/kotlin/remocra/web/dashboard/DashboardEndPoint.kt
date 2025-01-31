@@ -57,7 +57,7 @@ class DashboardEndPoint : AbstractEndpoint() {
     @Path("/validate-query")
     @RequireDroits([Droit.DASHBOARD_A])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getDashboardQuery(queryDasboard: DashboardQueryRequestData): Response = Response.ok().entity(getDashboardQueryUseCase.getQuery(queryDasboard)).build()
+    fun getDashboardQuery(queryDashboard: DashboardQueryRequestData): Response = Response.ok().entity(getDashboardQueryUseCase.getQuery(queryDashboard)).build()
 
     @POST
     @Path("/create-query")

@@ -25,9 +25,9 @@ const QueryForm = (props: QueryFormProps) => {
       title: data.queryTitle,
       query: data.querySql,
     });
-    const dataFormated = formatData(data);
-    props.setQueryData(dataFormated);
-    props.setAvailableOptions(Object.keys(dataFormated[0]));
+    const dataFormatted = formatData(data);
+    props.setQueryData(dataFormatted);
+    props.setAvailableOptions(Object.keys(dataFormatted[0]));
   };
 
   const getInitialValues = (activeQuery: QueryParam) => ({
