@@ -77,7 +77,7 @@ const ModuleDocumentCourrier = ({
                 <td>{e.libelle}</td>
                 <td>{e.date && formatDateTime(e.date)}</td>
                 <td>
-                  <CustomLinkButton
+                  <Button
                     className={"text-warning"}
                     href={
                       moduleType === TypeModuleRemocra.DOCUMENT
@@ -86,19 +86,19 @@ const ModuleDocumentCourrier = ({
                     }
                   >
                     <IconExport />
-                  </CustomLinkButton>
+                  </Button>
                 </td>
               </tr>
             );
           })}
         </tbody>
       </Table>
-      <Button
+      <CustomLinkButton
         variant="link"
         href={URLS.LIST_MODULE_DOCUMENT_COURRIER(moduleType, moduleId)}
       >
         Voir plus
-      </Button>
+      </CustomLinkButton>
     </>
   );
 };
@@ -110,7 +110,9 @@ const BuildLinks = ({ listeLink }: { listeLink: LinkType[] }) => {
         if (e.aLeDroit === true) {
           return (
             <div key={key}>
-              <a href={e.link}>{e.label}</a>
+              <CustomLinkButton className="text-underline" href={e.link}>
+                {e.label}
+              </CustomLinkButton>
             </div>
           );
         }

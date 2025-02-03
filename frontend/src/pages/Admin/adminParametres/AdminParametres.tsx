@@ -25,6 +25,8 @@ import TransferList, {
 import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
 import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconParametre } from "../../../components/Icon/Icon.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -166,7 +168,10 @@ export const AdminParametresInterne = () => {
     values && (
       <FormContainer>
         <Container>
-          <h1>Paramètres de l&apos;application</h1>
+          <PageTitle
+            title="Paramètres de l'application"
+            icon={<IconParametre />}
+          />
 
           <AccordionCustom
             activesKeys={activesKeys}

@@ -26,7 +26,7 @@ const LinkButton = ({
         ...state,
         from: [...statePrevious, `${pathname}${search}`],
       }}
-      className={`text-decoration-none btn btn-${variant} ${classname}`}
+      className={`text-decoration-none btn btn-${variant} ${classname} text-nowrap`}
       onClick={onClick}
     >
       {children}

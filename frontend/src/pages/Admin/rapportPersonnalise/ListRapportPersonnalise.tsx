@@ -50,8 +50,9 @@ const ListRapportPersonnalise = () => {
                 <Button
                   variant="primary"
                   href={URLS.IMPORTER_RAPPORT_PERSONNALISE}
-                  title={"Importer"}
-                />
+                >
+                  Importer
+                </Button>
               </Col>
             </Row>
           }

@@ -118,3 +118,5 @@ export const IconMapComponent = () => (
 export const IconArrowUp = () => (
   <i className="fi fi-ss-arrow-circle-up fs-1" />
 );
+
+export const IconParametre = () => <i className="fi fi-br-gears" />;

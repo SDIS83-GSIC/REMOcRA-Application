@@ -1,19 +1,21 @@
+import { isValid, parseISO } from "date-fns";
+import { Formik, useFormikContext } from "formik";
 import { useEffect } from "react";
 import { Button, Col, Container, Row, Stack, Table } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Formik, useFormikContext } from "formik";
-import { isValid, parseISO } from "date-fns";
+import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import {
   DateTimeInput,
   FormContainer,
-  TextInput,
   FormLabel,
   SelectInput,
+  TextInput,
 } from "../../../components/Form/Form.tsx";
+import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
-import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import { URLS } from "../../../routes.tsx";
-import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import { formatDateHeure } from "../../../utils/formatDateUtils.tsx";
 import { SelectOption, useRefs } from "./useRefs.ts";
 
@@ -75,7 +77,10 @@ const HistoriqueOperations = () => {
 
   return (
     <Container>
-      <h1>Historique des opérations</h1>
+      <PageTitle
+        title="Historique des opérations"
+        icon={<IconUtilisateurs />}
+      />
       <Row className="justify-content-md-center">
         <Col className="p-2 border rounded mx-2" xs={5}>
           <Formik

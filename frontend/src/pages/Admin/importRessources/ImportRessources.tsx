@@ -1,12 +1,14 @@
 import { useFormikContext } from "formik";
 import { object } from "yup";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { URLS } from "../../../routes.tsx";
 import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconImport } from "../../../components/Icon/Icon.tsx";
 
 export const getInitialValues = () => ({
   banniere: null,
@@ -31,8 +33,11 @@ export const ImportRessources = () => {
   );
 
   return (
-    <>
-      <h1>Import des ressources graphiques</h1>
+    <Container>
+      <PageTitle
+        title="Import des ressources graphiques"
+        icon={<IconImport />}
+      />
       <p>
         Cet écran permet d&apos;importer différentes ressources utiles à
         l&apos;outil. Chaque bloc (<i>accordéon</i>) est indépendant, et possède
@@ -153,7 +158,7 @@ export const ImportRessources = () => {
           },
         ]}
       />
-    </>
+    </Container>
   );
 };
 
