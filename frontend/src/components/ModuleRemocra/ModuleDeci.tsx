@@ -1,20 +1,35 @@
 import { Outlet } from "react-router-dom";
-import { URLS } from "../../routes.tsx";
-import Header, { NavToProps } from "../Header/Header.tsx";
+import { hasDroit } from "../../droits.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import SquelettePage from "../../pages/SquelettePage.tsx";
+import { URLS } from "../../routes.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
+import Header, { NavToProps } from "../Header/Header.tsx";
 
 const ModuleDeci = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const navLinks: NavToProps[] = [
-    { path: URLS.PEI, label: "Points d'eau" },
+    {
+      path: URLS.PEI,
+      label: "Points d'eau",
+      aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),
+    },
     {
       path: URLS.LIST_TOURNEE,
       label: "Tournées",
+      aLeDroit: hasDroit(user, TYPE_DROIT.TOURNEE_R),
     },
     {
       path: URLS.LIST_INDISPONIBILITE_TEMPORAIRE,
       label: "Indisponibilités temporaires",
+      aLeDroit: hasDroit(user, TYPE_DROIT.INDISPO_TEMP_R),
     },
-    { path: URLS.DECI_CARTE, label: "Carte" },
+    {
+      path: URLS.DECI_CARTE,
+      label: "Carte",
+      aLeDroit: true,
+    },
   ];
 
   return (

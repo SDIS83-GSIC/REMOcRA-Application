@@ -10,15 +10,18 @@ import LinkButton from "../Button/LinkButton.tsx";
 export interface NavToProps {
   path: string;
   label: ReactNode;
+  aLeDroit: boolean;
 }
 
-const NavTo = ({ path, label }: NavToProps) => {
+const NavTo = ({ path, label, aLeDroit }: NavToProps) => {
   return (
-    <Nav.Item>
-      <LinkButton href={path} classname="nav-link">
-        {label}
-      </LinkButton>
-    </Nav.Item>
+    aLeDroit && (
+      <Nav.Item>
+        <LinkButton href={path} classname="nav-link">
+          {label}
+        </LinkButton>
+      </Nav.Item>
+    )
   );
 };
 const Header = ({ links }: { links?: NavToProps[] }) => {
@@ -31,7 +34,12 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               {links?.map((item, index) => (
-                <NavTo key={index} path={item.path} label={item.label} />
+                <NavTo
+                  key={index}
+                  path={item.path}
+                  label={item.label}
+                  aLeDroit={item.aLeDroit}
+                />
               ))}
             </Nav>
             <Nav>
