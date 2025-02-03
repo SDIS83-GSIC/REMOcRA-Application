@@ -1,0 +1,3 @@
+ALTER TABLE remocra.oldeb RENAME COLUMN oldeb_cadastra_section_id TO oldeb_cadastre_section_id;
+
+ALTER TABLE remocra.oldeb RENAME CONSTRAINT oldeb_oldeb_cadastra_section_id_fkey TO oldeb_oldeb_cadastre_section_id_fkey;

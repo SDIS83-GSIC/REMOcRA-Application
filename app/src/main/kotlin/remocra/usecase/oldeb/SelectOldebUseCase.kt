@@ -33,7 +33,7 @@ class SelectOldebUseCase @Inject constructor(
                 oldebId = it.oldebId,
                 oldebGeometrie = it.oldebGeometrie,
                 oldebCommuneId = it.oldebCommuneId,
-                oldebCadastreSectionId = it.oldebCadastraSectionId,
+                oldebCadastreSectionId = it.oldebCadastreSectionId,
                 oldebCadastreParcelleId = it.oldebCadastreParcelleId,
                 oldebOldebTypeAccesId = it.oldebOldebTypeAccesId,
                 oldebOldebTypeZoneUrbanismeId = it.oldebOldebTypeZoneUrbanismeId,

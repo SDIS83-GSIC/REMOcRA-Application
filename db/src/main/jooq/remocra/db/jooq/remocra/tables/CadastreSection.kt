@@ -30,7 +30,7 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE__CADASTRE_PARCELLE_CADASTRE_PARCELLE_CADASTRE_SECTION_ID_FKEY
 import remocra.db.jooq.remocra.keys.CADASTRE_SECTION_PKEY
 import remocra.db.jooq.remocra.keys.CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_SECTION_COMMUNE_ID_FKEY
-import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRA_SECTION_ID_FKEY
+import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY
 import remocra.db.jooq.remocra.tables.CadastreParcelle.CadastreParcellePath
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
@@ -181,7 +181,7 @@ open class CadastreSection(
      */
     fun oldeb(): OldebPath {
         if (!this::_oldeb.isInitialized) {
-            _oldeb = OldebPath(this, null, OLDEB__OLDEB_OLDEB_CADASTRA_SECTION_ID_FKEY.inverseKey)
+            _oldeb = OldebPath(this, null, OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY.inverseKey)
         }
 
         return _oldeb

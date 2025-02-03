@@ -32,8 +32,8 @@ import remocra.db.jooq.remocra.keys.OLDEB_LOCATAIRE__OLDEB_LOCATAIRE_OLDEB_LOCAT
 import remocra.db.jooq.remocra.keys.OLDEB_PKEY
 import remocra.db.jooq.remocra.keys.OLDEB_PROPRIETE__OLDEB_PROPRIETE_OLDEB_PROPRIETE_OLDEB_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE__OLDEB_VISITE_OLDEB_VISITE_OLDEB_ID_FKEY
-import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRA_SECTION_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY
+import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ACCES_ID_FKEY
@@ -116,9 +116,9 @@ open class Oldeb(
     val COMMUNE_ID: TableField<Record, UUID?> = createField(DSL.name("oldeb_commune_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.oldeb.oldeb_cadastra_section_id</code>.
+     * The column <code>remocra.oldeb.oldeb_cadastre_section_id</code>.
      */
-    val CADASTRA_SECTION_ID: TableField<Record, UUID?> = createField(DSL.name("oldeb_cadastra_section_id"), SQLDataType.UUID.nullable(false), this, "")
+    val CADASTRE_SECTION_ID: TableField<Record, UUID?> = createField(DSL.name("oldeb_cadastre_section_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
      * The column <code>remocra.oldeb.oldeb_cadastre_parcelle_id</code>.
@@ -208,24 +208,7 @@ open class Oldeb(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = OLDEB_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(OLDEB__OLDEB_OLDEB_CADASTRA_SECTION_ID_FKEY, OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY, OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY, OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ACCES_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ZONE_URBANISME_ID_FKEY, OLDEB__OLDEB_OLDEB_VOIE_ID_FKEY)
-
-    private lateinit var _cadastreSection: CadastreSectionPath
-
-    /**
-     * Get the implicit join path to the <code>remocra.cadastre_section</code>
-     * table.
-     */
-    fun cadastreSection(): CadastreSectionPath {
-        if (!this::_cadastreSection.isInitialized) {
-            _cadastreSection = CadastreSectionPath(this, OLDEB__OLDEB_OLDEB_CADASTRA_SECTION_ID_FKEY, null)
-        }
-
-        return _cadastreSection
-    }
-
-    val cadastreSection: CadastreSectionPath
-        get(): CadastreSectionPath = cadastreSection()
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY, OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY, OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY, OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ACCES_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ZONE_URBANISME_ID_FKEY, OLDEB__OLDEB_OLDEB_VOIE_ID_FKEY)
 
     private lateinit var _cadastreParcelle: CadastreParcellePath
 
@@ -243,6 +226,23 @@ open class Oldeb(
 
     val cadastreParcelle: CadastreParcellePath
         get(): CadastreParcellePath = cadastreParcelle()
+
+    private lateinit var _cadastreSection: CadastreSectionPath
+
+    /**
+     * Get the implicit join path to the <code>remocra.cadastre_section</code>
+     * table.
+     */
+    fun cadastreSection(): CadastreSectionPath {
+        if (!this::_cadastreSection.isInitialized) {
+            _cadastreSection = CadastreSectionPath(this, OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY, null)
+        }
+
+        return _cadastreSection
+    }
+
+    val cadastreSection: CadastreSectionPath
+        get(): CadastreSectionPath = cadastreSection()
 
     private lateinit var _commune: CommunePath
 

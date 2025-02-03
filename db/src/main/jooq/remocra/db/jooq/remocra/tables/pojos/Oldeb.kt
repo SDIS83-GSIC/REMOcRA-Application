@@ -23,7 +23,7 @@ data class Oldeb(
     val oldebId: UUID,
     val oldebGeometrie: Geometry,
     val oldebCommuneId: UUID,
-    val oldebCadastraSectionId: UUID,
+    val oldebCadastreSectionId: UUID,
     val oldebCadastreParcelleId: UUID,
     val oldebOldebTypeAccesId: UUID?,
     val oldebOldebTypeZoneUrbanismeId: UUID?,
@@ -57,7 +57,7 @@ data class Oldeb(
         if (this.oldebCommuneId != o.oldebCommuneId) {
             return false
         }
-        if (this.oldebCadastraSectionId != o.oldebCadastraSectionId) {
+        if (this.oldebCadastreSectionId != o.oldebCadastreSectionId) {
             return false
         }
         if (this.oldebCadastreParcelleId != o.oldebCadastreParcelleId) {
@@ -134,7 +134,7 @@ data class Oldeb(
         result = prime * result + this.oldebId.hashCode()
         result = prime * result + this.oldebGeometrie.hashCode()
         result = prime * result + this.oldebCommuneId.hashCode()
-        result = prime * result + this.oldebCadastraSectionId.hashCode()
+        result = prime * result + this.oldebCadastreSectionId.hashCode()
         result = prime * result + this.oldebCadastreParcelleId.hashCode()
         result = prime * result + (if (this.oldebOldebTypeAccesId == null) 0 else this.oldebOldebTypeAccesId.hashCode())
         result = prime * result + (if (this.oldebOldebTypeZoneUrbanismeId == null) 0 else this.oldebOldebTypeZoneUrbanismeId.hashCode())
@@ -155,7 +155,7 @@ data class Oldeb(
         sb.append(oldebId)
         sb.append(", ").append(oldebGeometrie)
         sb.append(", ").append(oldebCommuneId)
-        sb.append(", ").append(oldebCadastraSectionId)
+        sb.append(", ").append(oldebCadastreSectionId)
         sb.append(", ").append(oldebCadastreParcelleId)
         sb.append(", ").append(oldebOldebTypeAccesId)
         sb.append(", ").append(oldebOldebTypeZoneUrbanismeId)

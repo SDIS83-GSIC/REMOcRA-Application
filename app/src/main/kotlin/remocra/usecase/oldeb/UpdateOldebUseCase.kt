@@ -86,7 +86,7 @@ class UpdateOldebUseCase @Inject constructor(
                 oldebId = element.oldeb.oldebId,
                 oldebGeometrie = element.oldeb.oldebGeometrie,
                 oldebCommuneId = element.oldeb.oldebCommuneId,
-                oldebCadastraSectionId = element.oldeb.oldebCadastreSectionId,
+                oldebCadastreSectionId = element.oldeb.oldebCadastreSectionId,
                 oldebCadastreParcelleId = element.oldeb.oldebCadastreParcelleId,
                 oldebOldebTypeAccesId = element.oldeb.oldebOldebTypeAccesId,
                 oldebOldebTypeZoneUrbanismeId = element.oldeb.oldebOldebTypeZoneUrbanismeId,
