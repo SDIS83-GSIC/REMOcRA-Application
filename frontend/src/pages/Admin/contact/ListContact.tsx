@@ -30,8 +30,6 @@ const ListContact = () => {
   const { appartenanceId, appartenance } = useParams();
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
-  // TODO vérifier si c'est un gestionnaire pour l'affichage de la colonne site
-
   const listeButton: ButtonType[] = [];
   if (
     hasDroit(user, TYPE_DROIT.GEST_SITE_A) ||
@@ -117,14 +115,16 @@ const ListContact = () => {
               sortField: "fonctionContactLibelle",
               Filter: <FilterInput type="text" name="fonctionContactLibelle" />,
             },
-            appartenance === "gestionnaire"
-              ? {
-                  Header: "Site",
-                  accessor: "siteLibelle",
-                  sortField: "siteLibelle",
-                  Filter: <FilterInput type="text" name="siteLibelle" />,
-                }
-              : {},
+            ...(appartenance === "gestionnaire"
+              ? [
+                  {
+                    Header: "Site",
+                    accessor: "siteLibelle",
+                    sortField: "siteLibelle",
+                    Filter: <FilterInput type="text" name="siteLibelle" />,
+                  },
+                ]
+              : []),
             {
               Header: "Téléphone",
               accessor: "contactTelephone",
