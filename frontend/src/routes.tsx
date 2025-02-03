@@ -154,6 +154,7 @@ import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
 import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
 import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
 import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
+import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -222,6 +223,9 @@ export const URLS = {
 
   // Module RCCI
   RCCI_MAP: url`/rcci`,
+
+  // Module Carte Permis
+  CARTE_PERMIS: url`/permis`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -799,6 +803,12 @@ export default [
         ),
       },
     ],
+  },
+  {
+    path: "/permis",
+    element: (
+      <Authorization Component={MapPermis} droits={[TYPE_DROIT.PERMIS_R]} />
+    ),
   },
   {
     path: "/admin/",
