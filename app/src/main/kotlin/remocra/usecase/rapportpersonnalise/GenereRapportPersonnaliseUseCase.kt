@@ -42,7 +42,10 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
 
         // On remplace avec les données paramètres fournies
         genererRapportPersonnaliseData.listeParametre.forEach {
-            requete = requete.replace(it.rapportPersonnaliseParametreCode, it.value.toString())
+            requete = requete.replace(
+                it.rapportPersonnaliseParametreCode,
+                it.value?.takeIf { it.isNotBlank() } ?: "null",
+            )
         }
 
         // Puis on l'exécute et on renvoie ensuite la liste
