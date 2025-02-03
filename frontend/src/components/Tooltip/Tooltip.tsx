@@ -9,19 +9,21 @@ const TooltipCustom = ({
   children,
 }: TooltipType) => {
   return (
-    <OverlayTrigger
-      overlay={
-        <Popover id={tooltipId}>
-          {tooltipHeader && (
-            <Popover.Header as="h3">{tooltipHeader}</Popover.Header>
-          )}
-          <Popover.Body>{tooltipText}</Popover.Body>
-        </Popover>
-      }
-      placement={placement}
-    >
-      <a> {children}</a>
-    </OverlayTrigger>
+    <div className={"tooltip-wrapper"}>
+      <OverlayTrigger
+        overlay={
+          <Popover id={tooltipId}>
+            {tooltipHeader && (
+              <Popover.Header as="h3">{tooltipHeader}</Popover.Header>
+            )}
+            <Popover.Body>{tooltipText}</Popover.Body>
+          </Popover>
+        }
+        placement={placement}
+      >
+        <a> {children}</a>
+      </OverlayTrigger>
+    </div>
   );
 };
 
