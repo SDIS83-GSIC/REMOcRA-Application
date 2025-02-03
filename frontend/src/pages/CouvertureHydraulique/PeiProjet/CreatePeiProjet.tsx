@@ -17,7 +17,11 @@ const CreatePeiProjet = ({
 }: CreatePeiProjetType) => {
   return (
     <Container>
-      <PageTitle icon={<IconPei />} title="Création d'un PEI en projet" />
+      <PageTitle
+        icon={<IconPei />}
+        title="Création d'un PEI en projet"
+        displayReturnButton={false}
+      />
       <MyFormik
         initialValues={getInitialValues({
           peiProjetCoordonneeX: coordonneeX,

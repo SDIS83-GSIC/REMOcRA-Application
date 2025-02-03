@@ -137,6 +137,7 @@ const TourneePei = ({
     data && (
       <Container>
         <PageTitle
+          displayReturnButton={tourneeMapId != null}
           icon={<IconTournee />}
           title={`Gestion des PEI de la tournée ${tourneePeiInfo.data.tourneeLibelle}`}
         />

@@ -44,7 +44,11 @@ const TraceeCouvertureForm = ({
 }) => {
   return (
     <Container>
-      <PageTitle icon={<IconEtude />} title={"Lancer une simulation"} />
+      <PageTitle
+        icon={<IconEtude />}
+        title={"Lancer une simulation"}
+        displayReturnButton={false}
+      />
       <MyFormik
         initialValues={getInitialValues(listePeiId, listePeiProjetId)}
         validationSchema={validationSchema}

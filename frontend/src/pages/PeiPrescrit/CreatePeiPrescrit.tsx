@@ -15,7 +15,11 @@ const CreatePeiPrescrit = ({
 }: CreatePeiPrescritType) => {
   return (
     <Container>
-      <PageTitle icon={<IconPrescrit />} title="Prescription de PEI" />
+      <PageTitle
+        icon={<IconPrescrit />}
+        title="Prescription de PEI"
+        displayReturnButton={false}
+      />
       <MyFormik
         initialValues={getInitialValues({
           peiPrescritCoordonneeX: coordonneeX,

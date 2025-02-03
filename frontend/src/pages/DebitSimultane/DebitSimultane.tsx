@@ -98,6 +98,7 @@ const DebitSimultane = () => {
       <Container>
         <Row>
           <PageTitle
+            displayReturnButton={false}
             icon={<IconDebitSimultane />}
             title={"Gestion des débits simultanés"}
           />

@@ -36,6 +36,7 @@ const AffecterPeiTourneeMap = ({
       {!create && !update ? (
         <>
           <PageTitle
+            displayReturnButton={false}
             icon={<IconTournee />}
             title={"Ajouter les PEI à une tournée"}
           />
@@ -129,7 +130,11 @@ const Update = ({
 
   return (
     <>
-      <PageTitle icon={<IconTournee />} title={"Choisissez la tournée"} />
+      <PageTitle
+        icon={<IconTournee />}
+        title={"Choisissez la tournée"}
+        displayReturnButton={false}
+      />
       <Select
         isMulti={false}
         placeholder={"Sélectionnez"}
