@@ -1,11 +1,11 @@
-import { Typeahead } from "react-bootstrap-typeahead";
-import { SelectIdLibelleDataFromListType } from "../../utils/typeUtils.tsx";
+import ReactSelect from "react-select";
+import { SelectFilterFromListType } from "../../utils/typeUtils.tsx";
 
 const SelectIdLibelleDataFromList = ({
   onChange,
   name,
   listIdLibelle,
-}: SelectIdLibelleDataFromListType) => {
+}: SelectFilterFromListType) => {
   const defaultValue = {
     id: undefined,
     code: undefined,
@@ -14,14 +14,14 @@ const SelectIdLibelleDataFromList = ({
 
   const data = [defaultValue].concat(listIdLibelle);
   return (
-    <Typeahead
-      placeholder={"Sélectionnez..."}
-      size={"sm"}
-      clearButton
+    <ReactSelect
+      placeholder={"Sélectionnez"}
+      name={name}
       options={data}
-      labelKey={"libelle"}
+      getOptionValue={(t) => t.id}
+      getOptionLabel={(t) => t.libelle}
       onChange={(data) => {
-        onChange({ name: name, value: data[0]?.id });
+        onChange({ name: name, value: data.id });
       }}
     />
   );

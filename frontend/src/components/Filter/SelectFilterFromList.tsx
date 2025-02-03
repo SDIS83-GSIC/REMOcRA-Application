@@ -1,4 +1,4 @@
-import { Typeahead } from "react-bootstrap-typeahead";
+import ReactSelect from "react-select";
 import {
   IdCodeLibelleType,
   SelectFilterFromListType,
@@ -18,7 +18,6 @@ const SelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
-  defaultValue: value,
 }: SelectFilterFromListType) => {
   const defaultValue: IdCodeLibelleType = {
     id: "",
@@ -30,19 +29,15 @@ const SelectFilterFromList = ({
 
   return (
     <>
-      <Typeahead
-        className="d-flex"
-        placeholder={"Sélectionnez..."}
-        size={"sm"}
+      <ReactSelect
+        placeholder={"Sélectionnez"}
+        name={name}
         options={data}
-        labelKey={"libelle"}
+        getOptionValue={(t) => t.id}
+        getOptionLabel={(t) => t.libelle}
         onChange={(data) => {
-          onChange({ name: name, value: data[0]?.id });
+          onChange({ name: name, value: data.id });
         }}
-        defaultSelected={value ? [value] : data[0]?.id === "" ? [data[0]] : []}
-        clearButton
-        paginationText={"Charger plus de valeurs"}
-        emptyLabel={"Aucun résultat trouvé"}
       />
     </>
   );

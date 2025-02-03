@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import ReactSelect from "react-select";
 import { SelectFilterFromListType } from "../../utils/typeUtils.tsx";
 
@@ -14,7 +13,7 @@ const MultiSelectFilterFromList = ({
   onChange,
   name,
   listIdCodeLibelle,
-}: SelectFilterFromListType): ReactNode => {
+}: SelectFilterFromListType) => {
   return (
     <>
       <ReactSelect

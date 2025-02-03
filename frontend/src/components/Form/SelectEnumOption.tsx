@@ -1,4 +1,4 @@
-import Form from "react-bootstrap/Form";
+import ReactSelect from "react-select";
 import { SelectType } from "../../utils/typeUtils.tsx";
 
 /**
@@ -24,23 +24,16 @@ function SelectEnumOption({
     }
   }
   return (
-    <Form.Select
-      size={"sm"}
+    <ReactSelect
+      placeholder={"Sélectionnez"}
       name={name}
-      onChange={(e) => {
-        onChangeCallback({ name: name, value: e.target.value });
+      options={optionsArray}
+      getOptionValue={(t) => t.value}
+      getOptionLabel={(t) => t.libelle}
+      onChange={(data) => {
+        onChangeCallback({ name: name, value: data.value });
       }}
-    >
-      <option value={""}>Sélectionnez...</option>
-
-      {optionsArray.map((option: OptionSelectType) => {
-        return (
-          <option key={option.value} value={option.value}>
-            {option.libelle}
-          </option>
-        );
-      })}
-    </Form.Select>
+    />
   );
 }
 
