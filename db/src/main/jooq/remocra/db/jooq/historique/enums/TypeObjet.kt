@@ -70,6 +70,8 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     OLDEB("OLDEB"),
     OLDEB_PROPRIETAIRE("OLDEB_PROPRIETAIRE"),
     RCCI("RCCI"),
+    ADRESSE("ADRESSE"),
+    ADRESSE_ELEMENT("ADRESSE_ELEMENT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

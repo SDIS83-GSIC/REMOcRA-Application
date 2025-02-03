@@ -33,12 +33,15 @@ import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
+import remocra.db.jooq.remocra.keys.L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.tables.Adresse.AdressePath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
+import remocra.db.jooq.remocra.tables.LAdresseDocument.LAdresseDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.OldebVisiteDocument.OldebVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
@@ -215,6 +218,23 @@ open class Document(
     val documentHabilitable: DocumentHabilitablePath
         get(): DocumentHabilitablePath = documentHabilitable()
 
+    private lateinit var _lAdresseDocument: LAdresseDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_adresse_document</code> table
+     */
+    fun lAdresseDocument(): LAdresseDocumentPath {
+        if (!this::_lAdresseDocument.isInitialized) {
+            _lAdresseDocument = LAdresseDocumentPath(this, null, L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lAdresseDocument
+    }
+
+    val lAdresseDocument: LAdresseDocumentPath
+        get(): LAdresseDocumentPath = lAdresseDocument()
+
     private lateinit var _lPeiDocument: LPeiDocumentPath
 
     /**
@@ -272,6 +292,13 @@ open class Document(
      */
     val etude: EtudePath
         get(): EtudePath = lEtudeDocument().etude()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.adresse</code> table
+     */
+    val adresse: AdressePath
+        get(): AdressePath = lAdresseDocument().adresse()
 
     /**
      * Get the implicit many-to-many join path to the <code>remocra.pei</code>

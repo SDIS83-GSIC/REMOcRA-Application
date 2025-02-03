@@ -3,6 +3,11 @@
  */
 package remocra.db.jooq.remocra.tables.references
 
+import remocra.db.jooq.remocra.tables.Adresse
+import remocra.db.jooq.remocra.tables.AdresseElement
+import remocra.db.jooq.remocra.tables.AdresseSousTypeElement
+import remocra.db.jooq.remocra.tables.AdresseTypeAnomalie
+import remocra.db.jooq.remocra.tables.AdresseTypeElement
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
@@ -29,6 +34,8 @@ import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LAdresseDocument
+import remocra.db.jooq.remocra.tables.LAdresseElementAdresseTypeAnomalie
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
@@ -118,6 +125,31 @@ import remocra.db.jooq.remocra.tables.Visite
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.Voie
 import remocra.db.jooq.remocra.tables.ZoneIntegration
+
+/**
+ * The table <code>remocra.adresse</code>.
+ */
+val ADRESSE: Adresse = Adresse.ADRESSE
+
+/**
+ * The table <code>remocra.adresse_element</code>.
+ */
+val ADRESSE_ELEMENT: AdresseElement = AdresseElement.ADRESSE_ELEMENT
+
+/**
+ * The table <code>remocra.adresse_sous_type_element</code>.
+ */
+val ADRESSE_SOUS_TYPE_ELEMENT: AdresseSousTypeElement = AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT
+
+/**
+ * The table <code>remocra.adresse_type_anomalie</code>.
+ */
+val ADRESSE_TYPE_ANOMALIE: AdresseTypeAnomalie = AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE
+
+/**
+ * The table <code>remocra.adresse_type_element</code>.
+ */
+val ADRESSE_TYPE_ELEMENT: AdresseTypeElement = AdresseTypeElement.ADRESSE_TYPE_ELEMENT
 
 /**
  * The table <code>remocra.anomalie</code>.
@@ -248,6 +280,16 @@ val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire = IndisponibiliteTempo
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
+
+/**
+ * The table <code>remocra.l_adresse_document</code>.
+ */
+val L_ADRESSE_DOCUMENT: LAdresseDocument = LAdresseDocument.L_ADRESSE_DOCUMENT
+
+/**
+ * The table <code>remocra.l_adresse_element_adresse_type_anomalie</code>.
+ */
+val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE: LAdresseElementAdresseTypeAnomalie = LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 
 /**
  * The table <code>remocra.l_commune_cis</code>.

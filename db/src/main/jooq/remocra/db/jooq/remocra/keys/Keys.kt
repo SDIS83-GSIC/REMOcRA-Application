@@ -8,6 +8,11 @@ import org.jooq.Record
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
+import remocra.db.jooq.remocra.tables.Adresse
+import remocra.db.jooq.remocra.tables.AdresseElement
+import remocra.db.jooq.remocra.tables.AdresseSousTypeElement
+import remocra.db.jooq.remocra.tables.AdresseTypeAnomalie
+import remocra.db.jooq.remocra.tables.AdresseTypeElement
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
@@ -34,6 +39,8 @@ import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LAdresseDocument
+import remocra.db.jooq.remocra.tables.LAdresseElementAdresseTypeAnomalie
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
@@ -127,6 +134,14 @@ import remocra.db.jooq.remocra.tables.ZoneIntegration
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
+val ADRESSE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Adresse.ADRESSE, DSL.name("adresse_pkey"), arrayOf(Adresse.ADRESSE.ID), true)
+val ADRESSE_ELEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseElement.ADRESSE_ELEMENT, DSL.name("adresse_element_pkey"), arrayOf(AdresseElement.ADRESSE_ELEMENT.ID), true)
+val ADRESSE_SOUS_TYPE_ELEMENT_ADRESSE_SOUS_TYPE_ELEMENT_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT, DSL.name("adresse_sous_type_element_adresse_sous_type_element_code_key"), arrayOf(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT.CODE), true)
+val ADRESSE_SOUS_TYPE_ELEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT, DSL.name("adresse_sous_type_element_pkey"), arrayOf(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT.ID), true)
+val ADRESSE_TYPE_ANOMALIE_ADRESSE_TYPE_ANOMALIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE, DSL.name("adresse_type_anomalie_adresse_type_anomalie_code_key"), arrayOf(AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE.CODE), true)
+val ADRESSE_TYPE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE, DSL.name("adresse_type_anomalie_pkey"), arrayOf(AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE.ID), true)
+val ADRESSE_TYPE_ELEMENT_ADRESSE_TYPE_ELEMENT_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseTypeElement.ADRESSE_TYPE_ELEMENT, DSL.name("adresse_type_element_adresse_type_element_code_key"), arrayOf(AdresseTypeElement.ADRESSE_TYPE_ELEMENT.CODE), true)
+val ADRESSE_TYPE_ELEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AdresseTypeElement.ADRESSE_TYPE_ELEMENT, DSL.name("adresse_type_element_pkey"), arrayOf(AdresseTypeElement.ADRESSE_TYPE_ELEMENT.ID), true)
 val ANOMALIE_ANOMALIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_code_key"), arrayOf(Anomalie.ANOMALIE.CODE), true)
 val ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Anomalie.ANOMALIE, DSL.name("anomalie_pkey"), arrayOf(Anomalie.ANOMALIE.ID), true)
 val ANOMALIE_CATEGORIE_ANOMALIE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AnomalieCategorie.ANOMALIE_CATEGORIE, DSL.name("anomalie_categorie_anomalie_categorie_code_key"), arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.CODE), true)
@@ -163,6 +178,8 @@ val GROUPE_COUCHE_GROUPE_COUCHE_ORDRE_KEY: UniqueKey<Record> = Internal.createUn
 val GROUPE_COUCHE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(GroupeCouche.GROUPE_COUCHE, DSL.name("groupe_couche_pkey"), arrayOf(GroupeCouche.GROUPE_COUCHE.ID), true)
 val INDISPONIBILITE_TEMPORAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE, DSL.name("indisponibilite_temporaire_pkey"), arrayOf(IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE.ID), true)
 val JOB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Job.JOB, DSL.name("job_pkey"), arrayOf(Job.JOB.ID), true)
+val L_ADRESSE_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LAdresseDocument.L_ADRESSE_DOCUMENT, DSL.name("l_adresse_document_pkey"), arrayOf(LAdresseDocument.L_ADRESSE_DOCUMENT.DOCUMENT_ID, LAdresseDocument.L_ADRESSE_DOCUMENT.ADRESSE_ID), true)
+val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, DSL.name("l_adresse_element_adresse_type_anomalie_pkey"), arrayOf(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID, LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ELEMENT_ID), true)
 val L_COMMUNE_CIS_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_pkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID, LCommuneCis.L_COMMUNE_CIS.CIS_ID), true)
 val L_CONTACT_GESTIONNAIRE_CONTACT_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_contact_id_key"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID), true)
 val L_CONTACT_GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_pkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID, LContactGestionnaire.L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID), true)
@@ -307,6 +324,10 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 // FOREIGN KEY definitions
 // -------------------------------------------------------------------------
 
+val ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Adresse.ADRESSE, DSL.name("adresse_adresse_utilisateur_fkey"), arrayOf(Adresse.ADRESSE.UTILISATEUR), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
+val ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_ADRESSE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(AdresseElement.ADRESSE_ELEMENT, DSL.name("adresse_element_adresse_element_adresse_id_fkey"), arrayOf(AdresseElement.ADRESSE_ELEMENT.ADRESSE_ID), remocra.db.jooq.remocra.keys.ADRESSE_PKEY, arrayOf(Adresse.ADRESSE.ID), true)
+val ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_SOUS_TYPE_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(AdresseElement.ADRESSE_ELEMENT, DSL.name("adresse_element_adresse_element_sous_type_fkey"), arrayOf(AdresseElement.ADRESSE_ELEMENT.SOUS_TYPE), remocra.db.jooq.remocra.keys.ADRESSE_SOUS_TYPE_ELEMENT_PKEY, arrayOf(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT.ID), true)
+val ADRESSE_SOUS_TYPE_ELEMENT__ADRESSE_SOUS_TYPE_ELEMENT_ADRESSE_SOUS_TYPE_ELEMENT_TYPE_E_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT, DSL.name("adresse_sous_type_element_adresse_sous_type_element_type_e_fkey"), arrayOf(AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT), remocra.db.jooq.remocra.keys.ADRESSE_TYPE_ELEMENT_PKEY, arrayOf(AdresseTypeElement.ADRESSE_TYPE_ELEMENT.ID), true)
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val CADASTRE_PARCELLE__CADASTRE_PARCELLE_CADASTRE_PARCELLE_CADASTRE_SECTION_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(CadastreParcelle.CADASTRE_PARCELLE, DSL.name("cadastre_parcelle_cadastre_parcelle_cadastre_section_id_fkey"), arrayOf(CadastreParcelle.CADASTRE_PARCELLE.CADASTRE_SECTION_ID), remocra.db.jooq.remocra.keys.CADASTRE_SECTION_PKEY, arrayOf(CadastreSection.CADASTRE_SECTION.ID), true)
@@ -327,6 +348,10 @@ val DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUME
 val DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DocumentHabilitable.DOCUMENT_HABILITABLE, DSL.name("document_habilitable_document_id_fkey"), arrayOf(DocumentHabilitable.DOCUMENT_HABILITABLE.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val JOB__JOB_JOB_TASK_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_task_id_fkey"), arrayOf(Job.JOB.TASK_ID), remocra.db.jooq.remocra.keys.TASK_PKEY, arrayOf(Task.TASK.ID), true)
 val JOB__JOB_JOB_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_utilisateur_id_fkey"), arrayOf(Job.JOB.UTILISATEUR_ID), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
+val L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_ADRESSE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LAdresseDocument.L_ADRESSE_DOCUMENT, DSL.name("l_adresse_document_adresse_id_fkey"), arrayOf(LAdresseDocument.L_ADRESSE_DOCUMENT.ADRESSE_ID), remocra.db.jooq.remocra.keys.ADRESSE_PKEY, arrayOf(Adresse.ADRESSE.ID), true)
+val L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LAdresseDocument.L_ADRESSE_DOCUMENT, DSL.name("l_adresse_document_document_id_fkey"), arrayOf(LAdresseDocument.L_ADRESSE_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
+val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE__L_ADRESSE_ELEMENT_ADRESSE_TYPE_AN_ADRESSE_TYPE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, DSL.name("l_adresse_element_adresse_type_an_adresse_type_anomalie_id_fkey"), arrayOf(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID), remocra.db.jooq.remocra.keys.ADRESSE_TYPE_ANOMALIE_PKEY, arrayOf(AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE.ID), true)
+val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE__L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE_ELEMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, DSL.name("l_adresse_element_adresse_type_anomalie_element_id_fkey"), arrayOf(LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ELEMENT_ID), remocra.db.jooq.remocra.keys.ADRESSE_ELEMENT_PKEY, arrayOf(AdresseElement.ADRESSE_ELEMENT.ID), true)
 val L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_cis_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.CIS_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_commune_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
 val L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LContactGestionnaire.L_CONTACT_GESTIONNAIRE, DSL.name("l_contact_gestionnaire_contact_id_fkey"), arrayOf(LContactGestionnaire.L_CONTACT_GESTIONNAIRE.CONTACT_ID), remocra.db.jooq.remocra.keys.CONTACT_PKEY, arrayOf(Contact.CONTACT.ID), true)

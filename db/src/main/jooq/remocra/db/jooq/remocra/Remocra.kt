@@ -7,6 +7,11 @@ import org.jooq.Catalog
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
 import remocra.db.jooq.DefaultCatalog
+import remocra.db.jooq.remocra.tables.Adresse
+import remocra.db.jooq.remocra.tables.AdresseElement
+import remocra.db.jooq.remocra.tables.AdresseSousTypeElement
+import remocra.db.jooq.remocra.tables.AdresseTypeAnomalie
+import remocra.db.jooq.remocra.tables.AdresseTypeElement
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
@@ -33,6 +38,8 @@ import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
+import remocra.db.jooq.remocra.tables.LAdresseDocument
+import remocra.db.jooq.remocra.tables.LAdresseElementAdresseTypeAnomalie
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
@@ -144,6 +151,31 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
          */
         val REMOCRA: Remocra = Remocra()
     }
+
+    /**
+     * The table <code>remocra.adresse</code>.
+     */
+    val ADRESSE: Adresse get() = Adresse.ADRESSE
+
+    /**
+     * The table <code>remocra.adresse_element</code>.
+     */
+    val ADRESSE_ELEMENT: AdresseElement get() = AdresseElement.ADRESSE_ELEMENT
+
+    /**
+     * The table <code>remocra.adresse_sous_type_element</code>.
+     */
+    val ADRESSE_SOUS_TYPE_ELEMENT: AdresseSousTypeElement get() = AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT
+
+    /**
+     * The table <code>remocra.adresse_type_anomalie</code>.
+     */
+    val ADRESSE_TYPE_ANOMALIE: AdresseTypeAnomalie get() = AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE
+
+    /**
+     * The table <code>remocra.adresse_type_element</code>.
+     */
+    val ADRESSE_TYPE_ELEMENT: AdresseTypeElement get() = AdresseTypeElement.ADRESSE_TYPE_ELEMENT
 
     /**
      * The table <code>remocra.anomalie</code>.
@@ -274,6 +306,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
+
+    /**
+     * The table <code>remocra.l_adresse_document</code>.
+     */
+    val L_ADRESSE_DOCUMENT: LAdresseDocument get() = LAdresseDocument.L_ADRESSE_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_adresse_element_adresse_type_anomalie</code>.
+     */
+    val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE: LAdresseElementAdresseTypeAnomalie get() = LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 
     /**
      * The table <code>remocra.l_commune_cis</code>.
@@ -723,6 +765,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        Adresse.ADRESSE,
+        AdresseElement.ADRESSE_ELEMENT,
+        AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT,
+        AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE,
+        AdresseTypeElement.ADRESSE_TYPE_ELEMENT,
         Anomalie.ANOMALIE,
         AnomalieCategorie.ANOMALIE_CATEGORIE,
         Api.API,
@@ -749,6 +796,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         GroupeCouche.GROUPE_COUCHE,
         IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,
         Job.JOB,
+        LAdresseDocument.L_ADRESSE_DOCUMENT,
+        LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE,
         LCommuneCis.L_COMMUNE_CIS,
         LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
         LContactOrganisme.L_CONTACT_ORGANISME,
