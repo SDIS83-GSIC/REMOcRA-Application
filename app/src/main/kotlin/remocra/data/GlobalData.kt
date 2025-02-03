@@ -12,4 +12,11 @@ class GlobalData {
         val libelle: String,
         val lienId: UUID?,
     )
+
+    data class IdCodeLibellePprifData(
+        val id: UUID,
+        val code: String,
+        val libelle: String,
+        val pprif: Boolean,
+    )
 }

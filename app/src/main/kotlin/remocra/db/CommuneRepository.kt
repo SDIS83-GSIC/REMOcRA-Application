@@ -57,6 +57,14 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .limit(1)
             .fetchOneInto()
 
+    fun getCommuneByCoords(coordonneeX: String, coordonneeY: String, srid: Int): GlobalData.IdCodeLibellePprifData? =
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"), COMMUNE.PPRIF.`as`("pprif"))
+            .from(COMMUNE)
+            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), 0)
+            .orderBy(COMMUNE.LIBELLE)
+            .limit(1)
+            .fetchOneInto()
+
     fun getById(id: UUID): Commune = dsl.selectFrom(COMMUNE).where(COMMUNE.ID.eq(id)).fetchSingleInto()
 
     fun updateFromEntrepotSig(listeChampsAUpdate: List<String>) =

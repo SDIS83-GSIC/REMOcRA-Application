@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.OLDEB
 import remocra.db.jooq.remocra.tables.references.OLDEB_TYPE_DEBROUSSAILLEMENT
 import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
+import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.RCCI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
@@ -144,6 +145,22 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
                         .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+    }
+
+    fun getPermisWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PermisCarte> {
+        return dsl.select(
+            ST_Transform(PERMIS.GEOMETRIE, srid).`as`("pointGeometrie"),
+            PERMIS.ID.`as`("pointId"),
+        ).from(PERMIS)
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(PERMIS.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                        .and(bbox?.let { ST_Within(ST_Transform(PERMIS.GEOMETRIE, srid), bbox) }),
                     isSuperAdmin,
                 ),
             )
@@ -297,6 +314,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.PEI_PRESCRIT
+    }
+
+    data class PermisCarte(
+        override val pointGeometrie: Point,
+        override val pointId: UUID,
+        override var propertiesToDisplay: String? = null,
+
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.PERMIS
     }
 
     data class DebitSimultaneCarte(

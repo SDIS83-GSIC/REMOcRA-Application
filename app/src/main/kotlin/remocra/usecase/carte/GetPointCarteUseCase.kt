@@ -84,6 +84,14 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getPeiPrescritWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
+            TypePointCarte.PERMIS -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getPermisWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getPermisWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
             TypePointCarte.DEBIT_SIMULTANE -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getDebitSimultaneWithinZoneAndBbox(

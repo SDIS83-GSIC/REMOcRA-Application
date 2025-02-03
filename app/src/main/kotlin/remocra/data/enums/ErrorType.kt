@@ -590,6 +590,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADRESSE_FORBIDDEN_INSERT(29000, "Vous n'avez pas les droits de création d'une adresse", Status.FORBIDDEN),
     ADRESSE_ELEMENT_ADRESSE_NULL(29001, "Il manque l'id de l'adresse pour l'insertion de l'élément"),
 
+    //
+    // ********************************************************************************
+    // Permis
+    // ********************************************************************************
+    //
+    PERMIS_FORBIDDEN_INSERT(30000, "Vous n'avez pas les droits de création de permis.", Status.FORBIDDEN),
+    PERMIS_FORBIDDEN_UPDATE(30001, "Vous n'avez pas les droits de modification de permis.", Status.FORBIDDEN),
+    PERMIS_FORBIDDEN_DELETE(30002, "Vous n'avez pas les droits de suppression de permis.", Status.FORBIDDEN),
     ;
 
     override fun toString(): String {
