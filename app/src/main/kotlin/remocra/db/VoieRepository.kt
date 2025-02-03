@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
@@ -22,6 +23,17 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
 
     fun getAll(): Collection<Voie> =
         getAll(null, null, null, null)
+
+    fun getVoieListByCommuneId(communeId: UUID): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            VOIE.ID.`as`("id"),
+            VOIE.LIBELLE.`as`("code"),
+            VOIE.LIBELLE.`as`("libelle"),
+        )
+            .from(VOIE)
+            .where(VOIE.COMMUNE_ID.eq(communeId))
+            .orderBy(VOIE.LIBELLE)
+            .fetchInto()
 
     fun getVoies(
         coordonneeX: String,

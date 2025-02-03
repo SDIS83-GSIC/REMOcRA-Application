@@ -5,6 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.OldebProprietaire
 import remocra.db.jooq.remocra.tables.references.OLDEB_PROPRIETAIRE
@@ -25,6 +26,16 @@ class ProprietaireRepository @Inject constructor(private val dsl: DSLContext) : 
         dsl.selectCount().from(OLDEB_PROPRIETAIRE)
             .where(filterBy?.toCondition())
             .fetchSingleInto()
+
+    fun getProprietaireForSelect(): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            OLDEB_PROPRIETAIRE.ID.`as`("id"),
+            OLDEB_PROPRIETAIRE.ID.`as`("code"),
+            DSL.concat(OLDEB_PROPRIETAIRE.NOM, DSL.`val`(" "), OLDEB_PROPRIETAIRE.PRENOM, DSL.`val`(" ("), OLDEB_PROPRIETAIRE.CIVILITE, DSL.`val`(")")).`as`("libelle"),
+        )
+            .from(OLDEB_PROPRIETAIRE)
+            .orderBy(OLDEB_PROPRIETAIRE.NOM, OLDEB_PROPRIETAIRE.PRENOM)
+            .fetchInto()
 
     fun get(proprietaireId: UUID): OldebProprietaire =
         dsl.selectFrom(OLDEB_PROPRIETAIRE).where(OLDEB_PROPRIETAIRE.ID.eq(proprietaireId)).fetchSingleInto()

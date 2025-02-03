@@ -111,11 +111,7 @@ class DocumentUtils {
         }
 
         if (repertoireFile.canWrite()) {
-            // Suppression du fichier
-            repertoireFile.listFiles()?.forEach {
-                it.delete()
-            }
-            repertoireFile.delete()
+            repertoireFile.deleteRecursively()
         } else {
             throw SecurityException("Impossible de supprimer le répertoire $repertoireFile")
         }

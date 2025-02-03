@@ -51,6 +51,12 @@ class ProprietaireEndpoint : AbstractEndpoint() {
             ),
         ).build()
 
+    @GET
+    @Path("/options")
+    @RequireDroits([Droit.OLDEB_C, Droit.OLDEB_U])
+    fun get(): Response =
+        Response.ok(proprietaireRepository.getProprietaireForSelect()).build()
+
     @POST
     @Path("/create")
     @RequireDroits([Droit.OLDEB_C])

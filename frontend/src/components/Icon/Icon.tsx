@@ -45,6 +45,8 @@ export const IconDebitSimultane = () => (
 
 export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 
+export const IconOldeb = () => <i className="fi fi-rr-bio-leaves" />;
+
 export const IconProprietaire = () => <i className="fi fi-br-house-building" />;
 
 export const IconIndisponibiliteTemporaire = () => (

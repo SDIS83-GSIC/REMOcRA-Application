@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import ReactSelect from "react-select";
 import { IconInfo } from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import "./form.css";
 
 type InputType = {
   name: string;
@@ -249,6 +250,7 @@ export const RadioInput = ({
 type FileInputType = InputType & {
   accept: string;
   onChange: (e) => any;
+  multiple?: boolean;
 };
 
 export const FileInput = ({
@@ -260,6 +262,7 @@ export const FileInput = ({
   accept,
   onChange,
   tooltipText,
+  multiple = false,
 }: FileInputType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -279,6 +282,7 @@ export const FileInput = ({
         readOnly={readOnly}
         disabled={disabled}
         onChange={onChange}
+        multiple={multiple}
       />
     </DivWithError>
   );
@@ -515,5 +519,20 @@ export const SelectInput = ({
         noOptionsMessage={() => "Aucune donnée trouvée"}
       />
     </DivWithError>
+  );
+};
+
+export const FieldSet = ({
+  title,
+  children,
+}: {
+  title?: ReactNode;
+  children: ReactNode;
+}) => {
+  return (
+    <fieldset>
+      {title && <legend>{title}</legend>}
+      {children}
+    </fieldset>
   );
 };

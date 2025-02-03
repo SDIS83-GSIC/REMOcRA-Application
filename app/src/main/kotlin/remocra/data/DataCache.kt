@@ -10,6 +10,17 @@ import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Niveau
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAcces
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAction
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAnomalie
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAvis
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCaracteristique
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCategorieAnomalie
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCategorieCaracteristique
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
@@ -32,4 +43,16 @@ data class DataCache(
     var mapTypeReseau: Map<UUID, TypeReseau>,
     var mapReservoir: Map<UUID, Reservoir>,
     var utilisateurSysteme: Utilisateur,
+
+    var mapOldebTypeAction: Map<UUID, OldebTypeAction>,
+    var mapOldebTypeAvis: Map<UUID, OldebTypeAvis>,
+    var mapOldebTypeDebrousaillement: Map<UUID, OldebTypeDebroussaillement>,
+    var mapOldebTypeAnomalie: Map<UUID, OldebTypeAnomalie>,
+    var mapOldebTypeCategorieAnomalie: Map<UUID, OldebTypeCategorieAnomalie>,
+    var mapOldebTypeAcces: Map<UUID, OldebTypeAcces>,
+    var mapOldebTypeResidence: Map<UUID, OldebTypeResidence>,
+    var mapOldebTypeSuite: Map<UUID, OldebTypeSuite>,
+    var mapOldebTypeZoneUrbanisme: Map<UUID, OldebTypeZoneUrbanisme>,
+    var mapOldebTypeCaracteristique: Map<UUID, OldebTypeCaracteristique>,
+    var mapOldebTypeCategorieCaracteristique: Map<UUID, OldebTypeCategorieCaracteristique>,
 )

@@ -7,6 +7,8 @@ import remocra.web.registerResources
 object OldebModule : Module {
     override fun configure(binder: Binder) {
         binder.registerResources(
+            OldebEndpoint::class,
+            CadastreEndpoint::class,
             ProprietaireEndpoint::class,
         )
     }

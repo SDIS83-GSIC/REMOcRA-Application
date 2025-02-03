@@ -142,6 +142,9 @@ import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import UpdateTypeOrganismeDroitApi from "./pages/Admin/TypeOrganisme/UpdateTypeOrganismeDroitApi.tsx";
 import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
 import ModuleOldeb from "./components/ModuleRemocra/ModuleOldeb.tsx";
+import OldebList from "./pages/Oldeb/OldebList.tsx";
+import OldebCreate from "./pages/Oldeb/OldebCreate.tsx";
+import OldebUpdate from "./pages/Oldeb/OldebUpdate.tsx";
 import OldebProprietaireList from "./pages/Oldeb/OldebProprietaireList.tsx";
 import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
 import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
@@ -201,6 +204,9 @@ export const URLS = {
   PEI_PRESCRIT: url`/pei-prescrit`,
 
   // MODULE OLDEB
+  OLDEB_LIST: url`/oldeb/liste`,
+  OLDEB_CREATE: url`/oldeb/create`,
+  OLDEB_UPDATE: (oldebId) => url`/oldeb/${oldebId}`,
   OLDEB_PROPRIETAIRE_LIST: url`/oldeb/proprietaire`,
   OLDEB_PROPRIETAIRE_CREATE: url`/oldeb/proprietaire/create`,
   OLDEB_PROPRIETAIRE_UPDATE: (oldebProprietaireId) =>
@@ -661,6 +667,30 @@ export default [
     path: "/oldeb/",
     element: <ModuleOldeb />,
     children: [
+      {
+        path: "liste",
+        element: (
+          <Authorization Component={OldebList} droits={[TYPE_DROIT.OLDEB_R]} />
+        ),
+      },
+      {
+        path: "create",
+        element: (
+          <Authorization
+            Component={OldebCreate}
+            droits={[TYPE_DROIT.OLDEB_C]}
+          />
+        ),
+      },
+      {
+        path: ":oldebId",
+        element: (
+          <Authorization
+            Component={OldebUpdate}
+            droits={[TYPE_DROIT.OLDEB_U]}
+          />
+        ),
+      },
       {
         path: "proprietaire",
         element: (

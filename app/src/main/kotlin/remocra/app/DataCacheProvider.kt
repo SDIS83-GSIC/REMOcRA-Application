@@ -17,6 +17,7 @@ import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.NomenclatureCodeLibelleRepository
+import remocra.db.OldebRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeReseauRepository
@@ -31,6 +32,17 @@ import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Niveau
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAcces
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAction
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAnomalie
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeAvis
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCaracteristique
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCategorieAnomalie
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeCategorieCaracteristique
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
+import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
@@ -57,6 +69,7 @@ constructor(
     private val reservoirRepository: ReservoirRepository,
     private val utilisateurRepository: UtilisateurRepository,
     private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
+    private val oldebRepository: OldebRepository,
 
 ) : Provider<DataCache> {
     private lateinit var dataCache: DataCache
@@ -88,6 +101,18 @@ constructor(
             TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
             TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
             TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
+
+            TypeDataCache.OLDEB_TYPE_ACTION -> dataCache.mapOldebTypeAction = oldebRepository.getTypeAction()
+            TypeDataCache.OLDEB_TYPE_AVIS -> dataCache.mapOldebTypeAvis = oldebRepository.getTypeAvisMap()
+            TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> dataCache.mapOldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
+            TypeDataCache.OLDEB_TYPE_ANOMALIE -> dataCache.mapOldebTypeAnomalie = oldebRepository.getTypeAnomalie()
+            TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> dataCache.mapOldebTypeCategorieAnomalie = oldebRepository.getTypeCategorieAnomalie()
+            TypeDataCache.OLDEB_TYPE_ACCES -> dataCache.mapOldebTypeAcces = oldebRepository.getTypeAcces()
+            TypeDataCache.OLDEB_TYPE_RESIDENCE -> dataCache.mapOldebTypeResidence = oldebRepository.getTypeResidence()
+            TypeDataCache.OLDEB_TYPE_SUITE -> dataCache.mapOldebTypeSuite = oldebRepository.getTypeSuite()
+            TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> dataCache.mapOldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
+            TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> dataCache.mapOldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
+            TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> dataCache.mapOldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
         }
     }
 
@@ -111,6 +136,18 @@ constructor(
         val reservoir = reservoirRepository.getMapById()
         val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
 
+        val oldebTypeAction = oldebRepository.getTypeAction()
+        val oldebTypeAvis = oldebRepository.getTypeAvisMap()
+        val oldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
+        val oldebTypeAnomalie = oldebRepository.getTypeAnomalie()
+        val oldebTypeCategorieAnomalie = oldebRepository.getTypeCategorieAnomalie()
+        val oldebTypeAcces = oldebRepository.getTypeAcces()
+        val oldebTypeResidence = oldebRepository.getTypeResidence()
+        val oldebTypeSuite = oldebRepository.getTypeSuite()
+        val oldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
+        val oldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
+        val oldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
+
         return DataCache(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
@@ -127,6 +164,18 @@ constructor(
             mapTypeReseau = typeReseau,
             mapReservoir = reservoir,
             utilisateurSysteme = utilisateurSysteme,
+
+            mapOldebTypeAction = oldebTypeAction,
+            mapOldebTypeAvis = oldebTypeAvis,
+            mapOldebTypeDebrousaillement = oldebTypeDebrousaillement,
+            mapOldebTypeAnomalie = oldebTypeAnomalie,
+            mapOldebTypeCategorieAnomalie = oldebTypeCategorieAnomalie,
+            mapOldebTypeAcces = oldebTypeAcces,
+            mapOldebTypeResidence = oldebTypeResidence,
+            mapOldebTypeSuite = oldebTypeSuite,
+            mapOldebTypeZoneUrbanisme = oldebTypeZoneUrbanisme,
+            mapOldebTypeCaracteristique = oldebTypeCaracteristique,
+            mapOldebTypeCategorieCaracteristique = oldebTypeCategorieCaracteristique,
         )
     }
 
@@ -149,6 +198,18 @@ constructor(
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
         TypeDataCache.RESERVOIR -> getReservoirs()
+
+        TypeDataCache.OLDEB_TYPE_ACTION -> get().mapOldebTypeAction
+        TypeDataCache.OLDEB_TYPE_AVIS -> get().mapOldebTypeAvis
+        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> get().mapOldebTypeDebrousaillement
+        TypeDataCache.OLDEB_TYPE_ANOMALIE -> get().mapOldebTypeAnomalie
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> get().mapOldebTypeCategorieAnomalie
+        TypeDataCache.OLDEB_TYPE_ACCES -> get().mapOldebTypeAcces
+        TypeDataCache.OLDEB_TYPE_RESIDENCE -> get().mapOldebTypeResidence
+        TypeDataCache.OLDEB_TYPE_SUITE -> get().mapOldebTypeSuite
+        TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> get().mapOldebTypeZoneUrbanisme
+        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> get().mapOldebTypeCaracteristique
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> get().mapOldebTypeCategorieCaracteristique
     }
 
     fun getAnomalies() = get().mapAnomalie
@@ -195,5 +256,17 @@ constructor(
         TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
         TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
         TypeDataCache.RESERVOIR -> Reservoir::class.java
+
+        TypeDataCache.OLDEB_TYPE_ACTION -> OldebTypeAction::class.java
+        TypeDataCache.OLDEB_TYPE_AVIS -> OldebTypeAvis::class.java
+        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> OldebTypeDebroussaillement::class.java
+        TypeDataCache.OLDEB_TYPE_ANOMALIE -> OldebTypeAnomalie::class.java
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> OldebTypeCategorieAnomalie::class.java
+        TypeDataCache.OLDEB_TYPE_ACCES -> OldebTypeAcces::class.java
+        TypeDataCache.OLDEB_TYPE_RESIDENCE -> OldebTypeResidence::class.java
+        TypeDataCache.OLDEB_TYPE_SUITE -> OldebTypeSuite::class.java
+        TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> OldebTypeZoneUrbanisme::class.java
+        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> OldebTypeCaracteristique::class.java
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> OldebTypeCategorieCaracteristique::class.java
     }
 }

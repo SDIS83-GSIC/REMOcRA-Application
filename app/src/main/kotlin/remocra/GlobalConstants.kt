@@ -50,6 +50,8 @@ object GlobalConstants {
 
     val DOSSIER_IMAGES = DOSSIER_DATA + "images/"
 
+    val DOSSIER_DOCUMENT_OLD = DOSSIER_DATA + "old/"
+
     val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
 
     val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
