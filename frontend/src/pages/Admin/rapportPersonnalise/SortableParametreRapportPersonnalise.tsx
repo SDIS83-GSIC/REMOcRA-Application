@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useFormikContext } from "formik";
 import { FC } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Alert, Col, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
-import { IconDragNDrop } from "../../../components/Icon/Icon.tsx";
+import { IconDragNDrop, IconInfo } from "../../../components/Icon/Icon.tsx";
 
 type SortableParametre = {
   id: string;
@@ -26,6 +26,12 @@ export enum TYPE_PARAMETRE_RAPPORT_PERSONNALISE {
   SELECT_INPUT = "Liste déroulante",
   TEXT_INPUT = "Champ texte",
 }
+
+export const userParamRapportPersonnalise = [
+  "ZONE_COMPETENCE_ID",
+  "UTILISATEUR_ID",
+  "ORGANISME_ID",
+];
 
 const SortableParametre: FC<SortableParametre> = ({
   id, // La propriété id doit impérativement s'appeler id
@@ -86,7 +92,7 @@ const SortableParametre: FC<SortableParametre> = ({
           />
         </Col>
       </Row>
-      <Row>
+      <Row className="align-items-end">
         <Col>
           <SelectForm
             name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreType`}
@@ -139,6 +145,19 @@ const SortableParametre: FC<SortableParametre> = ({
           listeElements[index].rapportPersonnaliseParametreType
         ] === TYPE_PARAMETRE_RAPPORT_PERSONNALISE.SELECT_INPUT && (
           <>
+            <Row className="mt-2">
+              <Col>
+                <Alert variant="info" key="info" className="border rounded">
+                  <IconInfo /> Les codes des paramètres que vous pouvez utiliser
+                  dans la requête :
+                  <ul>
+                    {userParamRapportPersonnalise.map((param: string) => (
+                      <li key={param}>{param}</li>
+                    ))}
+                  </ul>
+                </Alert>
+              </Col>
+            </Row>
             <Col>
               <TextAreaInput
                 name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlDebut`}

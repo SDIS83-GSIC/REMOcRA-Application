@@ -26,6 +26,7 @@ import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import {
   createComponentRapportPersoToRepeat,
   TYPE_PARAMETRE_RAPPORT_PERSONNALISE,
+  userParamRapportPersonnalise,
 } from "./SortableParametreRapportPersonnalise.tsx";
 
 type RapportPersonnaliseType = {
@@ -265,17 +266,19 @@ const RapportPersonnalise = () => {
       ) : (
         <>
           <Row className="mt-3">
-            {values.listeRapportPersonnaliseParametre.length > 0 && (
-              <Col className="bg-light border p-2 rounded">
-                <IconInfo /> Les codes des paramètres que vous pouvez utiliser
-                dans la requête :
-                <ul>
-                  {values.listeRapportPersonnaliseParametre.map((e, key) => (
+            <Col className="bg-light border p-2 rounded">
+              <IconInfo /> Les codes des paramètres que vous pouvez utiliser
+              dans la requête :
+              <ul>
+                {values.listeRapportPersonnaliseParametre.length > 0 &&
+                  values.listeRapportPersonnaliseParametre.map((e, key) => (
                     <li key={key}>{e.rapportPersonnaliseParametreCode}</li>
                   ))}
-                </ul>
-              </Col>
-            )}
+                {userParamRapportPersonnalise.map((param: string) => (
+                  <li key={param}>{param}</li>
+                ))}
+              </ul>
+            </Col>
           </Row>
           <Row className="mt-3">
             <Col>
