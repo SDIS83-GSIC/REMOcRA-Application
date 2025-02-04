@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 import { ReactNode } from "react";
 import Footer from "../components/Footer/Footer.tsx";
 import BanniereHeader from "../components/Header/BanniereHeader.tsx";
+import GoTopButton from "../components/GoTopButton/GoTopButton.tsx";
 
 type SquelettePageType = {
   children?;
@@ -27,6 +28,7 @@ const SquelettePage = ({
       </Container>
       <Container fluid={fluid} id={"main"}>
         <div className={"d-flex flex-column h-100"}>{children}</div>
+        <GoTopButton />
       </Container>
       <Container fluid id={"footer"}>
         <Footer />

@@ -115,3 +115,6 @@ export const IconCounterComponent = () => (
 export const IconMapComponent = () => (
   <i className="fi fi-br-land-layer-location" />
 );
+export const IconArrowUp = () => (
+  <i className="fi fi-ss-arrow-circle-up fs-1" />
+);

@@ -10,6 +10,7 @@ $dark: #343a40;
 $banner-size: 200px;
 $navbar-size: 75px;
 $footer-size: 55px;
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 #page {
@@ -66,4 +67,19 @@ $footer-size: 55px;
 .tooltip-wrapper {
   position: relative;
   display: inline-block;
+}
+
+.go-top-wrapper {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 100%;
+}
+
+.bounce-on-hover {
+  transition: transform 0.3s ease-in-out;
+}
+
+.bounce-on-hover:hover {
+  transform: translateY(-5px);
 }
