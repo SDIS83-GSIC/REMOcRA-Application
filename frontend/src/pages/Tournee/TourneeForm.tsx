@@ -63,7 +63,6 @@ const TourneeForm = ({
         </Col>
         <SubmitFormButtons
           returnLink={isFromMap ? undefined : URLS.LIST_TOURNEE}
-          update={!isCreation}
         />
       </Container>
     </FormContainer>

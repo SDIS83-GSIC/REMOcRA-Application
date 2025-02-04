@@ -144,7 +144,7 @@ const ParametreTaskForm = () => {
           <CheckBoxInput name="taskActif" label="Tâche active :" />
         </Col>
         <Col>
-          <SubmitFormButtons update={true} />
+          <SubmitFormButtons />
         </Col>
       </Row>
       <AccordionCustom

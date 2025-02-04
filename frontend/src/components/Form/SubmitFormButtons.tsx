@@ -4,7 +4,6 @@ import Col from "react-bootstrap/Col";
 import { SubmitButtonType } from "../../utils/typeUtils.tsx";
 
 const SubmitFormButtons = ({
-  update = false,
   returnLink,
   onClick,
   disabledValide = false,
@@ -21,7 +20,7 @@ const SubmitFormButtons = ({
       <Col sm={"auto"}>
         <Button
           type="submit"
-          variant={update ? "info" : "primary"}
+          variant={"primary"}
           onClick={onClick}
           disabled={disabledValide}
         >

@@ -150,7 +150,7 @@ const TypeOrganismeWithDroitApiInner = ({
           })}
         </tbody>
       </Table>
-      <SubmitFormButtons returnLink={URLS.MODULE_ADMIN} update />
+      <SubmitFormButtons returnLink={URLS.MODULE_ADMIN} />
     </FormContainer>
   );
 };

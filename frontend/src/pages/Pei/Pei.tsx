@@ -490,7 +490,6 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
           />
 
           <SubmitFormButtons
-            update={!isNew}
             returnLink={URLS.PEI}
             onClick={() => {
               const coordonnees = geometrieState.data?.find(
