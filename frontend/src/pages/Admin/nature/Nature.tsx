@@ -1,5 +1,4 @@
 import { object } from "yup";
-import { Button } from "react-bootstrap";
 import { useFormikContext } from "formik";
 import { URLS } from "../../../routes.tsx";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import TYPE_PEI from "../../../enums/TypePeiEnum.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { NatureType } from "./NatureEntity.tsx";
 
 export const prepareNatureValues = (values: NatureType) => ({
@@ -59,17 +59,7 @@ export const NatureForm = () => {
       />
       <CheckBoxInput name="natureActif" label="Actif" />
       <CheckBoxInput name="natureProtected" label="Protégé" disabled={true} />
-      <Button
-        type="button"
-        variant="primary"
-        href={URLS.LIST_NATURE}
-        className="mx-1"
-      >
-        Annuler
-      </Button>
-      <Button type="submit" variant="primary">
-        Valider
-      </Button>
+      <SubmitFormButtons returnLink={URLS.LIST_NATURE} />
     </FormContainer>
   );
 };

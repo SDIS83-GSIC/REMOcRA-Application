@@ -24,7 +24,7 @@ const UpdateNature = () => {
         initialValues={getInitialNatureValue(natureState.data)}
         prepareVariables={(values) => prepareNatureValues(values)}
         validationSchema={natureValidationSchema}
-        submitUrl={`/api/nature/edit/` + natureId}
+        submitUrl={`/api/nature/update/` + natureId}
         isPost={false}
         redirectUrl={URLS.LIST_NATURE}
         onSubmit={() => true}
