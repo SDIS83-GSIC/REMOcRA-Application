@@ -7,6 +7,7 @@ import de.thetaphi.forbiddenapis.SuppressForbidden
 import org.flywaydb.core.Flyway
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import remocra.apachehop.ApacheHopModule
 import remocra.app.AppModule
 import remocra.auth.AuthModule
 import remocra.csv.CsvModule
@@ -102,6 +103,7 @@ class Main : Runnable {
                 MailModule.create(config.getConfig("remocra.mail")),
                 EventBusModule,
                 AuthModule.create(authnConfig, oidcProviderMetadata),
+                ApacheHopModule.create(config.getConfig("remocra.apache-hop")),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 GeoserverModule.create(config.getConfig("remocra.geoserver")),
                 HealthModule.create(config.getConfig("remocra.health")),

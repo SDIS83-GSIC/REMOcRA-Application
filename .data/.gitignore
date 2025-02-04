@@ -4,3 +4,4 @@
 images/*
 !images/ressources/
 !images/symbologie/
+!apache_hop/

@@ -80,6 +80,8 @@ pipeline {
             buildDir: 'keycloak'
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${REMOCRA_VERSION}",
             buildDir: 'geoserver'
+        dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${REMOCRA_VERSION}",
+            buildDir: 'apachehop'
       }
     }
     stage ('Publish SBOM') {

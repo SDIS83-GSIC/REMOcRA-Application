@@ -104,7 +104,8 @@ pipeline {
         stage('Build and Remove docker remocra') {
           steps {
             dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
-              dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+                dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+                dockerDive image: imageId
             }
           }
         }
@@ -134,6 +135,7 @@ pipeline {
           }
           steps {
             dockerBuildAndRemove(buildDir: 'geoserver') { imageId ->
+              dockerDive image: imageId
               withSidecarContainers([
                 geoserver: [ imageId: imageId ],
               ]) {
@@ -142,6 +144,17 @@ pipeline {
                   sh '/entrypoint.sh load-data'
                 }
               }
+            }
+          }
+        }
+
+        stage ('Build and Remove docker apache hop') {
+          when {
+            expression { !isGerritReview() || headChangeset('apachehop/**') || headChangeset('Jenkinsfile') }
+          }
+          steps {
+            dockerBuildAndRemove(buildDir: 'apachehop') { imageId ->
+              dockerDive image: imageId
             }
           }
         }

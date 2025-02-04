@@ -76,3 +76,15 @@ services:
     ports:
       - "1025:1025"
       - "1080:1080"
+
+  apache-hop:
+    build: apachehop
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - HOP_SERVER_USER=admin
+      - HOP_SERVER_PASS=admin
+    volumes:
+      - ./.data/apache_hop/tasks:/files/tasks/
+      - ./.data/apache_hop/config:/files/metadata/async-web-service/
+    ports:
+      - '8060:8060'

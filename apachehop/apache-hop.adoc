@@ -1,0 +1,57 @@
+= Apache HOP
+:toc:
+:toc-placement: preamble
+
+== Besoin
+
+Avoir des traitements personnalisés qui ne peuvent pas être communs à l'ensemble des SDIS.
+
+== Mise en place
+
+Une image Apache HOP sera utilisée nous permettant d'exécuter des jobs. Ces jobs seront définis directement dans l'application REMOcRA où l'utilisateur importera un ou des fichiers `.hwf` / `.hpl`.
+
+Ces derniers seront stockés dans la machine dans le répertoire `/var/lib/remocra/apache_hop/` (ou en local `.data/apache_hop/`).
+
+=== Structure des répertoires
+
+Dans ce répertoire, nous avons 2 types d'informations qui sont stockées :
+
+==== Jobs
+Les jobs en tant que tels que nous stockons dans `../apache_hop/tasks` (les fichiers qui sont importés dans l'écran de gestion des jobs personnalisés).
+
+==== Configuration
+La configuration du job qui est essentielle pour l'exécution du job. Elle est stockée dans `../apache_hop/config`.
+
+Il s'agit de fichiers JSON qui sont écrits automatiquement à l'enregistrement et qui sont sous la forme :
+
+[source,json]
+----
+{
+  "name": "nom_job",
+  "filename": "/files/f86554b5-5df8-4743-8bef-95bae8de62d9/nom_job.hwf",
+  "enabled": true
+}
+----
+
+=== Bind mounts
+
+Notre application est donc "maître" du conteneur, c'est elle qui envoie les informations au conteneur. Il faut donc qu'il y ait 2 bind mounts :
+
+* Un premier pour les tasks : `../apache_hop/tasks` vers `/files/tasks`
+* Un deuxième pour les fichiers de configuration : `./apache_hop/config` vers `/files/metadata/async-web-service/`
+
+== Base de données
+
+Pour automatiser la configuration de la base de données, nous mettons en place un mécanisme en deux étapes :
+
+* *Génération automatique des paramètres* : Le script entrypoint.sh génère dynamiquement un fichier variables.json contenant les informations de connexion à la base de données
+* *Configuration de la connexion* : Un fichier de métadonnées situé dans /files/metadata/rdbms/remocra.json définit la configuration de connexion vers la base de données
+
+Cette approche garantit qu'une connexion fonctionnelle vers la base de données est disponible dès le démarrage, permettant l'exécution immédiate des jobs.
+
+== Utilisation
+
+Chaque traitement devrait insérer un élément `task` dans la base de données. Des `log_line` seront aussi insérées afin de suivre l'état de la task lancée.
+
+Les résultats d'exécution seront directement disponibles dans l'application REMOcRA. Cela permettra à l'utilisateur de suivre si les jobs se sont bien passés et dans le cas contraire comprendre la cause.
+
