@@ -5,6 +5,7 @@ jooq = "3.19.11"
 retrofit = "2.11.0"
 geotools = "31.3"
 jasperreports = "7.0.0"
+jetty = "12.0.16"
 sentry= "7.14.0"
 jts = "1.20.0"
 
@@ -18,9 +19,10 @@ log4j-bom = "org.apache.logging.log4j:log4j-bom:2.24.2"
 log4j-core = { module = "org.apache.logging.log4j:log4j-core"}
 log4j-jul = { module = "org.apache.logging.log4j:log4j-jul" }
 guice-bom = "com.google.inject:guice-bom:7.0.0"
-jetty-bom ="org.eclipse.jetty:jetty-bom:11.0.24"
-jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet" }
-jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets" }
+jetty-bom = { module = "org.eclipse.jetty:jetty-bom", version.ref = "jetty" }
+jetty-ee10-bom = { module = "org.eclipse.jetty.ee10:jetty-ee10-bom", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet" }
+jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets" }
 forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"

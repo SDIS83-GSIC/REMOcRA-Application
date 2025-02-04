@@ -131,6 +131,7 @@ dependencies {
     implementation(libs.jetty.servlet)
     implementation(libs.jetty.servlets)
     implementation(platform(libs.jetty.bom))
+    implementation(platform(libs.jetty.ee10.bom))
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.jackson)

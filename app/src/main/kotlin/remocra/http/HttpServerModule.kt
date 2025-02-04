@@ -23,9 +23,9 @@ class HttpServerModule(private val settings: HttpSettings) : RemocraModule() {
                     sessionMaxIdleTime = config.getDuration("session-max-idle-time"),
                     sessionStoreDir = config.getStringOrNull("session-store-dir")?.let { File(it) },
                     tempDirPrefix = config.getString("temp-dir-prefix"),
-                    qosMaxRequests = config.getString("qos.max-requests"),
-                    qosWaitMS = config.getString("qos.wait-ms"),
-                    qosSuspendMS = config.getString("qos.suspend-ms"),
+                    qosMaxRequests = config.getInt("qos.max-requests"),
+                    qosMaxSuspendedRequests = config.getInt("qos.max-suspended-requests"),
+                    qosMaxSuspend = config.getDuration("qos.max-suspend"),
                     staticDir = Path.of(config.getString("static-dir")),
                 ),
             )

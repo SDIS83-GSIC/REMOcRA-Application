@@ -12,8 +12,8 @@ data class HttpSettings(
     val sessionMaxIdleTime: Duration,
     val sessionStoreDir: File?,
     val tempDirPrefix: String,
-    val qosMaxRequests: String,
-    val qosWaitMS: String,
-    val qosSuspendMS: String,
+    val qosMaxRequests: Int,
+    val qosMaxSuspendedRequests: Int,
+    val qosMaxSuspend: Duration,
     val staticDir: Path,
 )
