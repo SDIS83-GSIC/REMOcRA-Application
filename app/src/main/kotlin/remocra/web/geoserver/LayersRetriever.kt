@@ -12,10 +12,13 @@ import kotlin.reflect.jvm.javaMethod
 
 class LayersRetriever {
     @Inject
-    private lateinit var droitsRepository: DroitsRepository
+    lateinit var droitsRepository: DroitsRepository
 
     @Inject
-    private lateinit var coucheRepository: CoucheRepository
+    lateinit var coucheRepository: CoucheRepository
+
+    @Inject
+    lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
 
     fun getData(module: TypeModule, userInfo: UserInfo?): List<LayerGroupData> {
         val profil = userInfo?.utilisateurId?.let {
@@ -39,7 +42,19 @@ class LayersRetriever {
                         source = couche.coucheSource,
                         projection = couche.coucheProjection,
                         libelle = couche.coucheLibelle,
-                        url = couche.coucheUrl,
+                        url = if (couche.coucheUrl.startsWith(geoserverSettings.url.toString())) {
+                            UriBuilder.fromPath(AuthnConstants.API_PATH)
+                                .path(GeoserverEndpoint::class.java)
+                                .path(GeoserverEndpoint::proxy.javaMethod)
+                                .build(module, couche.coucheCode)
+                                .toString()
+                        } else {
+                            UriBuilder.fromPath(AuthnConstants.API_PATH)
+                                .path(CartoEndpoint::class.java)
+                                .path(CartoEndpoint::proxy.javaMethod)
+                                .build(module, couche.coucheCode)
+                                .toString()
+                        },
                         format = couche.coucheFormat,
                         layer = couche.coucheNom,
                         active = couche.coucheActive,

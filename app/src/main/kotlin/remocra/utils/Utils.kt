@@ -2,7 +2,10 @@ package remocra.utils
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.MultivaluedMap
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.Response.Status.BAD_GATEWAY
+import okhttp3.HttpUrl
 import java.util.stream.Collectors
 
 /** As defined in [RFC 4918](https://tools.ietf.org/html/rfc4918#section-11.2) */
@@ -41,6 +44,8 @@ fun conflict(): Response.ResponseBuilder = Response.status(Response.Status.CONFL
 
 fun unprocessableEntity(): Response.ResponseBuilder = Response.status(UNPROCESSABLE_ENTITY)
 
+fun badGateway(): Response.ResponseBuilder = Response.status(BAD_GATEWAY)
+
 /**
  * Permet de simuler le limit + offset sur une collection, surtout utile pour les nomenclatures en cache afin d'éviter une requête SQL supplémentaire
  */
@@ -57,4 +62,13 @@ fun HttpServletRequest.getTextPartOrNull(part: String): String? {
         return null
     }
     return partText
+}
+
+fun HttpUrl.Builder.addQueryParameters(params: MultivaluedMap<String, String>): HttpUrl.Builder {
+    params.forEach { (key, values) ->
+        values.forEach { value ->
+            this.addQueryParameter(key, value)
+        }
+    }
+    return this
 }
