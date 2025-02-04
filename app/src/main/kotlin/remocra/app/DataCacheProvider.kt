@@ -7,7 +7,6 @@ import remocra.data.DataCache
 import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.TypeDataCache
 import remocra.db.AnomalieRepository
-import remocra.db.CommuneRepository
 import remocra.db.DiametreRepository
 import remocra.db.DomaineRepository
 import remocra.db.MarquePibiRepository
@@ -16,11 +15,11 @@ import remocra.db.ModelePibiRepository
 import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
-import remocra.db.NomenclatureCodeLibelleRepository
 import remocra.db.OldebRepository
 import remocra.db.RcciRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
+import remocra.db.TypeOrganismeRepository
 import remocra.db.TypeReseauRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypePei
@@ -51,6 +50,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 
 /**
@@ -61,9 +61,8 @@ class DataCacheProvider
 @Inject
 constructor(
     private val anomalieRepository: AnomalieRepository,
-    private val communeRepository: CommuneRepository,
+    // private val communeRepository: CommuneRepository,
     private val diametreRepository: DiametreRepository,
-    private val rcciRepository: RcciRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
     private val materiauRepository: MateriauRepository,
@@ -71,12 +70,14 @@ constructor(
     private val natureRepository: NatureRepository,
     private val natureDeciRepository: NatureDeciRepository,
     private val niveauRepository: NiveauRepository,
-    private val typeCanalisationRepository: TypeCanalisationRepository,
-    private val typeReseauRepository: TypeReseauRepository,
-    private val reservoirRepository: ReservoirRepository,
-    private val utilisateurRepository: UtilisateurRepository,
-    private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
     private val oldebRepository: OldebRepository,
+    private val rcciRepository: RcciRepository,
+    private val reservoirRepository: ReservoirRepository,
+    private val typeCanalisationRepository: TypeCanalisationRepository,
+    private val typeOrganismeRepository: TypeOrganismeRepository,
+    private val typeReseauRepository: TypeReseauRepository,
+    private val utilisateurRepository: UtilisateurRepository,
+    // private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
 
 ) : Provider<DataCache> {
     private lateinit var dataCache: DataCache
@@ -94,11 +95,6 @@ constructor(
         when (typeToReload) {
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
             TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
-            TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> dataCache.mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
-            TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
-            TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
-            TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
-            TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -110,10 +106,15 @@ constructor(
             -> dataCache.mapNature = natureRepository.getMapById()
             TypeDataCache.NATURE_DECI -> dataCache.mapNatureDeci = natureDeciRepository.getMapById()
             TypeDataCache.NIVEAU -> dataCache.mapNiveau = niveauRepository.getMapById()
-            TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
-            TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
+            TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
+            TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> dataCache.mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
             TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
-
+            TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
+            TypeDataCache.TYPE_ORGANISME -> dataCache.mapTypeOrganisme = typeOrganismeRepository.getMapById()
+            TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
             TypeDataCache.OLDEB_TYPE_ACTION -> dataCache.mapOldebTypeAction = oldebRepository.getTypeAction()
             TypeDataCache.OLDEB_TYPE_AVIS -> dataCache.mapOldebTypeAvis = oldebRepository.getTypeAvisMap()
             TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> dataCache.mapOldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
@@ -136,11 +137,6 @@ constructor(
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
 //        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
-        val mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
-        val mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
-        val mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
-        val mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
-        val mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
         val materiaux = materiauRepository.getMapById()
@@ -148,33 +144,33 @@ constructor(
         val nature = natureRepository.getMapById()
         val natureDeci = natureDeciRepository.getMapById()
         val niveau = niveauRepository.getMapById()
-        val typeCanalisation = typeCanalisationRepository.getMapById()
-        val typeReseau = typeReseauRepository.getMapById()
-        val reservoir = reservoirRepository.getMapById()
-        val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
-
-        val oldebTypeAction = oldebRepository.getTypeAction()
-        val oldebTypeAvis = oldebRepository.getTypeAvisMap()
-        val oldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
-        val oldebTypeAnomalie = oldebRepository.getTypeAnomalie()
-        val oldebTypeCategorieAnomalie = oldebRepository.getTypeCategorieAnomalie()
         val oldebTypeAcces = oldebRepository.getTypeAcces()
+        val oldebTypeAction = oldebRepository.getTypeAction()
+        val oldebTypeAnomalie = oldebRepository.getTypeAnomalie()
+        val oldebTypeAvis = oldebRepository.getTypeAvisMap()
+        val oldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
+        val oldebTypeCategorieAnomalie = oldebRepository.getTypeCategorieAnomalie()
+        val oldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
+        val oldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
         val oldebTypeResidence = oldebRepository.getTypeResidence()
         val oldebTypeSuite = oldebRepository.getTypeSuite()
         val oldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
-        val oldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
-        val oldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
+        val mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
+        val mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
+        val mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
+        val mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
+        val mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
+        val reservoir = reservoirRepository.getMapById()
+        val typeCanalisation = typeCanalisationRepository.getMapById()
+        val typeOrganisme = typeOrganismeRepository.getMapById()
+        val typeReseau = typeReseauRepository.getMapById()
+        val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
 
         return DataCache(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
             // mapCommune = communes,
             mapDiametre = diametres,
-            mapRcciTypePrometheeFamille = mapRcciTypePrometheeFamille,
-            mapRcciTypePrometheePartition = mapRcciTypePrometheePartition,
-            mapRcciTypePrometheeCategorie = mapRcciTypePrometheeCategorie,
-            mapRcciTypeOrigineAlerte = mapRcciTypeOrigineAlerte,
-            mapRcciTypeDegreCertitude = mapRcciTypeDegreCertitude,
             mapDomaine = domaines,
             mapMateriau = materiaux,
             mapMarquePibi = marquesPibi,
@@ -182,22 +178,27 @@ constructor(
             mapNature = nature,
             mapNatureDeci = natureDeci,
             mapNiveau = niveau,
-            mapTypeCanalisation = typeCanalisation,
-            mapTypeReseau = typeReseau,
-            mapReservoir = reservoir,
-            utilisateurSysteme = utilisateurSysteme,
-
-            mapOldebTypeAction = oldebTypeAction,
-            mapOldebTypeAvis = oldebTypeAvis,
-            mapOldebTypeDebrousaillement = oldebTypeDebrousaillement,
-            mapOldebTypeAnomalie = oldebTypeAnomalie,
-            mapOldebTypeCategorieAnomalie = oldebTypeCategorieAnomalie,
             mapOldebTypeAcces = oldebTypeAcces,
+            mapOldebTypeAction = oldebTypeAction,
+            mapOldebTypeAnomalie = oldebTypeAnomalie,
+            mapOldebTypeAvis = oldebTypeAvis,
+            mapOldebTypeCategorieAnomalie = oldebTypeCategorieAnomalie,
+            mapOldebTypeCategorieCaracteristique = oldebTypeCategorieCaracteristique,
+            mapOldebTypeCaracteristique = oldebTypeCaracteristique,
+            mapOldebTypeDebrousaillement = oldebTypeDebrousaillement,
             mapOldebTypeResidence = oldebTypeResidence,
             mapOldebTypeSuite = oldebTypeSuite,
             mapOldebTypeZoneUrbanisme = oldebTypeZoneUrbanisme,
-            mapOldebTypeCaracteristique = oldebTypeCaracteristique,
-            mapOldebTypeCategorieCaracteristique = oldebTypeCategorieCaracteristique,
+            mapRcciTypeDegreCertitude = mapRcciTypeDegreCertitude,
+            mapRcciTypeOrigineAlerte = mapRcciTypeOrigineAlerte,
+            mapRcciTypePrometheeCategorie = mapRcciTypePrometheeCategorie,
+            mapRcciTypePrometheeFamille = mapRcciTypePrometheeFamille,
+            mapRcciTypePrometheePartition = mapRcciTypePrometheePartition,
+            mapReservoir = reservoir,
+            mapTypeCanalisation = typeCanalisation,
+            mapTypeOrganisme = typeOrganisme,
+            mapTypeReseau = typeReseau,
+            utilisateurSysteme = utilisateurSysteme,
         )
     }
 
@@ -207,11 +208,6 @@ constructor(
     fun getData(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> getAnomalies()
         TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
-        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> getMapRcciTypePrometheeFamille()
-        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> getMapRcciTypePrometheePartition()
-        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> getMapRcciTypePrometheeCategorie()
-        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> getMapRcciTypeOrigineAlerte()
-        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> getMapRcciTypeDegreCertitude()
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -222,21 +218,26 @@ constructor(
         TypeDataCache.NATURE_PENA -> get().mapNature.filter { it.value.natureTypePei == TypePei.PENA }
         TypeDataCache.NATURE_DECI -> get().mapNatureDeci
         TypeDataCache.NIVEAU -> get().mapNiveau
-        TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
-        TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
-        TypeDataCache.RESERVOIR -> getReservoirs()
-
-        TypeDataCache.OLDEB_TYPE_ACTION -> get().mapOldebTypeAction
-        TypeDataCache.OLDEB_TYPE_AVIS -> get().mapOldebTypeAvis
-        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> get().mapOldebTypeDebrousaillement
-        TypeDataCache.OLDEB_TYPE_ANOMALIE -> get().mapOldebTypeAnomalie
-        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> get().mapOldebTypeCategorieAnomalie
         TypeDataCache.OLDEB_TYPE_ACCES -> get().mapOldebTypeAcces
+        TypeDataCache.OLDEB_TYPE_ACTION -> get().mapOldebTypeAction
+        TypeDataCache.OLDEB_TYPE_ANOMALIE -> get().mapOldebTypeAnomalie
+        TypeDataCache.OLDEB_TYPE_AVIS -> get().mapOldebTypeAvis
+        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> get().mapOldebTypeCaracteristique
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> get().mapOldebTypeCategorieAnomalie
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> get().mapOldebTypeCategorieCaracteristique
+        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> get().mapOldebTypeDebrousaillement
         TypeDataCache.OLDEB_TYPE_RESIDENCE -> get().mapOldebTypeResidence
         TypeDataCache.OLDEB_TYPE_SUITE -> get().mapOldebTypeSuite
         TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> get().mapOldebTypeZoneUrbanisme
-        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> get().mapOldebTypeCaracteristique
-        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> get().mapOldebTypeCategorieCaracteristique
+        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> getMapRcciTypeDegreCertitude()
+        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> getMapRcciTypeOrigineAlerte()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> getMapRcciTypePrometheeCategorie()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> getMapRcciTypePrometheeFamille()
+        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> getMapRcciTypePrometheePartition()
+        TypeDataCache.RESERVOIR -> getReservoirs()
+        TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
+        TypeDataCache.TYPE_ORGANISME -> get().mapTypeOrganisme
+        TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
     }
 
     fun getAnomalies() = get().mapAnomalie
@@ -279,11 +280,6 @@ constructor(
     fun getPojoClassFromType(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> Anomalie::class.java
         TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
-        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> RcciTypePrometheeFamille::class.java
-        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> RcciTypePrometheePartition::class.java
-        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> RcciTypePrometheeCategorie::class.java
-        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> RcciTypeOrigineAlerte::class.java
-        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> RcciTypeDegreCertitude::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java
@@ -295,21 +291,26 @@ constructor(
         -> Nature::class.java
         TypeDataCache.NATURE_DECI -> NatureDeci::class.java
         TypeDataCache.NIVEAU -> Niveau::class.java
-        TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
-        TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
-        TypeDataCache.RESERVOIR -> Reservoir::class.java
-
-        TypeDataCache.OLDEB_TYPE_ACTION -> OldebTypeAction::class.java
-        TypeDataCache.OLDEB_TYPE_AVIS -> OldebTypeAvis::class.java
-        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> OldebTypeDebroussaillement::class.java
-        TypeDataCache.OLDEB_TYPE_ANOMALIE -> OldebTypeAnomalie::class.java
-        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> OldebTypeCategorieAnomalie::class.java
         TypeDataCache.OLDEB_TYPE_ACCES -> OldebTypeAcces::class.java
+        TypeDataCache.OLDEB_TYPE_ACTION -> OldebTypeAction::class.java
+        TypeDataCache.OLDEB_TYPE_ANOMALIE -> OldebTypeAnomalie::class.java
+        TypeDataCache.OLDEB_TYPE_AVIS -> OldebTypeAvis::class.java
+        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> OldebTypeCaracteristique::class.java
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_ANOMALIE -> OldebTypeCategorieAnomalie::class.java
+        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> OldebTypeCategorieCaracteristique::class.java
+        TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> OldebTypeDebroussaillement::class.java
         TypeDataCache.OLDEB_TYPE_RESIDENCE -> OldebTypeResidence::class.java
         TypeDataCache.OLDEB_TYPE_SUITE -> OldebTypeSuite::class.java
         TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> OldebTypeZoneUrbanisme::class.java
-        TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> OldebTypeCaracteristique::class.java
-        TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> OldebTypeCategorieCaracteristique::class.java
+        TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> RcciTypeDegreCertitude::class.java
+        TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> RcciTypeOrigineAlerte::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> RcciTypePrometheeCategorie::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> RcciTypePrometheeFamille::class.java
+        TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> RcciTypePrometheePartition::class.java
+        TypeDataCache.RESERVOIR -> Reservoir::class.java
+        TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
+        TypeDataCache.TYPE_ORGANISME -> TypeOrganisme::class.java
+        TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
     }
 
     /**

@@ -28,6 +28,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import java.util.UUID
@@ -36,11 +37,6 @@ data class DataCache(
     var mapAnomalie: Map<UUID, Anomalie>,
     var mapAnomalieCategorie: Map<UUID, AnomalieCategorie>,
 //    var mapCommune: Map<UUID, Commune>, // TODO 'tention, volume important, à qualifier (SANS géométrie si possible)
-    var mapRcciTypePrometheeFamille: Map<UUID, RcciTypePrometheeFamille>,
-    var mapRcciTypePrometheePartition: Map<UUID, RcciTypePrometheePartition>,
-    var mapRcciTypePrometheeCategorie: Map<UUID, RcciTypePrometheeCategorie>,
-    var mapRcciTypeOrigineAlerte: Map<UUID, RcciTypeOrigineAlerte>,
-    var mapRcciTypeDegreCertitude: Map<UUID, RcciTypeDegreCertitude>,
     var mapDiametre: Map<UUID, Diametre>,
     var mapDomaine: Map<UUID, Domaine>,
     var mapMarquePibi: Map<UUID, MarquePibi>,
@@ -49,20 +45,25 @@ data class DataCache(
     var mapNature: Map<UUID, Nature>,
     var mapNatureDeci: Map<UUID, NatureDeci>,
     var mapNiveau: Map<UUID, Niveau>,
-    var mapTypeCanalisation: Map<UUID, TypeCanalisation>,
-    var mapTypeReseau: Map<UUID, TypeReseau>,
-    var mapReservoir: Map<UUID, Reservoir>,
-    var utilisateurSysteme: Utilisateur,
-
-    var mapOldebTypeAction: Map<UUID, OldebTypeAction>,
-    var mapOldebTypeAvis: Map<UUID, OldebTypeAvis>,
-    var mapOldebTypeDebrousaillement: Map<UUID, OldebTypeDebroussaillement>,
-    var mapOldebTypeAnomalie: Map<UUID, OldebTypeAnomalie>,
-    var mapOldebTypeCategorieAnomalie: Map<UUID, OldebTypeCategorieAnomalie>,
     var mapOldebTypeAcces: Map<UUID, OldebTypeAcces>,
+    var mapOldebTypeAction: Map<UUID, OldebTypeAction>,
+    var mapOldebTypeAnomalie: Map<UUID, OldebTypeAnomalie>,
+    var mapOldebTypeAvis: Map<UUID, OldebTypeAvis>,
+    var mapOldebTypeCaracteristique: Map<UUID, OldebTypeCaracteristique>,
+    var mapOldebTypeCategorieAnomalie: Map<UUID, OldebTypeCategorieAnomalie>,
+    var mapOldebTypeCategorieCaracteristique: Map<UUID, OldebTypeCategorieCaracteristique>,
+    var mapOldebTypeDebrousaillement: Map<UUID, OldebTypeDebroussaillement>,
     var mapOldebTypeResidence: Map<UUID, OldebTypeResidence>,
     var mapOldebTypeSuite: Map<UUID, OldebTypeSuite>,
     var mapOldebTypeZoneUrbanisme: Map<UUID, OldebTypeZoneUrbanisme>,
-    var mapOldebTypeCaracteristique: Map<UUID, OldebTypeCaracteristique>,
-    var mapOldebTypeCategorieCaracteristique: Map<UUID, OldebTypeCategorieCaracteristique>,
+    var mapRcciTypeDegreCertitude: Map<UUID, RcciTypeDegreCertitude>,
+    var mapRcciTypeOrigineAlerte: Map<UUID, RcciTypeOrigineAlerte>,
+    var mapRcciTypePrometheeCategorie: Map<UUID, RcciTypePrometheeCategorie>,
+    var mapRcciTypePrometheeFamille: Map<UUID, RcciTypePrometheeFamille>,
+    var mapRcciTypePrometheePartition: Map<UUID, RcciTypePrometheePartition>,
+    var mapReservoir: Map<UUID, Reservoir>,
+    var mapTypeCanalisation: Map<UUID, TypeCanalisation>,
+    var mapTypeOrganisme: Map<UUID, TypeOrganisme>,
+    var mapTypeReseau: Map<UUID, TypeReseau>,
+    var utilisateurSysteme: Utilisateur,
 )
