@@ -381,7 +381,9 @@ const Contact = () => {
         ]}
       />
 
-      <SubmitFormButtons returnLink={URLS.LIST_GESTIONNAIRE} />
+      <SubmitFormButtons
+        returnLink={URLS.LIST_CONTACT(appartenanceId, appartenance)}
+      />
     </FormContainer>
   );
 };
