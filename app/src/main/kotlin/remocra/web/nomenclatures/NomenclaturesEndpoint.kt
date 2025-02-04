@@ -10,15 +10,10 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
 import remocra.auth.Public
-import remocra.data.GlobalData
 import remocra.data.enums.TypeDataCache
+import remocra.usecase.nomenclature.NomenclatureUseCase
 import remocra.web.AbstractEndpoint
 import java.util.Locale
-import java.util.UUID
-
-private const val SUFFIXE_ID = "Id"
-private const val SUFFIXE_LIBELLE = "Libelle"
-private const val SUFFIXE_CODE = "Code"
 
 @Path("/nomenclatures")
 @Produces("application/json; charset=UTF-8")
@@ -27,6 +22,8 @@ class NomenclaturesEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
+
+    @Inject lateinit var nomenclatureUseCase: NomenclatureUseCase
 
     /**
      * Méthode retournant une map du type de nomenclature demandé, sous forme id -> POJO
@@ -55,39 +52,7 @@ class NomenclaturesEndpoint : AbstractEndpoint() {
     @Public("Les nomenclatures ne sont pas liées à un droit")
     fun getListIdLibelle(@PathParam("typeNomenclature")typeNomenclatureString: String): Response {
         val typeNomenclature = getTypeNomenclatureFromString(typeNomenclatureString)
-
-        val clazz = dataCacheProvider.getPojoClassFromType(typeNomenclature)
-        val linkedClazz = dataCacheProvider.getLinkedPojoClassFromType(typeNomenclature)
-
-        // On veut identifier les attributs nommés maclasseId et maclasseLibelle dans Maclasse, pour les invoquer plus tard
-        val fieldId = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
-        val fieldLibelle = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_LIBELLE, true) }.also { it?.isAccessible = true }
-        val fieldCode = clazz.declaredFields.find { it.name.contains(clazz.simpleName + SUFFIXE_CODE, true) }.also { it?.isAccessible = true }
-        val fieldLink = if (linkedClazz != null) {
-            clazz.declaredFields.find { it.name.contains(clazz.simpleName + linkedClazz.simpleName + SUFFIXE_ID, true) }.also { it?.isAccessible = true }
-        } else {
-            null
-        }
-
-        // On invoque sur chaque objet et on met le résultat dans un data pour fourniture au front
-        return Response.ok(
-            dataCacheProvider.getData(typeNomenclature).values.map {
-                if (linkedClazz != null) {
-                    GlobalData.IdCodeLibelleLienData(
-                        fieldId?.get(it) as UUID,
-                        fieldCode?.get(it) as String,
-                        fieldLibelle?.get(it) as String,
-                        fieldLink?.get(it) as UUID,
-                    )
-                } else {
-                    GlobalData.IdCodeLibelleData(
-                        fieldId?.get(it) as UUID,
-                        fieldCode?.get(it) as String,
-                        fieldLibelle?.get(it) as String,
-                    )
-                }
-            },
-        ).build()
+        return Response.ok(nomenclatureUseCase.getListIdLibelle(typeNomenclature)).build()
     }
 
     private fun getTypeNomenclatureFromString(typeNomenclatureString: String): TypeDataCache {
