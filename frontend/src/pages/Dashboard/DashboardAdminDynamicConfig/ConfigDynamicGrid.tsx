@@ -33,7 +33,7 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
 
   const [dashboardProfil, setDashboardProfil] = useState<any | null>();
   const [dashboardTitle, setDashboardtitle] = useState<string | null>(
-    "Nouveau Dashbaord",
+    "Nouveau Dashboard",
   );
   const [componentsListToMap, setComponentsListToMap] = useState<
     DashboardComponentConfig[] | []
