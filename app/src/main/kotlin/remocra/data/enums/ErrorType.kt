@@ -567,6 +567,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     OLDEB_FORBIDDEN_INSERT(27006, "Vous n'avez pas les droits de création des obligations légales de débrousaillement", Status.FORBIDDEN),
     OLDEB_FORBIDDEN_UPDATE(27007, "Vous n'avez pas les droits de modification des obligations légales de débrousaillement", Status.FORBIDDEN),
     OLDEB_FORBIDDEN_DELETE(27008, "Vous n'avez pas les droits de suppression des obligations légales de débrousaillement", Status.FORBIDDEN),
+    OLDEB_GEOMETRY_FORBIDDEN_UPDATE(27009, "Vous n'avez pas les droits de modification de la géométrie des obligations légales de débrousaillement", Status.FORBIDDEN),
 
     ;
     override fun toString(): String {

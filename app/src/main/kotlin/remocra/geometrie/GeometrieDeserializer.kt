@@ -11,16 +11,16 @@ class GeometrieDeserializer : StdDeserializer<Geometry>(Geometry::class.java) {
     private val reader: WKTReader = WKTReader()
 
     /**
-     * La géométrie doit être sous la forme
-     * SRID=XXXX;POINT(XXXXXXX XXXXXXX)
+     * La géométrie doit être au format WKT avec SRID en en-tête
+     * SRID=XXXX;GEOMETRY(...COORDINATES)
+     * GEOMETRY étant POINT, LINESTRING, POLYGON, etc. et COORDINATES un ensemble de coordonnées décimales
      */
-    override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): Geometry? {
-        return p0?.text?.split(";")?.let {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): Geometry {
+        return parser.text.split(";").let {
             val srid = it[0].split("=")[1].toInt()
-            val geometry: Geometry? = reader.read(it[1])
-            return geometry.apply {
-                this?.srid = srid
-            }
+            val geometry: Geometry = reader.read(it[1])
+            geometry.srid = srid
+            return geometry
         }
     }
 }

@@ -76,16 +76,33 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getDebitSimultaneWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
+            TypePointCarte.OLDEB -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getOldebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getOldebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
         }
 
         return LayersRes(
             features = feature.map {
                 Feature(
-                    geometry = FeatureGeom(
-                        type = it.pointGeometrie.geometryType,
-                        coordinates = it.pointGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
-                        srid = "EPSG:${it.pointGeometrie.srid}",
-                    ),
+                    geometry = if (it.pointGeometrie.geometryType.equals("Point")) {
+                        FeatureGeom(
+                            type = it.pointGeometrie.geometryType,
+                            coordinates =
+                            it.pointGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
+                            srid = "EPSG:${it.pointGeometrie.srid}",
+                        )
+                    } else {
+                        FeatureGeom(
+                            type = it.pointGeometrie.geometryType,
+                            coordinates = arrayOf(it.pointGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.toTypedArray()),
+                            srid = "EPSG:${it.pointGeometrie.srid}",
+                        )
+                    },
                     id = it.pointId,
                     properties = it,
                 )
@@ -108,7 +125,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
 
     data class FeatureGeom(
         val type: String,
-        val coordinates: Array<Double>,
+        val coordinates: Array<out Any>,
         val srid: String,
     )
 }

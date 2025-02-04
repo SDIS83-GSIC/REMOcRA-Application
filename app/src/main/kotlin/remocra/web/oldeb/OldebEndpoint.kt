@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PATCH
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -21,18 +23,23 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.Params
+import remocra.data.enums.TypePointCarte
 import remocra.data.oldeb.OldebForm
 import remocra.data.oldeb.OldebFormInput
+import remocra.data.oldeb.OldebGeometryFormData
 import remocra.data.oldeb.OldebLocataireForm
 import remocra.data.oldeb.OldebProprieteForm
 import remocra.data.oldeb.OldebVisiteForm
 import remocra.db.OldebRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.oldeb.CreateOldebUseCase
 import remocra.usecase.oldeb.DeleteOldebUseCase
 import remocra.usecase.oldeb.SelectOldebUseCase
+import remocra.usecase.oldeb.UpdateOldebGeometryUseCase
 import remocra.usecase.oldeb.UpdateOldebUseCase
 import remocra.utils.badRequest
+import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -45,6 +52,8 @@ class OldebEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var objectMapper: ObjectMapper
 
+    @Inject lateinit var getPointCarteUseCase: GetPointCarteUseCase
+
     @Inject lateinit var oldebRepository: OldebRepository
 
     @Inject lateinit var selectOldebUseCase: SelectOldebUseCase
@@ -54,6 +63,29 @@ class OldebEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateOldebUseCase: UpdateOldebUseCase
 
     @Inject lateinit var deleteOldebUseCase: DeleteOldebUseCase
+
+    @Inject lateinit var updateOldebGeometryUseCase: UpdateOldebGeometryUseCase
+
+    @GET
+    @Path("/layer")
+    @RequireDroits([Droit.OLDEB_R])
+    fun layer(
+        @QueryParam("bbox") bbox: String,
+        @QueryParam("srid") srid: String,
+    ): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        return Response.ok(
+            getPointCarteUseCase.execute(
+                bbox,
+                srid,
+                null,
+                TypePointCarte.OLDEB,
+                securityContext.userInfo!!,
+            ),
+        ).build()
+    }
 
     @POST
     @Path("/")
@@ -112,6 +144,16 @@ class OldebEndpoint : AbstractEndpoint() {
                 documentList = httpRequest.parts.filter { it.name.startsWith("document_") },
             ),
         ).wrap()
+    }
+
+    @PATCH
+    @Path("/{oldebId}/geometry")
+    @RequireDroits([Droit.OLDEB_U])
+    fun geometry(@PathParam("oldebId") oldebId: UUID, element: OldebGeometryFormData): Response {
+        if (oldebId != element.oldebId) {
+            return badRequest().build()
+        }
+        return updateOldebGeometryUseCase.execute(securityContext.userInfo, element).wrap()
     }
 
     @DELETE

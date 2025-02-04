@@ -3,6 +3,7 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Geometry
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.name
@@ -301,6 +302,9 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * UPDATE
      */
+    fun updateOldebGeometry(oldebId: UUID, geometry: org.locationtech.jts.geom.Geometry): Int =
+        dsl.update(OLDEB).set(OLDEB.GEOMETRIE, geometry).where(OLDEB.ID.eq(oldebId)).execute()
+
     fun updateOldeb(oldeb: Oldeb): Int =
         dsl.update(OLDEB).set(dsl.newRecord(OLDEB, oldeb)).where(OLDEB.ID.eq(oldeb.oldebId)).execute()
 

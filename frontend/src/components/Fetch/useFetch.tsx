@@ -3,7 +3,10 @@ import { useCallback } from "react";
 import { getFetchOptions } from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 
-export const doFetch = async (url: string, options = {}) => {
+export const doFetch = async (
+  url: string,
+  options = {},
+): Promise<undefined | any> => {
   if (!url) {
     return null;
   }

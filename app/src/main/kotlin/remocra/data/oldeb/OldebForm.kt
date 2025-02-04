@@ -77,3 +77,8 @@ data class OldebVisiteSuiteForm(
     val oldebVisiteSuiteDate: ZonedDateTime?,
     val oldebVisiteSuiteObservation: String?,
 )
+
+data class OldebGeometryFormData(
+    val oldebId: UUID,
+    val oldebGeometrie: Geometry,
+)

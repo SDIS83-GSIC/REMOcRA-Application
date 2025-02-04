@@ -59,7 +59,7 @@ class TourneeRepository
                 .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
                 .leftJoin(ZONE_INTEGRATION)
                 .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-                .where(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
+                .where(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 

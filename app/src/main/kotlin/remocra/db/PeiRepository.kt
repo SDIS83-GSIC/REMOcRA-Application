@@ -167,7 +167,7 @@ class PeiRepository
             }
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             // Et la zone de compétence de l'utilisateur s'il n'est pas super admin
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .count()
 
     fun isInZoneCompetence(
@@ -304,7 +304,7 @@ class PeiRepository
                 }
             }
             .where(param.filterBy?.toCondition() ?: DSL.noCondition())
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .groupBy(
                 PEI.ID,
                 PEI.NUMERO_COMPLET,

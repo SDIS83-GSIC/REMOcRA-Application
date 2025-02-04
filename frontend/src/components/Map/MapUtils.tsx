@@ -4,6 +4,7 @@ import { Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { Fill, Stroke, Style } from "ol/style";
+import type { StyleLike } from "ol/style/Style";
 import CircleStyle from "ol/style/Circle";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { toOpenLayer } from "./Map.tsx";
@@ -98,7 +99,7 @@ function toggleDeplacerPoint(
 export function createPointLayer(
   map: Map,
   urlApi: (extent, projection) => string,
-  style: Style,
+  style: StyleLike,
   projection: { name: string },
 ) {
   const vectorSource = toOpenLayer({

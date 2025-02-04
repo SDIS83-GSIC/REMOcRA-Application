@@ -102,7 +102,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .orderBy(
                 params.sortBy?.toCondition(listeNumeroPei) ?: listOf(
                     INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.asc(),

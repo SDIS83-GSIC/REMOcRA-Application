@@ -145,6 +145,7 @@ import ModuleOldeb from "./components/ModuleRemocra/ModuleOldeb.tsx";
 import OldebList from "./pages/Oldeb/OldebList.tsx";
 import OldebCreate from "./pages/Oldeb/OldebCreate.tsx";
 import OldebUpdate from "./pages/Oldeb/OldebUpdate.tsx";
+import OldebMap from "./pages/Oldeb/OldebMap.tsx";
 import OldebProprietaireList from "./pages/Oldeb/OldebProprietaireList.tsx";
 import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
 import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
@@ -207,6 +208,7 @@ export const URLS = {
   OLDEB_LIST: url`/oldeb/liste`,
   OLDEB_CREATE: url`/oldeb/create`,
   OLDEB_UPDATE: (oldebId) => url`/oldeb/${oldebId}`,
+  OLDEB_LOCALISATION: url`/oldeb/localisation`,
   OLDEB_PROPRIETAIRE_LIST: url`/oldeb/proprietaire`,
   OLDEB_PROPRIETAIRE_CREATE: url`/oldeb/proprietaire/create`,
   OLDEB_PROPRIETAIRE_UPDATE: (oldebProprietaireId) =>
@@ -689,6 +691,12 @@ export default [
             Component={OldebUpdate}
             droits={[TYPE_DROIT.OLDEB_U]}
           />
+        ),
+      },
+      {
+        path: "localisation",
+        element: (
+          <Authorization Component={OldebMap} droits={[TYPE_DROIT.OLDEB_R]} />
         ),
       },
       {

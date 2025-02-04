@@ -10,6 +10,10 @@ const ModuleOldeb = () => {
       label: "Liste des Obligations Légales de Débroussaillement",
     },
     {
+      path: URLS.OLDEB_LOCALISATION,
+      label: "Localisation",
+    },
+    {
       path: URLS.OLDEB_PROPRIETAIRE_LIST,
       label: "Propriétaires",
     },

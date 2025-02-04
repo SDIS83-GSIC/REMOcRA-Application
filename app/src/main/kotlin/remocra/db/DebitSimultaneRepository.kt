@@ -106,7 +106,7 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .where(DEBIT_SIMULTANE.ID.eq(debitSimultaneId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE),
+                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )

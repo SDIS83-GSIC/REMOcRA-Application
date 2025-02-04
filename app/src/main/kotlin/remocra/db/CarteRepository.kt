@@ -8,6 +8,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
+import org.locationtech.jts.geom.Polygon
 import remocra.data.enums.TypePointCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
@@ -19,6 +20,8 @@ import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
+import remocra.db.jooq.remocra.tables.references.OLDEB
+import remocra.db.jooq.remocra.tables.references.OLDEB_TYPE_DEBROUSSAILLEMENT
 import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
@@ -66,7 +69,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
                         .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
                     isSuperAdmin,
                 ),
@@ -96,7 +99,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .on(PIBI.ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE), isSuperAdmin),
+                repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin),
             )
             .fetchInto()
     }
@@ -135,7 +138,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                    ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
                         .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) }),
                     isSuperAdmin,
                 ),
@@ -173,7 +176,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
                         .and(bbox?.let { ST_Within(ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid), bbox) }),
                     isSuperAdmin,
                 ),
@@ -181,8 +184,28 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
+    fun getOldebWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<OldebCarte> =
+        dsl.with(OldebRepository.lastOldebVisiteCte)
+            .select(
+                ST_Transform(OLDEB.GEOMETRIE, srid).`as`("pointGeometrie"),
+                OLDEB.ID.`as`("pointId"),
+                OLDEB_TYPE_DEBROUSSAILLEMENT.CODE.`as`("etatDebroussaillement"),
+            )
+            .from(OLDEB)
+            .leftJoin(OldebRepository.lastOldebVisiteCte).on(OLDEB.ID.eq(OldebRepository.lastOldebVisiteCte.field("OLDEB_ID", UUID::class.java)))
+            .leftJoin(OLDEB_TYPE_DEBROUSSAILLEMENT).on(OLDEB_TYPE_DEBROUSSAILLEMENT.ID.eq(OldebRepository.lastOldebVisiteCte.field("OLDEB_TYPE_DEBROUSSAILLEMENT_ID", UUID::class.java)))
+            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(OLDEB.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                        .and(bbox?.let { ST_Within(ST_Transform(OLDEB.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+
     abstract class PointCarte {
-        abstract val pointGeometrie: Point
+        abstract val pointGeometrie: Geometry
         abstract val pointId: UUID
         abstract val typePointCarte: TypePointCarte
 
@@ -243,5 +266,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
         override val propertiesToDisplay: String =
             "Numéro du dossier : $debitSimultaneNumeroDossier \n Liste des PEI concernés : $listeNumeroPei"
+    }
+
+    data class OldebCarte(
+        override val pointGeometrie: Polygon,
+        override val pointId: UUID,
+        val etatDebroussaillement: String? = null,
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.OLDEB
+
+        override val propertiesToDisplay: String = "$etatDebroussaillement"
     }
 }
