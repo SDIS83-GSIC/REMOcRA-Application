@@ -163,7 +163,8 @@ const TourneePei = ({
                 value={selectedPei}
                 onChange={setSelectedPei}
                 className="my-3 mx-2"
-                placeholder={"Sélectionner..."}
+                placeholder={"Sélectionnez"}
+                noOptionsMessage={() => "Aucune donnée trouvée"}
               />
             </Col>
             <Col sm={"auto"}>

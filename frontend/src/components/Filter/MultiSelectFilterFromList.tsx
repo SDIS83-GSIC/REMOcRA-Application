@@ -20,6 +20,7 @@ const MultiSelectFilterFromList = ({
       <ReactSelect
         isMulti={true}
         placeholder={"Sélectionnez"}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
         name={name}
         options={listIdCodeLibelle}
         value={

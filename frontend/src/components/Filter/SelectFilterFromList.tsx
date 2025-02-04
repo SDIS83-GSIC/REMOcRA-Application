@@ -33,6 +33,7 @@ const SelectFilterFromList = ({
     <>
       <ReactSelect
         placeholder={"Sélectionnez"}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
         name={name}
         options={data}
         value={data.find((e) => e.id === value)}

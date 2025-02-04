@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import Select from "react-select";
+import ReactSelect from "react-select";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
@@ -135,9 +135,10 @@ const Update = ({
         title={"Choisissez la tournée"}
         displayReturnButton={false}
       />
-      <Select
+      <ReactSelect
         isMulti={false}
         placeholder={"Sélectionnez"}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
         options={tournees?.data}
         getOptionValue={(t) => t.tourneeId}
         getOptionLabel={(t) => t.tourneeLibelle}

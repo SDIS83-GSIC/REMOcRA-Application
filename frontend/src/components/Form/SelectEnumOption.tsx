@@ -27,6 +27,7 @@ function SelectEnumOption({
   return (
     <ReactSelect
       placeholder={"Sélectionnez"}
+      noOptionsMessage={() => "Aucune donnée trouvée"}
       name={name}
       value={optionsArray.find((e) => e.value === value)}
       options={optionsArray}

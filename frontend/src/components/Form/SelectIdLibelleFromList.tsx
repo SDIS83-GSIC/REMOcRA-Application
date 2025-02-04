@@ -16,6 +16,7 @@ const SelectIdLibelleDataFromList = ({
   return (
     <ReactSelect
       placeholder={"Sélectionnez"}
+      noOptionsMessage={() => "Aucune donnée trouvée"}
       name={name}
       options={data}
       getOptionValue={(t) => t.id}
