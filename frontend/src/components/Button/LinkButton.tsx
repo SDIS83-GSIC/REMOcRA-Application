@@ -32,7 +32,11 @@ const LinkButton = ({
       {children}
     </Link>
   ) : (
-    <Button variant={variant} className="text-muted" disabled={disabled}>
+    <Button
+      variant={variant}
+      className={variant === "link" ? "text-muted" : ""}
+      disabled={disabled}
+    >
       {children}
     </Button>
   );

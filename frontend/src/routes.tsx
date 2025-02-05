@@ -152,6 +152,7 @@ import OldebMap from "./pages/Oldeb/OldebMap.tsx";
 import OldebProprietaireList from "./pages/Oldeb/OldebProprietaireList.tsx";
 import OldebProprietaireCreate from "./pages/Oldeb/OldebProprietaireCreate.tsx";
 import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
+import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
 import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 
 export const URLS = {
@@ -400,6 +401,9 @@ export const URLS = {
   // Module DFCI
   CARTE_DFCI: url`/dfci`,
 
+  // Module Adresses
+  ADRESSE: url`/adresses`,
+
   // Module dashboard
   DASHBOARD_ADMIN_QUERY: url`/dashboard/admin/query`,
   DASHBOARD_ADMIN_DASHBOARD: url`/dashboard/admin/dashboard`,
@@ -408,6 +412,9 @@ export const URLS = {
   // Module Opérations diverses
   HISTORIQUE_OPERATIONS: url`/operations-diverses/historique-operations`,
   RESULTATS_EXECUTION: url`/operations-diverses/resultats-execution`,
+
+  //Tracabilité
+  TRACABILITE: url`/admin/tracabilite`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1750,6 +1757,15 @@ export default [
         ),
       },
     ],
+  },
+  {
+    path: "/adresses/",
+    element: (
+      <Authorization
+        Component={ModuleAdresse}
+        droits={[TYPE_DROIT.ADRESSES_C]}
+      />
+    ),
   },
   {
     path: "*",

@@ -165,6 +165,13 @@ function getLinks(
       ];
     case TypeModuleRemocra.PERMIS:
     case TypeModuleRemocra.ADRESSES:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.ADRESSES_C),
+          label: "Carte des adresses",
+          link: URLS.ADRESSE,
+        },
+      ];
     case TypeModuleRemocra.RISQUES:
       return;
     case TypeModuleRemocra.ADMIN:
