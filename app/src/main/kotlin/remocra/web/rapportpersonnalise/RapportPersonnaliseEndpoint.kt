@@ -234,6 +234,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
     fun import(@Context httpRequest: HttpServletRequest): Response {
         importConfRapportPersonnaliseUseCase.execute(
+            securityContext.userInfo,
             httpRequest.getPart("zipFile").inputStream,
         )
         return Response.ok().build()

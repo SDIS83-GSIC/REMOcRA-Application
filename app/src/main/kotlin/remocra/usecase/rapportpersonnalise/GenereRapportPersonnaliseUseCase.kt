@@ -16,6 +16,9 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
+    @Inject
+    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+
     companion object {
         private const val FIELD_GEOMETRIE = "geometrie"
     }
@@ -48,6 +51,9 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
             )
         }
 
+        // On remplace les variables utilisateur de la requête par les données userinfo
+        val requeteModifiee = rapportPersonnaliseUtils.formatParametreRequeteSql(userInfo, requete)
+        requete = if (requeteModifiee != null) requeteModifiee else requete
         // Puis on l'exécute et on renvoie ensuite la liste
         return infosForTableRapportPerso(rapportPersonnaliseRepository.executeSqlRapport(requete))
     }

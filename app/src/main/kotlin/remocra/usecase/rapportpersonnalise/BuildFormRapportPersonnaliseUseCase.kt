@@ -18,6 +18,9 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
+    @Inject
+    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+
     fun execute(userInfo: UserInfo?): MutableList<RapportPersonnaliseWithParametre> {
         if (userInfo == null) {
             throw ForbiddenException()
@@ -34,7 +37,8 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
                 // -> Si SELECT_INPUT alors on build la requête et on retourne une liste
                 var listeSelectInput: List<IdLibelleRapportPersonnalise>? = null
                 if (parametre.rapportPersonnaliseParametreType == TypeParametreRapportPersonnalise.SELECT_INPUT) {
-                    listeSelectInput = rapportPersonnaliseRepository.executeSqlParametre(parametre.rapportPersonnaliseParametreSourceSql!!)
+                    val requeteModifiee = rapportPersonnaliseUtils.formatParametreRequeteSql(userInfo, parametre.rapportPersonnaliseParametreSourceSql)
+                    listeSelectInput = rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee!!)
                 }
 
                 listeParametre.add(

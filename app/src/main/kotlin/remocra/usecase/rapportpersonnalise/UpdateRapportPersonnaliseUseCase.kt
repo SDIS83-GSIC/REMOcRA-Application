@@ -99,6 +99,6 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
-        rapportPersonnaliseUtils.checkContraintes(element)
+        rapportPersonnaliseUtils.checkContraintes(userInfo, element)
     }
 }
