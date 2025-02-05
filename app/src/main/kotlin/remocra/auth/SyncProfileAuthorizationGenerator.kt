@@ -31,6 +31,7 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
                 userProfile.firstName,
                 userProfile.email,
                 userProfile.username,
+                !profile.roles.contains("inactif"),
             )
             userProfile.utilisateur = utilisateur
 

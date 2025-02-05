@@ -30,10 +30,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .fetchOneInto()
 
-    fun setInactif(idUtilisateur: UUID) {
-        setActif(false, idUtilisateur)
-    }
-
     fun setActif(actif: Boolean, idUtilisateur: UUID) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
@@ -94,31 +90,28 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     fun syncUtilisateur(
         id: UUID,
-        lastName: String,
-        firstName: String,
+        nom: String,
+        prenom: String,
         email: String,
         username: String,
-    ): Utilisateur {
-        // Cas nominal, l'utilisateur existe et son ID est le même que dans keycloak
-        val userById = getUtilisateurById(id)
-
-        if (userById != null) {
-            // Si les propriétés ont changé, on les met à jour dans notre base
-            if (userById.utilisateurNom != lastName || userById.utilisateurPrenom != firstName || userById.utilisateurEmail != email) {
-                updateUtilisateur(
-                    idUtilisateur = userById.utilisateurId,
-                    nom = lastName,
-                    prenom = firstName,
-                    email = email,
-                    actif = true,
-                )
-            }
-            return userById
-        }
-
-        // L'utilisateur n'existe pas, on le crée
-        return insertUtilisateur(id, lastName, firstName, email, username)
-    }
+        actif: Boolean,
+    ): Utilisateur =
+        dsl.insertInto(UTILISATEUR)
+            .set(UTILISATEUR.ID, id)
+            .set(UTILISATEUR.ACTIF, actif)
+            .set(UTILISATEUR.NOM, nom)
+            .set(UTILISATEUR.PRENOM, prenom)
+            .set(UTILISATEUR.EMAIL, email)
+            .set(UTILISATEUR.USERNAME, username)
+            .onConflict(UTILISATEUR.ID)
+            .doUpdate()
+            .set(UTILISATEUR.ACTIF, actif)
+            .set(UTILISATEUR.NOM, nom)
+            .set(UTILISATEUR.PRENOM, prenom)
+            .set(UTILISATEUR.EMAIL, email)
+            // USERNAME exclu explicitement
+            .returning()
+            .fetchSingleInto()
 
     fun getAll(): Collection<Utilisateur> =
         dsl.selectFrom(UTILISATEUR).fetchInto()

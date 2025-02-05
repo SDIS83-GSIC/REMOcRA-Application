@@ -31,7 +31,7 @@ UserInfo : KeycloakOidcProfile() {
     lateinit var affiliatedOrganismeIds: Set<UUID>
 
     val isActif: Boolean
-        get() = !this.roles.contains("inactif")
+        get() = utilisateur.utilisateurActif
 
     val isSuperAdmin: Boolean
         get() = utilisateur.utilisateurIsSuperAdmin ?: false

@@ -46,7 +46,6 @@ class UserInfoFilter @Inject constructor(
         val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
 
         if (userInfo?.isActif == false) {
-            utilisateurRepository.setInactif(userInfo.utilisateurId)
             response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
         } else {
             val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
