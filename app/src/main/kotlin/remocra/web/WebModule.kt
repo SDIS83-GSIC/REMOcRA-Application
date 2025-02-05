@@ -16,6 +16,7 @@ import remocra.web.admin.AdminModule
 import remocra.web.adresses.AdresseModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
+import remocra.web.carto.CartoModule
 import remocra.web.commune.CommuneModule
 import remocra.web.courrier.CourrierModule
 import remocra.web.couverturehydraulique.CouvertureHydrauliqueModule
@@ -96,6 +97,7 @@ object WebModule : RemocraModule() {
         install(AdresseModule)
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
+        install(CartoModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

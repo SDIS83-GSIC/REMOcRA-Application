@@ -26,7 +26,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.UpsertCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
-import remocra.web.geoserver.LayersEndpoint
+import remocra.web.carto.LayersEndpoint
 import kotlin.reflect.jvm.javaMethod
 
 @Produces("application/json; charset=UTF-8")

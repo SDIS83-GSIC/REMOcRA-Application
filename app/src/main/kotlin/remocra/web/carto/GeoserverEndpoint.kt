@@ -1,4 +1,4 @@
-package remocra.web.geoserver
+package remocra.web.carto
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET

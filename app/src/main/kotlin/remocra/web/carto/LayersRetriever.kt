@@ -1,4 +1,4 @@
-package remocra.web.geoserver
+package remocra.web.carto
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
@@ -7,6 +7,7 @@ import remocra.auth.UserInfo
 import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.geoserver.GeoserverModule
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
