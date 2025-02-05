@@ -52,6 +52,7 @@ type RapportPersonnaliseType = {
     rapportPersonnaliseParametreSourceSqlLibelle: string | undefined;
     rapportPersonnaliseParametreValeurDefaut: any | undefined;
   }[];
+  unavailableCode: number[];
 };
 
 export const getInitialValues = (data?: RapportPersonnaliseType) => ({
@@ -364,6 +365,9 @@ const RapportPersonnalise = () => {
           <Col>
             <Button
               disabled={
+                (stepActive === 1 &&
+                  values.unavailableCode &&
+                  values.unavailableCode.length > 0) ||
                 isEmptyOrNull(values.rapportPersonnaliseModule) ||
                 isEmptyOrNull(values.rapportPersonnaliseCode) ||
                 isEmptyOrNull(values.rapportPersonnaliseLibelle) ||

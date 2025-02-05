@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useFormikContext } from "formik";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
@@ -56,7 +56,10 @@ const SortableParametre: FC<SortableParametre> = ({
     };
   });
 
-  const { setValues, setFieldValue } = useFormikContext();
+  const listParamUnavailable = userParamRapportPersonnalise;
+  const { values, setValues, setFieldValue } = useFormikContext();
+  const [codeUnavailableIndex, setCodeUnavailableIndex] =
+    useState<boolean>(false);
 
   return (
     <div ref={setNodeRef} style={styles}>
@@ -68,7 +71,36 @@ const SortableParametre: FC<SortableParametre> = ({
           <TextInput
             name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreCode`}
             label="Code"
+            onChange={(e) => {
+              setFieldValue(
+                `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreCode`,
+                e.target.value,
+              );
+              // Stock l'index du composant pour désactiver le bouton suivant le si code correspond à un nom réservé
+              if (listParamUnavailable.includes(e.target.value)) {
+                setCodeUnavailableIndex(true);
+                setFieldValue(
+                  "unavailableCode",
+                  values && values.unavailableCode
+                    ? [...values.unavailableCode, index]
+                    : [index],
+                );
+              } else if (!listParamUnavailable.includes(e.target.value)) {
+                setCodeUnavailableIndex(false);
+                if (values.unavailableCode) {
+                  setFieldValue(
+                    "unavailableCode",
+                    values.unavailableCode.filter((i) => i !== index),
+                  );
+                }
+              }
+            }}
           />
+          {codeUnavailableIndex && (
+            <Alert className="mt-2" variant="warning">
+              Nom de code reservé
+            </Alert>
+          )}
         </Col>
         <Col>
           <TextInput
