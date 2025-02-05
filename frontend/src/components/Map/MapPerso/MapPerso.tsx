@@ -1,21 +1,19 @@
 import React, { useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import { Button, ButtonGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { formatDateHeure } from "../../../utils/formatDateUtils.tsx";
-import { IconCarte, IconPrint, IconReturn } from "../../Icon/Icon.tsx";
+import { IconCarte, IconPrint } from "../../Icon/Icon.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { URLS } from "../../../routes.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
-import MapToolbarPerso, { useToolbarPersoContext } from "./MapToolbarPerso.tsx";
 import "./MapPerso.css";
+import SquelettePage from "../../../pages/SquelettePage.tsx";
+import Header from "../../Header/Header.tsx";
+import MapToolbarPerso, { useToolbarPersoContext } from "./MapToolbarPerso.tsx";
 
 const MapPerso = () => {
-  const navigate = useNavigate();
   const now = new Date();
   const mapElement = useRef<HTMLDivElement>();
 
@@ -48,29 +46,23 @@ const MapPerso = () => {
   });
 
   return (
-    <Container className={"printable-no-margin"}>
+    <SquelettePage
+      fluid={false}
+      className={"printable-no-margin"}
+      navbar={<Header />}
+    >
       <PageTitle
         title="Cartographie personnalisée"
         icon={<IconCarte />}
         right={
-          <ButtonGroup>
-            <Button
-              variant="primary"
-              onClick={() => {
-                navigate(URLS.ACCUEIL);
-              }}
-            >
-              <IconReturn /> Retour
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                window.print();
-              }}
-            >
-              <IconPrint /> Imprimer
-            </Button>
-          </ButtonGroup>
+          <Button
+            variant="primary"
+            onClick={() => {
+              window.print();
+            }}
+          >
+            <IconPrint /> Imprimer
+          </Button>
         }
       />
       <div id={"papersheet"}>
@@ -109,7 +101,7 @@ const MapPerso = () => {
           </Col>
         </Row>
       </div>
-    </Container>
+    </SquelettePage>
   );
 };
 
