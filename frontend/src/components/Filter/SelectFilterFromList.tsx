@@ -36,7 +36,7 @@ const SelectFilterFromList = ({
         noOptionsMessage={() => "Aucune donnée trouvée"}
         name={name}
         options={data}
-        value={data.find((e) => e.id === value)}
+        value={data.find((e) => e?.id === value)}
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         onChange={(data) => {
