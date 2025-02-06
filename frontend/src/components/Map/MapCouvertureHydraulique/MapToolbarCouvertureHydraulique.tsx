@@ -472,7 +472,7 @@ const MapToolbarCouvertureHydraulique = forwardRef(
           disabled={disabledEditPeiProjet}
         />
         <ToolbarButton
-          toolName={"deplacer-pei-projett"}
+          toolName={"deplacer-pei-projet"}
           toolIcon={<IconMoveObjet />}
           toolLabelTooltip={"Déplacer un PEI en projet"}
           toggleTool={toggleToolCallback}
