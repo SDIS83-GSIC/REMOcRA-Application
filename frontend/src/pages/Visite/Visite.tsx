@@ -276,17 +276,17 @@ const Visite = () => {
                                     }
                                   </div>
                                   <div>
-                                    Pression dynamique au débit nominal (bar) :{" "}
-                                    {
-                                      currentVisite.ctrlDebitPression
-                                        .visiteCtrlDebitPressionPressionDyn
-                                    }
-                                  </div>
-                                  <div>
                                     Pression statique (bar) :{" "}
                                     {
                                       currentVisite.ctrlDebitPression
                                         .visiteCtrlDebitPressionPression
+                                    }
+                                  </div>
+                                  <div>
+                                    Pression dynamique au débit nominal (bar) :{" "}
+                                    {
+                                      currentVisite.ctrlDebitPression
+                                        .visiteCtrlDebitPressionPressionDyn
                                     }
                                   </div>
                                 </div>

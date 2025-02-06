@@ -262,8 +262,8 @@ const SimplifiedVisiteForm = ({
                         </div>
                         <div>
                           <PositiveNumberInput
-                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPressionDyn`}
-                            label="Pression dynamique au débit nominal (bar) : "
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPression`}
+                            label="Pression statique (bar) : "
                             min={0}
                             step={0.01}
                             required={false}
@@ -271,8 +271,8 @@ const SimplifiedVisiteForm = ({
                         </div>
                         <div>
                           <PositiveNumberInput
-                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPression`}
-                            label="Pression statique (bar) : "
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPressionDyn`}
+                            label="Pression dynamique au débit nominal (bar) : "
                             min={0}
                             step={0.01}
                             required={false}
