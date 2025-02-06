@@ -16,4 +16,8 @@ data class HttpSettings(
     val qosMaxSuspendedRequests: Int,
     val qosMaxSuspend: Duration,
     val staticDir: Path,
+    val multipartTempDir: String,
+    val multipartMaxFileSize: Long,
+    val multipartMaxRequestSize: Long,
+    val multipartFileSizeThreshold: Int,
 )

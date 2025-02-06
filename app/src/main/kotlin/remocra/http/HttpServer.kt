@@ -131,7 +131,14 @@ constructor(
         )
         // Pour avoir useGlobal = false dans ServletContainerDispatcher.init
         resteasy.setInitParameter("resteasy.servlet.context.deployment", "false")
-        resteasy.registration.setMultipartConfig(MultipartConfigElement("./tmp"))
+        resteasy.registration.setMultipartConfig(
+            MultipartConfigElement(
+                settings.multipartTempDir,
+                settings.multipartMaxFileSize,
+                settings.multipartMaxRequestSize,
+                settings.multipartFileSizeThreshold,
+            ),
+        )
         context.addServlet(resteasy, AuthnConstants.API_PATH + "*")
 
         // Resteasy + Guice
@@ -152,7 +159,7 @@ constructor(
         context.addServlet(
             ServletHolder(AuthnConstants.IMAGES_SERVLET_NAME, ResourceServlet::class.java).apply {
                 setInitParameter("dirAllowed", "false")
-                setInitParameter("resourceBase", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+                setInitParameter("baseResource", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
                 setInitParameter("pathInfoOnly", "true")
             },
             "/images/*",

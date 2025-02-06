@@ -19,3 +19,14 @@ fun Config.getStringOrNull(path: String): String? {
         null
     }
 }
+
+/**
+ * Retourne la valeur de config définie, ou NULL si absente. A n'utiliser que sur une *property* nullable, pour éviter une exception.
+ */
+fun Config.getBytesOrNull(path: String): Long? {
+    return try {
+        this.getBytes(path)
+    } catch (missing: ConfigException.Missing) {
+        null
+    }
+}

@@ -2,6 +2,7 @@ package remocra.http
 
 import com.typesafe.config.Config
 import remocra.RemocraModule
+import remocra.getBytesOrNull
 import remocra.getStringOrNull
 import java.io.File
 import java.nio.file.Path
@@ -27,6 +28,10 @@ class HttpServerModule(private val settings: HttpSettings) : RemocraModule() {
                     qosMaxSuspendedRequests = config.getInt("qos.max-suspended-requests"),
                     qosMaxSuspend = config.getDuration("qos.max-suspend"),
                     staticDir = Path.of(config.getString("static-dir")),
+                    multipartTempDir = config.getString("multipart.temp-dir"),
+                    multipartMaxFileSize = config.getBytesOrNull("multipart.max-file-size") ?: -1,
+                    multipartMaxRequestSize = config.getBytesOrNull("multipart.max-request-size") ?: -1,
+                    multipartFileSizeThreshold = config.getBytes("multipart.file-size-threshold").toInt(),
                 ),
             )
     }
