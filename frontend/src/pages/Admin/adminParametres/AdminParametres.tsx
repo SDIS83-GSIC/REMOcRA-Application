@@ -515,6 +515,20 @@ const AdminApplicationMobile = ({
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="mobile.gestionAgent"
+            label="Type d'agent sélectionné"
+            options={typeAgent}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            onChange={(e) =>
+              setFieldValue(
+                `mobile.gestionAgent`,
+                typeAgent.find((type) => type.id === e.id)?.id,
+              )
+            }
+            defaultValue={typeAgent.find((e) => e.id === values.gestionAgent)}
+          />
           <SeeMoreButton id={"infoAgent"}>
             <>
               <p className="m-2">
@@ -562,20 +576,6 @@ const AdminApplicationMobile = ({
               </p>
             </>
           </SeeMoreButton>
-          <SelectInput
-            name="mobile.gestionAgent"
-            label="Type d'agent sélectionné"
-            options={typeAgent}
-            getOptionValue={(v) => v.id}
-            getOptionLabel={(v) => v.libelle}
-            onChange={(e) =>
-              setFieldValue(
-                `mobile.gestionAgent`,
-                typeAgent.find((type) => type.id === e.id)?.id,
-              )
-            }
-            defaultValue={typeAgent.find((e) => e.id === values.gestionAgent)}
-          />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextInput
