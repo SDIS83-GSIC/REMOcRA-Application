@@ -2,7 +2,7 @@ type PermisEntity = {
   permisId?: string;
   permisLibelle: string;
   permisNumero: string;
-  //permisInstructeurId: string;
+  permisInstructeurId: string;
   permisServiceInstructeurId: string;
   permisTypePermisInterserviceId: string;
   permisTypePermisAvisId: string;
@@ -22,6 +22,8 @@ type PermisEntity = {
   permisCadastreParcelle?: string[];
 
   voieSaisieText: boolean;
+  permisLastUpdateDate: Date;
+  permisInstructeurUsername: string;
 };
 
 export default PermisEntity;

@@ -4,6 +4,7 @@ import { useGet } from "../../components/Fetch/useFetch.js";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconPrescrit } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
+import { formatForDateInput } from "../../utils/formatDateUtils.tsx";
 import PeiPrescrit, {
   getInitialValues,
   prepareVariables,
@@ -38,7 +39,7 @@ const UpdatePeiPrescrit = ({
           peiPrescritCoordonneeY: coordonneeY,
           peiPrescritSrid: srid,
           peiPrescritDate: data?.peiPrescritDate
-            ? data.peiPrescritDate.split("T").shift()
+            ? formatForDateInput(data.peiPrescritDate)
             : null,
           peiPrescritDebit: data?.peiPrescritDebit,
           peiPrescritNbPoteaux: data?.peiPrescritNbPoteaux,

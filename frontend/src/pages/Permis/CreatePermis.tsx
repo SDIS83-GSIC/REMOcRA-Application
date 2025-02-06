@@ -1,7 +1,10 @@
 import { Container } from "react-bootstrap";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconPermis } from "../../components/Icon/Icon.tsx";
+import formatDateTime from "../../utils/formatDateUtils.tsx";
 import Permis, { getInitialValues, prepareVariables } from "./Permis.tsx";
 
 const CreatePermis = ({
@@ -10,6 +13,7 @@ const CreatePermis = ({
   srid,
   onSubmit,
 }: CreatePermisType) => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   return (
     <Container>
       <PageTitle
@@ -39,6 +43,8 @@ const CreatePermis = ({
           permisSrid: srid,
 
           voieSaisieText: false,
+          permisLastUpdateDate: formatDateTime(new Date()),
+          permisInstructeurUsername: user.username,
         })}
         isPost={true}
         prepareVariables={(values) => prepareVariables(values)}

@@ -11,6 +11,7 @@ import CreatePermis from "../../../pages/Permis/CreatePermis.tsx";
 import { IconCreate } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
+import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
 const defaultStyle = new Style({
   image: new Circle({
     radius: 5,
@@ -149,6 +150,12 @@ const MapToolbarPermis = forwardRef(
             }}
           />
         </Volet>
+        <TooltipMapEditPermis
+          map={map}
+          disabledEditPermis={false}
+          dataPermisLayer={dataPermisLayer}
+          disabled={false}
+        />
       </>
     );
   },

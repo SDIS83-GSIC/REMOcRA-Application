@@ -42,4 +42,12 @@ export function formatDateHeure(dateToFormat: Date) {
   return formatDateWithPattern(dateToFormat, "dd/MM/yyyy à HH:mm");
 }
 
+/** Retourne une date pour assigner la valeur au format attendu par le composant DateInput
+ * @param dateToFormat: Date
+ * @returns: string
+ */
+export function formatForDateInput(dateToFormat: Date) {
+  return dateToFormat.split("T").shift();
+}
+
 export default formatDateTime;

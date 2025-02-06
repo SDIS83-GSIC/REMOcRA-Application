@@ -1,8 +1,6 @@
 import { useFormikContext } from "formik";
 import { Button, Col, Row } from "react-bootstrap";
 import PermisEntity from "../../Entities/PermisEntity.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
@@ -15,7 +13,6 @@ import PositiveNumberInput, {
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
-import formatDateTime from "../../utils/formatDateUtils.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
@@ -35,13 +32,15 @@ export const getInitialValues = (data: PermisEntity) => ({
   permisAnnee: data?.permisAnnee,
   permisDatePermis: data?.permisDatePermis,
 
-  permisCadastreParcelle: data.permisCadastreParcelle,
+  permisCadastreParcelle: data?.permisCadastreParcelle,
 
   permisCoordonneeX: data?.permisCoordonneeX,
   permisCoordonneeY: data?.permisCoordonneeY,
   permisSrid: data?.permisSrid,
 
-  voieSaisieText: false,
+  voieSaisieText: data?.voieSaisieText,
+  permisLastUpdateDate: data?.permisLastUpdateDate,
+  permisInstructeurUsername: data?.permisInstructeurUsername,
 });
 
 export const prepareVariables = (values: PermisEntity) => ({
@@ -77,7 +76,6 @@ export const prepareVariables = (values: PermisEntity) => ({
 
 const Permis = () => {
   const { values, setFieldValue }: { values: any } = useFormikContext();
-  const { user }: { user: UtilisateurEntity } = useAppContext();
 
   const fetchPermisData = useGet(
     url`/api/permis/fetchPermisData?${{
@@ -281,8 +279,8 @@ const Permis = () => {
         <PositiveNumberInput name="permisAnnee" label="Année" />
       </Row>
       <Row>
-        <p>Dernière modification : {formatDateTime(new Date())}</p>
-        <p>Instructeur : {user.username}</p>
+        <p>Dernière modification : {values.permisLastUpdateDate}</p>
+        <p>Instructeur : {values.permisInstructeurUsername}</p>
       </Row>
       <Row className="mt-3">
         <Col className="text-center">

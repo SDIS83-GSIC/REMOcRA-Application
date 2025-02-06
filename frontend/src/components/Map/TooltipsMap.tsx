@@ -23,6 +23,7 @@ import Volet from "../Volet/Volet.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
+import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -248,6 +249,7 @@ const Tooltip = ({
   overlay,
 
   displayButtonEdit = false,
+  onClickEdit,
   hrefEdit,
   labelEdit = "Modifier l'élément",
 
@@ -268,6 +270,7 @@ const Tooltip = ({
   overlay: Overlay | undefined;
   displayButtonEdit?: boolean;
   hrefEdit?: string;
+  onClickEdit?: () => void;
   labelEdit: string;
 
   displayButtonDelete?: boolean;
@@ -342,6 +345,7 @@ const Tooltip = ({
                         <CustomLinkButton
                           variant="info"
                           className={"text-white"}
+                          onClick={onClickEdit}
                           pathname={hrefEdit!}
                         >
                           <IconEdit />
@@ -511,6 +515,72 @@ export const TooltipMapEditPeiPrescrit = ({
           srid={map.getView().getProjection().getCode().split(":")[1]}
           onSubmit={() => {
             handleCloseUpdatePeiPrescrit();
+            overlay?.setPosition(undefined);
+          }}
+        />
+      </Volet>
+    </div>
+  );
+};
+
+export const TooltipMapEditPermis = ({
+  map,
+  disabledEditPermis = false,
+  dataPermisLayer,
+  disabled,
+}: {
+  map: Map;
+  disabledEditPermis: boolean;
+  dataPermisLayer: any;
+  disabled: boolean;
+}) => {
+  const ref = useRef(null);
+  const [showUpdatePermis, setShowUpdatePermis] = useState(false);
+  const handleCloseUpdatePermis = () => setShowUpdatePermis(false);
+
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    disabled: disabled,
+  });
+  const displayEditDeleteButton =
+    !disabledEditPermis &&
+    featureSelect?.getProperties().typePointCarte === "PERMIS" &&
+    featureSelect?.getProperties().pointId != null;
+  if (disabled) {
+    overlay?.setPosition(undefined);
+  }
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        onClickEdit={() => setShowUpdatePermis(true)}
+        displayButtonEdit={displayEditDeleteButton}
+        displayButtonDelete={displayEditDeleteButton}
+        onClickDelete={() => {
+          dataPermisLayer.getSource().refresh();
+          overlay?.setPosition(undefined);
+        }}
+        deletePath={"/api/permis/" + featureSelect?.getProperties().pointId}
+        disabled={disabled}
+      />
+      <Volet
+        handleClose={handleCloseUpdatePermis}
+        show={showUpdatePermis}
+        className="w-auto"
+      >
+        <UpdatePermis
+          permisId={featureSelect?.getProperties().pointId}
+          coordonneeX={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
+          }
+          coordonneeY={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
+          }
+          srid={map.getView().getProjection().getCode().split(":")[1]}
+          onSubmit={() => {
+            handleCloseUpdatePermis();
             overlay?.setPosition(undefined);
           }}
         />
