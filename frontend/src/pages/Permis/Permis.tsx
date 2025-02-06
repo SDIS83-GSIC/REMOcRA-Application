@@ -8,6 +8,7 @@ import PositiveNumberInput, {
   CheckBoxInput,
   DateInput,
   FormContainer,
+  Multiselect,
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
@@ -34,6 +35,8 @@ export const getInitialValues = (data: PermisEntity) => ({
   permisAnnee: data?.permisAnnee,
   permisDatePermis: data?.permisDatePermis,
 
+  permisCadastreParcelle: data.permisCadastreParcelle,
+
   permisCoordonneeX: data?.permisCoordonneeX,
   permisCoordonneeY: data?.permisCoordonneeY,
   permisSrid: data?.permisSrid,
@@ -59,6 +62,8 @@ export const prepareVariables = (values: PermisEntity) => ({
   permisDatePermis: values.permisDatePermis
     ? new Date(values.permisDatePermis).toISOString()
     : null,
+
+  permisCadastreParcelle: values.permisCadastreParcelle,
 
   permisGeometrie:
     "SRID=" +
@@ -102,6 +107,7 @@ const Permis = () => {
     listeAvis: (IdCodeLibelleType & { pprif: boolean })[];
     listeInterservice: (IdCodeLibelleType & { pprif: boolean })[];
     listeServiceInstructeur: IdCodeLibelleType[];
+    listeCadastreParcelle: IdCodeLibelleType[];
   } = fetchPermisData.data;
 
   // On ne laisse pas le choix de la commune, le permis est déclaré là où le point à été posé
@@ -122,6 +128,14 @@ const Permis = () => {
   const filteredlisteInterservice = permisData.listeInterservice.filter(
     (e) => e.pprif === permisData.communeData.pprif,
   );
+
+  const sectionCadastrale = [
+    ...new Set(
+      permisData.listeCadastreParcelle
+        ?.filter((a) => values.permisCadastreParcelle?.includes(a.id))
+        ?.map((e) => e.code),
+    ),
+  ].join(", ");
 
   return (
     <FormContainer>
@@ -176,7 +190,36 @@ const Permis = () => {
           required={false}
         />
       </Row>
-      {/* TODO: ajouter infomrmation section + multiselect parcelle cadastre */}
+      <Row>
+        <Multiselect
+          name="permisCadastreParcelle"
+          label="Parcelle cadastrale"
+          options={permisData.listeCadastreParcelle}
+          getOptionValue={(t) => t.id}
+          getOptionLabel={(t) => t.code + " - " + t.libelle}
+          value={
+            values.permisCadastreParcelle?.map((e) =>
+              permisData.listeCadastreParcelle?.find(
+                (r: IdCodeLibelleType) => r.id === e,
+              ),
+            ) ?? undefined
+          }
+          onChange={(parcelle) => {
+            const parcelleId = parcelle.map((e) => e.id);
+            parcelleId.length > 0
+              ? setFieldValue(`permisCadastreParcelle`, parcelleId)
+              : setFieldValue(`permisCadastreParcelle`, undefined);
+          }}
+          isClearable={false}
+          required={false}
+          tooltipText="Les options proposées sont les 25 parcelles les plus proches du point de déclaration du permis."
+        />
+      </Row>
+      {values.permisCadastreParcelle?.length > 0 && (
+        <Row>
+          <p>Section cadastrale : {sectionCadastrale}</p>
+        </Row>
+      )}
       <Row>
         <TextInput name="permisNumero" label="N° permis" />
       </Row>

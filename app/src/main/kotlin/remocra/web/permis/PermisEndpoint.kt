@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.PermisData
 import remocra.data.enums.TypePointCarte
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Permis
@@ -73,24 +74,27 @@ class PermisEndpoint : AbstractEndpoint() {
     fun create(permisInput: PermisInput): Response =
         createPermisUseCase.execute(
             userInfo = securityContext.userInfo,
-            element = Permis(
-                permisId = UUID.randomUUID(),
-                permisLibelle = permisInput.permisLibelle,
-                permisNumero = permisInput.permisNumero,
-                permisInstructeurId = securityContext.userInfo!!.utilisateurId,
-                permisServiceInstructeurId = permisInput.permisServiceInstructeurId,
-                permisTypePermisInterserviceId = permisInput.permisTypePermisInterserviceId,
-                permisTypePermisAvisId = permisInput.permisTypePermisAvisId,
-                permisRiReceptionnee = permisInput.permisRiReceptionnee,
-                permisDossierRiValide = permisInput.permisDossierRiValide,
-                permisObservations = permisInput.permisObservations,
-                permisVoieText = permisInput.permisVoieId?.let { null } ?: permisInput.permisVoieText,
-                permisVoieId = permisInput.permisVoieId,
-                permisComplement = permisInput.permisComplement,
-                permisCommuneId = permisInput.permisCommuneId,
-                permisAnnee = permisInput.permisAnnee,
-                permisDatePermis = permisInput.permisDatePermis,
-                permisGeometrie = permisInput.permisGeometrie,
+            element = PermisData(
+                Permis(
+                    permisId = UUID.randomUUID(),
+                    permisLibelle = permisInput.permisLibelle,
+                    permisNumero = permisInput.permisNumero,
+                    permisInstructeurId = securityContext.userInfo!!.utilisateurId,
+                    permisServiceInstructeurId = permisInput.permisServiceInstructeurId,
+                    permisTypePermisInterserviceId = permisInput.permisTypePermisInterserviceId,
+                    permisTypePermisAvisId = permisInput.permisTypePermisAvisId,
+                    permisRiReceptionnee = permisInput.permisRiReceptionnee,
+                    permisDossierRiValide = permisInput.permisDossierRiValide,
+                    permisObservations = permisInput.permisObservations,
+                    permisVoieText = permisInput.permisVoieId?.let { null } ?: permisInput.permisVoieText,
+                    permisVoieId = permisInput.permisVoieId,
+                    permisComplement = permisInput.permisComplement,
+                    permisCommuneId = permisInput.permisCommuneId,
+                    permisAnnee = permisInput.permisAnnee,
+                    permisDatePermis = permisInput.permisDatePermis,
+                    permisGeometrie = permisInput.permisGeometrie,
+                ),
+                permisCadastreParcelle = permisInput.permisCadastreParcelle,
             ),
         ).wrap()
 
@@ -109,6 +113,7 @@ class PermisEndpoint : AbstractEndpoint() {
         val permisCommuneId: UUID,
         val permisAnnee: Int,
         val permisDatePermis: ZonedDateTime,
+        val permisCadastreParcelle: List<UUID> = listOf(),
         val permisGeometrie: Geometry,
     )
 }

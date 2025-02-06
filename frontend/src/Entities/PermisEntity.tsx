@@ -19,6 +19,8 @@ type PermisEntity = {
   permisCoordonneeY: number;
   permisSrid: string;
 
+  permisCadastreParcelle?: string[];
+
   voieSaisieText: boolean;
 };
 
