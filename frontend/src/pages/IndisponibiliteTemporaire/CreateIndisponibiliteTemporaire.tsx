@@ -24,6 +24,7 @@ const CreateIndisponibiliteTemporaire = ({
     >
       <IndisponibiliteTemporaireForm
         title={"Nouvelle indisponibilité temporaire"}
+        listePeiId={listePeiId}
       />
     </MyFormik>
   );

@@ -68,13 +68,23 @@ export const prepareVariables = (values) => ({
   indisponibiliteTemporaireMailApresIndisponibilite:
     values?.indisponibiliteTemporaireMailApresIndisponibilite,
 });
-const IndisponibiliteTemporaireForm = ({ title }: { title: string }) => {
+const IndisponibiliteTemporaireForm = ({
+  title,
+  listePeiId,
+}: {
+  title: string;
+  listePeiId?: string[];
+}) => {
   const { values, setFieldValue } = useFormikContext();
   const peiState = useGet(url`/api/pei/get-id-numero`);
   return (
     <>
       <Container>
-        <PageTitle title={title} icon={<IconIndisponibiliteTemporaire />} />
+        <PageTitle
+          title={title}
+          icon={<IconIndisponibiliteTemporaire />}
+          displayReturnButton={listePeiId?.length === 0}
+        />
         <FormContainer>
           <SectionTitle>Mise en indisponibilité</SectionTitle>
 

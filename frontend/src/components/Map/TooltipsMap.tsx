@@ -75,7 +75,7 @@ const TooltipMapPei = ({
           featureSelect={featureSelect}
           overlay={overlay}
           displayButtonEdit={displayButtonEdit}
-          onClickEdit={() => navigate(URLS.UPDATE_PEI(pointId))}
+          hrefEdit={URLS.UPDATE_PEI(pointId)}
           labelEdit={"Modifier le PEI"}
           displayButtonDelete={displayButtonDelete}
           deletePath={`/api/pei/delete/` + pointId}
@@ -248,7 +248,7 @@ const Tooltip = ({
   overlay,
 
   displayButtonEdit = false,
-  onClickEdit,
+  hrefEdit,
   labelEdit = "Modifier l'élément",
 
   displayButtonDelete = false,
@@ -267,7 +267,7 @@ const Tooltip = ({
   featureSelect: Feature | undefined;
   overlay: Overlay | undefined;
   displayButtonEdit?: boolean;
-  onClickEdit?: () => void;
+  hrefEdit?: string;
   labelEdit: string;
 
   displayButtonDelete?: boolean;
@@ -321,9 +321,13 @@ const Tooltip = ({
                         tooltipText={labelSee}
                         tooltipId={"fiche-resume-carte"}
                       >
-                        <Button variant="primary" onClick={onClickSee}>
+                        <CustomLinkButton
+                          variant="primary"
+                          href={href}
+                          onClick={onClickSee}
+                        >
                           <IconSee />
-                        </Button>
+                        </CustomLinkButton>
                       </TooltipCustom>
                     </Col>
                   )}
@@ -333,14 +337,13 @@ const Tooltip = ({
                         tooltipText={labelEdit}
                         tooltipId={"edit-carte"}
                       >
-                        <Button
+                        <CustomLinkButton
                           variant="info"
                           className={"text-white"}
-                          onClick={onClickEdit}
-                          href={href}
+                          href={hrefEdit!}
                         >
                           <IconEdit />
-                        </Button>
+                        </CustomLinkButton>
                       </TooltipCustom>
                     </Col>
                   )}

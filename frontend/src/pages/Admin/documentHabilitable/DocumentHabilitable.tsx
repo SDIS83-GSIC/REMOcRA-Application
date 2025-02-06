@@ -86,6 +86,7 @@ const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
         options={thematiqueState?.data}
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
+        disabled={isNew}
         value={
           values?.listeThematiqueId?.map((e) =>
             thematiqueState?.data?.find((r: IdCodeLibelleType) => r.id === e),
