@@ -28,6 +28,20 @@ const AddRemoveComponent = ({
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
+  const scrollToBottom = () => {
+    //requestAnomationFrame permet d'attendre la fin de la création du dom avant de descendre
+    requestAnimationFrame(() => {
+      const heightDOM = document.body.scrollHeight;
+
+      if (heightDOM > 900) {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    });
+  };
+
   return (
     <>
       <FieldArray
@@ -44,7 +58,10 @@ const AddRemoveComponent = ({
                 <Col xs={"auto"} className={"ms-auto"}>
                   <CreateButton
                     title={"Ajouter"}
-                    onClick={() => elements.push(defaultElement)}
+                    onClick={() => {
+                      elements.push(defaultElement);
+                      scrollToBottom();
+                    }}
                   />
                 </Col>
               </Row>
