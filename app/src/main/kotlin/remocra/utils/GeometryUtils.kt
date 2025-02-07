@@ -112,7 +112,7 @@ fun calculerCentroide(geometries: List<Geometry>): Point? {
     val geometryFactory = geometries.first().factory
     val collection = geometryFactory.createGeometryCollection(geometries.toTypedArray())
     val centroide = collection.centroid
-    centroide.srid = geometryFactory.srid
+    centroide.srid = geometries.first().srid
     // Calcul du centroide à partir de la collection
     return centroide
 }
