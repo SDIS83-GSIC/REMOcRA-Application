@@ -29,6 +29,7 @@ type ModuleType = {
 
 export const getInitialValues = (data) => ({
   listeModule: data,
+  listePersisted: data.map((e) => e.moduleType),
 });
 
 export const validationSchema = object({});
@@ -111,16 +112,32 @@ const ComposantToRepeat = ({
   listeElements: ModuleType[];
 }) => {
   const thematiqueState = useGet(url`/api/thematique/actif`);
-  const typesFicheResumeElement = Object.entries(TypeModuleRemocra).map(
-    ([key, value]) => {
-      return {
-        id: key,
-        code: key,
-        libelle: value,
-      };
-    },
+
+  const allTypesModules = Object.values(TypeModuleRemocra).map((key) => {
+    return {
+      id: key,
+      code: key,
+      libelle: key,
+    };
+  });
+
+  //Modules pouvant être placés plusieurs fois (donc possédant un paramétrage le justifiant !)
+  const multiTypesAutorises = [
+    TypeModuleRemocra.COURRIER,
+    TypeModuleRemocra.DOCUMENT,
+    TypeModuleRemocra.PERSONNALISE,
+  ];
+
+  // Tous les modules qui peuvent être placés plusieurs fois ou ne sont pas déjà placés
+  const availableTypesModules = allTypesModules.filter(
+    (typeModule) =>
+      multiTypesAutorises.includes(TypeModuleRemocra[typeModule.id]) ||
+      !listeElements
+        .map((e) => e.moduleType)
+        .includes(TypeModuleRemocra[typeModule.id]),
   );
-  const { setFieldValue } = useFormikContext();
+
+  const { setFieldValue, values } = useFormikContext();
   return (
     <Row xs={10}>
       <Row className="align-items-center mt-3">
@@ -128,19 +145,22 @@ const ComposantToRepeat = ({
           <SelectInput
             name={`listeModule[${index}].moduleType`}
             label="Type"
-            options={typesFicheResumeElement}
+            options={availableTypesModules}
             getOptionValue={(t) => t.id}
             getOptionLabel={(t) => t.libelle}
             onChange={(e) => {
               setFieldValue(
                 `listeModule[${index}].moduleType`,
-                typesFicheResumeElement.find((type) => type.id === e.id)?.id,
+                allTypesModules.find((type) => type.id === e.id)?.id,
               );
             }}
-            defaultValue={typesFicheResumeElement.find(
+            defaultValue={allTypesModules.find(
               (type) => type.id === listeElements[index].moduleType,
             )}
             required={true}
+            readOnly={values.listePersisted.includes(
+              values.listeModule[index].moduleType,
+            )}
           />
         </Col>
         <Col>
