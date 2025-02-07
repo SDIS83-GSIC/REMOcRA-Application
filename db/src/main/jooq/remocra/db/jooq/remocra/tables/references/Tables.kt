@@ -120,6 +120,7 @@ import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypeReseau
 import remocra.db.jooq.remocra.tables.Utilisateur
+import remocra.db.jooq.remocra.tables.VPeiLastMesures
 import remocra.db.jooq.remocra.tables.VPeiVisiteDate
 import remocra.db.jooq.remocra.tables.Visite
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression
@@ -710,6 +711,11 @@ val TYPE_RESEAU: TypeReseau = TypeReseau.TYPE_RESEAU
  * The table <code>remocra.utilisateur</code>.
  */
 val UTILISATEUR: Utilisateur = Utilisateur.UTILISATEUR
+
+/**
+ * The table <code>remocra.v_pei_last_mesures</code>.
+ */
+val V_PEI_LAST_MESURES: VPeiLastMesures = VPeiLastMesures.V_PEI_LAST_MESURES
 
 /**
  * The table <code>remocra.v_pei_visite_date</code>.
