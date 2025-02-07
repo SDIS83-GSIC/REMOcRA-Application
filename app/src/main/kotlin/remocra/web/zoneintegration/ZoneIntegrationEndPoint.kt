@@ -3,6 +3,7 @@ package remocra.web.zoneintegration
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -26,6 +27,7 @@ import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.zoneintegration.CheckZoneIntegration
+import remocra.usecase.zoneintegration.DeleteZonesIntegrationUseCase
 import remocra.usecase.zoneintegration.ImportZonesIntegrationUseCase
 import remocra.usecase.zoneintegration.UpdateZoneIntegrationUseCase
 import remocra.web.AbstractEndpoint
@@ -48,6 +50,8 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var updateZoneIntegrationUseCase: UpdateZoneIntegrationUseCase
+
+    @Inject lateinit var deleteZonesIntegrationUseCase: DeleteZonesIntegrationUseCase
 
     @GET
     @Path("/get-active")
@@ -128,4 +132,14 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
         @FormParam("zoneIntegrationActif")
         var zoneIntegrationActif: Boolean = true
     }
+
+    @DELETE
+    @Path("/delete/{zoneIntegrationId}")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun delete(@PathParam("zoneIntegrationId") zoneIntegrationId: UUID): Response =
+        deleteZonesIntegrationUseCase.execute(
+            securityContext.userInfo,
+            zoneIntegrationRepository.getZIDataById(zoneIntegrationId),
+        ).wrap()
 }

@@ -402,6 +402,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     ZONE_INTEGRATION_FORBIDDEN_UPDATE(9200, "Vous n'avez pas les droits de modification des zones d'intégration", Status.FORBIDDEN),
+    ZONE_INTEGRATION_FORBIDDEN_DELETE(9201, "Vous n'avez pas les droits de suppression d'une zone d'intégration", Status.FORBIDDEN),
+    ZONE_INTEGRATION_STILL_IN_USE(9202, "Impossible de supprimer cette zone d'intégration car elle est toujours référencé dans : $PLACEHOLDER_ERROR_TYPE"),
     IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE(9208, "Aucun fichier .shp n'a été trouvé."),
     IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE(9209, "La géométrie ne doit pas être nulle."),
     IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE_POINT(9210, "La géométrie ne doit pas être nulle et doit être de type Point."),

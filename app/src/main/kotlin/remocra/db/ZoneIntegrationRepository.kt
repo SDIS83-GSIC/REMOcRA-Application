@@ -8,9 +8,11 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import remocra.data.Params
+import remocra.data.ZoneIntegrationData
 import remocra.db.jooq.remocra.enums.TypeZoneIntegration
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -71,6 +73,30 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             .set(ZONE_INTEGRATION.ACTIF, zoneIntegrationActif)
             .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
             .execute()
+
+    fun existsInOrganisme(zoneIntegrationId: UUID) =
+        dsl.fetchExists(
+            dsl.select(ORGANISME.ID).from(ORGANISME).where(ORGANISME.ZONE_INTEGRATION_ID.eq(zoneIntegrationId)),
+        )
+
+    fun existsInPei(zoneIntegrationId: UUID) =
+        dsl.fetchExists(
+            dsl.select(PEI.ID).from(PEI).where(PEI.ZONE_SPECIALE_ID.eq(zoneIntegrationId)),
+        )
+
+    fun getZIDataById(zoneIntegrationId: UUID): ZoneIntegrationData =
+        dsl.select(
+            ZONE_INTEGRATION.ID,
+            ZONE_INTEGRATION.CODE,
+            ZONE_INTEGRATION.LIBELLE,
+            ZONE_INTEGRATION.ACTIF,
+        )
+            .from(ZONE_INTEGRATION)
+            .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
+            .fetchSingleInto()
+
+    fun delete(zoneIntegrationId: UUID) =
+        dsl.deleteFrom(ZONE_INTEGRATION).where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId)).execute()
 
     data class Filter(
         val zoneIntegrationCode: String?,
