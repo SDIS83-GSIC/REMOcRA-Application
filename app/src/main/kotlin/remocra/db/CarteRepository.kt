@@ -126,7 +126,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les PEI en projet selon l'étude
      */
     fun getPeiProjetWithinEtude(etudeId: UUID, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
             .from(PEI_PROJET)
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
@@ -258,13 +258,13 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         abstract val typePointCarte: TypePointCarte
 
         // Propriétés à afficher dans la tooltip
-        abstract val propertiesToDisplay: String?
+        abstract var propertiesToDisplay: String?
     }
 
     data class PeiCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
-        override val propertiesToDisplay: String? = null,
+        override var propertiesToDisplay: String? = null,
         val hasIndispoTemp: Boolean = false,
         val hasTournee: Boolean = false,
         val hasDebitSimultane: Boolean = false,
@@ -282,7 +282,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class PeiProjetCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
-        override val propertiesToDisplay: String? = null,
+        override var propertiesToDisplay: String? = null,
 
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
@@ -292,7 +292,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class PeiPrescritsCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
-        override val propertiesToDisplay: String? = null,
+        override var propertiesToDisplay: String? = null,
 
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
@@ -312,14 +312,14 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.DEBIT_SIMULTANE
 
-        override val propertiesToDisplay: String =
-            "Numéro du dossier : $debitSimultaneNumeroDossier \n Liste des PEI concernés : $listeNumeroPei"
+        override var propertiesToDisplay: String? =
+            "Numéro du dossier : $debitSimultaneNumeroDossier <br />Liste des PEI concernés : $listeNumeroPei"
     }
 
     data class AdresseCarte(
         override val pointGeometrie: Point,
         override val pointId: UUID,
-        override val propertiesToDisplay: String?,
+        override var propertiesToDisplay: String?,
         val adresseType: EtatAdresse,
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
@@ -333,7 +333,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.OLDEB
 
-        override val propertiesToDisplay: String = "$etatDebroussaillement"
+        override var propertiesToDisplay: String? = "$etatDebroussaillement"
     }
 
     data class RcciCarte(
@@ -344,6 +344,6 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.RCCI
 
-        override val propertiesToDisplay: String = "$rcciDateIncendie"
+        override var propertiesToDisplay: String? = "$rcciDateIncendie"
     }
 }

@@ -892,6 +892,9 @@ class PeiRepository
             .where(PEI.NUMERO_COMPLET.`in`(listNumeroComplet))
             .fetchInto()
 
+    fun getCaracteristiquesForTooltip() {
+    }
+
     data class PeiDataForApi(
         val peiId: UUID,
         val peiNumeroComplet: String,

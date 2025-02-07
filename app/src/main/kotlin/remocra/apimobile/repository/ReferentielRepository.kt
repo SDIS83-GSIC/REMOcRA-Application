@@ -2,29 +2,43 @@ package remocra.apimobile.repository
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Record
+import org.jooq.SelectOnConditionStep
 import org.jooq.impl.DSL
+import org.jooq.impl.TableImpl
 import remocra.GlobalConstants
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.PeiAnomalieForApiMobileData
 import remocra.apimobile.data.PeiForApiMobileData
+import remocra.data.PeiCaracteristqueData
 import remocra.data.enums.PeiCaracteristique
 import remocra.db.AbstractRepository
 import remocra.db.fetchInto
+import remocra.db.jooq.remocra.tables.Organisme
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CONTACT
+import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.NATURE
+import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PENA
+import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.db.jooq.remocra.tables.references.V_PEI_LAST_MESURES
+import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
+import java.util.UUID
+import java.util.stream.Collectors
 
 class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getPeiList(): List<PeiForApiMobileData> {
@@ -162,170 +176,197 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getPeiCaracteristiques(
         pibiSelectedFields: List<PeiCaracteristique>,
         penaSelectedFields: List<PeiCaracteristique>,
-    ): Map<Long, List<PeiCaracteristiquePojo>> {
-        return mapOf()
-//        val mapPeiCaracteristiques: MutableMap<Long, List<PeiCaracteristiquePojo>> = HashMap()
-//
-//        // Les PIBI
-//        if (pibiSelectedFields.isNotEmpty()) {
-//            var onClausePibi: SelectOnConditionStep<Record?>? =
-//                    dsl
-//                            .select(buildSelectFields(pibiSelectedFields))
-//                            .from(PEI)
-//                            .innerJoin(PIBI)
-//                            .on(PEI.ID.eq(PIBI.ID))
-//            onClausePibi = buildJoinClauses(pibiSelectedFields, onClausePibi, createAlias())
-//
-//            mapPeiCaracteristiques.putAll(fetchAndMapResults(pibiSelectedFields, onClausePibi))
-//        }
-//
-//        // Les PENA
-//        if (penaSelectedFields.isNotEmpty()) {
-//            var onClausePena: SelectOnConditionStep<Record?>? =
-//                    dsl
-//                            .select(buildSelectFields(penaSelectedFields))
-//                            .from(PEI)
-//                            .innerJoin(PENA)
-//                            .on(PEI.ID.eq(PENA.ID))
-//            onClausePena = buildJoinClauses(penaSelectedFields, onClausePena, createAlias())
-//
-//            mapPeiCaracteristiques.putAll(fetchAndMapResults(penaSelectedFields, onClausePena))
-//        }
-//
-//        return mapPeiCaracteristiques
-//    }
-//
-//    /**
-//     * Construit un Set des Fields qu'on a besoin de projeter
-//     *
-//     * @param selectedFields List<PeiCaracteristique>
-//     * @return Set<Field></Field>>
-//    </PeiCaracteristique> */
-//    private fun buildSelectFields(selectedFields: List<PeiCaracteristique>): Set<Field<*>> {
-//        val fieldsToSelect: MutableSet<Field<*>> = HashSet()
-//        // On a besoin de l'ID pour construire la map à retourner
-//        fieldsToSelect.add(PEI.ID)
-//        for (selectedField in selectedFields) {
-//            // à chaque objet correspond un champ en base
-//            fieldsToSelect.add(getFieldFromCaracteristique(selectedField, createAlias()))
-//        }
-//        return fieldsToSelect
+    ): MutableMap<UUID, List<PeiCaracteristqueData?>> {
+        val mapPeiCaracteristiques: MutableMap<UUID, List<PeiCaracteristqueData?>> =
+            mutableMapOf<UUID, List<PeiCaracteristqueData?>>()
+
+        // Les PIBI
+        if (!pibiSelectedFields.isEmpty()) {
+            var onClausePibi: SelectOnConditionStep<Record?> =
+                dsl.select(buildSelectFields(pibiSelectedFields))
+                    .from(PEI)
+                    .innerJoin(PIBI)
+                    .on(PEI.ID.eq(PIBI.ID))
+            onClausePibi = buildJoinClauses(pibiSelectedFields, onClausePibi, createAlias())
+
+            mapPeiCaracteristiques.putAll(fetchAndMapResults(pibiSelectedFields, onClausePibi))
+        }
+
+        // Les PENA
+        if (!penaSelectedFields.isEmpty()) {
+            var onClausePena: SelectOnConditionStep<Record?> =
+                dsl
+                    .select(buildSelectFields(penaSelectedFields))
+                    .from(PEI)
+                    .innerJoin(PENA)
+                    .on(PEI.ID.eq(PENA.ID))
+            onClausePena = buildJoinClauses(penaSelectedFields, onClausePena, createAlias())
+
+            mapPeiCaracteristiques.putAll(fetchAndMapResults(penaSelectedFields, onClausePena))
+        }
+
+        return mapPeiCaracteristiques
     }
-//
-//    fun createAlias(): Map<PeiCaracteristique, TableImpl<*>> {
-//        val mapAliases: MutableMap<PeiCaracteristique, TableImpl<*>> = HashMap()
-//
-//        val autoritePolice: Organisme = Organisme.ORGANISME.`as`("autorite_police")
-//        val servicePublic: Organisme = Organisme.ORGANISME.`as`("service_public")
-//        val maintenceCtp: Organisme = Organisme.ORGANISME.`as`("maintenance_ctp")
-//
-//        mapAliases[PeiCaracteristique.AUTORITE_POLICE] = autoritePolice
-//        mapAliases[PeiCaracteristique.SERVICE_PUBLIC] = servicePublic
-//        mapAliases[PeiCaracteristique.MAINTENANCE_CTP] = maintenceCtp
-//        return mapAliases
-//    }
-//
-//    /**
-//     * Fetch les résultats de la requête, et map les résultats dans une Map<idHydrant></idHydrant>,
-//     * List<PeiCaracteristiquePojo>>
-//     *
-//     * @param selectedFields List<PeiCaracteristique>
-//     * @param onClause SelectOnConditionStep
-//     * @return Map<Long></Long>, List<PeiCaracteristiquePojo>>
-//    </PeiCaracteristiquePojo></PeiCaracteristique></PeiCaracteristiquePojo> */
-//    fun fetchAndMapResults(
-//            selectedFields: List<PeiCaracteristique>, onClause: SelectOnConditionStep<Record>): Map<Long, List<PeiCaracteristiquePojo>> {
-//        val mapPeiCaracteristiques: MutableMap<Long, List<PeiCaracteristiquePojo>> = HashMap<Long, List<PeiCaracteristiquePojo>>()
-//        onClause.fetchInto<RecordHandler<Record>>(
-//                RecordHandler<Record> { record: Record ->
-//                    val peiCaracteristiques: List<PeiCaracteristiquePojo> =
-//                            selectedFields.stream()
-//                                    .map(
-//                                            Function<PeiCaracteristique, PeiCaracteristiquePojo> { caracteristique: PeiCaracteristique? ->
-//                                                val value: Any =
-//                                                        record.get(
-//                                                                getFieldFromCaracteristique(caracteristique, createAlias()))
-//                                                PeiCaracteristiquePojo(caracteristique, value)
-//                                            })
-//                                    .collect(Collectors.toList())
-//                    mapPeiCaracteristiques[record.get<Long>(PEI.ID)] = peiCaracteristiques
-//                })
-//        return mapPeiCaracteristiques
-//    }
-//
-//    /**
-//     * Construit les clauses "INNER JOIN" à rajouter à la requête en fonction des champs voulus por
-//     * l'utilisateur. <br></br>
-//     * S'assure qu'on n'a qu'une seule fois la même jointure
-//     *
-//     * @param selectedFields List<PeiCaracteristique>
-//     * @param onClause SelectOnConditionStep
-//     * @return SelectOnConditionStep (mis à jour)
-//    </PeiCaracteristique> */
-//    fun buildJoinClauses(
-//            selectedFields: List<PeiCaracteristique>,
-//            onClause: SelectOnConditionStep<Record?>,
-//            mapAlias: Map<PeiCaracteristique, TableImpl<*>>): SelectOnConditionStep<Record?> {
-//        var onClause = onClause
-//        var jointureNature = false
-//        for (caracteristique in selectedFields) {
-//            when (caracteristique) {
-//
-//
-//
-//                AUTORITE_POLICE -> {
-//                    val autoriteDeci: Organisme = mapAlias[PeiCaracteristique.AUTORITE_POLICE] as Organisme
-//                    onClause = onClause.innerJoin(autoriteDeci).on(PEI.AUTORITE_DECI.eq(autoriteDeci.ID))
-//                }
-//
-//                SERVICE_PUBLIC -> {
-//                    val servicePublic: Organisme = mapAlias[PeiCaracteristique.SERVICE_PUBLIC] as Organisme
-//                    onClause = onClause.innerJoin(servicePublic).on(PEI.SP_DECI.eq(servicePublic.ID))
-//                }
-//
-//                MAINTENANCE_CTP -> {
-//                    val maintenanceCtp: Organisme = mapAlias[PeiCaracteristique.MAINTENANCE_CTP] as Organisme
-//                    onClause =
-//                            onClause.innerJoin(maintenanceCtp).on(PEI.MAINTENANCE_DECI.eq(maintenanceCtp.ID))
-//                }
-//
-//                else -> null
-//            }
-//        }
-//        return onClause
-//    }
-//
-//    /**
-//     * Retourne le FIELD associé à la valeur d'un [PeiCaracteristique]
-//     *
-//     * @param caracteristique PeiCaracteristique
-//     * @return Field
-//     */
-//    fun getFieldFromCaracteristique(
-//            caracteristique: PeiCaracteristique, mapAlias: Map<PeiCaracteristique, TableImpl<*>>): Field<*> {
-//        when (caracteristique) {
-//            AUTORITE_POLICE -> return (mapAlias[PeiCaracteristique.AUTORITE_POLICE] as Organisme).LIBELLE
-//            SERVICE_PUBLIC -> return (mapAlias[PeiCaracteristique.SERVICE_PUBLIC] as Organisme).LIBELLE
-//            MAINTENANCE_CTP -> return (mapAlias[PeiCaracteristique.MAINTENANCE_CTP] as Organisme).LIBELLE
-//            COMPLEMENT -> return PEI.COMPLEMENT_ADRESSE
-//            DATE_RECEPTION -> return PEI.DATE_RECEP
-//            DEBIT -> return PIBI.DEBIT
-//            CAPACITE -> return PENA.CAPACITE
-//            else −>  null
-//        }
-//
-//        throw IllegalArgumentException("Valeur '$caracteristique' non prévue")
-//    }
 
     /**
-     * Classe permettant de représenter un type d'attribut (défini par PeiCaracteristique) et la
-     * valeur concernée (value)
-     */
-    class PeiCaracteristiquePojo(caracteristique: PeiCaracteristique, val value: Any) {
-        private val caracteristique: PeiCaracteristique = caracteristique
+     * Construit un Set des Fields qu'on a besoin de projeter
+     *
+     * @param selectedFields List<PeiCaracteristique>
+     * @return Set<Field></Field>>
+     </PeiCaracteristique> */
+    private fun buildSelectFields(selectedFields: List<PeiCaracteristique>): MutableSet<Field<*>?> {
+        val fieldsToSelect: MutableSet<Field<*>?> = HashSet<Field<*>?>()
+        // On a besoin de l'ID pour construire la map à retourner
+        fieldsToSelect.add(PEI.ID)
+        for (selectedField in selectedFields) {
+            // à chaque objet correspond un champ en base
+            fieldsToSelect.add(getFieldFromCaracteristique(selectedField, createAlias()))
+        }
+        return fieldsToSelect
+    }
 
-        fun getCaracteristique(): PeiCaracteristique {
-            return caracteristique
+    private fun createAlias(): MutableMap<PeiCaracteristique?, TableImpl<*>?> {
+        val mapAliases: MutableMap<PeiCaracteristique?, TableImpl<*>?> = HashMap<PeiCaracteristique?, TableImpl<*>?>()
+
+        val autoritePolice: Organisme? = Organisme.ORGANISME.`as`("autorite_police")
+        val servicePublic: Organisme? = Organisme.ORGANISME.`as`("service_public")
+        val maintenceCtp: Organisme? = Organisme.ORGANISME.`as`("maintenance_ctp")
+
+        mapAliases.put(PeiCaracteristique.AUTORITE_POLICE, autoritePolice)
+        mapAliases.put(PeiCaracteristique.SERVICE_PUBLIC, servicePublic)
+        mapAliases.put(PeiCaracteristique.MAINTENANCE_CTP, maintenceCtp)
+        return mapAliases
+    }
+
+    /**
+     * Fetch les résultats de la requête, et map les résultats dans une Map<idHydrant></idHydrant>,
+     * List<PeiCaracteristiquePojo>>
+     *
+     * @param selectedFields List<PeiCaracteristique>
+     * @param onClause SelectOnConditionStep
+     * @return Map<Long></Long>, List<PeiCaracteristiquePojo>>
+     </PeiCaracteristiquePojo></PeiCaracteristique></PeiCaracteristiquePojo> */
+    private fun fetchAndMapResults(
+        selectedFields: List<PeiCaracteristique>,
+        onClause: SelectOnConditionStep<Record?>,
+    ): MutableMap<UUID, List<PeiCaracteristqueData?>> {
+        val mapPeiCaracteristiques: MutableMap<UUID, List<PeiCaracteristqueData?>> =
+            mutableMapOf<UUID, List<PeiCaracteristqueData?>>()
+        onClause.fetch().forEach { record ->
+            val peiCaracteristiques: List<PeiCaracteristqueData?> = selectedFields.stream()
+                .map { caracteristique: PeiCaracteristique ->
+                    val value: Any? = record!!.get(getFieldFromCaracteristique(caracteristique, createAlias()))
+                    PeiCaracteristqueData(caracteristique, value)
+                }
+                .collect(Collectors.toList())
+
+            mapPeiCaracteristiques.put(record!!.get(PEI.ID)!!, peiCaracteristiques)
+        }
+        return mapPeiCaracteristiques
+    }
+
+    /**
+     * Construit les clauses "INNER JOIN" à rajouter à la requête en fonction des champs voulus por
+     * l'utilisateur. <br></br>
+     * S'assure qu'on n'a qu'une seule fois la même jointure
+     *
+     * @param selectedFields List<PeiCaracteristique>
+     * @param onClause SelectOnConditionStep
+     * @return SelectOnConditionStep (mis à jour)
+     </PeiCaracteristique> */
+    private fun buildJoinClauses(
+        selectedFields: List<PeiCaracteristique>,
+        onClause: SelectOnConditionStep<Record?>,
+        mapAlias: MutableMap<PeiCaracteristique?, TableImpl<*>?>,
+    ): SelectOnConditionStep<Record?> {
+        var onClause = onClause
+        var jointureNature = false
+        for (caracteristique in selectedFields) {
+            when (caracteristique) {
+                PeiCaracteristique.NATURE_PEI -> if (!jointureNature) {
+                    onClause =
+                        onClause
+                            .innerJoin(NATURE)
+                            .on(PEI.NATURE_ID.eq(NATURE.ID))
+                    jointureNature = true
+                }
+
+                PeiCaracteristique.TYPE_DECI ->
+                    onClause =
+                        onClause
+                            .innerJoin(NATURE_DECI)
+                            .on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+
+                PeiCaracteristique.AUTORITE_POLICE -> {
+                    val autoriteDeci: Organisme = mapAlias.get(PeiCaracteristique.AUTORITE_POLICE) as Organisme
+                    onClause = onClause.leftJoin(autoriteDeci).on(PEI.AUTORITE_DECI_ID.eq(autoriteDeci.ID))
+                }
+
+                PeiCaracteristique.SERVICE_PUBLIC -> {
+                    val servicePublic: Organisme = mapAlias.get(PeiCaracteristique.SERVICE_PUBLIC) as Organisme
+                    onClause = onClause.leftJoin(servicePublic).on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublic.ID))
+                }
+
+                PeiCaracteristique.MAINTENANCE_CTP -> {
+                    val maintenanceCtp: Organisme = mapAlias.get(PeiCaracteristique.MAINTENANCE_CTP) as Organisme
+                    onClause =
+                        onClause.leftJoin(maintenanceCtp).on(PEI.MAINTENANCE_DECI_ID.eq(maintenanceCtp.ID))
+                }
+
+                PeiCaracteristique.DIAMETRE_NOMINAL ->
+                    onClause =
+                        onClause
+                            .innerJoin(DIAMETRE)
+                            .on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
+
+                PeiCaracteristique.TYPE_PEI -> if (!jointureNature) {
+                    onClause =
+                        onClause
+                            .innerJoin(NATURE)
+                            .on(PEI.NATURE_ID.eq(NATURE.ID))
+                    jointureNature = true
+                }
+                PeiCaracteristique.COMPLEMENT -> Unit
+                PeiCaracteristique.DATE_RECEPTION -> {
+                    onClause =
+                        onClause
+                            .leftJoin(V_PEI_VISITE_DATE)
+                            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+                }
+                PeiCaracteristique.DEBIT -> {
+                    onClause =
+                        onClause
+                            .leftJoin(V_PEI_LAST_MESURES)
+                            .on(V_PEI_LAST_MESURES.PEI_ID.eq(PEI.ID))
+                }
+                PeiCaracteristique.CAPACITE -> Unit
+            }
+        }
+        return onClause
+    }
+
+    /**
+     * Retourne le FIELD associé à la valeur d'un [PeiCaracteristique]
+     *
+     * @param caracteristique PeiCaracteristique
+     * @return Field
+     */
+    private fun getFieldFromCaracteristique(
+        caracteristique: PeiCaracteristique,
+        mapAlias: MutableMap<PeiCaracteristique?, TableImpl<*>?>,
+    ): Field<*> {
+        when (caracteristique) {
+            PeiCaracteristique.TYPE_PEI -> return NATURE.TYPE_PEI
+            PeiCaracteristique.NATURE_PEI -> return NATURE.LIBELLE
+            PeiCaracteristique.AUTORITE_POLICE -> return (mapAlias.get(PeiCaracteristique.AUTORITE_POLICE) as Organisme).LIBELLE
+            PeiCaracteristique.TYPE_DECI -> return NATURE_DECI.LIBELLE
+            PeiCaracteristique.SERVICE_PUBLIC -> return (mapAlias.get(PeiCaracteristique.SERVICE_PUBLIC) as Organisme).LIBELLE
+            PeiCaracteristique.MAINTENANCE_CTP -> return (mapAlias.get(PeiCaracteristique.MAINTENANCE_CTP) as Organisme).LIBELLE
+            PeiCaracteristique.COMPLEMENT -> return PEI.COMPLEMENT_ADRESSE
+            PeiCaracteristique.DIAMETRE_NOMINAL -> return DIAMETRE.LIBELLE
+            PeiCaracteristique.CAPACITE -> return PENA.CAPACITE
+            PeiCaracteristique.DATE_RECEPTION -> return V_PEI_VISITE_DATE.LAST_RECEPTION
+            PeiCaracteristique.DEBIT -> return V_PEI_LAST_MESURES.DEBIT
         }
     }
 }

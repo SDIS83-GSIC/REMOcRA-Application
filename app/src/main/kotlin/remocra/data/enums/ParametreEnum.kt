@@ -53,6 +53,8 @@ enum class ParametreEnum(val section: ParametreSection) {
     DECLARATION_PEI_DESTINATAIRE_EMAIL(ParametreSection.PEI),
     DECLARATION_PEI_OBJET_EMAIL(ParametreSection.PEI),
     DECLARATION_PEI_CORPS_EMAIL(ParametreSection.PEI),
+    CARACTERISTIQUES_PENA_TOOLTIP_WEB(ParametreSection.PEI),
+    CARACTERISTIQUES_PIBI_TOOLTIP_WEB(ParametreSection.PEI),
 
     // ALERTE
     PEI_LONGUE_INDISPONIBILITE_MESSAGE(ParametreSection.ALERTE),

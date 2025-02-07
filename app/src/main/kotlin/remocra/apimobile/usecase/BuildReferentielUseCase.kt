@@ -103,7 +103,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listParametre = parametresMobile,
             listDroit = userInfo.droits.map { it.name },
             utilisateurConnecte = nomPrenom,
-            peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiques(),
+            peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
             listFonctionContact = fonctionContactRepository.getAll(),
             listDomaine = dataCacheProvider.getDomaines().values.filter { it.domaineActif },
         )

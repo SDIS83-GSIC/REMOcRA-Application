@@ -308,10 +308,12 @@ const Tooltip = ({
             </Row>
           </Popover.Header>
           <Popover.Body>
-            {featureSelect
-              .getProperties()
-              .propertiesToDisplay?.split("\n")
-              ?.map((e, key) => <div key={key}>{e}</div>)}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: featureSelect.getProperties().propertiesToDisplay,
+              }}
+            />
+
             <Row className="mt-3">
               <Col className="ms-auto" xs={"auto"}>
                 <Row>

@@ -1,7 +1,8 @@
 package remocra.usecase.carte
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
+import remocra.apimobile.usecase.PeiCaracteristiquesUseCase
 import remocra.auth.UserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypePointCarte
@@ -20,6 +21,9 @@ class GetPointCarteUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var carteRepository: CarteRepository
+
+    @Inject
+    lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -124,6 +128,13 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
                     carteRepository.getRcciWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
+            }
+        }
+
+        if (typePointCarte == TypePointCarte.PEI) {
+            val peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesWeb()
+            feature.map {
+                it.propertiesToDisplay = peiCaracteristiques[it.pointId]
             }
         }
 
