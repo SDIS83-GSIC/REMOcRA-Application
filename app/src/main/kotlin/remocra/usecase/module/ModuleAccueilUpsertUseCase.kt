@@ -51,7 +51,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
     ): ListModuleWithImage {
         val modulesAvant = moduleRepository.getModules()
 
-        moduleRepository.deleteLThematiqueModule(element.listeModuleAccueilData.mapNotNull { it.moduleId })
+        moduleRepository.deleteLThematiqueModule()
 
         val listeDelete = modulesAvant.filter { !element.listeModuleAccueilData.map { it.moduleId }.contains(it.moduleId) }
 

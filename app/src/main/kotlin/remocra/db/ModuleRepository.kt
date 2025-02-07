@@ -56,10 +56,8 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(MODULE.ID.eq(moduleId))
             .execute()
 
-    fun deleteLThematiqueModule(listModuleId: List<UUID>) =
-        dsl.deleteFrom(L_THEMATIQUE_MODULE)
-            .where(L_THEMATIQUE_MODULE.MODULE_ID.`in`(listModuleId))
-            .execute()
+    fun deleteLThematiqueModule() =
+        dsl.deleteFrom(L_THEMATIQUE_MODULE).execute()
 
     fun insertLThematiqueModule(moduleId: UUID, thematiqueId: UUID) =
         dsl.insertInto(L_THEMATIQUE_MODULE)
