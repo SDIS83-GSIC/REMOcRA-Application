@@ -63,6 +63,8 @@ type ParametresSectionPermis = {
 type ParametresSectionPei = {
   peiColonnes: string[] | undefined;
   bufferCarte: number;
+  caracteristiquesPenaTooltipWeb: string[] | undefined;
+  caracteristiquesPibiTooltipWeb: string[] | undefined;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -109,6 +111,14 @@ export const getInitialValues = (
   pei: {
     ...data?.pei,
     peiColonnes: data?.pei?.peiColonnes?.map((e) => ({ id: e, libelle: e })),
+    caracteristiquesPibiTooltipWeb:
+      data?.pei?.caracteristiquesPibiTooltipWeb?.map((e) => ({
+        id: e,
+      })) ?? [],
+    caracteristiquesPenaTooltipWeb:
+      data?.pei?.caracteristiquesPenaTooltipWeb?.map((e) => ({
+        id: e,
+      })) ?? [],
   },
   peiLongueIndispo: data?.peiLongueIndispo,
 });
@@ -135,6 +145,10 @@ export const prepareVariables = (values: AdminParametresValue) => {
     pei: {
       ...values?.pei,
       peiColonnes: values?.pei?.peiColonnes?.map((e) => e.id) ?? [],
+      caracteristiquesPenaTooltipWeb:
+        values?.pei?.caracteristiquesPenaTooltipWeb?.map((e) => e.id) ?? [],
+      caracteristiquesPibiTooltipWeb:
+        values?.pei?.caracteristiquesPibiTooltipWeb?.map((e) => e.id) ?? [],
     },
     peiLongueIndispo: values.peiLongueIndispo,
   };
@@ -160,6 +174,7 @@ const AdminParametres = () => {
 export const AdminParametresInterne = () => {
   const { values, setValues, setFieldValue }: { values: AdminParametresValue } =
     useFormikContext();
+  const allCaracteristiques = useGet(url`/api/admin/pei-caracteristique`)?.data;
   const { activesKeys, handleShowClose } = useAccordionState(
     Array(6).fill(false),
   );
@@ -193,6 +208,7 @@ export const AdminParametresInterne = () => {
                     values={values.mobile}
                     setValues={setValues}
                     setFieldValue={setFieldValue}
+                    allCaracteristiques={allCaracteristiques}
                   />
                 ),
               },
@@ -231,8 +247,7 @@ export const AdminParametresInterne = () => {
                 content: (
                   <AdminPei
                     values={values.pei}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
+                    allCaracteristiques={allCaracteristiques}
                   />
                 ),
               },
@@ -363,8 +378,10 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
 
 const AdminApplicationMobile = ({
   values,
+  allCaracteristiques,
 }: {
   values: ParametresSectionMobile;
+  allCaracteristiques: string[];
 }) => {
   const { setFieldValue } = useFormikContext();
   // Charger toutes les caractéristiques
@@ -391,12 +408,9 @@ const AdminApplicationMobile = ({
     nameFormik: "mobile.caracteristiquesPena",
   });
 
-  const allCaracteristiqueState = useGet(
-    url`/api/admin/pei-caracteristique`,
-  )?.data;
   useMemo(() => {
     if (
-      !allCaracteristiqueState ||
+      !allCaracteristiques ||
       !values?.caracteristiquesPibi ||
       !values?.caracteristiquesPena
     ) {
@@ -405,14 +419,14 @@ const AdminApplicationMobile = ({
     //PIBI
     if (availablePibiOptions == null) {
       setAvailablePibiOptions(
-        allCaracteristiqueState.filter(
+        allCaracteristiques.filter(
           (item: any) => item.type === "PIBI" || item.type === "GENERAL",
         ),
       );
     }
     if (selectedPibiOptions == null) {
       setSelectedPibiOptions(
-        allCaracteristiqueState.filter((item: any) => {
+        allCaracteristiques.filter((item: any) => {
           return values?.caracteristiquesPibi
             ?.map((e) => e.id)
             .includes(item.id);
@@ -422,14 +436,14 @@ const AdminApplicationMobile = ({
     //PENA
     if (availablePenaOptions == null) {
       setAvailablePenaOptions(
-        allCaracteristiqueState.filter(
+        allCaracteristiques.filter(
           (item: any) => item.type === "PENA" || item.type === "GENERAL",
         ),
       );
     }
     if (selectedPenaOptions == null) {
       setSelectedPenaOptions(
-        allCaracteristiqueState.filter((item: any) => {
+        allCaracteristiques.filter((item: any) => {
           return values?.caracteristiquesPena
             ?.map((e) => e.id)
             .includes(item.id);
@@ -446,7 +460,7 @@ const AdminApplicationMobile = ({
     setAvailablePibiOptions,
     setSelectedPenaOptions,
     setSelectedPibiOptions,
-    allCaracteristiqueState,
+    allCaracteristiques,
   ]);
 
   return (
@@ -481,8 +495,8 @@ const AdminApplicationMobile = ({
             label={"Caractéristiques à afficher pour les PIBI"}
             tooltipText={
               "Dans l'infobulle d'un PEI sur l'application mobile, " +
-              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
-              "et dans quel ordre ils se présentent"
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquelles, " +
+              "et dans quel ordre elles se présentent"
             }
             required={false}
             name={"mobile.caracteristiquePibi"}
@@ -497,8 +511,8 @@ const AdminApplicationMobile = ({
             label={"Caractéristiques à afficher pour les PENA"}
             tooltipText={
               "Dans l'infobulle d'un PEI sur l'application mobile, " +
-              "on affiche des caractéristiques. Ce paramètre permet de définir lesquels, " +
-              "et dans quel ordre ils se présentent"
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquelles, " +
+              "et dans quel ordre elles se présentent"
             }
             required={false}
             name={"mobile.caracteristiquePena"}
@@ -666,7 +680,13 @@ const AdminCouvertureHydraulique = ({
   );
 };
 
-const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
+const AdminPei = ({
+  values,
+  allCaracteristiques,
+}: {
+  values: ParametresSectionPei;
+  allCaracteristiques: string[];
+}) => {
   //Pour les colonnes PEI
 
   const listPossible = Object.values(COLUMN_PEI).map((option: any) => ({
@@ -706,6 +726,83 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
     listPossible,
   ]);
 
+  const {
+    availableOptions: availablePibiOptions,
+    setAvailableOptions: setAvailablePibiOptions,
+    selectedOptions: selectedPibiOptions,
+    setSelectedOptions: setSelectedPibiOptions,
+  } = useTransferList({
+    listeDisponible: null,
+    listeSelectionne: null,
+    nameFormik: "pei.caracteristiquesPibiTooltipWeb",
+  });
+
+  const {
+    availableOptions: availablePenaOptions,
+    setAvailableOptions: setAvailablePenaOptions,
+    selectedOptions: selectedPenaOptions,
+    setSelectedOptions: setSelectedPenaOptions,
+  } = useTransferList({
+    listeDisponible: null,
+    listeSelectionne: null,
+    nameFormik: "pei.caracteristiquesPenaTooltipWeb",
+  });
+
+  useMemo(() => {
+    if (
+      !allCaracteristiques ||
+      !values?.caracteristiquesPenaTooltipWeb ||
+      !values?.caracteristiquesPibiTooltipWeb
+    ) {
+      return;
+    }
+    //PIBI
+    if (availablePibiOptions == null) {
+      setAvailablePibiOptions(
+        allCaracteristiques.filter(
+          (item: any) => item.type === "PIBI" || item.type === "GENERAL",
+        ),
+      );
+    }
+    if (selectedPibiOptions == null) {
+      setSelectedPibiOptions(
+        allCaracteristiques.filter((item: any) => {
+          return values?.caracteristiquesPibiTooltipWeb
+            ?.map((e) => e.id)
+            .includes(item.id);
+        }),
+      );
+    }
+    //PENA
+    if (availablePenaOptions == null) {
+      setAvailablePenaOptions(
+        allCaracteristiques.filter(
+          (item: any) => item.type === "PENA" || item.type === "GENERAL",
+        ),
+      );
+    }
+    if (selectedPenaOptions == null) {
+      setSelectedPenaOptions(
+        allCaracteristiques.filter((item: any) => {
+          return values?.caracteristiquesPenaTooltipWeb
+            ?.map((e) => e.id)
+            .includes(item.id);
+        }),
+      );
+    }
+  }, [
+    values,
+    availablePenaOptions,
+    availablePibiOptions,
+    selectedPenaOptions,
+    selectedPibiOptions,
+    setAvailablePenaOptions,
+    setAvailablePibiOptions,
+    setSelectedPenaOptions,
+    setSelectedPibiOptions,
+    allCaracteristiques,
+  ]);
+
   return (
     values && (
       <>
@@ -713,6 +810,38 @@ const AdminPei = ({ values }: { values: ParametresSectionPei }) => {
           <PositiveNumberInput
             name="pei.bufferCarte"
             label="Espace tampon pour la génération de carte (carte des tournées)"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availablePibiOptions}
+            selectedOptions={selectedPibiOptions}
+            setAvailableOptions={setAvailablePibiOptions}
+            setSelectedOptions={setSelectedPibiOptions}
+            label={"Caractéristiques à afficher pour les PIBI"}
+            tooltipText={
+              "Dans l'infobulle d'un PEI sur la carte de l'application web, " +
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquelles, " +
+              "et dans quel ordre elles se présentent"
+            }
+            required={false}
+            name={"pei.caracteristiquesPibiTooltipWeb"}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availablePenaOptions}
+            selectedOptions={selectedPenaOptions}
+            setAvailableOptions={setAvailablePenaOptions}
+            setSelectedOptions={setSelectedPenaOptions}
+            label={"Caractéristiques à afficher pour les PENA"}
+            tooltipText={
+              "Dans l'infobulle d'un PEI sur la carte de l'application web, " +
+              "on affiche des caractéristiques. Ce paramètre permet de définir lesquelles, " +
+              "et dans quel ordre elles se présentent"
+            }
+            required={false}
+            name={"pei.caracteristiquesPenaTooltipWeb"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>

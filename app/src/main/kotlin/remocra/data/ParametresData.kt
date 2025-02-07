@@ -106,4 +106,6 @@ data class ParametresSectionPei(
     val peiHighlightDuree: Int?,
     val peiRenumerotationInterneAuto: Boolean?,
     val voieSaisieLibre: Boolean?,
+    val caracteristiquesPenaTooltipWeb: List<PeiCaracteristique>?,
+    val caracteristiquesPibiTooltipWeb: List<PeiCaracteristique>?,
 )

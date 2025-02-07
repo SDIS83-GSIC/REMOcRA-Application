@@ -87,7 +87,8 @@ class ParametresUseCase : AbstractUseCase() {
             peiHighlightDuree = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_DUREE.name),
             peiRenumerotationInterneAuto = mapParametres.getBooleanOrNull(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO.name),
             voieSaisieLibre = mapParametres.getBooleanOrNull(ParametreEnum.VOIE_SAISIE_LIBRE.name),
-
+            caracteristiquesPenaTooltipWeb = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB.name, objectMapper),
+            caracteristiquesPibiTooltipWeb = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name, objectMapper),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(

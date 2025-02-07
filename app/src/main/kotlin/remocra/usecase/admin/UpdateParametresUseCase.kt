@@ -93,6 +93,8 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
         updateParametre(ParametreEnum.PEI_HIGHLIGHT_DUREE, parametresAdminData.pei.peiHighlightDuree?.toString())
         updateParametre(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO, parametresAdminData.pei.peiRenumerotationInterneAuto?.toString())
         updateParametre(ParametreEnum.VOIE_SAISIE_LIBRE, parametresAdminData.pei.voieSaisieLibre?.toString())
+        updateParametre(ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB, objectMapper.writeValueAsString(parametresAdminData.pei.caracteristiquesPenaTooltipWeb))
+        updateParametre(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB, objectMapper.writeValueAsString(parametresAdminData.pei.caracteristiquesPibiTooltipWeb))
 
         // ALERTE
         updateParametre(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_MESSAGE, parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteMessage)
