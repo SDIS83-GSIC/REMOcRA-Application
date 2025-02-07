@@ -9,12 +9,10 @@ import jakarta.servlet.http.HttpFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpServletResponseWrapper
-import remocra.db.UtilisateurRepository
 import remocra.security.SecurityHeadersFilter
 
 class UserInfoFilter @Inject constructor(
     private val objectMapper: ObjectMapper,
-    private val utilisateurRepository: UtilisateurRepository,
 ) : HttpFilter() {
 
     override fun doFilter(
@@ -54,10 +52,10 @@ class UserInfoFilter @Inject constructor(
 
         val nonce = request.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
 
-        if (userInfo?.isActif == false) {
+        if (!userInfo.isActif) {
             response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
         } else {
-            val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
+            val javascriptUser = objectMapper.writeValueAsString((userInfo).asJavascriptUserProfile())
             response.outputStream?.println("""<script nonce="$nonce">const userInfo = $javascriptUser</script>""")
         }
     }

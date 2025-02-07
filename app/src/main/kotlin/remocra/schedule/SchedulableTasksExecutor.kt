@@ -59,7 +59,7 @@ constructor(
             val utilisateurSysteme = dataCacheProvider.get().utilisateurSysteme
             userInfoSysteme.utilisateur = utilisateurSysteme
             userInfoSysteme.id = utilisateurSysteme.utilisateurId.toString()
-            userInfoSysteme.droits = Droit.entries
+            userInfoSysteme.droits = Droit.entries.toSet()
             userInfoSysteme.addAttribute("given_name", userInfoSysteme.utilisateur.utilisateurPrenom)
 
             start(logManagerFactory.create(), userInfoSysteme)

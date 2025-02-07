@@ -24,7 +24,7 @@ import remocra.db.jooq.remocra.tables.pojos.ModelePibi
 import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 
-@Path("deci/referentiel/pibi")
+@Path("/deci/referentiel/pibi")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
 class ApiReferentielsPibiEndpoint : AbstractEndpoint() {

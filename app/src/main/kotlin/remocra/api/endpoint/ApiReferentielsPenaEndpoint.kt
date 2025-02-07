@@ -21,7 +21,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 
-@Path("deci/referentiel/pena")
+@Path("/deci/referentiel/pena")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
 class ApiReferentielsPenaEndpoint : AbstractEndpoint() {

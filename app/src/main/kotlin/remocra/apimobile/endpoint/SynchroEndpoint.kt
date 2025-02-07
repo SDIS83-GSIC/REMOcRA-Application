@@ -32,7 +32,6 @@ import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteAnomalieUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteUseCase
 import remocra.app.ParametresProvider
-import remocra.auth.AuthDevice
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.UserInfo
@@ -87,19 +86,15 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/tournees-dispos")
-    @AuthDevice
-    // TODO
-    @Public("TODO ")
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun getTourneesDispos(): Response {
         return Response.ok(tourneeUseCase.getTourneesDisponibles(currentUser!!.get())).build()
     }
 
-    @AuthDevice
     @Path("/reserver-tournees")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @POST
-    // TODO
-    @Public("TODO ")
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun reserverTournees(
         @FormParam("listIdTournees") listIdTournees: List<UUID>,
     ): Response {
@@ -108,17 +103,14 @@ class SynchroEndpoint : AbstractEndpoint() {
             .build()
     }
 
-    @AuthDevice
     @Path("/annule-reservation")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @POST
-    // TODO
-    @Public("TODO ")
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun annuleReservationTournee(@FormParam("idTournee") idTournee: UUID): Response {
         return tourneeUseCase.annuleReservation(idTournee, currentUser!!.get().utilisateurId)
     }
 
-    @AuthDevice
     @Path("/create-pei")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @POST
@@ -147,7 +139,6 @@ class SynchroEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
-    @AuthDevice
     @Path("/gestionnaires")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -167,7 +158,6 @@ class SynchroEndpoint : AbstractEndpoint() {
         ).wrap()
     }
 
-    @AuthDevice
     @Path("/contacts")
     @POST
     @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
@@ -214,7 +204,6 @@ class SynchroEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
-    @AuthDevice
     @Path("/contacts-roles")
     @POST
     @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
@@ -230,7 +219,6 @@ class SynchroEndpoint : AbstractEndpoint() {
         ),
     ).wrap()
 
-    @AuthDevice
     @Path("/synchro-tournee")
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
     @POST
@@ -249,7 +237,6 @@ class SynchroEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
-    @AuthDevice
     @Path("/synchro-visite")
     @POST
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
@@ -287,7 +274,6 @@ class SynchroEndpoint : AbstractEndpoint() {
         ),
     ).wrap()
 
-    @AuthDevice
     @Path("/synchro-visite-anomalie")
     @POST
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
@@ -304,7 +290,6 @@ class SynchroEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
-    @AuthDevice
     @Path("/synchro-photo")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -330,7 +315,6 @@ class SynchroEndpoint : AbstractEndpoint() {
         ).wrap()
     }
 
-    @AuthDevice
     @Path("/incoming-to-remocra/{tourneeId}")
     @POST
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")

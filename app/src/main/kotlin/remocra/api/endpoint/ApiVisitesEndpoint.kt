@@ -23,7 +23,7 @@ import remocra.exception.RemocraResponseException
 import remocra.web.AbstractEndpoint
 import java.io.IOException
 
-@Path("/api/deci/pei/{numeroComplet}/visites")
+@Path("/deci/pei/{numeroComplet}/visites")
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
 class ApiVisitesEndpoint : AbstractEndpoint() {

@@ -1,10 +1,19 @@
 package remocra.auth
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.inject.Inject
 import com.google.inject.Provides
 import com.google.inject.Singleton
+import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
+import com.nimbusds.oauth2.sdk.`as`.ReadOnlyAuthorizationServerMetadata
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
+import com.nimbusds.oauth2.sdk.auth.Secret
+import com.nimbusds.oauth2.sdk.id.ClientID
+import com.nimbusds.oauth2.sdk.id.Issuer
 import com.typesafe.config.Config
+import net.ltgt.oauth.common.TokenIntrospector
+import okhttp3.HttpUrl
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers
 import org.pac4j.core.context.CallContext
 import org.pac4j.core.exception.http.HttpAction
@@ -27,22 +36,41 @@ import remocra.RemocraModule
 import remocra.web.registerResources
 import java.net.MalformedURLException
 
-class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
+class AuthModule(
+    private val settings: AuthnSettings,
+    private val authorizationServerMetadata: ReadOnlyAuthorizationServerMetadata,
+) : RemocraModule() {
     override fun configure() {
-        binder().registerResources(AuthenticationFilter::class, AuthorizationFilter::class)
+        binder().registerResources(AuthenticationFeature::class, AuthorizationFeature::class)
         bind(AuthnSettings::class.java).toInstance(settings)
     }
 
     companion object {
-        fun create(config: Config) =
-            AuthModule(
+        fun create(config: Config): AuthModule {
+            val uriBuilder = HttpUrl.get(config.getString("base-uri"))
+                .newBuilder()
+                .addPathSegment("realms")
+                .addPathSegment(config.getString("realm"))
+            return AuthModule(
                 AuthnSettings(
                     config.getString("client-id"),
                     config.getString("client-secret"),
                     config.getString("base-uri"),
                     config.getString("realm"),
+                    config.getString("token-introspection-cache-spec"),
                 ),
+                AuthorizationServerMetadata(Issuer(uriBuilder.build().uri())).apply {
+                    introspectionEndpointURI =
+                        uriBuilder
+                            .addPathSegment("protocol")
+                            .addPathSegment("openid-connect")
+                            .addPathSegment("token")
+                            .addPathSegment("introspect")
+                            .build()
+                            .uri()
+                },
             )
+        }
 
         fun excludeStaticResources(
             path: String,
@@ -50,6 +78,10 @@ class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
             getResourcePath: (path: String) -> String?,
         ): Boolean {
             if (path == "/favicon.ico") {
+                return false
+            }
+            // Les API point d'eau et API mobile gèrent leur propre authentification
+            if (path.startsWith(AuthnConstants.API_DECI_PATH) || path.startsWith(AuthnConstants.API_REFERENTIEL_PATH) || path.startsWith(AuthnConstants.API_MOBILE_PATH)) {
                 return false
             }
 
@@ -163,11 +195,25 @@ class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
         )
     }
 
+    @Provides
+    @Singleton // contient un cache mémoire
+    fun provideTokenIntrospector(): TokenIntrospector {
+        return TokenIntrospector(
+            authorizationServerMetadata,
+            ClientSecretBasic(
+                ClientID(settings.clientId),
+                Secret(settings.clientSecret),
+            ),
+            Caffeine.from(settings.tokenIntrospectionCacheSpec),
+        )
+    }
+
     data class AuthnSettings(
         val clientId: String,
         val clientSecret: String,
         val baseUri: String,
         val realm: String,
+        val tokenIntrospectionCacheSpec: String,
     )
 
     /**

@@ -10,9 +10,9 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.apimobile.usecase.BuildReferentielUseCase
-import remocra.auth.AuthDevice
-import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.web.AbstractEndpoint
 
 @Path("/mobile/referentiel")
@@ -26,8 +26,7 @@ class MobileReferentielEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var buildReferentielUseCase: BuildReferentielUseCase
 
-    @Public("La récupération du référentiel n'est pas soumise à un droit")
-    @AuthDevice
+    @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
     @Path("/")
     @GET
     fun getRefentiel(): Response {

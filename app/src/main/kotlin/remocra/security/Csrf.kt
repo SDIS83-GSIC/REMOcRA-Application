@@ -32,9 +32,17 @@ annotation class NoCsrf(val justification: String)
 
 class CsrfFeature : DynamicFeature {
     override fun configure(resourceInfo: ResourceInfo, context: FeatureContext) {
-        if (!resourceInfo.resourceMethod.isAnnotationPresent(NoCsrf::class.java)) {
-            context.register(CsrfFilter)
+        if (resourceInfo.resourceMethod.isAnnotationPresent(NoCsrf::class.java)) {
+            return
         }
+        if ("${resourceInfo.resourceClass.packageName}.".run {
+                startsWith("remocra.api.") || startsWith("remocra.apimobile.")
+            }
+        ) {
+            // On n'applique pas la protection CSRF aux API points d'eau et API mobile
+            return
+        }
+        context.register(CsrfFilter)
     }
 }
 

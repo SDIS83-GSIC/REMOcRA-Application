@@ -20,6 +20,7 @@ import remocra.data.Params
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
@@ -285,6 +286,9 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getById(id: UUID): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchOneInto()
 
+    fun getByEmail(email: String): OrganismeData? =
+        dsl.selectFrom(ORGANISME).where(ORGANISME.EMAIL_CONTACT.eq(email)).fetchOneInto()
+
     fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<UUID>, contactRole: String): Map<Destinataire, List<UUID?>> =
         dsl.select(
             PEI.ID,
@@ -331,4 +335,13 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .from(ORGANISME)
             .where(ORGANISME.ID.eq(organismeId))
             .fetchSingleInto()
+
+    fun getDroitApi(typeOrganismeId: UUID): Set<DroitApi> =
+        dsl.select(TYPE_ORGANISME.DROIT_API)
+            .from(TYPE_ORGANISME)
+            .where(TYPE_ORGANISME.ID.eq(typeOrganismeId))
+            .and(TYPE_ORGANISME.DROIT_API.isNotNull())
+            .fetchSingle(TYPE_ORGANISME.DROIT_API)
+            ?.filterNotNull()
+            ?.toSet() ?: setOf()
 }

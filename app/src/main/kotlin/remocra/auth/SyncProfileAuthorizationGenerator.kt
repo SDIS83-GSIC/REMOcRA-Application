@@ -35,9 +35,11 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
             )
             userProfile.utilisateur = utilisateur
 
+            // XXX: factoriser avec MobileUserInfoProvider
+
             // On remplit ses droits
             userProfile.droits = if (utilisateur.utilisateurIsSuperAdmin == true) {
-                Droit.entries
+                Droit.entries.toSet()
             } else {
                 try {
                     droitsRepository.getDroitsFromUser(userProfile.utilisateurId)

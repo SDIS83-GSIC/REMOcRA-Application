@@ -112,6 +112,7 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlin.reflect)
     api(libs.commons.email)
+    api(libs.caffeine)
 
     // Dependency Injection
     api(libs.guice.bom)
@@ -129,6 +130,9 @@ dependencies {
     api(libs.jetty.servlets)
     api(platform(libs.jetty.bom))
     api(platform(libs.jetty.ee10.bom))
+
+    api(libs.oauthServlets.rs)
+    api(platform(libs.oauthServlets.bom))
 
     api(libs.retrofit)
     api(libs.retrofit.converter.jackson)

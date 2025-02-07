@@ -13,7 +13,8 @@ class
 UserInfo : KeycloakOidcProfile() {
     lateinit var utilisateur: Utilisateur
 
-    lateinit var droits: Collection<Droit>
+    lateinit var droits: Set<Droit>
+
     var profilDroits: ProfilDroit? = null
 
     var zoneCompetence: ZoneIntegration? = null
