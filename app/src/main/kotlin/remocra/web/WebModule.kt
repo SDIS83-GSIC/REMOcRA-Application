@@ -7,7 +7,6 @@ import remocra.RemocraModule
 import remocra.api.endpoint.ApiModule
 import remocra.log.LogManagerFactory
 import remocra.log.LogManagerFactoryImpl
-import remocra.resteasy.MultipartFormAnnotationReader
 import remocra.resteasy.ParamConverterProvider
 import remocra.resteasy.UUIDMessageBodyReader
 import remocra.resteasy.UnhandledExceptionMapper
@@ -101,7 +100,6 @@ object WebModule : RemocraModule() {
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
-        registerResource<MultipartFormAnnotationReader>()
         registerResource<UUIDMessageBodyReader>()
         registerResource<ParamConverterProvider>()
         registerResource<UnhandledExceptionMapper>()

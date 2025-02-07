@@ -138,7 +138,6 @@ dependencies {
 
     implementation(libs.resteasy.core.spi)
     implementation(libs.resteasy.core)
-    implementation(libs.resteasy.multipart.provider)
     implementation(platform(libs.resteasy.bom))
 
     // JSON
