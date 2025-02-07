@@ -4,7 +4,6 @@ import {
   ToolbarProps,
   ToolbarSlot,
 } from "@react-pdf-viewer/default-layout";
-import { pdfjs } from "react-pdf";
 import {
   LocalizationMap,
   ProgressBar,
@@ -94,7 +93,7 @@ const PdfViewer = ({ url }: { url: string }) => {
   return (
     <div className={styles.worker}>
       <Worker
-        workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.js`}
+        workerUrl={new URL('npm:pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString()}
       >
         <div className={styles.height100}>
           <Viewer

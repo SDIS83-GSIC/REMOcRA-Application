@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpServletResponseWrapper
 import remocra.db.UtilisateurRepository
+import remocra.security.SecurityHeadersFilter
 
 class UserInfoFilter @Inject constructor(
     private val objectMapper: ObjectMapper,
@@ -42,6 +43,8 @@ class UserInfoFilter @Inject constructor(
             },
         )
 
+        val nonce = request.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
+
         // On regarde si on a déjà un user connecté
         val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
 
@@ -49,7 +52,7 @@ class UserInfoFilter @Inject constructor(
             response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
         } else {
             val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
-            response.outputStream?.println("""<script>const userInfo = $javascriptUser</script>""")
+            response.outputStream?.println("""<script nonce="$nonce">const userInfo = $javascriptUser</script>""")
         }
     }
 }

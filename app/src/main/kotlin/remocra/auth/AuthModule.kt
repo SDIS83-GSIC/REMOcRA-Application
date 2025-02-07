@@ -131,11 +131,8 @@ class AuthModule(private val settings: AuthnSettings) : RemocraModule() {
             null,
             DefaultAuthorizers.IS_AUTHENTICATED,
             java.lang.String.join(
-                ",", // Correspond à la configuration par SECURITY_HEADERS à l'exception de HSTS
-                DefaultMatchers.NOCACHE,
-                DefaultMatchers.NOSNIFF,
-                DefaultMatchers.NOFRAME,
-                DefaultMatchers.XSSPROTECTION,
+                ",",
+                DefaultMatchers.NOCACHE, // XXX: peut-être gérer plus finement le cache ?
                 "excludeStaticResources",
             ),
         )

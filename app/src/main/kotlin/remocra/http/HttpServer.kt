@@ -36,6 +36,7 @@ import remocra.auth.UserInfoFilter
 import remocra.healthcheck.HealthServlet
 import remocra.resteasy.GuiceInjectorFactory
 import remocra.security.CsrfServletFilter
+import remocra.security.SecurityHeadersFilter
 import remocra.web.JaxrsApplication
 import java.nio.file.Files
 import java.util.EnumSet
@@ -103,6 +104,8 @@ constructor(
         sessionHandler.sessionCookie = settings.sessionCookieName
         sessionHandler.maxInactiveInterval = settings.sessionMaxIdleTime.seconds.toInt()
         sessionHandler.isHttpOnly = true
+
+        context.addFilter(SecurityHeadersFilter::class.java, "/*", null)
 
         // CSRF
         // DispatcherType.FORWARD permet de matcher l'index.html pour une requête sur "/"
