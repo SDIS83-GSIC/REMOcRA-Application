@@ -1,6 +1,5 @@
 package remocra.tasks
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.inject.Inject
 import org.jooq.exception.IOException
 import remocra.auth.AuthModule
@@ -34,9 +33,9 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
         val response = keycloakToken.getToken(
             keycloakClient.clientId,
             keycloakClient.clientSecret,
-        ).execute().body()
+        ).execute().body()!!
 
-        val token = "${response?.tokenType} ${response?.accessToken}"
+        val token = "${response.tokenType} ${response.accessToken}"
 
         val utilisateursRemocra = utilisateurRepository.getAll()
 
@@ -129,7 +128,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
         )
 
         keycloakToken.revokeToken(
-            token,
+            response.accessToken,
             keycloakClient.clientId,
             keycloakClient.clientSecret,
         ).execute()
@@ -156,10 +155,3 @@ data class SynchroUtilisateurTaskParameters(
     override val notification: NotificationMailData?,
     val canSuppressUser: Boolean = false,
 ) : SchedulableTaskParameters(notification)
-
-data class InfosToken(
-    @JsonProperty("access_token")
-    val accessToken: String?,
-    @JsonProperty("token_type")
-    val tokenType: String?,
-)

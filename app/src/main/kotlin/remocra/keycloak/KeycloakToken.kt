@@ -1,6 +1,6 @@
 package remocra.keycloak
 
-import remocra.tasks.InfosToken
+import remocra.keycloak.representations.InfosToken
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

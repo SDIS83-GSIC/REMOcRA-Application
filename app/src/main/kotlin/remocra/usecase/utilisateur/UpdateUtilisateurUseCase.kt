@@ -1,7 +1,8 @@
 package remocra.usecase.utilisateur
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
+import remocra.auth.AuthModule
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.UtilisateurData
@@ -15,13 +16,18 @@ import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
+import remocra.keycloak.KeycloakToken
 import remocra.keycloak.representations.UserRepresentation
 import remocra.usecase.AbstractCUDUseCase
 
 class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperation.UPDATE) {
-    @Inject private lateinit var keycloakApi: KeycloakApi
+    @Inject lateinit var keycloakToken: KeycloakToken
 
-    @Inject private lateinit var utilisateurRepository: UtilisateurRepository
+    @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
+
+    @Inject lateinit var keycloakApi: KeycloakApi
+
+    @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
     private val logger = LoggerFactory.getLogger(UpdateUtilisateurUseCase::class.java)
 
@@ -45,43 +51,51 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
     }
 
     override fun execute(userInfo: UserInfo?, element: UtilisateurData): UtilisateurData {
-        // Mise à jour l'utilisateur côté Keycloak
-        val updateResponse = keycloakApi.updateUser(
-            userInfo!!.accessToken.toAuthorizationHeader(),
-            user = UserRepresentation(
-                id = element.utilisateurId.toString(),
-                username = element.utilisateurUsername,
-                firstName = element.utilisateurPrenom,
-                lastName = element.utilisateurNom,
-                email = element.utilisateurEmail,
-                enabled = element.utilisateurActif,
-                requiredActions = listOf(),
-            ),
-            userId = element.utilisateurId.toString(),
-        ).execute()
+        val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
 
-        if (!updateResponse.isSuccessful) {
-            throw RemocraResponseException(ErrorType.UTILISATEUR_MAJ_KEYCLOAK)
+        try {
+            val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
+
+            // Mise à jour l'utilisateur côté Keycloak
+            val updateResponse = keycloakApi.updateUser(
+                token,
+                user = UserRepresentation(
+                    id = element.utilisateurId.toString(),
+                    username = element.utilisateurUsername,
+                    firstName = element.utilisateurPrenom,
+                    lastName = element.utilisateurNom,
+                    email = element.utilisateurEmail,
+                    enabled = element.utilisateurActif,
+                    requiredActions = listOf(),
+                ),
+                userId = element.utilisateurId.toString(),
+            ).execute()
+
+            if (!updateResponse.isSuccessful) {
+                throw RemocraResponseException(ErrorType.UTILISATEUR_MAJ_KEYCLOAK)
+            }
+
+            // Mise à jour côté REMOcRA
+            utilisateurRepository.updateUtilisateur(
+                Utilisateur(
+                    utilisateurId = element.utilisateurId,
+                    utilisateurActif = element.utilisateurActif,
+                    utilisateurEmail = element.utilisateurEmail,
+                    utilisateurNom = element.utilisateurNom,
+                    utilisateurPrenom = element.utilisateurPrenom,
+                    utilisateurUsername = element.utilisateurUsername,
+                    utilisateurTelephone = element.utilisateurTelephone,
+                    utilisateurCanBeNotified = element.utilisateurCanBeNotified,
+                    utilisateurProfilUtilisateurId = element.utilisateurProfilUtilisateurId,
+                    utilisateurOrganismeId = element.utilisateurOrganismeId,
+                    utilisateurIsSuperAdmin = element.utilisateurIsSuperAdmin,
+                ),
+            )
+
+            return element
+        } finally {
+            keycloakToken.revokeToken(tokenResponse.accessToken, keycloakClient.clientId, keycloakClient.clientSecret).execute()
         }
-
-        // Mise à jour côté REMOcRA
-        utilisateurRepository.updateUtilisateur(
-            Utilisateur(
-                utilisateurId = element.utilisateurId,
-                utilisateurActif = element.utilisateurActif,
-                utilisateurEmail = element.utilisateurEmail,
-                utilisateurNom = element.utilisateurNom,
-                utilisateurPrenom = element.utilisateurPrenom,
-                utilisateurUsername = element.utilisateurUsername,
-                utilisateurTelephone = element.utilisateurTelephone,
-                utilisateurCanBeNotified = element.utilisateurCanBeNotified,
-                utilisateurProfilUtilisateurId = element.utilisateurProfilUtilisateurId,
-                utilisateurOrganismeId = element.utilisateurOrganismeId,
-                utilisateurIsSuperAdmin = element.utilisateurIsSuperAdmin,
-            ),
-        )
-
-        return element
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: UtilisateurData) {

@@ -1,7 +1,8 @@
 package remocra.usecase.utilisateur
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.exception.NoDataFoundException
+import remocra.auth.AuthModule
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.UtilisateurData
@@ -14,12 +15,17 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
+import remocra.keycloak.KeycloakToken
 import remocra.usecase.AbstractCUDUseCase
 
 class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperation.DELETE) {
-    @Inject private lateinit var keycloakApi: KeycloakApi
+    @Inject lateinit var keycloakToken: KeycloakToken
 
-    @Inject private lateinit var utilisateurRepository: UtilisateurRepository
+    @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
+
+    @Inject lateinit var keycloakApi: KeycloakApi
+
+    @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
@@ -41,20 +47,28 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
     }
 
     override fun execute(userInfo: UserInfo?, element: UtilisateurData): UtilisateurData {
-        // On supprime dans keycloak
-        val deleteResponse = keycloakApi.deleteUser(userInfo!!.accessToken.toAuthorizationHeader(), element.utilisateurId.toString())
-            .execute()
+        val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
 
-        if (!deleteResponse.isSuccessful) {
-            throw RemocraResponseException(ErrorType.UTILISATEUR_SUPPRESSION_KEYCLOAK)
-        }
+        try {
+            val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
 
-        when (utilisateurRepository.deleteUtilisateur(element.utilisateurId)) {
-            1 -> Result.Success()
-            0 -> throw NoDataFoundException("L'utilisateur n'existe pas")
-            else -> throw RuntimeException("Erreur lors de la suppression de l'utilisateur")
+            // On supprime dans keycloak
+            val deleteResponse = keycloakApi.deleteUser(token, element.utilisateurId.toString())
+                .execute()
+
+            if (!deleteResponse.isSuccessful) {
+                throw RemocraResponseException(ErrorType.UTILISATEUR_SUPPRESSION_KEYCLOAK)
+            }
+
+            when (utilisateurRepository.deleteUtilisateur(element.utilisateurId)) {
+                1 -> Result.Success()
+                0 -> throw NoDataFoundException("L'utilisateur n'existe pas")
+                else -> throw RuntimeException("Erreur lors de la suppression de l'utilisateur")
+            }
+            return element
+        } finally {
+            keycloakToken.revokeToken(tokenResponse.accessToken, keycloakClient.clientId, keycloakClient.clientSecret).execute()
         }
-        return element
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: UtilisateurData) {
