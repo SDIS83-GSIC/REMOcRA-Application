@@ -1,4 +1,5 @@
 import { Button } from "react-bootstrap";
+import classNames from "classnames";
 import { IconDelete } from "../Icon/Icon.tsx";
 
 const DeleteButton = ({
@@ -10,7 +11,7 @@ const DeleteButton = ({
   return (
     <Button
       variant={"link"}
-      className={className}
+      className={classNames(className, "text-decoration-none")}
       disabled={disabled}
       onClick={onClick}
     >
