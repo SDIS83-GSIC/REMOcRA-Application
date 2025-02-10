@@ -60,6 +60,9 @@ const MapPermis = () => {
     showCreatePermis,
     handleClosePermis,
     pointPermis,
+    featureState,
+    showUpdatePermis,
+    handleCloseUpdatePermis,
   } = useToolbarPermisContext({
     map,
     workingLayer,
@@ -93,6 +96,9 @@ const MapPermis = () => {
               showCreatePermis={showCreatePermis}
               handleClosePermis={handleClosePermis}
               pointPermis={pointPermis}
+              featureState={featureState}
+              showUpdatePermis={showUpdatePermis}
+              handleCloseUpdatePermis={handleCloseUpdatePermis}
               toggleTool={toggleTool}
               activeTool={activeTool}
             />

@@ -1,14 +1,16 @@
 import { Map } from "ol";
 import { WKT } from "ol/format";
 import { Point } from "ol/geom";
-import { Draw } from "ol/interaction";
+import { Draw, Modify } from "ol/interaction";
+import { ModifyEvent } from "ol/interaction/Modify";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { forwardRef, useMemo, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import CreatePermis from "../../../pages/Permis/CreatePermis.tsx";
-import { IconCreate } from "../../Icon/Icon.tsx";
+import UpdatePermis from "../../../pages/Permis/UpdatePermis.tsx";
+import { IconCreate, IconMoveObjet } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
@@ -22,7 +24,11 @@ const defaultStyle = new Style({
     }),
   }),
 });
-export const useToolbarPermisContext = ({ map, workingLayer }) => {
+export const useToolbarPermisContext = ({
+  map,
+  workingLayer,
+  dataPermisLayer,
+}) => {
   const [featureStyle] = useState(defaultStyle);
   const { error: errorToast } = useToastContext();
   const [showCreatePermis, setShowPermis] = useState(false);
@@ -30,7 +36,12 @@ export const useToolbarPermisContext = ({ map, workingLayer }) => {
     setShowPermis(false);
     workingLayer.getSource().refresh();
   };
+  const [featureState, setFeatureState] = useState<any>(null);
+  const [showUpdatePermis, setShowUpdatePermis] = useState(false);
+  const handleCloseUpdatePermis = () => setShowUpdatePermis(false);
+
   const [pointPermis, setPointPermis] = useState<Point | null>(null);
+
   const tools = useMemo(() => {
     if (!map) {
       return {};
@@ -92,18 +103,72 @@ export const useToolbarPermisContext = ({ map, workingLayer }) => {
         map.removeInteraction(createPermis);
       }
     }
+
+    const movePermisCtrl = new Modify({
+      source: dataPermisLayer.getSource(),
+    });
+    movePermisCtrl.on("modifyend", async (event: ModifyEvent) => {
+      if (!event.features || event.features.getLength() !== 1) {
+        return;
+      }
+      (
+        await fetch(
+          url`/api/zone-integration/check`,
+          getFetchOptions({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              wkt: new WKT().writeFeature(event.features.getArray()[0]),
+              srid: map.getView().getProjection().getCode().split(":").pop(),
+            }),
+          }),
+        )
+      )
+        .text()
+        .then((text) => {
+          if (text === "true") {
+            setFeatureState(event.features.getArray()[0].getProperties());
+            setShowUpdatePermis(true);
+          } else {
+            dataPermisLayer.getSource().refresh();
+            errorToast(text);
+          }
+        })
+        .catch((reason) => {
+          dataPermisLayer.getSource().refresh();
+          errorToast(reason);
+        });
+    });
+    function toggleDeplacerPermis(active = false) {
+      const idx = map?.getInteractions().getArray().indexOf(movePermisCtrl);
+      if (active) {
+        if (idx === -1) {
+          map.addInteraction(movePermisCtrl);
+        }
+      } else {
+        map.removeInteraction(movePermisCtrl);
+      }
+    }
     const tools = {
       "create-permis": {
         action: toggleCreatePermis,
       },
+      "deplacer-permis": {
+        action: toggleDeplacerPermis,
+      },
     };
     return tools;
-  }, [map, featureStyle, workingLayer, errorToast]);
+  }, [map, featureStyle, workingLayer, errorToast, dataPermisLayer]);
   return {
     tools,
     showCreatePermis,
     handleClosePermis,
+    showUpdatePermis,
+    handleCloseUpdatePermis,
     pointPermis,
+    featureState,
+    setShowUpdatePermis,
+    setFeatureState,
   };
 };
 const MapToolbarPermis = forwardRef(
@@ -112,6 +177,11 @@ const MapToolbarPermis = forwardRef(
     dataPermisLayer,
     showCreatePermis,
     handleClosePermis,
+
+    showUpdatePermis,
+    handleCloseUpdatePermis,
+    featureState,
+
     pointPermis,
     toggleTool: toggleToolCallback,
     activeTool,
@@ -120,6 +190,11 @@ const MapToolbarPermis = forwardRef(
     dataPermisLayer: any;
     showCreatePermis: boolean;
     handleClosePermis: () => void;
+
+    showUpdatePermis: boolean;
+    handleCloseUpdatePermis: () => void;
+    featureState: any;
+
     pointPermis: string[];
     toggleTool: (toolId: string) => void;
     activeTool: string;
@@ -131,6 +206,13 @@ const MapToolbarPermis = forwardRef(
             toolName={"create-permis"}
             toolIcon={<IconCreate />}
             toolLabelTooltip={"Créer un permis"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"deplacer-permis"}
+            toolIcon={<IconMoveObjet />}
+            toolLabelTooltip={"Déplacer un permis"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />
@@ -156,6 +238,24 @@ const MapToolbarPermis = forwardRef(
           dataPermisLayer={dataPermisLayer}
           disabled={false}
         />
+        <Volet
+          handleClose={() => {
+            handleCloseUpdatePermis();
+            dataPermisLayer.getSource().refresh();
+          }}
+          show={showUpdatePermis}
+          className="w-auto"
+        >
+          <UpdatePermis
+            permisId={featureState?.pointId}
+            coordonneeX={featureState?.geometry.getFlatCoordinates()[0]}
+            coordonneeY={featureState?.geometry.getFlatCoordinates()[1]}
+            srid={map.getView().getProjection().getCode().split(":")[1]}
+            onSubmit={() => {
+              handleCloseUpdatePermis();
+            }}
+          />
+        </Volet>
       </>
     );
   },

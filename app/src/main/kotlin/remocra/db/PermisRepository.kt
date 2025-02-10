@@ -54,6 +54,7 @@ class PermisRepository @Inject constructor(
             .set(PERMIS.COMPLEMENT, permis.permisComplement)
             .set(PERMIS.COMMUNE_ID, permis.permisCommuneId)
             .set(PERMIS.ANNEE, permis.permisAnnee)
+            .set(PERMIS.GEOMETRIE, permis.permisGeometrie)
             .where(PERMIS.ID.eq(permis.permisId))
             .execute()
 

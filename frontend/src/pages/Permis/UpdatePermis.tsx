@@ -31,13 +31,23 @@ const UpdatePermis = ({
     permisInstructeurUsername: string;
   } = data.data;
 
+  // Si mes coordonnées ont changé, c'est que j'ai déplacé mon permis
+  // Dans ce cas là, je réinitilise la commune, voie_id, voie_text, complement, parcelles
+  const contextDeplacement =
+    !resolvedData.permis.permisGeometrie.includes(coordonneeX) &&
+    !resolvedData.permis.permisGeometrie.includes(coordonneeY);
+
   const pageTitle = resolvedData.permis.permisLibelle
     ? `Modification du permis ${resolvedData.permis.permisLibelle}`
     : "Modification d'un permis";
 
   return (
     <Container>
-      <PageTitle icon={<IconPermis />} title={pageTitle} />
+      <PageTitle
+        icon={<IconPermis />}
+        title={pageTitle}
+        displayReturnButton={false}
+      />
       <MyFormik
         initialValues={getInitialValues({
           ...resolvedData.permis,
@@ -48,10 +58,22 @@ const UpdatePermis = ({
           permisDatePermis: resolvedData.permis.permisDatePermis
             ? formatForDateInput(resolvedData.permis.permisDatePermis)
             : null,
-          permisCadastreParcelle: resolvedData.permisCadastreParcelle,
-          voieSaisieText:
-            resolvedData.permis.permisVoieText !== null ||
-            resolvedData.permis.permisVoieText.trim() !== "",
+          permisCadastreParcelle: contextDeplacement
+            ? []
+            : resolvedData.permisCadastreParcelle,
+          voieSaisieText: contextDeplacement
+            ? false
+            : resolvedData.permis.permisVoieText !== null ||
+              resolvedData.permis.permisVoieText.trim() !== "",
+          permisVoieId: contextDeplacement
+            ? null
+            : resolvedData.permis.permisVoieId,
+          permisVoieText: contextDeplacement
+            ? null
+            : resolvedData.permis.permisVoieText,
+          permisComplement: contextDeplacement
+            ? null
+            : resolvedData.permis.permisComplement,
           permisLastUpdateDate: formatDateHeure(
             new Date(resolvedData.permisLastUpdateDate),
           ),
