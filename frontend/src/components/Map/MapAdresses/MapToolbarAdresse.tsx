@@ -26,6 +26,7 @@ import { AdresseElementEntity } from "../../../Entities/AdresseElementEntity.tsx
 import { URLS } from "../../../routes.tsx";
 import MyFormik from "../../Form/MyFormik.tsx";
 import CreateButton from "../../Button/CreateButton.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -308,17 +309,30 @@ const MapToolbarAdresse = forwardRef(
             <ToolbarButton
               toolName={"select-draw"}
               toolIcon={<IconSelect />}
-              toolLabelTooltip={"Sélectionner des éléments"}
+              toolLabelTooltip={
+                "Sélectionner des éléments (non validés uniquement)"
+              }
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
             />
-            <Button
-              variant={"outline-danger"}
-              onClick={supprimerFeature}
-              disabled={selectedFeatures.length === 0}
+            <TooltipCustom
+              tooltipId="suppressionAdresse"
+              tooltipText={
+                selectedFeatures.length === 0
+                  ? "Aucun élément sélectionné"
+                  : "Supprimer le(s) " +
+                    selectedFeatures.length +
+                    "élément(s) sélectionné(s)"
+              }
             >
-              <IconDelete />
-            </Button>
+              <Button
+                variant={"outline-danger"}
+                onClick={supprimerFeature}
+                disabled={selectedFeatures.length === 0}
+              >
+                <IconDelete />
+              </Button>
+            </TooltipCustom>
           </Col>
           {typeWithSousType?.map((e, key) => {
             return (
