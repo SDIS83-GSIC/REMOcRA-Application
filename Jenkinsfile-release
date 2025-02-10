@@ -72,7 +72,7 @@ pipeline {
     stage('Build docker remocra') {
       steps {
         dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3:${REMOCRA_VERSION}",
-          dockerfile: 'docker/Dockerfile') { imageId ->
+          dockerfile: 'docker/Dockerfile', buildArgs: [ REMOCRA_VERSION: params.REMOCRA_VERSION ]) { imageId ->
                dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
              }
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",

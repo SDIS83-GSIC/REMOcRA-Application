@@ -1,5 +1,7 @@
 FROM docker-registry.priv.atolcd.com/java:21-jre
 
+ARG REMOCRA_VERSION=DEV
+
 # Crée un utilisateur applicatif et son groupe dédié
 RUN groupadd --system --non-unique --gid 2000 remocra \
  && useradd --no-log-init --system --no-create-home --home /opt/remocra --non-unique --uid 2000 --gid remocra remocra
@@ -16,10 +18,15 @@ COPY build/docker/classes/ classes/
 # 4. Frontend
 COPY frontend/build/parceljs/ www/
 
+# Le fichier est lu par remocra.app.AppSettings au lancement de l'application
+COPY <<EOF classes/REMOCRA_VERSION
+${REMOCRA_VERSION}
+EOF
+
 # Documente le port exposé par l'application
 EXPOSE 8881
 # Documente les répertoires de données (notamment accédés en écriture)
-# VOLUME /srv/remocra/
+# VOLUME /var/lib/remocra/
 
 # Quelques variables d'environnement pour permettre une certaine configurabilité au runtime
 ENV GC_OPTS="-XX:+DisableExplicitGC"

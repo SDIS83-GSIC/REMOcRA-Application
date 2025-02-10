@@ -39,7 +39,6 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                             projection = it.getString("projection"),
                         )
                     },
-                    version = config.getString("version"),
                     nexsis = Nexsis(
                         mock = config.getBoolean("nexsis.mock"),
                         codeStructure = config.getStringOrNull("nexsis.codeStructure"),

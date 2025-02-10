@@ -3,7 +3,10 @@ package remocra.app
 import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
 
-data class AppSettings(val environment: Environment, val codeSdis: CodeSdis, val epsg: Epsg, val version: String, val nexsis: Nexsis) {
+data class AppSettings(val environment: Environment, val codeSdis: CodeSdis, val epsg: Epsg, val nexsis: Nexsis) {
+    // Le fichier est créé dans le Dockerfile, il n'existe pas en dév
+    val version = javaClass.getResource("/REMOCRA_VERSION")?.readText()?.trim() ?: "DEV"
+
     val srid: Int
         get() = epsg.name.split(":")[1].toInt()
 }
