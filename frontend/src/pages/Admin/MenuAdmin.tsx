@@ -65,6 +65,14 @@ const MenuAdmin = () => {
                 Import des ressources
               </CustomLinkButton>
             </Nav.Item>
+            <Nav.Item>
+              <CustomLinkButton
+                className="text-underline text-start"
+                href={URLS.LIST_ANOMALIE}
+              >
+                Anomalies
+              </CustomLinkButton>
+            </Nav.Item>
           </Nav>
         </Col>
 

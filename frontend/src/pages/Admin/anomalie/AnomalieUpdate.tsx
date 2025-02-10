@@ -31,10 +31,10 @@ const AnomalieUpdate = () => {
         validationSchema={validationSchema}
         submitUrl={`/api/anomalie/update/${anomalieId}`}
         isPost={false}
-        redirectUrl={URLS.ANOMALIE}
+        redirectUrl={URLS.LIST_ANOMALIE}
         onSubmit={() => true}
       >
-        <AnomalieForm returnLink={URLS.ANOMALIE} />
+        <AnomalieForm returnLink={URLS.LIST_ANOMALIE} />
       </MyFormik>
     </Container>
   );

@@ -363,7 +363,7 @@ export const URLS = {
   UPDATE_DOCUMENT_HABILITABLE: (documentHabilitableId: string) =>
     url`/admin/document-habilitable/update/` + documentHabilitableId,
 
-  ANOMALIE: url`/admin/anomalie`,
+  LIST_ANOMALIE: url`/admin/anomalie`,
   ANOMALIE_CREATE: url`/admin/anomalie/create`,
   ANOMALIE_UPDATE: (anomalieId) => url`/admin/anomalie/${anomalieId}`,
 
