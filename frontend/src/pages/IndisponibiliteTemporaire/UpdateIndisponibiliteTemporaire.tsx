@@ -25,7 +25,7 @@ const UpdateIndisponibiliteTemporaire = () => {
       redirectUrl={URLS.LIST_INDISPONIBILITE_TEMPORAIRE}
     >
       <IndisponibiliteTemporaireForm
-        title={"Modifier indisponibilité temporaire"}
+        title={"Modifier une indisponibilité temporaire"}
       />
     </MyFormik>
   );
