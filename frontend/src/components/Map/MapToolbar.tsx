@@ -122,6 +122,7 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       const sketch = evt.feature;
       let tooltipCoord = evt.coordinate;
       listener = sketch.getGeometry().on("change", function (evt) {
+        createMeasureTooltip();
         const geom = evt.target;
         let output;
         if (geom instanceof Polygon) {
@@ -143,7 +144,6 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       // unset sketch
       // unset tooltip so that a new one can be created
       measureTooltipElement = null;
-      createMeasureTooltip();
       unByKey(listener);
     };
 
@@ -178,7 +178,6 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       const idx = map.getInteractions().getArray().indexOf(ctrl);
       if (active) {
         if (idx === -1) {
-          createMeasureTooltip();
           map.addInteraction(ctrl);
         }
       } else {
