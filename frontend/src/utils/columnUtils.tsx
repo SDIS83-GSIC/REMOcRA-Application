@@ -212,11 +212,30 @@ function getColumnPeiByStringArray(
           },
         });
         break;
+      case COLUMN_PEI.PEI_NEXT_CTP:
+        column.push({
+          Header: "Date prochain CTP",
+          accessor: "peiNextCtp",
+          sortField: "peiNextCtp",
+          Cell: (value) => {
+            return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
+          },
+        });
+        break;
       case COLUMN_PEI.TOURNEE_LIBELLE:
         column.push({
           Header: "Tournée",
           accessor: "tourneeLibelle",
           Filter: <FilterInput type="text" name="tourneeLibelle" />,
+        });
+        break;
+
+      case COLUMN_PEI.PEI_ADRESSE:
+        column.push({
+          Header: "Adresse",
+          accessor: "adresse",
+          sortField: "adresse",
+          Filter: <FilterInput type="text" name="adresse" />,
         });
         break;
       default:

@@ -5,7 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record14
+import org.jooq.Record21
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -42,6 +42,8 @@ import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.AdresseDecorator
+import remocra.utils.AdresseForDecorator
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
@@ -111,6 +113,7 @@ class PeiRepository
         )
             .fetchInto()
     }
+
     fun countAllPeiWithFilterByMessageAlerte(filterBy: Filter?, listePeiId: Set<UUID>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
         filterBy?.listePeiId = listePeiId
         return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.PEI_LONGUE_INDISPO)
@@ -132,7 +135,44 @@ class PeiRepository
     }
 
     fun getPeiWithFilter(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> =
-        getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.LISTE_PEI, isSuperAdmin).fetchInto()
+        getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.LISTE_PEI, isSuperAdmin)
+            .fetch().map { record ->
+                PeiForTableau(
+                    peiId = record.component1()!!,
+                    peiNumeroComplet = record.component2()!!,
+                    peiNumeroInterne = record.component3()!!,
+                    peiTypePei = record.component4()!!,
+                    peiDisponibiliteTerrestre = record.component5(),
+                    penaDisponibiliteHbe = record.component6(),
+                    natureLibelle = record.component7()!!,
+                    adresse = AdresseDecorator().decorateAdresse(
+                        AdresseForDecorator(
+                            enFace = record.component8(),
+                            numeroVoie = record.component9(),
+                            suffixeVoie = record.component10(),
+                            voie = null,
+                            //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
+                            voieTexte = if (record.component11() != null) record.component11() else record.component12(),
+                            complementAdresse = record.component13(),
+                        ),
+                    ),
+                    communeLibelle = record.component14()!!,
+                    natureDeciLibelle = record.component15()!!,
+                    autoriteDeci = record.component16()!!,
+                    servicePublicDeci = record.component17()!!,
+                    listeAnomalie = record.component18()!!,
+                    tourneeLibelle = record.component19()!!,
+                    peiNextRecop = record.component20(),
+                    peiNextCtp = record.component21(),
+                )
+            }.filter {
+                // On filtre l'adresse après la décoration pour permettre la recherche naturelle sur la chaîne complète
+                if (param.filterBy?.adresse != null) {
+                    it.adresse?.contains(param.filterBy.adresse!!, true) == true
+                } else {
+                    true
+                }
+            }
 
     fun countAllPeiWithFilter(filterBy: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int =
         dsl.selectDistinct(PEI.ID)
@@ -217,7 +257,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record14<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?>> =
+    ): SelectForUpdateStep<Record21<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, Boolean?, String?, String?, String?, String?, String?, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?, ZonedDateTime?>> =
         dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -226,6 +266,8 @@ class PeiRepository
             PEI.DISPONIBILITE_TERRESTRE,
             PENA.DISPONIBILITE_HBE,
             NATURE.LIBELLE,
+            // On projette tous les champs composant l'adresse
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
             COMMUNE.LIBELLE,
             NATURE_DECI.LIBELLE,
             autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
@@ -254,6 +296,7 @@ class PeiRepository
                 }?.joinToString()
             }.`as`("tourneeLibelle"),
             V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+            V_PEI_VISITE_DATE.PEI_NEXT_CTP,
         )
             .from(PEI)
             .join(COMMUNE)
@@ -270,6 +313,7 @@ class PeiRepository
             .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             /*
             Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
             de cette jointure
@@ -313,11 +357,13 @@ class PeiRepository
                 PEI.DISPONIBILITE_TERRESTRE,
                 PENA.DISPONIBILITE_HBE,
                 NATURE.LIBELLE,
+                PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, VOIE.LIBELLE, PEI.VOIE_TEXTE, PEI.COMPLEMENT_ADRESSE,
                 COMMUNE.LIBELLE,
                 NATURE_DECI.LIBELLE,
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+                V_PEI_VISITE_DATE.PEI_NEXT_CTP,
             )
             .orderBy(
                 param.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(
@@ -337,11 +383,13 @@ class PeiRepository
         val penaDisponibiliteHbe: Disponibilite?,
         val natureLibelle: String,
         val communeLibelle: String,
+        val adresse: String?,
         val natureDeciLibelle: String,
         val autoriteDeci: String?,
         val servicePublicDeci: String?,
         val listeAnomalie: List<UUID>?,
         val peiNextRecop: ZonedDateTime?,
+        val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
     )
 
@@ -361,6 +409,7 @@ class PeiRepository
         var idTournee: UUID?,
         val tourneeLibelle: String?,
         var listePeiId: Set<UUID>?,
+        var adresse: String?,
     ) {
 
         fun toCondition(): Condition =
