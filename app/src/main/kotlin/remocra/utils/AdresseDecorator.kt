@@ -8,18 +8,26 @@ class AdresseDecorator {
      * Retourne une adresse décorée en fonction des différents attributs élémentaires fournis.
      */
     fun decorateAdresse(adresse: AdresseForDecorator): String {
-        var adresseString = ""
+        val chunks: MutableList<String?> = mutableListOf()
         if (adresse.enFace == true) {
-            adresseString += "Face à "
+            chunks.add("Face à")
         }
-        adresseString += "${adresse.numeroVoie} ${adresse.suffixeVoie}".trim()
-        adresseString += if (adresse.voie != null) {
-            " ${adresse.voie.voieLibelle}"
-        } else {
-            " ${adresse.voieTexte}"
-        }
-        adresse.complementAdresse?.let { adresseString += " $it" }
-        return adresseString.trim()
+
+        chunks.add(adresse.numeroVoie)
+        chunks.add(adresse.suffixeVoie)
+
+        chunks.add(
+            if (adresse.voie != null) {
+                adresse.voie.voieLibelle
+            } else {
+                adresse.voieTexte
+            },
+        )
+        chunks.add(
+            adresse.complementAdresse,
+        )
+
+        return chunks.filter { !it.isNullOrEmpty() }.joinToString(separator = " ").trim()
     }
 }
 
