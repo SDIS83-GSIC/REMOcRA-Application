@@ -44,6 +44,7 @@ import remocra.web.profildroit.ProfilDroitModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
+import remocra.web.rcci.RcciModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.tracabilite.TracabiliteModule
 import remocra.web.typeorganisme.TypeOrganismeModule
@@ -75,6 +76,7 @@ object WebModule : RemocraModule() {
         install(PeiPrescritModule)
         install(IndisponibiliteTemporaireModule)
         install(OldebModule)
+        install(RcciModule)
         install(ModuleModule)
         install(ParametreModule)
         install(FicheResumeModule)
