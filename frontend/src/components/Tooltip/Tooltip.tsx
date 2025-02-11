@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { Placement } from "react-bootstrap/types";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
 const TooltipCustom = ({
@@ -21,7 +22,7 @@ const TooltipCustom = ({
         }
         placement={placement}
       >
-        <a> {children}</a>
+        {children}
       </OverlayTrigger>
     </div>
   );
@@ -31,8 +32,8 @@ type TooltipType = {
   tooltipText: string | ReactNode;
   tooltipId: string;
   tooltipHeader?: string;
-  placement?: string;
-  children: ReactNode;
+  placement?: Placement;
+  children: React.ReactElement | ((props: any) => React.ReactNode);
 };
 
 export default TooltipCustom;

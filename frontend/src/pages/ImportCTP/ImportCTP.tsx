@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { FileInput, FormContainer } from "../../components/Form/Form.tsx";
@@ -22,6 +22,7 @@ export const validationSchema = object({});
 
 const ImportCTP = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   return (
     <Container>
       <PageTitle
@@ -38,7 +39,10 @@ const ImportCTP = () => {
         prepareVariables={(values) => prepareVariables(values)}
         onSubmit={(result) =>
           navigate(URLS.RESULTAT_VERIF_IMPORT_CTP, {
-            state: { result: result },
+            state: {
+              ...location.state,
+              result: result,
+            },
           })
         }
       >

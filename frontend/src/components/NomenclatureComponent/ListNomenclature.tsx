@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { Container } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
@@ -41,14 +40,11 @@ const ListNomenclature = ({
   hasProtectedValue?: boolean;
   listeFk?: IdCodeLibelleType[];
   libelleFk?: string;
-  lienPageAjout: any;
-  lienPageUpdate: any;
+  lienPageAjout: string;
+  lienPageUpdate: (...args: string[]) => string;
   addButtonTitle: string;
 }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
-
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const listeButton: ButtonType[] = [];
 
@@ -57,16 +53,12 @@ const ListNomenclature = ({
       row: (row) => {
         return row;
       },
-      href: lienPageUpdate,
-      onClick: (nomenclatureId) =>
-        navigate(lienPageUpdate(nomenclatureId), {
-          state: {
-            ...location.state,
-            hasProtectedValue: hasProtectedValue,
-            listeFk: listeFk,
-            libelleFk: libelleFk,
-          },
-        }),
+      state: {
+        hasProtectedValue: hasProtectedValue,
+        listeFk: listeFk,
+        libelleFk: libelleFk,
+      },
+      route: lienPageUpdate,
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -119,16 +111,11 @@ const ListNomenclature = ({
           <CreateButton
             title={addButtonTitle}
             href={lienPageAjout}
-            onClick={() =>
-              navigate(lienPageAjout, {
-                state: {
-                  ...location.state,
-                  hasProtectedValue: hasProtectedValue,
-                  listeFk: listeFk,
-                  libelleFk: libelleFk,
-                },
-              })
-            }
+            state={{
+              hasProtectedValue: hasProtectedValue,
+              listeFk: listeFk,
+              libelleFk: libelleFk,
+            }}
           />
         }
       />

@@ -54,7 +54,7 @@ const ListSite = () => {
       row: (row) => {
         return row;
       },
-      href: (siteId) => URLS.UPDATE_SITE(siteId),
+      route: (siteId) => URLS.UPDATE_SITE(siteId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -63,7 +63,7 @@ const ListSite = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/site/delete/`,
+      pathname: url`/api/site/delete/`,
     });
   }
 

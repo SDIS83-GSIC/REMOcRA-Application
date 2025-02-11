@@ -37,7 +37,7 @@ const ListDocumentHabilitable = () => {
       row: (row) => {
         return row;
       },
-      href: (documentHabilitableId) =>
+      route: (documentHabilitableId) =>
         URLS.UPDATE_DOCUMENT_HABILITABLE(documentHabilitableId),
       type: TYPE_BUTTON.UPDATE,
     });
@@ -47,7 +47,7 @@ const ListDocumentHabilitable = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/document-habilitable/delete/`,
+      pathname: url`/api/document-habilitable/delete/`,
     });
   }
 
@@ -56,7 +56,7 @@ const ListDocumentHabilitable = () => {
       row: (row) => {
         return row;
       },
-      href: (documentHabilitableId) =>
+      route: (documentHabilitableId) =>
         url`/api/document-habilitable/telecharger/` + documentHabilitableId,
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconExport />,

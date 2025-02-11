@@ -60,7 +60,7 @@ const OldebProprietaireList = () => {
                 row: (row) => {
                   return row;
                 },
-                href: (oldebProprietaireId) =>
+                route: (oldebProprietaireId) =>
                   URLS.OLDEB_PROPRIETAIRE_UPDATE(oldebProprietaireId),
                 type: TYPE_BUTTON.UPDATE,
                 icon: <IconEdit />,
@@ -69,7 +69,7 @@ const OldebProprietaireList = () => {
                 row: (row) => {
                   return row;
                 },
-                path: url`/api/proprietaire/`,
+                pathname: url`/api/proprietaire/`,
                 type: TYPE_BUTTON.DELETE,
                 icon: <IconDelete />,
               },

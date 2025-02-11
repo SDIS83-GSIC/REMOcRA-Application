@@ -14,19 +14,22 @@ import OldebForm, {
 
 const OldebCreate = () => {
   // En cas de création via la carte, on récupère les coordonnées passées dans le state
-  const { state } = useLocation();
-  const { epsg, srid } = useAppContext();
+  const { state = {} } = useLocation();
+  const { epsg: contextEpsg, srid: contextSrid } = useAppContext();
   const initialValues = getInitialValues();
-  if (state && state.wkt && state.epsg) {
+
+  const { wkt: wkt = null, epsg: epsg = null, ...rest } = state;
+
+  if (wkt && epsg) {
     // On récupère le WKT et on s'assure de repecter la projection du serveur
     const wkt = new WKT();
     const geometry = wkt.readFeature(state.wkt, {
-      dataProjection: state.epsg, // Projection du WKT depuis la carte
-      featureProjection: epsg.name, // ESPG fourni par le serveur
+      dataProjection: epsg, // Projection du WKT depuis la carte
+      featureProjection: contextEpsg.name, // ESPG fourni par le serveur
     });
-    initialValues.oldeb.oldebGeometrie = `SRID=${srid};${wkt.writeFeature(geometry)}`;
+    initialValues.oldeb.oldebGeometrie = `SRID=${contextSrid};${wkt.writeFeature(geometry)}`;
     // On vide le state
-    window.history.replaceState(null, "");
+    window.history.replaceState(rest, "");
   }
 
   return (

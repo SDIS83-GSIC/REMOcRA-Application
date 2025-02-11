@@ -125,7 +125,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       disable: (v) => {
         return isDisabled(v);
       },
-      href: (idTournee) => URLS.UPDATE_TOURNEE(idTournee),
+      route: (idTournee) => URLS.UPDATE_TOURNEE(idTournee),
       textDisable: textDisable,
     });
 
@@ -138,14 +138,14 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/tournee/`,
+      pathname: url`/api/tournee/`,
     });
 
     listeButton.push({
       row: (row) => {
         return row;
       },
-      href: (idTournee) => URLS.TOURNEE_PEI(idTournee),
+      route: (idTournee) => URLS.TOURNEE_PEI(idTournee),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconSortList />,
       textEnable: "Gérer les PEI et leur ordre dans une tournée",
@@ -178,7 +178,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       row: (row) => {
         return row;
       },
-      href: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
+      route: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconTournee />,
       textEnable: "Saisir toutes les visites de la tournée",
@@ -198,7 +198,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       },
       type: TYPE_BUTTON.CONFIRM,
       textEnable: "Retirer la réservation",
-      path: url`/api/tournee/desaffecter/`,
+      pathname: url`/api/tournee/desaffecter/`,
       icon: <IconDesaffecter />,
       classEnable: "danger",
       hide: (v: any) => {
@@ -221,7 +221,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           : "Impossible de modifier une tournée réservée";
       },
       textEnable: "Forcer l'avancement de la tournée à 0",
-      path: url`/api/tournee/avancement-force-0/`,
+      pathname: url`/api/tournee/avancement-force-0/`,
       icon: <IconZeroPourcent />,
       disable: (v) => {
         return v.original.tourneePourcentageAvancement === 0 || isDisabled(v);
@@ -241,7 +241,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           : "Impossible de modifier une tournée réservée";
       },
       textEnable: "Forcer l'avancement de la tournée à 100",
-      path: url`/api/tournee/avancement-force-100/`,
+      pathname: url`/api/tournee/avancement-force-100/`,
       icon: <IconCentPourcent />,
       disable: (v) => {
         return v.original.tourneePourcentageAvancement === 100 || isDisabled(v);

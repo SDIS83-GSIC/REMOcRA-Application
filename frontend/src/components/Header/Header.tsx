@@ -17,7 +17,7 @@ const NavTo = ({ path, label, aLeDroit }: NavToProps) => {
   return (
     aLeDroit && (
       <Nav.Item>
-        <LinkButton href={path} classname="nav-link">
+        <LinkButton pathname={path} classname="nav-link">
           {label}
         </LinkButton>
       </Nav.Item>

@@ -60,7 +60,7 @@ const ProfilDroitList = () => {
                 row: (row) => {
                   return row;
                 },
-                href: (profilDroitId) =>
+                route: (profilDroitId) =>
                   URLS.PROFIL_DROIT_UPDATE(profilDroitId),
                 type: TYPE_BUTTON.UPDATE,
               },

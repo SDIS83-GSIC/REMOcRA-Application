@@ -10,7 +10,7 @@ import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
-import DeleteButtonWithModale from "../Button/DeleteButtonWithModale.tsx";
+import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
 import {
   IconClose,
   IconEdit,
@@ -95,7 +95,7 @@ const TooltipMapPei = ({
                   tooltipId={"tournees-carte"}
                 >
                   <CustomLinkButton
-                    href={URLS.VISITE(pointId)}
+                    pathname={URLS.VISITE(pointId)}
                     variant="warning"
                   >
                     <IconVisite />
@@ -325,7 +325,7 @@ const Tooltip = ({
                       >
                         <CustomLinkButton
                           variant="primary"
-                          href={href}
+                          pathname={href!}
                           onClick={onClickSee}
                         >
                           <IconSee />
@@ -342,7 +342,7 @@ const Tooltip = ({
                         <CustomLinkButton
                           variant="info"
                           className={"text-white"}
-                          href={hrefEdit!}
+                          pathname={hrefEdit!}
                         >
                           <IconEdit />
                         </CustomLinkButton>
@@ -355,7 +355,7 @@ const Tooltip = ({
                         tooltipText={labelDelete}
                         tooltipId={"supprimer-carte"}
                       >
-                        <DeleteButtonWithModale
+                        <DeleteButtonWithModal
                           path={deletePath}
                           disabled={!displayButtonDelete}
                           title={false}

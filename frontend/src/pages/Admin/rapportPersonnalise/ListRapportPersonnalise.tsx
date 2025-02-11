@@ -167,7 +167,7 @@ const ListRapportPersonnalise = () => {
                   row: (row) => {
                     return row;
                   },
-                  href: (rapportPersonnaliseId) =>
+                  route: (rapportPersonnaliseId) =>
                     URLS.UPDATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
                   type: TYPE_BUTTON.UPDATE,
                 },
@@ -176,13 +176,13 @@ const ListRapportPersonnalise = () => {
                     return row;
                   },
                   type: TYPE_BUTTON.DELETE,
-                  path: url`/api/rapport-personnalise/delete/`,
+                  pathname: url`/api/rapport-personnalise/delete/`,
                 },
                 {
                   row: (row) => {
                     return row;
                   },
-                  href: (rapportPersonnaliseId) =>
+                  route: (rapportPersonnaliseId) =>
                     URLS.DUPLICATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
                   type: TYPE_BUTTON.CUSTOM,
                   textEnable: "Dupliquer le rapport",
@@ -193,7 +193,7 @@ const ListRapportPersonnalise = () => {
                   row: (row) => {
                     return row;
                   },
-                  href: (rapportPersonnaliseId) =>
+                  route: (rapportPersonnaliseId) =>
                     url`/api/rapport-personnalise/export/` +
                     rapportPersonnaliseId,
                   type: TYPE_BUTTON.CUSTOM,

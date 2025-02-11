@@ -51,7 +51,7 @@ const ListZoneIntegration = () => {
       row: (row) => {
         return row;
       },
-      href: (zoneIntegrationId) =>
+      route: (zoneIntegrationId) =>
         URLS.UPDATE_ZONE_INTEGRATION(zoneIntegrationId),
       type: TYPE_BUTTON.UPDATE,
     });
@@ -61,7 +61,7 @@ const ListZoneIntegration = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/zone-integration/delete/`,
+      pathname: url`/api/zone-integration/delete/`,
     });
   }
 

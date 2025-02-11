@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { WKT } from "ol/format";
 import {
@@ -18,6 +18,7 @@ import SelectFilterFromUrl from "../../components/Filter/SelectFilterFromUrl.tsx
 
 const OldebSearch = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [radioValue, setRadioValue] = useState("oldeb");
   const [communeId, setCommuneId] = useState<string>(null);
   const [sectionId, setSectionId] = useState<string>(null);
@@ -106,7 +107,10 @@ const OldebSearch = () => {
                   );
                   const bbox = featurePei.getGeometry().getExtent();
                   navigate(URLS.OLDEB_LOCALISATION, {
-                    state: { bbox },
+                    state: {
+                      ...location.state,
+                      bbox,
+                    },
                   });
                 }
               }}

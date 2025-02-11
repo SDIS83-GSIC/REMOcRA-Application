@@ -28,29 +28,39 @@ const UpdateNomenclature = ({
   isFkRequired: boolean;
 }) => {
   const nomenclatureState = useGet(
-    url`/api/nomenclature/` + typeNomenclature + "/get/" + nomenclatureId,
+    url`/api/nomenclature/${typeNomenclature}/get/${nomenclatureId}`,
   );
 
-  const { state } = useLocation();
-  let initialValues: {
+  const location = useLocation();
+  const state = location.state ?? {};
+  const {
+    hasProtectedValue: hasProtectedValue = true,
+    listeFk: listeFk = null,
+    libelleFk: libelleFk = null,
+    ...rest
+  } = state;
+  const initialValues: {
     hasProtectedValue: boolean;
     listeFk: IdCodeLibelleType[] | null;
     libelleFk: string | null;
   } = {
-    hasProtectedValue: true,
-    listeFk: null,
-    libelleFk: null,
+    hasProtectedValue,
+    listeFk,
+    libelleFk,
   };
+
   if (state) {
-    initialValues = state;
-    window.history.replaceState({ from: state.from }, "");
+    window.history.replaceState(rest, "");
   }
 
   return (
     <Container>
       <PageTitle title={titrePage} icon={<IconEdit />} />
       <MyFormik
-        initialValues={getInitialValue(nomenclatureState.data)}
+        initialValues={getInitialValue({
+          ...initialValues,
+          ...nomenclatureState.data,
+        })}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
         submitUrl={

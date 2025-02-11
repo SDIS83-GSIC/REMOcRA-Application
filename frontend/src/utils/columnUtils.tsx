@@ -258,7 +258,7 @@ function getColumnPeiByStringArray(
         type: TYPE_BUTTON.SIMPLE_MODAL,
         icon: <IconSee />,
         textEnable: "Voir le résumé",
-        simpleModale: {
+        simpleModal: {
           content: (peiId: string) => <FicheResume peiId={peiId} />,
           header: (row) =>
             "Fiche résumée du PEI " + row.original.peiNumeroComplet,
@@ -271,7 +271,7 @@ function getColumnPeiByStringArray(
           return row;
         },
         type: TYPE_BUTTON.UPDATE,
-        href: (idPei) => URLS.UPDATE_PEI(idPei),
+        route: (idPei) => URLS.UPDATE_PEI(idPei),
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_D)) {
@@ -284,7 +284,7 @@ function getColumnPeiByStringArray(
           return row;
         },
         type: TYPE_BUTTON.DELETE,
-        path: url`/api/pei/delete/`,
+        pathname: url`/api/pei/delete/`,
       });
     }
     if (hasDroit(user, TYPE_DROIT.VISITE_R)) {
@@ -292,7 +292,7 @@ function getColumnPeiByStringArray(
         row: (row) => {
           return row;
         },
-        href: (idPei) => URLS.VISITE(idPei),
+        route: (idPei) => URLS.VISITE(idPei),
         type: TYPE_BUTTON.CUSTOM,
         icon: <IconVisite />,
         textEnable: "Gérer les visites",
@@ -304,7 +304,7 @@ function getColumnPeiByStringArray(
         row: (row) => {
           return row;
         },
-        href: (idPei) => URLS.UPDATE_PENA_ASPIRATION(idPei),
+        route: (idPei) => URLS.UPDATE_PENA_ASPIRATION(idPei),
         type: TYPE_BUTTON.CUSTOM,
         icon: <IconAireAspiration />,
         textEnable: "Gérer les aires d'aspirations",
@@ -517,7 +517,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         },
         textDisable:
           "L'indisponibilité temporaire est terminée ou contient des PEI en dehors de votre zone de compétence",
-        href: (indisponibiliteTemporaireId) =>
+        route: (indisponibiliteTemporaireId) =>
           URLS.UPDATE_INDISPONIBILITE_TEMPORAIRE(indisponibiliteTemporaireId),
       });
     }
@@ -537,7 +537,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         },
         textDisable:
           "L'indisponibilité temporaire est en cours ou contient des PEI en dehors de votre zone de compétence",
-        path: url`/api/indisponibilite-temporaire/delete/`,
+        pathname: url`/api/indisponibilite-temporaire/delete/`,
       });
 
       if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
@@ -557,7 +557,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           textDisable:
             "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
           textEnable: "Clore l'indisponibilité temporaire",
-          path: url`/api/indisponibilite-temporaire/clore/`,
+          pathname: url`/api/indisponibilite-temporaire/clore/`,
           icon: <IconCloseIndisponibiliteTemporaire />,
           classEnable: "warning",
         });

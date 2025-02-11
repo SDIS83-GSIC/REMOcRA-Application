@@ -70,14 +70,14 @@ const ListNature = () => {
         return row;
       },
       type: TYPE_BUTTON.UPDATE,
-      href: (data) => URLS.UPDATE_NATURE(data),
+      route: (data) => URLS.UPDATE_NATURE(data),
     });
     listeButton.push({
       row: (row) => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/nature/delete/`,
+      pathname: url`/api/nature/delete/`,
     });
   }
 

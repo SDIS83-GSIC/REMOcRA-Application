@@ -64,7 +64,7 @@ const LienProfilFonctionnaliteList = () => {
                 row: (row) => {
                   return row;
                 },
-                href: ({ profilOrganismeId, profilUtilisateurId }) =>
+                route: ({ profilOrganismeId, profilUtilisateurId }) =>
                   URLS.LIEN_PROFIL_FONCTIONNALITE_UPDATE({
                     profilOrganismeId,
                     profilUtilisateurId,

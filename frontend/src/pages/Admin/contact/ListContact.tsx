@@ -39,7 +39,7 @@ const ListContact = () => {
       row: (row) => {
         return row;
       },
-      href: (contactId) =>
+      route: (contactId) =>
         URLS.UPDATE_CONTACT(appartenanceId, contactId, appartenance),
       type: TYPE_BUTTON.UPDATE,
     });
@@ -49,7 +49,7 @@ const ListContact = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/contact/` + appartenanceId + `/delete/`,
+      pathname: url`/api/contact/${appartenanceId}/delete/`,
     });
   }
   return (

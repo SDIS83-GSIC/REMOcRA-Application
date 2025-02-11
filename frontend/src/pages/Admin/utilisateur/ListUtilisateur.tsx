@@ -38,7 +38,7 @@ const ListUtilisateur = () => {
       row: (row) => {
         return row;
       },
-      href: (utilisateurId) => URLS.UPDATE_UTILISATEUR(utilisateurId),
+      route: (utilisateurId) => URLS.UPDATE_UTILISATEUR(utilisateurId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -51,7 +51,7 @@ const ListUtilisateur = () => {
         return v.value === user.utilisateurId;
       },
       textDisable: "Impossible de supprimer votre propre compte.",
-      path: url`/api/utilisateur/delete/`,
+      pathname: url`/api/utilisateur/delete/`,
       textEnable:
         "Attention, si l'utilisateur vient d'un annuaire, le compte sera de nouveau présent lors de la synchronisation. Si vous souhaitez le supprimer, supprimez-le de l'annuaire, la synchronisation se chargera ensuite de la suppression dans REMOcRA",
     });

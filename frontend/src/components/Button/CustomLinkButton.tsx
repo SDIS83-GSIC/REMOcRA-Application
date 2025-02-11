@@ -6,8 +6,9 @@ import LinkButton from "./LinkButton.tsx";
 const CustomLinkButton = ({
   className,
   disabled = false,
-  href,
+  pathname,
   children,
+  state,
   variant = "link",
   onClick,
 }: CustomLinkButtonType) => {
@@ -16,7 +17,8 @@ const CustomLinkButton = ({
       variant={variant}
       classname={classNames("text-decoration-none", className)}
       disabled={disabled}
-      href={href}
+      pathname={pathname}
+      state={state}
       onClick={onClick}
     >
       {children}
@@ -28,8 +30,9 @@ type CustomLinkButtonType = {
   variant?: ButtonVariant;
   className?: string;
   disabled?: boolean;
-  href?: string;
-  children?: ReactNode;
+  pathname: string;
+  state?: object;
+  children: ReactNode;
   onClick?: (...args: any[]) => void;
 };
 

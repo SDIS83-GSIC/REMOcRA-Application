@@ -20,7 +20,7 @@ const SimpleModal = ({
   closeModal,
   header,
   content,
-}: SimpleModaleType) => {
+}: SimpleModalType) => {
   return (
     <Modal show={visible} onHide={closeModal} ref={ref} size="xl">
       <Modal.Header closeButton>
@@ -31,7 +31,7 @@ const SimpleModal = ({
   );
 };
 
-type SimpleModaleType = SimpleModalBodyType & {
+type SimpleModalType = SimpleModalBodyType & {
   header: ReactNode;
   ref: any;
   visible: boolean;

@@ -6,13 +6,15 @@ const CreateButton = ({
   href,
   onClick,
   disabled = false,
+  state,
 }: CreateButtonType) => {
   return (
     <LinkButton
-      href={href}
+      pathname={href}
       variant={"primary"}
       onClick={onClick}
       disabled={disabled}
+      state={state}
     >
       <IconCreate /> {title}
     </LinkButton>
@@ -23,6 +25,7 @@ type CreateButtonType = {
   title: string;
   href?: string;
   onClick?: (...args: any[]) => void;
+  state?: object;
   disabled?: boolean;
 };
 

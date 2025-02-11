@@ -42,7 +42,7 @@ const ListEtude = () => {
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconSee />,
       textEnable: "Ouvrir l'étude",
-      href: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
+      route: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
     });
   }
 
@@ -51,7 +51,7 @@ const ListEtude = () => {
       row: (row) => {
         return row;
       },
-      href: (etudeId) => URLS.UPDATE_ETUDE(etudeId),
+      route: (etudeId) => URLS.UPDATE_ETUDE(etudeId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -67,7 +67,7 @@ const ListEtude = () => {
       },
       textDisable: "Impossible de clore une étude qui n'est pas en cours",
       textEnable: "Clore l'étude",
-      path: url`/api/couverture-hydraulique/etude/clore/`,
+      pathname: url`/api/couverture-hydraulique/etude/clore/`,
       icon: <IconClose />,
       classEnable: "danger",
     });
@@ -76,7 +76,7 @@ const ListEtude = () => {
       row: (row) => {
         return row;
       },
-      href: (etudeId) => URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(etudeId),
+      route: (etudeId) => URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(etudeId),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconImport />,
       textEnable: "Importer des fichiers shapes pour l'étude",

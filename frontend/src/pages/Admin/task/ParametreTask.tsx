@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Nav, Row } from "react-bootstrap";
 import { TaskEntity } from "../../../Entities/TaskEntity.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.js";
-import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconOverview } from "../../../components/Icon/Icon.tsx";
 import TaskType from "../../../enums/TaskTypeEnum.tsx";
@@ -43,18 +42,22 @@ const ListeTask = () => {
       />
       <Row>
         <Col xs="5">
-          <div className="bg-light p-2 border rounded mx-2">
-            {Object.keys(TaskType).map((key) => (
-              <Row key={key}>
-                <CustomLinkButton
+          <Nav
+            className="flex-column bg-light p-2 border rounded mx-2"
+            variant="pills"
+          >
+            <Nav.Item>
+              {Object.keys(TaskType).map((key) => (
+                <Nav.Link
+                  eventKey={key}
                   key={key}
                   onClick={() => setCurrentTaskType(key)}
                 >
                   {TaskType[key].label}
-                </CustomLinkButton>
-              </Row>
-            ))}
-          </div>
+                </Nav.Link>
+              ))}
+            </Nav.Item>
+          </Nav>
         </Col>
         {currentTaskTypeState && (
           <Col className="bg-light p-2 border rounded mx-2">

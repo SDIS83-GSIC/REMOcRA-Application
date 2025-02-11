@@ -23,29 +23,36 @@ const CreateNomenclature = ({
   titrePage: string;
   isFkRequired: boolean;
 }) => {
-  const { state } = useLocation();
-  let initialValues: {
+  const location = useLocation();
+  const state = location.state ?? {};
+  const {
+    hasProtectedValue: hasProtectedValue = true,
+    listeFk: listeFk = null,
+    libelleFk: libelleFk = null,
+    ...rest
+  } = state;
+  const initialValues: {
     hasProtectedValue: boolean;
     listeFk: IdCodeLibelleType[] | null;
     libelleFk: string | null;
   } = {
-    hasProtectedValue: true,
-    listeFk: null,
-    libelleFk: null,
+    hasProtectedValue,
+    listeFk,
+    libelleFk,
   };
+
   if (state) {
-    initialValues = state;
-    window.history.replaceState({ from: state.from }, "");
+    window.history.replaceState(rest, "");
   }
 
   return (
     <Container>
       <PageTitle title={titrePage} icon={<IconCreate />} />
       <MyFormik
-        initialValues={getInitialValue()}
+        initialValues={getInitialValue(initialValues)}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/nomenclature/` + typeNomenclature + "/create/"}
+        submitUrl={`/api/nomenclature/${typeNomenclature}/create/`}
         isPost={true}
         redirectUrl={redirectLink}
         onSubmit={() => true}

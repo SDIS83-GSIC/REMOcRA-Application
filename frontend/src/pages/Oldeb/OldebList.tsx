@@ -102,7 +102,7 @@ const OldebList = () => {
                 row: (row) => {
                   return row;
                 },
-                href: (oldebId) => URLS.OLDEB_UPDATE(oldebId),
+                route: (oldebId) => URLS.OLDEB_UPDATE(oldebId),
                 type: TYPE_BUTTON.UPDATE,
                 icon: <IconEdit />,
               },
@@ -110,7 +110,7 @@ const OldebList = () => {
                 row: (row) => {
                   return row;
                 },
-                path: url`/api/oldeb/`,
+                pathname: url`/api/oldeb/`,
                 type: TYPE_BUTTON.DELETE,
                 icon: <IconDelete />,
               },

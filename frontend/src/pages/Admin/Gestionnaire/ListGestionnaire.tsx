@@ -37,7 +37,7 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      href: (gestionnaireId) => URLS.UPDATE_GESTIONNAIRE(gestionnaireId),
+      route: (gestionnaireId) => URLS.UPDATE_GESTIONNAIRE(gestionnaireId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -48,14 +48,14 @@ const ListGestionnaire = () => {
       textDisable: "Ce gestionnaire a des contacts.",
       disable: (row) => row.original.hasContact,
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/gestionnaire/delete/`,
+      pathname: url`/api/gestionnaire/delete/`,
     });
 
     listeButton.push({
       row: (row) => {
         return row;
       },
-      href: (gestionnaireId) =>
+      route: (gestionnaireId) =>
         URLS.ADD_CONTACT(gestionnaireId, "gestionnaire"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconAddContact />,
@@ -67,7 +67,7 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      href: (gestionnaireId) =>
+      route: (gestionnaireId) =>
         URLS.LIST_CONTACT(gestionnaireId, "gestionnaire"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconGererContact />,

@@ -9,16 +9,30 @@ import Pei, {
 
 const CreatePei = () => {
   // En cas de création via la carte, on récupère les coordonnées passées dans le state
-  const { state } = useLocation();
-  let initialValues;
+  const location = useLocation();
+  const state = location.state ?? {};
+  const {
+    coordonneeX: coordonneeX = null,
+    coordonneeY: coordonneeY = null,
+    srid: srid = null,
+    ...rest
+  } = state;
+  const initialValues = {
+    ...getInitialValues(),
+    ...{
+      coordonneeX,
+      coordonneeY,
+      srid,
+    },
+  };
+
   if (state) {
-    initialValues = state;
-    // On vide le state
-    window.history.replaceState({ from: state.from }, "");
+    window.history.replaceState(rest, "");
   }
+
   return (
     <MyFormik
-      initialValues={getInitialValues(initialValues)}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       isPost={true}
       isMultipartFormData={true}

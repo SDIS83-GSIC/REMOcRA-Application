@@ -22,9 +22,9 @@ const FicheResume = ({
   titre = "",
 }: {
   peiId: string;
-  titre: string;
+  titre?: string;
 }) => {
-  const elementFicheResumeState = useGet(url`/api/fiche-resume/` + peiId);
+  const elementFicheResumeState = useGet(url`/api/fiche-resume/${peiId}`);
 
   if (!elementFicheResumeState.isResolved) {
     return;

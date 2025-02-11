@@ -55,7 +55,7 @@ const ListModuleDocument = () => {
                   row: (row) => {
                     return row;
                   },
-                  href: (id) => url`/api/document/telecharger/` + id,
+                  route: (id) => url`/api/document/telecharger/` + id,
                   type: TYPE_BUTTON.CUSTOM,
                   icon: <IconExport />,
                   textEnable: "Télécharger le document",

@@ -37,7 +37,7 @@ const ListOrganisme = () => {
       row: (row) => {
         return row;
       },
-      href: (organismeId) => URLS.UPDATE_ORGANISME(organismeId),
+      route: (organismeId) => URLS.UPDATE_ORGANISME(organismeId),
       type: TYPE_BUTTON.UPDATE,
     });
 
@@ -45,7 +45,7 @@ const ListOrganisme = () => {
       row: (row) => {
         return row;
       },
-      href: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
+      route: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconAddContact />,
       textEnable: "Ajouter un contact",
@@ -56,7 +56,7 @@ const ListOrganisme = () => {
       row: (row) => {
         return row;
       },
-      href: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
+      route: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
       type: TYPE_BUTTON.CUSTOM,
       icon: <IconGererContact />,
       textEnable: "Afficher les contacts",

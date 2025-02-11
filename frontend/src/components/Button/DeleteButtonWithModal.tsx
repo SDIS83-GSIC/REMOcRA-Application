@@ -3,7 +3,7 @@ import { IconDelete } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 
-const DeleteButtonWithModale = ({
+const DeleteButtonWithModal = ({
   path,
   reload,
   title = true,
@@ -37,4 +37,4 @@ const DeleteButtonWithModale = ({
   );
 };
 
-export default DeleteButtonWithModale;
+export default DeleteButtonWithModal;

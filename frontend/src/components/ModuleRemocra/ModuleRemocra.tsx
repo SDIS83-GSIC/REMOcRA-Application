@@ -95,7 +95,7 @@ const ModuleDocumentCourrier = ({
       </Table>
       <CustomLinkButton
         variant="link"
-        href={URLS.LIST_MODULE_DOCUMENT_COURRIER(moduleType, moduleId)}
+        pathname={URLS.LIST_MODULE_DOCUMENT_COURRIER(moduleType, moduleId)}
       >
         Voir plus
       </CustomLinkButton>
@@ -110,7 +110,7 @@ const BuildLinks = ({ listeLink }: { listeLink: LinkType[] }) => {
         if (e.aLeDroit === true) {
           return (
             <div key={key}>
-              <CustomLinkButton className="text-underline" href={e.link}>
+              <CustomLinkButton className="text-underline" pathname={e.link}>
                 {e.label}
               </CustomLinkButton>
             </div>

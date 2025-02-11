@@ -112,7 +112,7 @@ const ListModuleCourrier = () => {
                   row: (row) => {
                     return row;
                   },
-                  href: (id) => url`/api/documents/telecharger/` + id,
+                  route: (id) => url`/api/documents/telecharger/` + id,
                   type: TYPE_BUTTON.CUSTOM,
                   icon: <IconExport />,
                   textEnable: "Télécharger le courrier",

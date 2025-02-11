@@ -5,7 +5,7 @@ import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
@@ -40,6 +40,7 @@ export const useToolbarPeiContext = ({
   map: Map;
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { visible, show, close, ref } = useModal();
   const { success: successToast, error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
@@ -118,6 +119,7 @@ export const useToolbarPeiContext = ({
           if (text === "true") {
             navigate(URLS.CREATE_PEI, {
               state: {
+                ...location.state,
                 coordonneeX: geometry.getFlatCoordinates()[0],
                 coordonneeY: geometry.getFlatCoordinates()[1],
                 srid: map.getView().getProjection().getCode().split(":").pop(),

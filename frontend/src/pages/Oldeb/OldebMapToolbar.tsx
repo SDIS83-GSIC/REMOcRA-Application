@@ -1,5 +1,5 @@
 import React, { forwardRef, Ref, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonGroup } from "react-bootstrap";
 import VectorLayer from "ol/layer/Vector";
 import { Stroke, Style } from "ol/style";
@@ -30,6 +30,7 @@ export const useToolbarOldebContext = ({
   dataOldebLayerRef: Ref<VectorLayer>;
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { success: successToast } = useToastContext();
   const { error: errorToast } = useToastContext();
 
@@ -61,6 +62,7 @@ export const useToolbarOldebContext = ({
           if (text === "true") {
             navigate(URLS.OLDEB_CREATE, {
               state: {
+                ...location.state,
                 wkt: new WKT().writeFeature(event.feature),
                 epsg: map.getView().getProjection().getCode(),
               },
