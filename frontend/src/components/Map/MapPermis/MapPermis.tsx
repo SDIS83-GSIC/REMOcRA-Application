@@ -1,5 +1,6 @@
 import { Circle, Fill, Stroke, Style } from "ol/style";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import SquelettePage from "../../../pages/SquelettePage.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import Header from "../../Header/Header.tsx";
@@ -13,6 +14,7 @@ import MapToolbarPermis, {
 } from "./MapToolbarPermis.tsx";
 
 const MapPermis = () => {
+  const { state } = useLocation();
   const mapElement = useRef<HTMLDivElement>();
 
   const {
@@ -57,6 +59,8 @@ const MapPermis = () => {
 
   const {
     tools: extraTools,
+    showSearchPermis,
+    handleCloseSearchPermis,
     showCreatePermis,
     handleClosePermis,
     pointPermis,
@@ -74,6 +78,13 @@ const MapPermis = () => {
     workingLayer: workingLayer,
     extraTools: extraTools,
   });
+
+  useEffect(() => {
+    if (state?.bbox && map) {
+      map?.getView().fit(state.bbox, { maxZoom: 20 });
+      window.history.replaceState({ from: state.from }, "");
+    }
+  }, [state, map]);
 
   return (
     <SquelettePage navbar={<Header />}>
@@ -93,6 +104,8 @@ const MapPermis = () => {
             <MapToolbarPermis
               map={map}
               dataPermisLayer={dataPermisLayer}
+              showSearchPermis={showSearchPermis}
+              handleCloseSearchPermis={handleCloseSearchPermis}
               showCreatePermis={showCreatePermis}
               handleClosePermis={handleClosePermis}
               pointPermis={pointPermis}

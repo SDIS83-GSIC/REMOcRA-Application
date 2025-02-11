@@ -189,4 +189,35 @@ class PermisEndpoint : AbstractEndpoint() {
         )
         return deletePermisUseCase.execute(securityContext.userInfo, permis).wrap()
     }
+
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.PERMIS_R])
+    fun getWithFilter(
+        @QueryParam("searchNom") searchNom: String?,
+        @QueryParam("searchCommuneId") searchCommuneId: UUID?,
+        @QueryParam("searchNumero") searchNumero: String?,
+        @QueryParam("searchSection") searchSection: String?,
+        @QueryParam("searchParcelle") searchParcelle: String?,
+        @QueryParam("searchAvisId") searchAvisId: UUID?,
+    ): Response =
+        Response.ok().entity(
+            permisRepository.getWithFilter(
+                PermisRepository.Filter(
+                    searchNom = searchNom,
+                    searchCommuneId = searchCommuneId,
+                    searchNumero = searchNumero,
+                    searchSection = searchSection,
+                    searchParcelle = searchParcelle,
+                    searchAvisId = searchAvisId,
+                ),
+            ),
+        ).build()
+
+    @GET
+    @Path("/get-libelle-permis-avis")
+    @RequireDroits([Droit.PERMIS_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getAvisForSelect(): Response = Response.ok(permisRepository.getAvis()).build()
 }

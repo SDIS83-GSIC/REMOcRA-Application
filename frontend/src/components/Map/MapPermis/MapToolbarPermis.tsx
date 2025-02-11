@@ -9,8 +9,9 @@ import { ButtonGroup } from "react-bootstrap";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import CreatePermis from "../../../pages/Permis/CreatePermis.tsx";
+import SearchPermis from "../../../pages/Permis/SearchPermis.tsx";
 import UpdatePermis from "../../../pages/Permis/UpdatePermis.tsx";
-import { IconCreate, IconMoveObjet } from "../../Icon/Icon.tsx";
+import { IconCreate, IconMoveObjet, IconSearch } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
@@ -31,6 +32,10 @@ export const useToolbarPermisContext = ({
 }) => {
   const [featureStyle] = useState(defaultStyle);
   const { error: errorToast } = useToastContext();
+
+  const [showSearchPermis, setShowSearchPermis] = useState(false);
+  const handleCloseSearchPermis = () => setShowSearchPermis(false);
+
   const [showCreatePermis, setShowPermis] = useState(false);
   const handleClosePermis = () => {
     setShowPermis(false);
@@ -149,7 +154,17 @@ export const useToolbarPermisContext = ({
         map.removeInteraction(movePermisCtrl);
       }
     }
+
+    function toggleSearchBarPermis(active = false) {
+      if (active) {
+        setShowSearchPermis(true);
+      }
+    }
+
     const tools = {
+      "search-permis": {
+        action: toggleSearchBarPermis,
+      },
       "create-permis": {
         action: toggleCreatePermis,
       },
@@ -161,6 +176,10 @@ export const useToolbarPermisContext = ({
   }, [map, featureStyle, workingLayer, errorToast, dataPermisLayer]);
   return {
     tools,
+
+    showSearchPermis,
+    handleCloseSearchPermis,
+
     showCreatePermis,
     handleClosePermis,
     showUpdatePermis,
@@ -175,6 +194,10 @@ const MapToolbarPermis = forwardRef(
   ({
     map,
     dataPermisLayer,
+
+    showSearchPermis,
+    handleCloseSearchPermis,
+
     showCreatePermis,
     handleClosePermis,
 
@@ -188,6 +211,10 @@ const MapToolbarPermis = forwardRef(
   }: {
     map?: Map;
     dataPermisLayer: any;
+
+    showSearchPermis: boolean;
+    handleCloseSearchPermis: () => void;
+
     showCreatePermis: boolean;
     handleClosePermis: () => void;
 
@@ -203,6 +230,13 @@ const MapToolbarPermis = forwardRef(
       <>
         <ButtonGroup>
           <ToolbarButton
+            toolName={"search-permis"}
+            toolIcon={<IconSearch />}
+            toolLabelTooltip={"Rechercher un permis"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
             toolName={"create-permis"}
             toolIcon={<IconCreate />}
             toolLabelTooltip={"Créer un permis"}
@@ -217,6 +251,15 @@ const MapToolbarPermis = forwardRef(
             activeTool={activeTool}
           />
         </ButtonGroup>
+        {/* Volet de Recherche */}
+        <Volet
+          handleClose={handleCloseSearchPermis}
+          show={showSearchPermis}
+          className="w-auto"
+        >
+          <SearchPermis />
+        </Volet>
+        {/* Volet de Création*/}
         <Volet
           handleClose={handleClosePermis}
           show={showCreatePermis}
@@ -232,12 +275,14 @@ const MapToolbarPermis = forwardRef(
             }}
           />
         </Volet>
+        {/* ToolTip d'Update et Delete */}
         <TooltipMapEditPermis
           map={map}
           disabledEditPermis={false}
           dataPermisLayer={dataPermisLayer}
           disabled={false}
         />
+        {/* Volet d'Update suite à un déplacement */}
         <Volet
           handleClose={() => {
             handleCloseUpdatePermis();

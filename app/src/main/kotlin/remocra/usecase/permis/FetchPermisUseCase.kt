@@ -41,7 +41,7 @@ class FetchPermisUseCase : AbstractUseCase() {
         return PermisFormData(
             communeData = communeData,
             listeVoie = voieRepository.getVoies(coordonneeX, coordonneeY, srid, toleranceVoie, listOf(communeData.id)),
-            listeAvis = permisRepository.getAvis(),
+            listeAvis = permisRepository.getAvisWithPprif(),
             listeInterservice = permisRepository.getInterservice(),
             listeServiceInstructeur = nomenclatureUseCase.getListIdLibelle(TypeDataCache.TYPE_ORGANISME),
             listeCadastreParcelle = cadastreRepository.getParcelleFromCoordsForCombo(coordonneeX, coordonneeY, srid, NB_PARCELLES_A_REMONTER),

@@ -1,14 +1,17 @@
 package remocra.db
 
 import jakarta.inject.Inject
+import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.max
-import org.jooq.impl.DSL.select
+import org.locationtech.jts.geom.Geometry
 import remocra.data.GlobalData
 import remocra.db.jooq.historique.tables.references.TRACABILITE
 import remocra.db.jooq.remocra.tables.pojos.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.pojos.Permis
+import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
+import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.L_PERMIS_CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.TYPE_PERMIS_AVIS
@@ -24,8 +27,14 @@ class PermisRepository @Inject constructor(
     fun getById(permisId: UUID): Permis =
         dsl.selectFrom(PERMIS).where(PERMIS.ID.eq(permisId)).fetchSingleInto()
 
-    fun getAvis(): Collection<GlobalData.IdCodeLibellePprifData> =
+    fun getAvisWithPprif(): Collection<GlobalData.IdCodeLibellePprifData> =
         dsl.select(TYPE_PERMIS_AVIS.ID.`as`("id"), TYPE_PERMIS_AVIS.CODE.`as`("code"), TYPE_PERMIS_AVIS.LIBELLE.`as`("libelle"), TYPE_PERMIS_AVIS.PPRIF.`as`("pprif"))
+            .from(TYPE_PERMIS_AVIS)
+            .where(TYPE_PERMIS_AVIS.ACTIF)
+            .fetchInto()
+
+    fun getAvis(): Collection<GlobalData.IdCodeLibelleData> =
+        dsl.select(TYPE_PERMIS_AVIS.ID.`as`("id"), TYPE_PERMIS_AVIS.CODE.`as`("code"), TYPE_PERMIS_AVIS.LIBELLE.`as`("libelle"))
             .from(TYPE_PERMIS_AVIS)
             .where(TYPE_PERMIS_AVIS.ACTIF)
             .fetchInto()
@@ -93,4 +102,46 @@ class PermisRepository @Inject constructor(
             .join(UTILISATEUR).on(PERMIS.INSTRUCTEUR_ID.eq(UTILISATEUR.ID))
             .where(PERMIS.ID.eq(permisId))
             .fetchSingleInto()
+
+    data class Filter(
+        val searchNom: String?,
+        val searchCommuneId: UUID?,
+        val searchNumero: String?,
+        val searchSection: String?,
+        val searchParcelle: String?,
+        val searchAvisId: UUID?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    searchNom?.let { DSL.and(PERMIS.LIBELLE.containsIgnoreCase(it)) },
+                    searchCommuneId?.let { DSL.and(PERMIS.COMMUNE_ID.eq(it)) },
+                    searchNumero?.let { DSL.and(PERMIS.NUMERO.containsIgnoreCase(it)) },
+                    searchSection?.let { DSL.and(CADASTRE_SECTION.NUMERO.containsIgnoreCase(it)) },
+                    searchParcelle?.let { DSL.and(CADASTRE_PARCELLE.NUMERO.containsIgnoreCase(it)) },
+                    searchAvisId?.let { DSL.and(PERMIS.TYPE_PERMIS_AVIS_ID.eq(it)) },
+                ),
+            )
+    }
+
+    fun getWithFilter(filter: Filter?): List<PermisToSearchResultCard> =
+        dsl.select(
+            PERMIS.ID,
+            PERMIS.LIBELLE,
+            PERMIS.NUMERO,
+            PERMIS.GEOMETRIE,
+        )
+            .from(PERMIS)
+            .leftJoin(L_PERMIS_CADASTRE_PARCELLE).on(PERMIS.ID.eq(L_PERMIS_CADASTRE_PARCELLE.PERMIS_ID))
+            .leftJoin(CADASTRE_PARCELLE).on(L_PERMIS_CADASTRE_PARCELLE.CADASTRE_PARCELLE_ID.eq(CADASTRE_PARCELLE.ID))
+            .leftJoin(CADASTRE_SECTION).on(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(CADASTRE_SECTION.ID))
+            .where(filter?.toCondition() ?: DSL.noCondition())
+            .fetchInto()
+
+    data class PermisToSearchResultCard(
+        val permisId: UUID,
+        val permisLibelle: String,
+        val permisNumero: String,
+        val permisGeometrie: Geometry,
+    )
 }
