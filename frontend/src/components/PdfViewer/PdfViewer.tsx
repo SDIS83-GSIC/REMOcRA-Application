@@ -93,7 +93,10 @@ const PdfViewer = ({ url }: { url: string }) => {
   return (
     <div className={styles.worker}>
       <Worker
-        workerUrl={new URL('npm:pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString()}
+        workerUrl={new URL(
+          "npm:pdfjs-dist/build/pdf.worker.min.js",
+          import.meta.url,
+        ).toString()}
       >
         <div className={styles.height100}>
           <Viewer
