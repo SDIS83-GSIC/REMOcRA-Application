@@ -150,7 +150,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
       caracteristiquesPibiTooltipWeb:
         values?.pei?.caracteristiquesPibiTooltipWeb?.map((e) => e.id) ?? [],
     },
-    peiLongueIndispo: values.peiLongueIndispo,
+    peiLongueIndispo: values?.peiLongueIndispo,
   };
 };
 
@@ -1047,11 +1047,11 @@ const AdminPeiLongueIndispo = ({
               );
               typeOrganismeCode.length > 0
                 ? setFieldValue(
-                    "alerte.peiLongueIndisponibiliteTypeOrganisme",
+                    "peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme",
                     typeOrganismeCode,
                   )
                 : setFieldValue(
-                    "alerte.peiLongueIndisponibiliteTypeOrganisme",
+                    "peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme",
                     [],
                   );
             }}
