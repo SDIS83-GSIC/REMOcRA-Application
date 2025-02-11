@@ -11,7 +11,26 @@ $banner-size: 200px;
 $navbar-size: 75px;
 $footer-size: 55px;
 
+$font-base: 0.85rem;
+$font-h1: calc($font-base * 2);
+$font-h2: calc($font-base * 1.5);
+$font-h3: calc($font-base * 1.3);
+
 @import "../node_modules/bootstrap/scss/bootstrap";
+
+body {
+  font-size: $font-base;
+}
+
+h1 {
+  font-size: $font-h1;
+}
+h2 {
+  font-size: $font-h2;
+}
+h3 {
+  font-size: $font-h3;
+}
 
 #page {
   display: grid;
