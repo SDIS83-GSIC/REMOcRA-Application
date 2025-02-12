@@ -184,6 +184,7 @@ tasks {
         mainClass = "remocra.cli.Main"
         args(*extraArgs)
         systemProperties = mapOf(
+            "remocra.http.relax-csp-for-development" to "true",
             "remocra.http.static-dir" to frontendOutputDir,
             "remocra.http.session-store-dir" to "${project.layout.buildDirectory.asFile.get()}/session",
             "remocra.fs.base-dir" to "$rootDir/.data/",
