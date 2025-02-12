@@ -10,12 +10,12 @@
       "publicClient": false,
       "standardFlowEnabled": true,
       "serviceAccountsEnabled": true,
-      "implicitFlowEnabled": true,
-      "directAccessGrantsEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
       "baseUrl": "$(env:REMOCRA_URL)",
       "redirectUris": [
-        "$(env:REMOCRA_URL)/callback",
-        "$(env:REMOCRA_URL)/*"
+        "$(env:REMOCRA_URL)/callback", # pour l'authentification,
+        "$(env:REMOCRA_URL)/"          # pour la redirection après execute-actions-email
       ]
     }
   ],
