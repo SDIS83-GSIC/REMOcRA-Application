@@ -217,7 +217,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_42 -> pei.penaCapacite == null || pei.penaCapacite < 2
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_58 -> false
+            CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
             CodeSdis.SDIS_61 -> pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -248,7 +248,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_58 -> false
+            CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite in 16..29
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -311,7 +311,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_58 -> false
+            CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -338,7 +338,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.pression != null && pei.pression > 14
-            CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
+            CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_61 -> pei.pression != null && pei.pression > 8
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -483,7 +483,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             }
 
             CodeSdis.SDIS_53 -> (pei.debit == null || pei.debit <= 15)
-            CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 30
+            CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_61 -> {
                 if (pei.pressionDynamique == null || pei.pressionDynamique <= 8) {
                     if (pei.pression != null && pei.pression >= 1 && pei.pression <= 8) {
@@ -601,7 +601,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             }
 
             CodeSdis.SDIS_53 -> pei.debit != null && (pei.debit in 16..59)
-            CodeSdis.SDIS_58 -> false
+            CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
             CodeSdis.SDIS_61 -> {
                 if (isDiametre100(pei) &&
                     isPressionsBetween1And8(pei) &&
