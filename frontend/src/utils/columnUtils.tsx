@@ -36,7 +36,7 @@ import url from "../module/fetch.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
-import formatDateTime from "./formatDateUtils.tsx";
+import { formatDate } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
 
 function getColumnPeiByStringArray(
@@ -57,7 +57,7 @@ function getColumnPeiByStringArray(
         break;
       case COLUMN_PEI.NUMERO_INTERNE:
         column.push({
-          Header: "Numéro interne",
+          Header: "N° interne",
           accessor: "peiNumeroInterne",
           sortField: "peiNumeroInterne",
           Filter: <FilterInput type="number" name="peiNumeroInterne" />,
@@ -77,14 +77,14 @@ function getColumnPeiByStringArray(
           accessor: "peiDisponibiliteTerrestre",
           sortField: "peiDisponibiliteTerrestre",
           Cell: (value) => {
-            const bg =
+            const dispo =
               DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
-                ? "bg-warning"
+                ? { bg: "bg-warning", value: "Non conforme" }
                 : DISPONIBILITE_PEI[value.value] ===
                     DISPONIBILITE_PEI.INDISPONIBLE
-                  ? "bg-danger text-light"
-                  : "";
-            return <div className={bg}>{value.value}</div>;
+                  ? { bg: "bg-danger", value: "Indispo" }
+                  : { bg: "", value: "Dispo" };
+            return <div className={dispo.bg}>{dispo.value}</div>;
           },
           Filter: (
             <SelectEnumOption
@@ -100,14 +100,14 @@ function getColumnPeiByStringArray(
           accessor: "penaDisponibiliteHbe",
           sortField: "penaDisponibiliteHbe",
           Cell: (value) => {
-            const bg =
+            const dispo =
               DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
-                ? "bg-warning"
+                ? { bg: "bg-warning", value: "Non conforme" }
                 : DISPONIBILITE_PEI[value.value] ===
                     DISPONIBILITE_PEI.INDISPONIBLE
-                  ? "bg-danger"
-                  : "";
-            return <div className={bg}>{value.value}</div>;
+                  ? { bg: "bg-danger", value: "Indispo" }
+                  : { bg: "", value: "Dispo" };
+            return <div className={dispo.bg}>{dispo.value}</div>;
           },
           Filter: (
             <SelectEnumOption
@@ -204,21 +204,21 @@ function getColumnPeiByStringArray(
         break;
       case COLUMN_PEI.PEI_NEXT_RECOP:
         column.push({
-          Header: "Date prochaine RECOP",
+          Header: "Prochaine RECOP",
           accessor: "peiNextRecop",
           sortField: "peiNextRecop",
           Cell: (value) => {
-            return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
+            return <div>{value.value ? formatDate(value.value) : ""}</div>;
           },
         });
         break;
       case COLUMN_PEI.PEI_NEXT_CTP:
         column.push({
-          Header: "Date prochain CTP",
+          Header: "Prochain CTP",
           accessor: "peiNextCtp",
           sortField: "peiNextCtp",
           Cell: (value) => {
-            return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
+            return <div>{value.value ? formatDate(value.value) : ""}</div>;
           },
         });
         break;
@@ -227,6 +227,7 @@ function getColumnPeiByStringArray(
           Header: "Tournée",
           accessor: "tourneeLibelle",
           Filter: <FilterInput type="text" name="tourneeLibelle" />,
+          width: 200,
         });
         break;
 

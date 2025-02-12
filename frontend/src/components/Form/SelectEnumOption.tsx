@@ -18,14 +18,28 @@ function SelectEnumOption({
   value,
 }: SelectEnumOptionType) {
   const optionsArray: OptionSelectType[] = [];
+  optionsArray.push({ value: "", libelle: "Tous" });
   for (const key in options) {
     // eslint-disable-next-line no-prototype-builtins
     if (options.hasOwnProperty(key)) {
       optionsArray.push({ value: key, libelle: options[key] });
     }
   }
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: 150, // Largeur fixe en pixels
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: 300, // Largeur du menu déroulant
+    }),
+  };
+
   return (
     <ReactSelect
+      styles={customStyles}
       placeholder={"Sélectionnez"}
       noOptionsMessage={() => "Aucune donnée trouvée"}
       name={name}

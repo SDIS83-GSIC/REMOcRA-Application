@@ -1,9 +1,4 @@
-.noSort {
-  color: transparent !important;
-}
-
 .sort {
-  text-align: center;
   cursor: pointer;
   color: gray;
 }

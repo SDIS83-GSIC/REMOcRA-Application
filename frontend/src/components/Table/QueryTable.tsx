@@ -267,77 +267,74 @@ function QueryTable({
     return (
       <th
         key={key}
-        className={classNames("align-middle", classNameHeader)}
-        style={{ width: width }}
+        className={classNames("text-center", classNameHeader)}
+        style={{ width: width, verticalAlign: "top" }}
       >
-        <Row className={"d-flex align-items-center justify-content-center"}>
-          <Col xs={"auto"}>{Header}</Col>
-
-          {sortField && (
-            <Col xs={"auto"}>
-              <div
-                onClick={() => {
-                  if (!sortField) {
-                    return;
-                  }
-
-                  // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
-                  if (sortBy[sortField] === "1") {
-                    setSortBy({});
-                  } else {
-                    const asc = [];
-                    asc[sortField] = "1";
-                    setSortBy({ ...asc });
-                  }
-                }}
-                className={classnames({
-                  [styles.sort]: sortField,
-                  [styles.noSort]: !sortField,
-                  [styles.sortActive]: sortBy[sortField] === "1",
-                })}
-              >
-                ▲
-              </div>
-              <div
-                onClick={() => {
-                  if (!sortField) {
-                    return;
-                  }
-                  // Si on appuie une nouvelle fois sur la flèche, on réinitialise le tableau
-                  if (sortBy[sortField] === "-1") {
-                    setSortBy({});
-                  } else {
-                    const desc = [];
-                    desc[sortField] = "-1";
-                    setSortBy({ ...desc });
-                  }
-                }}
-                className={classnames({
-                  [styles.sort]: sortField,
-                  [styles.noSort]: !sortField,
-                  [styles.sortActive]: sortBy[sortField] === "-1",
-                })}
-              >
-                ▼
-              </div>
+        <div className={"d-flex flex-column h-100"}>
+          <Row className="p-1">
+            <Col xs={12} className="align-self-start text-nowrap">
+              {Header}
+              {sortField && (
+                <>
+                  <span
+                    onClick={() => {
+                      if (!sortField) {
+                        return;
+                      }
+                      setSortBy(
+                        sortBy[sortField] === "1" ? {} : { [sortField]: "1" },
+                      );
+                    }}
+                    className={classnames(
+                      {
+                        [styles.sort]: sortField,
+                        [styles.noSort]: !sortField,
+                        [styles.sortActive]: sortBy[sortField] === "1",
+                      },
+                      "m-1",
+                    )}
+                  >
+                    ▲
+                  </span>
+                  <span
+                    onClick={() => {
+                      if (!sortField) {
+                        return;
+                      }
+                      setSortBy(
+                        sortBy[sortField] === "-1" ? {} : { [sortField]: "-1" },
+                      );
+                    }}
+                    className={classnames(
+                      {
+                        [styles.sort]: sortField,
+                        [styles.noSort]: !sortField,
+                        [styles.sortActive]: sortBy[sortField] === "-1",
+                      },
+                      "m-1",
+                    )}
+                  >
+                    ▼
+                  </span>
+                </>
+              )}
             </Col>
-          )}
-        </Row>
-        <Row>
+          </Row>
+
           {Filter && (
-            <Col>
-              {React.cloneElement(Filter, {
-                onChange: ({ name, value }) => {
-                  formik.setFieldValue(name, value);
-                  // formik.handleChange(e)
-                },
-                onBlur: formik.handleBlur,
-                defaultValue: formik?.values[Filter?.props?.name],
-                value: formik?.values[Filter?.props?.name],
-              })}
-            </Col>
+            <Row>
+              <Col xs={12}>
+                {React.cloneElement(Filter, {
+                  onChange: ({ name, value }) =>
+                    formik.setFieldValue(name, value),
+                  onBlur: formik.handleBlur,
+                  defaultValue: formik?.values[Filter?.props?.name],
+                  value: formik?.values[Filter?.props?.name],
+                })}
+              </Col>
+            </Row>
           )}
-        </Row>
+        </div>
       </th>
     );
   };

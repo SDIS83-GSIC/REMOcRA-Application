@@ -15,9 +15,21 @@ const MultiSelectFilterFromList = ({
   listIdCodeLibelle,
   value,
 }: SelectFilterFromListType) => {
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: 150, // Largeur fixe en pixels
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: 300, // Largeur du menu déroulant
+    }),
+  };
+
   return (
     <>
       <ReactSelect
+        styles={customStyles}
         isMulti={true}
         placeholder={"Sélectionnez"}
         noOptionsMessage={() => "Aucune donnée trouvée"}
