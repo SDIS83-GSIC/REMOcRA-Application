@@ -874,7 +874,7 @@ const FormLocalisationPei = ({
             defaultValue={selectData.listVoie.find(
               (e) => e.id === values.peiVoieId,
             )}
-            required={!isSaisieVoieEnabled} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
+            required={!values.voieSaisieLibre} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
             setValues={setValues}
             disabled={
               !hasDroitUpdate ||
