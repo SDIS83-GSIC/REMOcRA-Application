@@ -1,41 +1,21 @@
 {
   "realm": "remocra",
-  "enabled": true,
-  "roles": {
-    "realm": [
-      {
-        "name": "inactif",
-        "description": "Utilisateur inactif",
-        "composite": false,
-        "clientRole": false,
-        "attributes": {}
-      }
-    ]
-  },
   "clients": [
     {
+      "clientId": "remocra",
       "enabled": true,
       "protocol": "openid-connect",
-      "clientId": "remocra",
-      "secret": "$(env:CLIENT_SECRET)",
       "clientAuthenticatorType": "client-secret",
+      "secret": "$(env:CLIENT_SECRET)",
+      "publicClient": false,
       "standardFlowEnabled": true,
+      "serviceAccountsEnabled": true,
       "implicitFlowEnabled": true,
       "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": true,
-      "publicClient": false,
       "baseUrl": "$(env:REMOCRA_URL)",
       "redirectUris": [
         "$(env:REMOCRA_URL)/callback",
         "$(env:REMOCRA_URL)/*"
-      ],
-      "defaultClientScopes": [
-        "web-origins",
-        "acr",
-        "roles",
-        "profile",
-        "groups",
-        "email"
       ]
     }
   ],
@@ -44,9 +24,6 @@
       "username": "service-account-remocra",
       "enabled": true,
       "serviceAccountClientId": "remocra",
-      "realmRoles": [
-        "default-roles-remocra"
-      ],
       "clientRoles": {
         "realm-management": [
           "manage-users"
