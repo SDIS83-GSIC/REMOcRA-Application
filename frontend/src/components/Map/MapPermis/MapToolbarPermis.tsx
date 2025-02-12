@@ -4,7 +4,7 @@ import { Point } from "ol/geom";
 import { Draw, Modify } from "ol/interaction";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { Circle, Fill, Stroke, Style } from "ol/style";
-import { forwardRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
@@ -190,128 +190,126 @@ export const useToolbarPermisContext = ({
     setFeatureState,
   };
 };
-const MapToolbarPermis = forwardRef(
-  ({
-    map,
-    dataPermisLayer,
+const MapToolbarPermis = ({
+  map,
+  dataPermisLayer,
 
-    showSearchPermis,
-    handleCloseSearchPermis,
+  showSearchPermis,
+  handleCloseSearchPermis,
 
-    showCreatePermis,
-    handleClosePermis,
+  showCreatePermis,
+  handleClosePermis,
 
-    showUpdatePermis,
-    handleCloseUpdatePermis,
-    featureState,
+  showUpdatePermis,
+  handleCloseUpdatePermis,
+  featureState,
 
-    pointPermis,
-    toggleTool: toggleToolCallback,
-    activeTool,
-    hasRightToInteract = false,
-  }: {
-    map?: Map;
-    dataPermisLayer: any;
+  pointPermis,
+  toggleTool: toggleToolCallback,
+  activeTool,
+  hasRightToInteract = false,
+}: {
+  map?: Map;
+  dataPermisLayer: any;
 
-    showSearchPermis: boolean;
-    handleCloseSearchPermis: () => void;
+  showSearchPermis: boolean;
+  handleCloseSearchPermis: () => void;
 
-    showCreatePermis: boolean;
-    handleClosePermis: () => void;
+  showCreatePermis: boolean;
+  handleClosePermis: () => void;
 
-    showUpdatePermis: boolean;
-    handleCloseUpdatePermis: () => void;
-    featureState: any;
+  showUpdatePermis: boolean;
+  handleCloseUpdatePermis: () => void;
+  featureState: any;
 
-    pointPermis: string[];
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
+  pointPermis: string[];
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
 
-    hasRightToInteract: boolean;
-  }) => {
-    return (
-      <>
-        <ButtonGroup>
-          <ToolbarButton
-            toolName={"search-permis"}
-            toolIcon={<IconSearch />}
-            toolLabelTooltip={"Rechercher un permis"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-          {hasRightToInteract && (
-            <>
-              <ToolbarButton
-                toolName={"create-permis"}
-                toolIcon={<IconCreate />}
-                toolLabelTooltip={"Créer un permis"}
-                toggleTool={toggleToolCallback}
-                activeTool={activeTool}
-              />
-              <ToolbarButton
-                toolName={"deplacer-permis"}
-                toolIcon={<IconMoveObjet />}
-                toolLabelTooltip={"Déplacer un permis"}
-                toggleTool={toggleToolCallback}
-                activeTool={activeTool}
-              />
-            </>
-          )}
-        </ButtonGroup>
-        {/* Volet de Recherche */}
-        <Volet
-          handleClose={handleCloseSearchPermis}
-          show={showSearchPermis}
-          className="w-auto"
-        >
-          <SearchPermis />
-        </Volet>
-        {/* Volet de Création*/}
-        <Volet
-          handleClose={handleClosePermis}
-          show={showCreatePermis}
-          className="w-auto"
-        >
-          <CreatePermis
-            coordonneeX={pointPermis?.getFlatCoordinates()[0]}
-            coordonneeY={pointPermis?.getFlatCoordinates()[1]}
-            srid={map.getView().getProjection().getCode().split(":").pop()}
-            onSubmit={() => {
-              dataPermisLayer.getSource().refresh();
-              handleClosePermis();
-            }}
-          />
-        </Volet>
-        {/* ToolTip d'Update et Delete */}
-        <TooltipMapEditPermis
-          map={map}
-          disabledEditPermis={false}
-          dataPermisLayer={dataPermisLayer}
-          disabled={false}
-          hasRightToInteract={hasRightToInteract}
+  hasRightToInteract: boolean;
+}) => {
+  return (
+    <>
+      <ButtonGroup>
+        <ToolbarButton
+          toolName={"search-permis"}
+          toolIcon={<IconSearch />}
+          toolLabelTooltip={"Rechercher un permis"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
         />
-        {/* Volet d'Update suite à un déplacement */}
-        <Volet
-          handleClose={() => {
-            handleCloseUpdatePermis();
+        {hasRightToInteract && (
+          <>
+            <ToolbarButton
+              toolName={"create-permis"}
+              toolIcon={<IconCreate />}
+              toolLabelTooltip={"Créer un permis"}
+              toggleTool={toggleToolCallback}
+              activeTool={activeTool}
+            />
+            <ToolbarButton
+              toolName={"deplacer-permis"}
+              toolIcon={<IconMoveObjet />}
+              toolLabelTooltip={"Déplacer un permis"}
+              toggleTool={toggleToolCallback}
+              activeTool={activeTool}
+            />
+          </>
+        )}
+      </ButtonGroup>
+      {/* Volet de Recherche */}
+      <Volet
+        handleClose={handleCloseSearchPermis}
+        show={showSearchPermis}
+        className="w-auto"
+      >
+        <SearchPermis />
+      </Volet>
+      {/* Volet de Création*/}
+      <Volet
+        handleClose={handleClosePermis}
+        show={showCreatePermis}
+        className="w-auto"
+      >
+        <CreatePermis
+          coordonneeX={pointPermis?.getFlatCoordinates()[0]}
+          coordonneeY={pointPermis?.getFlatCoordinates()[1]}
+          srid={map.getView().getProjection().getCode().split(":").pop()}
+          onSubmit={() => {
             dataPermisLayer.getSource().refresh();
+            handleClosePermis();
           }}
-          show={showUpdatePermis}
-          className="w-auto"
-        >
-          <UpdatePermis
-            permisId={featureState?.pointId}
-            coordonneeX={featureState?.geometry.getFlatCoordinates()[0]}
-            coordonneeY={featureState?.geometry.getFlatCoordinates()[1]}
-            srid={map.getView().getProjection().getCode().split(":")[1]}
-            onSubmit={() => {
-              handleCloseUpdatePermis();
-            }}
-          />
-        </Volet>
-      </>
-    );
-  },
-);
+        />
+      </Volet>
+      {/* ToolTip d'Update et Delete */}
+      <TooltipMapEditPermis
+        map={map}
+        disabledEditPermis={false}
+        dataPermisLayer={dataPermisLayer}
+        disabled={false}
+        hasRightToInteract={hasRightToInteract}
+      />
+      {/* Volet d'Update suite à un déplacement */}
+      <Volet
+        handleClose={() => {
+          handleCloseUpdatePermis();
+          dataPermisLayer.getSource().refresh();
+        }}
+        show={showUpdatePermis}
+        className="w-auto"
+      >
+        <UpdatePermis
+          permisId={featureState?.pointId}
+          coordonneeX={featureState?.geometry.getFlatCoordinates()[0]}
+          coordonneeY={featureState?.geometry.getFlatCoordinates()[1]}
+          srid={map.getView().getProjection().getCode().split(":")[1]}
+          onSubmit={() => {
+            handleCloseUpdatePermis();
+          }}
+        />
+      </Volet>
+    </>
+  );
+};
 MapToolbarPermis.displayName = "MapToolbarPermis";
 export default MapToolbarPermis;

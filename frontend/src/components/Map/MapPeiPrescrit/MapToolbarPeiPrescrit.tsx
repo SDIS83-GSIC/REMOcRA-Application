@@ -2,7 +2,7 @@ import { Map } from "ol";
 import { Point } from "ol/geom";
 import { Draw } from "ol/interaction";
 import { Circle, Fill, Stroke, Style } from "ol/style";
-import { forwardRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import CreatePeiPrescrit from "../../../pages/PeiPrescrit/CreatePeiPrescrit.tsx";
 import { IconCreate } from "../../Icon/Icon.tsx";
@@ -81,60 +81,58 @@ export const useToolbarPeiPrescritContext = ({ map, workingLayer }) => {
   };
 };
 
-const MapToolbarPeiPrescrit = forwardRef(
-  ({
-    map,
-    dataPeiPrescritLayer,
-    showCreatePeiPrescrit,
-    handleClosePeiPrescrit,
-    pointPeiPrescrit,
-    toggleTool: toggleToolCallback,
-    activeTool,
-  }: {
-    map?: Map;
-    dataPeiPrescritLayer: any;
-    showCreatePeiPrescrit: boolean;
-    handleClosePeiPrescrit: () => void;
-    pointPeiPrescrit: string[];
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-  }) => {
-    return (
-      <>
-        <ButtonGroup>
-          <ToolbarButton
-            toolName={"create-pei-prescrits"}
-            toolIcon={<IconCreate />}
-            toolLabelTooltip={"Prescrire des points d'eau"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-        </ButtonGroup>
-        <Volet
-          handleClose={handleClosePeiPrescrit}
-          show={showCreatePeiPrescrit}
-          className="w-auto"
-        >
-          <CreatePeiPrescrit
-            coordonneeX={pointPeiPrescrit?.getFlatCoordinates()[0]}
-            coordonneeY={pointPeiPrescrit?.getFlatCoordinates()[1]}
-            srid={map.getView().getProjection().getCode().split(":").pop()}
-            onSubmit={() => {
-              dataPeiPrescritLayer.getSource().refresh();
-              handleClosePeiPrescrit();
-            }}
-          />
-        </Volet>
-        <TooltipMapEditPeiPrescrit
-          map={map}
-          disabledEditPeiPrescrit={false}
-          dataPeiPrescritLayer={dataPeiPrescritLayer}
-          disabled={false}
+const MapToolbarPeiPrescrit = ({
+  map,
+  dataPeiPrescritLayer,
+  showCreatePeiPrescrit,
+  handleClosePeiPrescrit,
+  pointPeiPrescrit,
+  toggleTool: toggleToolCallback,
+  activeTool,
+}: {
+  map?: Map;
+  dataPeiPrescritLayer: any;
+  showCreatePeiPrescrit: boolean;
+  handleClosePeiPrescrit: () => void;
+  pointPeiPrescrit: string[];
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+}) => {
+  return (
+    <>
+      <ButtonGroup>
+        <ToolbarButton
+          toolName={"create-pei-prescrits"}
+          toolIcon={<IconCreate />}
+          toolLabelTooltip={"Prescrire des points d'eau"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
         />
-      </>
-    );
-  },
-);
+      </ButtonGroup>
+      <Volet
+        handleClose={handleClosePeiPrescrit}
+        show={showCreatePeiPrescrit}
+        className="w-auto"
+      >
+        <CreatePeiPrescrit
+          coordonneeX={pointPeiPrescrit?.getFlatCoordinates()[0]}
+          coordonneeY={pointPeiPrescrit?.getFlatCoordinates()[1]}
+          srid={map.getView().getProjection().getCode().split(":").pop()}
+          onSubmit={() => {
+            dataPeiPrescritLayer.getSource().refresh();
+            handleClosePeiPrescrit();
+          }}
+        />
+      </Volet>
+      <TooltipMapEditPeiPrescrit
+        map={map}
+        disabledEditPeiPrescrit={false}
+        dataPeiPrescritLayer={dataPeiPrescritLayer}
+        disabled={false}
+      />
+    </>
+  );
+};
 
 MapToolbarPeiPrescrit.displayName = "MapToolbarPeiPrescrit";
 

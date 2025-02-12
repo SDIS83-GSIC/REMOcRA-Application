@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useMemo } from "react";
+import { Ref, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonGroup } from "react-bootstrap";
 import VectorLayer from "ol/layer/Vector";
@@ -208,47 +208,45 @@ export const useToolbarOldebContext = ({
   };
 };
 
-const OldebMapToolbar = forwardRef(
-  ({
-    toggleTool: toggleToolCallback,
-    activeTool,
-  }: {
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-  }) => {
-    const { user } = useAppContext();
+const OldebMapToolbar = ({
+  toggleTool: toggleToolCallback,
+  activeTool,
+}: {
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+}) => {
+  const { user } = useAppContext();
 
-    return (
-      <ButtonGroup>
+  return (
+    <ButtonGroup>
+      <ToolbarButton
+        toolName={"select-oldeb"}
+        toolIcon={<IconSelect />}
+        toolLabelTooltip={"Sélectionner"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+      />
+      {hasDroit(user, TYPE_DROIT.OLDEB_C) && (
         <ToolbarButton
-          toolName={"select-oldeb"}
-          toolIcon={<IconSelect />}
-          toolLabelTooltip={"Sélectionner"}
+          toolName={"create-oldeb"}
+          toolIcon={<IconCreate />}
+          toolLabelTooltip={"Créer une OLD"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
-        {hasDroit(user, TYPE_DROIT.OLDEB_C) && (
-          <ToolbarButton
-            toolName={"create-oldeb"}
-            toolIcon={<IconCreate />}
-            toolLabelTooltip={"Créer une OLD"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-        )}
-        {hasDroit(user, TYPE_DROIT.OLDEB_U) && (
-          <ToolbarButton
-            toolName={"edit-oldeb"}
-            toolIcon={<IconEdit />}
-            toolLabelTooltip={"Modifier une OLD"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-        )}
-      </ButtonGroup>
-    );
-  },
-);
+      )}
+      {hasDroit(user, TYPE_DROIT.OLDEB_U) && (
+        <ToolbarButton
+          toolName={"edit-oldeb"}
+          toolIcon={<IconEdit />}
+          toolLabelTooltip={"Modifier une OLD"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+      )}
+    </ButtonGroup>
+  );
+};
 
 OldebMapToolbar.displayName = "OldebMapToolbar";
 

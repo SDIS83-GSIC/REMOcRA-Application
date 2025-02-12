@@ -3,7 +3,7 @@ import VectorLayer from "ol/layer/Vector";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { shiftKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
-import { forwardRef, MutableRefObject, useMemo, useRef } from "react";
+import { MutableRefObject, useMemo, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import ToolbarButton from "../ToolbarButton.tsx";
 import {
@@ -298,155 +298,153 @@ export const useToolbarRcciContext = ({
   };
 };
 
-const MapToolbarRcci = forwardRef(
-  ({
-    toggleTool: toggleToolCallback,
-    activeTool,
-    dataRcciLayerRef,
-    editModalRefs,
-    deleteModalRefs,
-    rcciIdRef,
-    anneeCivileRef,
-  }: {
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-    dataRcciLayerRef: MutableRefObject<VectorLayer | undefined>;
-    rcciIdRef: MutableRefObject<string | undefined>;
-    editModalRefs: {
-      visible: boolean;
-      show: () => void;
-      close: () => void;
-      ref: MutableRefObject<HTMLDivElement>;
-      value: any;
-    };
-    deleteModalRefs: {
-      visible: boolean;
-      show: () => void;
-      close: () => void;
-      ref: MutableRefObject<HTMLDivElement>;
-      value: any;
-    };
-    anneeCivileRef: {
-      anneeCivileRef: MutableRefObject<boolean>;
-      displayAnneCivile: () => void;
-    };
-  }) => {
-    const { user } = useAppContext();
+const MapToolbarRcci = ({
+  toggleTool: toggleToolCallback,
+  activeTool,
+  dataRcciLayerRef,
+  editModalRefs,
+  deleteModalRefs,
+  rcciIdRef,
+  anneeCivileRef,
+}: {
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+  dataRcciLayerRef: MutableRefObject<VectorLayer | undefined>;
+  rcciIdRef: MutableRefObject<string | undefined>;
+  editModalRefs: {
+    visible: boolean;
+    show: () => void;
+    close: () => void;
+    ref: MutableRefObject<HTMLDivElement>;
+    value: any;
+  };
+  deleteModalRefs: {
+    visible: boolean;
+    show: () => void;
+    close: () => void;
+    ref: MutableRefObject<HTMLDivElement>;
+    value: any;
+  };
+  anneeCivileRef: {
+    anneeCivileRef: MutableRefObject<boolean>;
+    displayAnneCivile: () => void;
+  };
+}) => {
+  const { user } = useAppContext();
 
-    return (
-      <>
+  return (
+    <>
+      <ButtonGroup>
+        <ToolbarButton
+          toolName={"select-rcci"}
+          toolIcon={<IconSelect />}
+          toolLabelTooltip={"Sélectionner"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+      </ButtonGroup>
+      {hasDroit(user, TYPE_DROIT.RCCI_A) && (
         <ButtonGroup>
           <ToolbarButton
-            toolName={"select-rcci"}
-            toolIcon={<IconSelect />}
-            toolLabelTooltip={"Sélectionner"}
+            toolName={"create-rcci"}
+            toolIcon={<IconCreate />}
+            toolLabelTooltip={"Créer une RCCI"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <TooltipCustom
+            tooltipText={"Créer une RCCI (saisie X/Y)"}
+            tooltipId={"create-rcci-xy"}
+          >
+            <Button
+              name={"tool"}
+              onClick={() => editModalRefs.show()}
+              id={"create-rcci-xy"}
+              value={"create-rcci-xy"}
+              variant={"outline-primary"}
+              className="m-1"
+            >
+              {<IconCreate />}
+            </Button>
+          </TooltipCustom>
+          <ToolbarButton
+            toolName={"edit-rcci"}
+            toolIcon={<IconEdit />}
+            toolLabelTooltip={"Modifier une RCCI"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"delete-rcci"}
+            toolIcon={<IconDelete />}
+            toolLabelTooltip={"Supprimer une RCCI"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"move-rcci"}
+            toolIcon={<IconMoveObjet />}
+            toolLabelTooltip={"Déplacer une RCCI"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />
         </ButtonGroup>
-        {hasDroit(user, TYPE_DROIT.RCCI_A) && (
-          <ButtonGroup>
-            <ToolbarButton
-              toolName={"create-rcci"}
-              toolIcon={<IconCreate />}
-              toolLabelTooltip={"Créer une RCCI"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <TooltipCustom
-              tooltipText={"Créer une RCCI (saisie X/Y)"}
-              tooltipId={"create-rcci-xy"}
-            >
-              <Button
-                name={"tool"}
-                onClick={() => editModalRefs.show()}
-                id={"create-rcci-xy"}
-                value={"create-rcci-xy"}
-                variant={"outline-primary"}
-                className="m-1"
-              >
-                {<IconCreate />}
-              </Button>
-            </TooltipCustom>
-            <ToolbarButton
-              toolName={"edit-rcci"}
-              toolIcon={<IconEdit />}
-              toolLabelTooltip={"Modifier une RCCI"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"delete-rcci"}
-              toolIcon={<IconDelete />}
-              toolLabelTooltip={"Supprimer une RCCI"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"move-rcci"}
-              toolIcon={<IconMoveObjet />}
-              toolLabelTooltip={"Déplacer une RCCI"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-          </ButtonGroup>
-        )}
-        <ButtonGroup>
-          <TooltipCustom
-            tooltipText={"Masquer les départs antérieurs à l'année civile"}
-            tooltipId={"hide-rcci"}
+      )}
+      <ButtonGroup>
+        <TooltipCustom
+          tooltipText={"Masquer les départs antérieurs à l'année civile"}
+          tooltipId={"hide-rcci"}
+        >
+          <Button
+            name={"tool"}
+            onClick={(e) => {
+              anneeCivileRef.displayAnneCivile();
+              e.target.active = anneeCivileRef.anneeCivileRef.current;
+            }}
+            toolName={"edit-rcci"}
+            value={"hide-rcci"}
+            variant={"outline-primary"}
+            className="m-1"
+            active={anneeCivileRef.anneeCivileRef.current}
           >
-            <Button
-              name={"tool"}
-              onClick={(e) => {
-                anneeCivileRef.displayAnneCivile();
-                e.target.active = anneeCivileRef.anneeCivileRef.current;
-              }}
-              toolName={"edit-rcci"}
-              value={"hide-rcci"}
-              variant={"outline-primary"}
-              className="m-1"
-              active={anneeCivileRef.anneeCivileRef.current}
-            >
-              {<IconHide />}
-            </Button>
-          </TooltipCustom>
-        </ButtonGroup>
-        {editModalRefs.visible && (
-          <EditModal
-            visible={editModalRefs.visible}
-            closeModal={editModalRefs.close}
-            query={url`/api/rcci`}
-            ref={editModalRefs.ref}
-            validationSchema={validationSchema}
-            getInitialValues={(values) =>
-              getInitialValues(values, user.utilisateurId)
-            }
-            prepareVariables={prepareValues}
-            canModify={true}
-            header={""}
-            value={editModalRefs.value}
-            id={rcciIdRef.current}
-            isMultipartFormData={true}
-            onSubmit={() => dataRcciLayerRef.current?.getSource().refresh()}
-          >
-            <RcciForm validationSchema={validationSchema} />
-          </EditModal>
-        )}
-        {deleteModalRefs.visible && (
-          <DeleteModal
-            visible={deleteModalRefs.visible}
-            closeModal={deleteModalRefs.close}
-            query={url`/api/rcci`}
-            ref={deleteModalRefs.ref}
-            id={deleteModalRefs.value}
-            onDelete={() => dataRcciLayerRef.current?.getSource().refresh()}
-          />
-        )}
-      </>
-    );
-  },
-);
+            {<IconHide />}
+          </Button>
+        </TooltipCustom>
+      </ButtonGroup>
+      {editModalRefs.visible && (
+        <EditModal
+          visible={editModalRefs.visible}
+          closeModal={editModalRefs.close}
+          query={url`/api/rcci`}
+          ref={editModalRefs.ref}
+          validationSchema={validationSchema}
+          getInitialValues={(values) =>
+            getInitialValues(values, user.utilisateurId)
+          }
+          prepareVariables={prepareValues}
+          canModify={true}
+          header={""}
+          value={editModalRefs.value}
+          id={rcciIdRef.current}
+          isMultipartFormData={true}
+          onSubmit={() => dataRcciLayerRef.current?.getSource().refresh()}
+        >
+          <RcciForm validationSchema={validationSchema} />
+        </EditModal>
+      )}
+      {deleteModalRefs.visible && (
+        <DeleteModal
+          visible={deleteModalRefs.visible}
+          closeModal={deleteModalRefs.close}
+          query={url`/api/rcci`}
+          ref={deleteModalRefs.ref}
+          id={deleteModalRefs.value}
+          onDelete={() => dataRcciLayerRef.current?.getSource().refresh()}
+        />
+      )}
+    </>
+  );
+};
 
 MapToolbarRcci.displayName = "MapToolbarRcci";
 

@@ -3,7 +3,7 @@ import { shiftKeyOnly } from "ol/events/condition";
 import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
@@ -329,217 +329,215 @@ export const useToolbarPeiContext = ({
   };
 };
 
-const MapToolbarPei = forwardRef(
-  ({
-    toggleTool: toggleToolCallback,
-    activeTool,
-    map,
-    dataPeiLayer,
-    showCreateIndispoTemp,
-    handleCloseIndispoTemp,
-    listePeiId,
-    createIndispoTemp,
-    createUpdateTournee,
-    showCreateTournee,
-    handleCloseTournee,
-    listePeiTourneePrive,
-    listePeiTourneePublic,
-    dataDebitSimultaneLayer,
-    createDebitSimultane,
-    handleCloseDebitSimultane,
-    showCreateDebitSimultane,
-    listePeiIdDebitSimultane,
-    typeReseauId,
-    closeModal,
-    refModal,
-    visibleModal,
-  }: {
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-    map: Map;
-    dataPeiLayer: any;
-    showCreateIndispoTemp: boolean;
-    handleCloseIndispoTemp: () => void;
-    listePeiId: string[];
-    createIndispoTemp: () => void;
-    createUpdateTournee: () => void;
-    showCreateTournee: boolean;
-    handleCloseTournee: () => void;
-    listePeiTourneePrive: { peiId: string; numeroComplet: string }[];
-    listePeiTourneePublic: { peiId: string; numeroComplet: string }[];
-    dataDebitSimultaneLayer: any;
-    createDebitSimultane: () => void;
-    handleCloseDebitSimultane: () => void;
-    showCreateDebitSimultane: boolean;
-    listePeiIdDebitSimultane: string[];
-    typeReseauId: string | undefined;
-    visibleModal: boolean;
-    closeModal: () => void;
-    refModal: any;
-  }) => {
-    const { user } = useAppContext();
+const MapToolbarPei = ({
+  toggleTool: toggleToolCallback,
+  activeTool,
+  map,
+  dataPeiLayer,
+  showCreateIndispoTemp,
+  handleCloseIndispoTemp,
+  listePeiId,
+  createIndispoTemp,
+  createUpdateTournee,
+  showCreateTournee,
+  handleCloseTournee,
+  listePeiTourneePrive,
+  listePeiTourneePublic,
+  dataDebitSimultaneLayer,
+  createDebitSimultane,
+  handleCloseDebitSimultane,
+  showCreateDebitSimultane,
+  listePeiIdDebitSimultane,
+  typeReseauId,
+  closeModal,
+  refModal,
+  visibleModal,
+}: {
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+  map: Map;
+  dataPeiLayer: any;
+  showCreateIndispoTemp: boolean;
+  handleCloseIndispoTemp: () => void;
+  listePeiId: string[];
+  createIndispoTemp: () => void;
+  createUpdateTournee: () => void;
+  showCreateTournee: boolean;
+  handleCloseTournee: () => void;
+  listePeiTourneePrive: { peiId: string; numeroComplet: string }[];
+  listePeiTourneePublic: { peiId: string; numeroComplet: string }[];
+  dataDebitSimultaneLayer: any;
+  createDebitSimultane: () => void;
+  handleCloseDebitSimultane: () => void;
+  showCreateDebitSimultane: boolean;
+  listePeiIdDebitSimultane: string[];
+  typeReseauId: string | undefined;
+  visibleModal: boolean;
+  closeModal: () => void;
+  refModal: any;
+}) => {
+  const { user } = useAppContext();
 
-    return (
-      <ButtonGroup>
+  return (
+    <ButtonGroup>
+      <ToolbarButton
+        toolName={"select-pei"}
+        toolIcon={<IconSelect />}
+        toolLabelTooltip={"Sélectionner"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+      />
+      {hasDroit(user, TYPE_DROIT.PEI_C) && (
         <ToolbarButton
-          toolName={"select-pei"}
-          toolIcon={<IconSelect />}
-          toolLabelTooltip={"Sélectionner"}
+          toolName={"create-pei"}
+          toolIcon={<IconCreate />}
+          toolLabelTooltip={"Créer un PEI"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
-        {hasDroit(user, TYPE_DROIT.PEI_C) && (
-          <ToolbarButton
-            toolName={"create-pei"}
-            toolIcon={<IconCreate />}
-            toolLabelTooltip={"Créer un PEI"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-        )}
-        {hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U) && (
-          <ToolbarButton
-            toolName={"deplacer-pei"}
-            toolIcon={<IconMoveObjet />}
-            toolLabelTooltip={"Déplacer un PEI"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-        )}
-        {hasDroit(user, TYPE_DROIT.INDISPO_TEMP_C) && (
-          <>
-            <TooltipCustom
-              tooltipText={"Créer une indisponibilité temporaire"}
-              tooltipId={"indispo-temp-carte"}
-            >
-              <Button
-                variant="outline-primary"
-                onClick={createIndispoTemp}
-                className="rounded m-2"
-              >
-                <IconIndisponibiliteTemporaire />
-              </Button>
-            </TooltipCustom>
-            <Volet
-              handleClose={handleCloseIndispoTemp}
-              show={showCreateIndispoTemp}
-              className="w-auto"
-            >
-              <CreateIndisponibiliteTemporaire listePeiId={listePeiId} />
-            </Volet>
-          </>
-        )}
-        {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
-          <>
-            <TooltipCustom
-              tooltipText={"Ajouter des PEI de même nature DECI à une tournée"}
-              tooltipId={"affecter-pei-tournee-carte"}
-            >
-              <Button
-                variant="outline-primary"
-                onClick={createUpdateTournee}
-                className="rounded m-2"
-                disabled={
-                  listePeiTourneePrive.length === 0 &&
-                  listePeiTourneePublic.length === 0
-                }
-              >
-                <IconTournee />
-              </Button>
-            </TooltipCustom>
-            <Volet
-              handleClose={handleCloseTournee}
-              show={showCreateTournee}
-              className="w-auto"
-            >
-              <AffecterPeiTourneeMap
-                listePei={
-                  listePeiTourneePrive.length !== 0
-                    ? listePeiTourneePrive
-                    : listePeiTourneePublic
-                }
-                isPrive={listePeiTourneePrive.length !== 0}
-                closeVolet={handleCloseTournee}
-              />
-            </Volet>
-          </>
-        )}
-        {hasDroit(user, TYPE_DROIT.DEBITS_SIMULTANES_A) && (
-          <>
-            <TooltipCustom
-              tooltipText={
-                <>
-                  <Row className="p-2">
-                    <b>Créer un débit simultané</b>
-                  </Row>
-                  <Row className="p-2">
-                    Les PIBI sélectionnés doivent :
-                    <ul>
-                      <li>avoir la nature DECI privé </li>
-                      <li>avoir le même type de réseau</li>
-                      <li>n&apos;avoir aucun débit simultané associé</li>
-                      <li>être à moins de 500m</li>
-                    </ul>
-                  </Row>
-                </>
-              }
-              tooltipId={"debit-simultane-carte"}
-            >
-              <Button
-                variant="outline-primary"
-                onClick={createDebitSimultane}
-                className="rounded m-2"
-                disabled={
-                  listePeiIdDebitSimultane.length < 2 || typeReseauId === null
-                }
-              >
-                <IconDebitSimultane />
-              </Button>
-            </TooltipCustom>
-            <Volet
-              handleClose={handleCloseDebitSimultane}
-              show={showCreateDebitSimultane}
-              className="w-auto"
-            >
-              <CreateDebitSimultane
-                listePibiId={listePeiIdDebitSimultane}
-                typeReseauId={typeReseauId!}
-                onSubmit={() => {
-                  dataDebitSimultaneLayer.getSource().refresh();
-                  handleCloseDebitSimultane();
-                }}
-              />
-            </Volet>
-            <SimpleModal
-              closeModal={closeModal}
-              content={"Tous les PEI doivent être à moins de 500 mètres."}
-              header={"Impossible de créer un débit simultané"}
-              ref={refModal}
-              visible={visibleModal}
-            />
-          </>
-        )}
-        <TooltipMapPei
-          map={map}
-          dataPeiLayer={dataPeiLayer}
-          displayButtonDelete={hasDroit(user, TYPE_DROIT.PEI_D)}
-          displayButtonEdit={isAuthorized(user, [
-            TYPE_DROIT.PEI_U,
-            TYPE_DROIT.PEI_CARACTERISTIQUES_U,
-            TYPE_DROIT.PEI_DEPLACEMENT_U,
-            TYPE_DROIT.PEI_NUMERO_INTERNE_U,
-          ])}
-          disabledTooltip={activeTool === "deplacer-pei"}
-          displayButtonEditDebitSimultane={hasDroit(
-            user,
-            TYPE_DROIT.DEBITS_SIMULTANES_A,
-          )}
-          dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+      )}
+      {hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U) && (
+        <ToolbarButton
+          toolName={"deplacer-pei"}
+          toolIcon={<IconMoveObjet />}
+          toolLabelTooltip={"Déplacer un PEI"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
         />
-      </ButtonGroup>
-    );
-  },
-);
+      )}
+      {hasDroit(user, TYPE_DROIT.INDISPO_TEMP_C) && (
+        <>
+          <TooltipCustom
+            tooltipText={"Créer une indisponibilité temporaire"}
+            tooltipId={"indispo-temp-carte"}
+          >
+            <Button
+              variant="outline-primary"
+              onClick={createIndispoTemp}
+              className="rounded m-2"
+            >
+              <IconIndisponibiliteTemporaire />
+            </Button>
+          </TooltipCustom>
+          <Volet
+            handleClose={handleCloseIndispoTemp}
+            show={showCreateIndispoTemp}
+            className="w-auto"
+          >
+            <CreateIndisponibiliteTemporaire listePeiId={listePeiId} />
+          </Volet>
+        </>
+      )}
+      {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
+        <>
+          <TooltipCustom
+            tooltipText={"Ajouter des PEI de même nature DECI à une tournée"}
+            tooltipId={"affecter-pei-tournee-carte"}
+          >
+            <Button
+              variant="outline-primary"
+              onClick={createUpdateTournee}
+              className="rounded m-2"
+              disabled={
+                listePeiTourneePrive.length === 0 &&
+                listePeiTourneePublic.length === 0
+              }
+            >
+              <IconTournee />
+            </Button>
+          </TooltipCustom>
+          <Volet
+            handleClose={handleCloseTournee}
+            show={showCreateTournee}
+            className="w-auto"
+          >
+            <AffecterPeiTourneeMap
+              listePei={
+                listePeiTourneePrive.length !== 0
+                  ? listePeiTourneePrive
+                  : listePeiTourneePublic
+              }
+              isPrive={listePeiTourneePrive.length !== 0}
+              closeVolet={handleCloseTournee}
+            />
+          </Volet>
+        </>
+      )}
+      {hasDroit(user, TYPE_DROIT.DEBITS_SIMULTANES_A) && (
+        <>
+          <TooltipCustom
+            tooltipText={
+              <>
+                <Row className="p-2">
+                  <b>Créer un débit simultané</b>
+                </Row>
+                <Row className="p-2">
+                  Les PIBI sélectionnés doivent :
+                  <ul>
+                    <li>avoir la nature DECI privé </li>
+                    <li>avoir le même type de réseau</li>
+                    <li>n&apos;avoir aucun débit simultané associé</li>
+                    <li>être à moins de 500m</li>
+                  </ul>
+                </Row>
+              </>
+            }
+            tooltipId={"debit-simultane-carte"}
+          >
+            <Button
+              variant="outline-primary"
+              onClick={createDebitSimultane}
+              className="rounded m-2"
+              disabled={
+                listePeiIdDebitSimultane.length < 2 || typeReseauId === null
+              }
+            >
+              <IconDebitSimultane />
+            </Button>
+          </TooltipCustom>
+          <Volet
+            handleClose={handleCloseDebitSimultane}
+            show={showCreateDebitSimultane}
+            className="w-auto"
+          >
+            <CreateDebitSimultane
+              listePibiId={listePeiIdDebitSimultane}
+              typeReseauId={typeReseauId!}
+              onSubmit={() => {
+                dataDebitSimultaneLayer.getSource().refresh();
+                handleCloseDebitSimultane();
+              }}
+            />
+          </Volet>
+          <SimpleModal
+            closeModal={closeModal}
+            content={"Tous les PEI doivent être à moins de 500 mètres."}
+            header={"Impossible de créer un débit simultané"}
+            ref={refModal}
+            visible={visibleModal}
+          />
+        </>
+      )}
+      <TooltipMapPei
+        map={map}
+        dataPeiLayer={dataPeiLayer}
+        displayButtonDelete={hasDroit(user, TYPE_DROIT.PEI_D)}
+        displayButtonEdit={isAuthorized(user, [
+          TYPE_DROIT.PEI_U,
+          TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+          TYPE_DROIT.PEI_DEPLACEMENT_U,
+          TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+        ])}
+        disabledTooltip={activeTool === "deplacer-pei"}
+        displayButtonEditDebitSimultane={hasDroit(
+          user,
+          TYPE_DROIT.DEBITS_SIMULTANES_A,
+        )}
+        dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+      />
+    </ButtonGroup>
+  );
+};
 
 MapToolbarPei.displayName = "MapToolbarPei";
 

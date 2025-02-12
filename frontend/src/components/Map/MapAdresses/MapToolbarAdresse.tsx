@@ -2,7 +2,7 @@ import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { shiftKeyOnly } from "ol/events/condition";
 import { Feature } from "ol";
@@ -271,187 +271,183 @@ export const useToolbarAdresseContext = ({ map, workingLayer }) => {
   };
 };
 
-const MapToolbarAdresse = forwardRef(
-  ({
-    map,
-    dataAdresseLayer,
-    handleCloseElement,
-    showCreateElement,
-    setShowCreateElement,
-    handleCloseAdresse,
-    showCreateAdresse,
-    setShowCreateAdresse,
-    toggleTool: toggleToolCallback,
-    activeTool,
-    supprimerFeature,
-    selectedFeatures,
-    workingLayer,
-    listAdresseElement,
-    setListAdresseElement,
-    geometryElement,
-    setSousTypeElement,
-    sousTypeElement,
-  }: {
-    map?: Map;
-    dataAdresseLayer: any;
-    handleCloseElement: () => void;
-    showCreateElement: boolean;
-    setShowCreateElement: () => void;
-    handleCloseAdresse: () => void;
-    showCreateAdresse: boolean;
-    setShowCreateAdresse: () => void;
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-    supprimerFeature: () => void;
-    selectedFeatures: Feature[];
-    workingLayer: any;
-    listAdresseElement: AdresseElementEntity[];
-    setListAdresseElement: (AdresseElementEntity) => void;
-    geometryElement: string;
-    setSousTypeElement: () => void;
-    sousTypeElement: string;
-  }) => {
-    const typeWithSousType = useGet(url`/api/adresses/type-sous-type`)?.data;
+const MapToolbarAdresse = ({
+  map,
+  dataAdresseLayer,
+  handleCloseElement,
+  showCreateElement,
+  setShowCreateElement,
+  handleCloseAdresse,
+  showCreateAdresse,
+  setShowCreateAdresse,
+  toggleTool: toggleToolCallback,
+  activeTool,
+  supprimerFeature,
+  selectedFeatures,
+  workingLayer,
+  listAdresseElement,
+  setListAdresseElement,
+  geometryElement,
+  setSousTypeElement,
+  sousTypeElement,
+}: {
+  map?: Map;
+  dataAdresseLayer: any;
+  handleCloseElement: () => void;
+  showCreateElement: boolean;
+  setShowCreateElement: () => void;
+  handleCloseAdresse: () => void;
+  showCreateAdresse: boolean;
+  setShowCreateAdresse: () => void;
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+  supprimerFeature: () => void;
+  selectedFeatures: Feature[];
+  workingLayer: any;
+  listAdresseElement: AdresseElementEntity[];
+  setListAdresseElement: (AdresseElementEntity) => void;
+  geometryElement: string;
+  setSousTypeElement: () => void;
+  sousTypeElement: string;
+}) => {
+  const typeWithSousType = useGet(url`/api/adresses/type-sous-type`)?.data;
 
-    return (
-      typeWithSousType && (
-        <Row>
-          <Col xs={"auto"}>
-            <ToolbarButton
-              toolName={"select-draw"}
-              toolIcon={<IconSelect />}
-              toolLabelTooltip={
-                "Sélectionner des éléments (non validés uniquement)"
-              }
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <TooltipCustom
-              tooltipId="suppressionAdresse"
-              tooltipText={
-                selectedFeatures.length === 0
-                  ? "Aucun élément sélectionné"
-                  : "Supprimer le(s) " +
-                    selectedFeatures.length +
-                    "élément(s) sélectionné(s)"
-              }
-            >
-              <Button
-                variant={"outline-danger"}
-                onClick={supprimerFeature}
-                disabled={selectedFeatures.length === 0}
-              >
-                <IconDelete />
-              </Button>
-            </TooltipCustom>
-          </Col>
-          {typeWithSousType?.map((e, key) => {
-            return (
-              <Col xs={"auto"} className={"py-2"} key={key}>
-                <Dropdown>
-                  <Dropdown.Toggle id={"dropdown-" + e.adresseTypeElementCode}>
-                    {e.adresseTypeElementLibelle?.toString()}
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    {e.listSousType.map((soustype, key) => {
-                      let icon;
-                      switch (soustype.adresseSousTypeElementTypeGeom) {
-                        case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
-                          icon = <IconPoint />;
-                          break;
-                        case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
-                          icon = <IconLine />;
-                          break;
-                        case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
-                          icon = <IconPolygon />;
-                          break;
-                      }
-
-                      return (
-                        <Dropdown.Item
-                          onClick={() => {
-                            toggleToolCallback(
-                              "create-" +
-                                soustype.adresseSousTypeElementTypeGeom.toLowerCase(),
-                            );
-                            setSousTypeElement(
-                              soustype.adresseSousTypeElementId,
-                            );
-                          }}
-                          key={key}
-                        >
-                          {icon} {soustype?.adresseSousTypeElementLibelle}
-                        </Dropdown.Item>
-                      );
-                    })}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-            );
-          })}
-          <Col xs={"auto"} className={"ms-auto"}>
-            <CreateButton
-              onClick={() => {
-                setShowCreateAdresse(true);
-              }}
-              title={"Ajouter une adresse"}
-              disabled={listAdresseElement?.length <= 0}
-            />
-          </Col>
-          <Volet
-            handleClose={handleCloseElement}
-            show={showCreateElement}
-            className="w-auto"
-            backdrop={true}
+  return (
+    typeWithSousType && (
+      <Row>
+        <Col xs={"auto"}>
+          <ToolbarButton
+            toolName={"select-draw"}
+            toolIcon={<IconSelect />}
+            toolLabelTooltip={
+              "Sélectionner des éléments (non validés uniquement)"
+            }
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <TooltipCustom
+            tooltipId="suppressionAdresse"
+            tooltipText={
+              selectedFeatures.length === 0
+                ? "Aucun élément sélectionné"
+                : "Supprimer le(s) " +
+                  selectedFeatures.length +
+                  "élément(s) sélectionné(s)"
+            }
           >
-            <CreatElementAdresse
-              srid={map.getView().getProjection().getCode().split(":").pop()}
-              layer={workingLayer}
-              geometryString={geometryElement}
-              onClick={(element: AdresseElementEntity) => {
-                setListAdresseElement((data) => {
-                  return [...data, element];
-                });
-                dataAdresseLayer.getSource().refresh();
-                setShowCreateElement(false);
-              }}
-              sousTypeElement={sousTypeElement}
-            />
-          </Volet>
-
-          <Volet
-            handleClose={handleCloseAdresse}
-            show={showCreateAdresse}
-            className="w-auto"
-            backdrop={true}
-          >
-            <MyFormik
-              initialValues={getInitialValues(listAdresseElement)}
-              validationSchema={validationSchema}
-              isPost={true}
-              submitUrl={`/api/adresses/create`}
-              prepareVariables={(values) => prepareVariables(values)}
-              redirectUrl={URLS.ADRESSE}
-              onSubmit={() => {
-                dataAdresseLayer.getSource().refresh();
-                setListAdresseElement([]);
-                workingLayer.getSource().clear();
-                setShowCreateAdresse(false);
-              }}
+            <Button
+              variant={"outline-danger"}
+              onClick={supprimerFeature}
+              disabled={selectedFeatures.length === 0}
             >
-              {/* j'envoie la liste d'élément juste pour les afficher */}
-              <Adresse
-                listeElement={listAdresseElement}
-                typeWithSousType={typeWithSousType}
-              />
-            </MyFormik>
-          </Volet>
-        </Row>
-      )
-    );
-  },
-);
+              <IconDelete />
+            </Button>
+          </TooltipCustom>
+        </Col>
+        {typeWithSousType?.map((e, key) => {
+          return (
+            <Col xs={"auto"} className={"py-2"} key={key}>
+              <Dropdown>
+                <Dropdown.Toggle id={"dropdown-" + e.adresseTypeElementCode}>
+                  {e.adresseTypeElementLibelle?.toString()}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {e.listSousType.map((soustype, key) => {
+                    let icon;
+                    switch (soustype.adresseSousTypeElementTypeGeom) {
+                      case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
+                        icon = <IconPoint />;
+                        break;
+                      case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
+                        icon = <IconLine />;
+                        break;
+                      case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
+                        icon = <IconPolygon />;
+                        break;
+                    }
+
+                    return (
+                      <Dropdown.Item
+                        onClick={() => {
+                          toggleToolCallback(
+                            "create-" +
+                              soustype.adresseSousTypeElementTypeGeom.toLowerCase(),
+                          );
+                          setSousTypeElement(soustype.adresseSousTypeElementId);
+                        }}
+                        key={key}
+                      >
+                        {icon} {soustype?.adresseSousTypeElementLibelle}
+                      </Dropdown.Item>
+                    );
+                  })}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          );
+        })}
+        <Col xs={"auto"} className={"ms-auto"}>
+          <CreateButton
+            onClick={() => {
+              setShowCreateAdresse(true);
+            }}
+            title={"Ajouter une adresse"}
+            disabled={listAdresseElement?.length <= 0}
+          />
+        </Col>
+        <Volet
+          handleClose={handleCloseElement}
+          show={showCreateElement}
+          className="w-auto"
+          backdrop={true}
+        >
+          <CreatElementAdresse
+            srid={map.getView().getProjection().getCode().split(":").pop()}
+            layer={workingLayer}
+            geometryString={geometryElement}
+            onClick={(element: AdresseElementEntity) => {
+              setListAdresseElement((data) => {
+                return [...data, element];
+              });
+              dataAdresseLayer.getSource().refresh();
+              setShowCreateElement(false);
+            }}
+            sousTypeElement={sousTypeElement}
+          />
+        </Volet>
+
+        <Volet
+          handleClose={handleCloseAdresse}
+          show={showCreateAdresse}
+          className="w-auto"
+          backdrop={true}
+        >
+          <MyFormik
+            initialValues={getInitialValues(listAdresseElement)}
+            validationSchema={validationSchema}
+            isPost={true}
+            submitUrl={`/api/adresses/create`}
+            prepareVariables={(values) => prepareVariables(values)}
+            redirectUrl={URLS.ADRESSE}
+            onSubmit={() => {
+              dataAdresseLayer.getSource().refresh();
+              setListAdresseElement([]);
+              workingLayer.getSource().clear();
+              setShowCreateAdresse(false);
+            }}
+          >
+            {/* j'envoie la liste d'élément juste pour les afficher */}
+            <Adresse
+              listeElement={listAdresseElement}
+              typeWithSousType={typeWithSousType}
+            />
+          </MyFormik>
+        </Volet>
+      </Row>
+    )
+  );
+};
 
 export const validationSchema = object({});
 export const prepareVariables = (values) => values;

@@ -6,7 +6,7 @@ import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "react-bootstrap";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
@@ -417,130 +417,128 @@ export const useToolbarCouvertureHydrauliqueContext = ({
   };
 };
 
-const MapToolbarCouvertureHydraulique = forwardRef(
-  ({
-    map,
-    dataPeiProjetLayer,
-    etudeId,
-    disabledEditPeiProjet,
-    calculCouverture,
-    clearCouverture,
-    handleClosePeiProjet,
-    showCreatePeiProjet,
-    pointPeiProjet,
-    handleCloseTraceeCouverture,
-    showTraceeCouverture,
-    listePeiId,
-    listePeiProjetId,
-    toggleTool: toggleToolCallback,
-    activeTool,
-  }: {
-    map?: Map;
-    dataPeiLayer: any;
-    dataPeiProjetLayer: any;
-    workingLayer: any;
-    etudeId: string;
-    disabledEditPeiProjet: boolean;
-    calculCouverture: () => void;
-    clearCouverture: () => void;
-    handleClosePeiProjet: () => void;
-    showCreatePeiProjet: () => void;
-    pointPeiProjet: string[];
-    handleCloseTraceeCouverture: () => void;
-    showTraceeCouverture: () => void;
-    listePeiId: string[];
-    listePeiProjetId: string[];
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-  }) => {
-    return (
-      <>
-        {/**Pour la couverture hydraulique */}
-        <ToolbarButton
-          toolName={"select-etude"}
-          toolIcon={<IconSelect />}
-          toolLabelTooltip={"Sélectionner"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
-        <ToolbarButton
-          toolName={"create-pei-projet"}
-          toolIcon={<IconCreate />}
-          toolLabelTooltip={"Créer un PEI en projet"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
-        <ToolbarButton
-          toolName={"deplacer-pei-projet"}
-          toolIcon={<IconMoveObjet />}
-          toolLabelTooltip={"Déplacer un PEI en projet"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
-        <ToolbarButton
-          toolName={"pei-plus-proche"}
-          toolIcon={<IconPeiPlusProche />}
-          toolLabelTooltip={"Trouver le PEI le plus proche"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-          disabled={disabledEditPeiProjet}
-        />
-        <Button
-          className="me-1"
-          variant="outline-primary"
-          onClick={calculCouverture}
-          disabled={disabledEditPeiProjet}
-        >
-          Lancer une simulation
-        </Button>
-        <Button
-          variant="outline-primary"
-          onClick={clearCouverture}
-          disabled={disabledEditPeiProjet}
-        >
-          Effacer la couverture tracée
-        </Button>
-        <Volet
-          handleClose={handleClosePeiProjet}
-          show={showCreatePeiProjet}
-          className="w-auto"
-        >
-          <CreatePeiProjet
-            coordonneeX={pointPeiProjet?.getFlatCoordinates()[0]}
-            coordonneeY={pointPeiProjet?.getFlatCoordinates()[1]}
-            srid={map.getView().getProjection().getCode().split(":").pop()}
-            etudeId={etudeId}
-            onSubmit={() => {
-              dataPeiProjetLayer.getSource().refresh();
-              handleClosePeiProjet();
-            }}
-          />
-        </Volet>
-        <Volet
-          handleClose={handleCloseTraceeCouverture}
-          show={showTraceeCouverture}
-          className="w-auto"
-        >
-          <TraceeCouvertureForm
-            etudeId={etudeId}
-            listePeiId={listePeiId}
-            listePeiProjetId={listePeiProjetId}
-            closeVolet={handleCloseTraceeCouverture}
-          />
-        </Volet>
-        <TooltipMapEditPeiProjet
+const MapToolbarCouvertureHydraulique = ({
+  map,
+  dataPeiProjetLayer,
+  etudeId,
+  disabledEditPeiProjet,
+  calculCouverture,
+  clearCouverture,
+  handleClosePeiProjet,
+  showCreatePeiProjet,
+  pointPeiProjet,
+  handleCloseTraceeCouverture,
+  showTraceeCouverture,
+  listePeiId,
+  listePeiProjetId,
+  toggleTool: toggleToolCallback,
+  activeTool,
+}: {
+  map?: Map;
+  dataPeiLayer: any;
+  dataPeiProjetLayer: any;
+  workingLayer: any;
+  etudeId: string;
+  disabledEditPeiProjet: boolean;
+  calculCouverture: () => void;
+  clearCouverture: () => void;
+  handleClosePeiProjet: () => void;
+  showCreatePeiProjet: () => void;
+  pointPeiProjet: string[];
+  handleCloseTraceeCouverture: () => void;
+  showTraceeCouverture: () => void;
+  listePeiId: string[];
+  listePeiProjetId: string[];
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+}) => {
+  return (
+    <>
+      {/**Pour la couverture hydraulique */}
+      <ToolbarButton
+        toolName={"select-etude"}
+        toolIcon={<IconSelect />}
+        toolLabelTooltip={"Sélectionner"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+      />
+      <ToolbarButton
+        toolName={"create-pei-projet"}
+        toolIcon={<IconCreate />}
+        toolLabelTooltip={"Créer un PEI en projet"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+        disabled={disabledEditPeiProjet}
+      />
+      <ToolbarButton
+        toolName={"deplacer-pei-projet"}
+        toolIcon={<IconMoveObjet />}
+        toolLabelTooltip={"Déplacer un PEI en projet"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+        disabled={disabledEditPeiProjet}
+      />
+      <ToolbarButton
+        toolName={"pei-plus-proche"}
+        toolIcon={<IconPeiPlusProche />}
+        toolLabelTooltip={"Trouver le PEI le plus proche"}
+        toggleTool={toggleToolCallback}
+        activeTool={activeTool}
+        disabled={disabledEditPeiProjet}
+      />
+      <Button
+        className="me-1"
+        variant="outline-primary"
+        onClick={calculCouverture}
+        disabled={disabledEditPeiProjet}
+      >
+        Lancer une simulation
+      </Button>
+      <Button
+        variant="outline-primary"
+        onClick={clearCouverture}
+        disabled={disabledEditPeiProjet}
+      >
+        Effacer la couverture tracée
+      </Button>
+      <Volet
+        handleClose={handleClosePeiProjet}
+        show={showCreatePeiProjet}
+        className="w-auto"
+      >
+        <CreatePeiProjet
+          coordonneeX={pointPeiProjet?.getFlatCoordinates()[0]}
+          coordonneeY={pointPeiProjet?.getFlatCoordinates()[1]}
+          srid={map.getView().getProjection().getCode().split(":").pop()}
           etudeId={etudeId}
-          map={map}
-          disabledEditPeiProjet={disabledEditPeiProjet}
-          dataPeiProjetLayer={dataPeiProjetLayer}
-          disabled={activeTool === "deplacer-pei-projet"}
+          onSubmit={() => {
+            dataPeiProjetLayer.getSource().refresh();
+            handleClosePeiProjet();
+          }}
         />
-      </>
-    );
-  },
-);
+      </Volet>
+      <Volet
+        handleClose={handleCloseTraceeCouverture}
+        show={showTraceeCouverture}
+        className="w-auto"
+      >
+        <TraceeCouvertureForm
+          etudeId={etudeId}
+          listePeiId={listePeiId}
+          listePeiProjetId={listePeiProjetId}
+          closeVolet={handleCloseTraceeCouverture}
+        />
+      </Volet>
+      <TooltipMapEditPeiProjet
+        etudeId={etudeId}
+        map={map}
+        disabledEditPeiProjet={disabledEditPeiProjet}
+        dataPeiProjetLayer={dataPeiProjetLayer}
+        disabled={activeTool === "deplacer-pei-projet"}
+      />
+    </>
+  );
+};
 
 MapToolbarCouvertureHydraulique.displayName = "MapToolbarCouvertureHydraulique";
 

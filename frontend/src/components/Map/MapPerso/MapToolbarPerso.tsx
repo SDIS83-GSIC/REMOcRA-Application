@@ -9,7 +9,7 @@ import VectorSource from "ol/source/Vector";
 import { LineString, Point, Polygon } from "ol/geom";
 import View from "ol/View";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import FormRange from "react-bootstrap/FormRange";
 import Volet from "../../Volet/Volet.tsx";
@@ -263,480 +263,472 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
   };
 };
 
-const MapToolbarPerso = forwardRef(
-  ({
-    toggleTool: toggleToolCallback,
-    activeTool,
-    featureStyle,
-    setFeatureStyle,
-    selectedFeatures,
-    workingLayer,
-  }: {
-    toggleTool: (toolId: string) => void;
-    activeTool: string;
-    featureStyle: Style;
-    setFeatureStyle: (style: Style) => void;
-    selectedFeatures: Feature[];
-    workingLayer: VectorLayer;
-  }) => {
-    const [previewRef, setPreviewRef] = useState<HTMLDivElement>(null);
-    const [showPanel, setShowPanel] = useState(false);
-    const [previewStyle] = useState(featureStyle);
+const MapToolbarPerso = ({
+  toggleTool: toggleToolCallback,
+  activeTool,
+  featureStyle,
+  setFeatureStyle,
+  selectedFeatures,
+  workingLayer,
+}: {
+  toggleTool: (toolId: string) => void;
+  activeTool: string;
+  featureStyle: Style;
+  setFeatureStyle: (style: Style) => void;
+  selectedFeatures: Feature[];
+  workingLayer: VectorLayer;
+}) => {
+  const [previewRef, setPreviewRef] = useState<HTMLDivElement>(null);
+  const [showPanel, setShowPanel] = useState(false);
+  const [previewStyle] = useState(featureStyle);
 
-    const { activesKeys, handleShowClose } = useAccordionState(
-      Array(3).fill(true),
-    );
+  const { activesKeys, handleShowClose } = useAccordionState(
+    Array(3).fill(true),
+  );
 
-    const previewMap = useMemo(() => {
-      const initialMap = new Map({
-        controls: [],
-        interactions: [],
-        allOverlays: true,
-        target: previewRef,
-        layers: [],
-        theme: false,
-        view: new View({
-          extent: [-25, -20, 30, 20],
-          center: [0, 0],
-          zoom: 2,
-        }),
-      });
-      return initialMap;
-    }, []);
-
-    const previewLayer = useMemo(() => {
-      // Alimentation des géométries de prévisualisation
-      const pointFeature = new Point([-4, 8]);
-      const lineFeature = new LineString([
-        [-9, -12],
-        [-4, -15],
-        [1, -10],
-      ]);
-      const polygonFeature = new Polygon([
-        [
-          [5, 0],
-          [10, -3],
-          [15, 6],
-          [9, 5],
-          [5, 0],
-        ],
-      ]);
-
-      const vectorLayer = new VectorLayer({
-        source: new VectorSource({
-          features: [pointFeature, lineFeature, polygonFeature].map(
-            (p) => new Feature(p),
-          ),
-        }),
-        style: featureStyle,
+  const previewMap = useMemo(() => {
+    const initialMap = new Map({
+      controls: [],
+      interactions: [],
+      allOverlays: true,
+      target: previewRef,
+      layers: [],
+      theme: false,
+      view: new View({
         extent: [-25, -20, 30, 20],
+        center: [0, 0],
+        zoom: 2,
+      }),
+    });
+    return initialMap;
+  }, []);
+
+  const previewLayer = useMemo(() => {
+    // Alimentation des géométries de prévisualisation
+    const pointFeature = new Point([-4, 8]);
+    const lineFeature = new LineString([
+      [-9, -12],
+      [-4, -15],
+      [1, -10],
+    ]);
+    const polygonFeature = new Polygon([
+      [
+        [5, 0],
+        [10, -3],
+        [15, 6],
+        [9, 5],
+        [5, 0],
+      ],
+    ]);
+
+    const vectorLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [pointFeature, lineFeature, polygonFeature].map(
+          (p) => new Feature(p),
+        ),
+      }),
+      style: featureStyle,
+      extent: [-25, -20, 30, 20],
+    });
+
+    previewMap.addLayer(vectorLayer);
+
+    return vectorLayer;
+  }, []);
+
+  useLayoutEffect(() => {
+    if (previewRef) {
+      previewMap.setTarget(previewRef);
+    }
+  }, [previewRef]);
+
+  function updatePreview() {
+    if (!previewLayer.getSource()) {
+      return;
+    }
+    previewLayer
+      .getSource()
+      .getFeatures()
+      .forEach((f) => {
+        f.setStyle(previewStyle);
       });
+  }
 
-      previewMap.addLayer(vectorLayer);
-
-      return vectorLayer;
-    }, []);
-
-    useLayoutEffect(() => {
-      if (previewRef) {
-        previewMap.setTarget(previewRef);
-      }
-    }, [previewRef]);
-
-    function updatePreview() {
-      if (!previewLayer.getSource()) {
-        return;
-      }
-      previewLayer
-        .getSource()
-        .getFeatures()
-        .forEach((f) => {
-          f.setStyle(previewStyle);
-        });
-    }
-
-    function updateFeatureStyle() {
-      if (selectedFeatures.length) {
-        selectedFeatures.forEach((f) => {
-          // On retire l'élément sinon il conservera le style de la couche
-          const copy = f.clone();
-          workingLayer.getSource().removeFeature(f);
-          // On copie le style pour empêcher l'accès à la référence
-          copy.setStyle(previewStyle.clone());
-          workingLayer.getSource().addFeature(copy);
-        });
-      } else {
-        setFeatureStyle(previewStyle);
-      }
-    }
-
-    function deleteFeature() {
+  function updateFeatureStyle() {
+    if (selectedFeatures.length) {
       selectedFeatures.forEach((f) => {
+        // On retire l'élément sinon il conservera le style de la couche
+        const copy = f.clone();
         workingLayer.getSource().removeFeature(f);
+        // On copie le style pour empêcher l'accès à la référence
+        copy.setStyle(previewStyle.clone());
+        workingLayer.getSource().addFeature(copy);
       });
+    } else {
+      setFeatureStyle(previewStyle);
     }
+  }
 
-    return (
+  function deleteFeature() {
+    selectedFeatures.forEach((f) => {
+      workingLayer.getSource().removeFeature(f);
+    });
+  }
+
+  return (
+    <>
       <>
-        <>
-          <ButtonGroup>
-            <ToolbarButton
-              toolName={"select-draw"}
-              toolIcon={<IconSelect />}
-              toolLabelTooltip={"Sélectionner des éléments"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-          </ButtonGroup>
-          <ButtonGroup>
-            <ToolbarButton
-              toolName={"draw-point"}
-              toolIcon={<IconPoint />}
-              toolLabelTooltip={"Dessiner un point"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"draw-line"}
-              toolIcon={<IconLine />}
-              toolLabelTooltip={"Dessiner une ligne"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"draw-polygon"}
-              toolIcon={<IconPolygon />}
-              toolLabelTooltip={"Dessiner un polygone"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-          </ButtonGroup>
-          <ButtonGroup>
-            <TooltipCustom
-              tooltipText={"Modifier le style"}
-              tooltipId={"pick-style"}
+        <ButtonGroup>
+          <ToolbarButton
+            toolName={"select-draw"}
+            toolIcon={<IconSelect />}
+            toolLabelTooltip={"Sélectionner des éléments"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+        </ButtonGroup>
+        <ButtonGroup>
+          <ToolbarButton
+            toolName={"draw-point"}
+            toolIcon={<IconPoint />}
+            toolLabelTooltip={"Dessiner un point"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"draw-line"}
+            toolIcon={<IconLine />}
+            toolLabelTooltip={"Dessiner une ligne"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"draw-polygon"}
+            toolIcon={<IconPolygon />}
+            toolLabelTooltip={"Dessiner un polygone"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+        </ButtonGroup>
+        <ButtonGroup>
+          <TooltipCustom
+            tooltipText={"Modifier le style"}
+            tooltipId={"pick-style"}
+          >
+            <ToggleButton
+              name={"pick-style"}
+              onClick={() => setShowPanel(!showPanel)}
+              id={"pick-style"}
+              value={"pick-style"}
+              type={"radio"}
+              variant={"outline-primary"}
+              checked={showPanel}
+              className="m-2"
             >
-              <ToggleButton
-                name={"pick-style"}
-                onClick={() => setShowPanel(!showPanel)}
-                id={"pick-style"}
-                value={"pick-style"}
-                type={"radio"}
-                variant={"outline-primary"}
-                checked={showPanel}
-                className="m-2"
-              >
-                <IconStyle />
-              </ToggleButton>
-            </TooltipCustom>
-            <ToolbarButton
-              toolName={"edit-shape"}
-              toolIcon={<IconEdit />}
-              toolLabelTooltip={"Modifier un élément"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"edit-scale-rotate"}
-              toolIcon={<IconRotate />}
-              toolLabelTooltip={
-                "Mettre à l'échelle / effectuer une rotation sur un élément"
-              }
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <ToolbarButton
-              toolName={"edit-translate"}
-              toolIcon={<IconMoveCarte />}
-              toolLabelTooltip={"Déplacer un élément"}
-              toggleTool={toggleToolCallback}
-              activeTool={activeTool}
-            />
-            <TooltipCustom
-              tooltipText={"Supprimer un élément"}
-              tooltipId={"delete-features"}
+              <IconStyle />
+            </ToggleButton>
+          </TooltipCustom>
+          <ToolbarButton
+            toolName={"edit-shape"}
+            toolIcon={<IconEdit />}
+            toolLabelTooltip={"Modifier un élément"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"edit-scale-rotate"}
+            toolIcon={<IconRotate />}
+            toolLabelTooltip={
+              "Mettre à l'échelle / effectuer une rotation sur un élément"
+            }
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <ToolbarButton
+            toolName={"edit-translate"}
+            toolIcon={<IconMoveCarte />}
+            toolLabelTooltip={"Déplacer un élément"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+          <TooltipCustom
+            tooltipText={"Supprimer un élément"}
+            tooltipId={"delete-features"}
+          >
+            <ToggleButton
+              name={"delete-features"}
+              onClick={deleteFeature}
+              id={"delete-features"}
+              value={"delete-features"}
+              type={"radio"}
+              variant={"outline-primary"}
+              className="m-2"
             >
-              <ToggleButton
-                name={"delete-features"}
-                onClick={deleteFeature}
-                id={"delete-features"}
-                value={"delete-features"}
-                type={"radio"}
-                variant={"outline-primary"}
-                className="m-2"
-              >
-                <IconDelete />
-              </ToggleButton>
-            </TooltipCustom>
-          </ButtonGroup>
-          <ButtonGroup>
+              <IconDelete />
+            </ToggleButton>
+          </TooltipCustom>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Form.Group>
             <Form.Group>
-              <Form.Group>
-                <Form.Select
-                  onChange={(evt) => {
-                    const format = FORMATS.filter(
-                      (f) => f.code === evt.target.value,
-                    )[0];
-                    document.getElementById("papersheet").style.width =
-                      format.value.width;
-                    document.getElementById("papersheet").style.height =
-                      format.value.height;
-                  }}
-                >
-                  {FORMATS.map((v, k) => (
-                    <option key={k} value={v.code}>
-                      {v.label}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+              <Form.Select
+                onChange={(evt) => {
+                  const format = FORMATS.filter(
+                    (f) => f.code === evt.target.value,
+                  )[0];
+                  document.getElementById("papersheet").style.width =
+                    format.value.width;
+                  document.getElementById("papersheet").style.height =
+                    format.value.height;
+                }}
+              >
+                {FORMATS.map((v, k) => (
+                  <option key={k} value={v.code}>
+                    {v.label}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
-          </ButtonGroup>
-        </>
-        <Volet
-          show={showPanel}
-          handleClose={() => setShowPanel(false)}
-          title={"Modifier le style"}
-        >
-          <AccordionCustom
-            activesKeys={activesKeys}
-            list={[
-              {
-                header: "Point",
-                content: (
-                  <>
-                    <Form.Group>
-                      <Form.Label>Rayon</Form.Label>
-                      <FormRange
-                        min={1}
-                        max={200}
-                        step={1}
-                        defaultValue={previewStyle.getImage().getRadius()}
-                        onChange={(evt) => {
-                          previewStyle
-                            .getImage()
-                            .setRadius(parseInt(evt.target.value));
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Rotation</Form.Label>
-                      <FormRange
-                        min={0}
-                        max={359}
-                        step={1}
-                        defaultValue={previewStyle.getImage().getRotation()}
-                        onChange={(evt) => {
-                          previewStyle
-                            .getImage()
-                            .setRotation(parseInt(evt.target.value));
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                  </>
-                ),
-              },
-
-              {
-                header: "Ligne",
-                content: (
-                  <>
-                    <Form.Group>
-                      <Form.Label>Couleur</Form.Label>
-                      <Form.Control
-                        type="color"
-                        defaultValue={previewStyle
-                          .getStroke()
-                          .getColor()
-                          .substring(0, 7)}
-                        onChange={(evt) => {
-                          const newColor = asString(
-                            asArray(evt.target.value).concat(
-                              asArray(previewStyle.getFill().getColor())[3] ??
-                                1,
-                            ),
-                          );
-                          previewStyle.getStroke().setColor(newColor);
-                          previewStyle
-                            .getImage()
-                            .getStroke(previewStyle.getStroke());
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Opacité</Form.Label>
-                      <FormRange
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={
-                          asArray(previewStyle.getStroke().getColor())[3] ?? 1
-                        }
-                        onChange={(evt) => {
-                          const newColor = asString(
-                            asArray(previewStyle.getStroke().getColor())
-                              .slice(0, 3)
-                              .concat(parseFloat(evt.target.value)),
-                          );
-                          previewStyle.getStroke().setColor(newColor);
-                          previewStyle
-                            .getImage()
-                            .setStroke(previewStyle.getStroke());
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Epaisseur</Form.Label>
-                      <FormRange
-                        min={0}
-                        max={100}
-                        step={1}
-                        defaultValue={previewStyle.getStroke().getWidth()}
-                        onChange={(evt) => {
-                          previewStyle
-                            .getStroke()
-                            .setWidth(parseInt(evt.target.value));
-                          previewStyle
-                            .getImage()
-                            .setStroke(previewStyle.getStroke());
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Fins de ligne</Form.Label>
-                      <Form.Select
-                        onChange={(evt) => {
-                          previewStyle.getStroke().setLineCap(evt.target.value);
-                          previewStyle
-                            .getImage()
-                            .setStroke(previewStyle.getStroke());
-                          updatePreview();
-                        }}
-                      >
-                        {LINE_CAPS.map((v, k) => (
-                          <option key={k} value={v[0]}>
-                            {v[1]}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Style de ligne</Form.Label>
-                      <Form.Select
-                        onChange={(evt) => {
-                          let dash = [1];
-                          switch (evt.target.value) {
-                            case "dot":
-                              dash = [0, 10];
-                              break;
-                            case "dash":
-                              dash = [10];
-                              break;
-                            case "dashdot":
-                              dash = [10, 0, 10];
-                              break;
-                            case "longdash":
-                              dash = [30];
-                              break;
-                            case "longdashdot":
-                              dash = [30, 0, 30];
-                              break;
-                            default:
-                              dash = [1];
-                          }
-                          previewStyle.getStroke().setLineDash(dash);
-                          previewStyle
-                            .getImage()
-                            .setStroke(previewStyle.getStroke());
-                          updatePreview();
-                        }}
-                      >
-                        {LINE_DASHES.map((v, k) => (
-                          <option key={k} value={v[0]}>
-                            {v[1]}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </>
-                ),
-              },
-
-              {
-                header: "Remplissage",
-                content: (
-                  <>
-                    <Form.Group>
-                      <Form.Label>Couleur</Form.Label>
-                      <Form.Control
-                        type="color"
-                        defaultValue={previewStyle
-                          .getFill()
-                          .getColor()
-                          .substring(0, 7)}
-                        onChange={(evt) => {
-                          const newColor = asString(
-                            asArray(evt.target.value).concat(
-                              asArray(previewStyle.getFill().getColor())[3] ??
-                                1,
-                            ),
-                          );
-                          previewStyle.getFill().setColor(newColor);
-                          previewStyle
-                            .getImage()
-                            .setFill(previewStyle.getFill());
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Label>Opacité</Form.Label>
-                      <FormRange
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={
-                          asArray(previewStyle.getFill().getColor())[3] ?? 1
-                        }
-                        onChange={(evt) => {
-                          const newColor = asString(
-                            asArray(previewStyle.getFill().getColor())
-                              .slice(0, 3)
-                              .concat(parseFloat(evt.target.value)),
-                          );
-                          previewStyle.getFill().setColor(newColor);
-                          previewStyle
-                            .getImage()
-                            .setFill(previewStyle.getFill());
-                          updatePreview();
-                        }}
-                      />
-                    </Form.Group>
-                  </>
-                ),
-              },
-            ]}
-            handleShowClose={handleShowClose}
-          />
-
-          <Button onClick={updateFeatureStyle}>Appliquer</Button>
-          <div
-            ref={setPreviewRef}
-            style={{
-              width: "400px",
-              height: "400px",
-            }}
-          />
-        </Volet>
+          </Form.Group>
+        </ButtonGroup>
       </>
-    );
-  },
-);
+      <Volet
+        show={showPanel}
+        handleClose={() => setShowPanel(false)}
+        title={"Modifier le style"}
+      >
+        <AccordionCustom
+          activesKeys={activesKeys}
+          list={[
+            {
+              header: "Point",
+              content: (
+                <>
+                  <Form.Group>
+                    <Form.Label>Rayon</Form.Label>
+                    <FormRange
+                      min={1}
+                      max={200}
+                      step={1}
+                      defaultValue={previewStyle.getImage().getRadius()}
+                      onChange={(evt) => {
+                        previewStyle
+                          .getImage()
+                          .setRadius(parseInt(evt.target.value));
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Rotation</Form.Label>
+                    <FormRange
+                      min={0}
+                      max={359}
+                      step={1}
+                      defaultValue={previewStyle.getImage().getRotation()}
+                      onChange={(evt) => {
+                        previewStyle
+                          .getImage()
+                          .setRotation(parseInt(evt.target.value));
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                </>
+              ),
+            },
+
+            {
+              header: "Ligne",
+              content: (
+                <>
+                  <Form.Group>
+                    <Form.Label>Couleur</Form.Label>
+                    <Form.Control
+                      type="color"
+                      defaultValue={previewStyle
+                        .getStroke()
+                        .getColor()
+                        .substring(0, 7)}
+                      onChange={(evt) => {
+                        const newColor = asString(
+                          asArray(evt.target.value).concat(
+                            asArray(previewStyle.getFill().getColor())[3] ?? 1,
+                          ),
+                        );
+                        previewStyle.getStroke().setColor(newColor);
+                        previewStyle
+                          .getImage()
+                          .getStroke(previewStyle.getStroke());
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Opacité</Form.Label>
+                    <FormRange
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      defaultValue={
+                        asArray(previewStyle.getStroke().getColor())[3] ?? 1
+                      }
+                      onChange={(evt) => {
+                        const newColor = asString(
+                          asArray(previewStyle.getStroke().getColor())
+                            .slice(0, 3)
+                            .concat(parseFloat(evt.target.value)),
+                        );
+                        previewStyle.getStroke().setColor(newColor);
+                        previewStyle
+                          .getImage()
+                          .setStroke(previewStyle.getStroke());
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Epaisseur</Form.Label>
+                    <FormRange
+                      min={0}
+                      max={100}
+                      step={1}
+                      defaultValue={previewStyle.getStroke().getWidth()}
+                      onChange={(evt) => {
+                        previewStyle
+                          .getStroke()
+                          .setWidth(parseInt(evt.target.value));
+                        previewStyle
+                          .getImage()
+                          .setStroke(previewStyle.getStroke());
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Fins de ligne</Form.Label>
+                    <Form.Select
+                      onChange={(evt) => {
+                        previewStyle.getStroke().setLineCap(evt.target.value);
+                        previewStyle
+                          .getImage()
+                          .setStroke(previewStyle.getStroke());
+                        updatePreview();
+                      }}
+                    >
+                      {LINE_CAPS.map((v, k) => (
+                        <option key={k} value={v[0]}>
+                          {v[1]}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Style de ligne</Form.Label>
+                    <Form.Select
+                      onChange={(evt) => {
+                        let dash = [1];
+                        switch (evt.target.value) {
+                          case "dot":
+                            dash = [0, 10];
+                            break;
+                          case "dash":
+                            dash = [10];
+                            break;
+                          case "dashdot":
+                            dash = [10, 0, 10];
+                            break;
+                          case "longdash":
+                            dash = [30];
+                            break;
+                          case "longdashdot":
+                            dash = [30, 0, 30];
+                            break;
+                          default:
+                            dash = [1];
+                        }
+                        previewStyle.getStroke().setLineDash(dash);
+                        previewStyle
+                          .getImage()
+                          .setStroke(previewStyle.getStroke());
+                        updatePreview();
+                      }}
+                    >
+                      {LINE_DASHES.map((v, k) => (
+                        <option key={k} value={v[0]}>
+                          {v[1]}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </>
+              ),
+            },
+
+            {
+              header: "Remplissage",
+              content: (
+                <>
+                  <Form.Group>
+                    <Form.Label>Couleur</Form.Label>
+                    <Form.Control
+                      type="color"
+                      defaultValue={previewStyle
+                        .getFill()
+                        .getColor()
+                        .substring(0, 7)}
+                      onChange={(evt) => {
+                        const newColor = asString(
+                          asArray(evt.target.value).concat(
+                            asArray(previewStyle.getFill().getColor())[3] ?? 1,
+                          ),
+                        );
+                        previewStyle.getFill().setColor(newColor);
+                        previewStyle.getImage().setFill(previewStyle.getFill());
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Opacité</Form.Label>
+                    <FormRange
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      defaultValue={
+                        asArray(previewStyle.getFill().getColor())[3] ?? 1
+                      }
+                      onChange={(evt) => {
+                        const newColor = asString(
+                          asArray(previewStyle.getFill().getColor())
+                            .slice(0, 3)
+                            .concat(parseFloat(evt.target.value)),
+                        );
+                        previewStyle.getFill().setColor(newColor);
+                        previewStyle.getImage().setFill(previewStyle.getFill());
+                        updatePreview();
+                      }}
+                    />
+                  </Form.Group>
+                </>
+              ),
+            },
+          ]}
+          handleShowClose={handleShowClose}
+        />
+
+        <Button onClick={updateFeatureStyle}>Appliquer</Button>
+        <div
+          ref={setPreviewRef}
+          style={{
+            width: "400px",
+            height: "400px",
+          }}
+        />
+      </Volet>
+    </>
+  );
+};
 
 MapToolbarPerso.displayName = "MapToolbarPerso";
 
