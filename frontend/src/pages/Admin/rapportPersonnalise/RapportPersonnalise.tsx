@@ -68,15 +68,24 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   listeRapportPersonnaliseParametre:
     data?.listeRapportPersonnaliseParametre.map((e) => ({
       rapportPersonnaliseParametreSourceSqlDebut:
-        e.rapportPersonnaliseParametreSourceSql?.split(
-          e.rapportPersonnaliseParametreSourceSqlId,
-        )[0],
+        e.rapportPersonnaliseParametreSourceSql
+          ? e.rapportPersonnaliseParametreSourceSql?.split(
+              e.rapportPersonnaliseParametreSourceSqlId
+                ? e.rapportPersonnaliseParametreSourceSqlId
+                : null,
+            )[0]
+          : null,
       rapportPersonnaliseParametreSourceSqlFin:
         e.rapportPersonnaliseParametreSourceSql
-          ?.split(
-            e.rapportPersonnaliseParametreSourceSqlLibelle + " as libelle ",
-          )
-          .slice(-1)[0],
+          ? e.rapportPersonnaliseParametreSourceSql
+              ?.split(
+                e.rapportPersonnaliseParametreSourceSqlLibelle
+                  ? e.rapportPersonnaliseParametreSourceSqlLibelle +
+                      " as libelle"
+                  : null,
+              )
+              .slice(-1)[0]
+          : null,
       // Le composant drag and drop a besoin d'un identifiant unique, donc on passe par un random
       id: Math.random(),
       ...e,
