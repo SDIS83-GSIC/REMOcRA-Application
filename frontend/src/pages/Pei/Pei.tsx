@@ -218,7 +218,9 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
             penaCapaciteIncertaine: values.penaCapaciteIncertaine ?? null,
             penaMateriauId: values.penaMateriauId ?? null,
             penaQuantiteAppoint: values.penaQuantiteAppoint ?? null,
-            penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+            penaDisponibiliteHbe:
+              data?.penaDisponibiliteHbe ??
+              DISPONIBILITE_PEI.INDISPONIBLE.toUpperCase(),
           },
     ),
   );
