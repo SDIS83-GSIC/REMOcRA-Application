@@ -11,7 +11,7 @@ case "$1" in
       fi
     fi
 
-    export JAVA_OPTS="$JAVA_OPTS"
+    export JAVA_OPTS="$JAVA_OPTS -Djetty.http.port=${GEOSERVER_PORT:-8090}"
     commande=( /opt/geoserver/bin/startup.sh )
     if [[ "$(id -u)" == "0" ]]; then
       commande=( setpriv --reuid=geoserver --regid=geoserver --init-groups "${commande[@]}" )

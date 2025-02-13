@@ -136,7 +136,7 @@ pipeline {
               withSidecarContainers([
                 geoserver: [ imageId: imageId ],
               ]) {
-                insideDocker(imageId: imageId, runExtraParams: '-e GEOSERVER_URL=http://geoserver:8080/geoserver -e GEOSERVER_USER=admin -e GEOSERVER_PASSWORD=geoserver '
+                insideDocker(imageId: imageId, runExtraParams: '-e GEOSERVER_URL=http://geoserver:8090/geoserver -e GEOSERVER_USER=admin -e GEOSERVER_PASSWORD=geoserver '
                     + '-e POSTGIS_HOSTNAME=db -e POSTGIS_USER=remocra -e POSTGIS_PASSWORD=remocra') {
                   sh '/entrypoint.sh load-data'
                 }

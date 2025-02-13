@@ -49,7 +49,7 @@ services:
       pull: true
     user: "${UID:-1000}:${GID:-1000}"
     ports:
-      - 8090:8080
+      - 8090:8090
     volumes:
       - ./.docker/geoserver:/var/opt/geoserver
       - ./.data/images/symbologie:/var/opt/geoserver/workspaces/remocra/styles/symbologie:ro
@@ -61,7 +61,7 @@ services:
       pull: true
     command: [ "load-data" ]
     environment:
-      - GEOSERVER_URL=http://geoserver:8080/geoserver
+      - GEOSERVER_URL=http://geoserver:8090/geoserver
       - GEOSERVER_USER=admin
       - GEOSERVER_PASSWORD=geoserver
       - POSTGIS_HOSTNAME=db

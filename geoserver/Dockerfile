@@ -27,6 +27,8 @@ RUN mkdir -p /opt/geoserver \
     && sha256sum -c - <<<"$GEOSERVER_QUERYLAYER_SHA256 /tmp/geoserver-querylayer-plugin.zip" \
     && unzip /tmp/geoserver-querylayer-plugin.zip '*.jar' -d /opt/geoserver/webapps/geoserver/WEB-INF/lib \
     && rm -f /tmp/geoserver-querylayer-plugin.zip \
+    # On commente le port défini à 8080 (valeur Jetty par défaut) afin de pouvoir le définir avec GEOSERVER_PORT ou 8090
+    && sed -i "s/^jetty.http.port=/# &/" "${GEOSERVER_HOME}"/start.ini \
     # Finalisation
     && chmod -R a+rX /opt/geoserver
 
@@ -54,7 +56,7 @@ COPY --link entrypoint.sh /
 
 RUN mkdir -p /var/opt/geoserver && chmod -R a=rwxt /var/opt/geoserver
 
-EXPOSE 8080
+EXPOSE 8090
 #VOLUME /var/opt/geoserver
 #VOLUME /var/opt/glowroot
 
