@@ -340,7 +340,6 @@ val ROLE_ROLE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(RoleContact
 val SITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_pkey"), arrayOf(Site.SITE.ID), true)
 val SITE_SITE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Site.SITE, DSL.name("site_site_code_key"), arrayOf(Site.SITE.CODE), true)
 val TASK_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_pkey"), arrayOf(Task.TASK.ID), true)
-val TASK_TASK_TYPE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Task.TASK, DSL.name("task_task_type_key"), arrayOf(Task.TASK.TYPE), true)
 val THEMATIQUE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Thematique.THEMATIQUE, DSL.name("thematique_pkey"), arrayOf(Thematique.THEMATIQUE.ID), true)
 val THEMATIQUE_THEMATIQUE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Thematique.THEMATIQUE, DSL.name("thematique_thematique_code_key"), arrayOf(Thematique.THEMATIQUE.CODE), true)
 val TOPONYMIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Toponymie.TOPONYMIE, DSL.name("toponymie_pkey"), arrayOf(Toponymie.TOPONYMIE.ID), true)
