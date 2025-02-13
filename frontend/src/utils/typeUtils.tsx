@@ -49,6 +49,8 @@ export type IdCodeLibelleType = {
 export type SubmitButtonType = {
   update?: boolean;
   returnLink?: string | undefined;
+  secondaryActionTitle?: string | undefined;
   onClick?: (...args: any[]) => void;
   disabledValide?: boolean;
+  onSecondaryActionClick?: () => void | undefined;
 };

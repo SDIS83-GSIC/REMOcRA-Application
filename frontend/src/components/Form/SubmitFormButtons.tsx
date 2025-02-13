@@ -5,15 +5,21 @@ import { SubmitButtonType } from "../../utils/typeUtils.tsx";
 
 const SubmitFormButtons = ({
   returnLink,
+  onSecondaryActionClick,
+  secondaryActionTitle = "Retour",
   onClick,
   disabledValide = false,
 }: SubmitButtonType) => {
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
-      {returnLink && (
+      {(returnLink || onSecondaryActionClick) && (
         <Col sm={"auto"}>
-          <Button variant={"secondary"} href={returnLink}>
-            Retour
+          <Button
+            variant={"secondary"}
+            href={returnLink}
+            onClick={onSecondaryActionClick}
+          >
+            {secondaryActionTitle}
           </Button>
         </Col>
       )}
