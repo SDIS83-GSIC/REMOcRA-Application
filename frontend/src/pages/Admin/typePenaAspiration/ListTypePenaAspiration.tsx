@@ -8,6 +8,7 @@ const ListTypePenaAspiration = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des types de dispositifs d'aspiration"
+        addButtonTitle={"Ajouter un type d'aspiration"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_TYPE_PENA_ASPIRATION}

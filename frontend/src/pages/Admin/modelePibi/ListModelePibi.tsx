@@ -14,6 +14,7 @@ const ListModelePibi = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des modèles PIBI"
+        addButtonTitle={"Ajouter un modèle"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_MODELE_PIBI}

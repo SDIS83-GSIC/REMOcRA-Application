@@ -14,6 +14,7 @@ const ListProfilOrganisme = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des profils d'organisme"
+        addButtonTitle={"Ajouter un profil d'organisme"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_PROFIL_ORGANISME}

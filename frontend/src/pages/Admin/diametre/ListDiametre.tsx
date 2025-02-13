@@ -8,6 +8,7 @@ const ListDiametre = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des diamètres"
+        addButtonTitle={"Ajouter un diamètre"}
         pageIcon={<IconPei />}
         lienPageAjout={URLS.ADD_DIAMETRE}
         typeNomenclature={NOMENCLATURE.DIAMETRE}

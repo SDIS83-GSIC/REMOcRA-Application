@@ -268,7 +268,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           right={
             <CreateButton
               href={URLS.CREATE_TOURNEE}
-              title={"Créer une tournée"}
+              title={"Ajouter une tournée"}
             />
           }
         />

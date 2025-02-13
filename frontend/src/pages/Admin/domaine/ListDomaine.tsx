@@ -8,6 +8,7 @@ const ListDomaine = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des domaines"
+        addButtonTitle={"Ajouter un domaine"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_DOMAINE}

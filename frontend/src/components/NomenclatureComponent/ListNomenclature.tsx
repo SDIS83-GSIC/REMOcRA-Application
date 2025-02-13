@@ -33,6 +33,7 @@ const ListNomenclature = ({
   listeFk,
   libelleFk,
   lienPageUpdate,
+  addButtonTitle,
 }: {
   pageTitle: string;
   pageIcon: ReactNode;
@@ -42,6 +43,7 @@ const ListNomenclature = ({
   libelleFk?: string;
   lienPageAjout: any;
   lienPageUpdate: any;
+  addButtonTitle: string;
 }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
@@ -115,7 +117,7 @@ const ListNomenclature = ({
         urlRetour={URLS.MODULE_ADMIN}
         right={
           <CreateButton
-            title={"Ajouter"}
+            title={addButtonTitle}
             href={lienPageAjout}
             onClick={() =>
               navigate(lienPageAjout, {

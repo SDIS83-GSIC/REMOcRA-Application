@@ -8,6 +8,7 @@ const ListTypeEtude = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des types d'études"
+        addButtonTitle={"Ajouter un type d'étude"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_TYPE_ETUDE}

@@ -8,6 +8,7 @@ const ListMateriau = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des matériaux"
+        addButtonTitle={"Ajouter un matériau"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_MATERIAU}

@@ -43,7 +43,7 @@ const ListRapportPersonnalise = () => {
               <Col>
                 <CreateButton
                   href={URLS.CREATE_RAPPORT_PERSONNALISE}
-                  title={"Ajouter"}
+                  title={"Ajouter un rapport"}
                 />
               </Col>
               <Col>

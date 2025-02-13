@@ -94,7 +94,7 @@ const ListEtude = () => {
             hasDroit(user, TYPE_DROIT.ETUDE_C) && (
               <CreateButton
                 href={URLS.CREATE_ETUDE}
-                title={"Ajouter une nouvelle étude"}
+                title={"Ajouter une étude"}
               />
             )
           }

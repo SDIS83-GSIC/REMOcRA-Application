@@ -14,6 +14,7 @@ const ListProfilUtilisateur = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des profils d'utilisateur"
+        addButtonTitle={"Ajouter un profil d'utilisateur"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_PROFIL_UTILISATEUR}

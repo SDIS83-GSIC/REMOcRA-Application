@@ -57,7 +57,7 @@ const ListIndisponibiliteTemporaire = ({
           icon={<IconIndisponibiliteTemporaire />}
           right={
             <CreateButton
-              title={"Nouvelle indisponibilité temporaire"}
+              title={"Ajouter une indisponibilité temporaire"}
               href={URLS.CREATE_INDISPONIBILITE_TEMPORAIRE}
             />
           }

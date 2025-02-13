@@ -8,6 +8,7 @@ const ListTypeCanalisation = () => {
     <>
       <ListNomenclature
         pageTitle="Liste des types de canalisation"
+        addButtonTitle={"Ajouter un type de canalisation"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}
         lienPageAjout={URLS.ADD_TYPE_CANALISATION}

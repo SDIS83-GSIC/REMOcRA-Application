@@ -14,6 +14,7 @@ import { URLS } from "../../../routes.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import DeleteModal from "../../../components/Modal/DeleteModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 
 const AnomalieList = () => {
   const anomalieListState = useGet(url`/api/anomalie/list`);
@@ -40,14 +41,10 @@ const AnomalieList = () => {
         title="Liste des anomalies"
         icon={<IconAnomalie />}
         right={
-          <Button
-            type="button"
-            variant="primary"
+          <CreateButton
             href={URLS.ANOMALIE_CREATE}
-            className="mb-1"
-          >
-            Ajouter une anomalie
-          </Button>
+            title={"Ajouter une anomalie"}
+          />
         }
       />
       <Table striped bordered hover>
