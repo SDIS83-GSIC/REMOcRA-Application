@@ -79,16 +79,10 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
     @Produces(MediaType.APPLICATION_JSON)
     fun importData(
         @Context httpRequest: HttpServletRequest,
-    ): Response {
-        return Response.ok(
-            importZonesIntegrationUseCase.execute(
-                securityContext.userInfo,
-                ImportGeometriesCodeLibelleData(
-                    httpRequest.getPart("fileGeometries").inputStream,
-                ),
-            ),
-        ).build()
-    }
+    ): Response = importZonesIntegrationUseCase.execute(
+        securityContext.userInfo,
+        ImportGeometriesCodeLibelleData(httpRequest.getPart("fileGeometries").inputStream),
+    ).wrap()
 
     @GET
     @Path("/{zoneIntegrationId}")

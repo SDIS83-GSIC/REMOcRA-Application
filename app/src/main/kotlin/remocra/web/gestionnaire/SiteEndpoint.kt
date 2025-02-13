@@ -128,14 +128,8 @@ class SiteEndpoint : AbstractEndpoint() {
     @Produces(MediaType.APPLICATION_JSON)
     fun importData(
         @Context httpRequest: HttpServletRequest,
-    ): Response {
-        return Response.ok(
-            importSitesUseCase.execute(
-                securityContext.userInfo,
-                ImportGeometriesCodeLibelleData(
-                    httpRequest.getPart("fileSites").inputStream,
-                ),
-            ),
-        ).build()
-    }
+    ): Response = importSitesUseCase.execute(
+        securityContext.userInfo,
+        ImportGeometriesCodeLibelleData(httpRequest.getPart("fileSites").inputStream),
+    ).wrap()
 }

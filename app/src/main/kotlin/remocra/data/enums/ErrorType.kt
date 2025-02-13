@@ -388,7 +388,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_SITES_SHP_INTROUVABLE(9108, "Aucun fichier .shp n'a été trouvé."),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, "La géométrie ne doit pas être nulle."),
     IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, "La géométrie ne doit pas être nulle et doit être de type Point."),
-    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul. $PLACEHOLDER_ERROR_TYPE"),
+    IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul."),
     IMPORT_SITES_LIBELLE_NULL(9112, "Le libellé ne doit pas être nul."),
 
     // Contact

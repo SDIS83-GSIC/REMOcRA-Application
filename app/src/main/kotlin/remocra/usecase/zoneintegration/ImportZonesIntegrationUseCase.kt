@@ -56,22 +56,20 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
         }
     }
 
-    fun execute(userInfo: UserInfo?, element: ImportGeometriesCodeLibelleData): Result? {
+    fun execute(userInfo: UserInfo?, element: ImportGeometriesCodeLibelleData): Result {
         // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
         if (userInfo == null) {
             throw ForbiddenException()
         }
         checkDroits(userInfo)
 
-        var result: Result? = null
-        try {
-            importZonesIntegration(element.fileGeometries, userInfo)
+        return try {
+            Result.Success(importZonesIntegration(element.fileGeometries, userInfo))
         } catch (rre: RemocraResponseException) {
-            result = Result.Error(rre.message)
+            Result.Error(rre.message)
         } catch (e: Exception) {
-            result = Result.Error(e.message)
+            Result.Error(e.message)
         }
-        return result
     }
 
     private fun importZonesIntegration(inputStream: InputStream, userInfo: UserInfo) {
