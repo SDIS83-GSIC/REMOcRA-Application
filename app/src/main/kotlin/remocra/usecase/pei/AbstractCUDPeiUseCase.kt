@@ -98,7 +98,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             ) {
                 // Création de l'objet data pour le calcul
                 val peiForNumerotationData = PeiForNumerotationData(
-                    peiNumeroInterne = null,
+                    peiNumeroInterne = element.peiNumeroInterne,
                     peiId = element.peiId,
                     peiCommuneId = element.peiCommuneId,
                     peiZoneSpecialeId = element.peiZoneSpecialeId,
