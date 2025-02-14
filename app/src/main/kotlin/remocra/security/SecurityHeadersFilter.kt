@@ -16,7 +16,7 @@ class SecurityHeadersFilter : HttpFilter() {
         res.setHeader("X-Content-Type-Options", "nosniff")
         res.setHeader("X-Frame-Options", "DENY")
         res.setHeader("Referrer-Policy", "strict-origin")
-        res.setHeader("Permissions-Policy", "accelerometer=(), camera=(), fullscreen=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()")
+        res.setHeader("Permissions-Policy", "accelerometer=(), camera=(), fullscreen=(self), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()")
         res.setHeader("Cross-Origin-Resource-Policy", "same-site")
         res.setHeader("Cross-Origin-Embedder-Policy", "require-corp")
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin")
