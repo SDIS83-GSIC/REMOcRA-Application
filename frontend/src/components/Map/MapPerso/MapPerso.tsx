@@ -46,11 +46,7 @@ const MapPerso = () => {
   });
 
   return (
-    <SquelettePage
-      fluid={false}
-      className={"printable-no-margin"}
-      navbar={<Header />}
-    >
+    <SquelettePage navbar={<Header />}>
       <PageTitle
         title="Cartographie personnalisée"
         icon={<IconCarte />}
@@ -65,7 +61,7 @@ const MapPerso = () => {
           </Button>
         }
       />
-      <div id={"papersheet"}>
+      <div id={"papersheet"} className={"printable-no-margin mx-auto"}>
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
           map={map}

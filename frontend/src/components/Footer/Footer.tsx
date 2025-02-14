@@ -11,7 +11,7 @@ import atolcd from "../../img/atolcd.png";
 const Footer = () => {
   const version = useGet(url`/api/app-settings/version`);
   return (
-    <Row className={"bg-primary h-100"}>
+    <Row className={"bg-primary h-100"} id="footer">
       <Col className={"h-100 text-light"}>
         <Image className={"h-100 p-1"} fluid src={europesengage} />
         <Image className={"h-100 p-1"} fluid src={logo_prt3} />

@@ -143,8 +143,8 @@ const MapComponent = ({
           {toolbarElement && toolbarElement}
         </div>
       )}
-      <div ref={mapElement} className={"map-map"} />
-      <div className={"map-layers"}>
+      <div ref={mapElement} className={"map-map border border-primary"} />
+      <div className={"map-layers noprint"}>
         <MapLegend
           ref={layerListRef}
           layers={availableLayers}

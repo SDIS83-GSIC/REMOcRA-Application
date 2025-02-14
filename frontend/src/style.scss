@@ -74,15 +74,18 @@ h3 {
 }
 
 @media print {
-  .noprint {
-    display: none;
+  #navbar,
+  #footer,
+  .noprint,
+  .ol-full-screen,
+  .ol-zoom-in,
+  .ol-zoom-out,
+  .ol-mouse-position {
+    display: none !important;
   }
   .printable-no-margin {
     margin: 0;
     padding: 0;
-  }
-  #navbar {
-    display: none !important;
   }
 }
 
