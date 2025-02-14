@@ -4,12 +4,14 @@ import jakarta.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeDataCache
 import remocra.data.enums.TypeSourceModification
 import remocra.db.NatureRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.eventbus.datacache.DataCacheModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -33,6 +35,9 @@ class CreateNatureUseCase @Inject constructor(private val natureRepository: Natu
                 date = dateUtils.now(),
             ),
         )
+        // Si la nomenclature modifiée fait partie du DataCache
+        // Alors MiseAJour du Cache en question
+        eventBus.post(DataCacheModifiedEvent(TypeDataCache.NATURE))
     }
 
     override fun execute(userInfo: UserInfo?, element: Nature): Nature {

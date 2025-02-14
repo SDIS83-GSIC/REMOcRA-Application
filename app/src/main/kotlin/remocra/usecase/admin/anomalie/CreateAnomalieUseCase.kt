@@ -5,6 +5,7 @@ import remocra.auth.UserInfo
 import remocra.data.AnomalieData
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeDataCache
 import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -12,6 +13,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
+import remocra.eventbus.datacache.DataCacheModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -37,6 +39,9 @@ class CreateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.INS
                 date = dateUtils.now(),
             ),
         )
+        // Si la nomenclature modifiée fait partie du DataCache
+        // Alors MiseAJour du Cache en question
+        eventBus.post(DataCacheModifiedEvent(TypeDataCache.ANOMALIE))
     }
 
     override fun execute(userInfo: UserInfo?, element: AnomalieData): AnomalieData {

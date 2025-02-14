@@ -1,5 +1,6 @@
 package remocra.app
 
+import com.google.common.eventbus.Subscribe
 import com.google.inject.Provider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -52,6 +53,8 @@ import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
+import remocra.eventbus.EventListener
+import remocra.eventbus.datacache.DataCacheModifiedEvent
 
 /**
  * Classe permettant de fournir toutes les données stockées en cache dans REMOcRA
@@ -79,13 +82,18 @@ constructor(
     private val utilisateurRepository: UtilisateurRepository,
     // private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
 
-) : Provider<DataCache> {
+) : Provider<DataCache>, EventListener<DataCacheModifiedEvent> {
     private lateinit var dataCache: DataCache
     override fun get(): DataCache {
         if (!this::dataCache.isInitialized) {
             dataCache = buildDataCache()
         }
         return dataCache
+    }
+
+    @Subscribe
+    override fun onEvent(event: DataCacheModifiedEvent) {
+        reload(event.typeDataCache)
     }
 
     /**

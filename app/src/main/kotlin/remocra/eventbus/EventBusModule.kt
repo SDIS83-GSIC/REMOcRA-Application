@@ -5,6 +5,7 @@ import com.google.inject.Provides
 import com.google.inject.Singleton
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
+import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.eventbus.mobile.IntegrationTourneeEventListener
 import remocra.eventbus.notification.NotificationEventListener
@@ -22,6 +23,7 @@ object EventBusModule : RemocraModule() {
             addBinding().to<TracabiliteEventListener<*>>()
             addBinding().to<PeiModifiedEventListener>()
             addBinding().to<ParametresProvider>()
+            addBinding().to<DataCacheProvider>()
         }
 
         bind<EventBus>().to<EventBusImpl>().`in`(Singleton::class.java)
