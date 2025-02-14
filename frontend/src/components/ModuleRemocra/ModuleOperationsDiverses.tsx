@@ -23,7 +23,7 @@ const ModuleOperationsDiverses = () => {
   ];
 
   return (
-    <SquelettePage fluid navbar={<Header links={navLinks} />}>
+    <SquelettePage fluid={false} navbar={<Header links={navLinks} />}>
       {/* Outlet permet de faire référence à la page enfant sélectionnée */}
       <Outlet />
     </SquelettePage>

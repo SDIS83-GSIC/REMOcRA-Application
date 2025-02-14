@@ -9,12 +9,14 @@ import EtatJobEnum from "../../../enums/EtatJobEnum.tsx";
 import TaskType from "../../../enums/TaskTypeEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
+import { IconList } from "../../../components/Icon/Icon.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import filterValuesToVariable from "./FilterResultatsExecution.tsx";
 
 const ResultatsExecution = () => {
   return (
     <>
-      <h1>Résultats d&apos;exécution</h1>
+      <PageTitle title={"Résultats d'exécution"} icon={<IconList />} />
       <Formik initialValues={{ typeTache: "" }} onSubmit={() => {}}>
         <FormTable />
       </Formik>
