@@ -8,11 +8,10 @@ import remocra.data.Params
 import remocra.db.ModuleRepository
 import remocra.db.ProfilDroitRepository
 import remocra.db.ThematiqueRepository
-import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class ModuleDocumentCourrierUseCase : AbstractUseCase() {
+class ModuleDocumentUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var profilDroitRepository: ProfilDroitRepository
@@ -25,7 +24,6 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
 
     fun execute(
         moduleId: UUID,
-        moduleType: String,
         userInfo: UserInfo?,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
     ): Collection<DocumentCourrierData> {
@@ -43,28 +41,14 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
         } else {
             null
         }
-
-        // Puis on retourne la liste des documents / courrier
-        if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
-            return thematiqueRepository.getDocumentHabilitableWithThematique(listeThematiqueId, nbDocument, profilDroitId, userInfo.isSuperAdmin, params)
-                .map {
-                    DocumentCourrierData(
-                        id = it.documentHabilitableId,
-                        libelle = it.documentHabilitableLibelle,
-                        date = it.documentHabilitableDateMaj,
-                    )
-                }
-            // COURRIER
-        } else {
-            return thematiqueRepository.getCourrierWithThematiqueForAccueil(listeThematiqueId, nbDocument, userInfo)
-                .map {
-                    DocumentCourrierData(
-                        id = it.id,
-                        libelle = it.libelle,
-                        date = it.date,
-                    )
-                }
-        }
+        return thematiqueRepository.getDocumentHabilitableWithThematique(listeThematiqueId, nbDocument, profilDroitId, userInfo.isSuperAdmin, params)
+            .map {
+                DocumentCourrierData(
+                    id = it.documentHabilitableId,
+                    libelle = it.documentHabilitableLibelle,
+                    date = it.documentHabilitableDateMaj,
+                )
+            }
     }
 
     fun count(

@@ -1671,7 +1671,7 @@ export default [
   },
 
   {
-    path: "/documents/document/thematiques/:moduleId",
+    path: "/documents/:moduleType/thematiques/:moduleId",
     element: (
       <Authorization
         Component={ListModuleDocument}

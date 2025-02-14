@@ -15,18 +15,14 @@ import SquelettePage from "../SquelettePage.tsx";
 import FilterValues from "./FilterModuleDocument.tsx";
 
 const ListModuleDocument = () => {
-  const { moduleType, moduleId } = useParams();
+  const { moduleId } = useParams();
   return (
     <SquelettePage navbar={<Header />}>
       <Container>
-        <PageTitle
-          icon={<IconList />}
-          title={"Liste des " + moduleType?.toLowerCase() + "s"}
-        />
+        <PageTitle icon={<IconList />} title={"Liste des documents"} />
         <QueryTable
-          query={url`/api/modules/document/all?${{
+          query={url`/api/modules/documents/all?${{
             moduleId: moduleId,
-            moduleType: moduleType,
           }}`}
           columns={[
             {
@@ -55,7 +51,7 @@ const ListModuleDocument = () => {
                   row: (row) => {
                     return row;
                   },
-                  route: (id) => url`/api/document/telecharger/` + id,
+                  route: (id) => url`/api/documents/telecharger/` + id,
                   type: TYPE_BUTTON.CUSTOM,
                   icon: <IconExport />,
                   textEnable: "Télécharger le document",

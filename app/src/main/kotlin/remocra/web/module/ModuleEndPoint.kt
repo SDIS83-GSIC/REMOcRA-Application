@@ -30,7 +30,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierUsecase
 import remocra.usecase.module.ModuleAccueilUpsertUseCase
-import remocra.usecase.module.ModuleDocumentCourrierUseCase
+import remocra.usecase.module.ModuleDocumentUseCase
 import remocra.usecase.module.ModuleUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -51,7 +51,7 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Inject lateinit var objectMapper: ObjectMapper
 
     @Inject
-    lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
+    lateinit var moduleDocumentUseCase: ModuleDocumentUseCase
 
     @Context lateinit var uriInfo: UriInfo
 
@@ -109,19 +109,16 @@ class ModuleEndPoint : AbstractEndpoint() {
     fun getDocumentsForListWithThematique(
         @QueryParam("moduleId")
         moduleId: UUID,
-        @QueryParam("moduleType")
-        moduleType: String,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>,
     ): Response =
         Response.ok(
             DataTableau(
-                list = moduleDocumentCourrierUseCase.execute(
+                list = moduleDocumentUseCase.execute(
                     moduleId,
-                    moduleType,
                     securityContext.userInfo,
                     params,
                 ),
-                count = moduleDocumentCourrierUseCase.count(
+                count = moduleDocumentUseCase.count(
                     moduleId,
                     securityContext.userInfo,
                     params,
