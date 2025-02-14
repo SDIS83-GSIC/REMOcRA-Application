@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.db.jooq.remocra.tables.references.TASK
 
@@ -20,4 +21,7 @@ class TaskRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .set(TASK.NOTIFICATION, task.taskNotification)
             .where(TASK.ID.eq(task.taskId))
             .execute()
+
+    fun getTaskApacheHop(): Collection<Task> =
+        dsl.selectFrom(TASK).where(TASK.TYPE.eq(TypeTask.PERSONNALISE)).and(TASK.ACTIF.eq(true)).fetchInto()
 }

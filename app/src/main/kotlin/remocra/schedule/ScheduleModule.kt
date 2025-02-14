@@ -2,6 +2,7 @@ package remocra.schedule
 
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
+import remocra.tasks.ApacheHopTask
 import remocra.tasks.BasculeAutoIndispoTempTask
 import remocra.tasks.ChangementEtatPeiTask
 import remocra.tasks.NotifAvantDebutIndispoTempTask
@@ -34,5 +35,7 @@ object ScheduleModule : RemocraModule() {
             addBinding().to<SynchronisationSIGTask>().asEagerSingleton()
             addBinding().to<PurgerTask>().asEagerSingleton()
         }
+
+        KotlinMultibinder.newSetBinder<ApacheHopTask>(kotlinBinder)
     }
 }
