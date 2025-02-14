@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import ReactSelect from "react-select";
+import classNames from "classnames";
 import { IconInfo } from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import "./form.css";
@@ -187,7 +188,6 @@ type CheckBoxInputType = {
 export const CheckBoxInput = ({
   name,
   label,
-  required = false,
   disabled = false,
   checked = false,
   tooltipText,
@@ -205,14 +205,17 @@ export const CheckBoxInput = ({
         onChange={(v: boolean) => (onChange ? onChange(v) : field.onChange(v))}
         checked={field.value ?? checked}
       />
-      <FormLabel
-        className="p-1"
-        label={label}
-        required={required}
-        disabled={disabled}
-        tooltipText={tooltipText}
-        name={name}
-      />
+      <label
+        htmlFor={name}
+        className={classNames("mx-2 mt-2", disabled ? "text-muted" : "")}
+      >
+        {label}
+        {tooltipText && (
+          <TooltipCustom tooltipText={tooltipText} tooltipId={name}>
+            <IconInfo />
+          </TooltipCustom>
+        )}
+      </label>
     </DivWithError>
   );
 };

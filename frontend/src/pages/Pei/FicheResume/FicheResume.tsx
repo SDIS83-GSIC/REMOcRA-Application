@@ -106,9 +106,11 @@ const ElementResumeAnomalie = ({
     valIndispoHbe: number;
   }[];
 }) => {
-  return value.length > 0
-    ? value.map((e, key) => (
-        <span
+  return value.length > 0 ? (
+    <ul>
+      {" "}
+      {value.map((e, key) => (
+        <li
           key={key}
           className={classNames(
             e.valIndispoTerrestre === 5 && "fw-bold",
@@ -116,9 +118,12 @@ const ElementResumeAnomalie = ({
           )}
         >
           {e.anomalieLibelle}
-        </span>
-      ))
-    : "Aucune anomalie pour ce PEI.";
+        </li>
+      ))}{" "}
+    </ul>
+  ) : (
+    "Aucune anomalie pour ce PEI."
+  );
 };
 
 type ElementResumeType = {
