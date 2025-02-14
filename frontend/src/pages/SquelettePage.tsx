@@ -27,7 +27,7 @@ const SquelettePage = ({
         {navbar}
       </Container>
       <Container fluid={fluid} id={"main"}>
-        <div className={"d-flex flex-column h-100"}>{children}</div>
+        <div className={"d-flex flex-column h-100 pb-2"}>{children}</div>
         <GoTopButton />
       </Container>
       <Container fluid id={"footer"}>
