@@ -152,8 +152,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
             -> computeNumeroInterneMethodeB(pei)
-            // TODO trouver comment est numérotée la PROD, actuellement c'est le fallback sur le 83
-            CodeSdis.SDIS_14 -> TODO()
+            CodeSdis.SDIS_14 -> computeNumeroInterne83(pei)
             CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
@@ -882,13 +881,16 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_53,
+            CodeSdis.SDIS_58,
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
+            CodeSdis.SDIS_973,
             CodeSdis.BSPP,
             CodeSdis.SDMIS,
             -> return communeId != communeIdInitial
             CodeSdis.SDIS_09,
+            CodeSdis.SDIS_14,
             CodeSdis.SDIS_21,
             CodeSdis.SDIS_38,
             CodeSdis.SDIS_71,
@@ -898,11 +900,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_91,
             CodeSdis.SDIS_95,
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
-            // TODO trouver comment est numérotée la PROD, actuellement c'est le fallback sur le 83
-            CodeSdis.SDIS_14 -> TODO()
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_58 -> true
-            CodeSdis.SDIS_973 -> TODO()
         }
     }
 }
