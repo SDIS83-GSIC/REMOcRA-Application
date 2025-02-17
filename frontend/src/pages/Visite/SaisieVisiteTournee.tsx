@@ -134,6 +134,7 @@ const SaisieVisiteTournee = ({
   }, [valuesMemo]);
 
   return (
+    listeAnomaliesAssignable.isResolved &&
     tourneeInformations.isResolved &&
     saveValues && (
       <MyFormik
