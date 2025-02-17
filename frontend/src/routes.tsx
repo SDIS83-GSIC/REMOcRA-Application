@@ -77,6 +77,7 @@ import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
 import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
 import ListEtude from "./pages/CouvertureHydraulique/Etude/ListEtude.tsx";
 import MapEtude from "./pages/CouvertureHydraulique/Etude/MapEtude.tsx";
+import ModuleMapCrise from "./pages/ModuleCrise/Crise/MapCrise.tsx";
 import UpdateEtude from "./pages/CouvertureHydraulique/Etude/UpdateEtude.tsx";
 import UpdatePeiProjet from "./pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
@@ -217,6 +218,7 @@ export const URLS = {
   LIST_CRISES: url`/gestion-crise/crise/`,
   CREATE_CRISE: url`/gestion-crise/crise/create`,
   UPDATE_CRISE: (criseId: string) => url`/gestion-crise/crise/` + criseId,
+  OUVRIR_CRISE: (criseId: string) => url`/gestion-crise/crise/open/` + criseId,
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
@@ -736,6 +738,20 @@ export default [
           />
         ),
       },
+      {
+        path: "crise/open/:criseId",
+        element: (
+          <Authorization
+            Component={ModuleMapCrise}
+            droits={[
+              TYPE_DROIT.CRISE_U,
+              TYPE_DROIT.CRISE_R,
+              TYPE_DROIT.CRISE_D,
+              TYPE_DROIT.CRISE_C,
+            ]}
+          />
+        ),
+      },
     ],
   },
 
@@ -838,15 +854,6 @@ export default [
       <Authorization
         Component={MapPerso}
         droits={[TYPE_DROIT.CARTOGRAPHIES_E]}
-      />
-    ),
-  },
-  {
-    path: "/gestion-crise",
-    element: (
-      <Authorization
-        // TODO : Component est dans le commit d'après
-        droits={[TYPE_DROIT.CRISE_E]}
       />
     ),
   },

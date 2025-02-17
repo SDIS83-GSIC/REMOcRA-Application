@@ -4,7 +4,11 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { DateTimeInput } from "../../../components/Form/Form.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconWarningCrise, IconClose } from "../../../components/Icon/Icon.tsx";
+import {
+  IconWarningCrise,
+  IconClose,
+  IconSee,
+} from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
@@ -30,6 +34,17 @@ export const prepareValues = (data: any) => ({
 const ListCrise = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
   const listeButton: ButtonType[] = [];
+  if (hasDroit(user, TYPE_DROIT.CRISE_R)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.BUTTON,
+      icon: <IconSee />,
+      textEnable: "Ouvrir la crise",
+      route: (criseId) => URLS.OUVRIR_CRISE(criseId),
+    });
+  }
 
   if (hasDroit(user, TYPE_DROIT.CRISE_U)) {
     listeButton.push({

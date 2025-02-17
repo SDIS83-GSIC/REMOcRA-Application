@@ -295,7 +295,6 @@ export enum TYPE_BUTTON {
   SEE,
   LINK,
   BUTTON,
-  CUSTOM,
   EDIT_MODAL,
 }
 

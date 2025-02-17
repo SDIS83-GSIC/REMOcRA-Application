@@ -1,4 +1,5 @@
 import { Feature, Map, Overlay } from "ol";
+import { WKT } from "ol/format";
 import { ReactNode, Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
+import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -253,8 +255,8 @@ const Tooltip = ({
   overlay,
 
   displayButtonEdit = false,
-  onClickEdit,
   hrefEdit,
+  onClickEdit,
   labelEdit = "Modifier l'élément",
 
   displayButtonDelete = false,
@@ -458,6 +460,59 @@ export const TooltipMapEditPeiProjet = ({
         />
       </Volet>
     </>
+  );
+};
+
+export const TooltipMapEditEvenement = ({
+  map,
+  disabled,
+  criseId,
+}: {
+  map: Map;
+  disabled: boolean;
+  criseId: string;
+}) => {
+  const ref = useRef(null);
+  const [showUpdateEvenement, setShowUpdateEvenement] = useState(false);
+  const handleCloseUpdateEvenement = () => setShowUpdateEvenement(false);
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    disabled: disabled,
+  });
+  const eventId = featureSelect?.getProperties().pointId;
+  const displayEditDeleteButton =
+    featureSelect?.getProperties().pointId != null;
+  const srid = map.getView().getProjection().getCode().split(":")[1];
+
+  if (disabled) {
+    overlay?.setPosition(undefined);
+  }
+
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        onClickEdit={() => setShowUpdateEvenement(true)}
+        displayButtonEdit={displayEditDeleteButton}
+      />
+      <Volet
+        handleClose={handleCloseUpdateEvenement}
+        show={showUpdateEvenement}
+        className="w-auto"
+      >
+        <UpdateEvenement
+          criseId={criseId}
+          evenementId={eventId}
+          geometrieEvenement={`SRID=${srid};${featureSelect && new WKT().writeFeature(featureSelect)}`}
+          onSubmit={() => {
+            handleCloseUpdateEvenement();
+            overlay?.setPosition(undefined);
+          }}
+        />
+      </Volet>
+    </div>
   );
 };
 

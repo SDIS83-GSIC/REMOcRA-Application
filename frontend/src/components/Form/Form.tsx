@@ -1,8 +1,9 @@
 import { Field, Form as FormikForm, useField } from "formik";
 import { Typeahead } from "react-bootstrap-typeahead";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import FormRange from "react-bootstrap/esm/FormRange";
 import ReactSelect from "react-select";
 import classNames from "classnames";
 import { IconInfo } from "../Icon/Icon.tsx";
@@ -188,6 +189,7 @@ type CheckBoxInputType = {
 export const CheckBoxInput = ({
   name,
   label,
+  required = false,
   disabled = false,
   checked = false,
   tooltipText,
@@ -197,6 +199,14 @@ export const CheckBoxInput = ({
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
+      <FormLabel
+        className="p-1"
+        label={label}
+        required={required}
+        disabled={disabled}
+        tooltipText={tooltipText}
+        name={name}
+      />
       <Field
         id={name}
         name={name}
@@ -397,6 +407,64 @@ type DateType = InputType & {
 export const DateInput = (props: InputType) => (
   <DateTimeInput dateType="date" {...props} />
 );
+
+type RangeInputType = {
+  name: string;
+  label: string | ReactNode;
+  min: number;
+  max: number;
+  step: number;
+  value?: number;
+  required?: boolean;
+  disabled?: boolean;
+  tooltipText?: string;
+};
+
+export const RangeInput = ({
+  name,
+  label,
+  min,
+  max,
+  step,
+  value = 0,
+  required = false,
+  disabled = false,
+  tooltipText,
+}: RangeInputType) => {
+  const [, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+  const [currentValue, setCurrentValue] = useState(value);
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
+
+  // Fonction pour mettre à jour l'état de la valeur
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentValue(Number(event.target.value));
+  };
+
+  return (
+    <DivWithError name={name} error={error}>
+      <FormLabel
+        className="p-1"
+        label={label}
+        required={required}
+        disabled={disabled}
+        tooltipText={tooltipText}
+        name={name}
+      />
+      <FormRange
+        value={currentValue}
+        onChange={handleChange}
+        name={name}
+        min={min}
+        max={max}
+        step={step}
+        disabled={disabled}
+      />
+    </DivWithError>
+  );
+};
 
 export const DateTimeInput = ({
   name,
