@@ -68,7 +68,6 @@ class ImportCtpUseCase : AbstractUseCase() {
 
         private const val PRESSION_MAX = 20.0
 
-        // TODO changer le séparateur pour un caractère non possible, '_' par ex
         private const val ANOMALIES_SEPARATEUR = "-"
     }
 

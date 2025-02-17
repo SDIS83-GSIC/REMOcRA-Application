@@ -110,7 +110,6 @@ data class PibiData(
     var pibiSurpresse: Boolean = false,
     var pibiAdditive: Boolean = false,
     var pibiJumeleId: UUID?,
-    // TODO à compléter au fur et à mesure
 ) : PeiData(
     peiId,
     peiNumeroComplet,

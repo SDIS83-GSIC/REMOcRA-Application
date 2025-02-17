@@ -25,7 +25,6 @@ object ScheduleModule : RemocraModule() {
         KotlinMultibinder.newSetBinder<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>(
             kotlinBinder,
         ).apply {
-            // TODO : ajouter tâches programmées
             addBinding().to<SynchroUtilisateurTask>().asEagerSingleton()
             addBinding().to<ChangementEtatPeiTask>().asEagerSingleton()
             addBinding().to<NotifAvantDebutIndispoTempTask>().asEagerSingleton()

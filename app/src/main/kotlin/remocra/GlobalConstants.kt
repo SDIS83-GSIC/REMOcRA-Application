@@ -122,7 +122,6 @@ object GlobalConstants {
     const val IT_NOTIF_AVANT_DEBUT: String = "IT_NOTIF_AVANT_DEBUT"
     const val IT_NOTIF_AVANT_FIN: String = "IT_NOTIF_AVANT_FIN"
     const val IT_NOTIF_RESTE_INDISPO: String = "IT_NOTIF_RESTE_INDISPO"
-    // TODO : A agrémenter petit à petit
 
     const val SCHEMA_ENTREPOT_SIG: String = "ENTREPOTSIG"
 

@@ -64,7 +64,6 @@ class DataCacheProvider
 @Inject
 constructor(
     private val anomalieRepository: AnomalieRepository,
-    // private val communeRepository: CommuneRepository,
     private val diametreRepository: DiametreRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
@@ -143,7 +142,6 @@ constructor(
     private fun buildDataCache(): DataCache {
         val anomalies = anomalieRepository.getMapById()
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
-//        val communes = communeRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
@@ -177,7 +175,6 @@ constructor(
         return DataCache(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
-            // mapCommune = communes,
             mapDiametre = diametres,
             mapDomaine = domaines,
             mapMateriau = materiaux,

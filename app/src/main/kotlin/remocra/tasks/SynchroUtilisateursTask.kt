@@ -147,7 +147,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
     }
 
     override fun notifySpecific(executionResults: SchedulableTaskResults?, notificationRaw: NotificationRaw) {
-        // TODO: Pas de notification pour le moment
+        // Pas de notification pour le moment
     }
 }
 

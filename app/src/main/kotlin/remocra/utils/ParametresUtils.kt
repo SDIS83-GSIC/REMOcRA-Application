@@ -37,9 +37,6 @@ class ParametresUtils @Inject constructor() {
                 TypeParametre.INTEGER -> parametre.parametreValeur?.toInt() as T
                 TypeParametre.BOOLEAN -> parametre.parametreValeur?.toBoolean() as T
                 TypeParametre.DOUBLE -> parametre.parametreValeur?.toDouble() as T
-                // TODO !
-//                TypeParametre.GEOMETRY -> parametre.parametreValeur?.toGDouble() as T
-                // TODO possible ?
                 TypeParametre.BINARY ->
                     if (parametre.parametreValeur == null) {
                         null

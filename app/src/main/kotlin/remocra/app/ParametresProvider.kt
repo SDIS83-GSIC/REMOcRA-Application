@@ -35,7 +35,6 @@ constructor(
 
     /**
      * Méthode permettant de recharger les paramètres à partir de la BDD.
-     * TODO ne devrait pas servir en externe si on passe bien par un ParametreModifiedEventListener
      */
     private fun reloadParametres() {
         parametres = getData()
