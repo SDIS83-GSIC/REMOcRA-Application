@@ -435,6 +435,7 @@ const RcciForm = () => {
                   name={"rcci.rcciCarroyageDfci"}
                   required={false}
                   readOnly={true}
+                  disabled={true}
                 />
               </Col>
               <Col>
