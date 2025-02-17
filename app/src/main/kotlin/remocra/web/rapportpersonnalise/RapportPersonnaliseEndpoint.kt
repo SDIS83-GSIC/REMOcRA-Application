@@ -199,7 +199,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     fun exportData(
         element: GenererRapportPersonnaliseData,
     ): Response =
-        Response.ok(exportDataRapportPersonnaliseUseCase.execute(element))
+        Response.ok(exportDataRapportPersonnaliseUseCase.execute(securityContext.userInfo, element))
             .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
             .build()
 
