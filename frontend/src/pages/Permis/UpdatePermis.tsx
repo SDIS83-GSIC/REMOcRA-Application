@@ -1,6 +1,7 @@
 import { Container } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
+import { Document } from "../../components/Form/FormDocuments.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconPermis } from "../../components/Icon/Icon.tsx";
 import PermisEntity from "../../Entities/PermisEntity.tsx";
@@ -26,6 +27,7 @@ const UpdatePermis = ({
 
   const resolvedData: {
     permis: PermisEntity;
+    permisDocument: Document[];
     permisCadastreParcelle: string[];
     permisLastUpdateDate: Date;
     permisInstructeurUsername: string;
@@ -78,9 +80,14 @@ const UpdatePermis = ({
             new Date(resolvedData.permisLastUpdateDate),
           ),
           permisInstructeurUsername: resolvedData.permisInstructeurUsername,
+
+          documents: resolvedData.permisDocument ?? [],
         })}
         isPost={false}
-        prepareVariables={(values) => prepareVariables(values)}
+        isMultipartFormData={true}
+        prepareVariables={(values) =>
+          prepareVariables(values, resolvedData.permisDocument)
+        }
         onSubmit={onSubmit}
         submitUrl={`/api/permis/${permisId}`}
       >

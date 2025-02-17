@@ -33,6 +33,18 @@ class DocumentsData {
         override val documentNomFichier: String,
         val isPhotoPei: Boolean,
     ) : AbstractDocumentData()
+
+    open class DocumentsPermis(
+        override val objectId: UUID,
+        override val listeDocsToRemove: List<UUID>,
+        override val listDocument: List<DocumentPermisData>,
+        override val listDocumentParts: List<Part>,
+    ) : AbstractDocuments()
+
+    open class DocumentPermisData(
+        override val documentId: UUID?,
+        override val documentNomFichier: String,
+    ) : AbstractDocumentData()
 }
 
 abstract class AbstractDocumentData {

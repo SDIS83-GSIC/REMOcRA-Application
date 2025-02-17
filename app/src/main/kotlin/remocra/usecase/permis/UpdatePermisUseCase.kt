@@ -15,10 +15,13 @@ import remocra.db.jooq.remocra.tables.pojos.LPermisCadastreParcelle
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.document.documenthabilitable.UpsertDocumentPermisUseCase
 
 class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var permisRepository: PermisRepository
+
+    @Inject lateinit var upsertDocumentPermisUseCase: UpsertDocumentPermisUseCase
 
     override fun getListGeometrie(element: PermisData): Collection<Geometry> {
         return listOf(element.permis.permisGeometrie)
@@ -33,7 +36,9 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
     override fun postEvent(element: PermisData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element,
+                pojo = element.copy(
+                    permisDocuments = null,
+                ),
                 pojoId = element.permis.permisId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PERMIS,
@@ -55,7 +60,15 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
             }
             permisRepository.batchInsertPermisParcelle(permisParcelleToInsert)
         }
-        return element
+
+        if (element.permisDocuments != null) {
+            upsertDocumentPermisUseCase.execute(
+                userInfo = userInfo,
+                element = element.permisDocuments,
+                transactionManager,
+            )
+        }
+        return element.copy(permisDocuments = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: PermisData) {

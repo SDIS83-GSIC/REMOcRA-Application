@@ -14,10 +14,13 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.document.documenthabilitable.UpsertDocumentPermisUseCase
 
 class DeletePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperation.DELETE) {
 
     @Inject lateinit var permisRepository: PermisRepository
+
+    @Inject lateinit var upsertDocumentPermisUseCase: UpsertDocumentPermisUseCase
 
     override fun getListGeometrie(element: PermisData): Collection<Geometry> =
         listOf(element.permis.permisGeometrie)
@@ -31,7 +34,9 @@ class DeletePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
     override fun postEvent(element: PermisData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element,
+                pojo = element.copy(
+                    permisDocuments = null,
+                ),
                 pojoId = element.permis.permisId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PERMIS,
@@ -42,11 +47,19 @@ class DeletePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
     }
 
     override fun execute(userInfo: UserInfo?, element: PermisData): PermisData {
+        // Appele permettant la suppression de l'intégralité des documents liés à ce permis, et les liens en BDD.
+        if (element.permisDocuments != null) {
+            upsertDocumentPermisUseCase.execute(
+                userInfo = userInfo,
+                element = element.permisDocuments,
+                transactionManager,
+            )
+        }
         // Suppression liens Permis Parcelle
         permisRepository.deletePermisParcelle(element.permis.permisId)
         // Suppression du permis
         permisRepository.deletePermis(element.permis.permisId)
-        return element
+        return element.copy(permisDocuments = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: PermisData) {

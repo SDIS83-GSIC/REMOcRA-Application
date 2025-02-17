@@ -64,6 +64,8 @@ object GlobalConstants {
 
     val DOSSIER_DOCUMENT_RCCI = DOSSIER_DOCUMENT + "rcci/"
 
+    val DOSSIER_DOCUMENT_PERMIS = DOSSIER_DOCUMENT + "permis/"
+
     val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
 
     val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"

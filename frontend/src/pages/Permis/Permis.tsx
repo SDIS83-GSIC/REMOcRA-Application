@@ -14,6 +14,10 @@ import SelectForm from "../../components/Form/SelectForm.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import FormDocuments, {
+  Document,
+  setDocumentInFormData,
+} from "../../components/Form/FormDocuments.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
   permisId: data?.permisId,
@@ -41,38 +45,52 @@ export const getInitialValues = (data: PermisEntity) => ({
   voieSaisieText: data?.voieSaisieText,
   permisLastUpdateDate: data?.permisLastUpdateDate,
   permisInstructeurUsername: data?.permisInstructeurUsername,
+
+  documents: data?.documents ?? [],
 });
 
-export const prepareVariables = (values: PermisEntity) => ({
-  permisId: values.permisId,
-  permisLibelle: values.permisLibelle,
-  permisNumero: values.permisNumero,
-  permisServiceInstructeurId: values.permisServiceInstructeurId,
-  permisTypePermisInterserviceId: values.permisTypePermisInterserviceId,
-  permisTypePermisAvisId: values.permisTypePermisAvisId,
-  permisRiReceptionnee: values.permisRiReceptionnee,
-  permisDossierRiValide: values.permisDossierRiValide,
-  permisObservations: values.permisObservations?.trim() || null,
-  permisVoieText: values.voieSaisieText ? values.permisVoieText : null,
-  permisVoieId: values.voieSaisieText ? null : values.permisVoieId,
-  permisComplement: values.permisComplement?.trim() || null,
-  permisCommuneId: values.permisCommuneId,
-  permisAnnee: values.permisAnnee,
-  permisDatePermis: values.permisDatePermis
-    ? new Date(values.permisDatePermis).toISOString()
-    : null,
+export const prepareVariables = (
+  values: PermisEntity,
+  initialData?: Document[],
+) => {
+  const formData = new FormData();
 
-  permisCadastreParcelle: values.permisCadastreParcelle,
+  setDocumentInFormData(values?.documents, initialData, formData);
 
-  permisGeometrie:
-    "SRID=" +
-    values.permisSrid +
-    ";POINT(" +
-    values.permisCoordonneeX +
-    " " +
-    values.permisCoordonneeY +
-    ")",
-});
+  const permisData = {
+    permisId: values.permisId,
+    permisLibelle: values.permisLibelle,
+    permisNumero: values.permisNumero,
+    permisServiceInstructeurId: values.permisServiceInstructeurId,
+    permisTypePermisInterserviceId: values.permisTypePermisInterserviceId,
+    permisTypePermisAvisId: values.permisTypePermisAvisId,
+    permisRiReceptionnee: values.permisRiReceptionnee,
+    permisDossierRiValide: values.permisDossierRiValide,
+    permisObservations: values.permisObservations?.trim() || null,
+    permisVoieText: values.voieSaisieText ? values.permisVoieText : null,
+    permisVoieId: values.voieSaisieText ? null : values.permisVoieId,
+    permisComplement: values.permisComplement?.trim() || null,
+    permisCommuneId: values.permisCommuneId,
+    permisAnnee: values.permisAnnee,
+    permisDatePermis: values.permisDatePermis
+      ? new Date(values.permisDatePermis).toISOString()
+      : null,
+
+    permisCadastreParcelle: values.permisCadastreParcelle,
+
+    permisGeometrie:
+      "SRID=" +
+      values.permisSrid +
+      ";POINT(" +
+      values.permisCoordonneeX +
+      " " +
+      values.permisCoordonneeY +
+      ")",
+  };
+  formData.append("permisData", JSON.stringify(permisData));
+
+  return formData;
+};
 
 const Permis = () => {
   const { values, setFieldValue }: { values: any } = useFormikContext();
@@ -281,6 +299,12 @@ const Permis = () => {
       <Row>
         <p>Dernière modification : {values.permisLastUpdateDate}</p>
         <p>Instructeur : {values.permisInstructeurUsername}</p>
+      </Row>
+      <Row>
+        <FormDocuments
+          documents={values.documents}
+          setFieldValue={setFieldValue}
+        />
       </Row>
       <Row className="mt-3">
         <Col className="text-center">

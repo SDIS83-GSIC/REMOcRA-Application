@@ -47,6 +47,7 @@ const CreatePermis = ({
           permisInstructeurUsername: user.username,
         })}
         isPost={true}
+        isMultipartFormData={true}
         prepareVariables={(values) => prepareVariables(values)}
         onSubmit={onSubmit}
         submitUrl={`/api/permis/create`}

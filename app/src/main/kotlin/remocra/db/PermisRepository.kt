@@ -6,13 +6,16 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.max
 import org.locationtech.jts.geom.Geometry
+import remocra.data.DocumentsData
 import remocra.data.GlobalData
 import remocra.db.jooq.historique.tables.references.TRACABILITE
 import remocra.db.jooq.remocra.tables.pojos.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.pojos.Permis
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
+import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PERMIS_CADASTRE_PARCELLE
+import remocra.db.jooq.remocra.tables.references.L_PERMIS_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.TYPE_PERMIS_AVIS
 import remocra.db.jooq.remocra.tables.references.TYPE_PERMIS_INTERSERVICE
@@ -144,4 +147,23 @@ class PermisRepository @Inject constructor(
         val permisNumero: String,
         val permisGeometrie: Geometry,
     )
+
+    fun getDocumentById(permisId: UUID): List<DocumentsData.DocumentPermisData> =
+        dsl.select(
+            DOCUMENT.ID,
+            DOCUMENT.NOM_FICHIER,
+        )
+            .from(DOCUMENT)
+            .join(L_PERMIS_DOCUMENT).on(L_PERMIS_DOCUMENT.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .where(L_PERMIS_DOCUMENT.PERMIS_ID.eq(permisId))
+            .fetchInto()
+
+    fun insertPermisDocument(documentId: UUID, permisId: UUID) =
+        dsl.insertInto(L_PERMIS_DOCUMENT)
+            .set(L_PERMIS_DOCUMENT.DOCUMENT_ID, documentId)
+            .set(L_PERMIS_DOCUMENT.PERMIS_ID, permisId)
+            .execute()
+
+    fun deletePermisDocument(documentIds: Collection<UUID>) =
+        dsl.deleteFrom(L_PERMIS_DOCUMENT).where(L_PERMIS_DOCUMENT.DOCUMENT_ID.`in`(documentIds)).execute()
 }

@@ -1,6 +1,9 @@
 package remocra.web.permis
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -16,6 +19,7 @@ import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.DocumentsData
 import remocra.data.PermisData
 import remocra.data.PermisDataToFront
 import remocra.data.enums.TypePointCarte
@@ -28,6 +32,7 @@ import remocra.usecase.permis.DeletePermisUseCase
 import remocra.usecase.permis.FetchPermisUseCase
 import remocra.usecase.permis.UpdatePermisUseCase
 import remocra.utils.forbidden
+import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -49,6 +54,8 @@ class PermisEndpoint : AbstractEndpoint() {
     @Inject lateinit var updatePermisUseCase: UpdatePermisUseCase
 
     @Inject lateinit var deletePermisUseCase: DeletePermisUseCase
+
+    @Inject lateinit var objectMapper: ObjectMapper
 
     @GET
     @Path("/layer")
@@ -77,6 +84,7 @@ class PermisEndpoint : AbstractEndpoint() {
         Response.ok().entity(
             PermisDataToFront(
                 permis = permisRepository.getById(permisId),
+                permisDocument = permisRepository.getDocumentById(permisId),
                 permisCadastreParcelle = permisRepository.getParcelleByPermisId(permisId),
                 permisLastUpdateDate = permisRepository.getLastUpdateDate(permisId),
                 permisInstructeurUsername = permisRepository.getInstructeurUsername(permisId),
@@ -97,12 +105,16 @@ class PermisEndpoint : AbstractEndpoint() {
     @Path("/create")
     @RequireDroits([Droit.PERMIS_A])
     @Produces(MediaType.APPLICATION_JSON)
-    fun create(permisInput: PermisInput): Response =
-        createPermisUseCase.execute(
+    fun create(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val permisInput = objectMapper.readValue(httpRequest.getTextPart("permisData"), PermisInput::class.java)
+        val permisId = UUID.randomUUID()
+        return createPermisUseCase.execute(
             userInfo = securityContext.userInfo,
             element = PermisData(
                 Permis(
-                    permisId = UUID.randomUUID(),
+                    permisId = permisId,
                     permisLibelle = permisInput.permisLibelle,
                     permisNumero = permisInput.permisNumero,
                     permisInstructeurId = securityContext.userInfo!!.utilisateurId,
@@ -121,8 +133,15 @@ class PermisEndpoint : AbstractEndpoint() {
                     permisGeometrie = permisInput.permisGeometrie,
                 ),
                 permisCadastreParcelle = permisInput.permisCadastreParcelle,
+                permisDocuments = DocumentsData.DocumentsPermis(
+                    objectId = permisId,
+                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentPermisData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
             ),
         ).wrap()
+    }
 
     @PUT
     @Path("/{permisId}")
@@ -130,9 +149,11 @@ class PermisEndpoint : AbstractEndpoint() {
     @Produces(MediaType.APPLICATION_JSON)
     fun update(
         @PathParam("permisId") permisId: UUID,
-        permisInput: PermisInput,
-    ): Response =
-        updatePermisUseCase.execute(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val permisInput = objectMapper.readValue(httpRequest.getTextPart("permisData"), PermisInput::class.java)
+
+        return updatePermisUseCase.execute(
             securityContext.userInfo,
             PermisData(
                 Permis(
@@ -155,8 +176,15 @@ class PermisEndpoint : AbstractEndpoint() {
                     permisGeometrie = permisInput.permisGeometrie,
                 ),
                 permisCadastreParcelle = permisInput.permisCadastreParcelle,
+                permisDocuments = DocumentsData.DocumentsPermis(
+                    objectId = permisId,
+                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentPermisData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
             ),
         ).wrap()
+    }
 
     data class PermisInput(
         val permisLibelle: String,
@@ -186,6 +214,12 @@ class PermisEndpoint : AbstractEndpoint() {
         val permis = PermisData(
             permis = permisRepository.getById(permisId),
             permisCadastreParcelle = permisRepository.getParcelleByPermisId(permisId),
+            permisDocuments = DocumentsData.DocumentsPermis(
+                objectId = permisId,
+                listeDocsToRemove = permisRepository.getDocumentById(permisId).mapNotNull { it.documentId },
+                listDocument = listOf(),
+                listDocumentParts = listOf(),
+            ),
         )
         return deletePermisUseCase.execute(securityContext.userInfo, permis).wrap()
     }

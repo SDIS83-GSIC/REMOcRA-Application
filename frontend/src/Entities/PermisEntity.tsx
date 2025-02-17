@@ -1,3 +1,5 @@
+import { Document } from "../components/Form/FormDocuments.tsx";
+
 type PermisEntity = {
   permisId?: string;
   permisLibelle: string;
@@ -24,6 +26,8 @@ type PermisEntity = {
   voieSaisieText: boolean;
   permisLastUpdateDate: Date;
   permisInstructeurUsername: string;
+
+  documents: Document[];
 };
 
 export default PermisEntity;
