@@ -366,21 +366,6 @@ const MapToolbarRcci = forwardRef(
                 {<IconEdit />}
               </Button>
             </TooltipCustom>
-            <TooltipCustom
-              tooltipText={"Créer une RCCI (saisie X/Y)"}
-              tooltipId={"create-rcci-xy"}
-            >
-              <Button
-                name={"tool"}
-                onClick={() => editModalRefs.show()}
-                toolName={"edit-rcci"}
-                value={"create-rcci-xy"}
-                variant={"outline-primary"}
-                className="m-2"
-              >
-                {<IconEdit />}
-              </Button>
-            </TooltipCustom>
             <ToolbarButton
               toolName={"edit-rcci"}
               toolIcon={<IconEdit />}
