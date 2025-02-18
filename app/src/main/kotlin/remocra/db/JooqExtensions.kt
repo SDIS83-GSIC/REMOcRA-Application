@@ -53,6 +53,61 @@ fun Field<String?>.ftsearch(value: String): Condition {
     )
 }
 
+/**
+ * Fait appel à la primitive Postgres *unaccent* sur *this*
+ */
+fun Field<String?>.unaccent() = DSL.field("unaccent({0})", this.dataType, this)
+
+/**
+ * Fait appel à la primitive Postgres *unaccent* sur *value*
+ */
+fun unaccent(value: String) = DSL.field("unaccent({0})", String::class.java, value)
+
+/**
+ * Effectue une recherche d'égalité textuelle désaccentuée en wrappant *this* et *value* dans un *unaccent* postgres
+ */
+fun Field<String?>.equalUnaccent(value: String): Condition = this.unaccent().eq(unaccent(value))
+
+/**
+ * Effectue une recherche d'égalité textuelle désaccentuée et insensible à la casse en wrappant *this* et *value* dans un *unaccent* et un *lower* postgres
+ */
+fun Field<String?>.equalIgnoreCaseUnaccent(value: String): Condition = this.unaccent().equalIgnoreCase(unaccent(value))
+
+/**
+ * Effectue un CONTAINS désaccentué en wrappant *this* et *value* dans un *unaccent*
+ *
+ */
+fun Field<String?>.containsUnaccent(value: String): Condition = this.unaccent().contains(unaccent(value))
+
+/**
+ * Effectue un CONTAINS désaccentué et insensible à la casse en wrappant *this* et *value* dans un *unaccent* et un *lower* postgres
+ */
+fun Field<String?>.containsIgnoreCaseUnaccent(value: String): Condition = this.unaccent().containsIgnoreCase(unaccent(value))
+
+/**
+ * Effectue un like 'value%' désaccentué  en wrappant *this* et *value* dans un *unaccent*
+ *
+ */
+fun Field<String?>.startsWithUnaccent(value: String): Condition = this.unaccent().startsWith(unaccent(value))
+
+/**
+ * Effectue un like 'value%' désaccentué insensible à la casse en wrappant *this* et *value* dans un *unaccent*
+ *
+ */
+fun Field<String?>.startsWithIgnoreCaseUnaccent(value: String): Condition = this.unaccent().startsWithIgnoreCase(unaccent(value))
+
+/**
+ * Effectue un like '%value' désaccentué  en wrappant *this* et *value* dans un *unaccent*
+ *
+ */
+fun Field<String?>.endsWithUnaccent(value: String): Condition = this.unaccent().endsWith(unaccent(value))
+
+/**
+ * Effectue un like '%value' désaccentué insensible à la casse en wrappant *this* et *value* dans un *unaccent*
+ *
+ */
+fun Field<String?>.endsWithIgnoreCaseUnaccent(value: String): Condition = this.unaccent().endsWithIgnoreCase(unaccent(value))
+
 inline fun <R : Record, reified T> DSLContext.fetchOneById(
     idField: TableField<R, UUID>,
     id: UUID,
