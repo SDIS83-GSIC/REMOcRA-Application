@@ -110,14 +110,24 @@ const MenuAdmin = () => {
                   </Nav.Item>
                 )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS) && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.TASK}
-                    >
-                      Paramétrage des traitements
-                    </CustomLinkButton>
-                  </Nav.Item>
+                  <>
+                    <Nav.Item>
+                      <CustomLinkButton
+                        className="text-underline text-start"
+                        pathname={URLS.TASK}
+                      >
+                        Paramétrage des traitements
+                      </CustomLinkButton>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <CustomLinkButton
+                        className="text-underline text-start"
+                        pathname={URLS.LIST_TASK_SPECIFIQUE}
+                      >
+                        Paramétrage des traitements spécifiques
+                      </CustomLinkButton>
+                    </Nav.Item>
+                  </>
                 )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) && (
                   <Nav.Item>

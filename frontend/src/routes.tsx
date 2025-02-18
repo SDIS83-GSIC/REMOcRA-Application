@@ -479,6 +479,7 @@ export const URLS = {
   ADMIN_IMPORT_RESSOURCES: url`/admin/import-ressources`,
 
   CREATE_TACHE_SPECIFIQUE: url`/admin/tache-specifique/create`,
+  LIST_TASK_SPECIFIQUE: url`/admin/tache-specifique`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
