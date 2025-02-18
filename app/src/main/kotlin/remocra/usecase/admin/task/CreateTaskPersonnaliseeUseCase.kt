@@ -18,10 +18,10 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateTaskPersonnaliseeUseCase @Inject constructor(
+class CreateTaskPersonnaliseeUseCase @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskPersonnaliseeUtils: TaskPersonnaliseeUtils,
-) : AbstractCUDUseCase<TaskPersonnaliseeInputData>(typeOperation = TypeOperation.UPDATE) {
+) : AbstractCUDUseCase<TaskPersonnaliseeInputData>(typeOperation = TypeOperation.INSERT) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(Droit.ADMIN_PARAM_TRAITEMENTS)) {
             throw RemocraResponseException(ErrorType.ADMIN_TASK_FORBIDDEN)
@@ -41,7 +41,7 @@ class UpdateTaskPersonnaliseeUseCase @Inject constructor(
         element: TaskPersonnaliseeInputData,
     ): TaskPersonnaliseeInputData {
         // On sauvegarde en base l'élément mis à jour
-        taskRepository.update(
+        taskRepository.insert(
             Task(
                 taskId = element.taskId,
                 taskType = TypeTask.PERSONNALISE,
@@ -53,11 +53,7 @@ class UpdateTaskPersonnaliseeUseCase @Inject constructor(
             ),
         )
 
-        // puis on sauvegarde les fichiers
-        // On dézippe
-        if (element.zip != null) {
-            taskPersonnaliseeUtils.saveTask(element)
-        }
+        taskPersonnaliseeUtils.saveTask(element)
 
         return element.copy(zip = null)
     }

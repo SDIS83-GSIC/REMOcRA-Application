@@ -22,6 +22,17 @@ class TaskRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .where(TASK.ID.eq(task.taskId))
             .execute()
 
+    fun insert(task: Task): Int =
+        dsl.insertInto(TASK)
+            .set(TASK.ID, task.taskId)
+            .set(TASK.ACTIF, task.taskActif)
+            .set(TASK.TYPE, task.taskType)
+            .set(TASK.PLANIFICATION, task.taskPlanification)
+            .set(TASK.EXEC_MANUELLE, task.taskExecManuelle)
+            .set(TASK.PARAMETRES, task.taskParametres)
+            .set(TASK.NOTIFICATION, task.taskNotification)
+            .execute()
+
     fun getTaskApacheHopForAdmin(): Collection<Task> =
         dsl.selectFrom(TASK).where(TASK.TYPE.eq(TypeTask.PERSONNALISE)).fetchInto()
 

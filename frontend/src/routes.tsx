@@ -110,6 +110,7 @@ import ListRoleContact from "./pages/Admin/roleContact/ListRoleContact.tsx";
 import UpdateRoleContact from "./pages/Admin/roleContact/UpdateRolecontact.tsx";
 import ListSite from "./pages/Admin/site/ListSite.tsx";
 import UpdateSite from "./pages/Admin/site/UpdateSite.tsx";
+import CreateTaskPersonnalisee from "./pages/Admin/task/CreateTaskPersonnalisee.tsx";
 import ListeTaskPersonnalisee from "./pages/Admin/task/ListTaskPersonnalisee.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
@@ -476,6 +477,8 @@ export const URLS = {
   ADMIN_ACCUEIL: url`/admin/module-accueil`,
   ADMIN_PARAMETRE: url`/admin/parametres`,
   ADMIN_IMPORT_RESSOURCES: url`/admin/import-ressources`,
+
+  CREATE_TACHE_SPECIFIQUE: url`/admin/tache-specifique/create`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
@@ -2156,6 +2159,15 @@ export default [
         element: (
           <Authorization
             Component={ListeTaskPersonnalisee}
+            droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
+          />
+        ),
+      },
+      {
+        path: "tache-specifique/create",
+        element: (
+          <Authorization
+            Component={CreateTaskPersonnalisee}
             droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
           />
         ),

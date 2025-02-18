@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { TaskPersonnaliseEntity } from "../../../Entities/TaskEntity.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconOverview } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import ParametreTaskForm, {
   getCronTab,
   getInitialValues,
@@ -37,6 +39,12 @@ const ListeTaskPersonnalisee = () => {
       <PageTitle
         icon={<IconOverview />}
         title={"Paramétrage des traitements spécifiques"}
+        right={
+          <CreateButton
+            href={URLS.CREATE_TACHE_SPECIFIQUE}
+            title={"Ajouter une tâche spécifique"}
+          />
+        }
       />
       <Row>
         <Col xs="5">

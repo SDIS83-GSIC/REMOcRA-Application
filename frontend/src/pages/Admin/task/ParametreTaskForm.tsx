@@ -33,10 +33,10 @@ import { TypeOrganismeType } from "../organisme/Organisme.tsx";
 import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 
 export const getInitialValues = (currentTask: TaskEntity) => ({
-  taskId: currentTask.taskId,
+  taskId: currentTask?.taskId,
   taskType: currentTask?.taskType ?? TaskType.PERSONNALISEE.id,
-  taskActif: currentTask.taskActif,
-  taskPlanification: currentTask.taskPlanification,
+  taskActif: currentTask?.taskActif ?? false,
+  taskPlanification: currentTask?.taskPlanification,
   taskExecManuelle: currentTask?.taskExecManuelle ?? false,
   taskParametres: currentTask?.taskParametres ?? null,
   taskNotification: currentTask?.taskNotification ?? null,
@@ -299,7 +299,7 @@ const ParametreTaskForm = () => {
                         setFieldValue("zipFile", e.target.files[0]);
                       }}
                       tooltipText="Si des documents sont déjà présents sur le serveur pour ce job, ils seront remplacés par les nouveaux insérés"
-                      required={false}
+                      required={values.taskId == null}
                     />
                   ),
                 },

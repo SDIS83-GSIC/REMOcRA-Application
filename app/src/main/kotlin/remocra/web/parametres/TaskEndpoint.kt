@@ -5,6 +5,7 @@ import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -19,6 +20,7 @@ import remocra.data.TaskInputData
 import remocra.data.TaskPersonnaliseeInputData
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeTask
+import remocra.usecase.admin.task.CreateTaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.TaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.TaskUseCase
 import remocra.usecase.admin.task.UpdateTaskPersonnaliseeUseCase
@@ -37,6 +39,8 @@ class TaskEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateTaskUseCase: UpdateTaskUseCase
 
     @Inject lateinit var updateTaskPersonnaliseeUseCase: UpdateTaskPersonnaliseeUseCase
+
+    @Inject lateinit var createTaskPersonnaliseeUseCase: CreateTaskPersonnaliseeUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -85,6 +89,23 @@ class TaskEndpoint : AbstractEndpoint() {
             securityContext.userInfo,
             TaskPersonnaliseeInputData(
                 taskId = UUID.fromString(httpRequest.getTextPart("taskId")),
+                taskActif = httpRequest.getTextPart("taskActif").toBoolean(),
+                taskPlanification = httpRequest.getTextPart("taskPlanification"),
+                taskParametres = JSONB.jsonb(httpRequest.getTextPart("taskParametres")),
+                zip = httpRequest.getPart("zipFile")?.inputStream,
+            ),
+        ).wrap()
+
+    @Path("/personnalisee/create")
+    @POST
+    @RequireDroits([Droit.ADMIN_PARAM_TRAITEMENTS])
+    fun createTaskPersonnalisee(
+        @Context httpRequest: HttpServletRequest,
+    ): Response =
+        createTaskPersonnaliseeUseCase.execute(
+            securityContext.userInfo,
+            TaskPersonnaliseeInputData(
+                taskId = UUID.randomUUID(),
                 taskActif = httpRequest.getTextPart("taskActif").toBoolean(),
                 taskPlanification = httpRequest.getTextPart("taskPlanification"),
                 taskParametres = JSONB.jsonb(httpRequest.getTextPart("taskParametres")),
