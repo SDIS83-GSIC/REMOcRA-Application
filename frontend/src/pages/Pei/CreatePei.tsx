@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import { PeiEntity } from "../../Entities/PeiEntity.tsx";
 import { URLS } from "../../routes.tsx";
 import Pei, {
   getInitialValues,
@@ -17,14 +18,11 @@ const CreatePei = () => {
     srid: srid = null,
     ...rest
   } = state;
-  const initialValues = {
-    ...getInitialValues(),
-    ...{
-      coordonneeX,
-      coordonneeY,
-      srid,
-    },
-  };
+  const initialValues = getInitialValues({
+    coordonneeX,
+    coordonneeY,
+    srid,
+  } as PeiEntity);
 
   if (state) {
     window.history.replaceState(rest, "");
