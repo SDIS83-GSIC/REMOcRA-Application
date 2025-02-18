@@ -1,7 +1,11 @@
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { isAuthorized } from "../../../droits.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import SquelettePage from "../../../pages/SquelettePage.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import Header from "../../Header/Header.tsx";
 import { IconPermis } from "../../Icon/Icon.tsx";
@@ -15,6 +19,7 @@ import MapToolbarPermis, {
 
 const MapPermis = () => {
   const { state } = useLocation();
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const mapElement = useRef<HTMLDivElement>();
 
   const {
@@ -86,6 +91,8 @@ const MapPermis = () => {
     }
   }, [state, map]);
 
+  const hasRightToInteract = isAuthorized(user, [TYPE_DROIT.PERMIS_A]);
+
   return (
     <SquelettePage navbar={<Header />}>
       <PageTitle title="Carte des Permis" icon={<IconPermis />} />
@@ -114,6 +121,7 @@ const MapPermis = () => {
               handleCloseUpdatePermis={handleCloseUpdatePermis}
               toggleTool={toggleTool}
               activeTool={activeTool}
+              hasRightToInteract={hasRightToInteract}
             />
           )
         }

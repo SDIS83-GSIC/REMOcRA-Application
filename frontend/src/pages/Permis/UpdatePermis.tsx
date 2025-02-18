@@ -18,6 +18,7 @@ const UpdatePermis = ({
   coordonneeY,
   srid,
   onSubmit,
+  readOnly = false,
 }: UpdatePermisType) => {
   const data = useGet(url`/api/permis/${permisId}`);
 
@@ -91,7 +92,7 @@ const UpdatePermis = ({
         onSubmit={onSubmit}
         submitUrl={`/api/permis/${permisId}`}
       >
-        <Permis />
+        <Permis readOnly={readOnly} />
       </MyFormik>
     </Container>
   );
@@ -103,6 +104,7 @@ type UpdatePermisType = {
   coordonneeY: number;
   srid: string;
   onSubmit: () => void;
+  readOnly: boolean;
 };
 
 export default UpdatePermis;

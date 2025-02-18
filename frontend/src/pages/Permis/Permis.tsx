@@ -10,14 +10,14 @@ import PositiveNumberInput, {
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
-import SelectForm from "../../components/Form/SelectForm.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
-import url from "../../module/fetch.tsx";
-import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 import FormDocuments, {
   Document,
   setDocumentInFormData,
 } from "../../components/Form/FormDocuments.tsx";
+import SelectForm from "../../components/Form/SelectForm.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import url from "../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
   permisId: data?.permisId,
@@ -92,7 +92,7 @@ export const prepareVariables = (
   return formData;
 };
 
-const Permis = () => {
+const Permis = ({ readOnly }: { readOnly: boolean }) => {
   const { values, setFieldValue }: { values: any } = useFormikContext();
 
   const fetchPermisData = useGet(
@@ -156,10 +156,14 @@ const Permis = () => {
   return (
     <FormContainer>
       <Row>
-        <TextInput name="permisLibelle" label="Nom" />
+        <TextInput name="permisLibelle" label="Nom" readOnly={readOnly} />
       </Row>
       <Row>
-        <DateInput name="permisDatePermis" label="Date permis" />
+        <DateInput
+          name="permisDatePermis"
+          label="Date permis"
+          readOnly={readOnly}
+        />
       </Row>
       <Row>
         <SelectForm
@@ -182,18 +186,23 @@ const Permis = () => {
           )}
           required={false}
           setFieldValue={setFieldValue}
-          disabled={values.voieSaisieText}
+          disabled={readOnly || values.voieSaisieText}
         />
       </Row>
       {isSaisieVoieTextEnabled && (
         <Row>
           <Col>
-            <CheckBoxInput name="voieSaisieText" label="Voie non trouvée ?" />
+            <CheckBoxInput
+              name="voieSaisieText"
+              label="Voie non trouvée ?"
+              disabled={readOnly}
+            />
             {values.voieSaisieText && (
               <TextInput
                 name="permisVoieText"
                 label="Voie (saisie libre)"
                 required={false}
+                readOnly={readOnly}
               />
             )}
           </Col>
@@ -204,6 +213,7 @@ const Permis = () => {
           name="permisComplement"
           label="Complément adresse"
           required={false}
+          readOnly={readOnly}
         />
       </Row>
       <Row>
@@ -229,6 +239,7 @@ const Permis = () => {
           isClearable={false}
           required={false}
           tooltipText="Les options proposées sont les 25 parcelles les plus proches du point de déclaration du permis."
+          readOnly={readOnly}
         />
       </Row>
       {values.permisCadastreParcelle?.length > 0 && (
@@ -237,17 +248,22 @@ const Permis = () => {
         </Row>
       )}
       <Row>
-        <TextInput name="permisNumero" label="N° permis" />
+        <TextInput name="permisNumero" label="N° permis" readOnly={readOnly} />
       </Row>
       <Row>
         <Col>
           <CheckBoxInput
             name="permisDossierRiValide"
             label="Dossier RI validé"
+            disabled={readOnly}
           />
         </Col>
         <Col>
-          <CheckBoxInput name="permisRiReceptionnee" label="RI réceptionnée" />
+          <CheckBoxInput
+            name="permisRiReceptionnee"
+            label="RI réceptionnée"
+            disabled={readOnly}
+          />
         </Col>
       </Row>
       <Row>
@@ -260,6 +276,7 @@ const Permis = () => {
           )}
           required={true}
           setFieldValue={setFieldValue}
+          disabled={readOnly}
         />
       </Row>
       <Row>
@@ -272,6 +289,7 @@ const Permis = () => {
           )}
           required={true}
           setFieldValue={setFieldValue}
+          disabled={readOnly}
         />
       </Row>
       <Row>
@@ -279,6 +297,7 @@ const Permis = () => {
           name="permisObservations"
           label="Observations"
           required={false}
+          readOnly={readOnly}
         />
       </Row>
       <Row>
@@ -291,28 +310,60 @@ const Permis = () => {
           )}
           required={true}
           setFieldValue={setFieldValue}
+          disabled={readOnly}
         />
       </Row>
       <Row>
-        <PositiveNumberInput name="permisAnnee" label="Année" />
+        <PositiveNumberInput
+          name="permisAnnee"
+          label="Année"
+          readOnly={readOnly}
+        />
       </Row>
       <Row>
         <p>Dernière modification : {values.permisLastUpdateDate}</p>
         <p>Instructeur : {values.permisInstructeurUsername}</p>
       </Row>
-      <Row>
-        <FormDocuments
-          documents={values.documents}
-          setFieldValue={setFieldValue}
-        />
-      </Row>
-      <Row className="mt-3">
-        <Col className="text-center">
-          <Button type="submit" variant="primary">
-            Valider
-          </Button>
-        </Col>
-      </Row>
+      {!readOnly ? (
+        <Row>
+          <FormDocuments
+            documents={values.documents}
+            setFieldValue={setFieldValue}
+          />
+        </Row>
+      ) : (
+        <>
+          <Row>
+            <p className="fw-bold mt-2">Document </p>
+          </Row>
+          {values.documents.length > 0 ? (
+            <Row>
+              {values.documents.map((value: any, index: number) => {
+                return (
+                  <Button
+                    key={index}
+                    variant="link"
+                    href={url`/api/documents/telecharger/` + value.documentId}
+                  >
+                    {value.documentNomFichier}
+                  </Button>
+                );
+              })}
+            </Row>
+          ) : (
+            <p>Aucun document fourni</p>
+          )}
+        </>
+      )}
+      {!readOnly && (
+        <Row className="mt-3">
+          <Col className="text-center">
+            <Button type="submit" variant="primary">
+              Valider
+            </Button>
+          </Col>
+        </Row>
+      )}
     </FormContainer>
   );
 };

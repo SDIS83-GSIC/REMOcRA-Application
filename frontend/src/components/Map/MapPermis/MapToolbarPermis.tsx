@@ -208,6 +208,7 @@ const MapToolbarPermis = forwardRef(
     pointPermis,
     toggleTool: toggleToolCallback,
     activeTool,
+    hasRightToInteract = false,
   }: {
     map?: Map;
     dataPermisLayer: any;
@@ -225,6 +226,8 @@ const MapToolbarPermis = forwardRef(
     pointPermis: string[];
     toggleTool: (toolId: string) => void;
     activeTool: string;
+
+    hasRightToInteract: boolean;
   }) => {
     return (
       <>
@@ -236,20 +239,24 @@ const MapToolbarPermis = forwardRef(
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
           />
-          <ToolbarButton
-            toolName={"create-permis"}
-            toolIcon={<IconCreate />}
-            toolLabelTooltip={"Créer un permis"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
-          <ToolbarButton
-            toolName={"deplacer-permis"}
-            toolIcon={<IconMoveObjet />}
-            toolLabelTooltip={"Déplacer un permis"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-          />
+          {hasRightToInteract && (
+            <>
+              <ToolbarButton
+                toolName={"create-permis"}
+                toolIcon={<IconCreate />}
+                toolLabelTooltip={"Créer un permis"}
+                toggleTool={toggleToolCallback}
+                activeTool={activeTool}
+              />
+              <ToolbarButton
+                toolName={"deplacer-permis"}
+                toolIcon={<IconMoveObjet />}
+                toolLabelTooltip={"Déplacer un permis"}
+                toggleTool={toggleToolCallback}
+                activeTool={activeTool}
+              />
+            </>
+          )}
         </ButtonGroup>
         {/* Volet de Recherche */}
         <Volet
@@ -281,6 +288,7 @@ const MapToolbarPermis = forwardRef(
           disabledEditPermis={false}
           dataPermisLayer={dataPermisLayer}
           disabled={false}
+          hasRightToInteract={hasRightToInteract}
         />
         {/* Volet d'Update suite à un déplacement */}
         <Volet

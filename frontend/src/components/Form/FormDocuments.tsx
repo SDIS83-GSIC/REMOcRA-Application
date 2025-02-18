@@ -24,12 +24,14 @@ const FormDocuments = ({
   otherFormParam,
   defaultOtherProperties,
   disabled,
+  readOnly,
 }: {
   documents: Document[];
   defaultOtherProperties: any;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   otherFormParam: (index: number, listeElements: any[]) => ReactNode;
   disabled: boolean;
+  readOnly: boolean;
 }) => {
   function formDocumentsToRepeat(index: number, listeElements: any[]) {
     return (
@@ -70,12 +72,15 @@ const FormDocuments = ({
           setFieldValue("documents", documents);
         }}
         disabled={disabled}
+        readOnly={readOnly}
       />
       <AddRemoveComponent
         name="documents"
         createComponentToRepeat={formDocumentsToRepeat}
         listeElements={documents ?? []}
         canAdd={false}
+        disabled={disabled}
+        readOnly={readOnly}
       />
     </>
   );

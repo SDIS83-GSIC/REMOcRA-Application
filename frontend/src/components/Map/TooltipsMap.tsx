@@ -528,15 +528,19 @@ export const TooltipMapEditPermis = ({
   disabledEditPermis = false,
   dataPermisLayer,
   disabled,
+  hasRightToInteract = false,
 }: {
   map: Map;
   disabledEditPermis: boolean;
   dataPermisLayer: any;
   disabled: boolean;
+  hasRightToInteract: boolean;
 }) => {
   const ref = useRef(null);
   const [showUpdatePermis, setShowUpdatePermis] = useState(false);
   const handleCloseUpdatePermis = () => setShowUpdatePermis(false);
+  const [showPermisReadOnly, setShowPermisReadOnly] = useState(false);
+  const handleClosePermisReadOnly = () => setShowPermisReadOnly(false);
 
   const { featureSelect, overlay } = useTooltipMap({
     ref: ref,
@@ -544,6 +548,7 @@ export const TooltipMapEditPermis = ({
     disabled: disabled,
   });
   const displayEditDeleteButton =
+    hasRightToInteract &&
     !disabledEditPermis &&
     featureSelect?.getProperties().typePointCarte === "PERMIS" &&
     featureSelect?.getProperties().pointId != null;
@@ -564,6 +569,8 @@ export const TooltipMapEditPermis = ({
         }}
         deletePath={"/api/permis/" + featureSelect?.getProperties().pointId}
         disabled={disabled}
+        displayButtonSee={true}
+        onClickSee={() => setShowPermisReadOnly(true)}
       />
       <Volet
         handleClose={handleCloseUpdatePermis}
@@ -583,6 +590,24 @@ export const TooltipMapEditPermis = ({
             handleCloseUpdatePermis();
             overlay?.setPosition(undefined);
           }}
+          readOnly={false}
+        />
+      </Volet>
+      <Volet
+        handleClose={handleClosePermisReadOnly}
+        show={showPermisReadOnly}
+        className="w-auto"
+      >
+        <UpdatePermis
+          permisId={featureSelect?.getProperties().pointId}
+          coordonneeX={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
+          }
+          coordonneeY={
+            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
+          }
+          srid={map.getView().getProjection().getCode().split(":")[1]}
+          readOnly={true}
         />
       </Volet>
     </div>

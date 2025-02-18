@@ -79,7 +79,7 @@ class PermisEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{permisId}")
-    @RequireDroits([Droit.PERMIS_A])
+    @RequireDroits([Droit.PERMIS_A, Droit.PERMIS_R])
     fun get(@PathParam("permisId") permisId: UUID): Response =
         Response.ok().entity(
             PermisDataToFront(
@@ -93,7 +93,7 @@ class PermisEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/fetchPermisData/")
-    @RequireDroits([Droit.PERMIS_A])
+    @RequireDroits([Droit.PERMIS_A, Droit.PERMIS_R])
     fun fetchPermisUseCase(
         @QueryParam("coordonneeX") coordonneeX: String,
         @QueryParam("coordonneeY") coordonneeY: String,
@@ -227,7 +227,7 @@ class PermisEndpoint : AbstractEndpoint() {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    @RequireDroits([Droit.PERMIS_R])
+    @RequireDroits([Droit.PERMIS_R, Droit.PERMIS_R])
     fun getWithFilter(
         @QueryParam("searchNom") searchNom: String?,
         @QueryParam("searchCommuneId") searchCommuneId: UUID?,

@@ -25,6 +25,8 @@ const AddRemoveComponent = ({
   canAdd = true,
   createComponentToRepeat,
   label,
+  disabled,
+  readOnly,
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
@@ -75,26 +77,28 @@ const AddRemoveComponent = ({
                   {createComponentToRepeat(index, listeElements)}
                   {
                     // On n'affiche le bouton supprimer que si la propriété "protected" ne vaut pas TRUE
-                    (!protectedProperty ||
-                      value[protectedProperty] !== true) && (
-                      <Col
-                        key={index}
-                        className="p-2 d-flex justify-content-end"
-                      >
-                        <DeleteButton
-                          title={"Supprimer"}
-                          onClick={() => {
-                            elements.remove(index);
-                            setFieldValue(
-                              name,
-                              elements.form.values[name].filter(
-                                (e) => e !== value,
-                              ),
-                            );
-                          }}
-                        />
-                      </Col>
-                    )
+                    !readOnly &&
+                      (!protectedProperty ||
+                        value[protectedProperty] !== true) && (
+                        <Col
+                          key={index}
+                          className="p-2 d-flex justify-content-end"
+                        >
+                          <DeleteButton
+                            title={"Supprimer"}
+                            onClick={() => {
+                              elements.remove(index);
+                              setFieldValue(
+                                name,
+                                elements.form.values[name].filter(
+                                  (e) => e !== value,
+                                ),
+                              );
+                            }}
+                            disabled={disabled}
+                          />
+                        </Col>
+                      )
                   }
                 </span>
               );
@@ -114,6 +118,8 @@ type AddRemoveComponentType = {
   listeElements: any[];
   canAdd?: boolean;
   label?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
 
 export default AddRemoveComponent;
