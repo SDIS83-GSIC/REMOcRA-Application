@@ -7,7 +7,7 @@ case "$1" in
     if [ -n "$GLOWROOT_ENABLED" ] && [ "$GLOWROOT_ENABLED" != "false" ] && [ "$GLOWROOT_ENABLED" != "0" ]; then
       JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/glowroot/glowroot.jar"
       if [ -n "$GLOWROOT_PORT" ]; then
-        JAVA_OPTS="$JAVA_OPTS -Dglowroot.agent.port='$GLOWROOT_PORT'"
+        JAVA_OPTS="$JAVA_OPTS -Dglowroot.agent.port=$GLOWROOT_PORT"
       fi
     fi
 
