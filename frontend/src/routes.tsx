@@ -110,6 +110,7 @@ import ListRoleContact from "./pages/Admin/roleContact/ListRoleContact.tsx";
 import UpdateRoleContact from "./pages/Admin/roleContact/UpdateRolecontact.tsx";
 import ListSite from "./pages/Admin/site/ListSite.tsx";
 import UpdateSite from "./pages/Admin/site/UpdateSite.tsx";
+import ListeTaskPersonnalisee from "./pages/Admin/task/ListTaskPersonnalisee.tsx";
 import ListeTask from "./pages/Admin/task/ParametreTask.tsx";
 import CreateThematique from "./pages/Admin/thematique/CreateThematique.tsx";
 import ListThematique from "./pages/Admin/thematique/ListThematique.tsx";
@@ -2146,6 +2147,15 @@ export default [
         element: (
           <Authorization
             Component={ListeTask}
+            droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
+          />
+        ),
+      },
+      {
+        path: "tache-specifique",
+        element: (
+          <Authorization
+            Component={ListeTaskPersonnalisee}
             droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
           />
         ),

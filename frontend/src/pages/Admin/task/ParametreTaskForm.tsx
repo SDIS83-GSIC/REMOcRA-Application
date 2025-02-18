@@ -8,6 +8,7 @@ import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemove
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
+  FileInput,
   FormContainer,
   Multiselect,
   NumberInput,
@@ -33,14 +34,14 @@ import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 
 export const getInitialValues = (currentTask: TaskEntity) => ({
   taskId: currentTask.taskId,
-  taskType: currentTask.taskType,
+  taskType: currentTask?.taskType ?? TaskType.PERSONNALISEE.id,
   taskActif: currentTask.taskActif,
   taskPlanification: currentTask.taskPlanification,
-  taskExecManuelle: currentTask.taskExecManuelle,
-  taskParametres: currentTask.taskParametres,
-  taskNotification: currentTask.taskNotification,
+  taskExecManuelle: currentTask?.taskExecManuelle ?? false,
+  taskParametres: currentTask?.taskParametres ?? null,
+  taskNotification: currentTask?.taskNotification ?? null,
 
-  isPlanificationEnabled: currentTask.isPlanificationEnabled,
+  isPlanificationEnabled: currentTask?.isPlanificationEnabled ?? false,
   radioPlanification: "personalized",
 
   everyXMinute: null,
@@ -92,11 +93,22 @@ const ParametreTaskForm = () => {
   );
 
   const parametreComponentsList: ReactNode[] = [];
-  Object.entries(TaskType[values.taskType].parametre).map(([key, value]) => {
+  Object.entries(TaskType[values.taskType]?.parametre).map(([key, value]) => {
     switch (value.typeTaskParametre) {
       case TYPE_TASK_PARAMETRE.INTEGER: {
         parametreComponentsList.push(
           <NumberInput
+            name={"taskParametres[" + key + "]"}
+            label={value.label}
+            required={value.required}
+            tooltipText={value.tooltipMessage}
+          />,
+        );
+        break;
+      }
+      case TYPE_TASK_PARAMETRE.STRING: {
+        parametreComponentsList.push(
+          <TextInput
             name={"taskParametres[" + key + "]"}
             label={value.label}
             required={value.required}
@@ -253,12 +265,14 @@ const ParametreTaskForm = () => {
                     }
                   />
                 </div>
-                <div>
-                  <CheckBoxInput
-                    name="taskExecManuelle"
-                    label="Permettre l'exécution manuelle :"
-                  />
-                </div>
+                {TaskType[values.taskType] !== TaskType.PERSONNALISEE && (
+                  <div>
+                    <CheckBoxInput
+                      name="taskExecManuelle"
+                      label="Permettre l'exécution manuelle :"
+                    />
+                  </div>
+                )}
               </>
             ),
           },
@@ -267,6 +281,27 @@ const ParametreTaskForm = () => {
                 {
                   header: "Paramètres",
                   content: parametreComponentsList,
+                },
+              ]
+            : []),
+          ...(TaskType[values.taskType] === TaskType.PERSONNALISEE
+            ? [
+                {
+                  header: "Fichiers de la tâche",
+                  content: (
+                    <FileInput
+                      name={"zipFile"}
+                      label={
+                        "Fichier ZIP contenant le ou les fichiers hwf, et hpl"
+                      }
+                      accept={".zip"}
+                      onChange={(e) => {
+                        setFieldValue("zipFile", e.target.files[0]);
+                      }}
+                      tooltipText="Si des documents sont déjà présents sur le serveur pour ce job, ils seront remplacés par les nouveaux insérés"
+                      required={false}
+                    />
+                  ),
                 },
               ]
             : []),
@@ -559,7 +594,7 @@ const ParametreSynchroSIGIterableForm = ({
 };
 
 // * * * * * ?
-function getCronTab(values: TaskEntity) {
+export function getCronTab(values: TaskEntity) {
   switch (values.radioPlanification) {
     case PARAMETRE_TASK_PLANIFICATION.EVERY_X_MINUTE: {
       return `0 /${values.everyXMinute ?? 0} * * * ?`;

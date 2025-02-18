@@ -59,6 +59,10 @@ object GlobalConstants {
 
     val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
 
+    val DOSSIER_APACHE_HOP = DOSSIER_DATA + "apache_hop/"
+    val DOSSIER_APACHE_HOP_CONFIG = DOSSIER_APACHE_HOP + "config/"
+    val DOSSIER_APACHE_HOP_TASK = DOSSIER_APACHE_HOP + "tasks/"
+
     val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
 
     val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT + "courriers/"

@@ -2,6 +2,7 @@ package remocra.web.parametres
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
@@ -15,10 +16,14 @@ import org.jooq.JSONB
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.TaskInputData
+import remocra.data.TaskPersonnaliseeInputData
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeTask
+import remocra.usecase.admin.task.TaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.TaskUseCase
+import remocra.usecase.admin.task.UpdateTaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.UpdateTaskUseCase
+import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -27,7 +32,11 @@ import java.util.UUID
 class TaskEndpoint : AbstractEndpoint() {
     @Inject lateinit var taskUseCase: TaskUseCase
 
+    @Inject lateinit var taskPersonnaliseeUseCase: TaskPersonnaliseeUseCase
+
     @Inject lateinit var updateTaskUseCase: UpdateTaskUseCase
+
+    @Inject lateinit var updateTaskPersonnaliseeUseCase: UpdateTaskPersonnaliseeUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -39,6 +48,14 @@ class TaskEndpoint : AbstractEndpoint() {
     fun getTasks(): Response =
         Response.ok(
             taskUseCase.getTaskData(),
+        ).build()
+
+    @Path("/personnalisees")
+    @GET
+    @RequireDroits([Droit.ADMIN_PARAM_TRAITEMENTS])
+    fun getTasksPersonnalisees(): Response =
+        Response.ok(
+            taskPersonnaliseeUseCase.getAllTaskPersonnaliseeData(),
         ).build()
 
     @Path("/")
@@ -55,6 +72,23 @@ class TaskEndpoint : AbstractEndpoint() {
                 taskExecManuelle = taskInput.taskExecManuelle,
                 taskParametres = taskInput.taskParametres,
                 taskNotification = taskInput.taskNotification,
+            ),
+        ).wrap()
+
+    @Path("/personnalisee")
+    @PUT
+    @RequireDroits([Droit.ADMIN_PARAM_TRAITEMENTS])
+    fun updateTaskPersonnalisee(
+        @Context httpRequest: HttpServletRequest,
+    ): Response =
+        updateTaskPersonnaliseeUseCase.execute(
+            securityContext.userInfo,
+            TaskPersonnaliseeInputData(
+                taskId = UUID.fromString(httpRequest.getTextPart("taskId")),
+                taskActif = httpRequest.getTextPart("taskActif").toBoolean(),
+                taskPlanification = httpRequest.getTextPart("taskPlanification"),
+                taskParametres = JSONB.jsonb(httpRequest.getTextPart("taskParametres")),
+                zip = httpRequest.getPart("zipFile")?.inputStream,
             ),
         ).wrap()
 

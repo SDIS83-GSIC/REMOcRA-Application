@@ -124,6 +124,27 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     },
     notification: false,
   },
+  PERSONNALISEE: {
+    id: "PERSONNALISEE",
+    code: "personnalisee",
+    label: "Perso",
+    commentaire: "",
+    parametre: {
+      taskLibelle: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: true,
+        label: "Libellé de la tâche spécifique",
+      },
+      taskCode: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: true,
+        label: "Nom du worflow dans Apache HOP",
+        tooltipMessage:
+          "Il s'agit généralement du nom du fichier. Vous pouvez ouvrir le fichier xml et reprendre la valeur qui est dans la balise <name> (3ème ligne)",
+      },
+    },
+    notification: false,
+  },
 };
 
 export default TaskType;

@@ -34,6 +34,10 @@ const ListeTask = () => {
     //everyMinute: null,
   }));
 
+  const typeTaskKey = Object.keys(TaskType).filter(
+    (e) => e !== "PERSONNALISEE",
+  );
+
   return (
     <Container>
       <PageTitle
@@ -47,7 +51,7 @@ const ListeTask = () => {
             variant="pills"
           >
             <Nav.Item>
-              {Object.keys(TaskType).map((key) => (
+              {typeTaskKey.map((key) => (
                 <Nav.Link
                   eventKey={key}
                   key={key}

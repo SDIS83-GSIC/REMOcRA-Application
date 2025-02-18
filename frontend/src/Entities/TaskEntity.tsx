@@ -39,6 +39,7 @@ export type TaskParametreEntity = {
 export enum TYPE_TASK_PARAMETRE {
   INTEGER = "integer",
   BOOLEAN = "boolean",
+  STRING = "string",
   LISTE_TABLE_SYNCHRO_SIG = "listeTableSynchroSIG",
 }
 
@@ -63,3 +64,7 @@ export enum TYPE_SYNCHRONISATION_TABLE_SIG {
   MISE_A_JOUR_REMOCRA_VOIE = "Mise à jour REMOCRA.VOIE",
   STOCKAGE_SIMPLE = "Stockage simple",
 }
+
+export type TaskPersonnaliseEntity = TaskEntity & {
+  taskLibelle: string;
+};
