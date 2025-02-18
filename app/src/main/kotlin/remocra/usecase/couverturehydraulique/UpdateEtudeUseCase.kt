@@ -69,11 +69,11 @@ class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
             )
         }
 
-        return element
+        return element.copy(listeDocument = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: EtudeData) {
-        if (couvertureHydrauliqueRepository.checkNumeroExists(element.etudeNumero)) {
+        if (couvertureHydrauliqueRepository.checkNumeroExists(element.etudeNumero, element.etudeId)) {
             throw RemocraResponseException(ErrorType.ETUDE_NUMERO_UNIQUE)
         }
     }

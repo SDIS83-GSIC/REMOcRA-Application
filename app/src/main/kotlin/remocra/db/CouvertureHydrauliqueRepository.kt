@@ -235,8 +235,13 @@ class CouvertureHydrauliqueRepository @Inject constructor(
         val etudeDocumentLibelle: String,
     )
 
-    fun checkNumeroExists(etudeNumero: String): Boolean =
-        dsl.fetchExists(dsl.select(ETUDE.NUMERO).from(ETUDE).where(ETUDE.NUMERO.eq(etudeNumero)))
+    fun checkNumeroExists(etudeNumero: String, etudeId: UUID? = null): Boolean =
+        dsl.fetchExists(
+            dsl.select(ETUDE.NUMERO).from(ETUDE).where(
+                ETUDE.NUMERO.eq(etudeNumero)
+                    .and(etudeId?.let { DSL.and(ETUDE.ID.notEqual(it)) } ?: DSL.noCondition()),
+            ),
+        )
 
     fun insertEtudeDocument(documentId: UUID, etudeId: UUID, lEtudeDocumentLibelle: String?) =
         dsl.insertInto(L_ETUDE_DOCUMENT)

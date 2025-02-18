@@ -67,7 +67,7 @@ class CreateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.INSERT) {
             )
         }
 
-        return element
+        return element.copy(listeDocument = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: EtudeData) {
