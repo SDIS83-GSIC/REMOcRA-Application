@@ -104,6 +104,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   penaMateriauId: data?.penaMateriauId ?? null,
   penaQuantiteAppoint: data?.penaQuantiteAppoint ?? null,
   penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
+  penaEquipeHbe: data?.penaEquipeHbe ?? false,
 
   documents: data?.documents ?? [],
 
@@ -221,6 +222,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
             penaDisponibiliteHbe:
               data?.penaDisponibiliteHbe ??
               DISPONIBILITE_PEI.INDISPONIBLE.toUpperCase(),
+            penaEquipeHbe: values.penaEquipeHbe,
           },
     ),
   );
@@ -1192,6 +1194,13 @@ const FormPena = ({
           <CheckBoxInput
             name="penaCapaciteIncertaine"
             label="Capacité incertaine ?"
+            disabled={!hasDroitCaracteristique}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name="penaEquipeHbe"
+            label="Équipé HBE ?"
             disabled={!hasDroitCaracteristique}
           />
         </Col>

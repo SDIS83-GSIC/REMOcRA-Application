@@ -28,6 +28,7 @@ data class Pena(
     val penaCapaciteIllimitee: Boolean?,
     val penaCapaciteIncertaine: Boolean?,
     val penaQuantiteAppoint: Double?,
+    val penaEquipeHbe: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -89,6 +90,13 @@ data class Pena(
         } else if (this.penaQuantiteAppoint != o.penaQuantiteAppoint) {
             return false
         }
+        if (this.penaEquipeHbe == null) {
+            if (o.penaEquipeHbe != null) {
+                return false
+            }
+        } else if (this.penaEquipeHbe != o.penaEquipeHbe) {
+            return false
+        }
         return true
     }
 
@@ -103,6 +111,7 @@ data class Pena(
         result = prime * result + (if (this.penaCapaciteIllimitee == null) 0 else this.penaCapaciteIllimitee.hashCode())
         result = prime * result + (if (this.penaCapaciteIncertaine == null) 0 else this.penaCapaciteIncertaine.hashCode())
         result = prime * result + (if (this.penaQuantiteAppoint == null) 0 else this.penaQuantiteAppoint.hashCode())
+        result = prime * result + (if (this.penaEquipeHbe == null) 0 else this.penaEquipeHbe.hashCode())
         return result
     }
 
@@ -117,6 +126,7 @@ data class Pena(
         sb.append(", ").append(penaCapaciteIllimitee)
         sb.append(", ").append(penaCapaciteIncertaine)
         sb.append(", ").append(penaQuantiteAppoint)
+        sb.append(", ").append(penaEquipeHbe)
 
         sb.append(")")
         return sb.toString()

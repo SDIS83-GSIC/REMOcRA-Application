@@ -126,6 +126,11 @@ open class Pena(
      */
     val QUANTITE_APPOINT: TableField<Record, Double?> = createField(DSL.name("pena_quantite_appoint"), SQLDataType.DOUBLE, this, "")
 
+    /**
+     * The column <code>remocra.pena.pena_equipe_hbe</code>.
+     */
+    val EQUIPE_HBE: TableField<Record, Boolean?> = createField(DSL.name("pena_equipe_hbe"), SQLDataType.BOOLEAN, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

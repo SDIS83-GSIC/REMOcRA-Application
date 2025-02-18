@@ -60,6 +60,7 @@ export type PeiEntity = {
   penaMateriauId?: string;
   penaQuantiteAppoint?: number;
   penaDisponibiliteHbe?: DISPONIBILITE_PEI;
+  penaEquipeHbe?: boolean;
 
   // DONNEES INITIALES
   peiNumeroInterneInitial?: number;

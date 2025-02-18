@@ -189,6 +189,7 @@ data class PenaData(
     var penaCapaciteIncertaine: Boolean = false,
     var penaQuantiteAppoint: Double?,
     var penaMateriauId: UUID? = null,
+    var penaEquipeHbe: Boolean = false,
 ) : PeiData(
     peiId,
     peiNumeroComplet,

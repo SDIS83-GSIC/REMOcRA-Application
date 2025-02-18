@@ -23,6 +23,7 @@ class PenaRepository @Inject constructor(
             PENA.CAPACITE_ILLIMITEE,
             PENA.CAPACITE_INCERTAINE,
             PENA.MATERIAU_ID,
+            PENA.EQUIPE_HBE,
         )
             .from(PEI)
             .join(PENA)
@@ -50,6 +51,7 @@ class PenaRepository @Inject constructor(
                 penaDisponibiliteHbe = pena.penaDisponibiliteHbe,
                 penaCapaciteIncertaine = pena.penaCapaciteIncertaine,
                 penaCoordonneDfci = null, // TODO ?
+                penaEquipeHbe = pena.penaEquipeHbe,
             ),
         )
 
