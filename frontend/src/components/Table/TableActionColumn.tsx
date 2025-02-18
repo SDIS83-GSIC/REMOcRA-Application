@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import classNames from "classnames";
+import { Button } from "react-bootstrap";
 import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
 import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
-import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
 import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
@@ -25,7 +26,6 @@ const TableActionColumn = ({
   pathname,
   hide = () => false,
   onClick,
-  state,
 }: TableActionButtonType) => {
   return (
     <Col className={"m-0 p-0"}>
@@ -84,15 +84,20 @@ const TableActionColumn = ({
                 tooltipText={disabled ? textDisable : textEnable}
                 tooltipId={row.value}
               >
-                <CustomLinkButton
-                  className={disabled ? "text-muted" : "text-" + classEnable}
-                  disabled={disabled}
-                  pathname={pathname}
-                  state={state}
-                  onClick={onClick}
-                >
-                  {icon}
-                </CustomLinkButton>
+                <Col>
+                  <Button
+                    variant={"link"}
+                    className={classNames(
+                      "text-decoration-none",
+                      disabled ? "text-muted" : "text-" + classEnable,
+                    )}
+                    disabled={disabled}
+                    href={pathname}
+                    onClick={onClick}
+                  >
+                    {icon}
+                  </Button>
+                </Col>
               </TooltipCustom>
             )}
           </>
@@ -119,7 +124,6 @@ type TableActionButtonType = {
   onClick?: (param?: any) => any;
   isPost?: boolean;
   pathname?: string;
-  state?: object;
 };
 
 type SimpleModalType = {
@@ -153,7 +157,6 @@ export const ActionButton = ({
                 textDisable={_button.textDisable}
                 disabled={_button.disable ? _button.disable(row) : false}
                 pathname={_button.route?.(row.value)}
-                state={_button.state}
                 onClick={() => _button.onClick?.(row.value)}
               />
             );
