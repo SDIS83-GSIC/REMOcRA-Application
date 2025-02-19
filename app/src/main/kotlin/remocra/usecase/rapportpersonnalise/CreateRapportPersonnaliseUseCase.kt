@@ -11,7 +11,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
@@ -80,10 +80,10 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
                     rapportPersonnaliseParametreRapportPersonnaliseId = element.rapportPersonnaliseId,
                     rapportPersonnaliseParametreCode = param.rapportPersonnaliseParametreCode,
                     rapportPersonnaliseParametreLibelle = param.rapportPersonnaliseParametreLibelle,
-                    rapportPersonnaliseParametreSourceSql = param.rapportPersonnaliseParametreSourceSql.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportPersonnalise.SELECT_INPUT },
+                    rapportPersonnaliseParametreSourceSql = param.rapportPersonnaliseParametreSourceSql.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
                     rapportPersonnaliseParametreDescription = param.rapportPersonnaliseParametreDescription,
-                    rapportPersonnaliseParametreSourceSqlId = param.rapportPersonnaliseParametreSourceSqlId.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportPersonnalise.SELECT_INPUT },
-                    rapportPersonnaliseParametreSourceSqlLibelle = param.rapportPersonnaliseParametreSourceSqlLibelle.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportPersonnalise.SELECT_INPUT },
+                    rapportPersonnaliseParametreSourceSqlId = param.rapportPersonnaliseParametreSourceSqlId.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
+                    rapportPersonnaliseParametreSourceSqlLibelle = param.rapportPersonnaliseParametreSourceSqlLibelle.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
                     rapportPersonnaliseParametreValeurDefaut = param.rapportPersonnaliseParametreValeurDefaut,
                     rapportPersonnaliseParametreIsRequired = param.rapportPersonnaliseParametreIsRequired,
                     rapportPersonnaliseParametreType = param.rapportPersonnaliseParametreType,

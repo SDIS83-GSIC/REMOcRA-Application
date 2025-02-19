@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.StreamingOutput
 import remocra.csv.CsvWriter
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.usecase.AbstractUseCase
 import java.io.ByteArrayOutputStream
 import java.util.UUID
@@ -114,7 +114,7 @@ class ExportConfRapportPersonnaliseUseCase : AbstractUseCase() {
         val rapportPersonnaliseParametreSourceSqlId: String?,
         val rapportPersonnaliseParametreSourceSqlLibelle: String?,
         val rapportPersonnaliseParametreIsRequired: Boolean,
-        val rapportPersonnaliseParametreType: TypeParametreRapportPersonnalise,
+        val rapportPersonnaliseParametreType: TypeParametreRapportCourrier,
         val rapportPersonnaliseParametreOrdre: Int,
     )
 }

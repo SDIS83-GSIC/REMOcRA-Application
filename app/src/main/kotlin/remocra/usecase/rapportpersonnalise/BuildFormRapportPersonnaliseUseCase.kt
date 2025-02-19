@@ -5,7 +5,7 @@ import jakarta.ws.rs.ForbiddenException
 import remocra.auth.UserInfo
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.db.RapportPersonnaliseRepository
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.usecase.AbstractUseCase
 import remocra.utils.RequestUtils
 import java.util.UUID
@@ -40,7 +40,7 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
             rp.listeRapportPersonnaliseParametre.map { parametre ->
                 // -> Si SELECT_INPUT alors on build la requête et on retourne une liste
                 var listeSelectInput: List<IdLibelleRapportPersonnalise>? = null
-                if (parametre.rapportPersonnaliseParametreType == TypeParametreRapportPersonnalise.SELECT_INPUT) {
+                if (parametre.rapportPersonnaliseParametreType == TypeParametreRapportCourrier.SELECT_INPUT) {
                     val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametre.rapportPersonnaliseParametreSourceSql ?: throw IllegalArgumentException("SQL null pour le paramètre ${parametre.rapportPersonnaliseParametreCode}"))
                     listeSelectInput = rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee)
                 }
@@ -87,6 +87,6 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
         val rapportPersonnaliseParametreDescription: String?,
         val rapportPersonnaliseParametreValeurDefaut: String?,
         val rapportPersonnaliseParametreIsRequired: Boolean,
-        val rapportPersonnaliseParametreType: TypeParametreRapportPersonnalise,
+        val rapportPersonnaliseParametreType: TypeParametreRapportCourrier,
     )
 }

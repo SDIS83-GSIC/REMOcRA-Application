@@ -7,7 +7,6 @@ import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.InverseForeignKey
-import org.jooq.JSONB
 import org.jooq.Name
 import org.jooq.Path
 import org.jooq.PlainSQL
@@ -26,10 +25,14 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_MODELE_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_MODELE_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_MODELE_COURRIER_CODE_KEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PARAMETRE__MODELE_COURRIER_PARAMETRE_MODELE_COURRIER_PARAMETRE_MODELE_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PKEY
+import remocra.db.jooq.remocra.tables.Document.DocumentPath
+import remocra.db.jooq.remocra.tables.LModeleCourrierDocument.LModeleCourrierDocumentPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre.ModeleCourrierParametrePath
 import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
@@ -104,25 +107,38 @@ open class ModeleCourrier(
 
     /**
      * The column
+     * <code>remocra.modele_courrier.modele_courrier_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("modele_courrier_protected"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
+    /**
+     * The column
      * <code>remocra.modele_courrier.modele_courrier_description</code>.
      */
     val DESCRIPTION: TableField<Record, String?> = createField(DSL.name("modele_courrier_description"), SQLDataType.CLOB, this, "")
 
     /**
-     * The column <code>remocra.modele_courrier.modele_courrier_chemin</code>.
+     * The column
+     * <code>remocra.modele_courrier.modele_courrier_source_sql</code>.
      */
-    val CHEMIN: TableField<Record, String?> = createField(DSL.name("modele_courrier_chemin"), SQLDataType.CLOB.nullable(false), this, "")
+    val SOURCE_SQL: TableField<Record, String?> = createField(DSL.name("modele_courrier_source_sql"), SQLDataType.CLOB.nullable(false), this, "")
+
+    /**
+     * The column <code>remocra.modele_courrier.modele_courrier_module</code>.
+     */
+    val MODULE: TableField<Record, TypeModule?> = createField(DSL.name("modele_courrier_module"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypeModule::class.java), this, "")
 
     /**
      * The column
-     * <code>remocra.modele_courrier.modele_courrier_subreports</code>. Un JSON
-     * contenant tous les sous rapports. Chaque sous rapport devra avoir une
-     * propriété "nom" et une propriété "chemin". Le "chemin" sera relatif à
-     * "/var/lib/remocra/modeles/courriers"  Exemple: [{"nom":"subReport1",
-     * "chemin":"le/chemin/fichier.jrxml"}, {"nom":"subReport2",
-     * "chemin":"le/chemin2/fichier2.jrxml"}]
+     * <code>remocra.modele_courrier.modele_courrier_corps_email</code>.
      */
-    val SUBREPORTS: TableField<Record, JSONB?> = createField(DSL.name("modele_courrier_subreports"), SQLDataType.JSONB, this, "Un JSON contenant tous les sous rapports. Chaque sous rapport devra avoir une propriété \"nom\" et une propriété \"chemin\". Le \"chemin\" sera relatif à \"/var/lib/remocra/modeles/courriers\"  Exemple: [{\"nom\":\"subReport1\", \"chemin\":\"le/chemin/fichier.jrxml\"}, {\"nom\":\"subReport2\", \"chemin\":\"le/chemin2/fichier2.jrxml\"}]")
+    val CORPS_EMAIL: TableField<Record, String?> = createField(DSL.name("modele_courrier_corps_email"), SQLDataType.CLOB.nullable(false), this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier.modele_courrier_objet_email</code>.
+     */
+    val OBJET_EMAIL: TableField<Record, String?> = createField(DSL.name("modele_courrier_objet_email"), SQLDataType.CLOB.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
@@ -159,6 +175,23 @@ open class ModeleCourrier(
     override fun getPrimaryKey(): UniqueKey<Record> = MODELE_COURRIER_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(MODELE_COURRIER_MODELE_COURRIER_CODE_KEY)
 
+    private lateinit var _lModeleCourrierDocument: LModeleCourrierDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_modele_courrier_document</code> table
+     */
+    fun lModeleCourrierDocument(): LModeleCourrierDocumentPath {
+        if (!this::_lModeleCourrierDocument.isInitialized) {
+            _lModeleCourrierDocument = LModeleCourrierDocumentPath(this, null, L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_MODELE_COURRIER_ID_FKEY.inverseKey)
+        }
+
+        return _lModeleCourrierDocument
+    }
+
+    val lModeleCourrierDocument: LModeleCourrierDocumentPath
+        get(): LModeleCourrierDocumentPath = lModeleCourrierDocument()
+
     private lateinit var _lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
 
     /**
@@ -192,6 +225,13 @@ open class ModeleCourrier(
 
     val modeleCourrierParametre: ModeleCourrierParametrePath
         get(): ModeleCourrierParametrePath = modeleCourrierParametre()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.document</code> table
+     */
+    val document: DocumentPath
+        get(): DocumentPath = lModeleCourrierDocument().document()
 
     /**
      * Get the implicit many-to-many join path to the

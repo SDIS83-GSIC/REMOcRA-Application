@@ -34,6 +34,7 @@ import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESU
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
@@ -43,8 +44,10 @@ import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LAdresseDocument.LAdresseDocumentPath
+import remocra.db.jooq.remocra.tables.LModeleCourrierDocument.LModeleCourrierDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.LPermisDocument.LPermisDocumentPath
+import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
 import remocra.db.jooq.remocra.tables.OldebVisiteDocument.OldebVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Permis.PermisPath
@@ -238,6 +241,23 @@ open class Document(
     val lAdresseDocument: LAdresseDocumentPath
         get(): LAdresseDocumentPath = lAdresseDocument()
 
+    private lateinit var _lModeleCourrierDocument: LModeleCourrierDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_modele_courrier_document</code> table
+     */
+    fun lModeleCourrierDocument(): LModeleCourrierDocumentPath {
+        if (!this::_lModeleCourrierDocument.isInitialized) {
+            _lModeleCourrierDocument = LModeleCourrierDocumentPath(this, null, L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lModeleCourrierDocument
+    }
+
+    val lModeleCourrierDocument: LModeleCourrierDocumentPath
+        get(): LModeleCourrierDocumentPath = lModeleCourrierDocument()
+
     private lateinit var _lPeiDocument: LPeiDocumentPath
 
     /**
@@ -319,6 +339,13 @@ open class Document(
      */
     val adresse: AdressePath
         get(): AdressePath = lAdresseDocument().adresse()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.modele_courrier</code> table
+     */
+    val modeleCourrier: ModeleCourrierPath
+        get(): ModeleCourrierPath = lModeleCourrierDocument().modeleCourrier()
 
     /**
      * Get the implicit many-to-many join path to the <code>remocra.pei</code>

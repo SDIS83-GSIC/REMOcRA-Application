@@ -8,7 +8,6 @@ import remocra.db.CisCommuneRepository
 import remocra.db.CommuneRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.ModeleCourrierRepository
-import remocra.db.jooq.remocra.enums.TypeParametreCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
@@ -25,155 +24,13 @@ class GetCourriersWithParametresUseCase : AbstractUseCase() {
 
     @Inject lateinit var cisCommuneRepository: CisCommuneRepository
 
-    fun execute(userInfo: UserInfo?): MutableList<ModeleCourrierWithParametre> {
+    fun execute(userInfo: UserInfo?): Collection<ModeleCourrierWithParametre> {
         if (userInfo == null) {
             throw RemocraResponseException(ErrorType.MODELE_COURRIER_DROIT_FORBIDDEN)
         }
-        val allModeleCourrier = modeleCourrierRepository.getAll(userInfo.utilisateurId)
-        val mapParametreByCourrier = modeleCourrierRepository.getParametresByModele()
 
-        val listeWithParametres = mutableListOf<ModeleCourrierWithParametre>()
-
-        // Ceux qui n'ont pas de paramètres
-        val courriersSansParametre = allModeleCourrier.filter { !mapParametreByCourrier.keys.contains(it) }
-
-        courriersSansParametre.forEach {
-            listeWithParametres.add(
-                ModeleCourrierWithParametre(
-                    modeleCourrier = it,
-                    listParametres = null,
-                ),
-            )
-        }
-        val listCommune = communeRepository.getCommuneForSelect().map {
-            GlobalData.IdCodeLibelleLienData(
-                it.id,
-                it.code,
-                it.libelle,
-                null,
-            )
-        }
-        val listGestionnaire = gestionnaireRepository.getAll().map {
-            GlobalData.IdCodeLibelleLienData(
-                it.id,
-                it.code,
-                it.libelle,
-                null,
-            )
-        }
-
-        val listCisWithCommune = cisCommuneRepository.getCisCommune()
-
-        mapParametreByCourrier.forEach { courrierWithParametres ->
-            val listParametreCourrier = mutableListOf<ParametreCourrier>()
-            courrierWithParametres.value.sortedBy { it.modeleCourrierParametreOrdre }.map { parametre ->
-                listParametreCourrier.add(
-                    when (parametre.modeleCourrierParametreTypeParametreCourrier) {
-                        TypeParametreCourrier.COMMUNE_ID -> {
-                            ParametreCourrier(
-                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
-                                label = parametre.modeleCourrierParametreLibelle,
-                                liste = listCommune,
-                                description = parametre.modeleCourrierParametreDescription,
-                                typeComposant = TypeComposant.SELECT_INPUT,
-                                conditionToDisplay = if (courrierWithParametres.value
-                                        .firstOrNull { it.modeleCourrierParametreTypeParametreCourrier == TypeParametreCourrier.IS_ONLY_PUBLIC } != null
-                                ) {
-                                    ConditionToDisplay(
-                                        nameField = TypeParametreCourrier.IS_ONLY_PUBLIC.name,
-                                        valeurAttendue = ValeurAttendue(
-                                            Operation.EGAL,
-                                            true,
-                                        ),
-                                    )
-                                } else {
-                                    null
-                                },
-                                defaultValue = null,
-                            )
-                        }
-                        TypeParametreCourrier.GESTIONNAIRE_ID -> {
-                            ParametreCourrier(
-                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
-                                label = parametre.modeleCourrierParametreLibelle,
-                                liste = listGestionnaire,
-                                description = parametre.modeleCourrierParametreDescription,
-                                typeComposant = TypeComposant.SELECT_INPUT,
-                                conditionToDisplay = if (courrierWithParametres.value
-                                        .firstOrNull { it.modeleCourrierParametreTypeParametreCourrier == TypeParametreCourrier.IS_ONLY_PUBLIC } != null
-                                ) {
-                                    ConditionToDisplay(
-                                        nameField = TypeParametreCourrier.IS_ONLY_PUBLIC.name,
-                                        valeurAttendue = ValeurAttendue(
-                                            Operation.EGAL,
-                                            false,
-                                        ),
-                                    )
-                                } else {
-                                    null
-                                },
-                                defaultValue = null,
-                            )
-                        }
-                        TypeParametreCourrier.CIS_ID -> {
-                            ParametreCourrier(
-                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
-                                label = parametre.modeleCourrierParametreLibelle,
-                                liste = listCisWithCommune,
-                                description = parametre.modeleCourrierParametreDescription,
-                                typeComposant = TypeComposant.SELECT_INPUT,
-                                conditionToDisplay =
-                                ConditionToDisplay(
-                                    nameField = TypeParametreCourrier.COMMUNE_ID.name,
-                                    valeurAttendue = ValeurAttendue(
-                                        Operation.DIFFERENT,
-                                        null,
-                                    ),
-                                ),
-                                defaultValue = null,
-                                nameLienField = TypeParametreCourrier.COMMUNE_ID.name,
-                            )
-                        }
-                        TypeParametreCourrier.IS_ONLY_PUBLIC,
-                        TypeParametreCourrier.IS_EPCI,
-                        -> {
-                            ParametreCourrier(
-                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
-                                label = parametre.modeleCourrierParametreLibelle,
-                                liste = null,
-                                description = parametre.modeleCourrierParametreDescription,
-                                typeComposant = TypeComposant.CHECKBOX_INPUT,
-                                defaultValue = true,
-                            )
-                        }
-                        TypeParametreCourrier.PROFIL_UTILISATEUR_ID -> TODO()
-                        TypeParametreCourrier.ANNEE,
-                        TypeParametreCourrier.EXPEDITEUR_GRADE,
-                        TypeParametreCourrier.EXPEDITEUR_STATUT,
-                        TypeParametreCourrier.REFERENCE,
-                        -> {
-                            ParametreCourrier(
-                                nameField = parametre.modeleCourrierParametreTypeParametreCourrier.name,
-                                label = parametre.modeleCourrierParametreLibelle,
-                                description = parametre.modeleCourrierParametreDescription,
-                                liste = null,
-                                typeComposant = TypeComposant.TEXT_INPUT,
-                                defaultValue = "",
-                            )
-                        }
-                    },
-                )
-            }
-
-            listeWithParametres.add(
-                ModeleCourrierWithParametre(
-                    modeleCourrier = courrierWithParametres.key,
-                    listParametres = listParametreCourrier,
-                ),
-            )
-        }
-
-        return listeWithParametres
+        // TODO
+        return listOf()
     }
 
     data class ModeleCourrierWithParametre(

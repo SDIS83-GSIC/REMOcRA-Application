@@ -74,6 +74,8 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     ADRESSE_ELEMENT("ADRESSE_ELEMENT"),
     PERMIS("PERMIS"),
     DOCUMENT_PERMIS("DOCUMENT_PERMIS"),
+    MODELE_COURRIER("MODELE_COURRIER"),
+    DOCUMENT_MODELE_COURRIER("DOCUMENT_MODELE_COURRIER"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

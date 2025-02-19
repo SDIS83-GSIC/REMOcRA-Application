@@ -25,11 +25,10 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.enums.TypeParametreCourrier
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PARAMETRE_PKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PARAMETRE__MODELE_COURRIER_PARAMETRE_MODELE_COURRIER_PARAMETRE_MODELE_FKEY
 import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
-import java.math.BigDecimal
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -82,15 +81,21 @@ open class ModeleCourrierParametre(
 
     /**
      * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_id</code>.
+     */
+    val ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_parametre_id"), SQLDataType.UUID.nullable(false), this, "")
+
+    /**
+     * The column
      * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_modele_courrier_id</code>.
      */
     val MODELE_COURRIER_ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_parametre_modele_courrier_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
      * The column
-     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_type_parametre_courrier</code>.
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_code</code>.
      */
-    val TYPE_PARAMETRE_COURRIER: TableField<Record, TypeParametreCourrier?> = createField(DSL.name("modele_courrier_parametre_type_parametre_courrier"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypeParametreCourrier::class.java), this, "")
+    val CODE: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_code"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column
@@ -100,15 +105,51 @@ open class ModeleCourrierParametre(
 
     /**
      * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_source_sql</code>.
+     */
+    val SOURCE_SQL: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_source_sql"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column
      * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_description</code>.
      */
     val DESCRIPTION: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_description"), SQLDataType.CLOB, this, "")
 
     /**
      * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_source_sql_id</code>.
+     */
+    val SOURCE_SQL_ID: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_source_sql_id"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_source_sql_libelle</code>.
+     */
+    val SOURCE_SQL_LIBELLE: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_source_sql_libelle"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_valeur_defaut</code>.
+     */
+    val VALEUR_DEFAUT: TableField<Record, String?> = createField(DSL.name("modele_courrier_parametre_valeur_defaut"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_is_required</code>.
+     */
+    val IS_REQUIRED: TableField<Record, Boolean?> = createField(DSL.name("modele_courrier_parametre_is_required"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_type</code>.
+     */
+    val TYPE: TableField<Record, TypeParametreRapportCourrier?> = createField(DSL.name("modele_courrier_parametre_type"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypeParametreRapportCourrier::class.java), this, "")
+
+    /**
+     * The column
      * <code>remocra.modele_courrier_parametre.modele_courrier_parametre_ordre</code>.
      */
-    val ORDRE: TableField<Record, BigDecimal?> = createField(DSL.name("modele_courrier_parametre_ordre"), SQLDataType.NUMERIC, this, "")
+    val ORDRE: TableField<Record, Int?> = createField(DSL.name("modele_courrier_parametre_ordre"), SQLDataType.INTEGER.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

@@ -82,15 +82,15 @@ open class LModeleCourrierProfilDroit(
 
     /**
      * The column
-     * <code>remocra.l_modele_courrier_profil_droit.modele_courrier_id</code>.
-     */
-    val MODELE_COURRIER_ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_id"), SQLDataType.UUID.nullable(false), this, "")
-
-    /**
-     * The column
      * <code>remocra.l_modele_courrier_profil_droit.profil_droit_id</code>.
      */
     val PROFIL_DROIT_ID: TableField<Record, UUID?> = createField(DSL.name("profil_droit_id"), SQLDataType.UUID.nullable(false), this, "")
+
+    /**
+     * The column
+     * <code>remocra.l_modele_courrier_profil_droit.modele_courrier_id</code>.
+     */
+    val MODELE_COURRIER_ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_id"), SQLDataType.UUID.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

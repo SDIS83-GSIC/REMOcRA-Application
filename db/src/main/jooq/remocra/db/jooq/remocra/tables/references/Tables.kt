@@ -47,6 +47,7 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
+import remocra.db.jooq.remocra.tables.LModeleCourrierDocument
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
@@ -351,6 +352,11 @@ val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
  * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
  */
 val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
+
+/**
+ * The table <code>remocra.l_modele_courrier_document</code>.
+ */
+val L_MODELE_COURRIER_DOCUMENT: LModeleCourrierDocument = LModeleCourrierDocument.L_MODELE_COURRIER_DOCUMENT
 
 /**
  * The table <code>remocra.l_modele_courrier_profil_droit</code>.

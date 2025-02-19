@@ -3,7 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -30,7 +30,7 @@ data class RapportPersonnaliseParametre(
     val rapportPersonnaliseParametreSourceSqlLibelle: String?,
     val rapportPersonnaliseParametreValeurDefaut: String?,
     val rapportPersonnaliseParametreIsRequired: Boolean,
-    val rapportPersonnaliseParametreType: TypeParametreRapportPersonnalise,
+    val rapportPersonnaliseParametreType: TypeParametreRapportCourrier,
     val rapportPersonnaliseParametreOrdre: Int,
 ) : Serializable {
 

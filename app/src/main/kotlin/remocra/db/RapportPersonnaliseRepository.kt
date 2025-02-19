@@ -13,7 +13,7 @@ import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
@@ -177,7 +177,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                         rapportPersonnaliseParametreSourceSqlLibelle = it.value6(),
                         rapportPersonnaliseParametreValeurDefaut = it.value7(),
                         rapportPersonnaliseParametreIsRequired = it.value8() as Boolean,
-                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportPersonnalise,
+                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportCourrier,
                         rapportPersonnaliseParametreOrdre = it.value10() as Int,
                     )
                 }
@@ -289,7 +289,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                         rapportPersonnaliseParametreSourceSqlLibelle = it.value6(),
                         rapportPersonnaliseParametreValeurDefaut = it.value7(),
                         rapportPersonnaliseParametreIsRequired = it.value8() as Boolean,
-                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportPersonnalise,
+                        rapportPersonnaliseParametreType = it.value9() as TypeParametreRapportCourrier,
                         rapportPersonnaliseParametreOrdre = it.value10() as Int,
                     )
                 }

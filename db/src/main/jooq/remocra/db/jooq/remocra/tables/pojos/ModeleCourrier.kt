@@ -3,7 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import org.jooq.JSONB
+import remocra.db.jooq.remocra.enums.TypeModule
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -24,9 +24,12 @@ data class ModeleCourrier(
     val modeleCourrierActif: Boolean,
     val modeleCourrierCode: String,
     val modeleCourrierLibelle: String,
+    val modeleCourrierProtected: Boolean,
     val modeleCourrierDescription: String?,
-    val modeleCourrierChemin: String,
-    val modeleCourrierSubreports: JSONB?,
+    val modeleCourrierSourceSql: String,
+    val modeleCourrierModule: TypeModule,
+    val modeleCourrierCorpsEmail: String,
+    val modeleCourrierObjetEmail: String,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -52,6 +55,9 @@ data class ModeleCourrier(
         if (this.modeleCourrierLibelle != o.modeleCourrierLibelle) {
             return false
         }
+        if (this.modeleCourrierProtected != o.modeleCourrierProtected) {
+            return false
+        }
         if (this.modeleCourrierDescription == null) {
             if (o.modeleCourrierDescription != null) {
                 return false
@@ -59,14 +65,16 @@ data class ModeleCourrier(
         } else if (this.modeleCourrierDescription != o.modeleCourrierDescription) {
             return false
         }
-        if (this.modeleCourrierChemin != o.modeleCourrierChemin) {
+        if (this.modeleCourrierSourceSql != o.modeleCourrierSourceSql) {
             return false
         }
-        if (this.modeleCourrierSubreports == null) {
-            if (o.modeleCourrierSubreports != null) {
-                return false
-            }
-        } else if (this.modeleCourrierSubreports != o.modeleCourrierSubreports) {
+        if (this.modeleCourrierModule != o.modeleCourrierModule) {
+            return false
+        }
+        if (this.modeleCourrierCorpsEmail != o.modeleCourrierCorpsEmail) {
+            return false
+        }
+        if (this.modeleCourrierObjetEmail != o.modeleCourrierObjetEmail) {
             return false
         }
         return true
@@ -79,9 +87,12 @@ data class ModeleCourrier(
         result = prime * result + this.modeleCourrierActif.hashCode()
         result = prime * result + this.modeleCourrierCode.hashCode()
         result = prime * result + this.modeleCourrierLibelle.hashCode()
+        result = prime * result + this.modeleCourrierProtected.hashCode()
         result = prime * result + (if (this.modeleCourrierDescription == null) 0 else this.modeleCourrierDescription.hashCode())
-        result = prime * result + this.modeleCourrierChemin.hashCode()
-        result = prime * result + (if (this.modeleCourrierSubreports == null) 0 else this.modeleCourrierSubreports.hashCode())
+        result = prime * result + this.modeleCourrierSourceSql.hashCode()
+        result = prime * result + this.modeleCourrierModule.hashCode()
+        result = prime * result + this.modeleCourrierCorpsEmail.hashCode()
+        result = prime * result + this.modeleCourrierObjetEmail.hashCode()
         return result
     }
 
@@ -92,9 +103,12 @@ data class ModeleCourrier(
         sb.append(", ").append(modeleCourrierActif)
         sb.append(", ").append(modeleCourrierCode)
         sb.append(", ").append(modeleCourrierLibelle)
+        sb.append(", ").append(modeleCourrierProtected)
         sb.append(", ").append(modeleCourrierDescription)
-        sb.append(", ").append(modeleCourrierChemin)
-        sb.append(", ").append(modeleCourrierSubreports)
+        sb.append(", ").append(modeleCourrierSourceSql)
+        sb.append(", ").append(modeleCourrierModule)
+        sb.append(", ").append(modeleCourrierCorpsEmail)
+        sb.append(", ").append(modeleCourrierObjetEmail)
 
         sb.append(")")
         return sb.toString()

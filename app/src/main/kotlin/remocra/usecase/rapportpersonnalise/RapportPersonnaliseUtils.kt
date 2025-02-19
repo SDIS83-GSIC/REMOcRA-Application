@@ -7,7 +7,7 @@ import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.exception.RemocraResponseException
 import remocra.utils.DateUtils
 import remocra.utils.RequestUtils
@@ -67,15 +67,15 @@ class RapportPersonnaliseUtils {
         // On doit aussi remplacer les paramètres pour pouvoir vérifier que la requête est correcte
         element.listeRapportPersonnaliseParametre.forEach {
             when (it.rapportPersonnaliseParametreType) {
-                TypeParametreRapportPersonnalise.CHECKBOX_INPUT ->
+                TypeParametreRapportCourrier.CHECKBOX_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, "true")
-                TypeParametreRapportPersonnalise.DATE_INPUT ->
+                TypeParametreRapportCourrier.DATE_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut.let { param -> if (param.isNullOrEmpty()) dateUtils.format(dateUtils.now()) else param })
-                TypeParametreRapportPersonnalise.NUMBER_INPUT ->
+                TypeParametreRapportCourrier.NUMBER_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "10")
-                TypeParametreRapportPersonnalise.SELECT_INPUT ->
+                TypeParametreRapportCourrier.SELECT_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, testParametreRequeteSql(userInfo, it).firstOrNull()?.id ?: "null")
-                TypeParametreRapportPersonnalise.TEXT_INPUT ->
+                TypeParametreRapportCourrier.TEXT_INPUT ->
                     requete = requete.replace(it.rapportPersonnaliseParametreCode, it.rapportPersonnaliseParametreValeurDefaut ?: "")
             }
         }

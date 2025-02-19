@@ -25,7 +25,7 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.keys.RAPPORT_PERSONNALISE_PARAMETRE_PKEY
 import remocra.db.jooq.remocra.keys.RAPPORT_PERSONNALISE_PARAMETRE__RAPPORT_PERSONNALISE_PARAMETR_RAPPORT_PERSONNALISE_PARAMET_FKEY
 import remocra.db.jooq.remocra.tables.RapportPersonnalise.RapportPersonnalisePath
@@ -143,7 +143,7 @@ open class RapportPersonnaliseParametre(
      * The column
      * <code>remocra.rapport_personnalise_parametre.rapport_personnalise_parametre_type</code>.
      */
-    val TYPE: TableField<Record, TypeParametreRapportPersonnalise?> = createField(DSL.name("rapport_personnalise_parametre_type"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypeParametreRapportPersonnalise::class.java), this, "")
+    val TYPE: TableField<Record, TypeParametreRapportCourrier?> = createField(DSL.name("rapport_personnalise_parametre_type"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(TypeParametreRapportCourrier::class.java), this, "")
 
     /**
      * The column

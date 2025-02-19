@@ -1,7 +1,7 @@
 package remocra.data
 
 import remocra.data.enums.TypeModuleRapportCourrier
-import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import java.util.UUID
 
 data class RapportPersonnaliseData(
@@ -27,7 +27,7 @@ data class RapportPersonnaliseParametreData(
     val rapportPersonnaliseParametreSourceSqlLibelle: String?,
     val rapportPersonnaliseParametreValeurDefaut: String?,
     val rapportPersonnaliseParametreIsRequired: Boolean,
-    val rapportPersonnaliseParametreType: TypeParametreRapportPersonnalise,
+    val rapportPersonnaliseParametreType: TypeParametreRapportCourrier,
     val rapportPersonnaliseParametreOrdre: Int,
 )
 

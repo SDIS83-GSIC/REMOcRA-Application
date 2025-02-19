@@ -3,9 +3,8 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import remocra.db.jooq.remocra.enums.TypeParametreCourrier
+import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import java.io.Serializable
-import java.math.BigDecimal
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -21,11 +20,18 @@ import javax.annotation.processing.Generated
 )
 @Suppress("UNCHECKED_CAST")
 data class ModeleCourrierParametre(
+    val modeleCourrierParametreId: UUID,
     val modeleCourrierParametreModeleCourrierId: UUID,
-    val modeleCourrierParametreTypeParametreCourrier: TypeParametreCourrier,
+    val modeleCourrierParametreCode: String,
     val modeleCourrierParametreLibelle: String,
+    val modeleCourrierParametreSourceSql: String?,
     val modeleCourrierParametreDescription: String?,
-    val modeleCourrierParametreOrdre: BigDecimal?,
+    val modeleCourrierParametreSourceSqlId: String?,
+    val modeleCourrierParametreSourceSqlLibelle: String?,
+    val modeleCourrierParametreValeurDefaut: String?,
+    val modeleCourrierParametreIsRequired: Boolean,
+    val modeleCourrierParametreType: TypeParametreRapportCourrier,
+    val modeleCourrierParametreOrdre: Int,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -39,13 +45,23 @@ data class ModeleCourrierParametre(
             return false
         }
         val o: ModeleCourrierParametre = other as ModeleCourrierParametre
+        if (this.modeleCourrierParametreId != o.modeleCourrierParametreId) {
+            return false
+        }
         if (this.modeleCourrierParametreModeleCourrierId != o.modeleCourrierParametreModeleCourrierId) {
             return false
         }
-        if (this.modeleCourrierParametreTypeParametreCourrier != o.modeleCourrierParametreTypeParametreCourrier) {
+        if (this.modeleCourrierParametreCode != o.modeleCourrierParametreCode) {
             return false
         }
         if (this.modeleCourrierParametreLibelle != o.modeleCourrierParametreLibelle) {
+            return false
+        }
+        if (this.modeleCourrierParametreSourceSql == null) {
+            if (o.modeleCourrierParametreSourceSql != null) {
+                return false
+            }
+        } else if (this.modeleCourrierParametreSourceSql != o.modeleCourrierParametreSourceSql) {
             return false
         }
         if (this.modeleCourrierParametreDescription == null) {
@@ -55,11 +71,34 @@ data class ModeleCourrierParametre(
         } else if (this.modeleCourrierParametreDescription != o.modeleCourrierParametreDescription) {
             return false
         }
-        if (this.modeleCourrierParametreOrdre == null) {
-            if (o.modeleCourrierParametreOrdre != null) {
+        if (this.modeleCourrierParametreSourceSqlId == null) {
+            if (o.modeleCourrierParametreSourceSqlId != null) {
                 return false
             }
-        } else if (this.modeleCourrierParametreOrdre != o.modeleCourrierParametreOrdre) {
+        } else if (this.modeleCourrierParametreSourceSqlId != o.modeleCourrierParametreSourceSqlId) {
+            return false
+        }
+        if (this.modeleCourrierParametreSourceSqlLibelle == null) {
+            if (o.modeleCourrierParametreSourceSqlLibelle != null) {
+                return false
+            }
+        } else if (this.modeleCourrierParametreSourceSqlLibelle != o.modeleCourrierParametreSourceSqlLibelle) {
+            return false
+        }
+        if (this.modeleCourrierParametreValeurDefaut == null) {
+            if (o.modeleCourrierParametreValeurDefaut != null) {
+                return false
+            }
+        } else if (this.modeleCourrierParametreValeurDefaut != o.modeleCourrierParametreValeurDefaut) {
+            return false
+        }
+        if (this.modeleCourrierParametreIsRequired != o.modeleCourrierParametreIsRequired) {
+            return false
+        }
+        if (this.modeleCourrierParametreType != o.modeleCourrierParametreType) {
+            return false
+        }
+        if (this.modeleCourrierParametreOrdre != o.modeleCourrierParametreOrdre) {
             return false
         }
         return true
@@ -68,21 +107,35 @@ data class ModeleCourrierParametre(
     override fun hashCode(): Int {
         val prime = 31
         var result = 1
+        result = prime * result + this.modeleCourrierParametreId.hashCode()
         result = prime * result + this.modeleCourrierParametreModeleCourrierId.hashCode()
-        result = prime * result + this.modeleCourrierParametreTypeParametreCourrier.hashCode()
+        result = prime * result + this.modeleCourrierParametreCode.hashCode()
         result = prime * result + this.modeleCourrierParametreLibelle.hashCode()
+        result = prime * result + (if (this.modeleCourrierParametreSourceSql == null) 0 else this.modeleCourrierParametreSourceSql.hashCode())
         result = prime * result + (if (this.modeleCourrierParametreDescription == null) 0 else this.modeleCourrierParametreDescription.hashCode())
-        result = prime * result + (if (this.modeleCourrierParametreOrdre == null) 0 else this.modeleCourrierParametreOrdre.hashCode())
+        result = prime * result + (if (this.modeleCourrierParametreSourceSqlId == null) 0 else this.modeleCourrierParametreSourceSqlId.hashCode())
+        result = prime * result + (if (this.modeleCourrierParametreSourceSqlLibelle == null) 0 else this.modeleCourrierParametreSourceSqlLibelle.hashCode())
+        result = prime * result + (if (this.modeleCourrierParametreValeurDefaut == null) 0 else this.modeleCourrierParametreValeurDefaut.hashCode())
+        result = prime * result + this.modeleCourrierParametreIsRequired.hashCode()
+        result = prime * result + this.modeleCourrierParametreType.hashCode()
+        result = prime * result + this.modeleCourrierParametreOrdre.hashCode()
         return result
     }
 
     override fun toString(): String {
         val sb = StringBuilder("ModeleCourrierParametre (")
 
-        sb.append(modeleCourrierParametreModeleCourrierId)
-        sb.append(", ").append(modeleCourrierParametreTypeParametreCourrier)
+        sb.append(modeleCourrierParametreId)
+        sb.append(", ").append(modeleCourrierParametreModeleCourrierId)
+        sb.append(", ").append(modeleCourrierParametreCode)
         sb.append(", ").append(modeleCourrierParametreLibelle)
+        sb.append(", ").append(modeleCourrierParametreSourceSql)
         sb.append(", ").append(modeleCourrierParametreDescription)
+        sb.append(", ").append(modeleCourrierParametreSourceSqlId)
+        sb.append(", ").append(modeleCourrierParametreSourceSqlLibelle)
+        sb.append(", ").append(modeleCourrierParametreValeurDefaut)
+        sb.append(", ").append(modeleCourrierParametreIsRequired)
+        sb.append(", ").append(modeleCourrierParametreType)
         sb.append(", ").append(modeleCourrierParametreOrdre)
 
         sb.append(")")
