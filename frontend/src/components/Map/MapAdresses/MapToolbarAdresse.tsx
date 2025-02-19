@@ -69,9 +69,20 @@ export const useToolbarAdresseContext = ({ map, workingLayer }) => {
 
   function supprimerFeature() {
     if (selectedFeatures.length > 0) {
+      // Suppression de l'objet visible
       selectedFeatures.forEach((f) => {
         workingLayer.getSource().removeFeature(f);
       });
+      // Suppression de l'objet passé au formulaire
+      setListAdresseElement((prevList) =>
+        prevList.filter(
+          (adresse) =>
+            !selectedFeatures.some(
+              (feature) =>
+                new WKT().writeFeature(feature) === adresse.geometryString,
+            ),
+        ),
+      );
     }
   }
 
@@ -430,7 +441,10 @@ const MapToolbarAdresse = forwardRef(
               }}
             >
               {/* j'envoie la liste d'élément juste pour les afficher */}
-              <Adresse listeElement={listAdresseElement} />
+              <Adresse
+                listeElement={listAdresseElement}
+                typeWithSousType={typeWithSousType}
+              />
             </MyFormik>
           </Volet>
         </Row>
