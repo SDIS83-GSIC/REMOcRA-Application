@@ -52,6 +52,14 @@ const MenuAdmin = () => {
             <Nav.Item>
               <CustomLinkButton
                 className="text-underline text-start"
+                pathname={URLS.LIST_MODELE_COURRIER}
+              >
+                Modèles de courrier
+              </CustomLinkButton>
+            </Nav.Item>
+            <Nav.Item>
+              <CustomLinkButton
+                className="text-underline text-start"
                 pathname={URLS.TASK}
               >
                 Paramétrage des traitements

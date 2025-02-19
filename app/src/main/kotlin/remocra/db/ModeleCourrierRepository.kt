@@ -1,13 +1,22 @@
 package remocra.db
 
 import com.google.inject.Inject
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
+import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.selectDistinct
+import remocra.data.Params
+import remocra.data.enums.TypeModuleRapportCourrier
+import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER_PARAMETRE
+import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
@@ -47,4 +56,91 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .join(MODELE_COURRIER_PARAMETRE)
             .on(MODELE_COURRIER.ID.eq(MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID))
             .fetchGroups(ModeleCourrier::class.java, ModeleCourrierParametre::class.java)
+
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<ModeleCourrierComplet> =
+        dsl.selectDistinct(
+            MODELE_COURRIER.ID,
+            MODELE_COURRIER.CODE,
+            MODELE_COURRIER.ACTIF,
+            MODELE_COURRIER.PROTECTED,
+            MODELE_COURRIER.LIBELLE,
+            MODELE_COURRIER.DESCRIPTION,
+            MODELE_COURRIER.MODULE,
+            multiset(
+                selectDistinct(PROFIL_DROIT.LIBELLE)
+                    .from(PROFIL_DROIT)
+                    .join(L_MODELE_COURRIER_PROFIL_DROIT)
+                    .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
+                    .where(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1()
+                }?.joinToString()
+            }.`as`("listeProfilDroit"),
+        )
+            .from(MODELE_COURRIER)
+            .leftJoin(L_MODELE_COURRIER_PROFIL_DROIT)
+            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(MODELE_COURRIER.MODULE, MODELE_COURRIER.LIBELLE))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
+
+    fun countAllForAdmin(filterBy: Filter?) =
+        dsl.selectDistinct(
+            MODELE_COURRIER.ID,
+        )
+            .from(MODELE_COURRIER)
+            .leftJoin(L_MODELE_COURRIER_PROFIL_DROIT)
+            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .count()
+
+    data class Filter(
+        val modeleCourrierCode: String?,
+        val modeleCourrierLibelle: String?,
+        val modeleCourrierActif: Boolean?,
+        val modeleCourrierProtected: Boolean?,
+        val modeleCourrierModule: TypeModuleRapportCourrier?,
+        val listeProfilDroitId: Collection<UUID>?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    modeleCourrierCode?.let { DSL.and(MODELE_COURRIER.CODE.containsIgnoreCase(it)) },
+                    modeleCourrierLibelle?.let { DSL.and(MODELE_COURRIER.LIBELLE.containsIgnoreCase(it)) },
+                    modeleCourrierActif?.let { DSL.and(MODELE_COURRIER.ACTIF.eq(it)) },
+                    modeleCourrierProtected?.let { DSL.and(MODELE_COURRIER.PROTECTED.eq(it)) },
+                    modeleCourrierModule?.let { DSL.and(MODELE_COURRIER.MODULE.eq(TypeModule.entries.find { t -> t.name == it.name })) },
+                    listeProfilDroitId?.let { DSL.and(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.`in`(it)) },
+                ),
+            )
+    }
+
+    data class Sort(
+        val modeleCourrierCode: Int?,
+        val modeleCourrierLibelle: Int?,
+        val modeleCourrierActif: Int?,
+        val modeleCourrierProtected: Int?,
+    ) {
+
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            MODELE_COURRIER.CODE.getSortField(modeleCourrierCode),
+            MODELE_COURRIER.ACTIF.getSortField(modeleCourrierActif),
+            MODELE_COURRIER.LIBELLE.getSortField(modeleCourrierLibelle),
+            MODELE_COURRIER.PROTECTED.getSortField(modeleCourrierProtected),
+        )
+    }
+
+    data class ModeleCourrierComplet(
+        val modeleCourrierId: UUID,
+        val modeleCourrierActif: Boolean,
+        val modeleCourrierCode: String,
+        val modeleCourrierLibelle: String,
+        val modeleCourrierProtected: Boolean,
+        val modeleCourrierDescription: String?,
+        val modeleCourrierModule: TypeModuleRapportCourrier,
+        val listeProfilDroit: String?,
+    )
 }

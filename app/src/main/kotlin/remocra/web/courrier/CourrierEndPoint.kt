@@ -16,8 +16,11 @@ import org.slf4j.LoggerFactory
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.DataTableau
+import remocra.data.Params
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
+import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierGenerator
@@ -38,6 +41,8 @@ class CourrierEndPoint {
     @Inject lateinit var getCourriersWithParametresUseCase: GetCourriersWithParametresUseCase
 
     @Inject lateinit var courrierRepository: CourrierRepository
+
+    @Inject lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
     @Inject
     lateinit var documentUtils: DocumentUtils
@@ -64,6 +69,19 @@ class CourrierEndPoint {
                 ),
             )
             .build()
+    }
+
+    @POST
+    @Path("/modeles")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getAllModeleCourrier(params: Params<ModeleCourrierRepository.Filter, ModeleCourrierRepository.Sort>): Response {
+        return Response.ok(
+            DataTableau(
+                list = modeleCourrierRepository.getAllForAdmin(params),
+                count = modeleCourrierRepository.countAllForAdmin(params.filterBy),
+            ),
+        ).build()
     }
 
     @GET

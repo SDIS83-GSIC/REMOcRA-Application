@@ -57,14 +57,14 @@ abstract class AbstractCourrierGenerator<T : AbstractCourrierParametresData> {
             throw IllegalArgumentException("Impossible de récupérer les données pour remplir le template")
         }
 
-        val location = courrierData!!.courrierPath
+        val location = courrierData.courrierPath
         val courrier = JasperCompileManager.compileReport(location)
 
-        val mapParameters = toMap(courrierData!!).toMutableMap()
+        val mapParameters = toMap(courrierData).toMutableMap()
 
         // On compile ensuite les sous rapports
-        if (courrierData!!.courrierSubReport != null) {
-            val listSubReport = objectMapper.readValue<List<SubReport>>(courrierData!!.courrierSubReport!!.data())
+        if (courrierData.courrierSubReport != null) {
+            val listSubReport = objectMapper.readValue<List<SubReport>>(courrierData.courrierSubReport!!.data())
 
             listSubReport.forEach {
                 mapParameters[it.nom] = JasperCompileManager.compileReport(GlobalConstants.DOSSIER_MODELES_COURRIERS + it.chemin)

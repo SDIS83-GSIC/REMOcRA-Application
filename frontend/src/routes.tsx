@@ -155,6 +155,7 @@ import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
 import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
 import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
+import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.tsx";
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
 
 export const URLS = {
@@ -399,6 +400,8 @@ export const URLS = {
     url`/admin/rapport-personnalise/duplicate/` + rapportPersonnaliseId,
   IMPORTER_RAPPORT_PERSONNALISE: url`/admin/rapport-personnalise/import`,
   TASK: url`/admin/tache-planifiee`,
+
+  LIST_MODELE_COURRIER: url`/admin/modele-courrier`,
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
@@ -1646,6 +1649,15 @@ export default [
           <Authorization
             Component={DuplicateRapportPersonnalise}
             droits={[TYPE_DROIT.ADMIN_RAPPORTS_PERSO]}
+          />
+        ),
+      },
+      {
+        path: "modele-courrier",
+        element: (
+          <Authorization
+            Component={ListModeleCourrier}
+            droits={[TYPE_DROIT.COURRIER_C]}
           />
         ),
       },
