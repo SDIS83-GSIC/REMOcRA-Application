@@ -7,11 +7,8 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
 
 const MessagePeiLongueIndispoListePei = () => {
-  const PEI_LONGUE_INDISPONIBILITE_JOURS = "PEI_LONGUE_INDISPONIBILITE_JOURS";
-  const parametreState = useGet(
-    url`/api/parametres?${{
-      listeParametreCode: JSON.stringify(PEI_LONGUE_INDISPONIBILITE_JOURS),
-    }}`,
+  const messagePeiLongueIndispoState = useGet(
+    url`/api/message-pei-longue-indispo/`,
   );
 
   return (
@@ -19,7 +16,7 @@ const MessagePeiLongueIndispoListePei = () => {
       <Container>
         <PageTitle
           icon={<IconPei />}
-          title={`Liste des PEI indisponibles depuis plus de ${parametreState?.data?.[PEI_LONGUE_INDISPONIBILITE_JOURS]?.parametreValeur} jours`}
+          title={`Liste des PEI indisponibles depuis plus de ${messagePeiLongueIndispoState?.data?.nbMois} mois et ${messagePeiLongueIndispoState?.data?.nbJour} jours`}
         />
       </Container>
       <Container fluid className={"px-5"}>

@@ -57,14 +57,19 @@ class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
             return null
         }
 
-        // Puis on retourne le message
+        // Puis, on retourne le message pour le warning de la page d'accueil
+        // et les valeurs "mois" et "jour" pour le titre du tableau.
         return Message(
-            message.replace(PLACEHOLDER_MOIS, period.months.toString())
+            message = message.replace(PLACEHOLDER_MOIS, period.months.toString())
                 .replace(PLACEHOLDER_JOURS, period.days.toString()),
+            nbMois = period.months,
+            nbJour = period.days,
         )
     }
     data class Message(
         val message: String,
+        val nbMois: Int,
+        val nbJour: Int,
     )
 
     fun getListePeiAlerte(userInfo: UserInfo): Set<UUID>? {
