@@ -68,7 +68,7 @@ const MenuAdmin = () => {
             <Nav.Item>
               <CustomLinkButton
                 className="text-underline text-start"
-                href={URLS.LIST_ANOMALIE}
+                pathname={URLS.LIST_ANOMALIE}
               >
                 Anomalies
               </CustomLinkButton>
