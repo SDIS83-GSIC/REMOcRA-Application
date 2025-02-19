@@ -428,6 +428,7 @@ export const DateTimeInput = ({
           {...field}
           {...rest}
           disabled={readOnly}
+          max="9999-12-31T23:59"
         />
       </Row>
     </DivWithError>
