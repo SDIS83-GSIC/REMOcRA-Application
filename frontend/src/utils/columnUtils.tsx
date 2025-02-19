@@ -36,7 +36,7 @@ import url from "../module/fetch.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
-import { formatDate } from "./formatDateUtils.tsx";
+import formatDateTime, { formatDate } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
 
 function getColumnPeiByStringArray(
@@ -480,7 +480,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           accessor: "indisponibiliteTemporaireDateDebut",
           sortField: "indisponibiliteTemporaireDateDebut",
           Cell: (value) => {
-            return <div>{formatDateTime(value.value)}</div>;
+            return <div>{value.value ? formatDateTime(value.value) : ""}</div>;
           },
         });
         break;
