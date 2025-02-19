@@ -30,7 +30,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierUsecase
 import remocra.usecase.module.ModuleAccueilUpsertUseCase
-import remocra.usecase.module.ModuleDocumentUseCase
+import remocra.usecase.module.ModuleDocumentCourrierUseCase
 import remocra.usecase.module.ModuleUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -50,8 +50,7 @@ class ModuleEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var objectMapper: ObjectMapper
 
-    @Inject
-    lateinit var moduleDocumentUseCase: ModuleDocumentUseCase
+    @Inject lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
 
     @Context lateinit var uriInfo: UriInfo
 
@@ -104,21 +103,24 @@ class ModuleEndPoint : AbstractEndpoint() {
     }
 
     @POST
-    @Path("/documents/all")
+    @Path("/document/all")
     @Public("Les documents ne sont pas liés à un droit")
     fun getDocumentsForListWithThematique(
         @QueryParam("moduleId")
         moduleId: UUID,
+        @QueryParam("moduleType")
+        moduleType: String,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>,
     ): Response =
         Response.ok(
             DataTableau(
-                list = moduleDocumentUseCase.execute(
+                list = moduleDocumentCourrierUseCase.execute(
                     moduleId,
+                    moduleType,
                     securityContext.userInfo,
                     params,
                 ),
-                count = moduleDocumentUseCase.count(
+                count = moduleDocumentCourrierUseCase.count(
                     moduleId,
                     securityContext.userInfo,
                     params,

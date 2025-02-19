@@ -12,7 +12,7 @@ import java.util.UUID
 class ModuleUseCase : AbstractUseCase() {
     @Inject lateinit var moduleRepository: ModuleRepository
 
-    @Inject lateinit var moduleDocumentUseCase: ModuleDocumentUseCase
+    @Inject lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
 
     fun execute(uriInfo: UriBuilder, userInfo: UserInfo?): List<ModuleWithImageLink> {
         val listeModule = moduleRepository.getModules()
@@ -36,9 +36,10 @@ class ModuleUseCase : AbstractUseCase() {
                 moduleColonne = it.moduleColonne,
                 moduleLigne = it.moduleLigne,
                 moduleNbDocument = it.moduleNbDocument,
-                listeDocument = moduleDocumentUseCase.execute(
+                listeDocument = moduleDocumentCourrierUseCase.execute(
                     moduleId = it.moduleId,
                     params = null,
+                    moduleType = it.moduleType.toString(),
                     userInfo = userInfo,
                 ),
                 listeThematiqueId = listeLThematiqueModule.filter { l -> l.moduleId == it.moduleId }.map { it.thematiqueId },
