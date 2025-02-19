@@ -110,6 +110,8 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(lastOldebVisiteCte).on(OLDEB.ID.eq(lastOldebVisiteCte.field("OLDEB_ID", UUID::class.java)))
             .leftJoin(OLDEB_TYPE_AVIS).on(OLDEB_TYPE_AVIS.ID.eq(lastOldebVisiteCte.field("OLDEB_TYPE_AVIS_ID", UUID::class.java)))
             .leftJoin(OLDEB_TYPE_DEBROUSSAILLEMENT).on(OLDEB_TYPE_DEBROUSSAILLEMENT.ID.eq(lastOldebVisiteCte.field("OLDEB_TYPE_DEBROUSSAILLEMENT_ID", UUID::class.java)))
+            .leftJoin(CADASTRE_SECTION).on(CADASTRE_SECTION.ID.eq(OLDEB.CADASTRE_SECTION_ID))
+            .leftJoin(CADASTRE_PARCELLE).on(CADASTRE_PARCELLE.ID.eq(OLDEB.CADASTRE_PARCELLE_ID))
             .join(COMMUNE).on(COMMUNE.ID.eq(OLDEB.COMMUNE_ID))
             .where(filter?.toCondition())
             .fetchSingleInto()
