@@ -7,6 +7,7 @@ const CreateModelePibi = () => {
     <CreateNomenclature
       typeNomenclature={NOMENCLATURE.MODELE_PIBI}
       redirectLink={URLS.LIST_MODELE_PIBI}
+      isFkRequired={true}
     />
   );
 };
