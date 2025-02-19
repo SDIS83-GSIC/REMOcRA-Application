@@ -162,6 +162,16 @@ function getLinks(
           label: "Liste des Obligations Légales de Débroussaillement",
           link: URLS.OLDEB_LIST,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OLDEB_R),
+          label: "Localisation des Obligations Légales de Débroussaillement",
+          link: URLS.OLDEB_LOCALISATION,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OLDEB_R),
+          label: "Propriétaire des Obligations Légales de Débroussaillement",
+          link: URLS.OLDEB_PROPRIETAIRE_LIST,
+        },
       ];
     case TypeModuleRemocra.PERMIS:
     case TypeModuleRemocra.ADRESSES:
