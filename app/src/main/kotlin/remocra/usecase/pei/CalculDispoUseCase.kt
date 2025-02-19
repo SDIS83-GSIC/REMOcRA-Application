@@ -140,11 +140,11 @@ class CalculDispoUseCase : AbstractUseCase() {
                 poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }?.poidsAnomalieValIndispoTerrestre
             }.reduce { acc, next -> if (acc != null && next != null) acc.plus(next) else null } ?: 0
 
-            if (note > 5) {
+            if (note >= 5) {
                 return Disponibilite.INDISPONIBLE
             }
             // Sinon, il est peut-être non conforme
-            if (setGlobalAnomalies.any { !it.anomalieRendNonConforme }) {
+            if (setGlobalAnomalies.any { it.anomalieRendNonConforme }) {
                 return Disponibilite.NON_CONFORME
             }
         }
