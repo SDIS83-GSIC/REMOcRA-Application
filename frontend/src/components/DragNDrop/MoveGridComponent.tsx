@@ -53,18 +53,18 @@ const MoveGridComponent = ({
 
   function handleDragOver(event) {
     const { active, over, draggingRect } = event;
-    const { id } = active;
-    const { id: overId } = over;
+    if (!over) {
+      return;
+    }
 
-    // On récupére la colonne de l'item actif et la colonne de destination
-    const activeContainer = findColonne(id);
+    const activeId = active.id;
+    const overId = over.id;
+
+    // Trouver les colonnes source et destination
+    const activeContainer = findColonne(activeId);
     const overContainer = findColonne(overId);
 
-    if (
-      !activeContainer ||
-      !overContainer ||
-      activeContainer === overContainer
-    ) {
+    if (!activeContainer || !overContainer) {
       return;
     }
 
@@ -72,45 +72,57 @@ const MoveGridComponent = ({
       const activeItems = prev[activeContainer];
       const overItems = prev[overContainer];
 
-      const activeIndex = activeItems.indexOf(id);
+      const activeIndex = activeItems.indexOf(activeId);
       const overIndex = overItems.indexOf(overId);
 
+      // Vérification de sécurité
+      if (activeIndex === -1) {
+        return prev;
+      }
+
       let newIndex;
+      // Ajout en fin de colonne si elle est vide
       if (overId in prev) {
-        newIndex = overItems.length + 1;
+        newIndex = overItems.length;
       } else {
         const isBelowLastItem =
-          over &&
           overIndex === overItems.length - 1 &&
           draggingRect?.offsetTop > over.rect?.offsetTop + over.rect?.height;
 
-        const modifier = isBelowLastItem ? 1 : 0;
-
-        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+        newIndex =
+          overIndex >= 0
+            ? overIndex + (isBelowLastItem ? 1 : 0)
+            : overItems.length;
       }
 
-      const overContainerValue = [
-        ...prev[overContainer].slice(0, newIndex),
-        items[activeContainer][activeIndex],
-        ...prev[overContainer].slice(newIndex, prev[overContainer].length),
+      // Vérifier si l'élément est déjà dans la colonne de destination et l'enlever avant de le réinsérer
+      const filteredOverItems = overItems.filter((item) => item !== activeId);
+
+      // Ajouter l'élément déplacé à la nouvelle position
+      const updatedOverItems = [
+        ...filteredOverItems.slice(0, newIndex),
+        activeId,
+        ...filteredOverItems.slice(newIndex),
       ];
 
-      const activeContainerValue = [
-        ...prev[activeContainer].filter((item) => item !== active.id),
-      ];
+      // Supprimer l'élément de la colonne d'origine uniquement si elle est différente sinon utiliser la liste mise à jour
+      const updatedActiveItems =
+        activeContainer === overContainer
+          ? updatedOverItems
+          : activeItems.filter((item) => item !== activeId);
 
+      // Mise à jour des possibilités si besoin
       if (activeContainer === keyPossibilites) {
-        setPossibilites(activeContainerValue);
+        setPossibilites(updatedActiveItems);
       }
-
       if (overContainer === keyPossibilites) {
-        setPossibilites(overContainerValue);
+        setPossibilites(updatedOverItems);
       }
 
       return {
         ...prev,
-        [activeContainer]: activeContainerValue,
-        [overContainer]: overContainerValue,
+        [activeContainer]: updatedActiveItems,
+        [overContainer]: updatedOverItems,
       };
     });
   }
@@ -122,11 +134,7 @@ const MoveGridComponent = ({
 
     const activeContainer = findColonne(id);
     const overContainer = findColonne(overId);
-    if (
-      !activeContainer ||
-      !overContainer ||
-      activeContainer !== overContainer
-    ) {
+    if (!activeContainer || !overContainer) {
       return;
     }
 
