@@ -264,7 +264,6 @@ val PEI_PEI_NUMERO_COMPLET_KEY: UniqueKey<Record> = Internal.createUniqueKey(Pei
 val PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pei.PEI, DSL.name("pei_pkey"), arrayOf(Pei.PEI.ID), true)
 val PEI_PRESCRIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PeiPrescrit.PEI_PRESCRIT, DSL.name("pei_prescrit_pkey"), arrayOf(PeiPrescrit.PEI_PRESCRIT.ID), true)
 val PENA_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pena.PENA, DSL.name("pena_pkey"), arrayOf(Pena.PENA.ID), true)
-val PENA_ASPIRATION_PENA_ASPIRATION_NUMERO_KEY: UniqueKey<Record> = Internal.createUniqueKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pena_aspiration_numero_key"), arrayOf(PenaAspiration.PENA_ASPIRATION.NUMERO), true)
 val PENA_ASPIRATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PenaAspiration.PENA_ASPIRATION, DSL.name("pena_aspiration_pkey"), arrayOf(PenaAspiration.PENA_ASPIRATION.ID), true)
 val PIBI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Pibi.PIBI, DSL.name("pibi_pkey"), arrayOf(Pibi.PIBI.ID), true)
 val POIDS_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PoidsAnomalie.POIDS_ANOMALIE, DSL.name("poids_anomalie_pkey"), arrayOf(PoidsAnomalie.POIDS_ANOMALIE.ID), true)

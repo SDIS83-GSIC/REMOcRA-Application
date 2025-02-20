@@ -1,0 +1,1 @@
+ALTER TABLE pena_aspiration drop constraint pena_aspiration_pena_aspiration_numero_key;

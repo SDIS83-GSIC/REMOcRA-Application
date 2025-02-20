@@ -28,7 +28,6 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.PENA_ASPIRATION_PENA_ASPIRATION_NUMERO_KEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION_PKEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_ID_FKEY
@@ -165,7 +164,6 @@ open class PenaAspiration(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = PENA_ASPIRATION_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PENA_ASPIRATION_PENA_ASPIRATION_NUMERO_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY, PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_ID_FKEY)
 
     private lateinit var _pena: PenaPath
