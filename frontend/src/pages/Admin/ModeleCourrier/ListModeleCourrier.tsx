@@ -8,12 +8,14 @@ import SelectFilterFromList from "../../../components/Filter/SelectFilterFromLis
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
 import {
+  ActionColumn,
   BooleanColumn,
   ProtectedColumn,
 } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -122,6 +124,20 @@ const ListModeleCourrier = () => {
                   name={"modeleCourrierProtected"}
                 />
               ),
+            }),
+            ActionColumn({
+              Header: "Actions",
+              accessor: "modeleCourrierId",
+              buttons: [
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  route: (modeleCourrierId) =>
+                    URLS.UPDATE_MODELE_COURRIER(modeleCourrierId),
+                  type: TYPE_BUTTON.UPDATE,
+                },
+              ],
             }),
           ]}
           idName={"tableModeleCourrier"}

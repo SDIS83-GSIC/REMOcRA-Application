@@ -33,6 +33,7 @@ import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { createComponentModeleCourrierToRepeat } from "./SortableParametreModeleCourrier.tsx";
 
 type ModeleCourrierType = {
+  modeleCourrierId: string | undefined;
   modeleCourrierActif: boolean;
   modeleCourrierCode: string;
   modeleCourrierLibelle: string;
@@ -63,6 +64,7 @@ type ModeleCourrierType = {
 };
 
 export const getInitialValues = (data?: ModeleCourrierType) => ({
+  modeleCourrierId: data?.modeleCourrierId ?? null,
   modeleCourrierActif: data?.modeleCourrierActif ?? true,
   modeleCourrierCode: data?.modeleCourrierCode ?? null,
   modeleCourrierLibelle: data?.modeleCourrierLibelle ?? null,
@@ -94,7 +96,7 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
       ...e,
     })) ?? [],
   modeleCourrierSourceSql: data?.modeleCourrierSourceSql,
-  documents: data?.documents ?? [],
+  documents: data?.listeDocuments ?? [],
 });
 
 export const validationSchema = object({});
@@ -105,11 +107,16 @@ export const prepareVariables = (
 ) => {
   const formData = new FormData();
 
-  setDocumentInFormData(values?.documents, initialData?.documents, formData);
+  setDocumentInFormData(
+    values?.documents,
+    initialData?.listeDocuments,
+    formData,
+  );
 
   formData.append(
     "modeleCourrier",
     JSON.stringify({
+      modeleCourrierId: values?.modeleCourrierId,
       modeleCourrierActif: values.modeleCourrierActif,
       modeleCourrierCode: values.modeleCourrierCode,
       modeleCourrierLibelle: values.modeleCourrierLibelle,
@@ -279,6 +286,14 @@ const ModeleCourrier = () => {
       ) : stepActive === 2 ? (
         <>
           <Row className="mt-3">
+            <Col className="bg-light border p-2 rounded">
+              <IconInfo /> Vous pouvez utiliser le code
+              &apos;#[LIEN_TELECHARGEMENT]#&apos; dans le corps de mail. Ce
+              dernier sera automatiquement remplacé par le lien de
+              téléchargement du courrier.
+            </Col>
+          </Row>
+          <Row className="mt-3">
             <Col>
               <TextInput
                 name="modeleCourrierObjetEmail"
@@ -325,7 +340,6 @@ const ModeleCourrier = () => {
               />
             </Col>
           </Row>
-          {/* TODO permettre le téléchargement du courrier si c'est un update */}
           <Row className="mt-3">
             <Col>
               <FormDocuments
@@ -409,7 +423,7 @@ const ModeleCourrier = () => {
       </Row>
       {/* Si c'est la dernière step, on permet la sauvegarde */}
       {stepActive === 3 && (
-        <SubmitFormButtons returnLink={URLS.LIST_RAPPORT_PERSONNALISE} />
+        <SubmitFormButtons returnLink={URLS.LIST_MODELE_COURRIER} />
       )}
     </FormContainer>
   );

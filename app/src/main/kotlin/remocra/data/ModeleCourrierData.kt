@@ -17,6 +17,7 @@ data class ModeleCourrierData(
     val listeProfilDroitId: Collection<UUID>,
     val listeModeleCourrierParametre: Collection<ModeleCourrierParametreData>,
     val documents: DocumentsData.DocumentsModeleCourrier?,
+    val listeDocuments: Collection<DocumentsData.DocumentModeleCourrierData>?,
 )
 
 data class ModeleCourrierParametreData(

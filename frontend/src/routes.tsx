@@ -157,6 +157,7 @@ import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
 import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.tsx";
 import CreateModeleCourrier from "./pages/Admin/ModeleCourrier/CreateModeleCourrier.tsx";
+import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourrier.tsx";
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
 
 export const URLS = {
@@ -404,6 +405,8 @@ export const URLS = {
 
   LIST_MODELE_COURRIER: url`/admin/modele-courrier`,
   CREATE_MODELE_COURRIER: url`/admin/modele-courrier/create`,
+  UPDATE_MODELE_COURRIER: (modeleCourrierId: string) =>
+    url`/admin/modele-courrier/update/` + modeleCourrierId,
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
@@ -1668,6 +1671,15 @@ export default [
         element: (
           <Authorization
             Component={CreateModeleCourrier}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "modele-courrier/update/:modeleCourrierId",
+        element: (
+          <Authorization
+            Component={UpdateModeleCourrier}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

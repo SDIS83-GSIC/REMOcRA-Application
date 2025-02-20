@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -33,6 +34,7 @@ import remocra.usecase.courrier.CourrierGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
+import remocra.usecase.modelecourrier.UpdateModeleCourrierUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.io.File
@@ -55,6 +57,8 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Inject lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
     @Inject lateinit var createModeleCourrierUseCase: CreateModeleCourrierUseCase
+
+    @Inject lateinit var updateModeleCourrierUseCase: UpdateModeleCourrierUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -117,6 +121,40 @@ class CourrierEndPoint : AbstractEndpoint() {
                 ),
             ),
         ).wrap()
+    }
+
+    @PUT
+    @Path("modeles/update/{modeleCourrierId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun update(
+        @PathParam("modeleCourrierId")
+        modeleCourrierId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val modeleCourrier = objectMapper.readValue<ModeleCourrierData>(httpRequest.getTextPart("modeleCourrier"))
+        return updateModeleCourrierUseCase.execute(
+            securityContext.userInfo,
+            modeleCourrier.copy(
+                documents = DocumentsData.DocumentsModeleCourrier(
+                    objectId = modeleCourrierId,
+                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentModeleCourrierData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
+            ),
+        ).wrap()
+    }
+
+    @GET
+    @Path("/modele-courrier/get/{modeleCourrierId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getModeleCourrier(
+        @PathParam("modeleCourrierId")
+        modeleCourrierId: UUID,
+    ): Response {
+        return Response.ok(modeleCourrierRepository.getModeleCourrier(modeleCourrierId)).build()
     }
 
     @GET
