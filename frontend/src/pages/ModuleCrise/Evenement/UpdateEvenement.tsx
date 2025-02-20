@@ -12,11 +12,13 @@ import Evenement, {
 } from "./Evenement.tsx";
 
 const UpdateEvenement = ({
+  readOnly,
   criseId,
   evenementId,
   geometrieEvenement,
   onSubmit,
 }: {
+  readOnly: boolean;
   criseId: string;
   evenementId: string;
   geometrieEvenement: string | undefined;
@@ -26,12 +28,14 @@ const UpdateEvenement = ({
     url`/api/crise/evenement/getEvenement/${evenementId}`,
   );
   const { user } = useAppContext();
+  const title = readOnly ? "Informations" : "Modifier l'événement";
+
   return (
     selectDataState && (
       <Container>
         <PageTitle
           icon={<IconEvent />}
-          title="Modifier l'événement"
+          title={title}
           displayReturnButton={false}
         />
         <MyFormik
@@ -48,7 +52,7 @@ const UpdateEvenement = ({
           onSubmit={onSubmit}
           submitUrl={`/api/crise/${criseId}/evenement/${evenementId}/update`}
         >
-          <Evenement />
+          <Evenement isReadOnly={readOnly} />
         </MyFormik>
       </Container>
     )

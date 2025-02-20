@@ -72,7 +72,7 @@ export const prepareVariables = (
   return formData;
 };
 
-const Evenement = () => {
+const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
   const { setValues, setFieldValue, values } =
     useFormikContext<EvenementType>();
 
@@ -93,6 +93,7 @@ const Evenement = () => {
       <h3 className="mt-5">Informations générales</h3>
 
       <SelectForm
+        disabled={isReadOnly}
         name="evenementTypeId"
         listIdCodeLibelle={listeType}
         label="Type"
@@ -101,16 +102,28 @@ const Evenement = () => {
         defaultValue={values.geometrieEvenement ? listeType?.[0] : null}
       />
 
-      <TextInput label="titre" name="evenementLibelle" required={true} />
+      <TextInput
+        disabled={isReadOnly}
+        label="titre"
+        name="evenementLibelle"
+        required={true}
+      />
 
       <TextAreaInput
+        disabled={isReadOnly}
         name="evenementDescription"
         label="Description"
         required={false}
       />
-      <TextInput label="Origine" name="evenementOrigine" required={false} />
+      <TextInput
+        disabled={isReadOnly}
+        label="Origine"
+        name="evenementOrigine"
+        required={false}
+      />
 
       <TextAreaInput
+        disabled={isReadOnly}
         name="evenementTag"
         label="Tags"
         required={false}
@@ -118,6 +131,7 @@ const Evenement = () => {
       />
 
       <DateTimeInput
+        readOnly={isReadOnly}
         name="evenementDateDebut"
         label="Date et heure d’activation"
         required={true}
@@ -128,6 +142,7 @@ const Evenement = () => {
       />
 
       <RangeInput
+        disabled={isReadOnly}
         step={1}
         min={0}
         value={+values.evenementImportance}
@@ -136,10 +151,15 @@ const Evenement = () => {
         max={5}
       />
 
-      <CheckBoxInput name={"evenementIsClosed"} label={"Clore l'événement"} />
+      <CheckBoxInput
+        disabled={isReadOnly}
+        name={"evenementIsClosed"}
+        label={"Clore l'évènement"}
+      />
 
       <h3 className="mt-5">Document</h3>
       <FormDocuments
+        disabled={isReadOnly}
         documents={values.documents}
         setFieldValue={setFieldValue}
         autreFormParam={(index: number) => (
@@ -156,7 +176,7 @@ const Evenement = () => {
         }}
       />
 
-      <Button type="submit" variant="primary">
+      <Button disabled={isReadOnly} type="submit" variant="primary">
         Valider
       </Button>
     </FormContainer>

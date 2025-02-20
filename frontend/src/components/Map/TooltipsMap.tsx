@@ -473,6 +473,8 @@ export const TooltipMapEditEvenement = ({
 }) => {
   const ref = useRef(null);
   const [showUpdateEvenement, setShowUpdateEvenement] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
+
   const handleCloseUpdateEvenement = () => setShowUpdateEvenement(false);
   const { featureSelect, overlay } = useTooltipMap({
     ref: ref,
@@ -480,8 +482,7 @@ export const TooltipMapEditEvenement = ({
     disabled: disabled,
   });
   const eventId = featureSelect?.getProperties().elementId;
-  const displayEditDeleteButton =
-    featureSelect?.getProperties().elementId != null;
+  const displayButton = featureSelect?.getProperties().elementId != null;
   const srid = map.getView().getProjection().getCode().split(":")[1];
 
   if (disabled) {
@@ -493,8 +494,14 @@ export const TooltipMapEditEvenement = ({
       <Tooltip
         featureSelect={featureSelect}
         overlay={overlay}
-        onClickEdit={() => setShowUpdateEvenement(true)}
-        displayButtonEdit={displayEditDeleteButton}
+        onClickEdit={() => {
+          setShowUpdateEvenement(true), setIsReadOnly(false);
+        }}
+        displayButtonEdit={displayButton}
+        displayButtonSee={displayButton}
+        onClickSee={() => {
+          setShowUpdateEvenement(true), setIsReadOnly(true);
+        }}
       />
       <Volet
         handleClose={handleCloseUpdateEvenement}
@@ -502,6 +509,7 @@ export const TooltipMapEditEvenement = ({
         className="w-auto"
       >
         <UpdateEvenement
+          readOnly={isReadOnly}
           criseId={criseId}
           evenementId={eventId}
           geometrieEvenement={`SRID=${srid};${featureSelect && new WKT().writeFeature(featureSelect)}`}
