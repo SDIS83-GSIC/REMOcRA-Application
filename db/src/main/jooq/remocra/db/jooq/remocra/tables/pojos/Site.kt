@@ -24,7 +24,7 @@ data class Site(
     val siteActif: Boolean,
     val siteCode: String,
     val siteLibelle: String,
-    val siteGeometrie: Geometry,
+    val siteGeometrie: Geometry?,
     val siteGestionnaireId: UUID?,
 ) : Serializable {
 
@@ -51,7 +51,11 @@ data class Site(
         if (this.siteLibelle != o.siteLibelle) {
             return false
         }
-        if (this.siteGeometrie != o.siteGeometrie) {
+        if (this.siteGeometrie == null) {
+            if (o.siteGeometrie != null) {
+                return false
+            }
+        } else if (this.siteGeometrie != o.siteGeometrie) {
             return false
         }
         if (this.siteGestionnaireId == null) {
@@ -71,7 +75,7 @@ data class Site(
         result = prime * result + this.siteActif.hashCode()
         result = prime * result + this.siteCode.hashCode()
         result = prime * result + this.siteLibelle.hashCode()
-        result = prime * result + this.siteGeometrie.hashCode()
+        result = prime * result + (if (this.siteGeometrie == null) 0 else this.siteGeometrie.hashCode())
         result = prime * result + (if (this.siteGestionnaireId == null) 0 else this.siteGestionnaireId.hashCode())
         return result
     }

@@ -110,7 +110,7 @@ open class Site(
     /**
      * The column <code>remocra.site.site_geometrie</code>.
      */
-    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("site_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "", GeometryBinding())
+    val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("site_geometrie"), SQLDataType.GEOMETRY, this, "", GeometryBinding())
 
     /**
      * The column <code>remocra.site.site_gestionnaire_id</code>.
