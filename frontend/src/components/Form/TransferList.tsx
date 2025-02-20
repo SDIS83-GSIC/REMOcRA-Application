@@ -1,9 +1,4 @@
-import {
-  closestCenter,
-  DndContext,
-  useDraggable,
-  useDroppable,
-} from "@dnd-kit/core";
+import { closestCenter, DndContext, useDroppable } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -45,8 +40,9 @@ const TransferList = ({
 
     // Déplacement entre les listes
     if (
-      over.id === "available" &&
-      selectedOptions.some((item) => item.id === active.id)
+      over.id === "available" ||
+      (availableOptions.some((item) => item.id === over.id) &&
+        selectedOptions.some((item) => item.id === active.id))
     ) {
       // Déplacer de `selectedOptions` vers `availableOptions`
       setSelectedOptions((prev) =>
@@ -89,30 +85,37 @@ const TransferList = ({
           tooltipText={tooltipText}
         />
         <Row className={"bg-secondary p-3"}>
-          {/* Liste des options disponibles */}
-          <Col
-            className={
-              "border border-2 border-primary-subtle rounded-2 m-2 p-2"
-            }
+          <SortableContext
+            items={availableOptions
+              .concat(selectedOptions)
+              .map((item) => item.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <DroppableList
-              id="available"
-              items={availableOptions}
-              title="Options disponibles"
-            />
-          </Col>
-          {/* Liste des options sélectionnées */}
-          <Col
-            className={
-              "border border-2 rounded-2 border-primary-subtle m-2 p-2"
-            }
-          >
-            <SortableList
-              id="selected"
-              items={selectedOptions}
-              title="Options sélectionnées"
-            />
-          </Col>
+            {/* Liste des options disponibles */}
+            <Col
+              className={
+                "border border-2 border-primary-subtle rounded-2 m-2 p-2"
+              }
+            >
+              <DroppableList
+                id="available"
+                items={availableOptions}
+                title="Options disponibles"
+              />
+            </Col>
+            {/* Liste des options sélectionnées */}
+            <Col
+              className={
+                "border border-2 rounded-2 border-primary-subtle m-2 p-2"
+              }
+            >
+              <DroppableList
+                id="selected"
+                items={selectedOptions}
+                title="Options sélectionnées"
+              />
+            </Col>
+          </SortableContext>
         </Row>
       </DndContext>
     )
@@ -138,8 +141,20 @@ const DroppableList = ({ id, items, title }: DroppableSortType) => {
   );
 };
 const DraggableItem = ({ item }: { item: ItemType }) => {
+  // Gestion du tri et du drag
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useDraggable({ id: item.id });
+    useSortable({ id: item.id });
+
+  // Gestion du drop (pour accepter des éléments)
+  const { setNodeRef: setDroppableRef } = useDroppable({
+    id: item.id,
+  });
+
+  // Fusion des refs
+  const setRefs = (node: HTMLElement | null) => {
+    setNodeRef(node);
+    setDroppableRef(node);
+  };
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -149,52 +164,7 @@ const DraggableItem = ({ item }: { item: ItemType }) => {
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className="list-group-item d-flex justify-content-between align-items-center"
-    >
-      {item.libelle}
-    </div>
-  );
-};
-
-const SortableList = ({ id, items, title }: DroppableSortType) => {
-  const { setNodeRef } = useDroppable({ id });
-
-  return (
-    <>
-      <Col xs={12} className={"text-center m-2 h5"}>
-        {title}
-      </Col>
-      <Col ref={setNodeRef} className="list-group">
-        <SortableContext
-          items={items.map((item) => item.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          {items.map((item) => (
-            <SortableItem key={item.id} item={item} />
-          ))}
-        </SortableContext>
-      </Col>
-    </>
-  );
-};
-
-const SortableItem = ({ item }: { item: ItemType }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    cursor: "grab",
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
+      ref={setRefs}
       style={style}
       {...listeners}
       {...attributes}
