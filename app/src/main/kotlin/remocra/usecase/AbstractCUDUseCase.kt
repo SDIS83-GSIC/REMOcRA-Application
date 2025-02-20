@@ -54,24 +54,11 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
             checkDroits(userInfo)
             checkContraintes(userInfo, element)
 
-            var result: Result? = null
-            var savedElement: T? = null
             // On utilise le transactionManager parent s'il est fourni, sinon fallback sur celui qui est injecté
-            (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
-                try {
-                    savedElement = execute(userInfo, element)
-                } catch (rre: RemocraResponseException) {
-                    result = Result.Forbidden(rre.message)
-                    result = Result.Error(rre.message)
-                } catch (e: Exception) {
-                    result = Result.Error(e.message)
-                }
+            val savedElement = (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+                execute(userInfo, element)
             }
-
-            if (result != null) {
-                return result!!
-            }
-            postEvent(savedElement!!, userInfo)
+            postEvent(savedElement, userInfo)
 
             // On veut renvoyer un HTTP 201 lors d'une création
             return if (TypeOperation.INSERT == typeOperation) Result.Created(savedElement) else Result.Success(savedElement)

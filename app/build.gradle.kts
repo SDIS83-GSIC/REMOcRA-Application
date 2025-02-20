@@ -99,79 +99,76 @@ dependencies {
     implementation(libs.log4j.jul)
     implementation(libs.log4j.core)
     implementation(platform(libs.log4j.bom))
-    runtimeOnly(libs.slf4j.api)
     runtimeOnly(libs.log4j.slf4j2Impl)
-    runtimeOnly(libs.log4j.bom)
-    runtimeOnly(libs.log4j.core)
-    implementation(libs.disruptor)
-    implementation(libs.sentry)
-    implementation(libs.sentry.servlet.jakarta)
-    implementation(libs.sentry.log4j2)
+    runtimeOnly(libs.disruptor)
+    api(libs.sentry)
+    api(libs.sentry.servlet.jakarta)
+    api(libs.sentry.log4j2)
 
     // Utilitaires
     compileOnly(libs.forbiddenapis)
-    implementation(libs.typesafe)
-    implementation(libs.picocli)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlin.reflect)
-    implementation(libs.commons.email)
+    api(libs.typesafe)
+    api(libs.picocli)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.kotlin.reflect)
+    api(libs.commons.email)
 
     // Dependency Injection
-    implementation(libs.guice.bom)
-    implementation(libs.kotlin.guice)
+    api(libs.guice.bom)
+    api(libs.kotlin.guice)
 
     // Base de données
-    implementation(projects.db)
-    implementation(libs.hikaricp)
-    implementation(libs.jooq.kotlin)
+    api(projects.db)
+    api(libs.hikaricp)
+    api(libs.jooq.kotlin)
     runtimeOnly(libs.postgresql)
-    implementation(libs.flyway.core)
+    api(libs.flyway.core)
 
     // Web
-    implementation(libs.jetty.servlet)
-    implementation(libs.jetty.servlets)
-    implementation(platform(libs.jetty.bom))
-    implementation(platform(libs.jetty.ee10.bom))
+    api(libs.jetty.servlet)
+    api(libs.jetty.servlets)
+    api(platform(libs.jetty.bom))
+    api(platform(libs.jetty.ee10.bom))
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.jackson)
+    api(libs.retrofit)
+    api(libs.retrofit.converter.jackson)
 
-    implementation(libs.resteasy.core.spi)
-    implementation(libs.resteasy.core)
-    implementation(platform(libs.resteasy.bom))
+    api(libs.resteasy.core.spi)
+    api(libs.resteasy.core)
+    api(platform(libs.resteasy.bom))
 
     // JSON
-    implementation(libs.jackson.jakarta.rs.json.provider)
-    implementation(libs.jackson.module.kotlin)
-    implementation(libs.jackson.datatype.guava)
-    implementation(libs.jackson.datatype.jdk8)
-    implementation(libs.jackson.datatype.jsr310)
-    implementation(libs.jackson.dataformat.csv)
+    api(libs.jackson.jakarta.rs.json.provider)
+    api(libs.jackson.module.kotlin)
+    api(libs.jackson.datatype.guava)
+    api(libs.jackson.datatype.jdk8)
+    api(libs.jackson.datatype.jsr310)
+    api(libs.jackson.dataformat.csv)
 
     // OpenAPI
-//    implementation(libs.swagger.generator)
-    implementation(libs.swagger.core)
-    implementation(libs.swagger.jaxrs)
+//    api(libs.swagger.generator)
+    api(libs.swagger.core)
+    api(libs.swagger.jaxrs)
 
     // Pour l'import des fichiers shape
-    implementation(libs.geotools.gt.shapefile)
+    api(libs.geotools.gt.shapefile)
 
-    implementation(libs.geotools.gt.main)
-    implementation(libs.geotools.gt.referencing)
-    implementation(libs.geotools.gt.epsg)
-    implementation(libs.locationtech.jts.io)
+    api(libs.geotools.gt.main)
+    api(libs.geotools.gt.referencing)
+    api(libs.geotools.gt.epsg)
+    api(libs.locationtech.jts.io)
 
     // Pac4j (authn)
-    implementation(libs.jakartaee.pac4j)
-    implementation(libs.pac4j.oidc)
-    implementation(libs.pac4j.jakartaee)
+    api(libs.jakartaee.pac4j)
+    api(libs.pac4j.oidc)
+    api(libs.pac4j.jakartaee)
 
-    implementation(libs.apache.poi)
+    api(libs.apache.poi)
 
     // jasper
-    implementation(libs.jasperreports)
-    implementation(libs.jasperreports.pdf)
-    implementation(libs.jasperreports.fronts)
+    api(libs.jasperreports)
+    api(libs.jasperreports.pdf)
+    api(libs.jasperreports.fronts)
 }
 
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"
@@ -211,6 +208,18 @@ testing {
         named<JvmTestSuite>("test") {
             dependencies {
                 implementation(libs.archunit.junit5)
+            }
+        }
+        register<JvmTestSuite>("pgTest") {
+            dependencies {
+                implementation(project())
+            }
+            targets.configureEach {
+                testTask {
+                    systemProperties = mapOf(
+                        "config.file" to "$rootDir/dev.conf",
+                    ) + project.properties.filterKeys { it.startsWith("remocra.") }
+                }
             }
         }
     }
