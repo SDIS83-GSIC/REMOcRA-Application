@@ -198,6 +198,12 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(L_MODELE_COURRIER_DOCUMENT.DOCUMENT_ID.`in`(listId))
             .execute()
 
+    fun getDocumentsId(modeleCourrierId: UUID): Collection<UUID> =
+        dsl.select(L_MODELE_COURRIER_DOCUMENT.DOCUMENT_ID)
+            .from(L_MODELE_COURRIER_DOCUMENT)
+            .where(L_MODELE_COURRIER_DOCUMENT.MODELE_COURRIER_ID.eq(modeleCourrierId))
+            .fetchInto()
+
     fun updateIsMainReport(listDocumentId: List<UUID>, isMainReport: Boolean) =
         dsl.update(L_MODELE_COURRIER_DOCUMENT)
             .set(L_MODELE_COURRIER_DOCUMENT.IS_MAIN_REPORT, isMainReport)
@@ -282,5 +288,15 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
     fun deleteLProfilDroit(modeleCourrierId: UUID) =
         dsl.deleteFrom(L_MODELE_COURRIER_PROFIL_DROIT)
             .where(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(modeleCourrierId))
+            .execute()
+
+    fun deleteModeleCourrierParametre(modeleCourrierId: UUID) =
+        dsl.deleteFrom(MODELE_COURRIER_PARAMETRE)
+            .where(MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID.eq(modeleCourrierId))
+            .execute()
+
+    fun deleteModeleCourrier(modeleCourrierId: UUID) =
+        dsl.deleteFrom(MODELE_COURRIER)
+            .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .execute()
 }

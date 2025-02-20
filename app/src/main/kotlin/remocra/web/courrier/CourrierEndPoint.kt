@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -34,6 +35,7 @@ import remocra.usecase.courrier.CourrierGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
+import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
 import remocra.usecase.modelecourrier.UpdateModeleCourrierUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -59,6 +61,8 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Inject lateinit var createModeleCourrierUseCase: CreateModeleCourrierUseCase
 
     @Inject lateinit var updateModeleCourrierUseCase: UpdateModeleCourrierUseCase
+
+    @Inject lateinit var deleteModeleCourrierUseCase: DeleteModeleCourrierUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -155,6 +159,20 @@ class CourrierEndPoint : AbstractEndpoint() {
         modeleCourrierId: UUID,
     ): Response {
         return Response.ok(modeleCourrierRepository.getModeleCourrier(modeleCourrierId)).build()
+    }
+
+    @DELETE
+    @Path("/modele-courrier/delete/{modeleCourrierId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun delete(
+        @PathParam("modeleCourrierId")
+        modeleCourrierId: UUID,
+    ): Response {
+        return deleteModeleCourrierUseCase.execute(
+            securityContext.userInfo,
+            modeleCourrierRepository.getModeleCourrier(modeleCourrierId),
+        ).wrap()
     }
 
     @GET

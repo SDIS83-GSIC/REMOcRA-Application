@@ -137,6 +137,13 @@ const ListModeleCourrier = () => {
                     URLS.UPDATE_MODELE_COURRIER(modeleCourrierId),
                   type: TYPE_BUTTON.UPDATE,
                 },
+                {
+                  row: (row) => {
+                    return row;
+                  },
+                  type: TYPE_BUTTON.DELETE,
+                  pathname: url`/api/courriers/modele-courrier/delete/`,
+                },
               ],
             }),
           ]}
