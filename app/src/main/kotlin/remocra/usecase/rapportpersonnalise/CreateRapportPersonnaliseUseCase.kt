@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
+import remocra.utils.RequeteSqlUtils
 
 class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.INSERT) {
 
@@ -25,7 +26,7 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
-    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+    private lateinit var requeteSqlUtils: RequeteSqlUtils
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ADMIN_RAPPORTS_PERSO)) {
@@ -96,6 +97,10 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
-        rapportPersonnaliseUtils.checkContraintes(userInfo, element)
+        if (rapportPersonnaliseRepository.checkCodeExists(element.rapportPersonnaliseCode, element.rapportPersonnaliseId)) {
+            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_CODE_UNIQUE)
+        }
+
+        requeteSqlUtils.checkContraintes(userInfo, element)
     }
 }

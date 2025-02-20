@@ -598,6 +598,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PERMIS_FORBIDDEN_INSERT(30000, "Vous n'avez pas les droits de création de permis.", Status.FORBIDDEN),
     PERMIS_FORBIDDEN_UPDATE(30001, "Vous n'avez pas les droits de modification de permis.", Status.FORBIDDEN),
     PERMIS_FORBIDDEN_DELETE(30002, "Vous n'avez pas les droits de suppression de permis.", Status.FORBIDDEN),
+
+    /** MODELE DE COURRIER */
+    ADMIN_MODELE_COURRIER_FORBIDDEN(31000, "Vous n'avez pas les droits d'administration des modèles de courrier.", Status.FORBIDDEN),
+    ADMIN_MODELE_COURRIER_CODE_EXISTS(31001, "Le code du modèle de courrier doit être unique."),
+    ADMIN_MODELE_COURRIER_DOCUMENT_MAIN_REPORT(31002, "Un seul document peut être le rapport principal."),
+
     ;
 
     override fun toString(): String {

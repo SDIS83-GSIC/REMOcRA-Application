@@ -22,7 +22,7 @@ class RequestUtils {
      *
      */
     fun replaceGlobalParameters(userInfo: UserInfo?, requeteSql: String): String {
-        // On vérifie si la requête contient les variable utilisateur, si oui on les remplace par les informations de l'utilisateur
+        // On vérifie si la requête contient les variables utilisateur, si oui on les remplace par les informations de l'utilisateur
         val remplacementMap = mapOf(
             VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo?.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else dummyUUID }.toString(),
             VariableContextUtilisateur.UTILISATEUR_ID to userInfo?.utilisateur?.utilisateurId.toString(),

@@ -10,8 +10,11 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.Params
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierDocument
+import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
+import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER
@@ -143,4 +146,49 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         val modeleCourrierModule: TypeModuleRapportCourrier,
         val listeProfilDroit: String?,
     )
+
+    fun insertModeleCourrier(modeleCourrier: ModeleCourrier) {
+        dsl.insertInto(MODELE_COURRIER)
+            .set(dsl.newRecord(MODELE_COURRIER, modeleCourrier))
+            .execute()
+    }
+
+    fun insertLModeleCourrierProfilDroit(lModeleCourrierProfilDroit: LModeleCourrierProfilDroit) =
+        dsl.insertInto(L_MODELE_COURRIER_PROFIL_DROIT)
+            .set(dsl.newRecord(L_MODELE_COURRIER_PROFIL_DROIT, lModeleCourrierProfilDroit))
+            .execute()
+
+    fun upsertModeleCourrierParametre(modeleCourrierParametre: ModeleCourrierParametre) =
+        dsl.insertInto(MODELE_COURRIER_PARAMETRE)
+            .set(dsl.newRecord(MODELE_COURRIER_PARAMETRE, modeleCourrierParametre))
+            .onConflict(MODELE_COURRIER_PARAMETRE.ID)
+            .doUpdate()
+            .set(dsl.newRecord(MODELE_COURRIER_PARAMETRE, modeleCourrierParametre))
+            .execute()
+
+    /**
+     * Vérifie s'il existe déjà un élément avec ce *code*. En modification, on regarde si le code existe pour un autre élément que lui-même
+     */
+    fun checkCodeExists(modeleCourrierCode: String, modeleCourrierId: UUID?) = dsl.fetchExists(
+        dsl.select(MODELE_COURRIER.CODE)
+            .from(MODELE_COURRIER)
+            .where(MODELE_COURRIER.CODE.equalIgnoreCase(modeleCourrierCode))
+            .and(MODELE_COURRIER.ID.notEqual(modeleCourrierId)),
+    )
+
+    fun insertLModeleCourrierDocument(lModeleCourrierDocument: LModeleCourrierDocument) =
+        dsl.insertInto(L_MODELE_COURRIER_DOCUMENT)
+            .set(dsl.newRecord(L_MODELE_COURRIER_DOCUMENT, lModeleCourrierDocument))
+            .execute()
+
+    fun deleteLModeleCourrierDocument(listId: Collection<UUID>) =
+        dsl.deleteFrom(L_MODELE_COURRIER_DOCUMENT)
+            .where(L_MODELE_COURRIER_DOCUMENT.DOCUMENT_ID.`in`(listId))
+            .execute()
+
+    fun updateIsMainReport(listDocumentId: List<UUID>, isMainReport: Boolean) =
+        dsl.update(L_MODELE_COURRIER_DOCUMENT)
+            .set(L_MODELE_COURRIER_DOCUMENT.IS_MAIN_REPORT, isMainReport)
+            .where(L_MODELE_COURRIER_DOCUMENT.DOCUMENT_ID.`in`(listDocumentId))
+            .execute()
 }

@@ -36,7 +36,7 @@ const SortableAddRemoveComponent = ({
       <DndContext onDragEnd={dragEndEvent}>
         <SortableContext items={values[nomListe]}>
           <AddRemoveComponent
-            name={"listeRapportPersonnaliseParametre"}
+            name={nomListe}
             createComponentToRepeat={createComponentToRepeat}
             listeElements={values[nomListe]}
             defaultElement={{

@@ -1,6 +1,10 @@
 package remocra.web.courrier
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
@@ -17,6 +21,8 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.DocumentsData
+import remocra.data.ModeleCourrierData
 import remocra.data.Params
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
@@ -26,6 +32,9 @@ import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierGenerator
 import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import remocra.usecase.document.DocumentUtils
+import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
+import remocra.utils.getTextPart
+import remocra.web.AbstractEndpoint
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID
@@ -33,7 +42,8 @@ import kotlin.io.path.pathString
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/courriers")
-class CourrierEndPoint {
+@Produces(MediaType.APPLICATION_JSON)
+class CourrierEndPoint : AbstractEndpoint() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Inject lateinit var courrierGenerator: CourrierGenerator
@@ -43,6 +53,10 @@ class CourrierEndPoint {
     @Inject lateinit var courrierRepository: CourrierRepository
 
     @Inject lateinit var modeleCourrierRepository: ModeleCourrierRepository
+
+    @Inject lateinit var createModeleCourrierUseCase: CreateModeleCourrierUseCase
+
+    @Inject lateinit var objectMapper: ObjectMapper
 
     @Inject
     lateinit var documentUtils: DocumentUtils
@@ -82,6 +96,27 @@ class CourrierEndPoint {
                 count = modeleCourrierRepository.countAllForAdmin(params.filterBy),
             ),
         ).build()
+    }
+
+    @POST
+    @Path("modeles/create")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun create(@Context httpRequest: HttpServletRequest): Response {
+        val modeleCourrier = objectMapper.readValue<ModeleCourrierData>(httpRequest.getTextPart("modeleCourrier"))
+        val modeleCourrierId = modeleCourrier.modeleCourrierId ?: UUID.randomUUID()
+        return createModeleCourrierUseCase.execute(
+            securityContext.userInfo,
+            modeleCourrier.copy(
+                modeleCourrierId = modeleCourrierId,
+                documents = DocumentsData.DocumentsModeleCourrier(
+                    objectId = modeleCourrierId,
+                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentModeleCourrierData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
+            ),
+        ).wrap()
     }
 
     @GET

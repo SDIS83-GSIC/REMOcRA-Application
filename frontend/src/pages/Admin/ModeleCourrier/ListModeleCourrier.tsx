@@ -1,4 +1,5 @@
 import { Container } from "react-bootstrap";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
@@ -16,6 +17,7 @@ import QueryTable, {
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterModeleCourrier.tsx";
 
 const ListModeleCourrier = () => {
@@ -26,7 +28,16 @@ const ListModeleCourrier = () => {
   return (
     <>
       <Container>
-        <PageTitle icon={<IconList />} title={"Modèles de courrier"} />
+        <PageTitle
+          icon={<IconList />}
+          title={"Modèles de courrier"}
+          right={
+            <CreateButton
+              title={"Ajouter un modèle de courrier"}
+              href={URLS.CREATE_MODELE_COURRIER}
+            />
+          }
+        />
 
         <QueryTable
           query={url`/api/courriers/modeles`}

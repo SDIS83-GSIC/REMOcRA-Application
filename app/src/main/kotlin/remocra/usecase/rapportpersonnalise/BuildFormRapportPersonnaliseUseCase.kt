@@ -8,6 +8,7 @@ import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.usecase.AbstractUseCase
 import remocra.utils.RequestUtils
+import remocra.utils.RequeteSqlUtils
 import java.util.UUID
 
 /**
@@ -20,7 +21,7 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
-    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+    private lateinit var rapportPersonnaliseUtils: RequeteSqlUtils
 
     @Inject
     lateinit var requestUtils: RequestUtils

@@ -19,15 +19,15 @@ import {
   IconPreviousPage,
 } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import {
+  TYPE_PARAMETRE_RAPPORT_COURRIER,
+  userParamRapportCourrier,
+} from "../../../Entities/RapportCourrierEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import isEmptyOrNull from "../../../utils/fonctionsUtils.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
-import {
-  createComponentRapportPersoToRepeat,
-  TYPE_PARAMETRE_RAPPORT_PERSONNALISE,
-  userParamRapportPersonnalise,
-} from "./SortableParametreRapportPersonnalise.tsx";
+import { createComponentRapportPersoToRepeat } from "./SortableParametreRapportPersonnalise.tsx";
 
 type RapportPersonnaliseType = {
   rapportPersonnaliseActif: boolean;
@@ -44,7 +44,7 @@ type RapportPersonnaliseType = {
     rapportPersonnaliseParametreCode: string;
     rapportPersonnaliseParametreIsRequired: boolean;
     rapportPersonnaliseParametreDescription: string | undefined;
-    rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_PERSONNALISE;
+    rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_COURRIER;
     rapportPersonnaliseParametreSourceSqlDebut: string | undefined;
     rapportPersonnaliseParametreSourceSqlFin: string | undefined;
     rapportPersonnaliseParametreSourceSql: string | undefined;
@@ -284,7 +284,7 @@ const RapportPersonnalise = () => {
                   values.listeRapportPersonnaliseParametre.map((e, key) => (
                     <li key={key}>{e.rapportPersonnaliseParametreCode}</li>
                   ))}
-                {userParamRapportPersonnalise.map((param: string) => (
+                {userParamRapportCourrier.map((param: string) => (
                   <li key={param}>{param}</li>
                 ))}
               </ul>
@@ -393,10 +393,9 @@ const RapportPersonnalise = () => {
                     values.listeRapportPersonnaliseParametre
                       .filter(
                         (e) =>
-                          TYPE_PARAMETRE_RAPPORT_PERSONNALISE[
+                          TYPE_PARAMETRE_RAPPORT_COURRIER[
                             e.rapportPersonnaliseParametreType
-                          ] ===
-                          TYPE_PARAMETRE_RAPPORT_PERSONNALISE.SELECT_INPUT,
+                          ] === TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT,
                       )
                       .some(
                         (e) =>

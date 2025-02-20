@@ -23,7 +23,7 @@ type SortableParametre = {
   listeElements: any[];
 };
 
-const SortableParametre: FC<SortableParametre> = ({
+const SortableParametreModeleCourrier: FC<SortableParametre> = ({
   id, // La propriété id doit impérativement s'appeler id
   listeElements,
   index,
@@ -34,7 +34,6 @@ const SortableParametre: FC<SortableParametre> = ({
     transform: CSS.Transform.toString(transform),
     transition,
   };
-  // Faire une card avec les différents champs de formulaire
 
   const listeTypeParametre = Object.entries(
     TYPE_PARAMETRE_RAPPORT_COURRIER,
@@ -59,11 +58,11 @@ const SortableParametre: FC<SortableParametre> = ({
         </Col>
         <Col>
           <TextInput
-            name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreCode`}
+            name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreCode`}
             label="Code"
             onChange={(e) => {
               setFieldValue(
-                `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreCode`,
+                `listeModeleCourrierParametre[${index}].modeleCourrierParametreCode`,
                 e.target.value,
               );
               // Stock l'index du composant pour désactiver le bouton suivant le si code correspond à un nom réservé
@@ -94,13 +93,13 @@ const SortableParametre: FC<SortableParametre> = ({
         </Col>
         <Col>
           <TextInput
-            name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreLibelle`}
+            name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreLibelle`}
             label="Libellé"
           />
         </Col>
         <Col>
           <CheckBoxInput
-            name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreIsRequired`}
+            name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreIsRequired`}
             label="Obligatoire ?"
           />
         </Col>
@@ -108,7 +107,7 @@ const SortableParametre: FC<SortableParametre> = ({
       <Row>
         <Col>
           <TextAreaInput
-            name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreDescription`}
+            name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreDescription`}
             label="Description du paramètre"
             required={false}
           />
@@ -117,19 +116,19 @@ const SortableParametre: FC<SortableParametre> = ({
       <Row className="align-items-end">
         <Col>
           <SelectForm
-            name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreType`}
+            name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreType`}
             listIdCodeLibelle={listeTypeParametre}
             label="Type du composant paramètre"
             required={true}
             onChange={(e) => {
               setFieldValue(
-                `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreType`,
+                `listeModeleCourrierParametre[${index}].modeleCourrierParametreType`,
                 listeTypeParametre.find((type) => type.id === e.target.value)
                   ?.id,
               );
 
               setFieldValue(
-                `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`,
+                `listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`,
                 null,
               );
 
@@ -137,25 +136,24 @@ const SortableParametre: FC<SortableParametre> = ({
               if (
                 TYPE_PARAMETRE_RAPPORT_COURRIER[e.target.value] ===
                   TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT &&
-                (listeElements[index]
-                  .rapportPersonnaliseParametreSourceSqlDebut == null ||
-                  listeElements[index]
-                    .rapportPersonnaliseParametreSourceSqlFin == null)
+                (listeElements[index].modeleCourrierParametreSourceSqlDebut ==
+                  null ||
+                  listeElements[index].modeleCourrierParametreSourceSqlFin ==
+                    null)
               ) {
                 setFieldValue(
-                  `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlDebut`,
+                  `listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlDebut`,
                   "SELECT",
                 );
 
                 setFieldValue(
-                  `listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlFin`,
+                  `listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlFin`,
                   "FROM",
                 );
               }
             }}
             defaultValue={listeTypeParametre?.find(
-              (e) =>
-                e.id === listeElements[index].rapportPersonnaliseParametreType,
+              (e) => e.id === listeElements[index].modeleCourrierParametreType,
             )}
             setValues={setValues}
           />
@@ -164,7 +162,7 @@ const SortableParametre: FC<SortableParametre> = ({
       </Row>
       <Row>
         {TYPE_PARAMETRE_RAPPORT_COURRIER[
-          listeElements[index].rapportPersonnaliseParametreType
+          listeElements[index].modeleCourrierParametreType
         ] === TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT && (
           <>
             <Row className="mt-2">
@@ -182,14 +180,14 @@ const SortableParametre: FC<SortableParametre> = ({
             </Row>
             <Col>
               <TextAreaInput
-                name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlDebut`}
+                name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlDebut`}
                 label="Requête SQL pour alimenter le paramètre"
               />
             </Col>
             <Row className="m-2">
               <Col>
                 <TextInput
-                  name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlId`}
+                  name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlId`}
                 />
               </Col>
               <Col>as id,</Col>
@@ -197,7 +195,7 @@ const SortableParametre: FC<SortableParametre> = ({
             <Row className="m-2">
               <Col>
                 <TextInput
-                  name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlLibelle`}
+                  name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlLibelle`}
                 />
               </Col>
               <Col>as libelle</Col>
@@ -205,7 +203,7 @@ const SortableParametre: FC<SortableParametre> = ({
 
             <Col>
               <TextAreaInput
-                name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreSourceSqlFin`}
+                name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreSourceSqlFin`}
               />
             </Col>
           </>
@@ -215,12 +213,12 @@ const SortableParametre: FC<SortableParametre> = ({
   );
 };
 
-export function createComponentRapportPersoToRepeat(
+export function createComponentModeleCourrierToRepeat(
   index: number,
   listeElements: any[],
 ) {
   return (
-    <SortableParametre
+    <SortableParametreModeleCourrier
       index={index}
       listeElements={listeElements}
       id={listeElements[index].id}
@@ -231,13 +229,13 @@ export function createComponentRapportPersoToRepeat(
 export function getValeurDefaut(listeElements: any, index: number) {
   switch (
     TYPE_PARAMETRE_RAPPORT_COURRIER[
-      listeElements[index].rapportPersonnaliseParametreType
+      listeElements[index].modeleCourrierParametreType
     ]
   ) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.CHECKBOX_INPUT:
       return (
         <CheckBoxInput
-          name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`}
+          name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`}
           label="Valeur par défaut"
           required={false}
         />
@@ -245,7 +243,7 @@ export function getValeurDefaut(listeElements: any, index: number) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.DATE_INPUT:
       return (
         <DateTimeInput
-          name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`}
+          name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`}
           label="Valeur par défaut"
           required={false}
         />
@@ -253,7 +251,7 @@ export function getValeurDefaut(listeElements: any, index: number) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.NUMBER_INPUT:
       return (
         <NumberInput
-          name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`}
+          name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`}
           label="Valeur par défaut"
           required={false}
         />
@@ -261,7 +259,7 @@ export function getValeurDefaut(listeElements: any, index: number) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.TEXT_INPUT:
       return (
         <TextInput
-          name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`}
+          name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`}
           label="Valeur par défaut"
           required={false}
         />
@@ -269,7 +267,7 @@ export function getValeurDefaut(listeElements: any, index: number) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT:
       return (
         <TextInput
-          name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreValeurDefaut`}
+          name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreValeurDefaut`}
           label="Valeur par défaut (doit correspondre à l'identifiant technique d'un résultat renvoyé par la requête SQL)"
           required={false}
         />

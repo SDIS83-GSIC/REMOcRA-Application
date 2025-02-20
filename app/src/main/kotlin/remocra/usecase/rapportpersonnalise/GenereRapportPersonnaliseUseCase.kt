@@ -18,9 +18,6 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
-    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
-
-    @Inject
     lateinit var requestUtils: RequestUtils
 
     companion object {

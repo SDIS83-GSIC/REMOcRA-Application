@@ -45,6 +45,19 @@ class DocumentsData {
         override val documentId: UUID?,
         override val documentNomFichier: String,
     ) : AbstractDocumentData()
+
+    open class DocumentsModeleCourrier(
+        override val objectId: UUID,
+        override val listeDocsToRemove: List<UUID>,
+        override val listDocument: List<DocumentModeleCourrierData>,
+        override val listDocumentParts: List<Part>,
+    ) : AbstractDocuments()
+
+    open class DocumentModeleCourrierData(
+        override val documentId: UUID?,
+        override val documentNomFichier: String,
+        val isMainReport: Boolean,
+    ) : AbstractDocumentData()
 }
 
 abstract class AbstractDocumentData {

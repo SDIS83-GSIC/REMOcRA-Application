@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
+import remocra.utils.RequeteSqlUtils
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.util.UUID
@@ -25,7 +26,7 @@ class ImportConfRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
-    private lateinit var rappportPersonnaliseUtils: RapportPersonnaliseUtils
+    private lateinit var rappportPersonnaliseUtils: RequeteSqlUtils
 
     @Inject
     private lateinit var csvReader: CsvReader

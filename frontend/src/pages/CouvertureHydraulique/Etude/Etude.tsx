@@ -91,7 +91,7 @@ const Etude = () => {
         <FormDocuments
           documents={values.documents}
           setFieldValue={setFieldValue}
-          autreFormParam={(index: number) => (
+          otherFormParam={(index: number) => (
             <>
               <TextInput
                 label="Nom"

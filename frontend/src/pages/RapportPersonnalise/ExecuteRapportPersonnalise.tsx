@@ -19,10 +19,10 @@ import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/
 import PaginationFront, {
   LIMIT,
 } from "../../components/PaginationFront/PaginationFront.tsx";
+import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../../Entities/RapportCourrierEntity.tsx";
 import url from "../../module/fetch.tsx";
-import { requiredString } from "../../module/validators.tsx";
-import { TYPE_PARAMETRE_RAPPORT_PERSONNALISE } from "../Admin/rapportPersonnalise/SortableParametreRapportPersonnalise.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { requiredString } from "../../module/validators.tsx";
 import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 
 type RapportPersonnaliseParametreType = {
@@ -33,7 +33,7 @@ type RapportPersonnaliseParametreType = {
   rapportPersonnaliseParametreIsRequired: boolean;
   rapportPersonnaliseParametreLibelle: string;
   rapportPersonnaliseParametreValeurDefaut: string;
-  rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_PERSONNALISE;
+  rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_COURRIER;
 };
 
 type RapportPersoWithParametreType = {
@@ -288,11 +288,9 @@ function buildComponent(
   setFieldValue: (name: string, e: any) => void,
 ) {
   switch (
-    TYPE_PARAMETRE_RAPPORT_PERSONNALISE[
-      element.rapportPersonnaliseParametreType
-    ]
+    TYPE_PARAMETRE_RAPPORT_COURRIER[element.rapportPersonnaliseParametreType]
   ) {
-    case TYPE_PARAMETRE_RAPPORT_PERSONNALISE.CHECKBOX_INPUT:
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.CHECKBOX_INPUT:
       return (
         <CheckBoxInput
           name={element.rapportPersonnaliseParametreCode}
@@ -305,7 +303,7 @@ function buildComponent(
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />
       );
-    case TYPE_PARAMETRE_RAPPORT_PERSONNALISE.NUMBER_INPUT:
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.NUMBER_INPUT:
       return (
         <NumberInput
           name={element.rapportPersonnaliseParametreCode}
@@ -315,7 +313,7 @@ function buildComponent(
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />
       );
-    case TYPE_PARAMETRE_RAPPORT_PERSONNALISE.TEXT_INPUT:
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.TEXT_INPUT:
       return (
         <TextInput
           name={element.rapportPersonnaliseParametreCode}
@@ -325,7 +323,7 @@ function buildComponent(
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />
       );
-    case TYPE_PARAMETRE_RAPPORT_PERSONNALISE.DATE_INPUT:
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.DATE_INPUT:
       return (
         <DateTimeInput
           name={element.rapportPersonnaliseParametreCode}
@@ -335,7 +333,7 @@ function buildComponent(
           tooltipText={element.rapportPersonnaliseParametreDescription}
         />
       );
-    case TYPE_PARAMETRE_RAPPORT_PERSONNALISE.SELECT_INPUT:
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT:
       return (
         <SelectInput
           name={element.rapportPersonnaliseParametreCode}
