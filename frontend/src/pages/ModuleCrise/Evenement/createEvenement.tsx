@@ -20,7 +20,7 @@ const CreateEvenement = ({
     <Container>
       <PageTitle
         icon={<IconEvent />}
-        title="Nouvel évenement"
+        title="Nouvel évènement"
         displayReturnButton={false}
       />
       <MyFormik
@@ -38,7 +38,7 @@ const CreateEvenement = ({
         }
         onSubmit={onSubmit}
       >
-        <Evenement />
+        <Evenement isReadOnly={false} />
       </MyFormik>
     </Container>
   );

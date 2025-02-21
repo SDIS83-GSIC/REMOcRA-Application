@@ -6,6 +6,7 @@ import { Draw } from "ol/interaction";
 import { Style, Fill, Stroke } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import {
+  IconDocument,
   IconEvent,
   IconLine,
   IconList,
@@ -21,6 +22,7 @@ import url from "../../../module/fetch.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
+import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -44,6 +46,7 @@ const drawStyle = new Style({
 export const useToolbarCriseContext = ({ map, workingLayer }) => {
   const [showCreateEvent, setShowEvent] = useState(false);
   const [showListEvent, setShowListEvent] = useState(false);
+  const [showListDocument, setShowListDocument] = useState(false);
 
   const handleCloseEvent = () => {
     setShowEvent(false), workingLayer.getSource().clear();
@@ -138,6 +141,14 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       }
     }
 
+    function toggleSeeDocument(active = false) {
+      if (active) {
+        setShowListDocument(true);
+      } else {
+        setShowListDocument(false);
+      }
+    }
+
     function toggleSeeEvent(active = false) {
       setShowListEvent(active);
     }
@@ -158,6 +169,9 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       "list-event-project": {
         action: toggleSeeEvent,
       },
+      "list-document-project": {
+        action: toggleSeeDocument,
+      },
     };
     return tools;
   }, [map, workingLayer]);
@@ -167,6 +181,7 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     handleCloseEvent,
     showCreateEvent,
     showListEvent,
+    showListDocument,
     handleCloseTracee,
     showTracee,
     setShowCreateElement,
@@ -189,6 +204,7 @@ const MapToolbarCrise = forwardRef(
     showCreateEvent,
     showListEvent,
     dataCriseLayer,
+    showListDocument,
     toggleTool: toggleToolCallback,
     activeTool,
     setSousTypeElement,
@@ -202,6 +218,7 @@ const MapToolbarCrise = forwardRef(
     handleCloseEvent: () => void;
     showCreateEvent: boolean;
     showListEvent: boolean;
+    showListDocument: boolean;
     handleCloseTracee: () => void;
     showTracee: () => void;
     setShowEvent: () => void;
@@ -245,12 +262,28 @@ const MapToolbarCrise = forwardRef(
           activeTool={activeTool}
         />
 
+        <ToolbarButton
+          toolName={"list-document-project"}
+          toolIcon={<IconDocument />}
+          toolLabelTooltip={"Documents"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+
         <Volet
           handleClose={handleCloseEvent}
           show={showListEvent}
           className="w-auto"
         >
           <CreateListEvenement criseIdentifiant={criseId} />
+        </Volet>
+
+        <Volet
+          handleClose={handleCloseEvent}
+          show={showListDocument}
+          className="w-auto"
+        >
+          <CreateListDocument criseIdentifiant={criseId} />
         </Volet>
 
         <Volet

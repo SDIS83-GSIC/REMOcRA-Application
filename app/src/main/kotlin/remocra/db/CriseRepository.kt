@@ -12,7 +12,11 @@ import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CRISE
+import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.L_CRISE_COMMUNE
+import remocra.db.jooq.remocra.tables.references.L_CRISE_DOCUMENT
+import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TOPONYMIE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE
@@ -52,6 +56,27 @@ class CriseRepository @Inject constructor(
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
+
+    fun getCountDocumentFromCrise(criseId: UUID, filterBy: FilterCrise?): Int {
+        val countFromCrise = dsl.selectCount()
+            .from(DOCUMENT)
+            .join(L_CRISE_DOCUMENT)
+            .on(DOCUMENT.ID.eq(L_CRISE_DOCUMENT.DOCUMENT_ID))
+            .where(L_CRISE_DOCUMENT.CRISE_ID.eq(criseId))
+            .and(filterBy?.toCondition() ?: DSL.trueCondition())
+            .fetchSingleInto<Int>()
+
+        val countFromEvenement = dsl.selectCount()
+            .from(DOCUMENT)
+            .join(L_EVENEMENT_DOCUMENT)
+            .on(DOCUMENT.ID.eq(L_EVENEMENT_DOCUMENT.DOCUMENT_ID))
+            .join(EVENEMENT)
+            .on(L_EVENEMENT_DOCUMENT.EVENEMENT_ID.eq(EVENEMENT.ID))
+            .where(EVENEMENT.CRISE_ID.eq(criseId))
+            .fetchSingleInto<Int>()
+
+        return countFromCrise + countFromEvenement
+    }
 
     fun getCountCrises(filterBy: FilterCrise?): Int =
         dsl.selectCount()
@@ -230,4 +255,44 @@ class CriseRepository @Inject constructor(
             .set(CRISE.DATE_FIN, criseDateFin)
             .where(CRISE.ID.eq(criseId))
             .execute()
+
+    data class CriseDocs(
+        val documentId: UUID,
+        val documentDate: ZonedDateTime?,
+        val documentNomFichier: String?,
+        val type: String?,
+    )
+
+    /**
+     * Récupère les documents associés à une crise ou à un événement avec un type d'origine qui permet de différencier les documents issus d'une crise ou d'un événement.
+     *
+     * @param criseId L'ID de la crise pour filtrer les documents associés.
+     * @return Une liste de documents
+     */
+    fun getAllDocumentsFromCrise(criseId: UUID, params: Params<FilterCrise, SortCrise>): Collection<CriseDocs> =
+        dsl.select(
+            DOCUMENT.ID,
+            DOCUMENT.NOM_FICHIER,
+            DOCUMENT.DATE,
+            DSL.case_()
+                .`when`(L_CRISE_DOCUMENT.CRISE_ID.isNotNull(), DSL.`val`("Crise"))
+                .`when`(EVENEMENT.CRISE_ID.isNotNull(), DSL.`val`("Évènement"))
+                .`as`("type"),
+        )
+            .from(DOCUMENT)
+            .leftJoin(L_CRISE_DOCUMENT)
+            .on(DOCUMENT.ID.eq(L_CRISE_DOCUMENT.DOCUMENT_ID))
+            .leftJoin(L_EVENEMENT_DOCUMENT)
+            .on(DOCUMENT.ID.eq(L_EVENEMENT_DOCUMENT.DOCUMENT_ID))
+            .leftJoin(EVENEMENT)
+            .on(L_EVENEMENT_DOCUMENT.EVENEMENT_ID.eq(EVENEMENT.ID))
+            .where(
+                L_CRISE_DOCUMENT.CRISE_ID.eq(criseId)
+                    .or(EVENEMENT.CRISE_ID.eq(criseId)),
+            )
+            .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
 }

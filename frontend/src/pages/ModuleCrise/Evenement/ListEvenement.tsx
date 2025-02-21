@@ -1,5 +1,6 @@
 import { Button, Container } from "react-bootstrap";
 import { useState } from "react";
+import { shortenString } from "../../../utils/fonctionsUtils.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import AccordionCustom, {
   useAccordionState,
@@ -24,14 +25,6 @@ const ListEvenement = ({ criseId }: { criseId: string }) => {
 
   const { visible, show, close } = useModal();
   const [evenementId, setEvenementId] = useState();
-
-  function shortenString(str: string, maxLength: number): string {
-    if (str.length > maxLength) {
-      return str.substring(0, maxLength) + "...";
-    } else {
-      return str;
-    }
-  }
 
   const tableau: { header: string; content: JSX.Element }[] = [];
   const listMessage = useGet(url`/api/crise/evenement/message`);

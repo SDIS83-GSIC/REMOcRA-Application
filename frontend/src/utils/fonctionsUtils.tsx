@@ -6,6 +6,22 @@ function isEmptyOrNull(value: string) {
 
 export default isEmptyOrNull;
 
+/**
+ * Raccourcit une chaîne de caractères si elle dépasse une longueur max.
+ * Si la chaîne dépasse la longueur spécifiée, elle sera coupée et un "..." sera ajouté à la fin.
+ *
+ * @param {string} str - La chaîne de caractères à raccourcir.
+ * @param {number} maxLength - La longueur maximale autorisée pour la chaîne de caractères.
+ * @returns {string} - La chaîne de caractères raccourcie (si nécessaire), sinon la chaîne d'origine.
+ */
+export function shortenString(str: string, maxLength: number): string {
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength) + "...";
+  } else {
+    return str;
+  }
+}
+
 export function downloadOutputFile(
   urlApi: string,
   myObject: any,

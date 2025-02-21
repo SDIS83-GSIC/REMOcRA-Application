@@ -241,6 +241,23 @@ class CriseEndpoint : AbstractEndpoint() {
         ).build()
     }
 
+    @POST
+    @Path("/documents/getAllFromCrise/{criseId}")
+    @RequireDroits([Droit.CRISE_C])
+    fun getAllFromCrise(
+        @PathParam("criseId")
+        criseId: UUID,
+        params: Params<CriseRepository.FilterCrise, CriseRepository.SortCrise>,
+    ): Response {
+        return Response.ok(
+            DataTableau(
+                criseRepository.getAllDocumentsFromCrise(criseId, params),
+                criseRepository.getCountDocumentFromCrise(criseId, params.filterBy),
+            ),
+
+        ).build()
+    }
+
     @GET
     @Path("/{criseId}/evenement/")
     @RequireDroits([Droit.CRISE_R])
