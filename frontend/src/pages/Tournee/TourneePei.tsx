@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactSelect from "react-select";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { useGet, usePut } from "../../components/Fetch/useFetch.js";
+import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
 import { IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";

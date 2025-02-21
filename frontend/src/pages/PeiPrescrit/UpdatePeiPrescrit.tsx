@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { useGet } from "../../components/Fetch/useFetch.js";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconPrescrit } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";

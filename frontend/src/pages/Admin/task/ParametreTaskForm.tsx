@@ -5,7 +5,7 @@ import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemoveComponent.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.js";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   FormContainer,

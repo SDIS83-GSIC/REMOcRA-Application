@@ -1,4 +1,4 @@
-import { useGet } from "../../../components/Fetch/useFetch";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 
 export type SelectOption = {
   label: string;
