@@ -3,6 +3,7 @@ import {
   IdCodeLibelleType,
   SelectFilterFromListType,
 } from "../../utils/typeUtils.tsx";
+import selectStyle from "../../components/Form/SelectStyle.tsx";
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
  *     pour faire un select avec toutes ces données.
@@ -28,20 +29,10 @@ const SelectFilterFromList = ({
   };
 
   const data = [defaultValueTous].concat(listIdCodeLibelle);
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      width: 150, // Largeur fixe en pixels
-    }),
-    menu: (provided) => ({
-      ...provided,
-      width: 300, // Largeur du menu déroulant
-    }),
-  };
   return (
     <>
       <ReactSelect
-        styles={customStyles}
+        styles={selectStyle}
         placeholder={"Sélectionnez"}
         noOptionsMessage={() => "Aucune donnée trouvée"}
         name={name}

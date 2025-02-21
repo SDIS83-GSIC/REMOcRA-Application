@@ -1,5 +1,6 @@
 import ReactSelect from "react-select";
 import { SelectType } from "../../utils/typeUtils.tsx";
+import selectStyle from "../../components/Form/SelectStyle.tsx";
 
 /**
  * Composant Select pour les enums.
@@ -25,21 +26,9 @@ function SelectEnumOption({
       optionsArray.push({ value: key, libelle: options[key] });
     }
   }
-
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      width: 150, // Largeur fixe en pixels
-    }),
-    menu: (provided) => ({
-      ...provided,
-      width: 300, // Largeur du menu déroulant
-    }),
-  };
-
   return (
     <ReactSelect
-      styles={customStyles}
+      styles={selectStyle}
       placeholder={"Sélectionnez"}
       noOptionsMessage={() => "Aucune donnée trouvée"}
       name={name}
