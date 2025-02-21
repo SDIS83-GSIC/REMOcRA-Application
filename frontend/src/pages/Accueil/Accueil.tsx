@@ -58,7 +58,7 @@ const Accueil = () => {
                   e.moduleContenuHtml != null ||
                   e.moduleType === TypeModuleRemocra.DOCUMENT ||
                   e.moduleType === TypeModuleRemocra.COURRIER) && (
-                  <Row className="m-3">
+                  <Row key={e.moduleId} className="m-3">
                     <ModuleRemocra
                       moduleId={e.moduleId}
                       type={e.moduleType}
