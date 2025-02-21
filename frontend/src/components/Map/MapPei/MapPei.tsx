@@ -1,5 +1,7 @@
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useRef } from "react";
+import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import { IconPei } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
@@ -85,45 +87,49 @@ const MapPei = () => {
   });
 
   return (
-    <MapComponent
-      map={map}
-      workingLayer={workingLayer}
-      availableLayers={availableLayers}
-      addOrRemoveLayer={addOrRemoveLayer}
-      layerListRef={layerListRef}
-      mapToolbarRef={mapToolbarRef}
-      mapElement={mapElement}
-      toggleTool={toggleTool}
-      activeTool={activeTool}
-      toolbarElement={
-        mapToolbarRef.current && (
-          <MapToolbarPei
-            toggleTool={toggleTool}
-            activeTool={activeTool}
-            map={map}
-            dataPeiLayer={dataPeiLayer}
-            showCreateIndispoTemp={showCreateIndispoTemp}
-            handleCloseIndispoTemp={handleCloseIndispoTemp}
-            listePeiId={listePeiId}
-            createIndispoTemp={createIndispoTemp}
-            listePeiTourneePrive={listePeiTourneePrive}
-            listePeiTourneePublic={listePeiTourneePublic}
-            createUpdateTournee={createUpdateTournee}
-            handleCloseTournee={handleCloseTournee}
-            showCreateTournee={showCreateTournee}
-            dataDebitSimultaneLayer={dataDebitSimultaneLayer}
-            createDebitSimultane={createDebitSimultane}
-            handleCloseDebitSimultane={handleCloseDebitSimultane}
-            showCreateDebitSimultane={showCreateDebitSimultane}
-            listePeiIdDebitSimultane={listePeiIdDebitSimultane}
-            typeReseauId={typeReseauId}
-            closeModal={close}
-            refModal={ref}
-            visibleModal={visible}
-          />
-        )
-      }
-    />
+    <>
+      <PageTitle title="Carte" icon={<IconPei />} />
+
+      <MapComponent
+        map={map}
+        workingLayer={workingLayer}
+        availableLayers={availableLayers}
+        addOrRemoveLayer={addOrRemoveLayer}
+        layerListRef={layerListRef}
+        mapToolbarRef={mapToolbarRef}
+        mapElement={mapElement}
+        toggleTool={toggleTool}
+        activeTool={activeTool}
+        toolbarElement={
+          mapToolbarRef.current && (
+            <MapToolbarPei
+              toggleTool={toggleTool}
+              activeTool={activeTool}
+              map={map}
+              dataPeiLayer={dataPeiLayer}
+              showCreateIndispoTemp={showCreateIndispoTemp}
+              handleCloseIndispoTemp={handleCloseIndispoTemp}
+              listePeiId={listePeiId}
+              createIndispoTemp={createIndispoTemp}
+              listePeiTourneePrive={listePeiTourneePrive}
+              listePeiTourneePublic={listePeiTourneePublic}
+              createUpdateTournee={createUpdateTournee}
+              handleCloseTournee={handleCloseTournee}
+              showCreateTournee={showCreateTournee}
+              dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+              createDebitSimultane={createDebitSimultane}
+              handleCloseDebitSimultane={handleCloseDebitSimultane}
+              showCreateDebitSimultane={showCreateDebitSimultane}
+              listePeiIdDebitSimultane={listePeiIdDebitSimultane}
+              typeReseauId={typeReseauId}
+              closeModal={close}
+              refModal={ref}
+              visibleModal={visible}
+            />
+          )
+        }
+      />
+    </>
   );
 };
 
