@@ -12,6 +12,7 @@ import CircleStyle from "ol/style/Circle";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import FormRange from "react-bootstrap/FormRange";
+import { getCenter, getHeight, getWidth } from "ol/extent";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import {
@@ -189,11 +190,123 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
       source: workingLayer.getSource(),
     });
 
+    const calculateCenter = (geometry) => {
+      let center, coordinates, minRadius;
+      const type = geometry.getType();
+      if (type === "Polygon") {
+        let x = 0;
+        let y = 0;
+        let i = 0;
+        coordinates = geometry.getCoordinates()[0].slice(1);
+        coordinates.forEach(function (coordinate) {
+          x += coordinate[0];
+          y += coordinate[1];
+          i++;
+        });
+        center = [x / i, y / i];
+      } else if (type === "LineString") {
+        center = geometry.getCoordinateAt(0.5);
+        coordinates = geometry.getCoordinates();
+      } else {
+        center = getCenter(geometry.getExtent());
+      }
+      let sqDistances;
+      if (coordinates) {
+        sqDistances = coordinates.map(function (coordinate) {
+          const dx = coordinate[0] - center[0];
+          const dy = coordinate[1] - center[1];
+          return dx * dx + dy * dy;
+        });
+        minRadius = Math.sqrt(Math.max(...sqDistances)) / 3;
+      } else {
+        minRadius =
+          Math.max(
+            getWidth(geometry.getExtent()),
+            getHeight(geometry.getExtent()),
+          ) / 3;
+      }
+      return {
+        center: center,
+        coordinates: coordinates,
+        minRadius: minRadius,
+        sqDistances: sqDistances,
+      };
+    };
+
+    const defaultStyle = new Modify({ source: workingLayer.getSource() })
+      .getOverlay()
+      .getStyleFunction();
+
     // FIXME faire en sorte d'afficher une géométrie dédiée lors de la modification, actuellement seul le point sélectionné est visuellement déplacé
     const modifyScaleCtrl = new Modify({
       source: workingLayer.getSource(),
       deleteCondition: never,
       insertVertexCondition: never,
+      style: function (feature) {
+        feature.get("features").forEach(function (modifyFeature) {
+          const modifyGeometry = modifyFeature.get("modifyGeometry");
+          if (modifyGeometry) {
+            const point = feature.getGeometry().getCoordinates();
+            let modifyPoint = modifyGeometry.point;
+            if (!modifyPoint) {
+              // save the initial geometry and vertex position
+              modifyPoint = point;
+              modifyGeometry.point = modifyPoint;
+              modifyGeometry.geometry0 = modifyGeometry.geometry;
+              // get anchor and minimum radius of vertices to be used
+              const result = calculateCenter(modifyGeometry.geometry0);
+              modifyGeometry.center = result.center;
+              modifyGeometry.minRadius = result.minRadius;
+            }
+
+            const center = modifyGeometry.center;
+            const minRadius = modifyGeometry.minRadius;
+            let dx, dy;
+            dx = modifyPoint[0] - center[0];
+            dy = modifyPoint[1] - center[1];
+            const initialRadius = Math.sqrt(dx * dx + dy * dy);
+            if (initialRadius > minRadius) {
+              const initialAngle = Math.atan2(dy, dx);
+              dx = point[0] - center[0];
+              dy = point[1] - center[1];
+              const currentRadius = Math.sqrt(dx * dx + dy * dy);
+              if (currentRadius > 0) {
+                const currentAngle = Math.atan2(dy, dx);
+                const geometry = modifyGeometry.geometry0.clone();
+                geometry.scale(
+                  currentRadius / initialRadius,
+                  undefined,
+                  center,
+                );
+                geometry.rotate(currentAngle - initialAngle, center);
+                modifyGeometry.geometry = geometry;
+              }
+            }
+          }
+        });
+
+        return defaultStyle(feature);
+      },
+    });
+
+    modifyScaleCtrl.on("modifystart", function (event) {
+      event.features.forEach(function (feature) {
+        feature.set(
+          "modifyGeometry",
+          { geometry: feature.getGeometry().clone() },
+          true,
+        );
+      });
+    });
+
+    modifyScaleCtrl.on("modifyend", function (event) {
+      event.features.forEach(function (feature) {
+        const modifyGeometry = feature.get("modifyGeometry");
+        if (modifyGeometry) {
+          feature.setGeometry(modifyGeometry.geometry);
+          feature.unset("modifyGeometry", true);
+        }
+      });
     });
 
     function toggleModifyShape(active = false) {
