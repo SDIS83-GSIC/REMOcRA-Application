@@ -22,7 +22,7 @@ const TooltipCustom = ({
         }
         placement={placement}
       >
-        {children}
+        <div>{children}</div>
       </OverlayTrigger>
     </div>
   );
