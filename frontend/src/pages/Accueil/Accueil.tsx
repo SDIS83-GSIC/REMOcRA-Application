@@ -190,6 +190,14 @@ function getLinks(
       ];
     case TypeModuleRemocra.RISQUES:
       return;
+    case TypeModuleRemocra.CRISE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.CRISE_R),
+          label: "Liste des crises",
+          link: URLS.LIST_CRISES,
+        },
+      ];
     case TypeModuleRemocra.ADMIN:
       return [
         {

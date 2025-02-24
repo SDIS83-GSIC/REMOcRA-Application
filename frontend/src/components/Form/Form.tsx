@@ -78,7 +78,7 @@ export const FormLabel = ({
         </Form.Label>
         {tooltipText && (
           <TooltipCustom tooltipText={tooltipText} tooltipId={name}>
-              <IconInfo />
+            <IconInfo />
           </TooltipCustom>
         )}
       </>

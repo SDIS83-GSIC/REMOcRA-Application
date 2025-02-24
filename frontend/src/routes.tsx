@@ -1,6 +1,7 @@
 import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
+import ModuleCrise from "./components/ModuleRemocra/ModuleCrise.tsx";
 import ModuleDeci from "./components/ModuleRemocra/ModuleDeci.tsx";
 import NoMatch from "./components/Router/NoMatch.tsx";
 import { Authorization } from "./droits.tsx";
@@ -57,6 +58,7 @@ import ListTypeCanalisation from "./pages/Admin/typeCanalisation/ListTypeCanalis
 import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCanalisation.tsx";
 import CreateTypeEtude from "./pages/Admin/typeEtude/CreateTypeEtude.tsx";
 import ListTypeEtude from "./pages/Admin/typeEtude/ListTypeEtude.tsx";
+import ListCrise from "./pages/ModuleCrise/Crise/ListCrise.tsx";
 import UpdateTypeEtude from "./pages/Admin/typeEtude/UpdateTypeEtude.tsx";
 import CreateTypeOrganisme from "./pages/Admin/TypeOrganisme/CreateTypeOrganismes.tsx";
 import ListTypeOrganisme from "./pages/Admin/TypeOrganisme/ListTypeOrganisme.tsx";
@@ -208,6 +210,11 @@ export const URLS = {
     peiProjetId,
   OUVRIR_ETUDE: (etudeId: string) =>
     url`/couverture-hydraulique/etudes/open/` + etudeId,
+
+  // Module liste crises
+  LIST_CRISES: url`/gestion-crise/crise/`,
+  CREATE_CRISE: url`/gestion-crise/crise/create`,
+  UPDATE_CRISE: (criseId: string) => url`/gestion-crise/crise/` + criseId,
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
@@ -698,6 +705,20 @@ export default [
       },
     ],
   },
+
+  {
+    path: "/gestion-crise",
+    element: <ModuleCrise />,
+    children: [
+      {
+        path: "crise",
+        element: (
+          <Authorization Component={ListCrise} droits={[TYPE_DROIT.CRISE_R]} />
+        ),
+      },
+    ],
+  },
+
   {
     path: "/oldeb/",
     element: (
@@ -775,6 +796,7 @@ export default [
       },
     ],
   },
+
   {
     path: "/create-courrier/:typeModule",
     element: <GenereCourrier />,
@@ -796,6 +818,15 @@ export default [
       <Authorization
         Component={MapPerso}
         droits={[TYPE_DROIT.CARTOGRAPHIES_E]}
+      />
+    ),
+  },
+  {
+    path: "/gestion-crise",
+    element: (
+      <Authorization
+        // TODO : Component est dans le commit d'après
+        droits={[TYPE_DROIT.CRISE_E]}
       />
     ),
   },
