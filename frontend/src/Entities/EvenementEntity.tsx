@@ -4,6 +4,7 @@ export type EvenementType = {
   evenementType: string;
   evenementLibelle: string;
   evenementDescription: string;
+  evenementTag: string;
   evenementOrigine: string;
   evenementDateDebut: Date;
   evenementImportance: string;

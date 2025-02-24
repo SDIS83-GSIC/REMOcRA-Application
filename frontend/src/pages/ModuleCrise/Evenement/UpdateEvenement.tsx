@@ -4,6 +4,7 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { IconEvent } from "../../../components/Icon/Icon.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import Evenement, {
   getInitialValues,
   prepareVariables,
@@ -21,8 +22,10 @@ const UpdateEvenement = ({
   geometrieEvenement: string | undefined;
   onSubmit: () => void;
 }) => {
-  const selectDataState = useGet(url`/api/crise/evenement/${evenementId}`);
-
+  const selectDataState = useGet(
+    url`/api/crise/evenement/getEvenement/${evenementId}`,
+  );
+  const { user } = useAppContext();
   return (
     selectDataState && (
       <Container>
@@ -40,7 +43,7 @@ const UpdateEvenement = ({
           isPost={false}
           isMultipartFormData={true} // contient un document
           prepareVariables={(values) =>
-            prepareVariables(values, selectDataState.data)
+            prepareVariables(values, selectDataState.data, user.utilisateurId)
           }
           onSubmit={onSubmit}
           submitUrl={`/api/crise/${criseId}/evenement/${evenementId}/update`}

@@ -1,6 +1,7 @@
 import { Container } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { IconEvent } from "../../../components/Icon/Icon.tsx";
 import Evenement, {
   getInitialValues,
@@ -14,6 +15,7 @@ const CreateEvenement = ({
   geometrieEvenement,
   onSubmit,
 }: CreateEvenementType) => {
+  const { user } = useAppContext();
   return (
     <Container>
       <PageTitle
@@ -26,12 +28,14 @@ const CreateEvenement = ({
           null,
           geometrieEvenement,
           typeEvenement,
-        )} // remplir avec les géométries (voir createPeiProjet)
+        )}
         validationSchema={validationSchema}
         isPost={true}
         isMultipartFormData={true} // contient un document
         submitUrl={`/api/crise/` + criseId + `/evenement/create`}
-        prepareVariables={(values) => prepareVariables(values, null)}
+        prepareVariables={(values) =>
+          prepareVariables(values, null, user.utilisateurId)
+        }
         onSubmit={onSubmit}
       >
         <Evenement />
@@ -41,7 +45,6 @@ const CreateEvenement = ({
 };
 
 type CreateEvenementType = {
-  // Id de la crise associée
   criseId: string;
   typeEvenement: string | undefined;
   geometrieEvenement: string | undefined;

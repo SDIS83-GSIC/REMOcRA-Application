@@ -1,14 +1,14 @@
 import { Button, Container } from "react-bootstrap";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
-import MessageElement from "../../../components/message/messageElement.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
 import EditModal from "../../../components/Modal/EditModal.tsx";
+import MessageElement from "../../../components/message/messageElement.tsx";
 import MessageForm, {
   getInitialValue,
   messageValidationSchema,
@@ -34,30 +34,37 @@ const ListEvenement = ({ criseId }: { criseId: string }) => {
   }
 
   const tableau: { header: string; content: JSX.Element }[] = [];
-  getEvents?.map(
-    (e: {
-      evenementLibelle: string;
-      evenementId: SetStateAction<undefined>;
-    }) => {
-      tableau.push({
-        header: shortenString(e.evenementLibelle, 35),
-        content: (
-          <>
-            <Button
-              style={{ marginBottom: "10px" }}
-              onClick={() => {
-                setEvenementId(e.evenementId);
-                show();
-              }}
-            >
-              nouveau message
-            </Button>
-            <MessageElement />
-          </>
-        ),
-      });
-    },
-  );
+  const listMessage = useGet(url`/api/crise/evenement/message`);
+
+  getEvents?.map((e: { evenementLibelle: string; evenementId: string }) => {
+    const eventMessages = listMessage?.data?.filter(
+      (message: { messageEvenementId: string }) =>
+        message.messageEvenementId === e.evenementId,
+    );
+
+    tableau.push({
+      header: shortenString(e.evenementLibelle, 35),
+      content: (
+        <>
+          <Button
+            style={{ marginBottom: "10px" }}
+            onClick={() => {
+              setEvenementId(e.evenementId);
+              show();
+            }}
+          >
+            nouveau message
+          </Button>
+
+          {eventMessages?.map((message: any, index: number) => (
+            <div key={index}>
+              <MessageElement message={message} />
+            </div>
+          ))}
+        </>
+      ),
+    });
+  });
 
   return (
     <Container>
@@ -75,7 +82,9 @@ const ListEvenement = ({ criseId }: { criseId: string }) => {
         visible={visible}
         header={null}
         validationSchema={messageValidationSchema}
-        onSubmit={() => true}
+        onSubmit={() => {
+          listMessage.reload();
+        }}
         prepareVariables={(values) => prepareMessageValues(values)}
         getInitialValues={(values) =>
           getInitialValue(values, user.utilisateurId)

@@ -24,8 +24,8 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
     typeModule: TypeModuleRemocra.CRISE,
   });
 
-  /** Permet d'afficher les évènements */
-  const dataPeiPrescritLayer = useMemo(() => {
+  /** Permet d'afficher les géometries évènements */
+  const dataEvenementLayer = useMemo(() => {
     if (!map) {
       return;
     }
@@ -102,7 +102,7 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
             workingLayer={workingLayer}
             setSousTypeElement={setSousTypeElement}
             sousTypeElement={sousTypeElement}
-            dataAdresseLayer={dataPeiPrescritLayer}
+            dataCriseLayer={dataEvenementLayer}
             showListEvent={showListEvent}
           />
         )

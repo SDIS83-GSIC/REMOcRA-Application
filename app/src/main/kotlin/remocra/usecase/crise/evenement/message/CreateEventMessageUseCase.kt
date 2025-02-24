@@ -26,9 +26,6 @@ class CreateEventMessageUseCase : AbstractCUDUseCase<MessageData>(TypeOperation.
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: MessageData) {
-        if (messageRepository.checkNumeroExists(element.messageId)) {
-            throw RemocraResponseException(ErrorType.CRISE_NUMERO_UNIQUE)
-        }
     }
 
     override fun execute(userInfo: UserInfo?, element: MessageData): MessageData {

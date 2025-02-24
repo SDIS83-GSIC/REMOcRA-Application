@@ -52,7 +52,6 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
   const [showTracee, setShowTracee] = useState(false);
   const handleCloseTracee = () => setShowTracee(false);
   const [showCreateElement, setShowCreateElement] = useState(false);
-  const [listePeiId] = useState<string[]>([]);
   const [listeEventId] = useState<string[]>([]);
   const [sousTypeElement, setSousTypeElement] = useState<string | null>(null);
   const [geometryElement, setGeometryElement] = useState<string | null>(null);
@@ -171,7 +170,6 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     handleCloseTracee,
     showTracee,
     setShowCreateElement,
-    listePeiId,
     geometryElement,
     listeEventId,
     setSousTypeElement,
@@ -196,22 +194,17 @@ const MapToolbarCrise = forwardRef(
     setSousTypeElement,
   }: {
     map?: Map;
-    dataPeiLayer: any;
-    dataEventLayer: any;
     workingLayer: any;
     criseId: string;
     disabledEditEvent: boolean;
     calcul: () => void;
-    pointPeiProjet: string[];
     clear: () => void;
-    dataPeiProjetLayer: any;
     handleCloseEvent: () => void;
     showCreateEvent: boolean;
     showListEvent: boolean;
     handleCloseTracee: () => void;
     showTracee: () => void;
     setShowEvent: () => void;
-    listePeiId: string[];
     geometryElement: string | null;
     listeEventId: string[];
     toggleTool: (toolId: string) => void;

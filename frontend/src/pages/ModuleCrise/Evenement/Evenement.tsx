@@ -31,6 +31,7 @@ export const getInitialValues = (
   evenementImportance: data?.evenementImportance ?? 1,
   evenementIsClosed: data?.evenementIsClosed ?? false,
   documents: data?.documents ?? [],
+  evenementTag: data?.evenementTag ?? "",
   geometrieEvenement: geometrie ?? null,
   evenementTypeId: data?.evenementTypeCriseId ?? typeEvent,
 });
@@ -43,6 +44,7 @@ export const validationSchema = object({
 export const prepareVariables = (
   values: EvenementType,
   initialData: EvenementType | null,
+  userId: string,
 ) => {
   const formData = new FormData();
   setDocumentInFormData(values?.documents, initialData?.documents, formData);
@@ -64,6 +66,8 @@ export const prepareVariables = (
     "evenementGeometrie",
     JSON.stringify(values.geometrieEvenement),
   );
+  formData.append("evenementUtilisateurId", userId);
+  formData.append("evenementTag", values.evenementTag);
 
   return formData;
 };
@@ -106,6 +110,13 @@ const Evenement = () => {
       />
       <TextInput label="Origine" name="evenementOrigine" required={false} />
 
+      <TextAreaInput
+        name="evenementTag"
+        label="Tags"
+        required={false}
+        tooltipText={"Séparez les tags par une virgule: tag1, tag2, ..."}
+      />
+
       <DateTimeInput
         name="evenementDateDebut"
         label="Date et heure d’activation"
@@ -126,8 +137,6 @@ const Evenement = () => {
       />
 
       <CheckBoxInput name={"evenementIsClosed"} label={"Clore l'événement"} />
-
-      {/* // TODO : faire une entrée pour les "tag" */}
 
       <h3 className="mt-5">Document</h3>
       <FormDocuments

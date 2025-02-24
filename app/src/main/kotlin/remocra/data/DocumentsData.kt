@@ -31,7 +31,6 @@ class DocumentsData {
     open class DocumentEvenementData(
         override val documentId: UUID?,
         override val documentNomFichier: String,
-        val evenementDocumentLibelle: String?,
     ) : AbstractDocumentData()
 
     open class DocumentsPei(

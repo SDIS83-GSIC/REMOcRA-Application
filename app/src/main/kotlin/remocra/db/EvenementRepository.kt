@@ -50,7 +50,7 @@ class EvenementRepository @Inject constructor(
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS,
+            EVENEMENT.TAGS.`as`("evenementTag"),
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
@@ -175,7 +175,7 @@ class EvenementRepository @Inject constructor(
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS,
+            EVENEMENT.TAGS.`as`("evenementTag"),
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,

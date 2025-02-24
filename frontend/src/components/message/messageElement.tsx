@@ -1,12 +1,31 @@
+import { Card } from "react-bootstrap";
+import formatDateTime from "../../utils/formatDateUtils.tsx";
+
 /**
  * Permet d'afficher un message
  */
 
-const MessageElement = () => {
+function capitalizeFirstLetter(str: string): string {
+  if (str.length === 0) {
+    return str;
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+const MessageElement = ({ message }: { message: any }) => {
   return (
-    <div className="bg-light p-2 border rounded">
-      <div className="fw-bold text-center p-2" />
-    </div>
+    <Card bg={"light"} style={{ width: "18rem" }}>
+      <Card.Body>
+        <Card.Title>{message.messageObjet}</Card.Title>
+        <Card.Text>
+          <b>Auteur.</b> {capitalizeFirstLetter(message.messageUtilisateur)}
+          <br />
+          <b>Date.</b> {formatDateTime(message.messageDateConstat)}
+          <br />
+          <b>Desc.</b> {message.messageDescription}
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 };
 

@@ -28,6 +28,7 @@ import remocra.data.Params
 import remocra.data.enums.TypeElementCarte
 import remocra.db.CriseRepository
 import remocra.db.EvenementRepository
+import remocra.db.MessageRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
@@ -69,6 +70,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateEvenementUseCase: UpdateEvenementUseCase
 
     @Inject lateinit var createEventMessageUseCase: CreateEventMessageUseCase
+
+    @Inject lateinit var messageRepository: MessageRepository
 
     data class CriseInput(
         val criseLibelle: String? = null,
@@ -250,6 +253,15 @@ class CriseEndpoint : AbstractEndpoint() {
         ).build()
     }
 
+    @GET
+    @Path("/evenement/message")
+    @RequireDroits([Droit.CRISE_C])
+    fun getAllMessages(): Response {
+        return Response.ok(
+            messageRepository.getAllMessages(),
+        ).build()
+    }
+
     /**
      * Renvoie les évènements au format GeoJSON pour assurer les interactions sur la carte
      */
@@ -296,7 +308,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
-                evenementTag = null,
+                evenementTag = httpRequest.getTextPart("evenementTag"),
                 evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
@@ -308,6 +320,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 ),
                 evenementCriseId = criseId,
                 evenementStatut = EvenementStatut.EN_COURS,
+                evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
             ),
         ).wrap()
     }
@@ -360,7 +373,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
-                evenementTag = null,
+                evenementTag = httpRequest.getTextPart("evenementTag"),
                 evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
@@ -372,6 +385,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 ),
                 evenementCriseId = criseId,
                 evenementStatut = EvenementStatut.EN_COURS,
+                evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
             )
         return updateEvenementUseCase.execute(
             userInfo = securityContext.userInfo,

@@ -4,9 +4,11 @@ import jakarta.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.EvenementData
+import remocra.data.MessageData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.EvenementRepository
+import remocra.db.MessageRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -15,10 +17,13 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.UpsertDocumentEvenementUseCase
+import java.util.UUID
 
 class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var evenementRepository: EvenementRepository
+
+    @Inject lateinit var messageRepository: MessageRepository
 
     @Inject private lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
 
@@ -54,6 +59,20 @@ class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.U
         if (element.listeDocument != null) {
             upsertDocumentEvenementUseCase.execute(userInfo, element.listeDocument, transactionManager)
         }
+        // - message
+        messageRepository.add(
+            MessageData(
+                messageObjet = "Redéfinition d'évènement",
+                messageDescription = "",
+                messageDateConstat = dateUtils.now(),
+                messageImportance = element.evenementImportance,
+                messageOrigine = element.evenementOrigine,
+                messageTags = element.evenementTag,
+                messageId = UUID.randomUUID(),
+                messageEvenementId = element.evenementId,
+                messageUtilisateurId = element.evenementUtilisateurId,
+            ),
+        )
 
         return element.copy(listeDocument = null)
     }
