@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
+import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -46,6 +47,7 @@ import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
 import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
+import remocra.db.jooq.remocra.tables.LCriseCommune
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
@@ -62,6 +64,7 @@ import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
+import remocra.db.jooq.remocra.tables.LToponymieCrise
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -121,13 +124,16 @@ import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Thematique
+import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
+import remocra.db.jooq.remocra.tables.TypeCrise
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
 import remocra.db.jooq.remocra.tables.TypePermisInterservice
 import remocra.db.jooq.remocra.tables.TypeReseau
+import remocra.db.jooq.remocra.tables.TypeToponymie
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.VPeiLastMesures
 import remocra.db.jooq.remocra.tables.VPeiVisiteDate
@@ -210,6 +216,11 @@ val COUCHE: Couche = Couche.COUCHE
  * The table <code>remocra.courrier</code>.
  */
 val COURRIER: Courrier = Courrier.COURRIER
+
+/**
+ * The table <code>remocra.crise</code>.
+ */
+val CRISE: Crise = Crise.CRISE
 
 /**
  * The table <code>remocra.dashboard</code>.
@@ -352,6 +363,11 @@ val L_COURRIER_ORGANISME: LCourrierOrganisme = LCourrierOrganisme.L_COURRIER_ORG
 val L_COURRIER_UTILISATEUR: LCourrierUtilisateur = LCourrierUtilisateur.L_COURRIER_UTILISATEUR
 
 /**
+ * The table <code>remocra.l_crise_commune</code>.
+ */
+val L_CRISE_COMMUNE: LCriseCommune = LCriseCommune.L_CRISE_COMMUNE
+
+/**
  * The table <code>remocra.l_dashboard_profil</code>.
  */
 val L_DASHBOARD_PROFIL: LDashboardProfil = LDashboardProfil.L_DASHBOARD_PROFIL
@@ -430,6 +446,11 @@ val L_THEMATIQUE_DOCUMENT_HABILITABLE: LThematiqueDocumentHabilitable = LThemati
  * The table <code>remocra.l_thematique_module</code>.
  */
 val L_THEMATIQUE_MODULE: LThematiqueModule = LThematiqueModule.L_THEMATIQUE_MODULE
+
+/**
+ * The table <code>remocra.l_toponymie_crise</code>.
+ */
+val L_TOPONYMIE_CRISE: LToponymieCrise = LToponymieCrise.L_TOPONYMIE_CRISE
 
 /**
  * The table <code>remocra.l_tournee_pei</code>.
@@ -727,6 +748,11 @@ val TASK: Task = Task.TASK
 val THEMATIQUE: Thematique = Thematique.THEMATIQUE
 
 /**
+ * The table <code>remocra.toponymie</code>.
+ */
+val TOPONYMIE: Toponymie = Toponymie.TOPONYMIE
+
+/**
  * The table <code>remocra.tournee</code>.
  */
 val TOURNEE: Tournee = Tournee.TOURNEE
@@ -735,6 +761,11 @@ val TOURNEE: Tournee = Tournee.TOURNEE
  * The table <code>remocra.type_canalisation</code>.
  */
 val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
+
+/**
+ * The table <code>remocra.type_crise</code>.
+ */
+val TYPE_CRISE: TypeCrise = TypeCrise.TYPE_CRISE
 
 /**
  * The table <code>remocra.type_organisme</code>.
@@ -760,6 +791,11 @@ val TYPE_PERMIS_INTERSERVICE: TypePermisInterservice = TypePermisInterservice.TY
  * The table <code>remocra.type_reseau</code>.
  */
 val TYPE_RESEAU: TypeReseau = TypeReseau.TYPE_RESEAU
+
+/**
+ * The table <code>remocra.type_toponymie</code>.
+ */
+val TYPE_TOPONYMIE: TypeToponymie = TypeToponymie.TYPE_TOPONYMIE
 
 /**
  * The table <code>remocra.utilisateur</code>.

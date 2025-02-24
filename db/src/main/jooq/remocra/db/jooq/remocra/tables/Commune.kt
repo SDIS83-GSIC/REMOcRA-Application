@@ -41,6 +41,7 @@ import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_CRISE_COMMUNE__L_CRISE_COMMUNE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_COMMUNE_ID_FKEY
@@ -48,6 +49,7 @@ import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.CadastreSection.CadastreSectionPath
 import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
+import remocra.db.jooq.remocra.tables.LCriseCommune.LCriseCommunePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -254,6 +256,23 @@ open class Commune(
 
     val lCommuneCis: LCommuneCisPath
         get(): LCommuneCisPath = lCommuneCis()
+
+    private lateinit var _lCriseCommune: LCriseCommunePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_crise_commune</code> table
+     */
+    fun lCriseCommune(): LCriseCommunePath {
+        if (!this::_lCriseCommune.isInitialized) {
+            _lCriseCommune = LCriseCommunePath(this, null, L_CRISE_COMMUNE__L_CRISE_COMMUNE_COMMUNE_ID_FKEY.inverseKey)
+        }
+
+        return _lCriseCommune
+    }
+
+    val lCriseCommune: LCriseCommunePath
+        get(): LCriseCommunePath = lCriseCommune()
 
     private lateinit var _lieuDit: LieuDitPath
 

@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
+import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -50,6 +51,7 @@ import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
 import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
+import remocra.db.jooq.remocra.tables.LCriseCommune
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
@@ -66,6 +68,7 @@ import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
+import remocra.db.jooq.remocra.tables.LToponymieCrise
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
@@ -125,13 +128,16 @@ import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Thematique
+import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
+import remocra.db.jooq.remocra.tables.TypeCrise
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
 import remocra.db.jooq.remocra.tables.TypePermisInterservice
 import remocra.db.jooq.remocra.tables.TypeReseau
+import remocra.db.jooq.remocra.tables.TypeToponymie
 import remocra.db.jooq.remocra.tables.Utilisateur
 import remocra.db.jooq.remocra.tables.VPeiLastMesures
 import remocra.db.jooq.remocra.tables.VPeiVisiteDate
@@ -236,6 +242,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.courrier</code>.
      */
     val COURRIER: Courrier get() = Courrier.COURRIER
+
+    /**
+     * The table <code>remocra.crise</code>.
+     */
+    val CRISE: Crise get() = Crise.CRISE
 
     /**
      * The table <code>remocra.dashboard</code>.
@@ -378,6 +389,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_COURRIER_UTILISATEUR: LCourrierUtilisateur get() = LCourrierUtilisateur.L_COURRIER_UTILISATEUR
 
     /**
+     * The table <code>remocra.l_crise_commune</code>.
+     */
+    val L_CRISE_COMMUNE: LCriseCommune get() = LCriseCommune.L_CRISE_COMMUNE
+
+    /**
      * The table <code>remocra.l_dashboard_profil</code>.
      */
     val L_DASHBOARD_PROFIL: LDashboardProfil get() = LDashboardProfil.L_DASHBOARD_PROFIL
@@ -456,6 +472,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_thematique_module</code>.
      */
     val L_THEMATIQUE_MODULE: LThematiqueModule get() = LThematiqueModule.L_THEMATIQUE_MODULE
+
+    /**
+     * The table <code>remocra.l_toponymie_crise</code>.
+     */
+    val L_TOPONYMIE_CRISE: LToponymieCrise get() = LToponymieCrise.L_TOPONYMIE_CRISE
 
     /**
      * The table <code>remocra.l_tournee_pei</code>.
@@ -753,6 +774,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val THEMATIQUE: Thematique get() = Thematique.THEMATIQUE
 
     /**
+     * The table <code>remocra.toponymie</code>.
+     */
+    val TOPONYMIE: Toponymie get() = Toponymie.TOPONYMIE
+
+    /**
      * The table <code>remocra.tournee</code>.
      */
     val TOURNEE: Tournee get() = Tournee.TOURNEE
@@ -761,6 +787,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.type_canalisation</code>.
      */
     val TYPE_CANALISATION: TypeCanalisation get() = TypeCanalisation.TYPE_CANALISATION
+
+    /**
+     * The table <code>remocra.type_crise</code>.
+     */
+    val TYPE_CRISE: TypeCrise get() = TypeCrise.TYPE_CRISE
 
     /**
      * The table <code>remocra.type_organisme</code>.
@@ -786,6 +817,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.type_reseau</code>.
      */
     val TYPE_RESEAU: TypeReseau get() = TypeReseau.TYPE_RESEAU
+
+    /**
+     * The table <code>remocra.type_toponymie</code>.
+     */
+    val TYPE_TOPONYMIE: TypeToponymie get() = TypeToponymie.TYPE_TOPONYMIE
 
     /**
      * The table <code>remocra.utilisateur</code>.
@@ -840,6 +876,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Contact.CONTACT,
         Couche.COUCHE,
         Courrier.COURRIER,
+        Crise.CRISE,
         Dashboard.DASHBOARD,
         DashboardComponent.DASHBOARD_COMPONENT,
         DashboardConfig.DASHBOARD_CONFIG,
@@ -868,6 +905,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LCourrierContactOrganisme.L_COURRIER_CONTACT_ORGANISME,
         LCourrierOrganisme.L_COURRIER_ORGANISME,
         LCourrierUtilisateur.L_COURRIER_UTILISATEUR,
+        LCriseCommune.L_CRISE_COMMUNE,
         LDashboardProfil.L_DASHBOARD_PROFIL,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
@@ -884,6 +922,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LThematiqueCourrier.L_THEMATIQUE_COURRIER,
         LThematiqueDocumentHabilitable.L_THEMATIQUE_DOCUMENT_HABILITABLE,
         LThematiqueModule.L_THEMATIQUE_MODULE,
+        LToponymieCrise.L_TOPONYMIE_CRISE,
         LTourneePei.L_TOURNEE_PEI,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         LieuDit.LIEU_DIT,
@@ -943,13 +982,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Site.SITE,
         Task.TASK,
         Thematique.THEMATIQUE,
+        Toponymie.TOPONYMIE,
         Tournee.TOURNEE,
         TypeCanalisation.TYPE_CANALISATION,
+        TypeCrise.TYPE_CRISE,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,
         TypePermisAvis.TYPE_PERMIS_AVIS,
         TypePermisInterservice.TYPE_PERMIS_INTERSERVICE,
         TypeReseau.TYPE_RESEAU,
+        TypeToponymie.TYPE_TOPONYMIE,
         Utilisateur.UTILISATEUR,
         VPeiLastMesures.V_PEI_LAST_MESURES,
         VPeiVisiteDate.V_PEI_VISITE_DATE,
