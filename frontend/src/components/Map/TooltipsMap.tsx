@@ -256,7 +256,6 @@ const Tooltip = ({
 
   displayButtonEdit = false,
   hrefEdit,
-  onClickEdit,
   labelEdit = "Modifier l'élément",
 
   displayButtonDelete = false,

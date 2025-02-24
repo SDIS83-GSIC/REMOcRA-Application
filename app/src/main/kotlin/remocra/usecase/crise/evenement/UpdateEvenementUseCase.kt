@@ -43,12 +43,13 @@ class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.U
 
     override fun execute(userInfo: UserInfo?, element: EvenementData): EvenementData {
         // - evenement
-        if (element.evenementEstFerme == true) {
-            element.evenementDateCloture = dateUtils.now()
-            element.evenementStatut = EvenementStatut.CLOS
+        val newElement = if (element.evenementEstFerme == true) {
+            element.copy(evenementStatut = EvenementStatut.CLOS, evenementDateCloture = dateUtils.now())
+        } else {
+            element.copy()
         }
 
-        evenementRepository.updateEvenement(element)
+        evenementRepository.updateEvenement(newElement)
         // - document
         if (element.listeDocument != null) {
             upsertDocumentEvenementUseCase.execute(userInfo, element.listeDocument, transactionManager)

@@ -15,9 +15,9 @@ data class EvenementData(
     val evenementImportance: Int?,
     val evenementTag: String?,
     val evenementEstFerme: Boolean?,
-    var evenementDateCloture: ZonedDateTime?,
+    val evenementDateCloture: ZonedDateTime?,
     val evenementGeometrie: Geometry?,
     val listeDocument: DocumentsData.DocumentsEvenement?,
     val evenementCriseId: UUID,
-    var evenementStatut: EvenementStatut,
+    val evenementStatut: EvenementStatut,
 )

@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap";
 import { ReactNode } from "react";
+import { JSX } from "react/jsx-runtime";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
