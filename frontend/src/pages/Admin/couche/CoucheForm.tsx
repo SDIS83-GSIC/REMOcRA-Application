@@ -14,6 +14,9 @@ import { IconDelete } from "../../../components/Icon/Icon.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
+import DeleteButton from "../../../components/Button/DeleteButton.tsx";
 
 type CoucheType = {
   coucheId?: string;
@@ -137,9 +140,6 @@ const CoucheForm = () => {
 
   return (
     <FormContainer>
-      <Button type="submit" variant="primary">
-        Valider
-      </Button>
       <FieldArray
         name={"groupeCoucheList"}
         render={(arrayHelpers) => (
@@ -150,7 +150,7 @@ const CoucheForm = () => {
                   return b.groupeCoucheOrdre - a.groupeCoucheOrdre;
                 })
                 .map((groupeCouche, index) => (
-                  <ListGroup.Item key={index} variant={"dark"}>
+                  <ListGroup.Item key={index} variant={"light"}>
                     <Row>
                       <Col xs={4}>
                         <TextInput
@@ -190,7 +190,7 @@ const CoucheForm = () => {
                                   .map((couche, groupIndex) => (
                                     <ListGroup.Item
                                       key={`${index}.coucheList.${groupIndex}`}
-                                      variant={"primary"}
+                                      variant={"light"}
                                     >
                                       <Row>
                                         <Col xs={6}>
@@ -322,7 +322,10 @@ const CoucheForm = () => {
                                             }}
                                           />
                                           <Button
-                                            variant="primary"
+                                            variant="link"
+                                            className={
+                                              "text-danger text-decoration-none"
+                                            }
                                             onClick={() => {
                                               setFieldValue(
                                                 `groupeCoucheList.${index}.coucheList.${groupIndex}.coucheIcone`,
@@ -377,7 +380,10 @@ const CoucheForm = () => {
                                             }}
                                           />
                                           <Button
-                                            variant="primary"
+                                            variant="link"
+                                            className={
+                                              "text-danger text-decoration-none"
+                                            }
                                             onClick={() => {
                                               setFieldValue(
                                                 `groupeCoucheList.${index}.coucheList.${groupIndex}.coucheLegende`,
@@ -416,15 +422,27 @@ const CoucheForm = () => {
                                             />
                                           )}
                                         </Col>
+                                        <Row className="m-3">
+                                          <Col className="text-center">
+                                            <DeleteButton
+                                              onClick={() => {
+                                                arrayHelpers2.remove(index);
+                                              }}
+                                              title={"Supprimer la couche"}
+                                            />
+                                          </Col>
+                                        </Row>
                                       </Row>
                                     </ListGroup.Item>
                                   ))}
                               <ListGroup.Item
-                                variant={"primary"}
-                                action
-                                onClick={() => arrayHelpers2.push({})}
+                                variant={"light"}
+                                className={"text-center p-3"}
                               >
-                                Ajouter une couche
+                                <CreateButton
+                                  onClick={() => arrayHelpers2.push({})}
+                                  title={"Ajouter une couche"}
+                                />
                               </ListGroup.Item>
                             </ListGroup>
                           )}
@@ -432,22 +450,24 @@ const CoucheForm = () => {
                       </Col>
                     </Row>
                     <Button
+                      variant="link"
+                      className={"text-danger"}
                       onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
                     >
-                      Supprimer le groupe
+                      <IconDelete /> Supprimer le groupe
                     </Button>
                   </ListGroup.Item>
                 ))}
-            <ListGroup.Item
-              variant={"primary"}
-              action
-              onClick={() => arrayHelpers.push({ coucheList: [] })}
-            >
-              Ajouter un groupe
+            <ListGroup.Item variant={"light"} className={"text-center p-3"}>
+              <CreateButton
+                title={"Ajouter un groupe"}
+                onClick={() => arrayHelpers.push({ coucheList: [] })}
+              />
             </ListGroup.Item>
           </ListGroup>
         )}
       />
+      <SubmitFormButtons returnLink={url`/admin/menu`} />
     </FormContainer>
   );
 };
