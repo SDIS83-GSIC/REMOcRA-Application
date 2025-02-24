@@ -66,7 +66,10 @@ const AnomalieList = () => {
         {categorieList.map((categorie, idxC) => (
           <tbody key={idxC}>
             <tr>
-              <th colSpan={natureCount + 1}>
+              <th
+                colSpan={natureCount + 1}
+                className={"bg-primary text-light text-center"}
+              >
                 {categorie.anomalieCategorieLibelle}
               </th>
             </tr>
