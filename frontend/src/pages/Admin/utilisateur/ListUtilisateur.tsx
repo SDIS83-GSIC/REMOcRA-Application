@@ -62,7 +62,7 @@ const ListUtilisateur = () => {
       <Container fluid className={"px-5"}>
         <PageTitle
           icon={<IconGererContact />}
-          title={"Liste des utilisateurs"}
+          title={"Utilisateurs"}
           right={
             hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) && (
               <CreateButton

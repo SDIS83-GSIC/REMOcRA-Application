@@ -69,7 +69,7 @@ const ListOrganisme = () => {
     <>
       <Container>
         <PageTitle
-          title="Liste des organismes"
+          title="Organismes"
           icon={<IconPei />}
           right={
             <CreateButton

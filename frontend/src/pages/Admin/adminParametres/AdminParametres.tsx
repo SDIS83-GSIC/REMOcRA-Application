@@ -183,10 +183,7 @@ export const AdminParametresInterne = () => {
     values && (
       <FormContainer>
         <Container>
-          <PageTitle
-            title="Paramètres de l'application"
-            icon={<IconParametre />}
-          />
+          <PageTitle title="Paramètres applicatifs" icon={<IconParametre />} />
 
           <AccordionCustom
             activesKeys={activesKeys}

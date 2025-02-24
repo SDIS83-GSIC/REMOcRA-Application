@@ -13,7 +13,7 @@ const ListModelePibi = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des modèles PIBI"
+        pageTitle="Modèles PIBI"
         addButtonTitle={"Ajouter un modèle"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

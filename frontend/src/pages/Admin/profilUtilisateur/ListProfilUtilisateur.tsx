@@ -13,7 +13,7 @@ const ListProfilUtilisateur = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des profils d'utilisateur"
+        pageTitle="Profils d'utilisateurs"
         addButtonTitle={"Ajouter un profil d'utilisateur"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

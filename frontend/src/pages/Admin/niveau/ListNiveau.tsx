@@ -7,7 +7,7 @@ const ListNiveau = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des niveaux"
+        pageTitle="Niveaux"
         addButtonTitle={"Ajouter un niveau"}
         pageIcon={<IconPei />}
         lienPageAjout={URLS.ADD_NIVEAU}

@@ -7,7 +7,7 @@ const ListNatureDeci = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des natures DECI"
+        pageTitle="Natures DECI"
         addButtonTitle={"Ajouter une nature DECI"}
         pageIcon={<IconPei />}
         lienPageAjout={URLS.ADD_NATURE_DECI}

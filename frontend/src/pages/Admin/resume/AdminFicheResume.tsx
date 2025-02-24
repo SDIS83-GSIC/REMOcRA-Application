@@ -33,7 +33,7 @@ const AdminFicheResume = () => {
         colonneProperty={"ficheResumeBlocColonne"}
         ligneProperty={"ficheResumeBlocLigne"}
         titreProperty={"ficheResumeBlocTitre"}
-        pageTitle={"Paramétrer la fiche résumé"}
+        pageTitle={"Configurer la fiche de résumé des PEI"}
         urlToSubmit={`/api/fiche-resume/upsert`}
         validationSchema={validationSchema}
         getInitialValues={getInitialValues}

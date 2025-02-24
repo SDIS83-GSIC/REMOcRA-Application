@@ -7,7 +7,7 @@ const ListMateriau = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des matériaux"
+        pageTitle="Matériaux"
         addButtonTitle={"Ajouter un matériau"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

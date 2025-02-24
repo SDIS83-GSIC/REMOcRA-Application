@@ -7,7 +7,7 @@ const ListMarquePibi = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des marques des PIBI"
+        pageTitle="Marques des PIBI"
         addButtonTitle={"Ajouter une marque"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

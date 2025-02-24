@@ -82,7 +82,7 @@ const ListGestionnaire = () => {
       <Container>
         <PageTitle
           icon={<IconList />}
-          title={"Liste des gestionnaires"}
+          title={"Gestionnaires"}
           right={
             hasDroit(user, TYPE_DROIT.GEST_SITE_A) && (
               <CreateButton

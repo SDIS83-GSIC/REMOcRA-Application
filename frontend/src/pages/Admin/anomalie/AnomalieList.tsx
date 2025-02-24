@@ -38,7 +38,7 @@ const AnomalieList = () => {
   return (
     <Container>
       <PageTitle
-        title="Liste des anomalies"
+        title="Anomalies"
         icon={<IconAnomalie />}
         right={
           <CreateButton

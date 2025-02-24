@@ -72,7 +72,7 @@ const ListSite = () => {
   return (
     <>
       <Container>
-        <PageTitle icon={<IconList />} title={"Liste des sites"} />
+        <PageTitle icon={<IconList />} title={"Sites"} />
 
         <AccordionCustom
           activesKeys={activesKeys}

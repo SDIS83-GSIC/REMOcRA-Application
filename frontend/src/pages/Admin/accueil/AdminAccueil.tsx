@@ -73,7 +73,7 @@ const AdminAccueil = () => {
         ligneProperty={"moduleLigne"}
         titreProperty={"moduleTitre"}
         protectedProperty={"moduleProtected"}
-        pageTitle={"Paramétrer la page d'accueil"}
+        pageTitle={"Configurer la page d'accueil"}
         urlToSubmit={`/api/modules/upsert`}
         validationSchema={validationSchema}
         getInitialValues={getInitialValues}

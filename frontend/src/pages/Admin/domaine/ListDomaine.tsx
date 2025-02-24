@@ -7,7 +7,7 @@ const ListDomaine = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des domaines"
+        pageTitle="Domaines"
         addButtonTitle={"Ajouter un domaine"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

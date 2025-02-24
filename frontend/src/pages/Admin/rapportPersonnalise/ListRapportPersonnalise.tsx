@@ -37,7 +37,7 @@ const ListRapportPersonnalise = () => {
       <Container>
         <PageTitle
           icon={<IconList />}
-          title={"Liste des rapports personnalisés"}
+          title={"Rapports personnalisés"}
           right={
             <Row>
               <Col>

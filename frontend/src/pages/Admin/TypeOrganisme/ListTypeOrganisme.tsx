@@ -13,7 +13,7 @@ const ListTypeOrganisme = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des types d'organisme"
+        pageTitle="Types d'organismes"
         addButtonTitle="Ajouter un type d'organisme"
         pageIcon={<IconPei />}
         hasProtectedValue={true}

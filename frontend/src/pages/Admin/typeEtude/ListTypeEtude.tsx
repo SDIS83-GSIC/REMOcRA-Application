@@ -7,7 +7,7 @@ const ListTypeEtude = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des types d'études"
+        pageTitle="Types d'études"
         addButtonTitle={"Ajouter un type d'étude"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

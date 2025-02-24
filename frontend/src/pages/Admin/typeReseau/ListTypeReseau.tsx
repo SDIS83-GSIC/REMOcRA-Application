@@ -7,7 +7,7 @@ const ListTypeReseau = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des types de réseau"
+        pageTitle="Types de réseaux"
         addButtonTitle={"Ajouter un type de réseau"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

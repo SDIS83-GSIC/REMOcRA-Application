@@ -7,7 +7,7 @@ const ListRoleContact = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des rôles des contacts"
+        pageTitle="Rôles des contacts"
         addButtonTitle={"Ajouter un rôle de contact"}
         pageIcon={<IconPei />}
         lienPageAjout={URLS.ADD_ROLE_CONTACT}

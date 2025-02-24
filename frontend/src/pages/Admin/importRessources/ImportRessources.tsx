@@ -34,10 +34,7 @@ export const ImportRessources = () => {
 
   return (
     <Container>
-      <PageTitle
-        title="Import des ressources graphiques"
-        icon={<IconImport />}
-      />
+      <PageTitle title="Import des ressources" icon={<IconImport />} />
       <p>
         Cet écran permet d&apos;importer différentes ressources utiles à
         l&apos;outil. Chaque bloc (<i>accordéon</i>) est indépendant, et possède

@@ -22,7 +22,7 @@ const CoucheList = () => {
 
   return (
     <Container>
-      <PageTitle title="Gestion des couches" icon={<IconLayers />} />
+      <PageTitle title="Couches cartographiques" icon={<IconLayers />} />
       <MyFormik
         initialValues={getInitialValues(formData)}
         prepareVariables={(values) => prepareValues(values)}

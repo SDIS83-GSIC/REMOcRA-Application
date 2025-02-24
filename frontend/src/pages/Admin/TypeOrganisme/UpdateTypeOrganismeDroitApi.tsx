@@ -54,7 +54,7 @@ const TypeOrganismeWithDroitApiInner = ({
   return (
     <FormContainer>
       <PageTitle
-        title="Droits API des types organismes"
+        title="Attribution des droits API pour les types organismes"
         icon={<IconUtilisateurs />}
       />
       <Table striped bordered hover>

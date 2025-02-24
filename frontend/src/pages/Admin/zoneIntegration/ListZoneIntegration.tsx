@@ -70,10 +70,7 @@ const ListZoneIntegration = () => {
   return (
     <>
       <Container>
-        <PageTitle
-          icon={<IconList />}
-          title={"Liste des zones de compétence"}
-        />
+        <PageTitle icon={<IconList />} title={"Zones de compétence"} />
 
         <AccordionCustom
           activesKeys={activesKeys}

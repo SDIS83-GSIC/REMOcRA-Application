@@ -7,7 +7,7 @@ const ListTypePenaAspiration = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des types de dispositifs d'aspiration"
+        pageTitle="Types de dispositifs d'aspiration"
         addButtonTitle={"Ajouter un type d'aspiration"}
         pageIcon={<IconPei />}
         hasProtectedValue={false}

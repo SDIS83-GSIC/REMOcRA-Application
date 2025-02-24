@@ -38,7 +38,7 @@ const ListeTask = () => {
     <Container>
       <PageTitle
         icon={<IconOverview />}
-        title={"Parametrage des tâches planifiées"}
+        title={"Paramétrage des traitements"}
       />
       <Row>
         <Col xs="5">

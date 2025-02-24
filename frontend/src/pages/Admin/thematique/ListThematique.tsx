@@ -7,7 +7,7 @@ const ListThematique = () => {
   return (
     <>
       <ListNomenclature
-        pageTitle="Liste des thématiques"
+        pageTitle="Thématiques"
         addButtonTitle={"Ajouter une thématique"}
         pageIcon={<IconPei />}
         lienPageAjout={URLS.ADD_THEMATIQUE}
