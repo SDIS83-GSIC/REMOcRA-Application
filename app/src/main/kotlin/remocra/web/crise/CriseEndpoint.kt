@@ -42,13 +42,13 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateCriseUseCase: UpdateCriseUseCase
 
     data class CriseInput(
-        val criseLibelle: String,
+        val criseLibelle: String? = null,
         val criseDescription: String? = null,
-        val criseDateDebut: ZonedDateTime,
+        val criseDateDebut: ZonedDateTime? = null,
         val criseDateFin: ZonedDateTime? = null,
-        val typeCrise: UUID,
+        val typeCrise: UUID? = null,
         val criseStatutType: TypeCriseStatut = TypeCriseStatut.EN_COURS,
-        val listeCommuneId: Collection<UUID>,
+        val listeCommuneId: Collection<UUID>? = null,
         val listeToponymieId: Collection<UUID>? = null,
     )
 
@@ -128,6 +128,34 @@ class CriseEndpoint : AbstractEndpoint() {
                 listeCommuneId = criseInput.listeCommuneId,
                 listeToponymieId = criseInput.listeToponymieId,
             ),
+        ).wrap()
+    }
+
+    @POST
+    @Path("/{criseId}/clore/")
+    @RequireDroits([Droit.CRISE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun cloreCrise(
+        @PathParam("criseId")
+        criseId: UUID,
+        criseInput: CriseInput,
+    ): Response {
+        val crise = criseRepository.getCrise(criseId)
+        val criseData =
+            CriseData(
+                criseId = criseId,
+                criseLibelle = crise.criseLibelle,
+                criseDescription = crise.criseDescription,
+                criseDateDebut = crise.criseDateDebut,
+                criseDateFin = criseInput.criseDateFin,
+                criseTypeCriseId = crise.typeCriseId,
+                criseStatutType = TypeCriseStatut.TERMINEE,
+                listeCommuneId = crise.listeCommune,
+                listeToponymieId = crise.listeToponymie,
+            )
+        return updateCriseUseCase.execute(
+            userInfo = securityContext.userInfo,
+            criseData,
         ).wrap()
     }
 }

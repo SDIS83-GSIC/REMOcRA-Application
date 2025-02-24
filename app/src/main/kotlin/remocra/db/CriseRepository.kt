@@ -136,9 +136,9 @@ class CriseRepository @Inject constructor(
             criseData.criseStatutType,
         ).execute()
 
-    fun insertLCriseCommune(criseId: UUID, listeCommuneId: Collection<UUID>) =
+    fun insertLCriseCommune(criseId: UUID, listeCommuneId: Collection<UUID>?) =
         dsl.batch(
-            listeCommuneId.map {
+            listeCommuneId?.map {
                 DSL.insertInto(L_CRISE_COMMUNE)
                     .set(L_CRISE_COMMUNE.CRISE_ID, criseId)
                     .set(L_CRISE_COMMUNE.COMMUNE_ID, it)
@@ -150,10 +150,10 @@ class CriseRepository @Inject constructor(
         val criseId: UUID,
         val criseLibelle: String?,
         val criseDescription: String?,
-        val criseDateDebut: ZonedDateTime?,
+        val criseDateDebut: ZonedDateTime,
         val criseDateFin: ZonedDateTime?,
-        val criseStatutType: String?,
-        val typeCriseId: UUID?,
+        val criseStatutType: TypeCriseStatut?,
+        val typeCriseId: UUID,
         var listeCommune: Collection<UUID>?,
         var listeToponymie: Collection<UUID>?,
     )
@@ -197,12 +197,12 @@ class CriseRepository @Inject constructor(
 
     fun updateCrise(
         criseId: UUID,
-        criseLibelle: String,
+        criseLibelle: String?,
         criseDescription: String?,
         criseDateDebut: ZonedDateTime?,
         criseDateFin: ZonedDateTime?,
-        criseTypeCriseId: UUID,
-        criseStatutType: TypeCriseStatut?,
+        criseTypeCriseId: UUID?,
+        criseStatutType: TypeCriseStatut,
     ) =
         dsl.update(CRISE)
             .set(CRISE.LIBELLE, criseLibelle)
@@ -222,5 +222,12 @@ class CriseRepository @Inject constructor(
     fun deleteLToponymieCrise(criseId: UUID) =
         dsl.deleteFrom(L_TOPONYMIE_CRISE)
             .where(L_TOPONYMIE_CRISE.CRISE_ID.eq(criseId))
+            .execute()
+
+    fun cloreCrise(criseId: UUID, criseDateFin: ZonedDateTime?) =
+        dsl.update(CRISE)
+            .set(CRISE.STATUT_TYPE, TypeCriseStatut.TERMINEE)
+            .set(CRISE.DATE_FIN, criseDateFin)
+            .where(CRISE.ID.eq(criseId))
             .execute()
 }

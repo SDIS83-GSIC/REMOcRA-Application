@@ -219,6 +219,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
      */
     CRISE_TYPE_FORBIDDEN_C(4200, "Vous n'avez pas les droits de création d'une crise.", Status.FORBIDDEN),
     CRISE_TYPE_FORBIDDEN_U(4201, "Vous n'avez pas les droits de modification d'une crise.", Status.FORBIDDEN),
+    CRISE_FORBIDDEN_D(4203, "Vous n'avez pas les droits de suppression d'une crise.", Status.FORBIDDEN),
 
     /***
      * ***********************************************************************
