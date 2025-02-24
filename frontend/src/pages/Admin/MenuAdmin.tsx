@@ -316,14 +316,22 @@ const MenuAdmin = () => {
 
           <Nav className="flex-column">
             {/*  TODO type droit DASHBOARD_A */}
-            <a href={URLS.DASHBOARD_ADMIN_QUERY}>
-              Édition des requêtes et composants associés
-            </a>
-            <br />
-            <a href={URLS.DASHBOARD_ADMIN_DASHBOARD}>
-              Édition des tableaux de bord et profils associés
-            </a>
-            <br />
+            <Nav.Item>
+              <CustomLinkButton
+                pathname={URLS.DASHBOARD_ADMIN_QUERY}
+                className="text-underline text-start"
+              >
+                Édition des requêtes et composants associés
+              </CustomLinkButton>
+            </Nav.Item>
+            <Nav.Item>
+              <CustomLinkButton
+                pathname={URLS.DASHBOARD_ADMIN_DASHBOARD}
+                className="text-underline text-start"
+              >
+                Édition des tableaux de bord et profils associés
+              </CustomLinkButton>
+            </Nav.Item>
           </Nav>
         </Col>
       </Row>
