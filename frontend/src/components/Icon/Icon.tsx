@@ -1,6 +1,7 @@
 import "@flaticon/flaticon-uicons/css/all/all.css";
 
 export const IconClose = () => <i className="fi fi-rr-cross" />;
+export const IconMessage = () => <i className="fi fi-rr-comment-alt" />;
 export const IconEvent = () => <i className="fi fi-rr-calendar-star" />;
 export const IconError = () => <i className="fi fi-rr-cross" />;
 export const IconLoading = () => <i className="fi fi-br-loading" />;

@@ -1,6 +1,6 @@
 import { Field, Form as FormikForm, useField } from "formik";
 import { Typeahead } from "react-bootstrap-typeahead";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import { Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import FormRange from "react-bootstrap/esm/FormRange";
@@ -426,22 +426,12 @@ export const RangeInput = ({
   min,
   max,
   step,
-  value = 0,
   required = false,
   disabled = false,
   tooltipText,
 }: RangeInputType) => {
-  const [, meta] = useField(name);
+  const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
-  const [currentValue, setCurrentValue] = useState(value);
-  useEffect(() => {
-    setCurrentValue(value);
-  }, [value]);
-
-  // Fonction pour mettre à jour l'état de la valeur
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentValue(Number(event.target.value));
-  };
 
   return (
     <DivWithError name={name} error={error}>
@@ -454,8 +444,8 @@ export const RangeInput = ({
         name={name}
       />
       <FormRange
-        value={currentValue}
-        onChange={handleChange}
+        {...field}
+        id={name}
         name={name}
         min={min}
         max={max}
