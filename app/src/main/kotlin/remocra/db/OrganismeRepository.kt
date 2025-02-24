@@ -57,6 +57,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         )
             .from(ORGANISME)
             .where(ORGANISME.ACTIF.isTrue)
+            .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
 
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
