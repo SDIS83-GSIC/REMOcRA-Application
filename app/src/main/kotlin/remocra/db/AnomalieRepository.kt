@@ -105,9 +105,11 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
     fun isAnomalieInUse(anomalieId: UUID): Boolean =
         dsl.fetchExists(
             dsl.select(L_VISITE_ANOMALIE.ANOMALIE_ID)
+                .from(L_VISITE_ANOMALIE)
                 .where(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(anomalieId))
                 .union(
                     dsl.select(L_PEI_ANOMALIE.ANOMALIE_ID)
+                        .from(L_PEI_ANOMALIE)
                         .where(L_PEI_ANOMALIE.ANOMALIE_ID.eq(anomalieId)),
                 ),
         )
