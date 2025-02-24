@@ -96,7 +96,6 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                 actions = setOf(RequiredAction.VERIFY_EMAIL.name, RequiredAction.UPDATE_PASSWORD.name),
                 userId = utilisateurId.toString(),
                 clientId = keycloakClient.clientId,
-                redirectUri = element.uri!!,
             ).execute()
 
             if (!responseMailKeycloak.isSuccessful) {

@@ -12,7 +12,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.net.URI
 
 interface KeycloakApi {
 
@@ -42,7 +41,6 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String,
         @Path("id") userId: String,
         @Query("client_id") clientId: String = "remocra",
-        @Query("redirect_uri") redirectUri: URI,
         @Body actions: Set<String>,
     ): Call<Void>
 

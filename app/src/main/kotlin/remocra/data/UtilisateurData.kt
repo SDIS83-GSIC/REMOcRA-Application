@@ -1,6 +1,5 @@
 package remocra.data
 
-import java.net.URI
 import java.util.UUID
 
 data class UtilisateurData(
@@ -15,5 +14,4 @@ data class UtilisateurData(
     val utilisateurProfilUtilisateurId: UUID?,
     val utilisateurOrganismeId: UUID?,
     val utilisateurIsSuperAdmin: Boolean = false,
-    val uri: URI? = null,
 )

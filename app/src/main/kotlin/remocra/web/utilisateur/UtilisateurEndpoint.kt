@@ -80,7 +80,6 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
                 utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
-                uri = uriInfo.baseUri,
             ),
         ).wrap()
 
@@ -165,7 +164,6 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
                 utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
-                uri = null,
             ),
         ).wrap()
 }
