@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import type { Placement } from "react-bootstrap/types";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
@@ -9,9 +9,17 @@ const TooltipCustom = ({
   placement = "bottom",
   children,
 }: TooltipType) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  // Masque la tooltip lors du click sur le children
+  const handleButtonClick = () => {
+    setShowTooltip(false);
+  };
+
   return (
     <div className={"tooltip-wrapper"}>
       <OverlayTrigger
+        show={showTooltip}
         overlay={
           <Popover id={tooltipId}>
             {tooltipHeader && (
@@ -22,7 +30,13 @@ const TooltipCustom = ({
         }
         placement={placement}
       >
-        <div>{children}</div>
+        <div
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          onClick={handleButtonClick}
+        >
+          {children}
+        </div>
       </OverlayTrigger>
     </div>
   );
