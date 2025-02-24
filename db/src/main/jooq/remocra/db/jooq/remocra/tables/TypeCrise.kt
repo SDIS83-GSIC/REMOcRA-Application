@@ -26,9 +26,12 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.CRISE__CRISE_CRISE_TYPE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_TYPE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_PKEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_TYPE_CRISE_CODE_KEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
+import remocra.db.jooq.remocra.tables.CriseCategorie.CriseCategoriePath
+import remocra.db.jooq.remocra.tables.LTypeCriseCategorie.LTypeCriseCategoriePath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -144,6 +147,30 @@ open class TypeCrise(
 
     val crise: CrisePath
         get(): CrisePath = crise()
+
+    private lateinit var _lTypeCriseCategorie: LTypeCriseCategoriePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_type_crise_categorie</code> table
+     */
+    fun lTypeCriseCategorie(): LTypeCriseCategoriePath {
+        if (!this::_lTypeCriseCategorie.isInitialized) {
+            _lTypeCriseCategorie = LTypeCriseCategoriePath(this, null, L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_TYPE_CRISE_ID_FKEY.inverseKey)
+        }
+
+        return _lTypeCriseCategorie
+    }
+
+    val lTypeCriseCategorie: LTypeCriseCategoriePath
+        get(): LTypeCriseCategoriePath = lTypeCriseCategorie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.crise_categorie</code> table
+     */
+    val criseCategorie: CriseCategoriePath
+        get(): CriseCategoriePath = lTypeCriseCategorie().criseCategorie()
     override fun `as`(alias: String): TypeCrise = TypeCrise(DSL.name(alias), this)
     override fun `as`(alias: Name): TypeCrise = TypeCrise(alias, this)
     override fun `as`(alias: Table<*>): TypeCrise = TypeCrise(alias.qualifiedName, this)

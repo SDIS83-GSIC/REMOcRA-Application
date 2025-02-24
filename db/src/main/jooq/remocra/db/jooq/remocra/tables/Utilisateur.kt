@@ -26,6 +26,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY
+import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_INSTRUCTEUR_ID_FKEY
@@ -42,6 +43,7 @@ import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANIS
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.tables.Adresse.AdressePath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
+import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.Job.JobPath
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -239,6 +241,23 @@ open class Utilisateur(
 
     val adresse: AdressePath
         get(): AdressePath = adresse()
+
+    private lateinit var _evenement: EvenementPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.evenement</code>
+     * table
+     */
+    fun evenement(): EvenementPath {
+        if (!this::_evenement.isInitialized) {
+            _evenement = EvenementPath(this, null, EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _evenement
+    }
+
+    val evenement: EvenementPath
+        get(): EvenementPath = evenement()
 
     private lateinit var _job: JobPath
 

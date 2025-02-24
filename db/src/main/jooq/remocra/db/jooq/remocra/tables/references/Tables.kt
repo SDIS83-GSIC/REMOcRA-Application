@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
+import remocra.db.jooq.remocra.tables.CriseCategorie
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -29,6 +30,7 @@ import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.Domaine
+import remocra.db.jooq.remocra.tables.Evenement
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
@@ -51,6 +53,7 @@ import remocra.db.jooq.remocra.tables.LCriseCommune
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
+import remocra.db.jooq.remocra.tables.LEvenementDocument
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierDocument
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
@@ -66,6 +69,7 @@ import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
 import remocra.db.jooq.remocra.tables.LToponymieCrise
 import remocra.db.jooq.remocra.tables.LTourneePei
+import remocra.db.jooq.remocra.tables.LTypeCriseCategorie
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
@@ -128,6 +132,7 @@ import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
+import remocra.db.jooq.remocra.tables.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
@@ -223,6 +228,11 @@ val COURRIER: Courrier = Courrier.COURRIER
 val CRISE: Crise = Crise.CRISE
 
 /**
+ * The table <code>remocra.crise_categorie</code>.
+ */
+val CRISE_CATEGORIE: CriseCategorie = CriseCategorie.CRISE_CATEGORIE
+
+/**
  * The table <code>remocra.dashboard</code>.
  */
 val DASHBOARD: Dashboard = Dashboard.DASHBOARD
@@ -271,6 +281,11 @@ val DOCUMENT_HABILITABLE: DocumentHabilitable = DocumentHabilitable.DOCUMENT_HAB
  * The table <code>remocra.domaine</code>.
  */
 val DOMAINE: Domaine = Domaine.DOMAINE
+
+/**
+ * The table <code>remocra.evenement</code>.
+ */
+val EVENEMENT: Evenement = Evenement.EVENEMENT
 
 /**
  * The table <code>remocra.fiche_resume_bloc</code>.
@@ -383,6 +398,11 @@ val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei = LDebitSimultaneMesu
 val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
 
 /**
+ * The table <code>remocra.l_evenement_document</code>.
+ */
+val L_EVENEMENT_DOCUMENT: LEvenementDocument = LEvenementDocument.L_EVENEMENT_DOCUMENT
+
+/**
  * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
  */
 val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
@@ -456,6 +476,11 @@ val L_TOPONYMIE_CRISE: LToponymieCrise = LToponymieCrise.L_TOPONYMIE_CRISE
  * The table <code>remocra.l_tournee_pei</code>.
  */
 val L_TOURNEE_PEI: LTourneePei = LTourneePei.L_TOURNEE_PEI
+
+/**
+ * The table <code>remocra.l_type_crise_categorie</code>.
+ */
+val L_TYPE_CRISE_CATEGORIE: LTypeCriseCategorie = LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE
 
 /**
  * The table <code>remocra.l_visite_anomalie</code>.
@@ -766,6 +791,11 @@ val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
  * The table <code>remocra.type_crise</code>.
  */
 val TYPE_CRISE: TypeCrise = TypeCrise.TYPE_CRISE
+
+/**
+ * The table <code>remocra.type_crise_categorie</code>.
+ */
+val TYPE_CRISE_CATEGORIE: TypeCriseCategorie = TypeCriseCategorie.TYPE_CRISE_CATEGORIE
 
 /**
  * The table <code>remocra.type_organisme</code>.

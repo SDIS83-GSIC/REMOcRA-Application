@@ -29,8 +29,10 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.db.jooq.remocra.keys.CRISE_PKEY
 import remocra.db.jooq.remocra.keys.CRISE__CRISE_CRISE_TYPE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_COMMUNE__L_CRISE_COMMUNE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_TOPONYMIE_CRISE__L_TOPONYMIE_CRISE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.LCriseCommune.LCriseCommunePath
 import remocra.db.jooq.remocra.tables.LToponymieCrise.LToponymieCrisePath
 import remocra.db.jooq.remocra.tables.TypeCrise.TypeCrisePath
@@ -169,6 +171,23 @@ open class Crise(
 
     val typeCrise: TypeCrisePath
         get(): TypeCrisePath = typeCrise()
+
+    private lateinit var _evenement: EvenementPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.evenement</code>
+     * table
+     */
+    fun evenement(): EvenementPath {
+        if (!this::_evenement.isInitialized) {
+            _evenement = EvenementPath(this, null, EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY.inverseKey)
+        }
+
+        return _evenement
+    }
+
+    val evenement: EvenementPath
+        get(): EvenementPath = evenement()
 
     private lateinit var _lCriseCommune: LCriseCommunePath
 
