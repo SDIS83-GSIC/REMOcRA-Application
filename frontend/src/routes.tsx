@@ -161,6 +161,8 @@ import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.
 import CreateModeleCourrier from "./pages/Admin/ModeleCourrier/CreateModeleCourrier.tsx";
 import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourrier.tsx";
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
+import UpdateCrise from "./pages/ModuleCrise/Crise/UpdateCrise.tsx";
+import CreateCrise from "./pages/ModuleCrise/Crise/CreateCrise.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -714,6 +716,24 @@ export default [
         path: "crise",
         element: (
           <Authorization Component={ListCrise} droits={[TYPE_DROIT.CRISE_R]} />
+        ),
+      },
+      {
+        path: "crise/create",
+        element: (
+          <Authorization
+            Component={CreateCrise}
+            droits={[TYPE_DROIT.CRISE_R]}
+          />
+        ),
+      },
+      {
+        path: "crise/:criseId",
+        element: (
+          <Authorization
+            Component={UpdateCrise}
+            droits={[TYPE_DROIT.CRISE_R]}
+          />
         ),
       },
     ],

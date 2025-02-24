@@ -1,20 +1,19 @@
-import { Document } from "../components/Form/FormDocuments.tsx";
-
 enum CriseStatutEnum {
   EN_COURS = "En cours",
   TERMINEE = "Terminée",
+  FUSIONNEE = "Fusionnée",
 }
 
 export type CriseType = {
   criseId: string;
-  typeCriseId: string;
-  criseNumero: string;
   criseLibelle: string;
   criseDescription: string;
-  listeCommuneId: string[];
-  documents: Document & {
-    criseDocumentLibelle: string;
-  };
+  criseDateDebut: Date;
+  criseDateFin: Date;
+  criseStatutType: string;
+  typeCriseId: string;
+  listeCommune: string[];
+  listeToponymie: string[];
 };
 
 export default CriseStatutEnum;
