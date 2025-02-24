@@ -33,7 +33,7 @@ const ListCrise = () => {
             hasDroit(user, TYPE_DROIT.CRISE_C) && (
               <CreateButton
                 href={URLS.CREATE_CRISE}
-                title={"Ajouter une nouvelle crise"}
+                title={"Ajouter une crise"}
               />
             )
           }

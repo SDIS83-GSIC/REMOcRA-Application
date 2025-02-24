@@ -19,6 +19,7 @@ import remocra.web.carto.CartoModule
 import remocra.web.commune.CommuneModule
 import remocra.web.courrier.CourrierModule
 import remocra.web.couverturehydraulique.CouvertureHydrauliqueModule
+import remocra.web.crise.CriseModule
 import remocra.web.dashboard.DashboardModule
 import remocra.web.debitsimultane.DebitSimultaneModule
 import remocra.web.documents.DocumentModule
@@ -47,6 +48,7 @@ import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
 import remocra.web.rcci.RcciModule
 import remocra.web.thematique.ThematiqueModule
+import remocra.web.toponymie.ToponymieModule
 import remocra.web.tracabilite.TracabiliteModule
 import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
@@ -74,6 +76,8 @@ object WebModule : RemocraModule() {
         install(AdminModule)
         install(CourrierModule)
         install(CouvertureHydrauliqueModule)
+        install(CriseModule)
+        install(ToponymieModule)
         install(PeiPrescritModule)
         install(PermisModule)
         install(IndisponibiliteTemporaireModule)

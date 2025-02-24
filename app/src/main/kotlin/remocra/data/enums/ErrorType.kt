@@ -214,6 +214,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Le code du diamètre n'est pas présent dans la base. Les valeurs possibles sont : $PLACEHOLDER_ERROR_TYPE",
     ),
 
+    /**
+     * Pour la gestion des crises
+     */
+    CRISE_TYPE_FORBIDDEN_C(4200, "Vous n'avez pas les droits de création d'une crise.", Status.FORBIDDEN),
+    CRISE_TYPE_FORBIDDEN_U(4201, "Vous n'avez pas les droits de modification d'une crise.", Status.FORBIDDEN),
+
     /***
      * ***********************************************************************
      * Courrier
