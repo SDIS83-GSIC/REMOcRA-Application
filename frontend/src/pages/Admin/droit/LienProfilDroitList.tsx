@@ -67,8 +67,9 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
             return (
               <>
                 <tr>
+                  {/*2 + values.length car on colspan "clé" + " libellé" + le nombre de values*/}
                   <td
-                    colSpan="6"
+                    colSpan={2 + values.length}
                     className={"bg-primary text-light text-center fw-bolder"}
                   >
                     {currentSection}
