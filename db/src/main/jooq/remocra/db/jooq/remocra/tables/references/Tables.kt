@@ -75,6 +75,7 @@ import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
 import remocra.db.jooq.remocra.tables.Materiau
+import remocra.db.jooq.remocra.tables.MessageEvenement
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
@@ -506,6 +507,11 @@ val MARQUE_PIBI: MarquePibi = MarquePibi.MARQUE_PIBI
  * The table <code>remocra.materiau</code>.
  */
 val MATERIAU: Materiau = Materiau.MATERIAU
+
+/**
+ * The table <code>remocra.message_evenement</code>.
+ */
+val MESSAGE_EVENEMENT: MessageEvenement = MessageEvenement.MESSAGE_EVENEMENT
 
 /**
  * The table <code>remocra.modele_courrier</code>.

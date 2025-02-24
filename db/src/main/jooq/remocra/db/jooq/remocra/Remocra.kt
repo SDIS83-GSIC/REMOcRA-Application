@@ -79,6 +79,7 @@ import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
 import remocra.db.jooq.remocra.tables.Materiau
+import remocra.db.jooq.remocra.tables.MessageEvenement
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
@@ -534,6 +535,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val MATERIAU: Materiau get() = Materiau.MATERIAU
 
     /**
+     * The table <code>remocra.message_evenement</code>.
+     */
+    val MESSAGE_EVENEMENT: MessageEvenement get() = MessageEvenement.MESSAGE_EVENEMENT
+
+    /**
      * The table <code>remocra.modele_courrier</code>.
      */
     val MODELE_COURRIER: ModeleCourrier get() = ModeleCourrier.MODELE_COURRIER
@@ -963,6 +969,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LogLine.LOG_LINE,
         MarquePibi.MARQUE_PIBI,
         Materiau.MATERIAU,
+        MessageEvenement.MESSAGE_EVENEMENT,
         ModeleCourrier.MODELE_COURRIER,
         ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE,
         ModelePibi.MODELE_PIBI,

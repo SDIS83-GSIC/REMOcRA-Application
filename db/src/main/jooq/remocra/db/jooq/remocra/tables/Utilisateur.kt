@@ -29,6 +29,7 @@ import remocra.db.jooq.remocra.keys.ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_INSTRUCTEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY
@@ -46,6 +47,7 @@ import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.Job.JobPath
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
+import remocra.db.jooq.remocra.tables.MessageEvenement.MessageEvenementPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
@@ -291,6 +293,23 @@ open class Utilisateur(
 
     val lCourrierUtilisateur: LCourrierUtilisateurPath
         get(): LCourrierUtilisateurPath = lCourrierUtilisateur()
+
+    private lateinit var _messageEvenement: MessageEvenementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.message_evenement</code> table
+     */
+    fun messageEvenement(): MessageEvenementPath {
+        if (!this::_messageEvenement.isInitialized) {
+            _messageEvenement = MessageEvenementPath(this, null, MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_UTILISATEUR_ID_FKEY.inverseKey)
+        }
+
+        return _messageEvenement
+    }
+
+    val messageEvenement: MessageEvenementPath
+        get(): MessageEvenementPath = messageEvenement()
 
     private lateinit var _permis: PermisPath
 

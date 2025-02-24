@@ -80,6 +80,7 @@ import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
 import remocra.db.jooq.remocra.tables.Materiau
+import remocra.db.jooq.remocra.tables.MessageEvenement
 import remocra.db.jooq.remocra.tables.ModeleCourrier
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.ModelePibi
@@ -244,6 +245,7 @@ val MARQUE_PIBI_MARQUE_PIBI_CODE_KEY: UniqueKey<Record> = Internal.createUniqueK
 val MARQUE_PIBI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(MarquePibi.MARQUE_PIBI, DSL.name("marque_pibi_pkey"), arrayOf(MarquePibi.MARQUE_PIBI.ID), true)
 val MATERIAU_MATERIAU_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Materiau.MATERIAU, DSL.name("materiau_materiau_code_key"), arrayOf(Materiau.MATERIAU.CODE), true)
 val MATERIAU_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Materiau.MATERIAU, DSL.name("materiau_pkey"), arrayOf(Materiau.MATERIAU.ID), true)
+val MESSAGE_EVENEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(MessageEvenement.MESSAGE_EVENEMENT, DSL.name("message_evenement_pkey"), arrayOf(MessageEvenement.MESSAGE_EVENEMENT.MESSAGE_ID), true)
 val MODELE_COURRIER_MODELE_COURRIER_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(ModeleCourrier.MODELE_COURRIER, DSL.name("modele_courrier_modele_courrier_code_key"), arrayOf(ModeleCourrier.MODELE_COURRIER.CODE), true)
 val MODELE_COURRIER_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModeleCourrier.MODELE_COURRIER, DSL.name("modele_courrier_pkey"), arrayOf(ModeleCourrier.MODELE_COURRIER.ID), true)
 val MODELE_COURRIER_PARAMETRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE, DSL.name("modele_courrier_parametre_pkey"), arrayOf(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE.ID), true)
@@ -471,6 +473,8 @@ val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Re
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_VISITE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_visite_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID), remocra.db.jooq.remocra.keys.VISITE_PKEY, arrayOf(Visite.VISITE.ID), true)
 val LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LieuDit.LIEU_DIT, DSL.name("lieu_dit_lieu_dit_commune_id_fkey"), arrayOf(LieuDit.LIEU_DIT.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true)
 val LOG_LINE__LOG_LINE_LOG_LINE_JOB_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LogLine.LOG_LINE, DSL.name("log_line_log_line_job_id_fkey"), arrayOf(LogLine.LOG_LINE.JOB_ID), remocra.db.jooq.remocra.keys.JOB_PKEY, arrayOf(Job.JOB.ID), true)
+val MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_EVENEMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(MessageEvenement.MESSAGE_EVENEMENT, DSL.name("message_evenement_evenement_id_fkey"), arrayOf(MessageEvenement.MESSAGE_EVENEMENT.EVENEMENT_ID), remocra.db.jooq.remocra.keys.EVENEMENT_PKEY, arrayOf(Evenement.EVENEMENT.ID), true)
+val MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(MessageEvenement.MESSAGE_EVENEMENT, DSL.name("message_evenement_utilisateur_id_fkey"), arrayOf(MessageEvenement.MESSAGE_EVENEMENT.UTILISATEUR_ID), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
 val MODELE_COURRIER_PARAMETRE__MODELE_COURRIER_PARAMETRE_MODELE_COURRIER_PARAMETRE_MODELE_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE, DSL.name("modele_courrier_parametre_modele_courrier_parametre_modele_fkey"), arrayOf(ModeleCourrierParametre.MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID), remocra.db.jooq.remocra.keys.MODELE_COURRIER_PKEY, arrayOf(ModeleCourrier.MODELE_COURRIER.ID), true)
 val MODELE_PIBI__MODELE_PIBI_MODELE_PIBI_MARQUE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(ModelePibi.MODELE_PIBI, DSL.name("modele_pibi_modele_pibi_marque_id_fkey"), arrayOf(ModelePibi.MODELE_PIBI.MARQUE_ID), remocra.db.jooq.remocra.keys.MARQUE_PIBI_PKEY, arrayOf(MarquePibi.MARQUE_PIBI.ID), true)
 val OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Oldeb.OLDEB, DSL.name("oldeb_oldeb_cadastre_parcelle_id_fkey"), arrayOf(Oldeb.OLDEB.CADASTRE_PARCELLE_ID), remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE_PKEY, arrayOf(CadastreParcelle.CADASTRE_PARCELLE.ID), true)

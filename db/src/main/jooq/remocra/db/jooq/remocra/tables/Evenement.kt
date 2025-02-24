@@ -35,9 +35,11 @@ import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_EVENEMENT_DOCUMENT__L_EVENEMENT_DOCUMENT_EVENEMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_EVENEMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.LEvenementDocument.LEvenementDocumentPath
+import remocra.db.jooq.remocra.tables.MessageEvenement.MessageEvenementPath
 import remocra.db.jooq.remocra.tables.TypeCriseCategorie.TypeCriseCategoriePath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import java.time.ZonedDateTime
@@ -261,6 +263,23 @@ open class Evenement(
 
     val lEvenementDocument: LEvenementDocumentPath
         get(): LEvenementDocumentPath = lEvenementDocument()
+
+    private lateinit var _messageEvenement: MessageEvenementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.message_evenement</code> table
+     */
+    fun messageEvenement(): MessageEvenementPath {
+        if (!this::_messageEvenement.isInitialized) {
+            _messageEvenement = MessageEvenementPath(this, null, MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_EVENEMENT_ID_FKEY.inverseKey)
+        }
+
+        return _messageEvenement
+    }
+
+    val messageEvenement: MessageEvenementPath
+        get(): MessageEvenementPath = messageEvenement()
 
     /**
      * Get the implicit many-to-many join path to the
