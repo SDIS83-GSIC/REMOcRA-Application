@@ -61,6 +61,9 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
     showCreateEvent,
     showListEvent,
     showListDocument,
+    setShowListEvent,
+    setShowCreateEvent,
+    setShowListDocument,
     listeEventId,
     setSousTypeElement,
     geometryElement,
@@ -93,7 +96,6 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
             map={map}
             criseId={criseId}
             handleCloseEvent={handleCloseEvent}
-            showCreateEvent={showCreateEvent}
             listeEventId={listeEventId}
             toggleTool={toggleTool}
             activeTool={activeTool}
@@ -104,6 +106,10 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
             dataCriseLayer={dataEvenementLayer}
             showListEvent={showListEvent}
             showListDocument={showListDocument}
+            showCreateEvent={showCreateEvent}
+            setShowListEvent={setShowListEvent}
+            setShowCreateEvent={setShowCreateEvent}
+            setShowListDocument={setShowListDocument}
           />
         )
       }

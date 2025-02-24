@@ -1,6 +1,6 @@
 import Map from "ol/Map";
 import { forwardRef, Key, useMemo, useState } from "react";
-import { Col, Dropdown } from "react-bootstrap";
+import { Button, Col, Dropdown } from "react-bootstrap";
 import { WKT } from "ol/format";
 import { Draw } from "ol/interaction";
 import { Style, Fill, Stroke } from "ol/style";
@@ -44,17 +44,19 @@ const drawStyle = new Style({
 });
 
 export const useToolbarCriseContext = ({ map, workingLayer }) => {
-  const [showCreateEvent, setShowEvent] = useState(false);
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showListEvent, setShowListEvent] = useState(false);
   const [showListDocument, setShowListDocument] = useState(false);
 
   const handleCloseEvent = () => {
-    setShowEvent(false), workingLayer.getSource().clear();
+    setShowListDocument(false);
+    setShowListEvent(false);
+    setShowCreateEvent(false);
+    workingLayer.getSource().clear();
   };
 
   const [showTracee, setShowTracee] = useState(false);
   const handleCloseTracee = () => setShowTracee(false);
-  const [showCreateElement, setShowCreateElement] = useState(false);
   const [listeEventId] = useState<string[]>([]);
   const [sousTypeElement, setSousTypeElement] = useState<string | null>(null);
   const [geometryElement, setGeometryElement] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
         setGeometryElement(
           `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(event.feature)}`,
         );
-        setShowEvent(true);
+        setShowCreateEvent(true);
       });
       drawCtrl.on("drawstart", async () => {
         // Avant de redessiner un point, on supprime les autres points
@@ -128,35 +130,7 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       toggleInteraction(active, drawLineString);
     }
 
-    /**
-     * Permet d'ouvrir ou fermer le volet de création d'évenement
-     */
-    function toggleCreateEvent(active = false) {
-      if (active) {
-        // bouton enclenché
-        setGeometryElement(null);
-        setShowEvent(true);
-      } else {
-        setShowEvent(false);
-      }
-    }
-
-    function toggleSeeDocument(active = false) {
-      if (active) {
-        setShowListDocument(true);
-      } else {
-        setShowListDocument(false);
-      }
-    }
-
-    function toggleSeeEvent(active = false) {
-      setShowListEvent(active);
-    }
-
     const tools = {
-      "create-event-project": {
-        action: toggleCreateEvent,
-      },
       "create-point": {
         action: toggleCreatePointEvenement,
       },
@@ -165,12 +139,6 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       },
       "create-linestring": {
         action: toggleCreateLinestringEvenement,
-      },
-      "list-event-project": {
-        action: toggleSeeEvent,
-      },
-      "list-document-project": {
-        action: toggleSeeDocument,
       },
     };
     return tools;
@@ -182,15 +150,15 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     showCreateEvent,
     showListEvent,
     showListDocument,
+    setShowListDocument,
+    setShowListEvent,
+    setShowCreateEvent,
     handleCloseTracee,
     showTracee,
-    setShowCreateElement,
     geometryElement,
     listeEventId,
     setSousTypeElement,
-    showCreateElement,
     sousTypeElement,
-    setShowEvent,
   };
 };
 
@@ -198,7 +166,6 @@ const MapToolbarCrise = forwardRef(
   ({
     map,
     criseId,
-    disabledEditEvent,
     geometryElement,
     handleCloseEvent,
     showCreateEvent,
@@ -208,33 +175,34 @@ const MapToolbarCrise = forwardRef(
     toggleTool: toggleToolCallback,
     activeTool,
     setSousTypeElement,
+    setShowListDocument,
+    setShowListEvent,
+    setShowCreateEvent,
   }: {
     map?: Map;
     workingLayer: any;
     criseId: string;
     disabledEditEvent: boolean;
-    calcul: () => void;
-    clear: () => void;
+    activeTool: string;
     handleCloseEvent: () => void;
     showCreateEvent: boolean;
     showListEvent: boolean;
     showListDocument: boolean;
-    handleCloseTracee: () => void;
-    showTracee: () => void;
-    setShowEvent: () => void;
+    setShowListDocument: (b: boolean) => void;
+    setShowListEvent: (b: boolean) => void;
+    setShowCreateEvent: (b: boolean) => void;
     geometryElement: string | null;
-    listeEventId: string[];
     toggleTool: (toolId: string) => void;
-    activeTool: string;
     dataCriseLayer: any;
     setSousTypeElement: (object: object) => void;
-    sousTypeElement: string | null;
   }) => {
     const typeWithSousType = useGet(
       url`/api/crise/${criseId}/evenement/type-sous-type`,
     )?.data;
 
-    const [typeEvenement, setTypeEvenement] = useState<string | null>(null);
+    const [typeEvenement, setTypeEvenement] = useState<string | undefined>(
+      undefined,
+    );
 
     return (
       <>
@@ -245,30 +213,36 @@ const MapToolbarCrise = forwardRef(
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
-        <ToolbarButton
-          toolName={"create-event-project"}
-          toolIcon={<IconEvent />}
-          toolLabelTooltip={"Créer un évenement"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-          disabled={disabledEditEvent}
-        />
 
-        <ToolbarButton
-          toolName={"list-event-project"}
-          toolIcon={<IconList />}
-          toolLabelTooltip={"Evènements"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
+        {/* Evènements (création) */}
+        <Button
+          className="me-2"
+          onClick={() => {
+            setShowCreateEvent(!showCreateEvent);
+          }}
+        >
+          <IconEvent />
+        </Button>
 
-        <ToolbarButton
-          toolName={"list-document-project"}
-          toolIcon={<IconDocument />}
-          toolLabelTooltip={"Documents"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
+        {/* Evènements (liste) */}
+        <Button
+          className="me-2"
+          onClick={() => {
+            setShowListEvent(!showListEvent);
+          }}
+        >
+          <IconList />
+        </Button>
+
+        {/* documents */}
+        <Button
+          className="me-2"
+          onClick={() => {
+            setShowListDocument(!showListDocument);
+          }}
+        >
+          <IconDocument />
+        </Button>
 
         <Volet
           handleClose={handleCloseEvent}
@@ -283,7 +257,10 @@ const MapToolbarCrise = forwardRef(
           show={showListDocument}
           className="w-auto"
         >
-          <CreateListDocument criseIdentifiant={criseId} />
+          <CreateListDocument
+            criseIdentifiant={criseId}
+            onSubmit={handleCloseEvent}
+          />
         </Volet>
 
         <Volet
