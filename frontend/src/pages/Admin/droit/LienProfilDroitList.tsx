@@ -47,14 +47,6 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
       <PageTitle
         title="Attribution des fonctionnalités"
         icon={<IconUtilisateurs />}
-        right={
-          <>
-            <SubmitFormButtons
-              onSecondaryActionClick={() => resetForm()}
-              secondaryActionTitle={"Annuler"}
-            />
-          </>
-        }
       />
       <Table striped bordered hover>
         <thead>
@@ -195,6 +187,12 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
           })}
         </tbody>
       </Table>
+      <>
+        <SubmitFormButtons
+          onSecondaryActionClick={() => resetForm()}
+          secondaryActionTitle={"Annuler"}
+        />
+      </>
     </FormContainer>
   );
 };
