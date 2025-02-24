@@ -92,7 +92,7 @@ enum TYPE_DROIT {
 export default TYPE_DROIT;
 
 export enum SECTION_DROIT {
-  ADRESSE = "Adresse",
+  ADRESSE = "Adresses",
   CARTO = "Cartographie",
   COUVERTURE_HYDRAULIQUE = "Couverture hydraulique",
   CRISE = "Gestion de crise",
@@ -104,7 +104,7 @@ export enum SECTION_DROIT {
   PEI = "Point d'eau",
   PERMIS = "Permis",
   RCCI = "Recherche des Causes et des Circonstances d'Incendie (RCCI)",
-  RISQUE = "Risque",
+  RISQUE = "Risques",
 }
 
 export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
