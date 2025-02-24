@@ -54,6 +54,7 @@ import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LCriseCommune
+import remocra.db.jooq.remocra.tables.LCriseDocument
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
@@ -408,6 +409,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_crise_commune</code>.
      */
     val L_CRISE_COMMUNE: LCriseCommune get() = LCriseCommune.L_CRISE_COMMUNE
+
+    /**
+     * The table <code>remocra.l_crise_document</code>.
+     */
+    val L_CRISE_DOCUMENT: LCriseDocument get() = LCriseDocument.L_CRISE_DOCUMENT
 
     /**
      * The table <code>remocra.l_dashboard_profil</code>.
@@ -944,6 +950,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LCourrierOrganisme.L_COURRIER_ORGANISME,
         LCourrierUtilisateur.L_COURRIER_UTILISATEUR,
         LCriseCommune.L_CRISE_COMMUNE,
+        LCriseDocument.L_CRISE_DOCUMENT,
         LDashboardProfil.L_DASHBOARD_PROFIL,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,

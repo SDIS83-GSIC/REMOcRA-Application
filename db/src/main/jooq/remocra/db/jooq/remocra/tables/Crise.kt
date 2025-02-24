@@ -31,9 +31,12 @@ import remocra.db.jooq.remocra.keys.CRISE_PKEY
 import remocra.db.jooq.remocra.keys.CRISE__CRISE_CRISE_TYPE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_COMMUNE__L_CRISE_COMMUNE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_TOPONYMIE_CRISE__L_TOPONYMIE_CRISE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.LCriseCommune.LCriseCommunePath
+import remocra.db.jooq.remocra.tables.LCriseDocument.LCriseDocumentPath
 import remocra.db.jooq.remocra.tables.LToponymieCrise.LToponymieCrisePath
 import remocra.db.jooq.remocra.tables.TypeCrise.TypeCrisePath
 import java.time.ZonedDateTime
@@ -206,6 +209,23 @@ open class Crise(
     val lCriseCommune: LCriseCommunePath
         get(): LCriseCommunePath = lCriseCommune()
 
+    private lateinit var _lCriseDocument: LCriseDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_crise_document</code> table
+     */
+    fun lCriseDocument(): LCriseDocumentPath {
+        if (!this::_lCriseDocument.isInitialized) {
+            _lCriseDocument = LCriseDocumentPath(this, null, L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_CRISE_ID_FKEY.inverseKey)
+        }
+
+        return _lCriseDocument
+    }
+
+    val lCriseDocument: LCriseDocumentPath
+        get(): LCriseDocumentPath = lCriseDocument()
+
     private lateinit var _lToponymieCrise: LToponymieCrisePath
 
     /**
@@ -222,6 +242,13 @@ open class Crise(
 
     val lToponymieCrise: LToponymieCrisePath
         get(): LToponymieCrisePath = lToponymieCrise()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.document</code> table
+     */
+    val document: DocumentPath
+        get(): DocumentPath = lCriseDocument().document()
     override fun `as`(alias: String): Crise = Crise(DSL.name(alias), this)
     override fun `as`(alias: Name): Crise = Crise(alias, this)
     override fun `as`(alias: Table<*>): Crise = Crise(alias.qualifiedName, this)

@@ -50,6 +50,7 @@ import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LCriseCommune
+import remocra.db.jooq.remocra.tables.LCriseDocument
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
@@ -382,6 +383,11 @@ val L_COURRIER_UTILISATEUR: LCourrierUtilisateur = LCourrierUtilisateur.L_COURRI
  * The table <code>remocra.l_crise_commune</code>.
  */
 val L_CRISE_COMMUNE: LCriseCommune = LCriseCommune.L_CRISE_COMMUNE
+
+/**
+ * The table <code>remocra.l_crise_document</code>.
+ */
+val L_CRISE_DOCUMENT: LCriseDocument = LCriseDocument.L_CRISE_DOCUMENT
 
 /**
  * The table <code>remocra.l_dashboard_profil</code>.

@@ -34,6 +34,7 @@ import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESU
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_ADRESSE_DOCUMENT__L_ADRESSE_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_EVENEMENT_DOCUMENT__L_EVENEMENT_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
@@ -42,10 +43,12 @@ import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Adresse.AdressePath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
+import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.LAdresseDocument.LAdresseDocumentPath
+import remocra.db.jooq.remocra.tables.LCriseDocument.LCriseDocumentPath
 import remocra.db.jooq.remocra.tables.LEvenementDocument.LEvenementDocumentPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierDocument.LModeleCourrierDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
@@ -244,6 +247,23 @@ open class Document(
     val lAdresseDocument: LAdresseDocumentPath
         get(): LAdresseDocumentPath = lAdresseDocument()
 
+    private lateinit var _lCriseDocument: LCriseDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_crise_document</code> table
+     */
+    fun lCriseDocument(): LCriseDocumentPath {
+        if (!this::_lCriseDocument.isInitialized) {
+            _lCriseDocument = LCriseDocumentPath(this, null, L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lCriseDocument
+    }
+
+    val lCriseDocument: LCriseDocumentPath
+        get(): LCriseDocumentPath = lCriseDocument()
+
     private lateinit var _lEvenementDocument: LEvenementDocumentPath
 
     /**
@@ -359,6 +379,13 @@ open class Document(
      */
     val adresse: AdressePath
         get(): AdressePath = lAdresseDocument().adresse()
+
+    /**
+     * Get the implicit many-to-many join path to the <code>remocra.crise</code>
+     * table
+     */
+    val crise: CrisePath
+        get(): CrisePath = lCriseDocument().crise()
 
     /**
      * Get the implicit many-to-many join path to the
