@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER_PARAMETRE
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
@@ -299,4 +300,75 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         dsl.deleteFrom(MODELE_COURRIER)
             .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .execute()
+
+    fun getListeModeleCourrier(
+        utilisateurId: UUID,
+        isSuperAdmin: Boolean,
+    ): Collection<ModeleCourrierGenere> =
+        dsl.select(
+            MODELE_COURRIER.ID,
+            MODELE_COURRIER.LIBELLE,
+            MODELE_COURRIER.DESCRIPTION,
+            multiset(
+                selectDistinct(
+                    MODELE_COURRIER_PARAMETRE.CODE,
+                    MODELE_COURRIER_PARAMETRE.LIBELLE,
+                    MODELE_COURRIER_PARAMETRE.DESCRIPTION,
+                    MODELE_COURRIER_PARAMETRE.SOURCE_SQL,
+                    MODELE_COURRIER_PARAMETRE.SOURCE_SQL_ID,
+                    MODELE_COURRIER_PARAMETRE.SOURCE_SQL_LIBELLE,
+                    MODELE_COURRIER_PARAMETRE.VALEUR_DEFAUT,
+                    MODELE_COURRIER_PARAMETRE.IS_REQUIRED,
+                    MODELE_COURRIER_PARAMETRE.TYPE,
+                    MODELE_COURRIER_PARAMETRE.ORDRE,
+                    MODELE_COURRIER_PARAMETRE.ID,
+                )
+                    .from(MODELE_COURRIER_PARAMETRE)
+                    .where(MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+                    .orderBy(MODELE_COURRIER_PARAMETRE.ORDRE),
+            ).`as`("listeModeleCourrierParametre").convertFrom { record ->
+                record.map {
+                    ModeleCourrierParametreData(
+                        modeleCourrierParametreId = it.value11().let { it as UUID },
+                        modeleCourrierParametreCode = it.value1() as String,
+                        modeleCourrierParametreLibelle = it.value2() as String,
+                        modeleCourrierParametreDescription = it.value3(),
+                        modeleCourrierParametreSourceSql = it.value4(),
+                        modeleCourrierParametreSourceSqlId = it.value5(),
+                        modeleCourrierParametreSourceSqlLibelle = it.value6(),
+                        modeleCourrierParametreValeurDefaut = it.value7(),
+                        modeleCourrierParametreIsRequired = it.value8() as Boolean,
+                        modeleCourrierParametreType = it.value9() as TypeParametreRapportCourrier,
+                        modeleCourrierParametreOrdre = it.value10() as Int,
+                    )
+                }
+            },
+        )
+            .from(MODELE_COURRIER)
+            .join(L_MODELE_COURRIER_PROFIL_DROIT)
+            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+            .join(UTILISATEUR)
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .join(ORGANISME)
+            .on(
+                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+            )
+            .where(MODELE_COURRIER.ACTIF.isTrue)
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    UTILISATEUR.ID.eq(utilisateurId),
+                    isSuperAdmin = isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+
+    data class ModeleCourrierGenere(
+        val modeleCourrierId: UUID,
+        val modeleCourrierLibelle: String,
+        val modeleCourrierDescription: String?,
+        val listeModeleCourrierParametre: Collection<ModeleCourrierParametreData>,
+    )
 }

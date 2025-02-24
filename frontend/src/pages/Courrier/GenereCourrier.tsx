@@ -1,14 +1,16 @@
-import { Formik } from "formik";
-import { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { useState } from "react";
+import { Container, Row } from "react-bootstrap";
+import { useOutletContext } from "react-router-dom";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
-import { useMyFormik } from "../../components/Form/MyFormik.tsx";
-import { ModeleCourrierWithParametres } from "../../Entities/CourrierEntity.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
+import { IconDocument } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
-import Courrier, {
+import GenererForm, {
+  DynamicFormWithParametre,
+} from "../../utils/buildDynamicForm.tsx";
+import {
   getInitialValues,
   prepareVariables,
   validationSchema,
@@ -17,22 +19,7 @@ import Courrier, {
 type ContextType = { urlCourrier: { url: string } | null };
 
 const GenereCourrier = () => {
-  const [urlCourrier, setUrlCourrier] = useState(null);
-
-  // Ici on a besoin de l'url du courrier généré et donc de la réponse
-  const { submitState, errorMessage } = useMyFormik(
-    `/api/courriers/`,
-    true,
-    null,
-    "Génération du courrier effectué avec succès",
-    "Impossible de générer le courrier",
-    URLS.VIEW_COURRIER,
-    false,
-  );
-
-  useEffect(() => {
-    setUrlCourrier(submitState.data);
-  }, [submitState, setUrlCourrier]);
+  const [, setUrlCourrier] = useState(null);
 
   // On récupère tous les courriers avec leurs paramètres
   const modeleCourrierState = useGet(url`/api/courriers/parametres`);
@@ -41,39 +28,30 @@ const GenereCourrier = () => {
     return <Loading />;
   }
 
-  const { data }: { data: ModeleCourrierWithParametres[] } =
-    modeleCourrierState;
+  const { data }: { data: DynamicFormWithParametre[] } = modeleCourrierState;
 
   return (
-    <>
-      <Formik
-        enableReinitialize={true}
-        initialValues={getInitialValues}
-        validationSchema={validationSchema}
-        onSubmit={async (values, { setSubmitting }) => {
-          const variables = prepareVariables(values);
-          try {
-            await submitState.run(variables);
-          } finally {
-            setSubmitting(false);
-          }
-        }}
-      >
-        <Container>
-          {errorMessage && errorMessage}
-          <Row className="p-2">
-            <Col>
-              <Courrier initialesValues={data} />
-            </Col>
-            {urlCourrier && (
-              <Col>
-                <Outlet context={{ urlCourrier } satisfies ContextType} />
-              </Col>
-            )}
-          </Row>
-        </Container>
-      </Formik>
-    </>
+    <Container fluid>
+      <PageTitle icon={<IconDocument />} title={"Générer un courrier"} />
+      <Row>
+        <MyFormik
+          initialValues={getInitialValues()}
+          validationSchema={validationSchema}
+          isPost={false}
+          submitUrl={`/api/courrier/generer`} // TODO à implémenter
+          prepareVariables={(values) => {
+            const value = prepareVariables(values, data);
+            return value;
+          }}
+          onSubmit={(url) => setUrlCourrier(url)}
+        >
+          <GenererForm
+            listeWithParametre={data}
+            contexteLibelle="Modèle de courrier"
+          />
+        </MyFormik>
+      </Row>
+    </Container>
   );
 };
 

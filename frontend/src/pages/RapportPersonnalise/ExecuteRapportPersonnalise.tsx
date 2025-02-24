@@ -1,47 +1,23 @@
-import { useFormikContext } from "formik";
 import { useState } from "react";
 import { Button, Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
-import {
-  CheckBoxInput,
-  DateTimeInput,
-  FormContainer,
-  NumberInput,
-  SelectInput,
-  TextInput,
-} from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
-import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconExport, IconList } from "../../components/Icon/Icon.tsx";
 import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/MapRapportPersonnalise.tsx";
 import PaginationFront, {
   LIMIT,
 } from "../../components/PaginationFront/PaginationFront.tsx";
-import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../../Entities/RapportCourrierEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { requiredString } from "../../module/validators.tsx";
+import {
+  DynamicFormWithParametre,
+  default as GenererForm,
+} from "../../utils/buildDynamicForm.tsx";
 import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 
-type RapportPersonnaliseParametreType = {
-  listeSelectInput: { id: string; libelle: string }[];
-  rapportPersonnaliseParametreCode: string;
-  rapportPersonnaliseParametreDescription: string | undefined;
-  rapportPersonnaliseParametreId: string;
-  rapportPersonnaliseParametreIsRequired: boolean;
-  rapportPersonnaliseParametreLibelle: string;
-  rapportPersonnaliseParametreValeurDefaut: string;
-  rapportPersonnaliseParametreType: TYPE_PARAMETRE_RAPPORT_COURRIER;
-};
-
-type RapportPersoWithParametreType = {
-  rapportPersonnaliseDescription: string | undefined;
-  rapportPersonnaliseId: string | undefined;
-  rapportPersonnaliseLibelle: string | undefined;
-  listeParametre: RapportPersonnaliseParametreType[];
-};
 const ExecuteRapportPersonnalise = () => {
   const { success: successToast, error: errorToast } = useToastContext();
   const { data: listeRapportPersoWithParametre } = useGet(
@@ -131,8 +107,9 @@ const ExecuteRapportPersonnalise = () => {
               setActiveTab("data");
             }}
           >
-            <ExecuteRapportPersonnaliseForm
-              listeRapportPersoWithParametre={listeRapportPersoWithParametre}
+            <GenererForm
+              listeWithParametre={listeRapportPersoWithParametre}
+              contexteLibelle="Rapport personnalisé"
             />
           </MyFormik>
         </Col>
@@ -198,165 +175,32 @@ const ExecuteRapportPersonnalise = () => {
 };
 
 export const getInitialValues = () => ({
-  rapportPersonnaliseId: null,
+  dynamicFormId: null,
 });
 
 export const validationSchema = object({
-  rapportPersonnaliseId: requiredString,
+  dynamicFormId: requiredString,
 });
 export const prepareVariables = (
   values,
-  listeRapportPersoWithParametre: RapportPersoWithParametreType[],
+  listeRapportPersoWithParametre: DynamicFormWithParametre[],
 ) => {
   // on va récupérer que les paramètres du rapport personnalisé
   const listeParametre = listeRapportPersoWithParametre
-    .find((e) => values.rapportPersonnaliseId === e.rapportPersonnaliseId)
+    .find((e) => values.dynamicFormId === e.dynamicFormId)
     ?.listeParametre?.map((e) => {
       return {
-        rapportPersonnaliseParametreCode: e.rapportPersonnaliseParametreCode,
+        rapportPersonnaliseParametreCode: e.dynamicFormParametreCode,
         value:
-          values[e.rapportPersonnaliseParametreCode]?.toString() ??
-          e.rapportPersonnaliseParametreValeurDefaut?.toString(),
+          values[e.dynamicFormParametreCode]?.toString() ??
+          e.dynamicFormParametreValeurDefaut?.toString(),
       };
     });
 
   return {
-    rapportPersonnaliseId: values.rapportPersonnaliseId,
+    rapportPersonnaliseId: values.dynamicFormId,
     listeParametre: listeParametre,
   };
 };
-
-const ExecuteRapportPersonnaliseForm = ({
-  listeRapportPersoWithParametre,
-}: {
-  listeRapportPersoWithParametre: RapportPersoWithParametreType[];
-}) => {
-  const { setFieldValue, values } = useFormikContext();
-
-  const listeRapportPerso = listeRapportPersoWithParametre?.map((e) => ({
-    id: e.rapportPersonnaliseId,
-    libelle: e.rapportPersonnaliseLibelle,
-  }));
-
-  const rapportPersonnaliseCourant = listeRapportPersoWithParametre?.find(
-    (e) => e.rapportPersonnaliseId === values.rapportPersonnaliseId,
-  );
-
-  return (
-    <FormContainer>
-      <Row>
-        <SelectInput
-          name={`rapportPersonnaliseId`}
-          label="Rapport personnalisé"
-          options={listeRapportPerso}
-          getOptionValue={(t) => t.id}
-          getOptionLabel={(t) => t.libelle}
-          onChange={(e) => {
-            setFieldValue(
-              `rapportPersonnaliseId`,
-              listeRapportPerso?.find((r) => r.id === e.id).id,
-            );
-          }}
-          defaultValue={listeRapportPerso?.find(
-            (r) => r.id === values.rapportPersonnaliseId,
-          )}
-          required={true}
-        />
-      </Row>
-      {rapportPersonnaliseCourant?.rapportPersonnaliseDescription && (
-        <Row className="mt-3">
-          <Col>
-            <b>Description : </b>
-            {rapportPersonnaliseCourant.rapportPersonnaliseDescription}
-          </Col>
-        </Row>
-      )}
-      <Row className="mt-3">
-        {// Pour chacun des paramètres, on affiche le bon composant
-        rapportPersonnaliseCourant?.listeParametre?.map((element) => {
-          return buildComponent(element, values, setFieldValue);
-        })}
-      </Row>
-      <SubmitFormButtons submitTitle="Exécuter" />
-    </FormContainer>
-  );
-};
-
-function buildComponent(
-  element: RapportPersonnaliseParametreType,
-  values: any,
-  setFieldValue: (name: string, e: any) => void,
-) {
-  switch (
-    TYPE_PARAMETRE_RAPPORT_COURRIER[element.rapportPersonnaliseParametreType]
-  ) {
-    case TYPE_PARAMETRE_RAPPORT_COURRIER.CHECKBOX_INPUT:
-      return (
-        <CheckBoxInput
-          name={element.rapportPersonnaliseParametreCode}
-          label={element.rapportPersonnaliseParametreLibelle}
-          required={element.rapportPersonnaliseParametreIsRequired}
-          checked={
-            values[element.rapportPersonnaliseParametreCode] ??
-            element.rapportPersonnaliseParametreValeurDefaut === "true"
-          }
-          tooltipText={element.rapportPersonnaliseParametreDescription}
-        />
-      );
-    case TYPE_PARAMETRE_RAPPORT_COURRIER.NUMBER_INPUT:
-      return (
-        <NumberInput
-          name={element.rapportPersonnaliseParametreCode}
-          label={element.rapportPersonnaliseParametreLibelle}
-          required={element.rapportPersonnaliseParametreIsRequired}
-          value={element.rapportPersonnaliseParametreValeurDefaut}
-          tooltipText={element.rapportPersonnaliseParametreDescription}
-        />
-      );
-    case TYPE_PARAMETRE_RAPPORT_COURRIER.TEXT_INPUT:
-      return (
-        <TextInput
-          name={element.rapportPersonnaliseParametreCode}
-          label={element.rapportPersonnaliseParametreLibelle}
-          required={element.rapportPersonnaliseParametreIsRequired}
-          value={element.rapportPersonnaliseParametreValeurDefaut}
-          tooltipText={element.rapportPersonnaliseParametreDescription}
-        />
-      );
-    case TYPE_PARAMETRE_RAPPORT_COURRIER.DATE_INPUT:
-      return (
-        <DateTimeInput
-          name={element.rapportPersonnaliseParametreCode}
-          label={element.rapportPersonnaliseParametreLibelle}
-          required={element.rapportPersonnaliseParametreIsRequired}
-          defaultValue={element.rapportPersonnaliseParametreValeurDefaut}
-          tooltipText={element.rapportPersonnaliseParametreDescription}
-        />
-      );
-    case TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT:
-      return (
-        <SelectInput
-          name={element.rapportPersonnaliseParametreCode}
-          label={element.rapportPersonnaliseParametreLibelle}
-          required={element.rapportPersonnaliseParametreIsRequired}
-          options={element.listeSelectInput}
-          getOptionValue={(t) => t.id}
-          getOptionLabel={(t) => t.libelle}
-          onChange={(e) => {
-            setFieldValue(
-              element.rapportPersonnaliseParametreCode,
-              element.listeSelectInput?.find((r) => r.id === e.id).id,
-            );
-          }}
-          defaultValue={element.listeSelectInput?.find(
-            (r) => r.id === values[element.rapportPersonnaliseParametreCode],
-          )}
-          tooltipText={element.rapportPersonnaliseParametreDescription}
-        />
-      );
-    default:
-      return;
-  }
-}
 
 export default ExecuteRapportPersonnalise;

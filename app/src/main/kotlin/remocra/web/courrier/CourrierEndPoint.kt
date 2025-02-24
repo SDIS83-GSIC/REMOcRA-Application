@@ -31,8 +31,8 @@ import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
+import remocra.usecase.courrier.BuildFormCourrierUseCase
 import remocra.usecase.courrier.CourrierGenerator
-import remocra.usecase.courrier.GetCourriersWithParametresUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
 import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
@@ -52,7 +52,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var courrierGenerator: CourrierGenerator
 
-    @Inject lateinit var getCourriersWithParametresUseCase: GetCourriersWithParametresUseCase
+    @Inject lateinit var buildFormCourrierUseCase: BuildFormCourrierUseCase
 
     @Inject lateinit var courrierRepository: CourrierRepository
 
@@ -180,7 +180,7 @@ class CourrierEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.APPLICATION_JSON)
     fun getParametreByCourrier(): Response {
-        return Response.ok(getCourriersWithParametresUseCase.execute(securityContext.userInfo)).build()
+        return Response.ok(buildFormCourrierUseCase.execute(securityContext.userInfo)).build()
     }
 
     @GET
