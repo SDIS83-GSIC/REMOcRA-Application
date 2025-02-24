@@ -32,16 +32,14 @@ class CreateEventMessageUseCase : AbstractCUDUseCase<MessageData>(TypeOperation.
     }
 
     override fun execute(userInfo: UserInfo?, element: MessageData): MessageData {
-        // - evenement
         messageRepository.add(element)
-
-        return element.copy()
+        return element
     }
 
     override fun postEvent(element: MessageData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(),
+                pojo = element,
                 pojoId = element.messageId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MESSAGE,

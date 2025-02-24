@@ -23,6 +23,7 @@ import remocra.data.CriseData
 import remocra.data.DataTableau
 import remocra.data.DocumentsData
 import remocra.data.EvenementData
+import remocra.data.MessageData
 import remocra.data.Params
 import remocra.data.enums.TypeElementCarte
 import remocra.db.CriseRepository
@@ -36,6 +37,7 @@ import remocra.usecase.crise.CriseUseCase
 import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
+import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -66,6 +68,8 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var updateEvenementUseCase: UpdateEvenementUseCase
 
+    @Inject lateinit var createEventMessageUseCase: CreateEventMessageUseCase
+
     data class CriseInput(
         val criseLibelle: String? = null,
         val criseDescription: String? = null,
@@ -77,6 +81,15 @@ class CriseEndpoint : AbstractEndpoint() {
         val listeToponymieId: Collection<UUID>? = null,
     )
 
+    data class MessageInput(
+        val messageObjet: String? = null,
+        val messageDescription: String? = null,
+        val messageDateConstat: ZonedDateTime? = null,
+        var messageImportance: Int? = null, // peut être null, mais initialisé à 0 par défaut
+        val messageOrigine: String? = null,
+        val messageTags: String? = null,
+        val messageUtilisateurId: UUID? = null,
+    )
     data class EvenementInput(
         val evenementType: UUID? = null,
         val evenementLibelle: String? = null,
@@ -296,6 +309,34 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementCriseId = criseId,
                 evenementStatut = EvenementStatut.EN_COURS,
             ),
+        ).wrap()
+    }
+
+    @POST
+    @Path("/evenement/{evenementId}/message/create")
+    @RequireDroits([Droit.CRISE_C])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun createMessage(
+        @PathParam("evenementId")
+        evenementId: UUID,
+        messageInput: MessageInput,
+    ): Response {
+        val messageData =
+            MessageData(
+                messageObjet = messageInput.messageObjet,
+                messageDescription = messageInput.messageDescription,
+                messageDateConstat = messageInput.messageDateConstat,
+                messageImportance = messageInput.messageImportance,
+                messageOrigine = messageInput.messageOrigine,
+                messageTags = messageInput.messageTags,
+                messageId = UUID.randomUUID(),
+                messageEvenementId = evenementId,
+                messageUtilisateurId = messageInput.messageUtilisateurId,
+            )
+
+        return createEventMessageUseCase.execute(
+            securityContext.userInfo,
+            messageData,
         ).wrap()
     }
 

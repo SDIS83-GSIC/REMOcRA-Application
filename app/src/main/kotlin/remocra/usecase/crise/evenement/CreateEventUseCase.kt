@@ -6,7 +6,6 @@ import remocra.data.AuteurTracabiliteData
 import remocra.data.EvenementData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
-import remocra.db.CriseRepository
 import remocra.db.EvenementRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -21,8 +20,6 @@ class CreateEventUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.INSER
     @Inject lateinit var evenementRepository: EvenementRepository
 
     @Inject lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
-
-    @Inject lateinit var criseRepository: CriseRepository
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.CRISE_C)) {
