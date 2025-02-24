@@ -1,13 +1,14 @@
-import { ReactNode } from "react";
+import { ReactNode, MutableRefObject } from "react";
 import { Button, Row, Col } from "react-bootstrap";
 import classNames from "classnames";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import DeleteModal from "../Modal/DeleteModal.tsx";
+import useModal from "../Modal/ModalUtils.tsx";
+import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
+import EditModal from "../Modal/EditModal.tsx";
 import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
 import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
-import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
-import DeleteModal from "../Modal/DeleteModal.tsx";
-import useModal from "../Modal/ModalUtils.tsx";
-import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
 
 const TableActionColumn = ({
@@ -17,8 +18,9 @@ const TableActionColumn = ({
   textEnable,
   classEnable = "primary",
   deleteModal = null,
-  confirmModal,
-  simpleModal,
+  editModal = null,
+  confirmModal = null,
+  simpleModal = null,
   isPost = true,
   reload,
   icon,
@@ -32,8 +34,41 @@ const TableActionColumn = ({
       {!hide ||
         (!hide(row.original) && (
           <>
-            {/*si il y a une deleteModal*/}
-            {deleteModal != null ? (
+            {editModal != null ? (
+              <>
+                <EditModal
+                  closeModal={editModal.close}
+                  header={editModal.header}
+                  ref={editModal.ref}
+                  visible={editModal.visible}
+                  query={editModal.path}
+                  prepareVariables={editModal.prepareVariable}
+                  onSubmit={() =>
+                    reload ? reload() : window.location.reload(false)
+                  }
+                >
+                  {editModal.content}
+                </EditModal>
+
+                <TooltipCustom
+                  tooltipText={disabled ? textDisable : textEnable}
+                  tooltipId={row.value}
+                >
+                  <Button
+                    variant="link"
+                    className={
+                      disabled
+                        ? "text-decoration-none text-muted"
+                        : "text-decoration-none text-" + classEnable
+                    }
+                    disabled={disabled}
+                    onClick={editModal?.show}
+                  >
+                    {icon}
+                  </Button>
+                </TooltipCustom>
+              </>
+            ) : deleteModal != null ? (
               <>
                 <TooltipCustom
                   tooltipText={disabled ? textDisable : textEnable}
@@ -135,9 +170,12 @@ type TableActionButtonType = {
   icon?: ReactNode;
   classEnable?: "primary" | "danger" | "warning" | "info" | "success";
   reload?: () => void;
+  query?;
   confirmModal?: boolean | null;
   deleteModal?: object | null;
+  editModal?: EditModalType | null;
   simpleModal?: SimpleModalType | null;
+
   hide?: (param: any) => boolean;
   onClick?: (param?: any) => any;
   isPost?: boolean;
@@ -145,10 +183,25 @@ type TableActionButtonType = {
   isLink?: boolean;
 };
 
+type ModaleType = {
+  visible?: boolean;
+  show?: (value?: any) => void;
+  close?: () => void;
+  ref?: MutableRefObject<HTMLDialogElement | null>;
+};
+
 type SimpleModalType = {
   header: string | ((row: any) => string);
   content: ReactNode | ((id: string) => ReactNode);
 };
+
+type EditModalType = ModaleType & {
+  header?: (row: any) => string;
+  content?: (id: string) => ReactNode;
+  path: (row: any) => string;
+  prepareVariable: (row: any) => any;
+};
+
 export const ActionButton = ({
   buttons,
   row,
@@ -166,6 +219,8 @@ export const ActionButton = ({
             return <ConfirmButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.SIMPLE_MODAL:
             return <SimpleModalButtonPrivate _button={_button} row={row} />;
+          case TYPE_BUTTON.EDIT_MODAL:
+            return <EditModalButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.UPDATE:
             return (
               <TableActionColumn
@@ -240,12 +295,39 @@ export enum TYPE_BUTTON {
   SEE,
   LINK,
   BUTTON,
+  CUSTOM,
+  EDIT_MODAL,
 }
 
 type DeleteButtonType = { row: any; _button: ButtonType };
+
+const EditModalButtonPrivate = ({ row, _button }: DeleteButtonType) => {
+  const { visible, show, close, ref } = useModal();
+  const editModal: EditModalType = {
+    close: close,
+    ref: ref,
+    show: show,
+    visible: visible,
+    content: _button.editModal?.content(row.value),
+    header: _button.editModal?.header(row),
+    path: _button.editModal.path(row),
+    prepareVariable: _button.editModal.prepareVariable,
+  };
+  return (
+    <TableActionColumn
+      row={row}
+      disabled={_button.disable ? _button.disable(row) : false}
+      editModal={editModal}
+      textDisable={_button.textDisable}
+      textEnable={_button.textEnable ?? "Editer"}
+      icon={_button.icon ?? <IconClose />}
+    />
+  );
+};
+
 const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
   const { visible, show, close, ref } = useModal();
-  const deleteModal = {
+  const deleteModal: ModaleType = {
     close: close,
     ref: ref,
     show: show,

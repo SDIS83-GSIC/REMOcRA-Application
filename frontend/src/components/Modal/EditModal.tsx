@@ -22,7 +22,7 @@ const EditModalBody = ({
   isMultipartFormData = false,
 }: EditModalBodyType) => {
   const isAdd = id == null;
-  const submitUrl = query + "/" + (id ? id : "create");
+  const submitUrl = query + "/" + (id ? id : "");
   let initialData = {};
 
   if (!isAdd) {

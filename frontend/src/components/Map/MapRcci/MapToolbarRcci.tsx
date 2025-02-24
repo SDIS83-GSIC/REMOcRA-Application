@@ -427,7 +427,10 @@ const MapToolbarRcci = ({
         <EditModal
           visible={editModalRefs.visible}
           closeModal={editModalRefs.close}
-          query={url`/api/rcci`}
+          query={
+            url`/api/rcci/` +
+            (!rcciIdRef.current ? "create" : rcciIdRef.current)
+          }
           ref={editModalRefs.ref}
           validationSchema={validationSchema}
           getInitialValues={(values) =>

@@ -10,7 +10,7 @@ export type CriseType = {
   criseDescription: string;
   criseDateDebut: Date;
   criseDateFin: Date;
-  criseStatutType: string;
+  criseStatutType: CriseStatutEnum;
   typeCriseId: string;
   listeCommune: string[];
   listeToponymie: string[];

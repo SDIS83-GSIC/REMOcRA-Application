@@ -1,9 +1,10 @@
 import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { DateTimeInput } from "../../../components/Form/Form.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconWarningCrise } from "../../../components/Icon/Icon.tsx";
+import { IconWarningCrise, IconClose } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
@@ -22,9 +23,12 @@ import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import filterValuesToVariable from "./FilterCrise.tsx";
 
+export const prepareValues = (data: any) => ({
+  criseDateFin: new Date(data.criseDateFin).toISOString(),
+});
+
 const ListCrise = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
-
   const listeButton: ButtonType[] = [];
 
   if (hasDroit(user, TYPE_DROIT.CRISE_U)) {
@@ -35,6 +39,34 @@ const ListCrise = () => {
       textEnable: "Modifier",
       route: (criseId) => URLS.UPDATE_CRISE(criseId),
       type: TYPE_BUTTON.UPDATE,
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.EDIT_MODAL,
+      disable: (v) => {
+        return (
+          CriseStatutEnum[v.original.criseStatut] === CriseStatutEnum.TERMINEE
+        );
+      },
+      icon: <IconClose />,
+      classEnable: "danger",
+      textEnable: "Clore la crise",
+      textDisable: "Impossible de clore une crise qui n'est plus en cours",
+      editModal: {
+        content: () => (
+          <DateTimeInput
+            name="criseDateFin"
+            label="Date et heure de fin"
+            required={true}
+          />
+        ),
+        header: (row) => "Clore la crise : " + row.original.criseLibelle,
+        path: (row) => `/api/crise/${row.original.criseId}/clore`,
+        prepareVariable: (value) => prepareValues(value),
+      },
     });
   }
 

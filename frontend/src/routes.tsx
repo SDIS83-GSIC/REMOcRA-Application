@@ -59,6 +59,8 @@ import UpdateTypeCanalisation from "./pages/Admin/typeCanalisation/UpdateTypeCan
 import CreateTypeEtude from "./pages/Admin/typeEtude/CreateTypeEtude.tsx";
 import ListTypeEtude from "./pages/Admin/typeEtude/ListTypeEtude.tsx";
 import ListCrise from "./pages/ModuleCrise/Crise/ListCrise.tsx";
+import CreateCrise from "./pages/ModuleCrise/Crise/CreateCrise.tsx";
+import UpdateCrise from "./pages/ModuleCrise/Crise/UpdateCrise.tsx";
 import UpdateTypeEtude from "./pages/Admin/typeEtude/UpdateTypeEtude.tsx";
 import CreateTypeOrganisme from "./pages/Admin/TypeOrganisme/CreateTypeOrganismes.tsx";
 import ListTypeOrganisme from "./pages/Admin/TypeOrganisme/ListTypeOrganisme.tsx";
@@ -161,8 +163,6 @@ import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.
 import CreateModeleCourrier from "./pages/Admin/ModeleCourrier/CreateModeleCourrier.tsx";
 import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourrier.tsx";
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
-import UpdateCrise from "./pages/ModuleCrise/Crise/UpdateCrise.tsx";
-import CreateCrise from "./pages/ModuleCrise/Crise/CreateCrise.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
