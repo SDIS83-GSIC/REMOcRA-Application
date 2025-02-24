@@ -158,19 +158,13 @@ function getLinks(
     case TypeModuleRemocra.OLDEBS:
       return [
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.OLDEB_R),
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.OLDEB_C) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_D) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_R) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_U),
           label: "Liste des Obligations Légales de Débroussaillement",
           link: URLS.OLDEB_LIST,
-        },
-        {
-          aLeDroit: hasDroit(user, TYPE_DROIT.OLDEB_R),
-          label: "Localisation des Obligations Légales de Débroussaillement",
-          link: URLS.OLDEB_LOCALISATION,
-        },
-        {
-          aLeDroit: hasDroit(user, TYPE_DROIT.OLDEB_R),
-          label: "Propriétaire des Obligations Légales de Débroussaillement",
-          link: URLS.OLDEB_PROPRIETAIRE_LIST,
         },
       ];
     case TypeModuleRemocra.PERMIS:

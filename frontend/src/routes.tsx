@@ -686,7 +686,12 @@ export default [
   },
   {
     path: "/oldeb/",
-    element: <ModuleOldeb />,
+    element: (
+      <Authorization
+        Component={ModuleOldeb}
+        droits={Object.values(TYPE_DROIT)}
+      />
+    ),
     children: [
       {
         path: "recherche",
