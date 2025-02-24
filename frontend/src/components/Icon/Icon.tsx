@@ -122,4 +122,7 @@ export const IconArrowUp = () => (
 
 export const IconAdresse = () => <i className="fi fi-br-postal-address" />;
 
+export const IconRCCI = () => <i className="fi fi-ss-match-fire" />;
+
 export const IconParametre = () => <i className="fi fi-br-gears" />;
+export const IconHide = () => <i className="fi fi-br-eye-crossed" />;

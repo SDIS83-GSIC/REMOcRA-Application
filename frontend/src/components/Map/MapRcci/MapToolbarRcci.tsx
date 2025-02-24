@@ -9,6 +9,7 @@ import ToolbarButton from "../ToolbarButton.tsx";
 import {
   IconDelete,
   IconEdit,
+  IconHide,
   IconMoveObjet,
   IconSelect,
 } from "../../Icon/Icon.tsx";
@@ -406,7 +407,7 @@ const MapToolbarRcci = forwardRef(
               className="m-2"
               active={anneeCivileRef.anneeCivileRef.current}
             >
-              {<IconEdit />}
+              {<IconHide />}
             </Button>
           </TooltipCustom>
         </ButtonGroup>

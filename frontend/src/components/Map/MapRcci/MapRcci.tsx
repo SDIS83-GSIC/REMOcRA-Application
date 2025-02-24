@@ -5,6 +5,8 @@ import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconRCCI } from "../../../components/Icon/Icon.tsx";
 import MapToolbarRcci, { useToolbarRcciContext } from "./MapToolbarRcci.tsx";
 
 const MapRcci = () => {
@@ -82,30 +84,36 @@ const MapRcci = () => {
   });
 
   return (
-    <MapComponent
-      map={map}
-      workingLayer={workingLayer}
-      availableLayers={availableLayers}
-      addOrRemoveLayer={addOrRemoveLayer}
-      layerListRef={layerListRef}
-      mapToolbarRef={mapToolbarRef}
-      mapElement={mapElement}
-      toggleTool={toggleTool}
-      activeTool={activeTool}
-      toolbarElement={
-        mapToolbarRef.current && (
-          <MapToolbarRcci
-            toggleTool={toggleTool}
-            activeTool={activeTool}
-            dataRcciLayerRef={dataRcciLayerRef}
-            editModalRefs={editModalRefs}
-            deleteModalRefs={deleteModalRefs}
-            rcciIdRef={rcciIdRef}
-            anneeCivileRef={{ anneeCivileRef, displayAnneCivile }}
-          />
-        )
-      }
-    />
+    <>
+      <PageTitle
+        title="Recherche des Causes et des Circonstances d'Incendie (RCCI)"
+        icon={<IconRCCI />}
+      />
+      <MapComponent
+        map={map}
+        workingLayer={workingLayer}
+        availableLayers={availableLayers}
+        addOrRemoveLayer={addOrRemoveLayer}
+        layerListRef={layerListRef}
+        mapToolbarRef={mapToolbarRef}
+        mapElement={mapElement}
+        toggleTool={toggleTool}
+        activeTool={activeTool}
+        toolbarElement={
+          mapToolbarRef.current && (
+            <MapToolbarRcci
+              toggleTool={toggleTool}
+              activeTool={activeTool}
+              dataRcciLayerRef={dataRcciLayerRef}
+              editModalRefs={editModalRefs}
+              deleteModalRefs={deleteModalRefs}
+              rcciIdRef={rcciIdRef}
+              anneeCivileRef={{ anneeCivileRef, displayAnneCivile }}
+            />
+          )
+        }
+      />
+    </>
   );
 };
 
