@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -20,6 +21,7 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.CriseData
+import remocra.data.CriseDocumentData
 import remocra.data.DataTableau
 import remocra.data.DocumentsData
 import remocra.data.EvenementData
@@ -38,6 +40,7 @@ import remocra.usecase.crise.CriseUseCase
 import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
+import remocra.usecase.crise.evenement.document.CreateCriseDocument
 import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
@@ -50,6 +53,8 @@ import java.util.UUID
 class CriseEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var criseRepository: CriseRepository
+
+    @Inject lateinit var createCriseDocument: CreateCriseDocument
 
     @Inject lateinit var criseUseCase: CriseUseCase
 
@@ -83,7 +88,6 @@ class CriseEndpoint : AbstractEndpoint() {
         val listeCommuneId: Collection<UUID>? = null,
         val listeToponymieId: Collection<UUID>? = null,
     )
-
     data class MessageInput(
         val messageObjet: String? = null,
         val messageDescription: String? = null,
@@ -247,7 +251,7 @@ class CriseEndpoint : AbstractEndpoint() {
     fun getAllFromCrise(
         @PathParam("criseId")
         criseId: UUID,
-        params: Params<CriseRepository.FilterCrise, CriseRepository.SortCrise>,
+        params: Params<CriseRepository.FilterCrise, CriseRepository.SortDocs>,
     ): Response {
         return Response.ok(
             DataTableau(
@@ -255,6 +259,18 @@ class CriseEndpoint : AbstractEndpoint() {
                 criseRepository.getCountDocumentFromCrise(criseId, params.filterBy),
             ),
 
+        ).build()
+    }
+
+    @DELETE
+    @Path("/documents/supprimer/{documentId}")
+    @RequireDroits([Droit.CRISE_U])
+    fun supprimerDocumentCrise(
+        @PathParam("documentId")
+        documentId: UUID,
+    ): Response {
+        return Response.ok(
+            criseRepository.deleteCriseDocuments(documentId),
         ).build()
     }
 
@@ -407,6 +423,31 @@ class CriseEndpoint : AbstractEndpoint() {
         return updateEvenementUseCase.execute(
             userInfo = securityContext.userInfo,
             evenementData,
+        ).wrap()
+    }
+
+    @POST
+    @Path("/document/addDocument/{criseId}")
+    @RequireDroits([Droit.CRISE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun addDocument(
+        @PathParam("criseId")
+        criseId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        val docData =
+            CriseDocumentData(
+                criseId = criseId,
+                listDocument = DocumentsData.DocumentsEvenement(
+                    objectId = criseId,
+                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
+            )
+        return createCriseDocument.execute(
+            userInfo = securityContext.userInfo,
+            docData,
         ).wrap()
     }
 }

@@ -27,6 +27,24 @@ class CriseRepository @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
 
+    fun deleteCriseDocuments(documentsId: UUID) {
+        // Première suppression
+        dsl.deleteFrom(L_CRISE_DOCUMENT)
+            .where(L_CRISE_DOCUMENT.DOCUMENT_ID.eq(documentsId))
+            .execute()
+
+        // Deuxième suppression
+        dsl.deleteFrom(L_EVENEMENT_DOCUMENT)
+            .where(L_EVENEMENT_DOCUMENT.DOCUMENT_ID.eq(documentsId))
+            .execute()
+    }
+
+    fun insertCriseDocument(documentId: UUID, criseId: UUID) =
+        dsl.insertInto(L_CRISE_DOCUMENT)
+            .set(L_CRISE_DOCUMENT.DOCUMENT_ID, documentId)
+            .set(L_CRISE_DOCUMENT.CRISE_ID, criseId)
+            .execute()
+
     fun getCrises(params: Params<FilterCrise, SortCrise>): Collection<CriseComplete> =
         dsl.select(
             CRISE.ID,
@@ -113,6 +131,16 @@ class CriseRepository @Inject constructor(
                     criseStatutType?.let { DSL.and(CRISE.STATUT_TYPE.eq(it)) },
                 ),
             )
+    }
+
+    data class SortDocs(
+        val documentDate: Int?,
+        val documentNomFichier: Int,
+    ) {
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            DOCUMENT.DATE.getSortField(documentDate),
+            DOCUMENT.NOM_FICHIER.getSortField(documentNomFichier),
+        )
     }
 
     data class SortCrise(
@@ -269,7 +297,7 @@ class CriseRepository @Inject constructor(
      * @param criseId L'ID de la crise pour filtrer les documents associés.
      * @return Une liste de documents
      */
-    fun getAllDocumentsFromCrise(criseId: UUID, params: Params<FilterCrise, SortCrise>): Collection<CriseDocs> =
+    fun getAllDocumentsFromCrise(criseId: UUID, params: Params<FilterCrise, SortDocs>): Collection<CriseDocs> =
         dsl.select(
             DOCUMENT.ID,
             DOCUMENT.NOM_FICHIER,

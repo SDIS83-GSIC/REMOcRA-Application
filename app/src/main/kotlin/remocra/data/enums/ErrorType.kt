@@ -221,6 +221,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     CRISE_TYPE_FORBIDDEN_U(4201, "Vous n'avez pas les droits de modification d'une crise.", Status.FORBIDDEN),
     CRISE_NUMERO_UNIQUE(4202, "Le numéro de la crise doit être unique."),
     CRISE_FORBIDDEN_D(4203, "Vous n'avez pas les droits de suppression d'une crise.", Status.FORBIDDEN),
+    CRISE_DOCUMENT_MEME_NOM(4204, "Les documents d'une même crise ne doivent pas avoir le même nom."),
 
     EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un événement.", Status.FORBIDDEN),
     EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un événement.", Status.FORBIDDEN),
