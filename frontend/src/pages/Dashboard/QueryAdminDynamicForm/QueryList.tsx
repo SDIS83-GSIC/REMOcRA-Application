@@ -161,7 +161,7 @@ const QueryList = forwardRef((props: QueryListProps, ref) => {
   ]);
 
   // Valide la requête et récupère les datas correspondantes
-  const fetchDataQuery = useCallback(async () => {
+  /*const fetchDataQuery = */ useCallback(async () => {
     (
       await fetch(
         urlApiQuery,
@@ -259,21 +259,21 @@ const QueryList = forwardRef((props: QueryListProps, ref) => {
   }, [fetchQueryComponent, props.activeQuery, props.openListComponent]);
 
   // Récupères les datas de la requête éditée
-  useEffect(() => {
-    if (
-      props.activeQuery &&
-      props.activeQuery.id &&
-      !props.queryGlobalData &&
-      props.openListComponent
-    ) {
-      fetchDataQuery();
-    }
-  }, [
-    fetchDataQuery,
-    props.activeQuery,
-    props.openListComponent,
-    props.queryGlobalData,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     props.activeQuery &&
+  //     props.activeQuery.id &&
+  //     !props.queryGlobalData &&
+  //     props.openListComponent
+  //   ) {
+  //     fetchDataQuery();
+  //   }
+  // }, [
+  //   fetchDataQuery,
+  //   props.activeQuery,
+  //   props.openListComponent,
+  //   props.queryGlobalData,
+  // ]);
 
   return (
     <Card className="m-3">

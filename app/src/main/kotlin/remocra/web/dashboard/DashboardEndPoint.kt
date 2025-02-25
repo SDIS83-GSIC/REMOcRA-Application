@@ -57,7 +57,7 @@ class DashboardEndPoint : AbstractEndpoint() {
     @Path("/validate-query")
     @RequireDroits([Droit.DASHBOARD_A])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getDashboardQuery(queryDashboard: DashboardQueryRequestData): Response = Response.ok().entity(getDashboardQueryUseCase.getQuery(queryDashboard)).build()
+    fun validateQuery(queryDashboard: DashboardQueryRequestData): Response = Response.ok().entity(getDashboardQueryUseCase.validateQuery(queryDashboard, true)).build()
 
     @POST
     @Path("/create-query")
@@ -103,7 +103,7 @@ class DashboardEndPoint : AbstractEndpoint() {
     @POST
     @Path("/get-list-data-query")
     @RequireDroits([Droit.DASHBOARD_A])
-    fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds)).build()
+    fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds, securityContext.userInfo)).build()
 
     @GET
     @Path("/get-query-list-all")
@@ -133,7 +133,7 @@ class DashboardEndPoint : AbstractEndpoint() {
     @GET
     @Path("/get-data-query/{id}")
     @RequireDroits([Droit.DASHBOARD_R])
-    fun getDataQuery(@PathParam("id") queryId: UUID): Response = Response.ok(getDashboardQueryUseCase.getDataQuery(queryId)).build()
+    fun getDataQuery(@PathParam("id") queryId: UUID): Response = Response.ok(getDashboardQueryUseCase.getDataQuery(queryId, securityContext.userInfo)).build()
 
     @POST
     @Path("/create-dashboard")

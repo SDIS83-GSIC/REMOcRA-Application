@@ -10,6 +10,7 @@ import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
 import remocra.exception.RemocraResponseException
 import remocra.utils.DateUtils
+import remocra.utils.RequestUtils
 
 class RapportPersonnaliseUtils {
 
@@ -19,30 +20,19 @@ class RapportPersonnaliseUtils {
     @Inject
     private lateinit var dateUtils: DateUtils
 
-    private enum class VariableContextUtilisateur(val varName: String) { ZONE_COMPETENCE_ID("ZONE_COMPETENCE_ID"), UTILISATEUR_ID("UTILISATEUR_ID"), ORGANISME_ID("ORGANISME_ID") }
+    @Inject
+    private lateinit var requestUtils: RequestUtils
 
-    fun formatParametreRequeteSql(userInfo: UserInfo?, requeteSql: String?): String? {
-        // On vérifie si la requête contient les variable utilisateur, si oui on les remplace par les informations de l'utilisateur
-        val remplacementMap = mapOf(
-            VariableContextUtilisateur.ZONE_COMPETENCE_ID.varName to userInfo?.zoneCompetence?.zoneIntegrationId.toString(),
-            VariableContextUtilisateur.UTILISATEUR_ID.varName to userInfo?.utilisateur?.utilisateurId.toString(),
-            VariableContextUtilisateur.ORGANISME_ID.varName to userInfo?.utilisateur?.utilisateurOrganismeId.toString(),
-        )
-        var requeteModifiee = requeteSql
-        remplacementMap.forEach { cle, valeur ->
-            if (requeteModifiee != null) {
-                requeteModifiee = requeteModifiee!!.replace(cle, "'$valeur'")
-            }
-        }
-        return requeteModifiee
-    }
     private fun testParametreRequeteSql(userInfo: UserInfo?, parametreRequete: RapportPersonnaliseParametreData): List<IdLibelleRapportPersonnalise> {
         try {
-            val requeteModifiee = formatParametreRequeteSql(userInfo, parametreRequete.rapportPersonnaliseParametreSourceSql)
-            return rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee!!)
+            if (parametreRequete.rapportPersonnaliseParametreSourceSql != null) {
+                val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametreRequete.rapportPersonnaliseParametreSourceSql)
+                return rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee)
+            }
         } catch (e: Exception) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID, "(paramètre :  ${parametreRequete.rapportPersonnaliseParametreCode}) : ${e.message}")
         }
+        return emptyList()
     }
 
     fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
@@ -92,8 +82,8 @@ class RapportPersonnaliseUtils {
 
         // On vérifie ensuite la requête globale
         try {
-            val requeteModifiee = formatParametreRequeteSql(userInfo, requete)
-            requete = if (requeteModifiee != null) requeteModifiee else requete
+            val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, requete)
+            requete = requeteModifiee
             rapportPersonnaliseRepository.executeSqlRapport(requete)
         } catch (e: Exception) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID, e.message)

@@ -166,4 +166,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
             ),
         ).wrap()
+
+    @GET
+    @RequireDroits([Droit.DASHBOARD_A])
+    @Path("/list")
+    fun getForList() = utilisateurRepository.getForList()
 }

@@ -363,4 +363,13 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     // Police
     fun getUtilisateurPolice() = getUtilisteurListByTypeOrganisme("POLICE")
+
+    fun getForList(): Collection<GlobalData.IdCodeLibelleData> = dsl.select(
+        UTILISATEUR.ID.`as`("id"),
+        UTILISATEUR.USERNAME.`as`("code"),
+        UTILISATEUR.USERNAME.`as`("libelle"),
+    )
+        .from(UTILISATEUR)
+        .where(UTILISATEUR.ACTIF.isTrue)
+        .fetchInto()
 }

@@ -7,6 +7,7 @@ import remocra.data.IdLibelleRapportPersonnalise
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.TypeParametreRapportPersonnalise
 import remocra.usecase.AbstractUseCase
+import remocra.utils.RequestUtils
 import java.util.UUID
 
 /**
@@ -20,6 +21,9 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
 
     @Inject
     private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+
+    @Inject
+    lateinit var requestUtils: RequestUtils
 
     fun execute(userInfo: UserInfo?): MutableList<RapportPersonnaliseWithParametre> {
         if (userInfo == null) {
@@ -37,8 +41,8 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
                 // -> Si SELECT_INPUT alors on build la requête et on retourne une liste
                 var listeSelectInput: List<IdLibelleRapportPersonnalise>? = null
                 if (parametre.rapportPersonnaliseParametreType == TypeParametreRapportPersonnalise.SELECT_INPUT) {
-                    val requeteModifiee = rapportPersonnaliseUtils.formatParametreRequeteSql(userInfo, parametre.rapportPersonnaliseParametreSourceSql)
-                    listeSelectInput = rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee!!)
+                    val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametre.rapportPersonnaliseParametreSourceSql ?: throw IllegalArgumentException("SQL null pour le paramètre ${parametre.rapportPersonnaliseParametreCode}"))
+                    listeSelectInput = rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee)
                 }
 
                 listeParametre.add(

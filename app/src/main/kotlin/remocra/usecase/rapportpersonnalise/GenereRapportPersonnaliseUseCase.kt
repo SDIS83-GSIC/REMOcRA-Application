@@ -9,6 +9,7 @@ import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
+import remocra.utils.RequestUtils
 import java.util.UUID
 
 class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
@@ -18,6 +19,9 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
 
     @Inject
     private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+
+    @Inject
+    lateinit var requestUtils: RequestUtils
 
     companion object {
         private const val FIELD_GEOMETRIE = "geometrie"
@@ -52,8 +56,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
         }
 
         // On remplace les variables utilisateur de la requête par les données userinfo
-        val requeteModifiee = rapportPersonnaliseUtils.formatParametreRequeteSql(userInfo, requete)
-        requete = if (requeteModifiee != null) requeteModifiee else requete
+        requete = requestUtils.replaceGlobalParameters(userInfo, requete)
         // Puis on l'exécute et on renvoie ensuite la liste
         return infosForTableRapportPerso(rapportPersonnaliseRepository.executeSqlRapport(requete))
     }

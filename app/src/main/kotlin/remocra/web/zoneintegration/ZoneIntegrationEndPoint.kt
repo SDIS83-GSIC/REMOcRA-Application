@@ -136,4 +136,9 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
             securityContext.userInfo,
             zoneIntegrationRepository.getZIDataById(zoneIntegrationId),
         ).wrap()
+
+    @GET
+    @RequireDroits([Droit.DASHBOARD_A])
+    @Path("/list")
+    fun getForList() = zoneIntegrationRepository.getForList()
 }

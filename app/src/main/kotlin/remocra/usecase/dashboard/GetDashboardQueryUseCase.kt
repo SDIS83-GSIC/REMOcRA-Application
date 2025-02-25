@@ -6,6 +6,7 @@ import remocra.data.DashboardData
 import remocra.data.DashboardQueryRequestData
 import remocra.data.QueryIds
 import remocra.db.DashboardRepository
+import remocra.db.jooq.remocra.tables.pojos.DashboardQuery
 import remocra.usecase.AbstractUseCase
 import remocra.utils.RequestUtils
 import java.util.UUID
@@ -18,22 +19,55 @@ class GetDashboardQueryUseCase : AbstractUseCase() {
     @Inject
     lateinit var requestUtils: RequestUtils
 
-    fun getQuery(sqlQuery: DashboardQueryRequestData): RequestUtils.FieldData? {
-        requestUtils.validateReadOnlyQuery(sqlQuery.query) // Vérifie que la requête SQL soit valide
-        val dataSqlQuery = dashboardRepository.getQuery(sqlQuery.query)
+    /**
+     * Valide que la requête est formée convenablement, en remplaçant les placeholders statiques.
+     */
+    fun validateQuery(sqlQuery: DashboardQueryRequestData, saveQuery: Boolean): RequestUtils.FieldData? {
+        val replacedDashboardQueryRequestData = sqlQuery.copy(
+            query = requestUtils.replaceGlobalParameters(
+                sqlQuery.query,
+                zoneCompetenceId = sqlQuery.zoneCompetenceId,
+                organismeId = sqlQuery.organismeId,
+                utilisateurId = sqlQuery.utilisateurId,
+            ),
+        )
+
+        requestUtils.validateReadOnlyQuery(replacedDashboardQueryRequestData.query) // Vérifie que la requête SQL soit valide
+        if (saveQuery && replacedDashboardQueryRequestData.queryId != null) {
+            dashboardRepository.updateQuery(
+                DashboardQuery(
+                    dashboardQueryId = replacedDashboardQueryRequestData.queryId,
+                    dashboardQueryTitle = replacedDashboardQueryRequestData.queryTitle,
+                    // on prend la version originale, avec les placeholders non remplacés !
+                    dashboardQueryQuery = sqlQuery.query,
+                ),
+            )
+        }
+        val dataSqlQuery = dashboardRepository.getQuery(replacedDashboardQueryRequestData.query)
         return requestUtils.mapQueryToFieldData(dataSqlQuery, sqlQuery)
     }
 
-    fun getDataQuery(queryId: UUID): RequestUtils.FieldData? {
-        val requestSql = dashboardRepository.getRequest(queryId)
-        return requestSql?.let { getQuery(it) }
+    fun getDataQuery(queryId: UUID, userInfo: UserInfo?): RequestUtils.FieldData? {
+        val requestSql = dashboardRepository.getRequest(queryId)?.let {
+            // On remplace les placeholders habituels si l'utilisateur est connecté
+            DashboardQueryRequestData(
+                queryId = it.queryId,
+                query = requestUtils.replaceGlobalParameters(userInfo = userInfo, requeteSql = it.query),
+                queryTitle = it.queryTitle,
+                null,
+                null,
+                null,
+            )
+        }
+
+        return requestSql?.let { validateQuery(it, false) }
     }
 
-    fun getDataQuerys(queryIds: QueryIds): MutableList<RequestUtils.FieldData> {
+    fun getDataQuerys(queryIds: QueryIds, userInfo: UserInfo?): MutableList<RequestUtils.FieldData> {
         val results: MutableList<RequestUtils.FieldData> = mutableListOf() // Liste pour stocker les résultats
 
         for (queryId in queryIds.dashboardQueryIds) {
-            val result = getDataQuery(queryId)
+            val result = getDataQuery(queryId, userInfo)
             if (result != null) {
                 results.add(result)
             }

@@ -7,6 +7,7 @@ import org.jooq.Field
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.ZoneIntegrationData
 import remocra.db.jooq.remocra.enums.TypeZoneIntegration
@@ -126,4 +127,13 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             ZONE_INTEGRATION.LIBELLE.getSortField(zoneIntegrationLibelle),
         )
     }
+
+    fun getForList(): Collection<GlobalData.IdCodeLibelleData> = dsl.select(
+        ZONE_INTEGRATION.ID.`as`("id"),
+        ZONE_INTEGRATION.CODE.`as`("code"),
+        ZONE_INTEGRATION.LIBELLE.`as`("libelle"),
+    )
+        .from(ZONE_INTEGRATION)
+        .where(ZONE_INTEGRATION.ACTIF.isTrue)
+        .fetchInto()
 }

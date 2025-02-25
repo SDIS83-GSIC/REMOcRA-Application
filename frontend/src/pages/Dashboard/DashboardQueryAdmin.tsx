@@ -114,7 +114,7 @@ const ComponentBoardQueryAdmin = () => {
             prepareVariables={getPrepareVariables}
             submitUrl={activeQuery.id ? urlApiUpdateRegister : urlApiRegister}
             onSubmit={toSubmit}
-            successToastMessage="La requête à été correctement enregistrée"
+            successToastMessage="La requête a été correctement enregistrée"
           >
             <FormContainer>
               <Row>

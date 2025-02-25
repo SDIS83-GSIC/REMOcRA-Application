@@ -30,6 +30,9 @@ data class DashboardQueryRequestData(
     val queryId: UUID?,
     val query: String,
     val queryTitle: String,
+    val zoneCompetenceId: UUID?,
+    val utilisateurId: UUID?,
+    val organismeId: UUID?,
 )
 
 data class DashboardQueryInfoData(

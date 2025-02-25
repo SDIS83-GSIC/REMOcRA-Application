@@ -6,6 +6,7 @@ import remocra.csv.CsvWriter
 import remocra.data.GenererRapportPersonnaliseData
 import remocra.db.RapportPersonnaliseRepository
 import remocra.usecase.AbstractUseCase
+import remocra.utils.RequestUtils
 import java.io.ByteArrayOutputStream
 
 /**
@@ -20,6 +21,9 @@ class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
 
     @Inject
+    lateinit var requestUtils: RequestUtils
+
+    @Inject
     private lateinit var csvWriter: CsvWriter
 
     fun execute(userInfo: UserInfo?, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): ByteArrayOutputStream {
@@ -31,8 +35,7 @@ class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
         }
 
         // On remplace les variables utilisateur de la requête par les données userinfo
-        val requeteModifiee = rapportPersonnaliseUtils.formatParametreRequeteSql(userInfo, requete)
-        requete = if (requeteModifiee != null) requeteModifiee else requete
+        requete = requestUtils.replaceGlobalParameters(userInfo, requete)
 
         val result = rapportPersonnaliseRepository.executeSqlRapport(requete)
 
