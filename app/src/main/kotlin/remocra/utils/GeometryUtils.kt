@@ -4,7 +4,6 @@ import jakarta.ws.rs.ForbiddenException
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.geom.MultiPolygon
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
@@ -84,7 +83,7 @@ fun checkZoneCompetence(userInfo: UserInfo?, geometries: Collection<Geometry>) {
 
         // On regarde si chacunes des géométries sont comprises dans la zone de l'utilisateur
         geometries.forEach {
-            if (!(zoneCompetenceGeometrie as MultiPolygon).contains(it)) {
+            if (!zoneCompetenceGeometrie.contains(it)) {
                 throw RemocraResponseException(ErrorType.FORBIDDEN_ZONE_COMPETENCE)
             }
         }
