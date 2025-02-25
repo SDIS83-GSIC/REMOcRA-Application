@@ -1,10 +1,11 @@
 package remocra.usecase.zoneintegration
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKTReader
+import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.CoordonneeInput
 import remocra.data.enums.ErrorType
@@ -15,7 +16,8 @@ import remocra.utils.sridFromEpsgCode
 import remocra.utils.toGeomFromText
 
 class CheckZoneIntegration @Inject constructor(
-    private var zoneIntegrationRepository: ZoneIntegrationRepository,
+    private val zoneIntegrationRepository: ZoneIntegrationRepository,
+    private val appSettings: AppSettings,
 ) : AbstractUseCase() {
     fun checkZoneIntegration(userInfo: UserInfo?, input: CoordonneeInput): Result {
         if (userInfo?.organismeId == null) {
@@ -29,7 +31,7 @@ class CheckZoneIntegration @Inject constructor(
         }
         geometry.srid = sridFromEpsgCode(input.srid)
 
-        val check = zoneIntegrationRepository.checkByOrganismeId(geometry.toGeomFromText(), userInfo.organismeId!!)
+        val check = zoneIntegrationRepository.checkByOrganismeId(geometry.toGeomFromText(), userInfo.organismeId!!, appSettings.srid)
 
         return if (check == true) Result.Success(check) else throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_GEOMETRIE_FORBIDDEN)
     }

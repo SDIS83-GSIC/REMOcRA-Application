@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
 
@@ -30,8 +31,8 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             .fetchInto()
     }
 
-    fun checkByOrganismeId(geometry: Field<Geometry?>, organismeId: UUID): Boolean? =
-        dsl.select(ST_Within(geometry, ZONE_INTEGRATION.GEOMETRIE))
+    fun checkByOrganismeId(geometry: Field<Geometry?>, organismeId: UUID, srid: Int): Boolean? =
+        dsl.select(ST_Within(ST_Transform(geometry, srid), ZONE_INTEGRATION.GEOMETRIE))
             .from(ZONE_INTEGRATION)
             .join(ORGANISME).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .where(ORGANISME.ID.eq(organismeId))

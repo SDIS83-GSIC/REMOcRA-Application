@@ -4,13 +4,13 @@ import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY } from "ol/coordinate";
-import { getWidth } from "ol/extent";
+import { getCenter, getTopLeft, getWidth } from "ol/extent";
 import { GeoJSON } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import "ol/ol.css";
-import { fromLonLat, get as getProjection } from "ol/proj";
+import { get as getProjection, transformExtent } from "ol/proj";
 import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
@@ -28,13 +28,14 @@ import MapToolbar from "./MapToolbar.tsx";
 import { createPointLayer } from "./MapUtils.tsx";
 import "./map.css";
 
-const EPSG_3857 = "EPSG:3857"; // Web Mercator par défaut
+const EPSG_4326 = "EPSG:4326"; // WGS84 utilisé par l'étendue fournie par le serveur
+const EPSG_3857 = "EPSG:3857"; // Web Mercator pour l'affichage
 const resolutions = [];
 const matrixIds = [];
 const proj3857 = getProjection(EPSG_3857)!;
 const maxResolution = getWidth(proj3857.getExtent()) / 256;
 
-// Matrices / résolutions
+// Matrices TileGrid 0..19 pour afficher les tuiles suivant le zoom, les services (IGN, etc.) ne vont pas au-delà de 20 niveaux
 for (let i = 0; i < 20; i++) {
   matrixIds[i] = i.toString();
   resolutions[i] = maxResolution / Math.pow(2, i);
@@ -52,7 +53,7 @@ const scaleControl = new ScaleLine({
 
 // Grille de tuiles
 const tileGrid = new WMTSTileGrid({
-  origin: [-20037508, 20037508],
+  origin: getTopLeft(proj3857.getExtent()), // [-20037508, 20037508]
   resolutions: resolutions,
   matrixIds: matrixIds,
 });
@@ -167,7 +168,7 @@ export const useMapComponent = ({
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
 }) => {
-  const { epsg: projection } = useAppContext();
+  const { epsg: projection, extent } = useAppContext();
   const layersState = useGet(url`/api/layers/${typeModule}`, {});
   const layerListRef = useRef<MapLegend>();
   const mapToolbarRef = useRef<MapToolbar>();
@@ -186,14 +187,14 @@ export const useMapComponent = ({
         scaleControl,
       ]),
       interactions: [
-        new MouseWheelZoom({ useAnchor: false, constrainResolution: true }),
+        new MouseWheelZoom({ useAnchor: true, constrainResolution: true }),
       ],
       target: mapElement.current,
       layers: [],
       view: new View({
         zoom: 6,
-        projection: projection.name,
-        center: fromLonLat([6, 52]), // Environ le centre de la France
+        projection: EPSG_3857,
+        center: getCenter(transformExtent(extent, EPSG_4326, EPSG_3857)), // Centre depuis l'étendue fournie par le serveur
       }),
     });
     return initialMap;

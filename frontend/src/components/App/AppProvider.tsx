@@ -8,23 +8,32 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
 
+type AppContextProps = {
+  user: any;
+  epsg: { name: string; projection: string };
+  srid: number;
+  extent: number[];
+};
+
 const AppContext = createContext({});
 
-export const useAppContext = () => {
-  return useContext(AppContext);
+export const useAppContext = (): AppContextProps => {
+  return useContext(AppContext) as AppContextProps;
 };
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const {
     isLoading,
-    data: epsg,
-  }: { isLoading: boolean; data: { name: string; projection: string } } =
-    useGet(url`/api/app-settings/epsg`);
-  if (isLoading && !epsg) {
+    data: projectionProps,
+  }: {
+    isLoading: boolean;
+    data: { name: string; projection: string; extent: number[] };
+  } = useGet(url`/api/app-settings/epsg`);
+  if (isLoading && !projectionProps) {
     return <Loading />;
   }
-  if (!getProjection(epsg.name)) {
-    proj4.defs(epsg.name, epsg.projection);
+  if (!getProjection(projectionProps.name)) {
+    proj4.defs(projectionProps.name, projectionProps.projection);
     register(proj4);
   }
 
@@ -32,8 +41,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     <AppContext.Provider
       value={{
         user: userInfo,
-        epsg: epsg,
-        srid: epsg.name.split(":").pop(),
+        epsg: {
+          name: projectionProps.name,
+          projection: projectionProps.projection,
+        },
+        srid: projectionProps.name.split(":").pop(),
+        extent: projectionProps.extent,
       }}
     >
       {children}

@@ -99,7 +99,7 @@ function toggleDeplacerPoint(
 export function createPointLayer(
   map: Map,
   urlApi: (extent, projection) => string,
-  style: StyleLike,
+  style?: StyleLike,
   projection: { name: string },
 ) {
   const vectorSource = toOpenLayer({
@@ -140,6 +140,7 @@ export function createPointLayer(
     extent: map.getView().calculateExtent(),
     opacity: 1,
     visible: true,
+    minZoom: 12,
     minResolution: 0,
     maxResolution: 99999,
     zIndex: 9999,
