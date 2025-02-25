@@ -7,6 +7,7 @@ import { forwardRef, MutableRefObject, useMemo, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import ToolbarButton from "../ToolbarButton.tsx";
 import {
+  IconCreate,
   IconDelete,
   IconEdit,
   IconHide,
@@ -347,7 +348,7 @@ const MapToolbarRcci = forwardRef(
           <ButtonGroup>
             <ToolbarButton
               toolName={"create-rcci"}
-              toolIcon={<IconEdit />}
+              toolIcon={<IconCreate />}
               toolLabelTooltip={"Créer une RCCI"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
@@ -362,9 +363,9 @@ const MapToolbarRcci = forwardRef(
                 id={"create-rcci-xy"}
                 value={"create-rcci-xy"}
                 variant={"outline-primary"}
-                className="m-2"
+                className="m-1"
               >
-                {<IconEdit />}
+                {<IconCreate />}
               </Button>
             </TooltipCustom>
             <ToolbarButton
@@ -404,7 +405,7 @@ const MapToolbarRcci = forwardRef(
               toolName={"edit-rcci"}
               value={"hide-rcci"}
               variant={"outline-primary"}
-              className="m-2"
+              className="m-1"
               active={anneeCivileRef.anneeCivileRef.current}
             >
               {<IconHide />}

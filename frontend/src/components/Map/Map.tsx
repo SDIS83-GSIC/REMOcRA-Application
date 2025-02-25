@@ -18,6 +18,7 @@ import { Circle, Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
+import { Col, Row } from "react-bootstrap";
 import url from "../../module/fetch.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
@@ -131,17 +132,19 @@ const MapComponent = ({
   return (
     <div className={"map-wrapper"}>
       {map && mapElement && (
-        <div className={"map-toolbar noprint"}>
-          {/* Commun à toutes les cartes */}
-          <MapToolbar
-            ref={mapToolbarRef}
-            map={map}
-            workingLayer={workingLayer}
-            toggleTool={toggleTool}
-            activeTool={activeTool}
-          />
-          {toolbarElement && toolbarElement}
-        </div>
+        <Row className={"map-toolbar noprint "}>
+          <Col xs={"auto"}>
+            {/* Commun à toutes les cartes */}
+            <MapToolbar
+              ref={mapToolbarRef}
+              map={map}
+              workingLayer={workingLayer}
+              toggleTool={toggleTool}
+              activeTool={activeTool}
+            />
+          </Col>
+          <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
+        </Row>
       )}
       <div ref={mapElement} className={"map-map border border-primary"} />
       <div className={"map-layers noprint"}>
