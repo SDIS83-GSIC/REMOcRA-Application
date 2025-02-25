@@ -273,7 +273,7 @@ const MapToolbarCrise = forwardRef(
           show={showListEvent}
           className="w-auto"
         >
-          <CreateListEvenement criseIdentifiant={criseId} />
+          <CreateListEvenement criseIdentifiant={criseId} mapType={map} />
         </Volet>
 
         <Volet

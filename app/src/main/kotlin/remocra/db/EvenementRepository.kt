@@ -5,6 +5,7 @@ import org.jooq.DSLContext
 import org.jooq.Table
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Geometry
 import remocra.data.EvenementData
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.TypeGeometry
@@ -60,6 +61,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeCriseId"),
             EVENEMENT.DATE_CONSTAT.`as`("evenementDateDebut"),
             EVENEMENT.STATUT,
+            EVENEMENT.GEOMETRIE,
             multiset(
                 selectDistinct(
                     L_EVENEMENT_DOCUMENT.DOCUMENT_ID,
@@ -164,6 +166,7 @@ class EvenementRepository @Inject constructor(
         val evenementDateDebut: LocalDate?,
         val documents: Collection<DocumentEvenementData>?,
         val evenementStatut: EvenementStatut,
+        val evenementGeometrie: Geometry?,
     )
 
     data class DocumentEvenementData(
@@ -185,6 +188,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeCriseId"),
             EVENEMENT.DATE_CONSTAT.`as`("evenementDateDebut"),
             EVENEMENT.STATUT,
+            EVENEMENT.GEOMETRIE,
             multiset(
                 selectDistinct(
                     L_EVENEMENT_DOCUMENT.DOCUMENT_ID,

@@ -3,7 +3,10 @@ import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
 import ListEvenement from "./ListEvenement.tsx";
 
-const CreateListEvenement = ({ criseIdentifiant }: CreateListEvenementType) => {
+const CreateListEvenement = ({
+  criseIdentifiant,
+  mapType,
+}: CreateListEvenementType) => {
   return (
     <Container>
       <PageTitle
@@ -11,13 +14,14 @@ const CreateListEvenement = ({ criseIdentifiant }: CreateListEvenementType) => {
         title="Liste des événements"
         displayReturnButton={false}
       />
-      <ListEvenement criseId={criseIdentifiant} />
+      <ListEvenement criseId={criseIdentifiant} map={mapType} />
     </Container>
   );
 };
 
 type CreateListEvenementType = {
   criseIdentifiant: string;
+  mapType: Map | undefined;
 };
 
 export default CreateListEvenement;
