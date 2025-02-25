@@ -97,15 +97,6 @@ class CriseEndpoint : AbstractEndpoint() {
         val messageTags: String? = null,
         val messageUtilisateurId: UUID? = null,
     )
-    data class EvenementInput(
-        val evenementType: UUID? = null,
-        val evenementLibelle: String? = null,
-        val evenementDescription: String? = null,
-        val evenementOrigine: String? = null,
-        val evenementDateDebut: ZonedDateTime? = null,
-        val evenementImportance: Int? = null,
-        val evenementActif: Boolean? = null,
-    )
 
     @POST
     @Path("/")
@@ -126,6 +117,18 @@ class CriseEndpoint : AbstractEndpoint() {
     fun getTypeCriseForSelect(): Response {
         return Response.ok(
             criseUseCase.getTypeCriseForSelect(),
+        ).build()
+    }
+
+    @GET
+    @Path("/{criseId}/getCommuneGeometrie")
+    @Public("Les types de crises ne sont pas liées à un droit.")
+    fun getCommuneGeometrieByCrise(
+        @PathParam("criseId")
+        criseId: UUID,
+    ): Response {
+        return Response.ok(
+            criseUseCase.getCommuneGeometriesByCrise(criseId),
         ).build()
     }
 
