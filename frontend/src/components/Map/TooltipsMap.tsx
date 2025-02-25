@@ -84,7 +84,11 @@ const TooltipMapPei = ({
             dataPeiLayer.getSource().refresh();
             overlay?.setPosition(undefined);
           }}
-          labelDelete={"Supprimer le PEI"}
+          labelDelete={
+            featureSelect?.getProperties().hasTournee
+              ? "Impossible de supprimer un PEI affecté à une tournée"
+              : "Supprimer le PEI"
+          }
           displayButtonSee={true}
           onClickSee={() => setShowFichePei(true)}
           labelSee={"Voir la fiche de résumé du PEI"}
@@ -361,7 +365,10 @@ const Tooltip = ({
                       >
                         <DeleteButtonWithModal
                           path={deletePath}
-                          disabled={!displayButtonDelete}
+                          disabled={
+                            !displayButtonDelete ||
+                            featureSelect?.getProperties().hasTournee
+                          }
                           title={false}
                           reload={onClickDelete}
                         />
