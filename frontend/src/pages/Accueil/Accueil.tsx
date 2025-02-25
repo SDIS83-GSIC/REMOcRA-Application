@@ -197,11 +197,6 @@ function getLinks(
           label: "Liste des documents habilitables",
           link: URLS.LIST_DOCUMENT_HABILITABLE,
         },
-        {
-          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
-          label: "Gestion des couches",
-          link: URLS.COUCHES_LIST,
-        },
       ];
     case TypeModuleRemocra.COURRIER:
       return;

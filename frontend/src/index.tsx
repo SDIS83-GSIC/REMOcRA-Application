@@ -5,6 +5,4 @@ import "./style.scss";
 // FIXME: remettre en place <StrictMode> quand on n'utilisera plus react-async
 // cf. src/components/Fetch/useFetch.tsx
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <App />,
-);
+root.render(<App />);
