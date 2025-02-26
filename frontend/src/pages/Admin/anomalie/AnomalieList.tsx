@@ -15,6 +15,7 @@ import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import DeleteModal from "../../../components/Modal/DeleteModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 
 const AnomalieList = () => {
   const anomalieListState = useGet(url`/api/anomalie/list`);
@@ -83,12 +84,11 @@ const AnomalieList = () => {
                 <tr key={idxA}>
                   <th>
                     {anomalie.anomalieLibelle}&nbsp;
-                    <Button
-                      variant="link"
-                      href={URLS.ANOMALIE_UPDATE(anomalie.anomalieId)}
+                    <CustomLinkButton
+                      pathname={URLS.ANOMALIE_UPDATE(anomalie.anomalieId)}
                     >
                       <IconEdit />
-                    </Button>
+                    </CustomLinkButton>
                     {!anomalie.anomalieProtected && (
                       <Button
                         variant={"link"}

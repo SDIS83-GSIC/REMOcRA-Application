@@ -23,7 +23,7 @@ import url from "../../../module/fetch.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import TypeVisiteEnum from "../../../enums/TypeVisiteEnum.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { IconDelete } from "../../../components/Icon/Icon.tsx";
+import { IconCreate, IconDelete } from "../../../components/Icon/Icon.tsx";
 import {
   requiredBoolean,
   requiredString,
@@ -156,7 +156,7 @@ const AnomalieForm = ({ returnLink }: { returnLink: string }) => {
                 <Col xs={"auto"} className={"d-flex"}>
                   <Dropdown className={"align-self-center"}>
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                      Ajouter une nature
+                      <IconCreate /> Ajouter une nature
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                       {natureList
