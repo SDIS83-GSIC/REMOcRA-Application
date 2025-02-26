@@ -753,8 +753,8 @@ const FormLocalisationPei = ({
 
   return (
     <>
-      <h2>Coordonnées géographiques</h2>
-      <Row className="mt-3">
+      <Row>
+        <TitreSousSection>Coordonnées géographiques</TitreSousSection>
         <Col>
           <Form.Select
             name="typeSystemeSrid"
@@ -784,6 +784,7 @@ const FormLocalisationPei = ({
               setFieldValue("coordonneeY", coordonneesToSave?.coordonneeY);
             }}
             disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
+            className={"mt-3"}
           >
             {TypeSystemeSrid.map((e) => {
               if (e.actif || e.srid === srid) {
@@ -816,8 +817,8 @@ const FormLocalisationPei = ({
           />
         </Col>
       </Row>
-      <h2>Adresse</h2>
       <Row className="mt-3">
+        <TitreSousSection>Adresse</TitreSousSection>
         <Col>
           <SelectForm
             name={"peiCommuneId"}
@@ -992,8 +993,8 @@ const FormPibi = ({
 
   return (
     <>
-      <h2>Informations PEI</h2>
-      <Row className="mt-3">
+      <Row>
+        <TitreSousSection>Informations PEI</TitreSousSection>
         <Col>
           <SelectForm
             name={"pibiDiametreId"}
@@ -1088,8 +1089,8 @@ const FormPibi = ({
           />
         </Col>
       </Row>
-      <h2>Réseau</h2>
       <Row className="mt-3">
+        <TitreSousSection>Réseau</TitreSousSection>
         <Col>
           <SelectForm
             name={"pibiServiceEauId"}
@@ -1181,8 +1182,8 @@ const FormPena = ({
 }) => {
   return (
     <>
-      <h2>Ressource</h2>
-      <Row className="mt-3">
+      <Row>
+        <TitreSousSection>Ressource</TitreSousSection>
         <Col>
           <CheckBoxInput
             name="penaCapaciteIllimitee"
@@ -1236,4 +1237,8 @@ const FormPena = ({
       </Row>
     </>
   );
+};
+
+const TitreSousSection = ({ children }: { children: ReactNode }) => {
+  return <p className={"h5 mt-3"}>{children}</p>;
 };
