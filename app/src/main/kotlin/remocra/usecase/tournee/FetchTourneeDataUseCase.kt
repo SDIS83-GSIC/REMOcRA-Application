@@ -18,7 +18,7 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
         params: Params<Filter, Sort>,
         userInfo: UserInfo,
     ): DataTableau<TourneeRepository.TourneeComplete>? {
-        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
+        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds)
 
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete

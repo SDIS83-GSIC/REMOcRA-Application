@@ -47,7 +47,7 @@ class TourneeRepository
 @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
-    fun getAllTourneeComplete(filter: Filter?, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): List<TourneeComplete> {
+    fun getAllTourneeComplete(filter: Filter?, isSuperAdmin: Boolean, affiliatedOrganismeIds: Set<UUID>): List<TourneeComplete> {
         val peiCounterCteName = name("PEI_COUNTER_CTE")
         val peiCounterCte = peiCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_PEI").`as`(
             select(
@@ -57,9 +57,6 @@ class TourneeRepository
                 .from(L_TOURNEE_PEI)
                 .join(PEI)
                 .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
-                .leftJoin(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-                .where(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 
@@ -104,7 +101,8 @@ class TourneeRepository
             .on(TOURNEE.ID.eq(field(name("NEXT_RECOP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-            .where(filter?.toCondition() ?: DSL.noCondition())
+            .where(ORGANISME.ID.`in`(affiliatedOrganismeIds))
+            .and(filter?.toCondition() ?: DSL.noCondition())
             .fetchInto()
     }
 
