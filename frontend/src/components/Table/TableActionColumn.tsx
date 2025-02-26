@@ -28,7 +28,7 @@ const TableActionColumn = ({
   onClick,
 }: TableActionButtonType) => {
   return (
-    <Col className={"m-0 p-0"}>
+    <Col className={"m-0 p-0"} xs={12} md={6} xxl={3}>
       {!hide ||
         (!hide(row.original) && (
           <>
