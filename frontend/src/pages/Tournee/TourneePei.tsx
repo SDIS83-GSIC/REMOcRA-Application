@@ -5,11 +5,13 @@ import ReactSelect from "react-select";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
-import { IconTournee } from "../../components/Icon/Icon.tsx";
+import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import CreateButton from "../../components/Button/CreateButton.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 
 const TourneePei = ({
   tourneeMapId,
@@ -140,19 +142,23 @@ const TourneePei = ({
           displayReturnButton={tourneeMapId != null}
           icon={<IconTournee />}
           title={`Gestion des PEI de la tournée ${tourneePeiInfo.data.tourneeLibelle}`}
+          right={
+            <CreateButton
+              title={"Ajouter un PEI"}
+              onClick={showAddPeiSection}
+            />
+          }
         />
         <Row className="my-3 mx-2">
           <Col>
-            <div>Libellé tournée : {tourneePeiInfo.data.tourneeLibelle}</div>
-            <div>Organisme : {tourneePeiInfo.data.organismeLibelle}</div>
-          </Col>
-          <Col sm={"auto"}>
-            <Button onClick={submitList}>Enregistrer la liste</Button>
+            <h3 className={"fw-bold"}>
+              Libellé tournée : {tourneePeiInfo.data.tourneeLibelle}
+            </h3>
+            <h3 className={"fw-bold"}>
+              Organisme : {tourneePeiInfo.data.organismeLibelle}
+            </h3>
           </Col>
         </Row>
-        <Button onClick={showAddPeiSection} className="my-3 mx-2">
-          Ajouter un PEI
-        </Button>
         {displaySection && allPeiInfoSource && (
           <Row className="m-2 p-1 bg-light border border-1 border-secondary">
             <Col>
@@ -173,7 +179,7 @@ const TourneePei = ({
                 className="my-3 mx-2"
                 disabled={selectedPei === null}
               >
-                Ajouter un PEI
+                <IconCreate /> Ajouter le PEI
               </Button>
             </Col>
           </Row>
@@ -181,6 +187,9 @@ const TourneePei = ({
         {/* Tableau triable */}
         {errorMessage !== null && <div>{errorMessage}</div>}
         <SortableTableTourneePei data={data} setData={setData} />
+        <SubmitFormButtons onClick={submitList}>
+          Enregistrer la liste
+        </SubmitFormButtons>
       </Container>
     )
   );

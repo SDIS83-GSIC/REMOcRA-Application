@@ -40,6 +40,8 @@ const SortableRowTourneePei: FC<SortableTourneePeiType> = ({
       <td>{item.communeLibelle}</td>
       <td>
         <Button
+          variant={"link"}
+          className={"text-danger text-decoration-none"}
           onClick={() => {
             onRemove(id);
           }}
