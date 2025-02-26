@@ -7,7 +7,7 @@ import Header from "../../components/Header/Header.tsx";
 import ModuleRemocra, {
   TypeModuleRemocra,
 } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
-import { hasDroit } from "../../droits.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
@@ -201,7 +201,24 @@ function getLinks(
     case TypeModuleRemocra.ADMIN:
       return [
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.ADMIN_DROITS),
+          aLeDroit: isAuthorized(user, [
+            TYPE_DROIT.ADMIN_ANOMALIES,
+            TYPE_DROIT.ADMIN_API,
+            TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE,
+            TYPE_DROIT.DASHBOARD_A,
+            TYPE_DROIT.ADMIN_DROITS,
+            TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
+            TYPE_DROIT.ADMIN_NOMENCLATURE,
+            TYPE_DROIT.ADMIN_PARAM_APPLI,
+            TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
+            TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
+            TYPE_DROIT.ADMIN_ROLE_CONTACT,
+            TYPE_DROIT.ADMIN_TYPE_ETUDE,
+            TYPE_DROIT.ADMIN_UTILISATEURS_A,
+            TYPE_DROIT.ADMIN_ZONE_COMPETENCE,
+            TYPE_DROIT.GEST_SITE_A,
+            TYPE_DROIT.GEST_SITE_R,
+          ]),
           label: "Administrer l'application",
           link: URLS.MODULE_ADMIN,
         },

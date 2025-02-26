@@ -926,7 +926,25 @@ export default [
         element: (
           <Authorization
             Component={MenuAdmin}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[
+              TYPE_DROIT.ADMIN_ANOMALIES,
+              TYPE_DROIT.ADMIN_API,
+              TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE,
+              TYPE_DROIT.ADMIN_COURRIER,
+              TYPE_DROIT.DASHBOARD_A,
+              TYPE_DROIT.ADMIN_DROITS,
+              TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
+              TYPE_DROIT.ADMIN_NOMENCLATURE,
+              TYPE_DROIT.ADMIN_PARAM_APPLI,
+              TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
+              TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
+              TYPE_DROIT.ADMIN_ROLE_CONTACT,
+              TYPE_DROIT.ADMIN_TYPE_ETUDE,
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_ZONE_COMPETENCE,
+              TYPE_DROIT.GEST_SITE_A,
+              TYPE_DROIT.GEST_SITE_R,
+            ]}
           />
         ),
       },
@@ -935,7 +953,7 @@ export default [
         element: (
           <Authorization
             Component={AdminParametres}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -953,7 +971,7 @@ export default [
         element: (
           <Authorization
             Component={ListDiametre}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -962,7 +980,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateDiametre}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -971,7 +989,7 @@ export default [
         element: (
           <Authorization
             Component={CreateDiametre}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -980,7 +998,7 @@ export default [
         element: (
           <Authorization
             Component={ListNature}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -989,7 +1007,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateNature}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -998,7 +1016,7 @@ export default [
         element: (
           <Authorization
             Component={CreateNature}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1007,7 +1025,7 @@ export default [
         element: (
           <Authorization
             Component={ListNatureDeci}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1016,7 +1034,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateNatureDeci}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1025,7 +1043,7 @@ export default [
         element: (
           <Authorization
             Component={CreateNatureDeci}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1034,7 +1052,7 @@ export default [
         element: (
           <Authorization
             Component={ListDomaine}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1043,7 +1061,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateDomaine}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1052,7 +1070,7 @@ export default [
         element: (
           <Authorization
             Component={CreateDomaine}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1061,7 +1079,7 @@ export default [
         element: (
           <Authorization
             Component={ListMarquePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1070,7 +1088,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateMarquePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1079,7 +1097,7 @@ export default [
         element: (
           <Authorization
             Component={CreateMarquePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1088,7 +1106,7 @@ export default [
         element: (
           <Authorization
             Component={ListMateriau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1097,7 +1115,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateMateriau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1106,7 +1124,7 @@ export default [
         element: (
           <Authorization
             Component={CreateMateriau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1115,7 +1133,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeCanalisation}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1124,7 +1142,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeCanalisation}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1133,7 +1151,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCanalisation}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1142,7 +1160,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeReseau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1151,7 +1169,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeReseau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1160,7 +1178,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeReseau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1170,7 +1188,7 @@ export default [
         element: (
           <Authorization
             Component={ListNiveau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1179,7 +1197,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateNiveau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1188,7 +1206,7 @@ export default [
         element: (
           <Authorization
             Component={CreateNiveau}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1197,7 +1215,7 @@ export default [
         element: (
           <Authorization
             Component={ListModelePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1206,7 +1224,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateModelePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1215,7 +1233,7 @@ export default [
         element: (
           <Authorization
             Component={CreateModelePibi}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1224,7 +1242,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeEtude}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_TYPE_ETUDE]}
           />
         ),
       },
@@ -1233,7 +1251,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeEtude}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_TYPE_ETUDE]}
           />
         ),
       },
@@ -1242,7 +1260,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeEtude}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_TYPE_ETUDE]}
           />
         ),
       },
@@ -1251,7 +1269,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypePenaAspiration}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1260,7 +1278,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypePenaAspiration}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1269,7 +1287,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypePenaAspiration}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1278,7 +1296,7 @@ export default [
         element: (
           <Authorization
             Component={ProfilDroitList}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1287,7 +1305,7 @@ export default [
         element: (
           <Authorization
             Component={ProfilDroitCreate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1296,7 +1314,7 @@ export default [
         element: (
           <Authorization
             Component={ProfilDroitUpdate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1314,7 +1332,7 @@ export default [
         element: (
           <Authorization
             Component={LienProfilFonctionnaliteList}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1323,7 +1341,7 @@ export default [
         element: (
           <Authorization
             Component={LienProfilFonctionnaliteCreate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1332,7 +1350,7 @@ export default [
         element: (
           <Authorization
             Component={LienProfilFonctionnaliteUpdate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1341,7 +1359,7 @@ export default [
         element: (
           <Authorization
             Component={ListThematique}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -1350,7 +1368,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateThematique}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -1359,7 +1377,7 @@ export default [
         element: (
           <Authorization
             Component={CreateThematique}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -1368,7 +1386,7 @@ export default [
         element: (
           <Authorization
             Component={CoucheList}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
           />
         ),
       },
@@ -1377,7 +1395,7 @@ export default [
         element: (
           <Authorization
             Component={ListOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
           />
         ),
       },
@@ -1386,7 +1404,7 @@ export default [
         element: (
           <Authorization
             Component={CreateOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
           />
         ),
       },
@@ -1395,7 +1413,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
           />
         ),
       },
@@ -1404,7 +1422,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1413,7 +1431,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1422,7 +1440,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1431,7 +1449,7 @@ export default [
         element: (
           <Authorization
             Component={ListProfilOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1440,7 +1458,7 @@ export default [
         element: (
           <Authorization
             Component={CreateProfilOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1449,7 +1467,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateProfilOrganisme}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1458,7 +1476,7 @@ export default [
         element: (
           <Authorization
             Component={ListProfilUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1467,7 +1485,7 @@ export default [
         element: (
           <Authorization
             Component={CreateProfilUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
@@ -1476,7 +1494,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateRoleContact}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ROLE_CONTACT]}
           />
         ),
       },
@@ -1485,7 +1503,7 @@ export default [
         element: (
           <Authorization
             Component={ListRoleContact}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ROLE_CONTACT]}
           />
         ),
       },
@@ -1494,7 +1512,7 @@ export default [
         element: (
           <Authorization
             Component={CreateRoleContact}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ROLE_CONTACT]}
           />
         ),
       },
@@ -1512,7 +1530,7 @@ export default [
         element: (
           <Authorization
             Component={ListSite}
-            droits={[TYPE_DROIT.GEST_SITE_R]}
+            droits={[TYPE_DROIT.GEST_SITE_R, TYPE_DROIT.GEST_SITE_A]}
           />
         ),
       },
@@ -1530,7 +1548,7 @@ export default [
         element: (
           <Authorization
             Component={ListGestionnaire}
-            droits={[TYPE_DROIT.GEST_SITE_R]}
+            droits={[TYPE_DROIT.GEST_SITE_R, TYPE_DROIT.GEST_SITE_A]}
           />
         ),
       },
@@ -1611,7 +1629,7 @@ export default [
         element: (
           <Authorization
             Component={AnomalieList}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ANOMALIES]}
           />
         ),
       },
@@ -1620,7 +1638,7 @@ export default [
         element: (
           <Authorization
             Component={AnomalieCreate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ANOMALIES]}
           />
         ),
       },
@@ -1629,7 +1647,7 @@ export default [
         element: (
           <Authorization
             Component={AnomalieUpdate}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_ANOMALIES]}
           />
         ),
       },
@@ -1638,7 +1656,7 @@ export default [
         element: (
           <Authorization
             Component={ListUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_R]}
+            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
           />
         ),
       },
@@ -1665,7 +1683,7 @@ export default [
         element: (
           <Authorization
             Component={AdminFicheResume}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -1674,7 +1692,7 @@ export default [
         element: (
           <Authorization
             Component={AdminAccueil}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
@@ -1683,8 +1701,7 @@ export default [
         element: (
           <Authorization
             Component={ListZoneIntegration}
-            // TODO
-            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+            droits={[TYPE_DROIT.ADMIN_ZONE_COMPETENCE]}
           />
         ),
       },
@@ -1694,7 +1711,7 @@ export default [
           <Authorization
             Component={UpdateZoneIntegration}
             // TODO
-            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+            droits={[TYPE_DROIT.ADMIN_ZONE_COMPETENCE]}
           />
         ),
       },
@@ -1748,7 +1765,7 @@ export default [
         element: (
           <Authorization
             Component={ListModeleCourrier}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_COURRIER]}
           />
         ),
       },
@@ -1757,7 +1774,7 @@ export default [
         element: (
           <Authorization
             Component={CreateModeleCourrier}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_COURRIER]}
           />
         ),
       },
@@ -1766,7 +1783,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateModeleCourrier}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_COURRIER]}
           />
         ),
       },
