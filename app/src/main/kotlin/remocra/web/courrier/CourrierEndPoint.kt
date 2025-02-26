@@ -19,6 +19,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
 import org.slf4j.LoggerFactory
+import remocra.GlobalConstants
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
@@ -32,7 +33,7 @@ import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.BuildFormCourrierUseCase
-import remocra.usecase.courrier.CourrierGenerator
+import remocra.usecase.courrier.CourrierGeneratorUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
 import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
@@ -50,7 +51,7 @@ import kotlin.reflect.jvm.javaMethod
 class CourrierEndPoint : AbstractEndpoint() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @Inject lateinit var courrierGenerator: CourrierGenerator
+    @Inject lateinit var courrierGeneratorUseCase: CourrierGeneratorUseCase
 
     @Inject lateinit var buildFormCourrierUseCase: BuildFormCourrierUseCase
 
@@ -82,7 +83,7 @@ class CourrierEndPoint : AbstractEndpoint() {
     ): Response {
         return Response.ok()
             .entity(
-                courrierGenerator.execute(
+                courrierGeneratorUseCase.execute(
                     parametreCourrierInput,
                     securityContext.userInfo,
                     uriInfo.baseUriBuilder
@@ -186,10 +187,11 @@ class CourrierEndPoint : AbstractEndpoint() {
     @GET
     @Path("/get-courrier")
     @RequireDroits([Droit.COURRIER_C])
+    @NoCsrf("Téléchargement d'un fichier")
     @Produces(MediaType.MEDIA_TYPE_WILDCARD)
-    fun getUriCourrier(@QueryParam("courrierPath") courrierPath: String?): Response {
+    fun getUriCourrier(@QueryParam("courrierName") courrierName: String?): Response {
         return Response.ok(
-            courrierPath?.let { File(it) },
+            courrierName?.let { File(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE + it) },
         )
             .build()
     }

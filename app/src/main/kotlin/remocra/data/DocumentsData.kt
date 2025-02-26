@@ -57,6 +57,7 @@ class DocumentsData {
         override val documentId: UUID?,
         override val documentNomFichier: String,
         val isMainReport: Boolean,
+        val documentRepertoire: String?,
     ) : AbstractDocumentData()
 }
 

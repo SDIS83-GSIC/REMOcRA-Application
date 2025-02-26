@@ -234,7 +234,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                 }
             }.`as`("listeProfilDroitId"),
             multiset(
-                selectDistinct(DOCUMENT.ID, DOCUMENT.NOM_FICHIER, L_MODELE_COURRIER_DOCUMENT.IS_MAIN_REPORT)
+                selectDistinct(DOCUMENT.ID, DOCUMENT.NOM_FICHIER, L_MODELE_COURRIER_DOCUMENT.IS_MAIN_REPORT, DOCUMENT.REPERTOIRE)
                     .from(L_MODELE_COURRIER_DOCUMENT)
                     .join(DOCUMENT)
                     .on(DOCUMENT.ID.eq(L_MODELE_COURRIER_DOCUMENT.DOCUMENT_ID))
@@ -245,6 +245,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                         documentId = r.value1(),
                         documentNomFichier = r.value2().toString(),
                         isMainReport = r.value3() as Boolean,
+                        documentRepertoire = r.value4(),
                     )
                 }
             }.`as`("listeDocuments"),
@@ -284,6 +285,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             },
         )
             .from(MODELE_COURRIER)
+            .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .fetchSingleInto()
 
     fun deleteLProfilDroit(modeleCourrierId: UUID) =
@@ -371,4 +373,21 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         val modeleCourrierDescription: String?,
         val listeModeleCourrierParametre: Collection<ModeleCourrierParametreData>,
     )
+
+    fun executeRequeteSql(requete: String): MutableMap<String, Any?>? =
+        dsl.fetchOne(requete)?.intoMap()
+
+    fun checkProfilDroit(modeleCourrierId: UUID, utilisateurId: UUID) =
+        dsl.fetchExists(
+            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID)
+                .from(L_MODELE_COURRIER_PROFIL_DROIT)
+                .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+                .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID))
+                .join(ORGANISME)
+                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                .join(UTILISATEUR)
+                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                .where(UTILISATEUR.ID.eq(utilisateurId))
+                .and(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(modeleCourrierId)),
+        )
 }
