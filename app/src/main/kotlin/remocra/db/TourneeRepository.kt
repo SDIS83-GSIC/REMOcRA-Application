@@ -324,7 +324,7 @@ class TourneeRepository
                 }
 
                 else -> {
-                    list
+                    list.sortedBy { it.tourneeLibelle }
                 }
             }
         }
