@@ -56,8 +56,7 @@ const TourneePei = ({
           peiNumeroComplet: e.peiNumeroComplet,
           natureDeciCode: e.natureDeciCode,
           natureLibelle: e.natureLibelle,
-          peiNumeroVoie: e.peiNumeroVoie,
-          voieLibelle: e.voieLibelle,
+          adresse: e.adresse,
           communeLibelle: e.communeLibelle,
           tourneeId: tourneeIdToUse,
         };
@@ -118,8 +117,7 @@ const TourneePei = ({
         peiNumeroComplet: e.peiNumeroComplet,
         natureDeciCode: e.natureDeciCode,
         natureLibelle: e.natureLibelle,
-        peiNumeroVoie: e.peiNumeroVoie,
-        voieLibelle: e.voieLibelle,
+        adresse: e.adresse,
         communeLibelle: e.communeLibelle,
         tourneeId: tourneeIdToUse,
       };

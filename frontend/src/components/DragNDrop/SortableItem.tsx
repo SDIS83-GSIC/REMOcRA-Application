@@ -34,9 +34,7 @@ const SortableRowTourneePei: FC<SortableTourneePeiType> = ({
         {item.peiNumeroComplet}
       </td>
       <td>{item.natureLibelle}</td>
-      <td>
-        {item.peiNumeroVoie} {item.voieLibelle}
-      </td>
+      <td>{item.adresse}</td>
       <td>{item.communeLibelle}</td>
       <td>
         <Button

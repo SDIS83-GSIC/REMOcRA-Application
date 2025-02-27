@@ -38,6 +38,8 @@ import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.AdresseDecorator
+import remocra.utils.AdresseForDecorator
 import remocra.utils.ST_Within
 import java.math.BigDecimal
 import java.time.ZonedDateTime
@@ -369,8 +371,8 @@ class TourneeRepository
             PEI.NUMERO_COMPLET,
             NATURE_DECI.CODE,
             NATURE.LIBELLE,
-            PEI.NUMERO_VOIE,
-            VOIE.LIBELLE,
+            // On projette tous les champs composant l'adresse
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
             COMMUNE.LIBELLE,
             L_TOURNEE_PEI.ORDRE,
         ).distinctOn(PEI.ID)
@@ -388,15 +390,34 @@ class TourneeRepository
                     it
                 }
             }
-            .fetchInto()
+            .fetch().map { record ->
+                PeiTourneeForDnD(
+                    peiId = record.component1()!!,
+                    peiNumeroComplet = record.component2()!!,
+                    natureDeciCode = record.component3()!!,
+                    natureLibelle = record.component4()!!,
+                    adresse = AdresseDecorator().decorateAdresse(
+                        AdresseForDecorator(
+                            enFace = record.component5(),
+                            numeroVoie = record.component6(),
+                            suffixeVoie = record.component7(),
+                            voie = null,
+                            //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
+                            voieTexte = if (record.component8() != null) record.component8() else record.component9(),
+                            complementAdresse = record.component10(),
+                        ),
+                    ),
+                    communeLibelle = record.component11()!!,
+                    lTourneePeiOrdre = record.component12(),
+                )
+            }
 
     data class PeiTourneeForDnD(
         val peiId: UUID,
         val peiNumeroComplet: String,
         val natureDeciCode: String,
         val natureLibelle: String,
-        val peiNumeroVoie: Int?,
-        val voieLibelle: String?,
+        val adresse: String?,
         val communeLibelle: String,
         val lTourneePeiOrdre: Int?,
     )
@@ -469,9 +490,6 @@ class TourneeRepository
                 DOMAINE.LIBELLE,
                 NATURE.LIBELLE,
                 PEI.TYPE_PEI,
-                PEI.NUMERO_VOIE,
-                PEI.SUFFIXE_VOIE,
-                VOIE.LIBELLE,
                 COMMUNE.LIBELLE,
                 COMMUNE.CODE_INSEE,
                 COMMUNE.CODE_POSTAL,
@@ -480,6 +498,8 @@ class TourneeRepository
                 concatAnomaliesCte.field("LISTE_ANOMALIES"),
                 nextVisiteCte.field("PEI_NEXT_RECOP"),
                 nextVisiteCte.field("PEI_NEXT_CTP"),
+                // On projette tous les champs composant l'adresse
+                PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
             )
             .from(PEI)
             .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
@@ -494,7 +514,23 @@ class TourneeRepository
             .join(table(nextVisiteCteName))
             .on(PEI.ID.eq(field(name("NEXT_VISITE_CTE", "PEI_ID"), SQLDataType.UUID)))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
-            .fetchInto()
+            .fetch().map { record ->
+                PeiVisiteTourneeInformation(
+                    peiId = record.component1()!!, peiNumeroComplet = record.component2()!!, natureDeciCode = record.component3()!!, natureDeciLibelle = record.component4()!!, domaineLibelle = record.component5()!!, natureLibelle = record.component6()!!, peiTypePei = record.component7()!!, communeLibelle = record.component8()!!, communeCodeInsee = record.component9()!!, communeCodePostal = record.component10()!!, peiDisponibiliteTerrestre = record.component11()!!, gestionnaireLibelle = record.component12(), listeAnomalies = record.component13() as String?, peiNextRecop = record.component14() as ZonedDateTime?, peiNextCtp = record.component15() as ZonedDateTime?,
+                    adresse = AdresseDecorator().decorateAdresse(
+                        AdresseForDecorator(
+                            enFace = record.component16(),
+                            numeroVoie = record.component17(),
+                            suffixeVoie = record.component18(),
+                            voie = null,
+                            //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
+                            voieTexte = if (record.component19() != null) record.component19() else record.component20(),
+                            complementAdresse = record.component21(),
+                        ),
+                    ),
+
+                )
+            }
     }
 
     data class PeiVisiteTourneeInformation(
@@ -505,9 +541,6 @@ class TourneeRepository
         val domaineLibelle: String,
         val natureLibelle: String,
         val peiTypePei: TypePei,
-        val peiNumeroVoie: Int?,
-        val peiSuffixeVoie: String?,
-        val voieLibelle: String?,
         val communeLibelle: String,
         val communeCodeInsee: String,
         val communeCodePostal: String,
@@ -516,6 +549,7 @@ class TourneeRepository
         val listeAnomalies: String?,
         val peiNextRecop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
+        val adresse: String?,
     )
 
     fun getListLastPeiCDPByTournee(tourneeId: UUID): List<CDPByPeiId> {

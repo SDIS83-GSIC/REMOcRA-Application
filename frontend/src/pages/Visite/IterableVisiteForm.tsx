@@ -60,9 +60,7 @@ const IterableVisiteForm = ({
                         {currentInformation.peiTypePei})
                       </Row>
                       <Row>
-                        Adresse : {currentInformation.peiNumeroVoie}{" "}
-                        {currentInformation.peiSuffixeVoie}{" "}
-                        {currentInformation.voieLibelle}
+                        Adresse : {currentInformation.adresse}
                         {currentInformation.communeCodePostal}{" "}
                         {currentInformation.communeLibelle} (
                         {currentInformation.communeCodeInsee})
