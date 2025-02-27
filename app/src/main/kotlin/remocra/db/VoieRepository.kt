@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -9,7 +9,10 @@ import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
-import remocra.utils.ST_DistanceInferieurStrict
+import remocra.utils.ST_DWithin
+import remocra.utils.ST_MakePoint
+import remocra.utils.ST_SetSrid
+import remocra.utils.ST_Transform
 import java.util.UUID
 
 class VoieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -38,7 +41,8 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
     fun getVoies(
         coordonneeX: String,
         coordonneeY: String,
-        srid: Int,
+        sridCoords: Int,
+        sridSdis: Int,
         toleranceVoiesMetres: Int,
         listeIdCommune: List<UUID>,
     ): List<VoieWithCommune> =
@@ -50,7 +54,13 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         )
             .from(VOIE)
             .where(VOIE.COMMUNE_ID.`in`(listeIdCommune))
-            .ST_DistanceInferieurStrict(VOIE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceVoiesMetres)
+            .and(
+                ST_DWithin(
+                    VOIE.GEOMETRIE,
+                    ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    toleranceVoiesMetres.toDouble(),
+                ),
+            )
             .orderBy(VOIE.LIBELLE)
             .fetchInto()
 

@@ -266,6 +266,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     url`/api/pei/referentiel-for-upsert-pei?${{
       coordonneeX: values.coordonneeX,
       coordonneeY: values.coordonneeY,
+      srid: values.srid,
       peiId: values.peiId,
     }}`,
   );

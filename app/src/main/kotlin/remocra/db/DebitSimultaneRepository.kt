@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
@@ -21,7 +21,10 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
-import remocra.utils.ST_Distance
+import remocra.utils.ST_DWithin
+import remocra.utils.ST_MakePoint
+import remocra.utils.ST_SetSrid
+import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -198,12 +201,11 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .where(PIBI.TYPE_RESEAU_ID.eq(typeReseauId))
             .and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE))
             .and(
-                ST_Distance(
-                    geometrieField = PEI.GEOMETRIE,
-                    srid = coordonneesXYSrid.srid,
-                    coordonneeX = coordonneesXYSrid.coordonneeX,
-                    coordonneeY = coordonneesXYSrid.coordonneeY,
-                ).lt(DISTANCE_PEI_DEBIT_SIMULTANE.toDouble()),
+                ST_DWithin(
+                    ST_Transform(PEI.GEOMETRIE, coordonneesXYSrid.srid),
+                    ST_SetSrid(ST_MakePoint(coordonneesXYSrid.coordonneeX.toFloat(), coordonneesXYSrid.coordonneeY.toFloat()), coordonneesXYSrid.srid),
+                    DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
+                ),
             )
             .fetchInto()
 
@@ -215,11 +217,14 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .from(DOCUMENT)
             .join(DEBIT_SIMULTANE_MESURE)
             .on(DEBIT_SIMULTANE_MESURE.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .where(DEBIT_SIMULTANE_MESURE.DEBIT_SIMULTANE_ID.eq(debitSimultaneId))
             .fetchMap(DEBIT_SIMULTANE_MESURE.ID, Document::class.java)
 
     fun getDistance(listePibiId: Set<UUID>, coordonneesXYSrid: CoordonneesXYSrid): Collection<Boolean> =
         dsl.select(
-            ST_Distance(PEI.GEOMETRIE, coordonneesXYSrid.srid, coordonneesXYSrid.coordonneeX, coordonneesXYSrid.coordonneeY).lt(
+            ST_DWithin(
+                ST_Transform(PEI.GEOMETRIE, coordonneesXYSrid.srid),
+                ST_SetSrid(ST_MakePoint(coordonneesXYSrid.coordonneeX.toFloat(), coordonneesXYSrid.coordonneeY.toFloat()), coordonneesXYSrid.srid),
                 DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
             ),
         )

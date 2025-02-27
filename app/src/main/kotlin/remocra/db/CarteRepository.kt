@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
@@ -118,7 +118,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
             ).and(
-                ST_Within(PEI_PROJET.GEOMETRIE, bbox),
+                ST_Within(ST_Transform(PEI_PROJET.GEOMETRIE, srid), bbox),
             )
             .fetchInto()
     }
@@ -186,7 +186,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         )
             .from(ADRESSE)
             .where(
-                ST_Within(ADRESSE.GEOMETRIE, bbox),
+                ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox),
             )
             .fetchInto()
     }

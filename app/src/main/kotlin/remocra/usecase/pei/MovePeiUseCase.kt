@@ -1,6 +1,6 @@
 package remocra.usecase.pei
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Coordinate
@@ -52,13 +52,12 @@ class MovePeiUseCase : AbstractUseCase() {
         val geometryProjectionTo = JTS.transform(point, transform)
             ?: throw IllegalArgumentException("Impossible de convertir la géometrie $point en ${appSettings.srid}")
 
-        geometryProjectionTo.coordinate.x.toString()
-
         // On récupère la commune correspondante
         val communeId = communeRepository.getCommunePei(
             coordonneeX = geometryProjectionTo.coordinate.x.toString(),
             coordonneeY = geometryProjectionTo.coordinate.y.toString(),
-            srid = appSettings.srid,
+            sridCoords = geometryProjectionTo.srid,
+            sridSdis = appSettings.srid,
         ) ?: throw IllegalArgumentException("Aucune commune n'a été trouvée")
 
         return when (type) {

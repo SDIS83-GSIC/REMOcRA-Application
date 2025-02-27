@@ -169,9 +169,10 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getReferentielUpdateOrCreatePei(
         @QueryParam("coordonneeX") coordonneeX: String?,
         @QueryParam("coordonneeY") coordonneeY: String?,
+        @QueryParam("srid") srid: Int?,
         @QueryParam("peiId") peiId: UUID?,
     ) =
-        Response.ok(peiUseCase.getInfoForUpdateOrCreate(coordonneeX, coordonneeY, peiId)).build()
+        Response.ok(peiUseCase.getInfoForUpdateOrCreate(coordonneeX, coordonneeY, srid, peiId)).build()
 
     @PUT
     @Path("/update")

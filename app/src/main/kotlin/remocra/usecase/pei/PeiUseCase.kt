@@ -129,9 +129,7 @@ class PeiUseCase : AbstractUseCase() {
      * Retourne les informations nécessaires pour les valeurs qui peuvent être modifié
      * dans le formaulaire d'update d'un PEI
      */
-    fun getInfoForUpdateOrCreate(coordonneeX: String?, coordonneeY: String?, peiId: UUID?): FichePeiListSelect {
-        val srid = appSettings.srid
-
+    fun getInfoForUpdateOrCreate(coordonneeX: String?, coordonneeY: String?, srid: Int?, peiId: UUID?): FichePeiListSelect {
         val toleranceCommune = parametresProvider.getParametreInt(GlobalConstants.PEI_TOLERANCE_COMMUNE_METRES)
             ?: throw IllegalArgumentException("Le paramètre PEI_TOLERANCE_COMMUNE_METRES est nul, veuillez renseigner une valeur")
         val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
@@ -146,12 +144,12 @@ class PeiUseCase : AbstractUseCase() {
         var listLieuDit: Collection<LieuDitRepository.LieuDitWithCommune> = listOf()
         var listPeiJumelage: Collection<IdCodeLibelleData> = listOf()
 
-        if (!coordonneeX.isNullOrEmpty() && !coordonneeY.isNullOrEmpty()) {
-            listCommune = communeRepository.getCommunesPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+        if (!coordonneeX.isNullOrEmpty() && !coordonneeY.isNullOrEmpty() && srid != null) {
+            listCommune = communeRepository.getCommunesPei(coordonneeX, coordonneeY, sridCoords = srid, sridSdis = appSettings.srid, toleranceCommune)
             val listIdCommune = listCommune.map { it.id }
-            listVoiePei = voieRepository.getVoies(coordonneeX, coordonneeY, srid, toleranceVoie, listIdCommune)
+            listVoiePei = voieRepository.getVoies(coordonneeX, coordonneeY, srid, appSettings.srid, toleranceVoie, listIdCommune)
             listAutoriteDeci = organismeRepository
-                .getAutoriteDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune).onEach {
+                .getAutoriteDeciPei(coordonneeX, coordonneeY, srid, appSettings.srid, toleranceCommune).onEach {
                     when (it.codeTypeOrganisme.uppercase()) {
                         TypeAutoriteDeci.COMMUNE.name.uppercase() -> it.libelle = "Maire (${it.libelle})"
                         TypeAutoriteDeci.PREFECTURE.name.uppercase() -> it.libelle = "Préfet (${it.libelle})"
@@ -162,11 +160,11 @@ class PeiUseCase : AbstractUseCase() {
             listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listIdCommune)
             listPeiJumelage = pibiRepository.getBiCanJumele(coordonneeX, coordonneeY, peiId, srid)
             listMaintenanceDeci =
-                organismeRepository.getMaintenanceDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                organismeRepository.getMaintenanceDeciPei(coordonneeX, coordonneeY, srid, appSettings.srid, toleranceCommune)
                     .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
 
             listServicePublicDeci =
-                organismeRepository.getServicePublicDeciPei(coordonneeX, coordonneeY, srid, toleranceCommune)
+                organismeRepository.getServicePublicDeciPei(coordonneeX, coordonneeY, srid, appSettings.srid, toleranceCommune)
                     .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
         }
 

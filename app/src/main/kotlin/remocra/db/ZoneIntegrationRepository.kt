@@ -140,8 +140,8 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
     fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>, srid: Int): Boolean {
         return dsl.select(
             ST_Within(
-                geometrieField = ST_Transform(geometry, srid),
-                geometrieField2 = ZONE_INTEGRATION.GEOMETRIE,
+                ST_Transform(geometry, srid),
+                ZONE_INTEGRATION.GEOMETRIE,
             ),
         )
             .from(ZONE_INTEGRATION)

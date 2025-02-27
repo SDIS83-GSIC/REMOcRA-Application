@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.Record
@@ -18,6 +18,10 @@ import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.VISITE
 import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
+import remocra.utils.ST_DWithin
+import remocra.utils.ST_MakePoint
+import remocra.utils.ST_SetSrid
+import remocra.utils.ST_Transform
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -98,7 +102,7 @@ class PibiRepository @Inject constructor(
      * @param geometrie : géométrie de PEI en train d'être modifié
      * @param srid : srid de la géométrie => doit correspondre au paramètre dans la base de données
      */
-    fun getBiCanJumele(coordoneeX: String, coordoneeY: String, peiId: UUID?, srid: Int): Collection<GlobalData.IdCodeLibelleData> =
+    fun getBiCanJumele(coordonneeX: String, coordonneeY: String, peiId: UUID?, srid: Int): Collection<GlobalData.IdCodeLibelleData> =
         dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("code"), PEI.NUMERO_COMPLET.`as`("libelle"))
             .from(PEI)
             .join(NATURE)
@@ -107,8 +111,11 @@ class PibiRepository @Inject constructor(
             .on(PIBI.ID.eq(PEI.ID))
             .where(NATURE.CODE.eq(GlobalConstants.NATURE_BI))
             .and(
-                "ST_DISTANCE(${PEI.GEOMETRIE}, 'SRID=$srid;POINT($coordoneeX $coordoneeY)')" +
-                    " < ${GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE}",
+                ST_DWithin(
+                    ST_Transform(PEI.GEOMETRIE, srid),
+                    ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), srid),
+                    GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE.toDouble(),
+                ),
             )
             .and(DSL.and(PIBI.JUMELE_ID.isNull).or(PIBI.JUMELE_ID.eq(peiId)))
             .and(if (peiId != null) PIBI.ID.notEqual(peiId) else DSL.trueCondition())

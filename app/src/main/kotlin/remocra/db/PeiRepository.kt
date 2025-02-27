@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
@@ -44,7 +44,9 @@ import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
-import remocra.utils.ST_DWithin
+import remocra.utils.ST_MakePoint
+import remocra.utils.ST_SetSrid
+import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -211,7 +213,8 @@ class PeiRepository
             .count()
 
     fun isInZoneCompetence(
-        srid: Int,
+        sridCoords: Int,
+        sridSdis: Int,
         coordonneeX: Double,
         coordonneeY: Double,
         idOrganisme: UUID,
@@ -222,33 +225,11 @@ class PeiRepository
                 .on(ORGANISME.ID.eq(idOrganisme))
                 .join(ZONE_INTEGRATION)
                 .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
-                .ST_DWithin(
-                    srid = srid,
-                    distance = 0,
-                    geometrieField = ZONE_INTEGRATION.GEOMETRIE,
-                    coordonneeX = coordonneeX,
-                    coordonneeY = coordonneeY,
-                ),
-        )
-
-    fun isPeiInZoneCompetence(
-        srid: Int,
-        coordonneeX: Double,
-        coordonneeY: Double,
-        idPEI: UUID,
-        idZoneCompetence: UUID,
-    ): Boolean =
-        dsl.fetchExists(
-            dsl.select(PEI.ID)
-                .from(PEI)
-                .join(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
-                .ST_DWithin(
-                    srid = srid,
-                    distance = 0,
-                    geometrieField = ZONE_INTEGRATION.GEOMETRIE,
-                    coordonneeX = coordonneeX,
-                    coordonneeY = coordonneeY,
+                .where(
+                    ST_Within(
+                        ZONE_INTEGRATION.GEOMETRIE,
+                        ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    ),
                 ),
         )
 

@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -9,6 +9,10 @@ import remocra.db.jooq.entrepotsig.tables.references.V_COMMUNE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.utils.ST_DWithin
+import remocra.utils.ST_MakePoint
+import remocra.utils.ST_SetSrid
+import remocra.utils.ST_Transform
+import remocra.utils.ST_Within
 import java.util.UUID
 
 class CommuneRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -42,25 +46,41 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     /**
      * Retourne les communes qui sont à moins de PEI_TOLERANCE_COMMUNE_METRES mètres de la géométrie passée en paramètre
      */
-    fun getCommunesPei(coordonneeX: String, coordonneeY: String, srid: Int, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
+    fun getCommunesPei(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
-            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), toleranceCommuneMetres)
+            .where(
+                ST_DWithin(
+                    ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    COMMUNE.GEOMETRIE,
+                    toleranceCommuneMetres.toDouble(),
+                ),
+            )
             .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
 
-    fun getCommunePei(coordonneeX: String, coordonneeY: String, srid: Int): UUID? =
+    fun getCommunePei(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int): UUID? =
         dsl.select(COMMUNE.ID)
             .from(COMMUNE)
-            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), 0)
+            .where(
+                ST_Within(
+                    ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    COMMUNE.GEOMETRIE,
+                ),
+            )
             .orderBy(COMMUNE.LIBELLE)
             .limit(1)
             .fetchOneInto()
 
-    fun getCommuneByCoords(coordonneeX: String, coordonneeY: String, srid: Int): GlobalData.IdCodeLibellePprifData? =
+    fun getCommuneByCoords(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int): GlobalData.IdCodeLibellePprifData? =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"), COMMUNE.PPRIF.`as`("pprif"))
             .from(COMMUNE)
-            .ST_DWithin(COMMUNE.GEOMETRIE, srid, coordonneeX.toDouble(), coordonneeY.toDouble(), 0)
+            .where(
+                ST_Within(
+                    ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    COMMUNE.GEOMETRIE,
+                ),
+            )
             .orderBy(COMMUNE.LIBELLE)
             .limit(1)
             .fetchOneInto()
