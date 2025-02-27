@@ -146,7 +146,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         return row;
       },
       route: (idTournee) => URLS.TOURNEE_PEI(idTournee),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconSortList />,
       textEnable: "Gérer les PEI et leur ordre dans une tournée",
       textDisable: textDisable,
@@ -179,7 +179,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         return row;
       },
       route: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconTournee />,
       textEnable: "Saisir toutes les visites de la tournée",
       textDisable: textDisable,

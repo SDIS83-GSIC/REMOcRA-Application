@@ -184,7 +184,7 @@ const ListRapportPersonnalise = () => {
                   },
                   route: (rapportPersonnaliseId) =>
                     URLS.DUPLICATE_RAPPORT_PERSONNALISE(rapportPersonnaliseId),
-                  type: TYPE_BUTTON.CUSTOM,
+                  type: TYPE_BUTTON.LINK,
                   textEnable: "Dupliquer le rapport",
                   icon: <IconDuplicate />,
                   classEnable: "warning",
@@ -196,7 +196,7 @@ const ListRapportPersonnalise = () => {
                   route: (rapportPersonnaliseId) =>
                     url`/api/rapport-personnalise/export/` +
                     rapportPersonnaliseId,
-                  type: TYPE_BUTTON.CUSTOM,
+                  type: TYPE_BUTTON.BUTTON,
                   textEnable: "Exporter le rapport",
                   icon: <IconExport />,
                   disable: (row) => row.original.rapportPersonnaliseProtected,

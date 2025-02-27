@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import { Button, Row, Col } from "react-bootstrap";
 import classNames from "classnames";
-import { Button } from "react-bootstrap";
 import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
 import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
@@ -10,6 +8,7 @@ import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
 
 const TableActionColumn = ({
   row,
@@ -26,6 +25,7 @@ const TableActionColumn = ({
   pathname,
   hide = () => false,
   onClick,
+  isLink = true,
 }: TableActionButtonType) => {
   return (
     <Col className={"m-0 p-0"} xs={12} md={6} xxl={3}>
@@ -79,26 +79,39 @@ const TableActionColumn = ({
                 header={simpleModal.header}
                 content={simpleModal.content}
               />
-            ) : (
+            ) : isLink ? (
               <TooltipCustom
                 tooltipText={disabled ? textDisable : textEnable}
                 tooltipId={row.value}
               >
                 <Col>
-                  <Button
+                  <CustomLinkButton
                     variant={"link"}
                     className={classNames(
                       "text-decoration-none",
                       disabled ? "text-muted" : "text-" + classEnable,
                     )}
                     disabled={disabled}
-                    href={pathname}
+                    pathname={pathname}
                     onClick={onClick}
                   >
                     {icon}
-                  </Button>
+                  </CustomLinkButton>
                 </Col>
               </TooltipCustom>
+            ) : (
+              <Button
+                variant={"link"}
+                className={classNames(
+                  "text-decoration-none",
+                  disabled ? "text-muted" : "text-" + classEnable,
+                )}
+                disabled={disabled}
+                href={pathname}
+                onClick={onClick}
+              >
+                {icon}
+              </Button>
             )}
           </>
         ))}
@@ -124,6 +137,7 @@ type TableActionButtonType = {
   onClick?: (param?: any) => any;
   isPost?: boolean;
   pathname?: string;
+  isLink?: boolean;
 };
 
 type SimpleModalType = {
@@ -169,7 +183,7 @@ export const ActionButton = ({
                 pathname={_button.route?.(row.value)}
               />
             );
-          case TYPE_BUTTON.CUSTOM:
+          case TYPE_BUTTON.LINK:
             return (
               <TableActionColumn
                 row={row}
@@ -183,6 +197,23 @@ export const ActionButton = ({
                 confirmModal={_button.confirmModal}
                 reload={_button.reload}
                 textDisable={_button.textDisable}
+              />
+            );
+          case TYPE_BUTTON.BUTTON:
+            return (
+              <TableActionColumn
+                row={row}
+                textEnable={_button.textEnable}
+                icon={_button.icon}
+                pathname={_button.route?.(row.value)}
+                onClick={() => _button.onClick?.(row.value)}
+                hide={_button.hide}
+                disabled={_button.disable ? _button.disable(row) : false}
+                classEnable={_button.classEnable}
+                confirmModal={_button.confirmModal}
+                reload={_button.reload}
+                textDisable={_button.textDisable}
+                isLink={false}
               />
             );
         }
@@ -202,7 +233,8 @@ export enum TYPE_BUTTON {
   SIMPLE_MODAL,
   UPDATE,
   SEE,
-  CUSTOM,
+  LINK,
+  BUTTON,
 }
 
 type DeleteButtonType = { row: any; _button: ButtonType };

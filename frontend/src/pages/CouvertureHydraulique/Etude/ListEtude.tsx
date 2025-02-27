@@ -39,7 +39,7 @@ const ListEtude = () => {
       row: (row) => {
         return row;
       },
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconSee />,
       textEnable: "Ouvrir l'étude",
       route: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
@@ -77,7 +77,7 @@ const ListEtude = () => {
         return row;
       },
       route: (etudeId) => URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(etudeId),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconImport />,
       textEnable: "Importer des fichiers shapes pour l'étude",
       classEnable: "warning",

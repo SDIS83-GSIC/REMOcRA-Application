@@ -46,7 +46,7 @@ const ListOrganisme = () => {
         return row;
       },
       route: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconAddContact />,
       textEnable: "Ajouter un contact",
       classEnable: "warning",
@@ -57,7 +57,7 @@ const ListOrganisme = () => {
         return row;
       },
       route: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconGererContact />,
       textEnable: "Afficher les contacts",
       textDisable: "Aucun contact pour cet organisme",

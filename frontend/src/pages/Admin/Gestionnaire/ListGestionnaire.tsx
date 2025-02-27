@@ -57,7 +57,7 @@ const ListGestionnaire = () => {
       },
       route: (gestionnaireId) =>
         URLS.ADD_CONTACT(gestionnaireId, "gestionnaire"),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconAddContact />,
       textEnable: "Ajouter un contact",
       classEnable: "warning",
@@ -69,7 +69,7 @@ const ListGestionnaire = () => {
       },
       route: (gestionnaireId) =>
         URLS.LIST_CONTACT(gestionnaireId, "gestionnaire"),
-      type: TYPE_BUTTON.CUSTOM,
+      type: TYPE_BUTTON.LINK,
       icon: <IconGererContact />,
       textEnable: "Afficher les contacts",
       textDisable: "Aucun contact pour ce gestionnaire",

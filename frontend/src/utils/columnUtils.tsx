@@ -293,7 +293,7 @@ function getColumnPeiByStringArray(
           return row;
         },
         route: (idPei) => URLS.VISITE(idPei),
-        type: TYPE_BUTTON.CUSTOM,
+        type: TYPE_BUTTON.LINK,
         icon: <IconVisite />,
         textEnable: "Gérer les visites",
         classEnable: "warning",
@@ -305,7 +305,7 @@ function getColumnPeiByStringArray(
           return row;
         },
         route: (idPei) => URLS.UPDATE_PENA_ASPIRATION(idPei),
-        type: TYPE_BUTTON.CUSTOM,
+        type: TYPE_BUTTON.LINK,
         icon: <IconAireAspiration />,
         textEnable: "Gérer les aires d'aspirations",
         classEnable: "warning",
