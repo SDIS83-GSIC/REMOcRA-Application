@@ -62,7 +62,7 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             .offset(params.offset)
             .fetchInto()
 
-    fun countAllForAdmin(filterBy: ZoneIntegrationRepository.Filter?) =
+    fun countAllForAdmin(filterBy: Filter?) =
         dsl.select(ZONE_INTEGRATION.ID)
             .from(ZONE_INTEGRATION)
             .where(filterBy?.toCondition() ?: DSL.noCondition())
@@ -136,4 +136,16 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         .from(ZONE_INTEGRATION)
         .where(ZONE_INTEGRATION.ACTIF.isTrue)
         .fetchInto()
+
+    fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>, srid: Int): Boolean {
+        return dsl.select(
+            ST_Within(
+                geometrieField = ST_Transform(geometry, srid),
+                geometrieField2 = ZONE_INTEGRATION.GEOMETRIE,
+            ),
+        )
+            .from(ZONE_INTEGRATION)
+            .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
+            .fetchSingleInto()
+    }
 }

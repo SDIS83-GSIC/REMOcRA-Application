@@ -1,12 +1,15 @@
 package remocra.usecase
 
+import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
-import remocra.utils.checkZoneCompetence
+import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
 
 abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: TypeOperation) : AbstractCUDUseCase<T>(typeOperation) {
+
+    @Inject private lateinit var checkZoneCompetenceContainsUseCase: CheckZoneCompetenceContainsUseCase
 
     /**
      * Récupère les géométries
@@ -14,7 +17,7 @@ abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: 
     protected abstract fun getListGeometrie(element: T): Collection<Geometry>
 
     override fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager?): Result {
-        checkZoneCompetence(userInfo, getListGeometrie(element))
+        checkZoneCompetenceContainsUseCase.checkContains(userInfo, getListGeometrie(element))
         return super.execute(userInfo, element, mainTransactionManager)
     }
 }

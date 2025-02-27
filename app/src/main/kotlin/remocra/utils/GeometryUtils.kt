@@ -1,6 +1,5 @@
 package remocra.utils
 
-import jakarta.ws.rs.ForbiddenException
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
@@ -10,10 +9,6 @@ import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKTReader
 import org.locationtech.jts.io.WKTWriter
 import remocra.CoordonneesXYSrid
-import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.enums.ErrorType
-import remocra.exception.RemocraResponseException
 
 fun org.jooq.Geometry.toGeomFromText(srid: String): Field<Geometry?> = DSL.field("ST_GeomFromText('${this.data()}', '${sridFromEpsgCode(srid)}')", Geometry::class.java)
 
@@ -57,37 +52,6 @@ fun formatPoint(coordonneesXYSrid: CoordonneesXYSrid): Geometry {
 
     geometry.srid = coordonneesXYSrid.srid
     return geometry
-}
-
-/**
- * Vérifie si la zone de compétence de l'objet est dans la zone de compétence de l'utilisateur connecté
- */
-fun checkZoneCompetence(userInfo: UserInfo?, geometries: Collection<Geometry>) {
-    // TODO à retirer quand le userinfo ne sera plus potentiellement nul
-    if (userInfo == null) {
-        throw ForbiddenException()
-    }
-
-    // Si c'est un super admin, on ne prend pas en compte la zone de compétence
-    if (userInfo.isSuperAdmin) {
-        return
-    }
-
-    if (userInfo.utilisateur.utilisateurUsername != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
-        if (userInfo.zoneCompetence == null) {
-            throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
-        }
-
-        // On récupère la zone de compétence de l'utilisateur connecté
-        val zoneCompetenceGeometrie: Geometry = userInfo.zoneCompetence!!.zoneIntegrationGeometrie
-
-        // On regarde si chacunes des géométries sont comprises dans la zone de l'utilisateur
-        geometries.forEach {
-            if (!zoneCompetenceGeometrie.contains(it)) {
-                throw RemocraResponseException(ErrorType.FORBIDDEN_ZONE_COMPETENCE)
-            }
-        }
-    }
 }
 
 /**

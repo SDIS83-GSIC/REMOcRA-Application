@@ -41,7 +41,7 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.pei.MovePeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
 import remocra.usecase.visites.CreateVisiteUseCase
-import remocra.utils.checkZoneCompetence
+import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
 import java.io.InputStream
 import java.time.ZonedDateTime
 import java.util.Locale
@@ -100,6 +100,9 @@ class ImportCtpUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var transactionManager: TransactionManager
+
+    @Inject
+    lateinit var checkZoneCompetenceContainsUseCase: CheckZoneCompetenceContainsUseCase
 
     /**
      * Crée un noeud d'erreur global
@@ -267,7 +270,7 @@ class ImportCtpUseCase : AbstractUseCase() {
         // On vérifie si le PEI est bien dans la zone de compétence de l'utilisateur
         val pei = peiRepository.getGeometriePei(peiId = peiId)
 
-        checkZoneCompetence(userInfo, listOf(pei))
+        checkZoneCompetenceContainsUseCase.checkContains(userInfo, listOf(pei))
 
         // Si la visite CTP n'est pas renseignée (si tous les champs composant les informations de la
         // visite sont vides)
