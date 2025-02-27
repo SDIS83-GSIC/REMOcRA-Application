@@ -100,18 +100,23 @@ const TableActionColumn = ({
                 </Col>
               </TooltipCustom>
             ) : (
-              <Button
-                variant={"link"}
-                className={classNames(
-                  "text-decoration-none",
-                  disabled ? "text-muted" : "text-" + classEnable,
-                )}
-                disabled={disabled}
-                href={pathname}
-                onClick={onClick}
+              <TooltipCustom
+                tooltipText={disabled ? textDisable : textEnable}
+                tooltipId={row.value}
               >
-                {icon}
-              </Button>
+                <Button
+                  variant={"link"}
+                  className={classNames(
+                    "text-decoration-none",
+                    disabled ? "text-muted" : "text-" + classEnable,
+                  )}
+                  disabled={disabled}
+                  href={pathname}
+                  onClick={onClick}
+                >
+                  {icon}
+                </Button>
+              </TooltipCustom>
             )}
           </>
         ))}
