@@ -152,7 +152,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    libelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCase(it)) },
+                    libelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                 ),
             )
     }

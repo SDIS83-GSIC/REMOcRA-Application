@@ -81,8 +81,8 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    rapportPersonnaliseCode?.let { DSL.and(RAPPORT_PERSONNALISE.CODE.containsIgnoreCase(it)) },
-                    rapportPersonnaliseLibelle?.let { DSL.and(RAPPORT_PERSONNALISE.LIBELLE.containsIgnoreCase(it)) },
+                    rapportPersonnaliseCode?.let { DSL.and(RAPPORT_PERSONNALISE.CODE.containsIgnoreCaseUnaccent(it)) },
+                    rapportPersonnaliseLibelle?.let { DSL.and(RAPPORT_PERSONNALISE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     rapportPersonnaliseActif?.let { DSL.and(RAPPORT_PERSONNALISE.ACTIF.eq(it)) },
                     rapportPersonnaliseProtected?.let { DSL.and(RAPPORT_PERSONNALISE.PROTECTED.eq(it)) },
                     rapportPersonnaliseModule?.let { DSL.and(RAPPORT_PERSONNALISE.MODULE.eq(TypeModule.entries.find { t -> t.name == it.name })) },

@@ -142,13 +142,13 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             return DSL.and(
                 listOfNotNull(
                     organismeActif?.let { DSL.and(ORGANISME.ACTIF.eq(organismeActif)) },
-                    organismeCode?.let { DSL.and(ORGANISME.CODE.contains(organismeCode)) },
-                    organismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.contains(organismeLibelle)) },
-                    organismeEmailContact?.let { DSL.and(ORGANISME.EMAIL_CONTACT.contains(organismeEmailContact)) },
-                    typeOrganismeLibelle?.let { DSL.and(TYPE_ORGANISME.LIBELLE.contains(typeOrganismeLibelle)) },
-                    profilOrganismeLibelle?.let { DSL.and(PROFIL_ORGANISME.LIBELLE.contains(profilOrganismeLibelle)) },
-                    zoneIntegrationLibelle?.let { DSL.and(ZONE_INTEGRATION.LIBELLE.contains(zoneIntegrationLibelle)) },
-                    parentLibelle?.let { DSL.and(parent.LIBELLE.contains(parentLibelle)) },
+                    organismeCode?.let { DSL.and(ORGANISME.CODE.containsIgnoreCaseUnaccent(organismeCode)) },
+                    organismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(organismeLibelle)) },
+                    organismeEmailContact?.let { DSL.and(ORGANISME.EMAIL_CONTACT.containsIgnoreCaseUnaccent(organismeEmailContact)) },
+                    typeOrganismeLibelle?.let { DSL.and(TYPE_ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(typeOrganismeLibelle)) },
+                    profilOrganismeLibelle?.let { DSL.and(PROFIL_ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(profilOrganismeLibelle)) },
+                    zoneIntegrationLibelle?.let { DSL.and(ZONE_INTEGRATION.LIBELLE.containsIgnoreCaseUnaccent(zoneIntegrationLibelle)) },
+                    parentLibelle?.let { DSL.and(parent.LIBELLE.containsIgnoreCaseUnaccent(parentLibelle)) },
                 ),
             )
         }

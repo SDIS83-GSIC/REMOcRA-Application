@@ -42,8 +42,8 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         fun toCondition(): Condition = DSL.and(
             listOfNotNull(
                 natureActif?.let { DSL.and(NATURE.ACTIF.eq(natureActif)) },
-                natureCode?.let { DSL.and(NATURE.CODE.contains(natureCode)) },
-                natureLibelle?.let { DSL.and(NATURE.LIBELLE.contains(natureLibelle)) },
+                natureCode?.let { DSL.and(NATURE.CODE.containsIgnoreCaseUnaccent(natureCode)) },
+                natureLibelle?.let { DSL.and(NATURE.LIBELLE.containsIgnoreCaseUnaccent(natureLibelle)) },
                 natureTypePei?.let { DSL.and(NATURE.TYPE_PEI.eq(natureTypePei)) },
                 natureProtected?.let { DSL.and(NATURE.PROTECTED.eq(natureProtected)) },
             ),

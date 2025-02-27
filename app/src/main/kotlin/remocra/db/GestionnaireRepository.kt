@@ -73,8 +73,8 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    gestionnaireCode?.let { DSL.and(GESTIONNAIRE.CODE.contains(it)) },
-                    gestionnaireLibelle?.let { DSL.and(GESTIONNAIRE.LIBELLE.contains(it)) },
+                    gestionnaireCode?.let { DSL.and(GESTIONNAIRE.CODE.containsUnaccent(it)) },
+                    gestionnaireLibelle?.let { DSL.and(GESTIONNAIRE.LIBELLE.containsUnaccent(it)) },
                     gestionnaireActif?.let { DSL.and(GESTIONNAIRE.ACTIF.eq(it)) },
                 ),
             )

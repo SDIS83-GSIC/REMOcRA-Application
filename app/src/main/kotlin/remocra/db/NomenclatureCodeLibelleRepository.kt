@@ -261,8 +261,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         fun toCondition(): Condition = DSL.and(
             listOfNotNull(
                 actif?.let { DSL.and(getActifField(type!!).eq(actif)) },
-                code?.let { DSL.and(getCodeField(type!!).containsIgnoreCase(code)) },
-                libelle?.let { DSL.and(getLibelleField(type!!).containsIgnoreCase(libelle)) },
+                code?.let { DSL.and(getCodeField(type!!).containsIgnoreCaseUnaccent(code)) },
+                libelle?.let { DSL.and(getLibelleField(type!!).containsIgnoreCaseUnaccent(libelle)) },
                 protected?.let { DSL.and(getProtectedField(type!!)?.eq(protected) ?: DSL.noCondition()) },
                 idFk?.let { DSL.and(getInfosFk(type!!)?.idFk?.eq(idFk) ?: DSL.noCondition()) },
             ),

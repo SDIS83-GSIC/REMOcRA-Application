@@ -247,8 +247,8 @@ class TourneeRepository
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCase(it)) },
-                    tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCase(it)) },
+                    tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
                     tourneeActif?.let { DSL.and(TOURNEE.ACTIF.eq(it)) },

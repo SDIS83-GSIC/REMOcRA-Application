@@ -117,11 +117,11 @@ class PermisRepository @Inject constructor(
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    searchNom?.let { DSL.and(PERMIS.LIBELLE.containsIgnoreCase(it)) },
+                    searchNom?.let { DSL.and(PERMIS.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     searchCommuneId?.let { DSL.and(PERMIS.COMMUNE_ID.eq(it)) },
-                    searchNumero?.let { DSL.and(PERMIS.NUMERO.containsIgnoreCase(it)) },
-                    searchSection?.let { DSL.and(CADASTRE_SECTION.NUMERO.containsIgnoreCase(it)) },
-                    searchParcelle?.let { DSL.and(CADASTRE_PARCELLE.NUMERO.containsIgnoreCase(it)) },
+                    searchNumero?.let { DSL.and(PERMIS.NUMERO.containsIgnoreCaseUnaccent(it)) },
+                    searchSection?.let { DSL.and(CADASTRE_SECTION.NUMERO.containsIgnoreCaseUnaccent(it)) },
+                    searchParcelle?.let { DSL.and(CADASTRE_PARCELLE.NUMERO.containsIgnoreCaseUnaccent(it)) },
                     searchAvisId?.let { DSL.and(PERMIS.TYPE_PERMIS_AVIS_ID.eq(it)) },
                 ),
             )

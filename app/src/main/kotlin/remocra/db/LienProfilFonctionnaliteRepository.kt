@@ -69,16 +69,16 @@ class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DS
 
     data class Filter(
         val organisme: String?,
-        val utilistaeur: String?,
+        val utilisateur: String?,
         val fonctionnalite: String?,
     ) {
 
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    organisme?.let { DSL.and(PROFIL_ORGANISME.LIBELLE.containsIgnoreCase(it)) },
-                    utilistaeur?.let { DSL.and(PROFIL_UTILISATEUR.LIBELLE.containsIgnoreCase(it)) },
-                    fonctionnalite?.let { DSL.and(PROFIL_DROIT.LIBELLE.containsIgnoreCase(it)) },
+                    organisme?.let { DSL.and(PROFIL_ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    utilisateur?.let { DSL.and(PROFIL_UTILISATEUR.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    fonctionnalite?.let { DSL.and(PROFIL_DROIT.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                 ),
             )
     }

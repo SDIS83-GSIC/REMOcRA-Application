@@ -93,8 +93,8 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    profilDroitLibelle?.let { DSL.and(PROFIL_DROIT.LIBELLE.containsIgnoreCase(it)) },
-                    profilDroitCode?.let { DSL.and(PROFIL_DROIT.CODE.containsIgnoreCase(it)) },
+                    profilDroitLibelle?.let { DSL.and(PROFIL_DROIT.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    profilDroitCode?.let { DSL.and(PROFIL_DROIT.CODE.containsIgnoreCaseUnaccent(it)) },
                     profilDroitActif?.let { DSL.and(PROFIL_DROIT.ACTIF.eq(it)) },
                 ),
             )

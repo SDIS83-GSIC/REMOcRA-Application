@@ -315,10 +315,10 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             DSL.and(
                 listOfNotNull(
                     // TODO voir pour les unaccents
-                    indisponibiliteTemporaireMotif?.let { DSL.and(INDISPONIBILITE_TEMPORAIRE.MOTIF.containsIgnoreCase(it)) },
+                    indisponibiliteTemporaireMotif?.let { DSL.and(INDISPONIBILITE_TEMPORAIRE.MOTIF.containsIgnoreCaseUnaccent(it)) },
                     indisponibiliteTemporaireObservation?.let {
                         DSL.and(
-                            INDISPONIBILITE_TEMPORAIRE.OBSERVATION.containsIgnoreCase(it),
+                            INDISPONIBILITE_TEMPORAIRE.OBSERVATION.containsIgnoreCaseUnaccent(it),
                         )
                     },
                     listePeiId?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.`in`(it)) },

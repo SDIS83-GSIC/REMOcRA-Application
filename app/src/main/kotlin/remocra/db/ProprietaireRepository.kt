@@ -63,9 +63,9 @@ class ProprietaireRepository @Inject constructor(private val dsl: DSLContext) : 
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    oldebProprietaireNom?.let { OLDEB_PROPRIETAIRE.NOM.likeIgnoreCase("%$it%") },
-                    oldebProprietairePrenom?.let { OLDEB_PROPRIETAIRE.PRENOM.likeIgnoreCase("%$it%") },
-                    oldebProprietaireVille?.let { OLDEB_PROPRIETAIRE.VILLE.likeIgnoreCase("%$it%") },
+                    oldebProprietaireNom?.let { OLDEB_PROPRIETAIRE.NOM.containsIgnoreCaseUnaccent(it) },
+                    oldebProprietairePrenom?.let { OLDEB_PROPRIETAIRE.PRENOM.containsIgnoreCaseUnaccent(it) },
+                    oldebProprietaireVille?.let { OLDEB_PROPRIETAIRE.VILLE.containsIgnoreCaseUnaccent(it) },
                 ),
             )
     }

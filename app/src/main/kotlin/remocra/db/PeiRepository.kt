@@ -415,7 +415,7 @@ class PeiRepository
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.contains(it)) },
+                    peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(it)) },
                     peiNumeroInterne?.let { DSL.and(PEI.NUMERO_INTERNE.contains(it)) },
                     communeId?.let { DSL.and(PEI.COMMUNE_ID.eq(it)) },
                     typePei?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
@@ -425,7 +425,7 @@ class PeiRepository
                     servicePublicDeci?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
                     peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
-                    listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCase(it)) },
+                    listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     idIndisponibiliteTemporaire?.let {
                         DSL.and(
                             L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(

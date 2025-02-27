@@ -89,7 +89,7 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    documentHabilitableLibelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCase(it)) },
+                    documentHabilitableLibelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     listThematiqueId?.let { DSL.and(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listThematiqueId)) },
                     listProfilDroitId?.let { DSL.and(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.`in`(listProfilDroitId)) },
                 ),

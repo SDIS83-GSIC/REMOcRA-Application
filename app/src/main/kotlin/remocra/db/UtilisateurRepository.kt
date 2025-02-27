@@ -234,11 +234,11 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             DSL.and(
                 listOfNotNull(
                     utilisateurActif?.let { DSL.and(UTILISATEUR.ACTIF.eq(it)) },
-                    utilisateurEmail?.let { DSL.and(UTILISATEUR.EMAIL.containsIgnoreCase(it)) },
-                    utilisateurNom?.let { DSL.and(UTILISATEUR.NOM.containsIgnoreCase(it)) },
-                    utilisateurPrenom?.let { DSL.and(UTILISATEUR.PRENOM.containsIgnoreCase(it)) },
-                    utilisateurUsername?.let { DSL.and(UTILISATEUR.USERNAME.containsIgnoreCase(it)) },
-                    utilisateurTelephone?.let { DSL.and(UTILISATEUR.TELEPHONE.containsIgnoreCase(it)) },
+                    utilisateurEmail?.let { DSL.and(UTILISATEUR.EMAIL.containsIgnoreCaseUnaccent(it)) },
+                    utilisateurNom?.let { DSL.and(UTILISATEUR.NOM.containsIgnoreCaseUnaccent(it)) },
+                    utilisateurPrenom?.let { DSL.and(UTILISATEUR.PRENOM.containsIgnoreCaseUnaccent(it)) },
+                    utilisateurUsername?.let { DSL.and(UTILISATEUR.USERNAME.containsIgnoreCaseUnaccent(it)) },
+                    utilisateurTelephone?.let { DSL.and(UTILISATEUR.TELEPHONE.containsIgnoreCaseUnaccent(it)) },
                     utilisateurCanBeNotified?.let { DSL.and(UTILISATEUR.CAN_BE_NOTIFIED.eq(it)) },
                     utilisateurProfilUtilisateurId?.let { DSL.and(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(it)) },
                     utilisateurOrganismeId?.let { DSL.and(UTILISATEUR.ORGANISME_ID.eq(it)) },

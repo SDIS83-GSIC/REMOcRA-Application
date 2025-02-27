@@ -129,8 +129,8 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             DSL.and(
                 listOfNotNull(
                     oldebCommune?.let { OLDEB.COMMUNE_ID.eq(it) },
-                    oldebSection?.let { CADASTRE_SECTION.NUMERO.likeIgnoreCase("%$it%") },
-                    oldebParcelle?.let { CADASTRE_PARCELLE.NUMERO.likeIgnoreCase("%$it%") },
+                    oldebSection?.let { CADASTRE_SECTION.NUMERO.containsIgnoreCaseUnaccent(it) },
+                    oldebParcelle?.let { CADASTRE_PARCELLE.NUMERO.containsIgnoreCaseUnaccent(it) },
                     oldebTypeZoneUrbanisme?.let { OLDEB.OLDEB_TYPE_ZONE_URBANISME_ID.eq(it) },
                     oldebTypeDebroussaillement?.let { lastOldebVisiteCte.field("OLDEB_TYPE_DEBROUSSAILLEMENT_ID", UUID::class.java)?.eq(it) },
                     oldebTypeAvis?.let { lastOldebVisiteCte.field("OLDEB_TYPE_AVIS_ID", UUID::class.java)?.eq(it) },

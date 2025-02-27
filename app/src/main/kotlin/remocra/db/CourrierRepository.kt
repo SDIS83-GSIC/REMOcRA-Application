@@ -162,9 +162,9 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         fun toCondition(expediteurAlias: Table<*>): Condition =
             DSL.and(
                 listOfNotNull(
-                    courrierObjet?.let { DSL.and(COURRIER.OBJET.containsIgnoreCase(it)) },
-                    courrierReference?.let { DSL.and(COURRIER.REFERENCE.containsIgnoreCase(it)) },
-                    courrierExpediteur?.let { expediteurAlias.field(ORGANISME.LIBELLE)!!.containsIgnoreCase(it) },
+                    courrierObjet?.let { DSL.and(COURRIER.OBJET.containsIgnoreCaseUnaccent(it)) },
+                    courrierReference?.let { DSL.and(COURRIER.REFERENCE.containsIgnoreCaseUnaccent(it)) },
+                    courrierExpediteur?.let { expediteurAlias.field(ORGANISME.LIBELLE)!!.containsIgnoreCaseUnaccent(it) },
                     emailDestinataire?.let { DSL.and(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.`in`(it)) },
                     accuse?.let {
                         if (accuse) {

@@ -109,8 +109,8 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    zoneIntegrationCode?.let { DSL.and(ZONE_INTEGRATION.CODE.containsIgnoreCase(it)) },
-                    zoneIntegrationLibelle?.let { DSL.and(ZONE_INTEGRATION.LIBELLE.containsIgnoreCase(it)) },
+                    zoneIntegrationCode?.let { DSL.and(ZONE_INTEGRATION.CODE.containsIgnoreCaseUnaccent(it)) },
+                    zoneIntegrationLibelle?.let { DSL.and(ZONE_INTEGRATION.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     zoneIntegrationActif?.let { DSL.and(ZONE_INTEGRATION.ACTIF.eq(it)) },
                 ),
             )

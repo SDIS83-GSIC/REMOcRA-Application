@@ -103,9 +103,9 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             DSL.and(
                 listOfNotNull(
                     typeEtudeId?.let { DSL.and(ETUDE.TYPE_ETUDE_ID.eq(it)) },
-                    etudeNumero?.let { DSL.and(ETUDE.NUMERO.contains(it)) },
-                    etudeLibelle?.let { DSL.and(ETUDE.LIBELLE.contains(it)) },
-                    etudeDescription?.let { DSL.and(ETUDE.DESCRIPTION.contains(it)) },
+                    etudeNumero?.let { DSL.and(ETUDE.NUMERO.containsUnaccent(it)) },
+                    etudeLibelle?.let { DSL.and(ETUDE.LIBELLE.containsUnaccent(it)) },
+                    etudeDescription?.let { DSL.and(ETUDE.DESCRIPTION.containsUnaccent(it)) },
                     etudeStatut?.let { DSL.and(ETUDE.STATUT.eq(it)) },
                 ),
             )
