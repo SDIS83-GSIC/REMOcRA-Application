@@ -350,8 +350,8 @@ class TourneeRepository
             PEI.NUMERO_COMPLET,
             NATURE_DECI.CODE,
             NATURE.LIBELLE,
-            PEI.NUMERO_VOIE,
-            VOIE.LIBELLE,
+            // On projette tous les champs composant l'adresse
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
             COMMUNE.LIBELLE,
         )
             .from(TOURNEE)
@@ -363,7 +363,27 @@ class TourneeRepository
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .where(TOURNEE.ID.eq(tourneeId))
-            .fetchInto()
+            .fetch().map { record ->
+                PeiTourneeForDnD(
+                    peiId = record.component1()!!,
+                    peiNumeroComplet = record.component2()!!,
+                    natureDeciCode = record.component3()!!,
+                    natureLibelle = record.component4()!!,
+                    adresse = AdresseDecorator().decorateAdresse(
+                        AdresseForDecorator(
+                            enFace = record.component5(),
+                            numeroVoie = record.component6(),
+                            suffixeVoie = record.component7(),
+                            voie = null,
+                            //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
+                            voieTexte = if (record.component8() != null) record.component8() else record.component9(),
+                            complementAdresse = record.component10(),
+                        ),
+                    ),
+                    communeLibelle = record.component11()!!,
+                    lTourneePeiOrdre = null,
+                )
+            }
 
     fun getAllPeiByTourneeIdForDnD(tourneeId: UUID, listePeiId: Set<UUID>?): List<PeiTourneeForDnD> =
         dsl.select(
