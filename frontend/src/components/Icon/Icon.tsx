@@ -7,6 +7,7 @@ export const IconLocation = () => <i className="fi fi-br-marker" />;
 export const IconError = () => <i className="fi fi-rr-cross" />;
 export const IconLoading = () => <i className="fi fi-br-loading" />;
 export const IconCrise = () => <i className="fi fi-rr-light-emergency-on" />;
+export const IconMerge = () => <i className="fi fi-rr-code-merge" />;
 export const IconSearch = () => <i className="fi fi-br-search" />;
 export const IconWarningCrise = () => (
   <i className="fi fi-rr-triangle-warning" />

@@ -24,9 +24,7 @@ const UpdateEvenement = ({
   geometrieEvenement: string | undefined;
   onSubmit: () => void;
 }) => {
-  const selectDataState = useGet(
-    url`/api/crise/evenement/getEvenement/${evenementId}`,
-  );
+  const selectDataState = useGet(url`/api/crise/evenement/${evenementId}`);
   const { user } = useAppContext();
   const title = readOnly ? "Informations" : "Modifier l'événement";
 

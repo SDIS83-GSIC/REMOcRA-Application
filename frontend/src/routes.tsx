@@ -160,6 +160,7 @@ import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
 import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
 import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
+import MergeCrise from "./pages/ModuleCrise/Crise/MergeCrise.tsx";
 import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.tsx";
 import CreateModeleCourrier from "./pages/Admin/ModeleCourrier/CreateModeleCourrier.tsx";
 import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourrier.tsx";
@@ -220,6 +221,7 @@ export const URLS = {
   CREATE_CRISE: url`/gestion-crise/crise/create`,
   UPDATE_CRISE: (criseId: string) => url`/gestion-crise/crise/` + criseId,
   OUVRIR_CRISE: (criseId: string) => url`/gestion-crise/crise/open/` + criseId,
+  MERGE_CRISE: (criseId: string) => url`/gestion-crise/crise/merge/` + criseId,
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
@@ -756,6 +758,19 @@ export default [
             droits={[
               TYPE_DROIT.CRISE_U,
               TYPE_DROIT.CRISE_R,
+              TYPE_DROIT.CRISE_D,
+              TYPE_DROIT.CRISE_C,
+            ]}
+          />
+        ),
+      },
+      {
+        path: "crise/merge/:criseId",
+        element: (
+          <Authorization
+            Component={MergeCrise}
+            droits={[
+              TYPE_DROIT.CRISE_U,
               TYPE_DROIT.CRISE_D,
               TYPE_DROIT.CRISE_C,
             ]}

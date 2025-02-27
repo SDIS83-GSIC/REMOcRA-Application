@@ -27,18 +27,18 @@ export const getInitialValues = (
   evenementLibelle: data?.evenementLibelle ?? null,
   evenementOrigine: data?.evenementOrigine ?? "",
   evenementDescription: data?.evenementDescription ?? "",
-  evenementDateDebut: data?.evenementDateDebut ?? null,
+  evenementDateConstat: data?.evenementDateConstat ?? null,
   evenementImportance: data?.evenementImportance ?? 1,
-  evenementIsClosed: data?.evenementIsClosed ?? false,
+  evenementEstFerme: data?.evenementEstFerme ?? false,
   documents: data?.documents ?? [],
   evenementTag: data?.evenementTag ?? "",
   geometrieEvenement: geometrie ?? null,
-  evenementTypeId: data?.evenementTypeCriseId ?? typeEvent,
+  evenementTypeId: data?.evenementTypeId ?? typeEvent,
 });
 
 export const validationSchema = object({
   evenementLibelle: requiredString,
-  evenementDateDebut: requiredDate,
+  evenementDateConstat: requiredDate,
 });
 
 export const prepareVariables = (
@@ -54,13 +54,13 @@ export const prepareVariables = (
   formData.append("evenementOrigine", values.evenementOrigine);
   formData.append("evenementDescription", values.evenementDescription);
   formData.append(
-    "evenementDateDebut",
-    new Date(values.evenementDateDebut).toISOString(),
+    "evenementDateConstat",
+    new Date(values.evenementDateConstat).toISOString(),
   );
   formData.append("evenementImportance", values.evenementImportance);
   formData.append(
-    "evenementIsClosed",
-    JSON.stringify(values.evenementIsClosed),
+    "evenementEstFerme",
+    JSON.stringify(values.evenementEstFerme),
   );
   formData.append(
     "evenementGeometrie",
@@ -132,12 +132,12 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
 
       <DateTimeInput
         readOnly={isReadOnly}
-        name="evenementDateDebut"
+        name="evenementDateConstat"
         label="Date et heure d’activation"
         required={true}
         value={
-          values.evenementDateDebut &&
-          formatDateTimeForDateTimeInput(values.evenementDateDebut)
+          values.evenementDateConstat &&
+          formatDateTimeForDateTimeInput(values.evenementDateConstat)
         }
       />
 
@@ -153,7 +153,7 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
 
       <CheckBoxInput
         disabled={isReadOnly}
-        name={"evenementIsClosed"}
+        name={"evenementEstFerme"}
         label={"Clore l'évènement"}
       />
 

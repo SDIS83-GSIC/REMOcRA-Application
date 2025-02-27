@@ -255,6 +255,7 @@ const Tooltip = ({
   overlay,
 
   displayButtonEdit = false,
+  onClickEdit,
   hrefEdit,
   labelEdit = "Modifier l'élément",
 

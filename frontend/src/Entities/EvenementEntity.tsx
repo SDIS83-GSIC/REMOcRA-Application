@@ -6,9 +6,9 @@ export type EvenementType = {
   evenementDescription: string;
   evenementTag: string;
   evenementOrigine: string;
-  evenementDateDebut: Date;
+  evenementDateConstat: Date;
   evenementImportance: string;
-  evenementIsClosed: boolean;
+  evenementEstFerme: boolean;
   documents: Document & {
     evenementDocumentLibelle: string;
   };

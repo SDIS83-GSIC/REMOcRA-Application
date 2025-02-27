@@ -8,6 +8,7 @@ import {
   IconWarningCrise,
   IconClose,
   IconSee,
+  IconMerge,
 } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
@@ -34,6 +35,7 @@ export const prepareValues = (data: any) => ({
 const ListCrise = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
   const listeButton: ButtonType[] = [];
+
   if (hasDroit(user, TYPE_DROIT.CRISE_R)) {
     listeButton.push({
       row: (row) => {
@@ -41,6 +43,12 @@ const ListCrise = () => {
       },
       type: TYPE_BUTTON.BUTTON,
       icon: <IconSee />,
+      disable: (v) =>
+        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
+      textDisable: "Impossible d'ouvrir une crise qui n'est plus en cours",
+      classEnable: "danger",
       textEnable: "Ouvrir la crise",
       route: (criseId) => URLS.OUVRIR_CRISE(criseId),
     });
@@ -52,6 +60,12 @@ const ListCrise = () => {
         return row;
       },
       textEnable: "Modifier",
+      disable: (v) =>
+        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
+      textDisable: "Impossible de modifier une crise qui n'est plus en cours",
+      classEnable: "danger",
       route: (criseId) => URLS.UPDATE_CRISE(criseId),
       type: TYPE_BUTTON.UPDATE,
     });
@@ -60,12 +74,27 @@ const ListCrise = () => {
       row: (row) => {
         return row;
       },
-      type: TYPE_BUTTON.EDIT_MODAL,
-      disable: (v) => {
-        return (
-          CriseStatutEnum[v.original.criseStatut] === CriseStatutEnum.TERMINEE
-        );
+      disable: (v) =>
+        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
+      classEnable: "info",
+      textDisable: "Impossible de fusionner une crise qui n'est plus en cours",
+      route: (criseId) => URLS.MERGE_CRISE(criseId),
+      type: TYPE_BUTTON.BUTTON,
+      icon: <IconMerge />,
+      textEnable: "Fusionner",
+    });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
       },
+      type: TYPE_BUTTON.EDIT_MODAL,
+      disable: (v) =>
+        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
       icon: <IconClose />,
       classEnable: "danger",
       textEnable: "Clore la crise",
