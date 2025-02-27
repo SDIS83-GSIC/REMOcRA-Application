@@ -28,6 +28,7 @@ import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.t
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import TypeSystemeSrid from "../../../enums/TypeSystemeSrid.tsx";
 import { IconDelete, IconExport } from "../../../components/Icon/Icon.tsx";
+import DeleteButton from "../../../components/Button/DeleteButton.tsx";
 
 type FormType = {
   rcci: RcciFormType;
@@ -726,7 +727,6 @@ const RcciForm = () => {
                     ...e.target.files,
                   ]);
                 }
-                e.target.value = null;
                 setFieldValue(`documentHolder`, null);
               }}
             />
@@ -734,9 +734,7 @@ const RcciForm = () => {
               values.documentList.map((file, index) => (
                 <div key={index}>
                   {file.name}
-                  <Badge
-                    pill
-                    variant={"danger"}
+                  <DeleteButton
                     onClick={() => {
                       setFieldValue(
                         "documentList",
@@ -745,7 +743,7 @@ const RcciForm = () => {
                     }}
                   >
                     <IconDelete />
-                  </Badge>
+                  </DeleteButton>
                 </div>
               ))}
           </FieldSet>
