@@ -76,7 +76,13 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       accessor: "tourneeActif",
       Cell: (value) => {
         return (
-          <Form.Check type="checkbox" disabled checked={value.value === true} />
+          <div className="text-center">
+            <Form.Check
+              type="checkbox"
+              disabled
+              checked={value.value === true}
+            />
+          </div>
         );
       },
       Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeActif"} />,
