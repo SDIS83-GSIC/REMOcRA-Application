@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { Button } from "react-bootstrap";
 import type { ButtonVariant } from "react-bootstrap/types";
-import { Link, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import classNames from "classnames";
 
 const LinkButton = ({
   pathname,
@@ -27,26 +27,28 @@ const LinkButton = ({
   } = useLocation();
   const statePrevious = currentState?.from ?? [];
   return !disabled ? (
-    <Link
+    <NavLink
       to={{ pathname: pathname }}
       state={{
         ...state,
         ...currentState,
         from: [...statePrevious, `${currentPathname}${search}`],
       }}
-      className={`text-decoration-none btn btn-${variant} ${classname} text-nowrap`}
+      className={classNames(
+        `text-decoration-none btn btn-${variant} ${classname} text-nowrap`,
+      )}
       onClick={onClick}
     >
       {children}
-    </Link>
+    </NavLink>
   ) : (
-    <Button
+    <NavLink
       variant={variant}
       className={variant === "link" ? "text-muted" : ""}
       disabled={disabled}
     >
       {children}
-    </Button>
+    </NavLink>
   );
 };
 
