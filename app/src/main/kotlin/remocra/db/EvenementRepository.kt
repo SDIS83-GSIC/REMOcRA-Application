@@ -5,9 +5,7 @@ import org.jooq.DSLContext
 import org.jooq.Table
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
-import org.locationtech.jts.geom.Geometry
 import remocra.data.EvenementData
-import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.references.CRISE
@@ -17,7 +15,6 @@ import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
-import java.time.LocalDate
 import java.util.UUID
 
 class EvenementRepository @Inject constructor(
@@ -47,7 +44,7 @@ class EvenementRepository @Inject constructor(
         val typeCriseCategorieGeometrie: TypeGeometry?,
     )
 
-    fun getAllEvents(criseId: UUID): Collection<Evenement> =
+    fun getAllEvents(criseId: UUID): Collection<EvenementData> =
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
@@ -58,8 +55,8 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.IS_CLOSED,
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeCriseId"),
-            EVENEMENT.DATE_CONSTAT.`as`("evenementDateDebut"),
+            EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeId"),
+            EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
             multiset(
@@ -152,29 +149,19 @@ class EvenementRepository @Inject constructor(
             .from(TYPE_CRISE_CATEGORIE)
             .fetchInto()
 
-    data class Evenement(
-        val evenementId: UUID?,
-        val evenementCriseId: UUID?,
-        val evenementTag: String?,
-        val evenementOrigine: String?,
-        val evenementLibelle: String?,
-        val evenementImportance: Int?,
-        val evenementIsClosed: Boolean?,
-        val evenementDescription: String?,
-        val evenementDateCloture: LocalDate?,
-        val evenementTypeCriseId: UUID?,
-        val evenementDateDebut: LocalDate?,
-        val documents: Collection<DocumentEvenementData>?,
-        val evenementStatut: EvenementStatut,
-        val evenementGeometrie: Geometry?,
-    )
-
     data class DocumentEvenementData(
         val documentId: UUID,
         val documentNomFichier: String,
     )
 
-    fun getEvenement(evenementId: UUID): Evenement =
+    fun getEventIdByCriseId(criseId: UUID): Collection<UUID> =
+        dsl.select(
+            EVENEMENT.ID,
+        ).from(EVENEMENT)
+            .where(EVENEMENT.CRISE_ID.eq(criseId))
+            .fetchInto()
+
+    fun getEvenement(evenementId: UUID): EvenementData =
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
@@ -182,11 +169,11 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
-            EVENEMENT.IS_CLOSED.`as`("evenementIsClosed"),
+            EVENEMENT.IS_CLOSED.`as`("evenementEstFerme"),
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeCriseId"),
-            EVENEMENT.DATE_CONSTAT.`as`("evenementDateDebut"),
+            EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`as`("evenementTypeId"),
+            EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
             multiset(

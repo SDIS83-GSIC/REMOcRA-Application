@@ -162,6 +162,19 @@ class CriseRepository @Inject constructor(
         )
     }
 
+    data class CriseMerge(
+        val criseId: UUID,
+        val criseLibelle: String?,
+        val criseDateDebut: ZonedDateTime?,
+    )
+
+    fun getCriseForMerge(): Collection<CriseMerge> =
+        dsl.select(CRISE.ID, CRISE.LIBELLE, CRISE.DATE_DEBUT)
+            .from(CRISE)
+            .where(CRISE.STATUT_TYPE.eq(TypeCriseStatut.EN_COURS))
+            .orderBy(CRISE.LIBELLE)
+            .fetchInto()
+
     fun getCriseForSelect(): Collection<TypeCriseComplete> =
         dsl.select(TYPE_CRISE.ID.`as`("criseId"), TYPE_CRISE.LIBELLE.`as`("criseNom"))
             .from(TYPE_CRISE)
@@ -205,7 +218,7 @@ class CriseRepository @Inject constructor(
         val criseDescription: String?,
         val criseDateDebut: ZonedDateTime,
         val criseDateFin: ZonedDateTime?,
-        val criseStatutType: TypeCriseStatut?,
+        val criseStatutType: TypeCriseStatut,
         val typeCriseId: UUID,
         var listeCommune: Collection<UUID>?,
         var listeToponymie: Collection<UUID>?,

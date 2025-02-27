@@ -25,4 +25,8 @@ class CriseUseCase : AbstractUseCase() {
         val communeIds = criseRepository.getCrise(criseId).listeCommune ?: return emptyList()
         return communeIds.map { communeRepository.getById(it).communeGeometrie }
     }
+
+    fun getCriseForMerge(): Collection<CriseRepository.CriseMerge> {
+        return criseRepository.getCriseForMerge()
+    }
 }

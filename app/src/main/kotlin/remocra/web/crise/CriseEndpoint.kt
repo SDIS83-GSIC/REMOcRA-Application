@@ -37,6 +37,7 @@ import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.crise.CreateCriseUseCase
 import remocra.usecase.crise.CriseUseCase
+import remocra.usecase.crise.MergeCriseUseCase
 import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
@@ -59,6 +60,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var criseUseCase: CriseUseCase
 
     @Inject lateinit var createCriseUseCase: CreateCriseUseCase
+
+    @Inject lateinit var mergeCriseUseCase: MergeCriseUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -98,6 +101,12 @@ class CriseEndpoint : AbstractEndpoint() {
         val messageUtilisateurId: UUID? = null,
     )
 
+    data class CriseDataMerge(
+        val criseId: UUID,
+        val criseDateFin: ZonedDateTime?,
+        val listeCriseId: Collection<UUID>?,
+    )
+
     @POST
     @Path("/")
     @RequireDroits([Droit.CRISE_R])
@@ -109,6 +118,34 @@ class CriseEndpoint : AbstractEndpoint() {
                 criseRepository.getCountCrises(params.filterBy),
             ),
         ).build()
+    }
+
+    @GET
+    @Path("/getCriseForMerge")
+    @Public("Les types de crises ne sont pas liées à un droit.")
+    fun getCriseForMerge(): Response {
+        return Response.ok(
+            criseUseCase.getCriseForMerge(),
+        ).build()
+    }
+
+    @PUT
+    @Path("/{criseId}/merge")
+    @RequireDroits([Droit.CRISE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun mergeCrise(
+        @PathParam("criseId")
+        criseId: UUID,
+        criseDataMerge: CriseDataMerge,
+    ): Response {
+        return mergeCriseUseCase.execute(
+            userInfo = securityContext.userInfo,
+            CriseDataMerge(
+                criseId = criseDataMerge.criseId,
+                criseDateFin = criseDataMerge.criseDateFin,
+                listeCriseId = criseDataMerge.listeCriseId,
+            ),
+        ).wrap()
     }
 
     @GET
@@ -342,10 +379,10 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementLibelle = httpRequest.getTextPart("evenementLibelle"),
                 evenementDescription = httpRequest.getTextPart("evenementDescription"),
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
-                evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
+                evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateConstat")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
                 evenementTag = httpRequest.getTextPart("evenementTag"),
-                evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
+                evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
                 listeDocument = DocumentsData.DocumentsEvenement(
@@ -407,10 +444,10 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementLibelle = httpRequest.getTextPart("evenementLibelle"),
                 evenementDescription = httpRequest.getTextPart("evenementDescription"),
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
-                evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
+                evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateConstat")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
                 evenementTag = httpRequest.getTextPart("evenementTag"),
-                evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
+                evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
                 listeDocument = DocumentsData.DocumentsEvenement(
