@@ -16,6 +16,7 @@ const ToastAutohide = ({
       show={show}
       delay={delay}
       autohide
+      className={"toast-fixed"}
     >
       <Toast.Header closeLabel={"Fermer"}>
         <span className={"fw-bold me-auto"}>{header}</span>
