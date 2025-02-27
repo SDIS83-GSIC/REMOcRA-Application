@@ -98,6 +98,7 @@ class NumerotationUseCase : AbstractUseCase() {
 
             CodeSdis.SDIS_09 -> computeNumero09(pei)
             CodeSdis.SDIS_14 -> computeNumero14(pei)
+            CodeSdis.SDIS_21 -> computeNumero21(pei)
             CodeSdis.SDIS_38 -> computeNumero38(pei)
             CodeSdis.SDIS_39 -> computeNumero39(pei)
             CodeSdis.SDIS_42,
@@ -113,7 +114,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_83,
             -> computeNumeroMethodeC(pei)
 
-            CodeSdis.SDIS_21,
             CodeSdis.SDIS_77,
             CodeSdis.BSPP,
             -> computeNumeroMethodeD(pei)
@@ -653,6 +653,19 @@ class NumerotationUseCase : AbstractUseCase() {
      *
      */
     private fun computeNumeroMethodeD(pei: PeiForNumerotationData): String {
+        val codeZoneSpeciale = if (pei.peiZoneSpecialeId != null) ensureZoneSpeciale(pei).zoneIntegrationCode else null
+        val commune = ensureCommune(pei)
+
+        return (codeZoneSpeciale ?: commune.communeCodeInsee) + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
+     * <code insee commune>_<numéro interne>
+     * avec num_intern sur 4 chiffres
+     * Exemple : 21231_0621
+     *
+     */
+    private fun computeNumero21(pei: PeiForNumerotationData): String {
         val codeZoneSpeciale = if (pei.peiZoneSpecialeId != null) ensureZoneSpeciale(pei).zoneIntegrationCode else null
         val commune = ensureCommune(pei)
 
