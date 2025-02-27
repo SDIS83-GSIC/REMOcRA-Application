@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -8,7 +8,6 @@ import {
   SelectInput,
   TextInput,
 } from "../components/Form/Form.tsx";
-import SubmitFormButtons from "../components/Form/SubmitFormButtons.tsx";
 import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../Entities/RapportCourrierEntity.tsx";
 
 export type DynamicFormWithParametre = {
@@ -163,7 +162,13 @@ const GenererForm = ({
           return buildDynamicForm(element, values, setFieldValue);
         })}
       </Row>
-      <SubmitFormButtons />
+      <Row className={"my-3 d-flex justify-content-center"}>
+        <Col sm={"auto"}>
+          <Button type="submit" variant={"primary"}>
+            Exécuter
+          </Button>
+        </Col>
+      </Row>
     </FormContainer>
   );
 };

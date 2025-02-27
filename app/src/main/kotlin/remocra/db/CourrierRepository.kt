@@ -6,16 +6,29 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.selectDistinct
+import org.jooq.impl.DSL.table
+import org.jooq.impl.SQLDataType
 import remocra.auth.UserInfo
+import remocra.data.DestinataireData
 import remocra.data.Params
+import remocra.data.TypeDestinataire
 import remocra.db.jooq.remocra.tables.pojos.Document
+import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.ORGANISME
+import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
+import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -202,4 +215,134 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val email: String,
         val accuse: Boolean,
     )
+
+    fun getAllDestinataires(filterBy: FilterDestinataire?, sortBy: SortDestinataire?, limit: Int?, offset: Int?): Collection<DestinataireData> {
+        val nomCte = name("LISTE_DESTINATAIRE")
+        val cte = nomCte.fields(
+            "destinataireId",
+            "nomDestinataire",
+            "emailDestinataire",
+            "fonctionDestinataire",
+            "typeDestinataire",
+        )
+            .`as`(getRequestDestinataire())
+
+        return dsl.with(cte).selectFrom(table(nomCte))
+            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .orderBy(
+                sortBy?.toCondition().takeIf { it.isNullOrEmpty() }
+                    ?: listOf(
+                        field(name("LISTE_DESTINATAIRE", "typeDestinataire")),
+                        field(name("LISTE_DESTINATAIRE", "nomDestinataire")),
+                    ),
+            )
+            .limit(limit)
+            .offset(offset)
+            .fetchInto()
+    }
+
+    fun countDestinataire(): Int =
+        dsl.fetchCount(getRequestDestinataire())
+
+    private fun getRequestDestinataire() =
+        dsl.select(
+            UTILISATEUR.ID.`as`("destinataireId"),
+            DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM)
+                .`as`("nomDestinataire"),
+            UTILISATEUR.EMAIL.`as`("emailDestinataire"),
+            PROFIL_UTILISATEUR.LIBELLE.`as`("fonctionDestinataire"),
+            DSL.value(TypeDestinataire.UTILISATEUR.libelle).`as`("typeDestinataire"),
+        )
+            .from(UTILISATEUR)
+            .join(PROFIL_UTILISATEUR)
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID))
+            .where(UTILISATEUR.ACTIF.isTrue)
+            .and(UTILISATEUR.CAN_BE_NOTIFIED.isTrue)
+            .union(
+                dsl.select(
+                    ORGANISME.ID.`as`("destinataireId"),
+                    ORGANISME.LIBELLE.`as`("nomDestinataire"),
+                    ORGANISME.EMAIL_CONTACT.`as`("emailDestinataire"),
+                    PROFIL_ORGANISME.LIBELLE.`as`("fonctionDestinataire"),
+                    DSL.value(TypeDestinataire.ORGANISME.libelle).`as`("typeDestinataire"),
+                )
+                    .from(ORGANISME)
+                    .join(PROFIL_ORGANISME)
+                    .on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
+                    .where(ORGANISME.ACTIF.isTrue),
+            )
+            .union(
+                dsl.select(
+                    CONTACT.ID.`as`("destinataireId"),
+                    DSL.concat(CONTACT.NOM, DSL.value(" "), CONTACT.PRENOM)
+                        .`as`("nomDestinataire"),
+                    CONTACT.EMAIL.`as`("emailDestinataire"),
+                    FONCTION_CONTACT.LIBELLE.`as`("fonctionDestinataire"),
+                    DSL.value(TypeDestinataire.CONTACT_ORGANISME.libelle).`as`("typeDestinataire"),
+                )
+                    .from(CONTACT)
+                    .leftJoin(FONCTION_CONTACT)
+                    .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
+                    .join(L_CONTACT_ORGANISME)
+                    .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+                    .where(CONTACT.ACTIF.isTrue),
+            )
+            .union(
+                dsl.select(
+                    CONTACT.ID.`as`("destinataireId"),
+                    DSL.concat(
+                        CONTACT.NOM,
+                        DSL.value(" "),
+                        CONTACT.PRENOM,
+                        DSL.value(" ("),
+                        GESTIONNAIRE.LIBELLE,
+                        DSL.value(")"),
+                    )
+                        .`as`("nomDestinataire"),
+                    CONTACT.EMAIL.`as`("emailDestinataire"),
+                    FONCTION_CONTACT.LIBELLE.`as`("fonctionDestinataire"),
+                    DSL.value(TypeDestinataire.CONTACT_GESTIONNAIRE.libelle).`as`("typeDestinataire"),
+                )
+                    .from(CONTACT)
+                    .leftJoin(FONCTION_CONTACT)
+                    .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
+                    .join(L_CONTACT_GESTIONNAIRE)
+                    .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+                    .join(GESTIONNAIRE)
+                    .on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
+                    .where(CONTACT.ACTIF.isTrue),
+            )
+
+    data class FilterDestinataire(
+        val nomDestinataire: String?,
+        val emailDestinataire: String?,
+        val fonctionDestinataire: String?,
+        val listeTypeDestinataire: List<TypeDestinataire>?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    nomDestinataire?.let { DSL.and(field(name("LISTE_DESTINATAIRE", "nomDestinataire"), SQLDataType.VARCHAR).containsIgnoreCaseUnaccent(it)) },
+                    emailDestinataire?.let { DSL.and(field(name("LISTE_DESTINATAIRE", "emailDestinataire"), SQLDataType.VARCHAR).containsIgnoreCaseUnaccent(it)) },
+                    fonctionDestinataire?.let { DSL.and(field(name("LISTE_DESTINATAIRE", "fonctionDestinataire"), SQLDataType.VARCHAR).containsIgnoreCaseUnaccent(it)) },
+                    listeTypeDestinataire?.let { DSL.and(field(name("LISTE_DESTINATAIRE", "typeDestinataire"), SQLDataType.VARCHAR).`in`(it.map { it.libelle })) },
+
+                ),
+            )
+    }
+
+    data class SortDestinataire(
+        val nomDestinataire: Int?,
+        val emailDestinataire: Int?,
+        val fonctionDestinataire: Int?,
+        val typeDestinataire: Int?,
+    ) {
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            field(name("LISTE_DESTINATAIRE", "nomDestinataire"), SQLDataType.VARCHAR).getSortField(nomDestinataire),
+            field(name("LISTE_DESTINATAIRE", "emailDestinataire"), SQLDataType.VARCHAR).getSortField(emailDestinataire),
+            field(name("LISTE_DESTINATAIRE", "fonctionDestinataire"), SQLDataType.VARCHAR).getSortField(fonctionDestinataire),
+            field(name("LISTE_DESTINATAIRE", "typeDestinataire"), SQLDataType.VARCHAR).getSortField(typeDestinataire),
+
+        )
+    }
 }

@@ -95,6 +95,23 @@ class CourrierEndPoint : AbstractEndpoint() {
     }
 
     @POST
+    @Path("/destinataires")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.COURRIER_C])
+    fun getAllDestinataires(
+        params: Params<CourrierRepository.FilterDestinataire, CourrierRepository.SortDestinataire>,
+    ): Response {
+        return Response.ok()
+            .entity(
+                DataTableau(
+                    list = courrierRepository.getAllDestinataires(params.filterBy, params.sortBy, params.limit, params.offset),
+                    count = courrierRepository.countDestinataire(),
+                ),
+            )
+            .build()
+    }
+
+    @POST
     @Path("/modeles")
     @RequireDroits([Droit.ADMIN_DROITS])
     @Produces(MediaType.APPLICATION_JSON)
