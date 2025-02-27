@@ -57,10 +57,8 @@ export default function Colonne({
             )}
             {id === keyPossibilites
               ? items[id]?.map((id: string, index: number) => (
-                  <Col key={index}>
-                    <div className="w-25">
-                      <SortableItem key={id} id={id} />
-                    </div>
+                  <Col key={index} xs={"auto"}>
+                    <SortableItem key={id} id={id} />
                   </Col>
                 ))
               : items[id]?.map((id) => <SortableItem key={id} id={id} />)}
