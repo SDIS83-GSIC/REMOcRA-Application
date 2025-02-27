@@ -23,7 +23,7 @@ class CreateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.INS
     @Inject lateinit var anomalieRepository: AnomalieRepository
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_ANOMALIES)) {
             throw RemocraResponseException(ErrorType.ADMIN_ANOMALIE_FORBIDDEN_INSERT)
         }
     }

@@ -42,7 +42,7 @@ class CoucheEndpoint : AbstractEndpoint() {
 
     @Path("/")
     @GET
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
     fun list(): Response =
         Response.ok(
             object {
@@ -93,7 +93,7 @@ class CoucheEndpoint : AbstractEndpoint() {
 
     @Path("/")
     @PUT
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun put(
         @Context httpRequest: HttpServletRequest,

@@ -97,7 +97,7 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
 
     override fun checkContraintes(userInfo: UserInfo?, element: ContactData) {
         if ((element.isGestionnaire && !userInfo!!.droits.contains(Droit.GEST_SITE_A)) ||
-            (!element.isGestionnaire && !userInfo!!.droits.contains(Droit.ADMIN_DROITS))
+            (!element.isGestionnaire && !userInfo!!.droits.contains(Droit.ADMIN_UTILISATEURS_A))
         ) {
             throw RemocraResponseException(ErrorType.CONTACT_FORBIDDEN_INSERT)
         }

@@ -26,7 +26,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
 ) :
     AbstractCUDUseCase<ListModuleWithImage>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ADMIN_MODULE_RESUME_FORBIDDEN)
         }
     }

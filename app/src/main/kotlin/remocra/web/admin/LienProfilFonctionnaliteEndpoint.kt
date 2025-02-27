@@ -49,7 +49,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Path("/")
     @POST
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun list(params: Params<LienProfilFonctionnaliteRepository.Filter, LienProfilFonctionnaliteRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -60,7 +60,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Path("/{profilOrganismeId}/{profilUtilisateurId}")
     @GET
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun get(
         @PathParam("profilOrganismeId") profilOrganismeId: UUID,
         @PathParam("profilUtilisateurId") profilUtilisateurId: UUID,
@@ -69,7 +69,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Path("/referentiel")
     @GET
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun referentiel(): Response {
         return Response.ok(
             object {
@@ -82,13 +82,13 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Path("/create")
     @POST
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun post(element: LProfilUtilisateurOrganismeDroit): Response =
         createLienProfilFonctionnaliteUseCase.execute(securityContext.userInfo, element).wrap()
 
     @Path("/update/{profilOrganismeId}/{profilUtilisateurId}")
     @PUT
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun put(
         @PathParam("profilOrganismeId") profilOrganismeId: UUID,
         @PathParam("profilUtilisateurId") profilUtilisateurId: UUID,
@@ -105,7 +105,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Path("/delete")
     @DELETE
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun delete(element: LProfilUtilisateurOrganismeDroit): Response =
         deleteLienProfilFonctionnaliteUseCase.execute(securityContext.userInfo, element).wrap()
 }

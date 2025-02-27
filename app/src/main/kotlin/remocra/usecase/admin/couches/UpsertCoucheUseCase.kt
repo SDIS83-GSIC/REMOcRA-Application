@@ -20,7 +20,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
     @Inject lateinit var objectMapper: ObjectMapper
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_COUCHE_CARTOGRAPHIQUE)) {
             throw RemocraResponseException(ErrorType.ADMIN_COUCHES)
         }
     }

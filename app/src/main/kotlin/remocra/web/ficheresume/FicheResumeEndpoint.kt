@@ -48,14 +48,14 @@ class FicheResumeEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get-blocs")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     fun getForAdmin(): Response {
         return Response.ok(ficheResumeRepository.getFicheResume()).build()
     }
 
     @PUT
     @Path("/upsert")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Produces(MediaType.APPLICATION_JSON)
     fun upsert(
         ficheResumeInput: FicheResumeInput,

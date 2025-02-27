@@ -67,7 +67,7 @@ class OrganismeEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/get")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
     fun get(params: Params<OrganismeRepository.Filter, OrganismeRepository.Sort>): Response {
         return Response.ok(DataTableau(organismeRepository.getAllForAdmin(params), organismeRepository.getCountForAdmin(params)))
             .build()
@@ -83,14 +83,14 @@ class OrganismeEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
     fun id(@PathParam("id") id: UUID): Response {
         return Response.ok(organismeRepository.getById(id)).build()
     }
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
     fun add(organismeInput: OrganismeInput): Response {
         return createOrganismeUseCase.execute(
             securityContext.userInfo,
@@ -110,7 +110,7 @@ class OrganismeEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
     fun edit(@PathParam("id") id: UUID, organismeInput: OrganismeInput): Response {
         return updateOrganismeUseCase.execute(
             securityContext.userInfo,

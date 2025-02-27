@@ -87,7 +87,7 @@ class ModuleEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("/upsert")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Produces(MediaType.APPLICATION_JSON)
     fun upsert(
         @Context httpRequest: HttpServletRequest,

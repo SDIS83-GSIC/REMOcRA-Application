@@ -52,7 +52,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("{appartenanceId}/create")
-    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun create(
         @PathParam("appartenanceId")
@@ -93,7 +93,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("{appartenanceId}/update/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun update(
         @PathParam("appartenanceId")
@@ -197,7 +197,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/{appartenanceId}")
-    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_UTILISATEURS_A])
     fun getAllForAdmin(
         @PathParam("appartenanceId")
         appartenanceId: UUID,
@@ -215,7 +215,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("{appartenanceId}/get/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.ADMIN_UTILISATEURS_A])
     fun getById(
         @PathParam("appartenanceId")
         appartenanceId: UUID,
@@ -228,7 +228,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @DELETE
     @Path("{appartenanceId}/delete/{contactId}")
-    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
     fun delete(
         @PathParam("contactId")
         contactId: UUID,
@@ -247,7 +247,7 @@ class ContactEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/fonctions")
-    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
     fun getAllFonctions() =
         Response.ok(fonctionContactRepository.getAll()).build()
 }

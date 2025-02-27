@@ -44,7 +44,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/list")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun list(): Response {
         val anomaliePoidsList = anomalieRepository.getAllAnomaliePoidsForAdmin().groupBy { it.poidsAnomalieAnomalieId }
         return Response.ok(
@@ -65,7 +65,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/referentiel")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun referentiel(): Response {
         return Response.ok(
             object {
@@ -78,7 +78,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{anomalieId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun get(@PathParam("anomalieId") anomalieId: UUID): Response {
         return Response.ok(
             anomalieRepository.getAnomalieById(anomalieId).let { anomalie ->
@@ -110,7 +110,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun post(element: AnomalieData): Response {
         return createAnomalieUseCase.execute(securityContext.userInfo, element).wrap()
     }
@@ -120,7 +120,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{anomalieId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun put(@PathParam("anomalieId") anomalieId: UUID, element: AnomalieData): Response {
         return updateAnomalieUseCase.execute(securityContext.userInfo, element.copy(anomalieId = anomalieId)).wrap()
     }
@@ -130,7 +130,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/delete/{anomalieId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun delete(@PathParam("anomalieId") anomalieId: UUID): Response {
         return deleteAnomalieUseCase.execute(securityContext.userInfo, anomalieRepository.getAnomalieById(anomalieId)).wrap()
     }

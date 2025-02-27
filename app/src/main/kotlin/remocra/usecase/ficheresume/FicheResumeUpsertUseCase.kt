@@ -19,7 +19,7 @@ import java.util.UUID
 class FicheResumeUpsertUseCase @Inject constructor(private val ficheResumeRepository: FicheResumeRepository) :
     AbstractCUDUseCase<Collection<FicheResumeBlocData>>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ADMIN_FICHE_RESUME_FORBIDDEN)
         }
     }

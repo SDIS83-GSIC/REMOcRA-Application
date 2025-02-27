@@ -63,21 +63,21 @@ class NatureEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/get")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun get(params: Params<NatureRepository.Filter, NatureRepository.Sort>): Response {
         return Response.ok(DataTableau(natureRepository.getTable(params), natureRepository.getCount(params))).build()
     }
 
     @GET
     @Path("/get/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun id(@PathParam("id") id: UUID): Response {
         return Response.ok(natureRepository.getById(id)).build()
     }
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun createNature(natureInput: NatureInput): Response {
         return createNatureUseCase.execute(
             securityContext.userInfo,
@@ -94,7 +94,7 @@ class NatureEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun updateNature(@PathParam("id") id: UUID, natureInput: NatureInput): Response {
         return updateNatureUseCase.execute(
             securityContext.userInfo,
@@ -111,7 +111,7 @@ class NatureEndpoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/delete/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun remove(@PathParam("id") id: UUID): Response {
         return deleteNatureUseCase.execute(securityContext.userInfo, natureRepository.getById(id)!!).wrap()
     }

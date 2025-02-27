@@ -67,7 +67,7 @@ class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/get")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun get(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, params: Params<NomenclatureCodeLibelleRepository.Filter, NomenclatureCodeLibelleRepository.Sort>): Response {
         val type = getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString)
         params.filterBy?.type = type
@@ -77,14 +77,14 @@ class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun id(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, @PathParam("id") id: UUID): Response {
         return Response.ok(nomenclatureCodeLibelleRepository.getById(getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString), id)).build()
     }
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun create(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, nomenclatureCodeLibelleInput: NomenclatureCodeLibelleInput): Response {
         createNomenclatureCodeLibelleUseCase.setType(getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString))
         return createNomenclatureCodeLibelleUseCase.execute(
@@ -103,7 +103,7 @@ class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun update(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, @PathParam("id") id: UUID, nomenclatureCodeLibelleInput: NomenclatureCodeLibelleInput): Response {
         updateNomenclatureCodeLibelleUseCase.setType(getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString))
         return updateNomenclatureCodeLibelleUseCase.execute(
@@ -122,7 +122,7 @@ class NomenclatureCodeLibelleEndpoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/delete/{id}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun delete(@PathParam("typeObjet") typeNomenclatureCodeLibelleString: String, @PathParam("id") id: UUID): Response {
         val type = getTypeNomenclatureFromString(typeNomenclatureCodeLibelleString)
         deleteNomenclatureCodeLibelleUseCase.setType(type)

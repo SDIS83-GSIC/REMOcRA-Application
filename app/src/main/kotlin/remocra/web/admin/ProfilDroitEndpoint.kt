@@ -31,7 +31,7 @@ class ProfilDroitEndpoint : AbstractEndpoint() {
 
     @Path("/")
     @POST
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun list(params: Params<ProfilDroitRepository.Filter, ProfilDroitRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -42,7 +42,7 @@ class ProfilDroitEndpoint : AbstractEndpoint() {
 
     @Path("/{profilDroitId}")
     @GET
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun get(@PathParam("profilDroitId") profilDroitId: UUID): Response =
         Response.ok(profilDroitRepository.getById(profilDroitId)).build()
 
@@ -50,7 +50,7 @@ class ProfilDroitEndpoint : AbstractEndpoint() {
 
     @Path("/create")
     @POST
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun post(element: ProfilDroitData): Response =
         createProfilDroitUseCase.execute(securityContext.userInfo, element).wrap()
 
@@ -58,7 +58,7 @@ class ProfilDroitEndpoint : AbstractEndpoint() {
 
     @Path("/update/{profilDroitId}")
     @PUT
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
     fun put(@PathParam("profilDroitId") profilDroitId: UUID, element: ProfilDroitData): Response =
         updateProfilDroitUseCase.execute(securityContext.userInfo, element.copy(profilDroitId = profilDroitId)).wrap()
 }

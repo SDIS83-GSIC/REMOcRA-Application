@@ -18,7 +18,7 @@ import remocra.usecase.AbstractCUDUseCase
 class CreateProfilDroitUseCase @Inject constructor(private val profilDroitRepository: ProfilDroitRepository) :
     AbstractCUDUseCase<ProfilDroitData>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_INSERT)
         }
     }

@@ -23,7 +23,7 @@ class DeleteNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
     private lateinit var typeNomenclatureCodeLibelle: TypeNomenclatureCodeLibelle
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_NOMENCLATURE)) {
             throw RemocraResponseException(ErrorType.ADMIN_NOMENC_FORBIDDEN_REMOVAL)
         }
     }

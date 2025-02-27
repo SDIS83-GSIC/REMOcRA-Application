@@ -16,7 +16,7 @@ class UpdateLienProfilDroitUseCase @Inject constructor(private val profilDroitRe
         TypeOperation.UPDATE,
     ) {
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_GROUPE_UTILISATEUR)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_UPDATE)
         }
     }

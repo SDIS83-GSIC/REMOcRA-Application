@@ -119,7 +119,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/modeles")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COURRIER])
     @Produces(MediaType.APPLICATION_JSON)
     fun getAllModeleCourrier(params: Params<ModeleCourrierRepository.Filter, ModeleCourrierRepository.Sort>): Response {
         return Response.ok(
@@ -132,7 +132,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("modeles/create")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COURRIER])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun create(@Context httpRequest: HttpServletRequest): Response {
         val modeleCourrier = objectMapper.readValue<ModeleCourrierData>(httpRequest.getTextPart("modeleCourrier"))
@@ -153,7 +153,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("modeles/update/{modeleCourrierId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COURRIER])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun update(
         @PathParam("modeleCourrierId")
@@ -176,7 +176,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/modele-courrier/get/{modeleCourrierId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COURRIER])
     @Produces(MediaType.APPLICATION_JSON)
     fun getModeleCourrier(
         @PathParam("modeleCourrierId")
@@ -187,7 +187,7 @@ class CourrierEndPoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/modele-courrier/delete/{modeleCourrierId}")
-    @RequireDroits([Droit.ADMIN_DROITS])
+    @RequireDroits([Droit.ADMIN_COURRIER])
     @Produces(MediaType.APPLICATION_JSON)
     fun delete(
         @PathParam("modeleCourrierId")

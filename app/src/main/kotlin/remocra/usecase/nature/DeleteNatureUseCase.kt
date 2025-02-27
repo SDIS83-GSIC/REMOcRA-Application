@@ -19,7 +19,7 @@ import remocra.usecase.AbstractCUDUseCase
 class DeleteNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
     AbstractCUDUseCase<Nature>(TypeOperation.DELETE) {
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+        if (!userInfo.droits.contains(Droit.ADMIN_NOMENCLATURE)) {
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_REMOVAL)
         }
     }
