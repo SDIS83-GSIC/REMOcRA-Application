@@ -1,5 +1,4 @@
 import React, { useMemo, useRef } from "react";
-import { Circle, Fill, Stroke, Style } from "ol/style";
 import VectorLayer from "ol/layer/Vector";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
@@ -13,7 +12,6 @@ const MapRcci = () => {
   const mapElement = useRef<HTMLDivElement>();
   const dataRcciLayerRef = useRef<VectorLayer>();
   const anneeCivileRef = useRef<boolean>(false);
-  const now = new Date();
 
   function displayAnneCivile() {
     anneeCivileRef.current = !anneeCivileRef.current;
@@ -45,23 +43,6 @@ const MapRcci = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      (feature) => {
-        const anneeIncendie = feature.getProperties()?.rcciDateIncendie
-          ? new Date(feature.getProperties().rcciDateIncendie).getFullYear()
-          : null;
-        if (!anneeCivileRef.current || anneeIncendie === now.getFullYear()) {
-          return new Style({
-            image: new Circle({
-              radius: 5,
-              fill: new Fill({ color: "red" }),
-              stroke: new Stroke({
-                color: [255, 0, 0],
-                width: 2,
-              }),
-            }),
-          });
-        }
-      },
       projection,
     );
   }, [map, projection]);

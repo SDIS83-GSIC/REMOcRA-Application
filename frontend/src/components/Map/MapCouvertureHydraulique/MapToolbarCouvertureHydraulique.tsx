@@ -315,7 +315,18 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       workingLayer.getSource().addFeature(pointClic);
     }
 
-    const selectCtrl = new Select({});
+    const selectCtrl = new Select({
+      style: new Style({
+        image: new CircleStyle({
+          radius: 16,
+          stroke: new Stroke({
+            color: "rgba(255, 0, 0, 0.7)",
+            width: 4,
+          }),
+        }),
+      }),
+      hitTolerance: 4,
+    });
     const dragBoxCtrl = new DragBox({
       style: new Style({
         stroke: new Stroke({

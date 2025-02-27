@@ -3,6 +3,7 @@ import VectorLayer from "ol/layer/Vector";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { shiftKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
+import CircleStyle from "ol/style/Circle";
 import { MutableRefObject, useMemo, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import ToolbarButton from "../ToolbarButton.tsx";
@@ -56,7 +57,18 @@ export const useToolbarRcciContext = ({
       return {};
     }
 
-    const selectCtrl = new Select({});
+    const selectCtrl = new Select({
+      style: new Style({
+        image: new CircleStyle({
+          radius: 16,
+          stroke: new Stroke({
+            color: "rgba(255, 0, 0, 0.7)",
+            width: 4,
+          }),
+        }),
+      }),
+      hitTolerance: 4,
+    });
     const dragBoxCtrl = new DragBox({
       style: new Style({
         stroke: new Stroke({

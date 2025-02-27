@@ -1,4 +1,3 @@
-import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { isAuthorized } from "../../../droits.tsx";
@@ -48,16 +47,6 @@ const MapPermis = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "green" }),
-          stroke: new Stroke({
-            color: [255, 0, 0],
-            width: 1,
-          }),
-        }),
-      }),
       projection,
     );
   }, [map, projection]);

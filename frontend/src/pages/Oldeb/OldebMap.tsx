@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import VectorLayer from "ol/layer/Vector";
-import { Fill, Stroke, Style } from "ol/style";
 import { TypeModuleRemocra } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../../components/Map/Map.tsx";
 import { createPointLayer } from "../../components/Map/MapUtils.tsx";
@@ -40,54 +39,6 @@ const OldebMap = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      (feature) => {
-        switch (feature.getProperties()?.etatDebroussaillement) {
-          case "O":
-            return new Style({
-              fill: new Fill({
-                color: "rgba(0, 255, 0, 0.2)",
-              }),
-              stroke: new Stroke({
-                color: "rgba(0, 255, 0, 0.5)",
-                width: 2,
-              }),
-            });
-            break;
-          case "N":
-            return new Style({
-              fill: new Fill({
-                color: "rgba(255, 0, 0, 0.2)",
-              }),
-              stroke: new Stroke({
-                color: "rgba(255, 0, 0, 0.5)",
-                width: 2,
-              }),
-            });
-            break;
-          case "P":
-            return new Style({
-              fill: new Fill({
-                color: "rgba(255, 255, 0, 0.2)",
-              }),
-              stroke: new Stroke({
-                color: "rgba(255, 255, 0, 0.5)",
-                width: 2,
-              }),
-            });
-            break;
-          case "AV":
-          default:
-            return new Style({
-              fill: new Fill({
-                color: "rgba(255, 255, 255, 0.2)",
-              }),
-              stroke: new Stroke({
-                color: "rgba(63, 63, 63, 0.5)",
-                width: 2,
-              }),
-            });
-        }
-      },
       projection,
     );
   }, [map, projection]);

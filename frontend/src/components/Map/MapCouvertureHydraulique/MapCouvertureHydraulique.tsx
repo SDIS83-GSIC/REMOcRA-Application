@@ -1,5 +1,4 @@
 import "ol/ol.css";
-import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useRef } from "react";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
@@ -52,16 +51,6 @@ const MapCouvertureHydraulique = ({
         projection.getCode() +
         "&etudeId=" +
         etudeId,
-      new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "green" }),
-          stroke: new Stroke({
-            color: [255, 0, 0],
-            width: 1,
-          }),
-        }),
-      }),
       projection,
     );
   }, [map]);

@@ -1,4 +1,3 @@
-import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useRef } from "react";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
@@ -66,16 +65,6 @@ const MapPei = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "pink" }),
-          stroke: new Stroke({
-            color: [90, 0, 90],
-            width: 1,
-          }),
-        }),
-      }),
       projection,
     );
   }, [map, projection]);

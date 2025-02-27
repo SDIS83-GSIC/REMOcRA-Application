@@ -1,5 +1,4 @@
 import { useMemo, useRef } from "react";
-import { Circle, Fill, Style } from "ol/style";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
@@ -40,28 +39,6 @@ const MapAdresse = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      (e) => {
-        let color = "green";
-
-        switch (ADRESSE_TYPE[e.get("adresseType")]) {
-          case ADRESSE_TYPE.EN_COURS:
-            color = "green";
-            break;
-          case ADRESSE_TYPE.ACCEPTEE:
-            color = "blue";
-            break;
-          case ADRESSE_TYPE.REFUSEE:
-            color = "red";
-            break;
-        }
-
-        return new Style({
-          image: new Circle({
-            radius: 10,
-            fill: new Fill({ color: color }),
-          }),
-        });
-      },
       projection,
     );
   }, [map, projection]);
@@ -134,11 +111,5 @@ const MapAdresse = () => {
     </>
   );
 };
-
-enum ADRESSE_TYPE {
-  EN_COURS = "En cours",
-  ACCEPTEE = "Acceptée",
-  REFUSEE = "Refusée",
-}
 
 export default MapAdresse;

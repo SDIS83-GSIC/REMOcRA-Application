@@ -1,5 +1,4 @@
 import { useMemo, useRef } from "react";
-import { Fill, Stroke, Style, Circle } from "ol/style";
 import SquelettePage from "../../../pages/SquelettePage.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import Header from "../../Header/Header.tsx";
@@ -41,16 +40,6 @@ const MapPeiPrescrit = () => {
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "green" }),
-          stroke: new Stroke({
-            color: [255, 0, 0],
-            width: 1,
-          }),
-        }),
-      }),
       projection,
     );
   }, [map, projection]);

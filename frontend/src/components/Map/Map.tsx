@@ -14,7 +14,7 @@ import { get as getProjection, transformExtent } from "ol/proj";
 import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
@@ -277,16 +277,6 @@ export const useMapComponent = ({
         extent.join(",") +
         "&srid=" +
         projection.getCode(),
-      new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: "black" }),
-          stroke: new Stroke({
-            color: [255, 0, 0],
-            width: 2,
-          }),
-        }),
-      }),
       projection,
     );
   }
