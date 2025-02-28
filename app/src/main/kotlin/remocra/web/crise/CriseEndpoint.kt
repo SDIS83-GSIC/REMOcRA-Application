@@ -40,6 +40,7 @@ import remocra.usecase.crise.CriseUseCase
 import remocra.usecase.crise.MergeCriseUseCase
 import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
+import remocra.usecase.crise.evenement.EvenementUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
 import remocra.usecase.crise.evenement.document.CreateCriseDocument
 import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
@@ -60,6 +61,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var criseUseCase: CriseUseCase
 
     @Inject lateinit var createCriseUseCase: CreateCriseUseCase
+
+    @Inject lateinit var evenementUseCase: EvenementUseCase
 
     @Inject lateinit var mergeCriseUseCase: MergeCriseUseCase
 
@@ -110,7 +113,6 @@ class CriseEndpoint : AbstractEndpoint() {
     @POST
     @Path("/")
     @RequireDroits([Droit.CRISE_R])
-    @Produces(MediaType.APPLICATION_JSON)
     fun getCrise(params: Params<CriseRepository.FilterCrise, CriseRepository.SortCrise>): Response {
         return Response.ok(
             DataTableau(
@@ -166,6 +168,18 @@ class CriseEndpoint : AbstractEndpoint() {
     ): Response {
         return Response.ok(
             criseUseCase.getCommuneGeometriesByCrise(criseId),
+        ).build()
+    }
+
+    @GET
+    @Path("/{criseId}/getTypeEventFromCrise")
+    @Public("Les types d'évenements ne sont pas liées à un droit.")
+    fun getTypeEventFromCrise(
+        @PathParam("criseId")
+        criseId: UUID,
+    ): Response {
+        return Response.ok(
+            evenementUseCase.getTypeEventFromCrise(criseId),
         ).build()
     }
 
@@ -315,14 +329,27 @@ class CriseEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/{criseId}/evenement/")
+    @Path("/{criseId}/evenement")
     @RequireDroits([Droit.CRISE_R])
     fun getAllEvents(
         @PathParam("criseId")
         criseId: UUID,
+        @QueryParam("filterType") type: Set<UUID>?,
+        @QueryParam("filterAuthor") author: Set<UUID>?,
+        @QueryParam("filterStatut") statut: EvenementStatut?,
+        @QueryParam("filterImportance") importance: Int?,
+        @QueryParam("filterMessage") message: String?,
     ): Response {
+        val params = EvenementRepository.Filter(
+            filterType = type,
+            filterAuthor = author,
+            filterStatut = statut,
+            filterImportance = importance,
+            filterMessage = message,
+        )
+
         return Response.ok(
-            evenementRepository.getAllEvents(criseId),
+            evenementRepository.getAllEvents(criseId, params),
         ).build()
     }
 
@@ -392,7 +419,7 @@ class CriseEndpoint : AbstractEndpoint() {
                     listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
                 ),
                 evenementCriseId = criseId,
-                evenementStatut = EvenementStatut.EN_COURS,
+                evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
             ),
         ).wrap()
@@ -457,7 +484,8 @@ class CriseEndpoint : AbstractEndpoint() {
                     listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
                 ),
                 evenementCriseId = criseId,
-                evenementStatut = EvenementStatut.EN_COURS,
+                evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
+
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
             )
         return updateEvenementUseCase.execute(
