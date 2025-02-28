@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { URLS } from "../../routes.tsx";
 import TourneeForm, {
@@ -12,14 +13,20 @@ const CreateTournee = ({
   isFromMap?: boolean;
   setTourneeId: (e: string) => void;
 }) => {
+  const navigate = useNavigate();
+
   return (
     <MyFormik
       initialValues={getInitialValues()}
       isPost={true}
       submitUrl={`/api/tournee/createTournee`}
       prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={!isFromMap ? URLS.LIST_TOURNEE : undefined}
-      onSubmit={(e) => setTourneeId && setTourneeId(e.tourneeId)}
+      redirectUrl={undefined}
+      onSubmit={(e) =>
+        !isFromMap
+          ? navigate(URLS.TOURNEE_PEI(e.tourneeId))
+          : setTourneeId && setTourneeId(e.tourneeId)
+      }
     >
       <TourneeForm isCreation={true} isFromMap={isFromMap} />
     </MyFormik>

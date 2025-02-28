@@ -2,16 +2,16 @@ import { SetStateAction, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactSelect from "react-select";
+import CreateButton from "../../components/Button/CreateButton.tsx";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
-import CreateButton from "../../components/Button/CreateButton.tsx";
-import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { URLS } from "../../routes.tsx";
 
 const TourneePei = ({
   tourneeMapId,
@@ -75,7 +75,7 @@ const TourneePei = ({
         text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
       }) => {
         setErrorMessage(await error.text());
-        errorToast(error.text());
+        errorToast(await error.text());
       },
     },
     true,
@@ -183,7 +183,9 @@ const TourneePei = ({
           </Row>
         )}
         {/* Tableau triable */}
-        {errorMessage !== null && <div>{errorMessage}</div>}
+        {errorMessage !== null && (
+          <div className="text-danger">{errorMessage}</div>
+        )}
         <SortableTableTourneePei data={data} setData={setData} />
         <SubmitFormButtons onClick={submitList}>
           Enregistrer la liste
