@@ -100,7 +100,12 @@ const ExecuteRapportPersonnalise = () => {
                 errorToast,
               )
             }
-            disabled={valuesFormik == null || tableau == null}
+            disabled={
+              valuesFormik == null ||
+              tableau == null ||
+              tableau?.geometries == null ||
+              tableau.geometries.length === 0
+            }
           >
             Exporter les données carto <IconExport />
           </Button>
