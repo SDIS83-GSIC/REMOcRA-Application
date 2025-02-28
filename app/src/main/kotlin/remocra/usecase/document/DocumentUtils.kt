@@ -86,6 +86,26 @@ class DocumentUtils {
         }
     }
 
+    /**
+     * Déplace un fichier sur disque.
+     *
+     * @param nomFichier : Nom du fichier
+     * @param repertoireSource : Nom du répertoire source
+     * @param repertoireDestination : Nom du répertoire destination
+     * @throws Exception
+     */
+    @Throws(Exception::class)
+    fun moveFile(nomFichier: String, repertoireSource: String, repertoireDestination: String) {
+        val fichierPath = Paths.get(repertoireSource, nomFichier)
+
+        val repertoire = ensureDirectory(repertoireDestination)
+        if (Files.exists(fichierPath)) {
+            Files.move(fichierPath, Paths.get(repertoireDestination, nomFichier))
+        } else {
+            logger.warn("Fichier ${fichierPath.pathString} non présent sur le disque")
+        }
+    }
+
     fun checkFile(file: File): Response {
         if (!file.exists()) {
             logger.error("Le document ${file.path} est introuvable.")

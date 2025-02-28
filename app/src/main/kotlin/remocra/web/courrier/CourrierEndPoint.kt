@@ -24,9 +24,11 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.DestinataireData
 import remocra.data.DocumentsData
 import remocra.data.ModeleCourrierData
 import remocra.data.Params
+import remocra.data.courrier.form.CourrierData
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
@@ -34,6 +36,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.BuildFormCourrierUseCase
 import remocra.usecase.courrier.CourrierGeneratorUseCase
+import remocra.usecase.courrier.CreateCourrierUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
 import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
@@ -64,6 +67,8 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Inject lateinit var updateModeleCourrierUseCase: UpdateModeleCourrierUseCase
 
     @Inject lateinit var deleteModeleCourrierUseCase: DeleteModeleCourrierUseCase
+
+    @Inject lateinit var createCourrierUseCase: CreateCourrierUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -230,4 +235,29 @@ class CourrierEndPoint : AbstractEndpoint() {
             File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
         )
     }
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.COURRIER_C])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun createCourrier(
+        courrierWithDestinataires: CourrierWithDestinataire,
+    ): Response {
+        return createCourrierUseCase.execute(
+            securityContext.userInfo,
+            CourrierData(
+                courrierId = UUID.randomUUID(),
+                documentId = UUID.randomUUID(),
+                modeleCourrierId = courrierWithDestinataires.modeleCourrierId,
+                nomDocumentTmp = courrierWithDestinataires.nomDocument,
+                listeDestinataire = courrierWithDestinataires.listeDestinataire,
+            ),
+        ).wrap()
+    }
+
+    data class CourrierWithDestinataire(
+        val modeleCourrierId: UUID,
+        val nomDocument: String,
+        val listeDestinataire: Set<DestinataireData>,
+    )
 }

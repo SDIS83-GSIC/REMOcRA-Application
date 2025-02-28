@@ -16,7 +16,8 @@ import { IconAdd, IconDocument } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
-import url from "../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../module/fetch.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import GenererForm, {
   DynamicFormWithParametre,
@@ -29,7 +30,9 @@ import {
 } from "./Courrier.tsx";
 import filterValuesToVariable from "./FilterDestinataire.tsx";
 
-type ContextType = { urlCourrier: { url: string } | null };
+type ContextType = {
+  urlCourrier: { url: string; modeleCourrierId: string } | null;
+};
 
 const GenereCourrier = () => {
   const [urlCourrier, setUrlCourrier] = useState(null);
@@ -82,7 +85,10 @@ const GenereCourrier = () => {
             {
               header: "Notifier le courrier",
               content: urlCourrier ? (
-                <ListDestinataire />
+                <ListDestinataire
+                  urlCourrier={urlCourrier.url}
+                  modeleCourrierId={urlCourrier.modeleCourrierId}
+                />
               ) : (
                 <Row>Veuillez générer le courrier avant de notifier.</Row>
               ),
@@ -101,7 +107,13 @@ export function useUrlCourrier() {
 
 export default GenereCourrier;
 
-const ListDestinataire = () => {
+const ListDestinataire = ({
+  urlCourrier,
+  modeleCourrierId,
+}: {
+  urlCourrier: string;
+  modeleCourrierId: string;
+}) => {
   const [listeDestinataire, setListeDestinataire] = useState<
     {
       destinataireId: string;
@@ -110,6 +122,32 @@ const ListDestinataire = () => {
       typeDestinataire: string;
     }[]
   >([]);
+
+  const { success: successToast, error: errorToast } = useToastContext();
+
+  async function notifier() {
+    (
+      await fetch(
+        url`/api/courriers/create/`,
+        getFetchOptions({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            modeleCourrierId: modeleCourrierId,
+            nomDocument: urlCourrier.split("courrierName=")[1],
+            listeDestinataire: listeDestinataire,
+          }),
+        }),
+      )
+    )
+      .text()
+      .then(() => {
+        successToast("Destinataires notifiés");
+      })
+      .catch((reason: string) => {
+        errorToast(reason);
+      });
+  }
 
   return (
     <Row>
@@ -214,6 +252,7 @@ const ListDestinataire = () => {
       </Col>
       <Col xs={12} lg={6}>
         <h3>Destinataires sélectionnés</h3>
+        <Button onClick={notifier}>Notifier</Button>
         <div className="bg-light p-2 border rounded">
           {listeDestinataire.length === 0 ? (
             <div>Aucun destinataire sélectionné</div>

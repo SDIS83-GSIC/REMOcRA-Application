@@ -16,7 +16,12 @@ import remocra.auth.UserInfo
 import remocra.data.DestinataireData
 import remocra.data.Params
 import remocra.data.TypeDestinataire
+import remocra.db.jooq.remocra.tables.pojos.Courrier
 import remocra.db.jooq.remocra.tables.pojos.Document
+import remocra.db.jooq.remocra.tables.pojos.LCourrierContactGestionnaire
+import remocra.db.jooq.remocra.tables.pojos.LCourrierContactOrganisme
+import remocra.db.jooq.remocra.tables.pojos.LCourrierOrganisme
+import remocra.db.jooq.remocra.tables.pojos.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
@@ -24,6 +29,9 @@ import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_ORGANISME
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -345,4 +353,29 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
 
         )
     }
+
+    fun insertCourrier(courrier: Courrier) =
+        dsl.insertInto(COURRIER)
+            .set(dsl.newRecord(COURRIER, courrier))
+            .execute()
+
+    fun insertLCourrierUtilisateur(lCourrierUtilisateur: LCourrierUtilisateur) =
+        dsl.insertInto(L_COURRIER_UTILISATEUR)
+            .set(dsl.newRecord(L_COURRIER_UTILISATEUR, lCourrierUtilisateur))
+            .execute()
+
+    fun insertLCourrierOrganisme(lCourrierOrganisme: LCourrierOrganisme) =
+        dsl.insertInto(L_COURRIER_ORGANISME)
+            .set(dsl.newRecord(L_COURRIER_ORGANISME, lCourrierOrganisme))
+            .execute()
+
+    fun insertLCourrierContactOrganisme(lCourrierContactOrganisme: LCourrierContactOrganisme) =
+        dsl.insertInto(L_COURRIER_CONTACT_ORGANISME)
+            .set(dsl.newRecord(L_COURRIER_CONTACT_ORGANISME, lCourrierContactOrganisme))
+            .execute()
+
+    fun insertLCourrierContactGestionnaire(lCourrierContactGestionnaire: LCourrierContactGestionnaire) =
+        dsl.insertInto(L_COURRIER_CONTACT_GESTIONNAIRE)
+            .set(dsl.newRecord(L_COURRIER_CONTACT_GESTIONNAIRE, lCourrierContactGestionnaire))
+            .execute()
 }

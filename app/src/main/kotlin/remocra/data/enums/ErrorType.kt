@@ -1,7 +1,6 @@
 package remocra.data.enums
 
 import jakarta.ws.rs.core.Response.Status
-import remocra.GlobalConstants
 import remocra.GlobalConstants.PLACEHOLDER_ERROR_TYPE
 import remocra.db.jooq.remocra.enums.TypeVisite
 
@@ -220,32 +219,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
      * Courrier
      * ***********************************************************************
      */
-    MODELE_COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer ce courrier", Status.FORBIDDEN),
-    COURRIER_SAISIR_COMMUNE(
-        5001,
-        "Veuillez spécifier la commune.",
-    ),
-    COURRIER_SAISIR_CIS(
-        5002,
-        "Veuillez spécifier le CIS.",
-    ),
-    COURRIER_SAISIR_GESTIONNAIRE(
-        5003,
-        "Veuillez spécifier le CIS.",
-    ),
-    COURRIER_GROUPEMENT_INTROUVABLE(
-        5004,
-        "Impossble de trouver le groupement associé à la commune.",
-    ),
-    COURRIER_ORGANISME_COMMUNE(
-        5005,
-        "Aucun organisme de type COMMUNE ne correspond à la commune sélectionnée. La géométrie de la commune doit être contenu dans celle de l'organisme",
-    ),
-    COURRIER_MANQUE_MAIRE(
-        5006,
-        "Aucun destinataire Maire pour cette commune. Vérifier que le contact existe et qu'il a bien le rôle '${GlobalConstants.ROLE_DESTINATAIRE_MAIRE_ROP}'",
-        Status.BAD_REQUEST,
-    ),
+    COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer des courriers", Status.FORBIDDEN),
 
     //
     // ********************************************************************************

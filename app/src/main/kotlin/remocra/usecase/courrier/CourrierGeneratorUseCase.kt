@@ -17,7 +17,6 @@ import remocra.usecase.document.DocumentUtils
 import remocra.utils.DateUtils
 import remocra.utils.RequestUtils
 import java.nio.file.Paths
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 /**
@@ -120,7 +119,7 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         )
 
         val nomFichier = "${modeleCourrier.modeleCourrierCode}-${
-            dateUtils.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            dateUtils.format(dateUtils.now(), "yyyy-MM-dd-HH-mm-ss")
         }.pdf"
 
         documentUtils.saveFile(file, nomFichier, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
@@ -129,10 +128,12 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
                 .queryParam("courrierName", Paths.get(nomFichier))
                 .build()
                 .toString(),
+            modeleCourrierId = modeleCourrier.modeleCourrierId!!,
         )
     }
 
     data class UrlCourrier(
         val url: String,
+        val modeleCourrierId: UUID,
     )
 }

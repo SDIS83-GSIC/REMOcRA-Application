@@ -56,6 +56,8 @@ object GlobalConstants {
 
     val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
 
+    val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT + "courriers/"
+
     val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT + "debits_simultanes/"
 
     val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
