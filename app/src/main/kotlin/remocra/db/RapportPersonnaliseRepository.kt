@@ -128,7 +128,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
     )
 
     fun getRapportPersonnalise(rapportPersonnaliseId: UUID): RapportPersonnaliseData =
-        dsl.select(
+        dsl.selectDistinct(
             RAPPORT_PERSONNALISE.ID,
             RAPPORT_PERSONNALISE.CODE,
             RAPPORT_PERSONNALISE.ACTIF,
@@ -184,8 +184,6 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             },
         )
             .from(RAPPORT_PERSONNALISE)
-            .leftJoin(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
             .fetchSingleInto()
 
