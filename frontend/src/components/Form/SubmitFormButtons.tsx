@@ -9,6 +9,7 @@ const SubmitFormButtons = ({
   secondaryActionTitle = "Retour",
   onClick,
   disabledValide = false,
+  submitTitle = "Enregistrer",
 }: SubmitButtonType) => {
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
@@ -30,7 +31,7 @@ const SubmitFormButtons = ({
           onClick={onClick}
           disabled={disabledValide}
         >
-          Enregistrer
+          {submitTitle}
         </Button>
       </Col>
     </Row>

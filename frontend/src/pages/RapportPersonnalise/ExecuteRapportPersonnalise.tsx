@@ -277,7 +277,7 @@ const ExecuteRapportPersonnaliseForm = ({
           return buildComponent(element, values, setFieldValue);
         })}
       </Row>
-      <SubmitFormButtons />
+      <SubmitFormButtons submitTitle="Exécuter" />
     </FormContainer>
   );
 };
