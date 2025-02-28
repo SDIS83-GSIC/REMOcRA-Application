@@ -155,6 +155,7 @@ import OldebProprietaireUpdate from "./pages/Oldeb/OldebProprietaireUpdate.tsx";
 import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
 import ResultatsExecution from "./pages/Admin/jobs/ResultatsExecution.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
+import LogLines from "./pages/Admin/jobs/LogLines.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -416,6 +417,8 @@ export const URLS = {
   // Module Opérations diverses
   HISTORIQUE_OPERATIONS: url`/operations-diverses/historique-operations`,
   RESULTATS_EXECUTION: url`/operations-diverses/resultats-execution`,
+  RESULTATS_EXECUTION_LOGLINES: (jobId: string) =>
+    url`/operations-diverses/log-lines/` + jobId,
 
   //Tracabilité
   TRACABILITE: url`/admin/tracabilite`,
@@ -1749,6 +1752,15 @@ export default [
         element: (
           <Authorization
             Component={ResultatsExecution}
+            droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
+          />
+        ),
+      },
+      {
+        path: "log-lines/:jobId",
+        element: (
+          <Authorization
+            Component={LogLines}
             droits={[TYPE_DROIT.OPERATIONS_DIVERSES_E]}
           />
         ),

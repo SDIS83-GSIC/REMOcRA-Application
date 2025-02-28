@@ -11,6 +11,12 @@ import url from "../../../module/fetch.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
+import { URLS } from "../../../routes.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
 import filterValuesToVariable from "./FilterResultatsExecution.tsx";
 
 const ResultatsExecution = () => {
@@ -27,6 +33,15 @@ const ResultatsExecution = () => {
 export default ResultatsExecution;
 
 const FormTable = () => {
+  const listeButton: ButtonType[] = [];
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    route: (jobId) => URLS.RESULTATS_EXECUTION_LOGLINES(jobId),
+    type: TYPE_BUTTON.SEE,
+  });
+
   const typeTaskState = useGet(url`/api/jobs/types-task`);
   return (
     <QueryTable
@@ -81,6 +96,11 @@ const FormTable = () => {
           },
           Filter: <SelectEnumOption options={EtatJobEnum} name={"etatJob"} />,
         },
+        ActionColumn({
+          Header: "Actions",
+          accessor: "jobId",
+          buttons: listeButton,
+        }),
       ]}
       idName="jobTable"
       filterValuesToVariable={filterValuesToVariable}
