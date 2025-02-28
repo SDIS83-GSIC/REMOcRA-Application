@@ -1,27 +1,50 @@
 import { Button, Container } from "react-bootstrap";
 import { WKT } from "ol/format";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { shortenString } from "../../../utils/fonctionsUtils.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
 import EditModal from "../../../components/Modal/EditModal.tsx";
-import { IconLocation } from "../../../components/Icon/Icon.tsx";
+import { IconFilter, IconLocation } from "../../../components/Icon/Icon.tsx";
 import MessageElement from "../../../components/message/messageElement.tsx";
 import MessageForm, {
   getInitialValue,
   messageValidationSchema,
   prepareMessageValues,
 } from "./message/MessageForm.tsx";
+import FilterEvent from "./filterEvent.tsx";
+
+type FilterEvenement = {
+  filterType: string;
+  filterAuthor: string;
+  filterMessage: string;
+  filterStatut: string;
+  filterImportance: string;
+};
 
 const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
-  const getEvents = useGet(url`/api/crise/${criseId}/evenement`)?.data;
+  const [params, setSearchParam] = useState<FilterEvenement>({});
+  const [buttonClicked, setButtonClick] = useState<boolean>(false);
+
+  const { data, run } = useGetRun(
+    url`/api/crise/${criseId}/evenement?${params}`,
+    {},
+  );
+
+  useEffect(() => {
+    if (!data) {
+      run();
+    }
+  }, [data, run]);
+
   const { user } = useAppContext();
   const { visible, show, close } = useModal();
+
   const [evenementId, setEvenementId] = useState();
 
   const tableau: { header: string; content: JSX.Element }[] = [];
@@ -31,9 +54,9 @@ const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
   );
 
   const showEventLocation = (eventId: string) => {
-    for (let i = 0; i < getEvents.length; i++) {
-      const eventGeometry = getEvents[i].evenementGeometrie;
-      if (eventGeometry && getEvents[i].evenementId === eventId) {
+    for (let i = 0; i < data?.length; i++) {
+      const eventGeometry = data?.[i].evenementGeometrie;
+      if (eventGeometry && data?.[i].evenementId === eventId) {
         const geom = new WKT().readFeature(eventGeometry.split(";").pop());
         map?.getView().fit(geom.get("geometry"), {
           padding: [50, 50, 50, 50],
@@ -43,7 +66,7 @@ const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
     }
   };
 
-  getEvents?.map(
+  data?.map(
     (e: {
       evenementGeometrie: string;
       evenementLibelle: string;
@@ -92,12 +115,30 @@ const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
 
   return (
     <Container>
+      <Button
+        style={{ marginBottom: "10px" }}
+        onClick={() => {
+          setButtonClick(!buttonClicked);
+        }}
+      >
+        <IconFilter />
+      </Button>
+
+      {buttonClicked && (
+        <FilterEvent
+          setSearchParam={setSearchParam}
+          run={run}
+          criseId={criseId}
+        />
+      )}
+
       <AccordionCustom
         activesKeys={activesKeys}
         list={tableau}
         handleShowClose={handleShowClose}
       />
 
+      {/* messages */}
       <EditModal
         closeModal={close}
         canModify={true}

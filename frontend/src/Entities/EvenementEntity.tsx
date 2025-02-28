@@ -1,4 +1,5 @@
 export type EvenementType = {
+  geometrieEvenement(geometrieEvenement: any): string | Blob;
   evenementId: string;
   evenementTypeId: string;
   evenementType: string;
