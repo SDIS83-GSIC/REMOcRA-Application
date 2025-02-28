@@ -107,14 +107,17 @@ function buildDynamicForm(
  * Permet d'afficher dynamiquement le formulaire qu'il s'agisse de rapports personnalisé ou de courrier
  * @param listeWithParametre : liste des rapports ou courriers avec leur paramètres
  * @param contexteLibelle : Rapport personnalisé ou Modèle de courrier par exemple
+ * @param reference : afficher la référence ? (applicable que dans le cadre des courriers)
  * @returns
  */
 const GenererForm = ({
   listeWithParametre,
   contexteLibelle,
+  reference = false,
 }: {
   listeWithParametre: DynamicFormWithParametre[];
   contexteLibelle: string;
+  reference?: boolean;
 }) => {
   const { setFieldValue, values } = useFormikContext();
 
@@ -148,6 +151,15 @@ const GenererForm = ({
           required={true}
         />
       </Row>
+      {reference && (
+        <Row>
+          <TextInput
+            name="courrierReference"
+            required={true}
+            label="Référence"
+          />
+        </Row>
+      )}
       {rapportPersonnaliseCourant?.dynamicFormDescription && (
         <Row className="mt-3">
           <Col>

@@ -11,6 +11,7 @@ export const getInitialValues = (): ValuesType => ({
 export const validationSchema = object({});
 export const prepareVariables = (values) => ({
   modeleCourrierId: values.dynamicFormId,
+  courrierReference: values.courrierReference,
   listParametres: Object.entries(values).map((e) => {
     return { nom: e[0], valeur: e[1] };
   }),

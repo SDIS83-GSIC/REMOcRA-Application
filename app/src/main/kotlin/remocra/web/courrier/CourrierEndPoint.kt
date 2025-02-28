@@ -251,6 +251,7 @@ class CourrierEndPoint : AbstractEndpoint() {
                 modeleCourrierId = courrierWithDestinataires.modeleCourrierId,
                 nomDocumentTmp = courrierWithDestinataires.nomDocument,
                 listeDestinataire = courrierWithDestinataires.listeDestinataire,
+                courrierReference = courrierWithDestinataires.courrierReference,
             ),
         ).wrap()
     }
@@ -259,5 +260,6 @@ class CourrierEndPoint : AbstractEndpoint() {
         val modeleCourrierId: UUID,
         val nomDocument: String,
         val listeDestinataire: Set<DestinataireData>,
+        val courrierReference: String,
     )
 }

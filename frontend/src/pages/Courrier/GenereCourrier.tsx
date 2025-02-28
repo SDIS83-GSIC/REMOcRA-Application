@@ -31,7 +31,11 @@ import {
 import filterValuesToVariable from "./FilterDestinataire.tsx";
 
 type ContextType = {
-  urlCourrier: { url: string; modeleCourrierId: string } | null;
+  urlCourrier: {
+    url: string;
+    modeleCourrierId: string;
+    courrierReference: string;
+  } | null;
 };
 
 const GenereCourrier = () => {
@@ -71,6 +75,7 @@ const GenereCourrier = () => {
                       <GenererForm
                         listeWithParametre={data}
                         contexteLibelle="Modèle de courrier"
+                        reference={true}
                       />
                     </MyFormik>
                   </Col>
@@ -88,6 +93,7 @@ const GenereCourrier = () => {
                 <ListDestinataire
                   urlCourrier={urlCourrier.url}
                   modeleCourrierId={urlCourrier.modeleCourrierId}
+                  courrierReference={urlCourrier.courrierReference}
                 />
               ) : (
                 <Row>Veuillez générer le courrier avant de notifier.</Row>
@@ -110,9 +116,11 @@ export default GenereCourrier;
 const ListDestinataire = ({
   urlCourrier,
   modeleCourrierId,
+  courrierReference,
 }: {
   urlCourrier: string;
   modeleCourrierId: string;
+  courrierReference: string;
 }) => {
   const [listeDestinataire, setListeDestinataire] = useState<
     {
@@ -136,6 +144,7 @@ const ListDestinataire = ({
             modeleCourrierId: modeleCourrierId,
             nomDocument: urlCourrier.split("courrierName=")[1],
             listeDestinataire: listeDestinataire,
+            courrierReference: courrierReference,
           }),
         }),
       )
@@ -251,8 +260,16 @@ const ListDestinataire = ({
         />
       </Col>
       <Col xs={12} lg={6}>
-        <h3>Destinataires sélectionnés</h3>
-        <Button onClick={notifier}>Notifier</Button>
+        <Row>
+          <Col>
+            <h3>Destinataires sélectionnés</h3>
+          </Col>
+          <Col lg={2}>
+            <Button className="mb-2" onClick={notifier}>
+              Notifier
+            </Button>
+          </Col>
+        </Row>
         <div className="bg-light p-2 border rounded">
           {listeDestinataire.length === 0 ? (
             <div>Aucun destinataire sélectionné</div>

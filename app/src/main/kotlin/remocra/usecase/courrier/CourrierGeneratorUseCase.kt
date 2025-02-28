@@ -112,6 +112,9 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         // et le nom de l'utilisateur connecté qui génére le courrier
         mapParameters!!["userGenerationCourrier"] = "${userInfo.prenom} ${userInfo.nom}"
 
+        // et le nom de l'utilisateur connecté qui génére le courrier
+        mapParameters!!["reference"] = parametreCourrierInput.courrierReference
+
         val file = JasperRunManager.runReportToPdf(
             courrier,
             mapParameters,
@@ -129,11 +132,13 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
                 .build()
                 .toString(),
             modeleCourrierId = modeleCourrier.modeleCourrierId!!,
+            courrierReference = parametreCourrierInput.courrierReference,
         )
     }
 
     data class UrlCourrier(
         val url: String,
         val modeleCourrierId: UUID,
+        val courrierReference: String,
     )
 }

@@ -7,6 +7,9 @@ class ParametreCourrierInput(
     @FormParam("modeleCourrierId")
     val modeleCourrierId: UUID,
 
+    @FormParam("courrierReference")
+    val courrierReference: String,
+
     @FormParam("listParametres")
     val listParametres: List<NomValue>?,
 
