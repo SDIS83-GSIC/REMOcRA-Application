@@ -18,6 +18,10 @@ import SelectForm from "../../components/Form/SelectForm.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { hasDroit } from "../../droits.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
   permisId: data?.permisId,
@@ -93,6 +97,7 @@ export const prepareVariables = (
 };
 
 const Permis = ({ readOnly }: { readOnly: boolean }) => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const { values, setFieldValue }: { values: any } = useFormikContext();
 
   const fetchPermisData = useGet(
@@ -329,7 +334,7 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
         <p>Dernière modification : {values.permisLastUpdateDate}</p>
         <p>Instructeur : {values.permisInstructeurUsername}</p>
       </Row>
-      {!readOnly ? (
+      {!readOnly && hasDroit(user, TYPE_DROIT.PERMIS_DOCUMENTS_C) ? (
         <Row>
           <FormDocuments
             documents={values.documents}
