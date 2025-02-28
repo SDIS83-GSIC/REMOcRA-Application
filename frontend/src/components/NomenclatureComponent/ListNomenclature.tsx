@@ -84,7 +84,7 @@ const ListNomenclature = ({
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      path: url`/api/nomenclature/` + typeNomenclature + "/delete/",
+      pathname: url`/api/nomenclature/${typeNomenclature}/delete/`,
     });
   }
 
