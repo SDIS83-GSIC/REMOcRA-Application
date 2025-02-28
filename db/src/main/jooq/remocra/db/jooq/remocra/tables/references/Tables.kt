@@ -42,6 +42,9 @@ import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LCoucheModule
+import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
+import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
+import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
@@ -327,6 +330,21 @@ val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
  * The table <code>remocra.l_couche_module</code>.
  */
 val L_COUCHE_MODULE: LCoucheModule = LCoucheModule.L_COUCHE_MODULE
+
+/**
+ * The table <code>remocra.l_courrier_contact_gestionnaire</code>.
+ */
+val L_COURRIER_CONTACT_GESTIONNAIRE: LCourrierContactGestionnaire = LCourrierContactGestionnaire.L_COURRIER_CONTACT_GESTIONNAIRE
+
+/**
+ * The table <code>remocra.l_courrier_contact_organisme</code>.
+ */
+val L_COURRIER_CONTACT_ORGANISME: LCourrierContactOrganisme = LCourrierContactOrganisme.L_COURRIER_CONTACT_ORGANISME
+
+/**
+ * The table <code>remocra.l_courrier_organisme</code>.
+ */
+val L_COURRIER_ORGANISME: LCourrierOrganisme = LCourrierOrganisme.L_COURRIER_ORGANISME
 
 /**
  * The table <code>remocra.l_courrier_utilisateur</code>.

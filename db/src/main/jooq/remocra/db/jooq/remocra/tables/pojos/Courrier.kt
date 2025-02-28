@@ -3,7 +3,6 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
-import remocra.db.jooq.remocra.enums.TypeDestinataire
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -23,7 +22,6 @@ data class Courrier(
     val courrierId: UUID,
     val courrierDocumentId: UUID,
     val courrierReference: String,
-    val courrierTypeDestinataire: TypeDestinataire?,
     val courrierObjet: String,
     val courrierExpediteur: UUID?,
 ) : Serializable {
@@ -48,13 +46,6 @@ data class Courrier(
         if (this.courrierReference != o.courrierReference) {
             return false
         }
-        if (this.courrierTypeDestinataire == null) {
-            if (o.courrierTypeDestinataire != null) {
-                return false
-            }
-        } else if (this.courrierTypeDestinataire != o.courrierTypeDestinataire) {
-            return false
-        }
         if (this.courrierObjet != o.courrierObjet) {
             return false
         }
@@ -74,7 +65,6 @@ data class Courrier(
         result = prime * result + this.courrierId.hashCode()
         result = prime * result + this.courrierDocumentId.hashCode()
         result = prime * result + this.courrierReference.hashCode()
-        result = prime * result + (if (this.courrierTypeDestinataire == null) 0 else this.courrierTypeDestinataire.hashCode())
         result = prime * result + this.courrierObjet.hashCode()
         result = prime * result + (if (this.courrierExpediteur == null) 0 else this.courrierExpediteur.hashCode())
         return result
@@ -86,7 +76,6 @@ data class Courrier(
         sb.append(courrierId)
         sb.append(", ").append(courrierDocumentId)
         sb.append(", ").append(courrierReference)
-        sb.append(", ").append(courrierTypeDestinataire)
         sb.append(", ").append(courrierObjet)
         sb.append(", ").append(courrierExpediteur)
 

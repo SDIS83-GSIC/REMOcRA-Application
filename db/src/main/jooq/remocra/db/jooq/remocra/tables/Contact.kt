@@ -34,12 +34,17 @@ import remocra.db.jooq.remocra.keys.CONTACT__CONTACT_CONTACT_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ROLE__L_CONTACT_ROLE_CONTACT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_CONTACT_GESTIONNAIRE__L_COURRIER_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_CONTACT_ORGANISME__L_COURRIER_CONTACT_ORGANISME_CONTACT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
+import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.FonctionContact.FonctionContactPath
 import remocra.db.jooq.remocra.tables.Gestionnaire.GestionnairePath
 import remocra.db.jooq.remocra.tables.LContactGestionnaire.LContactGestionnairePath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
 import remocra.db.jooq.remocra.tables.LContactRole.LContactRolePath
+import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire.LCourrierContactGestionnairePath
+import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme.LCourrierContactOrganismePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.RoleContact.RoleContactPath
@@ -339,6 +344,40 @@ open class Contact(
     val lContactRole: LContactRolePath
         get(): LContactRolePath = lContactRole()
 
+    private lateinit var _lCourrierContactGestionnaire: LCourrierContactGestionnairePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_contact_gestionnaire</code> table
+     */
+    fun lCourrierContactGestionnaire(): LCourrierContactGestionnairePath {
+        if (!this::_lCourrierContactGestionnaire.isInitialized) {
+            _lCourrierContactGestionnaire = LCourrierContactGestionnairePath(this, null, L_COURRIER_CONTACT_GESTIONNAIRE__L_COURRIER_CONTACT_GESTIONNAIRE_CONTACT_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierContactGestionnaire
+    }
+
+    val lCourrierContactGestionnaire: LCourrierContactGestionnairePath
+        get(): LCourrierContactGestionnairePath = lCourrierContactGestionnaire()
+
+    private lateinit var _lCourrierContactOrganisme: LCourrierContactOrganismePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_contact_organisme</code> table
+     */
+    fun lCourrierContactOrganisme(): LCourrierContactOrganismePath {
+        if (!this::_lCourrierContactOrganisme.isInitialized) {
+            _lCourrierContactOrganisme = LCourrierContactOrganismePath(this, null, L_COURRIER_CONTACT_ORGANISME__L_COURRIER_CONTACT_ORGANISME_CONTACT_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierContactOrganisme
+    }
+
+    val lCourrierContactOrganisme: LCourrierContactOrganismePath
+        get(): LCourrierContactOrganismePath = lCourrierContactOrganisme()
+
     /**
      * Get the implicit many-to-many join path to the
      * <code>remocra.gestionnaire</code> table
@@ -359,6 +398,22 @@ open class Contact(
      */
     val roleContact: RoleContactPath
         get(): RoleContactPath = lContactRole().roleContact()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.courrier</code> table, via the
+     * <code>l_courrier_contact_gestionnaire_courrier_id_fkey</code> key
+     */
+    val lCourrierContactGestionnaireCourrierIdFkey: CourrierPath
+        get(): CourrierPath = lCourrierContactGestionnaire().courrier()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.courrier</code> table, via the
+     * <code>l_courrier_contact_organisme_courrier_id_fkey</code> key
+     */
+    val lCourrierContactOrganismeCourrierIdFkey: CourrierPath
+        get(): CourrierPath = lCourrierContactOrganisme().courrier()
     override fun `as`(alias: String): Contact = Contact(DSL.name(alias), this)
     override fun `as`(alias: Name): Contact = Contact(alias, this)
     override fun `as`(alias: Table<*>): Contact = Contact(alias.qualifiedName, this)

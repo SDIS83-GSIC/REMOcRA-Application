@@ -25,13 +25,19 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.enums.TypeDestinataire
 import remocra.db.jooq.remocra.keys.COURRIER_PKEY
 import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_CONTACT_GESTIONNAIRE__L_COURRIER_CONTACT_GESTIONNAIRE_COURRIER_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_CONTACT_ORGANISME__L_COURRIER_CONTACT_ORGANISME_COURRIER_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_ORGANISME__L_COURRIER_ORGANISME_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_COURRIER__L_THEMATIQUE_COURRIER_COURRIER_ID_FKEY
+import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
+import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire.LCourrierContactGestionnairePath
+import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme.LCourrierContactOrganismePath
+import remocra.db.jooq.remocra.tables.LCourrierOrganisme.LCourrierOrganismePath
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur.LCourrierUtilisateurPath
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier.LThematiqueCourrierPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -100,11 +106,6 @@ open class Courrier(
      * The column <code>remocra.courrier.courrier_reference</code>.
      */
     val REFERENCE: TableField<Record, String?> = createField(DSL.name("courrier_reference"), SQLDataType.CLOB.nullable(false), this, "")
-
-    /**
-     * The column <code>remocra.courrier.courrier_type_destinataire</code>.
-     */
-    val TYPE_DESTINATAIRE: TableField<Record, TypeDestinataire?> = createField(DSL.name("courrier_type_destinataire"), SQLDataType.VARCHAR.asEnumDataType(TypeDestinataire::class.java), this, "")
 
     /**
      * The column <code>remocra.courrier.courrier_objet</code>.
@@ -184,6 +185,57 @@ open class Courrier(
     val organisme: OrganismePath
         get(): OrganismePath = organisme()
 
+    private lateinit var _lCourrierContactGestionnaire: LCourrierContactGestionnairePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_contact_gestionnaire</code> table
+     */
+    fun lCourrierContactGestionnaire(): LCourrierContactGestionnairePath {
+        if (!this::_lCourrierContactGestionnaire.isInitialized) {
+            _lCourrierContactGestionnaire = LCourrierContactGestionnairePath(this, null, L_COURRIER_CONTACT_GESTIONNAIRE__L_COURRIER_CONTACT_GESTIONNAIRE_COURRIER_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierContactGestionnaire
+    }
+
+    val lCourrierContactGestionnaire: LCourrierContactGestionnairePath
+        get(): LCourrierContactGestionnairePath = lCourrierContactGestionnaire()
+
+    private lateinit var _lCourrierContactOrganisme: LCourrierContactOrganismePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_contact_organisme</code> table
+     */
+    fun lCourrierContactOrganisme(): LCourrierContactOrganismePath {
+        if (!this::_lCourrierContactOrganisme.isInitialized) {
+            _lCourrierContactOrganisme = LCourrierContactOrganismePath(this, null, L_COURRIER_CONTACT_ORGANISME__L_COURRIER_CONTACT_ORGANISME_COURRIER_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierContactOrganisme
+    }
+
+    val lCourrierContactOrganisme: LCourrierContactOrganismePath
+        get(): LCourrierContactOrganismePath = lCourrierContactOrganisme()
+
+    private lateinit var _lCourrierOrganisme: LCourrierOrganismePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_organisme</code> table
+     */
+    fun lCourrierOrganisme(): LCourrierOrganismePath {
+        if (!this::_lCourrierOrganisme.isInitialized) {
+            _lCourrierOrganisme = LCourrierOrganismePath(this, null, L_COURRIER_ORGANISME__L_COURRIER_ORGANISME_COURRIER_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierOrganisme
+    }
+
+    val lCourrierOrganisme: LCourrierOrganismePath
+        get(): LCourrierOrganismePath = lCourrierOrganisme()
+
     private lateinit var _lCourrierUtilisateur: LCourrierUtilisateurPath
 
     /**
@@ -217,6 +269,22 @@ open class Courrier(
 
     val lThematiqueCourrier: LThematiqueCourrierPath
         get(): LThematiqueCourrierPath = lThematiqueCourrier()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.contact</code> table, via the
+     * <code>l_courrier_contact_gestionnaire_contact_id_fkey</code> key
+     */
+    val lCourrierContactGestionnaireContactIdFkey: ContactPath
+        get(): ContactPath = lCourrierContactGestionnaire().contact()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.contact</code> table, via the
+     * <code>l_courrier_contact_organisme_contact_id_fkey</code> key
+     */
+    val lCourrierContactOrganismeContactIdFkey: ContactPath
+        get(): ContactPath = lCourrierContactOrganisme().contact()
 
     /**
      * Get the implicit many-to-many join path to the

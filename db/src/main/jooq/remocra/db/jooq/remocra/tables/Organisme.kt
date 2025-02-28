@@ -31,6 +31,7 @@ import remocra.db.jooq.remocra.keys.API__API_API_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COURRIER_ORGANISME__L_COURRIER_ORGANISME_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.ORGANISME_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PARENT_ID_FKEY
@@ -50,6 +51,7 @@ import remocra.db.jooq.remocra.tables.Contact.ContactPath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LContactOrganisme.LContactOrganismePath
+import remocra.db.jooq.remocra.tables.LCourrierOrganisme.LCourrierOrganismePath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.PeiPrescrit.PeiPrescritPath
@@ -341,6 +343,23 @@ open class Organisme(
 
     val lContactOrganisme: LContactOrganismePath
         get(): LContactOrganismePath = lContactOrganisme()
+
+    private lateinit var _lCourrierOrganisme: LCourrierOrganismePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_courrier_organisme</code> table
+     */
+    fun lCourrierOrganisme(): LCourrierOrganismePath {
+        if (!this::_lCourrierOrganisme.isInitialized) {
+            _lCourrierOrganisme = LCourrierOrganismePath(this, null, L_COURRIER_ORGANISME__L_COURRIER_ORGANISME_ORGANISME_ID_FKEY.inverseKey)
+        }
+
+        return _lCourrierOrganisme
+    }
+
+    val lCourrierOrganisme: LCourrierOrganismePath
+        get(): LCourrierOrganismePath = lCourrierOrganisme()
 
     private lateinit var _peiPeiAutoriteDeciIdFkey: PeiPath
 

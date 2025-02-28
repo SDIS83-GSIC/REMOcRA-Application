@@ -46,6 +46,9 @@ import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LCoucheModule
+import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
+import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
+import remocra.db.jooq.remocra.tables.LCourrierOrganisme
 import remocra.db.jooq.remocra.tables.LCourrierUtilisateur
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
@@ -353,6 +356,21 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_couche_module</code>.
      */
     val L_COUCHE_MODULE: LCoucheModule get() = LCoucheModule.L_COUCHE_MODULE
+
+    /**
+     * The table <code>remocra.l_courrier_contact_gestionnaire</code>.
+     */
+    val L_COURRIER_CONTACT_GESTIONNAIRE: LCourrierContactGestionnaire get() = LCourrierContactGestionnaire.L_COURRIER_CONTACT_GESTIONNAIRE
+
+    /**
+     * The table <code>remocra.l_courrier_contact_organisme</code>.
+     */
+    val L_COURRIER_CONTACT_ORGANISME: LCourrierContactOrganisme get() = LCourrierContactOrganisme.L_COURRIER_CONTACT_ORGANISME
+
+    /**
+     * The table <code>remocra.l_courrier_organisme</code>.
+     */
+    val L_COURRIER_ORGANISME: LCourrierOrganisme get() = LCourrierOrganisme.L_COURRIER_ORGANISME
 
     /**
      * The table <code>remocra.l_courrier_utilisateur</code>.
@@ -846,6 +864,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactRole.L_CONTACT_ROLE,
         LCoucheDroit.L_COUCHE_DROIT,
         LCoucheModule.L_COUCHE_MODULE,
+        LCourrierContactGestionnaire.L_COURRIER_CONTACT_GESTIONNAIRE,
+        LCourrierContactOrganisme.L_COURRIER_CONTACT_ORGANISME,
+        LCourrierOrganisme.L_COURRIER_ORGANISME,
         LCourrierUtilisateur.L_COURRIER_UTILISATEUR,
         LDashboardProfil.L_DASHBOARD_PROFIL,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
