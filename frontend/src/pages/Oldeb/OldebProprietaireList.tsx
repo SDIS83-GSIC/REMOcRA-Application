@@ -1,5 +1,4 @@
 import { Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
@@ -18,7 +17,6 @@ import { URLS } from "../../routes.tsx";
 import filterValuesToVariable from "./OldebProprietaireFilter.tsx";
 
 const OldebProprietaireList = () => {
-  const navigate = useNavigate();
   return (
     <Container>
       <PageTitle
@@ -26,7 +24,7 @@ const OldebProprietaireList = () => {
         title={"Liste des propriétaires"}
         right={
           <CreateButton
-            onClick={() => navigate(URLS.OLDEB_PROPRIETAIRE_CREATE)}
+            href={URLS.OLDEB_PROPRIETAIRE_CREATE}
             title={"Créer un propriétaire"}
           />
         }
