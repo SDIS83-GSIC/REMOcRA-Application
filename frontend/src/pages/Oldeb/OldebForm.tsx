@@ -328,7 +328,12 @@ const OldebForm = ({ returnLink }: { returnLink: string }) => {
           <Col>
             <SelectForm
               name={"oldeb.oldebCadastreSectionId"}
-              listIdCodeLibelle={cadastreSectionList}
+              listIdCodeLibelle={cadastreSectionList.map((v) => {
+                return {
+                  id: v.cadastreSectionId,
+                  libelle: v.cadastreSectionNumero,
+                };
+              })}
               label="Section"
               defaultValue={cadastreSectionList?.find(
                 (v) => v.id === values.oldeb.oldebCadastreSectionId,
