@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { Outlet, useOutletContext } from "react-router-dom";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
+import DeleteButton from "../../components/Button/DeleteButton.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -11,7 +12,7 @@ import FilterInput from "../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../components/Filter/MultiSelectFilterFromList.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import Header from "../../components/Header/Header.tsx";
-import { IconDocument } from "../../components/Icon/Icon.tsx";
+import { IconAdd, IconDocument } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
@@ -101,6 +102,15 @@ export function useUrlCourrier() {
 export default GenereCourrier;
 
 const ListDestinataire = () => {
+  const [listeDestinataire, setListeDestinataire] = useState<
+    {
+      destinataireId: string;
+      nomDestinataire: string;
+      emailDestinataire: string;
+      typeDestinataire: string;
+    }[]
+  >([]);
+
   return (
     <Row>
       <Col xs={12} lg={6}>
@@ -118,22 +128,22 @@ const ListDestinataire = () => {
                   listIdCodeLibelle={[
                     {
                       id: "UTILISATEUR",
-                      code: "Utilisateur",
+                      code: "UTILISATEUR",
                       libelle: "Utilisateur",
                     },
                     {
                       id: "ORGANISME",
-                      code: "Organisme",
+                      code: "ORGANISME",
                       libelle: "Organisme",
                     },
                     {
                       id: "CONTACT_ORGANISME",
-                      code: "Contact d'organisme",
+                      code: "CONTACT_ORGANISME",
                       libelle: "Contact d'organisme",
                     },
                     {
                       id: "CONTACT_GESTIONNAIRE",
-                      code: "Contact de gestionnaire",
+                      code: "CONTACT_GESTIONNAIRE",
                       libelle: "Contact de gestionnaire",
                     },
                   ]}
@@ -158,13 +168,80 @@ const ListDestinataire = () => {
               sortField: "fonctionDestinataire",
               Filter: <FilterInput type="text" name="fonctionDestinataire" />,
             },
+            {
+              accessor: ({
+                destinataireId,
+                nomDestinataire,
+                emailDestinataire,
+                typeDestinataire,
+              }) => {
+                return {
+                  destinataireId,
+                  nomDestinataire,
+                  emailDestinataire,
+                  typeDestinataire,
+                };
+              },
+              Cell: (value) => {
+                return (
+                  <Button
+                    variant="link"
+                    className="btn-link text-decoration-none fw-bold text-nowrap"
+                    disabled={listeDestinataire
+                      .map((e) => e.destinataireId)
+                      .includes(value.value.destinataireId)}
+                    onClick={() => {
+                      setListeDestinataire((liste) => [
+                        ...liste,
+                        {
+                          destinataireId: value.value.destinataireId,
+                          nomDestinataire: value.value.nomDestinataire,
+                          emailDestinataire: value.value.emailDestinataire,
+                          typeDestinataire: value.value.typeDestinataire,
+                        },
+                      ]);
+                    }}
+                  >
+                    <IconAdd /> Ajouter
+                  </Button>
+                );
+              },
+            },
           ]}
           filterValuesToVariable={filterValuesToVariable}
           idName={"tableDestinataireId"}
         />
       </Col>
-      <Col xs={12} lg={4}>
-        TODO ajouter les destinataires sélectionnés
+      <Col xs={12} lg={6}>
+        <h3>Destinataires sélectionnés</h3>
+        <div className="bg-light p-2 border rounded">
+          {listeDestinataire.length === 0 ? (
+            <div>Aucun destinataire sélectionné</div>
+          ) : (
+            listeDestinataire.map((e, index) => (
+              <Row className="mt-2" key={index}>
+                <Col>
+                  <b>Nom</b> : {e?.nomDestinataire}
+                </Col>
+                <Col>
+                  <b>Email</b> : {e?.emailDestinataire}
+                </Col>
+                <Col lg={2}>
+                  <DeleteButton
+                    title={"Supprimer"}
+                    onClick={() =>
+                      setListeDestinataire((liste) =>
+                        liste.filter(
+                          (item) => item.destinataireId !== e.destinataireId,
+                        ),
+                      )
+                    }
+                  />
+                </Col>
+              </Row>
+            ))
+          )}
+        </div>
       </Col>
     </Row>
   );
