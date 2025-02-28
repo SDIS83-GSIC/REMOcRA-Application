@@ -28,9 +28,9 @@ export enum TYPE_PARAMETRE_RAPPORT_PERSONNALISE {
 }
 
 export const userParamRapportPersonnalise = [
-  "ZONE_COMPETENCE_ID",
-  "UTILISATEUR_ID",
-  "ORGANISME_ID",
+  "#ZONE_COMPETENCE_ID#",
+  "#UTILISATEUR_ID#",
+  "#ORGANISME_ID#",
 ];
 
 const SortableParametre: FC<SortableParametre> = ({
