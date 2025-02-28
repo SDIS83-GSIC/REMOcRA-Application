@@ -54,5 +54,6 @@
   "internationalizationEnabled" : true,
   "supportedLocales" : [ "fr" ],
   "defaultLocale" : "fr",
-  "editUsernameAllowed": true
+  "editUsernameAllowed": true,
+  "resetPasswordAllowed" : true
 }
