@@ -698,7 +698,7 @@ const RcciForm = () => {
                     );
                     setFieldValue(
                       "rcci.rcciRcciTypePrometheeCategorieId",
-                      null,
+                      undefined,
                     );
                     setFieldValue(name, value);
                   }}
