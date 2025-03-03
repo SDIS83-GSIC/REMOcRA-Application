@@ -17,6 +17,7 @@ import remocra.db.jooq.remocra.tables.references.ADRESSE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
+import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
@@ -167,6 +168,34 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
+    /**
+     * Récupère les évènements selon la crise.
+     */
+    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int): Collection<EvenementCarte> {
+        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("pointGeometrie"), EVENEMENT.ID.`as`("pointId"))
+            .from(EVENEMENT)
+            .where(
+                EVENEMENT.CRISE_ID.eq(criseId),
+                EVENEMENT.IS_CLOSED.eq(false),
+            )
+            .fetchInto()
+    }
+
+    /**
+     * Récupère les évènements dans une BBOX selon la crise.
+     */
+    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<EvenementCarte> {
+        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("pointGeometrie"), EVENEMENT.ID.`as`("pointId"))
+            .from(EVENEMENT)
+            .where(
+                EVENEMENT.CRISE_ID.eq(criseId),
+                EVENEMENT.IS_CLOSED.eq(false),
+            ).and(
+                ST_Within(EVENEMENT.GEOMETRIE, bbox),
+            )
+            .fetchInto()
+    }
+
 // TODO zone compétence
     fun getAdresse(srid: Int): Collection<AdresseCarte> {
         return dsl.select(
@@ -304,6 +333,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     ) : PointCarte() {
         override val typePointCarte: TypePointCarte
             get() = TypePointCarte.PEI_PROJET
+    }
+
+    data class EvenementCarte(
+        override val pointGeometrie: Geometry,
+        override val pointId: UUID,
+        override var propertiesToDisplay: String? = null,
+    ) : PointCarte() {
+        override val typePointCarte: TypePointCarte
+            get() = TypePointCarte.CRISE
     }
 
     data class PeiPrescritsCarte(

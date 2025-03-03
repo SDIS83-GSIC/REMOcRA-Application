@@ -10,9 +10,9 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.CriseData
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
-import remocra.db.jooq.remocra.tables.LCriseCommune.Companion.L_CRISE_COMMUNE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CRISE
+import remocra.db.jooq.remocra.tables.references.L_CRISE_COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_TOPONYMIE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE

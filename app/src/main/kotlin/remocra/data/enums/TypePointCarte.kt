@@ -9,4 +9,5 @@ enum class TypePointCarte {
     OLDEB,
     RCCI,
     ADRESSE,
+    CRISE,
 }

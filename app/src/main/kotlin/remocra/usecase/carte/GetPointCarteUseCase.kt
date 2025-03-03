@@ -40,6 +40,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
         etudeId: UUID? = null,
         typePointCarte: TypePointCarte,
         userInfo: UserInfo,
+        criseId: UUID? = null,
     ): LayersRes {
         val srid = sridFromEpsgCode(sridSource)
 
@@ -135,6 +136,15 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 } else {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
                     carteRepository.getRcciWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
+
+            TypePointCarte.CRISE -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getEvenementProjetFromCrise(criseId!!, srid)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid)
                 }
             }
         }

@@ -21,6 +21,19 @@ class DocumentsData {
         val etudeDocumentLibelle: String?,
     ) : AbstractDocumentData()
 
+    open class DocumentsEvenement(
+        override val objectId: UUID,
+        override val listeDocsToRemove: List<UUID>,
+        override val listDocument: List<DocumentEvenementData>,
+        override val listDocumentParts: List<Part>,
+    ) : AbstractDocuments()
+
+    open class DocumentEvenementData(
+        override val documentId: UUID?,
+        override val documentNomFichier: String,
+        val evenementDocumentLibelle: String?,
+    ) : AbstractDocumentData()
+
     open class DocumentsPei(
         override val objectId: UUID,
         override val listeDocsToRemove: List<UUID>,
