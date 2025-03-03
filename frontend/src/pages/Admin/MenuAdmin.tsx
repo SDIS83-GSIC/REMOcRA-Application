@@ -12,6 +12,7 @@ const MenuAdmin = () => {
   const hasDroitAdministrationGenerale = isAuthorized(user, [
     TYPE_DROIT.ADMIN_COURRIER,
     TYPE_DROIT.ADMIN_PARAM_APPLI,
+    TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE,
     TYPE_DROIT.ADMIN_ZONE_COMPETENCE,
     TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
     TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
@@ -48,7 +49,8 @@ const MenuAdmin = () => {
                 Administration générale
               </div>
               <Nav className="flex-column">
-                {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) && (
+                {(hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) ||
+                  hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE)) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"

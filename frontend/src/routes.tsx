@@ -936,6 +936,7 @@ export default [
               TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
               TYPE_DROIT.ADMIN_NOMENCLATURE,
               TYPE_DROIT.ADMIN_PARAM_APPLI,
+              TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE,
               TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
               TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
               TYPE_DROIT.ADMIN_ROLE_CONTACT,
@@ -953,7 +954,10 @@ export default [
         element: (
           <Authorization
             Component={AdminParametres}
-            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+            droits={[
+              TYPE_DROIT.ADMIN_PARAM_APPLI,
+              TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE,
+            ]}
           />
         ),
       },

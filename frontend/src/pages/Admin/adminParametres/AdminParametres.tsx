@@ -26,6 +26,10 @@ import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
 import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -177,6 +181,7 @@ export const AdminParametresInterne = () => {
   const { activesKeys, handleShowClose } = useAccordionState(
     Array(6).fill(false),
   );
+  const { user }: { user: UtilisateurEntity } = useAppContext();
 
   return (
     values && (
@@ -187,75 +192,83 @@ export const AdminParametresInterne = () => {
           <AccordionCustom
             activesKeys={activesKeys}
             list={[
-              {
-                header: "Général",
-                content: (
-                  <AdminGeneral
-                    values={values.general}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
-              {
-                header: "Application mobile",
-                content: (
-                  <AdminApplicationMobile
-                    values={values.mobile}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                    allCaracteristiques={allCaracteristiques}
-                  />
-                ),
-              },
-              {
-                header: "Cartographie",
-                content: (
-                  <AdminCartographie
-                    values={values.cartographie}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
-              {
-                header: "Couverture hydraulique",
-                content: (
-                  <AdminCouvertureHydraulique
-                    values={values.couvertureHydraulique}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
-              {
-                header: "Permis",
-                content: (
-                  <AdminPermis
-                    values={values.permis}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
-              {
-                header: "PEI",
-                content: (
-                  <AdminPei
-                    values={values.pei}
-                    allCaracteristiques={allCaracteristiques}
-                  />
-                ),
-              },
-              {
-                header: "PEI longue indisponibilité",
-                content: (
-                  <AdminPeiLongueIndispo
-                    values={values.peiLongueIndispo}
-                    setFieldValue={setFieldValue}
-                  />
-                ),
-              },
+              ...(hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)
+                ? [
+                    {
+                      header: "Général",
+                      content: (
+                        <AdminGeneral
+                          values={values.general}
+                          setValues={setValues}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "Cartographie",
+                      content: (
+                        <AdminCartographie
+                          values={values.cartographie}
+                          setValues={setValues}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "Couverture hydraulique",
+                      content: (
+                        <AdminCouvertureHydraulique
+                          values={values.couvertureHydraulique}
+                          setValues={setValues}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "Permis",
+                      content: (
+                        <AdminPermis
+                          values={values.permis}
+                          setValues={setValues}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "PEI",
+                      content: (
+                        <AdminPei
+                          values={values.pei}
+                          allCaracteristiques={allCaracteristiques}
+                        />
+                      ),
+                    },
+                    {
+                      header: "PEI longue indisponibilité",
+                      content: (
+                        <AdminPeiLongueIndispo
+                          values={values.peiLongueIndispo}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
+              ...(hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE)
+                ? [
+                    {
+                      header: "Application mobile",
+                      content: (
+                        <AdminApplicationMobile
+                          values={values.mobile}
+                          setValues={setValues}
+                          setFieldValue={setFieldValue}
+                          allCaracteristiques={allCaracteristiques}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
             ]}
             handleShowClose={handleShowClose}
           />

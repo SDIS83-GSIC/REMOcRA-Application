@@ -40,14 +40,14 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/parametres")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI, Droit.ADMIN_PARAM_APPLI_MOBILE])
     fun getParametresData(): Response {
         return Response.ok(parametresUseCase.getParametresData()).build()
     }
 
     @GET
     @Path("/pei-caracteristique")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI, Droit.ADMIN_PARAM_APPLI_MOBILE])
     fun getPeiCaracteristique(): Response {
         return Response.ok(
             PeiCaracteristique.entries.map {
@@ -62,7 +62,7 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/parametres")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI, Droit.ADMIN_PARAM_APPLI_MOBILE])
     fun updateParametres(parametres: ParametresAdminDataInput): Response {
         return updateParametresUseCase.execute(
             userInfo = securityContext.userInfo,
