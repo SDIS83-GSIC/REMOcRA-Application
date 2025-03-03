@@ -21,7 +21,7 @@ import {
   BooleanColumn,
   ListePeiColumn,
 } from "../components/Table/columns.tsx";
-import { hasDroit } from "../droits.tsx";
+import { hasDroit, isAuthorized } from "../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
 import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
@@ -278,7 +278,15 @@ function getColumnPeiByStringArray(
         },
       });
     }
-    if (hasDroit(user, TYPE_DROIT.PEI_U)) {
+    if (
+      isAuthorized(user, [
+        TYPE_DROIT.PEI_U,
+        TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+        TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+        TYPE_DROIT.PEI_DEPLACEMENT_U,
+        TYPE_DROIT.PEI_ADRESSE_C,
+      ])
+    ) {
       listeButton.push({
         row: (row) => {
           return row;

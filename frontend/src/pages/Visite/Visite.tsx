@@ -146,7 +146,7 @@ const Visite = () => {
         title={"Visites du PEI " + numeroComplet}
         icon={<IconVisite />}
         right={
-          hasRightToCreate && (
+          hasRightToCreate() && (
             <CreateButton
               title={"Ajouter une visite"}
               onClick={() => {

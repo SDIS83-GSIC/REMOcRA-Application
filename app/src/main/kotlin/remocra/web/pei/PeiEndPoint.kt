@@ -171,7 +171,7 @@ class PeiEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/referentiel-for-upsert-pei/")
-    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U])
+    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_ADRESSE_C, Droit.PEI_DEPLACEMENT_U, Droit.PEI_NUMERO_INTERNE_U])
     fun getReferentielUpdateOrCreatePei(
         @QueryParam("geometry") geometry: Geometry?,
         @QueryParam("peiId") peiId: UUID?,
@@ -180,7 +180,7 @@ class PeiEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update")
-    @RequireDroits([Droit.PEI_U, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_NUMERO_INTERNE_U, Droit.PEI_DEPLACEMENT_U])
+    @RequireDroits([Droit.PEI_U, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_NUMERO_INTERNE_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun update(
         @Context httpRequest: HttpServletRequest,
@@ -194,19 +194,23 @@ class PeiEndPoint : AbstractEndpoint() {
             return result.wrap()
         }
 
-        val resultInsertDoc = upsertDocumentPeiUseCase.execute(
-            securityContext.userInfo,
-            DocumentsPei(
-                objectId = pei.peiId,
-                listDocument = objectMapper.readValue<List<DocumentData>>(httpRequest.getTextPart("documents")),
-                listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
-                listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-            ),
-        )
+        // On ne doit pas avoir accès à la gestion des documents PEI dans tous les contextes de modification PEI.
+        // Il n'est donc pas nécessaire de mettre à jour les documents si l'utilisateur n'était pas en capacité de les modifier.
+        if (securityContext.userInfo!!.droits.contains(Droit.PEI_U)) {
+            val resultInsertDoc = upsertDocumentPeiUseCase.execute(
+                securityContext.userInfo,
+                DocumentsPei(
+                    objectId = pei.peiId,
+                    listDocument = objectMapper.readValue<List<DocumentData>>(httpRequest.getTextPart("documents")),
+                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
+                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+                ),
+            )
 
-        // Le type de retour attendu n'est pas celui du useCase des documents, mais bien un PeiData
-        if (resultInsertDoc !is AbstractUseCase.Result.Success) {
-            return resultInsertDoc.wrap()
+            // Le type de retour attendu n'est pas celui du useCase des documents, mais bien un PeiData
+            if (resultInsertDoc !is AbstractUseCase.Result.Success) {
+                return resultInsertDoc.wrap()
+            }
         }
         return result.wrap()
     }
@@ -272,7 +276,7 @@ class PeiEndPoint : AbstractEndpoint() {
      */
     @GET
     @Path("/get-geometrie-by-srid")
-    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_DEPLACEMENT_U])
+    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C, Droit.PEI_NUMERO_INTERNE_U])
     fun getGeometrieByTypeSrid(
         @QueryParam("coordonneeX")
         coordonneeX: String?,

@@ -103,7 +103,10 @@ function getLinks(
           link: URLS.DECLARATION_PEI,
         },
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.IMPORT_CTP_PEI_DEPLACEMENT_U),
+          aLeDroit: isAuthorized(user, [
+            TYPE_DROIT.IMPORT_CTP_A,
+            TYPE_DROIT.IMPORT_CTP_PEI_DEPLACEMENT_U,
+          ]),
           label: "Import CTP",
           link: URLS.IMPORT_CTP,
         },

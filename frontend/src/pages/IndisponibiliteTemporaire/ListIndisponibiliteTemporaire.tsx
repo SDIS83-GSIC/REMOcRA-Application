@@ -1,13 +1,15 @@
 import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
 import { useFilterContext } from "../../components/Table/QueryTable.tsx";
+import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
@@ -54,10 +56,12 @@ const ListIndisponibiliteTemporaire = ({
           title={"Indisponibilités temporaires"}
           icon={<IconIndisponibiliteTemporaire />}
           right={
-            <CreateButton
-              title={"Ajouter une indisponibilité temporaire"}
-              href={URLS.CREATE_INDISPONIBILITE_TEMPORAIRE}
-            />
+            hasDroit(user, TYPE_DROIT.INDISPO_TEMP_C) && (
+              <CreateButton
+                title={"Ajouter une indisponibilité temporaire"}
+                href={URLS.CREATE_INDISPONIBILITE_TEMPORAIRE}
+              />
+            )
           }
         />
       </Container>

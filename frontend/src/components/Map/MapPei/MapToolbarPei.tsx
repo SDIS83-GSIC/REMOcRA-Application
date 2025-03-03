@@ -546,6 +546,7 @@ const MapToolbarPei = ({
           TYPE_DROIT.PEI_CARACTERISTIQUES_U,
           TYPE_DROIT.PEI_DEPLACEMENT_U,
           TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+          TYPE_DROIT.PEI_ADRESSE_C,
         ])}
         disabledTooltip={activeTool === "deplacer-pei"}
         displayButtonEditDebitSimultane={hasDroit(

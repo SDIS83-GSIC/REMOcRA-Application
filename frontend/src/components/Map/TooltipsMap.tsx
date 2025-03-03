@@ -26,6 +26,10 @@ import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -68,6 +72,7 @@ const TooltipMapPei = ({
     setShowUpdateDebitSimultane(false);
 
   const elementId = featureSelect?.getProperties().elementId;
+  const { user }: { user: UtilisateurEntity } = useAppContext();
 
   return (
     <div ref={ref}>
@@ -96,19 +101,21 @@ const TooltipMapPei = ({
           labelSee={"Voir la fiche de résumé du PEI"}
           autreActionBouton={
             <>
-              <Col className="p-1" xs={"auto"}>
-                <TooltipCustom
-                  tooltipText={"Voir les visites du PEI"}
-                  tooltipId={"tournees-carte"}
-                >
-                  <CustomLinkButton
-                    pathname={URLS.VISITE(elementId)}
-                    variant="warning"
+              {hasDroit(user, TYPE_DROIT.VISITE_R) && (
+                <Col className="p-1" xs={"auto"}>
+                  <TooltipCustom
+                    tooltipText={"Voir les visites du PEI"}
+                    tooltipId={"visite"}
                   >
-                    <IconVisite />
-                  </CustomLinkButton>
-                </TooltipCustom>
-              </Col>
+                    <CustomLinkButton
+                      pathname={URLS.VISITE(elementId)}
+                      variant="warning"
+                    >
+                      <IconVisite />
+                    </CustomLinkButton>
+                  </TooltipCustom>
+                </Col>
+              )}
               {featureSelect?.getProperties().hasIndispoTemp && (
                 <Col className="p-1" xs={"auto"}>
                   <TooltipCustom
@@ -127,24 +134,25 @@ const TooltipMapPei = ({
                   </TooltipCustom>
                 </Col>
               )}
-              {featureSelect?.getProperties().hasTournee && (
-                <Col className="p-1" xs={"auto"}>
-                  <TooltipCustom
-                    tooltipText={"Voir les tournées associées"}
-                    tooltipId={"tournees-carte"}
-                  >
-                    <Button
-                      variant="warning"
-                      onClick={() => {
-                        setShowTournee(true);
-                        overlay?.setPosition(undefined);
-                      }}
+              {featureSelect?.getProperties().hasTournee &&
+                hasDroit(user, TYPE_DROIT.TOURNEE_R) && (
+                  <Col className="p-1" xs={"auto"}>
+                    <TooltipCustom
+                      tooltipText={"Voir les tournées associées"}
+                      tooltipId={"tournees-carte"}
                     >
-                      <IconTournee />
-                    </Button>
-                  </TooltipCustom>
-                </Col>
-              )}
+                      <Button
+                        variant="warning"
+                        onClick={() => {
+                          setShowTournee(true);
+                          overlay?.setPosition(undefined);
+                        }}
+                      >
+                        <IconTournee />
+                      </Button>
+                    </TooltipCustom>
+                  </Col>
+                )}
               <Volet
                 handleClose={handleCloseFichePei}
                 show={showFichePei}

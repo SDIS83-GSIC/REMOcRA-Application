@@ -17,10 +17,11 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_U) ||
-            !userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) ||
-            !userInfo.droits.contains(Droit.PEI_NUMERO_INTERNE_U) ||
-            !userInfo.droits.contains(Droit.PEI_DEPLACEMENT_U)
+        if (!userInfo.droits.contains(Droit.PEI_U) &&
+            !userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) &&
+            !userInfo.droits.contains(Droit.PEI_NUMERO_INTERNE_U) &&
+            !userInfo.droits.contains(Droit.PEI_DEPLACEMENT_U) &&
+            !userInfo.droits.contains(Droit.PEI_ADRESSE_C)
         ) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
         }

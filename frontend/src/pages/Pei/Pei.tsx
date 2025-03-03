@@ -27,7 +27,7 @@ import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
-import { hasDroit } from "../../droits.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
@@ -754,7 +754,8 @@ const FormLocalisationPei = ({
   isNew: boolean;
   user: UtilisateurEntity;
 }) => {
-  const hasDroitUpdate = isNew || hasDroit(user, TYPE_DROIT.PEI_U);
+  const hasDroitUpdate =
+    isNew || isAuthorized(user, [TYPE_DROIT.PEI_U, TYPE_DROIT.PEI_ADRESSE_C]);
 
   return (
     <>

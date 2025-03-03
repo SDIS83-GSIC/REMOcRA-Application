@@ -90,7 +90,7 @@ class CreateIndisponibiliteTemporaireUseCase
     }
 
     override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_C)) {
+        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_C)) {
             throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE)
         }
     }
