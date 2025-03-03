@@ -208,7 +208,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/etude/clore/{etudeId}")
-    @RequireDroits([Droit.ETUDE_U])
+    @RequireDroits([Droit.ETUDE_D])
     @Produces(MediaType.APPLICATION_JSON)
     fun cloreEtude(
         @PathParam("etudeId")

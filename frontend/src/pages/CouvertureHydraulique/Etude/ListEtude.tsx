@@ -54,7 +54,8 @@ const ListEtude = () => {
       route: (etudeId) => URLS.UPDATE_ETUDE(etudeId),
       type: TYPE_BUTTON.UPDATE,
     });
-
+  }
+  if (hasDroit(user, TYPE_DROIT.ETUDE_D)) {
     listeButton.push({
       row: (row) => {
         return row;
@@ -71,7 +72,8 @@ const ListEtude = () => {
       icon: <IconClose />,
       classEnable: "danger",
     });
-
+  }
+  if (hasDroit(user, TYPE_DROIT.ETUDE_U)) {
     listeButton.push({
       row: (row) => {
         return row;

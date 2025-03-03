@@ -276,7 +276,7 @@ export const TypeDroitLabel = new Map<string, string>([
   ],
   [TYPE_DROIT.DOCUMENTS_R, "Consulter les documents"],
   [TYPE_DROIT.ETUDE_C, "Créer une étude"],
-  [TYPE_DROIT.ETUDE_D, "Supprimer une étude"],
+  [TYPE_DROIT.ETUDE_D, "Clore une étude"],
   [TYPE_DROIT.ETUDE_R, "Consulter une étude"],
   [TYPE_DROIT.ETUDE_U, "Modifier une étude"],
   [
