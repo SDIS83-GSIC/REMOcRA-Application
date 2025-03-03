@@ -126,3 +126,5 @@ export const IconRCCI = () => <i className="fi fi-ss-match-fire" />;
 
 export const IconParametre = () => <i className="fi fi-br-gears" />;
 export const IconHide = () => <i className="fi fi-br-eye-crossed" />;
+
+export const IconWarning = () => <i className="fi fi-sr-triangle-warning" />;

@@ -441,7 +441,7 @@ const MapToolbarRcci = ({
           isMultipartFormData={true}
           onSubmit={() => dataRcciLayerRef.current?.getSource().refresh()}
         >
-          <RcciForm validationSchema={validationSchema} />
+          <RcciForm />
         </EditModal>
       )}
       {deleteModalRefs.visible && (

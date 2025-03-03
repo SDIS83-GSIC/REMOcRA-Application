@@ -8,7 +8,6 @@ import {
   DateTimeInput,
   FieldSet,
   FileInput,
-  FormContainer,
   NumberInput,
   TextAreaInput,
   TextInput,
@@ -27,7 +26,12 @@ import nomenclaturesEnum from "../../../enums/NomenclaturesEnum.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import TypeSystemeSrid from "../../../enums/TypeSystemeSrid.tsx";
-import { IconDelete, IconExport } from "../../../components/Icon/Icon.tsx";
+import {
+  IconDelete,
+  IconExport,
+  IconWarning,
+} from "../../../components/Icon/Icon.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import DeleteButton from "../../../components/Button/DeleteButton.tsx";
 
 type FormType = {
@@ -82,6 +86,11 @@ type RcciDocumentType = {
   documentUrl: string;
 };
 
+type SectionWarning = {
+  renseignements: boolean;
+  constatations: boolean;
+};
+
 export const getInitialValues = (
   data: {
     rcci: RcciFormType;
@@ -98,11 +107,52 @@ export const getInitialValues = (
     : [null, null];
   return {
     rcci: {
+      rcciId: data.rcci?.rcciId ?? undefined,
+      rcciCommentaireConclusion:
+        data.rcci?.rcciCommentaireConclusion ?? undefined,
+      rcciComplement: data.rcci?.rcciComplement ?? undefined,
+      rcciCarroyageDfci: data.rcci?.rcciCarroyageDfci ?? undefined,
+      rcciDateIncendie: data.rcci?.rcciDateIncendie ?? null,
       rcciDateModification: data.rcci?.rcciDateModification ?? new Date(),
-      rcciUtilisateurId: data.rcci?.rcciUtilisateurId ?? userId,
-      rcciSrid: srid,
+      rcciDirectionVent: data.rcci?.rcciDirectionVent ?? undefined,
+      rcciForceVent: data.rcci?.rcciForceVent ?? undefined,
+      rcciForcesOrdre: data.rcci?.rcciForcesOrdre ?? undefined,
+      rcciGdh: data.rcci?.rcciGdh ?? undefined,
+      rcciGelLieux: data.rcci?.rcciGelLieux ?? undefined,
+      rcciGeometrie: data.rcci?.rcciGeometrie ?? undefined,
       rcciX: x,
       rcciY: y,
+      rcciSrid: srid ?? null,
+      rcciHygrometrie: data.rcci?.rcciHygrometrie ?? undefined,
+      rcciIndiceRothermel: data.rcci?.rcciIndiceRothermel ?? undefined,
+      rcciPointEclosion: data.rcci?.rcciPointEclosion ?? null,
+      rcciPremierCos: data.rcci?.rcciPremierCos ?? undefined,
+      rcciPremierEngin: data.rcci?.rcciPremierEngin ?? undefined,
+      rcciSuperficieFinale: data.rcci?.rcciSuperficieFinale ?? undefined,
+      rcciSuperficieReferent: data.rcci?.rcciSuperficieReferent ?? undefined,
+      rcciSuperficieSecours: data.rcci?.rcciSuperficieSecours ?? undefined,
+      rcciTemperature: data.rcci?.rcciTemperature ?? undefined,
+      rcciVentLocal: data.rcci?.rcciVentLocal ?? undefined,
+      rcciVoie: data.rcci?.rcciVoie ?? undefined,
+      rcciCommuneId: data.rcci?.rcciCommuneId ?? undefined,
+      rcciRcciTypePrometheeFamilleId:
+        data.rcci?.rcciRcciTypePrometheeFamilleId ?? undefined,
+      rcciRcciTypePrometheePartitionId:
+        data.rcci?.rcciRcciTypePrometheePartitionId ?? undefined,
+      rcciRcciTypePrometheeCategorieId:
+        data.rcci?.rcciRcciTypePrometheeCategorieId ?? undefined,
+      rcciRcciTypeDegreCertitudeId:
+        data.rcci?.rcciRcciTypeDegreCertitudeId ?? undefined,
+      rcciRcciTypeOrigineAlerteId:
+        data.rcci?.rcciRcciTypeOrigineAlerteId ?? null,
+      rcciRcciArriveeDdtmOnfId:
+        data.rcci?.rcciRcciArriveeDdtmOnfId ?? undefined,
+      rcciRcciArriveeSdisId: data.rcci?.rcciRcciArriveeSdisId ?? undefined,
+      rcciRcciArriveeGendarmerieId:
+        data.rcci?.rcciRcciArriveeGendarmerieId ?? undefined,
+      rcciRcciArriveePoliceId: data.rcci?.rcciRcciArriveePoliceId ?? undefined,
+      rcciUtilisateurId: data.rcci?.rcciUtilisateurId ?? userId,
+      documentList: data.rcci?.documentList ?? undefined,
       ...data.rcci,
     },
     documentList: data?.documentList || [],
@@ -212,13 +262,17 @@ export const validationSchema = object({
     rcciRcciArriveePoliceId: string(),
     rcciUtilisateurId: requiredString,
     documentList: array(),
-  }).required(),
+  }),
 });
 
 const RcciForm = () => {
   const { user, srid } = useAppContext();
   const [currentTab, setCurrentTab] = useState("renseignements");
-  const { values, setFieldValue } = useFormikContext<FormType>();
+  const [sectionWarning, setSectionWarning] = useState<SectionWarning>();
+  const { values, setFieldValue, errors, isSubmitting } =
+    useFormikContext<FormType>();
+
+  const { error: errorToast } = useToastContext();
 
   const sridList = TypeSystemeSrid.filter(
     (v) => v.actif || v.srid === srid,
@@ -257,14 +311,30 @@ const RcciForm = () => {
       x: values.rcci.rcciX,
       y: values.rcci.rcciY,
     });
-  }, [values.rcci.rcciX, values.rcci.rcciY]);
+  }, [run, values.rcci.rcciSrid, values.rcci.rcciX, values.rcci.rcciY]);
 
   useEffect(() => {
     setFieldValue("rcci.rcciCarroyageDfci", data?.carroyageDfciCoordonneee);
-  }, [isLoading, data]);
+  }, [isLoading, data, setFieldValue]);
+
+  useEffect(() => {
+    if (isSubmitting && errors.rcci) {
+      setSectionWarning({
+        renseignements:
+          errors.rcci.rcciDateIncendie ||
+          errors.rcci.rcciRcciTypeOrigineAlerteId,
+        constatations:
+          errors.rcci.rcciSrid ||
+          errors.rcci.rcciX ||
+          errors.rcci.rcciY ||
+          errors.rcci.rcciPointEclosion,
+      });
+      errorToast("Champs obligatoires non renseignés");
+    }
+  }, [isSubmitting, errors, errorToast]);
 
   return (
-    <FormContainer>
+    <>
       <Row>
         <Col>Nouveau départ en cours de saisie par {user.username}</Col>
       </Row>
@@ -273,7 +343,15 @@ const RcciForm = () => {
         activeKey={currentTab}
         onSelect={(key) => setCurrentTab(key)}
       >
-        <Tab eventKey="renseignements" title="Renseignements incendie">
+        <Tab
+          eventKey="renseignements"
+          title={
+            <span>
+              Renseignements incendie{" "}
+              {sectionWarning?.renseignements && <IconWarning />}
+            </span>
+          }
+        >
           <FieldSet title={"Renseignements"}>
             <Row>
               <Col>
@@ -310,14 +388,14 @@ const RcciForm = () => {
                     (v) => v.id === values.rcci.rcciCommuneId,
                   )}
                   setFieldValue={setFieldValue}
-                  required={true}
+                  required={false}
                 />
               </Col>
               <Col>
                 <TextInput
                   label="Voie"
                   name={"rcci.rcciVoie"}
-                  required={true}
+                  required={false}
                 />
               </Col>
             </Row>
@@ -386,7 +464,14 @@ const RcciForm = () => {
             </Row>
           </FieldSet>
         </Tab>
-        <Tab eventKey="constatations" title="Constatations">
+        <Tab
+          eventKey="constatations"
+          title={
+            <span>
+              Constatations {sectionWarning?.constatations && <IconWarning />}
+            </span>
+          }
+        >
           <FieldSet title={"Coordonnées"}>
             <Row>
               <Col />
@@ -749,7 +834,7 @@ const RcciForm = () => {
           </FieldSet>
         </Tab>
       </Tabs>
-    </FormContainer>
+    </>
   );
 };
 

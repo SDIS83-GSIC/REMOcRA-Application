@@ -67,7 +67,7 @@ const EditModalBody = ({
       prepareVariables={(values: any) => prepareVariables(values)}
       isMultipartFormData={isMultipartFormData}
     >
-      <FormContainer>
+      <FormContainer noValidate>
         <Modal.Body>{children}</Modal.Body>
         <Modal.Footer>
           {canModify ? (
