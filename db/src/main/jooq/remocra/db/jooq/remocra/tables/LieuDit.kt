@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -31,6 +32,7 @@ import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY
 import remocra.db.jooq.incoming.tables.Contact.ContactPath
 import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.LIEU_DIT_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.LIEU_DIT_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY
@@ -139,6 +141,7 @@ open class LieuDit(
         override fun `as`(alias: Table<*>): LieuDitPath = LieuDitPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(LIEU_DIT_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = LIEU_DIT_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY)
 

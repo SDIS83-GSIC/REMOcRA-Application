@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.PENA_ASPIRATION_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION_PKEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_ID_FKEY
@@ -163,6 +165,7 @@ open class PenaAspiration(
         override fun `as`(alias: Table<*>): PenaAspirationPath = PenaAspirationPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(PENA_ASPIRATION_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = PENA_ASPIRATION_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY, PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_TYPE_PENA_ASPIRATION_ID_FKEY)
 

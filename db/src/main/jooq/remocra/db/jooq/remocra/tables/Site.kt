@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.SITE_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE__DEBIT_SIMULTANE_DEBIT_SIMULTANE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_GESTIONNAIRE__L_CONTACT_GESTIONNAIRE_SITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_SITE_ID_FKEY
@@ -149,6 +151,7 @@ open class Site(
         override fun `as`(alias: Table<*>): SitePath = SitePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(SITE_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = SITE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(SITE_SITE_CODE_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY)

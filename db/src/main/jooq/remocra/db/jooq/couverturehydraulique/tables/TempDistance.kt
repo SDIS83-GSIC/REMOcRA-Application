@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -29,6 +30,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.couverturehydraulique.Couverturehydraulique
 import remocra.db.jooq.couverturehydraulique.enums.TypeSide
+import remocra.db.jooq.couverturehydraulique.indexes.TEMP_DISTANCE_GEOMETRIE_IDX
 import remocra.db.jooq.couverturehydraulique.keys.TEMP_DISTANCE_PKEY
 import remocra.db.jooq.couverturehydraulique.keys.TEMP_DISTANCE__TEMP_DISTANCE_TEMP_DISTANCE_SOMMET_FKEY
 import remocra.db.jooq.couverturehydraulique.keys.TEMP_DISTANCE__TEMP_DISTANCE_TEMP_DISTANCE_VOIE_COURANTE_FKEY
@@ -184,6 +186,7 @@ open class TempDistance(
         override fun `as`(alias: Table<*>): TempDistancePath = TempDistancePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Couverturehydraulique.COUVERTUREHYDRAULIQUE
+    override fun getIndexes(): List<Index> = listOf(TEMP_DISTANCE_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = TEMP_DISTANCE_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(TEMP_DISTANCE__TEMP_DISTANCE_TEMP_DISTANCE_SOMMET_FKEY, TEMP_DISTANCE__TEMP_DISTANCE_TEMP_DISTANCE_VOIE_COURANTE_FKEY, TEMP_DISTANCE__TEMP_DISTANCE_TEMP_DISTANCE_VOIE_PRECEDENTE_FKEY)
 

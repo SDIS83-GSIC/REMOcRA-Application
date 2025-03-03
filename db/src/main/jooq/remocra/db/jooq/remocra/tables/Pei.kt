@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -34,6 +35,7 @@ import remocra.db.jooq.incoming.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.indexes.PEI_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.L_DEBIT_SIMULTANE_MESURE_PEI__L_DEBIT_SIMULTANE_MESURE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_INDISPONIBILITE_TEMPORAIRE_PEI__L_INDISPONIBILITE_TEMPORAIRE_PEI_PEI_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY
@@ -300,6 +302,7 @@ open class Pei(
         override fun `as`(alias: Table<*>): PeiPath = PeiPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(PEI_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = PEI_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(PEI_PEI_NUMERO_COMPLET_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PEI__PEI_PEI_AUTORITE_DECI_ID_FKEY, PEI__PEI_PEI_COMMUNE_ID_FKEY, PEI__PEI_PEI_CROISEMENT_ID_FKEY, PEI__PEI_PEI_DOMAINE_ID_FKEY, PEI__PEI_PEI_GESTIONNAIRE_ID_FKEY, PEI__PEI_PEI_LIEU_DIT_ID_FKEY, PEI__PEI_PEI_MAINTENANCE_DECI_ID_FKEY, PEI__PEI_PEI_NATURE_DECI_ID_FKEY, PEI__PEI_PEI_NATURE_ID_FKEY, PEI__PEI_PEI_NIVEAU_ID_FKEY, PEI__PEI_PEI_SERVICE_PUBLIC_DECI_ID_FKEY, PEI__PEI_PEI_SITE_ID_FKEY, PEI__PEI_PEI_VOIE_ID_FKEY, PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY)

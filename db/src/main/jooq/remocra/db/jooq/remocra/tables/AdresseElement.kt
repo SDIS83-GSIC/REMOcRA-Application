@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -27,6 +28,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.ADRESSE_ELEMENT_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.ADRESSE_ELEMENT_PKEY
 import remocra.db.jooq.remocra.keys.ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_ADRESSE_ID_FKEY
 import remocra.db.jooq.remocra.keys.ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_SOUS_TYPE_FKEY
@@ -145,6 +147,7 @@ open class AdresseElement(
         override fun `as`(alias: Table<*>): AdresseElementPath = AdresseElementPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(ADRESSE_ELEMENT_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = ADRESSE_ELEMENT_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_ADRESSE_ID_FKEY, ADRESSE_ELEMENT__ADRESSE_ELEMENT_ADRESSE_ELEMENT_SOUS_TYPE_FKEY)
 

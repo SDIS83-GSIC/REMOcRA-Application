@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.PEI_PRESCRIT_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.PEI_PRESCRIT_PKEY
 import remocra.db.jooq.remocra.keys.PEI_PRESCRIT__PEI_PRESCRIT_PEI_PRESCRIT_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
@@ -159,6 +161,7 @@ open class PeiPrescrit(
         override fun `as`(alias: Table<*>): PeiPrescritPath = PeiPrescritPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(PEI_PRESCRIT_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = PEI_PRESCRIT_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PEI_PRESCRIT__PEI_PRESCRIT_PEI_PRESCRIT_ORGANISME_ID_FKEY)
 

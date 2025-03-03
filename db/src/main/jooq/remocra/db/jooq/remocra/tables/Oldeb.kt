@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -27,6 +28,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.OLDEB_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.OLDEB_CARACTERISTIQUE__OLDEB_CARACTERISTIQUE_OLDEB_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_LOCATAIRE__OLDEB_LOCATAIRE_OLDEB_LOCATAIRE_OLDEB_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_PKEY
@@ -207,6 +209,7 @@ open class Oldeb(
         override fun `as`(alias: Table<*>): OldebPath = OldebPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(OLDEB_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = OLDEB_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(OLDEB__OLDEB_OLDEB_CADASTRE_PARCELLE_ID_FKEY, OLDEB__OLDEB_OLDEB_CADASTRE_SECTION_ID_FKEY, OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY, OLDEB__OLDEB_OLDEB_LIEU_DIT_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ACCES_ID_FKEY, OLDEB__OLDEB_OLDEB_OLDEB_TYPE_ZONE_URBANISME_ID_FKEY, OLDEB__OLDEB_OLDEB_VOIE_ID_FKEY)
 

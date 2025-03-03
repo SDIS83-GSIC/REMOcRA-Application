@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.PERMIS_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.L_PERMIS_CADASTRE_PARCELLE__L_PERMIS_CADASTRE_PARCELLE_PERMIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_PERMIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.PERMIS_PKEY
@@ -216,6 +218,7 @@ open class Permis(
         override fun `as`(alias: Table<*>): PermisPath = PermisPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(PERMIS_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = PERMIS_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PERMIS__PERMIS_PERMIS_COMMUNE_ID_FKEY, PERMIS__PERMIS_PERMIS_INSTRUCTEUR_ID_FKEY, PERMIS__PERMIS_PERMIS_SERVICE_INSTRUCTEUR_ID_FKEY, PERMIS__PERMIS_PERMIS_TYPE_PERMIS_AVIS_ID_FKEY, PERMIS__PERMIS_PERMIS_TYPE_PERMIS_INTERSERVICE_ID_FKEY, PERMIS__PERMIS_PERMIS_VOIE_ID_FKEY)
 

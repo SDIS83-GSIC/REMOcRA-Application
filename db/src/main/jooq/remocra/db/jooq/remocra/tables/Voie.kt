@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -32,6 +33,7 @@ import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY
 import remocra.db.jooq.incoming.tables.Contact.ContactPath
 import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.VOIE_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_CROISEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_VOIE_ID_FKEY
@@ -144,6 +146,7 @@ open class Voie(
         override fun `as`(alias: Table<*>): VoiePath = VoiePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(VOIE_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = VOIE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(VOIE_VOIE_LIBELLE_VOIE_COMMUNE_ID_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(VOIE__VOIE_VOIE_COMMUNE_ID_FKEY)

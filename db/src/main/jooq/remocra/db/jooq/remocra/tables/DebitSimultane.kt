@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.DEBIT_SIMULTANE_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_PKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE__DEBIT_SIMULTANE_DEBIT_SIMULTANE_SITE_ID_FKEY
@@ -136,6 +138,7 @@ open class DebitSimultane(
         override fun `as`(alias: Table<*>): DebitSimultanePath = DebitSimultanePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(DEBIT_SIMULTANE_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = DEBIT_SIMULTANE_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(DEBIT_SIMULTANE__DEBIT_SIMULTANE_DEBIT_SIMULTANE_SITE_ID_FKEY)
 

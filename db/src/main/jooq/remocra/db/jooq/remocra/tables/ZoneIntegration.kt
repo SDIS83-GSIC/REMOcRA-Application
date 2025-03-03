@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -29,6 +30,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeZoneIntegration
+import remocra.db.jooq.remocra.indexes.ZONE_INTEGRATION_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_ZONE_INTEGRATION_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY
 import remocra.db.jooq.remocra.keys.ZONE_INTEGRATION_PKEY
@@ -148,6 +150,7 @@ open class ZoneIntegration(
         override fun `as`(alias: Table<*>): ZoneIntegrationPath = ZoneIntegrationPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(ZONE_INTEGRATION_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = ZONE_INTEGRATION_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY)
 

@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -34,6 +35,7 @@ import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_COMMUNE_ID_FKEY
 import remocra.db.jooq.incoming.tables.Contact.ContactPath
 import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.COMMUNE_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_SECTION_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
@@ -164,6 +166,7 @@ open class Commune(
         override fun `as`(alias: Table<*>): CommunePath = CommunePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(COMMUNE_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = COMMUNE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(COMMUNE_COMMUNE_CODE_INSEE_KEY)
 

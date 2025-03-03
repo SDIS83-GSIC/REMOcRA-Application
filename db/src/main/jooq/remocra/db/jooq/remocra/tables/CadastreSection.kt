@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -27,6 +28,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.indexes.CADASTRE_SECTION_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE__CADASTRE_PARCELLE_CADASTRE_PARCELLE_CADASTRE_SECTION_ID_FKEY
 import remocra.db.jooq.remocra.keys.CADASTRE_SECTION_PKEY
 import remocra.db.jooq.remocra.keys.CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_SECTION_COMMUNE_ID_FKEY
@@ -137,6 +139,7 @@ open class CadastreSection(
         override fun `as`(alias: Table<*>): CadastreSectionPath = CadastreSectionPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(CADASTRE_SECTION_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = CADASTRE_SECTION_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_SECTION_COMMUNE_ID_FKEY)
 

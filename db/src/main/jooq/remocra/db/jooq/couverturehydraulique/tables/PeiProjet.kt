@@ -7,6 +7,7 @@ import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -29,6 +30,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.couverturehydraulique.Couverturehydraulique
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
+import remocra.db.jooq.couverturehydraulique.indexes.PEI_PROJET_GEOMETRIE_IDX
 import remocra.db.jooq.couverturehydraulique.keys.PEI_PROJET_PKEY
 import remocra.db.jooq.couverturehydraulique.keys.PEI_PROJET__PEI_PROJET_PEI_PROJET_DIAMETRE_ID_FKEY
 import remocra.db.jooq.couverturehydraulique.keys.PEI_PROJET__PEI_PROJET_PEI_PROJET_ETUDE_ID_FKEY
@@ -173,6 +175,7 @@ open class PeiProjet(
         override fun `as`(alias: Table<*>): PeiProjetPath = PeiProjetPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Couverturehydraulique.COUVERTUREHYDRAULIQUE
+    override fun getIndexes(): List<Index> = listOf(PEI_PROJET_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = PEI_PROJET_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(PEI_PROJET__PEI_PROJET_PEI_PROJET_DIAMETRE_ID_FKEY, PEI_PROJET__PEI_PROJET_PEI_PROJET_ETUDE_ID_FKEY, PEI_PROJET__PEI_PROJET_PEI_PROJET_NATURE_DECI_ID_FKEY)
 

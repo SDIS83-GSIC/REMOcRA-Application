@@ -6,6 +6,7 @@ package remocra.db.jooq.couverturehydraulique.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -27,6 +28,7 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.couverturehydraulique.Couverturehydraulique
+import remocra.db.jooq.couverturehydraulique.indexes.COUVERTURE_TRACEE_PEI_GEOMETRIE_IDX
 import remocra.db.jooq.couverturehydraulique.keys.COUVERTURE_TRACEE_PEI_PKEY
 import remocra.db.jooq.couverturehydraulique.keys.COUVERTURE_TRACEE_PEI__COUVERTURE_TRACEE_PEI_COUVERTURE_TRACEE_PEI_ETUDE_ID_FKEY
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
@@ -139,6 +141,7 @@ open class CouvertureTraceePei(
         override fun `as`(alias: Table<*>): CouvertureTraceePeiPath = CouvertureTraceePeiPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Couverturehydraulique.COUVERTUREHYDRAULIQUE
+    override fun getIndexes(): List<Index> = listOf(COUVERTURE_TRACEE_PEI_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = COUVERTURE_TRACEE_PEI_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(COUVERTURE_TRACEE_PEI__COUVERTURE_TRACEE_PEI_COUVERTURE_TRACEE_PEI_ETUDE_ID_FKEY)
 

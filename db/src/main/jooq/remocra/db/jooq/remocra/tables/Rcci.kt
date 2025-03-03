@@ -6,6 +6,7 @@ package remocra.db.jooq.remocra.tables
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -29,6 +30,7 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Direction
+import remocra.db.jooq.remocra.indexes.RCCI_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_RCCI_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_PKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_COMMUNE_ID_FKEY
@@ -289,6 +291,7 @@ open class Rcci(
         override fun `as`(alias: Table<*>): RcciPath = RcciPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
+    override fun getIndexes(): List<Index> = listOf(RCCI_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = RCCI_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(RCCI__RCCI_RCCI_COMMUNE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY)
 
