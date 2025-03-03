@@ -22,6 +22,7 @@ export const IconDelete = () => <i className="fi fi-br-trash" />;
 export const IconCreate = () => <i className="fi fi-br-add" />;
 export const IconSee = () => <i className="fi fi-br-overview" />;
 export const IconPei = () => <i className="fi fi-ss-fire-hydrant" />;
+export const IconQuickAccess = () => <i className="fi fi-bs-time-fast" />;
 
 export const IconDocument = () => <i className="fi fi-br-document" />;
 export const IconInfo = () => <i className="fi fi-br-interrogation ms-1" />;

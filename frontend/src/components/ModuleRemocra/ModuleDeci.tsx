@@ -12,6 +12,11 @@ const ModuleDeci = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
   const navLinks: NavToProps[] = [
     {
+      path: URLS.ACCES_RAPIDE,
+      label: "Accès rapide",
+      aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),
+    },
+    {
       path: URLS.PEI,
       label: "Points d'eau",
       aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),

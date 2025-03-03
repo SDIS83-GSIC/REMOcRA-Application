@@ -164,6 +164,7 @@ import ListModeleCourrier from "./pages/Admin/ModeleCourrier/ListModeleCourrier.
 import CreateModeleCourrier from "./pages/Admin/ModeleCourrier/CreateModeleCourrier.tsx";
 import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourrier.tsx";
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
+import AccesRapidePei from "./pages/AccesRapide/AccesRapidePei.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -174,7 +175,7 @@ export const URLS = {
 
   // Module DECI
   DECI_CARTE: url`/deci/carte`,
-
+  ACCES_RAPIDE: url`/deci/acces-rapide`,
   PEI: url`/deci/pei`,
   DECLARATION_PEI: url`/deci/declaration-pei`,
   IMPORT_CTP: url`/deci/import-ctp`,
@@ -468,6 +469,15 @@ export default [
       />
     ),
     children: [
+      {
+        path: "acces-rapide",
+        element: (
+          <Authorization
+            Component={AccesRapidePei}
+            droits={[TYPE_DROIT.PEI_R]}
+          />
+        ),
+      },
       {
         path: "pei",
         element: (

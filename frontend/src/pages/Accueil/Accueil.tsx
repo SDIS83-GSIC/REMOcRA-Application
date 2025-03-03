@@ -95,7 +95,7 @@ function getLinks(
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),
           label: "Gestion des points d'eau",
-          link: URLS.PEI,
+          link: URLS.ACCES_RAPIDE,
         },
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.DECLARATION_PEI),
