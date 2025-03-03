@@ -154,6 +154,7 @@ const TourneePei = ({
             <h3 className={"fw-bold"}>
               Organisme : {tourneePeiInfo.data.organismeLibelle}
             </h3>
+            <h3 className={"fw-bold"}>Nombre de PEI : {data.length}</h3>
           </Col>
         </Row>
         {displaySection && allPeiInfoSource && (
