@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.core.StreamingOutput
 import org.geotools.api.data.DataStoreFactorySpi
 import org.geotools.api.data.SimpleFeatureStore
+import org.geotools.api.feature.simple.SimpleFeature
 import org.geotools.data.DataUtilities
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 import org.geotools.feature.simple.SimpleFeatureBuilder
@@ -125,6 +126,7 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
             val featureBuilder = SimpleFeatureBuilder(featureType)
             try {
                 val featureStore = dataStore.getFeatureSource(FILE_NAME) as SimpleFeatureStore
+                val features = ArrayList<SimpleFeature>()
                 for (row in data) {
                     // La géométrie doit être ajoutée en première
                     val g = WKTReader().read(row["geometrie"] as String)
@@ -137,8 +139,9 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
                         .forEach { featureBuilder.add(row.getOrDefault(it, null)) }
 
                     val feature = featureBuilder.buildFeature(null)
-                    featureStore.addFeatures(DataUtilities.collection(feature))
+                    features.add(feature)
                 }
+                featureStore.addFeatures(DataUtilities.collection(features))
             } catch (e: Exception) {
                 throw RemocraResponseException(ErrorType.RAPPORT_PERSO_SHP, e.message)
             }

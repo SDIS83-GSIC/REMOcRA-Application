@@ -33,6 +33,7 @@ const ExecuteRapportPersonnalise = () => {
   const [offset, setOffset] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>("data");
   const [valuesFormik, setValuesFormik] = useState();
+  const [isDownload, setIsDownload] = useState(false);
 
   return (
     <Container fluid>
@@ -63,7 +64,8 @@ const ExecuteRapportPersonnalise = () => {
         </Col>
         <Col xs="auto">
           <Button
-            onClick={() =>
+            onClick={() => {
+              setIsDownload(true);
               downloadOutputFile(
                 "/api/rapport-personnalise/export-shp",
                 JSON.stringify({
@@ -71,16 +73,23 @@ const ExecuteRapportPersonnalise = () => {
                   listeParametre: valuesFormik?.listeParametre,
                 }),
                 "rapport-personnalise.zip",
-                "Import terminé",
-                successToast,
-                errorToast,
-              )
-            }
+                "",
+                () => {
+                  setIsDownload(false);
+                  successToast("Import terminé");
+                },
+                () => {
+                  setIsDownload(false);
+                  return errorToast();
+                },
+              );
+            }}
             disabled={
               valuesFormik == null ||
               tableau == null ||
               tableau?.geometries == null ||
-              tableau.geometries.length === 0
+              tableau.geometries.length === 0 ||
+              isDownload
             }
           >
             Exporter les données carto <IconExport />
