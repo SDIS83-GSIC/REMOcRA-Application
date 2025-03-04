@@ -274,26 +274,24 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         )
     }
 
-    fun checkExistsUsername(username: String) =
-        dsl.fetchExists(
-            dsl.select(UTILISATEUR.ID)
-                .from(UTILISATEUR)
-                .where(UTILISATEUR.USERNAME.eq(username)),
-        )
-    fun checkExistsUsername(username: String, id: UUID) =
+    fun checkExistsUsername(username: String, id: UUID?) =
         dsl.fetchExists(
             dsl.select(UTILISATEUR.ID)
                 .from(UTILISATEUR)
                 .where(UTILISATEUR.USERNAME.eq(username))
                 .and(
-                    UTILISATEUR.ID.ne(id),
+                    id?.let { UTILISATEUR.ID.ne(id) } ?: DSL.noCondition(),
                 ),
         )
-    fun checkExistsEmail(email: String) =
+
+    fun checkExistsEmail(email: String, id: UUID?) =
         dsl.fetchExists(
             dsl.select(UTILISATEUR.ID)
                 .from(UTILISATEUR)
-                .where(UTILISATEUR.EMAIL.eq(email)),
+                .where(UTILISATEUR.EMAIL.eq(email))
+                .and(
+                    id?.let { UTILISATEUR.ID.ne(id) } ?: DSL.noCondition(),
+                ),
         )
 
     fun insertUtilisateur(utilisateur: Utilisateur) =

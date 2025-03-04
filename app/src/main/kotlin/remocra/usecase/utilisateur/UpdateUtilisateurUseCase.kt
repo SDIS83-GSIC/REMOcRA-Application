@@ -1,7 +1,6 @@
 package remocra.usecase.utilisateur
 
 import jakarta.inject.Inject
-import org.slf4j.LoggerFactory
 import remocra.auth.AuthModule
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
@@ -28,8 +27,6 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
     @Inject lateinit var keycloakApi: KeycloakApi
 
     @Inject lateinit var utilisateurRepository: UtilisateurRepository
-
-    private val logger = LoggerFactory.getLogger(UpdateUtilisateurUseCase::class.java)
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
@@ -107,7 +104,7 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }
 
-        if (utilisateurRepository.checkExistsEmail(element.utilisateurUsername)) {
+        if (utilisateurRepository.checkExistsEmail(element.utilisateurUsername, element.utilisateurId)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_EMAIL_EXISTS)
         }
     }

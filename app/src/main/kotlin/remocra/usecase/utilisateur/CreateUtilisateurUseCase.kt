@@ -128,10 +128,10 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         if (element.utilisateurUsername.trim().length < 3) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_LENGTH)
         }
-        if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername)) {
+        if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername, null)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }
-        if (utilisateurRepository.checkExistsEmail(element.utilisateurUsername)) {
+        if (utilisateurRepository.checkExistsEmail(element.utilisateurUsername, null)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_EMAIL_EXISTS)
         }
     }
