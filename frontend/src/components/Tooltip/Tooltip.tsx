@@ -21,7 +21,7 @@ const TooltipCustom = ({
       <OverlayTrigger
         show={showTooltip}
         overlay={
-          <Popover id={tooltipId}>
+          <Popover id={tooltipId} className="tooltip-popover">
             {tooltipHeader && (
               <Popover.Header as="h3">{tooltipHeader}</Popover.Header>
             )}

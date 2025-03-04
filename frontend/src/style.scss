@@ -93,6 +93,11 @@ h3 {
   position: relative;
   display: inline-block;
 }
+.tooltip-popover {
+  position: absolute !important;
+  top: -500;
+  left: -500;
+}
 
 .go-top-wrapper {
   position: fixed;
