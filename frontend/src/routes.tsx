@@ -164,7 +164,8 @@ export const URLS = {
   ACCUEIL: url`/`,
   LOGOUT: url`/logout`,
   LIST_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/`,
-  VIEW_COURRIER: url`/create-courrier/view-courrier`,
+  VIEW_COURRIER: (typeModule: string) =>
+    url`/create-courrier/${typeModule}/view-courrier`,
 
   // Module DECI
   DECI_CARTE: url`/deci/carte`,
@@ -407,6 +408,8 @@ export const URLS = {
   CREATE_MODELE_COURRIER: url`/admin/modele-courrier/create`,
   UPDATE_MODELE_COURRIER: (modeleCourrierId: string) =>
     url`/admin/modele-courrier/update/` + modeleCourrierId,
+
+  GENERER_COURRIER: (typeModule: string) => url`/create-courrier/` + typeModule,
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
@@ -773,7 +776,7 @@ export default [
     ],
   },
   {
-    path: "/create-courrier/",
+    path: "/create-courrier/:typeModule",
     element: <GenereCourrier />,
     children: [
       {

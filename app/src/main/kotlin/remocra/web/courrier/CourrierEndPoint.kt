@@ -33,6 +33,7 @@ import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.BuildFormCourrierUseCase
 import remocra.usecase.courrier.CourrierGeneratorUseCase
@@ -202,8 +203,11 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Path("/parametres")
     @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getParametreByCourrier(): Response {
-        return Response.ok(buildFormCourrierUseCase.execute(securityContext.userInfo)).build()
+    fun getParametreByCourrier(
+        @QueryParam("typeModule")
+        typeModule: TypeModule,
+    ): Response {
+        return Response.ok(buildFormCourrierUseCase.execute(securityContext.userInfo, typeModule)).build()
     }
 
     @GET

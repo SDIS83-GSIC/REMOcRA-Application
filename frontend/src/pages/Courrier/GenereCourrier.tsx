@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
@@ -39,11 +39,14 @@ type ContextType = {
 };
 
 const GenereCourrier = () => {
+  const { typeModule } = useParams();
   const [urlCourrier, setUrlCourrier] = useState(null);
   const { activesKeys, handleShowClose } = useAccordionState([true, false]);
 
   // On récupère tous les courriers avec leurs paramètres
-  const modeleCourrierState = useGet(url`/api/courriers/parametres`);
+  const modeleCourrierState = useGet(
+    url`/api/courriers/parametres?${{ typeModule: typeModule }}`,
+  );
 
   if (!modeleCourrierState.isResolved) {
     return <Loading />;
@@ -69,7 +72,7 @@ const GenereCourrier = () => {
                       isPost={true}
                       submitUrl={`/api/courriers`}
                       prepareVariables={(values) => prepareVariables(values)}
-                      redirectUrl={URLS.VIEW_COURRIER}
+                      redirectUrl={URLS.VIEW_COURRIER(typeModule)}
                       onSubmit={(url) => setUrlCourrier(url)}
                     >
                       <GenererForm

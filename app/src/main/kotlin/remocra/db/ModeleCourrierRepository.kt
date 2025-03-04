@@ -306,6 +306,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
     fun getListeModeleCourrier(
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
+        typeModule: TypeModule,
     ): Collection<ModeleCourrierGenere> =
         dsl.select(
             MODELE_COURRIER.ID,
@@ -365,6 +366,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                     isSuperAdmin = isSuperAdmin,
                 ),
             )
+            .and(MODELE_COURRIER.MODULE.eq(typeModule))
             .fetchInto()
 
     data class ModeleCourrierGenere(

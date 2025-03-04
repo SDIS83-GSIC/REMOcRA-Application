@@ -6,6 +6,7 @@ import SquelettePage from "../../pages/SquelettePage.tsx";
 import { URLS } from "../../routes.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
+import { TypeModuleRemocra } from "./ModuleRemocra.tsx";
 
 const ModuleDeci = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
@@ -29,6 +30,11 @@ const ModuleDeci = () => {
       path: URLS.DECI_CARTE,
       label: "Carte",
       aLeDroit: true,
+    },
+    {
+      path: URLS.GENERER_COURRIER(TypeModuleRemocra.DECI),
+      label: "Générer un courrier",
+      aLeDroit: hasDroit(user, TYPE_DROIT.COURRIER_C),
     },
   ];
 

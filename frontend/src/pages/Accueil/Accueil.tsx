@@ -107,6 +107,11 @@ function getLinks(
           label: "Import CTP",
           link: URLS.IMPORT_CTP,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.COURRIER_C),
+          label: "Générer un courrier",
+          link: URLS.GENERER_COURRIER(TypeModuleRemocra.DECI),
+        },
       ];
     case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
       return [
