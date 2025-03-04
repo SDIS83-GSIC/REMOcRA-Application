@@ -37,7 +37,6 @@ import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
-import { URLS } from "../../routes.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
@@ -495,7 +494,6 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
           />
 
           <SubmitFormButtons
-            returnLink={URLS.PEI}
             onClick={() => {
               const coordonnees = geometrieState.data?.find(
                 (e) => e.srid === parseInt(srid),

@@ -120,6 +120,10 @@ export const useToolbarPeiContext = ({
             navigate(URLS.CREATE_PEI, {
               state: {
                 ...location.state,
+                from: [
+                  ...location.state.from,
+                  `${location.pathname}${location.search}`,
+                ],
                 coordonneeX: geometry.getFlatCoordinates()[0],
                 coordonneeY: geometry.getFlatCoordinates()[1],
                 srid: map.getView().getProjection().getCode().split(":").pop(),
