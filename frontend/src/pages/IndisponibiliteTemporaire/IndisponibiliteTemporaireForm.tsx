@@ -134,15 +134,6 @@ const IndisponibiliteTemporaireForm = ({
                 <Row>
                   <Col>
                     <CheckBoxInput
-                      name={"indisponibiliteTemporaireBasculeAutoIndisponible"}
-                      required={false}
-                      label={"Basculer automatiquement en indisponible"}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <CheckBoxInput
                       name={"indisponibiliteTemporaireMailAvantIndisponibilite"}
                       required={false}
                       label={"Prévenir par mail avant la date prévue"}
@@ -175,15 +166,6 @@ const IndisponibiliteTemporaireForm = ({
                         )
                       }
                       label={"Date de fin prévue"}
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <CheckBoxInput
-                      name={"indisponibiliteTemporaireBasculeAutoDisponible"}
-                      required={false}
-                      label={"Basculer automatiquement en disponible"}
                     />
                   </Col>
                 </Row>

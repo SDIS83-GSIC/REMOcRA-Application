@@ -7,8 +7,6 @@ export type IndisponibiliteTemporaireEntity = {
   indisponibiliteTemporaireMotif: string;
   indisponibiliteTemporaireObservation?: string;
   indisponibiliteTemporaireStatut: STATUT_INDISPONIBILITE_TEMPORAIRE;
-  indisponibiliteTemporaireBasculeAutoIndisponible: boolean;
-  indisponibiliteTemporaireBasculeAutoDisponible: boolean;
   indisponibiliteTemporaireMailAvantIndisponibilite: boolean;
   indisponibiliteTemporaireMailApresIndisponibilite: boolean;
 };

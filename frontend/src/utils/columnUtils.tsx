@@ -391,37 +391,6 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           ),
         });
         break;
-      case COLUMN_INDISPONIBILITE_TEMPORAIRE.AUTO_DISPONIBLE:
-        column.push(
-          BooleanColumn({
-            Header: "Bascule vers disponible",
-            accessor: "indisponibiliteTemporaireBasculeAutoDisponible",
-            sortField: "indisponibiliteTemporaireBasculeAutoDisponible",
-            Filter: (
-              <SelectEnumOption
-                options={VRAI_FAUX}
-                name={"indisponibiliteTemporaireBasculeAutoDisponible"}
-              />
-            ),
-          }),
-        );
-        break;
-      case COLUMN_INDISPONIBILITE_TEMPORAIRE.AUTO_INDISPONIBLE:
-        column.push(
-          BooleanColumn({
-            Header: "Bascule vers indisponible",
-            accessor: "indisponibiliteTemporaireBasculeAutoIndisponible",
-            sortField: "indisponibiliteTemporaireBasculeAutoIndisponible",
-            Filter: (
-              <SelectEnumOption
-                options={VRAI_FAUX}
-                name={"indisponibiliteTemporaireBasculeAutoIndisponible"}
-              />
-            ),
-          }),
-        );
-
-        break;
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT:
         column.push(
           BooleanColumn({
