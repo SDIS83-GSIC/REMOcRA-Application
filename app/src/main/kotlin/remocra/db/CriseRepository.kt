@@ -300,6 +300,7 @@ class CriseRepository @Inject constructor(
     data class CriseDocs(
         val documentId: UUID,
         val documentDate: ZonedDateTime?,
+        val documentRepertoire: String?,
         val documentNomFichier: String?,
         val type: String?,
     )
@@ -310,11 +311,12 @@ class CriseRepository @Inject constructor(
      * @param criseId L'ID de la crise pour filtrer les documents associés.
      * @return Une liste de documents
      */
-    fun getAllDocumentsFromCrise(criseId: UUID, params: Params<FilterCrise, SortDocs>): Collection<CriseDocs> =
+    fun getAllDocumentsFromCrise(criseId: UUID, params: Params<FilterCrise, SortDocs>?): Collection<CriseDocs> =
         dsl.select(
             DOCUMENT.ID,
             DOCUMENT.NOM_FICHIER,
             DOCUMENT.DATE,
+            DOCUMENT.REPERTOIRE,
             DSL.case_()
                 .`when`(L_CRISE_DOCUMENT.CRISE_ID.isNotNull(), DSL.`val`("Crise"))
                 .`when`(EVENEMENT.CRISE_ID.isNotNull(), DSL.`val`("Évènement"))
@@ -331,9 +333,9 @@ class CriseRepository @Inject constructor(
                 L_CRISE_DOCUMENT.CRISE_ID.eq(criseId)
                     .or(EVENEMENT.CRISE_ID.eq(criseId)),
             )
-            .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE))
-            .limit(params.limit)
-            .offset(params.offset)
+            .and(params?.filterBy?.toCondition() ?: DSL.trueCondition())
+            .orderBy(params?.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE))
+            .limit(params?.limit)
+            .offset(params?.offset)
             .fetchInto()
 }

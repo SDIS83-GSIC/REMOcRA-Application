@@ -34,9 +34,11 @@ import remocra.db.MessageRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
+import remocra.security.NoCsrf
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.crise.CreateCriseUseCase
 import remocra.usecase.crise.CriseUseCase
+import remocra.usecase.crise.ExportCriseUseCase
 import remocra.usecase.crise.MergeCriseUseCase
 import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
@@ -44,6 +46,7 @@ import remocra.usecase.crise.evenement.EvenementUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
 import remocra.usecase.crise.evenement.document.CreateCriseDocument
 import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
+import remocra.utils.DateUtils
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -53,6 +56,8 @@ import java.util.UUID
 @Path("/crise")
 @Produces(MediaType.APPLICATION_JSON)
 class CriseEndpoint : AbstractEndpoint() {
+
+    @Inject lateinit var dateUtils: DateUtils
 
     @Inject lateinit var criseRepository: CriseRepository
 
@@ -65,6 +70,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var evenementUseCase: EvenementUseCase
 
     @Inject lateinit var mergeCriseUseCase: MergeCriseUseCase
+
+    @Inject lateinit var exportCriseUseCase: ExportCriseUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -110,6 +117,14 @@ class CriseEndpoint : AbstractEndpoint() {
         val listeCriseId: Collection<UUID>?,
     )
 
+    data class CriseDataExport(
+        val criseId: UUID,
+        val dateDebExtraction: ZonedDateTime,
+        val dateFinExtraction: ZonedDateTime,
+        val hasMessage: Boolean,
+        val hasDoc: Boolean,
+    )
+
     @POST
     @Path("/")
     @RequireDroits([Droit.CRISE_R])
@@ -149,6 +164,31 @@ class CriseEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
     }
+
+    @GET
+    @Path("/{criseId}/export")
+    @RequireDroits([Droit.CRISE_R])
+    @Produces(MediaType.TEXT_PLAIN)
+    @NoCsrf("On télécharge un fichier")
+    fun exportCrise(
+        @PathParam("criseId") criseId: UUID,
+        @QueryParam("dateDebExtraction") dateDebExtraction: ZonedDateTime,
+        @QueryParam("dateFinExtraction") dateFinExtraction: ZonedDateTime,
+        @QueryParam("hasMessage") hasMessage: Boolean,
+        @QueryParam("hasDoc") hasDoc: Boolean,
+
+    ): Response =
+        Response.ok(
+            exportCriseUseCase.execute(
+                criseId = criseId,
+                dateDebExtraction = dateDebExtraction,
+                dateFinExtraction = dateFinExtraction,
+                hasMessage = hasMessage,
+                hasDoc = hasDoc,
+            ),
+        )
+            .header("Content-Disposition", "attachment; filename=\"criseExport-${dateUtils.now()}.zip")
+            .build()
 
     @GET
     @Path("/get-type-crise")

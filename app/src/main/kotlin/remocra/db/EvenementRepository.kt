@@ -157,7 +157,7 @@ class EvenementRepository @Inject constructor(
             },
         ).fetchInto()
 
-    fun getAllEvents(criseId: UUID, params: Filter): Collection<EvenementData> =
+    fun getAllEvents(criseId: UUID, params: Filter? = null, dateDebExtraction: ZonedDateTime? = null, dateFinExtraction: ZonedDateTime? = null): Collection<EvenementData> =
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
@@ -193,7 +193,14 @@ class EvenementRepository @Inject constructor(
         )
             .from(EVENEMENT)
             .where(EVENEMENT.CRISE_ID.eq(criseId))
-            .and(params.toCondition())
+            .and(params?.toCondition())
+            .let {
+                if (dateDebExtraction != null && dateFinExtraction != null) {
+                    it.and(EVENEMENT.DATE_CONSTAT.between(dateDebExtraction, dateFinExtraction))
+                } else {
+                    it
+                }
+            }
             .fetchInto()
 
     fun getTypeAndSousType(criseId: UUID): Collection<SousTypeForMap> =

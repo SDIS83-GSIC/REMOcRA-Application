@@ -38,6 +38,7 @@ class CreateEventUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.INSER
     override fun execute(userInfo: UserInfo?, element: EvenementData): EvenementData {
         // - evenement
         evenementRepository.add(element)
+
         // - document
         if (element.listeDocument != null) {
             upsertDocumentEvenementUseCase.execute(

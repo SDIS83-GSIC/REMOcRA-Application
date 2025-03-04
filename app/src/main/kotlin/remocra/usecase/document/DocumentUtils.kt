@@ -8,6 +8,7 @@ import remocra.utils.notFound
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.FileTime
@@ -48,17 +49,30 @@ class DocumentUtils {
     fun saveFile(fileBytes: ByteArray, nomFichier: String, chemin: String) {
         // Création du répertoire d'accueil si nécessaire
         val repertoire = ensureDirectory(chemin)
-
         val targetFilePath = Paths.get(chemin, nomFichier).toString()
 
-        if (repertoire.canWrite()) {
-            try {
-                FileOutputStream(targetFilePath).use { outStream -> outStream.write(fileBytes) }
-            } catch (e: IOException) {
-                throw java.lang.RuntimeException(e)
+        if (!repertoire.canWrite()) {
+            throw IOException("Impossible d'écrire dans le répertoire $chemin")
+        }
+
+        FileOutputStream(targetFilePath).use { outStream -> outStream.write(fileBytes) }
+    }
+
+    /**
+     * Permet de créer un fichier à partir d'un contenu et de le sauvegarder sur le serveur
+     * @param content le contenu du fichier à sauvegarder
+     * @param nomFichier nom du fichier à sauvegarder
+     * @param chemin chemin sur le serveur
+     */
+    fun createFile(content: String, nomFichier: String, chemin: String) {
+        val targetFilePath = Paths.get(chemin, nomFichier)
+        try {
+            // Création et écriture dans le fichier avec un encodage (UTF-8)
+            Files.newBufferedWriter(targetFilePath, StandardCharsets.UTF_8).use { writer ->
+                writer.write(content)
             }
-        } else {
-            throw SecurityException("Impossible de créer le fichier $targetFilePath")
+        } catch (e: IOException) {
+            throw RuntimeException("Erreur lors de la création ou de l'écriture dans le fichier $targetFilePath", e)
         }
     }
 
