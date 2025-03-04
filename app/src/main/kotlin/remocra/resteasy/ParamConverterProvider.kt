@@ -7,6 +7,7 @@ import org.locationtech.jts.io.WKTReader
 import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 
 class ParamConverterProvider : ParamConverterProvider {
@@ -17,6 +18,7 @@ class ParamConverterProvider : ParamConverterProvider {
         annotations: Array<out Annotation>?,
     ): ParamConverter<T>? =
         when (rawType) {
+            ZonedDateTime::class.java -> ZonedDateTimeParamConverter as ParamConverter<T>
             LocalDate::class.java -> LocalDateParamConverter as ParamConverter<T>
             OffsetDateTime::class.java -> OffsetDateTimeDateParamConverter as ParamConverter<T>
             Set::class.java -> SetParamConverter as ParamConverter<T>
@@ -38,6 +40,22 @@ private object LocalDateParamConverter : ParamConverter<LocalDate> {
         } catch (e: DateTimeParseException) {
             throw IllegalArgumentException(e)
         }
+}
+
+private object ZonedDateTimeParamConverter : ParamConverter<ZonedDateTime> {
+
+    override fun toString(value: ZonedDateTime?): String =
+        (value ?: throw IllegalArgumentException()).toString()
+
+    override fun fromString(value: String?): ZonedDateTime? {
+        val nonEmptyValue = value?.takeUnless { it.isEmpty() } ?: throw IllegalArgumentException()
+
+        return try {
+            ZonedDateTime.parse(nonEmptyValue)
+        } catch (e: DateTimeParseException) {
+            throw IllegalArgumentException(e)
+        }
+    }
 }
 
 private object OffsetDateTimeDateParamConverter : ParamConverter<OffsetDateTime> {
