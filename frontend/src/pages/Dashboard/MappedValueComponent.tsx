@@ -50,9 +50,8 @@ export const setTableValueMapped = (data: any, config: any) => {
     // Itérer sur toutes les clés de la configuration et construire l'objet
     config.forEach((configKey: string) => {
       // Associer la valeur depuis `data`
-      transformedItem[configKey] = item[configKey as keyof typeof item]
-        ? item[configKey as keyof typeof item]
-        : configKey;
+      transformedItem[configKey] =
+        item[configKey as keyof typeof item] ?? configKey;
     });
     return transformedItem;
   });
