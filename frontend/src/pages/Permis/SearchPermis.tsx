@@ -225,7 +225,7 @@ const CardPermisToSearchResult = ({
 
   return (
     <Row className="bg-light p-2 border rounded mx-2">
-      <Col xs={3}>
+      <Col xs={"auto"}>
         <Button onClick={() => zoomerSurPermis()}>
           <IconMapComponent /> Localiser
         </Button>
