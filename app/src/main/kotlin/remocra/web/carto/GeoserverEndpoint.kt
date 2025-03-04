@@ -5,6 +5,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MultivaluedHashMap
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriInfo
@@ -18,6 +19,7 @@ import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.security.NoCsrf
 import remocra.utils.addQueryParameters
+import remocra.utils.forbidden
 import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
 
@@ -43,10 +45,12 @@ class GeoserverEndpoint : AbstractEndpoint() {
         @Context securityContext: SecurityContext,
     ): Response {
         // XXX: faire un/des "caches" pour éviter trop de requêtes SQL ?
+        val user = securityContext.userInfo
+
         val couche = coucheRepository.getCouche(
             code,
             module,
-            securityContext.userInfo?.utilisateurId?.let {
+            user?.utilisateurId?.let {
                 droitsRepository.getProfilDroitListFromUser(it)
             },
         )
@@ -56,9 +60,29 @@ class GeoserverEndpoint : AbstractEndpoint() {
             return notFound().build()
         }
 
+        val queryParameters = MultivaluedHashMap(uriInfo.queryParameters)
+
+        // L'utilisateur n'est pas superadmin ou la couche n'est pas publique, on filtre sur la zone d'intégration
+        if (!couche.couchePublic) {
+            if (user == null) {
+                return forbidden().build()
+            }
+
+            if (!user.isSuperAdmin) {
+                if (user.zoneCompetence == null) {
+                    return forbidden().build()
+                }
+                // XXX : Chaîne en dur, rajouter les noms des propriétés depuis les déclarations jOOQ ?
+                queryParameters.add(
+                    "CQL_FILTER",
+                    "WITHIN(geometrie,(querySingle('remocra:zone_integration','zone_integration_geometrie','zone_integration_id=\'\'${user.zoneCompetence!!.zoneIntegrationId}\'\'')))",
+                )
+            }
+        }
+
         val url = HttpUrl.get(couche.coucheUrl)
             .newBuilder()
-            .addQueryParameters(uriInfo.queryParameters)
+            .addQueryParameters(queryParameters)
             .build()
         val request = Request.Builder()
             .get()
