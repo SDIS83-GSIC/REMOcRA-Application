@@ -162,12 +162,12 @@ export const useToolbarRcciContext = ({
           .then((text) => {
             if (text === "true") {
               fetch(
-                url`/api/rcci/${feature.getProperties().pointId}/geometry`,
+                url`/api/rcci/${feature.getProperties().elementId}/geometry`,
                 getFetchOptions({
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    rcciId: feature.getProperties().pointId,
+                    rcciId: feature.getProperties().elementId,
                     rcciGeometrie: `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(feature)}`,
                   }),
                 }),
@@ -221,7 +221,7 @@ export const useToolbarRcciContext = ({
         return;
       }
       evt.selected.forEach(async function (feature) {
-        deleteShow(feature.getProperties().pointId);
+        deleteShow(feature.getProperties().elementId);
       });
     });
 
@@ -233,7 +233,7 @@ export const useToolbarRcciContext = ({
         return;
       }
       evt.selected.forEach(async function (feature) {
-        rcciIdRef.current = feature.getProperties().pointId;
+        rcciIdRef.current = feature.getProperties().elementId;
         editShow();
       });
     });

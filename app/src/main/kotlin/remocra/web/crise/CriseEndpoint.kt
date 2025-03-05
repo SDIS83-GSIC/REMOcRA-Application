@@ -24,7 +24,7 @@ import remocra.data.DataTableau
 import remocra.data.DocumentsData
 import remocra.data.EvenementData
 import remocra.data.Params
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.CriseRepository
 import remocra.db.EvenementRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -244,7 +244,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 bbox = bbox,
                 sridSource = srid,
                 etudeId = null,
-                typePointCarte = TypePointCarte.CRISE,
+                typeElementCarte = TypeElementCarte.CRISE,
                 userInfo = securityContext.userInfo!!,
                 criseId = criseId,
             ),

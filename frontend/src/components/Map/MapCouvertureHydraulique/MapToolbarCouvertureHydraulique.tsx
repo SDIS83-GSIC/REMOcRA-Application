@@ -356,11 +356,11 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
-        if (point.typePointCarte === "PEI") {
-          listePeiId.push(point.pointId);
+        if (point.typeElementCarte === "PEI") {
+          listePeiId.push(point.elementId);
         }
-        if (point.typePointCarte === "PEI_PROJET") {
-          listePeiProjetId.push(point.pointId);
+        if (point.typeElementCarte === "PEI_PROJET") {
+          listePeiProjetId.push(point.elementId);
         }
       });
     });
@@ -392,7 +392,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         dataPeiProjetLayer,
         successToast,
         errorToast,
-        (feature) => feature.getProperties().typePointCarte === "PEI_PROJET",
+        (feature) => feature.getProperties().typeElementCarte === "PEI_PROJET",
       );
     }
 

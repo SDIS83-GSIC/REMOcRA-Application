@@ -1,6 +1,6 @@
 package remocra.data.enums
 
-enum class TypePointCarte {
+enum class TypeElementCarte {
     PEI,
     PEI_PROJET,
     PEI_PRESCRIT,

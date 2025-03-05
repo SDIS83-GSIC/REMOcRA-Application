@@ -89,7 +89,7 @@ class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
 
         debitSimultaneRepository.insertDebitSimultane(
             debitSimultaneId = element.debitSimultaneId,
-            pointGeometrie = pointDebitSimultane,
+            elementGeometrie = pointDebitSimultane,
             siteId = peiRepository.getSiteId(listePeiDerniereMesure),
             numeroDossier = element.debitSimultaneNumeroDossier,
         )

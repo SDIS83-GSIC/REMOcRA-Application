@@ -30,7 +30,7 @@ import remocra.data.EtudeData
 import remocra.data.Params
 import remocra.data.PeiProjetData
 import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.remocra.enums.Droit
@@ -356,7 +356,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 bbox,
                 srid,
                 etudeId,
-                TypePointCarte.PEI_PROJET,
+                TypeElementCarte.PEI_PROJET,
                 securityContext.userInfo!!,
             ),
         ).build()

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import remocra.apimobile.usecase.PeiCaracteristiquesUseCase
 import remocra.auth.UserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.CarteRepository
 import remocra.db.UtilisateurRepository
 import remocra.exception.RemocraResponseException
@@ -32,20 +32,20 @@ class GetPointCarteUseCase : AbstractUseCase() {
      * @param bbox : la bbox si elle existe
      * @param srid de la carte
      * @param etudeId: Id de l'étude s'il s'agit des PEI en projet
-     * @param typePointCarte : Permet de spécifier le type de points (PEI, PEI en projet, PEI prescrit ...)
+     * @param typeElementCarte : Permet de spécifier le type de points (PEI, PEI en projet, PEI prescrit ...)
      */
     fun execute(
         bbox: String,
         sridSource: String,
         etudeId: UUID? = null,
-        typePointCarte: TypePointCarte,
+        typeElementCarte: TypeElementCarte,
         userInfo: UserInfo,
         criseId: UUID? = null,
     ): LayersRes {
         val srid = sridFromEpsgCode(sridSource)
 
-        val feature = when (typePointCarte) {
-            TypePointCarte.PEI -> bbox.let {
+        val feature = when (typeElementCarte) {
+            TypeElementCarte.PEI -> bbox.let {
                 if (userInfo.zoneCompetence == null && !userInfo.isSuperAdmin) {
                     logger.error("L'utilisateur n'a pas de zone de compétence.")
                     throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
@@ -68,7 +68,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 }
             }
 
-            TypePointCarte.PEI_PROJET -> bbox.let {
+            TypeElementCarte.PEI_PROJET -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getPeiProjetWithinEtude(etudeId!!, srid)
                 } else {
@@ -77,7 +77,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getPeiProjetWithinEtudeAndBbox(etudeId!!, geom.toGeomFromText(), srid)
                 }
             }
-            TypePointCarte.PEI_PRESCRIT -> bbox.let {
+            TypeElementCarte.PEI_PRESCRIT -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getPeiPrescritWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
                 } else {
@@ -85,7 +85,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getPeiPrescritWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
-            TypePointCarte.PERMIS -> bbox.let {
+            TypeElementCarte.PERMIS -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getPermisWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
                 } else {
@@ -93,7 +93,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getPermisWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
-            TypePointCarte.DEBIT_SIMULTANE -> bbox.let {
+            TypeElementCarte.DEBIT_SIMULTANE -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getDebitSimultaneWithinZoneAndBbox(
                         userInfo.zoneCompetence?.zoneIntegrationId,
@@ -113,7 +113,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 }
             }
 
-            TypePointCarte.ADRESSE -> bbox.let {
+            TypeElementCarte.ADRESSE -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getAdresse(srid)
                 } else {
@@ -122,7 +122,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getAdresseInBbox(geom.toGeomFromText(), srid)
                 }
             }
-            TypePointCarte.OLDEB -> bbox.let {
+            TypeElementCarte.OLDEB -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getOldebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
                 } else {
@@ -130,7 +130,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getOldebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
-            TypePointCarte.RCCI -> bbox.let {
+            TypeElementCarte.RCCI -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getRcciWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
                 } else {
@@ -139,7 +139,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 }
             }
 
-            TypePointCarte.CRISE -> bbox.let {
+            TypeElementCarte.CRISE -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getEvenementProjetFromCrise(criseId!!, srid)
                 } else {
@@ -149,31 +149,31 @@ class GetPointCarteUseCase : AbstractUseCase() {
             }
         }
 
-        if (typePointCarte == TypePointCarte.PEI) {
+        if (typeElementCarte == TypeElementCarte.PEI) {
             val peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesWeb()
             feature.map {
-                it.propertiesToDisplay = peiCaracteristiques[it.pointId]
+                it.propertiesToDisplay = peiCaracteristiques[it.elementId]
             }
         }
 
         return LayersRes(
             features = feature.map {
                 Feature(
-                    geometry = if (it.pointGeometrie.geometryType.equals("Point")) {
+                    geometry = if (it.elementGeometrie.geometryType.equals("Point")) {
                         FeatureGeom(
-                            type = it.pointGeometrie.geometryType,
+                            type = it.elementGeometrie.geometryType,
                             coordinates =
-                            it.pointGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
-                            srid = "EPSG:${it.pointGeometrie.srid}",
+                            it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
+                            srid = "EPSG:${it.elementGeometrie.srid}",
                         )
                     } else {
                         FeatureGeom(
-                            type = it.pointGeometrie.geometryType,
-                            coordinates = arrayOf(it.pointGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.toTypedArray()),
-                            srid = "EPSG:${it.pointGeometrie.srid}",
+                            type = it.elementGeometrie.geometryType,
+                            coordinates = arrayOf(it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.toTypedArray()),
+                            srid = "EPSG:${it.elementGeometrie.srid}",
                         )
                     },
-                    id = it.pointId,
+                    id = it.elementId,
                     properties = it,
                 )
             },

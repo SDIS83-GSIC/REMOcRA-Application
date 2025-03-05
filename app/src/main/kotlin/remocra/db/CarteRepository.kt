@@ -9,7 +9,7 @@ import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.Polygon
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatAdresse
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
@@ -57,8 +57,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      */
     fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(
-            ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
-            PEI.ID.`as`("pointId"),
+            ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI.ID.`as`("elementId"),
             hasIndispoTemp,
             hasTournee,
             hasDebitSimultane,
@@ -88,8 +88,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      */
     fun getPeiWithinZone(zoneId: UUID?, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(
-            ST_Transform(PEI.GEOMETRIE, srid).`as`("pointGeometrie"),
-            PEI.ID.`as`("pointId"),
+            ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI.ID.`as`("elementId"),
             hasIndispoTemp,
             hasTournee,
             hasDebitSimultane,
@@ -114,7 +114,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les PEI en projet dans une BBOX selon l'étude
      */
     fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
             .from(PEI_PROJET)
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
@@ -128,7 +128,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les PEI en projet selon l'étude
      */
     fun getPeiProjetWithinEtude(etudeId: UUID, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("pointGeometrie"), PEI_PROJET.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
             .from(PEI_PROJET)
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
@@ -138,8 +138,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
     fun getPeiPrescritWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PeiPrescritsCarte> {
         return dsl.select(
-            ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid).`as`("pointGeometrie"),
-            PEI_PRESCRIT.ID.`as`("pointId"),
+            ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI_PRESCRIT.ID.`as`("elementId"),
         ).from(PEI_PRESCRIT)
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
@@ -154,8 +154,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
     fun getPermisWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PermisCarte> {
         return dsl.select(
-            ST_Transform(PERMIS.GEOMETRIE, srid).`as`("pointGeometrie"),
-            PERMIS.ID.`as`("pointId"),
+            ST_Transform(PERMIS.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PERMIS.ID.`as`("elementId"),
         ).from(PERMIS)
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
@@ -172,7 +172,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les évènements selon la crise.
      */
     fun getEvenementProjetFromCrise(criseId: UUID, srid: Int): Collection<EvenementCarte> {
-        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("pointGeometrie"), EVENEMENT.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
                 EVENEMENT.CRISE_ID.eq(criseId),
@@ -185,7 +185,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les évènements dans une BBOX selon la crise.
      */
     fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<EvenementCarte> {
-        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("pointGeometrie"), EVENEMENT.ID.`as`("pointId"))
+        return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
                 EVENEMENT.CRISE_ID.eq(criseId),
@@ -199,8 +199,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 // TODO zone compétence
     fun getAdresse(srid: Int): Collection<AdresseCarte> {
         return dsl.select(
-            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("pointGeometrie"),
-            ADRESSE.ID.`as`("pointId"),
+            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            ADRESSE.ID.`as`("elementId"),
             ADRESSE.TYPE,
         )
             .from(ADRESSE)
@@ -209,8 +209,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
     fun getAdresseInBbox(bbox: Field<Geometry?>, srid: Int): Collection<AdresseCarte> {
         return dsl.select(
-            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("pointGeometrie"),
-            ADRESSE.ID.`as`("pointId"),
+            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            ADRESSE.ID.`as`("elementId"),
             ADRESSE.TYPE,
         )
             .from(ADRESSE)
@@ -222,8 +222,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
     fun getDebitSimultaneWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DebitSimultaneCarte> {
         return dsl.select(
-            ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("pointGeometrie"),
-            DEBIT_SIMULTANE.ID.`as`("pointId"),
+            ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DEBIT_SIMULTANE.ID.`as`("elementId"),
             DEBIT_SIMULTANE.NUMERO_DOSSIER,
             PIBI.TYPE_RESEAU_ID.`as`("typeReseauId"),
             multiset(
@@ -261,8 +261,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     fun getOldebWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<OldebCarte> =
         dsl.with(OldebRepository.lastOldebVisiteCte)
             .select(
-                ST_Transform(OLDEB.GEOMETRIE, srid).`as`("pointGeometrie"),
-                OLDEB.ID.`as`("pointId"),
+                ST_Transform(OLDEB.GEOMETRIE, srid).`as`("elementGeometrie"),
+                OLDEB.ID.`as`("elementId"),
                 OLDEB_TYPE_DEBROUSSAILLEMENT.CODE.`as`("etatDebroussaillement"),
             )
             .from(OLDEB)
@@ -283,8 +283,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      */
     fun getRcciWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<RcciCarte> =
         dsl.select(
-            ST_Transform(RCCI.GEOMETRIE, srid).`as`("pointGeometrie"),
-            RCCI.ID.`as`("pointId"),
+            ST_Transform(RCCI.GEOMETRIE, srid).`as`("elementGeometrie"),
+            RCCI.ID.`as`("elementId"),
             RCCI.DATE_INCENDIE,
         )
             .from(RCCI)
@@ -298,18 +298,18 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             )
             .fetchInto()
 
-    abstract class PointCarte {
-        abstract val pointGeometrie: Geometry
-        abstract val pointId: UUID
-        abstract val typePointCarte: TypePointCarte
+    abstract class ElementCarte {
+        abstract val elementGeometrie: Geometry
+        abstract val elementId: UUID
+        abstract val typeElementCarte: TypeElementCarte
 
         // Propriétés à afficher dans la tooltip
         abstract var propertiesToDisplay: String?
     }
 
     data class PeiCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
         val hasIndispoTemp: Boolean = false,
         val hasTournee: Boolean = false,
@@ -320,94 +320,94 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
         // TODO à compléter au besoin
 
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.PEI
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.PEI
     }
 
     data class PeiProjetCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
 
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.PEI_PROJET
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.PEI_PROJET
     }
 
     data class EvenementCarte(
-        override val pointGeometrie: Geometry,
-        override val pointId: UUID,
+        override val elementGeometrie: Geometry,
+        override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.CRISE
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.CRISE
     }
 
     data class PeiPrescritsCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
 
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.PEI_PRESCRIT
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.PEI_PRESCRIT
     }
 
     data class PermisCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
 
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.PERMIS
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.PERMIS
     }
 
     data class DebitSimultaneCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         val listeNumeroPei: String?,
         val debitSimultaneNumeroDossier: String,
         val typeReseauId: UUID,
 
         // TODO à compléter au besoin
 
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.DEBIT_SIMULTANE
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DEBIT_SIMULTANE
 
         override var propertiesToDisplay: String? =
             "Numéro du dossier : $debitSimultaneNumeroDossier <br />Liste des PEI concernés : $listeNumeroPei"
     }
 
     data class AdresseCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         override var propertiesToDisplay: String?,
         val adresseType: EtatAdresse,
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.ADRESSE }
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.ADRESSE }
 
     data class OldebCarte(
-        override val pointGeometrie: Polygon,
-        override val pointId: UUID,
+        override val elementGeometrie: Polygon,
+        override val elementId: UUID,
         val etatDebroussaillement: String? = null,
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.OLDEB
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.OLDEB
 
         override var propertiesToDisplay: String? = "$etatDebroussaillement"
     }
 
     data class RcciCarte(
-        override val pointGeometrie: Point,
-        override val pointId: UUID,
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
         val rcciDateIncendie: Date?,
-    ) : PointCarte() {
-        override val typePointCarte: TypePointCarte
-            get() = TypePointCarte.RCCI
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.RCCI
 
         override var propertiesToDisplay: String? = "$rcciDateIncendie"
     }

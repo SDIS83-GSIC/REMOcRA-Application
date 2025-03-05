@@ -299,7 +299,7 @@ const MapToolbarPermis = ({
         className="w-auto"
       >
         <UpdatePermis
-          permisId={featureState?.pointId}
+          permisId={featureState?.elementId}
           coordonneeX={featureState?.geometry.getFlatCoordinates()[0]}
           coordonneeY={featureState?.geometry.getFlatCoordinates()[1]}
           srid={map.getView().getProjection().getCode().split(":")[1]}

@@ -27,7 +27,7 @@ import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.Params
 import remocra.data.PenaData
 import remocra.data.PibiData
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.PeiRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -68,7 +68,7 @@ class PeiEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
 
-    @Inject lateinit var getPointCarteUseCase: GetPointCarteUseCase
+    @Inject lateinit var getElementCarteUseCase: GetPointCarteUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -294,11 +294,11 @@ class PeiEndPoint : AbstractEndpoint() {
             return forbidden().build()
         }
         return Response.ok(
-            getPointCarteUseCase.execute(
+            getElementCarteUseCase.execute(
                 bbox,
                 srid,
                 null,
-                TypePointCarte.PEI,
+                TypeElementCarte.PEI,
                 securityContext.userInfo!!,
             ),
         ).build()

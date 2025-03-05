@@ -37,27 +37,27 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
 
     fun updateDebitSimultane(
         siteId: UUID?,
-        pointGeometrie: Point,
+        elementGeometrie: Point,
         numeroDossier: String,
         debitSimultaneId: UUID,
     ) =
         dsl.update(DEBIT_SIMULTANE)
             .set(DEBIT_SIMULTANE.SITE_ID, siteId)
-            .set(DEBIT_SIMULTANE.GEOMETRIE, pointGeometrie)
+            .set(DEBIT_SIMULTANE.GEOMETRIE, elementGeometrie)
             .set(DEBIT_SIMULTANE.NUMERO_DOSSIER, numeroDossier)
             .where(DEBIT_SIMULTANE.ID.eq(debitSimultaneId))
             .execute()
 
     fun insertDebitSimultane(
         siteId: UUID?,
-        pointGeometrie: Point,
+        elementGeometrie: Point,
         numeroDossier: String,
         debitSimultaneId: UUID,
     ) =
         dsl.insertInto(DEBIT_SIMULTANE)
             .set(DEBIT_SIMULTANE.ID, debitSimultaneId)
             .set(DEBIT_SIMULTANE.SITE_ID, siteId)
-            .set(DEBIT_SIMULTANE.GEOMETRIE, pointGeometrie)
+            .set(DEBIT_SIMULTANE.GEOMETRIE, elementGeometrie)
             .set(DEBIT_SIMULTANE.NUMERO_DOSSIER, numeroDossier)
             .execute()
 

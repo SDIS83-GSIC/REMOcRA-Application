@@ -56,7 +56,7 @@ function toggleDeplacerPoint(
             const coordinate = feature.getGeometry().getCoordinates();
 
             const res = await fetch(
-              url`${urlApi}` + feature.getProperties().pointId,
+              url`${urlApi}` + feature.getProperties().elementId,
               getFetchOptions({
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },

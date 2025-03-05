@@ -23,7 +23,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.Params
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.data.oldeb.OldebForm
 import remocra.data.oldeb.OldebFormInput
 import remocra.data.oldeb.OldebGeometryFormData
@@ -81,7 +81,7 @@ class OldebEndpoint : AbstractEndpoint() {
                 bbox,
                 srid,
                 null,
-                TypePointCarte.OLDEB,
+                TypeElementCarte.OLDEB,
                 securityContext.userInfo!!,
             ),
         ).build()

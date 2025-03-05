@@ -67,21 +67,21 @@ const TooltipMapPei = ({
   const handleCloseUpdateDebitSimultane = () =>
     setShowUpdateDebitSimultane(false);
 
-  const pointId = featureSelect?.getProperties().pointId;
+  const elementId = featureSelect?.getProperties().elementId;
 
   return (
     <div ref={ref}>
-      {featureSelect?.getProperties().typePointCarte ===
+      {featureSelect?.getProperties().typeElementCarte ===
       TYPE_POINT_CARTE.PEI ? (
         <Tooltip
           disabled={disabledTooltip}
           featureSelect={featureSelect}
           overlay={overlay}
           displayButtonEdit={displayButtonEdit}
-          hrefEdit={URLS.UPDATE_PEI(pointId)}
+          hrefEdit={URLS.UPDATE_PEI(elementId)}
           labelEdit={"Modifier le PEI"}
           displayButtonDelete={displayButtonDelete}
-          deletePath={`/api/pei/delete/` + pointId}
+          deletePath={`/api/pei/delete/` + elementId}
           onClickDelete={() => {
             dataPeiLayer.getSource().refresh();
             overlay?.setPosition(undefined);
@@ -102,7 +102,7 @@ const TooltipMapPei = ({
                   tooltipId={"tournees-carte"}
                 >
                   <CustomLinkButton
-                    pathname={URLS.VISITE(pointId)}
+                    pathname={URLS.VISITE(elementId)}
                     variant="warning"
                   >
                     <IconVisite />
@@ -151,7 +151,7 @@ const TooltipMapPei = ({
                 className="w-auto"
               >
                 <FicheResume
-                  peiId={pointId}
+                  peiId={elementId}
                   titre={
                     "Fiche résumée du PEI " +
                     featureSelect?.getProperties().peiNumeroComplet
@@ -175,7 +175,7 @@ const TooltipMapPei = ({
                 backdrop={true}
               >
                 <ListIndisponibiliteTemporaire
-                  peiId={pointId}
+                  peiId={elementId}
                   colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
                 />
               </Volet>
@@ -195,12 +195,12 @@ const TooltipMapPei = ({
                 className="w-auto"
                 backdrop={true}
               >
-                <ListTournee peiId={pointId} />
+                <ListTournee peiId={elementId} />
               </Volet>
             </>
           }
         />
-      ) : featureSelect?.getProperties().typePointCarte ===
+      ) : featureSelect?.getProperties().typeElementCarte ===
         TYPE_POINT_CARTE.DEBIT_SIMULTANE ? (
         <>
           <Tooltip
@@ -213,7 +213,7 @@ const TooltipMapPei = ({
               dataDebitSimultaneLayer.getSource().refresh();
               overlay?.setPosition(undefined);
             }}
-            deletePath={`/api/debit-simultane/delete/` + pointId}
+            deletePath={`/api/debit-simultane/delete/` + elementId}
           />
 
           <Volet
@@ -224,7 +224,7 @@ const TooltipMapPei = ({
             className="w-50"
           >
             <UpdateDebitSimultane
-              debitSimultaneId={pointId}
+              debitSimultaneId={elementId}
               onSubmit={() => {
                 dataDebitSimultaneLayer.getSource().refresh();
                 handleCloseUpdateDebitSimultane();
@@ -293,7 +293,7 @@ const Tooltip = ({
 }) => {
   return (
     <>
-      {featureSelect?.getProperties().pointId && !disabled && (
+      {featureSelect?.getProperties().elementId && !disabled && (
         <Popover
           id="popover"
           placement="bottom"
@@ -412,8 +412,8 @@ export const TooltipMapEditPeiProjet = ({
   });
   const displayEditDeleteButton =
     !disabledEditPeiProjet &&
-    featureSelect?.getProperties().typePointCarte === "PEI_PROJET" &&
-    featureSelect?.getProperties().pointId != null;
+    featureSelect?.getProperties().typeElementCarte === "PEI_PROJET" &&
+    featureSelect?.getProperties().elementId != null;
 
   if (disabled) {
     overlay?.setPosition(undefined);
@@ -433,7 +433,7 @@ export const TooltipMapEditPeiProjet = ({
           }}
           deletePath={
             "/api/couverture-hydraulique/pei-projet/" +
-            featureSelect?.getProperties().pointId
+            featureSelect?.getProperties().elementId
           }
           disabled={disabled}
         />
@@ -445,7 +445,7 @@ export const TooltipMapEditPeiProjet = ({
       >
         <UpdatePeiProjet
           etudeId={etudeId}
-          peiProjetId={featureSelect?.getProperties().pointId}
+          peiProjetId={featureSelect?.getProperties().elementId}
           coordonneeX={
             featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
           }
@@ -480,9 +480,9 @@ export const TooltipMapEditEvenement = ({
     map: map,
     disabled: disabled,
   });
-  const eventId = featureSelect?.getProperties().pointId;
+  const eventId = featureSelect?.getProperties().elementId;
   const displayEditDeleteButton =
-    featureSelect?.getProperties().pointId != null;
+    featureSelect?.getProperties().elementId != null;
   const srid = map.getView().getProjection().getCode().split(":")[1];
 
   if (disabled) {
@@ -538,8 +538,8 @@ export const TooltipMapEditPeiPrescrit = ({
   });
   const displayEditDeleteButton =
     !disabledEditPeiPrescrit &&
-    featureSelect?.getProperties().typePointCarte === "PEI_PRESCRIT" &&
-    featureSelect?.getProperties().pointId != null;
+    featureSelect?.getProperties().typeElementCarte === "PEI_PRESCRIT" &&
+    featureSelect?.getProperties().elementId != null;
 
   if (disabled) {
     overlay?.setPosition(undefined);
@@ -557,7 +557,7 @@ export const TooltipMapEditPeiPrescrit = ({
           overlay?.setPosition(undefined);
         }}
         deletePath={
-          "/api/pei-prescrit/" + featureSelect?.getProperties().pointId
+          "/api/pei-prescrit/" + featureSelect?.getProperties().elementId
         }
         disabled={disabled}
       />
@@ -567,7 +567,7 @@ export const TooltipMapEditPeiPrescrit = ({
         className="w-auto"
       >
         <UpdatePeiPrescrit
-          peiPrescritId={featureSelect?.getProperties().pointId}
+          peiPrescritId={featureSelect?.getProperties().elementId}
           coordonneeX={
             featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
           }
@@ -612,8 +612,8 @@ export const TooltipMapEditPermis = ({
   const displayEditDeleteButton =
     hasRightToInteract &&
     !disabledEditPermis &&
-    featureSelect?.getProperties().typePointCarte === "PERMIS" &&
-    featureSelect?.getProperties().pointId != null;
+    featureSelect?.getProperties().typeElementCarte === "PERMIS" &&
+    featureSelect?.getProperties().elementId != null;
   if (disabled) {
     overlay?.setPosition(undefined);
   }
@@ -629,7 +629,7 @@ export const TooltipMapEditPermis = ({
           dataPermisLayer.getSource().refresh();
           overlay?.setPosition(undefined);
         }}
-        deletePath={"/api/permis/" + featureSelect?.getProperties().pointId}
+        deletePath={"/api/permis/" + featureSelect?.getProperties().elementId}
         disabled={disabled}
         displayButtonSee={true}
         onClickSee={() => setShowPermisReadOnly(true)}
@@ -640,7 +640,7 @@ export const TooltipMapEditPermis = ({
         className="w-auto"
       >
         <UpdatePermis
-          permisId={featureSelect?.getProperties().pointId}
+          permisId={featureSelect?.getProperties().elementId}
           coordonneeX={
             featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
           }
@@ -661,7 +661,7 @@ export const TooltipMapEditPermis = ({
         className="w-auto"
       >
         <UpdatePermis
-          permisId={featureSelect?.getProperties().pointId}
+          permisId={featureSelect?.getProperties().elementId}
           coordonneeX={
             featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
           }

@@ -178,7 +178,7 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
 
         debitSimultaneRepository.updateDebitSimultane(
             debitSimultaneId = element.debitSimultaneId,
-            pointGeometrie = pointDebitSimultane,
+            elementGeometrie = pointDebitSimultane,
             siteId = peiRepository.getSiteId(listePeiDerniereMesure),
             numeroDossier = element.debitSimultaneNumeroDossier,
         )

@@ -22,7 +22,7 @@ import remocra.auth.userInfo
 import remocra.data.DocumentsData
 import remocra.data.PermisData
 import remocra.data.PermisDataToFront
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.PermisRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Permis
@@ -71,7 +71,7 @@ class PermisEndpoint : AbstractEndpoint() {
             getPointCarteUseCase.execute(
                 bbox = bbox,
                 sridSource = srid,
-                typePointCarte = TypePointCarte.PERMIS,
+                typeElementCarte = TypeElementCarte.PERMIS,
                 userInfo = securityContext.userInfo!!,
             ),
         ).build()

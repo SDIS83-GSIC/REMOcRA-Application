@@ -180,11 +180,11 @@ export const useToolbarPeiContext = ({
 
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
-        listePeiId.push(point.pointId);
+        listePeiId.push(point.elementId);
 
         if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
           prives.push({
-            peiId: point.pointId,
+            peiId: point.elementId,
             numeroComplet: point.peiNumeroComplet,
           });
 
@@ -193,7 +193,7 @@ export const useToolbarPeiContext = ({
           }
         } else {
           publics.push({
-            peiId: point.pointId,
+            peiId: point.elementId,
             numeroComplet: point.peiNumeroComplet,
           });
         }
@@ -210,7 +210,7 @@ export const useToolbarPeiContext = ({
       // Si les PEI ont le même type de réseau et n'ont pas de débit simultané alors on autorise la création
       if (distinctTypeReseau.length === 1 && hasDebitSimultane === null) {
         setListePeiIdDebitSimultane(
-          peiPrivesDebitSimultane.map((e) => e.pointId),
+          peiPrivesDebitSimultane.map((e) => e.elementId),
         );
         setTypeReseauId(distinctTypeReseau.at(0));
       } else {

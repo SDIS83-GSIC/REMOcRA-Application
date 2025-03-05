@@ -23,7 +23,7 @@ import remocra.auth.userInfo
 import remocra.data.RcciForm
 import remocra.data.RcciFormInput
 import remocra.data.RcciGeometryForm
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.RcciRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -72,7 +72,7 @@ class RcciEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response =
-        Response.ok(getPointCarteUseCase.execute(bbox, srid, null, TypePointCarte.RCCI, securityContext.userInfo!!)).build()
+        Response.ok(getPointCarteUseCase.execute(bbox, srid, null, TypeElementCarte.RCCI, securityContext.userInfo!!)).build()
 
     @POST
     @Path("/create")

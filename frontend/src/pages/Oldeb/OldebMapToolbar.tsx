@@ -126,12 +126,12 @@ export const useToolbarOldebContext = ({
           .then((text) => {
             if (text === "true") {
               fetch(
-                url`/api/oldeb/${feature.getProperties().pointId}/geometry`,
+                url`/api/oldeb/${feature.getProperties().elementId}/geometry`,
                 getFetchOptions({
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    oldebId: feature.getProperties().pointId,
+                    oldebId: feature.getProperties().elementId,
                     oldebGeometrie: `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(feature)}`,
                   }),
                 }),

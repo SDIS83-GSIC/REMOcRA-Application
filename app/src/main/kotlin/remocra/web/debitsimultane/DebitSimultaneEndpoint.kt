@@ -22,7 +22,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DebitSimultaneData
 import remocra.data.DebitSimultaneMesureData
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.debitsimultane.CreateDebitSimultaneUseCase
@@ -81,7 +81,7 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
                 bbox,
                 srid,
                 null,
-                TypePointCarte.DEBIT_SIMULTANE,
+                TypeElementCarte.DEBIT_SIMULTANE,
                 securityContext.userInfo!!,
             ),
         ).build()

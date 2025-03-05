@@ -13,7 +13,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.AdresseData
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.AdresseRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.adresse.CreateAdresseUsecase
@@ -51,7 +51,7 @@ class AdresseEndpoint : AbstractEndpoint() {
                 bbox,
                 srid,
                 null,
-                TypePointCarte.ADRESSE,
+                TypeElementCarte.ADRESSE,
                 securityContext.userInfo!!,
             ),
         ).build()

@@ -19,7 +19,7 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.enums.TypePointCarte
+import remocra.data.enums.TypeElementCarte
 import remocra.db.PeiPrescritRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.PeiPrescrit
@@ -69,7 +69,7 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
             getPointCarteUseCase.execute(
                 bbox = bbox,
                 sridSource = srid,
-                typePointCarte = TypePointCarte.PEI_PRESCRIT,
+                typeElementCarte = TypeElementCarte.PEI_PRESCRIT,
                 userInfo = securityContext.userInfo!!,
             ),
         ).build()
