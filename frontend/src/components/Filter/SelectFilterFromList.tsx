@@ -21,6 +21,7 @@ const SelectFilterFromList = ({
   listIdCodeLibelle,
   value,
   disabled = false,
+  isClearable = false,
 }: SelectFilterFromListType) => {
   const defaultValueTous: IdCodeLibelleType = {
     id: "",
@@ -41,9 +42,10 @@ const SelectFilterFromList = ({
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         onChange={(data) => {
-          onChange({ name: name, value: data.id });
+          onChange({ name: name, value: data?.id });
         }}
         isDisabled={disabled}
+        isClearable={isClearable}
       />
     </>
   );

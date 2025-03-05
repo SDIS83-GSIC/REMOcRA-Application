@@ -14,6 +14,7 @@ export type SelectFilterFromUrlType = SelectType & {
 };
 export type SelectFilterFromListType = SelectType & {
   listIdCodeLibelle: IdCodeLibelleType[];
+  isClearable?: boolean;
 };
 
 export type SelectFormType = SelectType & {

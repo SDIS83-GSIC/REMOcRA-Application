@@ -4,15 +4,19 @@ import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Geometry
+import remocra.auth.UserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_MakePoint
 import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
+import remocra.utils.ST_Within
 import java.util.UUID
 
 class VoieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -116,4 +120,35 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .fetchInto()
 
     fun insertVoie(newVoie: Voie) = dsl.insertInto(VOIE).set(dsl.newRecord(VOIE, newVoie)).execute()
+
+    fun getVoieByZoneIntegrationShortData(communeId: UUID, userInfo: UserInfo): Collection<VoieShortData> {
+        if (userInfo.isSuperAdmin) {
+            return dsl.select(VOIE.ID, VOIE.LIBELLE, VOIE.COMMUNE_ID)
+                .from(VOIE)
+                .where(VOIE.COMMUNE_ID.eq(communeId))
+                .fetchInto()
+        }
+        return dsl.select(VOIE.ID, VOIE.LIBELLE, VOIE.COMMUNE_ID)
+            .from(VOIE)
+            .join(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            .where(ST_Within(VOIE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)).and(VOIE.COMMUNE_ID.eq(communeId))
+            .fetchInto()
+    }
+
+    data class VoieShortData(
+        val voieId: UUID,
+        val voieLibelle: String,
+        val voieCommuneId: UUID,
+    )
+
+    fun getGeometrieVoie(voieId: UUID): VoieGeometryOnly =
+        dsl.select(VOIE.GEOMETRIE)
+            .from(VOIE)
+            .where(VOIE.ID.eq(voieId))
+            .fetchSingleInto()
+
+    data class VoieGeometryOnly(
+        val voieGeometry: Geometry,
+    )
 }

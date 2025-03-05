@@ -1,4 +1,5 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
@@ -9,6 +10,7 @@ import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
   const mapElement = useRef<HTMLDivElement>();
+  const { state } = useLocation();
 
   const {
     map,
@@ -74,6 +76,13 @@ const MapPei = () => {
     workingLayer: workingLayer,
     extraTools: extraTools,
   });
+
+  useEffect(() => {
+    if (state?.bbox && map) {
+      map?.getView().fit(state.bbox, { maxZoom: 20 });
+      window.history.replaceState({ from: state.from }, "");
+    }
+  }, [state, map]);
 
   return (
     <>

@@ -74,6 +74,12 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Context
     lateinit var securityContext: SecurityContext
 
+    @GET
+    @Path("/")
+    @RequireDroits([Droit.TOURNEE_R])
+    fun getTourneeByZoneIntegrationShortData(): Response =
+        Response.ok().entity(tourneeRepository.getTourneeByZoneIntegrationShortData(securityContext.userInfo!!)).build()
+
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -233,4 +239,11 @@ class TourneeEndPoint : AbstractEndpoint() {
             userInfo = securityContext.userInfo,
             element = tourneeRepository.getTourneeById(tourneeId).copy(tourneePourcentageAvancement = 100),
         ).wrap()
+
+    @GET
+    @Path("/{tourneePei}/geometrie")
+    @RequireDroits([Droit.TOURNEE_R])
+    fun getGeometrieById(@PathParam("tourneePei") tourneePei: UUID): Response {
+        return Response.ok(tourneeRepository.getGeometrieTournee(tourneePei)).build()
+    }
 }

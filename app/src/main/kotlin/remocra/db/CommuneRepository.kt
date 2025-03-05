@@ -4,10 +4,13 @@ import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Geometry
+import remocra.auth.UserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_COMMUNE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_MakePoint
 import remocra.utils.ST_SetSrid
@@ -114,4 +117,32 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
                     .where(V_COMMUNE_SIG.CODE_INSEE.notIn(listCodeInseeDejaPresent)),
             )
             .execute()
+
+    fun getCommuneByZoneIntegrationShortData(userInfo: UserInfo): Collection<CommuneShortData> {
+        if (userInfo.isSuperAdmin) {
+            return dsl.select(COMMUNE.ID, COMMUNE.LIBELLE)
+                .from(COMMUNE).fetchInto()
+        }
+        return dsl.select(COMMUNE.ID, COMMUNE.LIBELLE)
+            .from(COMMUNE)
+            .join(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            .where(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .fetchInto()
+    }
+
+    data class CommuneShortData(
+        val communeId: UUID,
+        val communeLibelle: String,
+    )
+
+    fun getGeometrieCommune(communeId: UUID): CommuneGeometryOnly =
+        dsl.select(COMMUNE.GEOMETRIE)
+            .from(COMMUNE)
+            .where(COMMUNE.ID.eq(communeId))
+            .fetchSingleInto()
+
+    data class CommuneGeometryOnly(
+        val communeGeometry: Geometry,
+    )
 }

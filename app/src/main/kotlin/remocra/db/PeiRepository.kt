@@ -14,6 +14,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
+import remocra.auth.UserInfo
 import remocra.data.Params
 import remocra.data.PeiData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -903,6 +904,25 @@ class PeiRepository
         val lastRecoInit: ZonedDateTime?,
         val lastCtp: ZonedDateTime?,
         val lastRecop: ZonedDateTime?,
+    )
+
+    fun getPeiByZoneIntegrationShortData(userInfo: UserInfo): Collection<PeiShortData> {
+        if (userInfo.isSuperAdmin) {
+            return dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
+                .from(PEI)
+                .fetchInto()
+        }
+        return dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
+            .from(PEI)
+            .join(ZONE_INTEGRATION)
+            .on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .and(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            .fetchInto()
+    }
+
+    data class PeiShortData(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
     )
 }
 

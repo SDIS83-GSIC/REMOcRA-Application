@@ -89,6 +89,12 @@ class PeiEndPoint : AbstractEndpoint() {
             .build()
     }
 
+    @GET
+    @Path("/")
+    @RequireDroits([Droit.PEI_R])
+    fun getPeiByZoneIntegrationShortData(): Response =
+        Response.ok().entity(peiRepository.getPeiByZoneIntegrationShortData(securityContext.userInfo!!)).build()
+
     @POST
     @Path("/get-by-indispo/{idIndisponibiliteTemporaire}")
     @RequireDroits([Droit.PEI_R])
@@ -302,5 +308,12 @@ class PeiEndPoint : AbstractEndpoint() {
                 securityContext.userInfo!!,
             ),
         ).build()
+    }
+
+    @GET
+    @Path("/{idPei}/geometrie")
+    @RequireDroits([Droit.PEI_R])
+    fun getGeometrieById(@PathParam("idPei") idPei: UUID): Response {
+        return Response.ok(peiRepository.getGeometriePei(idPei)).build()
     }
 }

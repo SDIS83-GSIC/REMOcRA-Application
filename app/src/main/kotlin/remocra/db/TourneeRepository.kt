@@ -15,9 +15,12 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
+import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
+import remocra.auth.UserInfo
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
@@ -651,4 +654,34 @@ class TourneeRepository
         .set(TOURNEE.DATE_SYNCHRONISATION, dateSynchronisation)
         .where(TOURNEE.ID.eq(tourneeId))
         .execute()
+
+    fun getTourneeByZoneIntegrationShortData(userInfo: UserInfo): Collection<TourneeShortData> {
+        if (userInfo.isSuperAdmin) {
+            return dsl.select(TOURNEE.ID, TOURNEE.LIBELLE)
+                .from(TOURNEE)
+                .fetchInto()
+        }
+        return dsl.select(TOURNEE.ID, TOURNEE.LIBELLE)
+            .from(TOURNEE)
+            .join(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .join(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            .join(PEI)
+            .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+            .and(ST_Within(Pei.PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .fetchInto()
+    }
+
+    fun getGeometrieTournee(tourneeId: UUID): Collection<Point> =
+        dsl.select(PEI.GEOMETRIE)
+            .from(PEI)
+            .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .join(TOURNEE).on(TOURNEE.ID.eq(tourneeId)).and(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
+            .fetchInto()
 }
+
+data class TourneeShortData(
+    val tourneeId: UUID,
+    val tourneeLibelle: String,
+)
