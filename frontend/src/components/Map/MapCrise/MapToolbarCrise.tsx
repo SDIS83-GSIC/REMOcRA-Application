@@ -8,6 +8,7 @@ import CircleStyle from "ol/style/Circle";
 import {
   IconEvent,
   IconLine,
+  IconList,
   IconPoint,
   IconPolygon,
   IconSelect,
@@ -19,6 +20,7 @@ import { useGet } from "../../Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
+import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -41,6 +43,7 @@ const drawStyle = new Style({
 
 export const useToolbarCriseContext = ({ map, workingLayer }) => {
   const [showCreateEvent, setShowEvent] = useState(false);
+  const [showListEvent, setShowListEvent] = useState(false);
 
   const handleCloseEvent = () => {
     setShowEvent(false), workingLayer.getSource().clear();
@@ -136,6 +139,10 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       }
     }
 
+    function toggleSeeEvent(active = false) {
+      setShowListEvent(active);
+    }
+
     const tools = {
       "create-event-project": {
         action: toggleCreateEvent,
@@ -149,6 +156,9 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       "create-linestring": {
         action: toggleCreateLinestringEvenement,
       },
+      "list-event-project": {
+        action: toggleSeeEvent,
+      },
     };
     return tools;
   }, [map, workingLayer]);
@@ -157,6 +167,7 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     tools,
     handleCloseEvent,
     showCreateEvent,
+    showListEvent,
     handleCloseTracee,
     showTracee,
     setShowCreateElement,
@@ -178,6 +189,7 @@ const MapToolbarCrise = forwardRef(
     geometryElement,
     handleCloseEvent,
     showCreateEvent,
+    showListEvent,
     dataCriseLayer,
     toggleTool: toggleToolCallback,
     activeTool,
@@ -195,6 +207,7 @@ const MapToolbarCrise = forwardRef(
     dataPeiProjetLayer: any;
     handleCloseEvent: () => void;
     showCreateEvent: boolean;
+    showListEvent: boolean;
     handleCloseTracee: () => void;
     showTracee: () => void;
     setShowEvent: () => void;
@@ -231,6 +244,22 @@ const MapToolbarCrise = forwardRef(
           disabled={disabledEditEvent}
         />
 
+        <ToolbarButton
+          toolName={"list-event-project"}
+          toolIcon={<IconList />}
+          toolLabelTooltip={"Evènements"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+
+        <Volet
+          handleClose={handleCloseEvent}
+          show={showListEvent}
+          className="w-auto"
+        >
+          <CreateListEvenement criseIdentifiant={criseId} />
+        </Volet>
+
         <Volet
           handleClose={handleCloseEvent}
           show={showCreateEvent}
@@ -238,7 +267,7 @@ const MapToolbarCrise = forwardRef(
         >
           <CreateEvenement
             geometrieEvenement={geometryElement}
-            typeEvenement={typeEvenement} // changer le nom
+            typeEvenement={typeEvenement}
             criseId={criseId}
             onSubmit={() => {
               dataCriseLayer.getSource().refresh();

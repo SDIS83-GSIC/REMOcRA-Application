@@ -29,7 +29,7 @@ export const getInitialValues = (
   evenementDescription: data?.evenementDescription ?? "",
   evenementDateDebut: data?.evenementDateDebut ?? null,
   evenementImportance: data?.evenementImportance ?? 1,
-  evenementActif: data?.evenementActif ?? false,
+  evenementIsClosed: data?.evenementIsClosed ?? false,
   documents: data?.documents ?? [],
   geometrieEvenement: geometrie ?? null,
   evenementTypeId: data?.evenementTypeCriseId ?? typeEvent,
@@ -56,7 +56,10 @@ export const prepareVariables = (
     new Date(values.evenementDateDebut).toISOString(),
   );
   formData.append("evenementImportance", values.evenementImportance);
-  formData.append("evenementActif", JSON.stringify(values.evenementActif));
+  formData.append(
+    "evenementIsClosed",
+    JSON.stringify(values.evenementIsClosed),
+  );
   formData.append(
     "evenementGeometrie",
     JSON.stringify(values.geometrieEvenement),
@@ -122,7 +125,7 @@ const Evenement = () => {
         max={5}
       />
 
-      <CheckBoxInput name={"evenementActif"} label={"Clore l'évènement"} />
+      <CheckBoxInput name={"evenementIsClosed"} label={"Clore l'événement"} />
 
       {/* // TODO : faire une entrée pour les "tag" */}
 

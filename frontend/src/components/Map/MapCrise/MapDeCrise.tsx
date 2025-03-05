@@ -59,6 +59,7 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
     tools: extraTools,
     handleCloseEvent,
     showCreateEvent,
+    showListEvent,
     listePeiId,
     listeEventId,
     setSousTypeElement,
@@ -102,6 +103,7 @@ const MapCrise = ({ criseId }: { criseId: string }) => {
             setSousTypeElement={setSousTypeElement}
             sousTypeElement={sousTypeElement}
             dataAdresseLayer={dataPeiPrescritLayer}
+            showListEvent={showListEvent}
           />
         )
       }

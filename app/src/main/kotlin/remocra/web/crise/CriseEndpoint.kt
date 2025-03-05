@@ -225,6 +225,18 @@ class CriseEndpoint : AbstractEndpoint() {
         ).build()
     }
 
+    @GET
+    @Path("/{criseId}/evenement/")
+    @RequireDroits([Droit.CRISE_R])
+    fun getAllEvents(
+        @PathParam("criseId")
+        criseId: UUID,
+    ): Response {
+        return Response.ok(
+            evenementRepository.getAllEvents(criseId),
+        ).build()
+    }
+
     /**
      * Renvoie les évènements au format GeoJSON pour assurer les interactions sur la carte
      */
@@ -272,7 +284,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
                 evenementTag = null,
-                evenementEstFerme = httpRequest.getTextPart("evenementActif").toBoolean(),
+                evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
                 listeDocument = DocumentsData.DocumentsEvenement(
@@ -308,7 +320,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateDebut")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
                 evenementTag = null,
-                evenementEstFerme = httpRequest.getTextPart("evenementActif").toBoolean(),
+                evenementEstFerme = httpRequest.getTextPart("evenementIsClosed").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
                 listeDocument = DocumentsData.DocumentsEvenement(
