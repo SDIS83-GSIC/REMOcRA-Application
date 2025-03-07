@@ -3,6 +3,7 @@ package remocra.data
 import org.locationtech.jts.geom.Geometry
 import remocra.db.EvenementRepository.DocumentEvenementData
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -23,4 +24,5 @@ data class EvenementData(
     val evenementStatut: EvenementStatut?,
     val evenementUtilisateurId: UUID?,
     val documents: Collection<DocumentEvenementData>? = null,
+    val evenementStatutMode: EvenementStatutMode,
 )

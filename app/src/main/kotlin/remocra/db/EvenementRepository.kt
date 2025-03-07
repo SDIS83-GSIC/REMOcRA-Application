@@ -9,6 +9,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.EvenementData
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.references.CRISE
@@ -104,7 +105,7 @@ class EvenementRepository @Inject constructor(
         val utilisateur: Collection<UtilisateurFilter>?,
     )
 
-    fun getTypeEventFromCrise(criseId: UUID): Collection<FilterEvent> =
+    fun getTypeEventFromCrise(criseId: UUID, statut: EvenementStatutMode): Collection<FilterEvent> =
         dsl.select(
             multiset(
                 selectDistinct(
@@ -114,7 +115,7 @@ class EvenementRepository @Inject constructor(
                     .from(TYPE_CRISE_CATEGORIE)
                     .join(EVENEMENT)
                     .on(EVENEMENT.TYPE_CRISE_CATEGORIE_ID.eq(TYPE_CRISE_CATEGORIE.ID))
-                    .where(EVENEMENT.CRISE_ID.eq(criseId)),
+                    .where(EVENEMENT.CRISE_ID.eq(criseId), EVENEMENT.STATUT_MODE.eq(statut)),
             ).`as`("typeEvenement").convertFrom { record ->
                 record?.map { r ->
                     TypeEvenementFilter(
@@ -129,7 +130,11 @@ class EvenementRepository @Inject constructor(
                     EVENEMENT.TAGS,
                 )
                     .from(EVENEMENT)
-                    .where(EVENEMENT.CRISE_ID.eq(criseId)),
+                    .where(
+                        EVENEMENT.CRISE_ID.eq(criseId),
+                        EVENEMENT.STATUT_MODE.eq(statut),
+                    ),
+
             ).`as`("evenement").convertFrom { record ->
                 record?.map { r ->
                     EvenementFilter(
@@ -146,7 +151,7 @@ class EvenementRepository @Inject constructor(
                     .from(UTILISATEUR)
                     .join(EVENEMENT)
                     .on(EVENEMENT.UTILISATEUR_ID.eq(UTILISATEUR.ID))
-                    .where(EVENEMENT.CRISE_ID.eq(criseId)),
+                    .where(EVENEMENT.CRISE_ID.eq(criseId), EVENEMENT.STATUT_MODE.eq(statut)),
             ).`as`("utilisateur").convertFrom { record ->
                 record?.map { r ->
                     UtilisateurFilter(
@@ -157,7 +162,7 @@ class EvenementRepository @Inject constructor(
             },
         ).fetchInto()
 
-    fun getAllEvents(criseId: UUID, params: Filter? = null, dateDebExtraction: ZonedDateTime? = null, dateFinExtraction: ZonedDateTime? = null): Collection<EvenementData> =
+    fun getAllEvents(criseId: UUID, params: Filter? = null, dateDebExtraction: ZonedDateTime? = null, dateFinExtraction: ZonedDateTime? = null, state: EvenementStatutMode? = null): Collection<EvenementData> =
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
@@ -173,6 +178,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
             EVENEMENT.UTILISATEUR_ID,
+            EVENEMENT.STATUT_MODE,
             multiset(
                 selectDistinct(
                     L_EVENEMENT_DOCUMENT.DOCUMENT_ID,
@@ -197,6 +203,17 @@ class EvenementRepository @Inject constructor(
             .let {
                 if (dateDebExtraction != null && dateFinExtraction != null) {
                     it.and(EVENEMENT.DATE_CONSTAT.between(dateDebExtraction, dateFinExtraction))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (state != null) {
+                    if (state == EvenementStatutMode.ANTICIPATION) {
+                        it.and(EVENEMENT.STATUT_MODE.`in`(EvenementStatutMode.OPERATIONNEL, EvenementStatutMode.ANTICIPATION))
+                    } else {
+                        it.and(EVENEMENT.STATUT_MODE.eq(state))
+                    }
                 } else {
                     it
                 }
@@ -299,6 +316,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
             EVENEMENT.UTILISATEUR_ID,
+            EVENEMENT.STATUT_MODE,
             multiset(
                 selectDistinct(
                     L_EVENEMENT_DOCUMENT.DOCUMENT_ID,
@@ -339,6 +357,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.CRISE_ID,
             EVENEMENT.UTILISATEUR_ID,
             EVENEMENT.STATUT,
+            EVENEMENT.STATUT_MODE,
         ).values(
             evenementData.evenementId,
             evenementData.evenementTypeId,
@@ -354,6 +373,7 @@ class EvenementRepository @Inject constructor(
             evenementData.evenementCriseId,
             evenementData.evenementUtilisateurId,
             evenementData.evenementStatut,
+            evenementData.evenementStatutMode,
         ).execute()
 
     fun getDocumentByEvenementId(evenementId: UUID): Map<UUID?, Document> =
@@ -382,6 +402,7 @@ class EvenementRepository @Inject constructor(
             .set(EVENEMENT.CRISE_ID, element.evenementCriseId)
             .set(EVENEMENT.STATUT, element.evenementStatut)
             .set(EVENEMENT.UTILISATEUR_ID, element.evenementUtilisateurId)
+            .set(EVENEMENT.STATUT_MODE, element.evenementStatutMode)
             .where(EVENEMENT.ID.eq(element.evenementId))
             .execute()
 }

@@ -33,6 +33,7 @@ import remocra.db.EvenementRepository
 import remocra.db.MessageRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.security.NoCsrf
 import remocra.usecase.carte.GetPointCarteUseCase
@@ -212,14 +213,16 @@ class CriseEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/{criseId}/getTypeEventFromCrise")
+    @Path("/{criseId}/get-type-event-from-crise/{statut}")
     @Public("Les types d'évenements ne sont pas liées à un droit.")
     fun getTypeEventFromCrise(
         @PathParam("criseId")
         criseId: UUID,
+        @PathParam("statut")
+        statut: EvenementStatutMode,
     ): Response {
         return Response.ok(
-            evenementUseCase.getTypeEventFromCrise(criseId),
+            evenementUseCase.getTypeEventFromCrise(criseId, statut),
         ).build()
     }
 
@@ -369,11 +372,13 @@ class CriseEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/{criseId}/evenement")
+    @Path("/{criseId}/evenement/{state}")
     @RequireDroits([Droit.CRISE_R])
     fun getAllEvents(
         @PathParam("criseId")
         criseId: UUID,
+        @PathParam("state")
+        state: EvenementStatutMode?,
         @QueryParam("filterType") type: Set<UUID>?,
         @QueryParam("filterAuthor") author: Set<UUID>?,
         @QueryParam("filterStatut") statut: EvenementStatut?,
@@ -389,7 +394,7 @@ class CriseEndpoint : AbstractEndpoint() {
         )
 
         return Response.ok(
-            evenementRepository.getAllEvents(criseId, params),
+            evenementRepository.getAllEvents(criseId = criseId, params = params, state = state),
         ).build()
     }
 
@@ -412,6 +417,7 @@ class CriseEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
         @QueryParam("criseId") criseId: UUID,
+        @QueryParam("state") state: EvenementStatutMode,
     ): Response {
         if (securityContext.userInfo == null) {
             return forbidden().build()
@@ -424,12 +430,13 @@ class CriseEndpoint : AbstractEndpoint() {
                 typeElementCarte = TypeElementCarte.CRISE,
                 userInfo = securityContext.userInfo!!,
                 criseId = criseId,
+                criseState = state,
             ),
         ).build()
     }
 
     @POST
-    @Path("/{criseId}/evenement/create")
+    @Path("/{criseId}/evenement/{state}/create")
     @RequireDroits([Droit.CRISE_U])
     @Produces(MediaType.APPLICATION_JSON)
     fun createEvent(
@@ -461,6 +468,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
+                evenementStatutMode = EvenementStatutMode.valueOf(httpRequest.getTextPart("evenementState")),
             ),
         ).wrap()
     }
@@ -494,7 +502,7 @@ class CriseEndpoint : AbstractEndpoint() {
     }
 
     @PUT
-    @Path("/{criseId}/evenement/{evenementId}/update")
+    @Path("/{criseId}/evenement/{state}/{evenementId}/update")
     @RequireDroits([Droit.CRISE_U])
     @Produces(MediaType.APPLICATION_JSON)
     fun updateEvenement(
@@ -525,8 +533,8 @@ class CriseEndpoint : AbstractEndpoint() {
                 ),
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
-
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
+                evenementStatutMode = EvenementStatutMode.valueOf(httpRequest.getTextPart("evenementState")),
             )
         return updateEvenementUseCase.execute(
             userInfo = securityContext.userInfo,

@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Polygon
 import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatAdresse
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.ADRESSE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
@@ -169,14 +170,21 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     }
 
     /**
-     * Récupère les évènements selon la crise.
+     * Récupère les évènements selon la crise et le EvenementStatutMode associé.
      */
-    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
                 EVENEMENT.CRISE_ID.eq(criseId),
                 EVENEMENT.IS_CLOSED.eq(false),
+                evenementState?.let {
+                    if (it == EvenementStatutMode.ANTICIPATION) {
+                        EVENEMENT.STATUT_MODE.`in`(EvenementStatutMode.OPERATIONNEL, EvenementStatutMode.ANTICIPATION)
+                    } else {
+                        EVENEMENT.STATUT_MODE.eq(it)
+                    }
+                },
             )
             .fetchInto()
     }
@@ -184,12 +192,19 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les évènements dans une BBOX selon la crise.
      */
-    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
                 EVENEMENT.CRISE_ID.eq(criseId),
                 EVENEMENT.IS_CLOSED.eq(false),
+                evenementState?.let {
+                    if (it == EvenementStatutMode.ANTICIPATION) {
+                        EVENEMENT.STATUT_MODE.`in`(EvenementStatutMode.OPERATIONNEL, EvenementStatutMode.ANTICIPATION)
+                    } else {
+                        EVENEMENT.STATUT_MODE.eq(it)
+                    }
+                },
             ).and(
                 ST_Within(EVENEMENT.GEOMETRIE, bbox),
             )

@@ -21,7 +21,7 @@ const FilterEvent = ({
   statut: string;
 }) => {
   const typeCriseState = useGet(
-    url`/api/crise/${criseId}/getTypeEventFromCrise/${statut}`,
+    url`/api/crise/${criseId}/get-type-event-from-crise/${statut}`,
   )?.data?.[0];
 
   const setValue = (name: string, value: string) => {

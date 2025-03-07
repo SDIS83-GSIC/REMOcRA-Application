@@ -8,6 +8,7 @@ import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeElementCarte
 import remocra.db.CarteRepository
 import remocra.db.UtilisateurRepository
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.utils.geometryFromBBox
@@ -32,6 +33,8 @@ class GetPointCarteUseCase : AbstractUseCase() {
      * @param bbox : la bbox si elle existe
      * @param srid de la carte
      * @param etudeId: Id de l'étude s'il s'agit des PEI en projet
+     * @param criseId: Id de la crise s'il s'agit des crises
+     * @param criseState: Permet de spécifier les évènements de crises à retourner (Opérationnel / Anticipation)
      * @param typeElementCarte : Permet de spécifier le type de points (PEI, PEI en projet, PEI prescrit ...)
      */
     fun execute(
@@ -41,6 +44,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
         typeElementCarte: TypeElementCarte,
         userInfo: UserInfo,
         criseId: UUID? = null,
+        criseState: EvenementStatutMode? = null,
     ): LayersRes {
         val srid = sridFromEpsgCode(sridSource)
 
@@ -141,10 +145,10 @@ class GetPointCarteUseCase : AbstractUseCase() {
 
             TypeElementCarte.CRISE -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getEvenementProjetFromCrise(criseId!!, srid)
+                    carteRepository.getEvenementProjetFromCrise(criseId!!, srid, criseState)
                 } else {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid)
+                    carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid, criseState)
                 }
             }
         }
