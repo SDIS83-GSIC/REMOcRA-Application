@@ -11,6 +11,7 @@ import Evenement, {
 
 const CreateEvenement = ({
   criseId,
+  state,
   typeEvenement,
   geometrieEvenement,
   onSubmit,
@@ -32,7 +33,7 @@ const CreateEvenement = ({
         validationSchema={validationSchema}
         isPost={true}
         isMultipartFormData={true} // contient un document
-        submitUrl={`/api/crise/` + criseId + `/evenement/create`}
+        submitUrl={`/api/crise/${criseId}/evenement/${state}/create`}
         prepareVariables={(values) =>
           prepareVariables(values, null, user.utilisateurId)
         }
@@ -48,6 +49,7 @@ type CreateEvenementType = {
   criseId: string;
   typeEvenement: string | undefined;
   geometrieEvenement: string | undefined;
+  state: string;
 
   onSubmit: () => void;
 };

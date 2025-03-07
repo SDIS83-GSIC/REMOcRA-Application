@@ -12,12 +12,14 @@ import Evenement, {
 } from "./Evenement.tsx";
 
 const UpdateEvenement = ({
+  state,
   readOnly,
   criseId,
   evenementId,
   geometrieEvenement,
   onSubmit,
 }: {
+  state: string;
   readOnly: boolean;
   criseId: string;
   evenementId: string;
@@ -48,7 +50,7 @@ const UpdateEvenement = ({
             prepareVariables(values, selectDataState.data, user.utilisateurId)
           }
           onSubmit={onSubmit}
-          submitUrl={`/api/crise/${criseId}/evenement/${evenementId}/update`}
+          submitUrl={`/api/crise/${criseId}/evenement/${state}/${evenementId}/update`}
         >
           <Evenement isReadOnly={readOnly} />
         </MyFormik>

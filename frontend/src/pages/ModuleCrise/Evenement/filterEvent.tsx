@@ -13,13 +13,15 @@ const FilterEvent = ({
   criseId,
   setSearchParam,
   run,
+  statut,
 }: {
   criseId: string;
   run: any;
   setSearchParam: any;
+  statut: string;
 }) => {
   const typeCriseState = useGet(
-    url`/api/crise/${criseId}/getTypeEventFromCrise`,
+    url`/api/crise/${criseId}/getTypeEventFromCrise/${statut}`,
   )?.data?.[0];
 
   const setValue = (name: string, value: string) => {

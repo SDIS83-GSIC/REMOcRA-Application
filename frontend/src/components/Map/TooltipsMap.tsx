@@ -475,10 +475,12 @@ export const TooltipMapEditEvenement = ({
   map,
   disabled,
   criseId,
+  state,
 }: {
   map: Map;
   disabled: boolean;
   criseId: string;
+  state: string;
 }) => {
   const ref = useRef(null);
   const [showUpdateEvenement, setShowUpdateEvenement] = useState(false);
@@ -518,6 +520,7 @@ export const TooltipMapEditEvenement = ({
         className="w-auto"
       >
         <UpdateEvenement
+          state={state}
           readOnly={isReadOnly}
           criseId={criseId}
           evenementId={eventId}

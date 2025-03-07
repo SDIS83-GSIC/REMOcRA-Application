@@ -6,10 +6,12 @@ export const CheckBoxInput = ({
   onChange: onChangeCallback,
   required = false,
   disabled = false,
+  type = "checkbox",
 }: any) => {
   return (
     <Form.Check
-      type="checkbox"
+      className="form-check form-switch fs-4"
+      type={type}
       label={label}
       required={required}
       disabled={disabled}

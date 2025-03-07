@@ -6,6 +6,7 @@ import ListEvenement from "./ListEvenement.tsx";
 const CreateListEvenement = ({
   criseIdentifiant,
   mapType,
+  state,
 }: CreateListEvenementType) => {
   return (
     <Container>
@@ -14,7 +15,11 @@ const CreateListEvenement = ({
         title="Liste des événements"
         displayReturnButton={false}
       />
-      <ListEvenement criseId={criseIdentifiant} map={mapType} />
+      <ListEvenement
+        criseId={criseIdentifiant}
+        map={mapType}
+        stateEvent={state}
+      />
     </Container>
   );
 };
@@ -22,6 +27,7 @@ const CreateListEvenement = ({
 type CreateListEvenementType = {
   criseIdentifiant: string;
   mapType: Map | undefined;
+  state: string;
 };
 
 export default CreateListEvenement;

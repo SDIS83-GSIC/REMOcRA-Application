@@ -27,12 +27,20 @@ type FilterEvenement = {
   filterImportance: string;
 };
 
-const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
+const ListEvenement = ({
+  criseId,
+  map,
+  stateEvent,
+}: {
+  criseId: string;
+  map: any;
+  stateEvent: string;
+}) => {
   const [params, setSearchParam] = useState<FilterEvenement>({});
   const [buttonClicked, setButtonClick] = useState<boolean>(false);
 
   const { data, run } = useGetRun(
-    url`/api/crise/${criseId}/evenement?${params}`,
+    url`/api/crise/${criseId}/evenement/${stateEvent}/?${params}`,
     {},
   );
 
@@ -126,6 +134,7 @@ const ListEvenement = ({ criseId, map }: { criseId: string; map: any }) => {
 
       {buttonClicked && (
         <FilterEvent
+          statut={stateEvent}
           setSearchParam={setSearchParam}
           run={run}
           criseId={criseId}
