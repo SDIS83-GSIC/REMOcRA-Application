@@ -3,6 +3,7 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
@@ -10,6 +11,7 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.data.GlobalData.IdCodeLibelleData
@@ -31,9 +33,6 @@ import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.tasks.Destinataire
 import remocra.utils.ST_DWithin
-import remocra.utils.ST_MakePoint
-import remocra.utils.ST_SetSrid
-import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
 
@@ -79,20 +78,17 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .from(ORGANISME).join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .where(ORGANISME.ACTIF).and(condition).orderBy(ORGANISME.LIBELLE.asc()).fetchInto()
 
-    fun getAutoriteDeciPei(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int, toleranceCommuneMetres: Int) =
-        getOrganismePei(coordonneeX, coordonneeY, sridCoords, sridSdis, toleranceCommuneMetres, conditionAutoriteDeci)
+    fun getAutoriteDeciPei(geometry: Field<Geometry?>, toleranceCommuneMetres: Int) =
+        getOrganismePei(geometry, toleranceCommuneMetres, conditionAutoriteDeci)
 
-    fun getServicePublicDeciPei(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int, toleranceCommuneMetres: Int) =
-        getOrganismePei(coordonneeX, coordonneeY, sridCoords, sridSdis, toleranceCommuneMetres, conditionServiceDeci)
+    fun getServicePublicDeciPei(geometry: Field<Geometry?>, toleranceCommuneMetres: Int) =
+        getOrganismePei(geometry, toleranceCommuneMetres, conditionServiceDeci)
 
-    fun getMaintenanceDeciPei(coordonneeX: String, coordonneeY: String, sridCoords: Int, sridSdis: Int, toleranceCommuneMetres: Int) =
-        getOrganismePei(coordonneeX, coordonneeY, sridCoords, sridSdis, toleranceCommuneMetres, conditionMaintenanceDeci)
+    fun getMaintenanceDeciPei(geometry: Field<Geometry?>, toleranceCommuneMetres: Int) =
+        getOrganismePei(geometry, toleranceCommuneMetres, conditionMaintenanceDeci)
 
     private fun getOrganismePei(
-        coordonneeX: String,
-        coordonneeY: String,
-        sridCoords: Int,
-        sridSdis: Int,
+        geometry: Field<Geometry?>,
         toleranceCommuneMetres: Int,
         condition: Condition,
     ): List<OrganismePei> = dsl.select(
@@ -105,7 +101,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         .and(
             ST_DWithin(
                 ZONE_INTEGRATION.GEOMETRIE,
-                ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                geometry,
                 toleranceCommuneMetres.toDouble(),
             ),
         ).orderBy(ORGANISME.LIBELLE.asc()).fetchInto()

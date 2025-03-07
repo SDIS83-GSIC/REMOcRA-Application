@@ -450,7 +450,19 @@ const MapToolbarAdresse = ({
 };
 
 export const validationSchema = object({});
-export const prepareVariables = (values) => values;
+export const prepareVariables = (values: {
+  listAdresseElement: AdresseElementEntity[];
+}) => {
+  return {
+    ...values,
+    listAdresseElement: values.listAdresseElement.map((element) => ({
+      geometry: `SRID=${element.srid};${element.geometryString}`,
+      anomalies: element.anomalies,
+      description: element.description,
+      sousType: element.sousType,
+    })),
+  };
+};
 
 export const getInitialValues = (listAdresseElement) => ({
   listAdresseElement: listAdresseElement,

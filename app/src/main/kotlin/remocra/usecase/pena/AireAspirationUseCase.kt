@@ -1,11 +1,7 @@
 package remocra.usecase.pena
 
 import com.google.inject.Inject
-import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.PrecisionModel
-import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.AireAspirationUpsertData
 import remocra.data.AuteurTracabiliteData
@@ -24,20 +20,28 @@ import java.util.UUID
 class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 
-    @Inject lateinit var appSettings: AppSettings
-
     data class PenaAspirationData(
         val listeAireAspiration: List<AireAspirationUpsertData>,
         val penaId: UUID,
     )
 
+    override fun ensureSrid(element: PenaAspirationData): PenaAspirationData {
+        if (element.listeAireAspiration.any { it.geometrie != null && it.geometrie.srid != appSettings.srid }) {
+            return element.copy(
+                listeAireAspiration = element.listeAireAspiration.map {
+                    it.copy(geometrie = it.geometrie?.let { g -> transform(g) })
+                },
+            )
+        }
+        return element
+    }
+
     override fun getListGeometrie(element: PenaAspirationData): Collection<Geometry> {
         val geometries: MutableList<Geometry> = mutableListOf()
         element.listeAireAspiration.map {
-            if (it.estDeporte) {
+            if (it.estDeporte && it.geometrie != null) {
                 geometries.add(
-                    GeometryFactory(PrecisionModel(), appSettings.srid)
-                        .createPoint(Coordinate(it.coordonneeX!!.toDouble(), it.coordonneeY!!.toDouble())),
+                    it.geometrie,
                 )
             }
         }
@@ -77,8 +81,8 @@ class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.
                     penaAspirationTypePenaAspirationId = it.typePenaAspirationId,
                     penaAspirationNumero = it.numero,
                     penaAspirationPenaId = element.penaId,
-                    penaAspirationGeometrie = if (!it.coordonneeX.isNullOrEmpty() && !it.coordonneeY.isNullOrEmpty() && it.estDeporte) {
-                        GeometryFactory(PrecisionModel(), appSettings.srid).createPoint(Coordinate(it.coordonneeX.toDouble(), it.coordonneeY.toDouble()))
+                    penaAspirationGeometrie = if (it.geometrie != null && it.estDeporte) {
+                        it.geometrie
                     } else {
                         null
                     },
@@ -98,7 +102,7 @@ class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.
             throw IllegalArgumentException("Le numéro doit être unique")
         }
 
-        if (element.listeAireAspiration.filter { it.estDeporte && (it.coordonneeX == null || it.coordonneeY == null) }.isNotEmpty()) {
+        if (element.listeAireAspiration.filter { it.estDeporte && it.geometrie == null }.isNotEmpty()) {
             throw IllegalArgumentException("Si une aire d'aspiration est déportée, les coordonnées doivent être renseignées.")
         }
     }

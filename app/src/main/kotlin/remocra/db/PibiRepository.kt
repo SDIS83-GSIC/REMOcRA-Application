@@ -2,9 +2,11 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
 import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.data.PibiData
@@ -19,8 +21,6 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.VISITE
 import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
 import remocra.utils.ST_DWithin
-import remocra.utils.ST_MakePoint
-import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -100,9 +100,8 @@ class PibiRepository @Inject constructor(
      * Permettra de remplir la liste déroulante pour la modification  / création d'un PEI
      * @param idPei : id du PEI en train d'être modifé
      * @param geometrie : géométrie de PEI en train d'être modifié
-     * @param srid : srid de la géométrie => doit correspondre au paramètre dans la base de données
      */
-    fun getBiCanJumele(coordonneeX: String, coordonneeY: String, peiId: UUID?, srid: Int): Collection<GlobalData.IdCodeLibelleData> =
+    fun getBiCanJumele(geometry: Field<Geometry?>, peiId: UUID?): Collection<GlobalData.IdCodeLibelleData> =
         dsl.select(PEI.ID.`as`("id"), PEI.NUMERO_COMPLET.`as`("code"), PEI.NUMERO_COMPLET.`as`("libelle"))
             .from(PEI)
             .join(NATURE)
@@ -112,8 +111,8 @@ class PibiRepository @Inject constructor(
             .where(NATURE.CODE.eq(GlobalConstants.NATURE_BI))
             .and(
                 ST_DWithin(
-                    ST_Transform(PEI.GEOMETRIE, srid),
-                    ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), srid),
+                    PEI.GEOMETRIE,
+                    ST_Transform(geometry, SRID),
                     GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE.toDouble(),
                 ),
             )

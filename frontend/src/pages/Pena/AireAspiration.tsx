@@ -2,6 +2,7 @@ import { useFormikContext } from "formik";
 import { Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { object } from "yup";
+import { WKT } from "ol/format";
 import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -17,14 +18,43 @@ import { IconAireAspiration } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 
-export const getInitialValues = (data) => ({
-  listeAireAspiration: data,
+export const getInitialValues = (
+  data: any,
+): { listeAireAspiration: AireAspirationType[] } => ({
+  listeAireAspiration: data.map((v: any) => {
+    const { sridStr, geom } = v.geometrie.cadastreParcelleGeometrie.split(";");
+    const geometry = new WKT().readGeometry(geom);
+    return {
+      penaAspirationId: v.penaAspirationId,
+      numero: v.numero,
+      estNormalise: v.estNormalise,
+      hauteurSuperieure3Metres: v.hauteurSuperieure3Metres,
+      typePenaAspirationId: v.typePenaAspirationId,
+      estDeporte: v.estDeporte,
+      coordonneeX: geometry.getCoordinates()[0],
+      coordonneeY: geometry.getCoordinates()[1],
+      srid: sridStr.split("=").pop(),
+    };
+  }),
 });
 
 export const validationSchema = object({});
-export const prepareVariables = (values) => ({
-  listeAireAspiration: values.listeAireAspiration,
+export const prepareVariables = (values: {
+  listeAireAspiration: AireAspirationType[];
+}) => ({
+  listeAireAspiration: values.listeAireAspiration.map(
+    (v: AireAspirationType) => ({
+      penaAspirationId: v.penaAspirationId,
+      numero: v.numero,
+      estNormalise: v.estNormalise,
+      hauteurSuperieure3Metres: v.hauteurSuperieure3Metres,
+      typePenaAspirationId: v.typePenaAspirationId,
+      estDeporte: v.estDeporte,
+      geometrie: `SRID=${v.srid};POINT(${v.coordonneeX} ${v.coordonneeY})`,
+    }),
+  ),
 });
 
 const AireAspiration = () => {
@@ -54,6 +84,7 @@ const AireAspiration = () => {
 
 const FormAireAspiration = () => {
   const { values } = useFormikContext();
+  const { srid } = useAppContext();
 
   return (
     <FormContainer>
@@ -77,6 +108,7 @@ const FormAireAspiration = () => {
               estDeporte: false,
               coordonneeX: null,
               coordonneeY: null,
+              srid: srid,
             }}
             listeElements={values.listeAireAspiration}
           />
@@ -175,6 +207,7 @@ type AireAspirationType = {
   estDeporte: boolean;
   coordonneeX: string;
   coordonneeY: string;
+  srid: number;
 };
 
 export default AireAspiration;

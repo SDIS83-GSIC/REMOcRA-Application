@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.CoordonneesXYSrid
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.organismeUserId
 import remocra.auth.userInfo
@@ -173,12 +173,10 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/referentiel-for-upsert-pei/")
     @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U])
     fun getReferentielUpdateOrCreatePei(
-        @QueryParam("coordonneeX") coordonneeX: String?,
-        @QueryParam("coordonneeY") coordonneeY: String?,
-        @QueryParam("srid") srid: Int?,
+        @QueryParam("geometry") geometry: Geometry?,
         @QueryParam("peiId") peiId: UUID?,
     ) =
-        Response.ok(peiUseCase.getInfoForUpdateOrCreate(coordonneeX, coordonneeY, srid, peiId)).build()
+        Response.ok(peiUseCase.getInfoForUpdateOrCreate(geometry, peiId)).build()
 
     @PUT
     @Path("/update")
@@ -218,9 +216,9 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     fun updateLocalisation(
         @PathParam("peiId") peiId: UUID,
-        coordonnees: CoordonneesXYSrid,
+        geometry: Geometry,
     ): Response {
-        val peiData = movePeiUseCase.execute(coordonnees, peiId)
+        val peiData = movePeiUseCase.execute(geometry, peiId)
         return updatePeiUseCase.execute(securityContext.userInfo, peiData).wrap()
     }
 

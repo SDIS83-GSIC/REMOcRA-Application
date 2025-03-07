@@ -1,8 +1,8 @@
 package remocra.usecase.oldeb
 
 import jakarta.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
-import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
@@ -23,7 +23,7 @@ import remocra.db.jooq.remocra.tables.pojos.OldebVisiteAnomalie
 import remocra.db.jooq.remocra.tables.pojos.OldebVisiteSuite
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
@@ -31,8 +31,23 @@ class CreateOldebUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
     private val documentRepository: DocumentRepository,
     private val documentUtils: DocumentUtils,
-    private val appSettings: AppSettings,
-) : AbstractCUDUseCase<OldebFormInput>(TypeOperation.INSERT) {
+) : AbstractCUDGeometrieUseCase<OldebFormInput>(TypeOperation.INSERT) {
+
+    override fun getListGeometrie(element: OldebFormInput): Collection<Geometry> {
+        return listOf(element.oldeb.oldebGeometrie)
+    }
+
+    override fun ensureSrid(element: OldebFormInput): OldebFormInput {
+        if (element.oldeb.oldebGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                oldeb = element.oldeb.copy(
+                    oldebGeometrie = transform(element.oldeb.oldebGeometrie),
+                ),
+            )
+        }
+        return element
+    }
+
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.OLDEB_C)) {
             throw RemocraResponseException(ErrorType.OLDEB_FORBIDDEN_INSERT)

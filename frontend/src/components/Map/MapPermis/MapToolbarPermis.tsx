@@ -74,8 +74,11 @@ export const useToolbarPermisContext = ({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              wkt: new WKT().writeFeature(event.feature),
-              srid: map.getView().getProjection().getCode().split(":").pop(),
+              geometry:
+                "SRID=" +
+                map.getView().getProjection().getCode().split(":").pop() +
+                ";" +
+                new WKT().writeFeature(event.feature),
             }),
           }),
         )
@@ -123,8 +126,11 @@ export const useToolbarPermisContext = ({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              wkt: new WKT().writeFeature(event.features.getArray()[0]),
-              srid: map.getView().getProjection().getCode().split(":").pop(),
+              geometry:
+                "SRID=" +
+                map.getView().getProjection().getCode().split(":").pop() +
+                ";" +
+                new WKT().writeFeature(event.features.getArray()[0]),
             }),
           }),
         )

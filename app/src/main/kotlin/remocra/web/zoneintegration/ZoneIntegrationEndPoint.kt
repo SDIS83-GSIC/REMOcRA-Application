@@ -15,10 +15,10 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.CoordonneeInput
 import remocra.data.DataTableau
 import remocra.data.ImportGeometriesCodeLibelleData
 import remocra.data.Params
@@ -66,10 +66,11 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
      */
     @POST
     @Path("/check")
-    @Produces(MediaType.APPLICATION_JSON)
     @Public("La vérification doit être accessible pour n'importe quel utilisateur")
-    fun check(input: CoordonneeInput): Response =
-        checkZoneIntegration.checkZoneIntegration(securityContext.userInfo, input).wrap()
+    fun check(geometryInput: GeometryInput): Response =
+        checkZoneIntegration.checkZoneIntegration(securityContext.userInfo, geometryInput.geometry).wrap()
+
+    data class GeometryInput(val geometry: Geometry)
 
     @PUT
     @Path("/import/")

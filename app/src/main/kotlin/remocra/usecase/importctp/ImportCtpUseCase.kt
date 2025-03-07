@@ -14,8 +14,8 @@ import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
-import remocra.CoordonneesXYSrid
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
@@ -509,15 +509,18 @@ class ImportCtpUseCase : AbstractUseCase() {
             // L'export CTP fourni les coordonnées en EPSG:4326,
             // on s'attend donc à avoir en retour des coordonnées en 4326, d'où la GlobalConstant
             if (visitesData.importLatitude != null && visitesData.importLongitude != null && userInfo.droits.contains(Droit.IMPORT_CTP_PEI_DEPLACEMENT_U)) {
+                val point: Point = GeometryFactory(PrecisionModel()).createPoint(
+                    Coordinate(visitesData.importLatitude!!, visitesData.importLongitude!!),
+                )
+                val sourceCRS = CRS.decode("EPSG:${GlobalConstants.SRID_4326}")
+                val targetCRS = CRS.decode(appSettings.epsg.name)
+                val transform = CRS.findMathTransform(sourceCRS, targetCRS)
+                val geometryProjectionTo = JTS.transform(point, transform)
+                    ?: throw IllegalArgumentException("Impossible de convertir la géometrie $point en ${appSettings.srid}")
                 updatePeiUseCase.execute(
                     userInfo,
                     movePeiUseCase.execute(
-                        // Latitude = Y ; Longitude = X
-                        CoordonneesXYSrid(
-                            visitesData.importLatitude!!,
-                            visitesData.importLongitude!!,
-                            GlobalConstants.SRID_4326,
-                        ),
+                        geometryProjectionTo,
                         visitesData.importPeiId,
                     ),
                     transactionManager,

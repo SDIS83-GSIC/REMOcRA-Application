@@ -307,9 +307,7 @@ const RcciForm = () => {
       return;
     }
     run({
-      srid: values.rcci.rcciSrid,
-      x: values.rcci.rcciX,
-      y: values.rcci.rcciY,
+      geometry: `SRID=${values.rcci.rcciSrid}};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
     });
   }, [run, values.rcci.rcciSrid, values.rcci.rcciX, values.rcci.rcciY]);
 

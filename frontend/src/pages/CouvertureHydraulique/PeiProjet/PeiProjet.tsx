@@ -36,9 +36,14 @@ export const prepareVariables = (values: PeiProjetEntity) => ({
   peiProjetDiametreCanalisation: values.peiProjetDiametreCanalisation,
   peiProjetCapacite: values.peiProjetCapacite,
   peiProjetDebit: values.peiProjetDebit,
-  peiProjetCoordonneeX: values.peiProjetCoordonneeX,
-  peiProjetCoordonneeY: values.peiProjetCoordonneeY,
-  peiProjetSrid: values.peiProjetSrid,
+  peiProjetGeometrie:
+    "SRID=" +
+    values.peiProjetSrid +
+    ";POINT(" +
+    values.peiProjetCoordonneeX +
+    " " +
+    values.peiProjetCoordonneeY +
+    ")",
 });
 
 const PeiProjet = () => {

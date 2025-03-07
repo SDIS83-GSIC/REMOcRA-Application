@@ -12,7 +12,7 @@ import remocra.db.jooq.remocra.tables.references.GROUPE_COUCHE
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_DROIT
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
-import java.util.*
+import java.util.UUID
 
 class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     // XXX: Retourner un type plus spécifique, avec uniquement les champs utiles

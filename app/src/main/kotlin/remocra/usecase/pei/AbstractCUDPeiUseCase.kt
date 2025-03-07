@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.google.inject.Provider
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
-import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.UserInfo
@@ -28,6 +27,7 @@ import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.utils.toGeomFromText
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -36,9 +36,6 @@ import remocra.usecase.AbstractCUDGeometrieUseCase
  * Si un jour, on ajoute la saisie de visites dans la création d'un PEI, il faudra mettre à jour sa disponibilité.
  */
 abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUDGeometrieUseCase<PeiData>(typeOperation) {
-    @Inject
-    lateinit var appSettings: AppSettings
-
     @Inject
     lateinit var calculNumerotationUseCase: NumerotationUseCase
 
@@ -87,6 +84,18 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     override fun getListGeometrie(element: PeiData): Collection<Geometry> {
         return listOf(element.peiGeometrie)
+    }
+
+    override fun ensureSrid(element: PeiData): PeiData {
+        if (element.peiGeometrie.srid != appSettings.srid) {
+            if (element is PenaData) {
+                return element.copy(peiGeometrie = transform(element.peiGeometrie))
+            }
+            if (element is PibiData) {
+                return element.copy(peiGeometrie = transform(element.peiGeometrie))
+            }
+        }
+        return element
     }
 
     override fun execute(userInfo: UserInfo?, element: PeiData): PeiData {
@@ -202,10 +211,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
         val isInZoneCompetence = peiRepository.isInZoneCompetence(
-            sridCoords = element.srid,
-            sridSdis = appSettings.srid,
-            coordonneeY = element.coordonneeY,
-            coordonneeX = element.coordonneeX,
+            element.peiGeometrie.toGeomFromText(),
             idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
         )
         if (!isInZoneCompetence) {

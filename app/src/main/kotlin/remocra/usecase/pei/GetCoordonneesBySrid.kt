@@ -114,15 +114,15 @@ class GetCoordonneesBySrid {
 
         // On extrait les virgules et on calcul les minutes
         val resteMinuteCoordonneeX = coordonneeBigDecimal.remainder(BigDecimal.ONE)
-        val minuteCoordoneesX = resteMinuteCoordonneeX.multiply(BigDecimal("60"))
-        coordonneeSexagesimal += "${minuteCoordoneesX.toInt()}'"
+        val minuteCoordonneesX = resteMinuteCoordonneeX.multiply(BigDecimal("60"))
+        coordonneeSexagesimal += "${minuteCoordonneesX.toInt()}'"
 
         // On recommence avec les secondes
-        val resteSecondeCoordonnee = minuteCoordoneesX.remainder(BigDecimal.ONE)
+        val resteSecondeCoordonnee = minuteCoordonneesX.remainder(BigDecimal.ONE)
 
-        val secondeCoordonees = resteSecondeCoordonnee.multiply(BigDecimal("60"))
+        val secondeCoordonnees = resteSecondeCoordonnee.multiply(BigDecimal("60"))
         coordonneeSexagesimal +=
-            "${secondeCoordonees.setScale(NOMBRE_CHIFFRES_APRES_VIRGULE, RoundingMode.HALF_UP)}''"
+            "${secondeCoordonnees.setScale(NOMBRE_CHIFFRES_APRES_VIRGULE, RoundingMode.HALF_UP)}''"
 
         return coordonneeSexagesimal
     }

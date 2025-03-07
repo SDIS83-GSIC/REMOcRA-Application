@@ -2,7 +2,6 @@ package remocra.usecase.adresse
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import org.slf4j.LoggerFactory
 import remocra.auth.UserInfo
 import remocra.data.AdresseData
 import remocra.data.AuteurTracabiliteData
@@ -24,10 +23,21 @@ class CreateAdresseUsecase @Inject constructor(
     private val adresseRepository: AdresseRepository,
 ) :
     AbstractCUDGeometrieUseCase<AdresseData>(TypeOperation.INSERT) {
-    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun getListGeometrie(element: AdresseData): Collection<Geometry> {
         return element.listAdresseElement.map { e -> e.geometry }
+    }
+
+    override fun ensureSrid(element: AdresseData): AdresseData {
+        if (element.listAdresseElement.any { g -> g.geometry.srid != appSettings.srid }) {
+            return element.copy(
+                listAdresseElement = element.listAdresseElement.map {
+                        adresse ->
+                    adresse.copy(geometry = transform(adresse.geometry))
+                },
+            )
+        }
+        return element
     }
 
     override fun execute(userInfo: UserInfo?, element: AdresseData): AdresseData {

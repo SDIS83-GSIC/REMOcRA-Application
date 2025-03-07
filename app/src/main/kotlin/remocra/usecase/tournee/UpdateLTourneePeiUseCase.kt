@@ -34,6 +34,10 @@ class UpdateLTourneePeiUseCase @Inject constructor(
         return peiRepository.getGeometriesPei(element.listLTourneePei.map { it.peiId })
     }
 
+    override fun ensureSrid(element: LTourneePeiToInsert): LTourneePeiToInsert {
+        return element
+    }
+
     override fun checkContraintes(userInfo: UserInfo?, element: LTourneePeiToInsert) {
         // On vérifie que tous les pei ont bien la même nature deci
         val codesNatureDeci = peiRepository.getNatureDeciId(element.listLTourneePei?.map { it.peiId }?.toSet() ?: setOf())

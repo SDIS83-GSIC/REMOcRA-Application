@@ -96,10 +96,15 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
   const { values, setFieldValue }: { values: any } = useFormikContext();
 
   const fetchPermisData = useGet(
-    url`/api/permis/fetchPermisData?${{
-      coordonneeX: values.permisCoordonneeX.toString(),
-      coordonneeY: values.permisCoordonneeY.toString(),
-      srid: values.permisSrid,
+    url`/api/permis/fetch-permis-data?${{
+      geometry:
+        "SRID=" +
+        values.permisSrid +
+        ";POINT(" +
+        values.permisCoordonneeX +
+        " " +
+        values.permisCoordonneeY +
+        ")",
     }}`,
   );
 

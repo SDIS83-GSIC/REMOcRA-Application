@@ -27,7 +27,7 @@ function filterParams(obj: object) {
 
 export default function url(
   strings: TemplateStringsArray,
-  ...values: object[]
+  ...values: object[] | string[]
 ) {
   return strings.slice(1).reduce((res, string, i) => {
     const value = values[i];

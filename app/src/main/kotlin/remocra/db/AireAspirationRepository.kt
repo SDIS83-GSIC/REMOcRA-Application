@@ -2,7 +2,6 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
-import org.jooq.impl.DSL
 import remocra.data.AireAspirationUpsertData
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.pojos.PenaAspiration
@@ -21,8 +20,7 @@ class AireAspirationRepository @Inject constructor(private val dsl: DSLContext) 
             PENA_ASPIRATION.EST_DEPORTE.`as`("estDeporte"),
             PENA_ASPIRATION.TYPE_PENA_ASPIRATION_ID.`as`("typePenaAspirationId"),
             PENA_ASPIRATION.HAUTEUR_SUPERIEURE_3_METRES.`as`("hauteurSuperieure3Metres"),
-            DSL.field("ST_X(${PENA_ASPIRATION.GEOMETRIE})").`as`("coordonneeX"),
-            DSL.field("ST_Y(${PENA_ASPIRATION.GEOMETRIE})").`as`("coordonneeY"),
+            PENA_ASPIRATION.GEOMETRIE.`as`("geometrie"),
         )
             .from(PENA)
             .join(PENA_ASPIRATION)

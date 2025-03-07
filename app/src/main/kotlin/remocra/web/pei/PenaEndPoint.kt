@@ -26,7 +26,7 @@ class PenaEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 
-    @Inject lateinit var aireAspirationUSeCase: AireAspirationUseCase
+    @Inject lateinit var aireAspirationUseCase: AireAspirationUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -54,7 +54,7 @@ class PenaEndPoint : AbstractEndpoint() {
         penaId: UUID,
         aireAspirationInput: AireAspirationInput,
     ) =
-        aireAspirationUSeCase.execute(
+        aireAspirationUseCase.execute(
             securityContext.userInfo,
             AireAspirationUseCase.PenaAspirationData(
                 aireAspirationInput.listeAireAspiration,

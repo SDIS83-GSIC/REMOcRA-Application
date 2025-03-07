@@ -6,7 +6,6 @@ import com.google.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
-import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -18,10 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.PrecisionModel
-import remocra.CoordonneesXYSrid
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
@@ -46,7 +42,6 @@ import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
-import kotlin.properties.Delegates
 
 @Path("/couverture-hydraulique")
 @Produces(MediaType.APPLICATION_JSON)
@@ -116,12 +111,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 peiProjetCapacite = peiProjetInput.peiProjetCapacite,
                 peiProjetDebit = peiProjetInput.peiProjetDebit,
                 peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
-                peiProjetGeometrie = GeometryFactory(PrecisionModel(), peiProjetInput.peiProjetSrid).createPoint(
-                    Coordinate(
-                        peiProjetInput.peiProjetCoordonneeX.toDouble(),
-                        peiProjetInput.peiProjetCoordonneeY.toDouble(),
-                    ),
-                ),
+                peiProjetGeometrie = peiProjetInput.peiProjetGeometrie,
             ),
         ).wrap()
     }
@@ -161,12 +151,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
                 peiProjetCapacite = peiProjetInput.peiProjetCapacite,
                 peiProjetDebit = peiProjetInput.peiProjetDebit,
                 peiProjetDiametreCanalisation = peiProjetInput.peiProjetDiametreCanalisation,
-                peiProjetGeometrie = GeometryFactory(PrecisionModel(), peiProjetInput.peiProjetSrid).createPoint(
-                    Coordinate(
-                        peiProjetInput.peiProjetCoordonneeX.toDouble(),
-                        peiProjetInput.peiProjetCoordonneeY.toDouble(),
-                    ),
-                ),
+                peiProjetGeometrie = peiProjetInput.peiProjetGeometrie,
             ),
         ).wrap()
     }
@@ -178,18 +163,13 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     fun movePeiProjet(
         @PathParam("peiProjetId")
         peiProjetId: UUID,
-        coordonnees: CoordonneesXYSrid,
+        geometry: Geometry,
     ): Response {
         val peiProjetData = couvertureHydrauliqueRepository.getPeiProjet(peiProjetId)
         return updatePeiProjetUseCase.execute(
             securityContext.userInfo,
             peiProjetData.copy(
-                peiProjetGeometrie = GeometryFactory(PrecisionModel(), coordonnees.srid).createPoint(
-                    Coordinate(
-                        coordonnees.coordonneeX,
-                        coordonnees.coordonneeY,
-                    ),
-                ),
+                peiProjetGeometrie = geometry,
             ),
         ).wrap()
     }
@@ -205,34 +185,15 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         return deletePeiProjetUseCase.execute(securityContext.userInfo, peiProjetData).wrap()
     }
 
-    class PeiProjetInput {
-        @FormParam("peiProjetNatureDeciId")
-        lateinit var peiProjetNatureDeciId: UUID
-
-        @FormParam("peiProjetTypePeiProjet")
-        lateinit var peiProjetTypePeiProjet: TypePeiProjet
-
-        @FormParam("peiProjetDiametreId")
-        val peiProjetDiametreId: UUID? = null
-
-        @FormParam("peiProjetDiametreCanalisation")
-        val peiProjetDiametreCanalisation: Int? = null
-
-        @FormParam("peiProjetCapacite")
-        val peiProjetCapacite: Int? = null
-
-        @FormParam("peiProjetDebit")
-        val peiProjetDebit: Int? = null
-
-        @FormParam("peiProjetCoordonneeX")
-        lateinit var peiProjetCoordonneeX: String
-
-        @FormParam("peiProjetCoordonneeY")
-        lateinit var peiProjetCoordonneeY: String
-
-        @get:FormParam("peiProjetSrid")
-        var peiProjetSrid by Delegates.notNull<Int>()
-    }
+    data class PeiProjetInput(
+        val peiProjetNatureDeciId: UUID,
+        val peiProjetTypePeiProjet: TypePeiProjet,
+        val peiProjetDiametreId: UUID? = null,
+        val peiProjetDiametreCanalisation: Int? = null,
+        val peiProjetCapacite: Int? = null,
+        val peiProjetDebit: Int? = null,
+        val peiProjetGeometrie: Geometry,
+    )
 
     @GET
     @Path("/etude/{etudeId}")

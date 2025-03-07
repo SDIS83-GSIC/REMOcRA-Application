@@ -92,14 +92,12 @@ class PermisEndpoint : AbstractEndpoint() {
         ).build()
 
     @GET
-    @Path("/fetchPermisData/")
+    @Path("/fetch-permis-data")
     @RequireDroits([Droit.PERMIS_A, Droit.PERMIS_R])
     fun fetchPermisUseCase(
-        @QueryParam("coordonneeX") coordonneeX: String,
-        @QueryParam("coordonneeY") coordonneeY: String,
-        @QueryParam("srid") srid: Int,
+        @QueryParam("geometry") geometry: Geometry,
     ): Response =
-        Response.ok().entity(fetchPermisUseCase.fetchPermisData(coordonneeX, coordonneeY, srid)).build()
+        Response.ok().entity(fetchPermisUseCase.fetchPermisData(geometry)).build()
 
     @POST
     @Path("/create")

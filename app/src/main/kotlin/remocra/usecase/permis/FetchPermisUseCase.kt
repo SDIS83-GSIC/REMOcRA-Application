@@ -1,6 +1,7 @@
 package remocra.usecase.permis
 
 import jakarta.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
@@ -12,6 +13,7 @@ import remocra.db.PermisRepository
 import remocra.db.VoieRepository
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.nomenclature.NomenclatureUseCase
+import remocra.utils.toGeomFromText
 
 class FetchPermisUseCase : AbstractUseCase() {
     @Inject lateinit var communeRepository: CommuneRepository
@@ -33,21 +35,21 @@ class FetchPermisUseCase : AbstractUseCase() {
         private const val NB_PARCELLES_A_REMONTER: Int = 25
     }
 
-    fun fetchPermisData(coordonneeX: String, coordonneeY: String, srid: Int): PermisFormData {
+    fun fetchPermisData(geometry: Geometry): PermisFormData {
         val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
             ?: throw IllegalArgumentException("Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur")
 
         val communeData =
-            communeRepository.getCommuneByCoords(coordonneeX = coordonneeX, coordonneeY = coordonneeY, sridCoords = srid, sridSdis = appSettings.srid)
+            communeRepository.getCommuneByCoords(geometry.toGeomFromText())
                 ?: throw IllegalStateException("Aucune commune ne se trouve sur les coordonnées fournies")
 
         return PermisFormData(
             communeData = communeData,
-            listeVoie = voieRepository.getVoies(coordonneeX, coordonneeY, srid, appSettings.srid, toleranceVoie, listOf(communeData.id)),
+            listeVoie = voieRepository.getVoies(geometry.toGeomFromText(), toleranceVoie, listOf(communeData.id)),
             listeAvis = permisRepository.getAvisWithPprif(),
             listeInterservice = permisRepository.getInterservice(),
             listeServiceInstructeur = nomenclatureUseCase.getListIdLibelle(TypeDataCache.TYPE_ORGANISME),
-            listeCadastreParcelle = cadastreRepository.getParcelleFromCoordsForCombo(coordonneeX, coordonneeY, sridCoords = srid, sridSdis = appSettings.srid, NB_PARCELLES_A_REMONTER),
+            listeCadastreParcelle = cadastreRepository.getParcelleFromCoordsForCombo(geometry.toGeomFromText(), NB_PARCELLES_A_REMONTER),
         )
     }
 

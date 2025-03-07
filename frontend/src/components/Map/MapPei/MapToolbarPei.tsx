@@ -1,4 +1,5 @@
 import { Map } from "ol";
+import { WKT } from "ol/format";
 import { shiftKeyOnly } from "ol/events/condition";
 import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
@@ -108,8 +109,11 @@ export const useToolbarPeiContext = ({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              wkt: `POINT(${geometry.getFlatCoordinates()[0]} ${geometry.getFlatCoordinates()[1]})`,
-              srid: map.getView().getProjection().getCode(),
+              geometry:
+                "SRID=" +
+                map.getView().getProjection().getCode().split(":").pop() +
+                ";" +
+                new WKT().writeFeature(feature),
             }),
           }),
         )

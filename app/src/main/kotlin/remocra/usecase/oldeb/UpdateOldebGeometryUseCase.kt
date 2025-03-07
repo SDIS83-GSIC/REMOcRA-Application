@@ -1,7 +1,7 @@
 package remocra.usecase.oldeb
 
 import jakarta.inject.Inject
-import remocra.app.AppSettings
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
@@ -13,12 +13,25 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 
 class UpdateOldebGeometryUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
-    private val appSettings: AppSettings,
-) : AbstractCUDUseCase<OldebGeometryFormData>(TypeOperation.UPDATE) {
+) : AbstractCUDGeometrieUseCase<OldebGeometryFormData>(TypeOperation.UPDATE) {
+
+    override fun getListGeometrie(element: OldebGeometryFormData): Collection<Geometry> {
+        return listOf(element.oldebGeometrie)
+    }
+
+    override fun ensureSrid(element: OldebGeometryFormData): OldebGeometryFormData {
+        if (element.oldebGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                oldebGeometrie = transform(element.oldebGeometrie),
+            )
+        }
+        return element
+    }
+
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.OLDEB_U)) {
             throw RemocraResponseException(ErrorType.OLDEB_GEOMETRY_FORBIDDEN_UPDATE)

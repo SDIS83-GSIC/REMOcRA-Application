@@ -3,6 +3,7 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
 import org.jooq.Record21
@@ -12,6 +13,7 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
@@ -46,8 +48,6 @@ import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
 import remocra.utils.DateUtils
-import remocra.utils.ST_MakePoint
-import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
@@ -217,10 +217,7 @@ class PeiRepository
             .count()
 
     fun isInZoneCompetence(
-        sridCoords: Int,
-        sridSdis: Int,
-        coordonneeX: Double,
-        coordonneeY: Double,
+        geometry: Field<Geometry?>,
         idOrganisme: UUID,
     ): Boolean =
         dsl.fetchExists(
@@ -231,7 +228,7 @@ class PeiRepository
                 .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
                 .where(
                     ST_Within(
-                        ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                        ST_Transform(geometry, SRID),
                         ZONE_INTEGRATION.GEOMETRIE,
                     ),
                 ).and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)),

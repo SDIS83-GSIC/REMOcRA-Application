@@ -5,7 +5,6 @@ import jakarta.ws.rs.ForbiddenException
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.util.GeometryCombiner
 import remocra.GlobalConstants
-import remocra.app.AppSettings
 import remocra.auth.UserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.ZoneIntegrationRepository
@@ -19,8 +18,6 @@ import remocra.utils.toGeomFromText
 class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
 
     @Inject private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
-
-    @Inject lateinit var appSettings: AppSettings
 
     fun checkContains(userInfo: UserInfo?, geometries: Collection<Geometry>) {
         // TODO à retirer quand le userinfo ne sera plus potentiellement nul
@@ -45,7 +42,6 @@ class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
             if (!zoneIntegrationRepository.checkContains(
                     userInfo.zoneCompetence!!.zoneIntegrationId,
                     aggregatedGeometry.toGeomFromText(),
-                    appSettings.srid,
                 )
             ) {
                 throw RemocraResponseException(ErrorType.FORBIDDEN_ZONE_COMPETENCE)

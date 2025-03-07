@@ -32,8 +32,8 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             .fetchInto()
     }
 
-    fun checkByOrganismeId(geometry: Field<Geometry?>, organismeId: UUID, srid: Int): Boolean? =
-        dsl.select(ST_Within(ST_Transform(geometry, srid), ZONE_INTEGRATION.GEOMETRIE))
+    fun checkByOrganismeId(geometry: Field<Geometry?>, organismeId: UUID): Boolean? =
+        dsl.select(ST_Within(ST_Transform(geometry, SRID), ZONE_INTEGRATION.GEOMETRIE))
             .from(ZONE_INTEGRATION)
             .join(ORGANISME).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .where(ORGANISME.ID.eq(organismeId))
@@ -137,10 +137,10 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         .where(ZONE_INTEGRATION.ACTIF.isTrue)
         .fetchInto()
 
-    fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>, srid: Int): Boolean {
+    fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>): Boolean {
         return dsl.select(
             ST_Within(
-                ST_Transform(geometry, srid),
+                ST_Transform(geometry, SRID),
                 ZONE_INTEGRATION.GEOMETRIE,
             ),
         )

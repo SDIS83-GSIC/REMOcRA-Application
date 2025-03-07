@@ -32,9 +32,7 @@ export const prepareVariables = (values: PeiPrescritEntity) => ({
   peiPrescritCommentaire: values.peiPrescritCommentaire,
   peiPrescritAgent: values.peiPrescritAgent,
   peiPrescritNumDossier: values.peiPrescritNumDossier,
-  peiPrescritCoordonneeX: values.peiPrescritCoordonneeX,
-  peiPrescritCoordonneeY: values.peiPrescritCoordonneeY,
-  peiPrescritSrid: values.peiPrescritSrid,
+  peiPrescritGeometrie: `SRID=${values.peiPrescritSrid};POINT(${values.peiPrescritCoordonneeX} ${values.peiPrescritCoordonneeY})`,
 });
 
 const PeiPrescrit = () => {

@@ -3,11 +3,7 @@ package remocra.usecase.pei
 import jakarta.inject.Inject
 import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.Point
-import org.locationtech.jts.geom.PrecisionModel
-import remocra.CoordonneesXYSrid
+import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
 import remocra.data.PeiData
 import remocra.db.CommuneRepository
@@ -16,7 +12,7 @@ import remocra.db.PenaRepository
 import remocra.db.PibiRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
-import remocra.utils.formatPoint
+import remocra.utils.toGeomFromText
 import java.util.UUID
 
 class MovePeiUseCase : AbstractUseCase() {
@@ -37,32 +33,29 @@ class MovePeiUseCase : AbstractUseCase() {
     lateinit var appSettings: AppSettings
 
     fun execute(
-        coordonnees: CoordonneesXYSrid,
+        geometry: Geometry,
         peiId: UUID,
     ): PeiData {
+        var input = geometry
+        if (input.srid != appSettings.srid) {
+            val targetCRS = CRS.decode(appSettings.epsg.name)
+            val sourceCRS = CRS.decode("EPSG:${input.srid}")
+            input = JTS.transform(input, CRS.findMathTransform(sourceCRS, targetCRS))
+                ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
+            input.srid = appSettings.srid
+        }
+
         val type = peiRepository.getTypePei(peiId)
         val communeActuelle = peiRepository.getCommune(peiId)
 
-        val point: Point = GeometryFactory(PrecisionModel()).createPoint(
-            Coordinate(coordonnees.coordonneeX, coordonnees.coordonneeY),
-        )
-        val sourceCRS = CRS.decode("EPSG:${coordonnees.srid}")
-        val targetCRS = CRS.decode(appSettings.epsg.name)
-        val transform = CRS.findMathTransform(sourceCRS, targetCRS)
-        val geometryProjectionTo = JTS.transform(point, transform)
-            ?: throw IllegalArgumentException("Impossible de convertir la géometrie $point en ${appSettings.srid}")
-
         // On récupère la commune correspondante
         val communeId = communeRepository.getCommunePei(
-            coordonneeX = geometryProjectionTo.coordinate.x.toString(),
-            coordonneeY = geometryProjectionTo.coordinate.y.toString(),
-            sridCoords = geometryProjectionTo.srid,
-            sridSdis = appSettings.srid,
+            input.toGeomFromText(),
         ) ?: throw IllegalArgumentException("Aucune commune n'a été trouvée")
 
         return when (type) {
             TypePei.PIBI -> pibiRepository.getInfoPibi(peiId).copy(
-                peiGeometrie = geometryProjectionTo,
+                peiGeometrie = input,
                 peiCommuneId = communeId,
             ).let {
                 if (communeActuelle != communeId) {
@@ -74,7 +67,7 @@ class MovePeiUseCase : AbstractUseCase() {
                 it
             }
             TypePei.PENA -> penaRepository.getInfoPena(peiId).copy(
-                peiGeometrie = formatPoint(coordonnees),
+                peiGeometrie = input,
                 peiCommuneId = communeId,
             ).let {
                 if (communeActuelle != communeId) {

@@ -26,9 +26,7 @@ const UpdateDebitSimultane = ({
 
   const { data: listePeiSelectionnable } = useGet(
     url`/api/debit-simultane/pei?${{
-      coordonneeX: coordonneeX,
-      coordonneeY: coordonneeY,
-      srid: srid,
+      geometry: `SRID=${srid}};POINT(${coordonneeX} ${coordonneeY})`,
       typeReseauId: typeReseauId,
     }}`,
   );

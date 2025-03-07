@@ -42,6 +42,11 @@ class UpdateIndisponibiliteTemporaireUseCase
         )
     }
 
+    override fun ensureSrid(element: IndisponibiliteTemporaireData): IndisponibiliteTemporaireData {
+        // no-op ?
+        return element
+    }
+
     override fun execute(userInfo: UserInfo?, element: IndisponibiliteTemporaireData): IndisponibiliteTemporaireData {
         val indisponibiliteTemporaire = IndisponibiliteTemporaire(
             indisponibiliteTemporaireId = element.indisponibiliteTemporaireId,

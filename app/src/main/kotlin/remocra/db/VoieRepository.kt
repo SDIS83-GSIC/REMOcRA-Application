@@ -3,6 +3,7 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
@@ -13,8 +14,6 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
-import remocra.utils.ST_MakePoint
-import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -43,10 +42,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .fetchInto()
 
     fun getVoies(
-        coordonneeX: String,
-        coordonneeY: String,
-        sridCoords: Int,
-        sridSdis: Int,
+        geometry: Field<Geometry?>,
         toleranceVoiesMetres: Int,
         listeIdCommune: List<UUID>,
     ): List<VoieWithCommune> =
@@ -61,7 +57,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .and(
                 ST_DWithin(
                     VOIE.GEOMETRIE,
-                    ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                    ST_Transform(geometry, SRID),
                     toleranceVoiesMetres.toDouble(),
                 ),
             )

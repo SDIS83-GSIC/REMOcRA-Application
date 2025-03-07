@@ -22,6 +22,15 @@ class UpdatePeiPrescritUseCase : AbstractCUDGeometrieUseCase<PeiPrescrit>(TypeOp
     override fun getListGeometrie(element: PeiPrescrit): Collection<Geometry> =
         listOf(element.peiPrescritGeometrie)
 
+    override fun ensureSrid(element: PeiPrescrit): PeiPrescrit {
+        if (element.peiPrescritGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                peiPrescritGeometrie = transform(element.peiPrescritGeometrie),
+            )
+        }
+        return element
+    }
+
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.PEI_PRESCRIT_A)) {
             throw RemocraResponseException(ErrorType.PEI_PRESCRIT_FORBIDDEN_UPDATE)

@@ -2,6 +2,8 @@ package remocra.resteasy
 
 import jakarta.ws.rs.ext.ParamConverter
 import jakarta.ws.rs.ext.ParamConverterProvider
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.io.WKTReader
 import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -18,6 +20,7 @@ class ParamConverterProvider : ParamConverterProvider {
             LocalDate::class.java -> LocalDateParamConverter as ParamConverter<T>
             OffsetDateTime::class.java -> OffsetDateTimeDateParamConverter as ParamConverter<T>
             Set::class.java -> SetParamConverter as ParamConverter<T>
+            Geometry::class.java -> GeometryParamConverter as ParamConverter<T>
             else -> null
         }
 }
@@ -58,15 +61,25 @@ private object SetParamConverter : ParamConverter<Set<*>> {
         (value ?: throw IllegalArgumentException()).toString()
 
     override fun fromString(value: String?): Set<*>? =
-        try {
-            (value ?: throw IllegalArgumentException())
-                .takeUnless { it.isEmpty() }
-                ?.replace("[", "")
-                ?.replace("]", "")
-                ?.replace("\"", "")
-                ?.split(",")
-                ?.toHashSet()
-        } catch (e: DateTimeParseException) {
-            throw IllegalArgumentException(e)
+        (value ?: throw IllegalArgumentException())
+            .takeUnless { it.isEmpty() }
+            ?.replace("[", "")
+            ?.replace("]", "")
+            ?.replace("\"", "")
+            ?.split(",")
+            ?.toHashSet()
+}
+
+private object GeometryParamConverter : ParamConverter<Geometry> {
+
+    override fun toString(value: Geometry?): String =
+        value?.let { "SRID=${value.srid};${value.toText()}" } ?: throw IllegalArgumentException()
+
+    override fun fromString(value: String?): Geometry? =
+        (value ?: throw IllegalArgumentException()).takeUnless { it.isEmpty() }?.split(";")?.let { wkt ->
+            val srid = wkt[0].split("=")[1].toInt()
+            val geometry: Geometry = WKTReader().read(wkt[1])
+            geometry.srid = srid
+            geometry
         }
 }

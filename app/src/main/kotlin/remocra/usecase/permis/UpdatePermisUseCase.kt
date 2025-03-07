@@ -33,6 +33,15 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
         }
     }
 
+    override fun ensureSrid(element: PermisData): PermisData {
+        if (element.permis.permisGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                permis = element.permis.copy(permisGeometrie = transform(element.permis.permisGeometrie)),
+            )
+        }
+        return element
+    }
+
     override fun postEvent(element: PermisData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(

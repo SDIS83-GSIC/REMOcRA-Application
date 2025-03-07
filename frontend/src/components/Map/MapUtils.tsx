@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Feature, Map } from "ol";
 import { WKT } from "ol/format";
 import { Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
@@ -27,7 +27,7 @@ function toggleDeplacerPoint(
   dataLayer: any,
   successToast: (e: string) => void,
   errorToast: (e: string) => void,
-  conditionObjetSelectionne = () => true,
+  conditionObjetSelectionne = (feature: Feature) => feature != null, // unused ?
 ) {
   const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
   let modifyCtrl = new Modify({
@@ -53,17 +53,17 @@ function toggleDeplacerPoint(
       modifyCtrl.on("modifyend", function (evt) {
         evt.features.forEach(async function (feature) {
           if (conditionObjetSelectionne(feature)) {
-            const coordinate = feature.getGeometry().getCoordinates();
-
             const res = await fetch(
               url`${urlApi}` + feature.getProperties().elementId,
               getFetchOptions({
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  coordonneeX: coordinate[0],
-                  coordonneeY: coordinate[1],
-                  srid: map.getView().getProjection().getCode().split(":")[1],
+                  geometry:
+                    "SRID=" +
+                    map.getView().getProjection().getCode().split(":").pop() +
+                    ";" +
+                    new WKT().writeFeature(feature),
                 }),
               }),
             );

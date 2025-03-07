@@ -2,7 +2,6 @@ package remocra.web.peiprescrits
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.DELETE
-import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -14,9 +13,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.PrecisionModel
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
@@ -31,7 +28,6 @@ import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
-import kotlin.properties.Delegates
 
 @Path("/pei-prescrit")
 @Produces(MediaType.APPLICATION_JSON)
@@ -93,12 +89,7 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
                 peiPrescritCommentaire = peiPrescritInput.peiPrescritCommentaire,
                 peiPrescritAgent = peiPrescritInput.peiPrescritAgent,
                 peiPrescritNumDossier = peiPrescritInput.peiPrescritNumDossier,
-                peiPrescritGeometrie = GeometryFactory(PrecisionModel(), peiPrescritInput.peiPrescritSrid).createPoint(
-                    Coordinate(
-                        peiPrescritInput.peiPrescritCoordonneeX.toDouble(),
-                        peiPrescritInput.peiPrescritCoordonneeY.toDouble(),
-                    ),
-                ),
+                peiPrescritGeometrie = peiPrescritInput.peiPrescritGeometrie,
             ),
         ).wrap()
 
@@ -121,43 +112,19 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
                 peiPrescritAgent = peiPrescritInput.peiPrescritAgent,
                 peiPrescritNumDossier = peiPrescritInput.peiPrescritNumDossier,
                 peiPrescritOrganismeId = securityContext.userInfo?.organismeId,
-                peiPrescritGeometrie = GeometryFactory(PrecisionModel(), peiPrescritInput.peiPrescritSrid).createPoint(
-                    Coordinate(
-                        peiPrescritInput.peiPrescritCoordonneeX.toDouble(),
-                        peiPrescritInput.peiPrescritCoordonneeY.toDouble(),
-                    ),
-                ),
+                peiPrescritGeometrie = peiPrescritInput.peiPrescritGeometrie,
             ),
         ).wrap()
 
-    class PeiPrescritInput {
-        @FormParam("peiPrescritDate")
-        val peiPrescritDate: ZonedDateTime? = null
-
-        @FormParam("peiPrescritDebit")
-        val peiPrescritDebit: Int? = null
-
-        @FormParam("peiPrescritNbPoteaux")
-        val peiPrescritNbPoteaux: Int? = null
-
-        @FormParam("peiPrescritCommentaire")
-        val peiPrescritCommentaire: String? = null
-
-        @FormParam("peiPrescritAgent")
-        val peiPrescritAgent: String? = null
-
-        @FormParam("peiPrescritNumDossier")
-        val peiPrescritNumDossier: String? = null
-
-        @FormParam("peiPrescritCoordonneeX")
-        lateinit var peiPrescritCoordonneeX: String
-
-        @FormParam("peiPrescritCoordonneeY")
-        lateinit var peiPrescritCoordonneeY: String
-
-        @get:FormParam("peiPrescritSrid")
-        var peiPrescritSrid by Delegates.notNull<Int>()
-    }
+    data class PeiPrescritInput(
+        val peiPrescritDate: ZonedDateTime? = null,
+        val peiPrescritDebit: Int? = null,
+        val peiPrescritNbPoteaux: Int? = null,
+        val peiPrescritCommentaire: String? = null,
+        val peiPrescritAgent: String? = null,
+        val peiPrescritNumDossier: String? = null,
+        val peiPrescritGeometrie: Geometry,
+    )
 
     @DELETE
     @Path("/{peiPrescritId}")

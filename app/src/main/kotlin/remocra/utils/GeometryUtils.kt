@@ -8,7 +8,6 @@ import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKTReader
 import org.locationtech.jts.io.WKTWriter
-import remocra.CoordonneesXYSrid
 
 fun org.jooq.Geometry.toGeomFromText(srid: String): Field<Geometry?> = DSL.field("ST_GeomFromText('${this.data()}', '${sridFromEpsgCode(srid)}')", Geometry::class.java)
 
@@ -46,14 +45,6 @@ fun sridFromEpsgCode(coupleOrCode: String): Int =
 fun sridFromGeom(coupleOrCode: String): Int =
     coupleOrCode.split("=".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
 
-fun formatPoint(coordonneesXYSrid: CoordonneesXYSrid): Geometry {
-    val geometry = WKTReader().read("POINT(${coordonneesXYSrid.coordonneeX} ${coordonneesXYSrid.coordonneeY})")
-        ?: throw IllegalArgumentException("Impossible de convertir les coordonnées en point : $coordonneesXYSrid")
-
-    geometry.srid = coordonneesXYSrid.srid
-    return geometry
-}
-
 /**
  * Calcule le centroid d'une liste de géométries.
  *
@@ -67,7 +58,7 @@ fun formatPoint(coordonneesXYSrid: CoordonneesXYSrid): Geometry {
  * @throws IllegalArgumentException si les géométries ne partagent pas le même système de coordonnées (SRID).
 
  */
-fun calculerCentroide(geometries: List<Geometry>): Point? {
+fun calculerCentroide(geometries: Collection<Geometry>): Point? {
     // Vérification si la liste est vide
     if (geometries.isEmpty()) return null
 

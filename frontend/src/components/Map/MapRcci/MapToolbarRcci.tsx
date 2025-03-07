@@ -103,8 +103,11 @@ export const useToolbarRcciContext = ({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              wkt: new WKT().writeFeature(event.feature),
-              srid: map.getView().getProjection().getCode().split(":").pop(),
+              geometry:
+                "SRID=" +
+                map.getView().getProjection().getCode().split(":").pop() +
+                ";" +
+                new WKT().writeFeature(event.feature),
             }),
           }),
         )
@@ -152,8 +155,11 @@ export const useToolbarRcciContext = ({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                wkt: new WKT().writeFeature(feature),
-                srid: map.getView().getProjection().getCode(),
+                geometry:
+                  "SRID=" +
+                  map.getView().getProjection().getCode().split(":").pop() +
+                  ";" +
+                  new WKT().writeFeature(feature),
               }),
             }),
           )

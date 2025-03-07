@@ -29,6 +29,15 @@ class CreatePeiPrescritUseCase : AbstractCUDGeometrieUseCase<PeiPrescrit>(TypeOp
         }
     }
 
+    override fun ensureSrid(element: PeiPrescrit): PeiPrescrit {
+        if (element.peiPrescritGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                peiPrescritGeometrie = transform(element.peiPrescritGeometrie),
+            )
+        }
+        return element
+    }
+
     override fun postEvent(element: PeiPrescrit, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(

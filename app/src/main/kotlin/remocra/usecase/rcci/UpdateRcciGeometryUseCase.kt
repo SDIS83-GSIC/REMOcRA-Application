@@ -23,6 +23,15 @@ class UpdateRcciGeometryUseCase : AbstractCUDGeometrieUseCase<RcciGeometryForm>(
         return listOf(element.rcciGeometrie)
     }
 
+    override fun ensureSrid(element: RcciGeometryForm): RcciGeometryForm {
+        if (element.rcciGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                rcciGeometrie = transform(element.rcciGeometrie),
+            )
+        }
+        return element
+    }
+
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_GEOMETRY_UPDATE_FORBIDDEN)

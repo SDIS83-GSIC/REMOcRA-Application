@@ -1,6 +1,7 @@
 package remocra.usecase.rcci
 
 import jakarta.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
@@ -16,11 +17,11 @@ import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.Rcci
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class UpdateRcciUseCase : AbstractCUDUseCase<RcciFormInput>(TypeOperation.UPDATE) {
+class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.UPDATE) {
 
     @Inject lateinit var documentUtils: DocumentUtils
 
@@ -32,6 +33,21 @@ class UpdateRcciUseCase : AbstractCUDUseCase<RcciFormInput>(TypeOperation.UPDATE
         if (!userInfo.droits.contains(Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_UPDATE_FORBIDDEN)
         }
+    }
+
+    override fun getListGeometrie(element: RcciFormInput): Collection<Geometry> {
+        return listOf(element.rcci.rcciGeometrie)
+    }
+
+    override fun ensureSrid(element: RcciFormInput): RcciFormInput {
+        if (element.rcci.rcciGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                rcci = element.rcci.copy(
+                    rcciGeometrie = transform(element.rcci.rcciGeometrie),
+                ),
+            )
+        }
+        return element
     }
 
     override fun postEvent(element: RcciFormInput, userInfo: UserInfo) {

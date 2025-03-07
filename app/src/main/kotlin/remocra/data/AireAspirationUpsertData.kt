@@ -1,5 +1,6 @@
 package remocra.data
 
+import org.locationtech.jts.geom.Geometry
 import java.util.UUID
 
 data class AireAspirationUpsertData(
@@ -9,6 +10,5 @@ data class AireAspirationUpsertData(
     val typePenaAspirationId: UUID?,
     val hauteurSuperieure3Metres: Boolean,
     val estDeporte: Boolean,
-    val coordonneeX: String?,
-    val coordonneeY: String?,
+    val geometrie: Geometry?,
 )

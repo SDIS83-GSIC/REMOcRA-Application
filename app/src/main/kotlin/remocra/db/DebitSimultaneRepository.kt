@@ -4,8 +4,8 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
-import remocra.CoordonneesXYSrid
 import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
@@ -22,10 +22,9 @@ import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
-import remocra.utils.ST_MakePoint
-import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
+import remocra.utils.toGeomFromText
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -188,7 +187,7 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
         val typeReseauLibelle: String?,
     )
 
-    fun getPibiForDebitSimultane(coordonneesXYSrid: CoordonneesXYSrid, typeReseauId: UUID): Collection<GlobalData.IdCodeLibelleData> =
+    fun getPibiForDebitSimultane(geometry: Geometry, typeReseauId: UUID): Collection<GlobalData.IdCodeLibelleData> =
         dsl.select(
             PEI.ID.`as`("id"),
             PEI.NUMERO_COMPLET.`as`("code"),
@@ -202,8 +201,8 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE))
             .and(
                 ST_DWithin(
-                    ST_Transform(PEI.GEOMETRIE, coordonneesXYSrid.srid),
-                    ST_SetSrid(ST_MakePoint(coordonneesXYSrid.coordonneeX.toFloat(), coordonneesXYSrid.coordonneeY.toFloat()), coordonneesXYSrid.srid),
+                    PEI.GEOMETRIE,
+                    ST_Transform(geometry.toGeomFromText(), SRID),
                     DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
                 ),
             )
@@ -220,11 +219,11 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .where(DEBIT_SIMULTANE_MESURE.DEBIT_SIMULTANE_ID.eq(debitSimultaneId))
             .fetchMap(DEBIT_SIMULTANE_MESURE.ID, Document::class.java)
 
-    fun getDistance(listePibiId: Set<UUID>, coordonneesXYSrid: CoordonneesXYSrid): Collection<Boolean> =
+    fun getDistance(listePibiId: Set<UUID>, geometry: Geometry): Collection<Boolean> =
         dsl.select(
             ST_DWithin(
-                ST_Transform(PEI.GEOMETRIE, coordonneesXYSrid.srid),
-                ST_SetSrid(ST_MakePoint(coordonneesXYSrid.coordonneeX.toFloat(), coordonneesXYSrid.coordonneeY.toFloat()), coordonneesXYSrid.srid),
+                PEI.GEOMETRIE,
+                ST_Transform(geometry.toGeomFromText(), SRID),
                 DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
             ),
         )

@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.CoordonneesXYSrid
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DebitSimultaneData
@@ -116,12 +116,8 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
     @Path("/pei")
     @RequireDroits([Droit.DEBITS_SIMULTANES_R])
     fun getPei(
-        @QueryParam("coordonneeX")
-        coordonneeX: Double?,
-        @QueryParam("coordonneeY")
-        coordonneeY: Double?,
-        @QueryParam("srid")
-        srid: Int?,
+        @QueryParam("geometry")
+        geometry: Geometry?,
         @QueryParam("typeReseauId")
         typeReseauId: UUID,
         @QueryParam("listePibiId")
@@ -136,11 +132,7 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
                 )
             } else {
                 getPibiForDebitSimultaneUseCase.execute(
-                    CoordonneesXYSrid(
-                        coordonneeX!!,
-                        coordonneeY!!,
-                        srid!!,
-                    ),
+                    geometry,
                     null,
                     typeReseauId,
                 )
