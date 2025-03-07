@@ -9,6 +9,7 @@ import {
   IconClose,
   IconSee,
   IconMerge,
+  IconExportCrise,
 } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
@@ -38,7 +39,7 @@ const ListCrise = () => {
 
   if (hasDroit(user, TYPE_DROIT.CRISE_R)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.BUTTON,
@@ -56,7 +57,7 @@ const ListCrise = () => {
 
   if (hasDroit(user, TYPE_DROIT.CRISE_U)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       textEnable: "Modifier",
@@ -71,7 +72,7 @@ const ListCrise = () => {
     });
 
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       disable: (v) =>
@@ -87,7 +88,23 @@ const ListCrise = () => {
     });
 
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
+        return row;
+      },
+      disable: (v) =>
+        [CriseStatutEnum.EN_COURS].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
+      classEnable: "danger",
+      textDisable: "Impossible d'exporter une crise qui n'est pas close",
+      route: (criseId) => URLS.EXPORT_CRISE(criseId),
+      type: TYPE_BUTTON.BUTTON,
+      icon: <IconExportCrise />,
+      textEnable: "Exporter",
+    });
+
+    listeButton.push({
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.EDIT_MODAL,

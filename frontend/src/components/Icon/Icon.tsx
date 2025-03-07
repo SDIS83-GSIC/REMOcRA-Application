@@ -9,6 +9,7 @@ export const IconLoading = () => <i className="fi fi-br-loading" />;
 export const IconCrise = () => <i className="fi fi-rr-light-emergency-on" />;
 export const IconMerge = () => <i className="fi fi-rr-code-merge" />;
 export const IconSearch = () => <i className="fi fi-br-search" />;
+export const IconExportCrise = () => <i className="fi fi-br-file-export" />;
 export const IconFilter = () => <i className="fi fi-sr-filter" />;
 export const IconWarningCrise = () => (
   <i className="fi fi-rr-triangle-warning" />
