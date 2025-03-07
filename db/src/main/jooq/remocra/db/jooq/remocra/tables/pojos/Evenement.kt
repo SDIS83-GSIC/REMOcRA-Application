@@ -5,6 +5,7 @@ package remocra.db.jooq.remocra.tables.pojos
 
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -36,6 +37,7 @@ data class Evenement(
     val evenementCriseId: UUID?,
     val evenementStatut: EvenementStatut?,
     val utilisateurId: UUID?,
+    val evenementStatutMode: EvenementStatutMode?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -135,6 +137,13 @@ data class Evenement(
         } else if (this.utilisateurId != o.utilisateurId) {
             return false
         }
+        if (this.evenementStatutMode == null) {
+            if (o.evenementStatutMode != null) {
+                return false
+            }
+        } else if (this.evenementStatutMode != o.evenementStatutMode) {
+            return false
+        }
         return true
     }
 
@@ -155,6 +164,7 @@ data class Evenement(
         result = prime * result + (if (this.evenementCriseId == null) 0 else this.evenementCriseId.hashCode())
         result = prime * result + (if (this.evenementStatut == null) 0 else this.evenementStatut.hashCode())
         result = prime * result + (if (this.utilisateurId == null) 0 else this.utilisateurId.hashCode())
+        result = prime * result + (if (this.evenementStatutMode == null) 0 else this.evenementStatutMode.hashCode())
         return result
     }
 
@@ -175,6 +185,7 @@ data class Evenement(
         sb.append(", ").append(evenementCriseId)
         sb.append(", ").append(evenementStatut)
         sb.append(", ").append(utilisateurId)
+        sb.append(", ").append(evenementStatutMode)
 
         sb.append(")")
         return sb.toString()

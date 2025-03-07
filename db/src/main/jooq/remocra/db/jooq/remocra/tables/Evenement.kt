@@ -30,6 +30,7 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.keys.EVENEMENT_PKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY
@@ -162,6 +163,11 @@ open class Evenement(
      * The column <code>remocra.evenement.utilisateur_id</code>.
      */
     val UTILISATEUR_ID: TableField<Record, UUID?> = createField(DSL.name("utilisateur_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.evenement.evenement_statut_mode</code>.
+     */
+    val STATUT_MODE: TableField<Record, EvenementStatutMode?> = createField(DSL.name("evenement_statut_mode"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'OPERATIONNEL'::evenement_statut_mode"), SQLDataType.VARCHAR)).asEnumDataType(EvenementStatutMode::class.java), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
