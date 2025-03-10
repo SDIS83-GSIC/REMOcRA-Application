@@ -7,6 +7,7 @@ import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.Geometry
 import remocra.data.EvenementData
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
@@ -161,6 +162,9 @@ class EvenementRepository @Inject constructor(
                 }
             },
         ).fetchInto()
+
+    fun updateGeometry(evenementId: UUID, evenementGeometrie: Geometry): Int =
+        dsl.update(EVENEMENT).set(EVENEMENT.GEOMETRIE, evenementGeometrie).where(EVENEMENT.ID.eq(evenementId)).execute()
 
     fun getAllEvents(criseId: UUID, params: Filter? = null, dateDebExtraction: ZonedDateTime? = null, dateFinExtraction: ZonedDateTime? = null, state: EvenementStatutMode? = null): Collection<EvenementData> =
         dsl.select(

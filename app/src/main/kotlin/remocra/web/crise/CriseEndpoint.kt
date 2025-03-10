@@ -6,6 +6,7 @@ import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PATCH
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
@@ -25,6 +26,7 @@ import remocra.data.CriseDocumentData
 import remocra.data.DataTableau
 import remocra.data.DocumentsData
 import remocra.data.EvenementData
+import remocra.data.EvenementGeometrieData
 import remocra.data.MessageData
 import remocra.data.Params
 import remocra.data.enums.TypeElementCarte
@@ -45,9 +47,11 @@ import remocra.usecase.crise.UpdateCriseUseCase
 import remocra.usecase.crise.evenement.CreateEventUseCase
 import remocra.usecase.crise.evenement.EvenementUseCase
 import remocra.usecase.crise.evenement.UpdateEvenementUseCase
+import remocra.usecase.crise.evenement.UpdateEventGeometryUseCase
 import remocra.usecase.crise.evenement.document.CreateCriseDocument
 import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
 import remocra.utils.DateUtils
+import remocra.utils.badRequest
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -69,6 +73,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var createCriseUseCase: CreateCriseUseCase
 
     @Inject lateinit var evenementUseCase: EvenementUseCase
+
+    @Inject lateinit var updateEventGeometryUseCase: UpdateEventGeometryUseCase
 
     @Inject lateinit var mergeCriseUseCase: MergeCriseUseCase
 
@@ -442,6 +448,8 @@ class CriseEndpoint : AbstractEndpoint() {
     fun createEvent(
         @PathParam("criseId")
         criseId: UUID,
+        @PathParam("state")
+        state: EvenementStatutMode,
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val evenementId = UUID.randomUUID()
@@ -468,7 +476,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
-                evenementStatutMode = EvenementStatutMode.valueOf(httpRequest.getTextPart("evenementState")),
+                evenementStatutMode = state,
             ),
         ).wrap()
     }
@@ -510,6 +518,8 @@ class CriseEndpoint : AbstractEndpoint() {
         evenementId: UUID,
         @PathParam("criseId")
         criseId: UUID,
+        @PathParam("state")
+        state: EvenementStatutMode,
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val evenementData =
@@ -534,7 +544,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
-                evenementStatutMode = EvenementStatutMode.valueOf(httpRequest.getTextPart("evenementState")),
+                evenementStatutMode = state,
             )
         return updateEvenementUseCase.execute(
             userInfo = securityContext.userInfo,
@@ -565,5 +575,15 @@ class CriseEndpoint : AbstractEndpoint() {
             userInfo = securityContext.userInfo,
             docData,
         ).wrap()
+    }
+
+    @PATCH
+    @Path("/{eventId}/geometry")
+    @RequireDroits([Droit.CRISE_U])
+    fun move(element: EvenementGeometrieData, @PathParam("eventId") eventId: UUID): Response {
+        if (element.eventId != eventId) {
+            return badRequest().build()
+        }
+        return updateEventGeometryUseCase.execute(securityContext.userInfo, element).wrap()
     }
 }

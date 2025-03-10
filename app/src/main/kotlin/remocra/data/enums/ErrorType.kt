@@ -226,6 +226,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un événement.", Status.FORBIDDEN),
     EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un événement.", Status.FORBIDDEN),
     EVENEMENT_DOCUMENT_MEME_NOM(4302, "Les documents d'un même événement ne doivent pas avoir le même nom.", Status.BAD_REQUEST),
+    EVENEMENT_GEOMETRY_UPDATE_FORBIDDEN(4303, "Vous n'avez pas les droits de modification de la géométrie des évènements.", Status.FORBIDDEN),
 
     /***
      * ***********************************************************************
