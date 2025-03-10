@@ -2,7 +2,7 @@ import Map from "ol/Map";
 import { forwardRef, Key, useMemo, useState } from "react";
 import { Button, Col, Dropdown } from "react-bootstrap";
 import { WKT } from "ol/format";
-import { Draw } from "ol/interaction";
+import { Draw, Modify } from "ol/interaction";
 import { Style, Fill, Stroke } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import {
@@ -10,6 +10,7 @@ import {
   IconEvent,
   IconLine,
   IconList,
+  IconMoveObjet,
   IconPoint,
   IconPolygon,
   IconSelect,
@@ -18,11 +19,12 @@ import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import CreateEvenement from "../../../pages/ModuleCrise/Evenement/createEvenement.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -43,10 +45,15 @@ const drawStyle = new Style({
   }),
 });
 
-export const useToolbarCriseContext = ({ map, workingLayer }) => {
+export const useToolbarCriseContext = ({
+  map,
+  workingLayer,
+  dataEvenementLayer,
+}) => {
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showListEvent, setShowListEvent] = useState(false);
   const [showListDocument, setShowListDocument] = useState(false);
+  const { success: successToast, error: errorToast } = useToastContext();
 
   const handleCloseEvent = () => {
     setShowListDocument(false);
@@ -65,6 +72,67 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     if (!map) {
       return {};
     }
+
+    /**
+     * Fonction pour modifier la géométrie d'un évènement sur la carte
+     */
+    const moveCtrl = new Modify({
+      source: dataEvenementLayer.getSource(),
+    });
+    moveCtrl.on("modifyend", (event) => {
+      if (!event.features || event.features.getLength() !== 1) {
+        dataEvenementLayer.getSource().clear();
+        dataEvenementLayer.getSource().refresh();
+        return;
+      }
+      event.features.forEach(async (feature) => {
+        (
+          await fetch(
+            url`/api/zone-integration/check`,
+            getFetchOptions({
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                geometry:
+                  "SRID=" +
+                  map.getView().getProjection().getCode().split(":").pop() +
+                  ";" +
+                  new WKT().writeFeature(feature),
+              }),
+            }),
+          )
+        )
+          .text()
+          .then((text) => {
+            if (text === "true") {
+              fetch(
+                url`/api/crise/${feature.getProperties().elementId}/geometry`,
+                getFetchOptions({
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    eventId: feature.getProperties().elementId,
+                    eventGeometrie: `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(feature)}`,
+                  }),
+                }),
+              ).then((res) => {
+                if (res.status === 200) {
+                  successToast("Géométrie modifiée");
+                }
+              });
+            } else {
+              dataEvenementLayer.getSource().clear();
+              dataEvenementLayer.getSource().refresh();
+              errorToast(text);
+            }
+          })
+          .catch((reason) => {
+            dataEvenementLayer.getSource().clear();
+            dataEvenementLayer.getSource().refresh();
+            errorToast(reason);
+          });
+      });
+    });
 
     /**
      * Fonction pour dessiner des types de géométries
@@ -96,7 +164,7 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
     /**
      * Fonction pour activer ou désactiver une interaction
      */
-    function toggleInteraction(active: boolean = false, draw: Draw) {
+    function toggleInteraction(active: boolean = false, draw: Draw | Modify) {
       const idx = map?.getInteractions().getArray().indexOf(draw);
       if (active && idx === -1) {
         map.addInteraction(draw);
@@ -130,6 +198,13 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       toggleInteraction(active, drawLineString);
     }
 
+    /**
+     * Permet de déplacer un évènement
+     */
+    function toggleMoveEvent(active = false) {
+      toggleInteraction(active, moveCtrl);
+    }
+
     const tools = {
       "create-point": {
         action: toggleCreatePointEvenement,
@@ -140,9 +215,12 @@ export const useToolbarCriseContext = ({ map, workingLayer }) => {
       "create-linestring": {
         action: toggleCreateLinestringEvenement,
       },
+      "move-event": {
+        action: toggleMoveEvent,
+      },
     };
     return tools;
-  }, [map, workingLayer]);
+  }, [dataEvenementLayer, errorToast, map, successToast, workingLayer]);
 
   return {
     tools,
@@ -269,6 +347,15 @@ const MapToolbarCrise = forwardRef(
         >
           <IconDocument />
         </Button>
+
+        {/* déplacer évènement */}
+        <ToolbarButton
+          toolName={"move-event"}
+          toolIcon={<IconMoveObjet />}
+          toolLabelTooltip={"Déplacer un événement"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
 
         <Volet
           handleClose={handleCloseEvent}

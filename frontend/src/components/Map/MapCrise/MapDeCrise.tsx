@@ -1,5 +1,5 @@
 import "ol/ol.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import CircleStyle from "ol/style/Circle";
 import { Fill, Stroke, Style } from "ol/style";
 import { Vector } from "ol/source";
@@ -35,7 +35,10 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
     [criseId, state],
   );
 
-  const createVectorLayer = (map: any, vectorSource: any) => {
+  const dataEvenementLayer = useMemo(() => {
+    if (!map) {
+      return;
+    }
     const style = new Style({
       fill: new Fill({ color: "rgba(255, 255, 255, 0.2)" }),
       stroke: new Stroke({ color: "rgba(0, 0, 0, 0.5)", width: 1 }),
@@ -43,6 +46,15 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
         radius: 5,
         stroke: new Stroke({ color: "rgb(0, 160, 27)" }),
         fill: new Fill({ color: "rgb(0, 160, 27)" }),
+      }),
+    });
+
+    const vectorSource = new Vector({
+      extent: map.getView().calculateExtent(),
+      strategy: bbox,
+      format: new GeoJSON({
+        dataProjection: projection,
+        featureProjection: projection,
       }),
     });
 
@@ -58,54 +70,16 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
 
     map.addLayer(layer);
     return layer;
-  };
-
-  const [dataEvenementLayer, setDataEvenementLayer] = useState();
+  }, [map, projection]);
 
   useEffect(() => {
-    const createVectorSource = (map: any, projection: any) => {
-      const vectorSource = new Vector({
-        loader: async (extent, _, projection, success, failure) => {
-          try {
-            const res = await fetch(
-              url`${getLayerUrl(extent, projection)}`,
-              getFetchOptions({ method: "GET" }),
-            );
-            const features = new GeoJSON({
-              dataProjection: projection,
-            }).readFeatures(await res.json());
-            vectorSource.addFeatures(features);
-            success(features);
-          } catch {
-            vectorSource.removeLoadedExtent(extent);
-            failure();
-          }
-        },
-        extent: map.getView().calculateExtent(),
-        strategy: bbox,
-        format: new GeoJSON({
-          dataProjection: projection,
-          featureProjection: projection,
-        }),
-      });
-
-      return vectorSource;
-    };
-
-    if (!dataEvenementLayer) {
-      if (!map) {
-        return;
-      }
-      const vectorSource = createVectorSource(map, projection);
-      setDataEvenementLayer(createVectorLayer(map, vectorSource));
+    if (!map || !dataEvenementLayer) {
       return;
     }
-    const source = dataEvenementLayer.getSource();
-    if (!source) {
-      return;
-    }
+    const source = dataEvenementLayer.getSource()!;
+    source?.clear();
 
-    source.setLoader(
+    source!.setLoader(
       async (
         extent: number[],
         _: any,
@@ -129,7 +103,7 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
     );
 
     source.refresh();
-  }, [dataEvenementLayer, criseId, state, getLayerUrl, map, projection]);
+  }, [dataEvenementLayer, getLayerUrl, map, projection]);
 
   const {
     tools: extraTools,
@@ -147,6 +121,7 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
   } = useToolbarCriseContext({
     map,
     workingLayer,
+    dataEvenementLayer,
   });
 
   const { toggleTool, activeTool } = useToolbarContext({
@@ -167,7 +142,8 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
       toggleTool={toggleTool}
       activeTool={activeTool}
       toolbarElement={
-        mapToolbarRef.current && (
+        mapToolbarRef.current &&
+        dataEvenementLayer && (
           <MapToolbarCrise
             state={state}
             map={map}
