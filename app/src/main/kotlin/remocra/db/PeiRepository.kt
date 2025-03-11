@@ -231,10 +231,10 @@ class PeiRepository
                 .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
                 .where(
                     ST_Within(
-                        ZONE_INTEGRATION.GEOMETRIE,
                         ST_Transform(ST_SetSrid(ST_MakePoint(coordonneeX.toFloat(), coordonneeY.toFloat()), sridCoords), sridSdis),
+                        ZONE_INTEGRATION.GEOMETRIE,
                     ),
-                ),
+                ).and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)),
         )
 
     private fun getAllWithFilterAndConditionalJoin(
