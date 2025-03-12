@@ -184,7 +184,7 @@ const Contact = () => {
                   <Col>
                     <CheckBoxInput
                       name="contactIsCompteService"
-                      label="Compte de service ?"
+                      label="Compte de service"
                     />
                   </Col>
                 </Row>
@@ -226,7 +226,7 @@ const Contact = () => {
 
                     <CheckBoxInput
                       name="communeSaisieLibre"
-                      label="Commune non trouvée ?"
+                      label="Commune non trouvée"
                     />
 
                     {values.communeSaisieLibre && (
@@ -267,7 +267,7 @@ const Contact = () => {
 
                     <CheckBoxInput
                       name="lieuDitSaisieLibre"
-                      label="Lieu-dit non trouvé ?"
+                      label="Lieu-dit non trouvé"
                     />
 
                     {values.lieuDitSaisieLibre && (
@@ -327,7 +327,7 @@ const Contact = () => {
 
                     <CheckBoxInput
                       name="voieSaisieLibre"
-                      label="Voie non trouvée ?"
+                      label="Voie non trouvée"
                     />
 
                     {values.voieSaisieLibre && (

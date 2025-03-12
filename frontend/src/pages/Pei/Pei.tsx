@@ -480,7 +480,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                           ) && (
                             <CheckBoxInput
                               name={`documents[${index}].isPhotoPei`}
-                              label="Est la photo du PEI ?"
+                              label="Est la photo du PEI"
                             />
                           )
                         }
@@ -888,7 +888,7 @@ const FormLocalisationPei = ({
             <>
               <CheckBoxInput
                 name="voieSaisieLibre"
-                label="Voie non trouvée ?"
+                label="Voie non trouvée"
                 disabled={!hasDroitUpdate}
               />
               {values.voieSaisieLibre && (
@@ -909,7 +909,7 @@ const FormLocalisationPei = ({
         <Col>
           <CheckBoxInput
             name="peiEnFace"
-            label="Situé en face ?"
+            label="Situé en face"
             disabled={!hasDroitUpdate}
           />
         </Col>
@@ -1013,14 +1013,14 @@ const FormPibi = ({
         <Col>
           <CheckBoxInput
             name="pibiDispositifInviolabilite"
-            label="Dispositif d'inviolabilité ?"
+            label="Dispositif d'inviolabilité"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="pibiRenversable"
-            label="Renversable ?"
+            label="Renversable"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
@@ -1136,7 +1136,7 @@ const FormPibi = ({
           />
         </Col>
         <Col>
-          <CheckBoxInput name="pibiDebitRenforce" label="Débit renforcé ?" />
+          <CheckBoxInput name="pibiDebitRenforce" label="Débit renforcé" />
         </Col>
       </Row>
       <Row className="mt-3">
@@ -1154,14 +1154,14 @@ const FormPibi = ({
         <Col>
           <CheckBoxInput
             name="pibiSurpresse"
-            label="Réseau surpressé ?"
+            label="Réseau surpressé"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="pibiAdditive"
-            label="Réseau additivé ?"
+            label="Réseau additivé"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
@@ -1186,21 +1186,21 @@ const FormPena = ({
         <Col>
           <CheckBoxInput
             name="penaCapaciteIllimitee"
-            label="Capacité illimitée ?"
+            label="Capacité illimitée"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="penaCapaciteIncertaine"
-            label="Capacité incertaine ?"
+            label="Capacité incertaine"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name="penaEquipeHbe"
-            label="Équipé HBE ?"
+            label="Équipé HBE"
             disabled={!hasDroitCaracteristique}
           />
         </Col>

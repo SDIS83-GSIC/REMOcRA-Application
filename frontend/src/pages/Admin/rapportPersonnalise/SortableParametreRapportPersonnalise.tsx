@@ -101,7 +101,7 @@ const SortableParametre: FC<SortableParametre> = ({
         <Col>
           <CheckBoxInput
             name={`listeRapportPersonnaliseParametre[${index}].rapportPersonnaliseParametreIsRequired`}
-            label="Obligatoire ?"
+            label="Obligatoire"
           />
         </Col>
       </Row>

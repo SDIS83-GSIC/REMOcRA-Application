@@ -122,13 +122,13 @@ const ComposantToRepeat = ({
         <Col>
           <CheckBoxInput
             name={`listeAireAspiration[${index}].estNormalise`}
-            label={"Est normalisée ?"}
+            label={"Est normalisée"}
           />
         </Col>
         <Col>
           <CheckBoxInput
             name={`listeAireAspiration[${index}].hauteurSuperieure3Metres`}
-            label={"Hauteur > 3 mètres ?"}
+            label={"Hauteur > 3 mètres"}
           />
         </Col>
       </Row>
@@ -136,7 +136,7 @@ const ComposantToRepeat = ({
         <Col>
           <CheckBoxInput
             name={`listeAireAspiration[${index}].estDeporte`}
-            label={"Est déportée ?"}
+            label={"Est déportée"}
           />
         </Col>
         {listeElements[index].estDeporte && (

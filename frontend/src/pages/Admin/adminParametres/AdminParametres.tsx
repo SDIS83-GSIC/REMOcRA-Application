@@ -476,7 +476,7 @@ const AdminApplicationMobile = ({
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="mobile.affichageSymbolesNormalises"
-            label="Utiliser la symbologie du RNDECI ?"
+            label="Utiliser la symbologie du RNDECI"
             checked={values?.affichageSymbolesNormalises}
             tooltipText={
               "Utiliser la symbologie définie dans le RNDECI plutôt que des cercles"

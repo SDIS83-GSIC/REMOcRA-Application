@@ -139,7 +139,7 @@ const AnomalieForm = ({ returnLink }: { returnLink: string }) => {
       {!values.anomalieProtected && (
         <CheckBoxInput
           name={"anomalieRendNonConforme"}
-          label={"Rend non conforme ?"}
+          label={"Rend non conforme"}
         />
       )}
       <FieldArray

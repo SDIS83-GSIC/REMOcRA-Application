@@ -125,7 +125,7 @@ const ListRapportPersonnalise = () => {
               ),
             },
             BooleanColumn({
-              Header: "Spatial ?",
+              Header: "Spatial",
               accessor: ({ rapportPersonnaliseChampGeometrie }) => {
                 return rapportPersonnaliseChampGeometrie != null;
               },

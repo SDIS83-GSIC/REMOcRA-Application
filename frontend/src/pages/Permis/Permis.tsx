@@ -194,7 +194,7 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
           <Col>
             <CheckBoxInput
               name="voieSaisieText"
-              label="Voie non trouvée ?"
+              label="Voie non trouvée"
               disabled={readOnly}
             />
             {values.voieSaisieText && (

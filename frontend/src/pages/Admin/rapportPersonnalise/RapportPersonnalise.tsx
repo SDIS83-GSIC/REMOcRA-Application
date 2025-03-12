@@ -164,7 +164,7 @@ const RapportPersonnalise = () => {
         <>
           <Row className="mt-3">
             <Col>
-              <CheckBoxInput name="rapportPersonnaliseActif" label="Actif ?" />
+              <CheckBoxInput name="rapportPersonnaliseActif" label="Actif" />
             </Col>
             <Col>
               <TextInput
@@ -303,7 +303,7 @@ const RapportPersonnalise = () => {
             <Col>
               <CheckBoxInput
                 name="rapportPersonnaliseIsSpatial"
-                label="Remonte un champ spatial ?"
+                label="Remonte un champ spatial"
                 required={false}
                 onChange={(v) => {
                   setFieldValue(

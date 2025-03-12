@@ -104,7 +104,7 @@ const Utilisateur = () => {
         <Col>
           <CheckBoxInput
             name="utilisateurCanBeNotified"
-            label="Peut être notifié ?"
+            label="Peut être notifié"
           />
         </Col>
       </Row>
@@ -146,7 +146,7 @@ const Utilisateur = () => {
             >
               <CheckBoxInput
                 name="utilisateurIsSuperAdmin"
-                label="Est super administrateur ?"
+                label="Est super administrateur"
               />
             </TooltipCustom>
           </Col>

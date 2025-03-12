@@ -106,7 +106,7 @@ const ListUtilisateur = () => {
               Filter: <FilterInput type="text" name="utilisateurTelephone" />,
             },
             BooleanColumn({
-              Header: "Peut être notifié ?",
+              Header: "Peut être notifié",
               accessor: "utilisateurCanBeNotified",
               sortField: "utilisateurCanBeNotified",
               Filter: (

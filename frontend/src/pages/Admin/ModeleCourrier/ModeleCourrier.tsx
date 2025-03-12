@@ -174,7 +174,7 @@ const ModeleCourrier = () => {
         <>
           <Row className="mt-3">
             <Col>
-              <CheckBoxInput name="modeleCourrierActif" label="Actif ?" />
+              <CheckBoxInput name="modeleCourrierActif" label="Actif" />
             </Col>
             <Col>
               <TextInput
@@ -348,7 +348,7 @@ const ModeleCourrier = () => {
                 otherFormParam={(index: number) => (
                   <>
                     <CheckBoxInput
-                      label="Est le rapport principal ?"
+                      label="Est le rapport principal"
                       name={`documents[${index}].isMainReport`}
                       required={false}
                     />

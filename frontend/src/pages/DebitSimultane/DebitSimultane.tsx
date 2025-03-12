@@ -260,7 +260,7 @@ const ComposantToRepeat = ({
         <Col>
           <CheckBoxInput
             name={`listeDebitSimultaneMesure[${index}].debitSimultaneMesureIdentiqueReseauVille`}
-            label="Identique Réseau Ville ?"
+            label="Identique Réseau Ville"
             onChange={(e) => {
               setFieldValue(
                 `listeDebitSimultaneMesure[${index}].debitSimultaneMesureIdentiqueReseauVille`,

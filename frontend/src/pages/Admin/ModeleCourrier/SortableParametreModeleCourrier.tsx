@@ -100,7 +100,7 @@ const SortableParametreModeleCourrier: FC<SortableParametre> = ({
         <Col>
           <CheckBoxInput
             name={`listeModeleCourrierParametre[${index}].modeleCourrierParametreIsRequired`}
-            label="Obligatoire ?"
+            label="Obligatoire"
           />
         </Col>
       </Row>
