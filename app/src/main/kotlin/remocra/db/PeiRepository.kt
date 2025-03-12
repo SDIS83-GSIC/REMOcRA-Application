@@ -45,6 +45,7 @@ import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
+import remocra.utils.DateUtils
 import remocra.utils.ST_MakePoint
 import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
@@ -192,6 +193,8 @@ class PeiRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .leftJoin(TOURNEE)
             .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
+            .leftJoin(V_PEI_VISITE_DATE)
+            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .let {
@@ -208,7 +211,7 @@ class PeiRepository
                     PageFilter.PEI_LONGUE_INDISPO -> it
                 }
             }
-            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .where(filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
             // Et la zone de compétence de l'utilisateur s'il n'est pas super admin
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .count()
@@ -329,7 +332,7 @@ class PeiRepository
                     PageFilter.PEI_LONGUE_INDISPO -> it
                 }
             }
-            .where(param.filterBy?.toCondition() ?: DSL.noCondition())
+            .where(param.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .groupBy(
                 PEI.ID,
@@ -392,9 +395,20 @@ class PeiRepository
         val tourneeLibelle: String?,
         var listePeiId: Set<UUID>?,
         var adresse: String?,
+        val prochaineDateRecop: ProchaineDate?,
+        val prochaineDateCtp: ProchaineDate?,
     ) {
 
-        fun toCondition(): Condition =
+        enum class ProchaineDate {
+            DATE_PASSEE,
+            INFERIEUR_1_MOIS,
+            INFERIEUR_2_MOIS,
+            INFERIEUR_6_MOIS,
+            INFERIEUR_12_MOIS,
+            INFERIEUR_24_MOIS,
+        }
+
+        fun toCondition(dateUtils: DateUtils): Condition =
             DSL.and(
                 listOfNotNull(
                     peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(it)) },
@@ -417,6 +431,26 @@ class PeiRepository
                     },
                     idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                     listePeiId?.let { DSL.and(PEI.ID.`in`(it)) },
+                    prochaineDateRecop?.let {
+                        when (it) {
+                            ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.le(dateUtils.now()))
+                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
+                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
+                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
+                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
+                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
+                        }
+                    },
+                    prochaineDateCtp?.let {
+                        when (it) {
+                            ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now()))
+                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
+                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
+                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
+                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
+                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
+                        }
+                    },
                 ),
             )
     }
@@ -433,6 +467,7 @@ class PeiRepository
         val autoriteDeci: Int?,
         val servicePublicDeci: Int?,
         val peiNextRecop: Int?,
+        val peiNextCtp: Int?,
         val tourneeLibelle: Int?,
         var ordreTournee: Int?,
 
@@ -454,6 +489,7 @@ class PeiRepository
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_VISITE_DATE.PEI_NEXT_RECOP.getSortField(peiNextRecop),
+            V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
         )
     }
 

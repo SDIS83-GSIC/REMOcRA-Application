@@ -1,4 +1,5 @@
 import { Form } from "react-bootstrap";
+import PROCHAINE_DATE_ENUM from "../../enums/ProchaineDateEnum.tsx";
 
 type filterPei = {
   peiNumeroComplet?: string;
@@ -14,6 +15,8 @@ type filterPei = {
   listeAnomalie?: string;
   tourneeLibelle?: string;
   adresse?: string;
+  prochaineDateRecop?: PROCHAINE_DATE_ENUM;
+  prochaineDateCtp?: PROCHAINE_DATE_ENUM;
 };
 
 export const filterValuesToVariable = ({
@@ -30,6 +33,8 @@ export const filterValuesToVariable = ({
   listeAnomalie,
   tourneeLibelle,
   adresse,
+  prochaineDateRecop,
+  prochaineDateCtp,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -74,6 +79,14 @@ export const filterValuesToVariable = ({
   }
   if (adresse != null && adresse !== "") {
     filter.adresse = adresse;
+  }
+
+  if (prochaineDateRecop != null && prochaineDateRecop.trim() !== "") {
+    filter.prochaineDateRecop = prochaineDateRecop;
+  }
+
+  if (prochaineDateCtp != null && prochaineDateCtp.trim() !== "") {
+    filter.prochaineDateCtp = prochaineDateCtp;
   }
 
   return filter;

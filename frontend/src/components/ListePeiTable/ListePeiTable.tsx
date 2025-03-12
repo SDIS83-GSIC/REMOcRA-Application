@@ -55,6 +55,8 @@ const ListPei = ({
     listeAnomalie: "",
     tourneeLibelle: "",
     adresse: "",
+    prochaineDateRecop: undefined,
+    prochaineDateCtp: undefined,
   };
 
   let urlTable;

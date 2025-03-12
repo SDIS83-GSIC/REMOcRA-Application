@@ -29,6 +29,7 @@ import TYPE_DROIT from "../enums/DroitEnum.tsx";
 import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
 } from "../enums/NomenclaturesEnum.tsx";
+import PROCHAINE_DATE_ENUM from "../enums/ProchaineDateEnum.tsx";
 import STATUT_INDISPONIBILITE_TEMPORAIRE from "../enums/StatutIndisponibiliteTemporaireEnum.tsx";
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
@@ -210,6 +211,12 @@ function getColumnPeiByStringArray(
           Cell: (value) => {
             return <div>{value.value ? formatDate(value.value) : ""}</div>;
           },
+          Filter: (
+            <SelectEnumOption
+              options={PROCHAINE_DATE_ENUM}
+              name={"prochaineDateRecop"}
+            />
+          ),
         });
         break;
       case COLUMN_PEI.PEI_NEXT_CTP:
@@ -220,6 +227,12 @@ function getColumnPeiByStringArray(
           Cell: (value) => {
             return <div>{value.value ? formatDate(value.value) : ""}</div>;
           },
+          Filter: (
+            <SelectEnumOption
+              options={PROCHAINE_DATE_ENUM}
+              name={"prochaineDateCtp"}
+            />
+          ),
         });
         break;
       case COLUMN_PEI.TOURNEE_LIBELLE:
