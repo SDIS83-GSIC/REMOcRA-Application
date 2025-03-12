@@ -7,11 +7,17 @@ import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
+import {
+  IconCreate,
+  IconDragNDrop,
+  IconInfo,
+  IconTournee,
+} from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 
 const TourneePei = ({
   tourneeMapId,
@@ -138,7 +144,24 @@ const TourneePei = ({
       <Container>
         <PageTitle
           icon={<IconTournee />}
-          title={`Gestion des PEI de la tournée ${tourneePeiInfo.data.tourneeLibelle}`}
+          title={
+            <>
+              Gestion des PEI de la tournée $
+              {tourneePeiInfo.data.tourneeLibelle}
+              <TooltipCustom
+                tooltipText={
+                  <>
+                    Utilisez la fonctionnalité de glisser / déplacer à
+                    l&apos;aide du bouton <IconDragNDrop /> en début de ligne
+                    pour placer les PEI dans l&apos;ordre souhaité
+                  </>
+                }
+                tooltipId={"dragDropTournee"}
+              >
+                <IconInfo />
+              </TooltipCustom>
+            </>
+          }
           right={
             <CreateButton
               title={"Ajouter un PEI"}
