@@ -26,7 +26,7 @@ class LayersRetriever {
             droitsRepository.getProfilDroitListFromUser(it)
         }
 
-        val coucheMap = coucheRepository.getCoucheMap(module, profil)
+        val coucheMap = coucheRepository.getCoucheMap(module, profil, userInfo!!.isSuperAdmin)
         val groupeCoucheList = coucheRepository.getGroupeCoucheList()
 
         return groupeCoucheList.map { group ->

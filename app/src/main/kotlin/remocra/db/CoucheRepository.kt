@@ -37,13 +37,17 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             )
             .fetchOneInto<Couche>()
 
-    fun getCoucheMap(module: TypeModule, profilDroit: ProfilDroit?): Map<UUID, List<Couche>> =
+    fun getCoucheMap(module: TypeModule, profilDroit: ProfilDroit?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
         dsl.selectDistinct(*COUCHE.fields())
             .from(COUCHE)
             .leftJoin(L_COUCHE_DROIT).on(L_COUCHE_DROIT.COUCHE_ID.eq(COUCHE.ID))
             .join(L_COUCHE_MODULE).on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID).and(L_COUCHE_MODULE.MODULE_TYPE.eq(module)))
-            .where(COUCHE.PUBLIC.isTrue)
-            .or(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(profilDroit?.profilDroitId))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    COUCHE.PUBLIC.isTrue.or(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(profilDroit?.profilDroitId)),
+                    isSuperAdmin,
+                ),
+            )
             .fetchInto<Couche>().groupBy { it.coucheGroupeCoucheId }
 
     fun getProfilDroitList(coucheId: UUID): List<ProfilDroit> =
