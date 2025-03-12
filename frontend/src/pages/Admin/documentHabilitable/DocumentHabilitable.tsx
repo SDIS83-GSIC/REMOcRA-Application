@@ -10,7 +10,6 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type DocumentHabilitableType = {
@@ -123,7 +122,7 @@ const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
         required={false}
       />
 
-      <SubmitFormButtons returnLink={URLS.LIST_DOCUMENT_HABILITABLE} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

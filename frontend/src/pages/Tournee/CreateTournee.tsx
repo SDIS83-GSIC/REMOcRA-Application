@@ -28,7 +28,7 @@ const CreateTournee = ({
           : setTourneeId && setTourneeId(e.tourneeId)
       }
     >
-      <TourneeForm isCreation={true} isFromMap={isFromMap} />
+      <TourneeForm isCreation={true} />
     </MyFormik>
   );
 };

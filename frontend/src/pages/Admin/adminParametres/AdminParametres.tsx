@@ -1,10 +1,13 @@
-import React, { ReactNode, useMemo } from "react";
 import { useFormikContext } from "formik";
-import { object } from "yup";
+import { ReactNode, useMemo } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
+import { object } from "yup";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
+import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
-import url from "../../../module/fetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
   FormContainer,
@@ -13,20 +16,16 @@ import PositiveNumberInput, {
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { URLS } from "../../../routes.tsx";
-import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import TransferList, {
   useTransferList,
 } from "../../../components/Form/TransferList.tsx";
-import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
-import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
-import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
-import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconParametre } from "../../../components/Icon/Icon.tsx";
+import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
+import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
+import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
+import url from "../../../module/fetch.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -262,7 +261,7 @@ export const AdminParametresInterne = () => {
           />
 
           <br />
-          <SubmitFormButtons returnLink={URLS.MODULE_ADMIN} />
+          <SubmitFormButtons returnLink={true} />
         </Container>
       </FormContainer>
     )

@@ -31,11 +31,7 @@ export const validationSchema = object({
   profilDroitId: requiredString,
 });
 
-const LienProfilFonctionnaliteForm = ({
-  returnLink,
-}: {
-  returnLink: string;
-}) => {
+const LienProfilFonctionnaliteForm = () => {
   const { values, setFieldValue, setValues } = useFormikContext<LienType>();
 
   const lienProfilFonctionnaliteReferentielState = useGet(
@@ -115,7 +111,7 @@ const LienProfilFonctionnaliteForm = ({
         setValues={setValues}
         required={true}
       />
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

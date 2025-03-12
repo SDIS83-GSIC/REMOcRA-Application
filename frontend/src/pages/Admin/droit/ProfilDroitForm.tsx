@@ -25,13 +25,13 @@ export const validationSchema = object({
   profilDroitActif: boolean(),
 });
 
-const ProfilDroitForm = ({ returnLink }: { returnLink: string }) => {
+const ProfilDroitForm = () => {
   return (
     <FormContainer>
       <TextInput label="Libellé" name="profilDroitLibelle" required={true} />
       <TextInput label="Code" name="profilDroitCode" required={true} />
       <CheckBoxInput label="Actif" name="profilDroitActif" />
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

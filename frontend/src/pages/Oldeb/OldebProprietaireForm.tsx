@@ -8,8 +8,8 @@ import {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { email, requiredString } from "../../module/validators.tsx";
 import TYPE_CIVILITE from "../../enums/CiviliteEnum.tsx";
+import { email, requiredString } from "../../module/validators.tsx";
 
 type OldebProprietaireFormType = {
   oldebProprietaireId?: string;
@@ -46,7 +46,7 @@ export const validationSchema = object({
   oldebProprietairePays: requiredString,
 });
 
-const OldebProprietaireForm = ({ returnLink }: { returnLink: string }) => {
+const OldebProprietaireForm = () => {
   const { values, setFieldValue } =
     useFormikContext<OldebProprietaireFormType>();
 
@@ -165,7 +165,7 @@ const OldebProprietaireForm = ({ returnLink }: { returnLink: string }) => {
           />
         </Col>
       </Row>
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

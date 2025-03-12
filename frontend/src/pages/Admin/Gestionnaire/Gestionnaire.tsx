@@ -5,7 +5,6 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { URLS } from "../../../routes.tsx";
 
 type GestionnaireType = {
   gestionnaireCode: string;
@@ -33,7 +32,7 @@ const Gestionnaire = () => {
       <TextInput label="Code" name="gestionnaireCode" required={true} />
       <TextInput label="Libellé" name="gestionnaireLibelle" required={true} />
       <CheckBoxInput name="gestionnaireActif" label="Actif" />
-      <SubmitFormButtons returnLink={URLS.LIST_GESTIONNAIRE} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

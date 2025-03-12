@@ -17,7 +17,6 @@ import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import TYPE_CIVILITE from "../../../enums/CiviliteEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { email } from "../../../module/validators.tsx";
-import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type ContactType = {
@@ -381,9 +380,7 @@ const Contact = () => {
         ]}
       />
 
-      <SubmitFormButtons
-        returnLink={URLS.LIST_CONTACT(appartenanceId, appartenance)}
-      />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

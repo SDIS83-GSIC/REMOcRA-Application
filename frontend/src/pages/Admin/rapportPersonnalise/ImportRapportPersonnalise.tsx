@@ -60,7 +60,7 @@ const ImportRapportPersonnaliseForm = () => {
           setFieldValue("zipFile", e.target.files[0]);
         }}
       />
-      <SubmitFormButtons returnLink={URLS.LIST_RAPPORT_PERSONNALISE} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

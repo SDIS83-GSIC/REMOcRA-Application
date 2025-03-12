@@ -5,7 +5,6 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { URLS } from "../../../routes.tsx";
 
 type ZoneIntegrationType = {
   zoneIntegrationCode: string;
@@ -38,7 +37,7 @@ const ZoneIntegration = () => {
         required={true}
       />
       <CheckBoxInput name="zoneIntegrationActif" label="Actif" />
-      <SubmitFormButtons returnLink={URLS.LIST_ZONE_INTEGRATION} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

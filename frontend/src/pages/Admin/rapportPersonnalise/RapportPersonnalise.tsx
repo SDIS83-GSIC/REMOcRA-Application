@@ -24,7 +24,6 @@ import {
   userParamRapportCourrier,
 } from "../../../Entities/RapportCourrierEntity.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import isEmptyOrNull from "../../../utils/fonctionsUtils.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { createComponentRapportPersoToRepeat } from "./SortableParametreRapportPersonnalise.tsx";
@@ -416,9 +415,7 @@ const RapportPersonnalise = () => {
         )}
       </Row>
       {/* Si c'est la dernière step, on permet la sauvegarde */}
-      {stepActive === 2 && (
-        <SubmitFormButtons returnLink={URLS.LIST_RAPPORT_PERSONNALISE} />
-      )}
+      {stepActive === 2 && <SubmitFormButtons returnLink={true} />}
     </FormContainer>
   );
 };

@@ -25,9 +25,7 @@ const ProfilDroitCreate = () => {
         redirectUrl={URLS.LIEN_PROFIL_FONCTIONNALITE_LIST}
         onSubmit={() => true}
       >
-        <LienProfilFonctionnaliteForm
-          returnLink={URLS.LIEN_PROFIL_FONCTIONNALITE_LIST}
-        />
+        <LienProfilFonctionnaliteForm />
       </MyFormik>
     </Container>
   );

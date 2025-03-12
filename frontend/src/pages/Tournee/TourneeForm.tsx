@@ -1,14 +1,13 @@
 import { useFormikContext } from "formik";
 import { Col, Container } from "react-bootstrap";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { FormContainer, TextInput } from "../../components/Form/Form.tsx";
+import SelectForm from "../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
 import { TourneeFormEntity } from "../../Entities/TourneeEntity.tsx";
 import url from "../../module/fetch.tsx";
-import SelectForm from "../../components/Form/SelectForm.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
-import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { URLS } from "../../routes.tsx";
 
 export const getInitialValues = (data?: TourneeFormEntity) => ({
   tourneeId: data?.tourneeId ?? null,
@@ -24,11 +23,9 @@ export const prepareVariables = (values: TourneeFormEntity) => ({
 
 const TourneeForm = ({
   isCreation = false,
-  isFromMap = false,
   tourneeLibelle = null,
 }: {
   isCreation?: boolean;
-  isFromMap: boolean;
   tourneeLibelle?: string;
 }) => {
   const { setValues }: { values: TourneeFormEntity } = useFormikContext();
@@ -61,9 +58,7 @@ const TourneeForm = ({
             />
           )}
         </Col>
-        <SubmitFormButtons
-          returnLink={isFromMap ? undefined : URLS.LIST_TOURNEE}
-        />
+        <SubmitFormButtons returnLink={true} />
       </Container>
     </FormContainer>
   );

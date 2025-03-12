@@ -37,13 +37,11 @@ export const validationSchema = object({
 });
 
 export const Nomenclature = ({
-  returnLink,
   hasProtectedValue = true,
   listeFk,
   libelleFk,
   isFkRequired,
 }: {
-  returnLink: string;
   hasProtectedValue?: boolean;
   listeFk: IdCodeLibelleType[] | null;
   libelleFk: string | null;
@@ -73,7 +71,7 @@ export const Nomenclature = ({
           required={isFkRequired}
         />
       )}
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

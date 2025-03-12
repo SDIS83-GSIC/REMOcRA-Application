@@ -1,18 +1,17 @@
-import { object } from "yup";
 import { useFormikContext } from "formik";
-import { URLS } from "../../../routes.tsx";
-import {
-  requiredBoolean,
-  requiredString,
-} from "../../../module/validators.tsx";
+import { object } from "yup";
 import {
   CheckBoxInput,
   FormContainer,
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
-import TYPE_PEI from "../../../enums/TypePeiEnum.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import TYPE_PEI from "../../../enums/TypePeiEnum.tsx";
+import {
+  requiredBoolean,
+  requiredString,
+} from "../../../module/validators.tsx";
 import { NatureType } from "./NatureEntity.tsx";
 
 export const prepareNatureValues = (values: NatureType) => ({
@@ -59,7 +58,7 @@ export const NatureForm = () => {
       />
       <CheckBoxInput name="natureActif" label="Actif" />
       <CheckBoxInput name="natureProtected" label="Protégé" disabled={true} />
-      <SubmitFormButtons returnLink={URLS.LIST_NATURE} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

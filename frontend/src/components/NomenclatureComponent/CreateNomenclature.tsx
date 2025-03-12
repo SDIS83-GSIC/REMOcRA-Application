@@ -58,7 +58,6 @@ const CreateNomenclature = ({
         onSubmit={() => true}
       >
         <Nomenclature
-          returnLink={redirectLink}
           hasProtectedValue={initialValues.hasProtectedValue}
           listeFk={initialValues.listeFk}
           libelleFk={initialValues.libelleFk}

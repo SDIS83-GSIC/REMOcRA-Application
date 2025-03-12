@@ -1,15 +1,17 @@
 import { FieldArray, useFormikContext } from "formik";
 import {
-  Row,
-  Col,
   Button,
   ButtonGroup,
   Card,
+  Col,
   Dropdown,
   ListGroup,
+  Row,
   ToggleButton,
 } from "react-bootstrap";
 import { array, object } from "yup";
+import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   FormContainer,
@@ -18,12 +20,9 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import Loading from "../../../components/Elements/Loading/Loading.tsx";
-import TypeVisiteEnum from "../../../enums/TypeVisiteEnum.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconDelete } from "../../../components/Icon/Icon.tsx";
+import url from "../../../module/fetch.tsx";
 import {
   requiredBoolean,
   requiredString,
@@ -80,7 +79,7 @@ export const validationSchema = object({
   poidsAnomalieList: array(),
 });
 
-const AnomalieForm = ({ returnLink }: { returnLink: string }) => {
+const AnomalieForm = () => {
   const { values, setFieldValue, setValues } = useFormikContext<AnomalieType>();
 
   const anomalieReferentielState = useGet(url`/api/anomalie/referentiel`);
@@ -276,7 +275,7 @@ const AnomalieForm = ({ returnLink }: { returnLink: string }) => {
           </Card>
         )}
       />
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

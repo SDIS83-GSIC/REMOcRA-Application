@@ -467,7 +467,7 @@ const CoucheForm = () => {
           </ListGroup>
         )}
       />
-      <SubmitFormButtons returnLink={url`/admin/menu`} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

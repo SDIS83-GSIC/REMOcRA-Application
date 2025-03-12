@@ -231,7 +231,7 @@ export const validationSchema = object({
   isRent: boolean(),
 });
 
-const OldebForm = ({ returnLink }: { returnLink: string }) => {
+const OldebForm = () => {
   const [currentTab, setCurrentTab] = useState("parcelle");
   const [currentVisite, setCurrentVisite] = useState<number>(null);
   const { values, setFieldValue } = useFormikContext<FormType>();
@@ -778,7 +778,7 @@ const OldebForm = ({ returnLink }: { returnLink: string }) => {
           )}
         </Tab>
       </Tabs>
-      <SubmitFormButtons returnLink={returnLink} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

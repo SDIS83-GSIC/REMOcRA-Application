@@ -1,26 +1,46 @@
 import { Button } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import { useLocation, useNavigate } from "react-router-dom";
+import { URLS } from "../../routes.tsx";
 import { SubmitButtonType } from "../../utils/typeUtils.tsx";
 
 const SubmitFormButtons = ({
   returnLink,
   onSecondaryActionClick,
-  secondaryActionTitle = "Retour",
+  secondaryActionTitle,
   onClick,
   disabledValide = false,
   submitTitle = "Enregistrer",
 }: SubmitButtonType) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
-      {(returnLink || onSecondaryActionClick) && (
+      {onSecondaryActionClick && (
+        <Col sm={"auto"}>
+          <Button variant={"secondary"} onClick={onSecondaryActionClick}>
+            {secondaryActionTitle}
+          </Button>
+        </Col>
+      )}
+      {returnLink && (
         <Col sm={"auto"}>
           <Button
-            variant={"secondary"}
-            href={returnLink}
-            onClick={onSecondaryActionClick}
+            variant={"light"}
+            className="btn-light"
+            onClick={() => {
+              if (location.state?.from?.slice(-1)[0]) {
+                navigate(location.state.from.slice(-1)[0], {
+                  state: { from: location.state.from.slice(0, -1) },
+                });
+              } else {
+                navigate(URLS.ACCUEIL);
+              }
+            }}
           >
-            {secondaryActionTitle}
+            Retour
           </Button>
         </Col>
       )}

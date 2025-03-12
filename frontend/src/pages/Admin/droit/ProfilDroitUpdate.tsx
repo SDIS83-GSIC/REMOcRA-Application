@@ -37,7 +37,7 @@ const ProfilDroitUpdate = () => {
         redirectUrl={URLS.PROFIL_DROIT_LIST}
         onSubmit={() => true}
       >
-        <ProfilDroitForm returnLink={URLS.PROFIL_DROIT_LIST} />
+        <ProfilDroitForm />
       </MyFormik>
     </Container>
   );

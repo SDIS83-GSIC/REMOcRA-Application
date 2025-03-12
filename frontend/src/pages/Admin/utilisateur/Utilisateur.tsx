@@ -2,6 +2,8 @@ import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -15,12 +17,9 @@ import {
   IconInfo,
   IconNextPage,
 } from "../../../components/Icon/Icon.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredEmail } from "../../../module/validators.tsx";
-import { URLS } from "../../../routes.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 type UtilisateurType = {
   utilisateurActif: boolean;
@@ -204,7 +203,7 @@ const Utilisateur = () => {
           </Col>
         </Row>
       )}
-      <SubmitFormButtons returnLink={URLS.LIST_UTILISATEUR} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

@@ -15,7 +15,6 @@ import {
   TypeDroitApiLabel,
 } from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import { TypeOrganismeType } from "../organisme/Organisme.tsx";
 
 const UpdateTypeOrganismeDroitApi = () => {
@@ -150,7 +149,7 @@ const TypeOrganismeWithDroitApiInner = ({
           })}
         </tbody>
       </Table>
-      <SubmitFormButtons returnLink={URLS.MODULE_ADMIN} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

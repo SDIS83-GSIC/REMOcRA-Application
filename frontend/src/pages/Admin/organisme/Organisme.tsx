@@ -15,7 +15,6 @@ import {
   requiredBoolean,
   requiredString,
 } from "../../../module/validators.tsx";
-import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { OrganismeCompleteType } from "./OrganismeEntity.tsx";
 
@@ -192,7 +191,7 @@ export const OrganismeForm = () => {
         defaultValue={defaultOrganismeParent}
       />
       <CheckBoxInput name="organismeActif" label="Actif" />
-      <SubmitFormButtons returnLink={URLS.LIST_ORGANISME} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

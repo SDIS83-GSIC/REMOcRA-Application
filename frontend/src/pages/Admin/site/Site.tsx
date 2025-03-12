@@ -9,7 +9,6 @@ import {
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 
 type SiteType = {
   siteGestionnaireId: string | null;
@@ -50,7 +49,7 @@ const Site = () => {
         listIdCodeLibelle={data}
         setValues={setValues}
       />
-      <SubmitFormButtons returnLink={URLS.LIST_SITE} />
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

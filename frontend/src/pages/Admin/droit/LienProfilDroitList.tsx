@@ -1,20 +1,20 @@
-import { object } from "yup";
-import { Form, Table } from "react-bootstrap";
 import { useFormikContext } from "formik";
+import { Form, Table } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
+import { object } from "yup";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import { FormContainer } from "../../../components/Form/Form.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import {
   SECTION_DROIT,
   TypeDroitLabel,
   TypeDroitSection,
 } from "../../../enums/DroitEnum.tsx";
-import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import url from "../../../module/fetch.tsx";
 
 const LienProfilDroitList = () => {
   const lienProfilDroitListState = useGet(url`/api/lien-profil-droit`);

@@ -27,7 +27,6 @@ import {
   userParamRapportCourrier,
 } from "../../../Entities/RapportCourrierEntity.tsx";
 import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import isEmptyOrNull from "../../../utils/fonctionsUtils.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { createComponentModeleCourrierToRepeat } from "./SortableParametreModeleCourrier.tsx";
@@ -422,9 +421,7 @@ const ModeleCourrier = () => {
         )}
       </Row>
       {/* Si c'est la dernière step, on permet la sauvegarde */}
-      {stepActive === 3 && (
-        <SubmitFormButtons returnLink={URLS.LIST_MODELE_COURRIER} />
-      )}
+      {stepActive === 3 && <SubmitFormButtons returnLink={true} />}
     </FormContainer>
   );
 };

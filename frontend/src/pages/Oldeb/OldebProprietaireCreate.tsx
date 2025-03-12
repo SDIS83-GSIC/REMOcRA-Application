@@ -24,10 +24,7 @@ const OldebProprietaireCreate = () => {
         prepareVariables={(values) => prepareValues(values)}
         redirectUrl={URLS.OLDEB_PROPRIETAIRE_LIST}
       >
-        <OldebProprietaireForm
-          isNew={true}
-          returnLink={URLS.OLDEB_PROPRIETAIRE_LIST}
-        />
+        <OldebProprietaireForm isNew={true} />
       </MyFormik>
     </Container>
   );

@@ -48,7 +48,7 @@ const OldebCreate = () => {
           prepareVariables={(values) => prepareValues(values)}
           redirectUrl={URLS.OLDEB_LIST}
         >
-          <OldebForm isNew={true} returnLink={URLS.OLDEB_LIST} />
+          <OldebForm isNew={true} />
         </MyFormik>
       ) : (
         <>

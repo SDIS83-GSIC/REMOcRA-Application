@@ -34,7 +34,7 @@ const AnomalieUpdate = () => {
         redirectUrl={URLS.LIST_ANOMALIE}
         onSubmit={() => true}
       >
-        <AnomalieForm returnLink={URLS.LIST_ANOMALIE} />
+        <AnomalieForm />
       </MyFormik>
     </Container>
   );

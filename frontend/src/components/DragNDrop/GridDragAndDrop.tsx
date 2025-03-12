@@ -219,7 +219,7 @@ const Form = ({
             </Col>
           </Row>
           <SubmitFormButtons
-            returnLink={URLS.MODULE_ADMIN}
+            returnLink={true}
             disabledValide={items.possibilites.length > 0}
             onClick={() => {
               const listeWithColRow = [];

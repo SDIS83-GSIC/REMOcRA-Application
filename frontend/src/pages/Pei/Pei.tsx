@@ -499,6 +499,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
           />
 
           <SubmitFormButtons
+            returnLink={true}
             onClick={() => {
               const coordonnees = geometrieState.data?.find(
                 (e) => e.srid === parseInt(srid),
