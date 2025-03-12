@@ -25,6 +25,7 @@ import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -356,6 +357,9 @@ const MapToolbarCrise = forwardRef(
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
+
+        {/* gestion toponymies */}
+        <ToponymieTypeBarre map={map} criseId={criseId} />
 
         <Volet
           handleClose={handleCloseEvent}
