@@ -59,7 +59,10 @@ const formatLength = function (line) {
 const formatArea = function (polygon) {
   const area = getArea(polygon);
   let output;
-  if (area > 10000) {
+  // Au dessus de 10km², on passe en hectares ; 1km² == 100ha
+  if (area > 10000000) {
+    output = Math.round((area / 10000) * 100) / 100 + " ha";
+  } else if (area > 10000) {
     output = Math.round((area / 1000000) * 100) / 100 + " " + "km<sup>2</sup>";
   } else {
     output = Math.round(area * 100) / 100 + " " + "m<sup>2</sup>";
