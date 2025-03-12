@@ -360,7 +360,11 @@ const PositiveNumberInput = ({
     }
 
     const characterNumber = Number(characterCode);
-    if (characterNumber >= 0 && characterNumber <= 9) {
+    if (
+      (characterNumber >= 0 && characterNumber <= 9) ||
+      characterCode === "." ||
+      characterCode === ","
+    ) {
       if (e.currentTarget.value && e.currentTarget.value.length) {
         return;
       } else if (characterNumber === 0) {
