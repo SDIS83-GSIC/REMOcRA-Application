@@ -81,3 +81,11 @@ fun ST_SetSrid(
     srid: Int,
 ): Field<Geometry?> =
     DSL.field("ST_SetSrid({0}, {1})", Geometry::class.java, geometryField, srid)
+
+/**
+ * Renvoie une géométrie qui est l'union d'un tableau de géométries.
+ * @param geometryList Geometry?: le tableau de géométries dont l'union est à faire
+ * @return Champ de type Geometry
+ */
+fun ST_Union(geometry: Field<Geometry?>): Field<Geometry?> =
+    DSL.field("ST_Union({0})", Geometry::class.java, geometry)

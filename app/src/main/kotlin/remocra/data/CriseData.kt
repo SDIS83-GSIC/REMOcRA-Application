@@ -21,3 +21,9 @@ data class EvenementGeometrieData(
     val eventId: UUID,
     val eventGeometrie: Geometry,
 )
+
+data class TypeToponymies(
+    val typeToponymieId: UUID,
+    val typeToponymieLibelle: String?,
+    val typeToponymieCode: String?,
+)

@@ -586,4 +586,17 @@ class CriseEndpoint : AbstractEndpoint() {
         }
         return updateEventGeometryUseCase.execute(securityContext.userInfo, element).wrap()
     }
+
+    @GET
+    @Path("/{criseId}/get-toponymies")
+    @RequireDroits([Droit.CRISE_C])
+    fun getToponymies(
+        @PathParam("criseId")
+        criseId: UUID,
+        @QueryParam("libelle") libelle: String,
+    ): Response {
+        return Response.ok(
+            criseUseCase.getToponymies(criseId, libelle),
+        ).build()
+    }
 }

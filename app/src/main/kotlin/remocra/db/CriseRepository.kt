@@ -3,23 +3,33 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Geometry
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.CriseData
 import remocra.data.Params
+import remocra.data.TypeToponymies
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
+import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CRISE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
+import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_CRISE_COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_CRISE_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TOPONYMIE_CRISE
+import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE
+import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.utils.ST_Union
+import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -224,6 +234,18 @@ class CriseRepository @Inject constructor(
         var listeToponymie: Collection<UUID>?,
     )
 
+    fun getCriseGeometryUnion(criseId: UUID): Geometry? =
+        dsl.select(
+            ST_Union(COMMUNE.GEOMETRIE),
+        )
+            .from(CRISE)
+            .join(L_CRISE_COMMUNE)
+            .on(CRISE.ID.eq(L_CRISE_COMMUNE.CRISE_ID))
+            .join(COMMUNE)
+            .on(COMMUNE.ID.eq(L_CRISE_COMMUNE.COMMUNE_ID))
+            .where(CRISE.ID.eq(criseId))
+            .fetchSingleInto()
+
     fun getCrise(criseId: UUID): CriseUpsert =
         dsl.select(
             CRISE.ID,
@@ -338,4 +360,81 @@ class CriseRepository @Inject constructor(
             .limit(params?.limit)
             .offset(params?.offset)
             .fetchInto()
+
+    fun getToponymiesByCrise(criseId: UUID): Collection<TypeToponymies> =
+        dsl.select(
+            TYPE_TOPONYMIE.ID,
+            TYPE_TOPONYMIE.LIBELLE,
+            TYPE_TOPONYMIE.CODE,
+        )
+            .from(TYPE_TOPONYMIE)
+            .join(L_TOPONYMIE_CRISE)
+            .on(TOPONYMIE.ID.eq(L_TOPONYMIE_CRISE.TYPE_TOPONYMIE_ID))
+            .where(L_TOPONYMIE_CRISE.CRISE_ID.eq(criseId))
+            .fetchInto()
+
+    /**
+     * listIdToponymiesCrise : types de toponymie que l'utilisateur a sélectionnés.
+     * Récupère les types sélectionnés par l'utilisateur et les classe en protégés / non protégés
+     */
+    fun getSelectedTypes(listIdToponymiesCrise: Collection<UUID>?, protege: Boolean): Collection<SelectedToponymieTypes> =
+        dsl.select(
+            TYPE_TOPONYMIE.ID,
+            TYPE_TOPONYMIE.CODE,
+            TYPE_TOPONYMIE.PROTECTED,
+            TYPE_TOPONYMIE.ACTIF,
+        )
+            .from(TYPE_TOPONYMIE)
+            .where((TYPE_TOPONYMIE.ID.`in`(listIdToponymiesCrise)), TYPE_TOPONYMIE.PROTECTED.eq(protege))
+            .fetchInto()
+
+    /**
+     * Génère la requête pour les types non protégés dans la table `toponymie`
+     */
+    fun getToponymiesNonProtegesQuery(nonProteges: Collection<SelectedToponymieTypes>, globalGeometry: Field<org.locationtech.jts.geom.Geometry?>, libelle: String): Collection<ToponymieResult> =
+        dsl.select(TOPONYMIE.ID, TOPONYMIE.LIBELLE, TOPONYMIE.GEOMETRIE)
+            .from(TOPONYMIE)
+            .where(
+                TOPONYMIE.TYPE_TOPONYMIE_ID.`in`(nonProteges.map { it.typeToponymieId })
+                    .and(ST_Within(TOPONYMIE.GEOMETRIE, globalGeometry)),
+            )
+            .and(TOPONYMIE.LIBELLE.likeIgnoreCase("%$libelle%"))
+            .fetchInto()
+
+    /**
+     * Génère la requête pour les types protégés
+     */
+    fun getToponymiesProtegesQuery(proteges: Collection<SelectedToponymieTypes>, globalGeometry: Field<org.locationtech.jts.geom.Geometry?>, libelleName: String): Collection<ToponymieResult> {
+        val typeToTableMapping = mapOf(
+            "COMMUNE" to Triple(COMMUNE.ID, COMMUNE.LIBELLE, COMMUNE.GEOMETRIE), // permet de regrouper trois valeurs ensemble
+            "LIEU_DIT" to Triple(LIEU_DIT.ID, LIEU_DIT.LIBELLE, LIEU_DIT.GEOMETRIE),
+            "PEI" to Triple(PEI.ID, PEI.COMPLEMENT_ADRESSE, PEI.GEOMETRIE),
+            "CADASTRE" to Triple(CADASTRE_SECTION.ID, CADASTRE_SECTION.NUMERO, CADASTRE_SECTION.GEOMETRIE),
+            "ROUTE" to Triple(VOIE.ID, VOIE.LIBELLE, VOIE.GEOMETRIE),
+        )
+
+        return proteges
+            .filter { it.typeToponymieActif == true }
+            .mapNotNull { typeToTableMapping[it.typeToponymieCode] }
+            .flatMap { (id, libelle, geometrie) ->
+                dsl.select(id.`as`("toponymieId"), libelle.`as`("toponymieLibelle"), geometrie.`as`("toponymieGeometrie"))
+                    .from(id.table)
+                    .where(ST_Within(geometrie, globalGeometry))
+                    .and(libelle.likeIgnoreCase("%$libelleName%"))
+                    .fetchInto()
+            } // flatMap → retourne liste unique des élèments
+    }
+
+    data class ToponymieResult(
+        val toponymieId: UUID,
+        val toponymieLibelle: String?,
+        val toponymieGeometrie: org.locationtech.jts.geom.Geometry?,
+    )
+
+    data class SelectedToponymieTypes(
+        val typeToponymieId: UUID,
+        val typeToponymieCode: String?,
+        val typeToponymieProtected: Boolean?,
+        val typeToponymieActif: Boolean?,
+    )
 }
