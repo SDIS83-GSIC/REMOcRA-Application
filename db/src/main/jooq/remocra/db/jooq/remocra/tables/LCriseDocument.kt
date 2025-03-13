@@ -24,6 +24,8 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.locationtech.jts.geom.Geometry
+import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.L_CRISE_DOCUMENT_PKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_CRISE_ID_FKEY
@@ -88,6 +90,11 @@ open class LCriseDocument(
      * The column <code>remocra.l_crise_document.document_id</code>.
      */
     val DOCUMENT_ID: TableField<Record, UUID?> = createField(DSL.name("document_id"), SQLDataType.UUID.nullable(false), this, "")
+
+    /**
+     * The column <code>remocra.l_crise_document.document_geometrie</code>.
+     */
+    val DOCUMENT_GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("document_geometrie"), SQLDataType.GEOMETRY, this, "", GeometryBinding())
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

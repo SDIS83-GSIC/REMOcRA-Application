@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import org.locationtech.jts.geom.Geometry
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -21,6 +22,7 @@ import javax.annotation.processing.Generated
 data class LCriseDocument(
     val criseId: UUID,
     val documentId: UUID,
+    val documentGeometrie: Geometry?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -40,6 +42,13 @@ data class LCriseDocument(
         if (this.documentId != o.documentId) {
             return false
         }
+        if (this.documentGeometrie == null) {
+            if (o.documentGeometrie != null) {
+                return false
+            }
+        } else if (this.documentGeometrie != o.documentGeometrie) {
+            return false
+        }
         return true
     }
 
@@ -48,6 +57,7 @@ data class LCriseDocument(
         var result = 1
         result = prime * result + this.criseId.hashCode()
         result = prime * result + this.documentId.hashCode()
+        result = prime * result + (if (this.documentGeometrie == null) 0 else this.documentGeometrie.hashCode())
         return result
     }
 
@@ -56,6 +66,7 @@ data class LCriseDocument(
 
         sb.append(criseId)
         sb.append(", ").append(documentId)
+        sb.append(", ").append(documentGeometrie)
 
         sb.append(")")
         return sb.toString()
