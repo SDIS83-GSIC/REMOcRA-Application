@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { transformExtent } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import { TypeModuleRemocra } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../../components/Map/Map.tsx";
@@ -56,9 +57,18 @@ const OldebMap = () => {
   });
 
   useEffect(() => {
-    if (state?.bbox && map) {
-      map?.getView().fit(state.bbox);
-      window.history.replaceState(null, "");
+    if (state?.target && map) {
+      map
+        .getView()
+        .fit(
+          transformExtent(
+            state.target.extent,
+            `EPSG:${state.target.srid}`,
+            map.getView().getProjection().getCode(),
+          ),
+          { maxZoom: 20 },
+        );
+      window.history.replaceState({ from: state.from }, "");
     }
   }, [state, map]);
 

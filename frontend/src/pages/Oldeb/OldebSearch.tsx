@@ -21,8 +21,8 @@ const OldebSearch = () => {
   const location = useLocation();
   const [radioValue, setRadioValue] = useState("oldeb");
   const [communeId, setCommuneId] = useState<string>(null);
-  const [sectionId, setSectionId] = useState<string>(null);
-  const [parcelleId, setParcelleId] = useState<string>(null);
+  const [section, setSection] = useState<string>(null);
+  const [parcelle, setParcelle] = useState<string>(null);
 
   return (
     <Container>
@@ -75,7 +75,7 @@ const OldebSearch = () => {
               url={
                 communeId ? url`/api/cadastre/commune/${communeId}/section` : ""
               }
-              onChange={(e) => setSectionId(e)}
+              onChange={(e) => setSection(e)}
               disabled={!communeId}
             />
           </Col>
@@ -85,31 +85,34 @@ const OldebSearch = () => {
             <AsyncTypeahead
               labelKey={"cadastreParcelleNumero"}
               url={
-                sectionId
-                  ? url`/api/cadastre/section/${sectionId.cadastreSectionId}/parcelle${radioValue === "oldeb" ? "-old" : ""}`
+                section
+                  ? url`/api/cadastre/section/${section.cadastreSection}/parcelle${radioValue === "oldeb" ? "-old" : ""}`
                   : ""
               }
               onChange={(e) => {
-                setParcelleId(e);
+                setParcelle(e);
               }}
-              disabled={!sectionId}
+              disabled={!section}
             />
           </Col>
         </Row>
         <Row>
           <Col className={"py-3"}>
             <Button
-              disabled={!parcelleId}
+              disabled={!parcelle}
               onClick={() => {
-                if (parcelleId) {
-                  const featurePei = new WKT().readFeature(
-                    parcelleId.cadastreParcelleGeometrie.split(";")[1],
-                  );
-                  const bbox = featurePei.getGeometry().getExtent();
+                if (parcelle) {
+                  const [rawSrid, rawFeature] =
+                    parcelle.cadastreParcelleGeometrie.split(";");
+                  const srid = rawSrid.split("=").pop();
+                  const extent = new WKT().readGeometry(rawFeature).getExtent();
                   navigate(URLS.OLDEB_LOCALISATION, {
                     state: {
                       ...location.state,
-                      bbox,
+                      target: {
+                        extent,
+                        srid,
+                      },
                     },
                   });
                 }

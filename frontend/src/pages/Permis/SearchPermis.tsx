@@ -212,13 +212,17 @@ const CardPermisToSearchResult = ({
   const location = useLocation();
 
   const zoomerSurPermis = () => {
-    const featurePermis = new WKT().readFeature(permisGeometrie.split(";")[1]);
-    const bbox = featurePermis.getGeometry().getExtent();
+    const [rawSrid, rawFeature] = permisGeometrie.split(";");
+    const srid = rawSrid.split("=").pop();
+    const extent = new WKT().readGeometry(rawFeature).getExtent();
 
     navigate(URLS.CARTE_PERMIS, {
       state: {
         ...location.state,
-        bbox,
+        target: {
+          extent,
+          srid,
+        },
       },
     });
   };

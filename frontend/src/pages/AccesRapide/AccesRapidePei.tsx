@@ -46,38 +46,40 @@ const AccesRapidePei = () => {
       )
         .json()
         .then((resData) => {
-          let bbox;
-
+          let extent, srid;
           if (GET_TYPE_GEOMETRY.PEI === typeGeometry) {
             // PEI
-            const feature = new WKT().readGeometry(resData.split(";").pop());
-            bbox = feature.getExtent();
+            const [rawSrid, rawFeature] = resData.split(";");
+            srid = rawSrid.split("=").pop();
+            extent = new WKT().readGeometry(rawFeature).getExtent();
           } else if (GET_TYPE_GEOMETRY.TOURNEE === typeGeometry) {
             // Tournée
-            const geometrie = new GeometryCollection(
-              resData.map((pei) =>
-                new WKT().readGeometry(pei.split(";").pop()),
-              ),
-            );
-            bbox = geometrie.getExtent();
+            extent = new GeometryCollection(
+              resData.map((pei: string) => {
+                const [rawSrid, rawFeature] = pei.split(";");
+                srid = rawSrid.split("=").pop();
+                return new WKT().readGeometry(rawFeature).getExtent();
+              }),
+            ).getExtent();
           } else if (GET_TYPE_GEOMETRY.COMMUNE === typeGeometry) {
             // Commune
-            const feature = new WKT().readGeometry(
-              resData.communeGeometry.split(";").pop(),
-            );
-            bbox = feature.getExtent();
+            const [rawSrid, rawFeature] = resData.communeGeometry.split(";");
+            srid = rawSrid.split("=").pop();
+            extent = new WKT().readGeometry(rawFeature).getExtent();
           } else {
             // Voie
-            const feature = new WKT().readGeometry(
-              resData.voieGeometry.split(";").pop(),
-            );
-            bbox = feature.getExtent();
+            const [rawSrid, rawFeature] = resData.voieGeometry.split(";");
+            srid = rawSrid.split("=").pop();
+            extent = new WKT().readGeometry(rawFeature).getExtent();
           }
 
           navigate(URLS.DECI_CARTE, {
             state: {
               ...location.state,
-              bbox,
+              target: {
+                extent,
+                srid,
+              },
             },
           });
         });

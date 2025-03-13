@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import { transformExtent } from "ol/proj";
 import { useLocation } from "react-router-dom";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
@@ -78,8 +79,17 @@ const MapPei = () => {
   });
 
   useEffect(() => {
-    if (state?.bbox && map) {
-      map?.getView().fit(state.bbox, { maxZoom: 20 });
+    if (state?.target && map) {
+      map
+        .getView()
+        .fit(
+          transformExtent(
+            state.target.extent,
+            `EPSG:${state.target.srid}`,
+            map.getView().getProjection().getCode(),
+          ),
+          { maxZoom: 20 },
+        );
       window.history.replaceState({ from: state.from }, "");
     }
   }, [state, map]);
