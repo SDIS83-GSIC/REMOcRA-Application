@@ -352,7 +352,14 @@ const OldebForm = () => {
             <SelectForm
               name={"oldeb.oldebCadastreParcelleId"}
               listIdCodeLibelle={
-                values.oldeb.oldebCadastreSectionId ? cadastreParcelleList : []
+                values.oldeb.oldebCadastreSectionId
+                  ? cadastreParcelleList.map((v) => {
+                      return {
+                        id: v.cadastreParcelleId,
+                        libelle: v.cadastreParcelleNumero,
+                      };
+                    })
+                  : []
               }
               label="Parcelle"
               defaultValue={
