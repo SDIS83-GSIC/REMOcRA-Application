@@ -143,7 +143,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiAnneeFabrication: values?.peiAnneeFabrication ?? null,
     peiGeometrie:
       "SRID=" +
-      values.typeSystemeSrid +
+      values.srid +
       ";POINT(" +
       values.coordonneeX +
       " " +
@@ -246,7 +246,7 @@ type SelectDataType = {
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
   // On récupère l'utilisateur pour prendre en compte les droits
-  const { user, srid }: { user: UtilisateurEntity; srid: string } =
+  const { user, srid }: { user: UtilisateurEntity; srid: number } =
     useAppContext();
 
   const {
@@ -770,16 +770,16 @@ const FormLocalisationPei = ({
                 typeSystemeSrid: e.target.value,
               }));
               const sridActif = e.target.value;
-              const projetionValeur = geometrieData?.find(
+              const projectionValeur = geometrieData?.find(
                 (e) => e.srid === parseInt(sridActif),
               );
               setFieldValue(
                 "coordonneeXToDisplay",
-                projetionValeur?.coordonneeX,
+                projectionValeur?.coordonneeX,
               );
               setFieldValue(
                 "coordonneeYToDisplay",
-                projetionValeur?.coordonneeY,
+                projectionValeur?.coordonneeY,
               );
 
               // Coordonnées en 2154 ou autres
@@ -795,8 +795,11 @@ const FormLocalisationPei = ({
             {TypeSystemeSrid.map((e) => {
               if (e.actif || e.srid === srid) {
                 return (
-                  <option key={e.srid} value={e.srid}>
-                    {" "}
+                  <option
+                    key={e.srid}
+                    value={e.srid}
+                    selected={e.srid === values.typeSystemeSrid}
+                  >
                     {e.nomSystem}
                   </option>
                 );

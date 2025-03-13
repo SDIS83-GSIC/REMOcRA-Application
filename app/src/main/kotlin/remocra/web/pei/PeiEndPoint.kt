@@ -286,7 +286,7 @@ class PeiEndPoint : AbstractEndpoint() {
         srid: Int?,
     ): Response {
         if (coordonneeX.isNullOrEmpty() || coordonneeY.isNullOrEmpty() || srid == null) {
-            return Response.ok(listOf<GetCoordonneesBySrid.CoordonneesBySysteme>()).build()
+            return Response.ok(emptyList<GetCoordonneesBySrid.CoordonneesBySysteme>()).build()
         }
         return Response.ok(getCoordonneesBySrid.execute(coordonneeX, coordonneeY, srid)).build()
     }

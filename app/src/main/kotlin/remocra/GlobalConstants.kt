@@ -42,6 +42,7 @@ object GlobalConstants {
     const val TOLERANCE_VOIES_METRES = "TOLERANCE_VOIES_METRES"
     const val VOIE_SAISIE_LIBRE = "VOIE_SAISIE_LIBRE"
 
+    const val SRID_3857 = 3857
     const val SRID_4326 = 4326
 
     // TODO: convertir en configuration injectable (valeur par défaut dans reference.conf)

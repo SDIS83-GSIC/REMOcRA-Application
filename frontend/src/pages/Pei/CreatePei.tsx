@@ -21,7 +21,7 @@ const CreatePei = () => {
   const initialValues = getInitialValues({
     coordonneeX,
     coordonneeY,
-    srid,
+    srid: srid ? parseInt(srid) : srid,
   } as PeiEntity);
 
   if (state) {
