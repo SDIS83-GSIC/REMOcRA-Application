@@ -6,6 +6,8 @@ import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
 import LinkButton from "../Button/LinkButton.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 
 export interface NavToProps {
   path: string;
@@ -25,6 +27,8 @@ const NavTo = ({ path, label, aLeDroit }: NavToProps) => {
   );
 };
 const Header = ({ links }: { links?: NavToProps[] }) => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
+
   return (
     <Row>
       <Navbar className="mb-3" expand="lg" bg={"primary"} data-bs-theme="dark">
@@ -43,11 +47,13 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
               ))}
             </Nav>
             <Nav>
+              <p className="text-light pe-3">
+                {`${user.prenom} ${user.nom} (${user.username})`}
+              </p>
               <a
                 href={URLS.LOGOUT}
                 className={"text-decoration-none text-light"}
               >
-                {" "}
                 Déconnexion{" "}
               </a>
             </Nav>
