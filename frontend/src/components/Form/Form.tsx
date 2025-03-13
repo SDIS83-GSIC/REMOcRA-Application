@@ -1,17 +1,17 @@
+import classNames from "classnames";
 import { Field, Form as FormikForm, useField } from "formik";
-import { Typeahead } from "react-bootstrap-typeahead";
 import { ReactNode } from "react";
 import { Row } from "react-bootstrap";
+import { Typeahead } from "react-bootstrap-typeahead";
 import Form from "react-bootstrap/Form";
 import FormRange from "react-bootstrap/esm/FormRange";
 import ReactSelect from "react-select";
-import classNames from "classnames";
+import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import { IconInfo } from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import "./form.css";
-import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
-import { useGet } from "../Fetch/useFetch.tsx";
-import Loading from "../Elements/Loading/Loading.tsx";
 
 type InputType = {
   name: string;
@@ -189,7 +189,6 @@ type CheckBoxInputType = {
 export const CheckBoxInput = ({
   name,
   label,
-  required = false,
   disabled = false,
   checked = false,
   tooltipText,
@@ -199,14 +198,6 @@ export const CheckBoxInput = ({
   const error = meta.touched ? meta.error : null;
   return (
     <DivWithError name={name} error={error}>
-      <FormLabel
-        className="p-1"
-        label={label}
-        required={required}
-        disabled={disabled}
-        tooltipText={tooltipText}
-        name={name}
-      />
       <Field
         id={name}
         name={name}
