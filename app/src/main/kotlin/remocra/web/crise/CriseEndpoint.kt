@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PATCH
@@ -21,6 +22,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.CreateDoc
 import remocra.data.CriseData
 import remocra.data.CriseDocumentData
 import remocra.data.DataTableau
@@ -40,6 +42,7 @@ import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.security.NoCsrf
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.crise.CreateCriseUseCase
+import remocra.usecase.crise.CreateScreenCriseUseCase
 import remocra.usecase.crise.CriseUseCase
 import remocra.usecase.crise.ExportCriseUseCase
 import remocra.usecase.crise.MergeCriseUseCase
@@ -85,6 +88,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateCriseUseCase: UpdateCriseUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
+
+    @Inject lateinit var createScreenCrise: CreateScreenCriseUseCase
 
     @Inject lateinit var getPointCarteUseCase: GetPointCarteUseCase
 
@@ -598,5 +603,24 @@ class CriseEndpoint : AbstractEndpoint() {
         return Response.ok(
             criseUseCase.getToponymies(criseId, libelle),
         ).build()
+    }
+
+    @POST
+    @Path("/{criseId}/screen")
+    @RequireDroits([Droit.CRISE_C])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun doScreen(
+        @PathParam("criseId") criseId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return createScreenCrise.execute(
+            userInfo = securityContext.userInfo,
+            CreateDoc(
+                criseId = criseId,
+                criseDocName = httpRequest.getTextPart("criseDocName"),
+                criseDocument = httpRequest.getPart("document"),
+                criseDocumentGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("documentGeometry")),
+            ),
+        ).wrap()
     }
 }

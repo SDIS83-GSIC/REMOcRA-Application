@@ -49,10 +49,11 @@ class CriseRepository @Inject constructor(
             .execute()
     }
 
-    fun insertCriseDocument(documentId: UUID, criseId: UUID) =
+    fun insertCriseDocument(documentId: UUID, criseId: UUID, geometry: org.locationtech.jts.geom.Geometry? = null) =
         dsl.insertInto(L_CRISE_DOCUMENT)
             .set(L_CRISE_DOCUMENT.DOCUMENT_ID, documentId)
             .set(L_CRISE_DOCUMENT.CRISE_ID, criseId)
+            .set(L_CRISE_DOCUMENT.DOCUMENT_GEOMETRIE, geometry)
             .execute()
 
     fun getCrises(params: Params<FilterCrise, SortCrise>): Collection<CriseComplete> =
@@ -324,6 +325,7 @@ class CriseRepository @Inject constructor(
         val documentDate: ZonedDateTime?,
         val documentRepertoire: String?,
         val documentNomFichier: String?,
+        val documentGeometrie: org.locationtech.jts.geom.Geometry?,
         val type: String?,
     )
 
@@ -339,6 +341,7 @@ class CriseRepository @Inject constructor(
             DOCUMENT.NOM_FICHIER,
             DOCUMENT.DATE,
             DOCUMENT.REPERTOIRE,
+            L_CRISE_DOCUMENT.DOCUMENT_GEOMETRIE.`as`("documentGeometrie"),
             DSL.case_()
                 .`when`(L_CRISE_DOCUMENT.CRISE_ID.isNotNull(), DSL.`val`("Crise"))
                 .`when`(EVENEMENT.CRISE_ID.isNotNull(), DSL.`val`("Évènement"))
