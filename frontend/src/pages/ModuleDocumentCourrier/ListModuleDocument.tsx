@@ -52,7 +52,7 @@ const ListModuleDocument = () => {
               accessor: "id",
               buttons: [
                 {
-                  row: (row) => {
+                  row: (row: any) => {
                     return row;
                   },
                   route: (id) => url`/api/document/telecharger/` + id,

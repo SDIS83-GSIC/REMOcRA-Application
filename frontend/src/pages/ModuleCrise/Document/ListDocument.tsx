@@ -1,6 +1,8 @@
 import { Button, Container } from "react-bootstrap";
+import Map from "ol/Map";
+import { WKT } from "ol/format";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
-import { IconExport } from "../../../components/Icon/Icon.tsx";
+import { IconExport, IconLocation } from "../../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
@@ -28,25 +30,43 @@ import filterValuesToVariable from "./FilterCriseDocument.tsx";
 const ListDocument = ({
   criseId,
   onSubmit,
+  map,
 }: {
   criseId: string;
   onSubmit: any;
+  map: Map;
 }) => {
   const { visible, show, close } = useModal();
   const { user }: { user: UtilisateurEntity } = useAppContext();
   const listeButton: ButtonType[] = [];
 
+  const showEventLocation = (geometry: string) => {
+    const geom = new WKT().readFeature(geometry.split(";").pop());
+    map?.getView().fit(geom.get("geometry"));
+  };
+
   if (hasDroit(user, TYPE_DROIT.CRISE_U)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      textEnable: "Clore la crise",
+      textEnable: "Supprimer le document",
       pathname: url`/api/crise/documents/supprimer/`,
       classEnable: "danger",
     });
   }
+
+  listeButton.push({
+    row: (row: any) => {
+      return row;
+    },
+    classEnable: "info",
+    route: (documentId) => url`/api/documents/telecharger/${documentId}`,
+    type: TYPE_BUTTON.BUTTON,
+    icon: <IconExport />,
+    textEnable: "Télécharger",
+  });
 
   return (
     <Container>
@@ -84,24 +104,27 @@ const ListDocument = ({
           },
 
           {
-            Header: "Télécharger",
-            accessor: "documentId",
+            Header: "Localiser",
+            accessor: "documentGeometry",
             Cell: (value) => {
               return (
-                <div>
+                <>
                   <Button
+                    disabled={value.value == null}
                     style={{ backgroundColor: "transparent", border: "none" }}
                     className={"text-warning"}
-                    href={url`/api/documents/telecharger/` + value.value}
+                    onClick={() => {
+                      showEventLocation(value.value);
+                    }}
                   >
-                    <IconExport />
+                    <IconLocation />
                   </Button>
-                </div>
+                </>
               );
             },
           },
           ActionColumn({
-            Header: "Supprimer",
+            Header: "Actions",
             accessor: "documentId",
             buttons: listeButton,
           }),

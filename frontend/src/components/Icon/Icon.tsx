@@ -11,6 +11,7 @@ export const IconMerge = () => <i className="fi fi-rr-code-merge" />;
 export const IconSearch = () => <i className="fi fi-br-search" />;
 export const IconExportCrise = () => <i className="fi fi-br-file-export" />;
 export const IconFilter = () => <i className="fi fi-sr-filter" />;
+export const IconCamera = () => <i className="fi fi-rr-camera-viewfinder" />;
 export const IconWarningCrise = () => (
   <i className="fi fi-rr-triangle-warning" />
 );

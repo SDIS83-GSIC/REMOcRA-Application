@@ -5,7 +5,9 @@ import { WKT } from "ol/format";
 import { Draw, Modify } from "ol/interaction";
 import { Style, Fill, Stroke } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import { fromExtent } from "ol/geom/Polygon";
 import {
+  IconCamera,
   IconDocument,
   IconEvent,
   IconLine,
@@ -26,6 +28,13 @@ import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateList
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
+import EditModal from "../../Modal/EditModal.tsx";
+import useModal from "../../Modal/ModalUtils.tsx";
+import AddTitleForm, {
+  getInitialValue,
+  prepareVariables,
+  ValidationSchema,
+} from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -50,6 +59,10 @@ export const useToolbarCriseContext = ({
   map,
   workingLayer,
   dataEvenementLayer,
+}: {
+  map: any;
+  workingLayer: any;
+  dataEvenementLayer: any;
 }) => {
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showListEvent, setShowListEvent] = useState(false);
@@ -306,6 +319,50 @@ const MapToolbarCrise = forwardRef(
       }
     }
 
+    const { visible, show, close } = useModal();
+
+    const getMapGeometry = (): string => {
+      return (
+        `SRID=${map!.getView().getProjection().getCode().split(":").pop()};` +
+        new WKT().writeGeometry(fromExtent(map!.getView().calculateExtent()))
+      );
+    };
+
+    const captureMap = (): File => {
+      map!.updateSize();
+      const canvas = document.createElement("canvas");
+      const size = map!.getSize() as [number, number];
+
+      canvas.width = size[0];
+      canvas.height = size[1];
+
+      const ctx = canvas.getContext("2d");
+
+      document
+        .querySelectorAll<HTMLCanvasElement>(".ol-layer canvas")
+        .forEach((c) => {
+          if (c.width > 0) {
+            ctx!.globalAlpha = parseFloat(
+              c.parentElement?.style.opacity || "1",
+            );
+            ctx!.drawImage(c, 0, 0, canvas.width, canvas.height);
+          }
+        });
+
+      // Convertir le canvas en Blob (image PNG)
+      const dataURL = canvas.toDataURL("image/png");
+      const byteString = atob(dataURL.split(",")[1]); // Décoder base64
+      const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
+      const listBits = new Uint8Array(byteString.length);
+
+      for (let i = 0; i < byteString.length; i++) {
+        listBits[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([listBits], { type: mimeString });
+      return new File([blob], "capture.png", { type: "image/png" });
+    };
+
     const [typeEvenement, setTypeEvenement] = useState<string | undefined>(
       undefined,
     );
@@ -358,6 +415,15 @@ const MapToolbarCrise = forwardRef(
           activeTool={activeTool}
         />
 
+        <Button
+          className="me-2"
+          onClick={() => {
+            show();
+          }}
+        >
+          <IconCamera />
+        </Button>
+
         {/* gestion toponymies */}
         <ToponymieTypeBarre map={map} criseId={criseId} />
 
@@ -379,6 +445,7 @@ const MapToolbarCrise = forwardRef(
           className="w-auto"
         >
           <CreateListDocument
+            map={map}
             criseIdentifiant={criseId}
             onSubmit={handleCloseEvent}
           />
@@ -487,6 +554,24 @@ const MapToolbarCrise = forwardRef(
           disabled={false}
           criseId={criseId}
         />
+
+        <EditModal
+          closeModal={close}
+          canModify={true}
+          query={url`/api/crise/${criseId}/screen`}
+          submitLabel={"Valider"}
+          visible={visible}
+          isMultipartFormData={true}
+          header={null}
+          validationSchema={ValidationSchema}
+          onSubmit={close}
+          prepareVariables={(values) =>
+            prepareVariables(captureMap(), values, getMapGeometry())
+          }
+          getInitialValues={getInitialValue}
+        >
+          <AddTitleForm />
+        </EditModal>
       </>
     );
   },
