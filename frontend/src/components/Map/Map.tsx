@@ -248,7 +248,7 @@ export const useMapComponent = ({
             color: "rgba(255, 255, 255, 0.2)",
           }),
           stroke: new Stroke({
-            color: "blue",
+            color: "rgba(255, 0, 0, 0.7)",
             width: 2,
           }),
           image: new CircleStyle({

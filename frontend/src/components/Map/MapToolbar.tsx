@@ -30,7 +30,7 @@ const measureStyle = new Style({
     color: "rgba(255, 255, 255, 0.2)",
   }),
   stroke: new Stroke({
-    color: "rgba(0, 0, 0, 0.5)",
+    color: "rgba(255, 0, 0, 0.7)",
     lineDash: [10, 10],
     width: 2,
   }),
