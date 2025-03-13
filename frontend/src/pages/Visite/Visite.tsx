@@ -132,7 +132,7 @@ const Visite = () => {
       return hasDroit(user, TYPE_DROIT.VISITE_RECEP_C);
     } else if (listeVisite.length === 1) {
       return hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_C);
-    } else if (listeVisite.lenght >= 3) {
+    } else if (listeVisite.length >= 3) {
       return (
         hasDroit(user, TYPE_DROIT.VISITE_CONTROLE_TECHNIQUE_C) ||
         hasDroit(user, TYPE_DROIT.VISITE_RECO_C) ||
