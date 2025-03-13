@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
@@ -475,6 +476,10 @@ export default [
     ),
     children: [
       {
+        path: "",
+        element: <Navigate to="acces-rapide" replace />,
+      },
+      {
         path: "acces-rapide",
         element: (
           <Authorization
@@ -668,6 +673,10 @@ export default [
     element: <ModuleCouvertureHydraulique />,
     children: [
       {
+        path: "",
+        element: <Navigate to="etudes" replace />,
+      },
+      {
         path: "etudes",
         element: (
           <Authorization Component={ListEtude} droits={[TYPE_DROIT.ETUDE_R]} />
@@ -730,6 +739,10 @@ export default [
     path: "/gestion-crise",
     element: <ModuleCrise />,
     children: [
+      {
+        path: "",
+        element: <Navigate to="crise" replace />,
+      },
       {
         path: "crise",
         element: (
@@ -797,7 +810,6 @@ export default [
       },
     ],
   },
-
   {
     path: "/oldeb/",
     element: (
@@ -807,6 +819,10 @@ export default [
       />
     ),
     children: [
+      {
+        path: "",
+        element: <Navigate to="recherche" replace />,
+      },
       {
         path: "recherche",
         element: (
@@ -881,6 +897,10 @@ export default [
     element: <GenereCourrier />,
     children: [
       {
+        path: "",
+        element: <Navigate to="view-courrier" replace />,
+      },
+      {
         path: "view-courrier",
         element: (
           <Authorization
@@ -939,6 +959,10 @@ export default [
       />
     ),
     children: [
+      {
+        path: "",
+        element: <Navigate to="menu" replace />,
+      },
       {
         path: "menu",
         element: (
@@ -1878,6 +1902,10 @@ export default [
     ),
     children: [
       {
+        path: "",
+        element: <Navigate to="execute" replace />,
+      },
+      {
         path: "execute/",
         element: (
           <Authorization
@@ -1898,6 +1926,10 @@ export default [
       />
     ),
     children: [
+      {
+        path: "",
+        element: <Navigate to="historique-operations" replace />,
+      },
       {
         path: "historique-operations",
         element: (
