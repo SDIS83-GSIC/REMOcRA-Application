@@ -101,7 +101,7 @@ export const useToolbarPeiContext = ({
       },
     });
     createCtrl.on("drawend", async (event) => {
-      const geometry = event.feature.getGeometry();
+      const feature = event.feature;
       (
         await fetch(
           url`/api/zone-integration/check`,
@@ -128,8 +128,8 @@ export const useToolbarPeiContext = ({
                   ...location.state.from,
                   `${location.pathname}${location.search}`,
                 ],
-                coordonneeX: geometry.getFlatCoordinates()[0],
-                coordonneeY: geometry.getFlatCoordinates()[1],
+                coordonneeX: feature.getGeometry().getFlatCoordinates()[0],
+                coordonneeY: feature.getGeometry().getFlatCoordinates()[1],
                 srid: map.getView().getProjection().getCode().split(":").pop(),
               },
             });
