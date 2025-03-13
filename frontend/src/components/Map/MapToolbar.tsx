@@ -48,7 +48,7 @@ const measureStyle = new Style({
 const formatLength = function (line) {
   const length = getLength(line);
   let output;
-  if (length > 100) {
+  if (length > 1000) {
     output = Math.round((length / 1000) * 100) / 100 + " " + "km";
   } else {
     output = Math.round(length * 100) / 100 + " " + "m";
