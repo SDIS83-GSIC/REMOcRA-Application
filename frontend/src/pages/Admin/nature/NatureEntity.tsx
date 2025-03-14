@@ -4,4 +4,5 @@ export type NatureType = {
   natureLibelle: string;
   natureTypePei: string;
   natureProtected: boolean;
+  diametreIds: string[];
 };

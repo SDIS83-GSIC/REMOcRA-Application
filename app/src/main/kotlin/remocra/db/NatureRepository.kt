@@ -6,9 +6,12 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import remocra.data.NatureWithDiametres
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.tables.pojos.LDiametreNature
 import remocra.db.jooq.remocra.tables.pojos.Nature
+import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE
 import java.util.UUID
 
@@ -18,7 +21,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     override fun getMapById(): Map<UUID, Nature> =
         dsl.selectFrom(NATURE).where(NATURE.ACTIF.isTrue).fetchInto<Nature>().associateBy { it.natureId }
 
-/**
+    /**
      * Retourne l'ensemble des natures
      */
     fun getAllForAdmin(): Collection<Nature> =
@@ -68,17 +71,40 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     }
 
     fun getTable(params: Params<Filter, Sort>): Collection<Nature> =
-        dsl.select(NATURE.fields().asList()).from(NATURE).where(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(params.sortBy?.toCondition() ?: listOf(NATURE.CODE)).limit(params.limit).offset(params.offset)
+        dsl.select(NATURE.fields().asList()).from(NATURE).where(
+            params.filterBy?.toCondition()
+                ?: DSL.trueCondition(),
+        )
+            .orderBy(
+                params.sortBy?.toCondition()
+                    ?: listOf(NATURE.CODE),
+            ).limit(params.limit).offset(params.offset)
             .fetchInto()
 
     fun getCount(params: Params<Filter, Sort>): Int =
-        dsl.selectCount().from(NATURE).where(params.filterBy?.toCondition() ?: DSL.trueCondition()).fetchSingleInto()
+        dsl.selectCount().from(NATURE).where(
+            params.filterBy?.toCondition()
+                ?: DSL.trueCondition(),
+        ).fetchSingleInto()
 
     fun getById(id: UUID): Nature? =
         dsl.select(NATURE.fields().asList()).from(NATURE).where(NATURE.ID.eq(id)).fetchOneInto()
 
-    fun add(natureData: Nature): Int =
+    fun getByIdWithDiametres(id: UUID): NatureWithDiametres? =
+        dsl.select(NATURE.fields().asList()).select(
+            DSL.multiset(
+                dsl.select(L_DIAMETRE_NATURE.DIAMETRE_ID)
+                    .from(L_DIAMETRE_NATURE)
+                    .where(L_DIAMETRE_NATURE.NATURE_ID.eq(NATURE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1().let { it as UUID }
+                }
+            }.`as`("diametreIds"),
+        )
+            .from(NATURE).where(NATURE.ID.eq(id)).fetchOneInto()
+
+    fun add(natureData: NatureWithDiametres): Int =
         dsl.insertInto(NATURE, NATURE.ID, NATURE.ACTIF, NATURE.CODE, NATURE.LIBELLE, NATURE.TYPE_PEI, NATURE.PROTECTED)
             .values(
                 natureData.natureId,
@@ -89,10 +115,16 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 false,
             ).execute()
 
-    fun edit(natureData: Nature): Int =
+    fun edit(natureData: NatureWithDiametres): Int =
         dsl.update(NATURE).set(NATURE.ACTIF, natureData.natureActif).set(NATURE.CODE, natureData.natureCode)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
             .where(NATURE.ID.eq(natureData.natureId)).and(NATURE.PROTECTED.isFalse).execute()
+
+    fun deleteLienDiametreNature(natureId: UUID) = dsl.deleteFrom(L_DIAMETRE_NATURE).where(L_DIAMETRE_NATURE.NATURE_ID.eq(natureId)).execute()
+
+    fun addLienDiametreNature(natureData: NatureWithDiametres) =
+        dsl.batch(natureData.diametreIds.map { DSL.insertInto(L_DIAMETRE_NATURE).set(dsl.newRecord(L_DIAMETRE_NATURE, LDiametreNature(diametreId = it, natureId = natureData.natureId))) })
+            .execute()
 
     fun remove(id: UUID): Int = dsl.deleteFrom(NATURE).where(NATURE.ID.eq(id)).and(NATURE.PROTECTED.isFalse).execute()
 }

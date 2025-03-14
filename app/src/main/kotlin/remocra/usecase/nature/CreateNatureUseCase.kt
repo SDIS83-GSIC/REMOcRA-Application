@@ -3,6 +3,7 @@ package remocra.usecase.nature
 import jakarta.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.NatureWithDiametres
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
 import remocra.data.enums.TypeSourceModification
@@ -10,21 +11,20 @@ import remocra.db.NatureRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.eventbus.datacache.DataCacheModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
 class CreateNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
-    AbstractCUDUseCase<Nature>(TypeOperation.INSERT) {
+    AbstractCUDUseCase<NatureWithDiametres>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.ADMIN_NOMENCLATURE)) {
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: Nature, userInfo: UserInfo) {
+    override fun postEvent(element: NatureWithDiametres, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
@@ -40,12 +40,14 @@ class CreateNatureUseCase @Inject constructor(private val natureRepository: Natu
         eventBus.post(DataCacheModifiedEvent(TypeDataCache.NATURE))
     }
 
-    override fun execute(userInfo: UserInfo?, element: Nature): Nature {
+    override fun execute(userInfo: UserInfo?, element: NatureWithDiametres): NatureWithDiametres {
         natureRepository.add(element)
+
+        natureRepository.addLienDiametreNature(element)
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Nature) {
+    override fun checkContraintes(userInfo: UserInfo?, element: NatureWithDiametres) {
         // rien à faire
     }
 }

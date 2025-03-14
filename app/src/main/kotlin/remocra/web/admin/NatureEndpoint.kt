@@ -15,11 +15,11 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.NatureWithDiametres
 import remocra.data.Params
 import remocra.db.NatureRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.usecase.nature.CreateNatureUseCase
 import remocra.usecase.nature.DeleteNatureUseCase
 import remocra.usecase.nature.UpdateNatureUseCase
@@ -59,6 +59,9 @@ class NatureEndpoint : AbstractEndpoint() {
 
         @FormParam("protected")
         val protected: Boolean = false
+
+        @FormParam("diametreIds")
+        lateinit var diametreIds: Collection<UUID>
     }
 
     @POST
@@ -72,7 +75,7 @@ class NatureEndpoint : AbstractEndpoint() {
     @Path("/get/{id}")
     @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun id(@PathParam("id") id: UUID): Response {
-        return Response.ok(natureRepository.getById(id)).build()
+        return Response.ok(natureRepository.getByIdWithDiametres(id)).build()
     }
 
     @POST
@@ -81,13 +84,14 @@ class NatureEndpoint : AbstractEndpoint() {
     fun createNature(natureInput: NatureInput): Response {
         return createNatureUseCase.execute(
             securityContext.userInfo,
-            Nature(
+            NatureWithDiametres(
                 natureId = UUID.randomUUID(),
                 natureActif = natureInput.actif,
                 natureCode = natureInput.code,
                 natureLibelle = natureInput.libelle,
                 TypePei.valueOf(natureInput.typePei),
                 natureProtected = natureInput.protected,
+                diametreIds = natureInput.diametreIds,
             ),
         ).wrap()
     }
@@ -98,13 +102,14 @@ class NatureEndpoint : AbstractEndpoint() {
     fun updateNature(@PathParam("id") id: UUID, natureInput: NatureInput): Response {
         return updateNatureUseCase.execute(
             securityContext.userInfo,
-            Nature(
+            NatureWithDiametres(
                 natureId = id,
                 natureActif = natureInput.actif,
                 natureCode = natureInput.code,
                 natureLibelle = natureInput.libelle,
                 TypePei.valueOf(natureInput.typePei),
                 natureProtected = natureInput.protected,
+                diametreIds = natureInput.diametreIds,
             ),
         ).wrap()
     }
