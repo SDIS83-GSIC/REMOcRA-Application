@@ -885,7 +885,7 @@ const AdminPei = ({
             setAvailableOptions={setAvailableOptions}
             setSelectedOptions={setSelectedOptions}
             required={true}
-            label={"Colonnes affichées dans la fiche PEI"}
+            label={"Colonnes affichées dans la liste des PEI"}
             name={"pei.peiColonnes"}
           />
         </AdminParametre>
