@@ -5,7 +5,7 @@ export type EvenementType = {
   evenementType: string;
   evenementLibelle: string;
   evenementDescription: string;
-  evenementTag: string;
+  evenementTags: string[];
   evenementOrigine: string;
   evenementDateConstat: Date;
   evenementImportance: string;

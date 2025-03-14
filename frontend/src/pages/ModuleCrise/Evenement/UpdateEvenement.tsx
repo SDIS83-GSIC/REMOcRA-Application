@@ -31,7 +31,7 @@ const UpdateEvenement = ({
   const title = readOnly ? "Informations" : "Modifier l'événement";
 
   return (
-    selectDataState && (
+    selectDataState.data && (
       <Container>
         <PageTitle
           icon={<IconEvent />}

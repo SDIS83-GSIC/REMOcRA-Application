@@ -24,12 +24,32 @@ const FilterEvent = ({
     url`/api/crise/${criseId}/get-type-event-from-crise/${statut}`,
   )?.data?.[0];
 
-  const setValue = (name: string, value: string) => {
+  const setValue = (name: string, value: any) => {
     setSearchParam((previous: any) => ({
       ...(previous || {}),
-      [name]: value === "0" || value === "" || value === "[]" ? null : value,
+      [name]:
+        value === "0" || value === "" || value === "[]" ? undefined : value,
     }));
   };
+
+  const allTags: string[] =
+    typeCriseState?.evenement?.flatMap((event: { evenementTags: any[] }) => {
+      return event.evenementTags?.map((tagName) => tagName.trim()) || [];
+    }) || [];
+
+  const uniqueTags: { id: string; libelle: string }[] = [];
+  allTags
+    .filter((tagName: string) => tagName !== "")
+    .forEach((tagName) => {
+      const isDuplicate = uniqueTags.some((tag) => tag.libelle === tagName);
+
+      if (!isDuplicate) {
+        uniqueTags.push({
+          id: tagName,
+          libelle: tagName,
+        });
+      }
+    });
 
   return (
     <Container>
@@ -39,19 +59,34 @@ const FilterEvent = ({
           <MultiSelectFilterFromList
             name={"listTypeEvent"}
             listIdCodeLibelle={typeCriseState?.typeEvenement}
-            onChange={(e: { value: string }) => setValue("filterType", e.value)}
+            onChange={(e: { value: string }) =>
+              setValue("filterType", e.value.length > 0 ? e.value : null)
+            }
           />
         </Row>
 
         <Row>
-          <p>Auteur</p>
-          <MultiSelectFilterFromList
-            name={"listAuteur"}
-            listIdCodeLibelle={typeCriseState?.utilisateur}
-            onChange={(e: { value: string }) =>
-              setValue("filterAuthor", e.value)
-            }
-          />
+          <Col>
+            <p>Auteur</p>
+            <MultiSelectFilterFromList
+              name={"listAuteur"}
+              listIdCodeLibelle={typeCriseState?.utilisateur}
+              onChange={(e: { value: string }) =>
+                setValue("filterAuthor", e.value.length > 0 ? e.value : null)
+              }
+            />
+          </Col>
+
+          <Col>
+            <p>Tags</p>
+            <MultiSelectFilterFromList
+              name={"filterTag"}
+              listIdCodeLibelle={uniqueTags}
+              onChange={(e: { value: string }) =>
+                setValue("filterTag", e.value.length > 0 ? e.value : null)
+              }
+            />
+          </Col>
         </Row>
 
         <Row>

@@ -18,6 +18,7 @@ import FormDocuments, {
   setDocumentInFormData,
 } from "../../../components/Form/FormDocuments.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
+import TagInput from "../../../components/InputTag/InputTag.tsx";
 
 export const getInitialValues = (
   data: EvenementType | null,
@@ -31,7 +32,7 @@ export const getInitialValues = (
   evenementImportance: data?.evenementImportance ?? 1,
   evenementEstFerme: data?.evenementEstFerme ?? false,
   documents: data?.documents ?? [],
-  evenementTag: data?.evenementTag ?? "",
+  evenementTags: data?.evenementTags ?? [],
   geometrieEvenement: geometrie ?? null,
   evenementTypeId: data?.evenementTypeId ?? typeEvent,
 });
@@ -67,7 +68,7 @@ export const prepareVariables = (
     JSON.stringify(values.geometrieEvenement),
   );
   formData.append("evenementUtilisateurId", userId);
-  formData.append("evenementTag", values.evenementTag);
+  formData.append("evenementTags", values.evenementTags.join());
 
   return formData;
 };
@@ -122,14 +123,6 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
         required={false}
       />
 
-      <TextAreaInput
-        disabled={isReadOnly}
-        name="evenementTag"
-        label="Tags"
-        required={false}
-        tooltipText={"Séparez les tags par une virgule: tag1, tag2, ..."}
-      />
-
       <DateTimeInput
         readOnly={isReadOnly}
         name="evenementDateConstat"
@@ -155,6 +148,14 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
         disabled={isReadOnly}
         name={"evenementEstFerme"}
         label={"Clore l'évènement"}
+      />
+
+      <TagInput
+        onTagsChange={(tags) => setFieldValue("evenementTags", tags)}
+        name={"evenementTag"}
+        label={"Liste des tags"}
+        disabled={isReadOnly}
+        defaultTags={values.evenementTags}
       />
 
       <h3 className="mt-5">Document</h3>
