@@ -39,6 +39,8 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      */
     fun getAllWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): Collection<IndisponibiliteTemporaireWithPei> {
         return internalWithListPei(params, isSuperAdmin, zoneCompetenceId)
+            .limit(params.limit)
+            .offset(params.offset)
             .fetchInto()
     }
 
