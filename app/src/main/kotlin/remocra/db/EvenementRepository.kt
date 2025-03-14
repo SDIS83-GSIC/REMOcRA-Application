@@ -43,15 +43,19 @@ class EvenementRepository @Inject constructor(
         val filterStatut: EvenementStatut? = null,
         val filterImportance: Int? = null,
         val filterMessage: String? = null,
+        val filterTags: Set<String>? = null,
     ) {
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    filterType?.let { DSL.and(EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`in`(it)) },
-                    filterAuthor?.let { DSL.and(EVENEMENT.UTILISATEUR_ID.`in`(it)) },
+                    filterType?.takeIf { it.isNotEmpty() }?.let { DSL.and(EVENEMENT.TYPE_CRISE_CATEGORIE_ID.`in`(it)) },
+                    filterAuthor?.takeIf { it.isNotEmpty() }?.let { DSL.and(EVENEMENT.UTILISATEUR_ID.`in`(it)) },
                     filterStatut?.let { DSL.and(EVENEMENT.STATUT.eq(it)) },
                     filterImportance?.let { DSL.and(EVENEMENT.IMPORTANCE.eq(it)) },
-                    filterMessage?.let { DSL.and(buildDateEventFilter(it)) },
+                    filterMessage?.takeIf { it.isNotEmpty() }?.let { DSL.and(buildDateEventFilter(it)) },
+                    filterTags?.takeIf { it.isNotEmpty() }?.let { tags ->
+                        DSL.and(tags.map { tag -> EVENEMENT.TAGS.containsIgnoreCaseUnaccent(tag) })
+                    },
                 ),
             )
 
@@ -170,7 +174,7 @@ class EvenementRepository @Inject constructor(
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS.`as`("evenementTag"),
+            EVENEMENT.TAGS.convertFrom { it?.split(",")?.map { tag -> tag.trim() } ?: "" }.`as`("evenementTags"),
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
@@ -308,7 +312,7 @@ class EvenementRepository @Inject constructor(
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS.`as`("evenementTag"),
+            EVENEMENT.TAGS.convertFrom { it?.split(",")?.map { tag -> tag.trim() } ?: "" }.`as`("evenementTags"),
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
@@ -370,7 +374,7 @@ class EvenementRepository @Inject constructor(
             evenementData.evenementOrigine,
             evenementData.evenementDateConstat,
             evenementData.evenementImportance,
-            evenementData.evenementTag,
+            evenementData.evenementTags.joinToString(),
             evenementData.evenementEstFerme,
             evenementData.evenementDateCloture,
             evenementData.evenementGeometrie,
@@ -399,7 +403,7 @@ class EvenementRepository @Inject constructor(
             .set(EVENEMENT.ORIGINE, element.evenementOrigine)
             .set(EVENEMENT.DATE_CONSTAT, element.evenementDateConstat)
             .set(EVENEMENT.IMPORTANCE, element.evenementImportance)
-            .set(EVENEMENT.TAGS, element.evenementTag)
+            .set(EVENEMENT.TAGS, element.evenementTags.joinToString())
             .set(EVENEMENT.IS_CLOSED, element.evenementEstFerme)
             .set(EVENEMENT.DATE_CLOTURE, element.evenementDateCloture)
             .set(EVENEMENT.GEOMETRIE, element.evenementGeometrie)

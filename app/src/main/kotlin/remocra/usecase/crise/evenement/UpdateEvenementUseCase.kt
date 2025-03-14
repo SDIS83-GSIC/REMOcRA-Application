@@ -36,7 +36,7 @@ class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.U
     override fun postEvent(element: EvenementData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(listeDocument = null),
+                pojo = element.copy(listeDocuments = null),
                 pojoId = element.evenementId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.EVENEMENT,
@@ -56,8 +56,8 @@ class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.U
 
         evenementRepository.updateEvenement(newElement)
         // - document
-        if (element.listeDocument != null) {
-            upsertDocumentEvenementUseCase.execute(userInfo, element.listeDocument, transactionManager)
+        if (element.listeDocuments != null) {
+            upsertDocumentEvenementUseCase.execute(userInfo, element.listeDocuments, transactionManager)
         }
         // - message
         messageRepository.add(
@@ -67,14 +67,14 @@ class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.U
                 messageDateConstat = dateUtils.now(),
                 messageImportance = element.evenementImportance,
                 messageOrigine = element.evenementOrigine,
-                messageTags = element.evenementTag,
+                messageTags = element.evenementTags.joinToString(),
                 messageId = UUID.randomUUID(),
                 messageEvenementId = element.evenementId,
                 messageUtilisateurId = element.evenementUtilisateurId,
             ),
         )
 
-        return element.copy(listeDocument = null)
+        return element.copy(listeDocuments = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: EvenementData) {

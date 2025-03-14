@@ -57,6 +57,7 @@ import remocra.utils.DateUtils
 import remocra.utils.badRequest
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
+import remocra.utils.getTextPartOrNull
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -395,6 +396,7 @@ class CriseEndpoint : AbstractEndpoint() {
         @QueryParam("filterStatut") statut: EvenementStatut?,
         @QueryParam("filterImportance") importance: Int?,
         @QueryParam("filterMessage") message: String?,
+        @QueryParam("filterTag") tags: Set<String>?,
     ): Response {
         val params = EvenementRepository.Filter(
             filterType = type,
@@ -402,6 +404,7 @@ class CriseEndpoint : AbstractEndpoint() {
             filterStatut = statut,
             filterImportance = importance,
             filterMessage = message,
+            filterTags = tags,
         )
 
         return Response.ok(
@@ -458,6 +461,12 @@ class CriseEndpoint : AbstractEndpoint() {
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val evenementId = UUID.randomUUID()
+        val docsEvenement = DocumentsData.DocumentsEvenement(
+            objectId = evenementId,
+            listDocument = if (httpRequest.getTextPartOrNull("documents").isNullOrEmpty()) objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")) else emptyList(),
+            listeDocsToRemove = if (httpRequest.getTextPartOrNull("listeDocsToRemove").isNullOrEmpty()) objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")) else emptyList(),
+            listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+        )
         return createEventUseCase.execute(
             securityContext.userInfo,
             EvenementData(
@@ -468,16 +477,11 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateConstat")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
-                evenementTag = httpRequest.getTextPart("evenementTag"),
+                evenementTags = httpRequest.getTextPart("evenementTags").split(','),
                 evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
-                listeDocument = DocumentsData.DocumentsEvenement(
-                    objectId = evenementId,
-                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")),
-                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
-                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-                ),
+                listeDocuments = docsEvenement,
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
@@ -527,6 +531,12 @@ class CriseEndpoint : AbstractEndpoint() {
         state: EvenementStatutMode,
         @Context httpRequest: HttpServletRequest,
     ): Response {
+        val docsEvenement = DocumentsData.DocumentsEvenement(
+            objectId = evenementId,
+            listDocument = if (httpRequest.getTextPartOrNull("documents").isNullOrEmpty()) objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")) else emptyList(),
+            listeDocsToRemove = if (httpRequest.getTextPartOrNull("listeDocsToRemove").isNullOrEmpty()) objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")) else emptyList(),
+            listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+        )
         val evenementData =
             EvenementData(
                 evenementId = evenementId,
@@ -536,16 +546,11 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
                 evenementDateConstat = ZonedDateTime.parse(httpRequest.getTextPart("evenementDateConstat")),
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
-                evenementTag = httpRequest.getTextPart("evenementTag"),
+                evenementTags = if (httpRequest.getTextPart("evenementTags").isBlank()) emptyList() else objectMapper.readValue<List<String>>(httpRequest.getTextPart("evenementTags")),
                 evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
-                listeDocument = DocumentsData.DocumentsEvenement(
-                    objectId = evenementId,
-                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")),
-                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
-                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-                ),
+                listeDocuments = docsEvenement,
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),

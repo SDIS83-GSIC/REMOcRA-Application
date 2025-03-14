@@ -40,10 +40,10 @@ class CreateEventUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.INSER
         evenementRepository.add(element)
 
         // - document
-        if (element.listeDocument != null) {
+        if (element.listeDocuments != null) {
             upsertDocumentEvenementUseCase.execute(
                 userInfo,
-                element.listeDocument,
+                element.listeDocuments,
                 transactionManager,
             )
         }
@@ -55,20 +55,20 @@ class CreateEventUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.INSER
                 messageDateConstat = dateUtils.now(),
                 messageImportance = element.evenementImportance,
                 messageOrigine = element.evenementOrigine,
-                messageTags = element.evenementTag,
+                messageTags = element.evenementTags.joinToString(),
                 messageId = UUID.randomUUID(),
                 messageEvenementId = element.evenementId,
                 messageUtilisateurId = element.evenementUtilisateurId,
             ),
         )
 
-        return element.copy(listeDocument = null)
+        return element.copy(listeDocuments = null)
     }
 
     override fun postEvent(element: EvenementData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(listeDocument = null),
+                pojo = element.copy(listeDocuments = null),
                 pojoId = element.evenementId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.EVENEMENT,
