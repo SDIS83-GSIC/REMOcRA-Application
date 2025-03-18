@@ -146,7 +146,7 @@ const TourneePei = ({
           icon={<IconTournee />}
           title={
             <>
-              Gestion des PEI de la tournée $
+              Gestion des PEI de la tournée
               {tourneePeiInfo.data.tourneeLibelle}
               <TooltipCustom
                 tooltipText={
