@@ -21,7 +21,7 @@ class LayersRetriever {
     @Inject
     lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
 
-    fun getData(module: TypeModule, userInfo: UserInfo?): List<LayerGroupData> {
+    fun getData(module: TypeModule, userInfo: UserInfo?, typeId: UUID? = null): List<LayerGroupData> {
         val profil = userInfo?.utilisateurId?.let {
             droitsRepository.getProfilDroitFromUser(it)
         }

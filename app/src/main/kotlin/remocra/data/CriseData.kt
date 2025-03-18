@@ -16,6 +16,7 @@ data class CriseData(
     val criseStatutType: TypeCriseStatut,
     val listeCommuneId: Collection<UUID>?,
     val listeToponymieId: Collection<UUID>?,
+    val couchesWMS: Collection<CouchesData>? = null,
 )
 
 data class EvenementGeometrieData(
@@ -34,4 +35,18 @@ data class CreateDoc(
     val criseDocName: String,
     val criseDocument: Part?,
     val criseDocumentGeometrie: Geometry,
+)
+
+data class CouchesWms(
+    val coucheId: UUID,
+    val coucheCode: String,
+    val coucheLibelle: String,
+)
+
+data class CouchesData(
+    val coucheId: UUID?,
+    val anticipation: Boolean,
+    val operationnel: Boolean,
+    val libelle: String? = null,
+    val code: String? = null,
 )

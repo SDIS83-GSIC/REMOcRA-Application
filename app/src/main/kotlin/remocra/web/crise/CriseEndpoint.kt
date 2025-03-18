@@ -22,6 +22,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.data.CouchesData
 import remocra.data.CreateDoc
 import remocra.data.CriseData
 import remocra.data.CriseDocumentData
@@ -113,6 +114,7 @@ class CriseEndpoint : AbstractEndpoint() {
         val criseStatutType: TypeCriseStatut = TypeCriseStatut.EN_COURS,
         val listeCommuneId: Collection<UUID>? = null,
         val listeToponymieId: Collection<UUID>? = null,
+        val couchesWMS: Collection<CouchesData>? = null,
     )
     data class MessageInput(
         val messageObjet: String? = null,
@@ -264,6 +266,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 criseStatutType = criseInput.criseStatutType,
                 listeCommuneId = criseInput.listeCommuneId,
                 listeToponymieId = criseInput.listeToponymieId,
+                couchesWMS = criseInput.couchesWMS,
             ),
         ).wrap()
     }
@@ -310,6 +313,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 criseStatutType = criseInput.criseStatutType,
                 listeCommuneId = criseInput.listeCommuneId,
                 listeToponymieId = criseInput.listeToponymieId,
+                couchesWMS = criseInput.couchesWMS,
             ),
         ).wrap()
     }
@@ -627,5 +631,25 @@ class CriseEndpoint : AbstractEndpoint() {
                 criseDocumentGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("documentGeometry")),
             ),
         ).wrap()
+    }
+
+    @GET
+    @Path("/get-couches-wms")
+    @Public("Les couches WMS ne sont pas liées à un droit.")
+    fun getCouchesWms(): Response {
+        return Response.ok(
+            criseRepository.getCouchesWms(),
+        ).build()
+    }
+
+    @GET
+    @Path("{criseId}/get-couches")
+    @Public("Les couches WMS ne sont pas liées à un droit.")
+    fun getCouchesByCrise(
+        @PathParam("criseId") criseId: UUID,
+    ): Response {
+        return Response.ok(
+            criseRepository.getCouchesByCrise(criseId),
+        ).build()
     }
 }

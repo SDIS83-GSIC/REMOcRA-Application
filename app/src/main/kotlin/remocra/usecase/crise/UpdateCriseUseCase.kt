@@ -45,6 +45,8 @@ class UpdateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.UPDATE) {
         criseRepository.deleleteLCriseCommune(element.criseId)
         // L_TOPONYMIE_CRISE
         criseRepository.deleteLToponymieCrise(element.criseId)
+        // L_COUCHES_CRISE
+        criseRepository.deleteLCoucheCrise(element.criseId)
 
         // On remplit les L_CRISE_COMMUNE
         criseRepository.insertLCriseCommune(
@@ -56,6 +58,14 @@ class UpdateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.UPDATE) {
             toponymieRepository.insertLToponymieCrise(
                 element.listeToponymieId,
                 element.criseId,
+            )
+        }
+
+        if (!element.couchesWMS.isNullOrEmpty()) {
+            // On remplit les L_COUCHES_CRISE
+            criseRepository.insertLCoucheCrise(
+                element.criseId,
+                element.couchesWMS,
             )
         }
 

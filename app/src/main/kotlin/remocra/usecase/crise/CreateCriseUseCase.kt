@@ -38,6 +38,14 @@ class CreateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.INSERT) {
             element.criseId,
             element.listeCommuneId,
         )
+
+        // On remplit les L_COUCHES_CRISES
+
+        criseRepository.insertLCoucheCrise(
+            element.criseId,
+            element.couchesWMS,
+        )
+
         if (element.listeToponymieId != null) {
             // On remplit les L_TOPONYMIE_CRISE
             toponymieRepository.insertLToponymieCrise(

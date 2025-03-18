@@ -9,16 +9,22 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.data.CouchesData
+import remocra.data.CouchesWms
 import remocra.data.CriseData
 import remocra.data.Params
 import remocra.data.TypeToponymies
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
+import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.COUCHE
 import remocra.db.jooq.remocra.tables.references.CRISE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
+import remocra.db.jooq.remocra.tables.references.L_COUCHE_CRISE
+import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
 import remocra.db.jooq.remocra.tables.references.L_CRISE_COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_CRISE_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
@@ -36,6 +42,19 @@ import java.util.UUID
 class CriseRepository @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
+
+    fun getCouchesWms(): Collection<CouchesWms> =
+        dsl.select(
+            COUCHE.ID,
+            COUCHE.CODE,
+            COUCHE.LIBELLE,
+        )
+            .from(COUCHE)
+            .join(L_COUCHE_MODULE)
+            .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
+            .where(L_COUCHE_MODULE.MODULE_TYPE.eq(TypeModule.CRISE))
+            .and(COUCHE.ACTIVE.eq(true))
+            .fetchInto()
 
     fun deleteCriseDocuments(documentsId: UUID) {
         // Première suppression
@@ -223,6 +242,19 @@ class CriseRepository @Inject constructor(
         )
             .execute()
 
+    fun insertLCoucheCrise(criseId: UUID, couchesWms: Collection<CouchesData>?) =
+        dsl.batch(
+            couchesWms?.mapNotNull {
+                it.coucheId?.let { coucheId ->
+                    DSL.insertInto(L_COUCHE_CRISE)
+                        .set(L_COUCHE_CRISE.COUCHE_ID, coucheId)
+                        .set(L_COUCHE_CRISE.CRISE_ID, criseId)
+                        .set(L_COUCHE_CRISE.OPERATIONNEL, it.operationnel)
+                        .set(L_COUCHE_CRISE.ANTICIPATION, it.anticipation)
+                }
+            },
+        ).execute()
+
     data class CriseUpsert(
         val criseId: UUID,
         val criseLibelle: String?,
@@ -233,6 +265,7 @@ class CriseRepository @Inject constructor(
         val typeCriseId: UUID,
         var listeCommuneId: Collection<UUID>?,
         var listeToponymieId: Collection<UUID>?,
+        val couchesWMS: Collection<CouchesData>?,
     )
 
     fun getCriseGeometryUnion(criseId: UUID): Geometry? =
@@ -267,6 +300,29 @@ class CriseRepository @Inject constructor(
                     r.value1() as UUID
                 }
             }.`as`("listeCommuneId"),
+            multiset(
+                selectDistinct(
+                    COUCHE.ID,
+                    L_COUCHE_CRISE.ANTICIPATION.`as`("anticipation"),
+                    L_COUCHE_CRISE.OPERATIONNEL.`as`("operationnel"),
+                    COUCHE.LIBELLE.`as`("libelle"),
+                    COUCHE.CODE.`as`("code"),
+                )
+                    .from(COUCHE)
+                    .join(L_COUCHE_CRISE)
+                    .on(L_COUCHE_CRISE.COUCHE_ID.eq(COUCHE.ID))
+                    .where(L_COUCHE_CRISE.CRISE_ID.eq(CRISE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    CouchesData(
+                        coucheId = r.value1(),
+                        anticipation = r.value2() as Boolean,
+                        operationnel = r.value3() as Boolean,
+                        libelle = r.value4(),
+                        code = r.value5(),
+                    )
+                }
+            }.`as`("couchesWMS"),
             multiset(
                 selectDistinct(TYPE_TOPONYMIE.ID)
                     .from(TYPE_TOPONYMIE)
@@ -311,6 +367,11 @@ class CriseRepository @Inject constructor(
     fun deleteLToponymieCrise(criseId: UUID) =
         dsl.deleteFrom(L_TOPONYMIE_CRISE)
             .where(L_TOPONYMIE_CRISE.CRISE_ID.eq(criseId))
+            .execute()
+
+    fun deleteLCoucheCrise(criseId: UUID) =
+        dsl.deleteFrom(L_COUCHE_CRISE)
+            .where(L_COUCHE_CRISE.CRISE_ID.eq(criseId))
             .execute()
 
     fun cloreCrise(criseId: UUID, criseDateFin: ZonedDateTime?) =
@@ -440,4 +501,18 @@ class CriseRepository @Inject constructor(
         val typeToponymieProtected: Boolean?,
         val typeToponymieActif: Boolean?,
     )
+
+    fun getCouchesByCrise(criseId: UUID): Collection<CouchesData> =
+        dsl.select(
+            COUCHE.ID,
+            L_COUCHE_CRISE.ANTICIPATION.`as`("anticipation"),
+            L_COUCHE_CRISE.OPERATIONNEL.`as`("operationnel"),
+            COUCHE.LIBELLE.`as`("libelle"),
+            COUCHE.CODE.`as`("code"),
+        )
+            .from(COUCHE)
+            .join(L_COUCHE_CRISE)
+            .on(L_COUCHE_CRISE.COUCHE_ID.eq(COUCHE.ID))
+            .where(L_COUCHE_CRISE.CRISE_ID.eq(criseId))
+            .fetchInto()
 }
