@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.UriBuilder
+import net.sf.jasperreports.engine.DefaultJasperReportsContext
 import net.sf.jasperreports.engine.JREmptyDataSource
+import net.sf.jasperreports.engine.JRPropertiesUtil
 import net.sf.jasperreports.engine.JasperCompileManager
 import net.sf.jasperreports.engine.JasperRunManager
 import remocra.GlobalConstants
@@ -96,6 +98,10 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         val main = modeleCourrier.listeDocuments.find { it.isMainReport }
             ?: throw IllegalArgumentException("Doit avoir un rapport principal")
         val location = "${main.documentRepertoire}/${main.documentNomFichier}"
+
+        // Permet de définir un dossier par défaut pour la compilation du rapport
+        DefaultJasperReportsContext.getInstance()
+            .setProperty(JRPropertiesUtil.PROPERTY_PREFIX + ".compiler.temp.dir", GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
 
         val courrier = JasperCompileManager.compileReport(location)
 

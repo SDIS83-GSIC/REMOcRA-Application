@@ -54,7 +54,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
 
         nouveauxDocuments.forEach { newDoc ->
             val filePart = element.listDocumentParts.find { it.name == "document_${newDoc.documentNomFichier}" }
-            val repertoire = getRepertoire() + "/${element.objectId}"
+            val repertoire = getRepertoire() + "${element.objectId}"
             documentUtils.saveFile(filePart!!.inputStream.readAllBytes(), newDoc.documentNomFichier, repertoire)
 
             val idDocument = UUID.randomUUID()
