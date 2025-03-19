@@ -1,26 +1,16 @@
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { WKT } from "ol/format";
-import { GeometryCollection } from "ol/geom";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconQuickAccess } from "../../components/Icon/Icon.tsx";
-import { FormLabel } from "../../components/Form/Form.tsx";
 import { useGet, useGetRun } from "../../components/Fetch/useFetch.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
 import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
-
-enum GET_TYPE_GEOMETRY {
-  COMMUNE = "/api/commune",
-  TOURNEE = "/api/tournee",
-  PEI = "/api/pei",
-  VOIE = "/api/voie",
-}
+import { FormLabel } from "../../components/Form/Form.tsx";
+import { IconQuickAccess } from "../../components/Icon/Icon.tsx";
+import useLocalisation, {
+  GET_TYPE_GEOMETRY,
+} from "../../components/Localisation/useLocalisation.tsx";
+import url from "../../module/fetch.tsx";
 
 const AccesRapidePei = () => {
-  const navigate = useNavigate();
-
   const [tourneeId, setTourneeId] = useState<string | null>();
   const [peiId, setPeiId] = useState<string | null>();
   const [communeId, setCommuneId] = useState<string | null>();
@@ -34,58 +24,7 @@ const AccesRapidePei = () => {
     {},
   );
 
-  const fetchGeometry = useCallback(
-    async (typeGeometry: string, idType: string) => {
-      (
-        await fetch(
-          url`${typeGeometry}/${idType}/geometrie`,
-          getFetchOptions({
-            method: "GET",
-          }),
-        )
-      )
-        .json()
-        .then((resData) => {
-          let extent, srid;
-          if (GET_TYPE_GEOMETRY.PEI === typeGeometry) {
-            // PEI
-            const [rawSrid, rawFeature] = resData.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
-          } else if (GET_TYPE_GEOMETRY.TOURNEE === typeGeometry) {
-            // Tournée
-            extent = new GeometryCollection(
-              resData.map((pei: string) => {
-                const [rawSrid, rawFeature] = pei.split(";");
-                srid = rawSrid.split("=").pop();
-                return new WKT().readGeometry(rawFeature).getExtent();
-              }),
-            ).getExtent();
-          } else if (GET_TYPE_GEOMETRY.COMMUNE === typeGeometry) {
-            // Commune
-            const [rawSrid, rawFeature] = resData.communeGeometry.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
-          } else {
-            // Voie
-            const [rawSrid, rawFeature] = resData.voieGeometry.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
-          }
-
-          navigate(URLS.DECI_CARTE, {
-            state: {
-              ...location.state,
-              target: {
-                extent,
-                srid,
-              },
-            },
-          });
-        });
-    },
-    [navigate],
-  );
+  const { fetchGeometry } = useLocalisation();
 
   useEffect(() => {
     if (
