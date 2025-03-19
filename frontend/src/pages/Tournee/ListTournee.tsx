@@ -2,18 +2,22 @@ import { useState } from "react";
 import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
-import CreateButton from "../../components/Button/CreateButton.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
   IconCentPourcent,
   IconDesaffecter,
+  IconLocation,
   IconSortList,
   IconTournee,
   IconZeroPourcent,
 } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
+import useLocalisation, {
+  GET_TYPE_GEOMETRY,
+} from "../../components/Localisation/useLocalisation.tsx";
 import {
   ActionColumn,
   ListePeiColumn,
@@ -31,14 +35,15 @@ import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
+import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
-import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { fetchGeometry } = useLocalisation();
 
   const column: Array<columnType> = [
     {
@@ -255,6 +260,17 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       classEnable: "warning",
     });
   }
+
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    onClick: (tourneeId) => fetchGeometry(GET_TYPE_GEOMETRY.TOURNEE, tourneeId),
+    type: TYPE_BUTTON.LINK,
+    icon: <IconLocation />,
+    textEnable: "Localiser",
+    classEnable: "primary",
+  });
 
   column.push(
     ActionColumn({
