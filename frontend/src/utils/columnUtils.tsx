@@ -8,9 +8,11 @@ import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
 import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
+  IconLocation,
   IconSee,
   IconVisite,
 } from "../components/Icon/Icon.tsx";
+import { GET_TYPE_GEOMETRY } from "../components/Localisation/useLocalisation.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
 import {
   ButtonType,
@@ -44,8 +46,10 @@ function getColumnPeiByStringArray(
   user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
   listeAnomaliePossible: Array<IdCodeLibelleType>,
+  fetchGeometry: (typeGeometrie: string, idPei: string) => void,
 ): Array<columnType> {
   const column: Array<columnType> = [];
+
   parametres.forEach((_parametre: COLUMN_PEI) => {
     switch (_parametre) {
       case COLUMN_PEI.NUMERO_COMPLET:
@@ -335,6 +339,16 @@ function getColumnPeiByStringArray(
         },
       });
     }
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      onClick: (idPei) => fetchGeometry(GET_TYPE_GEOMETRY.PEI, idPei),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconLocation />,
+      textEnable: "Localiser",
+      classEnable: "primary",
+    });
     column.push(
       ActionColumn({
         Header: "Actions",

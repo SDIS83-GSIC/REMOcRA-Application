@@ -30,132 +30,132 @@ const TableActionColumn = ({
   isLink = true,
 }: TableActionButtonType) => {
   return (
-    <Col className={"m-0 p-0"} xs={12} md={6} xxl={3}>
-      {!hide ||
-        (!hide(row.original) && (
-          <>
-            {editModal != null ? (
-              <>
-                <EditModal
-                  closeModal={editModal.close}
-                  header={editModal.header}
-                  ref={editModal.ref}
-                  visible={editModal.visible}
-                  query={editModal.path}
-                  prepareVariables={editModal.prepareVariable}
-                  onSubmit={() =>
-                    reload ? reload() : window.location.reload(false)
-                  }
-                >
-                  {editModal.content}
-                </EditModal>
-
-                <TooltipCustom
-                  tooltipText={disabled ? textDisable : textEnable}
-                  tooltipId={row.value}
-                >
-                  <Button
-                    variant="link"
-                    className={
-                      disabled
-                        ? "text-decoration-none text-muted"
-                        : "text-decoration-none text-" + classEnable
-                    }
-                    disabled={disabled}
-                    onClick={editModal?.show}
-                  >
-                    {icon}
-                  </Button>
-                </TooltipCustom>
-              </>
-            ) : deleteModal != null ? (
-              <>
-                <TooltipCustom
-                  tooltipText={disabled ? textDisable : textEnable}
-                  tooltipId={row.value}
-                >
-                  <DeleteButton
-                    className={disabled ? "text-muted" : "text-" + classEnable}
-                    disabled={disabled}
-                    onClick={deleteModal?.show}
-                  />
-                </TooltipCustom>
-                {!disabled && (
-                  <DeleteModal
-                    visible={deleteModal.visible}
-                    closeModal={deleteModal.close}
-                    query={pathname}
-                    ref={deleteModal.ref}
-                    onDelete={() =>
-                      reload ? reload() : window.location.reload(false)
-                    }
-                  />
-                )}
-              </>
-            ) : confirmModal ? (
-              <ConfirmButtonWithModal
-                path={pathname}
-                icon={icon}
-                disabled={disabled}
-                classEnable={classEnable}
-                textDisable={textDisable}
-                textEnable={textEnable}
-                tooltipId={row.value}
-                isPost={isPost}
-              />
-            ) : simpleModal != null ? (
-              <ButtonWithSimpleModal
-                icon={icon}
-                disabled={disabled}
-                classEnable={classEnable}
-                textDisable={textDisable}
-                textEnable={textEnable}
-                tooltipId={row.value}
-                header={simpleModal.header}
-                content={simpleModal.content}
-              />
-            ) : isLink ? (
-              <TooltipCustom
-                tooltipText={disabled ? textDisable : textEnable}
-                tooltipId={row.value}
+    !hide ||
+    (!hide(row.original) && (
+      <Col className={"m-0 p-0"} xs={12} md={6} xxl={3}>
+        <>
+          {editModal != null ? (
+            <>
+              <EditModal
+                closeModal={editModal.close}
+                header={editModal.header}
+                ref={editModal.ref}
+                visible={editModal.visible}
+                query={editModal.path}
+                prepareVariables={editModal.prepareVariable}
+                onSubmit={() =>
+                  reload ? reload() : window.location.reload(false)
+                }
               >
-                <Col>
-                  <CustomLinkButton
-                    variant={"link"}
-                    className={classNames(
-                      "text-decoration-none",
-                      disabled ? "text-muted" : "text-" + classEnable,
-                    )}
-                    disabled={disabled}
-                    pathname={pathname}
-                    onClick={onClick}
-                  >
-                    {icon}
-                  </CustomLinkButton>
-                </Col>
-              </TooltipCustom>
-            ) : (
+                {editModal.content}
+              </EditModal>
+
               <TooltipCustom
                 tooltipText={disabled ? textDisable : textEnable}
                 tooltipId={row.value}
               >
                 <Button
+                  variant="link"
+                  className={
+                    disabled
+                      ? "text-decoration-none text-muted"
+                      : "text-decoration-none text-" + classEnable
+                  }
+                  disabled={disabled}
+                  onClick={editModal?.show}
+                >
+                  {icon}
+                </Button>
+              </TooltipCustom>
+            </>
+          ) : deleteModal != null ? (
+            <>
+              <TooltipCustom
+                tooltipText={disabled ? textDisable : textEnable}
+                tooltipId={row.value}
+              >
+                <DeleteButton
+                  className={disabled ? "text-muted" : "text-" + classEnable}
+                  disabled={disabled}
+                  onClick={deleteModal?.show}
+                />
+              </TooltipCustom>
+              {!disabled && (
+                <DeleteModal
+                  visible={deleteModal.visible}
+                  closeModal={deleteModal.close}
+                  query={pathname}
+                  ref={deleteModal.ref}
+                  onDelete={() =>
+                    reload ? reload() : window.location.reload(false)
+                  }
+                />
+              )}
+            </>
+          ) : confirmModal ? (
+            <ConfirmButtonWithModal
+              path={pathname}
+              icon={icon}
+              disabled={disabled}
+              classEnable={classEnable}
+              textDisable={textDisable}
+              textEnable={textEnable}
+              tooltipId={row.value}
+              isPost={isPost}
+            />
+          ) : simpleModal != null ? (
+            <ButtonWithSimpleModal
+              icon={icon}
+              disabled={disabled}
+              classEnable={classEnable}
+              textDisable={textDisable}
+              textEnable={textEnable}
+              tooltipId={row.value}
+              header={simpleModal.header}
+              content={simpleModal.content}
+            />
+          ) : isLink ? (
+            <TooltipCustom
+              tooltipText={disabled ? textDisable : textEnable}
+              tooltipId={row.value}
+            >
+              <Col>
+                <CustomLinkButton
                   variant={"link"}
                   className={classNames(
                     "text-decoration-none",
                     disabled ? "text-muted" : "text-" + classEnable,
                   )}
                   disabled={disabled}
-                  href={pathname}
+                  pathname={pathname}
                   onClick={onClick}
                 >
                   {icon}
-                </Button>
-              </TooltipCustom>
-            )}
-          </>
-        ))}
-    </Col>
+                </CustomLinkButton>
+              </Col>
+            </TooltipCustom>
+          ) : (
+            <TooltipCustom
+              tooltipText={disabled ? textDisable : textEnable}
+              tooltipId={row.value}
+            >
+              <Button
+                variant={"link"}
+                className={classNames(
+                  "text-decoration-none",
+                  disabled ? "text-muted" : "text-" + classEnable,
+                )}
+                disabled={disabled}
+                href={pathname}
+                onClick={onClick}
+              >
+                {icon}
+              </Button>
+            </TooltipCustom>
+          )}
+        </>
+      </Col>
+    ))
   );
 };
 

@@ -11,6 +11,7 @@ import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
+import useLocalisation from "../Localisation/useLocalisation.tsx";
 
 const ListPei = ({
   filterPage,
@@ -19,6 +20,7 @@ const ListPei = ({
   displayNone,
 }: ListePeiType) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { fetchGeometry } = useLocalisation();
 
   const { data: listeAnomaliePossible } = useGet(
     url`/api/nomenclatures/list/` + NOMENCLATURE.ANOMALIE,
@@ -97,6 +99,7 @@ const ListPei = ({
           user,
           peiColonnes,
           listeAnomaliePossible,
+          fetchGeometry,
         )}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}
