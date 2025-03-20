@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import SelectDateTimeInput from "../../../components/Filter/SelectDateTimeInput.tsx";
 import CheckBoxInput from "../../../components/Filter/SelectCheckBoxInput.tsx";
 import url from "../../../module/fetch.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 
 const ExportCrise = () => {
   const { criseId } = useParams();
@@ -26,6 +27,7 @@ const ExportCrise = () => {
         onChange={(e: { value: string }) =>
           setValue("dateDebExtraction", new Date(e.value).toISOString())
         }
+        value={formatDateTimeForDateTimeInput(new Date())}
       />
 
       <SelectDateTimeInput
@@ -35,6 +37,7 @@ const ExportCrise = () => {
         onChange={(e: { value: string }) =>
           setValue("dateFinExtraction", new Date(e.value).toISOString())
         }
+        value={formatDateTimeForDateTimeInput(new Date())}
       />
 
       <h1>Export</h1>

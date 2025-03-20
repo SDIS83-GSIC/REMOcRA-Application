@@ -14,7 +14,7 @@ import { requiredDate } from "../../../module/validators.tsx";
 
 export const getInitialValues = (criseId: string | undefined) => ({
   criseId: criseId,
-  criseDateFin: null,
+  criseDateFin: new Date(),
 });
 export const validationSchema = object({
   criseDateFin: requiredDate,

@@ -12,20 +12,19 @@ import {
   requiredDate,
   requiredString,
 } from "../../../../module/validators.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../../utils/formatDateUtils.tsx";
 
 export const messageValidationSchema = object({
   messageObjet: requiredString,
   messageDescription: requiredString,
   messageDateConstat: requiredDate,
-  messageOrigine: requiredString,
-  messageTags: requiredString,
 });
 
 export const getInitialValue = (values: any, utilisateurId: any) => ({
   messageUtilisateurId: utilisateurId,
 });
 
-export const prepareMessageValues = (values) => ({
+export const prepareMessageValues = (values: any) => ({
   messageObjet: values.messageObjet,
   messageDescription: values.messageDescription,
   messageDateConstat: new Date(values.messageDateConstat).toISOString(),
@@ -61,6 +60,7 @@ const MessageForm = () => {
               label="Date de constat"
               name={"messageDateConstat"}
               required={true}
+              value={formatDateTimeForDateTimeInput(new Date())}
             />
           </Col>
 
@@ -81,11 +81,11 @@ const MessageForm = () => {
             <TextInput
               label="Origine"
               name={"messageOrigine"}
-              required={true}
+              required={false}
             />
           </Col>
           <Col>
-            <TextInput label="Tags" name={"messageTags"} />
+            <TextInput required={false} label="Tags" name={"messageTags"} />
           </Col>
         </Row>
       </FieldSet>

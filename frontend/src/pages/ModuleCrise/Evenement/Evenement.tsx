@@ -28,7 +28,7 @@ export const getInitialValues = (
   evenementLibelle: data?.evenementLibelle ?? null,
   evenementOrigine: data?.evenementOrigine ?? "",
   evenementDescription: data?.evenementDescription ?? "",
-  evenementDateConstat: data?.evenementDateConstat ?? null,
+  evenementDateConstat: data?.evenementDateConstat ?? new Date(),
   evenementImportance: data?.evenementImportance ?? 1,
   evenementEstFerme: data?.evenementEstFerme ?? false,
   documents: data?.documents ?? [],
