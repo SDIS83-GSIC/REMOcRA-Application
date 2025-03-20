@@ -66,6 +66,7 @@ type ParametresSectionPermis = {
 
 type ParametresSectionPei = {
   peiColonnes: string[] | undefined;
+  peiNombreHistorique: number | undefined;
   bufferCarte: number;
   caracteristiquesPenaTooltipWeb: string[] | undefined;
   caracteristiquesPibiTooltipWeb: string[] | undefined;
@@ -1017,6 +1018,13 @@ const AdminPei = ({
             name="pei.voieSaisieLibre"
             label="Autoriser la saisie libre pour les voies"
             checked={values?.voieSaisieLibre}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiNombreHistorique"
+            label="Nombre de données à afficher sur le graphique de la fiche résumée"
+            required={false}
           />
         </AdminParametre>
       </>

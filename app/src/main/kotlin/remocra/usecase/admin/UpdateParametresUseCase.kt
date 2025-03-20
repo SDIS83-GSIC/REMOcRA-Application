@@ -139,6 +139,10 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB,
                 objectMapper.writeValueAsString(parametresAdminData.pei.caracteristiquesPibiTooltipWeb),
             )
+            updateParametre(
+                ParametreEnum.PEI_NOMBRE_HISTORIQUE,
+                parametresAdminData.pei.peiNombreHistorique?.toString(),
+            )
 
             // ALERTE
             updateParametre(
