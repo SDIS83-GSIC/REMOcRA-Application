@@ -66,8 +66,8 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @return Une étape de requête SQL pour les résultats filtrés et triés.
      */
     private fun internalWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): SelectSeekStepN<Record> {
-        val nomCte = name("listePei")
-        val cte = nomCte.fields("idIT", "listeNumeroPei").`as`(
+        val nomCte = name("liste_pei")
+        val cte = nomCte.fields("id_it", "liste_numero_pei").`as`(
             dsl.select(
                 L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID,
                 DSL.listAgg(PEI.NUMERO_COMPLET, ", ")
@@ -85,10 +85,10 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
 
         )
 
-        val indisponibiliteTemporaireId = field(name("listePei", "idIT"), SQLDataType.UUID)
-        val listeNumeroPei = field(name("listePei", "listeNumeroPei"), SQLDataType.VARCHAR)
+        val indisponibiliteTemporaireId = field(name("liste_pei", "id_it"), SQLDataType.UUID)
+        val listeNumeroPei = field(name("liste_pei", "liste_numero_pei"), SQLDataType.VARCHAR)
 
-        return dsl.with(cte).selectDistinct(
+        return dsl.with(cte).select(
             *INDISPONIBILITE_TEMPORAIRE.fields(),
             listeNumeroPei,
         )
