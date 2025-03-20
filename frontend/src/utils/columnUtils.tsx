@@ -366,10 +366,12 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
   user,
   parametres,
   handleButtonClick,
+  fetchGeometry,
 }: {
   user: UtilisateurEntity;
   parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>;
   handleButtonClick: (value: string) => any;
+  fetchGeometry: (typeGeometrie: string, idInsiponibiliteTemp: string) => void;
 }): Array<columnType> {
   const listePeiState = useGet(url`/api/pei/get-id-numero`);
   const column: Array<columnType> = [];
@@ -567,6 +569,20 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         });
       }
     }
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      onClick: (idIndisponibiliteTemporaire) =>
+        fetchGeometry(
+          GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP,
+          idIndisponibiliteTemporaire,
+        ),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconLocation />,
+      textEnable: "Localiser",
+      classEnable: "primary",
+    });
     column.push(
       ActionColumn({
         Header: "Actions",

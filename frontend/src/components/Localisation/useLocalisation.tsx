@@ -10,6 +10,7 @@ export enum GET_TYPE_GEOMETRY {
   TOURNEE = "/api/tournee",
   PEI = "/api/pei",
   VOIE = "/api/voie",
+  INDISPONIBILITE_TEMP = "/api/indisponibilite-temporaire",
 }
 
 /**
@@ -41,7 +42,10 @@ const useLocalisation = () => {
             const [rawSrid, rawFeature] = resData.split(";");
             srid = rawSrid.split("=").pop();
             extent = new WKT().readGeometry(rawFeature).getExtent();
-          } else if (GET_TYPE_GEOMETRY.TOURNEE === typeGeometry) {
+          } else if (
+            GET_TYPE_GEOMETRY.TOURNEE === typeGeometry ||
+            GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP === typeGeometry
+          ) {
             // Tournée
             extent = new GeometryCollection(
               resData.map((pei: string) => {

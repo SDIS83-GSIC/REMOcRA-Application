@@ -14,6 +14,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
+import org.locationtech.jts.geom.Point
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
@@ -464,4 +465,12 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .set(INDISPONIBILITE_TEMPORAIRE.BASCULE_FIN, true)
             .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(itId))
             .execute()
+
+    fun getGeometrieIndispoTemp(indisponibiliteTemporaireId: UUID): Collection<Point> =
+        dsl.select(PEI.GEOMETRIE)
+            .from(PEI)
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(indisponibiliteTemporaireId))
+            .fetchInto()
 }

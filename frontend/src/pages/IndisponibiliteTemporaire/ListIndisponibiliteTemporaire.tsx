@@ -5,6 +5,7 @@ import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
+import useLocalisation from "../../components/Localisation/useLocalisation.tsx";
 import { useFilterContext } from "../../components/Table/QueryTable.tsx";
 import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
@@ -24,6 +25,7 @@ const ListIndisponibiliteTemporaire = ({
   colonnes?: COLUMN_INDISPONIBILITE_TEMPORAIRE[];
 }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { fetchGeometry } = useLocalisation();
 
   //TODO a aller chercher en base
   const column: COLUMN_INDISPONIBILITE_TEMPORAIRE[] = colonnes ?? [
@@ -72,6 +74,7 @@ const ListIndisponibiliteTemporaire = ({
             user: user,
             parametres: column,
             handleButtonClick: handleButtonClick,
+            fetchGeometry: fetchGeometry,
           })}
           query={url`/api/indisponibilite-temporaire`}
           idName={"IndisponibiliteTemporaireTable"}

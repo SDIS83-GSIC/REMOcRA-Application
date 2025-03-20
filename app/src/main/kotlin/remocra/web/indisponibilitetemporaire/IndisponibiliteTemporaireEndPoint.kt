@@ -153,6 +153,13 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
             indisponibiliteTemporaireListePeiId = indisponibiliteTemporaireInput.listePeiId,
         )
     }
+
+    @GET
+    @Path("/{indispoTemporaireId}/geometrie")
+    @RequireDroits([Droit.INDISPO_TEMP_R])
+    fun getGeometrieById(@PathParam("indispoTemporaireId") indispoTemporaireId: UUID): Response {
+        return Response.ok(indisponibiliteTemporaireRepository.getGeometrieIndispoTemp(indispoTemporaireId)).build()
+    }
 }
 
 class IndisponibiliteTemporaireInput {
