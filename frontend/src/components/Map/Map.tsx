@@ -3,7 +3,7 @@ import Map from "ol/Map";
 import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
-import { createStringXY } from "ol/coordinate";
+import { createStringXY, degreesToStringHDMS } from "ol/coordinate";
 import { getCenter, getTopLeft, getWidth } from "ol/extent";
 import { GeoJSON } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
@@ -19,6 +19,8 @@ import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
 import { Col, Row } from "react-bootstrap";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import { TYPE_AFFICHAGE_COORDONNEES } from "../../enums/TypeAffichageCoordonnees.tsx";
 import url from "../../module/fetch.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
@@ -170,18 +172,34 @@ export const useMapComponent = ({
 }) => {
   const { epsg: projection, extent } = useAppContext();
   const layersState = useGet(url`/api/layers/${typeModule}`, {});
+  const afficheCoordonneesState = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(
+        PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE,
+      ),
+    }}`,
+    {},
+  );
   const layerListRef = useRef<MapLegend>();
   const mapToolbarRef = useRef<MapToolbar>();
 
   const map = useMemo(() => {
-    if (!projection || !mapElement.current) {
+    if (!projection || !mapElement.current || !afficheCoordonneesState.data) {
       return;
     }
     const initialMap = new Map({
       controls: defaultControls().extend([
         new FullScreen(),
         new MousePosition({
-          coordinateFormat: createStringXY(4),
+          coordinateFormat:
+            afficheCoordonneesState.data?.[
+              PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
+            ].parametreValeur === TYPE_AFFICHAGE_COORDONNEES.DEGRES_DECIMAUX
+              ? (coordinate) =>
+                  degreesToStringHDMS("NS", coordinate[1], 4) +
+                  " " +
+                  degreesToStringHDMS("EO", coordinate[0], 4)
+              : createStringXY(4),
           projection: projection.name,
         }),
         scaleControl,
@@ -198,7 +216,7 @@ export const useMapComponent = ({
       }),
     });
     return initialMap;
-  }, [mapElement.current, projection]);
+  }, [mapElement.current, projection, afficheCoordonneesState.data]);
 
   // Ajout des couches disponibles depuis le serveur
   const availableLayers = useMemo(() => {
