@@ -30,6 +30,7 @@ import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -641,14 +642,27 @@ const AdminCartographie = ({
 }: {
   values: ParametresSectionCartographie;
 }) => {
+  const { setFieldValue } = useFormikContext();
+
   return (
     values && (
       <>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <TextInput
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
             name="cartographie.coordonneesFormatAffichage"
             label="Format d'affichage des coordonnées"
-            tooltipText={"TODO"}
+            options={typeAffichageCoordonnees}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            onChange={(e) =>
+              setFieldValue(
+                `cartographie.coordonneesFormatAffichage`,
+                typeAffichageCoordonnees.find((type) => type.id === e.id)?.id,
+              )
+            }
+            defaultValue={typeAffichageCoordonnees.find(
+              (e) => e.id === values.coordonneesFormatAffichage,
+            )}
           />
         </AdminParametre>
       </>
