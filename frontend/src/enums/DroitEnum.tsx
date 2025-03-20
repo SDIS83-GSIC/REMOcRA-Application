@@ -153,6 +153,7 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.DFCI_EXPORTATLAS_C, SECTION_DROIT.DFCI],
   [TYPE_DROIT.DFCI_R, SECTION_DROIT.DFCI],
   [TYPE_DROIT.DFCI_RECEPTRAVAUX_C, SECTION_DROIT.DFCI],
+  [TYPE_DROIT.DOCUMENTS_A, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.DOCUMENTS_R, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.ETUDE_C, SECTION_DROIT.COUVERTURE_HYDRAULIQUE],
   [TYPE_DROIT.ETUDE_D, SECTION_DROIT.COUVERTURE_HYDRAULIQUE],
@@ -187,6 +188,7 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.PERMIS_A, SECTION_DROIT.PERMIS],
   [TYPE_DROIT.PERMIS_DOCUMENTS_C, SECTION_DROIT.PERMIS],
   [TYPE_DROIT.PERMIS_R, SECTION_DROIT.PERMIS],
+  [TYPE_DROIT.RAPPORT_PERSONNALISE_E, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.RCCI_A, SECTION_DROIT.RCCI],
   [TYPE_DROIT.RCCI_R, SECTION_DROIT.RCCI],
   [TYPE_DROIT.RISQUES_KML_D, SECTION_DROIT.RISQUE],
@@ -209,7 +211,6 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.VISITE_RECO_INIT_C, SECTION_DROIT.PEI],
   [TYPE_DROIT.VISITE_RECO_INIT_D, SECTION_DROIT.PEI],
   [TYPE_DROIT.ZOOM_LIEU_R, SECTION_DROIT.GENERAL],
-  [TYPE_DROIT.DOCUMENTS_A, SECTION_DROIT.GENERAL],
 ]);
 
 export const TypeDroitLabel = new Map<string, string>([
@@ -275,6 +276,7 @@ export const TypeDroitLabel = new Map<string, string>([
     TYPE_DROIT.DFCI_RECEPTRAVAUX_C,
     "Déposer des dossiers de réception de travaux",
   ],
+  [TYPE_DROIT.DOCUMENTS_A, "Administrer les documents"],
   [TYPE_DROIT.DOCUMENTS_R, "Consulter les documents"],
   [TYPE_DROIT.ETUDE_C, "Créer une étude"],
   [TYPE_DROIT.ETUDE_D, "Clore une étude"],
@@ -345,6 +347,7 @@ export const TypeDroitLabel = new Map<string, string>([
     "Déposer des documents rattachés à un permis",
   ],
   [TYPE_DROIT.PERMIS_R, "Consulter les permis (carte et recherches)"],
+  [TYPE_DROIT.RAPPORT_PERSONNALISE_E, "Exécuter des rapports personnalisés"],
   [TYPE_DROIT.RCCI_A, "Créer, éditer, supprimer les RCCI"],
   [TYPE_DROIT.RCCI_R, "Consulter les RCCI"],
   [TYPE_DROIT.RISQUES_KML_D, "TODO"],
@@ -388,7 +391,6 @@ export const TypeDroitLabel = new Map<string, string>([
     "Supprimer des visites de reconnaissance opérationnelle initiale",
   ],
   [TYPE_DROIT.ZOOM_LIEU_R, "Zoomer sur un lieu"],
-  [TYPE_DROIT.DOCUMENTS_A, "Administrer les documents"],
 ]);
 
 export enum TYPE_DROIT_API {
