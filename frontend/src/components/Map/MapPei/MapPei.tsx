@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { isEmpty } from "ol/extent";
 import { transformExtent } from "ol/proj";
-import { useLocation } from "react-router-dom";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
@@ -11,7 +12,8 @@ import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
   const mapElement = useRef<HTMLDivElement>();
-  const { state } = useLocation();
+  const { state, search } = useLocation();
+  const navigate = useNavigate();
 
   const {
     map,
@@ -93,6 +95,30 @@ const MapPei = () => {
       window.history.replaceState({ from: state.from }, "");
     }
   }, [state, map]);
+
+  useEffect(() => {
+    // On met dans l'URL le extent pour simplifier la navigation
+    if (map) {
+      map.on("moveend", () => {
+        const view = map.getView();
+        const extent = view.calculateExtent();
+        const params = new URLSearchParams();
+        params.set("extent", extent.join(","));
+        navigate(`?${params.toString()}`, { replace: true });
+      });
+
+      const params = new URLSearchParams(search);
+
+      if (params.get("extent")) {
+        const geom = params.get("extent")?.split(",");
+        if (!isEmpty(geom)) {
+          map.getView().fit(geom, {
+            maxZoom: 20,
+          });
+        }
+      }
+    }
+  }, [state, map, navigate, search]);
 
   return (
     <>

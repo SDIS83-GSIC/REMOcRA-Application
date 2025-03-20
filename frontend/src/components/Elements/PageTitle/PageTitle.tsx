@@ -32,7 +32,10 @@ const PageTitle = ({
               onClick={() => {
                 if (location.state?.from?.slice(-1)[0]) {
                   navigate(location.state.from.slice(-1)[0], {
-                    state: { from: location.state.from.slice(0, -1) },
+                    state: {
+                      ...location.state,
+                      from: location.state.from.slice(0, -1),
+                    },
                   });
                 } else if (urlRetour) {
                   navigate(urlRetour);
