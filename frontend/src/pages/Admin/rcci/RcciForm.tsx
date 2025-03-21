@@ -33,6 +33,7 @@ import {
 } from "../../../components/Icon/Icon.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import DeleteButton from "../../../components/Button/DeleteButton.tsx";
+import DIRECTION from "../../../enums/DirectionEnum.tsx";
 
 type FormType = {
   rcci: RcciFormType;
@@ -298,6 +299,13 @@ const RcciForm = () => {
   const rcciTypeOrigineAlerteState = useGet(
     url`/api/nomenclatures/list/${nomenclaturesEnum.RCCI_TYPE_ORIGINE_ALERTE}`,
   );
+  const directionList = Object.entries(DIRECTION).map(([key, value]) => {
+    return {
+      id: key,
+      code: value,
+      libelle: value,
+    };
+  });
   const utilisateurRefState = useGet(url`/api/rcci/refs`);
 
   const { isLoading, data, run } = usePost(url`/api/dfci/check`);
@@ -564,11 +572,17 @@ const RcciForm = () => {
                 />
               </Col>
               <Col>
-                <TextInput
-                  label="Direction"
+                <SelectForm
                   name={"rcci.rcciDirectionVent"}
-                  required={false}
+                  listIdCodeLibelle={directionList}
+                  label="Direction"
+                  defaultValue={directionList?.find(
+                    (v) => v.id === values?.rcci.rcciDirectionVent,
+                  )}
+                  required={true}
+                  setFieldValue={setFieldValue}
                 />
+
               </Col>
             </Row>
             <Row>
