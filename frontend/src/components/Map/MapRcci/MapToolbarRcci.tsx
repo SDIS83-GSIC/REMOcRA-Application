@@ -9,6 +9,7 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import ToolbarButton from "../ToolbarButton.tsx";
 import {
   IconCreate,
+  IconCursorAdd,
   IconDelete,
   IconEdit,
   IconHide,
@@ -365,7 +366,7 @@ const MapToolbarRcci = ({
         <ButtonGroup>
           <ToolbarButton
             toolName={"create-rcci"}
-            toolIcon={<IconCreate />}
+            toolIcon={<IconCursorAdd />}
             toolLabelTooltip={"Créer une RCCI"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}

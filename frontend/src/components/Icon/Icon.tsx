@@ -140,3 +140,4 @@ export const IconParametre = () => <i className="fi fi-br-gears" />;
 export const IconHide = () => <i className="fi fi-br-eye-crossed" />;
 
 export const IconWarning = () => <i className="fi fi-sr-triangle-warning" />;
+export const IconCursorAdd = () => <i className="fi fi-rs-cursor-plus" />;
