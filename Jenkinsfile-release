@@ -40,7 +40,6 @@ pipeline {
               sh '''
                 gradle --stacktrace build
                 gradle --stacktrace cyclonedxBom
-                gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 '''
             }

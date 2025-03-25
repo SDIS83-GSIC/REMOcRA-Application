@@ -18,6 +18,3 @@ UPDATE remocra.profil_droit remo
 SET profil_droit_droits = new.agg_droits
 FROM nouveaux_droits new
 WHERE remo.profil_droit_id = new.profil_droit_id;
-
--- On crame la valeur d'enum
-DELETE FROM pg_enum en WHERE en.enumlabel='PERMIS_TRAITEMENT_E';
