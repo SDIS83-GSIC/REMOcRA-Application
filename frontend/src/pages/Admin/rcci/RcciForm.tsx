@@ -579,10 +579,9 @@ const RcciForm = () => {
                   defaultValue={directionList?.find(
                     (v) => v.id === values?.rcci.rcciDirectionVent,
                   )}
-                  required={true}
+                  required={false}
                   setFieldValue={setFieldValue}
                 />
-
               </Col>
             </Row>
             <Row>
