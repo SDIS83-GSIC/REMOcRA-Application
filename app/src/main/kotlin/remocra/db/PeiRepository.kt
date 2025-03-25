@@ -67,9 +67,9 @@ class PeiRepository
          * @see AdresseDecorator.decorateAdresse
          */
         val adresseField = DSL.concat(
-            DSL.`when`(PEI.EN_FACE.isTrue, AdresseDecorator.FACE_A + " "),
-            DSL.`when`(PEI.NUMERO_VOIE.isNotNull, DSL.concat(PEI.NUMERO_VOIE, " ")),
-            DSL.`when`(PEI.SUFFIXE_VOIE.isNotNull, DSL.concat(PEI.SUFFIXE_VOIE, " ")),
+            DSL.`when`(PEI.EN_FACE.isTrue, AdresseDecorator.FACE_A + " ").otherwise(""),
+            DSL.`when`(PEI.NUMERO_VOIE.isNotNull, DSL.concat(PEI.NUMERO_VOIE, " ")).otherwise(""),
+            DSL.`when`(PEI.SUFFIXE_VOIE.isNotNull, DSL.concat(PEI.SUFFIXE_VOIE, " ")).otherwise(""),
             DSL.`when`(PEI.VOIE_ID.isNotNull, DSL.concat(VOIE.LIBELLE, " ")).otherwise(PEI.VOIE_TEXTE),
             DSL.`when`(PEI.COMPLEMENT_ADRESSE.isNotNull, PEI.COMPLEMENT_ADRESSE),
         )
