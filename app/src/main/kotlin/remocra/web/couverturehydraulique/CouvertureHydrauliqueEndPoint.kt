@@ -163,16 +163,20 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     fun movePeiProjet(
         @PathParam("peiProjetId")
         peiProjetId: UUID,
-        geometry: Geometry,
+        geometry: Geometrie,
     ): Response {
         val peiProjetData = couvertureHydrauliqueRepository.getPeiProjet(peiProjetId)
         return updatePeiProjetUseCase.execute(
             securityContext.userInfo,
             peiProjetData.copy(
-                peiProjetGeometrie = geometry,
+                peiProjetGeometrie = geometry.geometry,
             ),
         ).wrap()
     }
+
+    data class Geometrie(
+        val geometry: Geometry,
+    )
 
     @DELETE
     @Path("/pei-projet/{peiProjetId}")

@@ -220,11 +220,15 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     fun updateLocalisation(
         @PathParam("peiId") peiId: UUID,
-        geometry: Geometry,
+        geometry: Geometrie,
     ): Response {
-        val peiData = movePeiUseCase.execute(geometry, peiId)
+        val peiData = movePeiUseCase.execute(geometry.geometry, peiId)
         return updatePeiUseCase.execute(securityContext.userInfo, peiData).wrap()
     }
+
+    data class Geometrie(
+        val geometry: Geometry,
+    )
 
     @DELETE
     @Path("/delete/{peiId}")
