@@ -140,11 +140,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         .set(INDISPONIBILITE_TEMPORAIRE.OBSERVATION, element.indisponibiliteTemporaireObservation)
         .set(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT, element.indisponibiliteTemporaireDateDebut)
         .set(INDISPONIBILITE_TEMPORAIRE.DATE_FIN, element.indisponibiliteTemporaireDateFin)
-        .set(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE, element.indisponibiliteTemporaireBasculeAutoDisponible)
-        .set(
-            INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE,
-            element.indisponibiliteTemporaireBasculeAutoIndisponible,
-        )
         .set(
             INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailAvantIndisponibilite,
@@ -159,11 +154,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         .set(INDISPONIBILITE_TEMPORAIRE.OBSERVATION, element.indisponibiliteTemporaireObservation)
         .set(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT, element.indisponibiliteTemporaireDateDebut)
         .set(INDISPONIBILITE_TEMPORAIRE.DATE_FIN, element.indisponibiliteTemporaireDateFin)
-        .set(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE, element.indisponibiliteTemporaireBasculeAutoDisponible)
-        .set(
-            INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE,
-            element.indisponibiliteTemporaireBasculeAutoIndisponible,
-        )
         .set(
             INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
             element.indisponibiliteTemporaireMailAvantIndisponibilite,
@@ -288,13 +278,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE.getSortField(
                 indisponibiliteTemporaireMailAvantIndisponibilite,
             ),
-            INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE.getSortField(
-                indisponibiliteTemporaireBasculeAutoDisponible,
-            ),
-            INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE.getSortField(
-                indisponibiliteTemporaireBasculeAutoIndisponible,
-            ),
-
             INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.getSortField(indisponibiliteTemporaireDateDebut),
             INDISPONIBILITE_TEMPORAIRE.DATE_FIN.getSortField(indisponibiliteTemporaireDateFin),
 
@@ -329,10 +312,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE) },
                     indisponibiliteTemporaireMailAvantIndisponibilite
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE) },
-                    indisponibiliteTemporaireBasculeAutoDisponible
-                        ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE) },
-                    indisponibiliteTemporaireBasculeAutoIndisponible
-                        ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE) },
                 ),
             )
     }
@@ -436,7 +415,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .from(INDISPONIBILITE_TEMPORAIRE)
             .where(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
             .and((INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now())).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull))
-            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_INDISPONIBLE)
             .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_DEBUT.isFalse)
             .fetchInto()
 
@@ -444,7 +422,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         dsl.select(INDISPONIBILITE_TEMPORAIRE.ID)
             .from(INDISPONIBILITE_TEMPORAIRE)
             .where(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.le(dateUtils.now()))
-            .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_AUTO_DISPONIBLE)
             .and(INDISPONIBILITE_TEMPORAIRE.BASCULE_FIN.isFalse)
             .fetchInto()
 

@@ -112,18 +112,6 @@ open class IndisponibiliteTemporaire(
 
     /**
      * The column
-     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_bascule_auto_indisponible</code>.
-     */
-    val BASCULE_AUTO_INDISPONIBLE: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_bascule_auto_indisponible"), SQLDataType.BOOLEAN.nullable(false), this, "")
-
-    /**
-     * The column
-     * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_bascule_auto_disponible</code>.
-     */
-    val BASCULE_AUTO_DISPONIBLE: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_bascule_auto_disponible"), SQLDataType.BOOLEAN.nullable(false), this, "")
-
-    /**
-     * The column
      * <code>remocra.indisponibilite_temporaire.indisponibilite_temporaire_mail_avant_indisponibilite</code>.
      */
     val MAIL_AVANT_INDISPONIBILITE: TableField<Record, Boolean?> = createField(DSL.name("indisponibilite_temporaire_mail_avant_indisponibilite"), SQLDataType.BOOLEAN.nullable(false), this, "")

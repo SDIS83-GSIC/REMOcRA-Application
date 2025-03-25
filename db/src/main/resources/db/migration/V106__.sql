@@ -1,0 +1,5 @@
+ALTER TABLE remocra.indisponibilite_temporaire
+DROP COLUMN indisponibilite_temporaire_bascule_auto_disponible;
+
+ALTER TABLE remocra.indisponibilite_temporaire
+DROP COLUMN indisponibilite_temporaire_bascule_auto_indisponible;

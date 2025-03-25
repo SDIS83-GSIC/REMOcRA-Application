@@ -91,8 +91,6 @@ const ListIndisponibiliteTemporaire = ({
             indisponibiliteTemporaireMotif: undefined,
             indisponibiliteTemporaireStatut: undefined,
             indisponibiliteTemporaireObservation: undefined,
-            indisponibiliteTemporaireBasculeAutoIndisponible: undefined,
-            indisponibiliteTemporaireBasculeAutoDisponible: undefined,
             indisponibiliteTemporaireMailAvantIndisponibilite: undefined,
             indisponibiliteTemporaireMailApresIndisponibilite: undefined,
             listePeiId: peiId ? [peiId] : undefined,

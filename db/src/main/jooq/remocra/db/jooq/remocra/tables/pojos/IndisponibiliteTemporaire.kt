@@ -25,8 +25,6 @@ data class IndisponibiliteTemporaire(
     val indisponibiliteTemporaireDateFin: ZonedDateTime?,
     val indisponibiliteTemporaireMotif: String,
     val indisponibiliteTemporaireObservation: String?,
-    val indisponibiliteTemporaireBasculeAutoIndisponible: Boolean,
-    val indisponibiliteTemporaireBasculeAutoDisponible: Boolean,
     val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean,
     val indisponibiliteTemporaireMailApresIndisponibilite: Boolean,
     val indisponibiliteTemporaireNotificationDebut: ZonedDateTime?,
@@ -68,12 +66,6 @@ data class IndisponibiliteTemporaire(
                 return false
             }
         } else if (this.indisponibiliteTemporaireObservation != o.indisponibiliteTemporaireObservation) {
-            return false
-        }
-        if (this.indisponibiliteTemporaireBasculeAutoIndisponible != o.indisponibiliteTemporaireBasculeAutoIndisponible) {
-            return false
-        }
-        if (this.indisponibiliteTemporaireBasculeAutoDisponible != o.indisponibiliteTemporaireBasculeAutoDisponible) {
             return false
         }
         if (this.indisponibiliteTemporaireMailAvantIndisponibilite != o.indisponibiliteTemporaireMailAvantIndisponibilite) {
@@ -128,8 +120,6 @@ data class IndisponibiliteTemporaire(
         result = prime * result + (if (this.indisponibiliteTemporaireDateFin == null) 0 else this.indisponibiliteTemporaireDateFin.hashCode())
         result = prime * result + this.indisponibiliteTemporaireMotif.hashCode()
         result = prime * result + (if (this.indisponibiliteTemporaireObservation == null) 0 else this.indisponibiliteTemporaireObservation.hashCode())
-        result = prime * result + this.indisponibiliteTemporaireBasculeAutoIndisponible.hashCode()
-        result = prime * result + this.indisponibiliteTemporaireBasculeAutoDisponible.hashCode()
         result = prime * result + this.indisponibiliteTemporaireMailAvantIndisponibilite.hashCode()
         result = prime * result + this.indisponibiliteTemporaireMailApresIndisponibilite.hashCode()
         result = prime * result + (if (this.indisponibiliteTemporaireNotificationDebut == null) 0 else this.indisponibiliteTemporaireNotificationDebut.hashCode())
@@ -148,8 +138,6 @@ data class IndisponibiliteTemporaire(
         sb.append(", ").append(indisponibiliteTemporaireDateFin)
         sb.append(", ").append(indisponibiliteTemporaireMotif)
         sb.append(", ").append(indisponibiliteTemporaireObservation)
-        sb.append(", ").append(indisponibiliteTemporaireBasculeAutoIndisponible)
-        sb.append(", ").append(indisponibiliteTemporaireBasculeAutoDisponible)
         sb.append(", ").append(indisponibiliteTemporaireMailAvantIndisponibilite)
         sb.append(", ").append(indisponibiliteTemporaireMailApresIndisponibilite)
         sb.append(", ").append(indisponibiliteTemporaireNotificationDebut)

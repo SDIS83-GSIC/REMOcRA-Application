@@ -214,7 +214,6 @@ class CreateVisiteUseCase @Inject constructor(
             updatePeiUseCase.updatePeiWithId(
                 peiId = element.visitePeiId,
                 userInfo = userInfo,
-                transactionManager = transactionManager,
             )
         }
         return element

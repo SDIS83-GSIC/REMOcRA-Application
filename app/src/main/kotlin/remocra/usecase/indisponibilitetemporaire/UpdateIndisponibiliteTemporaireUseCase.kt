@@ -56,8 +56,6 @@ class UpdateIndisponibiliteTemporaireUseCase
             indisponibiliteTemporaireMailAvantIndisponibilite = element.indisponibiliteTemporaireMailAvantIndisponibilite,
             indisponibiliteTemporaireDateDebut = element.indisponibiliteTemporaireDateDebut,
             indisponibiliteTemporaireDateFin = element.indisponibiliteTemporaireDateFin,
-            indisponibiliteTemporaireBasculeAutoDisponible = element.indisponibiliteTemporaireBasculeAutoDisponible,
-            indisponibiliteTemporaireBasculeAutoIndisponible = element.indisponibiliteTemporaireBasculeAutoIndisponible,
             indisponibiliteTemporaireNotificationDebut = element.indisponibiliteTemporaireNotificationDebut,
             indisponibiliteTemporaireNotificationFin = element.indisponibiliteTemporaireNotificationFin,
             indisponibiliteTemporaireNotificationResteIndispo = element.indisponibiliteTemporaireNotificationResteIndispo,

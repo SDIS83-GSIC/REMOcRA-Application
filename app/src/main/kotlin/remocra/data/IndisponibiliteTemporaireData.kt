@@ -17,10 +17,6 @@ data class IndisponibiliteTemporaireData(
 
     val indisponibiliteTemporaireMailApresIndisponibilite: Boolean = false,
 
-    val indisponibiliteTemporaireBasculeAutoDisponible: Boolean = false,
-
-    val indisponibiliteTemporaireBasculeAutoIndisponible: Boolean = false,
-
     val indisponibiliteTemporaireNotificationDebut: ZonedDateTime? = null,
 
     val indisponibiliteTemporaireNotificationFin: ZonedDateTime? = null,

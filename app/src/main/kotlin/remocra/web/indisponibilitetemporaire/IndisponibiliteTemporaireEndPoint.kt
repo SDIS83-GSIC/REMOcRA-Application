@@ -1,4 +1,4 @@
-package remocra.web.indisponibiliteTemporaire
+package remocra.web.indisponibilitetemporaire
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
@@ -148,8 +148,6 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
             indisponibiliteTemporaireDateDebut = indisponibiliteTemporaireInput.indisponibiliteTemporaireDateDebut,
             indisponibiliteTemporaireMailAvantIndisponibilite = indisponibiliteTemporaireInput.indisponibiliteTemporaireMailAvantIndisponibilite,
             indisponibiliteTemporaireMailApresIndisponibilite = indisponibiliteTemporaireInput.indisponibiliteTemporaireMailApresIndisponibilite,
-            indisponibiliteTemporaireBasculeAutoDisponible = indisponibiliteTemporaireInput.indisponibiliteTemporaireBasculeAutoDisponible,
-            indisponibiliteTemporaireBasculeAutoIndisponible = indisponibiliteTemporaireInput.indisponibiliteTemporaireBasculeAutoIndisponible,
             indisponibiliteTemporaireListePeiId = indisponibiliteTemporaireInput.listePeiId,
         )
     }
@@ -178,12 +176,6 @@ class IndisponibiliteTemporaireInput {
 
     @FormParam("indisponibiliteTemporaireMailApresIndisponibilite")
     var indisponibiliteTemporaireMailApresIndisponibilite: Boolean = false
-
-    @FormParam("indisponibiliteTemporaireBasculeAutoDisponible")
-    var indisponibiliteTemporaireBasculeAutoDisponible: Boolean = false
-
-    @FormParam("indisponibiliteTemporaireBasculeAutoIndisponible")
-    var indisponibiliteTemporaireBasculeAutoIndisponible: Boolean = false
 
     @FormParam("indisponibiliteTemporaireDateFin")
     var indisponibiliteTemporaireDateFin: ZonedDateTime? = null

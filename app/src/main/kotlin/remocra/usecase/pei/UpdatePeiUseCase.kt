@@ -3,7 +3,6 @@ package remocra.usecase.pei
 import remocra.auth.UserInfo
 import remocra.data.PeiData
 import remocra.data.enums.ErrorType
-import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
@@ -27,7 +26,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
         }
     }
 
-    fun updatePeiWithId(peiId: UUID, userInfo: UserInfo?, transactionManager: TransactionManager) {
+    fun updatePeiWithId(peiId: UUID, userInfo: UserInfo?) {
         val typePei = peiRepository.getTypePei(peiId)
         val peiData =
             if (TypePei.PIBI == typePei) {
@@ -38,10 +37,9 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
                 )
             }
 
-        this.execute(
+        execute(
             userInfo = userInfo,
             element = peiData,
-            mainTransactionManager = transactionManager,
         )
     }
 }

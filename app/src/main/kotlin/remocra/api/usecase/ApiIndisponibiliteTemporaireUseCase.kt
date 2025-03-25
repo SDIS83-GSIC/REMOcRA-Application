@@ -131,8 +131,6 @@ class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
             indisponibiliteTemporaireDateDebut = apiIndispoTempFormData.dateDebut,
             indisponibiliteTemporaireMailAvantIndisponibilite = apiIndispoTempFormData.mailAvantIndisponibilite,
             indisponibiliteTemporaireMailApresIndisponibilite = apiIndispoTempFormData.mailApresIndisponibilite,
-            indisponibiliteTemporaireBasculeAutoDisponible = apiIndispoTempFormData.basculeAutoDisponible,
-            indisponibiliteTemporaireBasculeAutoIndisponible = apiIndispoTempFormData.basculeAutoDisponible,
             indisponibiliteTemporaireNotificationDebut = apiIndispoTempFormData.notificationDebut,
             indisponibiliteTemporaireNotificationFin = apiIndispoTempFormData.notificationFin,
             indisponibiliteTemporaireNotificationResteIndispo = apiIndispoTempFormData.notificationResteIndispo,

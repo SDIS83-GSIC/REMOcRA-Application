@@ -29,7 +29,7 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
                 val listPeiId = indisponibiliteTemporaireRepository.getAllPeiIdFromItId(it)
                 logManager.info("[$identificationJob] Les PEIs liés sont : $listPeiId")
                 listPeiId.forEach { currentPeiId ->
-                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo, transactionManager)
+                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo)
                 }
                 logManager.info("[$identificationJob] Mise à jour du flag BASCULE_DEBUT pour l'IT $it")
                 indisponibiliteTemporaireRepository.setBasculeDebutTrue(it)
@@ -44,7 +44,7 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
                 val listPeiId = indisponibiliteTemporaireRepository.getAllPeiIdFromItId(it)
                 logManager.info("[$identificationJob] Les PEIs liés sont : $listPeiId")
                 listPeiId.forEach { currentPeiId ->
-                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo, transactionManager)
+                    updatePeiUseCase.updatePeiWithId(currentPeiId, userInfo)
                 }
                 logManager.info("[$identificationJob] Mise à jour du flag BASCULE_FIN pour l'IT $it")
                 indisponibiliteTemporaireRepository.setBasculeFinTrue(it)

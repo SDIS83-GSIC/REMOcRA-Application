@@ -6,8 +6,6 @@ INTO
  indisponibilite_temporaire_date_fin,
  indisponibilite_temporaire_motif,
  indisponibilite_temporaire_observation,
- indisponibilite_temporaire_bascule_auto_indisponible,
- indisponibilite_temporaire_bascule_auto_disponible,
  indisponibilite_temporaire_mail_avant_indisponibilite,
  indisponibilite_temporaire_mail_apres_indisponibilite)
 VALUES(gen_random_uuid(),
@@ -15,8 +13,6 @@ VALUES(gen_random_uuid(),
        NOW()+(floor(random() * 10 + 3)::int || ' days')::INTERVAL,
        'Test 4',
        'Lorem ipsum dolor sit amet.',
-       true,
-       false,
        true,
        true);
 
@@ -35,8 +31,6 @@ INTO
  indisponibilite_temporaire_date_fin,
  indisponibilite_temporaire_motif,
  indisponibilite_temporaire_observation,
- indisponibilite_temporaire_bascule_auto_indisponible,
- indisponibilite_temporaire_bascule_auto_disponible,
  indisponibilite_temporaire_mail_avant_indisponibilite,
  indisponibilite_temporaire_mail_apres_indisponibilite)
 VALUES(gen_random_uuid(),
@@ -44,8 +38,6 @@ VALUES(gen_random_uuid(),
        NOW()+(floor(random() * 10 + 3)::int || ' days')::INTERVAL,
        'Test 1',
        'Lorem ipsum dolor sit amet.',
-       true,
-       true,
        true,
        false);
 
@@ -58,8 +50,6 @@ INTO
  indisponibilite_temporaire_date_fin,
  indisponibilite_temporaire_motif,
  indisponibilite_temporaire_observation,
- indisponibilite_temporaire_bascule_auto_indisponible,
- indisponibilite_temporaire_bascule_auto_disponible,
  indisponibilite_temporaire_mail_avant_indisponibilite,
  indisponibilite_temporaire_mail_apres_indisponibilite)
 VALUES(gen_random_uuid(),
@@ -67,8 +57,6 @@ VALUES(gen_random_uuid(),
        NOW()+(floor(random() * 10 + 10)::int || ' days')::INTERVAL,
        'Test 2',
        'Lorem ipsum dolor sit amet.',
-       true,
-       false,
        true,
        true);
 
@@ -101,8 +89,6 @@ INTO
  indisponibilite_temporaire_date_fin,
  indisponibilite_temporaire_motif,
  indisponibilite_temporaire_observation,
- indisponibilite_temporaire_bascule_auto_indisponible,
- indisponibilite_temporaire_bascule_auto_disponible,
  indisponibilite_temporaire_mail_avant_indisponibilite,
  indisponibilite_temporaire_mail_apres_indisponibilite)
 VALUES(gen_random_uuid(),
@@ -110,8 +96,6 @@ VALUES(gen_random_uuid(),
        NOW()+(floor(random() * 10 + 3)::int || ' days')::INTERVAL,
        'Test 3',
        NULL,
-       false,
-       true,
        false,
        true);
 

@@ -30,10 +30,6 @@ export const getInitialValues = (data) => ({
   indisponibiliteTemporaireDateDebut: data?.indisponibiliteTemporaireDateDebut,
   indisponibiliteTemporaireDateFin: data?.indisponibiliteTemporaireDateFin,
   listePeiId: data?.indisponibiliteTemporaireListePeiId,
-  indisponibiliteTemporaireBasculeAutoIndisponible:
-    data?.indisponibiliteTemporaireBasculeAutoIndisponible,
-  indisponibiliteTemporaireBasculeAutoDisponible:
-    data?.indisponibiliteTemporaireBasculeAutoDisponible,
   indisponibiliteTemporaireMailAvantIndisponibilite:
     data?.indisponibiliteTemporaireMailAvantIndisponibilite,
   indisponibiliteTemporaireMailApresIndisponibilite:
@@ -59,10 +55,6 @@ export const prepareVariables = (values) => ({
 
   listePeiId: values?.listePeiId,
 
-  indisponibiliteTemporaireBasculeAutoIndisponible:
-    values?.indisponibiliteTemporaireBasculeAutoIndisponible,
-  indisponibiliteTemporaireBasculeAutoDisponible:
-    values?.indisponibiliteTemporaireBasculeAutoDisponible,
   indisponibiliteTemporaireMailAvantIndisponibilite:
     values?.indisponibiliteTemporaireMailAvantIndisponibilite,
   indisponibiliteTemporaireMailApresIndisponibilite:
