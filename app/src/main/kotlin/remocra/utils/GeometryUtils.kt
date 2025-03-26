@@ -1,5 +1,8 @@
 package remocra.utils
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem
+import org.geotools.geometry.jts.JTS
+import org.geotools.referencing.CRS
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
@@ -69,4 +72,12 @@ fun calculerCentroide(geometries: Collection<Geometry>): Point? {
     centroide.srid = geometries.first().srid
     // Calcul du centroide à partir de la collection
     return centroide
+}
+
+fun transform(input: Geometry, targetCRS: CoordinateReferenceSystem, srid: Int): Geometry {
+    val sourceCRS = CRS.decode("EPSG:${input.srid}")
+    val geom = JTS.transform(input, CRS.findMathTransform(sourceCRS, targetCRS))
+        ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
+    geom.srid = srid
+    return geom
 }

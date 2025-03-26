@@ -1,6 +1,7 @@
 package remocra.usecase.pei
 
 import jakarta.inject.Inject
+import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
@@ -26,6 +27,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.messagelongueindispo.GetMessagePeiLongueIndispoUseCase
 import remocra.utils.toGeomFromText
+import remocra.utils.transform
 import java.util.UUID
 
 /**
@@ -147,11 +149,14 @@ class PeiUseCase : AbstractUseCase() {
         var listPeiJumelage: Collection<IdCodeLibelleData> = listOf()
 
         if (geometry != null) {
-            listCommune = communeRepository.getCommunesPei(geometry.toGeomFromText(), toleranceCommune)
+            // On transforme la source dans la bonne projection
+            val geom = transform(geometry, CRS.decode(appSettings.epsg.name), appSettings.srid)
+
+            listCommune = communeRepository.getCommunesPei(geom.toGeomFromText(), toleranceCommune)
             val listIdCommune = listCommune.map { it.id }
-            listVoiePei = voieRepository.getVoies(geometry.toGeomFromText(), toleranceVoie, listIdCommune)
+            listVoiePei = voieRepository.getVoies(geom.toGeomFromText(), toleranceVoie, listIdCommune)
             listAutoriteDeci = organismeRepository
-                .getAutoriteDeciPei(geometry.toGeomFromText(), toleranceCommune).onEach {
+                .getAutoriteDeciPei(geom.toGeomFromText(), toleranceCommune).onEach {
                     when (it.codeTypeOrganisme.uppercase()) {
                         TypeAutoriteDeci.COMMUNE.name.uppercase() -> it.libelle = "Maire (${it.libelle})"
                         TypeAutoriteDeci.PREFECTURE.name.uppercase() -> it.libelle = "Préfet (${it.libelle})"
@@ -160,13 +165,13 @@ class PeiUseCase : AbstractUseCase() {
                 }
 
             listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listIdCommune)
-            listPeiJumelage = pibiRepository.getBiCanJumele(geometry.toGeomFromText(), peiId)
+            listPeiJumelage = pibiRepository.getBiCanJumele(geom.toGeomFromText(), peiId)
             listMaintenanceDeci =
-                organismeRepository.getMaintenanceDeciPei(geometry.toGeomFromText(), toleranceCommune)
+                organismeRepository.getMaintenanceDeciPei(geom.toGeomFromText(), toleranceCommune)
                     .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
 
             listServicePublicDeci =
-                organismeRepository.getServicePublicDeciPei(geometry.toGeomFromText(), toleranceCommune)
+                organismeRepository.getServicePublicDeciPei(geom.toGeomFromText(), toleranceCommune)
                     .map { IdCodeLibelleData(it.id, it.code, it.libelle) }
         }
 

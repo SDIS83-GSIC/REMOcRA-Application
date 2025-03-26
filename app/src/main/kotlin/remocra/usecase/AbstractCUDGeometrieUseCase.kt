@@ -2,7 +2,6 @@ package remocra.usecase
 
 import jakarta.inject.Inject
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem
-import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
@@ -34,11 +33,7 @@ abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: 
      * Utilitaire embarqué pour transformer une géométrie
      */
     protected fun transform(input: Geometry): Geometry {
-        val sourceCRS = CRS.decode("EPSG:${input.srid}")
-        val geom = JTS.transform(input, CRS.findMathTransform(sourceCRS, targetCRS))
-            ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
-        geom.srid = appSettings.srid
-        return geom
+        return remocra.utils.transform(input, targetCRS, appSettings.srid)
     }
 
     override fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager?): Result {

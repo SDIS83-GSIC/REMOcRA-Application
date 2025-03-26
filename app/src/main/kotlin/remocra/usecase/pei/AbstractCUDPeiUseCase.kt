@@ -27,7 +27,6 @@ import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
-import remocra.utils.toGeomFromText
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -210,14 +209,6 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     protected abstract fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any?
 
     override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        val isInZoneCompetence = peiRepository.isInZoneCompetence(
-            element.peiGeometrie.toGeomFromText(),
-            idOrganisme = userInfo?.organismeId ?: throw RemocraResponseException(ErrorType.FORBIDDEN),
-        )
-        if (!isInZoneCompetence) {
-            throw RemocraResponseException(ErrorType.FORBIDDEN_ZONE_COMPETENCE)
-        }
-
         val isSaisieLibreEnabled = parametresProvider.get().getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!
         // Normalement impossible, sauf sur changement du paramètre sans nettoyage
         if (!isSaisieLibreEnabled && element.peiVoieTexte != null) {
