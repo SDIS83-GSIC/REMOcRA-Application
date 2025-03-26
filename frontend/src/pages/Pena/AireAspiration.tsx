@@ -24,8 +24,8 @@ export const getInitialValues = (
   data: any,
 ): { listeAireAspiration: AireAspirationType[] } => ({
   listeAireAspiration: data.map((v: any) => {
-    const { sridStr, geom } = v.geometrie.cadastreParcelleGeometrie.split(";");
-    const geometry = new WKT().readGeometry(geom);
+    const geom = v.geometrie?.split(";");
+    const geometry = geom ? new WKT().readGeometry(geom[1]) : undefined;
     return {
       penaAspirationId: v.penaAspirationId,
       numero: v.numero,
@@ -33,9 +33,9 @@ export const getInitialValues = (
       hauteurSuperieure3Metres: v.hauteurSuperieure3Metres,
       typePenaAspirationId: v.typePenaAspirationId,
       estDeporte: v.estDeporte,
-      coordonneeX: geometry.getCoordinates()[0],
-      coordonneeY: geometry.getCoordinates()[1],
-      srid: sridStr.split("=").pop(),
+      coordonneeX: geometry?.getCoordinates()[0],
+      coordonneeY: geometry?.getCoordinates()[1],
+      srid: geom?.[0]?.split("=")?.pop(),
     };
   }),
 });
@@ -52,7 +52,10 @@ export const prepareVariables = (values: {
       hauteurSuperieure3Metres: v.hauteurSuperieure3Metres,
       typePenaAspirationId: v.typePenaAspirationId,
       estDeporte: v.estDeporte,
-      geometrie: `SRID=${v.srid};POINT(${v.coordonneeX} ${v.coordonneeY})`,
+      geometrie:
+        v.srid && v.coordonneeX
+          ? `SRID=${v.srid};POINT(${v.coordonneeX} ${v.coordonneeY})`
+          : undefined,
     }),
   ),
 });
@@ -173,6 +176,13 @@ const ComposantToRepeat = ({
         </Col>
         {listeElements[index].estDeporte && (
           <>
+            <Col>
+              <NumberInput
+                name={`listeAireAspiration[${index}].srid`}
+                label="SRID"
+                required={false}
+              />
+            </Col>
             <Col>
               <NumberInput
                 name={`listeAireAspiration[${index}].coordonneeX`}
