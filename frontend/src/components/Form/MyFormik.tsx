@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import { ReactNode, SetStateAction, useState } from "react";
 import { Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { usePost, usePut } from "../Fetch/useFetch.tsx";
 
@@ -59,9 +59,21 @@ export const useMyFormik = (
 ) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const redirectFn = redirectUrl
     ? () => {
-        navigate(redirectUrl);
+        // Si on a la page retour, on retourne dans l'état précédent
+        // Sinon, on va à la page mentionnée
+        if (location.state?.from?.slice(-1)[0]) {
+          navigate(location.state.from.slice(-1)[0], {
+            state: {
+              ...location.state,
+              from: location.state.from.slice(0, -1),
+            },
+          });
+        } else if (redirectUrl) {
+          navigate(redirectUrl);
+        }
       }
     : null;
   const postState = usePost(
