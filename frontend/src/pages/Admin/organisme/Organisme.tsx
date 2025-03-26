@@ -121,15 +121,7 @@ export const OrganismeForm = () => {
       };
     },
   );
-  const zoneIntegrationList: IdCodeLibelleType[] = zoneIntegration.data.map(
-    (e: ZoneIntegrationType) => {
-      return {
-        id: e.zoneIntegrationId,
-        libelle: e.zoneIntegrationLibelle,
-        code: e.zoneIntegrationCode,
-      };
-    },
-  );
+
   const organismeList: IdCodeLibelleType[] = organisme.data.map(
     (e: OrganismeType) => {
       return {
@@ -146,7 +138,7 @@ export const OrganismeForm = () => {
   const defaultTypeOrganisme = typeOrganismeList.find((e) => {
     return e.id === values.organismeTypeOrganismeId;
   });
-  const defaultZoneIntegration = zoneIntegrationList.find((e) => {
+  const defaultZoneIntegration = zoneIntegration.data.find((e) => {
     return e.id === values.organismeZoneIntegrationId;
   });
   const defaultOrganismeParent = organismeList.find((e) => {
@@ -177,7 +169,7 @@ export const OrganismeForm = () => {
       <FormLabel label="Zone de compétence" />
       <SelectForm
         name="organismeZoneIntegrationId"
-        listIdCodeLibelle={zoneIntegrationList}
+        listIdCodeLibelle={zoneIntegration.data}
         setValues={setValues}
         required={true}
         defaultValue={defaultZoneIntegration}
