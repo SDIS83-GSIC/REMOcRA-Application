@@ -10,6 +10,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Fill, Stroke, Style } from "ol/style";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
+import EPSG_3857 from "../../../../utils/constantsUtils.tsx";
 
 const OSM_LAYER = new TileLayer({
   source: new OSM(),
@@ -56,7 +57,7 @@ const MapDashboardComponent = (data: any) => {
       layers: [OSM_LAYER],
       view: new View({
         zoom: 6,
-        projectiion: "EPSG:3857",
+        projection: EPSG_3857,
         center: [244598, 5921729], // FIXME : récupérer la zone de l'utilisateur ?
         padding: [50, 50, 50, 50],
       }),

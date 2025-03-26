@@ -1,4 +1,6 @@
 import { useFormikContext } from "formik";
+import { degreesToStringHDMS } from "ol/coordinate";
+import { transform } from "ol/proj";
 import { Button, Col, Row } from "react-bootstrap";
 import PositiveNumberInput, {
   DateInput,
@@ -8,6 +10,7 @@ import PositiveNumberInput, {
   TextInput,
 } from "../../components/Form/Form.tsx";
 import PeiPrescritEntity from "../../Entities/PeiPrescritEntity.tsx";
+import EPSG_3857, { EPSG_4326 } from "../../utils/constantsUtils.tsx";
 
 export const getInitialValues = (data: PeiPrescritEntity) => ({
   peiPrescritId: data?.peiPrescritId,
@@ -37,6 +40,11 @@ export const prepareVariables = (values: PeiPrescritEntity) => ({
 
 const PeiPrescrit = () => {
   const { values }: { values: any } = useFormikContext();
+  const coordinates = transform(
+    [values.peiPrescritCoordonneeX, values.peiPrescritCoordonneeY],
+    EPSG_3857,
+    EPSG_4326,
+  );
 
   return (
     <FormContainer>
@@ -81,10 +89,11 @@ const PeiPrescrit = () => {
         </Row>
         <Row>
           <Col>
-            <p>Long : {values.peiPrescritCoordonneeX}</p>
-          </Col>
-          <Col>
-            <p>Lat : {values.peiPrescritCoordonneeY}</p>
+            <p>
+              {degreesToStringHDMS("NS", coordinates[1], 4) +
+                " " +
+                degreesToStringHDMS("EO", coordinates[0], 4)}
+            </p>
           </Col>
         </Row>
       </Row>

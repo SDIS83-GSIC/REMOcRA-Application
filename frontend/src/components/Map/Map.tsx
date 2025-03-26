@@ -10,7 +10,7 @@ import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import "ol/ol.css";
-import { get as getProjection, transformExtent } from "ol/proj";
+import { get as getProjection, transform, transformExtent } from "ol/proj";
 import { TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
@@ -22,6 +22,7 @@ import { Col, Row } from "react-bootstrap";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import { TYPE_AFFICHAGE_COORDONNEES } from "../../enums/TypeAffichageCoordonnees.tsx";
 import url from "../../module/fetch.tsx";
+import EPSG_3857, { EPSG_4326 } from "../../utils/constantsUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
@@ -30,8 +31,6 @@ import MapToolbar from "./MapToolbar.tsx";
 import { createPointLayer } from "./MapUtils.tsx";
 import "./map.css";
 
-const EPSG_4326 = "EPSG:4326"; // WGS84 utilisé par l'étendue fournie par le serveur
-const EPSG_3857 = "EPSG:3857"; // Web Mercator pour l'affichage
 const resolutions = [];
 const matrixIds = [];
 const proj3857 = getProjection(EPSG_3857)!;
@@ -195,10 +194,18 @@ export const useMapComponent = ({
             afficheCoordonneesState.data?.[
               PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
             ].parametreValeur === TYPE_AFFICHAGE_COORDONNEES.DEGRES_DECIMAUX
-              ? (coordinate) =>
-                  degreesToStringHDMS("NS", coordinate[1], 4) +
-                  " " +
-                  degreesToStringHDMS("EO", coordinate[0], 4)
+              ? (coordinate) => {
+                  const coord = transform(
+                    coordinate,
+                    projection.name,
+                    EPSG_4326,
+                  );
+                  return (
+                    degreesToStringHDMS("NS", coord[1], 4) +
+                    " " +
+                    degreesToStringHDMS("EO", coord[0], 4)
+                  );
+                }
               : createStringXY(4),
           projection: projection.name,
         }),

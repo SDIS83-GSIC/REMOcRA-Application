@@ -1,11 +1,12 @@
-import { useState } from "react";
 import Map from "ol/Map";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { transform } from "ol/proj";
+import { useState } from "react";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
+import { EPSG_4326 } from "../../utils/constantsUtils.tsx";
 
 const AdresseTypeahead = ({ map }: { map: Map }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });
-  const apiEpsg = "EPSG:4326"; // ESPG utilisée pour data.gouv
+  const apiEpsg = EPSG_4326; // ESPG utilisée pour data.gouv
 
   return (
     <AsyncTypeahead
