@@ -366,6 +366,11 @@ class TourneeRepository
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .where(TOURNEE.ID.eq(tourneeId))
+            .orderBy(
+                COMMUNE.LIBELLE,
+                DSL.length(PEI.NUMERO_COMPLET).asc(),
+                PEI.NUMERO_COMPLET.asc(),
+            )
             .fetch().map { record ->
                 PeiTourneeForDnD(
                     peiId = record.component1()!!,
