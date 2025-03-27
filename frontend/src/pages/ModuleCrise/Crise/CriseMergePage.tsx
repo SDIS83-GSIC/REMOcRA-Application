@@ -25,7 +25,7 @@ export const prepareCriseValues = (values: {
   listeCriseId: string[];
   criseId: string;
 }) => ({
-  criseDateFin: new Date(values.criseDateFin).toISOString(),
+  criseDateFin: new Date(values.criseDateFin ?? new Date()),
   listeCriseId: values.listeCriseId,
   criseId: values.criseId,
 });

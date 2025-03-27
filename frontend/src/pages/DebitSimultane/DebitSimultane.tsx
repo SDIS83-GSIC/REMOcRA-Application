@@ -176,12 +176,9 @@ const ComposantToRepeat = ({
             name={`listeDebitSimultaneMesure[${index}].debitSimultaneMesureDateMesure`}
             label="Date de la mesure"
             required={true}
-            value={
-              listeElements[index].debitSimultaneMesureDateMesure &&
-              formatDateTimeForDateTimeInput(
-                listeElements[index].debitSimultaneMesureDateMesure,
-              )
-            }
+            value={formatDateTimeForDateTimeInput(
+              listeElements[index].debitSimultaneMesureDateMesure ?? new Date(),
+            )}
           />
         </Col>
         <Col>

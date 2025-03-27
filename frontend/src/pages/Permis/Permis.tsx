@@ -1,6 +1,8 @@
 import { useFormikContext } from "formik";
 import { Button, Col, Row } from "react-bootstrap";
 import PermisEntity from "../../Entities/PermisEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
@@ -15,13 +17,14 @@ import FormDocuments, {
   setDocumentInFormData,
 } from "../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
+import {
+  formatForDateInput
+} from "../../utils/formatDateUtils.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
-import { hasDroit } from "../../droits.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
   permisId: data?.permisId,
@@ -38,7 +41,7 @@ export const getInitialValues = (data: PermisEntity) => ({
   permisComplement: data?.permisComplement,
   permisCommuneId: data?.permisCommuneId,
   permisAnnee: data?.permisAnnee,
-  permisDatePermis: data?.permisDatePermis,
+  permisDatePermis: formatForDateInput(data?.permisDatePermis ?? new Date()),
 
   permisCadastreParcelle: data?.permisCadastreParcelle,
 
@@ -173,6 +176,7 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
           name="permisDatePermis"
           label="Date permis"
           readOnly={readOnly}
+          value={values.permisDatePermis}
         />
       </Row>
       <Row>

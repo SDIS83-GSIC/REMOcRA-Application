@@ -113,8 +113,12 @@ export const getInitialValues = (
         data.rcci?.rcciCommentaireConclusion ?? undefined,
       rcciComplement: data.rcci?.rcciComplement ?? undefined,
       rcciCarroyageDfci: data.rcci?.rcciCarroyageDfci ?? undefined,
-      rcciDateIncendie: data.rcci?.rcciDateIncendie ?? null,
-      rcciDateModification: data.rcci?.rcciDateModification ?? new Date(),
+      rcciDateIncendie: formatDateTimeForDateTimeInput(
+        data.rcci?.rcciDateIncendie ?? new Date(),
+      ),
+      rcciDateModification: formatDateTimeForDateTimeInput(
+        data.rcci?.rcciDateModification ?? new Date(),
+      ),
       rcciDirectionVent: data.rcci?.rcciDirectionVent ?? undefined,
       rcciForceVent: data.rcci?.rcciForceVent ?? undefined,
       rcciForcesOrdre: data.rcci?.rcciForcesOrdre ?? undefined,
@@ -365,10 +369,7 @@ const RcciForm = () => {
                   label="Date"
                   name={"rcci.rcciDateIncendie"}
                   required={true}
-                  value={
-                    values.rcci.rcciDateIncendie &&
-                    formatDateTimeForDateTimeInput(values.rcci.rcciDateIncendie)
-                  }
+                  value={values.rcci.rcciDateIncendie}
                 />
               </Col>
               <Col>

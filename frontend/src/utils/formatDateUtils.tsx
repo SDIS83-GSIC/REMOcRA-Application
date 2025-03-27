@@ -47,7 +47,7 @@ export function formatDateHeure(dateToFormat: Date) {
  * @returns: string
  */
 export function formatForDateInput(dateToFormat: Date) {
-  return dateToFormat.split("T").shift();
+  return formatDateWithPattern(dateToFormat, "yyyy-MM-dd");
 }
 
 export default formatDateTime;

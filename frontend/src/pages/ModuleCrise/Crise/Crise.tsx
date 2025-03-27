@@ -37,7 +37,9 @@ export const prepareCriseValues = (values) => ({
   criseLibelle: values.criseLibelle,
   criseDescription: values.criseDescription,
   listeCommuneId: values.listeCommuneId,
-  criseDateDebut: new Date(values.criseDateDebut).toISOString(),
+  criseDateDebut: formatDateTimeForDateTimeInput(
+    values.criseDateDebut ?? new Date(),
+  ),
   listeToponymieId: values.listeToponymieId,
 });
 
@@ -84,10 +86,6 @@ const Crise = () => {
         name="criseDateDebut"
         label="Date et heure d’activation"
         required={true}
-        value={
-          values.criseDateDebut &&
-          formatDateTimeForDateTimeInput(values.criseDateDebut)
-        }
       />
 
       <Multiselect

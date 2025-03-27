@@ -11,10 +11,11 @@ import PositiveNumberInput, {
 } from "../../components/Form/Form.tsx";
 import PeiPrescritEntity from "../../Entities/PeiPrescritEntity.tsx";
 import EPSG_3857, { EPSG_4326 } from "../../utils/constantsUtils.tsx";
+import { formatForDateInput } from "../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (data: PeiPrescritEntity) => ({
   peiPrescritId: data?.peiPrescritId,
-  peiPrescritDate: data?.peiPrescritDate,
+  peiPrescritDate: formatForDateInput(data?.peiPrescritDate ?? new Date()),
   peiPrescritDebit: data?.peiPrescritDebit,
   peiPrescritNbPoteaux: data?.peiPrescritNbPoteaux,
   peiPrescritCommentaire: data?.peiPrescritCommentaire,
@@ -64,7 +65,12 @@ const PeiPrescrit = () => {
         />
       </Row>
       <Row>
-        <DateInput name="peiPrescritDate" label="Date" required={false} />
+        <DateInput
+          name="peiPrescritDate"
+          label="Date"
+          required={false}
+          value={values.peiPrescritDate}
+        />
       </Row>
       <Row>
         <TextInput name="peiPrescritAgent" label="Agent" required={false} />

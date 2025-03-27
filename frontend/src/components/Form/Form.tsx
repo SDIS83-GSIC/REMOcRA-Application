@@ -18,7 +18,7 @@ type InputType = {
   label?: string;
   required?: boolean;
   readOnly?: boolean;
-  value?: string;
+  value?: string | any;
   disabled?: boolean;
   placeholder?: string;
   tooltipText?: string;
@@ -458,6 +458,7 @@ export const DateTimeInput = ({
   readOnly = false,
   tooltipText,
   dateType = "datetime-local",
+  value,
   ...rest
 }: DateType) => {
   const [field, meta] = useField(name);
@@ -481,6 +482,7 @@ export const DateTimeInput = ({
           {...field}
           {...rest}
           disabled={readOnly}
+          value={value}
           max="9999-12-31T23:59"
         />
       </Row>
