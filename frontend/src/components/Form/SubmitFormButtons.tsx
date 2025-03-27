@@ -2,7 +2,7 @@ import { Button } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { useLocation, useNavigate } from "react-router-dom";
-import { URLS } from "../../routes.tsx";
+import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
 import { SubmitButtonType } from "../../utils/typeUtils.tsx";
 
 const SubmitFormButtons = ({
@@ -31,16 +31,7 @@ const SubmitFormButtons = ({
             variant={"light"}
             className="btn-light"
             onClick={() => {
-              if (location.state?.from?.slice(-1)[0]) {
-                navigate(location.state.from.slice(-1)[0], {
-                  state: {
-                    ...location.state,
-                    from: location.state.from.slice(0, -1),
-                  },
-                });
-              } else {
-                navigate(URLS.ACCUEIL);
-              }
+              navigateGoBack(location, navigate);
             }}
           >
             Retour

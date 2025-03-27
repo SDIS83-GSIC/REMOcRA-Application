@@ -1,6 +1,6 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReactSelect from "react-select";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
@@ -13,11 +13,12 @@ import {
   IconInfo,
   IconTournee,
 } from "../../components/Icon/Icon.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
 
 const TourneePei = ({
   tourneeMapId,
@@ -53,6 +54,7 @@ const TourneePei = ({
   const { success: successToast, error: errorToast } = useToastContext();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   if (tourneePeiInfo.isResolved && data == null) {
     setData(
@@ -74,7 +76,9 @@ const TourneePei = ({
     url`/api/tournee/listPeiTournee/update/` + tourneeIdToUse,
     {
       onResolve: () => {
-        closeVolet ? closeVolet() : navigate(URLS.LIST_TOURNEE);
+        closeVolet
+          ? closeVolet()
+          : navigateGoBack(location, navigate, URLS.LIST_TOURNEE);
         successToast("L'élément a bien été déplacé.");
       },
       onReject: async (error: {
@@ -210,9 +214,7 @@ const TourneePei = ({
           <div className="text-danger">{errorMessage}</div>
         )}
         <SortableTableTourneePei data={data} setData={setData} />
-        <SubmitFormButtons onClick={submitList}>
-          Enregistrer la liste
-        </SubmitFormButtons>
+        <SubmitFormButtons onClick={submitList} />
       </Container>
     )
   );

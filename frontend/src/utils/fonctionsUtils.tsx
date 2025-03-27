@@ -1,4 +1,5 @@
 import url, { getFetchOptions } from "../module/fetch.tsx";
+import { URLS } from "../routes.tsx";
 
 function isEmptyOrNull(value: string) {
   return value == null || value.trim().length === 0;
@@ -58,4 +59,23 @@ export function downloadOutputFile(
       window.URL.revokeObjectURL(url); // Libération de la mémoire
       successToast(successToastMessage);
     });
+}
+
+export function navigateGoBack(
+  location: any,
+  navigate: any,
+  urlRetour?: string,
+) {
+  if (location.state?.from?.slice(-1)[0]) {
+    navigate(location.state.from.slice(-1)[0], {
+      state: {
+        ...location.state,
+        from: location.state.from.slice(0, -1),
+      },
+    });
+  } else if (urlRetour) {
+    navigate(urlRetour);
+  } else {
+    navigate(URLS.ACCUEIL);
+  }
 }

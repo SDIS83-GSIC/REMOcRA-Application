@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { Button, Col, Row, Container } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { URLS } from "../../../routes.tsx";
+import { navigateGoBack } from "../../../utils/fonctionsUtils.tsx";
 import { IconPreviousPage } from "../../Icon/Icon.tsx";
 
 type TitlePageModel = {
@@ -30,18 +30,7 @@ const PageTitle = ({
               variant={"link"}
               className="text-decoration-none text-sm font-weight-bold ps-0"
               onClick={() => {
-                if (location.state?.from?.slice(-1)[0]) {
-                  navigate(location.state.from.slice(-1)[0], {
-                    state: {
-                      ...location.state,
-                      from: location.state.from.slice(0, -1),
-                    },
-                  });
-                } else if (urlRetour) {
-                  navigate(urlRetour);
-                } else {
-                  navigate(URLS.ACCUEIL);
-                }
+                navigateGoBack(location, navigate, urlRetour);
               }}
             >
               <IconPreviousPage /> Retour

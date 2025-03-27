@@ -3,6 +3,7 @@ import { ReactNode, SetStateAction, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
 import { usePost, usePut } from "../Fetch/useFetch.tsx";
 
 const ResolveReject = (
@@ -64,16 +65,7 @@ export const useMyFormik = (
     ? () => {
         // Si on a la page retour, on retourne dans l'état précédent
         // Sinon, on va à la page mentionnée
-        if (location.state?.from?.slice(-1)[0]) {
-          navigate(location.state.from.slice(-1)[0], {
-            state: {
-              ...location.state,
-              from: location.state.from.slice(0, -1),
-            },
-          });
-        } else if (redirectUrl) {
-          navigate(redirectUrl);
-        }
+        navigateGoBack(location, navigate, redirectUrl);
       }
     : null;
   const postState = usePost(
