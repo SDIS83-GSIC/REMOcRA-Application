@@ -238,7 +238,7 @@ const Visite = () => {
                             {formatDateTime(currentVisite.visiteDate)}
                           </div>
                           <div>
-                            TypeVisite : {currentVisite.visiteTypeVisite}
+                            Type de visite : {currentVisite.visiteTypeVisite}
                           </div>
                           {typePei === TYPE_PEI.PIBI && (
                             <div>
