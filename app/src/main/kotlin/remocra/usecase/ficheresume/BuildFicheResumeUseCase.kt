@@ -7,6 +7,7 @@ import remocra.db.jooq.remocra.enums.TypeResumeElement
 import remocra.usecase.AbstractUseCase
 import remocra.utils.DateUtils
 import java.util.UUID
+import kotlin.text.isNullOrBlank
 
 class BuildFicheResumeUseCase : AbstractUseCase() {
     @Inject
@@ -67,7 +68,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         data += """
                              
                             Commentaire de localisation :
-                            ${peiData.peiComplementAdresse}
+                            ${peiData.peiComplementAdresse.takeIfNotNullElseNonRenseigne()}
                         """.trimIndent()
                     }
 
@@ -84,8 +85,8 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                 TypeResumeElement.CARACTERISTIQUES -> {
                     var data = if (peiData.peiTypePei == TypePei.PIBI) {
                         """
-                               Diamètre : ${peiData.diametreLibelle}
-                               Diamètre de canalisation : ${peiData.pibiDiametreCanalisation?.toString().orEmpty()}
+                               Diamètre : ${peiData.diametreLibelle.takeIfNotNullElseNonRenseigne()}"}
+                               Diamètre de canalisation : ${peiData.pibiDiametreCanalisation?.toString()?.takeIfNotNullElseNonRenseigne()}
                                Débit renforcé : ${if (peiData.pibiDebitRenforce == true) "Oui" else "Non"}
                         """.trimIndent().apply {
                             peiData.pibiJumele?.let { jumele ->
@@ -94,7 +95,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         }
                     } else {
                         """
-                           Capacité : ${peiData.capacite.takeIf { c -> c != null }}
+                           Capacité : ${peiData.capacite?.toString()?.takeIfNotNullElseNonRenseigne()}
                         """.trimIndent()
                     }
 
@@ -107,14 +108,14 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                                 it,
                                 DateUtils.PATTERN_NATUREL,
                             )
-                        }
+                        }.takeIfNotNullElseNonRenseigne()
                     }
                         Dernier CTP :  ${peiData.lastCtp?.let {
                         dateUtils.format(
                             it,
                             DateUtils.PATTERN_NATUREL,
                         )
-                    }}
+                    }.takeIfNotNullElseNonRenseigne()}
                     """.trimIndent()
 
                     listeResumeElement.add(
@@ -172,4 +173,8 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
         val colonne: Int,
         val ligne: Int,
     )
+
+    private fun String?.takeIfNotNullElseNonRenseigne() {
+        this.takeIf { !it.isNullOrBlank() } ?: "Non renseigné"
+    }
 }
