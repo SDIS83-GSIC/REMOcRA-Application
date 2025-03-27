@@ -695,6 +695,27 @@ export const TooltipMapEditPermis = ({
   );
 };
 
+export const TooltipMapAdresse = ({ map }: { map: Map }) => {
+  const ref = useRef(null);
+
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+  });
+
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        displayButtonEdit={false}
+        displayButtonDelete={false}
+        displayButtonSee={false}
+      />
+    </div>
+  );
+};
+
 /**
  * Permet d'observer quel point est cliqué par l'utilisateur
  */

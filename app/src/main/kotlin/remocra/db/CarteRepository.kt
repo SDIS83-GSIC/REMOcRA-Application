@@ -15,10 +15,14 @@ import remocra.db.jooq.remocra.enums.EtatAdresse
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.ADRESSE
+import remocra.db.jooq.remocra.tables.references.ADRESSE_ELEMENT
+import remocra.db.jooq.remocra.tables.references.ADRESSE_SOUS_TYPE_ELEMENT
+import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
+import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
@@ -31,9 +35,13 @@ import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.RCCI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.DateUtils
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class CarteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -211,26 +219,48 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
-// TODO zone compétence
-    fun getAdresse(srid: Int): Collection<AdresseCarte> {
+    fun getAdresse(bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<AdresseCarte> {
         return dsl.select(
             ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
             ADRESSE.ID.`as`("elementId"),
             ADRESSE.TYPE,
-        )
-            .from(ADRESSE)
-            .fetchInto()
-    }
-
-    fun getAdresseInBbox(bbox: Field<Geometry?>, srid: Int): Collection<AdresseCarte> {
-        return dsl.select(
-            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
-            ADRESSE.ID.`as`("elementId"),
-            ADRESSE.TYPE,
+            ADRESSE.DESCRIPTION,
+            ADRESSE.DATE_CONSTAT,
+            multiset(
+                dsl.select(
+                    ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE,
+                    multiset(
+                        selectDistinct(ADRESSE_TYPE_ANOMALIE.LIBELLE)
+                            .from(ADRESSE_TYPE_ANOMALIE)
+                            .join(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE)
+                            .on(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID.eq(ADRESSE_TYPE_ANOMALIE.ID))
+                            .where(ADRESSE_ELEMENT.ID.eq(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ELEMENT_ID)),
+                    ).convertFrom { record ->
+                        record?.map { r ->
+                            r.value1()
+                        }?.joinToString()
+                    },
+                )
+                    .from(ADRESSE_SOUS_TYPE_ELEMENT)
+                    .join(ADRESSE_ELEMENT)
+                    .on(ADRESSE.ID.eq(ADRESSE_ELEMENT.ADRESSE_ID))
+                    .where(ADRESSE_SOUS_TYPE_ELEMENT.ID.eq(ADRESSE_ELEMENT.SOUS_TYPE)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    SousElementAvecAnomalie(
+                        sousElement = r.value1()!!,
+                        listeAnomalie = r.value2(),
+                    )
+                }
+            }.`as`("listSousElementAvecAnomalie"),
         )
             .from(ADRESSE)
             .where(
-                ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(ADRESSE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                        .and(bbox?.let { ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox) }),
+                    isSuperAdmin,
+                ),
             )
             .fetchInto()
     }
@@ -399,11 +429,31 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class AdresseCarte(
         override val elementGeometrie: Point,
         override val elementId: UUID,
-        override var propertiesToDisplay: String?,
         val adresseType: EtatAdresse,
+        val adresseDescription: String?,
+        val adresseDateConstat: ZonedDateTime?,
+        val listSousElementAvecAnomalie: List<SousElementAvecAnomalie> = listOf(),
+
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
-            get() = TypeElementCarte.ADRESSE }
+            get() = TypeElementCarte.ADRESSE
+
+        override var propertiesToDisplay: String? = "<b>Etat :</b> $adresseType <br/>" +
+            "<b>Description :</b> ${adresseDescription.orEmpty()} " +
+            "<br /><b>Date constat :</b> ${adresseDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
+            "<br/><b>Liste des élements :</b> ${
+                listSousElementAvecAnomalie.joinToString {
+                    "${it.sousElement} (anomalies constatées : ${
+                        it.listeAnomalie.takeIf { !it.isNullOrBlank() }.apply { it } ?: "aucune anomalie"
+                    })"
+                }
+            }"
+    }
+
+    data class SousElementAvecAnomalie(
+        val sousElement: String,
+        val listeAnomalie: String?,
+    )
 
     data class OldebCarte(
         override val elementGeometrie: Polygon,

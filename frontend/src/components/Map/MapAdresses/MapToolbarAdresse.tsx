@@ -27,6 +27,7 @@ import { URLS } from "../../../routes.tsx";
 import MyFormik from "../../Form/MyFormik.tsx";
 import CreateButton from "../../Button/CreateButton.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
+import { TooltipMapAdresse } from "../TooltipsMap.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -444,6 +445,7 @@ const MapToolbarAdresse = ({
             />
           </MyFormik>
         </Volet>
+        <TooltipMapAdresse map={map} />
       </Row>
     )
   );

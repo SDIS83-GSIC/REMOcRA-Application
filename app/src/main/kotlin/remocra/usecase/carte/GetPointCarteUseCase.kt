@@ -119,11 +119,11 @@ class GetPointCarteUseCase : AbstractUseCase() {
 
             TypeElementCarte.ADRESSE -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getAdresse(srid)
+                    carteRepository.getAdresse(null, srid, userInfo.isSuperAdmin)
                 } else {
                     val geom =
                         geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getAdresseInBbox(geom.toGeomFromText(), srid)
+                    carteRepository.getAdresse(geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
             TypeElementCarte.OLDEB -> bbox.let {
