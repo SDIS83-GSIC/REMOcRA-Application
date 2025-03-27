@@ -254,14 +254,6 @@ const SimplifiedVisiteForm = ({
                       <div>
                         <div>
                           <PositiveNumberInput
-                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlDebit`}
-                            label="Débit à 1 bar (m3/h) : "
-                            min={0}
-                            required={false}
-                          />
-                        </div>
-                        <div>
-                          <PositiveNumberInput
                             name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlPression`}
                             label="Pression statique (bar) : "
                             min={0}
@@ -275,6 +267,14 @@ const SimplifiedVisiteForm = ({
                             label="Pression dynamique au débit nominal (bar) : "
                             min={0}
                             step={0.01}
+                            required={false}
+                          />
+                        </div>
+                        <div>
+                          <PositiveNumberInput
+                            name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlDebit`}
+                            label="Débit à 1 bar (m3/h) : "
+                            min={0}
                             required={false}
                           />
                         </div>

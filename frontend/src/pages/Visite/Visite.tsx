@@ -269,13 +269,6 @@ const Visite = () => {
                               {currentVisite.ctrlDebitPression != null && (
                                 <div>
                                   <div>
-                                    Débit à 1 bar (m3/h) :{" "}
-                                    {
-                                      currentVisite.ctrlDebitPression
-                                        .visiteCtrlDebitPressionDebit
-                                    }
-                                  </div>
-                                  <div>
                                     Pression statique (bar) :{" "}
                                     {
                                       currentVisite.ctrlDebitPression
@@ -287,6 +280,13 @@ const Visite = () => {
                                     {
                                       currentVisite.ctrlDebitPression
                                         .visiteCtrlDebitPressionPressionDyn
+                                    }
+                                  </div>
+                                  <div>
+                                    Débit à 1 bar (m3/h) :{" "}
+                                    {
+                                      currentVisite.ctrlDebitPression
+                                        .visiteCtrlDebitPressionDebit
                                     }
                                   </div>
                                 </div>

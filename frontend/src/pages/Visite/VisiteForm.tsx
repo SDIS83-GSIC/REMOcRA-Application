@@ -276,14 +276,6 @@ const VisiteForm = ({
                     <div>
                       <div>
                         <PositiveNumberInput
-                          name="ctrlDebitPression.ctrlDebit"
-                          label="Débit à 1 bar (m3/h) : "
-                          min={0}
-                          required={false}
-                        />
-                      </div>
-                      <div>
-                        <PositiveNumberInput
                           name="ctrlDebitPression.ctrlPression"
                           label="Pression statique (bar) : "
                           min={0}
@@ -297,6 +289,14 @@ const VisiteForm = ({
                           label="Pression dynamique au débit nominal (bar) : "
                           min={0}
                           step={0.01}
+                          required={false}
+                        />
+                      </div>
+                      <div>
+                        <PositiveNumberInput
+                          name="ctrlDebitPression.ctrlDebit"
+                          label="Débit à 1 bar (m3/h) : "
+                          min={0}
                           required={false}
                         />
                       </div>
