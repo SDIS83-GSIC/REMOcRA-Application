@@ -174,7 +174,6 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
         val ligne: Int,
     )
 
-    private fun String?.takeIfNotNullElseNonRenseigne() {
+    private fun String?.takeIfNotNullElseNonRenseigne() =
         this.takeIf { !it.isNullOrBlank() } ?: "Non renseigné"
-    }
 }
