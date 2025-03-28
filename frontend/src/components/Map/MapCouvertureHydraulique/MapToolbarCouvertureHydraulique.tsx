@@ -20,7 +20,7 @@ import {
   IconSelect,
 } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
-import toggleDeplacerPoint from "../MapUtils.tsx";
+import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
 
@@ -524,6 +524,7 @@ const MapToolbarCouvertureHydraulique = ({
           etudeId={etudeId}
           onSubmit={() => {
             dataPeiProjetLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
             handleClosePeiProjet();
           }}
         />

@@ -15,6 +15,7 @@ import { IconCreate, IconMoveObjet, IconSearch } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 const defaultStyle = new Style({
   image: new Circle({
     radius: 5,
@@ -149,6 +150,8 @@ export const useToolbarPermisContext = ({
           dataPermisLayer.getSource().refresh();
           errorToast(reason);
         });
+
+      refreshLayerGeoserver(map);
     });
     function toggleDeplacerPermis(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(movePermisCtrl);
@@ -283,6 +286,8 @@ const MapToolbarPermis = ({
           srid={map.getView().getProjection().getCode().split(":").pop()}
           onSubmit={() => {
             dataPermisLayer.getSource().refresh();
+
+            refreshLayerGeoserver(map);
             handleClosePermis();
           }}
         />
@@ -300,6 +305,7 @@ const MapToolbarPermis = ({
         handleClose={() => {
           handleCloseUpdatePermis();
           dataPermisLayer.getSource().refresh();
+          refreshLayerGeoserver(map);
         }}
         show={showUpdatePermis}
         className="w-auto"

@@ -30,6 +30,7 @@ import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import { refreshLayerGeoserver } from "./MapUtils.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -89,6 +90,7 @@ const TooltipMapPei = ({
           deletePath={`/api/pei/delete/` + elementId}
           onClickDelete={() => {
             dataPeiLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
             overlay?.setPosition(undefined);
           }}
           labelDelete={
@@ -219,6 +221,7 @@ const TooltipMapPei = ({
             displayButtonDelete={displayButtonEditDebitSimultane}
             onClickDelete={() => {
               dataDebitSimultaneLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
               overlay?.setPosition(undefined);
             }}
             deletePath={`/api/debit-simultane/delete/` + elementId}
@@ -235,6 +238,7 @@ const TooltipMapPei = ({
               debitSimultaneId={elementId}
               onSubmit={() => {
                 dataDebitSimultaneLayer.getSource().refresh();
+                refreshLayerGeoserver(map);
                 handleCloseUpdateDebitSimultane();
               }}
               typeReseauId={featureSelect?.getProperties().typeReseauId}
@@ -437,6 +441,7 @@ export const TooltipMapEditPeiProjet = ({
           displayButtonDelete={displayEditDeleteButton}
           onClickDelete={() => {
             dataPeiProjetLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
             overlay?.setPosition(undefined);
           }}
           deletePath={
@@ -573,6 +578,7 @@ export const TooltipMapEditPeiPrescrit = ({
         displayButtonDelete={displayEditDeleteButton}
         onClickDelete={() => {
           dataPeiPrescritLayer.getSource().refresh();
+          refreshLayerGeoserver(map);
           overlay?.setPosition(undefined);
         }}
         deletePath={
@@ -646,6 +652,7 @@ export const TooltipMapEditPermis = ({
         displayButtonDelete={displayEditDeleteButton}
         onClickDelete={() => {
           dataPermisLayer.getSource().refresh();
+          refreshLayerGeoserver(map);
           overlay?.setPosition(undefined);
         }}
         deletePath={"/api/permis/" + featureSelect?.getProperties().elementId}

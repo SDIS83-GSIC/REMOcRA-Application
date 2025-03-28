@@ -77,6 +77,7 @@ function toggleDeplacerPoint(
               });
             }
           }
+          refreshLayerGeoserver(map);
         });
       });
     }
@@ -217,5 +218,13 @@ export function addWktLayer(
     padding: [50, 50, 50, 50],
     maxZoom: 18,
     size: map.getSize(),
+  });
+}
+
+export function refreshLayerGeoserver(map: Map) {
+  map.getLayers().forEach((layer) => {
+    if (layer.getSource().params_) {
+      layer.getSource().refresh();
+    }
   });
 }

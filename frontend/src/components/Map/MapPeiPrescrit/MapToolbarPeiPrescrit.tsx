@@ -9,6 +9,7 @@ import { IconCreate } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiPrescrit } from "../TooltipsMap.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 
 const defaultStyle = new Style({
   image: new Circle({
@@ -120,6 +121,7 @@ const MapToolbarPeiPrescrit = ({
           srid={map.getView().getProjection().getCode().split(":").pop()}
           onSubmit={() => {
             dataPeiPrescritLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
             handleClosePeiPrescrit();
           }}
         />

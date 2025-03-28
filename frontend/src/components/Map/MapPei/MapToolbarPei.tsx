@@ -29,7 +29,7 @@ import useModal from "../../Modal/ModalUtils.tsx";
 import SimpleModal from "../../Modal/SimpleModal.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
-import toggleDeplacerPoint from "../MapUtils.tsx";
+import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
 
@@ -524,6 +524,8 @@ const MapToolbarPei = ({
               typeReseauId={typeReseauId!}
               onSubmit={() => {
                 dataDebitSimultaneLayer.getSource().refresh();
+
+                refreshLayerGeoserver(map);
                 handleCloseDebitSimultane();
               }}
             />

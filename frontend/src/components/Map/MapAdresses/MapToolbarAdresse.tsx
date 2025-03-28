@@ -28,6 +28,7 @@ import MyFormik from "../../Form/MyFormik.tsx";
 import CreateButton from "../../Button/CreateButton.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import { TooltipMapAdresse } from "../TooltipsMap.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -412,6 +413,7 @@ const MapToolbarAdresse = ({
                 return [...data, element];
               });
               dataAdresseLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
               setShowCreateElement(false);
             }}
             sousTypeElement={sousTypeElement}
@@ -433,6 +435,7 @@ const MapToolbarAdresse = ({
             redirectUrl={URLS.ADRESSE}
             onSubmit={() => {
               dataAdresseLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
               setListAdresseElement([]);
               workingLayer.getSource().clear();
               setShowCreateAdresse(false);

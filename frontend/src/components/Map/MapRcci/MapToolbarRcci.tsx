@@ -30,6 +30,7 @@ import RcciForm, {
   prepareValues,
   validationSchema,
 } from "../../../pages/Admin/rcci/RcciForm.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 
 export const useToolbarRcciContext = ({
   map,
@@ -449,7 +450,11 @@ const MapToolbarRcci = ({
           value={editModalRefs.value}
           id={rcciIdRef.current}
           isMultipartFormData={true}
-          onSubmit={() => dataRcciLayerRef.current?.getSource().refresh()}
+          onSubmit={() => {
+            dataRcciLayerRef.current?.getSource().refresh();
+
+            refreshLayerGeoserver(map);
+          }}
         >
           <RcciForm />
         </EditModal>
@@ -461,7 +466,11 @@ const MapToolbarRcci = ({
           query={url`/api/rcci`}
           ref={deleteModalRefs.ref}
           id={deleteModalRefs.value}
-          onDelete={() => dataRcciLayerRef.current?.getSource().refresh()}
+          onDelete={() => {
+            dataRcciLayerRef.current?.getSource().refresh();
+
+            refreshLayerGeoserver(map);
+          }}
         />
       )}
     </>

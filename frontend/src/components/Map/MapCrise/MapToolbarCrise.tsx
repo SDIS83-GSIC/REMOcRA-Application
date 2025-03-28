@@ -35,6 +35,7 @@ import AddTitleForm, {
   prepareVariables,
   ValidationSchema,
 } from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -97,6 +98,7 @@ export const useToolbarCriseContext = ({
       if (!event.features || event.features.getLength() !== 1) {
         dataEvenementLayer.getSource().clear();
         dataEvenementLayer.getSource().refresh();
+        refreshLayerGeoserver(map);
         return;
       }
       event.features.forEach(async (feature) => {
@@ -146,6 +148,7 @@ export const useToolbarCriseContext = ({
             errorToast(reason);
           });
       });
+      refreshLayerGeoserver(map);
     });
 
     /**
@@ -463,6 +466,7 @@ const MapToolbarCrise = forwardRef(
             state={state}
             onSubmit={() => {
               dataCriseLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
               handleCloseEvent();
             }}
           />
