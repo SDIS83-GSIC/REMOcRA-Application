@@ -30,8 +30,8 @@ const LinkButton = ({
     <NavLink
       to={{ pathname: pathname }}
       state={{
-        ...state,
         ...currentState,
+        ...state,
         from: [...statePrevious, `${currentPathname}${search}`],
       }}
       className={classNames(

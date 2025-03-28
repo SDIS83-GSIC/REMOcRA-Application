@@ -30,16 +30,14 @@ const UpdateNomenclature = ({
   const nomenclatureState = useGet(
     url`/api/nomenclature/${typeNomenclature}/get/${nomenclatureId}`,
   );
-  const { data }: { data: IdCodeLibelleType[] } = useGet(
-    url`/api/type-organisme/get`,
-  );
 
   const location = useLocation();
+
   const state = location.state ?? {};
   const {
     hasProtectedValue: hasProtectedValue = true,
-    listeFk: listeFk = data,
-    libelleFk: libelleFk = "Type organisme parent",
+    listeFk: listeFk,
+    libelleFk: libelleFk,
     ...rest
   } = state;
   const initialValues: {

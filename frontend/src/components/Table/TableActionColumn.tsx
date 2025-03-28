@@ -28,6 +28,7 @@ const TableActionColumn = ({
   hide = () => false,
   onClick,
   isLink = true,
+  state,
 }: TableActionButtonType) => {
   return (
     !hide ||
@@ -129,6 +130,7 @@ const TableActionColumn = ({
                   disabled={disabled}
                   pathname={pathname}
                   onClick={onClick}
+                  state={state}
                 >
                   {icon}
                 </CustomLinkButton>
@@ -175,6 +177,7 @@ type TableActionButtonType = {
   deleteModal?: object | null;
   editModal?: EditModalType | null;
   simpleModal?: SimpleModalType | null;
+  state?: any | undefined;
 
   hide?: (param: any) => boolean;
   onClick?: (param?: any) => any;
@@ -232,6 +235,8 @@ export const ActionButton = ({
                 disabled={_button.disable ? _button.disable(row) : false}
                 pathname={_button.route?.(row.value)}
                 onClick={() => _button.onClick?.(row.value)}
+                state={_button.state}
+                isLink={true}
               />
             );
           case TYPE_BUTTON.SEE:

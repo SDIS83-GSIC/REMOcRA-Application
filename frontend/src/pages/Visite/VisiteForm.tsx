@@ -26,9 +26,7 @@ import referenceTypeVisite, {
   TYPE_VISITE,
 } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
-import {
-  formatDateTimeForDateTimeInput
-} from "../../utils/formatDateUtils.tsx";
+import { formatDateTimeForDateTimeInput } from "../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (
   _visitePeiId: string,
@@ -74,8 +72,7 @@ const VisiteForm = ({
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
   user: UtilisateurEntity;
 }) => {
-  const { values, setValues } =
-    useFormikContext<VisiteCompleteEntity>();
+  const { values, setValues } = useFormikContext<VisiteCompleteEntity>();
 
   const parametreVisiteTypeCdp = PARAMETRE.TYPE_VISITE_CDP;
 

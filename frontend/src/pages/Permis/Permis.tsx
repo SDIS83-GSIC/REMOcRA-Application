@@ -21,9 +21,7 @@ import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
-import {
-  formatForDateInput
-} from "../../utils/formatDateUtils.tsx";
+import { formatForDateInput } from "../../utils/formatDateUtils.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data: PermisEntity) => ({
