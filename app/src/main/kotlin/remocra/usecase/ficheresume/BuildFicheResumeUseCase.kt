@@ -85,7 +85,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                 TypeResumeElement.CARACTERISTIQUES -> {
                     var data = if (peiData.peiTypePei == TypePei.PIBI) {
                         """
-                               Diamètre : ${peiData.diametreLibelle.takeIfNotNullElseNonRenseigne()}"}
+                               Diamètre : ${peiData.diametreLibelle.takeIfNotNullElseNonRenseigne()}
                                Diamètre de canalisation : ${peiData.pibiDiametreCanalisation?.toString()?.takeIfNotNullElseNonRenseigne()}
                                Débit renforcé : ${if (peiData.pibiDebitRenforce == true) "Oui" else "Non"}
                         """.trimIndent().apply {
