@@ -278,7 +278,7 @@ function getColumnPeiByStringArray(
         simpleModal: {
           content: (peiId: string) => <FicheResume peiId={peiId} />,
           header: (row) =>
-            "Fiche résumée du PEI " + row.original.peiNumeroComplet,
+            "Fiche Résumé du PEI " + row.original.peiNumeroComplet,
         },
       });
     }

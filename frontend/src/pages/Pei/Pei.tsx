@@ -38,6 +38,7 @@ import TypeSystemeSrid from "../../enums/TypeSystemeSrid.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
+import FicheResume from "./FicheResume/FicheResume.tsx";
 
 export const getInitialValues = (data?: PeiEntity) => ({
   peiId: data?.peiId ?? null,
@@ -341,13 +342,15 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     srid,
   ]);
 
+  const openedAccordions = [];
+  if (!isNew) {
+    openedAccordions.push(false);
+  }
+  openedAccordions.push(true, false, false, false);
+
   // Permet de savoir si les sections de l'accordion sont ouvertes et de les set
-  const { handleShowClose, activesKeys, show } = useAccordionState([
-    true,
-    false,
-    false,
-    false,
-  ]);
+  const { handleShowClose, activesKeys, show } =
+    useAccordionState(openedAccordions);
 
   // Correspond à la liste des champs obligatoires avec leur index dans l'accordion
   // Cela nous permettra d'ouvrir une section si un champ obligatoire n'est pas saisi
@@ -387,6 +390,96 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
 
   const hasDroitCaracteristique =
     isNew || hasDroit(user, TYPE_DROIT.PEI_CARACTERISTIQUES_U);
+
+  const listAccordions = [];
+
+  if (!isNew) {
+    listAccordions.push({
+      header: "Fiche Résumé",
+      content: <FicheResume peiId={values.peiId} />,
+    });
+  }
+  listAccordions.push(
+    {
+      header: "Informations générales",
+      content: (
+        <FormEntetePei
+          values={values}
+          selectData={selectData}
+          setValues={setValues}
+          setFieldValue={setFieldValue}
+          isNew={isNew}
+          user={user}
+        />
+      ),
+    },
+    {
+      header: "Localisation",
+      content: (
+        <FormLocalisationPei
+          values={values}
+          selectData={selectData}
+          setValues={setValues}
+          setFieldValue={setFieldValue}
+          geometrieData={geometrieState?.data}
+          srid={parseInt(srid)}
+          isSaisieVoieEnabled={isSaisieVoieEnabled}
+          isNew={isNew}
+          user={user}
+        />
+      ),
+    },
+    {
+      header: "Caractéristiques techniques",
+      content:
+        values.peiTypePei === TYPE_PEI.PIBI ? (
+          <FormPibi
+            values={values}
+            selectData={selectData}
+            setFieldValue={setFieldValue}
+            setValues={setValues}
+            hasDroitCaracteristique={hasDroitCaracteristique}
+          />
+        ) : values.peiTypePei === TYPE_PEI.PENA ? (
+          <FormPena
+            values={values}
+            setValues={setValues}
+            hasDroitCaracteristique={hasDroitCaracteristique}
+          />
+        ) : (
+          <div>Veuillez renseigner le type de PEI</div>
+        ),
+    },
+    {
+      header: "Documents",
+      content: (
+        <FormDocuments
+          documents={values.documents}
+          setFieldValue={setFieldValue}
+          defaultOtherProperties={{
+            isPhotoPei: false,
+          }}
+          otherFormParam={(index: number, listeElements: any[]) => (
+            <>
+              {
+                // Si c'est une image
+                ["png", "svg", "jpeg", "jpg", "bmp", "webp", "gif"].includes(
+                  listeElements[index].documentNomFichier.split(".").at(-1),
+                ) && (
+                  <CheckBoxInput
+                    name={`documents[${index}].isPhotoPei`}
+                    label="Est la photo du PEI"
+                  />
+                )
+              }
+            </>
+          )}
+          disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_U)}
+        />
+      ),
+    },
+  );
+
   return (
     selectData &&
     srid != null && (
@@ -406,96 +499,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
           <AccordionCustom
             activesKeys={activesKeys}
             handleShowClose={handleShowClose}
-            list={[
-              {
-                header: "Informations générales",
-                content: (
-                  <FormEntetePei
-                    values={values}
-                    selectData={selectData}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                    isNew={isNew}
-                    user={user}
-                  />
-                ),
-              },
-              {
-                header: "Localisation",
-                content: (
-                  <FormLocalisationPei
-                    values={values}
-                    selectData={selectData}
-                    setValues={setValues}
-                    setFieldValue={setFieldValue}
-                    geometrieData={geometrieState?.data}
-                    srid={parseInt(srid)}
-                    isSaisieVoieEnabled={isSaisieVoieEnabled}
-                    isNew={isNew}
-                    user={user}
-                  />
-                ),
-              },
-              {
-                header: "Caractéristiques techniques",
-                content:
-                  values.peiTypePei === TYPE_PEI.PIBI ? (
-                    <FormPibi
-                      values={values}
-                      selectData={selectData}
-                      setFieldValue={setFieldValue}
-                      setValues={setValues}
-                      hasDroitCaracteristique={hasDroitCaracteristique}
-                    />
-                  ) : values.peiTypePei === TYPE_PEI.PENA ? (
-                    <FormPena
-                      values={values}
-                      setValues={setValues}
-                      hasDroitCaracteristique={hasDroitCaracteristique}
-                    />
-                  ) : (
-                    <div>Veuillez renseigner le type de PEI</div>
-                  ),
-              },
-              {
-                header: "Documents",
-                content: (
-                  <FormDocuments
-                    documents={values.documents}
-                    setFieldValue={setFieldValue}
-                    defaultOtherProperties={{
-                      isPhotoPei: false,
-                    }}
-                    otherFormParam={(index: number, listeElements: any[]) => (
-                      <>
-                        {
-                          // Si c'est une image
-                          [
-                            "png",
-                            "svg",
-                            "jpeg",
-                            "jpg",
-                            "bmp",
-                            "webp",
-                            "gif",
-                          ].includes(
-                            listeElements[index].documentNomFichier
-                              .split(".")
-                              .at(-1),
-                          ) && (
-                            <CheckBoxInput
-                              name={`documents[${index}].isPhotoPei`}
-                              label="Est la photo du PEI"
-                            />
-                          )
-                        }
-                      </>
-                    )}
-                    disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_U)}
-                  />
-                ),
-              },
-            ]}
+            list={listAccordions}
           />
 
           <SubmitFormButtons
