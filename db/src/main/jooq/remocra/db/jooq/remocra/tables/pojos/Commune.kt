@@ -26,6 +26,7 @@ data class Commune(
     val communeCodePostal: String,
     val communeGeometrie: Geometry,
     val communePprif: Boolean,
+    val communeCode: String?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -57,6 +58,13 @@ data class Commune(
         if (this.communePprif != o.communePprif) {
             return false
         }
+        if (this.communeCode == null) {
+            if (o.communeCode != null) {
+                return false
+            }
+        } else if (this.communeCode != o.communeCode) {
+            return false
+        }
         return true
     }
 
@@ -69,6 +77,7 @@ data class Commune(
         result = prime * result + this.communeCodePostal.hashCode()
         result = prime * result + this.communeGeometrie.hashCode()
         result = prime * result + this.communePprif.hashCode()
+        result = prime * result + (if (this.communeCode == null) 0 else this.communeCode.hashCode())
         return result
     }
 
@@ -81,6 +90,7 @@ data class Commune(
         sb.append(", ").append(communeCodePostal)
         sb.append(", ").append(communeGeometrie)
         sb.append(", ").append(communePprif)
+        sb.append(", ").append(communeCode)
 
         sb.append(")")
         return sb.toString()

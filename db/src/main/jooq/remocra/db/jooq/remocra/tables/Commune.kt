@@ -136,6 +136,12 @@ open class Commune(
      */
     val PPRIF: TableField<Record, Boolean?> = createField(DSL.name("commune_pprif"), SQLDataType.BOOLEAN.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.commune.commune_code</code>. Permet une
+     * dénomination spécifique, en particulier pour la numérotation des PEI.
+     */
+    val CODE: TableField<Record, String?> = createField(DSL.name("commune_code"), SQLDataType.CLOB, this, "Permet une dénomination spécifique, en particulier pour la numérotation des PEI.")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
