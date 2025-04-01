@@ -693,7 +693,7 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
-     * <Code nature pour les PIBI ou les RI, PN pour les autres> <code commune>
+     * <Code nature pour les PIBI ou les RI, PN pour les autres> <commune_code>
      * <numéro interne>
      * <p>
      * Exemple : PI TLN 12
@@ -714,7 +714,7 @@ class NumerotationUseCase : AbstractUseCase() {
             sb.append("PN")
         }
         sb.append(" ")
-        sb.append(codeZoneSpeciale ?: commune.communeCodeInsee)
+        sb.append(codeZoneSpeciale ?: commune.communeCode)
         return sb.append(" ").append(pei.peiNumeroInterne).toString()
     }
 
