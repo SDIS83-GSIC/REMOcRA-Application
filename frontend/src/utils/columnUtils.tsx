@@ -87,8 +87,8 @@ function getColumnPeiByStringArray(
                 ? { bg: "bg-warning", value: "Non conforme" }
                 : DISPONIBILITE_PEI[value.value] ===
                     DISPONIBILITE_PEI.INDISPONIBLE
-                  ? { bg: "bg-danger", value: "Indispo" }
-                  : { bg: "", value: "Dispo" };
+                  ? { bg: "bg-danger", value: "Indisponible" }
+                  : { bg: "", value: "Disponible" };
             return <div className={dispo.bg}>{dispo.value}</div>;
           },
           Filter: (
