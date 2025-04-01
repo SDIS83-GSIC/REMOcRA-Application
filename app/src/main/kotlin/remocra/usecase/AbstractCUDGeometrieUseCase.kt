@@ -38,7 +38,10 @@ abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: 
 
     override fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager?): Result {
         val safeElement = ensureSrid(element)
-        checkZoneCompetenceContainsUseCase.checkContains(userInfo, getListGeometrie(safeElement))
+        val geometrie = getListGeometrie(safeElement)
+        if (geometrie.isNotEmpty()) {
+            checkZoneCompetenceContainsUseCase.checkContains(userInfo, geometrie)
+        }
         return super.execute(userInfo, safeElement, mainTransactionManager)
     }
 }
