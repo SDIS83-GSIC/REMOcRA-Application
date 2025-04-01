@@ -9,6 +9,7 @@ import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.CriseRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -22,15 +23,17 @@ class UpsertDocumentCriseUseCase : AbstractUpsertDocumentUseCase<DocumentsData.D
     @Inject
     lateinit var criseRepository: CriseRepository
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData) {
-        criseRepository.insertCriseDocument(documentId, element.objectId)
+    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            criseRepository.insertCriseDocument(documentId, element.objectId)
+        }
     }
 
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
         // pas utile pour l'instant
     }
 
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
         // Rien ici
     }
 

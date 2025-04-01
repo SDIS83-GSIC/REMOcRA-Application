@@ -8,6 +8,7 @@ import remocra.data.DocumentsData.DocumentData
 import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -17,22 +18,28 @@ import java.util.UUID
 
 class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsPei, newDoc: AbstractDocumentData) {
-        documentRepository.insertDocumentPei(element.objectId, documentId, (newDoc as DocumentData).isPhotoPei)
-    }
-
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        documentRepository.deleteDocumentPei(listeDocsToRemove)
-    }
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
-        val documentsNonPhoto = listToUpdate.filter { !(it as DocumentData).isPhotoPei }.map { it.documentId!! }
-        if (documentsNonPhoto.isNotEmpty()) {
-            documentRepository.updateIsPhotoPei(documentsNonPhoto, false)
+    override fun insertLDocument(documentId: UUID, element: DocumentsPei, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            documentRepository.insertDocumentPei(element.objectId, documentId, (newDoc as DocumentData).isPhotoPei)
         }
+    }
 
-        val documentPhoto: UUID? = listToUpdate.firstOrNull { !(it as DocumentData).isPhotoPei }?.documentId
-        if (documentPhoto != null) {
-            documentRepository.updateIsPhotoPei(listOf(documentPhoto), true)
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            documentRepository.deleteDocumentPei(listeDocsToRemove)
+        }
+    }
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            val documentsNonPhoto = listToUpdate.filter { !(it as DocumentData).isPhotoPei }.map { it.documentId!! }
+            if (documentsNonPhoto.isNotEmpty()) {
+                documentRepository.updateIsPhotoPei(documentsNonPhoto, false)
+            }
+
+            val documentPhoto: UUID? = listToUpdate.firstOrNull { !(it as DocumentData).isPhotoPei }?.documentId
+            if (documentPhoto != null) {
+                documentRepository.updateIsPhotoPei(listOf(documentPhoto), true)
+            }
         }
     }
 

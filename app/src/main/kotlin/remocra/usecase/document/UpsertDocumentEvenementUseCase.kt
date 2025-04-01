@@ -9,6 +9,7 @@ import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.EvenementRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -21,15 +22,19 @@ class UpsertDocumentEvenementUseCase : AbstractUpsertDocumentUseCase<DocumentsDa
     @Inject
     lateinit var evenementRepository: EvenementRepository
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData) {
-        evenementRepository.insertEvenementDocument(documentId, element.objectId)
+    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            evenementRepository.insertEvenementDocument(documentId, element.objectId)
+        }
     }
 
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        evenementRepository.deleteEvenementDocument(listeDocsToRemove)
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            evenementRepository.deleteEvenementDocument(listeDocsToRemove)
+        }
     }
 
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
         // no-op
     }
 

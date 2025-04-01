@@ -82,8 +82,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
 
         // Gestion des tournées
         val listeTournee = tourneeRepository.getTourneeByPei(element.peiId)
-        listeTournee.forEach {
-                tournee: Tournee ->
+        listeTournee.forEach { tournee: Tournee ->
             // impossible de modifier une tournée réservée
             if (tournee.tourneeReservationUtilisateurId != null) {
                 throw RemocraResponseException(ErrorType.PEI_TOURNEE_LECTURE_SEULE)
@@ -91,32 +90,33 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
             tourneeRepository.deleteLTourneePeiByTourneeAndPeiId(tourneeId = tournee.tourneeId, peiId = element.peiId)
         }
 
-        // Suppression des liaisons anomalies
-        anomalieRepository.deleteLiaisonByPei(element.peiId)
-
         // Suppression des Aires d'aspiration
         if (element.peiTypePei == TypePei.PENA) {
             aireAspirationRepository.deleteAireAspiration(element.peiId)
         }
 
         // Suppression des documents
-
         val listeDocsToRemove = mutableListOf<UUID>()
         documentRepository.getDocumentByPei(element.peiId).forEach {
             listeDocsToRemove.add(it.documentId)
         }
-        upsertDocument.deleteLDocument(listeDocsToRemove)
+
+        upsertDocument.deleteLDocument(listeDocsToRemove, transactionManager)
 
         // Suppression des visites
         visiteRepository.getAllVisiteByIdPei(element.peiId).forEach {
             deleteVisiteUseCase.execute(userInfo, it, transactionManager)
         }
 
+        // Suppression des liaisons anomalies
+        anomalieRepository.deleteLiaisonByPei(element.peiId)
+
         // Suppression dans la table PIBI ou PENA
         when (element.peiTypePei) {
             TypePei.PENA -> {
                 penaRepository.deleteById(element.peiId)
             }
+
             TypePei.PIBI -> {
                 pibiRepository.deleteById(element.peiId)
             }

@@ -9,6 +9,7 @@ import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.CouvertureHydrauliqueRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -20,17 +21,23 @@ class UpsertDocumentEtudeUseCase : AbstractUpsertDocumentUseCase<DocumentsData.D
 
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEtude, newDoc: AbstractDocumentData) {
-        couvertureHydrauliqueRepository.insertEtudeDocument(documentId, element.objectId, (newDoc as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
+    override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEtude, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            couvertureHydrauliqueRepository.insertEtudeDocument(documentId, element.objectId, (newDoc as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
+        }
     }
 
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        couvertureHydrauliqueRepository.deleteEtudeDocument(listeDocsToRemove)
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            couvertureHydrauliqueRepository.deleteEtudeDocument(listeDocsToRemove)
+        }
     }
 
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
-        listToUpdate.forEach {
-            couvertureHydrauliqueRepository.updateEtudeDocument(it.documentId!!, (it as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            listToUpdate.forEach {
+                couvertureHydrauliqueRepository.updateEtudeDocument(it.documentId!!, (it as DocumentsData.DocumentEtudeData).etudeDocumentLibelle)
+            }
         }
     }
 

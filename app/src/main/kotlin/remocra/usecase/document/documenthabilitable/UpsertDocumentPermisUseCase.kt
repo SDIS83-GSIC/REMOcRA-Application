@@ -9,6 +9,7 @@ import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.PermisRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -25,15 +26,20 @@ class UpsertDocumentPermisUseCase : AbstractUpsertDocumentUseCase<DocumentsData.
         documentId: UUID,
         element: DocumentsData.DocumentsPermis,
         newDoc: AbstractDocumentData,
+        mainTransactionManager: TransactionManager?,
     ) {
-        permisRepository.insertPermisDocument(documentId = documentId, permisId = element.objectId)
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            permisRepository.insertPermisDocument(documentId = documentId, permisId = element.objectId)
+        }
     }
 
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        permisRepository.deletePermisDocument(listeDocsToRemove)
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            permisRepository.deletePermisDocument(listeDocsToRemove)
+        }
     }
 
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
         // Pas la possibilité d'Update, rien à spécifier ici.
     }
 

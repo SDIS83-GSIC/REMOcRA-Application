@@ -10,6 +10,7 @@ import remocra.data.DocumentsData.DocumentsModeleCourrier
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.ModeleCourrierRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -22,33 +23,39 @@ class UpsertDocumentModeleCourrierUseCase : AbstractUpsertDocumentUseCase<Docume
 
     @Inject lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
-    override fun insertLDocument(documentId: UUID, element: DocumentsModeleCourrier, newDoc: AbstractDocumentData) {
-        modeleCourrierRepository.insertLModeleCourrierDocument(
-            LModeleCourrierDocument(
-                element.objectId,
-                documentId,
-                (newDoc as DocumentModeleCourrierData).isMainReport,
-            ),
-        )
-    }
-
-    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>) {
-        modeleCourrierRepository.deleteLModeleCourrierDocument(listeDocsToRemove)
-    }
-
-    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>) {
-        val documentsNonRapportPrincipal = listToUpdate.filter {
-            !(it as DocumentModeleCourrierData).isMainReport
-        }.map { it.documentId!! }
-        if (documentsNonRapportPrincipal.isNotEmpty()) {
-            modeleCourrierRepository.updateIsMainReport(documentsNonRapportPrincipal, false)
+    override fun insertLDocument(documentId: UUID, element: DocumentsModeleCourrier, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            modeleCourrierRepository.insertLModeleCourrierDocument(
+                LModeleCourrierDocument(
+                    element.objectId,
+                    documentId,
+                    (newDoc as DocumentModeleCourrierData).isMainReport,
+                ),
+            )
         }
+    }
 
-        val documentMainReport: UUID? = listToUpdate.firstOrNull {
-            (it as DocumentModeleCourrierData).isMainReport
-        }?.documentId
-        if (documentMainReport != null) {
-            modeleCourrierRepository.updateIsMainReport(listOf(documentMainReport), true)
+    override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            modeleCourrierRepository.deleteLModeleCourrierDocument(listeDocsToRemove)
+        }
+    }
+
+    override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {
+        (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            val documentsNonRapportPrincipal = listToUpdate.filter {
+                !(it as DocumentModeleCourrierData).isMainReport
+            }.map { it.documentId!! }
+            if (documentsNonRapportPrincipal.isNotEmpty()) {
+                modeleCourrierRepository.updateIsMainReport(documentsNonRapportPrincipal, false)
+            }
+
+            val documentMainReport: UUID? = listToUpdate.firstOrNull {
+                (it as DocumentModeleCourrierData).isMainReport
+            }?.documentId
+            if (documentMainReport != null) {
+                modeleCourrierRepository.updateIsMainReport(listOf(documentMainReport), true)
+            }
         }
     }
 

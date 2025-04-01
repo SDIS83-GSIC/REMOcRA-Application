@@ -5,6 +5,7 @@ import remocra.auth.UserInfo
 import remocra.data.AbstractDocumentData
 import remocra.data.AbstractDocuments
 import remocra.db.DocumentRepository
+import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.usecase.AbstractCUDUseCase
@@ -19,17 +20,17 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
     /**
      * Permet d'insérer le document dans la table de liaison
      */
-    abstract fun insertLDocument(documentId: UUID, element: T, newDoc: AbstractDocumentData)
+    abstract fun insertLDocument(documentId: UUID, element: T, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?)
 
     /**
      * Permet de supprimer une liste de documents dans la table de liaison
      */
-    abstract fun deleteLDocument(listeDocsToRemove: Collection<UUID>)
+    abstract fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?)
 
     /**
      * Permet de mettre à jour une liste de documents dans la table de liaison
      */
-    abstract fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>)
+    abstract fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?)
 
     /**
      * Retourne le répertoire où le document doit être enregistré
@@ -46,7 +47,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
         }
 
         // Puis en base
-        deleteLDocument(element.listeDocsToRemove)
+        deleteLDocument(element.listeDocsToRemove, transactionManager)
         documentRepository.deleteDocumentByIds(element.listeDocsToRemove)
 
         // On ajoute ceux qui sont à ajouter (l'id est null)
@@ -68,12 +69,12 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
                 ),
             )
 
-            insertLDocument(idDocument, element, newDoc)
+            insertLDocument(idDocument, element, newDoc, transactionManager)
         }
 
         val listToUpdate = element.listDocument.minus(nouveauxDocuments)
 
-        updateLDocument(listToUpdate)
+        updateLDocument(listToUpdate, transactionManager)
         return element
     }
 }
