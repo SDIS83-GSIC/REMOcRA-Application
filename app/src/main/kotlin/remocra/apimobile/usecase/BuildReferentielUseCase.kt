@@ -75,7 +75,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             setTypeVisiteAutorisees.add(TypeVisite.CTP)
         }
         if (userInfo.droits.contains(Droit.VISITE_RECO_C)) {
-            setTypeVisiteAutorisees.add(TypeVisite.RECOP)
+            setTypeVisiteAutorisees.add(TypeVisite.ROP)
         }
         if (userInfo.droits.contains(Droit.VISITE_NON_PROGRAMME_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.NP)

@@ -24,9 +24,9 @@ data class VPeiVisiteDate(
     val lastReception: ZonedDateTime?,
     val lastRecoInit: ZonedDateTime?,
     val lastCtp: ZonedDateTime?,
-    val lastRecop: ZonedDateTime?,
+    val lastRop: ZonedDateTime?,
     val lastNp: ZonedDateTime?,
-    val peiNextRecop: ZonedDateTime?,
+    val peiNextRop: ZonedDateTime?,
     val peiNextCtp: ZonedDateTime?,
 ) : Serializable {
 
@@ -69,11 +69,11 @@ data class VPeiVisiteDate(
         } else if (this.lastCtp != o.lastCtp) {
             return false
         }
-        if (this.lastRecop == null) {
-            if (o.lastRecop != null) {
+        if (this.lastRop == null) {
+            if (o.lastRop != null) {
                 return false
             }
-        } else if (this.lastRecop != o.lastRecop) {
+        } else if (this.lastRop != o.lastRop) {
             return false
         }
         if (this.lastNp == null) {
@@ -83,11 +83,11 @@ data class VPeiVisiteDate(
         } else if (this.lastNp != o.lastNp) {
             return false
         }
-        if (this.peiNextRecop == null) {
-            if (o.peiNextRecop != null) {
+        if (this.peiNextRop == null) {
+            if (o.peiNextRop != null) {
                 return false
             }
-        } else if (this.peiNextRecop != o.peiNextRecop) {
+        } else if (this.peiNextRop != o.peiNextRop) {
             return false
         }
         if (this.peiNextCtp == null) {
@@ -107,9 +107,9 @@ data class VPeiVisiteDate(
         result = prime * result + (if (this.lastReception == null) 0 else this.lastReception.hashCode())
         result = prime * result + (if (this.lastRecoInit == null) 0 else this.lastRecoInit.hashCode())
         result = prime * result + (if (this.lastCtp == null) 0 else this.lastCtp.hashCode())
-        result = prime * result + (if (this.lastRecop == null) 0 else this.lastRecop.hashCode())
+        result = prime * result + (if (this.lastRop == null) 0 else this.lastRop.hashCode())
         result = prime * result + (if (this.lastNp == null) 0 else this.lastNp.hashCode())
-        result = prime * result + (if (this.peiNextRecop == null) 0 else this.peiNextRecop.hashCode())
+        result = prime * result + (if (this.peiNextRop == null) 0 else this.peiNextRop.hashCode())
         result = prime * result + (if (this.peiNextCtp == null) 0 else this.peiNextCtp.hashCode())
         return result
     }
@@ -121,9 +121,9 @@ data class VPeiVisiteDate(
         sb.append(", ").append(lastReception)
         sb.append(", ").append(lastRecoInit)
         sb.append(", ").append(lastCtp)
-        sb.append(", ").append(lastRecop)
+        sb.append(", ").append(lastRop)
         sb.append(", ").append(lastNp)
-        sb.append(", ").append(peiNextRecop)
+        sb.append(", ").append(peiNextRop)
         sb.append(", ").append(peiNextCtp)
 
         sb.append(")")

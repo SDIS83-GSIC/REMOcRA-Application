@@ -167,7 +167,7 @@ class PeiRepository
                     servicePublicDeci = record.component12()!!,
                     listeAnomalie = record.component13()!!,
                     tourneeLibelle = record.component14()!!,
-                    peiNextRecop = record.component15(),
+                    peiNextRop = record.component15(),
                     peiNextCtp = record.component16(),
                 )
             }
@@ -271,7 +271,7 @@ class PeiRepository
                     r.value1()
                 }?.joinToString()
             }.`as`("tourneeLibelle"),
-            V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+            V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
         )
             .from(PEI)
@@ -338,7 +338,7 @@ class PeiRepository
                 NATURE_DECI.LIBELLE,
                 autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-                V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+                V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
             )
             .orderBy(
@@ -365,7 +365,7 @@ class PeiRepository
         val autoriteDeci: String?,
         val servicePublicDeci: String?,
         val listeAnomalie: List<UUID>?,
-        val peiNextRecop: ZonedDateTime?,
+        val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
     )
@@ -387,7 +387,7 @@ class PeiRepository
         val tourneeLibelle: String?,
         var listePeiId: Set<UUID>?,
         var adresse: String?,
-        val prochaineDateRecop: ProchaineDate?,
+        val prochaineDateRop: ProchaineDate?,
         val prochaineDateCtp: ProchaineDate?,
     ) {
 
@@ -423,14 +423,14 @@ class PeiRepository
                     },
                     idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                     listePeiId?.let { DSL.and(PEI.ID.`in`(it)) },
-                    prochaineDateRecop?.let {
+                    prochaineDateRop?.let {
                         when (it) {
-                            ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.le(dateUtils.now()))
-                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
-                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
-                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
-                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
-                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_RECOP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
+                            ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now()))
+                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
+                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
+                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
+                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
+                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
                         }
                     },
                     prochaineDateCtp?.let {
@@ -461,7 +461,7 @@ class PeiRepository
         val natureDeciLibelle: Int?,
         val autoriteDeci: Int?,
         val servicePublicDeci: Int?,
-        val peiNextRecop: Int?,
+        val peiNextRop: Int?,
         val peiNextCtp: Int?,
         val tourneeLibelle: Int?,
         var ordreTournee: Int?,
@@ -483,7 +483,7 @@ class PeiRepository
              */
             DSL.length(PEI.NUMERO_COMPLET).getSortField(peiNumeroComplet),
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
-            V_PEI_VISITE_DATE.PEI_NEXT_RECOP.getSortField(peiNextRecop),
+            V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
         )
     }
@@ -824,7 +824,7 @@ class PeiRepository
             PENA.CAPACITE,
             PENA.DISPONIBILITE_HBE,
             V_PEI_VISITE_DATE.LAST_CTP,
-            V_PEI_VISITE_DATE.LAST_RECOP,
+            V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_RECEPTION,
             V_PEI_VISITE_DATE.LAST_RECO_INIT,
         )
@@ -934,7 +934,7 @@ class PeiRepository
         val lastReception: ZonedDateTime?,
         val lastRecoInit: ZonedDateTime?,
         val lastCtp: ZonedDateTime?,
-        val lastRecop: ZonedDateTime?,
+        val lastRop: ZonedDateTime?,
     )
 
     fun getPeiByZoneIntegrationShortData(userInfo: UserInfo): Collection<PeiShortData> {

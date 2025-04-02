@@ -33,14 +33,14 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
             }
             filteredList = if (dateLimite != null) {
                 listTourneeComplete.filterNot {
-                    it.tourneeNextRecopDate == null ||
-                        it.tourneeNextRecopDate!!.isAfter(dateLimite) ||
-                        it.tourneeNextRecopDate!!.isBefore(today)
+                    it.tourneeNextRopDate == null ||
+                        it.tourneeNextRopDate!!.isAfter(dateLimite) ||
+                        it.tourneeNextRopDate!!.isBefore(today)
                 }
             } else {
                 listTourneeComplete.filterNot {
-                    it.tourneeNextRecopDate == null ||
-                        it.tourneeNextRecopDate!!.isAfter(today)
+                    it.tourneeNextRopDate == null ||
+                        it.tourneeNextRopDate!!.isAfter(today)
                 }
             }
         }

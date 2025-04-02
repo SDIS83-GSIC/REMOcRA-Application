@@ -59,8 +59,8 @@ class DeleteVisiteUseCase @Inject constructor(
             TypeVisite.RECO_INIT -> if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECO_INIT_FORBIDDEN)
             }
-            TypeVisite.RECOP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_D)) {
-                throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECOP_FORBIDDEN)
+            TypeVisite.ROP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_D)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_D_ROP_FORBIDDEN)
             }
             TypeVisite.NP -> if (!userInfo.droits.contains(Droit.VISITE_NP_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_NP_FORBIDDEN)

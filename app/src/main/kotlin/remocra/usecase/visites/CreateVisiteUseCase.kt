@@ -89,8 +89,8 @@ class CreateVisiteUseCase @Inject constructor(
                 } else if (nbVisite != 1) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_RECO_INIT_NOT_FIRST)
                 }
-            TypeVisite.RECOP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_C)) {
-                throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECOP_FORBIDDEN)
+            TypeVisite.ROP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_C)) {
+                throw RemocraResponseException(errorType = ErrorType.VISITE_C_ROP_FORBIDDEN)
             }
             TypeVisite.NP -> if (!userInfo.droits.contains(Droit.VISITE_NON_PROGRAMME_C)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_NP_FORBIDDEN)

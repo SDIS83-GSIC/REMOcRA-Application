@@ -10,6 +10,6 @@ fun getLibelleTypeVisite(typeVisite: TypeVisite) =
         TypeVisite.RECEPTION -> "Visite de réception"
         TypeVisite.RECO_INIT -> "Reconnaissance opérationnelle initiale"
         TypeVisite.CTP -> "Contrôle technique périodique"
-        TypeVisite.RECOP -> "Reconnaissance opérationnelle périodique"
+        TypeVisite.ROP -> "Reconnaissance opérationnelle périodique"
         TypeVisite.NP -> "Non programmée"
     }

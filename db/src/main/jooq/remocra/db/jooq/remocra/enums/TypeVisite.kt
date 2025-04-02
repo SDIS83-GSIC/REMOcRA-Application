@@ -24,7 +24,7 @@ enum class TypeVisite(@get:JvmName("literal") public val literal: String) : Enum
     RECEPTION("RECEPTION"),
     RECO_INIT("RECO_INIT"),
     CTP("CTP"),
-    RECOP("RECOP"),
+    ROP("ROP"),
     NP("NP"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog

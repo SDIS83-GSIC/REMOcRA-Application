@@ -186,7 +186,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECEPTION), true)).`as`("isReceptionAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECO_INIT), true)).`as`("isRecoInitAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.CTP), true)).`as`("isCTPAssignable"),
-            (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECOP), true)).`as`("isRecopAssignable"),
+            (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.ROP), true)).`as`("isRopAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.NP), true)).`as`("isNPAssignable"),
             (`when`(L_PEI_ANOMALIE.ANOMALIE_ID.isNotNull, true)).`as`("isAssigned"),
         )
@@ -223,7 +223,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
         val isReceptionAssignable: Boolean,
         val isRecoInitAssignable: Boolean,
         val isCTPAssignable: Boolean,
-        val isRecopAssignable: Boolean,
+        val isRopAssignable: Boolean,
         val isNPAssignable: Boolean,
         val isAssigned: Boolean,
     )
@@ -247,7 +247,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECEPTION), true)).`as`("isReceptionAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECO_INIT), true)).`as`("isRecoInitAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.CTP), true)).`as`("isCTPAssignable"),
-            (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.RECOP), true)).`as`("isRecopAssignable"),
+            (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.ROP), true)).`as`("isRopAssignable"),
             (`when`(POIDS_ANOMALIE.TYPE_VISITE.contains(TypeVisite.NP), true)).`as`("isNPAssignable"),
             (`when`(L_PEI_ANOMALIE.ANOMALIE_ID.isNotNull, true)).`as`("isAssigned"),
         )

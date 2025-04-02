@@ -103,7 +103,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     data += """
                         
                         Dernière RECO : ${
-                        peiData.lastRecop?.let {
+                        peiData.lastRop?.let {
                             dateUtils.format(
                                 it,
                                 DateUtils.PATTERN_NATUREL,

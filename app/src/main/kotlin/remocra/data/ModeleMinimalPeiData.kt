@@ -55,7 +55,7 @@ data class ModeleMinimalPeiData(
     @JsonProperty("dateCt")
     val dateDernierControleTechnique: String?,
     @JsonProperty("dateRo")
-    val dateDerniereRecop: String?,
+    val dateDerniereRop: String?,
     @JsonProperty("prec")
     val precision: String?,
     @JsonProperty("nonConforme")

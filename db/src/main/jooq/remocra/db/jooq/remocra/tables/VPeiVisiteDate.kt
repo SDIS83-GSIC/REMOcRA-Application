@@ -77,7 +77,7 @@ open class VPeiVisiteDate(
                    END) AS last_ctp,
                max(
                    CASE
-                       WHEN (visite.visite_type_visite = 'RECOP'::"TYPE_VISITE") THEN visite.visite_date
+                       WHEN (visite.visite_type_visite = 'ROP'::"TYPE_VISITE") THEN visite.visite_date
                        ELSE NULL::timestamp with time zone
                    END) AS last_recop,
                max(
@@ -113,9 +113,9 @@ open class VPeiVisiteDate(
        last_visites.last_reception,
        last_visites.last_reco_init,
        last_visites.last_ctp,
-       last_visites.last_recop,
+       last_visites.last_recop AS last_rop,
        last_visites.last_np,
-       (COALESCE(last_visites.last_recop, last_visites.last_reco_init) + ((p.delta_days_reco || ' day'::text))::interval) AS pei_next_recop,
+       (COALESCE(last_visites.last_recop, last_visites.last_reco_init) + ((p.delta_days_reco || ' day'::text))::interval) AS pei_next_rop,
        (last_visites.last_ctp + ((p.delta_days_ctp || ' day'::text))::interval) AS pei_next_ctp
       FROM (((pei
         LEFT JOIN last_visites ON ((pei.pei_id = last_visites.pei_id)))
@@ -159,9 +159,9 @@ open class VPeiVisiteDate(
     val LAST_CTP: TableField<Record, ZonedDateTime?> = createField(DSL.name("last_ctp"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     /**
-     * The column <code>remocra.v_pei_visite_date.last_recop</code>.
+     * The column <code>remocra.v_pei_visite_date.last_rop</code>.
      */
-    val LAST_RECOP: TableField<Record, ZonedDateTime?> = createField(DSL.name("last_recop"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
+    val LAST_ROP: TableField<Record, ZonedDateTime?> = createField(DSL.name("last_rop"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     /**
      * The column <code>remocra.v_pei_visite_date.last_np</code>.
@@ -169,9 +169,9 @@ open class VPeiVisiteDate(
     val LAST_NP: TableField<Record, ZonedDateTime?> = createField(DSL.name("last_np"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     /**
-     * The column <code>remocra.v_pei_visite_date.pei_next_recop</code>.
+     * The column <code>remocra.v_pei_visite_date.pei_next_rop</code>.
      */
-    val PEI_NEXT_RECOP: TableField<Record, ZonedDateTime?> = createField(DSL.name("pei_next_recop"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
+    val PEI_NEXT_ROP: TableField<Record, ZonedDateTime?> = createField(DSL.name("pei_next_rop"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     /**
      * The column <code>remocra.v_pei_visite_date.pei_next_ctp</code>.

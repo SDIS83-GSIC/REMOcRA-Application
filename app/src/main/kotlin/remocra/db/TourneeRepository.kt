@@ -65,18 +65,18 @@ class TourneeRepository
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 
-        val nextRecopCteName = name("NEXT_RECOP_CTE")
-        val nextRecopCte = nextRecopCteName.fields("TOURNEE_ID", "TOURNEE_NEXT_RECOP_DATE").`as`(
+        val nextRopCteName = name("NEXT_ROP_CTE")
+        val nextRopCte = nextRopCteName.fields("TOURNEE_ID", "TOURNEE_NEXT_ROP_DATE").`as`(
             select(
                 L_TOURNEE_PEI.TOURNEE_ID,
-                DSL.min(V_PEI_VISITE_DATE.PEI_NEXT_RECOP).`as`("TOURNEE_NEXT_RECOP_DATE"),
+                DSL.min(V_PEI_VISITE_DATE.PEI_NEXT_ROP).`as`("TOURNEE_NEXT_ROP_DATE"),
             )
                 .from(L_TOURNEE_PEI)
                 .join(V_PEI_VISITE_DATE).on(L_TOURNEE_PEI.PEI_ID.eq(V_PEI_VISITE_DATE.PEI_ID))
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 
-        return dsl.with(peiCounterCte, nextRecopCte)
+        return dsl.with(peiCounterCte, nextRopCte)
             .selectDistinct(
                 TOURNEE.ID,
                 TOURNEE.LIBELLE,
@@ -95,15 +95,15 @@ class TourneeRepository
                 TOURNEE.DATE_SYNCHRONISATION,
                 TOURNEE.ACTIF,
                 peiCounterCte.field("TOURNEE_NB_PEI"),
-                nextRecopCte.field("TOURNEE_NEXT_RECOP_DATE"),
+                nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
             )
             .from(TOURNEE)
             .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
             .leftJoin(UTILISATEUR).on(TOURNEE.RESERVATION_UTILISATEUR_ID.eq(UTILISATEUR.ID))
             .leftJoin(table(peiCounterCteName))
             .on(TOURNEE.ID.eq(field(name("PEI_COUNTER_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
-            .leftJoin(table(nextRecopCteName))
-            .on(TOURNEE.ID.eq(field(name("NEXT_RECOP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
+            .leftJoin(table(nextRopCteName))
+            .on(TOURNEE.ID.eq(field(name("NEXT_ROP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
             .where(ORGANISME.ID.`in`(affiliatedOrganismeIds))
@@ -226,7 +226,7 @@ class TourneeRepository
         val tourneeDateSynchronisation: ZonedDateTime?,
         val tourneeActif: Boolean,
         val tourneeNbPei: Int,
-        var tourneeNextRecopDate: ZonedDateTime?,
+        var tourneeNextRopDate: ZonedDateTime?,
         var isModifiable: Boolean = true,
     )
 
@@ -266,7 +266,7 @@ class TourneeRepository
         val tourneePourcentageAvancement: Int?,
         val tourneeUtilisateurReservationLibelle: Int?,
         val tourneeActif: Int?,
-        val tourneeNextRecopDate: Int?,
+        val tourneeNextRopDate: Int?,
     ) {
         fun toCondition(list: Collection<TourneeComplete>): Collection<TourneeComplete> {
             return when {
@@ -318,12 +318,12 @@ class TourneeRepository
                     list.sortedByDescending { it.tourneeActif }
                 }
 
-                tourneeNextRecopDate == 1 -> {
-                    list.sortedBy { it.tourneeNextRecopDate }
+                tourneeNextRopDate == 1 -> {
+                    list.sortedBy { it.tourneeNextRopDate }
                 }
 
-                tourneeNextRecopDate == -1 -> {
-                    list.sortedByDescending { it.tourneeNextRecopDate }
+                tourneeNextRopDate == -1 -> {
+                    list.sortedByDescending { it.tourneeNextRopDate }
                 }
 
                 else -> {
@@ -509,10 +509,10 @@ class TourneeRepository
         )
 
         val nextVisiteCteName = name("NEXT_VISITE_CTE")
-        val nextVisiteCte = nextVisiteCteName.fields("PEI_ID", "PEI_NEXT_RECOP", "PEI_NEXT_CTP").`as`(
+        val nextVisiteCte = nextVisiteCteName.fields("PEI_ID", "PEI_NEXT_ROP", "PEI_NEXT_CTP").`as`(
             select(
                 V_PEI_VISITE_DATE.PEI_ID,
-                V_PEI_VISITE_DATE.PEI_NEXT_RECOP,
+                V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
             )
                 .from(V_PEI_VISITE_DATE),
@@ -533,7 +533,7 @@ class TourneeRepository
                 PEI.DISPONIBILITE_TERRESTRE,
                 GESTIONNAIRE.LIBELLE,
                 concatAnomaliesCte.field("LISTE_ANOMALIES"),
-                nextVisiteCte.field("PEI_NEXT_RECOP"),
+                nextVisiteCte.field("PEI_NEXT_ROP"),
                 nextVisiteCte.field("PEI_NEXT_CTP"),
                 // On projette tous les champs composant l'adresse
                 PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
@@ -553,7 +553,7 @@ class TourneeRepository
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
             .fetch().map { record ->
                 PeiVisiteTourneeInformation(
-                    peiId = record.component1()!!, peiNumeroComplet = record.component2()!!, natureDeciCode = record.component3()!!, natureDeciLibelle = record.component4()!!, domaineLibelle = record.component5()!!, natureLibelle = record.component6()!!, peiTypePei = record.component7()!!, communeLibelle = record.component8()!!, communeCodeInsee = record.component9()!!, communeCodePostal = record.component10()!!, peiDisponibiliteTerrestre = record.component11()!!, gestionnaireLibelle = record.component12(), listeAnomalies = record.component13() as String?, peiNextRecop = record.component14() as ZonedDateTime?, peiNextCtp = record.component15() as ZonedDateTime?,
+                    peiId = record.component1()!!, peiNumeroComplet = record.component2()!!, natureDeciCode = record.component3()!!, natureDeciLibelle = record.component4()!!, domaineLibelle = record.component5()!!, natureLibelle = record.component6()!!, peiTypePei = record.component7()!!, communeLibelle = record.component8()!!, communeCodeInsee = record.component9()!!, communeCodePostal = record.component10()!!, peiDisponibiliteTerrestre = record.component11()!!, gestionnaireLibelle = record.component12(), listeAnomalies = record.component13() as String?, peiNextRop = record.component14() as ZonedDateTime?, peiNextCtp = record.component15() as ZonedDateTime?,
                     adresse = AdresseDecorator().decorateAdresse(
                         AdresseForDecorator(
                             enFace = record.component16(),
@@ -584,7 +584,7 @@ class TourneeRepository
         val peiDisponibiliteTerrestre: Disponibilite,
         val gestionnaireLibelle: String?,
         val listeAnomalies: String?,
-        val peiNextRecop: ZonedDateTime?,
+        val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val adresse: String?,
     )

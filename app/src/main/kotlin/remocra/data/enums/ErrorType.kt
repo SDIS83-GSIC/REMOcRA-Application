@@ -92,7 +92,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_RECO_INIT(2102, "Le type de visite doit être de type ${TypeVisite.RECO_INIT} (deuxième visite du PEI)"),
     VISITE_MEME_TYPE_EXISTE(
         2103,
-        "Une visite de ce type existe déjà. Veuillez utiliser une visite de type ${TypeVisite.NP}, ${TypeVisite.RECOP} ou ${TypeVisite.CTP}",
+        "Une visite de ce type existe déjà. Veuillez utiliser une visite de type ${TypeVisite.NP}, ${TypeVisite.ROP} ou ${TypeVisite.CTP}",
     ),
     VISITE_ANO_CONSTATEE(2104, "Une ou plusieurs anomalies ont été marquées constatées sans avoir été contrôlées"),
     VISITE_DEBIT_INF_0(2105, "Le débit ne peut être inférieur à 0"),
@@ -159,14 +159,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.RECEPTION}",
         Status.FORBIDDEN,
     ),
-    VISITE_C_RECOP_FORBIDDEN(
+    VISITE_C_ROP_FORBIDDEN(
         2341,
-        "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.RECOP}",
+        "Vous n'avez pas les droits suffisant pour créer une visite de type ${TypeVisite.ROP}",
         Status.FORBIDDEN,
     ),
-    VISITE_D_RECOP_FORBIDDEN(
+    VISITE_D_ROP_FORBIDDEN(
         2342,
-        "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.RECOP}",
+        "Vous n'avez pas les droits suffisant pour supprimer une visite de type ${TypeVisite.ROP}",
         Status.FORBIDDEN,
     ),
     VISITE_C_RECO_INIT_FORBIDDEN(

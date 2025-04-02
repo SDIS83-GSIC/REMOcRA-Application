@@ -105,7 +105,7 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
                 dateMiseEnService = dateUtils.formatDateOnly(it.lastRecoInit),
                 dateMiseAJour = dateUtils.formatDateOnly(mapDateDerniereModif[it.peiId]),
                 dateDernierControleTechnique = dateUtils.formatDateOnly(it.lastCtp),
-                dateDerniereRecop = dateUtils.formatDateOnly(it.lastRecop),
+                dateDerniereRop = dateUtils.formatDateOnly(it.lastRop),
                 precision = null,
                 isNonConforme = it.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME,
                 isAccessibleHbe = it.penaDisponibiliteHbe == Disponibilite.DISPONIBLE,

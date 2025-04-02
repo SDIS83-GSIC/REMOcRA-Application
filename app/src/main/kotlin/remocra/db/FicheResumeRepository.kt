@@ -85,7 +85,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             PIBI.DEBIT_RENFORCE,
             pibiJumeleTable.NUMERO_COMPLET.`as`("pibiJumele"),
             PENA.CAPACITE,
-            V_PEI_VISITE_DATE.LAST_RECOP,
+            V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
         ).from(PEI)
             .leftJoin(VOIE)
@@ -117,7 +117,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
     data class PeiFicheResume(
         val peiDisponibiliteTerrestre: Disponibilite,
         val peiTypePei: TypePei,
-        val lastRecop: ZonedDateTime?,
+        val lastRop: ZonedDateTime?,
         val lastCtp: ZonedDateTime?,
         val peiNumeroVoie: Int?,
         val peiSuffixeVoie: String?,

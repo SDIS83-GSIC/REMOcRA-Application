@@ -371,7 +371,7 @@ class CourrierRopRepository @Inject constructor(private val dsl: DSLContext) : A
         getLastDate(listPeiId, TypeVisite.CTP)
 
     fun getLastDateRop(listPeiId: Collection<UUID>): MutableMap<UUID?, ZonedDateTime?> =
-        getLastDate(listPeiId, TypeVisite.RECOP)
+        getLastDate(listPeiId, TypeVisite.ROP)
 
     private fun getLastDate(listPeiId: Collection<UUID>, typeVisite: TypeVisite): MutableMap<UUID?, ZonedDateTime?> =
         dsl.select(VISITE.PEI_ID, DSL.max(VISITE.DATE)).from(VISITE)
