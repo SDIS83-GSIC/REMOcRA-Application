@@ -338,8 +338,17 @@ class TourneeRepository
             .set(dsl.newRecord(TOURNEE, tournee))
             .execute()
 
-    fun tourneeAlreadyExists(tourneeLibelle: String, tourneeOrganismeId: UUID) =
-        dsl.fetchExists(dsl.selectFrom(TOURNEE).where(TOURNEE.LIBELLE.eq(tourneeLibelle).and(TOURNEE.ORGANISME_ID.eq(tourneeOrganismeId))))
+    fun tourneeAlreadyExists(tourneeId: UUID, tourneeLibelle: String, tourneeOrganismeId: UUID) =
+        dsl.fetchExists(
+            dsl.selectFrom(TOURNEE)
+                .where(
+                    TOURNEE.LIBELLE.eq(tourneeLibelle)
+                        .and(
+                            TOURNEE.ORGANISME_ID.eq(tourneeOrganismeId)
+                                .and(TOURNEE.ID.notEqual(tourneeId)),
+                        ),
+                ),
+        )
 
     fun updateTourneeLibelle(tourneeId: UUID, tourneeLibelle: String) =
         dsl.update(TOURNEE)

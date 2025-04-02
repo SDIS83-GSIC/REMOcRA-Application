@@ -39,7 +39,7 @@ class UpdateTourneeUseCase @Inject constructor(
 
     override fun checkContraintes(userInfo: UserInfo?, element: Tournee) {
         // La paire organisme_id et tournee_libelle doit etre unique
-        if (tourneeRepository.tourneeAlreadyExists(tourneeLibelle = element.tourneeLibelle, tourneeOrganismeId = element.tourneeOrganismeId)) {
+        if (tourneeRepository.tourneeAlreadyExists(element.tourneeId, element.tourneeLibelle, tourneeOrganismeId = element.tourneeOrganismeId)) {
             throw RemocraResponseException(ErrorType.TOURNEE_ALREADY_EXISTS)
         }
         // Si la tournée est réservée, elle est en lecture seule => impossible de modifier ses informations
