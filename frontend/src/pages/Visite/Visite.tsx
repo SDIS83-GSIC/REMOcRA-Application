@@ -120,7 +120,7 @@ const Visite = () => {
         return hasDroit(user, TYPE_DROIT.VISITE_NP_D);
       case TYPE_VISITE.RECEPTION:
         return hasDroit(user, TYPE_DROIT.VISITE_RECEP_D);
-      case TYPE_VISITE.RECOP:
+      case TYPE_VISITE.ROP:
         return hasDroit(user, TYPE_DROIT.VISITE_RECO_D);
       case TYPE_VISITE.RECO_INIT:
         return hasDroit(user, TYPE_DROIT.VISITE_RECO_INIT_D);

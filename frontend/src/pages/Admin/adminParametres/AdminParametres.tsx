@@ -968,7 +968,7 @@ const AdminPei = ({
             name="pei.peiRenouvellementRecoPrive"
             label="Nombre de jours pour le renouvellement des reconnaissances privées"
             tooltipText={
-              "Permet de calculer la prochaine date de la RECOP par rapport à la dernière saisie"
+              "Permet de calculer la prochaine date de la ROP par rapport à la dernière saisie"
             }
           />
         </AdminParametre>
@@ -977,7 +977,7 @@ const AdminPei = ({
             name="pei.peiRenouvellementRecoPublic"
             label="Nombre de jours pour le renouvellement des reconnaissances publiques"
             tooltipText={
-              "Permet de calculer la prochaine date de la RECOP par rapport à la dernière saisie"
+              "Permet de calculer la prochaine date de la ROP par rapport à la dernière saisie"
             }
           />
         </AdminParametre>

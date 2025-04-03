@@ -93,11 +93,11 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeActif"} />,
     },
     {
-      Header: "Prochaine RECOP",
-      accessor: ({ tourneeNextRecopDate }) => {
-        return tourneeNextRecopDate ? formatDate(tourneeNextRecopDate) : "";
+      Header: "Prochaine ROP",
+      accessor: ({ tourneeNextRopDate }) => {
+        return tourneeNextRopDate ? formatDate(tourneeNextRopDate) : "";
       },
-      sortField: "tourneeNextRecopDate",
+      sortField: "tourneeNextRopDate",
       Filter: (
         <SelectEnumOption options={DELTA_DATE} name={"tourneeDeltaDate"} />
       ),

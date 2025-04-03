@@ -5,7 +5,7 @@ export enum TYPE_VISITE {
   RECEPTION = "RECEPTION",
   RECO_INIT = "RECO_INIT",
   CTP = "CTP",
-  RECOP = "RECOP",
+  ROP = "ROP",
   NP = "NP",
 }
 
@@ -22,7 +22,7 @@ const referenceTypeVisite: TypeVisite[] = [
   },
   { code: TYPE_VISITE.CTP, libelle: "Contrôle technique périodique" },
   {
-    code: TYPE_VISITE.RECOP,
+    code: TYPE_VISITE.ROP,
     libelle: "Reconnaissance opérationnelle périodique",
   },
   { code: TYPE_VISITE.NP, libelle: "Non programmée" },

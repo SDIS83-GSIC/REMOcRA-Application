@@ -85,8 +85,8 @@ const IterableVisiteForm = ({
                       </Row>
                       <Row>
                         Date dernière ROP :{" "}
-                        {currentInformation.peiNextRecop
-                          ? formatDate(currentInformation.peiNextRecop)
+                        {currentInformation.peiNextRop
+                          ? formatDate(currentInformation.peiNextRop)
                           : ""}
                       </Row>
                       <Row>

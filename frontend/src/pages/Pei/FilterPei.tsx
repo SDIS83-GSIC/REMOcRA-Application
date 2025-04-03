@@ -15,7 +15,7 @@ type filterPei = {
   listeAnomalie?: string;
   tourneeLibelle?: string;
   adresse?: string;
-  prochaineDateRecop?: PROCHAINE_DATE_ENUM;
+  prochaineDateRop?: PROCHAINE_DATE_ENUM;
   prochaineDateCtp?: PROCHAINE_DATE_ENUM;
 };
 
@@ -33,7 +33,7 @@ export const filterValuesToVariable = ({
   listeAnomalie,
   tourneeLibelle,
   adresse,
-  prochaineDateRecop,
+  prochaineDateRop,
   prochaineDateCtp,
 }: filterPei) => {
   const filter: filterPei = {};
@@ -81,8 +81,8 @@ export const filterValuesToVariable = ({
     filter.adresse = adresse;
   }
 
-  if (prochaineDateRecop != null && prochaineDateRecop.trim() !== "") {
-    filter.prochaineDateRecop = prochaineDateRecop;
+  if (prochaineDateRop != null && prochaineDateRop.trim() !== "") {
+    filter.prochaineDateRop = prochaineDateRop;
   }
 
   if (prochaineDateCtp != null && prochaineDateCtp.trim() !== "") {

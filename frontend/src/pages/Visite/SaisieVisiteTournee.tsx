@@ -235,7 +235,7 @@ export const VisiteTourneeForm = ({
         ? e.code !== TYPE_VISITE.CTP
         : true) &&
       (!hasDroit(user, TYPE_DROIT.VISITE_RECO_C)
-        ? e.code !== TYPE_VISITE.RECOP
+        ? e.code !== TYPE_VISITE.ROP
         : true) &&
       (!hasDroit(user, TYPE_DROIT.VISITE_NON_PROGRAMME_C)
         ? e.code !== TYPE_VISITE.NP

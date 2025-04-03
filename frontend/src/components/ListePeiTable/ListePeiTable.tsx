@@ -57,7 +57,7 @@ const ListPei = ({
     listeAnomalie: "",
     tourneeLibelle: "",
     adresse: "",
-    prochaineDateRecop: undefined,
+    prochaineDateRop: undefined,
     prochaineDateCtp: undefined,
   };
 

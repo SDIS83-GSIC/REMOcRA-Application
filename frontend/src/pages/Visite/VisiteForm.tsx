@@ -120,7 +120,7 @@ const VisiteForm = ({
                 ? e.code !== TYPE_VISITE.CTP
                 : true) &&
               (!hasDroit(user, TYPE_DROIT.VISITE_RECO_C)
-                ? e.code !== TYPE_VISITE.RECOP
+                ? e.code !== TYPE_VISITE.ROP
                 : true) &&
               (!hasDroit(user, TYPE_DROIT.VISITE_NON_PROGRAMME_C)
                 ? e.code !== TYPE_VISITE.NP
@@ -159,9 +159,9 @@ const VisiteForm = ({
         );
         break;
       }
-      case TYPE_VISITE.RECOP: {
+      case TYPE_VISITE.ROP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isRecopAssignable === true,
+          (e) => e.isRopAssignable === true,
         );
         break;
       }

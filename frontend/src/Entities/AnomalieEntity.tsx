@@ -10,7 +10,7 @@ export type AnomalieCompleteEntity = {
   isReceptionAssignable: boolean;
   isRecoInitAssignable: boolean;
   isCTPAssignable: boolean;
-  isRecopAssignable: boolean;
+  isRopAssignable: boolean;
   isNPAssignable: boolean;
   isAssigned: boolean;
 };

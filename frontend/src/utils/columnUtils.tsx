@@ -207,18 +207,18 @@ function getColumnPeiByStringArray(
           Filter: <FilterInput type="text" name="listeAnomalie" />,
         });
         break;
-      case COLUMN_PEI.PEI_NEXT_RECOP:
+      case COLUMN_PEI.PEI_NEXT_ROP:
         column.push({
-          Header: "Prochaine RECOP",
-          accessor: "peiNextRecop",
-          sortField: "peiNextRecop",
+          Header: "Prochaine ROP",
+          accessor: "peiNextRop",
+          sortField: "peiNextRop",
           Cell: (value) => {
             return <div>{value.value ? formatDate(value.value) : ""}</div>;
           },
           Filter: (
             <SelectEnumOption
               options={PROCHAINE_DATE_ENUM}
-              name={"prochaineDateRecop"}
+              name={"prochaineDateRop"}
             />
           ),
         });

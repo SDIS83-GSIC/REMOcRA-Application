@@ -61,10 +61,10 @@ const SimplifiedVisiteForm = ({
           [];
         break;
       }
-      case TYPE_VISITE.RECOP: {
+      case TYPE_VISITE.ROP: {
         filteredListAnomalie =
           listeAnomaliesAssignable?.filter(
-            (e) => e.isRecopAssignable === true,
+            (e) => e.isRopAssignable === true,
           ) ?? [];
         break;
       }
