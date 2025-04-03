@@ -271,14 +271,14 @@ const MapToolbar = forwardRef(
         <ButtonToolbar>
           <ButtonGroup>
             <Button
-              className="m-1 rounded"
+              className="m-2 rounded"
               onClick={zoomIn}
               disabled={zoom >= map.getView().getMaxZoom()}
             >
               <IconZoomIn />
             </Button>
             <Button
-              className="m-1 rounded"
+              className="m-2 rounded"
               onClick={zoomOut}
               disabled={zoom <= map.getView().getMinZoom()}
             >

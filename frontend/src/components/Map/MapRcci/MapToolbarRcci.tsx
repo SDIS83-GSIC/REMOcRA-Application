@@ -382,7 +382,7 @@ const MapToolbarRcci = ({
               id={"create-rcci-xy"}
               value={"create-rcci-xy"}
               variant={"outline-primary"}
-              className="m-1"
+              className="m-2"
             >
               {<IconCreate />}
             </Button>
@@ -424,7 +424,7 @@ const MapToolbarRcci = ({
             toolName={"edit-rcci"}
             value={"hide-rcci"}
             variant={"outline-primary"}
-            className="m-1"
+            className="m-2"
             active={anneeCivileRef.anneeCivileRef.current}
           >
             {<IconHide />}

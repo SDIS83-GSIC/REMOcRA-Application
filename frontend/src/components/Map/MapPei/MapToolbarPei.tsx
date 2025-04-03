@@ -433,7 +433,7 @@ const MapToolbarPei = ({
             <Button
               variant="outline-primary"
               onClick={createIndispoTemp}
-              className="rounded m-1"
+              className="rounded m-2"
             >
               <IconIndisponibiliteTemporaire />
             </Button>
@@ -456,7 +456,7 @@ const MapToolbarPei = ({
             <Button
               variant="outline-primary"
               onClick={createUpdateTournee}
-              className="rounded m-1"
+              className="rounded m-2"
               disabled={
                 listePeiTourneePrive.length === 0 &&
                 listePeiTourneePublic.length === 0
@@ -506,7 +506,7 @@ const MapToolbarPei = ({
             <Button
               variant="outline-primary"
               onClick={createDebitSimultane}
-              className="rounded m-1"
+              className="rounded m-2"
               disabled={
                 listePeiIdDebitSimultane.length < 2 || typeReseauId === null
               }

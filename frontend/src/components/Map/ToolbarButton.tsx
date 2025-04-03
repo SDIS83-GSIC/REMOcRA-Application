@@ -30,7 +30,7 @@ const ToolbarButton = ({
         type={"radio"}
         variant={"outline-" + variant}
         checked={activeTool === toolName}
-        className="m-1"
+        className="m-2"
       >
         {toolIcon}
       </ToggleButton>
