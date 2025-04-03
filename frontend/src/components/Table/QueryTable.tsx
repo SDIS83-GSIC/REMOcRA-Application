@@ -1,4 +1,4 @@
-import { default as classnames, default as classNames } from "classnames";
+import { default as classNames } from "classnames";
 import { useFormik } from "formik";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
@@ -264,6 +264,25 @@ function QueryTable({
 
   const makeHeader = (column: any, key: string) => {
     const { Header, sortField, classNameHeader, width, Filter } = column;
+    const isSortedAsc = sortBy[sortField] === "1";
+    const isSortedDesc = sortBy[sortField] === "-1";
+
+    const toggleSort = () => {
+      if (!sortField) {
+        return;
+      }
+      setSortBy((prevSortBy) => {
+        const newSortBy = { ...prevSortBy };
+        if (isSortedAsc) {
+          newSortBy[sortField] = "-1";
+        } else if (isSortedDesc) {
+          delete newSortBy[sortField];
+        } else {
+          newSortBy[sortField] = "1";
+        }
+        return newSortBy;
+      });
+    };
     return (
       <th
         key={key}
@@ -271,52 +290,25 @@ function QueryTable({
         style={{ width: width, verticalAlign: "top" }}
       >
         <div className={"d-flex flex-column h-100"}>
-          <Row className="p-1">
+          <Row
+            className="p-1"
+            onClick={toggleSort}
+            style={{ cursor: "pointer" }}
+          >
             <Col xs={12} className="align-self-start text-nowrap">
               {Header}
               {sortField && (
-                <>
-                  <span
-                    onClick={() => {
-                      if (!sortField) {
-                        return;
-                      }
-                      setSortBy(
-                        sortBy[sortField] === "1" ? {} : { [sortField]: "1" },
-                      );
-                    }}
-                    className={classnames(
-                      {
-                        [styles.sort]: sortField,
-                        [styles.noSort]: !sortField,
-                        [styles.sortActive]: sortBy[sortField] === "1",
-                      },
-                      "m-1",
-                    )}
-                  >
-                    ▲
-                  </span>
-                  <span
-                    onClick={() => {
-                      if (!sortField) {
-                        return;
-                      }
-                      setSortBy(
-                        sortBy[sortField] === "-1" ? {} : { [sortField]: "-1" },
-                      );
-                    }}
-                    className={classnames(
-                      {
-                        [styles.sort]: sortField,
-                        [styles.noSort]: !sortField,
-                        [styles.sortActive]: sortBy[sortField] === "-1",
-                      },
-                      "m-1",
-                    )}
-                  >
-                    ▼
-                  </span>
-                </>
+                <span
+                  className={classNames(
+                    styles.sort,
+                    {
+                      [styles.sortActive]: isSortedAsc || isSortedDesc,
+                    },
+                    "m-1",
+                  )}
+                >
+                  {isSortedAsc ? "▲" : isSortedDesc ? "▼" : "⬍"}
+                </span>
               )}
             </Col>
           </Row>
