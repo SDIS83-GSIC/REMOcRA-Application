@@ -127,6 +127,8 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .join(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
             .where(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .groupBy(COMMUNE.ID, COMMUNE.LIBELLE)
+            .orderBy(COMMUNE.LIBELLE)
             .fetchInto()
     }
 

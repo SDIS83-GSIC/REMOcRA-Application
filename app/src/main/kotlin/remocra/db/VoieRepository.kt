@@ -129,6 +129,8 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .join(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
             .where(ST_Within(VOIE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)).and(VOIE.COMMUNE_ID.eq(communeId))
+            .groupBy(VOIE.ID, VOIE.LIBELLE, VOIE.COMMUNE_ID)
+            .orderBy(VOIE.LIBELLE)
             .fetchInto()
     }
 

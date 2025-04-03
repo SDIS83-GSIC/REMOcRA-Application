@@ -963,6 +963,8 @@ class PeiRepository
             .join(ZONE_INTEGRATION)
             .on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
             .and(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            .groupBy(PEI.ID, PEI.NUMERO_COMPLET)
+            .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
     }
 

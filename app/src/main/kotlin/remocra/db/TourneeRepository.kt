@@ -675,6 +675,8 @@ class TourneeRepository
             .join(PEI)
             .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
             .and(ST_Within(Pei.PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .groupBy(TOURNEE.ID, TOURNEE.LIBELLE)
+            .orderBy(TOURNEE.LIBELLE)
             .fetchInto()
     }
 
