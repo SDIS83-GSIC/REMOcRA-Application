@@ -34,7 +34,7 @@ const SelectFilterFromList = ({
     <>
       <ReactSelect
         styles={selectStyle}
-        placeholder={"Sélectionnez"}
+        placeholder={"Tous"}
         noOptionsMessage={() => "Aucune donnée trouvée"}
         name={name}
         options={data}

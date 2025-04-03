@@ -1,7 +1,7 @@
 const selectStyle = {
   control: (provided) => ({
     ...provided,
-    width: 150, // Largeur fixe en pixels
+    minWidth: 100, // Largeur fixe en pixels
     margin: "0 auto",
   }),
   menu: (provided) => ({

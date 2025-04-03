@@ -29,7 +29,7 @@ function SelectEnumOption({
   return (
     <ReactSelect
       styles={selectStyle}
-      placeholder={"Sélectionnez"}
+      placeholder={"Tous"}
       noOptionsMessage={() => "Aucune donnée trouvée"}
       name={name}
       value={optionsArray.find((e) => e.value === value)}
