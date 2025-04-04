@@ -5,7 +5,7 @@ import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY, degreesToStringHDMS } from "ol/coordinate";
 import { getCenter, getTopLeft, getWidth } from "ol/extent";
-import { GeoJSON } from "ol/format";
+import { GeoJSON, WKT } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
@@ -22,7 +22,7 @@ import { Col, Row } from "react-bootstrap";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import { TYPE_AFFICHAGE_COORDONNEES } from "../../enums/TypeAffichageCoordonnees.tsx";
 import url from "../../module/fetch.tsx";
-import EPSG_3857, { EPSG_4326 } from "../../utils/constantsUtils.tsx";
+import { EPSG_3857, EPSG_4326 } from "../../utils/constantsUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
@@ -169,7 +169,7 @@ export const useMapComponent = ({
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
 }) => {
-  const { epsg: projection, extent } = useAppContext();
+  const { epsg: projection, extent: defaultExtent, user } = useAppContext();
   const layersState = useGet(url`/api/layers/${typeModule}`, {});
   const afficheCoordonneesState = useGet(
     url`/api/parametres?${{
@@ -186,6 +186,7 @@ export const useMapComponent = ({
     if (!projection || !mapElement.current || !afficheCoordonneesState.data) {
       return;
     }
+
     const initialMap = new Map({
       controls: defaultControls().extend([
         new FullScreen(),
@@ -219,9 +220,21 @@ export const useMapComponent = ({
       view: new View({
         zoom: 6,
         projection: EPSG_3857,
-        center: getCenter(transformExtent(extent, EPSG_4326, EPSG_3857)), // Centre depuis l'étendue fournie par le serveur
+        center: getCenter(transformExtent(defaultExtent, EPSG_4326, EPSG_3857)), // Centre depuis l'étendue fournie par le serveur
       }),
     });
+
+    if (user.zoneIntegrationExtent) {
+      const rawExtent = new WKT()
+        .readGeometry(user.zoneIntegrationExtent.split(";").pop())
+        .getExtent();
+      initialMap
+        ?.getView()
+        .fit(transformExtent(rawExtent, projection.name, EPSG_3857), {
+          maxZoom: 20,
+        });
+    }
+
     return initialMap;
   }, [mapElement.current, projection, afficheCoordonneesState.data]);
 

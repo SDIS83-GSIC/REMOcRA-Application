@@ -10,7 +10,7 @@ import PositiveNumberInput, {
   TextInput,
 } from "../../components/Form/Form.tsx";
 import PeiPrescritEntity from "../../Entities/PeiPrescritEntity.tsx";
-import EPSG_3857, { EPSG_4326 } from "../../utils/constantsUtils.tsx";
+import { EPSG_3857, EPSG_4326 } from "../../utils/constantsUtils.tsx";
 import { formatForDateInput } from "../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (data: PeiPrescritEntity) => ({

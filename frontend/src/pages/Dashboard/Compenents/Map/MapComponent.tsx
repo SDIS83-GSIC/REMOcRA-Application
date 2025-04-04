@@ -10,7 +10,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Fill, Stroke, Style } from "ol/style";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
-import EPSG_3857 from "../../../../utils/constantsUtils.tsx";
+import { EPSG_3857 } from "../../../../utils/constantsUtils.tsx";
 
 const OSM_LAYER = new TileLayer({
   source: new OSM(),

@@ -1,5 +1,6 @@
 package remocra.auth
 
+import org.locationtech.jts.geom.Geometry
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
@@ -47,6 +48,7 @@ UserInfo : KeycloakOidcProfile() {
             prenom = this.firstName,
             username = this.username,
             organismeId = this.organismeId,
+            zoneIntegrationExtent = zoneCompetence?.zoneIntegrationGeometrie?.envelope,
             droits = this.droits,
             isSuperAdmin = this.isSuperAdmin,
         )
@@ -62,6 +64,7 @@ UserInfo : KeycloakOidcProfile() {
         val prenom: String,
         val username: String,
         val organismeId: UUID?,
+        val zoneIntegrationExtent: Geometry?,
         val droits: Collection<Droit>,
         val isSuperAdmin: Boolean = false,
     )

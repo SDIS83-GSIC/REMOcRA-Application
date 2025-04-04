@@ -6,6 +6,7 @@ type UtilisateurEntity = {
   prenom: string;
   username: string;
   organismeId: string;
+  zoneIntegrationExtent: string;
   droits: TYPE_DROIT[];
   isSuperAdmin: boolean;
 };
