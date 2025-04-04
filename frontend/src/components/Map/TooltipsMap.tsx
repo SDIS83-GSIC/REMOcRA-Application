@@ -2,7 +2,7 @@ import { Feature, Map, Overlay } from "ol";
 import { WKT } from "ol/format";
 import { ReactNode, Ref, useEffect, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
@@ -56,6 +56,7 @@ const TooltipMapPei = ({
 }) => {
   const ref = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
 
   const [showFichePei, setShowFichePei] = useState(false);
@@ -177,7 +178,7 @@ const TooltipMapPei = ({
                       pathname: location.pathname,
                       search: "",
                     },
-                    { replace: true },
+                    { replace: true, state: location.state },
                   );
                 }}
                 show={showIndispoTemp}
@@ -198,7 +199,7 @@ const TooltipMapPei = ({
                       pathname: location.pathname,
                       search: "",
                     },
-                    { replace: true },
+                    { replace: true, state: location.state },
                   );
                 }}
                 show={showTournee}

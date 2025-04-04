@@ -104,7 +104,7 @@ const MapPei = () => {
         const extent = view.calculateExtent();
         const params = new URLSearchParams();
         params.set("extent", extent.join(","));
-        navigate(`?${params.toString()}`, { replace: true });
+        navigate(`?${params.toString()}`, { replace: true, state: state });
       });
 
       const params = new URLSearchParams(search);
