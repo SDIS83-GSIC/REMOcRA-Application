@@ -19,6 +19,7 @@ class DiametreRepository @Inject constructor(private val dsl: DSLContext) : Nome
             DIAMETRE.ID.`as`("id"),
             DIAMETRE.CODE.`as`("code"),
             DIAMETRE.LIBELLE.`as`("libelle"),
+            DIAMETRE.ACTIF.`as`("actif"),
             L_DIAMETRE_NATURE.NATURE_ID,
         ).from(DIAMETRE)
             .join(L_DIAMETRE_NATURE)
@@ -29,6 +30,7 @@ class DiametreRepository @Inject constructor(private val dsl: DSLContext) : Nome
         val id: UUID,
         val code: String,
         val libelle: String,
+        val actif: Boolean,
         val natureId: UUID,
     )
 

@@ -242,7 +242,8 @@ type SelectDataType = {
   listModele: (IdCodeLibelleType & { marqueId: string })[];
   listServiceEau: IdCodeLibelleType[];
   listPeiJumelage: IdCodeLibelleType[];
-  listDiametreWithNature: IdCodeLibelleType & { natureId: string }[];
+  listDiametreWithNature: IdCodeLibelleType &
+    { natureId: string; actif: boolean }[];
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
@@ -1013,7 +1014,11 @@ const FormPibi = ({
             name={"pibiDiametreId"}
             listIdCodeLibelle={selectData.listDiametreWithNature.filter(
               (e) =>
-                e.natureId === values.peiNatureId || e.natureId === idNature,
+                (e.id === values.pibiDiametreId &&
+                  e.natureId === values.peiNatureId &&
+                  !e.actif) ||
+                (e.natureId === values.peiNatureId && e.actif) ||
+                (e.natureId === idNature && e.actif),
             )}
             label="Diamètre nominal"
             defaultValue={selectData.listDiametreWithNature.find(
