@@ -9,7 +9,6 @@ import remocra.db.TourneeRepository
 import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
 import remocra.usecase.AbstractUseCase
-import remocra.utils.limitOffset
 
 class FetchTourneeDataUseCase : AbstractUseCase() {
     @Inject lateinit var tourneeRepository: TourneeRepository
@@ -48,20 +47,21 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
 
         // Calcul size pour DataTableau
         val count = filteredList.size
+        // Tri en fonction de sortBy
+        val filteredSortedList = params.sortBy?.toCondition(filteredList)
         // Application de limit et offset à notre liste
-        val filteredShortedList = filteredList.limitOffset(params.limit!!.toLong(), params.offset!!.toLong())
+        val filteredShortedList = filteredSortedList?.drop(params.offset ?: 0)?.take(params.limit ?: count)
 
         val tourneeNonModifiable = tourneeRepository.getTourneeHorsZc(
             userInfo.isSuperAdmin,
             userInfo.zoneCompetence?.zoneIntegrationId,
             filteredShortedList?.map { it.tourneeId } ?: listOf(),
         )
-
-        filteredShortedList?.forEach {
-            it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
+        if (tourneeNonModifiable.isNotEmpty()) {
+            filteredShortedList?.forEach {
+                it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
+            }
         }
-
-        // Tri en fonction sortBy + return
-        return params.sortBy?.toCondition(filteredShortedList ?: listOf())?.let { DataTableau(it, count) }
+        return filteredShortedList?.let { DataTableau(it, count) }
     }
 }

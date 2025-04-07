@@ -271,11 +271,11 @@ class TourneeRepository
         fun toCondition(list: Collection<TourneeComplete>): Collection<TourneeComplete> {
             return when {
                 tourneeLibelle == 1 -> {
-                    list.sortedBy { it.tourneeLibelle }
+                    list.sortedBy { it.tourneeLibelle.uppercase() }
                 }
 
                 tourneeLibelle == -1 -> {
-                    list.sortedByDescending { it.tourneeLibelle }
+                    list.sortedByDescending { it.tourneeLibelle.uppercase() }
                 }
 
                 tourneeNbPei == 1 -> {
