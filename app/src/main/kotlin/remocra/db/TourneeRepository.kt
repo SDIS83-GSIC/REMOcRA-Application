@@ -121,15 +121,8 @@ class TourneeRepository
                 .from(L_TOURNEE_PEI)
                 .join(PEI)
                 .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
-                .leftJoin(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-                .where(
-                    if (isSuperAdmin) {
-                        DSL.falseCondition()
-                    } else {
-                        ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isFalse
-                    },
-                )
+                .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+                .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isFalse)
                 .and(L_TOURNEE_PEI.TOURNEE_ID.`in`(listeTourneeId))
                 .fetchInto()
         }

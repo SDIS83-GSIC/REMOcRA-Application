@@ -57,10 +57,9 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
             userInfo.zoneCompetence?.zoneIntegrationId,
             filteredShortedList?.map { it.tourneeId } ?: listOf(),
         )
-        if (tourneeNonModifiable.isNotEmpty()) {
-            filteredShortedList?.forEach {
-                it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
-            }
+
+        filteredShortedList?.forEach {
+            it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
         }
         return filteredShortedList?.let { DataTableau(it, count) }
     }
