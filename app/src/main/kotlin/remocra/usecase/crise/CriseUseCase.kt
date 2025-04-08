@@ -27,7 +27,7 @@ class CriseUseCase : AbstractUseCase() {
      * @return La liste des géométries des communes associées à la crise, ou une liste vide si aucune géométrie n'est trouvée.
      */
     fun getCommuneGeometriesByCrise(criseId: UUID): List<Geometry> {
-        val communeIds = criseRepository.getCrise(criseId).listeCommune ?: return emptyList()
+        val communeIds = criseRepository.getCrise(criseId).listeCommuneId ?: return emptyList()
         return communeIds.map { communeRepository.getById(it).communeGeometrie }
     }
 
@@ -43,8 +43,8 @@ class CriseUseCase : AbstractUseCase() {
         val crise = criseRepository.getCrise(criseId)
 
         // récupère les types sélectionnés par l'utilisateur (protégés / non protégés)
-        val nonProteges = criseRepository.getSelectedTypes(crise.listeToponymie, false)
-        val proteges = criseRepository.getSelectedTypes(crise.listeToponymie, true)
+        val nonProteges = criseRepository.getSelectedTypes(crise.listeToponymieId, false)
+        val proteges = criseRepository.getSelectedTypes(crise.listeToponymieId, true)
         val results = mutableListOf<ToponymieResult>()
         val globalGeometry = criseRepository.getCriseGeometryUnion(criseId)
 

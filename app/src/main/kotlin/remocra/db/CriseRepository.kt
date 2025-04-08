@@ -231,8 +231,8 @@ class CriseRepository @Inject constructor(
         val criseDateFin: ZonedDateTime?,
         val criseStatutType: TypeCriseStatut,
         val typeCriseId: UUID,
-        var listeCommune: Collection<UUID>?,
-        var listeToponymie: Collection<UUID>?,
+        var listeCommuneId: Collection<UUID>?,
+        var listeToponymieId: Collection<UUID>?,
     )
 
     fun getCriseGeometryUnion(criseId: UUID): Geometry? =
@@ -266,7 +266,7 @@ class CriseRepository @Inject constructor(
                 record?.map { r ->
                     r.value1() as UUID
                 }
-            }.`as`("listeCommune"),
+            }.`as`("listeCommuneId"),
             multiset(
                 selectDistinct(TYPE_TOPONYMIE.ID)
                     .from(TYPE_TOPONYMIE)
@@ -277,7 +277,7 @@ class CriseRepository @Inject constructor(
                 record?.map { r ->
                     r.value1() as UUID
                 }
-            }.`as`("listeToponymie"),
+            }.`as`("listeToponymieId"),
         ).from(CRISE)
             .join(TYPE_CRISE)
             .on(CRISE.TYPE_CRISE_ID.eq(TYPE_CRISE.ID))

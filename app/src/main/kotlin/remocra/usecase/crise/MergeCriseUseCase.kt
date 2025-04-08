@@ -62,8 +62,8 @@ class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDAT
         // on récupère les crises dont les informations sont à déplacer :
         var criseLibelle: String? = crise1.criseLibelle
         var criseDescription: String = crise1.criseDescription ?: ""
-        val criseListeCommune: MutableList<UUID>? = crise1.listeCommune?.toMutableList()
-        val criseListeToponymie: MutableList<UUID>? = crise1.listeToponymie?.toMutableList()
+        val criseListeCommune: MutableList<UUID>? = crise1.listeCommuneId?.toMutableList()
+        val criseListeToponymie: MutableList<UUID>? = crise1.listeToponymieId?.toMutableList()
 
         element.listeCriseId?.forEach { uuid ->
             val criseX = criseRepository.getCrise(uuid)
@@ -72,8 +72,8 @@ class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDAT
                 criseDescription += " " + criseX.criseDescription
             }
             // Ajout des communes et toponymies
-            criseListeCommune?.addAll(criseX.listeCommune ?: emptyList())
-            criseListeToponymie?.addAll(criseX.listeToponymie ?: emptyList())
+            criseListeCommune?.addAll(criseX.listeCommuneId ?: emptyList())
+            criseListeToponymie?.addAll(criseX.listeToponymieId ?: emptyList())
             // mise à jour de la seconde crise
             criseRepository.updateCrise(uuid, criseX.criseLibelle, criseX.criseDescription, criseX.criseDateDebut, element.criseDateFin, criseX.typeCriseId, TypeCriseStatut.FUSIONNEE)
 

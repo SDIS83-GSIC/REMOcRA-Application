@@ -5,15 +5,15 @@ enum CriseStatutEnum {
 }
 
 export type CriseType = {
-  criseId: string;
+  criseId?: string;
   criseLibelle: string;
   criseDescription: string;
   criseDateDebut: Date;
   criseDateFin: Date;
   criseStatutType: CriseStatutEnum;
   typeCriseId: string;
-  listeCommune: string[];
-  listeToponymie: string[];
+  listeCommuneId: string[];
+  listeToponymieId: string[];
 };
 
 export default CriseStatutEnum;

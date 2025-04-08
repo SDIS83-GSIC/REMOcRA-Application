@@ -9,7 +9,7 @@ import {
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import { requiredDate, requiredString } from "../../../module/validators.tsx";
+import { requiredArray, requiredDate, requiredString } from "../../../module/validators.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import { CriseType } from "../../../Entities/CriseEntity.tsx";
 import url from "../../../module/fetch.tsx";
@@ -18,33 +18,34 @@ import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.t
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 
 export const getInitialValues = (data?: CriseType) => ({
-  typeCrise: data?.typeCriseId ?? null,
+  typeCriseId: data?.typeCriseId ?? null,
   criseLibelle: data?.criseLibelle ?? null,
   criseDescription: data?.criseDescription ?? null,
-  listeCommuneId: data?.listeCommune ?? null,
-  criseDateDebut: data?.criseDateDebut ?? null,
-  listeToponymieId: data?.listeToponymie ?? null,
+  listeCommuneId: data?.listeCommuneId ?? null,
+  criseDateDebut: data?.criseDateDebut
+    ? formatDateTimeForDateTimeInput(data?.criseDateDebut)
+    : formatDateTimeForDateTimeInput(new Date()),
+  listeToponymieId: data?.listeToponymieId ?? null,
 });
 
 export const criseValidationSchema = object({
-  typeCrise: requiredString,
+  typeCriseId: requiredString,
   criseLibelle: requiredString,
   criseDateDebut: requiredDate,
+  listeCommuneId: requiredArray,
 });
 
-export const prepareCriseValues = (values) => ({
-  typeCrise: values.typeCrise,
+export const prepareCriseValues = (values: CriseType) => ({
+  typeCriseId: values.typeCriseId,
   criseLibelle: values.criseLibelle,
   criseDescription: values.criseDescription,
   listeCommuneId: values.listeCommuneId,
-  criseDateDebut: formatDateTimeForDateTimeInput(
-    values.criseDateDebut ?? new Date(),
-  ),
+  criseDateDebut: new Date(values.criseDateDebut).toISOString(),
   listeToponymieId: values.listeToponymieId,
 });
 
 const Crise = () => {
-  const { setValues, setFieldValue, values } = useFormikContext();
+  const { setValues, setFieldValue, values } = useFormikContext<CriseType>();
 
   const typeCriseState = useGet(url`/api/crise/get-type-crise`);
   const communeState = useGet(url`/api/commune/get-libelle-commune`);
@@ -56,7 +57,7 @@ const Crise = () => {
       return [];
     }
     return typeCriseState.data.map((crise) => {
-      return { id: crise.criseId, libelle: crise.criseNom };
+      return { id: crise.criseId, code: crise.criseNom, libelle: crise.criseNom };
     });
   }, [typeCriseState.data]);
 
@@ -64,13 +65,13 @@ const Crise = () => {
     <FormContainer noValidate>
       <h3 className="mt-1">Informations générales</h3>
       <SelectForm
-        name={"typeCrise"}
+        name={"typeCriseId"}
         listIdCodeLibelle={listTypeCrise}
         label="Type de la crise"
         required={true}
         setValues={setValues}
         defaultValue={listTypeCrise.find(
-          (e: { id: any }) => e.id === values?.typeCriseId,
+          (e: IdCodeLibelleType) => e.id === values?.typeCriseId,
         )}
       />
 
@@ -85,22 +86,23 @@ const Crise = () => {
       <DateTimeInput
         name="criseDateDebut"
         label="Date et heure d’activation"
+        value={values.criseDateDebut}
         required={true}
       />
 
       <Multiselect
-        name={"listeCommune"}
+        name={"listeCommuneId"}
         label="Liste des communes de la crise"
         options={communeState.data}
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         value={
-          values.listeCommuneId?.map((e) =>
+          values.listeCommuneId?.map((e: any) =>
             communeState.data?.find((c: IdCodeLibelleType) => c.id === e),
           ) ?? undefined
         }
         onChange={(commune) => {
-          const communeId = commune.map((e) => e.id);
+          const communeId = commune.map((e: any) => e.id);
           communeId.length > 0
             ? setFieldValue("listeCommuneId", communeId)
             : setFieldValue("listeCommuneId", undefined);
@@ -109,7 +111,7 @@ const Crise = () => {
       />
 
       <Multiselect
-        name={"repertoireLieux"}
+        name={"listeTyponymieId"}
         label="Répertoire des lieux"
         options={toponymieList.data}
         getOptionValue={(t) => t.id}
@@ -117,12 +119,12 @@ const Crise = () => {
         isClearable={true}
         required={false}
         value={
-          values.listeToponymieId?.map((e) =>
+          values.listeToponymieId?.map((e: any) =>
             toponymieList.data?.find((c: IdCodeLibelleType) => c.id === e),
           ) ?? undefined
         }
         onChange={(toponymie) => {
-          const toponymieId = toponymie.map((e: { id: any }) => e.id);
+          const toponymieId = toponymie.map((e: any) => e.id);
           toponymieId.length > 0
             ? setFieldValue("listeToponymieId", toponymieId)
             : setFieldValue("listeToponymieId", undefined);

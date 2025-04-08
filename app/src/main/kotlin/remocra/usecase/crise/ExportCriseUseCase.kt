@@ -55,7 +55,7 @@ class ExportCriseUseCase : AbstractUseCase() {
             dateDebCrise = crise.criseDateDebut,
             dateClotureCrise = crise.criseDateFin,
             evenement = evenementRepository.getAllEvents(criseId = criseId, dateDebExtraction = dateDebExtraction, dateFinExtraction = dateFinExtraction),
-            listeCommune = crise.listeCommune?.map { id -> communeRepository.getById(id).communeLibelle }?.distinct() ?: emptyList(),
+            listeCommune = crise.listeCommuneId?.map { id -> communeRepository.getById(id).communeLibelle }?.distinct() ?: emptyList(),
             listeMessage = messageRepository.getAllMessages(),
             hasMessage = hasMessage,
         )
