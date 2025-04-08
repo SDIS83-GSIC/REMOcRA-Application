@@ -59,7 +59,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                 }
                 TypeResumeElement.LOCALISATION -> {
                     var data = """
-                                ${peiData.peiNumeroVoie?.toString().orEmpty()} ${peiData.peiSuffixeVoie.orEmpty()} ${peiData.voieLibelle}
+                                ${peiData.peiNumeroVoie?.toString().orEmpty()} ${peiData.peiSuffixeVoie.orEmpty()} ${peiData.voieLibelle ?: peiData.peiVoieTexte}
                                 ${peiData.communeCodePostal} ${peiData.communeLibelle}
                                 Code INSEE : ${peiData.communeCodeInsee}
                     """.trimIndent().trim()
