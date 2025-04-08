@@ -6,7 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record16
+import org.jooq.Record17
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -168,6 +168,7 @@ class PeiRepository
                     tourneeLibelle = record.component14()!!,
                     peiNextRop = record.component15(),
                     peiNextCtp = record.component16(),
+                    tourneeId = record.component17(),
                 )
             }
 
@@ -233,7 +234,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record16<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?, ZonedDateTime?>> {
+    ): SelectForUpdateStep<Record17<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?, ZonedDateTime?, UUID?>> {
         return dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -272,6 +273,7 @@ class PeiRepository
             }.`as`("tourneeLibelle"),
             V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
+            TOURNEE.ID,
         )
             .from(PEI)
             .join(COMMUNE)
@@ -339,6 +341,7 @@ class PeiRepository
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
+                TOURNEE.ID,
             )
             .orderBy(
                 param.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(
@@ -367,6 +370,7 @@ class PeiRepository
         val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
+        val tourneeId: UUID?,
     )
 
     data class Filter(
@@ -383,11 +387,11 @@ class PeiRepository
         val listeAnomalie: String?,
         var idIndisponibiliteTemporaire: UUID?,
         var idTournee: UUID?,
-        val tourneeLibelle: String?,
         var listePeiId: Set<UUID>?,
         var adresse: String?,
         val prochaineDateRop: ProchaineDate?,
         val prochaineDateCtp: ProchaineDate?,
+        val tourneeId: UUID?,
     ) {
 
         enum class ProchaineDate {
@@ -445,6 +449,7 @@ class PeiRepository
                     adresse?.let {
                         DSL.and(adresseField.containsIgnoreCaseUnaccent(it))
                     },
+                    tourneeId?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                 ),
             )
     }
@@ -484,6 +489,7 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
+            TOURNEE.LIBELLE.getSortField(tourneeLibelle),
         )
     }
 

@@ -246,4 +246,15 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun getGeometrieById(@PathParam("tourneePei") tourneePei: UUID): Response {
         return Response.ok(tourneeRepository.getGeometrieTournee(tourneePei)).build()
     }
+
+    @GET
+    @Path("/get-libelle-tournee")
+    @RequireDroits([Droit.TOURNEE_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getTourneeForSelect(): Response {
+        return Response.ok(
+            tourneeRepository.getTourneeForSelect(),
+        )
+            .build()
+    }
 }

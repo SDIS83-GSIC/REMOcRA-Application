@@ -243,7 +243,13 @@ function getColumnPeiByStringArray(
         column.push({
           Header: "Tournée",
           accessor: "tourneeLibelle",
-          Filter: <FilterInput type="text" name="tourneeLibelle" />,
+          sortField: "tourneeLibelle",
+          Filter: (
+            <SelectFilterFromUrl
+              url={url`/api/tournee/get-libelle-tournee`}
+              name="tourneeId"
+            />
+          ),
           width: 200,
         });
         break;

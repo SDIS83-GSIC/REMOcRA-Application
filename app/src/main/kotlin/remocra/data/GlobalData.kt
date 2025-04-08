@@ -19,4 +19,9 @@ class GlobalData {
         val libelle: String,
         val pprif: Boolean,
     )
+
+    data class IdLibelleData(
+        val id: UUID,
+        val libelle: String,
+    )
 }

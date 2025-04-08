@@ -85,15 +85,6 @@ class PeiUseCase : AbstractUseCase() {
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: UserInfo): List<PeiRepository.PeiForTableau> {
         val listePei = peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
 
-        /*
-         * Le libelle de la tournée est un multiset qui concatène toutes les tournées
-         * Impossible en jooq de filtrer sur un multiset
-         */
-        params.filterBy?.tourneeLibelle?.let {
-                tourneeSearch ->
-            return listePei.filter { it.tourneeLibelle?.contains(tourneeSearch) == true }
-        }
-
         return peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
     }
 

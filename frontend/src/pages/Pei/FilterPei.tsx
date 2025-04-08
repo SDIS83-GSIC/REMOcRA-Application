@@ -17,6 +17,7 @@ type filterPei = {
   adresse?: string;
   prochaineDateRop?: PROCHAINE_DATE_ENUM;
   prochaineDateCtp?: PROCHAINE_DATE_ENUM;
+  tourneeId?: string;
 };
 
 export const filterValuesToVariable = ({
@@ -35,6 +36,7 @@ export const filterValuesToVariable = ({
   adresse,
   prochaineDateRop,
   prochaineDateCtp,
+  tourneeId,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -88,7 +90,9 @@ export const filterValuesToVariable = ({
   if (prochaineDateCtp != null && prochaineDateCtp.trim() !== "") {
     filter.prochaineDateCtp = prochaineDateCtp;
   }
-
+  if (tourneeId != null && tourneeId.trim() !== "") {
+    filter.tourneeId = tourneeId;
+  }
   return filter;
 };
 
