@@ -24,6 +24,7 @@ enum class CodeSdis {
     SDIS_89,
     SDIS_91,
     SDIS_95,
+    SDIS_971,
     SDIS_973,
     BSPP,
     SDMIS,
