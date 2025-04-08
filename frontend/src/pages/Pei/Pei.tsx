@@ -999,12 +999,6 @@ const FormPibi = ({
     ? selectData.listModele.find((e) => e.id === values.pibiModeleId)?.marqueId
     : values.pibiMarqueId;
 
-  const idNature = values.peiNatureId
-    ? selectData.listDiametreWithNature.find(
-        (e) => e.id === values.pibiDiametreId,
-      )?.natureId
-    : values.peiNatureId;
-
   return (
     <>
       <Row>
@@ -1012,14 +1006,16 @@ const FormPibi = ({
         <Col>
           <SelectForm
             name={"pibiDiametreId"}
-            listIdCodeLibelle={selectData.listDiametreWithNature.filter(
-              (e) =>
-                (e.id === values.pibiDiametreId &&
-                  e.natureId === values.peiNatureId &&
-                  !e.actif) ||
-                (e.natureId === values.peiNatureId && e.actif) ||
-                (e.natureId === idNature && e.actif),
-            )}
+            listIdCodeLibelle={selectData.listDiametreWithNature
+              .filter(
+                (e) =>
+                  (e.natureId === values.peiNatureId && e.actif) ||
+                  e.id === values.pibiDiametreId,
+              )
+              .filter(
+                (item, index, self) =>
+                  self.findIndex((t) => t.id === item.id) === index,
+              )}
             label="Diamètre nominal"
             defaultValue={selectData.listDiametreWithNature.find(
               (e) => e.id === values.pibiDiametreId,
