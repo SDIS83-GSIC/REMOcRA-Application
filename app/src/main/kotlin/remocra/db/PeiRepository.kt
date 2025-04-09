@@ -71,7 +71,6 @@ class PeiRepository
             DSL.`when`(PEI.NUMERO_VOIE.isNotNull, DSL.concat(PEI.NUMERO_VOIE, " ")).otherwise(""),
             DSL.`when`(PEI.SUFFIXE_VOIE.isNotNull, DSL.concat(PEI.SUFFIXE_VOIE, " ")).otherwise(""),
             DSL.`when`(PEI.VOIE_ID.isNotNull, DSL.concat(VOIE.LIBELLE, " ")).otherwise(PEI.VOIE_TEXTE),
-            DSL.`when`(PEI.COMPLEMENT_ADRESSE.isNotNull, PEI.COMPLEMENT_ADRESSE),
         )
 
         val peiData = listOf(

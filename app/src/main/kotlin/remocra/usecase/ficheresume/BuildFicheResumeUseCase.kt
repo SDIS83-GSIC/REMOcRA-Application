@@ -5,6 +5,8 @@ import remocra.db.FicheResumeRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeResumeElement
 import remocra.usecase.AbstractUseCase
+import remocra.utils.AdresseDecorator
+import remocra.utils.AdresseForDecorator
 import remocra.utils.DateUtils
 import java.util.UUID
 import kotlin.text.isNullOrBlank
@@ -58,8 +60,18 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     )
                 }
                 TypeResumeElement.LOCALISATION -> {
+                    val decoratedAdresse = AdresseDecorator().decorateAdresse(
+                        AdresseForDecorator(
+                            enFace = peiData.peiEnFace,
+                            numeroVoie = peiData.peiNumeroVoie,
+                            suffixeVoie = peiData.peiSuffixeVoie,
+                            voie = null,
+                            voieTexte = peiData.peiVoieTexte ?: peiData.voieLibelle,
+                        ),
+                    )
+
                     var data = """
-                                ${peiData.peiNumeroVoie?.toString().orEmpty()} ${peiData.peiSuffixeVoie.orEmpty()} ${peiData.voieLibelle ?: peiData.peiVoieTexte}
+                                $decoratedAdresse
                                 ${peiData.communeCodePostal} ${peiData.communeLibelle}
                                 Code INSEE : ${peiData.communeCodeInsee}
                     """.trimIndent().trim()

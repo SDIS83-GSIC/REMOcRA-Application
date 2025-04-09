@@ -41,13 +41,10 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         return dsl.select(
             PEI.DISPONIBILITE_TERRESTRE,
             PEI.TYPE_PEI,
-            PEI.NUMERO_VOIE,
-            PEI.SUFFIXE_VOIE,
-            PEI.VOIE_TEXTE,
-            VOIE.LIBELLE,
+            // On projette tous les champs composant l'adresse
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
             COMMUNE.CODE_INSEE,
             COMMUNE.CODE_POSTAL,
-            PEI.COMPLEMENT_ADRESSE,
             COMMUNE.LIBELLE,
             multiset(
                 selectDistinct(TOURNEE.LIBELLE)
@@ -120,7 +117,8 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val peiTypePei: TypePei,
         val lastRop: ZonedDateTime?,
         val lastCtp: ZonedDateTime?,
-        val peiNumeroVoie: Int?,
+        val peiEnFace: Boolean?,
+        val peiNumeroVoie: String?,
         val peiSuffixeVoie: String?,
         val peiVoieTexte: String?,
         val voieLibelle: String?,

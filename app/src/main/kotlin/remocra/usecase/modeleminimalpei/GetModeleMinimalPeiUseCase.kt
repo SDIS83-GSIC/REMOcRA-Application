@@ -94,7 +94,6 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
                         suffixeVoie = it.peiSuffixeVoie,
                         voie = listeVoie.firstOrNull { v -> it.peiVoieId == v.voieId },
                         voieTexte = it.peiVoieTexte,
-                        complementAdresse = it.peiComplementAdresse,
                     ),
                 ),
                 pibiPressionDynamique = lastCtrl?.ctrlDebitPression?.ctrlPressionDyn?.toDouble(),

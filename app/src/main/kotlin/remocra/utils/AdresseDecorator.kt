@@ -29,9 +29,6 @@ class AdresseDecorator {
                 adresse.voieTexte
             },
         )
-        chunks.add(
-            adresse.complementAdresse,
-        )
 
         return chunks.filter { !it.isNullOrEmpty() }.joinToString(separator = " ").trim()
     }
@@ -43,5 +40,4 @@ data class AdresseForDecorator(
     val suffixeVoie: String?,
     val voie: Voie?,
     val voieTexte: String?,
-    val complementAdresse: String?,
 )

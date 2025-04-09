@@ -356,7 +356,7 @@ class TourneeRepository
             NATURE_DECI.CODE,
             NATURE.LIBELLE,
             // On projette tous les champs composant l'adresse
-            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE,
             COMMUNE.LIBELLE,
         )
             .from(TOURNEE)
@@ -387,10 +387,9 @@ class TourneeRepository
                             voie = null,
                             //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
                             voieTexte = if (record.component8() != null) record.component8() else record.component9(),
-                            complementAdresse = record.component10(),
                         ),
                     ),
-                    communeLibelle = record.component11()!!,
+                    communeLibelle = record.component10()!!,
                     lTourneePeiOrdre = null,
                 )
             }
@@ -402,7 +401,7 @@ class TourneeRepository
             NATURE_DECI.CODE,
             NATURE.LIBELLE,
             // On projette tous les champs composant l'adresse
-            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
+            PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE,
             COMMUNE.LIBELLE,
             L_TOURNEE_PEI.ORDRE,
         ).distinctOn(PEI.ID)
@@ -434,11 +433,10 @@ class TourneeRepository
                             voie = null,
                             //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
                             voieTexte = if (record.component8() != null) record.component8() else record.component9(),
-                            complementAdresse = record.component10(),
                         ),
                     ),
-                    communeLibelle = record.component11()!!,
-                    lTourneePeiOrdre = record.component12(),
+                    communeLibelle = record.component10()!!,
+                    lTourneePeiOrdre = record.component11(),
                 )
             }
 
@@ -529,7 +527,7 @@ class TourneeRepository
                 nextVisiteCte.field("PEI_NEXT_ROP"),
                 nextVisiteCte.field("PEI_NEXT_CTP"),
                 // On projette tous les champs composant l'adresse
-                PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
+                PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE,
             )
             .from(PEI)
             .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
@@ -555,7 +553,6 @@ class TourneeRepository
                             voie = null,
                             //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
                             voieTexte = if (record.component19() != null) record.component19() else record.component20(),
-                            complementAdresse = record.component21(),
                         ),
                     ),
 
