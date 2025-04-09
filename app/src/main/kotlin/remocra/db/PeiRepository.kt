@@ -429,21 +429,31 @@ class PeiRepository
                     prochaineDateRop?.let {
                         when (it) {
                             ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now()))
-                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
-                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
-                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
-                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
-                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
+                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(1)))
+                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(2)))
+                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(6)))
+                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(12)))
+                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(24)))
                         }
                     },
                     prochaineDateCtp?.let {
                         when (it) {
                             ProchaineDate.DATE_PASSEE -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now()))
-                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(1)))
-                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(2)))
-                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(6)))
-                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(12)))
-                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.between(dateUtils.now(), dateUtils.now().minusMonths(24)))
+                            ProchaineDate.INFERIEUR_1_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(1)))
+                            ProchaineDate.INFERIEUR_2_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(2)))
+                            ProchaineDate.INFERIEUR_6_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(6)))
+                            ProchaineDate.INFERIEUR_12_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(12)))
+                            ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(24)))
                         }
                     },
                     adresse?.let {
