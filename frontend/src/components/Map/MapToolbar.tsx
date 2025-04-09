@@ -17,7 +17,6 @@ import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import {
   IconDistance,
-  IconMoveCarte,
   IconSurface,
   IconZoomIn,
   IconZoomOut,
@@ -70,6 +69,7 @@ const formatArea = function (polygon) {
 
 export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
   const [activeTool, setActiveTool] = useState<string>("");
+
   const measureOverlayArray = [];
   const geometryOverlayArray = [];
 
@@ -193,12 +193,15 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
     return {
       "move-view": {
         action: toggleMove,
+        actionPossibleEnDeplacement: true,
       },
       "measure-length": {
         action: toggleMeasureLength,
+        actionPossibleEnDeplacement: true,
       },
       "measure-area": {
         action: toggleMeasureArea,
+        actionPossibleEnDeplacement: true,
       },
       ...extraTools,
     };
@@ -212,9 +215,15 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       setActiveTool(toolId);
       newTool = toolId;
     }
+
     for (const property in tools) {
       tools[property].action(property === newTool);
     }
+
+    // on autorise le déplacement que si on n'est pas dans une situation qui l'interdit (sélection)
+    tools["move-view"].action(
+      tools[toolId]?.actionPossibleEnDeplacement !== false || newTool == null,
+    );
   }
 
   return {
@@ -282,15 +291,6 @@ const MapToolbar = forwardRef(
             >
               <IconZoomOut />
             </Button>
-          </ButtonGroup>
-          <ButtonGroup>
-            <ToolbarButton
-              toolName={"move-view"}
-              toolIcon={<IconMoveCarte />}
-              toolLabelTooltip={"Se déplacer sur la carte"}
-              toggleTool={toggleTool}
-              activeTool={activeTool}
-            />
           </ButtonGroup>
           <AdresseTypeahead map={map} />
           <ButtonGroup>

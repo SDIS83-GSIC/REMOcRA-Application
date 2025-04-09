@@ -280,6 +280,7 @@ export const useToolbarRcciContext = ({
     const tools = {
       "select-rcci": {
         action: toggleSelect,
+        actionPossibleEnDeplacement: false,
       },
       "create-rcci": {
         action: toggleCreate,

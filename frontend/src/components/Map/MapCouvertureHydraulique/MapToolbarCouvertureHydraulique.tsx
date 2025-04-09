@@ -402,6 +402,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       },
       "select-etude": {
         action: toggleSelect,
+        actionPossibleEnDeplacement: false,
       },
       "pei-plus-proche": {
         action: togglePeiPlusProche,

@@ -281,6 +281,7 @@ export const useToolbarPeiContext = ({
     const tools = {
       "select-pei": {
         action: toggleSelect,
+        actionPossibleEnDeplacement: false,
       },
       "create-pei": {
         action: toggleCreate,

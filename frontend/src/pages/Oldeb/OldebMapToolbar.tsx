@@ -197,6 +197,7 @@ export const useToolbarOldebContext = ({
     const tools = {
       "select-oldeb": {
         action: toggleSelect,
+        actionPossibleEnDeplacement: false,
       },
       "edit-oldeb": {
         action: toggleEdit,

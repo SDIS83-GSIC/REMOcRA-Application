@@ -240,6 +240,7 @@ export const useToolbarAdresseContext = ({ map, workingLayer }) => {
     const tools = {
       "select-draw": {
         action: toggleSelectDraw,
+        actionPossibleEnDeplacement: false,
       },
       "create-point": {
         action: toggleCreatePointAdresse,

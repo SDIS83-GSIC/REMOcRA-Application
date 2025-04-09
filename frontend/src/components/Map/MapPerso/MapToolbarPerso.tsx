@@ -344,6 +344,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
     const tools = {
       "select-draw": {
         action: toggleSelectDraw,
+        actionPossibleEnDeplacement: false,
       },
       "draw-point": {
         action: toggleDrawPoint,
