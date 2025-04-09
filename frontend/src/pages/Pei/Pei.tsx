@@ -242,8 +242,10 @@ type SelectDataType = {
   listModele: (IdCodeLibelleType & { marqueId: string })[];
   listServiceEau: IdCodeLibelleType[];
   listPeiJumelage: IdCodeLibelleType[];
-  listDiametreWithNature: IdCodeLibelleType &
-    { natureId: string; actif: boolean }[];
+  listDiametreWithNature: (IdCodeLibelleType & {
+    natureId: string;
+    actif: boolean;
+  })[];
 };
 
 const Pei = ({ isNew = false }: { isNew?: boolean }) => {
@@ -999,6 +1001,35 @@ const FormPibi = ({
     ? selectData.listModele.find((e) => e.id === values.pibiModeleId)?.marqueId
     : values.pibiMarqueId;
 
+  const listDiametreOptions: IdCodeLibelleType[] =
+    selectData.listDiametreWithNature
+      .filter(
+        (e) =>
+          //retire les éléments non assignable (car nature (!=) ou inactif)
+          (e.natureId === values.peiNatureId && e.actif) ||
+          // conserve l'élément assigné actuellement
+          e.id === values.pibiDiametreId,
+      )
+      .map((e) =>
+        // Formate la liste dans l'état attendu par le composant SelectForm
+        ({ id: e.id, code: e.code, libelle: e.libelle }),
+      )
+      .filter(
+        // Elimination des doublons
+        (item, index, self) =>
+          self.findIndex(
+            (t) =>
+              t.id === item.id &&
+              t.code === item.code &&
+              t.libelle === item.libelle,
+          ) === index,
+      )
+      .sort((a, b) => {
+        // Tri des options, nécessaire au bon fonctionnement du composant
+        // Si les options changent d'index au cours de l'assignation, le SetValue ne donne pas le résultat attendu
+        return a.code < b.code ? -1 : 1;
+      });
+
   return (
     <>
       <Row>
@@ -1006,18 +1037,9 @@ const FormPibi = ({
         <Col>
           <SelectForm
             name={"pibiDiametreId"}
-            listIdCodeLibelle={selectData.listDiametreWithNature
-              .filter(
-                (e) =>
-                  (e.natureId === values.peiNatureId && e.actif) ||
-                  e.id === values.pibiDiametreId,
-              )
-              .filter(
-                (item, index, self) =>
-                  self.findIndex((t) => t.id === item.id) === index,
-              )}
+            listIdCodeLibelle={listDiametreOptions}
             label="Diamètre nominal"
-            defaultValue={selectData.listDiametreWithNature.find(
+            defaultValue={listDiametreOptions.find(
               (e) => e.id === values.pibiDiametreId,
             )}
             required={false}
