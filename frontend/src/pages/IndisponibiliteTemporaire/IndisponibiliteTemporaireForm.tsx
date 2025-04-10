@@ -75,7 +75,7 @@ const IndisponibiliteTemporaireForm = ({
         <PageTitle
           title={title}
           icon={<IconIndisponibiliteTemporaire />}
-          displayReturnButton={listePeiId?.length === 0}
+          displayReturnButton={!(listePeiId?.length > 0)}
         />
         <FormContainer>
           <SectionTitle>Mise en indisponibilité</SectionTitle>
