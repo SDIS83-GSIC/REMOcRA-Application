@@ -24,7 +24,9 @@ import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
-import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
+import referenceTypeVisite, {
+  TYPE_VISITE,
+} from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import VisiteForm, {
@@ -179,7 +181,13 @@ const Visite = () => {
                   }
                 >
                   <td>{formatDateTime(element.visiteDate)}</td>
-                  <td>{element.visiteTypeVisite}</td>
+                  <td>
+                    {
+                      referenceTypeVisite.find(
+                        (e) => e.code === element.visiteTypeVisite,
+                      )?.libelle
+                    }
+                  </td>
                   <td>{element.visiteAgent1}</td>
                   <td>
                     <Button
