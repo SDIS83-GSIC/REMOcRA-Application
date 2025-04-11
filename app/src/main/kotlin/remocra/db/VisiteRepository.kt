@@ -32,6 +32,22 @@ class VisiteRepository
         .orderBy(VISITE.DATE.desc())
         .fetchAnyInto()
 
+    fun getAvantDerniereVisite(peiId: UUID, visiteId: UUID): UUID =
+        dsl.select(VISITE.ID).from(VISITE)
+            .where(VISITE.PEI_ID.eq(peiId))
+            .and(VISITE.ID.ne(visiteId))
+            .orderBy(VISITE.DATE.desc())
+            .limit(1)
+            .fetchSingleInto()
+
+    fun getLVisiteAnomalie(visiteId: UUID): Collection<UUID> {
+        return dsl
+            .select(L_VISITE_ANOMALIE.ANOMALIE_ID)
+            .from(L_VISITE_ANOMALIE)
+            .where(L_VISITE_ANOMALIE.VISITE_ID.eq(visiteId))
+            .fetchInto()
+    }
+
     fun getLastVisiteBefore(peiId: UUID, instant: ZonedDateTime): Visite {
         return dsl
             .selectFrom(VISITE)

@@ -134,7 +134,11 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .execute()
 
     fun batchInsertLPeiAnomalie(listePeiAnomalie: List<LPeiAnomalie>) {
-        dsl.batch(listePeiAnomalie.map { DSL.insertInto(L_PEI_ANOMALIE).set(dsl.newRecord(L_PEI_ANOMALIE, it)) })
+        dsl.batch(
+            listePeiAnomalie.map {
+                DSL.insertInto(L_PEI_ANOMALIE).set(dsl.newRecord(L_PEI_ANOMALIE, it)).onConflictDoNothing()
+            },
+        )
             .execute()
     }
 

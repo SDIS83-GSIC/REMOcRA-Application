@@ -136,9 +136,9 @@ class CalculDispoUseCase : AbstractUseCase() {
             val poidsAnomalies = poidsAnomalieRepository.getPoidsAnomalies(setGlobalAnomalies.map { it.anomalieId }, pei.peiNatureId, lastVisite?.visiteTypeVisite)
 
             // On calcule le poids total, comme étant la somme des poids de chaque anomalie présente sur le PEI, quelle que soit sa provenance
-            val note = setGlobalAnomalies.map { ano ->
+            val note = setGlobalAnomalies.mapNotNull { ano ->
                 poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }?.poidsAnomalieValIndispoTerrestre
-            }.reduce { acc, next -> if (acc != null && next != null) acc.plus(next) else null } ?: 0
+            }.reduceOrNull { acc, next -> acc.plus(next) } ?: 0
 
             if (note >= 5) {
                 return Disponibilite.INDISPONIBLE

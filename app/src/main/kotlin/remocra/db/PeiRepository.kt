@@ -920,8 +920,11 @@ class PeiRepository
             .where(PEI.NUMERO_COMPLET.`in`(listNumeroComplet))
             .fetchInto()
 
-    fun getCaracteristiquesForTooltip() {
-    }
+    fun deleteAnomaliePei(peiId: UUID, listeAnomalie: List<UUID>) =
+        dsl.deleteFrom(L_PEI_ANOMALIE)
+            .where(L_PEI_ANOMALIE.PEI_ID.eq(peiId))
+            .and(L_PEI_ANOMALIE.ANOMALIE_ID.`in`(listeAnomalie))
+            .execute()
 
     data class PeiDataForApi(
         val peiId: UUID,

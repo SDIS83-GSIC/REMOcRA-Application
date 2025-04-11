@@ -6,12 +6,14 @@ import remocra.data.AuteurTracabiliteData
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeVisite
+import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -26,6 +28,9 @@ class DeleteVisiteUseCase @Inject constructor(
 
     @Inject
     lateinit var peiRepository: PeiRepository
+
+    @Inject
+    lateinit var anomalieRepository: AnomalieRepository
 
     override fun checkDroits(userInfo: UserInfo) {
     }
@@ -73,6 +78,24 @@ class DeleteVisiteUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: UserInfo?, element: VisiteData): VisiteData {
+        // On supprime les anomalies du PEI (de la dernière visite)
+        peiRepository.deleteAnomaliePei(element.visitePeiId, element.listeAnomalie)
+
+        // On va ensuite chercher les anomalies de la nouvelle dernière visite
+        val avantDernierVisiteId = visiteRepository.getAvantDerniereVisite(element.visitePeiId, element.visiteId)
+
+        val listeAnomalie = visiteRepository.getLVisiteAnomalie(avantDernierVisiteId)
+
+        anomalieRepository.batchInsertLPeiAnomalie(
+            listeAnomalie.takeIf { it.isNotEmpty() }?.map {
+                LPeiAnomalie(
+                    peiId = element.visitePeiId,
+                    anomalieId = it,
+                )
+            } ?: listOf(),
+        )
+
+        // On supprime les autres données liées à la visite
         visiteRepository.deleteAllVisiteAnomalies(element.visiteId)
         visiteRepository.deleteVisiteCtrl(element.visiteId)
         visiteRepository.deleteVisite(element.visiteId)
