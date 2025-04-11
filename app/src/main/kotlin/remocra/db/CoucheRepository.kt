@@ -16,23 +16,25 @@ import java.util.UUID
 
 class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     // XXX: Retourner un type plus spécifique, avec uniquement les champs utiles
-    fun getCouche(code: String, module: TypeModule, profilDroit: ProfilDroit?): Couche? =
+    fun getCouche(code: String, module: TypeModule, profilDroit: ProfilDroit?, isSuperAdmin: Boolean? = false): Couche? =
         dsl.select(*COUCHE.fields())
             .from(COUCHE)
             .join(L_COUCHE_MODULE).on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
             .where(COUCHE.CODE.eq(code))
             .and(L_COUCHE_MODULE.MODULE_TYPE.eq(module))
             .and(
-                DSL.or(
-                    COUCHE.PUBLIC.isTrue,
-                    profilDroit?.let {
-                        DSL.exists(
-                            DSL.select(L_COUCHE_DROIT.COUCHE_ID)
-                                .from(L_COUCHE_DROIT)
-                                .where(L_COUCHE_DROIT.COUCHE_ID.eq(COUCHE.ID))
-                                .and(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(it.profilDroitId)),
-                        )
-                    } ?: DSL.noCondition(),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    COUCHE.PUBLIC.isTrue.or(
+                        profilDroit?.let {
+                            DSL.exists(
+                                DSL.select(L_COUCHE_DROIT.COUCHE_ID)
+                                    .from(L_COUCHE_DROIT)
+                                    .where(L_COUCHE_DROIT.COUCHE_ID.eq(COUCHE.ID))
+                                    .and(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(it.profilDroitId)),
+                            )
+                        },
+                    ),
+                    isSuperAdmin == true,
                 ),
             )
             .fetchOneInto<Couche>()

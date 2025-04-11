@@ -53,6 +53,7 @@ class GeoserverEndpoint : AbstractEndpoint() {
             user?.utilisateurId?.let {
                 droitsRepository.getProfilDroitListFromUser(it)
             },
+            user?.isSuperAdmin,
         )
         if (couche == null) {
             // On ne sait pas ici si c'est un problème de droit où de couche inexistante
