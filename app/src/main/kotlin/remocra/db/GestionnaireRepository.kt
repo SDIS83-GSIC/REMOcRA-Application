@@ -25,6 +25,7 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         dsl.select(GESTIONNAIRE.ID.`as`("id"), GESTIONNAIRE.CODE.`as`("code"), GESTIONNAIRE.LIBELLE.`as`("libelle"))
             .from(GESTIONNAIRE)
             .where(GESTIONNAIRE.ACTIF)
+            .orderBy(GESTIONNAIRE.LIBELLE)
             .fetchInto()
 
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<GestionnaireWithHasContact> =
