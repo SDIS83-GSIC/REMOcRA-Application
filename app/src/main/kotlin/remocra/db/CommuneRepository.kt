@@ -42,7 +42,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     fun getCommuneForSelect(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
-            .orderBy(COMMUNE.LIBELLE)
+            .orderBy(DSL.field("SUBSTRING(${COMMUNE.LIBELLE}, '([0-9]+)')::integer", Int::class.java), COMMUNE.LIBELLE)
             .fetchInto()
 
     /**
