@@ -9,7 +9,11 @@ import {
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import { requiredArray, requiredDate, requiredString } from "../../../module/validators.tsx";
+import {
+  requiredArray,
+  requiredDate,
+  requiredString,
+} from "../../../module/validators.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import { CriseType } from "../../../Entities/CriseEntity.tsx";
 import url from "../../../module/fetch.tsx";
@@ -57,7 +61,11 @@ const Crise = () => {
       return [];
     }
     return typeCriseState.data.map((crise) => {
-      return { id: crise.criseId, code: crise.criseNom, libelle: crise.criseNom };
+      return {
+        id: crise.criseId,
+        code: crise.criseNom,
+        libelle: crise.criseNom,
+      };
     });
   }, [typeCriseState.data]);
 

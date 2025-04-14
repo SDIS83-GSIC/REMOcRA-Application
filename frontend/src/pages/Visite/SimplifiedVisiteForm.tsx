@@ -63,9 +63,8 @@ const SimplifiedVisiteForm = ({
       }
       case TYPE_VISITE.ROP: {
         filteredListAnomalie =
-          listeAnomaliesAssignable?.filter(
-            (e) => e.isRopAssignable === true,
-          ) ?? [];
+          listeAnomaliesAssignable?.filter((e) => e.isRopAssignable === true) ??
+          [];
         break;
       }
       case TYPE_VISITE.NP: {
