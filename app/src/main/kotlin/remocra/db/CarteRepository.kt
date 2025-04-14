@@ -219,7 +219,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
-    fun getAdresse(bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<AdresseCarte> {
+    fun getAdresse(bbox: Field<Geometry?>?, srid: Int, zoneId: UUID?, isSuperAdmin: Boolean): Collection<AdresseCarte> {
         return dsl.select(
             ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
             ADRESSE.ID.`as`("elementId"),
@@ -255,6 +255,8 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             }.`as`("listSousElementAvecAnomalie"),
         )
             .from(ADRESSE)
+            .leftJoin(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     ST_Within(ADRESSE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
@@ -438,7 +440,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.ADRESSE
 
-        override var propertiesToDisplay: String? = "<b>Etat :</b> $adresseType <br/>" +
+        override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatAdresseLibelle(adresseType)} <br/>" +
             "<b>Description :</b> ${adresseDescription.orEmpty()} " +
             "<br /><b>Date constat :</b> ${adresseDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
             "<br/><b>Liste des élements :</b> ${
@@ -448,6 +450,13 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                     })"
                 }
             }"
+
+        fun getEtatAdresseLibelle(etatAdresse: EtatAdresse) =
+            when (etatAdresse) {
+                EtatAdresse.EN_COURS -> "En cours"
+                EtatAdresse.ACCEPTEE -> "Acceptée"
+                EtatAdresse.REFUSEE -> "Refusée"
+            }
     }
 
     data class SousElementAvecAnomalie(
