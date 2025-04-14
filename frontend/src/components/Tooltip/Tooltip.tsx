@@ -7,6 +7,7 @@ const TooltipCustom = ({
   tooltipId,
   tooltipHeader,
   placement = "bottom",
+  maxWidth,
   children,
 }: TooltipType) => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -34,6 +35,12 @@ const TooltipCustom = ({
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
           onClick={handleButtonClick}
+          style={{
+            maxWidth: maxWidth,
+            overflowX: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
         >
           {children}
         </div>
@@ -48,6 +55,7 @@ type TooltipType = {
   tooltipHeader?: string;
   placement?: Placement;
   children: React.ReactElement | ((props: any) => React.ReactNode);
+  maxWidth?: number;
 };
 
 export default TooltipCustom;
