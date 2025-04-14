@@ -30,7 +30,7 @@ class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
             return
         }
 
-        if (userInfo.utilisateur.utilisateurUsername != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
+        if (userInfo.username != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
             if (userInfo.zoneCompetence == null) {
                 throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
             }

@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ReactNode } from "react";
+import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -47,15 +48,18 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
               ))}
             </Nav>
             <Nav>
-              <p className="text-light pe-3">
+              <p className="d-flex m-0 align-items-center text-light pe-3">
                 {`${user.prenom} ${user.nom} (${user.username})`}
               </p>
-              <a
-                href={URLS.LOGOUT}
-                className={"text-decoration-none text-light"}
-              >
-                Déconnexion{" "}
-              </a>
+              <form method="post" action={URLS.LOGOUT}>
+                <Button
+                  type="submit"
+                  variant="link"
+                  className={"text-decoration-none text-light"}
+                >
+                  Déconnexion
+                </Button>
+              </form>
             </Nav>
           </Navbar.Collapse>
         </Container>

@@ -8,52 +8,48 @@ import net.ltgt.oauth.common.CachedTokenPrincipalProvider
 import net.ltgt.oauth.common.KeycloakTokenPrincipal
 import net.ltgt.oauth.common.TokenPrincipal
 import remocra.db.DroitsRepository
+import remocra.db.OrganismeRepository
+import remocra.db.ProfilDroitRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecase.utilisateur.UtilisateurOrganismesUseCase
 import java.util.UUID
 
 class MobileUserPrincipalProvider @Inject constructor(
     private val utilisateurRepository: Provider<UtilisateurRepository>,
     private val droitsRepository: Provider<DroitsRepository>,
-    private val utilisateurOrganismesUseCase: Provider<UtilisateurOrganismesUseCase>,
+    private val organismeRepository: Provider<OrganismeRepository>,
+    private val profilDroitRepository: ProfilDroitRepository,
     authnSettings: AuthModule.AuthnSettings,
 ) : CachedTokenPrincipalProvider(Caffeine.from(authnSettings.tokenIntrospectionCacheSpec)) {
     override fun load(introspectionResponse: TokenIntrospectionSuccessResponse): TokenPrincipal? {
         // XXX: utiliser syncUtilisateur ?
-        val utilisateur =
-            utilisateurRepository.get().getUtilisateurById(UUID.fromString(introspectionResponse.subject!!.value))
-                ?: return null
+        val utilisateur = utilisateurRepository.get().getUtilisateurById(UUID.fromString(introspectionResponse.subject!!.value))
+            ?: return null
 
-        val userInfo = UserInfo()
-        userInfo.id = introspectionResponse.subject!!.value
-        userInfo.addAttribute("preferred_username", utilisateur.utilisateurUsername)
-        userInfo.addAttribute("given_name", utilisateur.utilisateurPrenom)
-        userInfo.addAttribute("family_name", utilisateur.utilisateurNom)
-        userInfo.addAttribute("email", utilisateur.utilisateurEmail)
-        userInfo.utilisateur = utilisateur
-
-        // XXX: factoriser avec SyncProfileAuthorizationGenerator
+        // XXX: factoriser avec RemocraUserPrincipalFactory
 
         // On remplit ses droits
-        userInfo.droits = if (utilisateur.utilisateurIsSuperAdmin == true) {
+        val droits = if (utilisateur.utilisateurIsSuperAdmin == true) {
             Droit.entries.toSet()
         } else {
-            droitsRepository.get().getDroitsFromUser(userInfo.utilisateurId)
+            droitsRepository.get().getDroitsFromUser(utilisateur.utilisateurId)
         }
 
-        if (userInfo.utilisateur.utilisateurOrganismeId != null) {
-            // zone de compétence
-            userInfo.zoneCompetence =
-                utilisateurRepository.get().getZoneByOrganismeId(utilisateur.utilisateurOrganismeId!!)
+        // zone de compétence
+        val zoneCompetence = utilisateur.utilisateurOrganismeId?.let {
+            utilisateurRepository.get().getZoneByOrganismeId(it)
         }
 
         // On remplit ses organismes affiliés
-        utilisateurOrganismesUseCase.get().execute(userInfo)
+        val affiliatedOrganismeIds = utilisateur.utilisateurOrganismeId?.let {
+            organismeRepository.get().getOrganismeAndChildren(it).toSet()
+        } ?: organismeRepository.get().getAll().map { it.id }.toSet()
+
+        val profilDroit = profilDroitRepository.getProfilDroitByUtilisateurId(utilisateur.utilisateurId)
 
         return object : KeycloakTokenPrincipal(introspectionResponse), RemocraUserPrincipal {
             override fun getName() = super<RemocraUserPrincipal>.getName()
-            override val userInfo = userInfo
+            override val userInfo = UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit)
         }
     }
 }

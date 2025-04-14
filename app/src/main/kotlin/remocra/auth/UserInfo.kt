@@ -1,43 +1,37 @@
 package remocra.auth
 
 import org.locationtech.jts.geom.Geometry
-import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
-import java.security.Principal
+import java.io.Serializable
 import java.util.UUID
 
-class
-UserInfo : KeycloakOidcProfile() {
-    lateinit var utilisateur: Utilisateur
-
-    lateinit var droits: Set<Droit>
-
-    var profilDroits: ProfilDroit? = null
-
-    var zoneCompetence: ZoneIntegration? = null
+class UserInfo(
+    val utilisateur: Utilisateur,
+    val droits: Set<Droit>,
+    val zoneCompetence: ZoneIntegration?,
+    val affiliatedOrganismeIds: Set<UUID>,
+    val profilDroits: ProfilDroit?,
+) : Serializable {
+    val username: String
+        get() = utilisateur.utilisateurUsername
 
     val utilisateurId: UUID
-        get() = UUID.fromString(subject)
+        get() = utilisateur.utilisateurId
 
     val prenom: String
-        get() = firstName
+        get() = utilisateur.utilisateurPrenom
 
     val nom: String
-        get() = familyName
+        get() = utilisateur.utilisateurNom
+
+    val email: String
+        get() = utilisateur.utilisateurEmail
 
     val organismeId: UUID?
         get() = utilisateur.utilisateurOrganismeId
-
-    /**
-     * Retourne TRUE si l'utilisateur est initialisé, FALSE sinon
-     */
-    fun isUtilisateurInitialized() = ::utilisateur.isInitialized
-
-    // Les organismes affiliés, à savoir l'organisme de rattachement et ses enfants, pour simplifier les requêtes hiérarchiques
-    lateinit var affiliatedOrganismeIds: Set<UUID>
 
     val isActif: Boolean
         get() = utilisateur.utilisateurActif
@@ -45,20 +39,16 @@ UserInfo : KeycloakOidcProfile() {
     val isSuperAdmin: Boolean
         get() = utilisateur.utilisateurIsSuperAdmin ?: false
 
-    override fun asPrincipal(): Principal {
-        return UserPrincipal(this)
-    }
-
     fun asJavascriptUserProfile(): JavascriptUserProfile {
         return JavascriptUserProfile(
-            utilisateurId = this.utilisateurId,
-            nom = this.familyName,
-            prenom = this.firstName,
-            username = this.username,
-            organismeId = this.organismeId,
+            utilisateurId = utilisateurId,
+            nom = nom,
+            prenom = prenom,
+            username = username,
+            organismeId = organismeId,
             zoneIntegrationExtent = zoneCompetence?.zoneIntegrationGeometrie,
             droits = this.droits,
-            isSuperAdmin = this.isSuperAdmin,
+            isSuperAdmin = isSuperAdmin,
         )
     }
 

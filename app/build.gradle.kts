@@ -39,9 +39,6 @@ licensee {
     allowUrl("https://flywaydb.org/licenses/flyway-oss") {
         because("Erreur 404 mais FlywayDB est Apache-2.0")
     }
-    allowUrl("http://www.gnu.org/licenses/lgpl.html") {
-        because("LGPL")
-    }
     allowUrl("http://www.gnu.org/copyleft/lesser.txt") {
         because("LGPL")
     }
@@ -129,6 +126,9 @@ dependencies {
     api(platform(libs.jetty.bom))
     api(platform(libs.jetty.ee10.bom))
 
+    api(libs.oidcServlets)
+    api(libs.oidcServlets.rs)
+    api(platform(libs.oidcServlets.bom))
     api(libs.oauthServlets.rs)
     api(platform(libs.oauthServlets.bom))
 
@@ -159,11 +159,6 @@ dependencies {
     api(libs.geotools.gt.referencing)
     api(libs.geotools.gt.epsg)
     api(libs.locationtech.jts.io)
-
-    // Pac4j (authn)
-    api(libs.jakartaee.pac4j)
-    api(libs.pac4j.oidc)
-    api(libs.pac4j.jakartaee)
 
     api(libs.apache.poi)
 

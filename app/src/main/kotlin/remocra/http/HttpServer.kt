@@ -7,6 +7,13 @@ import jakarta.servlet.DispatcherType.REQUEST
 import jakarta.servlet.MultipartConfigElement
 import jakarta.servlet.ServletContext
 import jakarta.servlet.SessionTrackingMode
+import net.ltgt.oidc.servlet.AuthenticationRedirector
+import net.ltgt.oidc.servlet.CallbackServlet
+import net.ltgt.oidc.servlet.Configuration
+import net.ltgt.oidc.servlet.IsAuthenticatedFilter
+import net.ltgt.oidc.servlet.LogoutServlet
+import net.ltgt.oidc.servlet.UserFilter
+import net.ltgt.oidc.servlet.UserPrincipalFactory
 import org.eclipse.jetty.ee10.servlet.DefaultServlet
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler
 import org.eclipse.jetty.ee10.servlet.FilterHolder
@@ -28,11 +35,9 @@ import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters
 import org.jboss.resteasy.spi.ResteasyDeployment
 import org.jboss.resteasy.spi.ResteasyProviderFactory
-import org.pac4j.jee.filter.CallbackFilter
-import org.pac4j.jee.filter.LogoutFilter
-import org.pac4j.jee.filter.SecurityFilter
 import remocra.GlobalConstants
 import remocra.auth.AuthnConstants
+import remocra.auth.RemocraUserPrincipalFactory
 import remocra.auth.UserInfoFilter
 import remocra.healthcheck.HealthServlet
 import remocra.resteasy.GuiceInjectorFactory
@@ -46,13 +51,12 @@ class HttpServer
 @Inject
 constructor(
     private val settings: HttpSettings,
+    private val oidcConfiguration: Configuration,
     private val guiceInjectorFactory: GuiceInjectorFactory,
     private val application: JaxrsApplication,
     private val healthServlet: HealthServlet,
     private val userInfoFilter: UserInfoFilter,
-    private val callbackFilter: CallbackFilter,
-    private val logoutFilter: LogoutFilter,
-    private val securityFilter: SecurityFilter,
+    private val userPrincipalFactory: RemocraUserPrincipalFactory,
 ) {
     private lateinit var server: Server
 
@@ -122,11 +126,22 @@ constructor(
             EnumSet.of(REQUEST, ASYNC, FORWARD),
         )
 
-        // Securité
-        context.addFilter(FilterHolder(callbackFilter), AuthnConstants.CALLBACK_PATH, null)
-        context.addFilter(FilterHolder(logoutFilter), AuthnConstants.LOGOUT_PATH, null)
-        context.addFilter(FilterHolder(securityFilter), "/*", null)
+        // Sécurité
+        context.setAttribute(Configuration.CONTEXT_ATTRIBUTE_NAME, oidcConfiguration)
+        context.setAttribute(
+            AuthenticationRedirector.CONTEXT_ATTRIBUTE_NAME,
+            AuthenticationRedirector(oidcConfiguration, AuthnConstants.CALLBACK_PATH),
+        )
+        context.setAttribute(UserPrincipalFactory.CONTEXT_ATTRIBUTE_NAME, userPrincipalFactory)
+        context.addFilter(UserFilter::class.java, "/*", null)
+        context.addServlet(CallbackServlet::class.java, AuthnConstants.CALLBACK_PATH)
+        context.addServlet(LogoutServlet::class.java, AuthnConstants.LOGOUT_PATH)
 
+        context.addFilter(
+            IsAuthenticatedFilter::class.java,
+            "/index.html",
+            EnumSet.of(REQUEST, ASYNC, FORWARD),
+        )
         context.addFilter(
             FilterHolder(userInfoFilter),
             "/index.html",

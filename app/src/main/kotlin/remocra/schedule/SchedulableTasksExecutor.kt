@@ -55,12 +55,13 @@ constructor(
             delay(millis)
             // Par défaut c'est l'utilisateur système qui exécute les tâches,
             // on reconstruit son UserInfo car c'est lui qui sera fourni aux useCases appelés dans les traitements.
-            val userInfoSysteme = UserInfo()
-            val utilisateurSysteme = dataCacheProvider.get().utilisateurSysteme
-            userInfoSysteme.utilisateur = utilisateurSysteme
-            userInfoSysteme.id = utilisateurSysteme.utilisateurId.toString()
-            userInfoSysteme.droits = Droit.entries.toSet()
-            userInfoSysteme.addAttribute("given_name", userInfoSysteme.utilisateur.utilisateurPrenom)
+            val userInfoSysteme = UserInfo(
+                dataCacheProvider.get().utilisateurSysteme,
+                Droit.entries.toSet(),
+                null,
+                emptySet(),
+                null,
+            )
 
             start(logManagerFactory.create(), userInfoSysteme)
             schedule(scheduleTime)

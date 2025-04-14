@@ -1,6 +1,7 @@
 package remocra.usecase.admin.organisme
 
 import jakarta.inject.Inject
+import remocra.auth.AuthModule
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.OrganismeData
@@ -13,12 +14,15 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
+import remocra.keycloak.KeycloakToken
 import remocra.keycloak.representations.ClientRepresentation
 import remocra.usecase.AbstractCUDUseCase
 
 class UpdateOrganismeUseCase @Inject constructor(
     private val organismeRepository: OrganismeRepository,
     private val keycloakApi: KeycloakApi,
+    private val keycloakToken: KeycloakToken,
+    private val keycloakClient: AuthModule.KeycloakClient,
 ) :
     AbstractCUDUseCase<OrganismeData>(
         TypeOperation.UPDATE,
@@ -49,30 +53,37 @@ class UpdateOrganismeUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: UserInfo?, element: OrganismeData): OrganismeData {
-        // Si on a un client keycloak, on regarde si l'adresse mail a changé. Si c'est le cas, on envoie l'info à keycloak
-        val organisme = organismeRepository.getById(element.organismeId)
-        if (organisme.organismeKeycloakId != null && element.organismeEmailContact != organisme.organismeEmailContact) {
-            val response = keycloakApi.updateClient(
-                authorization = userInfo!!.accessToken.toAuthorizationHeader(),
-                techniqueId = organisme.organismeKeycloakId!!,
-                client = ClientRepresentation(
-                    clientId = element.organismeEmailContact!!,
-                    id = organisme.organismeKeycloakId!!,
-                    name = organisme.organismeCode,
-                    secret = "",
-                ),
-            ).execute()
+        val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
+        try {
+            val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
 
-            if (!response.isSuccessful) {
-                val replacement = "${response.message()} - " +
-                    "(${
-                        response.errorBody()?.source()
-                    }"
-                throw RemocraResponseException(ErrorType.DROIT_API_UPDATE_CLIENT_KEYCLOAK, replacement)
+            // Si on a un client keycloak, on regarde si l'adresse mail a changé. Si c'est le cas, on envoie l'info à keycloak
+            val organisme = organismeRepository.getById(element.organismeId)
+            if (organisme.organismeKeycloakId != null && element.organismeEmailContact != organisme.organismeEmailContact) {
+                val response = keycloakApi.updateClient(
+                    authorization = token,
+                    techniqueId = organisme.organismeKeycloakId!!,
+                    client = ClientRepresentation(
+                        clientId = element.organismeEmailContact!!,
+                        id = organisme.organismeKeycloakId!!,
+                        name = organisme.organismeCode,
+                        secret = "",
+                    ),
+                ).execute()
+
+                if (!response.isSuccessful) {
+                    val replacement = "${response.message()} - " +
+                        "(${
+                            response.errorBody()?.source()
+                        }"
+                    throw RemocraResponseException(ErrorType.DROIT_API_UPDATE_CLIENT_KEYCLOAK, replacement)
+                }
             }
-        }
 
-        organismeRepository.edit(element)
+            organismeRepository.edit(element)
+        } finally {
+            keycloakToken.revokeToken(tokenResponse.accessToken, keycloakClient.clientId, keycloakClient.clientSecret).execute()
+        }
         return element
     }
 

@@ -54,6 +54,23 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .fetchOneInto()
 
+    fun getProfilDroitByUtilisateurId(utilisateurId: UUID): ProfilDroit? =
+        dsl.select(
+            *PROFIL_DROIT.fields(),
+        )
+            .from(PROFIL_DROIT)
+            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
+            .join(UTILISATEUR)
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .join(ORGANISME)
+            .on(
+                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                    .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
+            )
+            .where(UTILISATEUR.ID.eq(utilisateurId))
+            .fetchOneInto()
+
     data class ProfilDroitWithProfils(
         val id: UUID,
         val libelle: String,

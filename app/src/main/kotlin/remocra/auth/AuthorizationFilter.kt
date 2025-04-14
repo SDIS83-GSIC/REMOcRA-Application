@@ -2,16 +2,14 @@ package remocra.auth
 
 import jakarta.annotation.Priority
 import jakarta.ws.rs.Priorities
-import jakarta.ws.rs.container.ContainerRequestContext
-import jakarta.ws.rs.container.ContainerRequestFilter
 import jakarta.ws.rs.container.DynamicFeature
 import jakarta.ws.rs.container.ResourceInfo
 import jakarta.ws.rs.core.FeatureContext
-import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.DroitApi
 import net.ltgt.oauth.rs.AbstractAuthorizationFilter as AbstractOauthAuthorizationFilter
+import net.ltgt.oidc.servlet.rs.AbstractAuthorizationFilter as AbstractOidcAuthorizationFilter
 
 /**
  * Annotation permettant de définir les droits d'accès que l'utilisateur connecté doit posséder pour exécuter cette fonction.
@@ -69,13 +67,10 @@ class AuthorizationFeature : DynamicFeature {
 @Priority(Priorities.AUTHORIZATION)
 private class AuthorizationFilter(
     private val droitsPossibles: Set<Droit>,
-) : ContainerRequestFilter {
-    override fun filter(requestContext: ContainerRequestContext) {
-        // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
-        if (droitsPossibles.intersect(requestContext.securityContext.userInfo!!.droits).isEmpty()) {
-            requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build())
-        }
-    }
+) : AbstractOidcAuthorizationFilter() {
+    // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
+    override fun isAuthorized(securityContext: SecurityContext): Boolean =
+        securityContext.userInfo?.let { droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
 }
 
 @Priority(Priorities.AUTHORIZATION)

@@ -21,14 +21,7 @@ class UserInfoFilter @Inject constructor(
         response: HttpServletResponse,
         chain: FilterChain,
     ) {
-        // On regarde si on a déjà un user connecté
-        val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
-
-        if (userInfo == null || !userInfo.isUtilisateurInitialized()) {
-            request.session.invalidate()
-            response.sendRedirect("/")
-            return
-        }
+        val userInfo = (request.userPrincipal as RemocraUserPrincipal).userInfo
 
         response.setHeader(HttpHeaders.CACHE_CONTROL, "private, no-store")
 

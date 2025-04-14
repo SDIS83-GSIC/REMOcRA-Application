@@ -55,7 +55,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
     lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
 
     fun execute(userInfo: UserInfo): ReferentielResponse {
-        val nomPrenom = userInfo.utilisateur.utilisateurNom + " " + userInfo.utilisateur.utilisateurPrenom
+        val nomPrenom = userInfo.nom + " " + userInfo.prenom
 
         // On va chercher tous les paramètres rattachés à la section "MOBILE"
         val paramsMobile = ParametreEnum.entries.filter { it.section == ParametreEnum.ParametreSection.MOBILE }

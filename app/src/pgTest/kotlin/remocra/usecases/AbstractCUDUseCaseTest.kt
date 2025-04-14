@@ -12,6 +12,8 @@ import remocra.data.enums.ErrorType
 import remocra.db.TransactionManager
 import remocra.db.jooq.fixtures.PostgresqlExtension
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -79,7 +81,28 @@ class AbstractCUDUseCaseTest {
             override fun checkContraintes(userInfo: UserInfo?, element: UUID) {}
         }
 
-        val result = sut.execute(UserInfo(), insertedUuid)
+        val result = sut.execute(
+            UserInfo(
+                Utilisateur(
+                    UUID.randomUUID(),
+                    true,
+                    "admin@example.com",
+                    "admin",
+                    "admin",
+                    "admin",
+                    null,
+                    false,
+                    null,
+                    null,
+                    true,
+                ),
+                Droit.entries.toSet(),
+                null,
+                emptySet(),
+                null,
+            ),
+            insertedUuid,
+        )
         // Vérifie que le rollback a bien eu lieu
         assertEquals(0, dsl.selectCount().from(UTILISATEUR).where(UTILISATEUR.ID.eq(insertedUuid)).fetchSingleValue())
         return result

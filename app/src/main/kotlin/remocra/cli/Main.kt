@@ -91,6 +91,8 @@ class Main : Runnable {
     @Command(description = ["Démarre le serveur"])
     fun serve() {
         val config = init()
+        val authnConfig = config.getConfig("remocra.authn")
+        val oidcProviderMetadata = AuthModule.loadOidcProviderMetadata(authnConfig)
         val serve =
             Guice.createInjector(
                 AppModule.create(config.getConfig("remocra.app")),
@@ -99,7 +101,7 @@ class Main : Runnable {
                 CsvModule,
                 MailModule.create(config.getConfig("remocra.mail")),
                 EventBusModule,
-                AuthModule.create(config.getConfig("remocra.authn")),
+                AuthModule.create(authnConfig, oidcProviderMetadata),
                 KeycloakModule.create(config.getConfig("remocra.authn")),
                 GeoserverModule.create(config.getConfig("remocra.geoserver")),
                 HealthModule.create(config.getConfig("remocra.health")),

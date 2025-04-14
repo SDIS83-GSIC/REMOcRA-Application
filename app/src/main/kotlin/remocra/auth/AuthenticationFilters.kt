@@ -3,17 +3,15 @@ package remocra.auth
 import jakarta.annotation.Priority
 import jakarta.inject.Inject
 import jakarta.ws.rs.Priorities
-import jakarta.ws.rs.container.ContainerRequestContext
-import jakarta.ws.rs.container.ContainerRequestFilter
 import jakarta.ws.rs.container.DynamicFeature
 import jakarta.ws.rs.container.ResourceInfo
 import jakarta.ws.rs.core.FeatureContext
-import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import net.ltgt.oauth.common.TokenIntrospector
 import net.ltgt.oauth.common.TokenPrincipalProvider
 import net.ltgt.oauth.rs.TokenFilter
 import java.util.UUID
+import net.ltgt.oidc.servlet.rs.IsAuthenticatedFilter as OidcIsAuthenticatedFilter
 
 /**
  * Permet de désactiver l'authent pour certaines resources JAX-RS
@@ -41,17 +39,7 @@ class AuthenticationFeature : DynamicFeature {
         when {
             pkg.startsWith("remocra.api.") -> context.register(ApiAuthenticationFilter::class.java)
             pkg.startsWith("remocra.apimobile.") -> context.register(ApiMobileAuthenticationFilter::class.java)
-            else -> context.register(AuthenticationFilter)
-        }
-    }
-}
-
-@Priority(Priorities.AUTHENTICATION)
-private object AuthenticationFilter : ContainerRequestFilter {
-    override fun filter(requestContext: ContainerRequestContext) {
-        // Normalement déjà géré par Pac4j, mais on n'est jamais trop prudent
-        if (requestContext.securityContext.userPrincipal == null) {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
+            else -> context.register(OidcIsAuthenticatedFilter::class.java)
         }
     }
 }
