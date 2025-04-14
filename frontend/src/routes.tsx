@@ -174,7 +174,7 @@ export const URLS = {
   LOGOUT: url`/logout`,
   LIST_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/`,
   VIEW_COURRIER: (typeModule: string) =>
-    url`/create-courrier/${typeModule}/view-courrier`,
+    url`/deci/create-courrier/${typeModule}/view-courrier`,
 
   // Module DECI
   DECI_CARTE: url`/deci/carte`,
@@ -427,7 +427,8 @@ export const URLS = {
   UPDATE_MODELE_COURRIER: (modeleCourrierId: string) =>
     url`/admin/modele-courrier/update/` + modeleCourrierId,
 
-  GENERER_COURRIER: (typeModule: string) => url`/create-courrier/` + typeModule,
+  GENERER_COURRIER: (typeModule: string) =>
+    url`/deci/create-courrier/` + typeModule,
 
   // Module Rapports personnalisés
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
@@ -666,6 +667,25 @@ export default [
           />
         ),
       },
+      {
+        path: "create-courrier/:typeModule",
+        element: <GenereCourrier />,
+        children: [
+          {
+            path: "",
+            element: <Navigate to="view-courrier" replace />,
+          },
+          {
+            path: "view-courrier",
+            element: (
+              <Authorization
+                Component={ViewCourrier}
+                droits={[TYPE_DROIT.COURRIER_C]}
+              />
+            ),
+          },
+        ],
+      },
     ],
   },
   {
@@ -886,26 +906,6 @@ export default [
           <Authorization
             Component={OldebProprietaireUpdate}
             droits={[TYPE_DROIT.OLDEB_U]}
-          />
-        ),
-      },
-    ],
-  },
-
-  {
-    path: "/create-courrier/:typeModule",
-    element: <GenereCourrier />,
-    children: [
-      {
-        path: "",
-        element: <Navigate to="view-courrier" replace />,
-      },
-      {
-        path: "view-courrier",
-        element: (
-          <Authorization
-            Component={ViewCourrier}
-            droits={[TYPE_DROIT.COURRIER_C]}
           />
         ),
       },

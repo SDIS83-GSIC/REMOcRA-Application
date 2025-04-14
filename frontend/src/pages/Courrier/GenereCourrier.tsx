@@ -11,7 +11,6 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../components/Filter/MultiSelectFilterFromList.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
-import Header from "../../components/Header/Header.tsx";
 import { IconAdd, IconDocument } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
@@ -22,7 +21,6 @@ import { URLS } from "../../routes.tsx";
 import GenererForm, {
   DynamicFormWithParametre,
 } from "../../utils/buildDynamicForm.tsx";
-import SquelettePage from "../SquelettePage.tsx";
 import {
   getInitialValues,
   prepareVariables,
@@ -55,58 +53,56 @@ const GenereCourrier = () => {
   const { data }: { data: DynamicFormWithParametre[] } = modeleCourrierState;
 
   return (
-    <SquelettePage navbar={<Header />}>
-      <Container fluid>
-        <PageTitle icon={<IconDocument />} title={"Générer un courrier"} />
-        <AccordionCustom
-          activesKeys={activesKeys}
-          list={[
-            {
-              header: "Générer le courrier",
-              content: (
-                <Row>
-                  <Col xs={12} lg={4}>
-                    <MyFormik
-                      initialValues={getInitialValues()}
-                      validationSchema={validationSchema}
-                      isPost={true}
-                      submitUrl={`/api/courriers`}
-                      prepareVariables={(values) => prepareVariables(values)}
-                      redirectUrl={URLS.VIEW_COURRIER(typeModule)}
-                      onSubmit={(url) => setUrlCourrier(url)}
-                    >
-                      <GenererForm
-                        listeWithParametre={data}
-                        contexteLibelle="Modèle de courrier"
-                        reference={true}
-                      />
-                    </MyFormik>
+    <Container fluid>
+      <PageTitle icon={<IconDocument />} title={"Générer un courrier"} />
+      <AccordionCustom
+        activesKeys={activesKeys}
+        list={[
+          {
+            header: "Générer le courrier",
+            content: (
+              <Row>
+                <Col xs={12} lg={4}>
+                  <MyFormik
+                    initialValues={getInitialValues()}
+                    validationSchema={validationSchema}
+                    isPost={true}
+                    submitUrl={`/api/courriers`}
+                    prepareVariables={(values) => prepareVariables(values)}
+                    redirectUrl={URLS.VIEW_COURRIER(typeModule)}
+                    onSubmit={(url) => setUrlCourrier(url)}
+                  >
+                    <GenererForm
+                      listeWithParametre={data}
+                      contexteLibelle="Modèle de courrier"
+                      reference={true}
+                    />
+                  </MyFormik>
+                </Col>
+                {urlCourrier && (
+                  <Col xs={12} lg={8}>
+                    <Outlet context={{ urlCourrier } satisfies ContextType} />
                   </Col>
-                  {urlCourrier && (
-                    <Col xs={12} lg={8}>
-                      <Outlet context={{ urlCourrier } satisfies ContextType} />
-                    </Col>
-                  )}
-                </Row>
-              ),
-            },
-            {
-              header: "Notifier le courrier",
-              content: urlCourrier ? (
-                <ListDestinataire
-                  urlCourrier={urlCourrier.url}
-                  modeleCourrierId={urlCourrier.modeleCourrierId}
-                  courrierReference={urlCourrier.courrierReference}
-                />
-              ) : (
-                <Row>Veuillez générer le courrier avant de notifier.</Row>
-              ),
-            },
-          ]}
-          handleShowClose={handleShowClose}
-        />
-      </Container>
-    </SquelettePage>
+                )}
+              </Row>
+            ),
+          },
+          {
+            header: "Notifier le courrier",
+            content: urlCourrier ? (
+              <ListDestinataire
+                urlCourrier={urlCourrier.url}
+                modeleCourrierId={urlCourrier.modeleCourrierId}
+                courrierReference={urlCourrier.courrierReference}
+              />
+            ) : (
+              <Row>Veuillez générer le courrier avant de notifier.</Row>
+            ),
+          },
+        ]}
+        handleShowClose={handleShowClose}
+      />
+    </Container>
   );
 };
 
