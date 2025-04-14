@@ -28,6 +28,11 @@ UserInfo : KeycloakOidcProfile() {
     val organismeId: UUID?
         get() = utilisateur.utilisateurOrganismeId
 
+    /**
+     * Retourne TRUE si l'utilisateur est initialisé, FALSE sinon
+     */
+    fun isUtilisateurInitialized() = ::utilisateur.isInitialized
+
     // Les organismes affiliés, à savoir l'organisme de rattachement et ses enfants, pour simplifier les requêtes hiérarchiques
     lateinit var affiliatedOrganismeIds: Set<UUID>
 

@@ -22,6 +22,15 @@ class UserInfoFilter @Inject constructor(
         response: HttpServletResponse,
         chain: FilterChain,
     ) {
+        // On regarde si on a déjà un user connecté
+        val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
+
+        if (userInfo == null || !userInfo.isUtilisateurInitialized()) {
+            request.session.invalidate()
+            response.sendRedirect("/")
+            return
+        }
+
         // Il faut wrapper le ServletOutputStream pour bypasser une optimisation de Jetty
         chain.doFilter(
             request,
@@ -44,9 +53,6 @@ class UserInfoFilter @Inject constructor(
         )
 
         val nonce = request.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
-
-        // On regarde si on a déjà un user connecté
-        val userInfo = (request.userPrincipal as? UserPrincipal)?.userInfo
 
         if (userInfo?.isActif == false) {
             response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
