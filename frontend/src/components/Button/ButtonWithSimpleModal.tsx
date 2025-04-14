@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
+import classnames from "classnames";
 import useModal from "../Modal/ModalUtils.tsx";
 import SimpleModal from "../Modal/SimpleModal.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
@@ -32,11 +33,12 @@ const ButtonWithSimpleModal = ({
       >
         <Button
           variant={"link"}
-          className={
+          className={classnames(
+            "p-0 m-0",
             disabled
               ? "text-decoration-none text-muted"
-              : "text-decoration-none text-" + classEnable
-          }
+              : "text-decoration-none text-" + classEnable,
+          )}
           disabled={disabled}
           onClick={() => show()}
         >

@@ -38,6 +38,7 @@ import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
 import url from "../module/fetch.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
+import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime, { formatDate } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
@@ -260,6 +261,18 @@ function getColumnPeiByStringArray(
           accessor: "adresse",
           sortField: "adresse",
           Filter: <FilterInput type="text" name="adresse" />,
+          Cell: (value) => {
+            return (
+              <TooltipCustom
+                tooltipText={value.value}
+                tooltipId={value}
+                maxWidth={195}
+              >
+                {value.value}
+              </TooltipCustom>
+            );
+          },
+          width: 200,
         });
         break;
       default:

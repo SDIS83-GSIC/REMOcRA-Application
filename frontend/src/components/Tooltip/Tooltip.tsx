@@ -18,7 +18,7 @@ const TooltipCustom = ({
   };
 
   return (
-    <div className={"tooltip-wrapper"}>
+    <div className={"tooltip-wrapper m-0 p-0"}>
       <OverlayTrigger
         show={showTooltip}
         overlay={

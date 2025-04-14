@@ -1,6 +1,6 @@
 import { ReactNode, MutableRefObject } from "react";
 import { Button, Row, Col } from "react-bootstrap";
-import classNames from "classnames";
+import classnames from "classnames";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
@@ -57,11 +57,12 @@ const TableActionColumn = ({
               >
                 <Button
                   variant="link"
-                  className={
+                  className={classnames(
+                    "p-0 m-0",
                     disabled
                       ? "text-decoration-none text-muted"
-                      : "text-decoration-none text-" + classEnable
-                  }
+                      : "text-decoration-none text-" + classEnable,
+                  )}
                   disabled={disabled}
                   onClick={editModal?.show}
                 >
@@ -76,7 +77,10 @@ const TableActionColumn = ({
                 tooltipId={row.value}
               >
                 <DeleteButton
-                  className={disabled ? "text-muted" : "text-" + classEnable}
+                  className={classnames(
+                    "p-0 m-0",
+                    disabled ? "text-muted" : "text-" + classEnable,
+                  )}
                   disabled={disabled}
                   onClick={deleteModal?.show}
                 />
@@ -123,7 +127,8 @@ const TableActionColumn = ({
               <Col>
                 <CustomLinkButton
                   variant={"link"}
-                  className={classNames(
+                  className={classnames(
+                    "p-0 m-0",
                     "text-decoration-none",
                     disabled ? "text-muted" : "text-" + classEnable,
                   )}
@@ -143,7 +148,8 @@ const TableActionColumn = ({
             >
               <Button
                 variant={"link"}
-                className={classNames(
+                className={classnames(
+                  "p-0 m-0",
                   "text-decoration-none",
                   disabled ? "text-muted" : "text-" + classEnable,
                 )}
