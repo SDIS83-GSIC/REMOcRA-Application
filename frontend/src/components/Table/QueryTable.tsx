@@ -242,7 +242,7 @@ function QueryTable({
   };
 
   const makeCell = (column: any, row: any, key: string) => {
-    const { Cell, accessor, className, width } = column;
+    const { Cell, accessor, width } = column;
     let res = null;
     let acc = null;
     if (typeof accessor === "function") {
@@ -256,7 +256,7 @@ function QueryTable({
       res = acc;
     }
     return (
-      <td key={key} className={className} style={{ maxWidth: width }}>
+      <td key={key} className={"m-0 p-0"} style={{ maxWidth: width }}>
         {res}
       </td>
     );

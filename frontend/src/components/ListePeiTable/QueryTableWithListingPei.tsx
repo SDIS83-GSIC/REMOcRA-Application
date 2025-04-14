@@ -34,7 +34,7 @@ const QueryTableWithListingPei = ({
   setFilterId,
 }: QueryTableWithListingPeiType) => {
   return (
-    <Container fluid className={"px-5"}>
+    <Container fluid>
       <QueryTable
         displayNone={!showTable}
         query={query}
