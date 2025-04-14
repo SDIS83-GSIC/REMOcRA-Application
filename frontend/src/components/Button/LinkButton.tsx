@@ -22,17 +22,27 @@ const LinkButton = ({
 }) => {
   const {
     pathname: currentPathname,
-    search,
+    search: currentSearch,
     state: currentState,
   } = useLocation();
   const statePrevious = currentState?.from ?? [];
+
+  // Si on a des search param pour la page destination, on les charge
+  const newSearch = localStorage.getItem(pathname);
+
+  // Puis on sauvegarde les nouveaux search de la page courrante
+  localStorage.setItem(currentPathname, currentSearch);
+
   return !disabled ? (
     <NavLink
-      to={{ pathname: pathname }}
+      to={{
+        pathname: pathname,
+        search: newSearch ?? "",
+      }}
       state={{
         ...currentState,
         ...state,
-        from: [...statePrevious, `${currentPathname}${search}`],
+        from: [...statePrevious, `${currentPathname}${currentSearch}`],
       }}
       className={classNames(
         `text-decoration-none btn btn-${variant} ${classname} text-nowrap`,
