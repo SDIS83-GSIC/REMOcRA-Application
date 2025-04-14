@@ -56,7 +56,7 @@ const ListIndisponibiliteTemporaire = ({
     <>
       <Container>
         <PageTitle
-          displayReturnButton={peiId != null}
+          displayReturnButton={peiId == null}
           title={"Indisponibilités temporaires"}
           icon={<IconIndisponibiliteTemporaire />}
           right={
