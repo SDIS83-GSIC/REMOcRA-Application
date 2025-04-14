@@ -46,7 +46,7 @@ const measureStyle = new Style({
 });
 
 const formatLength = function (line) {
-  const length = getLength(line);
+  const length = getLength(line); // m
   let output;
   if (length > 1000) {
     output = Math.round((length / 1000) * 100) / 100 + " " + "km";
@@ -57,13 +57,11 @@ const formatLength = function (line) {
 };
 
 const formatArea = function (polygon) {
-  const area = getArea(polygon);
+  const area = getArea(polygon); // m²
   let output;
-  // Au dessus de 10km², on passe en hectares ; 1km² == 100ha
-  if (area > 10000000) {
+  // Au dessus de 10 000 m², on passe en hectares ; 1ha == 10 000 m² == 100 m * 100 m
+  if (area > 10000) {
     output = Math.round((area / 10000) * 100) / 100 + " ha";
-  } else if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + " " + "km<sup>2</sup>";
   } else {
     output = Math.round(area * 100) / 100 + " " + "m<sup>2</sup>";
   }
