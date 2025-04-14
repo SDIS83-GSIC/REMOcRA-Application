@@ -33,7 +33,7 @@ const TableActionColumn = ({
   return (
     !hide ||
     (!hide(row.original) && (
-      <Col className={"m-0 p-0"} xs={12} md={6} xxl={3}>
+      <Col xs={1}>
         <>
           {editModal != null ? (
             <>
