@@ -340,6 +340,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                             .on(V_PEI_LAST_MESURES.PEI_ID.eq(PEI.ID))
                 }
                 PeiCaracteristique.CAPACITE -> Unit
+                PeiCaracteristique.NUMERO_COMPLET -> Unit
             }
         }
         return onClause
@@ -367,6 +368,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             PeiCaracteristique.CAPACITE -> return PENA.CAPACITE
             PeiCaracteristique.DATE_RECEPTION -> return V_PEI_VISITE_DATE.LAST_RECEPTION
             PeiCaracteristique.DEBIT -> return V_PEI_LAST_MESURES.DEBIT
+            PeiCaracteristique.NUMERO_COMPLET -> return PEI.NUMERO_COMPLET
         }
     }
 }

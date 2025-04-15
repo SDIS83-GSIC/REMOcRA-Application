@@ -6,6 +6,7 @@ package remocra.data.enums
  */
 enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCaracterique) {
     // Général
+    NUMERO_COMPLET("Numéro complet", TypeCaracterique.GENERAL),
     TYPE_PEI("Type du PEI", TypeCaracterique.GENERAL),
     NATURE_PEI("Nature du PEI", TypeCaracterique.GENERAL),
     AUTORITE_POLICE("Autorité de police DECI", TypeCaracterique.GENERAL),
