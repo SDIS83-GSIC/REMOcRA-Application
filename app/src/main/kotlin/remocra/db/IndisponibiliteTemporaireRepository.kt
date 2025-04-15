@@ -88,7 +88,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireId = field(name("liste_pei", "id_it"), SQLDataType.UUID)
         val listeNumeroPei = field(name("liste_pei", "liste_numero_pei"), SQLDataType.VARCHAR)
 
-        return dsl.with(cte).select(
+        return dsl.with(cte).selectDistinct(
             *INDISPONIBILITE_TEMPORAIRE.fields(),
             listeNumeroPei,
         )
