@@ -5,6 +5,7 @@ import remocra.auth.UserInfo
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
+import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
@@ -32,7 +33,18 @@ class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
         // On filtre côté back pour éviter de réimplémenter le calcul en BDD
         params.filterBy?.indisponibiliteTemporaireStatut?.let {
                 statusSearch ->
-            return listeIndisponibiliteTemporaire.filter { it.indisponibiliteTemporaireStatut == statusSearch }
+
+            when (statusSearch) {
+                StatutIndisponibiliteTemporaireEnum.EN_COURS_PLANIFIEE -> {
+                    return listeIndisponibiliteTemporaire.filter {
+                        it.indisponibiliteTemporaireStatut == StatutIndisponibiliteTemporaireEnum.EN_COURS ||
+                            it.indisponibiliteTemporaireStatut == StatutIndisponibiliteTemporaireEnum.PLANIFIEE
+                    }
+                }
+                else -> {
+                    return listeIndisponibiliteTemporaire.filter { it.indisponibiliteTemporaireStatut == statusSearch }
+                }
+            }
         }
 
         return listeIndisponibiliteTemporaire
