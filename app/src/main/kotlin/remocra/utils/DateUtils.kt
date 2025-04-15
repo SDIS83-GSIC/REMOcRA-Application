@@ -29,6 +29,11 @@ class DateUtils(val clock: Clock) {
 
         const val PATTERN_NATUREL: String = "dd/MM/yyyy HH:mm:ss"
         const val PATTERN_NATUREL_DATE_ONLY: String = "dd/MM/yyyy"
+
+        /**
+         * @see formatNaturelDateHeureMinute
+         */
+        const val PATTERN_NATUREL_DATE_HEURE_MINUTE: String = "dd/MM/yyyy HH:mm"
     }
 
     /**
@@ -142,5 +147,16 @@ class DateUtils(val clock: Clock) {
 
     fun formatDateOnly(date: ZonedDateTime?): String? {
         return date?.format(DateTimeFormatter.ofPattern(PATTERN_NATUREL_DATE_ONLY, Locale.getDefault()))
+    }
+
+    /**
+     * Formate un objet [ZonedDateTime] en une chaîne de caractères selon PATTERN_NATUREL_DATE_HEURE_MINUTE "dd/MM/yyyy HH:mm"
+     * en respectant la locale par défaut du système.
+     *
+     * @param date L'objet [ZonedDateTime] à formater. Peut être null.
+     * @return Une chaîne représentant la date formatée, ou null si la date fournie est null.
+     */
+    fun formatNaturelDateHeureMinute(date: ZonedDateTime): String {
+        return date.format(DateTimeFormatter.ofPattern(PATTERN_NATUREL_DATE_HEURE_MINUTE, Locale.getDefault()))
     }
 }
