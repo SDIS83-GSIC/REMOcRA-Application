@@ -23,6 +23,16 @@ export function shortenString(str: string, maxLength: number): string {
   }
 }
 
+/**
+ * Récupère la clé d'une énumération (enum) à partir de sa valeur.
+ *
+ * @param enumParam - L'énumération à parcourir.
+ * @param keyParam - La valeur de l'énumération pour laquelle on souhaite obtenir la clé correspondante.
+ * @returns La clé correspondant à la valeur dans l'énumération, ou `undefined` si aucune correspondance n'est trouvée.
+ */
+export function getEnumKey(enumParam: any, keyParam: string) {
+  return Object.keys(enumParam).find((key) => enumParam[key] === keyParam);
+}
 export function downloadOutputFile(
   urlApi: string,
   myObject: any,
