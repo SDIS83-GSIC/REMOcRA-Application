@@ -15,6 +15,8 @@ import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { GetColumnIndisponibiliteTemporaireByStringArray } from "../../utils/columnUtils.tsx";
+import STATUT_INDISPONIBILITE_TEMPORAIRE from "../../enums/StatutIndisponibiliteTemporaireEnum.tsx";
+import { getEnumKey } from "../../utils/fonctionsUtils.tsx";
 import filterValuesToVariable from "./FilterIndisponibiliteTemporaire.tsx";
 
 const ListIndisponibiliteTemporaire = ({
@@ -89,7 +91,10 @@ const ListIndisponibiliteTemporaire = ({
             indisponibiliteTemporaireDateDebut: undefined,
             indisponibiliteTemporaireDateFin: undefined,
             indisponibiliteTemporaireMotif: undefined,
-            indisponibiliteTemporaireStatut: undefined,
+            indisponibiliteTemporaireStatut: getEnumKey(
+              STATUT_INDISPONIBILITE_TEMPORAIRE,
+              STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS_PLANIFIEE,
+            ),
             indisponibiliteTemporaireObservation: undefined,
             indisponibiliteTemporaireMailAvantIndisponibilite: undefined,
             indisponibiliteTemporaireMailApresIndisponibilite: undefined,
