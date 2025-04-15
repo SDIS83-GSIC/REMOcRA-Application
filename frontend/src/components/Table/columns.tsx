@@ -14,6 +14,8 @@ import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import { actionColumnType, columnType } from "./QueryTable.tsx";
 import { ActionButton } from "./TableActionColumn.tsx";
 
+export const ACTION_BUTTON_SIZE = 28;
+
 const EditColumn = ({
   to,
   title = true,
@@ -188,6 +190,7 @@ export const ActionColumn = ({
   accessor,
   sortField,
   buttons,
+  width = 200,
   ...options
 }: actionColumnType) => ({
   // eslint-disable-next-line react/display-name
@@ -197,7 +200,7 @@ export const ActionColumn = ({
     return <ActionButton buttons={buttons} row={row} />;
   },
   sortField: sortField,
-  width: 200,
+  width: buttons?.length * ACTION_BUTTON_SIZE ?? width,
   ...options,
 });
 
