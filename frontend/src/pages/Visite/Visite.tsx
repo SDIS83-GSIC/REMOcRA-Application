@@ -1,4 +1,4 @@
-import classNames from "classnames";
+import classnames from "classnames";
 import { ReactNode, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -99,7 +99,7 @@ const Visite = () => {
             checked={true}
             label={
               <span
-                className={classNames(
+                className={classnames(
                   element.poidsAnomalieValIndispoTerrestre === 5 && "fw-bold",
                   element.poidsAnomalieValIndispoHbe === 5 &&
                     "text-decoration-underline",
@@ -191,7 +191,8 @@ const Visite = () => {
                   <td>{element.visiteAgent1}</td>
                   <td>
                     <Button
-                      size="sm"
+                      variant="link"
+                      className={classnames("p-0 m-0 text-decoration-none")}
                       onClick={() => {
                         setCurrentVisite(element);
                         setNewVisite(false);
@@ -203,7 +204,9 @@ const Visite = () => {
                       <>
                         <Button
                           variant={"link"}
-                          className={"text-danger"}
+                          className={
+                            "p-0 m-0 ps-1 text-decoration-none text-danger"
+                          }
                           onClick={show}
                         >
                           <IconDelete />
