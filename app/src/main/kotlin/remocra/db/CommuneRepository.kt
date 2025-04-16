@@ -137,6 +137,26 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
         val communeLibelle: String,
     )
 
+    fun getCommuneIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.LIBELLE.`as`("libelle")).from(
+            userInfo.isSuperAdmin.let {
+                if (it) {
+                    COMMUNE
+                } else COMMUNE.join(ZONE_INTEGRATION)
+                    .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+            },
+        )
+            .where(
+                userInfo.isSuperAdmin.let {
+                    if (it) {
+                        DSL.noCondition()
+                    } else {
+                        ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
+                    }
+                },
+            )
+            .and(COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(motifLibelle)).orderBy(COMMUNE.LIBELLE).fetchInto()
+
     fun getGeometrieCommune(communeId: UUID): CommuneGeometryOnly =
         dsl.select(COMMUNE.GEOMETRIE)
             .from(COMMUNE)

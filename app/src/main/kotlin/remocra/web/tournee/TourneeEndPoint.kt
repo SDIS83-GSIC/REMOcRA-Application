@@ -41,6 +41,7 @@ import java.util.UUID
 @Path("/tournee")
 @Produces(MediaType.APPLICATION_JSON)
 class TourneeEndPoint : AbstractEndpoint() {
+
     @Inject
     lateinit var tourneeRepository: TourneeRepository
 
@@ -92,6 +93,14 @@ class TourneeEndPoint : AbstractEndpoint() {
         }
         return Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params, securityContext.userInfo!!)).build()
     }
+
+    @GET
+    @Path("/acces-rapide")
+    @RequireDroits([Droit.TOURNEE_R])
+    fun getTourneeForAccesRapide(
+        @QueryParam("motifLibelle") motifLibelle: String,
+    ): Response =
+        Response.ok().entity(tourneeRepository.getTourneeIdLibelleByMotif(securityContext.userInfo!!, motifLibelle)).build()
 
     @GET
     @Path("/actives")

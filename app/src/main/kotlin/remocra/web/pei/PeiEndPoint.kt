@@ -95,6 +95,14 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getPeiByZoneIntegrationShortData(): Response =
         Response.ok().entity(peiRepository.getPeiByZoneIntegrationShortData(securityContext.userInfo!!)).build()
 
+    @GET
+    @Path("/acces-rapide")
+    @RequireDroits([Droit.PEI_R])
+    fun getPeiForAccesRapide(
+        @QueryParam("motifLibelle") motifLibelle: String,
+    ): Response =
+        Response.ok().entity(peiRepository.getPeiIdLibelleByMotif(securityContext.userInfo!!, motifLibelle)).build()
+
     @POST
     @Path("/get-by-indispo/{idIndisponibiliteTemporaire}")
     @RequireDroits([Droit.PEI_R])

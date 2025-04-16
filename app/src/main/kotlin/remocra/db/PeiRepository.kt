@@ -17,6 +17,7 @@ import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -970,6 +971,21 @@ class PeiRepository
             .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
     }
+
+    fun getPeiIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+        dsl.select(remocra.db.jooq.remocra.tables.references.PEI.ID.`as`("id"), remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET.`as`("libelle")).from(
+            userInfo.isSuperAdmin.let {
+                if (it) {
+                    remocra.db.jooq.remocra.tables.references.PEI
+                } else { remocra.db.jooq.remocra.tables.references.PEI.join(ZONE_INTEGRATION)
+                    .on(ST_Within(remocra.db.jooq.remocra.tables.references.PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+                    .and(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId))
+                }
+            },
+        ).where(remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(motifLibelle))
+            .groupBy(remocra.db.jooq.remocra.tables.references.PEI.ID, remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET)
+            .orderBy(remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET)
+            .fetchInto()
 
     data class PeiShortData(
         val peiId: UUID,

@@ -209,6 +209,14 @@ class TourneeRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(peiId))
             .fetchInto()
 
+    fun getTourneeIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+        dsl.select(TOURNEE.ID.`as`("id"), TOURNEE.LIBELLE.`as`("libelle"))
+            .from(TOURNEE)
+            .where(TOURNEE.LIBELLE.containsIgnoreCaseUnaccent(motifLibelle))
+            .and(userInfo.isSuperAdmin.let { if (it) { DSL.noCondition() } else { TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds) } })
+            .orderBy(TOURNEE.LIBELLE)
+            .fetchInto()
+
     data class TourneeComplete(
         val tourneeId: UUID,
         val tourneeLibelle: String,
