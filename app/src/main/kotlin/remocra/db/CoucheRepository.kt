@@ -93,6 +93,8 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .doUpdate()
             .set(COUCHE.GROUPE_COUCHE_ID, couche.coucheGroupeCoucheId)
             .set(COUCHE.LIBELLE, couche.coucheLibelle)
+            .set(COUCHE.CODE, couche.coucheCode)
+            .set(COUCHE.NOM, couche.coucheNom)
             .set(COUCHE.ORDRE, couche.coucheOrdre)
             .set(COUCHE.SOURCE, couche.coucheSource)
             .set(COUCHE.PROJECTION, couche.coucheProjection)
