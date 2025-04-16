@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import { useGet, useGetRun } from "../../components/Fetch/useFetch.tsx";
+import { useGetRun } from "../../components/Fetch/useFetch.tsx";
 import SelectFilterFromList from "../../components/Filter/SelectFilterFromList.tsx";
 import { FormLabel } from "../../components/Form/Form.tsx";
 import { IconQuickAccess } from "../../components/Icon/Icon.tsx";
@@ -9,6 +9,7 @@ import useLocalisation, {
   GET_TYPE_GEOMETRY,
 } from "../../components/Localisation/useLocalisation.tsx";
 import url from "../../module/fetch.tsx";
+import AccesRapideTypeahead from "./AccesRapideTypeahead.tsx";
 
 const AccesRapidePei = () => {
   const [tourneeId, setTourneeId] = useState<string | null>();
@@ -16,9 +17,6 @@ const AccesRapidePei = () => {
   const [communeId, setCommuneId] = useState<string | null>();
   const [voieId, setVoieId] = useState<string | null>();
 
-  const optionsTournee = useGet(url`/api/tournee`);
-  const optionPei = useGet(url`/api/pei`);
-  const optionCommune = useGet(url`/api/commune`);
   const { run: fetchOptionVoie, data: optionVoie } = useGetRun(
     url`/api/voie/${communeId}`,
     {},
@@ -47,25 +45,12 @@ const AccesRapidePei = () => {
         {/* Tournée */}
         <Row className="align-items-end mb-3">
           <Col className="d-flex align-items-start flex-column" sm={2}>
-            {optionsTournee.isResolved && (
-              <>
-                <FormLabel
-                  name={"tournee"}
-                  label="Tournée :"
-                  required={false}
-                />
-                <SelectFilterFromList
-                  name={"tournee"}
-                  listIdCodeLibelle={optionsTournee.data.map((v) => {
-                    return {
-                      id: v.tourneeId,
-                      libelle: v.tourneeLibelle,
-                    };
-                  })}
-                  onChange={(e) => setTourneeId(e.value)}
-                />
-              </>
-            )}
+            <FormLabel name={"tournee"} label="Tournée :" required={false} />
+            <AccesRapideTypeahead
+              label="Tournée"
+              queryUrl="/api/tournee/acces-rapide"
+              setter={setTourneeId}
+            />
           </Col>
           <Col>
             <Button
@@ -81,21 +66,12 @@ const AccesRapidePei = () => {
         {/* PEI */}
         <Row className="align-items-end mb-3">
           <Col className="d-flex align-items-start flex-column" sm={2}>
-            {optionPei.isResolved && (
-              <>
-                <FormLabel name={"pei"} label="PEI :" required={false} />
-                <SelectFilterFromList
-                  name={"pei"}
-                  listIdCodeLibelle={optionPei.data.map((v) => {
-                    return {
-                      id: v.peiId,
-                      libelle: v.peiNumeroComplet,
-                    };
-                  })}
-                  onChange={(e) => setPeiId(e.value)}
-                />
-              </>
-            )}
+            <FormLabel name={"pei"} label="PEI :" required={false} />
+            <AccesRapideTypeahead
+              label="PEI"
+              queryUrl="/api/pei/acces-rapide"
+              setter={setPeiId}
+            />
           </Col>
           <Col>
             <Button
@@ -111,52 +87,30 @@ const AccesRapidePei = () => {
         {/* Commune */}
         <Row className="align-items-end mb-3">
           <Col className="d-flex align-items-start flex-column" sm={2}>
-            {optionCommune.isResolved && (
-              <>
-                <FormLabel
-                  name={"commune"}
-                  label="Commune :"
-                  required={false}
-                />
-                <SelectFilterFromList
-                  name={"commune"}
-                  listIdCodeLibelle={
-                    optionCommune.data &&
-                    optionCommune.data.map((v) => {
-                      return {
-                        id: v.communeId,
-                        libelle: v.communeLibelle,
-                      };
-                    })
-                  }
-                  onChange={(e) => {
-                    setCommuneId(e.value);
-                  }}
-                />
-              </>
-            )}
+            <FormLabel name={"commune"} label="Commune :" required={false} />
+            <AccesRapideTypeahead
+              label="Commune"
+              queryUrl="/api/commune/acces-rapide"
+              setter={setCommuneId}
+            />
           </Col>
           <Col className="d-flex align-items-start flex-column" sm={2}>
-            {optionCommune.isResolved && (
-              <>
-                <FormLabel name={"voie"} label="Voie :" required={false} />
-                <SelectFilterFromList
-                  name={"voie"}
-                  listIdCodeLibelle={
-                    optionVoie &&
-                    optionVoie.map((v) => {
-                      return {
-                        id: v.voieId,
-                        libelle: v.voieLibelle,
-                      };
-                    })
-                  }
-                  onChange={(e) => setVoieId(e ? e.value : null)}
-                  isClearable={true}
-                  disabled={!communeId}
-                />
-              </>
-            )}
+            <FormLabel name={"voie"} label="Voie :" required={false} />
+            <SelectFilterFromList
+              name={"voie"}
+              listIdCodeLibelle={
+                optionVoie &&
+                optionVoie.map((v) => {
+                  return {
+                    id: v.voieId,
+                    libelle: v.voieLibelle,
+                  };
+                })
+              }
+              onChange={(e) => setVoieId(e ? e.value : null)}
+              isClearable={true}
+              disabled={!communeId}
+            />
           </Col>
           <Col>
             <Button
