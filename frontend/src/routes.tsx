@@ -72,6 +72,9 @@ import UpdateTypePenaAspiration from "./pages/Admin/typePenaAspiration/UpdateTyp
 import CreateTypeReseau from "./pages/Admin/typeReseau/CreateTypeReseau.tsx";
 import ListTypeReseau from "./pages/Admin/typeReseau/ListTypeReseau.tsx";
 import UpdateTypeReseau from "./pages/Admin/typeReseau/UpdateTypeReseau.tsx";
+import CreateAnomalieCategorie from "./pages/Admin/anomalieCategorie/CreateAnomalieCategorie.tsx";
+import ListAnomalieCategorie from "./pages/Admin/anomalieCategorie/ListAnomalieCategorie.tsx";
+import UpdateAnomalieCategorie from "./pages/Admin/anomalieCategorie/UpdateAnomalieCategorie.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
@@ -312,6 +315,11 @@ export const URLS = {
   UPDATE_TYPE_RESEAU: (typeReseauId: string) =>
     url`/admin/type-reseau/update/` + typeReseauId,
   LIST_TYPE_RESEAU: url`/admin/type-reseau`,
+
+  ADD_ANOMALIE_CATEGORIE: url`/admin/anomalie-categorie/create`,
+  UPDATE_ANOMALIE_CATEGORIE: (anomalieCategorieId: string) =>
+    url`/admin/anomalie-categorie/update/` + anomalieCategorieId,
+  LIST_ANOMALIE_CATEGORIE: url`/admin/anomalie-categorie`,
 
   ADD_NIVEAU: url`/admin/niveau/create`,
   UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/update/` + niveauId,
@@ -1228,7 +1236,33 @@ export default [
           />
         ),
       },
-
+      {
+        path: "anomalie-categorie",
+        element: (
+          <Authorization
+            Component={ListAnomalieCategorie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "anomalie-categorie/update/:anomalieCategorieId",
+        element: (
+          <Authorization
+            Component={UpdateAnomalieCategorie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "anomalie-categorie/create",
+        element: (
+          <Authorization
+            Component={CreateAnomalieCategorie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
       {
         path: "niveau",
         element: (

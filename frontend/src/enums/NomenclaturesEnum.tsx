@@ -3,6 +3,7 @@
  */
 export enum NOMENCLATURE {
   ANOMALIE = "anomalie",
+  ANOMALIE_CATEGORIE = "anomalie_categorie",
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
   NATURE = "nature",
