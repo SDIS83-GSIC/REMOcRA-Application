@@ -82,6 +82,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     EVENEMENT("EVENEMENT"),
     MESSAGE("MESSAGE"),
     CRISE_DOCUMENT("CRISE_DOCUMENT"),
+    ANOMALIE_CATEGORIE("ANOMALIE_CATEGORIE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
