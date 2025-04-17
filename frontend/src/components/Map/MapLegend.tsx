@@ -4,9 +4,9 @@ import { Badge, Collapse, Form, Image, ListGroup } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import FormRange from "react-bootstrap/FormRange";
 import Row from "react-bootstrap/Row";
+import classnames from "classnames";
 import AccordionCustom, { useAccordionState } from "../Accordion/Accordion.tsx";
 import { IconMinus, IconPlus } from "../Icon/Icon.tsx";
-import "./legend.css";
 
 const MapLegend = forwardRef(
   (
@@ -49,35 +49,35 @@ const MapLegend = forwardRef(
                 .map((layer: any, layerIdx: number) => (
                   <ListGroup.Item
                     key={layerIdx}
-                    className={isChecked(layer) ? "" : "noprint"}
+                    className={classnames(
+                      "pb-0",
+                      isChecked(layer) ? "" : "noprint",
+                    )}
                   >
                     <Row>
-                      <Col className={"icone-legende"}>
+                      <Col className={"m-0 p-0"} xs={"auto"}>
                         {layer.icone && (
-                          <Image src={layer.icone} rounded fluid />
+                          <Image
+                            src={layer.icone}
+                            fluid
+                            style={{ width: 20 }}
+                          />
                         )}
                       </Col>
                       <Col>
                         <Form.Group controlId={getUid(layer.openlayer)}>
                           <Row>
-                            <Col>
+                            <Col xs={10} className={"p-0 px-1"}>
                               <Form.Switch
                                 checked={isChecked(layer)}
                                 onClick={() => {
                                   addOrRemoveLayer(layer);
                                 }}
-                                label={
-                                  <>
-                                    {layer.libelle}
-                                    {layer.legende && (
-                                      <img src={layer.icone} height={24} />
-                                    )}
-                                  </>
-                                }
+                                label={layer.libelle}
                               />
                             </Col>
                             {layer.legende && (
-                              <Col xs={"auto"}>
+                              <Col xs={1}>
                                 <Badge
                                   pill
                                   onClick={() =>
@@ -100,19 +100,21 @@ const MapLegend = forwardRef(
                             )}
                           </Row>
                         </Form.Group>
-                        <FormRange
-                          className={"noprint"}
-                          disabled={!isChecked(layer)}
-                          min={0}
-                          max={1}
-                          step={0.1}
-                          defaultValue={layer.openlayer.getOpacity()}
-                          onChange={(evt) => {
-                            layer.openlayer.setOpacity(
-                              parseFloat(evt.target.value),
-                            );
-                          }}
-                        />
+                        {isChecked(layer) && (
+                          <FormRange
+                            className={"noprint"}
+                            disabled={!isChecked(layer)}
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            defaultValue={layer.openlayer.getOpacity()}
+                            onChange={(evt) => {
+                              layer.openlayer.setOpacity(
+                                parseFloat(evt.target.value),
+                              );
+                            }}
+                          />
+                        )}
                       </Col>
                     </Row>
                     {layer.legende && (
@@ -136,6 +138,7 @@ const MapLegend = forwardRef(
         activesKeys={activesKeys}
         handleShowClose={handleShowClose}
         list={listeVoletsAccordion}
+        classNameBody={"p-1"}
       />
     );
   },

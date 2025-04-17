@@ -58,4 +58,19 @@
 .map-layers {
   grid-area: layers;
   width: 270px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.map-layers::-webkit-scrollbar {
+  width: 6px;
+}
+
+.map-layers::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.map-layers::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -98,7 +98,7 @@ export const IconUnlock = () => <i className="fi fi-br-unlock" />;
 
 export const IconAddContact = () => <i className="fi fi-br-user-add" />;
 export const IconGererContact = () => <i className="fi fi-br-users-gear" />;
-export const IconPlus = () => <i className="fi fi-rr-add" />;
+export const IconPlus = () => <i className="fi fi-br-plus" />;
 export const IconDFCI = () => <i className="fi fi-br-fire-extinguisher" />;
 export const IconAdd = () => <i className="fi fi-rr-add" />;
 
