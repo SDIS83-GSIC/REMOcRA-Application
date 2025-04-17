@@ -916,7 +916,7 @@ const AdminPei = ({
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
-            name="mobile.peiGenerationCarteTournee"
+            name="pei.peiGenerationCarteTournee"
             label="Active le module de génération de carte des tournées dans le module Point d’eau"
             checked={values?.peiGenerationCarteTournee}
             tooltipText={

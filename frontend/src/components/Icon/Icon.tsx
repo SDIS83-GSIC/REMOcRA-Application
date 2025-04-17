@@ -88,9 +88,7 @@ export const IconDuplicate = () => <i className="fi fi-br-duplicate" />;
 
 export const IconTournee = () => <i className="fi fi-br-document" />;
 export const IconSortList = () => <i className="fi fi-br-apps-sort" />;
-export const IconDragNDrop = () => (
-  <i className="fi fi-rs-burger-menu" />
-);
+export const IconDragNDrop = () => <i className="fi fi-rs-burger-menu" />;
 export const IconDesaffecter = () => <i className="fi fi-br-user-slash" />;
 export const IconZeroPourcent = () => <i className="fi fi-br-square-0" />;
 export const IconCentPourcent = () => <i className="fi fi-br-percent-100" />;
