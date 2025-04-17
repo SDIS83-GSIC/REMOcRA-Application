@@ -85,7 +85,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
             }
         }
 
-        return element
+        return element.copy(iconeList = listOf(), legendeList = listOf())
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: CoucheFormData) {
