@@ -102,14 +102,6 @@ class CreateVisiteUseCase @Inject constructor(
             throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
         }
 
-        // La visite n'est pas antérieur à la dernière visite du pei
-        val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
-        if (lastVisite != null) {
-            if (element.visiteDate.isBefore(lastVisite.visiteDate)) {
-                throw RemocraResponseException(ErrorType.VISITE_CREATE_NOT_LAST)
-            }
-        }
-
         val typePei = peiRepository.getTypePei(element.visitePeiId)
 
         // Vérification de la validité du CDP
@@ -166,16 +158,9 @@ class CreateVisiteUseCase @Inject constructor(
             )
         }
 
-        // Verification de si la visite courante est la dernière en date
-        var isLastVisiteToDate = true
-        // Seulement pour les visites provenant d'un import CTP
         // Si la visite que l'on insert n'est pas la dernière en date, ne pas mettre à jour les anomalies courantes du PEI
-        if (element.isFromImportCtp) {
-            val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
-            if (lastVisite != null && element.visiteDate.isBefore(lastVisite.visiteDate)) {
-                isLastVisiteToDate = false
-            }
-        }
+        val lastVisite = visiteRepository.getLastVisite(element.visitePeiId)
+        val isLastVisiteToDate = !(lastVisite != null && element.visiteDate.isBefore(lastVisite.visiteDate))
 
         // Si dernière visite en date :
         //  - Suppression de toutes les anomalies non-protégées du pei : l_pei_anomalie
@@ -207,15 +192,11 @@ class CreateVisiteUseCase @Inject constructor(
             anomalieRepository.batchInsertLVisiteAnomalie(visiteAnomalieToInsert)
         }
 
-        // Si dernière visite en date :
-        //  - Prévenir d'un changement sur le PEI : updatePeiUseCase.execute()
-        if (isLastVisiteToDate) {
-            // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
-            updatePeiUseCase.updatePeiWithId(
-                peiId = element.visitePeiId,
-                userInfo = userInfo,
-            )
-        }
+        // On prévient d'une modification du PEI : la dispo peut se retrouver changée par la dernière visite
+        updatePeiUseCase.updatePeiWithId(
+            peiId = element.visitePeiId,
+            userInfo = userInfo,
+        )
         return element
     }
 }

@@ -102,10 +102,6 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_PRESSION_DYN_DEBIT_MAX_INF_0(2109, "La pression dynamique au débit maximum ne peut être inférieure à 0"),
     VISITE_UPDATE_NOT_LAST(2110, "Modification de la visite impossible : une visite plus récente est présente"),
     VISITE_AFTER_NOW(2111, "Impossible de créer une visite dans le futur"),
-    VISITE_CREATE_NOT_LAST(
-        2112,
-        "La date renseignée est antérieure à la dernière visite de ce PEI, les visites doivent être saisies par ordre chronologique.",
-    ),
     VISITE_CDP_INVALIDE(
         2113,
         "Au moins une valeur technique doit être saisie pour un contrôle débit pression valide.",
