@@ -39,7 +39,7 @@ const MapCouvertureHydraulique = ({
    * @returns
    */
   const dataPeiProjetLayer = useMemo(() => {
-    if (!map) {
+    if (!map || !etudeId || !projection) {
       return;
     }
     return createPointLayer(
@@ -53,7 +53,7 @@ const MapCouvertureHydraulique = ({
         etudeId,
       projection,
     );
-  }, [map]);
+  }, [map, etudeId, projection]);
 
   const {
     tools: extraTools,
