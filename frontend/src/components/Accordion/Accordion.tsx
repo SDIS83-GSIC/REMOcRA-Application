@@ -12,6 +12,7 @@ const AccordionCustom = ({
   list,
   handleShowClose,
   activesKeys,
+  classNameBody,
 }: AccordionType) => {
   return (
     <Accordion
@@ -24,7 +25,7 @@ const AccordionCustom = ({
           <Accordion.Header onClick={() => handleShowClose(key)}>
             {header}
           </Accordion.Header>
-          <Accordion.Body>{content}</Accordion.Body>
+          <Accordion.Body className={classNameBody}>{content}</Accordion.Body>
         </Accordion.Item>
       ))}
     </Accordion>
@@ -37,6 +38,7 @@ type AccordionType = {
   list: { header: string; content: ReactNode }[];
   handleShowClose: (index: number) => void;
   activesKeys: string[];
+  classNameBody?: string;
 };
 
 /**
