@@ -25,7 +25,10 @@ const defaultStyle = new Style({
 export const useToolbarPeiPrescritContext = ({ map, workingLayer }) => {
   const [featureStyle] = useState(defaultStyle);
   const [showCreatePeiPrescrit, setShowPeiPrescrit] = useState(false);
-  const handleClosePeiPrescrit = () => setShowPeiPrescrit(false);
+  const handleClosePeiPrescrit = () => {
+    workingLayer.getSource().clear();
+    setShowPeiPrescrit(false);
+  };
   const [pointPeiPrescrit, setPointPeiPrescrit] = useState<Point | null>(null);
 
   const tools = useMemo(() => {
@@ -121,6 +124,7 @@ const MapToolbarPeiPrescrit = ({
           srid={map.getView().getProjection().getCode().split(":").pop()}
           onSubmit={() => {
             dataPeiPrescritLayer.getSource().refresh();
+
             refreshLayerGeoserver(map);
             handleClosePeiPrescrit();
           }}
