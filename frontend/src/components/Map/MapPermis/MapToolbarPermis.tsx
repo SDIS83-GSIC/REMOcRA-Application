@@ -306,7 +306,6 @@ const MapToolbarPermis = ({
         handleClose={() => {
           handleCloseUpdatePermis();
           dataPermisLayer.getSource().refresh();
-          refreshLayerGeoserver(map);
         }}
         show={showUpdatePermis}
         className="w-auto"
@@ -318,6 +317,7 @@ const MapToolbarPermis = ({
           srid={map.getView().getProjection().getCode().split(":")[1]}
           onSubmit={() => {
             handleCloseUpdatePermis();
+            refreshLayerGeoserver(map);
           }}
         />
       </Volet>
