@@ -19,7 +19,6 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
-import remocra.auth.organismeUserId
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.DocumentsData.DocumentData
@@ -165,7 +164,7 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/get-id-numero")
     @RequireDroits([Droit.PEI_R])
     fun getIdNumeroComplet(): Response {
-        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetence(securityContext.organismeUserId)).build()
+        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetence(securityContext.userInfo)).build()
     }
 
     @GET

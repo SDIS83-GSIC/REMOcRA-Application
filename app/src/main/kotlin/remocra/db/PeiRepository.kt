@@ -702,13 +702,17 @@ class PeiRepository
             .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
             .fetchInto()
 
-    fun getListIdNumeroCompletInZoneCompetence(organismeId: UUID?): Collection<IdNumeroComplet> =
+    fun getListIdNumeroCompletInZoneCompetence(userInfo: UserInfo?): Collection<IdNumeroComplet> =
         dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
-            .from(PEI)
-            .join(ORGANISME).on(ORGANISME.ID.eq(organismeId))
-            .join(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
-            .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .from(
+                userInfo?.isSuperAdmin?.let {
+                    if (it) {
+                        PEI
+                    } else PEI.join(ZONE_INTEGRATION)
+                        .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence!!.zoneIntegrationId))
+                        .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+                },
+            )
             .fetchInto()
 
     fun deleteById(peiId: UUID) = dsl.deleteFrom(PEI).where(PEI.ID.eq(peiId)).execute()
