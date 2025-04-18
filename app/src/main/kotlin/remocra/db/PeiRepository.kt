@@ -6,13 +6,17 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record17
+import org.jooq.Record16
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.selectDistinct
+import org.jooq.impl.DSL.table
+import org.jooq.impl.SQLDataType
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
@@ -163,13 +167,12 @@ class PeiRepository
                     adresse = record.component8(),
                     communeLibelle = record.component9()!!,
                     natureDeciLibelle = record.component10()!!,
-                    autoriteDeci = record.component11()!!,
-                    servicePublicDeci = record.component12()!!,
-                    listeAnomalie = record.component13()!!,
-                    tourneeLibelle = record.component14()!!,
+                    autoriteDeci = record.component11(),
+                    servicePublicDeci = record.component12(),
+                    listeAnomalie = record.component13(),
+                    tourneeLibelle = record.component14(),
                     peiNextRop = record.component15(),
                     peiNextCtp = record.component16(),
-                    tourneeId = record.component17(),
                 )
             }
 
@@ -235,8 +238,22 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record17<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String?, ZonedDateTime?, ZonedDateTime?, UUID?>> {
-        return dsl.select(
+    ): SelectForUpdateStep<Record16<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String, ZonedDateTime?, ZonedDateTime?>> {
+        val concatTourneeLibelleNomCte = name("tournees_libelle")
+        val concatTourneeLibelle =
+            concatTourneeLibelleNomCte.fields("tournee_id", "concat_tournee_libelle").`as`(
+                DSL.select(
+                    L_TOURNEE_PEI.PEI_ID,
+                    DSL.listAgg(TOURNEE.LIBELLE, ", ")
+                        .withinGroupOrderBy(TOURNEE.LIBELLE),
+                ).from(L_TOURNEE_PEI)
+                    .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                    .groupBy(L_TOURNEE_PEI.PEI_ID),
+            )
+        val peiIdCte = field(name("tournees_libelle", "tournee_id"), SQLDataType.UUID)
+        val tourneeLibelleField = field(name("tournees_libelle", "concat_tournee_libelle"), SQLDataType.VARCHAR)
+
+        return dsl.with(concatTourneeLibelle).select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
             PEI.NUMERO_INTERNE,
@@ -261,20 +278,9 @@ class PeiRepository
                     r.value1().let { it as UUID }
                 }
             },
-            multiset(
-                selectDistinct(TOURNEE.LIBELLE)
-                    .from(TOURNEE)
-                    .join(L_TOURNEE_PEI)
-                    .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-                    .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)),
-            ).`as`("listeTournee").convertFrom { record ->
-                record?.map { r ->
-                    r.value1()
-                }?.joinToString()
-            }.`as`("tourneeLibelle"),
+            tourneeLibelleField,
             V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
-            TOURNEE.ID,
         )
             .from(PEI)
             .join(COMMUNE)
@@ -292,6 +298,7 @@ class PeiRepository
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .leftJoin(table(concatTourneeLibelleNomCte)).on(peiIdCte.eq(PEI.ID))
                 /*
             Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
             de cette jointure
@@ -299,13 +306,11 @@ class PeiRepository
             .leftJoin(L_PEI_ANOMALIE)
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
-            .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
+            .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
             .leftJoin(V_PEI_VISITE_DATE)
             .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
-            .leftJoin(TOURNEE)
-            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .let {
@@ -342,10 +347,10 @@ class PeiRepository
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
-                TOURNEE.ID,
+                tourneeLibelleField,
             )
             .orderBy(
-                param.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(
+                param.sortBy?.toCondition(tourneeLibelleField).takeIf { !it.isNullOrEmpty() } ?: listOf(
                     DSL.length(PEI.NUMERO_COMPLET).asc(),
                     PEI.NUMERO_COMPLET.asc(),
                 ),
@@ -371,7 +376,6 @@ class PeiRepository
         val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
-        val tourneeId: UUID?,
     )
 
     data class Filter(
@@ -483,7 +487,7 @@ class PeiRepository
 
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
+        fun toCondition(tourneeLibelleField: Field<String?>): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
             PEI.TYPE_PEI.getSortField(peiTypePei),
             PEI.DISPONIBILITE_TERRESTRE.getSortField(peiDisponibilite),
@@ -500,7 +504,7 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
-            TOURNEE.LIBELLE.getSortField(tourneeLibelle),
+            tourneeLibelleField.getSortField(tourneeLibelle),
         )
     }
 
