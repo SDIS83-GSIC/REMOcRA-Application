@@ -45,6 +45,15 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .orderBy(DSL.field("SUBSTRING(${COMMUNE.LIBELLE}, '([0-9]+)')::integer", Int::class.java), COMMUNE.LIBELLE)
             .fetchInto()
 
+    fun getCommuneForSelectWithZone(zoneId: UUID): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
+            .from(COMMUNE)
+            .join(ZONE_INTEGRATION)
+            .on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .where(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .orderBy(DSL.field("SUBSTRING(${COMMUNE.LIBELLE}, '([0-9]+)')::integer", Int::class.java), COMMUNE.LIBELLE)
+            .fetchInto()
+
     /**
      * Retourne les communes qui sont à moins de PEI_TOLERANCE_COMMUNE_METRES mètres de la géométrie passée en paramètre
      */

@@ -53,7 +53,7 @@ class CommuneEndPoint {
     @Produces(MediaType.APPLICATION_JSON)
     fun getCommuneForSelect(): Response {
         return Response.ok(
-            communeUseCase.getCommuneForSelect(),
+            communeUseCase.getCommuneForSelect(securityContext.userInfo),
         )
             .build()
     }
