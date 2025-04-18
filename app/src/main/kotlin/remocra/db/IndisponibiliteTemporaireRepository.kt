@@ -68,7 +68,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
     private fun internalWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): SelectSeekStepN<Record> {
         val nomCte = name("liste_pei")
         val cte = nomCte.fields("id_it", "liste_numero_pei").`as`(
-            dsl.select(
+            DSL.select(
                 L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID,
                 DSL.listAgg(PEI.NUMERO_COMPLET, ", ")
                     .withinGroupOrderBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID),
@@ -88,7 +88,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireId = field(name("liste_pei", "id_it"), SQLDataType.UUID)
         val listeNumeroPei = field(name("liste_pei", "liste_numero_pei"), SQLDataType.VARCHAR)
 
-        return dsl.with(cte).selectDistinct(
+        return dsl.with(cte).select(
             *INDISPONIBILITE_TEMPORAIRE.fields(),
             listeNumeroPei,
         )
@@ -106,6 +106,10 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
+            .groupBy(
+                INDISPONIBILITE_TEMPORAIRE.ID,
+                listeNumeroPei,
+            )
             .orderBy(
                 params.sortBy?.toCondition(listeNumeroPei) ?: listOf(
                     INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.asc(),
