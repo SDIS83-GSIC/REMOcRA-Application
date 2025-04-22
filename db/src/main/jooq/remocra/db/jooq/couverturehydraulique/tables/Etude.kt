@@ -129,7 +129,7 @@ open class Etude(
     /**
      * The column <code>couverturehydraulique.etude.etude_organisme_id</code>.
      */
-    val ORGANISME_ID: TableField<Record, UUID?> = createField(DSL.name("etude_organisme_id"), SQLDataType.UUID.nullable(false), this, "")
+    val ORGANISME_ID: TableField<Record, UUID?> = createField(DSL.name("etude_organisme_id"), SQLDataType.UUID, this, "")
 
     /**
      * The column <code>couverturehydraulique.etude.etude_date_maj</code>.

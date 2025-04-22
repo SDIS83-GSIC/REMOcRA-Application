@@ -26,7 +26,7 @@ data class Etude(
     val etudeNumero: String,
     val etudeLibelle: String,
     val etudeDescription: String?,
-    val etudeOrganismeId: UUID,
+    val etudeOrganismeId: UUID?,
     val etudeDateMaj: ZonedDateTime?,
     val etudeStatut: EtudeStatut,
 ) : Serializable {
@@ -61,7 +61,11 @@ data class Etude(
         } else if (this.etudeDescription != o.etudeDescription) {
             return false
         }
-        if (this.etudeOrganismeId != o.etudeOrganismeId) {
+        if (this.etudeOrganismeId == null) {
+            if (o.etudeOrganismeId != null) {
+                return false
+            }
+        } else if (this.etudeOrganismeId != o.etudeOrganismeId) {
             return false
         }
         if (this.etudeDateMaj == null) {
@@ -85,7 +89,7 @@ data class Etude(
         result = prime * result + this.etudeNumero.hashCode()
         result = prime * result + this.etudeLibelle.hashCode()
         result = prime * result + (if (this.etudeDescription == null) 0 else this.etudeDescription.hashCode())
-        result = prime * result + this.etudeOrganismeId.hashCode()
+        result = prime * result + (if (this.etudeOrganismeId == null) 0 else this.etudeOrganismeId.hashCode())
         result = prime * result + (if (this.etudeDateMaj == null) 0 else this.etudeDateMaj.hashCode())
         result = prime * result + this.etudeStatut.hashCode()
         return result
