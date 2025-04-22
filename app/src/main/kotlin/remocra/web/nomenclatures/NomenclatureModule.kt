@@ -9,5 +9,6 @@ object NomenclatureModule : Module {
     override fun configure(binder: Binder) {
         binder.registerResources(NomenclaturesEndpoint::class)
         binder.registerResources(NomenclatureCodeLibelleEndpoint::class)
+        binder.registerResources(NomenclatureAnomalieCategorieEndpoint::class)
     }
 }

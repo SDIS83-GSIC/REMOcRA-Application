@@ -56,7 +56,7 @@ class AnomalieEndpoint : AbstractEndpoint() {
                             val anomaliePoidsList: Collection<PoidsAnomalie> = anomaliePoidsList.getOrDefault(anomalie.anomalieId, listOf())
                         }
                     }.sortedBy { it.anomalie.anomalieLibelle }
-                val categorieList: Collection<AnomalieCategorie> = anomalieRepository.getAllAnomalieCategorieForAdmin().sortedBy { it.anomalieCategorieLibelle }
+                val categorieList: Collection<AnomalieCategorie> = anomalieRepository.getAllAnomalieCategorieForAdmin()
                 val natureList: Collection<Nature> = natureRepository.getAllForAdmin()
                 val typeList: Collection<TypePei> = TypePei.entries
             },

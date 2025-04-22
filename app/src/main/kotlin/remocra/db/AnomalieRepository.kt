@@ -48,7 +48,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      * Retourne l'ensemble des catégories d'anomalie
      */
     fun getAllAnomalieCategorieForAdmin(): Collection<AnomalieCategorie> =
-        dsl.selectFrom(ANOMALIE_CATEGORIE).fetchInto()
+        dsl.selectFrom(ANOMALIE_CATEGORIE).orderBy(ANOMALIE_CATEGORIE.ORDRE).fetchInto()
 
     /**
      * Retourne l'ensemble des poids/anomalies pour une anomalie
