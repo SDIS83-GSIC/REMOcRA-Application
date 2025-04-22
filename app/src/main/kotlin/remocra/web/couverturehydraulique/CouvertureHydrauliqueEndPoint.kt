@@ -327,4 +327,10 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             ),
         ).build()
     }
+
+    @GET
+    @Path("/etude/{etudeId}/geometrie")
+    @RequireDroits([Droit.ETUDE_U, Droit.ETUDE_R, Droit.ETUDE_D, Droit.ETUDE_C])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getGeometrieById(@PathParam("etudeId") etudeId: UUID): Response = Response.ok(couvertureHydrauliqueRepository.getEtudeCommuneGeometrie(etudeId)).build()
 }

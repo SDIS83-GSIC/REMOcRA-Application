@@ -7,6 +7,7 @@ import { URLS } from "../../routes.tsx";
 
 export enum GET_TYPE_GEOMETRY {
   COMMUNE = "/api/commune",
+  COMMUNE_ETUDE = "/api/couverture-hydraulique/etude",
   TOURNEE = "/api/tournee",
   PEI = "/api/pei",
   VOIE = "/api/voie",
@@ -71,6 +72,14 @@ const useLocalisation = () => {
               );
               extent = geometry.getExtent();
               srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.COMMUNE_ETUDE: {
+              const geometries = resData.map(
+                (commune: string) => parseGeometry(commune).geometry,
+              );
+              srid = parseGeometry(resData[0]).srid;
+              extent = new GeometryCollection(geometries).getExtent();
               break;
             }
             case GET_TYPE_GEOMETRY.VOIE: {

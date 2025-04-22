@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.MultiPolygon
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiProjetData
@@ -25,6 +26,7 @@ import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.utils.ST_Multi
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -398,4 +400,11 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .set(ETUDE.STATUT, EtudeStatut.TERMINEE)
             .where(ETUDE.ID.eq(etudeId))
             .execute()
+
+    fun getEtudeCommuneGeometrie(etudeId: UUID): Collection<MultiPolygon> =
+        dsl.select(ST_Multi(COMMUNE.GEOMETRIE))
+            .from(L_ETUDE_COMMUNE)
+            .join(COMMUNE).on(L_ETUDE_COMMUNE.COMMUNE_ID.eq(COMMUNE.ID))
+            .where(L_ETUDE_COMMUNE.ETUDE_ID.eq(etudeId))
+            .fetchInto()
 }

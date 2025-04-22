@@ -1,10 +1,10 @@
 import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconClose,
@@ -12,6 +12,9 @@ import {
   IconImport,
   IconSee,
 } from "../../../components/Icon/Icon.tsx";
+import useLocalisation, {
+  GET_TYPE_GEOMETRY,
+} from "../../../components/Localisation/useLocalisation.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
@@ -32,6 +35,7 @@ import filterValuesToVariable from "./FilterEtude.tsx";
 const ListEtude = () => {
   const typeEtudeState = useGet(url`/api/couverture-hydraulique/type-etudes`);
   const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { fetchGeometry } = useLocalisation();
 
   const listeButton: ButtonType[] = [];
   if (hasDroit(user, TYPE_DROIT.ETUDE_R)) {
@@ -42,6 +46,15 @@ const ListEtude = () => {
       type: TYPE_BUTTON.LINK,
       icon: <IconSee />,
       textEnable: "Ouvrir l'étude",
+      onClick: (etudeId, row) => {
+        if (row.listeCommune.length > 0) {
+          fetchGeometry(
+            GET_TYPE_GEOMETRY.COMMUNE_ETUDE,
+            etudeId,
+            URLS.OUVRIR_ETUDE(etudeId),
+          );
+        }
+      },
       route: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
     });
   }

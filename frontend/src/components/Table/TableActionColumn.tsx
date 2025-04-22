@@ -186,7 +186,7 @@ type TableActionButtonType = {
   state?: any | undefined;
 
   hide?: (param: any) => boolean;
-  onClick?: (param?: any) => any;
+  onClick?: (param?: any, row?: any) => any;
   isPost?: boolean;
   pathname?: string;
   isLink?: boolean;
@@ -240,7 +240,7 @@ export const ActionButton = ({
                 textDisable={_button.textDisable}
                 disabled={_button.disable ? _button.disable(row) : false}
                 pathname={_button.route?.(row.value)}
-                onClick={() => _button.onClick?.(row.value)}
+                onClick={() => _button.onClick?.(row.value, row.original)}
                 state={_button.state}
                 isLink={true}
               />
@@ -261,7 +261,7 @@ export const ActionButton = ({
                 textEnable={_button.textEnable}
                 icon={_button.icon}
                 pathname={_button.route?.(row.value)}
-                onClick={() => _button.onClick?.(row.value)}
+                onClick={() => _button.onClick?.(row.value, row.original)}
                 hide={_button.hide}
                 disabled={_button.disable ? _button.disable(row) : false}
                 classEnable={_button.classEnable}
@@ -277,7 +277,7 @@ export const ActionButton = ({
                 textEnable={_button.textEnable}
                 icon={_button.icon}
                 pathname={_button.route?.(row.value)}
-                onClick={() => _button.onClick?.(row.value)}
+                onClick={() => _button.onClick?.(row.value, row.original)}
                 hide={_button.hide}
                 disabled={_button.disable ? _button.disable(row) : false}
                 classEnable={_button.classEnable}
