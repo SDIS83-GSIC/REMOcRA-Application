@@ -317,4 +317,11 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .limit(limit)
             .offset(offset)
             .fetchInto()
+
+    /**
+     * Retourne les ID de PEI associés à l'anomalie dont l'ID est passé en paramètre...
+     * Permet de propager une modification du poids de l'anomalie lors de l'enregistrement.
+     */
+    fun getPeiIds(anomalieId: UUID): Collection<UUID> =
+        dsl.select(L_PEI_ANOMALIE.PEI_ID).from(L_PEI_ANOMALIE).where(L_PEI_ANOMALIE.ANOMALIE_ID.eq(anomalieId)).fetchInto()
 }

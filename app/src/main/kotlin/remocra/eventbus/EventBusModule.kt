@@ -7,6 +7,7 @@ import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
 import remocra.RemocraModule
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
+import remocra.eventbus.anomalie.AnomalieModifiedEventListener
 import remocra.eventbus.mobile.IntegrationTourneeEventListener
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.pei.PeiModifiedEventListener
@@ -22,6 +23,7 @@ object EventBusModule : RemocraModule() {
             addBinding().to<IntegrationTourneeEventListener>()
             addBinding().to<TracabiliteEventListener<*>>()
             addBinding().to<PeiModifiedEventListener>()
+            addBinding().to<AnomalieModifiedEventListener>()
             addBinding().to<ParametresProvider>()
             addBinding().to<DataCacheProvider>()
         }
