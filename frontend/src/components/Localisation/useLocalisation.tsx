@@ -25,7 +25,11 @@ const useLocalisation = () => {
   } = useLocation();
 
   const fetchGeometry = useCallback(
-    async (typeGeometry: string, idType: string) => {
+    async (
+      typeGeometry: string,
+      idType: string,
+      urlDestination = URLS.DECI_CARTE,
+    ) => {
       (
         await fetch(
           url`${typeGeometry}/${idType}/geometrie`,
@@ -36,37 +40,50 @@ const useLocalisation = () => {
       )
         .json()
         .then((resData) => {
+          const parseGeometry = (raw: string) => {
+            const [rawSrid, rawFeature] = raw.split(";");
+            const srid = rawSrid.split("=").pop();
+            const geometry = new WKT().readGeometry(rawFeature);
+            return { geometry, srid };
+          };
+
           let extent, srid;
-          if (GET_TYPE_GEOMETRY.PEI === typeGeometry) {
-            // PEI
-            const [rawSrid, rawFeature] = resData.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
-          } else if (
-            GET_TYPE_GEOMETRY.TOURNEE === typeGeometry ||
-            GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP === typeGeometry
-          ) {
-            // Tournée
-            extent = new GeometryCollection(
-              resData.map((pei: string) => {
-                const [rawSrid, rawFeature] = pei.split(";");
-                srid = rawSrid.split("=").pop();
-                return new WKT().readGeometry(rawFeature);
-              }),
-            ).getExtent();
-          } else if (GET_TYPE_GEOMETRY.COMMUNE === typeGeometry) {
-            // Commune
-            const [rawSrid, rawFeature] = resData.communeGeometry.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
-          } else {
-            // Voie
-            const [rawSrid, rawFeature] = resData.voieGeometry.split(";");
-            srid = rawSrid.split("=").pop();
-            extent = new WKT().readGeometry(rawFeature).getExtent();
+
+          switch (typeGeometry) {
+            case GET_TYPE_GEOMETRY.PEI: {
+              const { geometry, srid: parsedSrid } = parseGeometry(resData);
+              extent = geometry.getExtent();
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.TOURNEE:
+            case GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP: {
+              const geometries = resData.map(
+                (pei: string) => parseGeometry(pei).geometry,
+              );
+              srid = parseGeometry(resData[0]).srid;
+              extent = new GeometryCollection(geometries).getExtent();
+              break;
+            }
+            case GET_TYPE_GEOMETRY.COMMUNE: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.communeGeometry,
+              );
+              extent = geometry.getExtent();
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.VOIE: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.voieGeometry,
+              );
+              extent = geometry.getExtent();
+              srid = parsedSrid;
+              break;
+            }
           }
 
-          navigate(URLS.DECI_CARTE, {
+          navigate(urlDestination, {
             state: {
               ...currentState,
               from: [

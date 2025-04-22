@@ -4,7 +4,7 @@ import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY, degreesToStringHDMS } from "ol/coordinate";
-import { getCenter, getTopLeft, getWidth } from "ol/extent";
+import { getCenter, getTopLeft, getWidth, isEmpty } from "ol/extent";
 import { GeoJSON, WKT } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
@@ -19,6 +19,7 @@ import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
 import { Col, Row } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import { TYPE_AFFICHAGE_COORDONNEES } from "../../enums/TypeAffichageCoordonnees.tsx";
 import url from "../../module/fetch.tsx";
@@ -125,12 +126,56 @@ const MapComponent = ({
   toggleTool: any;
   activeTool: any;
 }) => {
+  const { state, search } = useLocation();
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!map) {
       return;
     }
     toggleTool("move-view");
   }, [map]);
+
+  useEffect(() => {
+    if (state?.target && map) {
+      map
+        .getView()
+        .fit(
+          transformExtent(
+            state.target.extent,
+            `EPSG:${state.target.srid}`,
+            map.getView().getProjection().getCode(),
+          ),
+          { maxZoom: 20 },
+        );
+      window.history.replaceState({ from: state.from }, "");
+    }
+  }, [state, map]);
+
+  useEffect(() => {
+    // On met dans l'URL le extent pour simplifier la navigation
+    if (map) {
+      map.on("moveend", () => {
+        const view = map.getView();
+        const extent = view.calculateExtent();
+        const params = new URLSearchParams();
+        params.set("extent", extent.join(","));
+        navigate(`?${params.toString()}`, { replace: true, state: state });
+      });
+
+      const params = new URLSearchParams(search);
+
+      if (params.get("extent")) {
+        const geom = params.get("extent")?.split(",");
+        if (!isEmpty(geom)) {
+          map.getView().fit(geom, {
+            maxZoom: 20,
+          });
+        }
+      }
+    }
+  }, [state, map, navigate, search]);
+
   return (
     <div className={"map-wrapper"}>
       {map && mapElement && (
