@@ -89,3 +89,12 @@ fun ST_SetSrid(
  */
 fun ST_Union(geometry: Field<Geometry?>): Field<Geometry?> =
     DSL.field("ST_Union({0})", Geometry::class.java, geometry)
+
+/**
+ * Renvoie une géométrie multi (MultiPoint, MultiLineString, MultiPolygon) à partir d'une géométrie donnée.
+ * Garantie que le résultat est une collection de géométries du même type.
+ * @param geometry Geometry? : la géométrie à convertir en une géométrie multi
+ * @return Champ de type Geometry
+ */
+fun ST_Multi(geometry: Field<Geometry?>): Field<Geometry?> =
+    DSL.field("ST_Multi({0})", Geometry::class.java, geometry)
