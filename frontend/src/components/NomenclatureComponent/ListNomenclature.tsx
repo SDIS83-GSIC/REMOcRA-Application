@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { hasDroit } from "../../droits.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
@@ -33,6 +33,7 @@ const ListNomenclature = ({
   libelleFk,
   lienPageUpdate,
   addButtonTitle,
+  additionalButton,
 }: {
   pageTitle: string;
   pageIcon: ReactNode;
@@ -43,6 +44,7 @@ const ListNomenclature = ({
   lienPageAjout: string;
   lienPageUpdate: (...args: string[]) => string;
   addButtonTitle: string;
+  additionalButton?: ReactNode;
 }) => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
 
@@ -108,15 +110,20 @@ const ListNomenclature = ({
         icon={pageIcon}
         urlRetour={URLS.MODULE_ADMIN}
         right={
-          <CreateButton
-            title={addButtonTitle}
-            href={lienPageAjout}
-            state={{
-              hasProtectedValue: hasProtectedValue,
-              listeFk: listeFk,
-              libelleFk: libelleFk,
-            }}
-          />
+          <Row>
+            <Col>{additionalButton}</Col>
+            <Col>
+              <CreateButton
+                title={addButtonTitle}
+                href={lienPageAjout}
+                state={{
+                  hasProtectedValue: hasProtectedValue,
+                  listeFk: listeFk,
+                  libelleFk: libelleFk,
+                }}
+              />
+            </Col>
+          </Row>
         }
       />
       <QueryTable

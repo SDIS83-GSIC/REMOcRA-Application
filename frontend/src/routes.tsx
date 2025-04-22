@@ -74,6 +74,7 @@ import ListTypeReseau from "./pages/Admin/typeReseau/ListTypeReseau.tsx";
 import UpdateTypeReseau from "./pages/Admin/typeReseau/UpdateTypeReseau.tsx";
 import CreateAnomalieCategorie from "./pages/Admin/anomalieCategorie/CreateAnomalieCategorie.tsx";
 import ListAnomalieCategorie from "./pages/Admin/anomalieCategorie/ListAnomalieCategorie.tsx";
+import SortAnomalieCategorie from "./pages/Admin/anomalieCategorie/SortAnomalieCategorie.tsx";
 import UpdateAnomalieCategorie from "./pages/Admin/anomalieCategorie/UpdateAnomalieCategorie.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
@@ -344,6 +345,7 @@ export const URLS = {
   UPDATE_ANOMALIE_CATEGORIE: (anomalieCategorieId: string) =>
     url`/admin/anomalie-categorie/update/` + anomalieCategorieId,
   LIST_ANOMALIE_CATEGORIE: url`/admin/anomalie-categorie`,
+  SORT_ANOMALIE_CATEGORIE: url`/admin/anomalie-categorie/sort`,
 
   ADD_NIVEAU: url`/admin/niveau/create`,
   UPDATE_NIVEAU: (niveauId: string) => url`/admin/niveau/update/` + niveauId,
@@ -1346,6 +1348,15 @@ export default [
         element: (
           <Authorization
             Component={ListAnomalieCategorie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "anomalie-categorie/sort",
+        element: (
+          <Authorization
+            Component={SortAnomalieCategorie}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
