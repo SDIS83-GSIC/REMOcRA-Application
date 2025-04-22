@@ -295,6 +295,7 @@ val OLDEB_VISITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(OldebVisite.
 val OLDEB_VISITE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(OldebVisiteAnomalie.OLDEB_VISITE_ANOMALIE, DSL.name("oldeb_visite_anomalie_pkey"), arrayOf(OldebVisiteAnomalie.OLDEB_VISITE_ANOMALIE.OLDEB_VISITE_ID, OldebVisiteAnomalie.OLDEB_VISITE_ANOMALIE.OLDEB_TYPE_ANOMALIE_ID), true)
 val OLDEB_VISITE_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(OldebVisiteDocument.OLDEB_VISITE_DOCUMENT, DSL.name("oldeb_visite_document_pkey"), arrayOf(OldebVisiteDocument.OLDEB_VISITE_DOCUMENT.ID), true)
 val OLDEB_VISITE_SUITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(OldebVisiteSuite.OLDEB_VISITE_SUITE, DSL.name("oldeb_visite_suite_pkey"), arrayOf(OldebVisiteSuite.OLDEB_VISITE_SUITE.ID), true)
+val ORGANISME_KEYCLOAK_ID_UNIQUE: UniqueKey<Record> = Internal.createUniqueKey(Organisme.ORGANISME, DSL.name("organisme_keycloak_id_unique"), arrayOf(Organisme.ORGANISME.KEYCLOAK_ID), true)
 val ORGANISME_ORGANISME_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Organisme.ORGANISME, DSL.name("organisme_organisme_code_key"), arrayOf(Organisme.ORGANISME.CODE), true)
 val ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Organisme.ORGANISME, DSL.name("organisme_pkey"), arrayOf(Organisme.ORGANISME.ID), true)
 val PARAMETRE_PARAMETRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Parametre.PARAMETRE, DSL.name("parametre_parametre_code_key"), arrayOf(Parametre.PARAMETRE.CODE), true)

@@ -28,6 +28,7 @@ data class Organisme(
     val organismeTypeOrganismeId: UUID,
     val organismeZoneIntegrationId: UUID,
     val organismeParentId: UUID?,
+    val organismeKeycloakId: String?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -76,6 +77,13 @@ data class Organisme(
         } else if (this.organismeParentId != o.organismeParentId) {
             return false
         }
+        if (this.organismeKeycloakId == null) {
+            if (o.organismeKeycloakId != null) {
+                return false
+            }
+        } else if (this.organismeKeycloakId != o.organismeKeycloakId) {
+            return false
+        }
         return true
     }
 
@@ -91,6 +99,7 @@ data class Organisme(
         result = prime * result + this.organismeTypeOrganismeId.hashCode()
         result = prime * result + this.organismeZoneIntegrationId.hashCode()
         result = prime * result + (if (this.organismeParentId == null) 0 else this.organismeParentId.hashCode())
+        result = prime * result + (if (this.organismeKeycloakId == null) 0 else this.organismeKeycloakId.hashCode())
         return result
     }
 
@@ -106,6 +115,7 @@ data class Organisme(
         sb.append(", ").append(organismeTypeOrganismeId)
         sb.append(", ").append(organismeZoneIntegrationId)
         sb.append(", ").append(organismeParentId)
+        sb.append(", ").append(organismeKeycloakId)
 
         sb.append(")")
         return sb.toString()

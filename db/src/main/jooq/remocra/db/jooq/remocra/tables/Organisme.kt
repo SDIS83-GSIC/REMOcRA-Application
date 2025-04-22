@@ -32,6 +32,7 @@ import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY
 import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CONTACT_ORGANISME__L_CONTACT_ORGANISME_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_ORGANISME__L_COURRIER_ORGANISME_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.ORGANISME_KEYCLOAK_ID_UNIQUE
 import remocra.db.jooq.remocra.keys.ORGANISME_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PARENT_ID_FKEY
@@ -157,6 +158,11 @@ open class Organisme(
      */
     val PARENT_ID: TableField<Record, UUID?> = createField(DSL.name("organisme_parent_id"), SQLDataType.UUID, this, "")
 
+    /**
+     * The column <code>remocra.organisme.organisme_keycloak_id</code>.
+     */
+    val KEYCLOAK_ID: TableField<Record, String?> = createField(DSL.name("organisme_keycloak_id"), SQLDataType.CLOB, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -190,7 +196,7 @@ open class Organisme(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = ORGANISME_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(ORGANISME_ORGANISME_CODE_KEY)
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(ORGANISME_KEYCLOAK_ID_UNIQUE, ORGANISME_ORGANISME_CODE_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(ORGANISME__ORGANISME_ORGANISME_PARENT_ID_FKEY, ORGANISME__ORGANISME_ORGANISME_PROFIL_ORGANISME_ID_FKEY, ORGANISME__ORGANISME_ORGANISME_TYPE_ORGANISME_ID_FKEY, ORGANISME__ORGANISME_ORGANISME_ZONE_INTEGRATION_ID_FKEY)
 
     private lateinit var _organisme: OrganismePath
