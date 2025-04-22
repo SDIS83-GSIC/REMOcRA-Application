@@ -40,6 +40,7 @@ import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
 import remocra.utils.forbidden
 import remocra.utils.getTextPart
+import remocra.utils.getTextPartOrNull
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -236,7 +237,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             etudeId = etudeId,
             etudeNumero = httpRequest.getTextPart("etudeNumero"),
             etudeLibelle = httpRequest.getTextPart("etudeLibelle"),
-            etudeDescription = httpRequest.getTextPart("etudeDescription"),
+            etudeDescription = httpRequest.getTextPartOrNull("etudeDescription"),
             listeCommuneId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeCommuneId")),
             listeDocument = DocumentsData.DocumentsEtude(
                 objectId = etudeId,
@@ -266,7 +267,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             typeEtudeId = UUID.fromString(httpRequest.getTextPart("typeEtudeId")),
             etudeNumero = httpRequest.getTextPart("etudeNumero"),
             etudeLibelle = httpRequest.getTextPart("etudeLibelle"),
-            etudeDescription = httpRequest.getTextPart("etudeDescription"),
+            etudeDescription = httpRequest.getTextPartOrNull("etudeDescription"),
             listeCommuneId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeCommuneId")),
             listeDocument = DocumentsData.DocumentsEtude(
                 objectId = etudeId,

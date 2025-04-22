@@ -292,7 +292,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
         etudeNumero: String,
         etudeLibelle: String,
         etudeDescription: String?,
-        etudeOrganismeId: UUID,
+        etudeOrganismeId: UUID?,
     ) =
         dsl.insertInto(ETUDE)
             .set(ETUDE.ID, etudeId)

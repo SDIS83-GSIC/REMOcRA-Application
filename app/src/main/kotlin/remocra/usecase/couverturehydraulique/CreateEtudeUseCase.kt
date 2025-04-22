@@ -49,7 +49,7 @@ class CreateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.INSERT) {
             etudeNumero = element.etudeNumero,
             etudeLibelle = element.etudeLibelle,
             etudeDescription = element.etudeDescription,
-            etudeOrganismeId = userInfo!!.organismeId!!,
+            etudeOrganismeId = userInfo!!.organismeId,
         )
 
         // On remplit les L_ETUDE_COMMUNE

@@ -10,7 +10,7 @@ export type EtudeType = {
   typeEtudeId: string;
   etudeNumero: string;
   etudeLibelle: string;
-  etudeDescription: string;
+  etudeDescription?: string;
   listeCommuneId: string[];
   documents: Document & {
     etudeDocumentLibelle: string;
