@@ -54,6 +54,8 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                         url = config.getString("nexsis.url"),
                         user = config.getStringOrNull("nexsis.user"),
                         password = config.getStringOrNull("nexsis.password"),
+                        testToken = config.getStringOrNull("nexsis.testToken"),
+
                     ),
                 ),
             )

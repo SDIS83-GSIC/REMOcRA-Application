@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.data.ModeleMinimalPeiData
+import remocra.data.enums.Environment
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -61,16 +62,11 @@ class PeiModifiedEventListener @Inject constructor() :
      */
     private fun notifyNexSIS(event: PeiModifiedEvent) {
         if (appSettings.nexsis.enabled) {
-            // Le code structure est forcément rempli si l'option enabled est positionnée
-            val codeStructure = appSettings.nexsis.codeStructure!!
-
             when (event.typeOperation) {
                 TypeOperation.INSERT -> createPei(event)
                 TypeOperation.UPDATE -> updatePei(event)
                 TypeOperation.DELETE -> deletePei(event)
             }
-
-            // TODO stocker les appels / réponses à NexSIS, ne serait-ce qu'en logs d'une tâche ou autre ?
         }
     }
 
@@ -111,10 +107,17 @@ class PeiModifiedEventListener @Inject constructor() :
      * Exécute la requête HTTP vers NexSIS, en fonction du Endpoint souhaité
      */
     private fun executeRequest(objectAsString: String?, endpoint: String, typeOperation: TypeOperation) {
+        if (appSettings.environment == Environment.PRODUCTION && appSettings.nexsis.testToken != null) {
+            throw IllegalStateException("Impossible d'utiliser un token prédéfini en production, il faut passer par l'a12n NexSIS !")
+        }
+
+        // TODO voir comment utiliser la brique d'a12n en production, pour l'instant ce n'est pas possible côté NexSIS, le token est en dur
+        val token = appSettings.nexsis.testToken
+
         val httpClient: HttpClient = HttpClient.newHttpClient()
 
         val request =
-            HttpRequest.newBuilder(URI(appSettings.nexsis.url).resolve(URI("./$endpoint")))
+            HttpRequest.newBuilder(URI(appSettings.nexsis.url.plus(endpoint)))
                 .let {
                     val ofString = HttpRequest.BodyPublishers.ofString(objectAsString)
                     when (typeOperation) {
@@ -124,7 +127,7 @@ class PeiModifiedEventListener @Inject constructor() :
                     }
                 }
                 .setHeader("Content-Type", "application/json")
-//                        .setHeader(key, value)
+                .setHeader("Authorization", "Bearer $token")
                 .build()
         if (appSettings.nexsis.mock) {
             logger.debug("Appel à l'API NexSIS : {}", request)
@@ -145,11 +148,13 @@ class PeiModifiedEventListener @Inject constructor() :
         when (response.statusCode()) {
             HttpURLConnection.HTTP_OK,
             HttpURLConnection.HTTP_CREATED,
-            -> TODO("success")
+            HttpURLConnection.HTTP_NO_CONTENT,
+            -> logger.info("Notification NexSIS ok !")
 
-            HttpURLConnection.HTTP_BAD_REQUEST -> TODO("")
-            HttpURLConnection.HTTP_UNAUTHORIZED -> TODO("")
-            HttpURLConnection.HTTP_FORBIDDEN -> TODO("")
+            HttpURLConnection.HTTP_BAD_REQUEST -> logger.error("400 : Bad request")
+            HttpURLConnection.HTTP_UNAUTHORIZED -> logger.error("401 : Unauthorized")
+            HttpURLConnection.HTTP_FORBIDDEN -> logger.error("403 : Forbidden")
+            else -> logger.error("Erreur inconnue : ${response.statusCode()}")
         }
     }
 }

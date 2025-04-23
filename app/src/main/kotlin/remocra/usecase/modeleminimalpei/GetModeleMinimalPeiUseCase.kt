@@ -70,7 +70,7 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
                 .maxByOrNull { it.visiteDate }
 
             ModeleMinimalPeiData(
-                codeStructure = appSettings.codeSdis.name,
+                codeStructure = appSettings.nexsis.codeStructure!!,
                 peiId = it.peiId,
                 peiNumeroComplet = it.peiNumeroComplet,
                 natureCode = it.natureCode,

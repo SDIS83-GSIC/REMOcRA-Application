@@ -34,4 +34,5 @@ data class Nexsis(
     val url: String,
     val user: String?,
     val password: String?,
+    val testToken: String?,
 )
