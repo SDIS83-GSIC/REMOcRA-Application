@@ -12,10 +12,9 @@ import jakarta.ws.rs.core.UriInfo
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import remocra.app.DataCacheProvider
 import remocra.auth.Public
 import remocra.auth.userInfo
-import remocra.db.CoucheRepository
-import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.security.NoCsrf
 import remocra.utils.addQueryParameters
@@ -26,10 +25,7 @@ import remocra.web.AbstractEndpoint
 @Path("/geoserver")
 class GeoserverEndpoint : AbstractEndpoint() {
     @Inject
-    lateinit var droitsRepository: DroitsRepository
-
-    @Inject
-    lateinit var coucheRepository: CoucheRepository
+    lateinit var dataCacheProvider: DataCacheProvider
 
     @Inject
     lateinit var httpClient: OkHttpClient
@@ -44,19 +40,13 @@ class GeoserverEndpoint : AbstractEndpoint() {
         @Context uriInfo: UriInfo,
         @Context securityContext: SecurityContext,
     ): Response {
-        // XXX: faire un/des "caches" pour éviter trop de requêtes SQL ?
         val user = securityContext.userInfo
+        val couche = dataCacheProvider.get().mapCouches.values.firstOrNull {
+            it.coucheCode == code && (user!!.isSuperAdmin || it.couchePublic || it.profilDroitList.contains(user.profilDroits!!.profilDroitId))
+        }
 
-        val couche = coucheRepository.getCouche(
-            code,
-            module,
-            user?.utilisateurId?.let {
-                droitsRepository.getProfilDroitFromUser(it)
-            },
-            user?.isSuperAdmin,
-        )
         if (couche == null) {
-            // On ne sait pas ici si c'est un problème de droit où de couche inexistante
+            // On ne sait pas ici si c'est un problème de droit ou de couche inexistante
             // On ne cherche pas à distinguer les deux
             return notFound().build()
         }
