@@ -1,11 +1,12 @@
 import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconAddContact,
+  IconCreateApi,
   IconGererContact,
   IconPei,
 } from "../../../components/Icon/Icon.tsx";
@@ -62,6 +63,19 @@ const ListOrganisme = () => {
       textEnable: "Afficher les contacts",
       textDisable: "Aucun contact pour cet organisme",
       disable: (row) => !row.original.hasContact,
+      classEnable: "warning",
+    });
+  }
+
+  if (hasDroit(user, TYPE_DROIT.ADMIN_API)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      textEnable: "Créer un accès API",
+      pathname: url`/api/organisme/create-client-keycloak/`,
+      icon: <IconCreateApi />,
       classEnable: "warning",
     });
   }

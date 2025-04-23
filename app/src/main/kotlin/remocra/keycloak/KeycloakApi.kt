@@ -1,6 +1,7 @@
 package remocra.keycloak
 
 import com.google.common.net.HttpHeaders
+import remocra.keycloak.representations.ClientRepresentation
 import remocra.keycloak.representations.UserRepresentation
 import retrofit2.Call
 import retrofit2.http.Body
@@ -57,4 +58,12 @@ interface KeycloakApi {
         @Path("id") userId: String,
         @Body user: UserRepresentation,
     ): Call<Void>
+
+    // Client
+    @POST("clients")
+    @Headers("Content-Type: application/json")
+    fun createClient(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Body client: ClientRepresentation,
+    ): Call<Void?>
 }

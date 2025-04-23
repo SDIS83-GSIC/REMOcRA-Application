@@ -63,6 +63,12 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
 
+    fun countEmail(email: String): Int =
+        dsl.selectCount()
+            .from(ORGANISME)
+            .where(ORGANISME.EMAIL_CONTACT.eq(email))
+            .fetchSingleInto()
+
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
 
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(conditionAutoriteDeci)
@@ -283,8 +289,14 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .where(ORGANISME.ID.eq(organisme.organismeId))
             .execute()
 
-    fun getById(id: UUID): OrganismeData? =
-        dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchOneInto()
+    fun updateKeycloakClientId(keyclaokClientId: String, organismeId: UUID) =
+        dsl.update(ORGANISME)
+            .set(ORGANISME.KEYCLOAK_ID, keyclaokClientId)
+            .where(ORGANISME.ID.eq(organismeId))
+            .execute()
+
+    fun getById(id: UUID): Organisme =
+        dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchSingleInto()
 
     fun getByEmail(email: String): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.EMAIL_CONTACT.eq(email)).fetchOneInto()

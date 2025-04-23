@@ -538,6 +538,15 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     // Paramètres API
     DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),
+    DROIT_API_CLIENT_FORBIDDEN(26001, "Vous n'avez pas les droits pour la création d'un accès API", Status.FORBIDDEN),
+    DROIT_API_CLIENT_EMAIL_NULL(26002, "L'organisme doit avoir une adresse mail valide."),
+    DROIT_API_CLIENT_EMAIL_DOUBLON(26003, "Un ou plusieurs organisme ont la même adresse mail."),
+    DROIT_API_CLIENT_ERROR_KEYCLOAK(26004, "Impossible de récupérer l'id du client dans keycloak"),
+    DROIT_API_DEJA_CLIENT_KEYCLOAK(26005, "L'organisme a déjà un accès API."),
+    DROIT_API_INSERT_CLIENT_KEYCLOAK(
+        26006,
+        "Erreur lors de l'insertion dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
+    ),
 
     //
     // ********************************************************************************
