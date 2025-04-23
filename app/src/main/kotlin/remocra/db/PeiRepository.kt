@@ -478,7 +478,7 @@ class PeiRepository
         val peiNumeroComplet: Int?,
         val peiNumeroInterne: Int?,
         val peiTypePei: Int?,
-        val peiDisponibilite: Int?,
+        val peiDisponibiliteTerrestre: Int?,
         val penaDisponibiliteHBE: Int?,
         val natureLibelle: Int?,
         val communeLibelle: Int?,
@@ -489,13 +489,11 @@ class PeiRepository
         val peiNextCtp: Int?,
         val tourneeLibelle: Int?,
         var ordreTournee: Int?,
-
     ) {
-
         fun toCondition(tourneeLibelleField: Field<String?>): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
             PEI.TYPE_PEI.getSortField(peiTypePei),
-            PEI.DISPONIBILITE_TERRESTRE.getSortField(peiDisponibilite),
+            PEI.DISPONIBILITE_TERRESTRE.getSortField(peiDisponibiliteTerrestre),
             PENA.DISPONIBILITE_HBE.getSortField(penaDisponibiliteHBE),
             NATURE.LIBELLE.getSortField(natureLibelle),
             COMMUNE.LIBELLE.getSortField(communeLibelle),
