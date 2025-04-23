@@ -42,6 +42,8 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
                 droitsRepository.getDroitsFromUser(userProfile.utilisateurId)
             }
 
+            userProfile.profilDroits = droitsRepository.getProfilDroitFromUser(utilisateur.utilisateurId)
+
             if (userProfile.utilisateur.utilisateurOrganismeId != null) {
                 // zone de compétence
                 userProfile.zoneCompetence =

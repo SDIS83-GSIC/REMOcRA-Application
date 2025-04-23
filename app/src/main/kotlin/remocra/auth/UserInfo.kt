@@ -3,6 +3,7 @@ package remocra.auth
 import org.locationtech.jts.geom.Geometry
 import org.pac4j.oidc.profile.keycloak.KeycloakOidcProfile
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.security.Principal
@@ -13,6 +14,7 @@ UserInfo : KeycloakOidcProfile() {
     lateinit var utilisateur: Utilisateur
 
     lateinit var droits: Collection<Droit>
+    var profilDroits: ProfilDroit? = null
 
     var zoneCompetence: ZoneIntegration? = null
 
