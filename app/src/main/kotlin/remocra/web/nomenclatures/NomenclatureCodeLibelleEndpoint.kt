@@ -1,4 +1,4 @@
-package remocra.web.admin
+package remocra.web.nomenclatures
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.DELETE
