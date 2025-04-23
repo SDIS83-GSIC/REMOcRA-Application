@@ -51,7 +51,7 @@ class GeoserverEndpoint : AbstractEndpoint() {
             code,
             module,
             user?.utilisateurId?.let {
-                droitsRepository.getProfilDroitListFromUser(it)
+                droitsRepository.getProfilDroitFromUser(it)
             },
             user?.isSuperAdmin,
         )

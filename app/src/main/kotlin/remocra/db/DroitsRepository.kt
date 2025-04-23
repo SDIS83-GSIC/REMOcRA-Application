@@ -32,7 +32,7 @@ class DroitsRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .toSet()
     }
 
-    fun getProfilDroitListFromUser(userId: UUID): ProfilDroit? {
+    fun getProfilDroitFromUser(userId: UUID): ProfilDroit? {
         return dsl.select(*PROFIL_DROIT.fields())
             .from(UTILISATEUR)
             .innerJoin(PROFIL_UTILISATEUR).on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID))

@@ -48,7 +48,7 @@ class CartoEndpoint : AbstractEndpoint() {
             code,
             module,
             securityContext.userInfo?.utilisateurId?.let {
-                droitsRepository.getProfilDroitListFromUser(it)
+                droitsRepository.getProfilDroitFromUser(it)
             },
         )
         if (couche == null) {
