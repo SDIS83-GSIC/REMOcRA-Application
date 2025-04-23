@@ -30,7 +30,7 @@ import RcciForm, {
   prepareValues,
   validationSchema,
 } from "../../../pages/Admin/rcci/RcciForm.tsx";
-import { refreshLayerGeoserver } from "../MapUtils.tsx";
+import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 
 export const useToolbarRcciContext = ({
   map,
@@ -269,6 +269,7 @@ export const useToolbarRcciContext = ({
     function toggleMove(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(moveCtrl);
       if (active) {
+        desactiveMoveMap(map);
         if (idx === -1) {
           map.addInteraction(moveCtrl);
         }

@@ -1,6 +1,6 @@
 import { Feature, Map } from "ol";
 import { WKT } from "ol/format";
-import { Modify, Select } from "ol/interaction";
+import { DragPan, Interaction, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { Fill, Stroke, Style } from "ol/style";
@@ -227,4 +227,15 @@ export function refreshLayerGeoserver(map: Map) {
       layer.getSource().refresh();
     }
   });
+}
+
+export function desactiveMoveMap(map: Map) {
+  map
+    .getInteractions()
+    .getArray()
+    .forEach((interaction: Interaction) => {
+      if (interaction instanceof DragPan) {
+        interaction.setActive(false);
+      }
+    });
 }

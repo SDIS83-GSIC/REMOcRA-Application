@@ -2,7 +2,7 @@ import { Overlay } from "ol";
 import Map from "ol/Map";
 import { unByKey } from "ol/Observable";
 import { LineString, Polygon } from "ol/geom";
-import { DragPan, Draw } from "ol/interaction";
+import { DragPan, Draw, Interaction } from "ol/interaction";
 import { getArea, getLength } from "ol/sphere";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -105,8 +105,9 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
         if (idx === -1) {
           map.addInteraction(dragPanCtrl);
         }
+        dragPanCtrl.setActive(true);
       } else {
-        map.removeInteraction(dragPanCtrl);
+        dragPanCtrl.setActive(false);
       }
     }
 
@@ -222,7 +223,13 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
 
     // on autorise le déplacement que si on n'est pas dans une situation qui l'interdit (sélection)
     tools["move-view"].action(
-      tools[toolId]?.actionPossibleEnDeplacement !== false || newTool == null,
+      tools[toolId]?.actionPossibleEnDeplacement !== false ||
+        newTool == null ||
+        map
+          .getInteractions()
+          .getArray()
+          .find((interaction: Interaction) => interaction instanceof DragPan)
+          ?.getActive() !== true,
     );
   }
 

@@ -35,7 +35,7 @@ import AddTitleForm, {
   prepareVariables,
   ValidationSchema,
 } from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
-import { refreshLayerGeoserver } from "../MapUtils.tsx";
+import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -183,8 +183,13 @@ export const useToolbarCriseContext = ({
      */
     function toggleInteraction(active: boolean = false, draw: Draw | Modify) {
       const idx = map?.getInteractions().getArray().indexOf(draw);
-      if (active && idx === -1) {
-        map.addInteraction(draw);
+      if (active) {
+        if (idx === -1) {
+          map.addInteraction(draw);
+        }
+        if (draw instanceof Modify) {
+          desactiveMoveMap(map);
+        }
       } else if (!active && idx !== -1) {
         map.removeInteraction(draw);
       }
