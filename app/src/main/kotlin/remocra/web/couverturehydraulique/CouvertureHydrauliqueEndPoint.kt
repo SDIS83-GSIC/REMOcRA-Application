@@ -78,8 +78,8 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         val affiliatedOrganismeIds = securityContext.userInfo!!.affiliatedOrganismeIds
         return Response.ok(
             DataTableau(
-                couvertureHydrauliqueRepository.getEtudes(params, affiliatedOrganismeIds),
-                couvertureHydrauliqueRepository.getCountEtudes(params.filterBy, affiliatedOrganismeIds),
+                couvertureHydrauliqueRepository.getEtudes(params, affiliatedOrganismeIds, securityContext.userInfo!!.isSuperAdmin),
+                couvertureHydrauliqueRepository.getCountEtudes(params.filterBy, affiliatedOrganismeIds, securityContext.userInfo!!.isSuperAdmin),
             ),
         ).build()
     }

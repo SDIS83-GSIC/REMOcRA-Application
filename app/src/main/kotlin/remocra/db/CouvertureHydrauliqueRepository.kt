@@ -32,7 +32,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
 
-    fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>): Collection<EtudeComplete> =
+    fun getEtudes(params: Params<Filter, Sort>, affiliatedOrganismeIds: Set<UUID>, isSuperAdmin: Boolean): Collection<EtudeComplete> =
         dsl.select(
             ETUDE.ID,
             TYPE_ETUDE.LIBELLE,
@@ -62,17 +62,17 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .join(TYPE_ETUDE)
             .on(ETUDE.TYPE_ETUDE_ID.eq(TYPE_ETUDE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .and(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds), isSuperAdmin))
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ETUDE.LIBELLE))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
 
-    fun getCountEtudes(filterBy: Filter?, affiliatedOrganismeIds: Set<UUID>): Int =
+    fun getCountEtudes(filterBy: Filter?, affiliatedOrganismeIds: Set<UUID>, isSuperAdmin: Boolean): Int =
         dsl.selectCount()
             .from(ETUDE)
             .where(filterBy?.toCondition() ?: DSL.trueCondition())
-            .and(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
+            .and(repositoryUtils.checkIsSuperAdminOrCondition(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds), isSuperAdmin))
             .fetchSingleInto()
 
     data class EtudeComplete(
