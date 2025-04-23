@@ -143,7 +143,7 @@ const Visite = () => {
     }
   };
   return (
-    <Container>
+    <Container fluid className={"px-5"}>
       <PageTitle
         title={"Visites du PEI " + numeroComplet}
         icon={<IconVisite />}
@@ -180,7 +180,9 @@ const Visite = () => {
                     "table-info"
                   }
                 >
-                  <td>{formatDateTime(element.visiteDate)}</td>
+                  <td className={"text-nowrap"}>
+                    {formatDateTime(element.visiteDate)}
+                  </td>
                   <td>
                     {
                       referenceTypeVisite.find(
@@ -188,7 +190,7 @@ const Visite = () => {
                       )?.libelle
                     }
                   </td>
-                  <td>{element.visiteAgent1}</td>
+                  <td className={"text-nowrap"}>{element.visiteAgent1}</td>
                   <td>
                     <Button
                       variant="link"
