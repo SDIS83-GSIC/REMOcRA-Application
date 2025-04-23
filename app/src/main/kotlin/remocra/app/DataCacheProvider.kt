@@ -4,10 +4,12 @@ import com.google.common.eventbus.Subscribe
 import com.google.inject.Provider
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import remocra.data.CoucheData
 import remocra.data.DataCache
 import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.TypeDataCache
 import remocra.db.AnomalieRepository
+import remocra.db.CoucheRepository
 import remocra.db.DiametreRepository
 import remocra.db.DomaineRepository
 import remocra.db.MarquePibiRepository
@@ -64,6 +66,7 @@ class DataCacheProvider
 @Inject
 constructor(
     private val anomalieRepository: AnomalieRepository,
+    private val coucheRepository: CoucheRepository,
     private val diametreRepository: DiametreRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
@@ -102,6 +105,7 @@ constructor(
         when (typeToReload) {
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
             TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
+            TypeDataCache.COUCHE -> dataCache.mapCouches = coucheRepository.getMapById()
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -142,6 +146,7 @@ constructor(
     private fun buildDataCache(): DataCache {
         val anomalies = anomalieRepository.getMapById()
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
+        val couches = coucheRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
@@ -175,6 +180,7 @@ constructor(
         return DataCache(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
+            mapCouches = couches,
             mapDiametre = diametres,
             mapDomaine = domaines,
             mapMateriau = materiaux,
@@ -213,6 +219,7 @@ constructor(
     fun getData(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> getAnomalies()
         TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
+        TypeDataCache.COUCHE -> get().mapCouches
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -285,6 +292,7 @@ constructor(
     fun getPojoClassFromType(typeDataCache: TypeDataCache) = when (typeDataCache) {
         TypeDataCache.ANOMALIE -> Anomalie::class.java
         TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
+        TypeDataCache.COUCHE -> CoucheData::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java

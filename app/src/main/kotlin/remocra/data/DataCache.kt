@@ -36,6 +36,7 @@ import java.util.UUID
 data class DataCache(
     var mapAnomalie: Map<UUID, Anomalie>,
     var mapAnomalieCategorie: Map<UUID, AnomalieCategorie>,
+    var mapCouches: Map<UUID, CoucheData>,
     var mapDiametre: Map<UUID, Diametre>,
     var mapDomaine: Map<UUID, Domaine>,
     var mapMarquePibi: Map<UUID, MarquePibi>,

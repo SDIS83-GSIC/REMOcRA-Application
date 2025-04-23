@@ -3,6 +3,7 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.data.CoucheData
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.Couche
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
@@ -38,6 +39,31 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 ),
             )
             .fetchOneInto<Couche>()
+
+    /**
+     * Retourne une Map<coucheId, CoucheData> pour stockage dans le dataCache
+     */
+    fun getMapById(): Map<UUID, CoucheData> =
+        dsl.selectFrom(COUCHE).fetchInto<Couche>().map {
+                couche ->
+            CoucheData(
+                coucheId = couche.coucheId,
+                coucheCode = couche.coucheCode,
+                coucheLibelle = couche.coucheLibelle,
+                coucheOrdre = couche.coucheOrdre,
+                coucheSource = couche.coucheSource,
+                coucheProjection = couche.coucheProjection,
+                coucheUrl = couche.coucheUrl,
+                coucheNom = couche.coucheNom,
+                coucheFormat = couche.coucheFormat,
+                couchePublic = couche.couchePublic,
+                coucheActive = couche.coucheActive,
+                coucheIconeUrl = null,
+                coucheLegendeUrl = null,
+                profilDroitList = getProfilDroitList(couche.coucheId).map { profilDroit -> profilDroit.profilDroitId },
+                moduleList = getModuleList(couche.coucheId),
+            )
+        }.associateBy { it.coucheId }
 
     fun getCoucheMap(module: TypeModule, profilDroit: ProfilDroit?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
         dsl.selectDistinct(*COUCHE.fields())
