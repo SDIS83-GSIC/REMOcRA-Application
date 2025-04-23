@@ -59,6 +59,7 @@ function getColumnPeiByStringArray(
           accessor: "peiNumeroComplet",
           sortField: "peiNumeroComplet",
           Filter: <FilterInput type="text" name="peiNumeroComplet" />,
+          width: 125,
         });
         break;
       case COLUMN_PEI.NUMERO_INTERNE:
@@ -147,6 +148,18 @@ function getColumnPeiByStringArray(
               url={url`/api/commune/get-libelle-commune`}
             />
           ),
+          Cell: (value) => {
+            return (
+              <TooltipCustom
+                tooltipText={value.value}
+                tooltipId={value}
+                maxWidth={167}
+              >
+                {value.value}
+              </TooltipCustom>
+            );
+          },
+          width: 170,
         });
         break;
       case COLUMN_PEI.NATURE_DECI:
@@ -176,6 +189,7 @@ function getColumnPeiByStringArray(
               }
             />
           ),
+          width: 150,
         });
         break;
       case COLUMN_PEI.SERVICE_PUBLIC_DECI:
@@ -251,7 +265,18 @@ function getColumnPeiByStringArray(
               name="tourneeId"
             />
           ),
-          width: 200,
+          width: 250,
+          Cell: (value) => {
+            return (
+              <TooltipCustom
+                tooltipText={value.value}
+                tooltipId={value}
+                maxWidth={247}
+              >
+                {value.value}
+              </TooltipCustom>
+            );
+          },
         });
         break;
 
@@ -266,13 +291,13 @@ function getColumnPeiByStringArray(
               <TooltipCustom
                 tooltipText={value.value}
                 tooltipId={value}
-                maxWidth={195}
+                maxWidth={247}
               >
                 {value.value}
               </TooltipCustom>
             );
           },
-          width: 200,
+          width: 250,
         });
         break;
       default:
