@@ -30,32 +30,32 @@ const FicheResume = ({
     return;
   }
 
-  const mapLigneRow = Object.groupBy(
+  const mapColonneRow = Object.groupBy(
     elementFicheResumeState?.data,
-    ({ ligne }) => ligne,
+    ({ colonne }) => colonne,
   );
 
   return (
     <>
       {titre.trim().length > 0 && <h1>{titre}</h1>}
       <Container>
-        <Col>
-          {Object.entries(mapLigneRow).map(([key, values]) => (
-            <Row key={key}>
+        <Row>
+          {Object.entries(mapColonneRow).map(([key, values]) => (
+            <Col key={key}>
               {Array.from(values).map((e, key) => {
                 return (
-                  <Col className="m-3" key={key}>
+                  <Row className="m-3" key={key}>
                     <ElementResume
                       titre={e.titre}
                       value={e.data}
                       typeResumeElement={e.type}
                     />
-                  </Col>
+                  </Row>
                 );
               })}
-            </Row>
+            </Col>
           ))}
-        </Col>
+        </Row>
         <Row>
           <HistoriqueDebitPression pibiId={peiId} />
         </Row>
@@ -70,30 +70,38 @@ const ElementResume = ({
   typeResumeElement,
 }: ElementResumeType) => {
   return (
-    <>
-      <h2>{titre}</h2>
-      <div>
-        {typeResumeElement === TYPE_RESUME_ELEMENT.DISPONIBILITE ? (
-          <ElementResumeDisponibilite value={value} />
-        ) : typeResumeElement === TYPE_RESUME_ELEMENT.ANOMALIES ? (
-          <ElementResumeAnomalie value={value} />
-        ) : (
-          value?.split("\n").map((ligne: string, key: number) => {
-            return <div key={key}>{ligne}</div>;
-          })
-        )}
-      </div>
-    </>
+    <div className="bg-light px-1 border rounded">
+      <div className="py-2 h2 text-center">{titre}</div>
+      <Row>
+        <Col xs={"auto"} className={"mx-auto"}>
+          {typeResumeElement === TYPE_RESUME_ELEMENT.DISPONIBILITE ? (
+            <ElementResumeDisponibilite value={value} />
+          ) : typeResumeElement === TYPE_RESUME_ELEMENT.ANOMALIES ? (
+            <ElementResumeAnomalie value={value} />
+          ) : (
+            value?.split("\n").map((ligne: string, key: number) => {
+              return <div key={key}>{ligne}</div>;
+            })
+          )}
+        </Col>
+      </Row>
+    </div>
   );
 };
 
 const ElementResumeDisponibilite = ({ value }: { value: string }) => {
   return DISPONIBILITE_PEI[value] === DISPONIBILITE_PEI.DISPONIBLE ? (
-    <span className="text-white bg-success rounded p-2"> OUI </span>
+    <p>
+      <span className="text-white bg-success rounded p-2"> OUI </span>
+    </p>
   ) : DISPONIBILITE_PEI[value] === DISPONIBILITE_PEI.NON_CONFORME ? (
-    <span className="text-white bg-warning rounded p-2">NON CONFORME</span>
+    <p>
+      <span className="text-white bg-warning rounded p-2">NON CONFORME</span>
+    </p>
   ) : (
-    <span className="text-white bg-danger rounded p-2">NON</span>
+    <p>
+      <span className="text-white bg-danger rounded p-2">NON</span>
+    </p>
   );
 };
 
