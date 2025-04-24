@@ -15,10 +15,14 @@ import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
+import remocra.db.jooq.remocra.tables.references.ADRESSE_SOUS_TYPE_ELEMENT
+import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
@@ -58,6 +62,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
     companion object {
         private fun getTableFromType(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE
@@ -66,19 +72,21 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI
                 TypeNomenclatureCodeLibelle.NATURE_DECI -> NATURE_DECI
                 TypeNomenclatureCodeLibelle.NIVEAU -> NIVEAU
-                TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION
-                TypeNomenclatureCodeLibelle.TYPE_RESEAU -> TYPE_RESEAU
                 TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> PROFIL_ORGANISME
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> PROFIL_UTILISATEUR
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE
+                TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION
+                TypeNomenclatureCodeLibelle.TYPE_RESEAU -> TYPE_RESEAU
             }
 
         private fun getIdField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ID
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ID
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ID
@@ -100,6 +108,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getCodeField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.CODE
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.CODE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.CODE
@@ -121,6 +131,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getLibelleField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.LIBELLE
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.LIBELLE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.LIBELLE
@@ -142,6 +154,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getActifField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ACTIF
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ACTIF
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ACTIF
@@ -201,6 +215,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
          */
         private fun getInfosFkCible(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> setOf(InfosFkCible(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID))
+                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> setOf(InfosFkCible(ADRESSE_SOUS_TYPE_ELEMENT, ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT))
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> setOf(InfosFkCible(ANOMALIE, ANOMALIE.ANOMALIE_CATEGORIE_ID))
                 TypeNomenclatureCodeLibelle.DIAMETRE -> setOf(InfosFkCible(PIBI, PIBI.DIAMETRE_ID), InfosFkCible(L_DIAMETRE_NATURE, L_DIAMETRE_NATURE.DIAMETRE_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.DIAMETRE_ID))
                 TypeNomenclatureCodeLibelle.DOMAINE -> setOf(InfosFkCible(PEI, PEI.DOMAINE_ID), InfosFkCible(NEW_PEI, NEW_PEI.DOMAINE_ID))

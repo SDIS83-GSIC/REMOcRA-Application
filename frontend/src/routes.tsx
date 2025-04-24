@@ -171,6 +171,12 @@ import UpdateModeleCourrier from "./pages/Admin/ModeleCourrier/UpdateModeleCourr
 import LogLines from "./pages/Admin/jobs/LogLines.tsx";
 import ExportCrise from "./pages/ModuleCrise/Crise/ExportCrise.tsx";
 import AccesRapidePei from "./pages/AccesRapide/AccesRapidePei.tsx";
+import ListAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/ListAdresseTypeAnomalie.tsx";
+import CreateAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/CreateAdresseTypeAnomalie.tsx";
+import UpdateAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/UpdateAdresseTypeAnomalie.tsx";
+import ListAdresseTypeElement from "./pages/Admin/adresseTypeElement/ListAdresseTypeElement.tsx";
+import CreateAdresseTypeElement from "./pages/Admin/adresseTypeElement/CreateAdresseTypeElement.tsx";
+import UpdateAdresseTypeElement from "./pages/Admin/adresseTypeElement/UpdateAdresseTypeElement.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -261,6 +267,16 @@ export const URLS = {
   ADD_NATURE: url`/admin/nature/create`,
   UPDATE_NATURE: (natureId: string) => url`/admin/nature/update/` + natureId,
   LIST_NATURE: url`/admin/nature`,
+
+  LIST_ADRESSE_TYPE_ANOMALIE: url`/admin/adresse-type-anomalie/`,
+  ADD_ADRESSE_TYPE_ANOMALIE: url`/admin/adresse-type-anomalie/create/`,
+  UPDATE_ADRESSE_TYPE_ANOMALIE: (adresseTypeAnomalieId: string) =>
+    url`/admin/adresse-type-anomalie/` + adresseTypeAnomalieId,
+
+  LIST_ADRESSE_TYPE_ELEMENT: url`/admin/adresse-type-element/`,
+  ADD_ADRESSE_TYPE_ELEMENT: url`/admin/adresse-type-element/create/`,
+  UPDATE_ADRESSE_TYPE_ELEMENT: (adresseTypeElementId: string) =>
+    url`/admin/adresse-type-element/` + adresseTypeElementId,
 
   PROFIL_DROIT_LIST: url`/admin/profil-droit`,
   PROFIL_DROIT_CREATE: url`/admin/profil-droit/create`,
@@ -1017,6 +1033,60 @@ export default [
           <Authorization
             Component={ImportRessources}
             droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-anomalie",
+        element: (
+          <Authorization
+            Component={ListAdresseTypeAnomalie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-anomalie/create",
+        element: (
+          <Authorization
+            Component={CreateAdresseTypeAnomalie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-anomalie/:adresseTypeAnomalieId",
+        element: (
+          <Authorization
+            Component={UpdateAdresseTypeAnomalie}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-element",
+        element: (
+          <Authorization
+            Component={ListAdresseTypeElement}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-element/create",
+        element: (
+          <Authorization
+            Component={CreateAdresseTypeElement}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-type-element/:adresseTypeElementId",
+        element: (
+          <Authorization
+            Component={UpdateAdresseTypeElement}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },

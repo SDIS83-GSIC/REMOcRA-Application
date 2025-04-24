@@ -1,0 +1,2 @@
+ALTER TYPE historique.type_objet ADD VALUE 'ADRESSE_TYPE_ANOMALIE';
+ALTER TYPE historique.type_objet ADD VALUE 'ADRESSE_TYPE_ELEMENT';

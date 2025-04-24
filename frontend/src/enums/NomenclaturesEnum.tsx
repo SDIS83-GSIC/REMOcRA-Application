@@ -2,6 +2,8 @@
  * Les types possibles de données en cache à demander au endpoint nomenclatures/list
  */
 export enum NOMENCLATURE {
+  ADRESSE_TYPE_ANOMALIE = "adresse_type_anomalie",
+  ADRESSE_TYPE_ELEMENT = "adresse_type_element",
   ANOMALIE = "anomalie",
   ANOMALIE_CATEGORIE = "anomalie_categorie",
   DIAMETRE = "diametre",
@@ -30,7 +32,6 @@ export enum NOMENCLATURE {
   TYPE_ORGANISME = "type_organisme",
   TYPE_PENA_ASPIRATION = "type_pena_aspiration",
   TYPE_RESEAU = "type_reseau",
-
   OLDEB_TYPE_ACTION = "oldeb_type_action",
   OLDEB_TYPE_AVIS = "oldeb_type_avis",
   OLDEB_TYPE_DEBROUSSAILLEMENT = "oldeb_type_debroussaillement",
