@@ -55,7 +55,7 @@ UserInfo : KeycloakOidcProfile() {
             prenom = this.firstName,
             username = this.username,
             organismeId = this.organismeId,
-            zoneIntegrationExtent = zoneCompetence?.zoneIntegrationGeometrie?.envelope,
+            zoneIntegrationExtent = zoneCompetence?.zoneIntegrationGeometrie,
             droits = this.droits,
             isSuperAdmin = this.isSuperAdmin,
         )
