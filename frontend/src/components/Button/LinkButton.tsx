@@ -33,7 +33,7 @@ const LinkButton = ({
   // Puis on sauvegarde les nouveaux search de la page courrante
   localStorage.setItem(currentPathname, currentSearch);
 
-  return !disabled ? (
+  return (
     <NavLink
       to={{
         pathname: pathname,
@@ -45,17 +45,10 @@ const LinkButton = ({
         from: [...statePrevious, `${currentPathname}${currentSearch}`],
       }}
       className={classNames(
-        `text-decoration-none btn btn-${variant} ${classname} text-nowrap`,
+        `text-decoration-none btn btn-${variant} ${classname} text-nowrap`, //class général
+        disabled ? "disabled pointer-events-none" : "", // class quand disable
       )}
       onClick={onClick}
-    >
-      {children}
-    </NavLink>
-  ) : (
-    <NavLink
-      variant={variant}
-      className={variant === "link" ? "text-muted" : ""}
-      disabled={disabled}
     >
       {children}
     </NavLink>
