@@ -20,6 +20,11 @@ const TooltipCustom = ({
   return (
     <div className={"tooltip-wrapper m-0 p-0"}>
       <OverlayTrigger
+        /*
+               Ajoute la tooltips au composant map-container si il existe pour qu'elle s'affiche
+               aussi en fullscreen
+           */
+        container={document.getElementById("map-container")}
         show={showTooltip}
         overlay={
           <Popover id={tooltipId} className="tooltip-popover">

@@ -127,3 +127,16 @@ h3 {
   bottom: 20px;
   right: 20px;
 }
+/** pour les map en fullscreen **/
+
+:fullscreen {
+  background-color: #fff !important;
+}
+
+:-webkit-full-screen {
+  background-color: #fff !important;
+}
+
+:-moz-full-screen {
+  background-color: #fff !important;
+}

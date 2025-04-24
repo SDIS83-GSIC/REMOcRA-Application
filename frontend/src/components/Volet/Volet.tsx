@@ -18,6 +18,11 @@ const Volet = ({
       scroll={true}
       backdrop={backdrop}
       autoFocus={true}
+      /*
+            Ajoute la tooltips au composant map-container si il existe pour qu'elle s'affiche
+            aussi en fullscreen
+        */
+      container={document.getElementById("map-container")}
     >
       <Offcanvas.Header closeButton>
         {title && <Offcanvas.Title>{title}</Offcanvas.Title>}

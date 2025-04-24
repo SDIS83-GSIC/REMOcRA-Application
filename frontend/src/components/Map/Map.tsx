@@ -130,6 +130,23 @@ const MapComponent = ({
   const navigate = useNavigate();
 
   useEffect(() => {
+    const mapContainer = document.getElementById("map-container");
+
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement === mapContainer) {
+        mapContainer?.classList.add("is-fullscreen");
+      } else {
+        mapContainer?.classList.remove("is-fullscreen");
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!map) {
       return;
     }
@@ -177,9 +194,9 @@ const MapComponent = ({
   }, [state, map, navigate, search]);
 
   return (
-    <div className={"map-wrapper"}>
+    <div className={"map-wrapper"} id={"map-container"}>
       {map && mapElement && (
-        <Row className={"map-toolbar noprint "}>
+        <Row className={"map-toolbar noprint"}>
           <Col xs={"auto"}>
             {/* Commun à toutes les cartes */}
             <MapToolbar
@@ -234,7 +251,7 @@ export const useMapComponent = ({
 
     const initialMap = new Map({
       controls: defaultControls().extend([
-        new FullScreen(),
+        new FullScreen({ source: "map-container" }),
         new MousePosition({
           coordinateFormat:
             afficheCoordonneesState.data?.[
@@ -321,6 +338,7 @@ export const useMapComponent = ({
       layerListRef.current?.addActiveLayer(getUid(layer.openlayer));
     }
   };
+
   // Ajout de la couche de travail
   function createWorkingLayer() {
     const wl = new VectorLayer({

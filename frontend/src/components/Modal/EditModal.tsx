@@ -116,7 +116,17 @@ const EditModal = ({
   header: ReactNode;
 }) => {
   return (
-    <Modal show={visible} onHide={closeModal} size={"xl"} backdrop={false}>
+    <Modal
+      show={visible}
+      onHide={closeModal}
+      size={"xl"}
+      backdrop={false}
+      /*
+            Ajoute la tooltips au composant map-container si il existe pour qu'elle s'affiche
+            aussi en fullscreen
+        */
+      container={document.getElementById("map-container")}
+    >
       <Modal.Header>
         <Modal.Title>{header}</Modal.Title>
       </Modal.Header>
