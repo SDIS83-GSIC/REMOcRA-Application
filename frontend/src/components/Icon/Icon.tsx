@@ -141,3 +141,4 @@ export const IconHide = () => <i className="fi fi-br-eye-crossed" />;
 export const IconWarning = () => <i className="fi fi-sr-triangle-warning" />;
 export const IconCursorAdd = () => <i className="fi fi-rs-cursor-plus" />;
 export const IconCreateApi = () => <i className="fi fi-rs-key" />;
+export const IconRegenereApi = () => <i className="fi fi-ss-key" />;

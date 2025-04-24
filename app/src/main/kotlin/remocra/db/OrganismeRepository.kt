@@ -198,6 +198,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         val zoneIntegrationLibelle: String?,
         val parentLibelle: String?,
         val hasContact: Boolean,
+        val organismeKeycloakId: String?,
     )
 
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<OrganismeComplet> {
@@ -208,6 +209,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             ORGANISME.CODE,
             ORGANISME.LIBELLE,
             ORGANISME.EMAIL_CONTACT,
+            ORGANISME.KEYCLOAK_ID,
             PROFIL_ORGANISME.LIBELLE,
             ZONE_INTEGRATION.LIBELLE,
             TYPE_ORGANISME.LIBELLE,

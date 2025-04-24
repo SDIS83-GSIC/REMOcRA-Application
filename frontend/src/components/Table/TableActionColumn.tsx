@@ -370,6 +370,7 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmButtonType) => {
       textDisable={
         _button.textDisable ?? _button.conditionnalTextDisable?.(row)
       }
+      hide={_button.hide}
       textEnable={_button.textEnable}
       classEnable={_button.classEnable}
       confirmModal={true}

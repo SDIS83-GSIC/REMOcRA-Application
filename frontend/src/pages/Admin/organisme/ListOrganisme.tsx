@@ -9,6 +9,7 @@ import {
   IconCreateApi,
   IconGererContact,
   IconPei,
+  IconRegenereApi,
 } from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
@@ -68,14 +69,27 @@ const ListOrganisme = () => {
   }
 
   if (hasDroit(user, TYPE_DROIT.ADMIN_API)) {
+    // TODO alimenter le contenu des modales pour expliquer comment on notifiera un organisme
     listeButton.push({
       row: (row) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
+      hide: (row) => row.organismeKeycloakId != null,
       textEnable: "Créer un accès API",
       pathname: url`/api/organisme/create-client-keycloak/`,
       icon: <IconCreateApi />,
+      classEnable: "warning",
+    });
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.CONFIRM,
+      hide: (row) => row.organismeKeycloakId == null,
+      textEnable: "Regénérer un accès API",
+      pathname: url`/api/organisme/regenerer-client-secret/`,
+      icon: <IconRegenereApi />,
       classEnable: "warning",
     });
   }

@@ -16,6 +16,7 @@ import remocra.auth.userInfo
 import remocra.db.OrganismeRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.api.CreateClientKeycloakApiUseCase
+import remocra.usecase.api.RegenereClientKeycloakApiUseCase
 import remocra.usecase.organisme.OrganismeUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -32,6 +33,9 @@ class OrganismeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createClientKeycloakApiUseCase: CreateClientKeycloakApiUseCase
+
+    @Inject
+    lateinit var regenereClientKeycloakApiUseCase: RegenereClientKeycloakApiUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -85,6 +89,20 @@ class OrganismeEndPoint : AbstractEndpoint() {
         organismeId: UUID,
     ): Response {
         return createClientKeycloakApiUseCase.execute(
+            securityContext.userInfo,
+            organismeRepository.getById(organismeId),
+        ).wrap()
+    }
+
+    @POST
+    @Path("/regenerer-client-secret/{organismeId}")
+    @RequireDroits([Droit.ADMIN_API])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun regenereClientKeyclaok(
+        @PathParam("organismeId")
+        organismeId: UUID,
+    ): Response {
+        return regenereClientKeycloakApiUseCase.execute(
             securityContext.userInfo,
             organismeRepository.getById(organismeId),
         ).wrap()
