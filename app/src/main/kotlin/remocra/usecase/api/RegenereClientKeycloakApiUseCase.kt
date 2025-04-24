@@ -31,9 +31,9 @@ class RegenereClientKeycloakApiUseCase @Inject constructor(
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_EMAIL_NULL)
         }
 
-        val nbEmail = organismeRepository.countEmail(element.organismeEmailContact!!)
+        val existEmail = organismeRepository.fetchEmailExists(element.organismeEmailContact!!, element.organismeId)
 
-        if (nbEmail > 1) {
+        if (existEmail) {
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_EMAIL_DOUBLON)
         }
     }

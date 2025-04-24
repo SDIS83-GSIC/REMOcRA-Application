@@ -67,6 +67,14 @@ interface KeycloakApi {
         @Body client: ClientRepresentation,
     ): Call<Void?>
 
+    @PUT("clients/{id}")
+    @Headers("Content-Type: application/json")
+    fun updateClient(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Path("id") techniqueId: String,
+        @Body client: ClientRepresentation,
+    ): Call<Void?>
+
     @POST("clients/{id}/client-secret")
     @Headers("Content-Type: application/json")
     fun regenereSecret(

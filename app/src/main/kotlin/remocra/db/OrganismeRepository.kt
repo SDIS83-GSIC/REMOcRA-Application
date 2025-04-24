@@ -63,11 +63,12 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
 
-    fun countEmail(email: String): Int =
-        dsl.selectCount()
-            .from(ORGANISME)
-            .where(ORGANISME.EMAIL_CONTACT.eq(email))
-            .fetchSingleInto()
+    fun fetchEmailExists(email: String, organismeId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.selectFrom(ORGANISME)
+                .where(ORGANISME.EMAIL_CONTACT.eq(email))
+                .and(ORGANISME.ID.ne(organismeId)),
+        )
 
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
 
