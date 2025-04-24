@@ -342,6 +342,7 @@ const MapToolbarAdresse = ({
               variant={"outline-danger"}
               onClick={supprimerFeature}
               disabled={selectedFeatures.length === 0}
+              className={"m-2"}
             >
               <IconDelete />
             </Button>
@@ -392,6 +393,7 @@ const MapToolbarAdresse = ({
         })}
         <Col xs={"auto"} className={"ms-auto"}>
           <CreateButton
+            classnames={"m-2"}
             onClick={() => {
               setShowCreateAdresse(true);
             }}

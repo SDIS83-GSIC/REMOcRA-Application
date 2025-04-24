@@ -7,6 +7,7 @@ const CreateButton = ({
   onClick,
   disabled = false,
   state,
+  classnames,
 }: CreateButtonType) => {
   return (
     <LinkButton
@@ -14,6 +15,7 @@ const CreateButton = ({
       variant={"primary"}
       onClick={onClick}
       disabled={disabled}
+      classname={classnames}
       state={state}
     >
       <IconCreate /> {title}
@@ -27,6 +29,7 @@ type CreateButtonType = {
   onClick?: (...args: any[]) => void;
   state?: object;
   disabled?: boolean;
+  classnames?: string;
 };
 
 export default CreateButton;
