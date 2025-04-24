@@ -923,7 +923,7 @@ const FormLocalisationPei = ({
             </>
           )}
         </Col>
-        <Col>
+        <Col className="d-flex align-items-center">
           <CheckBoxInput
             name="peiEnFace"
             label="Situé en face"
@@ -1034,7 +1034,7 @@ const FormPibi = ({
     <>
       <Row>
         <TitreSousSection>Informations PEI</TitreSousSection>
-        <Col>
+        <Col xs={6}>
           <SelectForm
             name={"pibiDiametreId"}
             listIdCodeLibelle={listDiametreOptions}
@@ -1047,14 +1047,14 @@ const FormPibi = ({
             setValues={setValues}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-end mb-2 me-2" xs={"auto"}>
           <CheckBoxInput
             name="pibiDispositifInviolabilite"
             label="Dispositif d'inviolabilité"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-end mb-2" xs={"auto"}>
           <CheckBoxInput
             name="pibiRenversable"
             label="Renversable"
@@ -1062,7 +1062,7 @@ const FormPibi = ({
           />
         </Col>
       </Row>
-      <Row className="mt-3 d-flex align-items-center">
+      <Row className="mt-3 d-flex align-items-end mb-2">
         <Col>
           <TextInput
             name="pibiNumeroScp"
@@ -1172,12 +1172,12 @@ const FormPibi = ({
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-end mb-2">
           <CheckBoxInput name="pibiDebitRenforce" label="Débit renforcé" />
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col>
+        <Col xs={4}>
           <SelectNomenclaturesForm
             name={"pibiReservoirId"}
             nomenclature={NOMENCLATURE.RESERVOIR}
@@ -1188,14 +1188,14 @@ const FormPibi = ({
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-end mb-2 me-2" xs={"auto"}>
           <CheckBoxInput
             name="pibiSurpresse"
             label="Réseau surpressé"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-end mb-2" xs={"auto"}>
           <CheckBoxInput
             name="pibiAdditive"
             label="Réseau additivé"
@@ -1220,21 +1220,21 @@ const FormPena = ({
     <>
       <Row>
         <TitreSousSection>Ressource</TitreSousSection>
-        <Col>
+        <Col className="d-flex align-items-center">
           <CheckBoxInput
             name="penaCapaciteIllimitee"
             label="Capacité illimitée"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-center">
           <CheckBoxInput
             name="penaCapaciteIncertaine"
             label="Capacité incertaine"
             disabled={!hasDroitCaracteristique}
           />
         </Col>
-        <Col>
+        <Col className="d-flex align-items-center">
           <CheckBoxInput
             name="penaEquipeHbe"
             label="Équipé HBE"
