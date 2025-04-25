@@ -82,4 +82,11 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Path("id") techniqueId: String,
     ): Call<CredentialRepresentation>
+
+    @GET("clients/{id}/client-secret")
+    @Headers("Content-Type: application/json")
+    fun getClientSecret(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Path("id") techniqueId: String,
+    ): Call<CredentialRepresentation>
 }

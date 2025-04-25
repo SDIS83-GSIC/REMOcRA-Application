@@ -24,13 +24,13 @@ const usePostState = ({
   return usePost(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onConfirm && onConfirm(res);
-      successToast({ message: "L'action a bien été exécutée" });
+      successToast("L'action a bien été exécutée");
       closeModal();
     },
     onReject: async (error: any) => {
-      errorToast({
-        message: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
-      });
+      errorToast(
+        `Erreur lors de l'exécution de l'action : ${await error.text()}`,
+      );
       closeModal();
     },
   });
@@ -49,13 +49,13 @@ const usePutState = ({
     {
       onResolve: (res: any) => {
         onConfirm && onConfirm(res);
-        successToast({ message: "L'action a bien été exécutée" });
+        successToast("L'action a bien été exécutée");
         closeModal();
       },
       onReject: async (error: any) => {
-        errorToast({
-          message: `Erreur lors de l'exécution de l'action : ${await error.text()}`,
-        });
+        errorToast(
+          `Erreur lors de l'exécution de l'action : ${await error.text()}`,
+        );
         closeModal();
       },
     },
