@@ -12,6 +12,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { IconCreate } from "../Icon/Icon.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import Colonne from "./Colonne.tsx";
 import { Item } from "./SortableItemGrid.tsx";
 
@@ -131,7 +132,6 @@ const MoveGridComponent = ({
     const { active, over } = event;
     const { id } = active;
     const { id: overId } = over;
-
     const activeContainer = findColonne(id);
     const overContainer = findColonne(overId);
     if (!activeContainer || !overContainer) {
@@ -149,6 +149,7 @@ const MoveGridComponent = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+  const disabled = Object.entries(items).length >= 7;
 
   return (
     <DndContext
@@ -181,21 +182,46 @@ const MoveGridComponent = ({
       <Row className="mt-3">
         <h5 className="mt-2">2.2 - Emplacement</h5>
         <Col xs="auto" className="ms-auto">
-          <Button
-            variant="link"
-            onClick={() => {
-              const random = Math.random();
-              const newColonne = {};
-              newColonne["colonne" + random] = [];
+          {disabled ? (
+            <TooltipCustom
+              tooltipText={"6 colonnes maximum"}
+              tooltipId={"limit-colonne-maximum"}
+            >
+              <Button
+                variant="link"
+                disabled={disabled} //pour limiter a 6 colonne mais avec "items.possibilite" ça fait 7
+                onClick={() => {
+                  const random = Math.random();
+                  const newColonne = {};
+                  newColonne["colonne" + random] = [];
 
-              setItems({
-                ...items,
-                ...newColonne,
-              });
-            }}
-          >
-            <IconCreate /> Ajouter une colonne
-          </Button>
+                  setItems({
+                    ...items,
+                    ...newColonne,
+                  });
+                }}
+              >
+                <IconCreate /> Ajouter une colonne
+              </Button>
+            </TooltipCustom>
+          ) : (
+            <Button
+              variant="link"
+              disabled={disabled} //pour limiter a 6 colonne mais avec "items.possibilite" ça fait 7
+              onClick={() => {
+                const random = Math.random();
+                const newColonne = {};
+                newColonne["colonne" + random] = [];
+
+                setItems({
+                  ...items,
+                  ...newColonne,
+                });
+              }}
+            >
+              <IconCreate /> Ajouter une colonne
+            </Button>
+          )}
         </Col>
       </Row>
       <Row>

@@ -20,7 +20,7 @@ const ModuleRemocra = ({
   listeDocument,
 }: ModuleRemocra) => {
   return (
-    <div className="bg-light p-2 border rounded">
+    <Col className="bg-light border rounded">
       <div className="fw-bold text-center p-2">{titre}</div>
       <Row>
         {image && (
@@ -43,7 +43,7 @@ const ModuleRemocra = ({
           )}
         </Col>
       </Row>
-    </div>
+    </Col>
   );
 };
 

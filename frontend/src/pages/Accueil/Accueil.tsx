@@ -1,4 +1,4 @@
-import { Alert, Button, Col, Row } from "react-bootstrap";
+import { Alert, Button, Col, Row, Container } from "react-bootstrap";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
@@ -33,21 +33,23 @@ const Accueil = () => {
   );
 
   return (
-    <SquelettePage navbar={<Header />} fluid={false} banner={true}>
-      {messagePeiLongueIndispoState?.data && (
-        <Row>
-          <Alert variant="danger">
-            <Alert.Heading>PEI indisponibles</Alert.Heading>
-            {messagePeiLongueIndispoState?.data.message}
-            <Button
-              variant="link"
-              href={URLS.MESSAGE_PEI_LONGUE_INDISPO_LISTE_PEI}
-            >
-              Voir plus
-            </Button>
-          </Alert>
-        </Row>
-      )}
+    <SquelettePage navbar={<Header />} fluid={true} banner={true}>
+      <Container>
+        {messagePeiLongueIndispoState?.data && (
+          <Row>
+            <Alert variant="danger">
+              <Alert.Heading>PEI indisponibles</Alert.Heading>
+              {messagePeiLongueIndispoState?.data.message}
+              <Button
+                variant="link"
+                href={URLS.MESSAGE_PEI_LONGUE_INDISPO_LISTE_PEI}
+              >
+                Voir plus
+              </Button>
+            </Alert>
+          </Row>
+        )}
+      </Container>
       <Row>
         {Object.entries(mapColonneRow).map(([key, values]) => (
           <Col key={key}>
@@ -58,7 +60,7 @@ const Accueil = () => {
                   e.moduleContenuHtml != null ||
                   e.moduleType === TypeModuleRemocra.DOCUMENT ||
                   e.moduleType === TypeModuleRemocra.COURRIER) && (
-                  <Row key={e.moduleId} className="m-3">
+                  <Row key={e.moduleId} className="m-1">
                     <ModuleRemocra
                       moduleId={e.moduleId}
                       type={e.moduleType}
