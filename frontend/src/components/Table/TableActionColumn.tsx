@@ -98,7 +98,7 @@ const TableActionColumn = ({
                 />
               )}
             </>
-          ) : confirmModal ? (
+          ) : confirmModal != null ? (
             <ConfirmButtonWithModal
               path={pathname}
               icon={icon}
@@ -108,6 +108,8 @@ const TableActionColumn = ({
               textEnable={textEnable}
               tooltipId={row.value}
               isPost={isPost}
+              header={confirmModal.header}
+              content={confirmModal.content}
             />
           ) : simpleModal != null ? (
             <ButtonWithSimpleModal
@@ -180,7 +182,7 @@ type TableActionButtonType = {
   classEnable?: "primary" | "danger" | "warning" | "info" | "success";
   reload?: () => void;
   query?;
-  confirmModal?: boolean | null;
+  confirmModal?: SimpleModalType | null;
   deleteModal?: object | null;
   editModal?: EditModalType | null;
   simpleModal?: SimpleModalType | null;
@@ -373,7 +375,7 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmButtonType) => {
       hide={_button.hide}
       textEnable={_button.textEnable}
       classEnable={_button.classEnable}
-      confirmModal={true}
+      confirmModal={_button.confirmModal}
       icon={_button.icon ?? <IconClose />}
       pathname={`${_button.pathname}${row.value}`}
     />

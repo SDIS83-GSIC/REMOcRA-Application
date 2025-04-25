@@ -15,6 +15,8 @@ const ConfirmButtonWithModal = ({
   textEnable,
   tooltipId,
   isPost = true,
+  header,
+  content,
 }: {
   path: string;
   reload?: () => void;
@@ -25,6 +27,8 @@ const ConfirmButtonWithModal = ({
   textEnable: string | undefined;
   tooltipId: string;
   isPost: boolean;
+  header: string;
+  content: string;
 }) => {
   const { visible, show, close, ref } = useModal();
   return (
@@ -54,6 +58,8 @@ const ConfirmButtonWithModal = ({
           closeModal={close}
           query={path}
           ref={ref}
+          header={header}
+          content={content}
           onConfirm={() => (reload ? reload() : window.location.reload())}
         />
       )}

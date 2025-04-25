@@ -80,6 +80,11 @@ const ListOrganisme = () => {
       pathname: url`/api/organisme/create-client-keycloak/`,
       icon: <IconCreateApi />,
       classEnable: "warning",
+      confirmModal: {
+        header: "Créer un accès API ?",
+        content:
+          "Vous allez créer un accès API pour l'organisme sélectionné. Il recevra un mail avec le mot de passe qu'il lui est associé.\nVoulez-vous continuer ? ",
+      },
     });
     listeButton.push({
       row: (row) => {
@@ -91,6 +96,11 @@ const ListOrganisme = () => {
       pathname: url`/api/organisme/regenerer-client-secret/`,
       icon: <IconRegenereApi />,
       classEnable: "warning",
+      confirmModal: {
+        header: "Régénérer le mot de passe de l'API ?",
+        content:
+          "Vous allez regénérer le mot de passe de l'API pour l'organisme sélectionné. Il recevra un mail avec le nouevau mot de passe qu'il lui est associé.\nVoulez-vous continuer ? ",
+      },
     });
   }
   return (
