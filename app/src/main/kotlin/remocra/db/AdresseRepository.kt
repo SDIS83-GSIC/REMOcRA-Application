@@ -1,9 +1,14 @@
 package remocra.db
 
 import com.google.inject.Inject
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.data.GlobalData
+import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Adresse
 import remocra.db.jooq.remocra.tables.pojos.AdresseTypeAnomalie
@@ -49,6 +54,14 @@ class AdresseRepository @Inject constructor(private val dsl: DSLContext) : Abstr
                 ADRESSE_TYPE_ELEMENT,
             )
             .fetchInto()
+
+    fun getType(): Collection<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            ADRESSE_TYPE_ELEMENT.ID.`as`("id"),
+            ADRESSE_TYPE_ELEMENT.CODE.`as`("code"),
+            ADRESSE_TYPE_ELEMENT.LIBELLE.`as`("libelle"),
+        ).from(ADRESSE_TYPE_ELEMENT).fetchInto()
+
     fun getTypeAnomalie(): List<AdresseTypeAnomalie> = dsl.selectFrom(ADRESSE_TYPE_ANOMALIE).fetchInto()
 
     data class TypeSousTypeForMap(
@@ -56,13 +69,76 @@ class AdresseRepository @Inject constructor(private val dsl: DSLContext) : Abstr
         val adresseTypeElementCode: String,
         val adresseTypeElementLibelle: String,
         val listSousType: List<SousTypeForMap>,
-
     )
     data class SousTypeForMap(
         val adresseSousTypeElementId: UUID?,
         val adresseSousTypeElementCode: String?,
         val adresseSousTypeElementLibelle: String?,
         val adresseSousTypeElementTypeGeom: TypeGeometry?,
-
     )
+
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<AdresseSousTypeElementForAdminData> =
+        dsl.select(
+            ADRESSE_SOUS_TYPE_ELEMENT.ID,
+            ADRESSE_SOUS_TYPE_ELEMENT.CODE,
+            ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE,
+            ADRESSE_SOUS_TYPE_ELEMENT.ACTIF,
+            ADRESSE_TYPE_ELEMENT.LIBELLE,
+            ADRESSE_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE,
+        )
+            .from(ADRESSE_SOUS_TYPE_ELEMENT)
+            .leftJoin(ADRESSE_TYPE_ELEMENT).on(ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(ADRESSE_TYPE_ELEMENT.ID))
+            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
+
+    data class AdresseSousTypeElementForAdminData(
+        val adresseSousTypeElementId: UUID,
+        val adresseSousTypeElementCode: String,
+        val adresseSousTypeElementLibelle: String?,
+        val adresseSousTypeElementActif: Boolean,
+        val adresseTypeElementLibelle: String?,
+        val adresseSousTypeElementTypeGeometrie: TypeGeometry,
+    )
+
+    fun countAllForAdmin(params: Params<Filter, Sort>): Int =
+        dsl.selectCount().from(ADRESSE_SOUS_TYPE_ELEMENT).where(params.filterBy?.toCondition() ?: DSL.noCondition()).fetchSingleInto()
+
+    data class Filter(
+        val adresseSousTypeElementCode: String?,
+        val adresseSousTypeElementLibelle: String?,
+        val adresseSousTypeElementActif: Boolean?,
+        val adresseTypeElementId: UUID?,
+        val adresseSousTypeElementTypeGeometrie: TypeGeometry?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    adresseSousTypeElementCode?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.CODE.containsIgnoreCaseUnaccent(it)) },
+                    adresseSousTypeElementLibelle?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    adresseSousTypeElementActif?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.ACTIF.eq(it)) },
+                    adresseTypeElementId?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(it)) },
+                    adresseSousTypeElementTypeGeometrie?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE.eq(it)) },
+                ),
+            )
+    }
+
+    data class Sort(
+        val adresseSousTypeElementCode: Int?,
+        val adresseSousTypeElementLibelle: Int?,
+        val adresseSousTypeElementActif: Int?,
+        val adresseTypeElementId: Int?,
+        val adresseSousTypeElementTypeGeometrie: Int?,
+    ) {
+        fun toCondition(): List<SortField<*>> =
+            listOfNotNull(
+                ADRESSE_SOUS_TYPE_ELEMENT.CODE.getSortField(adresseSousTypeElementCode),
+                ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE.getSortField(adresseSousTypeElementLibelle),
+                ADRESSE_SOUS_TYPE_ELEMENT.ACTIF.getSortField(adresseSousTypeElementActif),
+                ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.getSortField(adresseTypeElementId),
+                ADRESSE_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE.getSortField(adresseSousTypeElementTypeGeometrie),
+            )
+    }
 }

@@ -290,6 +290,16 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
+                      pathname={URLS.LIST_ADRESSE_SOUS_TYPE_ELEMENT}
+                    >
+                      Adresse - Sous type d&apos;élément
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
+                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
                       pathname={URLS.LIST_ANOMALIE_CATEGORIE}
                     >
                       Catégories d&apos;anomalies
