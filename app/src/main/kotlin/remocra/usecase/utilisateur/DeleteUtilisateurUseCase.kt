@@ -3,11 +3,9 @@ package remocra.usecase.utilisateur
 import jakarta.inject.Inject
 import org.jooq.exception.NoDataFoundException
 import remocra.auth.AuthModule
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.UtilisateurData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -27,26 +25,26 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
 
     @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: UtilisateurData, userInfo: UserInfo) {
+    override fun postEvent(element: UtilisateurData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.utilisateurId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.UTILISATEUR,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: UtilisateurData): UtilisateurData {
+    override fun execute(userInfo: WrappedUserInfo, element: UtilisateurData): UtilisateurData {
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
 
         try {
@@ -71,7 +69,7 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: UtilisateurData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: UtilisateurData) {
         // Si l'utilisateur a réservé une tournée, on interdit la suppression
         if (utilisateurRepository.checkExistsInTournee(element.utilisateurId)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_TOURNEE_RESERVEE)

@@ -3,7 +3,7 @@ package remocra.usecase.messagelongueindispo
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ParametreEnum
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
@@ -35,7 +35,7 @@ class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
         const val PLACEHOLDER_JOURS = "#JOURS#"
     }
 
-    fun execute(userInfo: UserInfo): Message? {
+    fun execute(userInfo: WrappedUserInfo): Message? {
         val message = parametresProvider.getParametreString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_MESSAGE.name)
             ?: return null
         val nombreJoursIndispo = parametresProvider.getParametreInt(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_JOURS.name)
@@ -72,7 +72,7 @@ class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
         val nbJour: Int,
     )
 
-    fun getListePeiAlerte(userInfo: UserInfo): Set<UUID>? {
+    fun getListePeiAlerte(userInfo: WrappedUserInfo): Set<UUID>? {
         val nombreJoursIndispo = parametresProvider.getParametreInt(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_JOURS.name)
             ?: return null
 

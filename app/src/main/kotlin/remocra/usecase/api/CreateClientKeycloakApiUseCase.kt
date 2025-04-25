@@ -2,11 +2,9 @@ package remocra.usecase.api
 
 import jakarta.inject.Inject
 import remocra.auth.AuthModule
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.OrganismeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -28,13 +26,13 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
     private val keycloakClient: AuthModule.KeycloakClient,
 ) :
     AbstractCUDUseCase<Organisme>(TypeOperation.INSERT) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_API)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(Droit.ADMIN_API)) {
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_FORBIDDEN)
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Organisme) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Organisme) {
         if (element.organismeEmailContact.isNullOrBlank()) {
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_EMAIL_NULL)
         }
@@ -50,7 +48,7 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: Organisme): Organisme {
+    override fun execute(userInfo: WrappedUserInfo, element: Organisme): Organisme {
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
         try {
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
@@ -83,20 +81,14 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
         return element
     }
 
-    override fun postEvent(element: Organisme, userInfo: UserInfo) {
+    override fun postEvent(element: Organisme, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.organismeId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ORGANISME,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )

@@ -8,7 +8,7 @@ import remocra.apimobile.data.PeiForApiMobileData
 import remocra.apimobile.repository.ReferentielRepository
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.enums.ParametreEnum
 import remocra.db.FonctionContactRepository
@@ -54,7 +54,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
     @Inject
     lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
 
-    fun execute(userInfo: UserInfo): ReferentielResponse {
+    fun execute(userInfo: WrappedUserInfo): ReferentielResponse {
         val nomPrenom = userInfo.nom + " " + userInfo.prenom
 
         // On va chercher tous les paramètres rattachés à la section "MOBILE"
@@ -65,19 +65,19 @@ class BuildReferentielUseCase : AbstractUseCase() {
             .mapParametres.values.filter { paramsMobile.contains(ParametreEnum.valueOf(it.parametreCode)) }
 
         val setTypeVisiteAutorisees: MutableSet<TypeVisite> = mutableSetOf()
-        if (userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
+        if (userInfo.hasDroit(droitWeb = Droit.VISITE_RECEP_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.RECEPTION)
         }
-        if (userInfo.droits.contains(Droit.VISITE_RECO_INIT_C)) {
+        if (userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_INIT_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.RECO_INIT)
         }
-        if (userInfo.droits.contains(Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
+        if (userInfo.hasDroit(droitWeb = Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.CTP)
         }
-        if (userInfo.droits.contains(Droit.VISITE_RECO_C)) {
+        if (userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.ROP)
         }
-        if (userInfo.droits.contains(Droit.VISITE_NON_PROGRAMME_C)) {
+        if (userInfo.hasDroit(droitWeb = Droit.VISITE_NON_PROGRAMME_C)) {
             setTypeVisiteAutorisees.add(TypeVisite.NP)
         }
 
@@ -101,7 +101,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
                 )
             },
             listParametre = parametresMobile,
-            listDroit = userInfo.droits.map { it.name },
+            listDroit = userInfo.droits!!.map { it.name },
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
             listFonctionContact = fonctionContactRepository.getAll(),

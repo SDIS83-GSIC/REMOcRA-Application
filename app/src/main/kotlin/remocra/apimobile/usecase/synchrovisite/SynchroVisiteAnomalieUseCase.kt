@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.repository.IncomingRepository
 import remocra.app.DataCacheProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
@@ -24,15 +24,15 @@ class SynchroVisiteAnomalieUseCase : AbstractCUDUseCase<VisiteAnomalieForApiMobi
         private val logger: Logger = LoggerFactory.getLogger(SynchroVisiteAnomalieUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
         // Pas de droits particulier aujourd'hui pour faire la synchro !
     }
 
-    override fun postEvent(element: VisiteAnomalieForApiMobileData, userInfo: UserInfo) {
+    override fun postEvent(element: VisiteAnomalieForApiMobileData, userInfo: WrappedUserInfo) {
         // On ne poste pas d'évènement comme c'est une insertion dans le schéma incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: VisiteAnomalieForApiMobileData): VisiteAnomalieForApiMobileData {
+    override fun execute(userInfo: WrappedUserInfo, element: VisiteAnomalieForApiMobileData): VisiteAnomalieForApiMobileData {
         val result = incomingRepository.insertVisiteAnomalie(element.visiteId, element.anomalieId)
 
         when (result) {
@@ -48,7 +48,7 @@ class SynchroVisiteAnomalieUseCase : AbstractCUDUseCase<VisiteAnomalieForApiMobi
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: VisiteAnomalieForApiMobileData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteAnomalieForApiMobileData) {
         // On vérifie si l'anomalie est toujours dans REMOcRA
         if (dataCacheProvider.getAnomalies().values.firstOrNull { it.anomalieId == element.anomalieId } == null) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA, element.anomalieId.toString())

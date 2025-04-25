@@ -5,7 +5,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem
 import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
@@ -36,7 +36,7 @@ abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: 
         return remocra.utils.transform(input, targetCRS, appSettings.srid)
     }
 
-    override fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager?): Result {
+    override fun execute(userInfo: WrappedUserInfo, element: T, mainTransactionManager: TransactionManager?): Result {
         val safeElement = ensureSrid(element)
         val geometrie = getListGeometrie(safeElement)
         if (geometrie.isNotEmpty()) {

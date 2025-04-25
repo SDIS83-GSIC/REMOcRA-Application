@@ -6,7 +6,6 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
-import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -37,9 +36,8 @@ class LayersEndpoint : AbstractEndpoint() {
     @GET
     fun getLayers(
         @PathParam("module") module: TypeModule,
-        @QueryParam("typeId") typeId: UUID?,
     ): Response =
-        Response.ok(layersRetriever.getData(module, securityContext.userInfo, typeId)).build()
+        Response.ok(layersRetriever.getData(module, securityContext.userInfo)).build()
 
     @NoCsrf("Les couches peuvent être accessibles publiquement")
     @Public("Les couches peuvent être accessibles publiquement")

@@ -1,11 +1,9 @@
 package remocra.usecase.visites
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
@@ -31,27 +29,23 @@ class CreateVisiteUseCase @Inject constructor(
 
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
     }
 
-    override fun postEvent(element: VisiteData, userInfo: UserInfo) {
+    override fun postEvent(element: VisiteData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.visiteId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: VisiteData) {
-        if (userInfo == null) {
-            throw RemocraResponseException(errorType = ErrorType.VISITE_C_FORBIDDEN)
-        }
-
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteData) {
         // Si l'on se trouve ici en venant d'un Import CTP,
         // les vérifications faites en amont garantissent la véracité des données
         // On peut donc directement passer à la suite
@@ -70,11 +64,11 @@ class CreateVisiteUseCase @Inject constructor(
 
         when (element.visiteTypeVisite) {
             TypeVisite.CTP ->
-                if (!userInfo.droits.contains(Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
+                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_CTP_FORBIDDEN)
                 }
             TypeVisite.RECEPTION ->
-                if (!userInfo.droits.contains(Droit.VISITE_RECEP_C)) {
+                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECEP_C)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECEPTION_FORBIDDEN)
                 } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
@@ -82,17 +76,17 @@ class CreateVisiteUseCase @Inject constructor(
                     throw RemocraResponseException(errorType = ErrorType.VISITE_RECEPTION_NOT_FIRST)
                 }
             TypeVisite.RECO_INIT ->
-                if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_C)) {
+                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_INIT_C)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECO_INIT_FORBIDDEN)
                 } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
                 } else if (nbVisite != 1) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_RECO_INIT_NOT_FIRST)
                 }
-            TypeVisite.ROP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_C)) {
+            TypeVisite.ROP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_C)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_ROP_FORBIDDEN)
             }
-            TypeVisite.NP -> if (!userInfo.droits.contains(Droit.VISITE_NON_PROGRAMME_C)) {
+            TypeVisite.NP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_NON_PROGRAMME_C)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_NP_FORBIDDEN)
             }
         }
@@ -133,7 +127,7 @@ class CreateVisiteUseCase @Inject constructor(
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: VisiteData): VisiteData {
+    override fun execute(userInfo: WrappedUserInfo, element: VisiteData): VisiteData {
         // Insertion de la visite : remocra.visite
         visiteRepository.insertVisite(
             Visite(

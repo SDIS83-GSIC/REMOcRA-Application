@@ -1,7 +1,7 @@
 package remocra.eventbus.anomalie
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.eventbus.Event
 import java.util.UUID
 
@@ -10,5 +10,5 @@ import java.util.UUID
  */
 class AnomalieModifiedEvent @Inject constructor(
     val anomalieId: UUID,
-    val userInfo: UserInfo,
+    val userInfo: WrappedUserInfo,
 ) : Event

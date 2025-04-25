@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import remocra.GlobalConstants
 import remocra.apimobile.data.PhotoPeiForApiMobileData
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
@@ -25,15 +25,15 @@ class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(Type
         private val logger: Logger = LoggerFactory.getLogger(SynchroPhotoPeiUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
         // Pas de droits particulier aujourd'hui pour faire la synchro !
     }
 
-    override fun postEvent(element: PhotoPeiForApiMobileData, userInfo: UserInfo) {
+    override fun postEvent(element: PhotoPeiForApiMobileData, userInfo: WrappedUserInfo) {
         // On ne poste pas d'évènement comme c'est une insertion dans le schéma incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: PhotoPeiForApiMobileData): PhotoPeiForApiMobileData {
+    override fun execute(userInfo: WrappedUserInfo, element: PhotoPeiForApiMobileData): PhotoPeiForApiMobileData {
         val repertoire = GlobalConstants.DOSSIER_DOCUMENT_PEI + "${element.peiId}/${element.photoId}"
         val result = incomingRepository.insertPhotoPei(
             peiId = element.peiId,
@@ -59,7 +59,7 @@ class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(Type
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PhotoPeiForApiMobileData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PhotoPeiForApiMobileData) {
         // Check la date
         dateUtils.getMomentForResponse(element.photoDate)
     }

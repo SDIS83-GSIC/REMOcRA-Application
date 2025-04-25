@@ -3,7 +3,7 @@ package remocra.tasks
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.NotificationMailData
 import remocra.data.PeiData
@@ -119,7 +119,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
         // Pas de parametres pour cette tâche
     }
 
-    override fun execute(parameters: ChangementEtatPeiTaskParameter?, userInfo: UserInfo): ChangementEtatPeiJobResult? {
+    override fun execute(parameters: ChangementEtatPeiTaskParameter?, userInfo: WrappedUserInfo): ChangementEtatPeiJobResult? {
         /** La moulinette doit permettre de notifier au choix, les PEI passant à l'état Dispo, Indispo et Non conforme
          *  Au choix signifit que ca peut etre les trois, deux ou un seul cas
          */

@@ -2,10 +2,8 @@ package remocra.usecase.oldeb
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository
 import remocra.db.OldebRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -22,26 +20,26 @@ class DeleteOldebUseCase @Inject constructor(
     private val documentRepository: DocumentRepository,
     private val documentUtils: DocumentUtils,
 ) : AbstractCUDUseCase<Oldeb>(TypeOperation.DELETE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.OLDEB_D)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.OLDEB_D)) {
             throw RemocraResponseException(ErrorType.OLDEB_FORBIDDEN_DELETE)
         }
     }
 
-    override fun postEvent(element: Oldeb, userInfo: UserInfo) {
+    override fun postEvent(element: Oldeb, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.oldebId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.OLDEB,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: Oldeb): Oldeb {
+    override fun execute(userInfo: WrappedUserInfo, element: Oldeb): Oldeb {
         // Suppression des suites
         oldebRepository.deleteSuite(element.oldebId)
 
@@ -74,5 +72,5 @@ class DeleteOldebUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Oldeb) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Oldeb) {}
 }

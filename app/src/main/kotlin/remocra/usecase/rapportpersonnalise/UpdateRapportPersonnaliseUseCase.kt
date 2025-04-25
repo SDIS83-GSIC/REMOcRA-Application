@@ -1,11 +1,9 @@
 package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.RapportPersonnaliseData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -28,26 +26,26 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     @Inject
     private lateinit var requeteSqlUtils: RequeteSqlUtils
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_RAPPORTS_PERSO)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_RAPPORTS_PERSO)) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: RapportPersonnaliseData, userInfo: UserInfo) {
+    override fun postEvent(element: RapportPersonnaliseData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.rapportPersonnaliseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.RAPPORT_PERSONNALISE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: RapportPersonnaliseData): RapportPersonnaliseData {
+    override fun execute(userInfo: WrappedUserInfo, element: RapportPersonnaliseData): RapportPersonnaliseData {
         // On récupère les informations d'origine pour s'assurer que l'élément n'est pas protected
         val reference = rapportPersonnaliseRepository.getRapportPersonnalisePojo(element.rapportPersonnaliseId)
         val elementToUpdate =
@@ -113,7 +111,7 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: RapportPersonnaliseData) {
         if (rapportPersonnaliseRepository.checkCodeExists(element.rapportPersonnaliseCode, element.rapportPersonnaliseId)) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_CODE_UNIQUE)
         }

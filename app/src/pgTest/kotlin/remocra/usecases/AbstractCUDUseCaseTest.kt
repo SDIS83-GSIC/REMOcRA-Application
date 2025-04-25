@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeSourceModification
 import remocra.db.TransactionManager
 import remocra.db.jooq.fixtures.PostgresqlExtension
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -62,11 +64,11 @@ class AbstractCUDUseCaseTest {
                 transactionManager = TransactionManager(dsl)
             }
 
-            override fun checkDroits(userInfo: UserInfo) {}
+            override fun checkDroits(userInfo: WrappedUserInfo) {}
 
-            override fun postEvent(element: UUID, userInfo: UserInfo) {}
+            override fun postEvent(element: UUID, userInfo: WrappedUserInfo) {}
 
-            override fun execute(userInfo: UserInfo?, element: UUID): UUID {
+            override fun execute(userInfo: WrappedUserInfo, element: UUID): UUID {
                 dsl.insertInto(UTILISATEUR)
                     .set(UTILISATEUR.ID, element)
                     .set(UTILISATEUR.USERNAME, element.toString())
@@ -78,30 +80,34 @@ class AbstractCUDUseCaseTest {
                 doThrow()
             }
 
-            override fun checkContraintes(userInfo: UserInfo?, element: UUID) {}
+            override fun checkContraintes(userInfo: WrappedUserInfo, element: UUID) {}
         }
 
         val result = sut.execute(
-            UserInfo(
-                Utilisateur(
-                    UUID.randomUUID(),
-                    true,
-                    "admin@example.com",
-                    "admin",
-                    "admin",
-                    "admin",
+            WrappedUserInfo().apply {
+                userInfo = UserInfo(
+                    Utilisateur(
+                        UUID.randomUUID(),
+                        true,
+                        "admin@example.com",
+                        "admin",
+                        "admin",
+                        "admin",
+                        null,
+                        false,
+                        null,
+                        null,
+                        true,
+                    ),
+                    Droit.entries.toSet(),
                     null,
-                    false,
+                    emptySet(),
                     null,
-                    null,
-                    true,
-                ),
-                Droit.entries.toSet(),
-                null,
-                emptySet(),
-                null,
-            ),
+                    TypeSourceModification.REMOCRA_WEB,
+                )
+            },
             insertedUuid,
+
         )
         // Vérifie que le rollback a bien eu lieu
         assertEquals(0, dsl.selectCount().from(UTILISATEUR).where(UTILISATEUR.ID.eq(insertedUuid)).fetchSingleValue())

@@ -3,7 +3,7 @@ package remocra.apimobile.usecase.synchrofintournee
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.eventbus.EventBus
 import remocra.eventbus.mobile.IntegrationTourneeEvent
 import remocra.usecase.AbstractUseCase
@@ -18,7 +18,7 @@ class SynchroFinTourneeUseCase : AbstractUseCase() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun execute(tourneeId: UUID, userInfo: UserInfo) {
+    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo) {
         // On met à jour la date de synchronisation de la tournée dans incoming
         incomingRepository.updateDateSynchroFin(dateUtils.now(), tourneeId)
 

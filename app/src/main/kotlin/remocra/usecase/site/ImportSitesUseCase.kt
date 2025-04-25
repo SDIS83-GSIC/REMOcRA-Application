@@ -1,18 +1,15 @@
 package remocra.usecase.site
 
 import com.google.inject.Inject
-import jakarta.ws.rs.ForbiddenException
 import org.geotools.api.data.FileDataStoreFinder
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ImportGeometriesCodeLibelleData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.SiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -48,17 +45,13 @@ class ImportSitesUseCase : AbstractUseCase() {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.GEST_SITE_A)) {
+    fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {
             throw RemocraResponseException(ErrorType.SITE_FORBIDDEN_UPDATE)
         }
     }
 
-    fun execute(userInfo: UserInfo?, element: ImportGeometriesCodeLibelleData): Result {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun execute(userInfo: WrappedUserInfo, element: ImportGeometriesCodeLibelleData): Result {
         checkDroits(userInfo)
         return try {
             Result.Success(importSites(element.fileGeometries, userInfo))
@@ -69,7 +62,7 @@ class ImportSitesUseCase : AbstractUseCase() {
         }
     }
 
-    private fun importSites(inputStream: InputStream, userInfo: UserInfo) {
+    private fun importSites(inputStream: InputStream, userInfo: WrappedUserInfo) {
         val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_SHP_INTROUVABLE)
 
@@ -103,7 +96,7 @@ class ImportSitesUseCase : AbstractUseCase() {
                         pojoId = site.siteId,
                         typeOperation = TypeOperation.UPDATE,
                         typeObjet = TypeObjet.SITE,
-                        auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                        auteurTracabilite = userInfo.getInfosTracabilite(),
                         date = dateUtils.now(),
                     ),
                 )

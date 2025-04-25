@@ -2,11 +2,9 @@ package remocra.usecase.pena
 
 import com.google.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AireAspirationUpsertData
-import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AireAspirationRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -49,28 +47,28 @@ class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.
         return geometries
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) ||
-            !userInfo.droits.contains(Droit.PEI_U)
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.PEI_CARACTERISTIQUES_U) ||
+            !userInfo.hasDroit(droitWeb = Droit.PEI_U)
         ) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: PenaAspirationData, userInfo: UserInfo) {
+    override fun postEvent(element: PenaAspirationData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.penaId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PENA_ASPIRATION,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: PenaAspirationData): PenaAspirationData {
+    override fun execute(userInfo: WrappedUserInfo, element: PenaAspirationData): PenaAspirationData {
         // On supprime en amont les aires existantes pour les recréer
         aireAspirationRepository.deleteAireAspiration(element.penaId)
 
@@ -96,7 +94,7 @@ class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PenaAspirationData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PenaAspirationData) {
         // Vérifie si on n'a pas de doublon sur le numéro
         if (element.listeAireAspiration.groupingBy { it.numero }.eachCount().any { it.value > 1 }) {
             throw IllegalArgumentException("Le numéro doit être unique")

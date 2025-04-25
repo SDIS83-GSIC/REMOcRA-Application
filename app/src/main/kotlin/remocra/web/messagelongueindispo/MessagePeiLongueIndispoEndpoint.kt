@@ -17,7 +17,6 @@ import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.messagelongueindispo.GetMessagePeiLongueIndispoUseCase
 import remocra.usecase.pei.PeiUseCase
-import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 
 @Path("/message-pei-longue-indispo")
@@ -37,10 +36,6 @@ class MessagePeiLongueIndispoEndpoint : AbstractEndpoint() {
     @GET
     @Public("Est rattaché à des types d'organismes, pas à un droit")
     fun getMessageAlerte(): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-
         return Response.ok(getMessagePeiLongueIndispoUseCase.execute(securityContext.userInfo!!)).build()
     }
 
@@ -53,14 +48,10 @@ class MessagePeiLongueIndispoEndpoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-
         return Response.ok(
             peiUseCase.getPeiWithFilterByMessageAlerteForDataTableau(
                 params,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }

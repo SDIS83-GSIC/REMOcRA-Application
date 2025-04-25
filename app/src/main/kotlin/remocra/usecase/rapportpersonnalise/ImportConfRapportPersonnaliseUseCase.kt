@@ -2,7 +2,7 @@ package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.csv.CsvReader
 import remocra.data.RapportPersonnaliseData
 import remocra.data.RapportPersonnaliseParametreData
@@ -36,7 +36,7 @@ class ImportConfRapportPersonnaliseUseCase : AbstractUseCase() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun execute(userInfo: UserInfo?, zip: InputStream) {
+    fun execute(userInfo: WrappedUserInfo, zip: InputStream) {
         try {
             var listeRapportPersonnalise: Collection<ExportConfRapportPersonnaliseUseCase.ImportExportRapportPersonnalise>? = null
             var listeRapportPersonnaliseParametre: Collection<ExportConfRapportPersonnaliseUseCase.ImportExportRapportPersonnaliseParametre>? = null

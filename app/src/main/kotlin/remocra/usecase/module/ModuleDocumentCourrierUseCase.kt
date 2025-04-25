@@ -1,8 +1,7 @@
 package remocra.usecase.module
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.ForbiddenException
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DocumentCourrierData
 import remocra.data.Params
 import remocra.db.ModuleRepository
@@ -26,12 +25,9 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
     fun execute(
         moduleId: UUID,
         moduleType: String,
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
     ): Collection<DocumentCourrierData> {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
         // on va chercher le profil droit de l'utilisateur connecté
         val profilDroitId = getProfilDroit(userInfo)
 
@@ -69,22 +65,16 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
 
     fun count(
         moduleId: UUID,
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         params: Params<ThematiqueRepository.Filter, ThematiqueRepository.Sort>?,
     ): Int {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
         val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
         return thematiqueRepository.countDocumentHabilitableWithThematique(listeThematiqueId, getProfilDroit(userInfo), userInfo.isSuperAdmin, params)
     }
 
-    private fun getProfilDroit(userInfo: UserInfo?): UUID? {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    private fun getProfilDroit(userInfo: WrappedUserInfo): UUID? {
         // on va chercher le profil droit de l'utilisateur connecté
-        return profilDroitRepository.getProfilUtilisateurByUtilisateurId(userInfo.utilisateurId)
+        return profilDroitRepository.getProfilUtilisateurByUtilisateurId(userInfo.utilisateurId!!)
     }
 }

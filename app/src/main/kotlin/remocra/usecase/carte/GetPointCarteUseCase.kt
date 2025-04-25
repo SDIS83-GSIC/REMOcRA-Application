@@ -3,7 +3,7 @@ package remocra.usecase.carte
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.apimobile.usecase.PeiCaracteristiquesUseCase
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeElementCarte
 import remocra.db.CarteRepository
@@ -42,7 +42,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
         sridSource: String,
         etudeId: UUID? = null,
         typeElementCarte: TypeElementCarte,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
         criseId: UUID? = null,
         criseState: EvenementStatutMode? = null,
         listePeiId: Set<UUID>? = null,

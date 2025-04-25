@@ -2,7 +2,7 @@ package remocra.utils
 
 import org.jooq.Record
 import org.jooq.Result
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DashboardQueryRequestData
 import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
@@ -21,12 +21,12 @@ class RequestUtils {
      * Remplace les paramètres globaux, dans une requête SQL pouvant les contenir, par les données de <b>l'utilisateur connecté</b>.
      *
      */
-    fun replaceGlobalParameters(userInfo: UserInfo?, requeteSql: String): String {
+    fun replaceGlobalParameters(userInfo: WrappedUserInfo, requeteSql: String): String {
         // On vérifie si la requête contient les variables utilisateur, si oui on les remplace par les informations de l'utilisateur
         val remplacementMap = mapOf(
-            VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo?.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else dummyUUID }.toString(),
-            VariableContextUtilisateur.UTILISATEUR_ID to userInfo?.utilisateur?.utilisateurId.toString(),
-            VariableContextUtilisateur.ORGANISME_ID to userInfo?.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else dummyUUID }.toString(),
+            VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else dummyUUID }.toString(),
+            VariableContextUtilisateur.UTILISATEUR_ID to userInfo.utilisateur?.utilisateurId.toString(),
+            VariableContextUtilisateur.ORGANISME_ID to userInfo.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else dummyUUID }.toString(),
         )
         return replaceFromMap(requeteSql, remplacementMap)
     }

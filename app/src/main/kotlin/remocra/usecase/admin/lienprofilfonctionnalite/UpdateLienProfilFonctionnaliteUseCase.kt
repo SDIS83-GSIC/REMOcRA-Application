@@ -1,7 +1,7 @@
 package remocra.usecase.admin.lienprofilfonctionnalite
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.LienProfilFonctionnaliteUpdateData
 import remocra.data.enums.ErrorType
 import remocra.db.LienProfilFonctionnaliteRepository
@@ -20,20 +20,20 @@ class UpdateLienProfilFonctionnaliteUseCase @Inject constructor(
     AbstractCUDUseCase<LienProfilFonctionnaliteUpdateData>(
         TypeOperation.UPDATE,
     ) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_GROUPE_UTILISATEUR)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_GROUPE_UTILISATEUR)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: LienProfilFonctionnaliteUpdateData, userInfo: UserInfo) { }
+    override fun postEvent(element: LienProfilFonctionnaliteUpdateData, userInfo: WrappedUserInfo) { }
 
-    override fun execute(userInfo: UserInfo?, element: LienProfilFonctionnaliteUpdateData): LienProfilFonctionnaliteUpdateData {
+    override fun execute(userInfo: WrappedUserInfo, element: LienProfilFonctionnaliteUpdateData): LienProfilFonctionnaliteUpdateData {
         lienProfilFonctionnaliteRepository.update(element.newValue, element.profilOrganismeId, element.profilUtilisateurId)
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: LienProfilFonctionnaliteUpdateData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: LienProfilFonctionnaliteUpdateData) {
         if (profilOrganismeRepository.get(element.profilOrganismeId).profilOrganismeTypeOrganismeId !=
             profilUtilisateurRepository.get(element.profilUtilisateurId).profilUtilisateurTypeOrganismeId
         ) {

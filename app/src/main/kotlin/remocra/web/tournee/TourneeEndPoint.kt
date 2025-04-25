@@ -33,7 +33,6 @@ import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -79,7 +78,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/")
     @RequireDroits([Droit.TOURNEE_R])
     fun getTourneeByZoneIntegrationShortData(): Response =
-        Response.ok().entity(tourneeRepository.getTourneeByZoneIntegrationShortData(securityContext.userInfo!!)).build()
+        Response.ok().entity(tourneeRepository.getTourneeByZoneIntegrationShortData(securityContext.userInfo)).build()
 
     @POST
     @Path("/")
@@ -88,10 +87,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun fetchTourneeData(
         params: Params<TourneeRepository.Filter, TourneeRepository.Sort>,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-        return Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params, securityContext.userInfo!!)).build()
+        return Response.ok().entity(fetchTourneeDataUseCase.fetchTourneeData(params, securityContext.userInfo)).build()
     }
 
     @GET
@@ -100,7 +96,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun getTourneeForAccesRapide(
         @QueryParam("motifLibelle") motifLibelle: String,
     ): Response =
-        Response.ok().entity(tourneeRepository.getTourneeIdLibelleByMotif(securityContext.userInfo!!, motifLibelle)).build()
+        Response.ok().entity(tourneeRepository.getTourneeIdLibelleByMotif(securityContext.userInfo, motifLibelle)).build()
 
     @GET
     @Path("/actives")
@@ -110,13 +106,10 @@ class TourneeEndPoint : AbstractEndpoint() {
         @QueryParam("isPrive")
         isPrive: Boolean,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok().entity(
             tourneeRepository.getTourneesActives(
-                securityContext.userInfo!!.isSuperAdmin,
-                securityContext.userInfo!!.affiliatedOrganismeIds,
+                securityContext.userInfo.isSuperAdmin,
+                securityContext.userInfo.affiliatedOrganismeIds!!,
                 isPrive,
                 null,
                 null,

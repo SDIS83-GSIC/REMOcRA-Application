@@ -2,9 +2,8 @@ package remocra.usecase.admin
 
 import jakarta.inject.Inject
 import jakarta.servlet.http.Part
-import jakarta.ws.rs.ForbiddenException
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
@@ -24,8 +23,8 @@ class ImportRessourcesUseCase : AbstractUseCase() {
     @Inject
     lateinit var documentUtils: DocumentUtils
 
-    fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+    fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ADMIN_IMPORT_RESSOURCE_FORBIDDEN)
         }
     }
@@ -33,11 +32,7 @@ class ImportRessourcesUseCase : AbstractUseCase() {
     /**
      * On importe la bannière avec un nom figé pour simplifier le templating ultérieur
      */
-    fun importBanniere(userInfo: UserInfo?, bannierePart: Part) {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun importBanniere(userInfo: WrappedUserInfo, bannierePart: Part) {
         checkDroits(userInfo)
 
         documentUtils.saveFile(bannierePart.inputStream.readAllBytes(), "banniere", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
@@ -46,21 +41,13 @@ class ImportRessourcesUseCase : AbstractUseCase() {
     /**
      * On importe le logo avec un nom figé pour simplifier le templating ultérieur
      */
-    fun importLogo(userInfo: UserInfo?, logoPart: Part) {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun importLogo(userInfo: WrappedUserInfo, logoPart: Part) {
         checkDroits(userInfo)
 
         documentUtils.saveFile(logoPart.inputStream.readAllBytes(), "logo", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
     }
 
-    fun importSymbologie(userInfo: UserInfo?, symbologiePart: Part) {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun importSymbologie(userInfo: WrappedUserInfo, symbologiePart: Part) {
         checkDroits(userInfo)
 
         ZipInputStream(symbologiePart.inputStream).use { zipInputStream ->
@@ -83,11 +70,7 @@ class ImportRessourcesUseCase : AbstractUseCase() {
         }
     }
 
-    fun importTemplateExportCtp(userInfo: UserInfo?, templateExportCtpPart: Part) {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun importTemplateExportCtp(userInfo: WrappedUserInfo, templateExportCtpPart: Part) {
         checkDroits(userInfo)
         /** Vérification type du fichier */
         if (!templateExportCtpPart.submittedFileName.lowercase().endsWith(".xlsx")) {

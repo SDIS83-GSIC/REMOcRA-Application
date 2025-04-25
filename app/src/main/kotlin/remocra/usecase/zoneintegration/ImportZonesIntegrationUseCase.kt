@@ -1,18 +1,15 @@
 package remocra.usecase.zoneintegration
 
 import com.google.inject.Inject
-import jakarta.ws.rs.ForbiddenException
 import org.geotools.api.data.FileDataStoreFinder
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ImportGeometriesCodeLibelleData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -49,18 +46,14 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun checkDroits(userInfo: UserInfo) {
+    fun checkDroits(userInfo: WrappedUserInfo) {
         // TODO quel droit pour l'administration des zones de compétence / intégration ?
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ZONE_INTEGRATION_FORBIDDEN_UPDATE)
         }
     }
 
-    fun execute(userInfo: UserInfo?, element: ImportGeometriesCodeLibelleData): Result {
-        // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun execute(userInfo: WrappedUserInfo, element: ImportGeometriesCodeLibelleData): Result {
         checkDroits(userInfo)
 
         return try {
@@ -72,7 +65,7 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
         }
     }
 
-    private fun importZonesIntegration(inputStream: InputStream, userInfo: UserInfo) {
+    private fun importZonesIntegration(inputStream: InputStream, userInfo: WrappedUserInfo) {
         val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_ZONES_INTEGRATION)
             ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE)
 
@@ -115,7 +108,7 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
                         pojoId = zoneIntegration.zoneIntegrationId,
                         typeOperation = TypeOperation.UPDATE,
                         typeObjet = TypeObjet.ZONE_INTEGRATION,
-                        auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                        auteurTracabilite = userInfo.getInfosTracabilite(),
                         date = dateUtils.now(),
                     ),
                 )

@@ -20,7 +20,7 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.data.enums.ErreurImportCtp
@@ -130,7 +130,7 @@ class ImportCtpUseCase : AbstractUseCase() {
      * @return String Le résultat de la vérification au format JSON
      */
     @Throws(JsonProcessingException::class)
-    fun importCtpValidation(file: InputStream, userInfo: UserInfo): ImportCtpData {
+    fun importCtpValidation(file: InputStream, userInfo: WrappedUserInfo): ImportCtpData {
         val mapper = ObjectMapper()
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
 
@@ -246,7 +246,7 @@ class ImportCtpUseCase : AbstractUseCase() {
      */
     private fun checkLineValidity(
         row: Row,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ): LigneImportCtpData {
         val data = LigneImportCtpData()
         val warnings: MutableList<String> = ArrayList()
@@ -385,7 +385,7 @@ class ImportCtpUseCase : AbstractUseCase() {
 
         // Si l'utilisateur a le droit de déplacer un PEI, on affiche un warning si la distance de
         // déplacement est supérieure à la distance renseignée dans les paramètres de l'application
-        if (userInfo.isSuperAdmin || userInfo.droits.contains(Droit.IMPORT_CTP_PEI_DEPLACEMENT_U)) {
+        if (userInfo.isSuperAdmin || userInfo.hasDroit(droitWeb = Droit.IMPORT_CTP_PEI_DEPLACEMENT_U)) {
             try {
                 latitude = this.getNumericValueFromCell(row.getCell(LATITUDE_INDEX))
                 longitude = this.getNumericValueFromCell(row.getCell(LONGITUDE_INDEX))
@@ -473,7 +473,7 @@ class ImportCtpUseCase : AbstractUseCase() {
         INT,
     }
 
-    fun importCtpEnregistrement(importCtpData: ImportCtpData, userInfo: UserInfo) {
+    fun importCtpEnregistrement(importCtpData: ImportCtpData, userInfo: WrappedUserInfo) {
         importCtpData.bilanVerifications?.forEach {
             if (it.dataVisite != null) {
                 addVisiteFromImportCtp(it.dataVisite!!, userInfo)
@@ -481,7 +481,7 @@ class ImportCtpUseCase : AbstractUseCase() {
         }
     }
 
-    private fun addVisiteFromImportCtp(visitesData: LigneImportCtpVisiteData, userInfo: UserInfo) {
+    private fun addVisiteFromImportCtp(visitesData: LigneImportCtpVisiteData, userInfo: WrappedUserInfo) {
         transactionManager.transactionResult {
             createVisiteUseCase.execute(
                 userInfo,
@@ -508,7 +508,7 @@ class ImportCtpUseCase : AbstractUseCase() {
 
             // L'export CTP fourni les coordonnées en EPSG:4326,
             // on s'attend donc à avoir en retour des coordonnées en 4326, d'où la GlobalConstant
-            if (visitesData.importLatitude != null && visitesData.importLongitude != null && userInfo.droits.contains(Droit.IMPORT_CTP_PEI_DEPLACEMENT_U)) {
+            if (visitesData.importLatitude != null && visitesData.importLongitude != null && userInfo.hasDroit(droitWeb = Droit.IMPORT_CTP_PEI_DEPLACEMENT_U)) {
                 val point: Point = GeometryFactory(PrecisionModel()).createPoint(
                     Coordinate(visitesData.importLatitude!!, visitesData.importLongitude!!),
                 )

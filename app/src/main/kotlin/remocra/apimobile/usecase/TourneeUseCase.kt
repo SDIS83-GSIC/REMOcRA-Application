@@ -3,7 +3,7 @@ package remocra.apimobile.usecase
 import com.google.inject.Inject
 import jakarta.ws.rs.core.Response
 import remocra.apimobile.data.TourneeForApiMobileData
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.TourneeRepository
 import remocra.db.jooq.remocra.tables.pojos.Tournee
@@ -15,8 +15,8 @@ class TourneeUseCase : AbstractUseCase() {
     @Inject
     lateinit var tourneeRepository: TourneeRepository
 
-    fun getTourneesDisponibles(userInfo: UserInfo) =
-        tourneeRepository.getTourneesActives(userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds, null, true, true)
+    fun getTourneesDisponibles(userInfo: WrappedUserInfo) =
+        tourneeRepository.getTourneesActives(userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!, null, true, true)
 
     fun reserveTournees(listIdTournees: List<UUID>, idUser: UUID): ReservationTourneesResponse {
         val tournees: MutableList<Tournee> = tourneeRepository.getTourneesByIds(listIdTournees).toMutableList()

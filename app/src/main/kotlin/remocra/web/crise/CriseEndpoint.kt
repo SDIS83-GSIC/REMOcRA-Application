@@ -56,7 +56,6 @@ import remocra.usecase.crise.evenement.document.CreateCriseDocument
 import remocra.usecase.crise.evenement.message.CreateEventMessageUseCase
 import remocra.utils.DateUtils
 import remocra.utils.badRequest
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.utils.getTextPartOrNull
 import remocra.web.AbstractEndpoint
@@ -437,16 +436,13 @@ class CriseEndpoint : AbstractEndpoint() {
         @QueryParam("criseId") criseId: UUID,
         @QueryParam("state") state: EvenementStatutMode,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox = bbox,
                 sridSource = srid,
                 etudeId = null,
                 typeElementCarte = TypeElementCarte.CRISE,
-                userInfo = securityContext.userInfo!!,
+                userInfo = securityContext.userInfo,
                 criseId = criseId,
                 criseState = state,
             ),

@@ -5,7 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DocumentCourrierData
 import remocra.data.GlobalData
 import remocra.data.Params
@@ -103,7 +103,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
     fun getCourrierWithThematiqueForAccueil(
         listeThematiqueId: Collection<UUID>,
         limit: Int?,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ): Collection<DocumentCourrierData> =
         // Pour l'accueil pas besoin d'info courrier, mais vraiment juste document
         // Mais on parle bien du document venant d'un courrier.

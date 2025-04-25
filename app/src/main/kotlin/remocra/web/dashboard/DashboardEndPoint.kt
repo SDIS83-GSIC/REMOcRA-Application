@@ -28,7 +28,7 @@ import remocra.usecase.dashboard.GetDashboardQueryUseCase
 import remocra.usecase.dashboard.UpdateDashboardQueryUseCase
 import remocra.usecase.dashboard.UpdateDashboardUseCase
 import remocra.web.AbstractEndpoint
-import java.util.*
+import java.util.UUID
 
 @Path("/dashboard")
 @Produces(MediaType.APPLICATION_JSON)

@@ -2,11 +2,9 @@ package remocra.usecase.permis
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.PermisData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.PermisRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -27,8 +25,8 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
         return listOf(element.permis.permisGeometrie)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PERMIS_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.PERMIS_A)) {
             throw RemocraResponseException(ErrorType.PERMIS_FORBIDDEN_UPDATE)
         }
     }
@@ -42,7 +40,7 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
         return element
     }
 
-    override fun postEvent(element: PermisData, userInfo: UserInfo) {
+    override fun postEvent(element: PermisData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(
@@ -51,13 +49,13 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
                 pojoId = element.permis.permisId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PERMIS,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: PermisData): PermisData {
+    override fun execute(userInfo: WrappedUserInfo, element: PermisData): PermisData {
         // Mise à jour du permis
         permisRepository.updatePermis(element.permis)
         // Suppression des liens Permis Parcelle
@@ -80,7 +78,7 @@ class UpdatePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperatio
         return element.copy(permisDocuments = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PermisData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PermisData) {
         // Pas de contrainte
     }
 }

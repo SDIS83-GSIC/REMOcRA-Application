@@ -3,15 +3,12 @@ package remocra.usecase.pei
 import jakarta.inject.Inject
 import jakarta.inject.Provider
 import jakarta.servlet.http.Part
-import jakarta.ws.rs.ForbiddenException
 import remocra.GlobalConstants
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository
 import remocra.db.OrganismeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -38,10 +35,7 @@ class InsertDocumentUseCase : AbstractUseCase() {
 
     @Inject lateinit var parametresProvider: Provider<ParametresProvider>
 
-    fun execute(userInfo: UserInfo?, element: Part): Result? {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
+    fun execute(userInfo: WrappedUserInfo, element: Part): Result? {
         checkDroits(userInfo)
 
         var result: Result? = null
@@ -53,8 +47,8 @@ class InsertDocumentUseCase : AbstractUseCase() {
         return result
     }
 
-    private fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.DECLARATION_PEI)) {
+    private fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.DECLARATION_PEI)) {
             throw RemocraResponseException(ErrorType.DOCUMENT_FORBIDDEN_INSERT)
         }
     }
@@ -79,7 +73,7 @@ class InsertDocumentUseCase : AbstractUseCase() {
         return documentToInsert
     }
 
-    private fun postEvents(document: Document, userInfo: UserInfo) {
+    private fun postEvents(document: Document, userInfo: WrappedUserInfo) {
         /** Insertion dans la traçabilité */
         eventBus.post(
             TracabiliteEvent(
@@ -87,7 +81,7 @@ class InsertDocumentUseCase : AbstractUseCase() {
                 pojoId = document.documentId,
                 typeOperation = TypeOperation.INSERT,
                 typeObjet = TypeObjet.DOCUMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )

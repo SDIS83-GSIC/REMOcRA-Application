@@ -1,9 +1,8 @@
 package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.ForbiddenException
 import org.jooq.Record
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GenererRapportPersonnaliseData
 import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
@@ -24,21 +23,17 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
         private const val FIELD_GEOMETRIE = "geometrie"
     }
 
-    private fun checkProfilDroit(userInfo: UserInfo, rapportPersonnaliseId: UUID) {
+    private fun checkProfilDroit(userInfo: WrappedUserInfo, rapportPersonnaliseId: UUID) {
         if (userInfo.isSuperAdmin) {
             return
         }
 
-        if (!rapportPersonnaliseRepository.checkDroitRapportPersonnalise(userInfo.utilisateurId, rapportPersonnaliseId)) {
+        if (!rapportPersonnaliseRepository.checkDroitRapportPersonnalise(userInfo.utilisateurId!!, rapportPersonnaliseId)) {
             throw RemocraResponseException(ErrorType.RAPPORT_PERSO_FORBIDDEN)
         }
     }
 
-    fun execute(userInfo: UserInfo?, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): RapportPersonnaliseTableau? {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
-
+    fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): RapportPersonnaliseTableau? {
         checkProfilDroit(userInfo, genererRapportPersonnaliseData.rapportPersonnaliseId)
 
         // On va chercher la requête du rapport

@@ -1,11 +1,10 @@
 package remocra.usecase.zoneintegration
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.ForbiddenException
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.util.GeometryCombiner
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.ZoneIntegrationRepository
 import remocra.exception.RemocraResponseException
@@ -19,18 +18,13 @@ class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
 
     @Inject private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
 
-    fun checkContains(userInfo: UserInfo?, geometries: Collection<Geometry>) {
-        // TODO à retirer quand le userinfo ne sera plus potentiellement nul
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
-
+    fun checkContains(userInfo: WrappedUserInfo, geometries: Collection<Geometry>) {
         // Si c'est un super admin, on ne prend pas en compte la zone de compétence
         if (userInfo.isSuperAdmin) {
             return
         }
 
-        if (userInfo.username != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
+        if (userInfo.nom != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
             if (userInfo.zoneCompetence == null) {
                 throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
             }

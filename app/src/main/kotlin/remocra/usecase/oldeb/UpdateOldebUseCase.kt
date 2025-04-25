@@ -3,10 +3,8 @@ package remocra.usecase.oldeb
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.data.oldeb.OldebFormInput
 import remocra.db.DocumentRepository
 import remocra.db.OldebRepository
@@ -48,26 +46,26 @@ class UpdateOldebUseCase @Inject constructor(
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.OLDEB_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.OLDEB_U)) {
             throw RemocraResponseException(ErrorType.OLDEB_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: OldebFormInput, userInfo: UserInfo) {
+    override fun postEvent(element: OldebFormInput, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(documentList = null),
                 pojoId = element.oldeb.oldebId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.OLDEB,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: OldebFormInput): OldebFormInput {
+    override fun execute(userInfo: WrappedUserInfo, element: OldebFormInput): OldebFormInput {
         // Suppression des suites absentes
         oldebRepository.deleteMissingSuite(element.oldeb.oldebId, element.visiteList?.flatMap { it.suiteList ?: listOf() }?.map { it.oldebVisiteSuiteId })
 
@@ -279,5 +277,5 @@ class UpdateOldebUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: OldebFormInput) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {}
 }

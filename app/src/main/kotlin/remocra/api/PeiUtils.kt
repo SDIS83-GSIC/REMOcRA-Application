@@ -1,7 +1,7 @@
 package remocra.api
 
 import remocra.GlobalConstants
-import remocra.auth.OrganismeInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.jooq.remocra.enums.DroitApi
 import java.util.UUID
 import java.util.stream.Stream
@@ -83,11 +83,11 @@ object PeiUtils {
     ) {
 
         constructor(
-            organismeInfo: OrganismeInfo,
+            userInfo: WrappedUserInfo,
         ) : this(
-            organismeInfo.organismeId,
-            organismeInfo.typeOrganismeCode,
-            organismeInfo.droits.any { it == DroitApi.ADMINISTRER },
+            userInfo.organismeInfo!!.organismeId,
+            userInfo.organismeInfo!!.typeOrganismeCode,
+            userInfo.organismeInfo!!.droits.any { it == DroitApi.ADMINISTRER },
         )
     }
 }

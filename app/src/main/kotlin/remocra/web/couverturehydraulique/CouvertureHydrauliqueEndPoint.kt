@@ -38,7 +38,6 @@ import remocra.usecase.couverturehydraulique.DeletePeiProjetUseCase
 import remocra.usecase.couverturehydraulique.ImportDataCouvertureHydrauliqueUseCase
 import remocra.usecase.couverturehydraulique.UpdateEtudeUseCase
 import remocra.usecase.couverturehydraulique.UpdatePeiProjetUseCase
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.utils.getTextPartOrNull
 import remocra.web.AbstractEndpoint
@@ -75,11 +74,11 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.ETUDE_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getEtude(params: Params<CouvertureHydrauliqueRepository.Filter, CouvertureHydrauliqueRepository.Sort>): Response {
-        val affiliatedOrganismeIds = securityContext.userInfo!!.affiliatedOrganismeIds
+        val affiliatedOrganismeIds = securityContext.userInfo.affiliatedOrganismeIds ?: emptySet()
         return Response.ok(
             DataTableau(
-                couvertureHydrauliqueRepository.getEtudes(params, affiliatedOrganismeIds, securityContext.userInfo!!.isSuperAdmin),
-                couvertureHydrauliqueRepository.getCountEtudes(params.filterBy, affiliatedOrganismeIds, securityContext.userInfo!!.isSuperAdmin),
+                couvertureHydrauliqueRepository.getEtudes(params, affiliatedOrganismeIds, securityContext.userInfo.isSuperAdmin),
+                couvertureHydrauliqueRepository.getCountEtudes(params.filterBy, affiliatedOrganismeIds, securityContext.userInfo.isSuperAdmin),
             ),
         ).build()
     }
@@ -314,16 +313,13 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         @QueryParam("srid") srid: String,
         @QueryParam("etudeId") etudeId: UUID,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox,
                 srid,
                 etudeId,
                 TypeElementCarte.PEI_PROJET,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }

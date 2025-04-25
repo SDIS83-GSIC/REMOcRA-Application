@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.select
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DashboardComponentData
 import remocra.data.DashboardComponentInfoData
 import remocra.data.DashboardQueryInfoData
@@ -39,7 +39,7 @@ class DashboardRepository
     fun getDashboardList(): Collection<Dashboard> =
         dsl.select(*DASHBOARD.fields()).from(DASHBOARD).fetchInto()
 
-    fun getDashboardUser(userInfo: UserInfo?): Dashboard? =
+    fun getDashboardUser(userInfo: WrappedUserInfo): Dashboard? =
         dsl.select(*DASHBOARD.fields())
             .from(DASHBOARD)
             .join(L_DASHBOARD_PROFIL)

@@ -1,11 +1,9 @@
 package remocra.usecase.admin.profildroit
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ProfilDroitData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.ProfilDroitRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -17,26 +15,26 @@ import remocra.usecase.AbstractCUDUseCase
 
 class CreateProfilDroitUseCase @Inject constructor(private val profilDroitRepository: ProfilDroitRepository) :
     AbstractCUDUseCase<ProfilDroitData>(TypeOperation.INSERT) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: ProfilDroitData, userInfo: UserInfo) {
+    override fun postEvent(element: ProfilDroitData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.profilDroitId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PROFIL_DROIT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: ProfilDroitData): ProfilDroitData {
+    override fun execute(userInfo: WrappedUserInfo, element: ProfilDroitData): ProfilDroitData {
         profilDroitRepository.insert(
             ProfilDroit(
                 profilDroitId = element.profilDroitId,
@@ -49,5 +47,5 @@ class CreateProfilDroitUseCase @Inject constructor(private val profilDroitReposi
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ProfilDroitData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ProfilDroitData) {}
 }

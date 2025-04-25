@@ -3,7 +3,7 @@ package remocra.usecase.zoneintegration
 import jakarta.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.ZoneIntegrationRepository
 import remocra.exception.RemocraResponseException
@@ -13,12 +13,12 @@ import remocra.utils.toGeomFromText
 class CheckZoneIntegration @Inject constructor(
     private val zoneIntegrationRepository: ZoneIntegrationRepository,
 ) : AbstractUseCase() {
-    fun checkZoneIntegration(userInfo: UserInfo?, geometry: Geometry): Result {
-        if (userInfo?.isSuperAdmin == true) {
+    fun checkZoneIntegration(userInfo: WrappedUserInfo, geometry: Geometry): Result {
+        if (userInfo.isSuperAdmin) {
             return Result.Success(true)
         }
 
-        if (userInfo?.organismeId == null) {
+        if (userInfo.organismeId == null) {
             throw ForbiddenException()
         }
 

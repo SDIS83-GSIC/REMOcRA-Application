@@ -5,7 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -21,17 +21,17 @@ class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData
         private val logger: Logger = LoggerFactory.getLogger(SynchroContactRoleUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.MOBILE_GESTIONNAIRE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.MOBILE_GESTIONNAIRE_C)) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: ContactRoleForApiMobileData, userInfo: UserInfo) {
+    override fun postEvent(element: ContactRoleForApiMobileData, userInfo: WrappedUserInfo) {
         // On ne poste pas d'évènement comme c'est une insertion dans le schéma incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: ContactRoleForApiMobileData): ContactRoleForApiMobileData {
+    override fun execute(userInfo: WrappedUserInfo, element: ContactRoleForApiMobileData): ContactRoleForApiMobileData {
         val result = incomingRepository.insertContactRole(element.contactId, element.roleId)
 
         when (result) {
@@ -47,7 +47,7 @@ class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ContactRoleForApiMobileData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ContactRoleForApiMobileData) {
         // On vérifie que le contact existe bien avant d'ajouter le role / contact
         if (!incomingRepository.checkContactExist(element.contactId)) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE, "contactId = ${element.contactId}, roleId = ${element.roleId}")

@@ -6,7 +6,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DataTableau
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.Params
@@ -82,7 +82,9 @@ class PeiUseCase : AbstractUseCase() {
     @Inject
     lateinit var appSettings: AppSettings
 
-    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: UserInfo): List<PeiRepository.PeiForTableau> {
+    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: WrappedUserInfo): List<PeiRepository.PeiForTableau> {
+        val listePei = peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
+
         return peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
     }
 
@@ -92,7 +94,7 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idIndisponibiliteTemporaire: UUID,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
 
     fun getPeiWithFilterByTournee(
@@ -101,7 +103,7 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Sort,
             >,
         idTournee: UUID,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ): List<PeiRepository.PeiForTableau> {
         param.filterBy?.idTournee = idTournee
         param.sortBy?.ordreTournee = 1
@@ -185,7 +187,7 @@ class PeiUseCase : AbstractUseCase() {
             PeiRepository.Filter,
             PeiRepository.Sort,
             >,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ): DataTableau<PeiRepository.PeiForTableau> {
         val listePeiId = getMessagePeiLongueIndispoUseCase.getListePeiAlerte(userInfo) ?: setOf()
         return DataTableau(

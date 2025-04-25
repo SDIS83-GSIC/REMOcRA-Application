@@ -16,7 +16,7 @@ import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GeometrieWithPeiId
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -209,7 +209,7 @@ class TourneeRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(peiId))
             .fetchInto()
 
-    fun getTourneeIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+    fun getTourneeIdLibelleByMotif(userInfo: WrappedUserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
         dsl.select(TOURNEE.ID.`as`("id"), TOURNEE.LIBELLE.`as`("libelle"))
             .from(TOURNEE)
             .where(TOURNEE.LIBELLE.containsIgnoreCaseUnaccent(motifLibelle))
@@ -669,7 +669,7 @@ class TourneeRepository
         .where(TOURNEE.ID.eq(tourneeId))
         .execute()
 
-    fun getTourneeByZoneIntegrationShortData(userInfo: UserInfo): Collection<TourneeShortData> {
+    fun getTourneeByZoneIntegrationShortData(userInfo: WrappedUserInfo): Collection<TourneeShortData> {
         if (userInfo.isSuperAdmin) {
             return dsl.select(TOURNEE.ID, TOURNEE.LIBELLE)
                 .from(TOURNEE)

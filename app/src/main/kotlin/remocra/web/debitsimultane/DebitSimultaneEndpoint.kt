@@ -30,7 +30,6 @@ import remocra.usecase.debitsimultane.DeleteDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.GetDebitSimultaneCompletUseCase
 import remocra.usecase.debitsimultane.GetPibiForDebitSimultaneUseCase
 import remocra.usecase.debitsimultane.UpdateDebitSimultaneUseCase
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -73,16 +72,13 @@ class DebitSimultaneEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox,
                 srid,
                 null,
                 TypeElementCarte.DEBIT_SIMULTANE,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }

@@ -2,13 +2,11 @@ package remocra.usecase.courrier
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.data.TypeDestinataire
 import remocra.data.courrier.form.CourrierData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CourrierRepository
 import remocra.db.DocumentRepository
 import remocra.db.ModeleCourrierRepository
@@ -40,18 +38,18 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
 
     @Inject private lateinit var thematiqueRepository: ThematiqueRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.COURRIER_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.COURRIER_C)) {
             throw RemocraResponseException(ErrorType.COURRIER_DROIT_FORBIDDEN)
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CourrierData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CourrierData) {
         // no-op
     }
 
     override fun execute(
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         element: CourrierData,
     ): CourrierData {
         // On va chercher le le modeleCourrier
@@ -118,7 +116,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
         return element
     }
 
-    override fun postEvent(element: CourrierData, userInfo: UserInfo) {
+    override fun postEvent(element: CourrierData, userInfo: WrappedUserInfo) {
         // On va chercher le le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         eventBus.post(
@@ -127,7 +125,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
                 pojoId = element.courrierId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.COURRIER,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )

@@ -3,11 +3,9 @@ package remocra.usecase.rcci
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.RcciFormInput
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository
 import remocra.db.RcciRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -44,26 +42,26 @@ class CreateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.RCCI_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_CREATE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: RcciFormInput, userInfo: UserInfo) {
+    override fun postEvent(element: RcciFormInput, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(documentList = null),
                 pojoId = element.rcci.rcciId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.RCCI,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: RcciFormInput): RcciFormInput {
+    override fun execute(userInfo: WrappedUserInfo, element: RcciFormInput): RcciFormInput {
         rcciRepository.insertRcci(
             Rcci(
                 rcciId = element.rcci.rcciId,
@@ -121,7 +119,7 @@ class CreateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
         return element.copy(documentList = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: RcciFormInput) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: RcciFormInput) {
         // no-op
     }
 }

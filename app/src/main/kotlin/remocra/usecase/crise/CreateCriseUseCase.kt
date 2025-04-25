@@ -1,11 +1,9 @@
 package remocra.usecase.crise
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.CriseData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CriseRepository
 import remocra.db.ToponymieRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -21,16 +19,16 @@ class CreateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.INSERT) {
 
     @Inject lateinit var toponymieRepository: ToponymieRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.CRISE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_C)
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CriseData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CriseData) {
     }
 
-    override fun execute(userInfo: UserInfo?, element: CriseData): CriseData {
+    override fun execute(userInfo: WrappedUserInfo, element: CriseData): CriseData {
         criseRepository.createCrise(element)
 
         // On remplit les L_CRISE_COMMUNE
@@ -56,14 +54,14 @@ class CreateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.INSERT) {
         return element
     }
 
-    override fun postEvent(element: CriseData, userInfo: UserInfo) {
+    override fun postEvent(element: CriseData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.criseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.CRISE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )

@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.SecurityContext
 import net.ltgt.oauth.common.TokenIntrospector
 import net.ltgt.oauth.common.TokenPrincipalProvider
 import net.ltgt.oauth.rs.TokenFilter
-import java.util.UUID
 
 /**
  * Permet de désactiver l'authent pour certaines resources JAX-RS
@@ -20,14 +19,11 @@ import java.util.UUID
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Public(val justification: String)
 
-val SecurityContext.userInfo: UserInfo?
-    get() = (userPrincipal as? RemocraUserPrincipal)?.userInfo
-
-val SecurityContext.organismeUserId: UUID?
-    get() = (userPrincipal as? RemocraUserPrincipal)?.userInfo?.organismeId
-
-val SecurityContext.organismeInfo: OrganismeInfo?
-    get() = (userPrincipal as? OrganismePrincipal)?.organismeInfo
+val SecurityContext.userInfo: WrappedUserInfo
+    get() = WrappedUserInfo().apply {
+        this.userInfo = (userPrincipal as? RemocraUserPrincipal)?.userInfo
+        this.organismeInfo = (userPrincipal as? OrganismePrincipal)?.organismeInfo
+    }
 
 class AuthenticationFeature : DynamicFeature {
     override fun configure(resourceInfo: ResourceInfo, context: FeatureContext) {

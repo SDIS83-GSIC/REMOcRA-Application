@@ -1,10 +1,8 @@
 package remocra.usecase.tournee
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.TourneeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -17,33 +15,33 @@ import remocra.usecase.AbstractCUDUseCase
 class DeleteTourneeUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
 ) : AbstractCUDUseCase<Tournee>(TypeOperation.DELETE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.TOURNEE_GESTION_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: Tournee, userInfo: UserInfo) {
+    override fun postEvent(element: Tournee, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.tourneeId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.TOURNEE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Tournee) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Tournee) {
         // Si la tournée est réservée, elle est en lecture seule => impossible de modifier ses informations
         if (element.tourneeReservationUtilisateurId != null) {
             throw RemocraResponseException(ErrorType.TOURNEE_LECTURE_SEULE)
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: Tournee): Tournee {
+    override fun execute(userInfo: WrappedUserInfo, element: Tournee): Tournee {
         // Suppression des liens de la table L_Tournee_Pei
         tourneeRepository.deleteLTourneePeiByTourneeId(element.tourneeId)
         // Suppression de l'élément dans la table Tournee

@@ -1,8 +1,7 @@
 package remocra.utils
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.ForbiddenException
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.ModeleCourrierRepository
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.RequeteSqlRepository
@@ -21,7 +20,7 @@ class BuildDynamicForm : AbstractUseCase() {
     @Inject
     private lateinit var requestUtils: RequestUtils
 
-    fun executeForModeleCourrier(userInfo: UserInfo?, listModeleCourrier: Collection<ModeleCourrierRepository.ModeleCourrierGenere>) =
+    fun executeForModeleCourrier(userInfo: WrappedUserInfo, listModeleCourrier: Collection<ModeleCourrierRepository.ModeleCourrierGenere>) =
         execute(
             userInfo,
             listeDynamicForm = listModeleCourrier.map {
@@ -48,7 +47,7 @@ class BuildDynamicForm : AbstractUseCase() {
             },
         )
 
-    fun executeForRapportPerso(userInfo: UserInfo?, listRapportPersonnalise: Collection<RapportPersonnaliseRepository.RapportPersonnaliseGenere>) =
+    fun executeForRapportPerso(userInfo: WrappedUserInfo, listRapportPersonnalise: Collection<RapportPersonnaliseRepository.RapportPersonnaliseGenere>) =
         execute(
             userInfo,
             listeDynamicForm = listRapportPersonnalise.map {
@@ -75,11 +74,7 @@ class BuildDynamicForm : AbstractUseCase() {
             },
         )
 
-    private fun execute(userInfo: UserInfo?, listeDynamicForm: Collection<DynamicFormGenere>): Collection<DynamicFormWithParametre> {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
-
+    private fun execute(userInfo: WrappedUserInfo, listeDynamicForm: Collection<DynamicFormGenere>): Collection<DynamicFormWithParametre> {
         // On s'occupe des paramètres
         val listeDynamicFormWithParametres = mutableListOf<DynamicFormWithParametre>()
         listeDynamicForm.forEach { rp ->

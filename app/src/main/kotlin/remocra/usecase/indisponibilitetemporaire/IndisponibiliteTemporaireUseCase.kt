@@ -1,7 +1,7 @@
 package remocra.usecase.indisponibilitetemporaire
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
@@ -16,7 +16,7 @@ class IndisponibiliteTemporaireUseCase : AbstractUseCase() {
     @Inject
     lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
 
-    fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>, userInfo: UserInfo): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
+    fun getAllWithListPei(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>, userInfo: WrappedUserInfo): Collection<IndisponibiliteTemporaireRepository.IndisponibiliteTemporaireWithPei> {
         val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getAllWithListPei(params, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
 
         val listeIndispoTempNonModifiable = indisponibiliteTemporaireRepository.getIndispoTemporaireHorsZC(

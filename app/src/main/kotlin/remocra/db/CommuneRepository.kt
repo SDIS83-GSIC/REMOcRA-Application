@@ -6,7 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_COMMUNE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Commune
@@ -126,7 +126,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             )
             .execute()
 
-    fun getCommuneByZoneIntegrationShortData(userInfo: UserInfo): Collection<CommuneShortData> {
+    fun getCommuneByZoneIntegrationShortData(userInfo: WrappedUserInfo): Collection<CommuneShortData> {
         if (userInfo.isSuperAdmin) {
             return dsl.select(COMMUNE.ID, COMMUNE.LIBELLE)
                 .from(COMMUNE).fetchInto()
@@ -146,7 +146,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
         val communeLibelle: String,
     )
 
-    fun getCommuneIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+    fun getCommuneIdLibelleByMotif(userInfo: WrappedUserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.LIBELLE.`as`("libelle")).from(
             userInfo.isSuperAdmin.let {
                 if (it) {

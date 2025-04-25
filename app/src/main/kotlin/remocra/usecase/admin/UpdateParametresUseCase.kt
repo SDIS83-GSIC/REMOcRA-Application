@@ -3,7 +3,7 @@ package remocra.usecase.admin
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.ParametresAdminData
 import remocra.data.ParametresAdminDataInput
 import remocra.data.enums.ErrorType
@@ -24,18 +24,18 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
     @Inject
     private lateinit var parametreRepository: ParametreRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI) && !userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI_MOBILE)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroits(droitsWeb = setOf(Droit.ADMIN_PARAM_APPLI, Droit.ADMIN_PARAM_APPLI_MOBILE))) {
             throw RemocraResponseException(ErrorType.ADMIN_PARAMETRE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: ParametresAdminDataInput, userInfo: UserInfo) {
+    override fun postEvent(element: ParametresAdminDataInput, userInfo: WrappedUserInfo) {
         // impossible de tracer un pojo qui n'a pas d'id aujourd'hui
         eventBus.post(ParametresModifiedEvent())
     }
 
-    override fun execute(userInfo: UserInfo?, element: ParametresAdminDataInput): ParametresAdminDataInput {
+    override fun execute(userInfo: WrappedUserInfo, element: ParametresAdminDataInput): ParametresAdminDataInput {
         val parametresAdminData = ParametresAdminData(
             pei = element.pei,
             general = element.general,
@@ -46,7 +46,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             peiLongueIndispo = element.peiLongueIndispo,
         )
 
-        if (userInfo!!.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+        if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
             // Général
             updateParametre(ParametreEnum.MENTION_CNIL, parametresAdminData.general.mentionCnil)
             updateParametre(ParametreEnum.MESSAGE_ENTETE, parametresAdminData.general.messageEntete)
@@ -163,7 +163,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             )
         }
         // Mobile
-        if (userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI_MOBILE)) {
+        if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI_MOBILE)) {
             updateParametre(ParametreEnum.AFFICHAGE_INDISPO, parametresAdminData.mobile.affichageIndispo?.toString())
             updateParametre(
                 ParametreEnum.AFFICHAGE_SYMBOLES_NORMALISES,
@@ -189,7 +189,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ParametresAdminDataInput) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ParametresAdminDataInput) {
         // vérif du parametre "isodistance"
         element.couvertureHydraulique.deciIsodistances?.let {
             try {

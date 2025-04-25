@@ -6,7 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
 import remocra.db.jooq.remocra.tables.pojos.Voie
@@ -117,7 +117,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
 
     fun insertVoie(newVoie: Voie) = dsl.insertInto(VOIE).set(dsl.newRecord(VOIE, newVoie)).execute()
 
-    fun getVoieByZoneIntegrationShortData(communeId: UUID, userInfo: UserInfo): Collection<VoieShortData> {
+    fun getVoieByZoneIntegrationShortData(communeId: UUID, userInfo: WrappedUserInfo): Collection<VoieShortData> {
         if (userInfo.isSuperAdmin) {
             return dsl.select(VOIE.ID, VOIE.LIBELLE, VOIE.COMMUNE_ID)
                 .from(VOIE)

@@ -55,10 +55,6 @@ class GeoserverEndpoint : AbstractEndpoint() {
 
         // L'utilisateur n'est pas superadmin ou la couche n'est pas publique, on filtre sur la zone d'intégration
         if (!couche.couchePublic) {
-            if (user == null) {
-                return forbidden().build()
-            }
-
             if (!user.isSuperAdmin) {
                 if (user.zoneCompetence == null) {
                     return forbidden().build()

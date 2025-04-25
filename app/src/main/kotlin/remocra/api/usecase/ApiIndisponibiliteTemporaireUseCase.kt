@@ -3,6 +3,7 @@ package remocra.api.usecase
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import remocra.auth.WrappedUserInfo
 import remocra.data.ApiIndispoTempFormData
 import remocra.data.ApiIndispoTemporaireData
 import remocra.data.AuteurTracabiliteData
@@ -97,16 +98,16 @@ class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
         return codeOrganisme?.let { liste.filter { it.organismeApiMaj != null && it.organismeApiMaj.equals(it) } } ?: liste
     }
 
-    fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData): Result {
+    fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, userInfo: WrappedUserInfo): Result {
         return createIndisponibiliteTemporaireUseCase.execute(
-            null, // TODO userInfo
+            userInfo,
             getIndisponibiliteTemporaiteData(apiIndispoTempFormData),
         )
     }
 
-    fun updateIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID): Result {
+    fun updateIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID, userInfo: WrappedUserInfo): Result {
         return updateIndisponibiliteTemporaireUseCase.execute(
-            null, // TODO userInfo
+            userInfo,
             getIndisponibiliteTemporaiteData(apiIndispoTempFormData, indispoTemporaireId),
         )
     }

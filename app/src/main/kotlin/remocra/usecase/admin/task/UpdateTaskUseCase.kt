@@ -2,11 +2,9 @@ package remocra.usecase.admin.task
 
 import jakarta.inject.Inject
 import org.apache.logging.log4j.core.util.CronExpression
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.TaskInputData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.TaskRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,13 +16,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
 class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepository) : AbstractCUDUseCase<TaskInputData>(typeOperation = TypeOperation.UPDATE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_TRAITEMENTS)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_TRAITEMENTS)) {
             throw RemocraResponseException(ErrorType.ADMIN_TASK_FORBIDDEN)
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: TaskInputData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: TaskInputData) {
         // La méthode isValidExpression retourne un booléan indiquant si l'expression est conforme ou non
         // Donc si false, l'expression est invalide, on remonte l'info dans le Front
         if (!CronExpression.isValidExpression(element.taskPlanification)) {
@@ -32,7 +30,7 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: TaskInputData): TaskInputData {
+    override fun execute(userInfo: WrappedUserInfo, element: TaskInputData): TaskInputData {
         taskRepository.update(
             Task(
                 taskId = element.taskId,
@@ -47,7 +45,7 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
         return element
     }
 
-    override fun postEvent(element: TaskInputData, userInfo: UserInfo) {
+    override fun postEvent(element: TaskInputData, userInfo: WrappedUserInfo) {
         // Ajout Traçabilité
         eventBus.post(
             TracabiliteEvent(
@@ -55,13 +53,7 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
                 pojoId = element.taskId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.TASK,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )

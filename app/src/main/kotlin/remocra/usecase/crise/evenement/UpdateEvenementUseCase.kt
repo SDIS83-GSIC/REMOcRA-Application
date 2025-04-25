@@ -2,12 +2,10 @@ package remocra.usecase.crise.evenement
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.EvenementData
 import remocra.data.MessageData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.EvenementRepository
 import remocra.db.MessageRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -27,6 +25,12 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
     @Inject lateinit var messageRepository: MessageRepository
 
     @Inject private lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
+
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.EVENEMENT_U)) {
+            throw RemocraResponseException(ErrorType.EVENEMENT_TYPE_FORBIDDEN_U)
+        }
+    }
     override fun getListGeometrie(element: EvenementData): Collection<Geometry> {
         return element.evenementGeometrie?.let { listOf(it) } ?: emptyList()
     }
@@ -40,26 +44,20 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.EVENEMENT_U)) {
-            throw RemocraResponseException(ErrorType.EVENEMENT_TYPE_FORBIDDEN_U)
-        }
-    }
-
-    override fun postEvent(element: EvenementData, userInfo: UserInfo) {
+    override fun postEvent(element: EvenementData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(listeDocuments = null),
                 pojoId = element.evenementId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.EVENEMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: EvenementData): EvenementData {
+    override fun execute(userInfo: WrappedUserInfo, element: EvenementData): EvenementData {
         // - evenement
         val newElement = if (element.evenementEstFerme == true) {
             element.copy(evenementStatut = EvenementStatut.CLOS, evenementDateCloture = dateUtils.now())
@@ -90,7 +88,7 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
         return element.copy(listeDocuments = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: EvenementData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: EvenementData) {
         // rien ici
     }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.couverturehydraulique.CalculData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
@@ -29,17 +29,17 @@ class CalculCouvertureUseCase : AbstractCUDUseCase<CalculData>(TypeOperation.UPD
     @Inject
     lateinit var objectMapper: ObjectMapper
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ETUDE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {
             throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: CalculData, userInfo: UserInfo) {
+    override fun postEvent(element: CalculData, userInfo: WrappedUserInfo) {
         // On ne trace pas les tracés de la couverture hydraulique
     }
 
-    override fun execute(userInfo: UserInfo?, element: CalculData): CalculData {
+    override fun execute(userInfo: WrappedUserInfo, element: CalculData): CalculData {
         // On va chercher les paramètres que l'on doit utiliser
         val profondeurCouverture = parametresProvider.getParametreInt(ParametreEnum.PROFONDEUR_COUVERTURE.name)
             ?: throw RemocraResponseException(ErrorType.CALCUL_COUVERTURE_PARAMETRE_PROFONDEUR_MANQUANT)
@@ -86,7 +86,7 @@ class CalculCouvertureUseCase : AbstractCUDUseCase<CalculData>(TypeOperation.UPD
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CalculData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CalculData) {
         // pas de contraintes
     }
 }

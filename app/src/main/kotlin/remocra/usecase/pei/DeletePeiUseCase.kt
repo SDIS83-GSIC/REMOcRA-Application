@@ -1,7 +1,7 @@
 package remocra.usecase.pei
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiData
 import remocra.data.enums.ErrorType
 import remocra.db.AireAspirationRepository
@@ -53,7 +53,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
     @Inject
     lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
 
-    override fun executeSpecific(userInfo: UserInfo?, element: PeiData) {
+    override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) {
         // Gestion des Indisponibilités temporaires
         val listeIndisponibiliteTemporaire = indisponibiliteTemporaireUseCase.getWithListPeiByPei(element.peiId)
         listeIndisponibiliteTemporaire.forEach { indisponibiliteTemporaire ->
@@ -125,19 +125,19 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         peiRepository.deleteById(element.peiId)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_D)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.PEI_D)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D)
         }
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
-        super.checkContraintes(userInfo!!, element)
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PeiData) {
+        super.checkContraintes(userInfo, element)
 
-        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_D)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_D)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
         }
-        if (!userInfo.droits.contains(Droit.TOURNEE_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
         }
 

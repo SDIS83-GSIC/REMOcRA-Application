@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.couverturehydraulique.Batiment
 import remocra.data.couverturehydraulique.Reseau
 import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
@@ -38,17 +38,17 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     @Inject
     lateinit var importShapeUtils: ImportShapeUtils
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ETUDE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {
             throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: ReseauBatimentPeiProjet, userInfo: UserInfo) {
+    override fun postEvent(element: ReseauBatimentPeiProjet, userInfo: WrappedUserInfo) {
         // On ne trace pas l'action
     }
 
-    override fun execute(userInfo: UserInfo?, element: ReseauBatimentPeiProjet): ReseauBatimentPeiProjet {
+    override fun execute(userInfo: WrappedUserInfo, element: ReseauBatimentPeiProjet): ReseauBatimentPeiProjet {
         if (element.fileReseau != null) {
             importReseau(element.fileReseau, element.etudeId)
         }
@@ -256,7 +256,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
         couvertureHydrauliqueRepository.insertPeiProjet(listPeiProjet)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ReseauBatimentPeiProjet) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ReseauBatimentPeiProjet) {
         // noop -> les vérifications sont faites dans le execute au cas par cas
     }
 }

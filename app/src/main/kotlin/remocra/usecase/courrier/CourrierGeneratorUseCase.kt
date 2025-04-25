@@ -12,7 +12,7 @@ import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.UriBuilder
 import org.jooq.JSON
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.ModeleCourrierRepository
 import remocra.db.TransactionManager
@@ -50,23 +50,20 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
      * Vérifie les droits de l'utilisateur, et déclenche une [ForbiddenException] si l'utilisateur
      * n'est pas dans le bon profil droit ou n'est pas superadmin
      */
-    fun checkProfilDroit(userInfo: UserInfo, modeleCourrierId: UUID) {
+    fun checkProfilDroit(userInfo: WrappedUserInfo, modeleCourrierId: UUID) {
         if (userInfo.isSuperAdmin) {
             return
         }
 
-        modeleCourrierRepository.checkProfilDroit(modeleCourrierId, userInfo.utilisateurId)
+        modeleCourrierRepository.checkProfilDroit(modeleCourrierId, userInfo.utilisateurId!!)
     }
 
     /** Fonction commune pour la génération de tous les courriers */
     fun execute(
         parametreCourrierInput: ParametreCourrierInput,
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         uriBuilder: UriBuilder,
     ): UrlCourrier? {
-        if (userInfo == null) {
-            throw ForbiddenException("Vous ne possédez pas les droits pour générer ce courrier")
-        }
         checkProfilDroit(userInfo, parametreCourrierInput.modeleCourrierId)
 
         var mapParameters: MutableMap<String, Any?>? = mutableMapOf()

@@ -1,7 +1,7 @@
 package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.RapportPersonnaliseRepository
 import remocra.usecase.AbstractUseCase
 import remocra.utils.BuildDynamicForm
@@ -18,8 +18,8 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var buildDynamicForm: BuildDynamicForm
 
-    fun execute(userInfo: UserInfo?) = buildDynamicForm.executeForRapportPerso(
+    fun execute(userInfo: WrappedUserInfo) = buildDynamicForm.executeForRapportPerso(
         userInfo,
-        rapportPersonnaliseRepository.getListeRapportPersonnalise(userInfo!!.utilisateurId, userInfo.isSuperAdmin),
+        rapportPersonnaliseRepository.getListeRapportPersonnalise(userInfo.utilisateurId!!, userInfo.isSuperAdmin),
     )
 }

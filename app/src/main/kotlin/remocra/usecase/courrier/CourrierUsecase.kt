@@ -1,8 +1,7 @@
 package remocra.usecase.courrier
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.ForbiddenException
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.Params
 import remocra.db.CourrierRepository
 import remocra.db.ModuleRepository
@@ -18,13 +17,10 @@ class CourrierUsecase {
 
     fun getCourrierCompletWithThematique(
         moduleId: UUID,
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         params: Params<CourrierRepository.Filter, CourrierRepository.Sort>,
     ): Collection<CourrierRepository.CourrierComplet> {
         val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
 
         return courrierRepository.getCourrierCompletWithThematique(
             listeThematiqueId = listeThematiqueId,
@@ -35,12 +31,9 @@ class CourrierUsecase {
 
     fun countCourrierCompletWithThematique(
         moduleId: UUID,
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         params: Params<CourrierRepository.Filter, CourrierRepository.Sort>,
     ): Int {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
         val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
         return courrierRepository.countCourrierCompletWithThematique(

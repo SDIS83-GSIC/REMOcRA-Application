@@ -11,10 +11,13 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 import remocra.api.usecase.ApiIndisponibiliteTemporaireUseCase
 import remocra.auth.RequireDroitsApi
+import remocra.auth.userInfo
 import remocra.data.ApiIndispoTempFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.web.AbstractEndpoint
@@ -26,6 +29,9 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var apiIndisponibiliteTemporaireUseCase: ApiIndisponibiliteTemporaireUseCase
+
+    @Context
+    lateinit var securityContext: SecurityContext
 
     @GET
     @Path("")
@@ -56,7 +62,7 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
         @NotNull @Parameter(description = "Informations de l'indisponibilité temporaire")
         indispoForm: ApiIndispoTempFormData,
     ): Response {
-        return apiIndisponibiliteTemporaireUseCase.addIndispoTemp(indispoForm).wrap()
+        return apiIndisponibiliteTemporaireUseCase.addIndispoTemp(indispoForm, securityContext.userInfo).wrap()
     }
 
     @PUT
@@ -74,6 +80,6 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
             required = true,
         ) @NotNull apiIndispoTempFormData: ApiIndispoTempFormData,
     ): Response {
-        return apiIndisponibiliteTemporaireUseCase.updateIndispoTemp(apiIndispoTempFormData, idIndispo).wrap()
+        return apiIndisponibiliteTemporaireUseCase.updateIndispoTemp(apiIndispoTempFormData, idIndispo, securityContext.userInfo).wrap()
     }
 }

@@ -1,10 +1,8 @@
 package remocra.usecase.crise
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CriseRepository
 import remocra.db.EvenementRepository
 import remocra.db.ToponymieRepository
@@ -26,20 +24,20 @@ class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDAT
 
     @Inject lateinit var evenementRepository: EvenementRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.CRISE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.CRISE_U)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: CriseDataMerge, userInfo: UserInfo) {
+    override fun postEvent(element: CriseDataMerge, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.criseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.CRISE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -56,7 +54,7 @@ class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDAT
      *                à fusionner avec la crise principale, ainsi qu'une date de fusion.
      * @return Élément contenant les informations de fusion des crises.
      */
-    override fun execute(userInfo: UserInfo?, element: CriseDataMerge): CriseDataMerge {
+    override fun execute(userInfo: WrappedUserInfo, element: CriseDataMerge): CriseDataMerge {
         // on récupère la crise dans laquelle on va fusionner les données :
         val crise1 = criseRepository.getCrise(element.criseId)
         // on récupère les crises dont les informations sont à déplacer :
@@ -111,6 +109,6 @@ class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDAT
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CriseDataMerge) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CriseDataMerge) {
     }
 }

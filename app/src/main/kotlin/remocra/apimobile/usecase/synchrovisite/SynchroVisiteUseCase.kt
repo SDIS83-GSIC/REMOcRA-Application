@@ -5,7 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -24,15 +24,15 @@ class SynchroVisiteUseCase : AbstractCUDUseCase<VisiteForApiMobileData>(TypeOper
         private val logger: Logger = LoggerFactory.getLogger(SynchroVisiteUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
         // Pas de droits particulier aujourd'hui pour faire la synchro !
     }
 
-    override fun postEvent(element: VisiteForApiMobileData, userInfo: UserInfo) {
+    override fun postEvent(element: VisiteForApiMobileData, userInfo: WrappedUserInfo) {
         // On ne poste pas d'évènement comme c'est une insertion dans le schéma incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: VisiteForApiMobileData): VisiteForApiMobileData {
+    override fun execute(userInfo: WrappedUserInfo, element: VisiteForApiMobileData): VisiteForApiMobileData {
         // On insère la visite
         val result = incomingRepository.insertVisite(element, dateUtils.getMoment(element.visiteDate))
 
@@ -54,7 +54,7 @@ class SynchroVisiteUseCase : AbstractCUDUseCase<VisiteForApiMobileData>(TypeOper
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: VisiteForApiMobileData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteForApiMobileData) {
         // On check le format de la date, s'il n'est pas bon, une erreur est catchée
         dateUtils.getMomentForResponse(element.visiteDate)
 

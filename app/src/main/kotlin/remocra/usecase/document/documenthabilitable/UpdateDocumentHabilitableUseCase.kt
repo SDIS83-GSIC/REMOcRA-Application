@@ -2,11 +2,9 @@ package remocra.usecase.document.documenthabilitable
 
 import com.google.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.DocumentHabilitableData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentHabilitableRepository
 import remocra.db.DocumentRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -28,13 +26,13 @@ class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
 
     @Inject lateinit var documentUtils: DocumentUtils
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.DOCUMENTS_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.DOCUMENTS_A)) {
             throw RemocraResponseException(ErrorType.DOCUMENT_HABILITABLE_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: DocumentHabilitableData, userInfo: UserInfo) {
+    override fun postEvent(element: DocumentHabilitableData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(
@@ -43,13 +41,13 @@ class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
                 pojoId = element.documentHabilitableId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.DOCUMENT_HABILITABLE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: DocumentHabilitableData): DocumentHabilitableData {
+    override fun execute(userInfo: WrappedUserInfo, element: DocumentHabilitableData): DocumentHabilitableData {
         val document = documentHabilitableRepository.getDocumentByDocumentHabilitable(element.documentHabilitableId)
             ?: throw RemocraResponseException(ErrorType.DOCUMENT_HABILITABLE_DOCUMENT_NOT_FOUND)
 
@@ -100,6 +98,6 @@ class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
         return element.copy(document = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: DocumentHabilitableData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: DocumentHabilitableData) {
     }
 }

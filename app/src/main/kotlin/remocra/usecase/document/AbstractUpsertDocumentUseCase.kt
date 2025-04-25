@@ -1,7 +1,7 @@
 package remocra.usecase.document
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AbstractDocumentData
 import remocra.data.AbstractDocuments
 import remocra.db.DocumentRepository
@@ -37,7 +37,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
      */
     abstract fun getRepertoire(): String
 
-    override fun execute(userInfo: UserInfo?, element: T): T {
+    override fun execute(userInfo: WrappedUserInfo, element: T): T {
         // On supprime les documents de la liste documentIdToRemove
         val listeDocsToRemove = documentRepository.getDocumentByIds(element.listeDocsToRemove)
 

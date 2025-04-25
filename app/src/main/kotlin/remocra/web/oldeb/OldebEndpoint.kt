@@ -39,7 +39,6 @@ import remocra.usecase.oldeb.SelectOldebUseCase
 import remocra.usecase.oldeb.UpdateOldebGeometryUseCase
 import remocra.usecase.oldeb.UpdateOldebUseCase
 import remocra.utils.badRequest
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -73,16 +72,13 @@ class OldebEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox,
                 srid,
                 null,
                 TypeElementCarte.OLDEB,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }

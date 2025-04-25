@@ -1,12 +1,10 @@
 package remocra.usecase.nature
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.NatureWithDiametres
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
-import remocra.data.enums.TypeSourceModification
 import remocra.db.NatureRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,26 +16,20 @@ import remocra.usecase.AbstractCUDUseCase
 
 class UpdateNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
     AbstractCUDUseCase<NatureWithDiametres>(TypeOperation.UPDATE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_NOMENCLATURE)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: NatureWithDiametres, userInfo: UserInfo) {
+    override fun postEvent(element: NatureWithDiametres, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.natureId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.NATURE,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -46,7 +38,7 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
         eventBus.post(DataCacheModifiedEvent(TypeDataCache.NATURE))
     }
 
-    override fun execute(userInfo: UserInfo?, element: NatureWithDiametres): NatureWithDiametres {
+    override fun execute(userInfo: WrappedUserInfo, element: NatureWithDiametres): NatureWithDiametres {
         natureRepository.edit(element)
 
         natureRepository.deleteLienDiametreNature(element.natureId)
@@ -54,7 +46,7 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: NatureWithDiametres) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: NatureWithDiametres) {
         if (element.natureProtected!!) {
             throw RemocraResponseException(ErrorType.ADMIN_DIAMETRE_IS_PROTECTED)
         }

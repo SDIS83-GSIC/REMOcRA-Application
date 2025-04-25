@@ -2,11 +2,9 @@ package remocra.usecase.modelecourrier
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ModeleCourrierData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -37,26 +35,26 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     @Inject
     private lateinit var requeteSqlUtils: RequeteSqlUtils
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_DROITS)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {
             throw RemocraResponseException(ErrorType.ADMIN_MODELE_COURRIER_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: ModeleCourrierData, userInfo: UserInfo) {
+    override fun postEvent(element: ModeleCourrierData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(part = null),
                 pojoId = element.modeleCourrierId!!,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MODELE_COURRIER,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: ModeleCourrierData): ModeleCourrierData {
+    override fun execute(userInfo: WrappedUserInfo, element: ModeleCourrierData): ModeleCourrierData {
         modeleCourrierRepository.run {
             updateModeleCourrier(
                 ModeleCourrier(
@@ -121,7 +119,7 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         return element.copy(part = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ModeleCourrierData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ModeleCourrierData) {
         if (modeleCourrierRepository.checkCodeExists(element.modeleCourrierCode, element.modeleCourrierId)) {
             throw RemocraResponseException(ErrorType.ADMIN_MODELE_COURRIER_CODE_EXISTS)
         }

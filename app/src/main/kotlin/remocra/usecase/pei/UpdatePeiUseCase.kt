@@ -1,6 +1,6 @@
 package remocra.usecase.pei
 
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiData
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -11,22 +11,17 @@ import java.util.UUID
 
 class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPDATE) {
 
-    override fun executeSpecific(userInfo: UserInfo?, element: PeiData) {
+    override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) {
         upsertPei(element)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.PEI_U) &&
-            !userInfo.droits.contains(Droit.PEI_CARACTERISTIQUES_U) &&
-            !userInfo.droits.contains(Droit.PEI_NUMERO_INTERNE_U) &&
-            !userInfo.droits.contains(Droit.PEI_DEPLACEMENT_U) &&
-            !userInfo.droits.contains(Droit.PEI_ADRESSE_C)
-        ) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroits(droitsWeb = setOf(Droit.PEI_U, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_NUMERO_INTERNE_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C))) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_U)
         }
     }
 
-    fun updatePeiWithId(peiId: UUID, userInfo: UserInfo?) {
+    fun updatePeiWithId(peiId: UUID, userInfo: WrappedUserInfo) {
         val typePei = peiRepository.getTypePei(peiId)
         val peiData =
             if (TypePei.PIBI == typePei) {

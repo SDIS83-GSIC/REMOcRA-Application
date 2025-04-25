@@ -2,10 +2,8 @@ package remocra.usecase.oldeb
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.data.oldeb.OldebGeometryFormData
 import remocra.db.OldebRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -32,29 +30,29 @@ class UpdateOldebGeometryUseCase @Inject constructor(
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.OLDEB_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.OLDEB_U)) {
             throw RemocraResponseException(ErrorType.OLDEB_GEOMETRY_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: OldebGeometryFormData, userInfo: UserInfo) {
+    override fun postEvent(element: OldebGeometryFormData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.oldebId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.OLDEB,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: OldebGeometryFormData): OldebGeometryFormData {
+    override fun execute(userInfo: WrappedUserInfo, element: OldebGeometryFormData): OldebGeometryFormData {
         oldebRepository.updateOldebGeometry(element.oldebId, element.oldebGeometrie)
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: OldebGeometryFormData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebGeometryFormData) {}
 }

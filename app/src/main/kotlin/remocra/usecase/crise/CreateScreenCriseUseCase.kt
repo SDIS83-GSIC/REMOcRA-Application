@@ -2,11 +2,9 @@ package remocra.usecase.crise
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.CreateDoc
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CriseRepository
 import remocra.db.DocumentRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -27,26 +25,26 @@ class CreateScreenCriseUseCase : AbstractCUDUseCase<CreateDoc>(TypeOperation.INS
 
     @Inject private lateinit var criseRepository: CriseRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.CRISE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_C)
         }
     }
 
-    override fun postEvent(element: CreateDoc, userInfo: UserInfo) {
+    override fun postEvent(element: CreateDoc, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.criseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.CRISE_DOCUMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: CreateDoc): CreateDoc {
+    override fun execute(userInfo: WrappedUserInfo, element: CreateDoc): CreateDoc {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
         val repertoire = GlobalConstants.DOSSIER_DOCUMENT_CRISE + "$documentId"
@@ -69,7 +67,7 @@ class CreateScreenCriseUseCase : AbstractCUDUseCase<CreateDoc>(TypeOperation.INS
         return element.copy(criseDocument = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CreateDoc) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CreateDoc) {
         // pas de contraintes
     }
 }

@@ -31,7 +31,6 @@ import remocra.usecase.permis.CreatePermisUseCase
 import remocra.usecase.permis.DeletePermisUseCase
 import remocra.usecase.permis.FetchPermisUseCase
 import remocra.usecase.permis.UpdatePermisUseCase
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
@@ -64,15 +63,12 @@ class PermisEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox = bbox,
                 sridSource = srid,
                 typeElementCarte = TypeElementCarte.PERMIS,
-                userInfo = securityContext.userInfo!!,
+                userInfo = securityContext.userInfo,
             ),
         ).build()
     }
@@ -115,7 +111,7 @@ class PermisEndpoint : AbstractEndpoint() {
                     permisId = permisId,
                     permisLibelle = permisInput.permisLibelle,
                     permisNumero = permisInput.permisNumero,
-                    permisInstructeurId = securityContext.userInfo!!.utilisateurId,
+                    permisInstructeurId = securityContext.userInfo.utilisateurId!!,
                     permisServiceInstructeurId = permisInput.permisServiceInstructeurId,
                     permisTypePermisInterserviceId = permisInput.permisTypePermisInterserviceId,
                     permisTypePermisAvisId = permisInput.permisTypePermisAvisId,
@@ -158,7 +154,7 @@ class PermisEndpoint : AbstractEndpoint() {
                     permisId = permisId,
                     permisLibelle = permisInput.permisLibelle,
                     permisNumero = permisInput.permisNumero,
-                    permisInstructeurId = securityContext.userInfo!!.utilisateurId,
+                    permisInstructeurId = securityContext.userInfo.utilisateurId!!,
                     permisServiceInstructeurId = permisInput.permisServiceInstructeurId,
                     permisTypePermisInterserviceId = permisInput.permisTypePermisInterserviceId,
                     permisTypePermisAvisId = permisInput.permisTypePermisAvisId,

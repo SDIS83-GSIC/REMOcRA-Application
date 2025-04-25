@@ -1,12 +1,10 @@
 package remocra.usecase.admin.anomalie
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AnomalieData
-import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
@@ -35,20 +33,20 @@ class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPD
 
     @Inject lateinit var peiUseCase: UpdatePeiUseCase
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_ANOMALIES)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ANOMALIES)) {
             throw RemocraResponseException(ErrorType.ADMIN_ANOMALIE_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: AnomalieData, userInfo: UserInfo) {
+    override fun postEvent(element: AnomalieData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.anomalieId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ANOMALIE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -57,7 +55,7 @@ class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPD
         eventBus.post(DataCacheModifiedEvent(TypeDataCache.ANOMALIE))
     }
 
-    override fun execute(userInfo: UserInfo?, element: AnomalieData): AnomalieData {
+    override fun execute(userInfo: WrappedUserInfo, element: AnomalieData): AnomalieData {
         anomalieRepository.updateAnomalie(
             Anomalie(
                 anomalieId = element.anomalieId,
@@ -98,5 +96,5 @@ class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPD
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: AnomalieData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: AnomalieData) {}
 }

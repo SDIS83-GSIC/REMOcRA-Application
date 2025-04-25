@@ -356,7 +356,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .from(TYPE_ORGANISME)
             .where(TYPE_ORGANISME.ID.eq(typeOrganismeId))
             .and(TYPE_ORGANISME.DROIT_API.isNotNull())
-            .fetchSingle(TYPE_ORGANISME.DROIT_API)
+            .fetchOne(TYPE_ORGANISME.DROIT_API)
             ?.filterNotNull()
             ?.toSet() ?: setOf()
 }

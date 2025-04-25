@@ -3,7 +3,7 @@ package remocra.apimobile.usecase
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.PeiData
 import remocra.data.PenaData
@@ -57,7 +57,7 @@ class ValideIncomingTournee : AbstractUseCase() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun execute(tourneeId: UUID, userInfo: UserInfo) {
+    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo) {
         transactionManager.transactionResult {
             val gestionnaires = incomingRepository.getGestionnaires()
 
@@ -165,7 +165,7 @@ class ValideIncomingTournee : AbstractUseCase() {
         incomingRepository.deleteContact(listeContactId)
     }
 
-    private fun gestionNewPei(userInfo: UserInfo) {
+    private fun gestionNewPei(userInfo: WrappedUserInfo) {
         val listeNewPei = incomingRepository.getNewPei()
 
         // TODO prendre en compte le domaine proprement
@@ -280,7 +280,7 @@ class ValideIncomingTournee : AbstractUseCase() {
         incomingRepository.deleteNewPei(listeNewPei.map { it.newPeiId })
     }
 
-    private fun gestionVisites(tourneeId: UUID, userInfo: UserInfo) {
+    private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo) {
         val visites = incomingRepository.getVisites(tourneeId)
         val visitesCtrlDebitPression = incomingRepository.getVisitesCtrlDebitPression(tourneeId)
         val visiteAnomalie = incomingRepository.getVisitesAnomalie(tourneeId)

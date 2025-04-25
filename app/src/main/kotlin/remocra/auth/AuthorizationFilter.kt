@@ -70,7 +70,7 @@ private class AuthorizationFilter(
 ) : AbstractOidcAuthorizationFilter() {
     // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        securityContext.userInfo?.let { it.isActif && droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
+        securityContext.userInfo.let { it.isActif == true && droitsPossibles.intersect(it.droits?.toSet() ?: emptySet()).isNotEmpty() }
 }
 
 @Priority(Priorities.AUTHORIZATION)
@@ -79,7 +79,7 @@ private class ApiMobileAuthorizationFilter(
 ) : AbstractOauthAuthorizationFilter() {
     // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        securityContext.userInfo?.let { it.isActif && droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
+        securityContext.userInfo.let { it.isActif == true && droitsPossibles.intersect(it.droits?.toSet() ?: emptySet()).isNotEmpty() }
 }
 
 @Priority(Priorities.AUTHORIZATION)
@@ -88,5 +88,5 @@ private class ApiAuthorizationFilter(
 ) : AbstractOauthAuthorizationFilter() {
     // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        securityContext.organismeInfo?.let { droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
+        securityContext.userInfo.let { droitsPossibles.intersect(it.droitsApi?.toSet() ?: emptySet()).isNotEmpty() }
 }

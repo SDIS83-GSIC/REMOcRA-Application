@@ -40,7 +40,6 @@ import remocra.usecase.pei.GetCoordonneesBySrid
 import remocra.usecase.pei.MovePeiUseCase
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
-import remocra.utils.forbidden
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -78,12 +77,9 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-        val listPei = peiUseCase.getPeiWithFilter(params, securityContext.userInfo!!)
+        val listPei = peiUseCase.getPeiWithFilter(params, securityContext.userInfo)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId, securityContext.userInfo!!.isSuperAdmin)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo.zoneCompetence?.zoneIntegrationId, securityContext.userInfo!!.isSuperAdmin)),
         )
             .build()
     }
@@ -92,7 +88,7 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/")
     @RequireDroits([Droit.PEI_R])
     fun getPeiByZoneIntegrationShortData(): Response =
-        Response.ok().entity(peiRepository.getPeiByZoneIntegrationShortData(securityContext.userInfo!!)).build()
+        Response.ok().entity(peiRepository.getPeiByZoneIntegrationShortData(securityContext.userInfo)).build()
 
     @GET
     @Path("/acces-rapide")
@@ -113,18 +109,15 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, securityContext.userInfo!!)
+        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, securityContext.userInfo)
         return Response.ok(
             DataTableau(
                 listPei,
                 peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(
                     params.filterBy,
                     idIndisponibiliteTemporaire,
-                    securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId,
-                    securityContext.userInfo!!.isSuperAdmin,
+                    securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
+                    securityContext.userInfo.isSuperAdmin,
                 ),
             ),
         )
@@ -142,18 +135,15 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
-        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, securityContext.userInfo!!)
+        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, securityContext.userInfo)
         return Response.ok(
             DataTableau(
                 listPei,
                 peiRepository.countAllPeiWithFilterByTournee(
                     params.filterBy,
                     idTournee,
-                    securityContext.userInfo!!.zoneCompetence?.zoneIntegrationId,
-                    securityContext.userInfo!!.isSuperAdmin,
+                    securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
+                    securityContext.userInfo.isSuperAdmin,
                 ),
             ),
         )
@@ -203,7 +193,7 @@ class PeiEndPoint : AbstractEndpoint() {
 
         // On ne doit pas avoir accès à la gestion des documents PEI dans tous les contextes de modification PEI.
         // Il n'est donc pas nécessaire de mettre à jour les documents si l'utilisateur n'était pas en capacité de les modifier.
-        if (securityContext.userInfo!!.droits.contains(Droit.PEI_U)) {
+        if (securityContext.userInfo.hasDroit(droitWeb = Droit.PEI_U)) {
             val resultInsertDoc = upsertDocumentPeiUseCase.execute(
                 securityContext.userInfo,
                 DocumentsPei(
@@ -309,16 +299,13 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/layer")
     @RequireDroits([Droit.PEI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getElementCarteUseCase.execute(
                 bbox,
                 srid,
                 null,
                 TypeElementCarte.PEI,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }
@@ -341,9 +328,6 @@ class PeiEndPoint : AbstractEndpoint() {
         @QueryParam("srid") srid: String,
         @QueryParam("listePeiId") listePeiId: Set<UUID>,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getElementCarteUseCase.execute(
                 bbox,

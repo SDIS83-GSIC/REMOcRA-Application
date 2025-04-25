@@ -1,7 +1,7 @@
 package remocra.usecase.typeorganisme
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.TypeOrganismeRepository
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -15,21 +15,21 @@ class UpdateTypeOrganismeDroitApiUseCase : AbstractCUDUseCase<Collection<TypeOrg
     @Inject
     lateinit var typeOrganismeRepository: TypeOrganismeRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_API)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_API)) {
             throw RemocraResponseException(ErrorType.DROIT_API_FORBIDDEN)
         }
     }
 
     override fun checkContraintes(
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         element: Collection<TypeOrganisme>,
     ) {
         // no-op
     }
 
     override fun execute(
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         element: Collection<TypeOrganisme>,
     ): Collection<TypeOrganisme> {
         element.forEach {
@@ -41,7 +41,7 @@ class UpdateTypeOrganismeDroitApiUseCase : AbstractCUDUseCase<Collection<TypeOrg
 
     override fun postEvent(
         element: Collection<TypeOrganisme>,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ) {
         // On ne trace pas comme pour les liens profil droit
     }

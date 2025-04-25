@@ -1,11 +1,9 @@
 package remocra.usecase.ficheresume
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.FicheResumeBlocData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.FicheResumeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,13 +16,13 @@ import java.util.UUID
 
 class FicheResumeUpsertUseCase @Inject constructor(private val ficheResumeRepository: FicheResumeRepository) :
     AbstractCUDUseCase<Collection<FicheResumeBlocData>>(TypeOperation.UPDATE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ADMIN_FICHE_RESUME_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: Collection<FicheResumeBlocData>, userInfo: UserInfo) {
+    override fun postEvent(element: Collection<FicheResumeBlocData>, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
@@ -32,14 +30,14 @@ class FicheResumeUpsertUseCase @Inject constructor(private val ficheResumeReposi
                 pojoId = UUID.randomUUID(),
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.FICHE_RESUME,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
     override fun execute(
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         element: Collection<FicheResumeBlocData>,
     ): Collection<FicheResumeBlocData> {
         ficheResumeRepository.deleteFicheResumeBloc()
@@ -58,7 +56,7 @@ class FicheResumeUpsertUseCase @Inject constructor(private val ficheResumeReposi
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Collection<FicheResumeBlocData>) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Collection<FicheResumeBlocData>) {
         // pas de contraintes
     }
 }

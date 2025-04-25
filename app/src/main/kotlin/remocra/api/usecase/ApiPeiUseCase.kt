@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.api.PeiUtils
 import remocra.app.DataCacheProvider
-import remocra.auth.OrganismeInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.ApiPenaFormData
 import remocra.data.ApiPibiFormData
 import remocra.data.AuteurTracabiliteData
@@ -35,11 +35,11 @@ constructor(
     private val objectMapper: ObjectMapper,
 ) : AbstractApiPeiUseCase(peiRepository) {
 
-    fun getPeiCaracteristiques(numero: String, organismeInfo: OrganismeInfo): Result {
+    fun getPeiCaracteristiques(numero: String, wrappedUserInfo: WrappedUserInfo): Result {
         val peiId = peiRepository.getPeiIdFromNumero(numero)
             ?: return Result.Error(ErrorType.PEI_INEXISTANT.toString())
 //         TODO peut pas marcher sans avoir l'organisme connecté !
-        if (!this.isPeiAccessible(peiId, organismeInfo)) {
+        if (!this.isPeiAccessible(peiId, wrappedUserInfo)) {
             return Result.Error(
                 ErrorType.FORBIDDEN.toString(),
             )
@@ -55,7 +55,7 @@ constructor(
      * @param dateString La date format YYYY-MM-DD hh:mm à partir de laquelle rechercher les changements
      * @return List<PeiDiffData>
      */
-    fun diff(dateString: String?, organismeInfo: OrganismeInfo): Result {
+    fun diff(dateString: String?, wrappedUserInfo: WrappedUserInfo): Result {
         var moment: ZonedDateTime? = null
         var valide = true
         if (dateString != null) {
@@ -102,7 +102,7 @@ constructor(
         val listModifiedPei = diffs.map { it.peiId }.toSet()
 
         // Une seule requête pour calculer leur accessibilité, on se servira de la map<numero, POJO> par la suite
-        val mapAccessibilite = listPeiAccessibilite(listModifiedPei, organismeInfo).associateBy { it.numero }
+        val mapAccessibilite = listPeiAccessibilite(listModifiedPei, wrappedUserInfo).associateBy { it.numero }
 
         return Result.Success(diffs.filter { p -> mapAccessibilite[p.numeroComplet] != null && mapAccessibilite[p.numeroComplet]!!.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet) })
     }
@@ -115,15 +115,15 @@ constructor(
      * @param idPei ID du pei
      * @return
      */
-    fun userCanEditPei(idPei: UUID, organismeInfo: OrganismeInfo): Boolean {
-        val organisme: PeiUtils.OrganismeIdType = PeiUtils.OrganismeIdType(organismeInfo)
+    fun userCanEditPei(idPei: UUID, wrappedUserInfo: WrappedUserInfo): Boolean {
+        val organisme: PeiUtils.OrganismeIdType = PeiUtils.OrganismeIdType(wrappedUserInfo)
 
         if (PeiUtils.isApiAdmin(organisme)) {
             return true
         }
 
         val peiAccessibilite =
-            listPeiAccessibilite(setOf(idPei), organismeInfo)[0]
+            listPeiAccessibilite(setOf(idPei), wrappedUserInfo)[0]
 
         if (PeiUtils.isApiAdmin(organisme)) {
             return true
@@ -144,10 +144,10 @@ constructor(
      * @param numeroComplet: Numéro complet du PEI à modifier
      * @param peiForm: Formulaire des données à modifier
      */
-    fun updatePibiCaracteristiques(numeroComplet: String, peiForm: ApiPibiFormData, organismeInfo: OrganismeInfo): Result {
+    fun updatePibiCaracteristiques(numeroComplet: String, peiForm: ApiPibiFormData, wrappedUserInfo: WrappedUserInfo): Result {
         val pei = peiRepository.getPeiFromNumero(numeroComplet)
         try {
-            checkDroits(pei, organismeInfo)
+            checkDroits(pei, wrappedUserInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -170,7 +170,7 @@ constructor(
         peiForm.reseauAdditive?.apply { pibiData.pibiAdditive = this }
 
         // TODO voir comment on veut gérer ce cas, pour l'instant on n'a pas d'a12n dans l'API
-        return updatePeiUseCase.execute(null, pibiData)
+        return updatePeiUseCase.execute(wrappedUserInfo, pibiData)
     }
 
     /**
@@ -178,10 +178,10 @@ constructor(
      * @param numeroComplet: Numéro complet du PEI à modifier
      * @param peiForm: Formulaire des données à modifier
      */
-    fun updatePenaCaracteristiques(numeroComplet: String, peiForm: ApiPenaFormData, organismeInfo: OrganismeInfo): Result {
+    fun updatePenaCaracteristiques(numeroComplet: String, peiForm: ApiPenaFormData, wrappedUserInfo: WrappedUserInfo): Result {
         val pei = peiRepository.getPeiFromNumero(numeroComplet)
         try {
-            checkDroits(pei, organismeInfo)
+            checkDroits(pei, wrappedUserInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -196,7 +196,7 @@ constructor(
         peiForm.equipeHBE?.apply { penaData.penaDisponibiliteHbe }
 
         // TODO idem PIBI
-        return updatePeiUseCase.execute(null, penaData)
+        return updatePeiUseCase.execute(wrappedUserInfo, penaData)
     }
 
     /**
@@ -205,9 +205,9 @@ constructor(
      * @param numeroComplet: String
      * @return [Result]
      */
-    fun getPeiSpecifiqueAsResult(numeroComplet: String, organismeInfo: OrganismeInfo): Result {
+    fun getPeiSpecifiqueAsResult(numeroComplet: String, wrappedUserInfo: WrappedUserInfo): Result {
         return try {
-            Result.Success(getPeiSpecifique(numeroComplet, organismeInfo))
+            Result.Success(getPeiSpecifique(numeroComplet, wrappedUserInfo))
         } catch (rre: RemocraResponseException) {
             Result.Error(rre.message)
         }

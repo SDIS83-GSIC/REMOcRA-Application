@@ -1,9 +1,8 @@
 package remocra.usecase.debitsimultane
 
 import com.google.inject.Inject
-import jakarta.ws.rs.ForbiddenException
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DebitSimultaneMesureData
 import remocra.data.enums.ParametreEnum
 import remocra.db.DebitSimultaneRepository
@@ -18,11 +17,7 @@ class GetDebitSimultaneCompletUseCase : AbstractUseCase() {
     @Inject
     private lateinit var parametresProvider: ParametresProvider
 
-    fun execute(userInfo: UserInfo?, debitSimultaneId: UUID): DebitSimultaneComplet {
-        if (userInfo == null) {
-            throw ForbiddenException()
-        }
-
+    fun execute(userInfo: WrappedUserInfo, debitSimultaneId: UUID): DebitSimultaneComplet {
         val debitSimultaneInfo = debitSimultaneRepository.getDebitSimultane(debitSimultaneId, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
 
         val listeDebitSimultaneMesure = debitSimultaneRepository.getDebitSimultaneMesure(

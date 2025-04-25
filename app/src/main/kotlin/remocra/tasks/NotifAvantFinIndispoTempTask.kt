@@ -2,7 +2,7 @@ package remocra.tasks
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.jooq.remocra.enums.TypeTask
@@ -15,7 +15,7 @@ class NotifAvantFinIndispoTempTask : SchedulableTask<NotifAvantFinIndispoTempTas
 
     private val identificationJob = this.getType().toString()
 
-    override fun execute(parameters: NotifAvantFinIndispoTempTaskParameter?, userInfo: UserInfo): NotifAvantFinIndispoTempJobResult {
+    override fun execute(parameters: NotifAvantFinIndispoTempTaskParameter?, userInfo: WrappedUserInfo): NotifAvantFinIndispoTempJobResult {
         logManager.info("[$identificationJob] Lancement de l'exécution du job")
         val indispoTempANotifier = indisponibiliteTemporaireRepository.getITToNotifyFin(parameters!!.deltaMinuteNotificationFin)
         var peiIdFromItANotifier: List<IndisponibiliteTemporaireRepository.PeiForItMoulinette> = listOf()

@@ -4,7 +4,7 @@ import jakarta.inject.Inject
 import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.db.CommuneRepository
 import remocra.db.EntrepotSigRepository
@@ -26,7 +26,7 @@ class SynchronisationSIGTask : SchedulableTask<SynchronisationSIGTaskParameter, 
 
     @Inject lateinit var sigRepository: SigRepository
 
-    override fun execute(parameters: SynchronisationSIGTaskParameter?, userInfo: UserInfo): SchedulableTaskResults? {
+    override fun execute(parameters: SynchronisationSIGTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         // La vérification des paramètres a déja été faite par checkParameters, pour éviter de spécifier !! a chaque appel, on duplique le dit paramètre
         val timeSource = TimeSource.Monotonic
         val startJob = timeSource.markNow()

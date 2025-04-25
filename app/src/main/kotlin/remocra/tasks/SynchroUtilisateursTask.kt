@@ -3,7 +3,7 @@ package remocra.tasks
 import com.google.inject.Inject
 import org.jooq.exception.IOException
 import remocra.auth.AuthModule
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypeTask
@@ -26,7 +26,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
 
     @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
 
-    override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: UserInfo): SchedulableTaskResults? {
+    override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         var i = 0
         var fini = false
 

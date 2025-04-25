@@ -3,7 +3,6 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
-import org.jooq.Geometry
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.name

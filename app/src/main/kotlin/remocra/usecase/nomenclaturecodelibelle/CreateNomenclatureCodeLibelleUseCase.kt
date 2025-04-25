@@ -1,13 +1,11 @@
 package remocra.usecase.nomenclaturecodelibelle
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
 import remocra.data.enums.TypeNomenclatureCodeLibelle
-import remocra.data.enums.TypeSourceModification
 import remocra.db.NomenclatureCodeLibelleRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -21,13 +19,13 @@ class CreateNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
     AbstractCUDUseCase<NomenclatureCodeLibelleData>(TypeOperation.INSERT) {
 
     private lateinit var typeNomenclatureCodeLibelle: TypeNomenclatureCodeLibelle
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_NOMENCLATURE)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: NomenclatureCodeLibelleData, userInfo: UserInfo) {
+    override fun postEvent(element: NomenclatureCodeLibelleData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
@@ -35,7 +33,7 @@ class CreateNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
                 typeOperation = typeOperation,
                 // Les noms sont communs entre les 2 enum
                 typeObjet = TypeObjet.valueOf(typeNomenclatureCodeLibelle.name),
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -48,12 +46,12 @@ class CreateNomenclatureCodeLibelleUseCase @Inject constructor(private val nomen
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: NomenclatureCodeLibelleData): NomenclatureCodeLibelleData {
+    override fun execute(userInfo: WrappedUserInfo, element: NomenclatureCodeLibelleData): NomenclatureCodeLibelleData {
         nomenclatureCodeLibelleDataRepository.create(typeNomenclatureCodeLibelle, element)
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: NomenclatureCodeLibelleData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: NomenclatureCodeLibelleData) {
         if (nomenclatureCodeLibelleDataRepository.checkCodeExists(typeNomenclatureCodeLibelle, element.code, null)) {
             throw RemocraResponseException(ErrorType.ADMIN_NOMENC_CODE_EXISTS)
         }

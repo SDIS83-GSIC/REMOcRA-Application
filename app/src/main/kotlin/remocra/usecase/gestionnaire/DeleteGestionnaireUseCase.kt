@@ -1,10 +1,8 @@
 package remocra.usecase.gestionnaire
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.GestionnaireRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,32 +16,32 @@ class DeleteGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation
 
     @Inject lateinit var gestionnaireRepository: GestionnaireRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.GEST_SITE_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {
             throw RemocraResponseException(ErrorType.GESTIONNAIRE_FORBIDDEN_DELETE)
         }
     }
 
-    override fun postEvent(element: Gestionnaire, userInfo: UserInfo) {
+    override fun postEvent(element: Gestionnaire, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.gestionnaireId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.GESTIONNAIRE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: Gestionnaire): Gestionnaire {
+    override fun execute(userInfo: WrappedUserInfo, element: Gestionnaire): Gestionnaire {
         gestionnaireRepository.deleteGestionnaire(element.gestionnaireId)
 
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Gestionnaire) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Gestionnaire) {
         if (gestionnaireRepository.gestionnaireUsedInPei(element.gestionnaireId)) {
             throw RemocraResponseException(ErrorType.GESTIONNAIRE_USED_IN_PEI)
         }

@@ -1,7 +1,7 @@
 package remocra.utils
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.ModeleCourrierData
 import remocra.data.RapportPersonnaliseData
@@ -23,7 +23,7 @@ class RequeteSqlUtils {
     @Inject
     private lateinit var requestUtils: RequestUtils
 
-    private fun testParametreRequeteSql(userInfo: UserInfo?, parametreRequete: RapportCourrierParametreData): List<IdLibelleRapportPersonnalise> {
+    private fun testParametreRequeteSql(userInfo: WrappedUserInfo, parametreRequete: RapportCourrierParametreData): List<IdLibelleRapportPersonnalise> {
         try {
             val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametreRequete.rapportCourrierParametreSourceSql!!)
             return rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee)
@@ -35,7 +35,7 @@ class RequeteSqlUtils {
         }
     }
 
-    fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
+    fun checkContraintes(userInfo: WrappedUserInfo, element: RapportPersonnaliseData) {
         checkContraintes(
             userInfo,
             RapportCourrierData(
@@ -67,7 +67,7 @@ class RequeteSqlUtils {
         )
     }
 
-    fun checkContraintes(userInfo: UserInfo?, element: ModeleCourrierData) {
+    fun checkContraintes(userInfo: WrappedUserInfo, element: ModeleCourrierData) {
         checkContraintes(
             userInfo,
             RapportCourrierData(
@@ -99,7 +99,7 @@ class RequeteSqlUtils {
         )
     }
 
-    private fun checkContraintes(userInfo: UserInfo?, element: RapportCourrierData) {
+    private fun checkContraintes(userInfo: WrappedUserInfo, element: RapportCourrierData) {
         // Aucun paramètre ne doivent avoir le même code
         if (element.listeRapportCourrierParametre.map { it.rapportCourrierParametreCode }.distinct().size != element.listeRapportCourrierParametre.size) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE)

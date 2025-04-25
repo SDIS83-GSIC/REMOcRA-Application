@@ -1,7 +1,7 @@
 package remocra.usecase.tournee
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DataTableau
 import remocra.data.Params
 import remocra.data.enums.DeltaDate
@@ -15,9 +15,9 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
 
     fun fetchTourneeData(
         params: Params<Filter, Sort>,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
     ): DataTableau<TourneeRepository.TourneeComplete>? {
-        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds)
+        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!)
 
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete

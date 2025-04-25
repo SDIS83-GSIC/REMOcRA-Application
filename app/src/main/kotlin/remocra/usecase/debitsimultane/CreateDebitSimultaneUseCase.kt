@@ -8,11 +8,9 @@ import org.locationtech.jts.geom.MultiPoint
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.GlobalConstants
 import remocra.app.AppSettings
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.DebitSimultaneData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DebitSimultaneRepository
 import remocra.db.DocumentRepository
 import remocra.db.PeiRepository
@@ -45,26 +43,26 @@ class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
     @Inject
     private lateinit var documentUtils: DocumentUtils
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.DEBITS_SIMULTANES_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.DEBITS_SIMULTANES_A)) {
             throw RemocraResponseException(ErrorType.DEBIT_SIMULTANE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: DebitSimultaneData, userInfo: UserInfo) {
+    override fun postEvent(element: DebitSimultaneData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(listeDocument = null),
                 pojoId = element.debitSimultaneId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.DEBIT_SIMULTANE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: DebitSimultaneData): DebitSimultaneData {
+    override fun execute(userInfo: WrappedUserInfo, element: DebitSimultaneData): DebitSimultaneData {
         // On insère le débit simultané
         // Ce sont les PEI de la dernière mesure qui comptent
         val listePeiDerniereMesure = element.listeDebitSimultaneMesure.sortedBy { it.debitSimultaneMesureDateMesure }.last().listePeiId
@@ -147,7 +145,7 @@ class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
         return element.copy(listeDocument = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: DebitSimultaneData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: DebitSimultaneData) {
         // On doit avoir au moins une mesure
         if (element.listeDebitSimultaneMesure.isEmpty()) {
             throw RemocraResponseException(ErrorType.DEBIT_SIMULTANE_MESURE)

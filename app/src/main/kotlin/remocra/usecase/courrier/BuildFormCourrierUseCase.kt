@@ -1,7 +1,7 @@
 package remocra.usecase.courrier
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
@@ -19,8 +19,8 @@ class BuildFormCourrierUseCase : AbstractUseCase() {
     @Inject
     private lateinit var buildDynamicForm: BuildDynamicForm
 
-    fun execute(userInfo: UserInfo?, typeModule: TypeModule) = buildDynamicForm.executeForModeleCourrier(
+    fun execute(userInfo: WrappedUserInfo, typeModule: TypeModule) = buildDynamicForm.executeForModeleCourrier(
         userInfo,
-        modeleCourrierRepository.getListeModeleCourrier(userInfo!!.utilisateurId, userInfo.isSuperAdmin, typeModule),
+        modeleCourrierRepository.getListeModeleCourrier(userInfo.utilisateurId!!, userInfo.isSuperAdmin, typeModule),
     )
 }

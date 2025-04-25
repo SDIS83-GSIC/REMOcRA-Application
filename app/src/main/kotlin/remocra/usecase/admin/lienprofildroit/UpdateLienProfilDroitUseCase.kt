@@ -1,7 +1,7 @@
 package remocra.usecase.admin.lienprofildroit
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.ProfilDroitData
 import remocra.data.enums.ErrorType
 import remocra.db.ProfilDroitRepository
@@ -15,15 +15,15 @@ class UpdateLienProfilDroitUseCase @Inject constructor(private val profilDroitRe
     AbstractCUDUseCase<Collection<ProfilDroitData>>(
         TypeOperation.UPDATE,
     ) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_GROUPE_UTILISATEUR)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_GROUPE_UTILISATEUR)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: Collection<ProfilDroitData>, userInfo: UserInfo) { }
+    override fun postEvent(element: Collection<ProfilDroitData>, userInfo: WrappedUserInfo) { }
 
-    override fun execute(userInfo: UserInfo?, element: Collection<ProfilDroitData>): Collection<ProfilDroitData> {
+    override fun execute(userInfo: WrappedUserInfo, element: Collection<ProfilDroitData>): Collection<ProfilDroitData> {
         element.forEach { profilDroit ->
             profilDroitRepository.updateDroits(
                 ProfilDroit(
@@ -38,5 +38,5 @@ class UpdateLienProfilDroitUseCase @Inject constructor(private val profilDroitRe
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Collection<ProfilDroitData>) { }
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Collection<ProfilDroitData>) { }
 }

@@ -1,7 +1,7 @@
 package remocra.usecase.admin.lienprofilfonctionnalite
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.LienProfilFonctionnaliteRepository
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -14,18 +14,18 @@ class DeleteLienProfilFonctionnaliteUseCase @Inject constructor(private val lien
     AbstractCUDUseCase<LProfilUtilisateurOrganismeDroit>(
         TypeOperation.DELETE,
     ) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_GROUPE_UTILISATEUR)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_GROUPE_UTILISATEUR)) {
             throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: LProfilUtilisateurOrganismeDroit, userInfo: UserInfo) { }
+    override fun postEvent(element: LProfilUtilisateurOrganismeDroit, userInfo: WrappedUserInfo) { }
 
-    override fun execute(userInfo: UserInfo?, element: LProfilUtilisateurOrganismeDroit): LProfilUtilisateurOrganismeDroit {
+    override fun execute(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeDroit): LProfilUtilisateurOrganismeDroit {
         lienProfilFonctionnaliteRepository.delete(element)
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: LProfilUtilisateurOrganismeDroit) { }
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeDroit) { }
 }

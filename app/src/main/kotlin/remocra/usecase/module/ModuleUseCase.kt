@@ -2,7 +2,7 @@ package remocra.usecase.module
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DocumentCourrierData
 import remocra.db.ModuleRepository
 import remocra.db.jooq.remocra.enums.TypeModule
@@ -14,7 +14,7 @@ class ModuleUseCase : AbstractUseCase() {
 
     @Inject lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
 
-    fun execute(uriInfo: UriBuilder, userInfo: UserInfo?): List<ModuleWithImageLink> {
+    fun execute(uriInfo: UriBuilder, userInfo: WrappedUserInfo): List<ModuleWithImageLink> {
         val listeModule = moduleRepository.getModules()
 
         val listeLThematiqueModule = moduleRepository.getModuleThematique()

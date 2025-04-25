@@ -1,11 +1,9 @@
 package remocra.usecase.crise.evenement.document
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.CriseDocumentData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -18,26 +16,26 @@ class CreateCriseDocument : AbstractCUDUseCase<CriseDocumentData>(TypeOperation.
 
     @Inject lateinit var upsertDocumentCriseUseCase: UpsertDocumentCriseUseCase
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.CRISE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_C)
         }
     }
 
-    override fun postEvent(element: CriseDocumentData, userInfo: UserInfo) {
+    override fun postEvent(element: CriseDocumentData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(listDocument = null),
                 pojoId = element.criseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.CRISE_DOCUMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: CriseDocumentData): CriseDocumentData {
+    override fun execute(userInfo: WrappedUserInfo, element: CriseDocumentData): CriseDocumentData {
         // insérer dans les documents
         if (element.listDocument != null) {
             upsertDocumentCriseUseCase.execute(
@@ -50,7 +48,7 @@ class CreateCriseDocument : AbstractCUDUseCase<CriseDocumentData>(TypeOperation.
         return element.copy(listDocument = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CriseDocumentData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CriseDocumentData) {
         // pas de contraintes
     }
 }

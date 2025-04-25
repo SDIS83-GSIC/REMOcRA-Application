@@ -3,7 +3,7 @@ package remocra.usecase.oldeb
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.oldeb.OldebForm
 import remocra.data.oldeb.OldebFormInput
@@ -23,8 +23,8 @@ import kotlin.reflect.jvm.javaMethod
 class SelectOldebUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
 ) : AbstractUseCase() {
-    fun execute(userInfo: UserInfo?, oldebId: UUID): Result {
-        if (userInfo == null || !userInfo.droits.contains(Droit.OLDEB_U)) {
+    fun execute(userInfo: WrappedUserInfo, oldebId: UUID): Result {
+        if (!userInfo.hasDroit(droitWeb = Droit.OLDEB_U)) {
             throw RemocraResponseException(ErrorType.OLDEB_FORBIDDEN)
         }
 

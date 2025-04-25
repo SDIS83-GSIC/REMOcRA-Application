@@ -12,7 +12,7 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.selectDistinct
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.DestinataireData
 import remocra.data.Params
 import remocra.data.TypeDestinataire
@@ -63,7 +63,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
 
     fun getCourrierCompletWithThematique(
         listeThematiqueId: Collection<UUID>,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
         params: Params<Filter, Sort>?,
     ): Collection<CourrierComplet> {
         return dsl.selectDistinct(
@@ -134,7 +134,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
     }
     fun countCourrierCompletWithThematique(
         listeThematiqueId: Collection<UUID>,
-        userInfo: UserInfo,
+        userInfo: WrappedUserInfo,
         params: Params<Filter, Sort>?,
     ): Int =
         dsl.selectDistinct(

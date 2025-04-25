@@ -1,10 +1,8 @@
 package remocra.usecase.oldebproprietaire
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.data.oldeb.OldebProprietaireForm
 import remocra.db.ProprietaireRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -16,26 +14,26 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
 class CreateProprietaireUseCase @Inject constructor(private val proprietaireRepository: ProprietaireRepository) : AbstractCUDUseCase<OldebProprietaireForm>(TypeOperation.INSERT) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.OLDEB_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.OLDEB_C)) {
             throw RemocraResponseException(ErrorType.OLDEB_PROPRIETAIRE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: OldebProprietaireForm, userInfo: UserInfo) {
+    override fun postEvent(element: OldebProprietaireForm, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.oldebProprietaireId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.OLDEB_PROPRIETAIRE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: OldebProprietaireForm): OldebProprietaireForm {
+    override fun execute(userInfo: WrappedUserInfo, element: OldebProprietaireForm): OldebProprietaireForm {
         proprietaireRepository.insertProprietaire(
             OldebProprietaire(
                 oldebProprietaireId = element.oldebProprietaireId,
@@ -57,7 +55,7 @@ class CreateProprietaireUseCase @Inject constructor(private val proprietaireRepo
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: OldebProprietaireForm) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebProprietaireForm) {
         // no-op
     }
 }

@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.api.usecase.ApiVisitesUseCase
 import remocra.auth.RequireDroitsApi
-import remocra.auth.organismeInfo
+import remocra.auth.userInfo
 import remocra.data.ApiVisiteFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.exception.RemocraResponseException
@@ -76,7 +76,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations de la visite", required = true) form: ApiVisiteFormData,
     ): Response {
-        return apiVisitesUseCase.addVisite(numeroComplet, form, securityContext.organismeInfo!!).wrap()
+        return apiVisitesUseCase.addVisite(numeroComplet, form, securityContext.userInfo).wrap()
     }
 
     @GET
@@ -88,7 +88,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,
     ): Response {
-        return apiVisitesUseCase.getVisiteSpecifique(numeroComplet, idVisite, securityContext.organismeInfo!!).wrap()
+        return apiVisitesUseCase.getVisiteSpecifique(numeroComplet, idVisite, securityContext.userInfo).wrap()
     }
 
     @PUT
@@ -116,6 +116,6 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,
     ): Response {
-        return apiVisitesUseCase.deleteVisite(numeroComplet, idVisite, securityContext.organismeInfo!!).wrap()
+        return apiVisitesUseCase.deleteVisite(numeroComplet, idVisite, securityContext.userInfo).wrap()
     }
 }

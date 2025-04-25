@@ -24,7 +24,6 @@ import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.peiPrescrit.CreatePeiPrescritUseCase
 import remocra.usecase.peiPrescrit.DeletePeiPrescritUseCase
 import remocra.usecase.peiPrescrit.UpdatePeiPrescritUseCase
-import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -58,15 +57,12 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response {
-        if (securityContext.userInfo == null) {
-            return forbidden().build()
-        }
         return Response.ok(
             getPointCarteUseCase.execute(
                 bbox = bbox,
                 sridSource = srid,
                 typeElementCarte = TypeElementCarte.PEI_PRESCRIT,
-                userInfo = securityContext.userInfo!!,
+                userInfo = securityContext.userInfo,
             ),
         ).build()
     }

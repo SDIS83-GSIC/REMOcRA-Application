@@ -6,6 +6,7 @@ import net.ltgt.oidc.servlet.KeycloakUserPrincipal
 import net.ltgt.oidc.servlet.SessionInfo
 import net.ltgt.oidc.servlet.UserPrincipal
 import net.ltgt.oidc.servlet.UserPrincipalFactory
+import remocra.data.enums.TypeSourceModification
 import remocra.db.DroitsRepository
 import remocra.db.OrganismeRepository
 import remocra.db.ProfilDroitRepository
@@ -65,7 +66,7 @@ class RemocraUserPrincipalFactory @Inject constructor(
 
         session.setAttribute(
             USER_INFO_SESSION_ATTRIBUTE_NAME,
-            UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit),
+            UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit, TypeSourceModification.REMOCRA_WEB),
         )
     }
 }

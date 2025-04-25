@@ -1,11 +1,9 @@
 package remocra.usecase.couverturehydraulique
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.EtudeData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -21,13 +19,13 @@ class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var upsertDocumentEtudeUseCase: UpsertDocumentEtudeUseCase
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ETUDE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {
             throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: EtudeData, userInfo: UserInfo) {
+    override fun postEvent(element: EtudeData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(
@@ -36,13 +34,13 @@ class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
                 pojoId = element.etudeId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: EtudeData): EtudeData {
+    override fun execute(userInfo: WrappedUserInfo, element: EtudeData): EtudeData {
         couvertureHydrauliqueRepository.deleteLEtudeCommune(element.etudeId)
 
         // On remplit les L_ETUDE_COMMUNE
@@ -72,7 +70,7 @@ class UpdateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.UPDATE) {
         return element.copy(listeDocument = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: EtudeData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: EtudeData) {
         if (couvertureHydrauliqueRepository.checkNumeroExists(element.etudeNumero, element.etudeId)) {
             throw RemocraResponseException(ErrorType.ETUDE_NUMERO_UNIQUE)
         }

@@ -3,7 +3,7 @@ package remocra.web.carto
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.TypeModule
@@ -21,12 +21,12 @@ class LayersRetriever {
     @Inject
     lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
 
-    fun getData(module: TypeModule, userInfo: UserInfo?, typeId: UUID? = null): List<LayerGroupData> {
-        val profil = userInfo?.utilisateurId?.let {
+    fun getData(module: TypeModule, userInfo: WrappedUserInfo): List<LayerGroupData> {
+        val profil = userInfo.utilisateurId?.let {
             droitsRepository.getProfilDroitFromUser(it)
         }
 
-        val coucheMap = coucheRepository.getCoucheMap(module, profil, userInfo!!.isSuperAdmin)
+        val coucheMap = coucheRepository.getCoucheMap(module, profil, userInfo.isSuperAdmin)
         val groupeCoucheList = coucheRepository.getGroupeCoucheList()
 
         return groupeCoucheList.map { group ->

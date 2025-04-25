@@ -1,7 +1,7 @@
 package remocra.usecase.rapportpersonnalise
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.csv.CsvWriter
 import remocra.data.GenererRapportPersonnaliseData
 import remocra.db.RapportPersonnaliseRepository
@@ -23,7 +23,7 @@ class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var csvWriter: CsvWriter
 
-    fun execute(userInfo: UserInfo?, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): ByteArrayOutputStream {
+    fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): ByteArrayOutputStream {
         var requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
 
         // On remplace avec les données paramètres fournies

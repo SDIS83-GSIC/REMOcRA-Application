@@ -2,11 +2,9 @@ package remocra.usecase.indisponibilitetemporaire
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -23,20 +21,14 @@ class CreateIndisponibiliteTemporaireUseCase
     private val peiRepository: PeiRepository,
 ) :
     AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
-    override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: UserInfo) {
+    override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.indisponibiliteTemporaireId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.INDISPONIBILITE_TEMPORAIRE,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -47,7 +39,7 @@ class CreateIndisponibiliteTemporaireUseCase
         return element
     }
 
-    override fun execute(userInfo: UserInfo?, element: IndisponibiliteTemporaireData): IndisponibiliteTemporaireData {
+    override fun execute(userInfo: WrappedUserInfo, element: IndisponibiliteTemporaireData): IndisponibiliteTemporaireData {
         val indisponibiliteTemporaire = IndisponibiliteTemporaire(
             indisponibiliteTemporaireId = element.indisponibiliteTemporaireId,
             indisponibiliteTemporaireMotif = element.indisponibiliteTemporaireMotif,
@@ -75,7 +67,7 @@ class CreateIndisponibiliteTemporaireUseCase
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: IndisponibiliteTemporaireData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: IndisponibiliteTemporaireData) {
         element.indisponibiliteTemporaireDateFin?.let {
             if (element.indisponibiliteTemporaireDateDebut > element.indisponibiliteTemporaireDateFin) {
                 throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FIN_AVANT_DEBUT)
@@ -87,8 +79,8 @@ class CreateIndisponibiliteTemporaireUseCase
         return peiRepository.getGeometriesPei(element.indisponibiliteTemporaireListePeiId)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.INDISPO_TEMP_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_C)) {
             throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE)
         }
     }

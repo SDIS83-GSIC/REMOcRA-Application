@@ -2,7 +2,7 @@ package remocra.usecase.admin.couches
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.CoucheFormData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
@@ -21,17 +21,17 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
 
     @Inject lateinit var objectMapper: ObjectMapper
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_COUCHE_CARTOGRAPHIQUE)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_COUCHE_CARTOGRAPHIQUE)) {
             throw RemocraResponseException(ErrorType.ADMIN_COUCHES)
         }
     }
 
-    override fun postEvent(element: CoucheFormData, userInfo: UserInfo) {
+    override fun postEvent(element: CoucheFormData, userInfo: WrappedUserInfo) {
         eventBus.post(DataCacheModifiedEvent(TypeDataCache.COUCHE))
     }
 
-    override fun execute(userInfo: UserInfo?, element: CoucheFormData): CoucheFormData {
+    override fun execute(userInfo: WrappedUserInfo, element: CoucheFormData): CoucheFormData {
         coucheRepository.clearProfilDroit()
         coucheRepository.clearModule()
         coucheRepository.removeOldCouche(element.data.map { groupe -> groupe.coucheList.map { couche -> couche.coucheId } }.flatten())
@@ -90,7 +90,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
         return element.copy(iconeList = listOf(), legendeList = listOf())
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: CoucheFormData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheFormData) {
         // no-op
     }
 }

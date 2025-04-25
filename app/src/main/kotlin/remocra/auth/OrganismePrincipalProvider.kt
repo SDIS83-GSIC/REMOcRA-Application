@@ -7,6 +7,7 @@ import jakarta.inject.Provider
 import jakarta.inject.Singleton
 import net.ltgt.oauth.common.CachedTokenPrincipalProvider
 import net.ltgt.oauth.common.TokenPrincipal
+import remocra.data.enums.TypeSourceModification
 import remocra.db.OrganismeRepository
 import remocra.db.TypeOrganismeRepository
 
@@ -24,10 +25,13 @@ class OrganismePrincipalProvider @Inject constructor(
                 return@let OrganismePrincipal(
                     introspectionResponse,
                     OrganismeInfo(
-                        organisme.organismeId,
-                        organisme.organismeLibelle,
-                        droits,
-                        typeOrganismeRepository.get().getByOrganismeId(organisme.organismeId),
+                        organismeId = organisme.organismeId,
+                        code = organisme.organismeCode,
+                        libelle = organisme.organismeLibelle,
+                        email = organisme.organismeEmailContact!!,
+                        droits = droits,
+                        typeOrganismeCode = typeOrganismeRepository.get().getByOrganismeId(organisme.organismeId),
+                        TypeSourceModification.API,
                     ),
                 )
             }

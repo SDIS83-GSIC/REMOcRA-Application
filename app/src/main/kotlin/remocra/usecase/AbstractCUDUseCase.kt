@@ -3,7 +3,8 @@ import com.google.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.Response
 import org.jooq.exception.NoDataFoundException
-import remocra.auth.UserInfo
+import remocra.auth.OrganismeInfo
+import remocra.auth.WrappedUserInfo
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventBus
@@ -18,14 +19,18 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
      * Vérifie les droits de l'utilisateur, et déclenche une [ForbiddenException] si l'utilisateur
      * n'est pas habilité convenablement
      */
-    protected abstract fun checkDroits(userInfo: UserInfo)
+    protected abstract fun checkDroits(userInfo: WrappedUserInfo)
+
+    protected fun checkDroitsOrganisme(organismeInfo: OrganismeInfo?) {
+        // no op, à override au besoin
+    }
 
     /**
      * Vérifie si l'action peut être faite
      * exemple : dans le cas d'une suppression de PEI, on vérifie s'il est utilisé quelque part
      * Doit déclencher des [Exception] si les contraintes ne sont pas vérifiées
      */
-    protected abstract fun checkContraintes(userInfo: UserInfo?, element: T)
+    protected abstract fun checkContraintes(userInfo: WrappedUserInfo, element: T)
 
     /** Exécute la logique métier d'insert / update / delete.
      *
@@ -34,7 +39,7 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
      * @param element L'élément à enregistrer
      * @return T l'élément enregistré
      */
-    protected abstract fun execute(userInfo: UserInfo?, element: T): T
+    protected abstract fun execute(userInfo: WrappedUserInfo, element: T): T
 
     /**
      * Point d'entrée du useCase permettant de vérifier les droits et de déclencher l'action au sein
@@ -45,12 +50,8 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
      * @return Result : dans le cas d'un success, on peut au besoin faire retourner n'importe quoi
      * dans le success, pour le faire transiter côté client, mais ce n'est pas obligatoire.
      */
-    open fun execute(userInfo: UserInfo?, element: T, mainTransactionManager: TransactionManager? = null): Result {
+    open fun execute(userInfo: WrappedUserInfo, element: T, mainTransactionManager: TransactionManager? = null): Result {
         try {
-            // TODO ne plus rendre nullable lorsque tous les cas d'utilisation seront développés !
-            if (userInfo == null) {
-                throw ForbiddenException()
-            }
             checkDroits(userInfo)
             checkContraintes(userInfo, element)
 
@@ -80,5 +81,5 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
     /**
      * Permet de lancer un évènement suite à la mise à jour / insertion ou suppression d'un objet
      */
-    protected abstract fun postEvent(element: T, userInfo: UserInfo)
+    protected abstract fun postEvent(element: T, userInfo: WrappedUserInfo)
 }

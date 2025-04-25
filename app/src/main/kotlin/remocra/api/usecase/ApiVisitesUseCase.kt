@@ -1,7 +1,7 @@
 package remocra.api.usecase
 
 import jakarta.inject.Inject
-import remocra.auth.OrganismeInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
@@ -70,10 +70,10 @@ constructor(
      * @return [Result]
      *
      */
-    fun addVisite(numeroComplet: String, form: ApiVisiteFormData, organismeInfo: OrganismeInfo): Result {
-        val pei = getPeiSpecifique(numeroComplet, organismeInfo)
+    fun addVisite(numeroComplet: String, form: ApiVisiteFormData, userInfo: WrappedUserInfo): Result {
+        val pei = getPeiSpecifique(numeroComplet, userInfo)
         try {
-            checkDroits(pei, organismeInfo)
+            checkDroits(pei, userInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -94,14 +94,13 @@ constructor(
 
         )
 
-        // TODO le user ne correspond pas encore
-        return createVisiteUseCase.execute(null, visiteData)
+        return createVisiteUseCase.execute(userInfo, visiteData)
     }
 
-    fun getVisiteSpecifique(numeroComplet: String, visiteIdString: String, organismeInfo: OrganismeInfo): Result {
+    fun getVisiteSpecifique(numeroComplet: String, visiteIdString: String, userInfo: WrappedUserInfo): Result {
         try {
-            val pei = getPeiSpecifique(numeroComplet, organismeInfo)
-            checkDroits(pei, organismeInfo)
+            val pei = getPeiSpecifique(numeroComplet, userInfo)
+            checkDroits(pei, userInfo)
 
             val visiteId = UUID.fromString(visiteIdString)
             val visite: ApiVisiteSpecifiqueData = visiteRepository.getVisiteForApi(visiteId)
@@ -118,10 +117,10 @@ constructor(
      *
      * @return [Result]
      */
-    fun deleteVisite(numeroComplet: String, visiteIdString: String, organismeInfo: OrganismeInfo): Result {
+    fun deleteVisite(numeroComplet: String, visiteIdString: String, userInfo: WrappedUserInfo): Result {
         try {
             val visiteComplete = visiteRepository.getVisiteCompleteByVisiteId(UUID.fromString(visiteIdString))
-            val pei = getPeiSpecifique(numeroComplet, organismeInfo)
+            val pei = getPeiSpecifique(numeroComplet, userInfo)
 
             if (visiteComplete.visitePeiId != pei.peiId) {
                 return Result.Error(ErrorType.VISITE_INEXISTANTE.toString())
@@ -149,9 +148,8 @@ constructor(
                 ),
             )
             // TODO vérifier 2201, 2110 au moins
-            // TODO le userInfo !
             return deleteVisiteUseCase.execute(
-                userInfo = null,
+                userInfo = userInfo,
                 element = visiteDataToDelete,
             )
         } catch (iae: IllegalArgumentException) {

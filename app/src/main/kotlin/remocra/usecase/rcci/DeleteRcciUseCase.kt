@@ -2,10 +2,8 @@ package remocra.usecase.rcci
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.DocumentRepository
 import remocra.db.RcciRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -28,26 +26,26 @@ class DeleteRcciUseCase : AbstractCUDUseCase<Rcci>(TypeOperation.DELETE) {
     @Inject
     lateinit var documentRepository: DocumentRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.RCCI_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_DELETE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: Rcci, userInfo: UserInfo) {
+    override fun postEvent(element: Rcci, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.rcciId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.RCCI,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: Rcci): Rcci {
+    override fun execute(userInfo: WrappedUserInfo, element: Rcci): Rcci {
         val documentIdList = rcciRepository.selectDocument(element.rcciId).map { it.documentId }
         rcciRepository.deleteDocument(element.rcciId)
         documentRepository.deleteDocumentByIds(documentIdList)
@@ -58,7 +56,7 @@ class DeleteRcciUseCase : AbstractCUDUseCase<Rcci>(TypeOperation.DELETE) {
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Rcci) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Rcci) {
         // no-op
     }
 }

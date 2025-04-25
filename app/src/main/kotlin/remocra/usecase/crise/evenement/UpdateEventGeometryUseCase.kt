@@ -2,12 +2,10 @@ package remocra.usecase.crise.evenement
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.EvenementGeometrieData
 import remocra.data.MessageData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.EvenementRepository
 import remocra.db.MessageRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -37,26 +35,26 @@ class UpdateEventGeometryUseCase : AbstractCUDGeometrieUseCase<EvenementGeometri
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.CRISE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.CRISE_U)) {
             throw RemocraResponseException(ErrorType.EVENEMENT_GEOMETRY_UPDATE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: EvenementGeometrieData, userInfo: UserInfo) {
+    override fun postEvent(element: EvenementGeometrieData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.eventId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.EVENEMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: EvenementGeometrieData): EvenementGeometrieData {
+    override fun execute(userInfo: WrappedUserInfo, element: EvenementGeometrieData): EvenementGeometrieData {
         eventRepository.updateGeometry(element.eventId, element.eventGeometrie)
 
         // - message
@@ -77,7 +75,7 @@ class UpdateEventGeometryUseCase : AbstractCUDGeometrieUseCase<EvenementGeometri
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: EvenementGeometrieData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: EvenementGeometrieData) {
         // no-op
     }
 }

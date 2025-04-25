@@ -6,15 +6,13 @@ import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiData
 import remocra.data.PeiForCalculDispoData
 import remocra.data.PeiForNumerotationData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
@@ -56,14 +54,14 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject lateinit var penaRepository: PenaRepository
 
-    override fun postEvent(element: PeiData, userInfo: UserInfo) {
+    override fun postEvent(element: PeiData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.peiId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PEI,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
@@ -97,7 +95,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         return element
     }
 
-    override fun execute(userInfo: UserInfo?, element: PeiData): PeiData {
+    override fun execute(userInfo: WrappedUserInfo, element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
             if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
@@ -206,9 +204,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     /**
      * Méthode permettant de décrire tout ce qui est spécifique à chaque opération, typiquement le service métier à appeler
      */
-    protected abstract fun executeSpecific(userInfo: UserInfo?, element: PeiData): Any?
+    protected abstract fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData): Any?
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PeiData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PeiData) {
         val isSaisieLibreEnabled = parametresProvider.get().getParametreBoolean(GlobalConstants.VOIE_SAISIE_LIBRE)!!
         // Normalement impossible, sauf sur changement du paramètre sans nettoyage
         if (!isSaisieLibreEnabled && element.peiVoieTexte != null) {

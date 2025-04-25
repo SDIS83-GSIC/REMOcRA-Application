@@ -1,11 +1,9 @@
 package remocra.usecase.visites
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
@@ -32,42 +30,38 @@ class DeleteVisiteUseCase @Inject constructor(
     @Inject
     lateinit var anomalieRepository: AnomalieRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
     }
 
-    override fun postEvent(element: VisiteData, userInfo: UserInfo) {
+    override fun postEvent(element: VisiteData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.visitePeiId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: VisiteData) {
-        if (userInfo == null) {
-            throw RemocraResponseException(errorType = ErrorType.VISITE_D_FORBIDDEN)
-        }
-
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteData) {
         // Vérification des droits de création
         when (element.visiteTypeVisite) {
-            TypeVisite.CTP -> if (!userInfo.droits.contains(Droit.VISITE_CTP_D)) {
+            TypeVisite.CTP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_CTP_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_CTP_FORBIDDEN)
             }
-            TypeVisite.RECEPTION -> if (!userInfo.droits.contains(Droit.VISITE_RECEP_D)) {
+            TypeVisite.RECEPTION -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECEP_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECEPTION_FORBIDDEN)
             }
-            TypeVisite.RECO_INIT -> if (!userInfo.droits.contains(Droit.VISITE_RECO_INIT_D)) {
+            TypeVisite.RECO_INIT -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_INIT_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECO_INIT_FORBIDDEN)
             }
-            TypeVisite.ROP -> if (!userInfo.droits.contains(Droit.VISITE_RECO_D)) {
+            TypeVisite.ROP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_ROP_FORBIDDEN)
             }
-            TypeVisite.NP -> if (!userInfo.droits.contains(Droit.VISITE_NP_D)) {
+            TypeVisite.NP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_NP_D)) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_NP_FORBIDDEN)
             }
         }
@@ -77,7 +71,7 @@ class DeleteVisiteUseCase @Inject constructor(
         }
     }
 
-    override fun execute(userInfo: UserInfo?, element: VisiteData): VisiteData {
+    override fun execute(userInfo: WrappedUserInfo, element: VisiteData): VisiteData {
         // On supprime les anomalies du PEI (de la dernière visite)
         peiRepository.deleteAnomaliePei(element.visitePeiId, element.listeAnomalie)
 

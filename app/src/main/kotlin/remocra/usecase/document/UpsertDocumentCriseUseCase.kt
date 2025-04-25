@@ -2,12 +2,10 @@ package remocra.usecase.document
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AbstractDocumentData
-import remocra.data.AuteurTracabiliteData
 import remocra.data.DocumentsData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CriseRepository
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -41,15 +39,15 @@ class UpsertDocumentCriseUseCase : AbstractUpsertDocumentUseCase<DocumentsData.D
         return GlobalConstants.DOSSIER_DOCUMENT_CRISE
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (typeOperation == TypeOperation.INSERT && !userInfo.droits.contains(Droit.CRISE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (typeOperation == TypeOperation.INSERT && !userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_C)
-        } else if (typeOperation == TypeOperation.UPDATE && !userInfo.droits.contains(Droit.CRISE_U)) {
+        } else if (typeOperation == TypeOperation.UPDATE && !userInfo.hasDroit(droitWeb = Droit.CRISE_U)) {
             throw RemocraResponseException(ErrorType.CRISE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: DocumentsData.DocumentsEvenement, userInfo: UserInfo) {
+    override fun postEvent(element: DocumentsData.DocumentsEvenement, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo =
@@ -62,13 +60,13 @@ class UpsertDocumentCriseUseCase : AbstractUpsertDocumentUseCase<DocumentsData.D
                 pojoId = element.objectId,
                 typeOperation = TypeOperation.UPDATE,
                 typeObjet = TypeObjet.CRISE_DOCUMENT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: DocumentsData.DocumentsEvenement) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: DocumentsData.DocumentsEvenement) {
         // Si même nom => lève une exeption
         if (element.listDocument.groupingBy { it.documentNomFichier }.eachCount().any { it.value > 1 }) {
             throw RemocraResponseException(ErrorType.CRISE_DOCUMENT_MEME_NOM)

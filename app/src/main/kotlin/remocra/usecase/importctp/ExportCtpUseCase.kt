@@ -5,7 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import remocra.GlobalConstants
 import remocra.app.ParametresProvider
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
@@ -40,7 +40,7 @@ class ExportCtpUseCase : AbstractUseCase() {
         private const val CELL_TYPE_INDEX = 8
     }
 
-    fun execute(communeId: UUID?, userInfo: UserInfo): ByteArray {
+    fun execute(communeId: UUID?, userInfo: WrappedUserInfo): ByteArray {
         /** Création du fichier excel */
         // Récupération du fichier modèle
         val templatePath = GlobalConstants.TEMPLATE_EXPORT_CTP_FULL_PATH

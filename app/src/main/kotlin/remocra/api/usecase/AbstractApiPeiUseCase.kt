@@ -1,8 +1,7 @@
 package remocra.api.usecase
 
 import remocra.api.PeiUtils
-import remocra.auth.OrganismeInfo
-import remocra.auth.organismeInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.tables.pojos.Pei
@@ -20,14 +19,14 @@ abstract class AbstractApiPeiUseCase(
      * Vérifie que l'utilisateur a bien les droits sur le PEI, sinon déclenche une [RemocraResponseException]
      */
     @Throws(RemocraResponseException::class)
-    fun checkDroits(pei: Pei?, organismeInfo: OrganismeInfo) {
+    fun checkDroits(pei: Pei?, userInfo: WrappedUserInfo) {
         if (pei == null) {
             throw RemocraResponseException(
                 ErrorType.PEI_INEXISTANT,
             )
         }
 
-        if (!this.isPeiAccessible(pei.peiId, organismeInfo)) {
+        if (!this.isPeiAccessible(pei.peiId, userInfo)) {
             throw RemocraResponseException(
                 ErrorType.FORBIDDEN,
             )
@@ -41,13 +40,13 @@ abstract class AbstractApiPeiUseCase(
      * @param numeroComplet: String
      * @return [Pei]
      */
-    fun getPeiSpecifique(numeroComplet: String, organismeInfo: OrganismeInfo): Pei {
+    fun getPeiSpecifique(numeroComplet: String, userInfo: WrappedUserInfo): Pei {
         val peiId = peiRepository.getPeiIdFromNumero(numeroComplet)
             ?: throw RemocraResponseException(
                 ErrorType.PEI_INEXISTANT,
             )
 
-        if (!this.isPeiAccessible(peiId, organismeInfo)) {
+        if (!this.isPeiAccessible(peiId, userInfo)) {
             throw RemocraResponseException(
                 ErrorType.FORBIDDEN,
             )
@@ -60,8 +59,8 @@ abstract class AbstractApiPeiUseCase(
      *
      * @param idPei Le numéro du PEI
      */
-    fun isPeiAccessible(idPei: UUID, organismeInfo: OrganismeInfo): Boolean {
-        return getPeiAccessibilite(idPei, organismeInfo).isAccessible
+    fun isPeiAccessible(idPei: UUID, userInfo: WrappedUserInfo): Boolean {
+        return getPeiAccessibilite(idPei, userInfo).isAccessible
     }
 
     /**
@@ -70,8 +69,8 @@ abstract class AbstractApiPeiUseCase(
      * @param idPei String
      * @return PeiAccessibilite
      */
-    protected fun getPeiAccessibilite(idPei: UUID, organismeInfo: OrganismeInfo): PeiAccessibilite {
-        return listPeiAccessibilite(setOf(idPei), organismeInfo)[0]
+    protected fun getPeiAccessibilite(idPei: UUID, wrapperUserInfo: WrappedUserInfo): PeiAccessibilite {
+        return listPeiAccessibilite(setOf(idPei), wrapperUserInfo)[0]
     }
 
     /**
@@ -85,8 +84,8 @@ abstract class AbstractApiPeiUseCase(
      * @param listPei List<UUID> (Pei.id)
      * @return List<PeiAccessibilite>
      */
-    fun listPeiAccessibilite(listPei: Set<UUID>, organismeInfo: OrganismeInfo): List<PeiAccessibilite> {
-        val organisme = PeiUtils.OrganismeIdType(organismeInfo)
+    fun listPeiAccessibilite(listPei: Set<UUID>, wrapperUserInfo: WrappedUserInfo): List<PeiAccessibilite> {
+        val organisme = PeiUtils.OrganismeIdType(wrapperUserInfo)
 
         return peiRepository.getPeiAccessibility(listPei).map { PeiAccessibilite(it.id, it.numeroComplet, it.maintenanceDeciId, it.servicePublicDeciId, it.serviceEauxId, PeiUtils.isApiAdmin(organisme) || PeiUtils.isMaintenanceDECI(it.maintenanceDeciId, organisme) || PeiUtils.isServicePublicDECI(it.servicePublicDeciId, organisme) || PeiUtils.isServiceEaux(it.serviceEauxId, organisme)) }
     }

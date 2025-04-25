@@ -1,11 +1,9 @@
 package remocra.usecase.adresse
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AdresseElementInput
-import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AdresseElementRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -21,7 +19,7 @@ class CreateAdresseElementUsecase
 ) :
     AbstractCUDUseCase<AdresseElementInput>(TypeOperation.INSERT) {
 
-    override fun execute(userInfo: UserInfo?, element: AdresseElementInput): AdresseElementInput {
+    override fun execute(userInfo: WrappedUserInfo, element: AdresseElementInput): AdresseElementInput {
         adresseElementRepository.insertAdresseElement(
             AdresseElement(
                 adresseElementId = element.adresseElementId,
@@ -36,31 +34,25 @@ class CreateAdresseElementUsecase
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADRESSES_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADRESSES_C)) {
             throw RemocraResponseException(ErrorType.ADRESSE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: AdresseElementInput, userInfo: UserInfo) {
+    override fun postEvent(element: AdresseElementInput, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.adresseElementId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ADRESSE_ELEMENT,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         ) }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: AdresseElementInput) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: AdresseElementInput) {
         if (element.adresseElementAdresseId == null) {
             throw RemocraResponseException(ErrorType.ADRESSE_ELEMENT_ADRESSE_NULL)
         }

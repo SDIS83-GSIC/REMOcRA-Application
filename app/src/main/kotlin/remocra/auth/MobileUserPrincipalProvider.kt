@@ -7,6 +7,7 @@ import jakarta.inject.Provider
 import net.ltgt.oauth.common.CachedTokenPrincipalProvider
 import net.ltgt.oauth.common.KeycloakTokenPrincipal
 import net.ltgt.oauth.common.TokenPrincipal
+import remocra.data.enums.TypeSourceModification
 import remocra.db.DroitsRepository
 import remocra.db.OrganismeRepository
 import remocra.db.ProfilDroitRepository
@@ -48,7 +49,7 @@ class MobileUserPrincipalProvider @Inject constructor(
 
         return object : KeycloakTokenPrincipal(introspectionResponse), RemocraUserPrincipal {
             override fun getName() = super<RemocraUserPrincipal>.getName()
-            override val userInfo = UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit)
+            override val userInfo = UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit, TypeSourceModification.MOBILE)
         }
     }
 }

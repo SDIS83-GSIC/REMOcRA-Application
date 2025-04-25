@@ -8,7 +8,9 @@ import org.apache.logging.log4j.core.util.CronExpression
 import org.slf4j.LoggerFactory
 import remocra.app.DataCacheProvider
 import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.ParametresData
+import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.log.LogManagerFactory
@@ -56,14 +58,17 @@ constructor(
             // Par défaut c'est l'utilisateur système qui exécute les tâches,
             // on reconstruit son UserInfo car c'est lui qui sera fourni aux useCases appelés dans les traitements.
             val userInfoSysteme = UserInfo(
-                dataCacheProvider.get().utilisateurSysteme,
-                Droit.entries.toSet(),
-                null,
-                emptySet(),
-                null,
+                utilisateur = dataCacheProvider.get().utilisateurSysteme,
+                droits = Droit.entries.toSet(),
+                zoneCompetence = null,
+                affiliatedOrganismeIds = emptySet(),
+                profilDroits = null,
+                typeSourceModification = TypeSourceModification.REMOCRA_WEB,
             )
-
-            start(logManagerFactory.create(), userInfoSysteme)
+            // On wrappe dans l'objet qui va bien
+            val wrappedUserInfo = WrappedUserInfo()
+            wrappedUserInfo.userInfo = userInfoSysteme
+            start(logManagerFactory.create(), wrappedUserInfo)
             schedule(scheduleTime)
         }
     }

@@ -20,7 +20,7 @@ import org.jooq.impl.SQLDataType
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
@@ -705,7 +705,7 @@ class PeiRepository
             .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
             .fetchInto()
 
-    fun getListIdNumeroCompletInZoneCompetence(userInfo: UserInfo?): Collection<IdNumeroComplet> =
+    fun getListIdNumeroCompletInZoneCompetence(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
         dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
             .from(
                 userInfo?.isSuperAdmin?.let {
@@ -967,7 +967,7 @@ class PeiRepository
         val lastRop: ZonedDateTime?,
     )
 
-    fun getPeiByZoneIntegrationShortData(userInfo: UserInfo): Collection<PeiShortData> {
+    fun getPeiByZoneIntegrationShortData(userInfo: WrappedUserInfo): Collection<PeiShortData> {
         if (userInfo.isSuperAdmin) {
             return dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
                 .from(PEI)
@@ -983,7 +983,7 @@ class PeiRepository
             .fetchInto()
     }
 
-    fun getPeiIdLibelleByMotif(userInfo: UserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+    fun getPeiIdLibelleByMotif(userInfo: WrappedUserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
         dsl.select(remocra.db.jooq.remocra.tables.references.PEI.ID.`as`("id"), remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET.`as`("libelle")).from(
             userInfo.isSuperAdmin.let {
                 if (it) {

@@ -4,7 +4,7 @@ import jakarta.inject.Inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import remocra.apimobile.repository.IncomingRepository
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.GestionnaireRepository
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -24,17 +24,17 @@ class SynchroGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperatio
         private val logger: Logger = LoggerFactory.getLogger(SynchroGestionnaireUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.MOBILE_GESTIONNAIRE_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.MOBILE_GESTIONNAIRE_C)) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: Gestionnaire, userInfo: UserInfo) {
+    override fun postEvent(element: Gestionnaire, userInfo: WrappedUserInfo) {
         // On ne poste pas d'évènement comme c'est une insertion dans le schéma incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: Gestionnaire): Gestionnaire {
+    override fun execute(userInfo: WrappedUserInfo, element: Gestionnaire): Gestionnaire {
         val result: Int =
             incomingRepository.insertGestionnaireIncoming(
                 gestionnaireCode = element.gestionnaireCode,
@@ -55,7 +55,7 @@ class SynchroGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperatio
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: Gestionnaire) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Gestionnaire) {
         // Check si code n'existe pas déjà en base
         if (gestionnaireRepository.checkCodeExists(element.gestionnaireCode, element.gestionnaireId)) {
             throw RemocraResponseException(ErrorType.ADMIN_GESTIONNAIRE_CODE_EXISTS)

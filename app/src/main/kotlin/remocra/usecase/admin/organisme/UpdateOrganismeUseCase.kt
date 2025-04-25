@@ -2,11 +2,9 @@ package remocra.usecase.admin.organisme
 
 import jakarta.inject.Inject
 import remocra.auth.AuthModule
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.OrganismeData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.OrganismeRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -27,32 +25,26 @@ class UpdateOrganismeUseCase @Inject constructor(
     AbstractCUDUseCase<OrganismeData>(
         TypeOperation.UPDATE,
     ) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_UTILISATEURS_A)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
             throw RemocraResponseException(ErrorType.ADMIN_ORGANISME_FORBIDDEN_UPDATE)
         }
     }
 
-    override fun postEvent(element: OrganismeData, userInfo: UserInfo) {
+    override fun postEvent(element: OrganismeData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.organismeId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ORGANISME,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: OrganismeData): OrganismeData {
+    override fun execute(userInfo: WrappedUserInfo, element: OrganismeData): OrganismeData {
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
         try {
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
@@ -87,7 +79,7 @@ class UpdateOrganismeUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: OrganismeData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OrganismeData) {
         if (organismeRepository.getById(element.organismeId).organismeKeycloakId != null) {
             if (element.organismeEmailContact.isNullOrBlank()) {
                 throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_EMAIL_NULL)

@@ -1,11 +1,9 @@
 package remocra.usecase.couverturehydraulique
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiProjetData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -18,26 +16,26 @@ import remocra.usecase.AbstractCUDUseCase
 class CreatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.INSERT) {
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ETUDE_U)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {
             throw RemocraResponseException(ErrorType.ETUDE_TYPE_FORBIDDEN_U)
         }
     }
 
-    override fun postEvent(element: PeiProjetData, userInfo: UserInfo) {
+    override fun postEvent(element: PeiProjetData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.peiProjetId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.PEI_PROJET,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: PeiProjetData): PeiProjetData {
+    override fun execute(userInfo: WrappedUserInfo, element: PeiProjetData): PeiProjetData {
         when (element.peiProjetTypePeiProjet) {
             TypePeiProjet.PA -> {
                 if (element.peiProjetDebit == null) {
@@ -88,7 +86,7 @@ class CreatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.I
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: PeiProjetData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: PeiProjetData) {
         // Les contraintes sont vérifiées directement dans le execute
     }
 }

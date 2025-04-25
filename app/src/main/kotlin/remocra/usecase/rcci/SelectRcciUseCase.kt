@@ -3,7 +3,7 @@ package remocra.usecase.rcci
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.RcciDocument
 import remocra.data.RcciForm
 import remocra.data.RcciFormInput
@@ -17,8 +17,8 @@ import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
 class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepository) : AbstractUseCase() {
-    fun execute(userInfo: UserInfo?, rcciId: UUID): Result {
-        if (userInfo == null || !userInfo.droits.contains(Droit.RCCI_R) || !userInfo.droits.contains(Droit.RCCI_A)) {
+    fun execute(userInfo: WrappedUserInfo, rcciId: UUID): Result {
+        if (!userInfo.hasDroit(droitWeb = Droit.RCCI_R) || !userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_FORBIDDEN)
         }
 

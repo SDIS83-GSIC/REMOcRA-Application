@@ -1,7 +1,7 @@
 package remocra.tasks
 
 import jakarta.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PeiRepository
@@ -19,7 +19,7 @@ class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskPar
 
     private val identificationJob = this.getType().toString()
 
-    override fun execute(parameters: BasculeAutoIndispoTempTaskParameter?, userInfo: UserInfo): SchedulableTaskResults? {
+    override fun execute(parameters: BasculeAutoIndispoTempTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         logManager.info("[$identificationJob] Lancement de l'exécution du job")
         val listIdItPourBasculeAutoDebut: List<UUID> = indisponibiliteTemporaireRepository.getItEnCoursToCalculIndispo()
         if (listIdItPourBasculeAutoDebut.isNotEmpty()) {

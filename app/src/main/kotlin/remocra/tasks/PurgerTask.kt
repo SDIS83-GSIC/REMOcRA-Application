@@ -2,7 +2,7 @@ package remocra.tasks
 
 import com.google.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
 import remocra.db.JobRepository
 import remocra.db.LogLineRepository
@@ -17,7 +17,7 @@ class PurgerTask : SchedulableTask<PurgerTaskParameter, SchedulableTaskResults>(
 
     @Inject lateinit var logLineRepository: LogLineRepository
 
-    override fun execute(parameters: PurgerTaskParameter?, userInfo: UserInfo): SchedulableTaskResults? {
+    override fun execute(parameters: PurgerTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         logManager.info("Exécution du job")
         /** Suppression du contenu de documents/tmp/ */
         if (parameters!!.purgerDocumentTemp) {

@@ -6,7 +6,7 @@ import remocra.data.MessageData
 import remocra.db.jooq.remocra.tables.references.MESSAGE_EVENEMENT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.UUID
 
 class MessageRepository @Inject constructor(
     private val dsl: DSLContext,

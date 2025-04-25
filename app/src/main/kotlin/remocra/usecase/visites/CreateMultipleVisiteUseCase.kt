@@ -1,7 +1,7 @@
 package remocra.usecase.visites
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.VisiteData
 import remocra.data.VisiteTourneeInput
 import remocra.usecase.AbstractUseCase
@@ -18,7 +18,7 @@ class CreateMultipleVisiteUseCase : AbstractUseCase() {
      * @param userInfo
      * @param visiteTourneeInput
      */
-    fun createMultipleVisite(userInfo: UserInfo?, visiteTourneeInput: VisiteTourneeInput): Map<UUID, AbstractUseCase.Result> {
+    fun createMultipleVisite(userInfo: WrappedUserInfo, visiteTourneeInput: VisiteTourneeInput): Map<UUID, AbstractUseCase.Result> {
         val listResult: MutableMap<UUID, AbstractUseCase.Result> = mutableMapOf()
         visiteTourneeInput.listeSimplifiedVisite?.forEach { visite ->
             val generatedVisiteId = UUID.randomUUID()

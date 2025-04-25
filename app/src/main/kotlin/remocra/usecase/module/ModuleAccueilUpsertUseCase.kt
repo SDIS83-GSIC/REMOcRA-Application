@@ -2,11 +2,9 @@ package remocra.usecase.module
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ListModuleWithImage
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.ModuleRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -25,13 +23,13 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
     private val documentUtils: DocumentUtils,
 ) :
     AbstractCUDUseCase<ListModuleWithImage>(TypeOperation.UPDATE) {
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADMIN_PARAM_APPLI)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
             throw RemocraResponseException(ErrorType.ADMIN_MODULE_RESUME_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: ListModuleWithImage, userInfo: UserInfo) {
+    override fun postEvent(element: ListModuleWithImage, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element.copy(listeImage = null),
@@ -39,14 +37,14 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                 pojoId = UUID.randomUUID(),
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MODULE_ACCUEIL,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
     override fun execute(
-        userInfo: UserInfo?,
+        userInfo: WrappedUserInfo,
         element: ListModuleWithImage,
     ): ListModuleWithImage {
         val modulesAvant = moduleRepository.getModules()
@@ -124,7 +122,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
         return element.copy(listeImage = null)
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ListModuleWithImage) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ListModuleWithImage) {
         // pas de contraintes
     }
 }

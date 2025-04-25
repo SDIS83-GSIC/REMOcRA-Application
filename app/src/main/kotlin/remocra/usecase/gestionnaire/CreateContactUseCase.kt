@@ -1,11 +1,9 @@
 package remocra.usecase.gestionnaire
 
 import com.google.inject.Inject
-import remocra.auth.UserInfo
-import remocra.data.AuteurTracabiliteData
+import remocra.auth.WrappedUserInfo
 import remocra.data.ContactData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.ContactRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -22,24 +20,24 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
 
     @Inject lateinit var contactRepository: ContactRepository
 
-    override fun checkDroits(userInfo: UserInfo) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
         // Les droits sont gérés dans le checkContraintes puisqu'on a besoin de savoir si c'est un gestionnaire ou organisme
     }
 
-    override fun postEvent(element: ContactData, userInfo: UserInfo) {
+    override fun postEvent(element: ContactData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.contactId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.CONTACT,
-                auteurTracabilite = AuteurTracabiliteData(idAuteur = userInfo.utilisateurId, nom = userInfo.nom, prenom = userInfo.prenom, email = userInfo.email, typeSourceModification = TypeSourceModification.REMOCRA_WEB),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun execute(userInfo: UserInfo?, element: ContactData): ContactData {
+    override fun execute(userInfo: WrappedUserInfo, element: ContactData): ContactData {
         contactRepository.insertContact(
             Contact(
                 contactId = element.contactId,
@@ -95,9 +93,9 @@ class CreateContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.INSER
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: ContactData) {
-        if ((element.isGestionnaire && !userInfo!!.droits.contains(Droit.GEST_SITE_A)) ||
-            (!element.isGestionnaire && !userInfo!!.droits.contains(Droit.ADMIN_UTILISATEURS_A))
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ContactData) {
+        if ((element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) ||
+            (!element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A))
         ) {
             throw RemocraResponseException(ErrorType.CONTACT_FORBIDDEN_INSERT)
         }

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.repository.IncomingRepository
 import remocra.app.AppSettings
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -29,17 +29,17 @@ class SynchroNewPeiUseCase : AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOper
         private val logger: Logger = LoggerFactory.getLogger(SynchroNewPeiUseCase::class.java)
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.MOBILE_PEI_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.MOBILE_PEI_C)) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_PEI_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: NewPeiForMobileApiData, userInfo: UserInfo) {
+    override fun postEvent(element: NewPeiForMobileApiData, userInfo: WrappedUserInfo) {
         // On n'insère pas d'évènement dans la traçabilité parce qu'on insère dans incoming
     }
 
-    override fun execute(userInfo: UserInfo?, element: NewPeiForMobileApiData): NewPeiForMobileApiData {
+    override fun execute(userInfo: WrappedUserInfo, element: NewPeiForMobileApiData): NewPeiForMobileApiData {
         // On va chercher toutes les infos dont on a besoin
 
         // Géométrie du PEI
@@ -82,7 +82,7 @@ class SynchroNewPeiUseCase : AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOper
         return element
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: NewPeiForMobileApiData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: NewPeiForMobileApiData) {
         // On check la commune dans le exécute puisqu'on a besoin de l'id
     }
 

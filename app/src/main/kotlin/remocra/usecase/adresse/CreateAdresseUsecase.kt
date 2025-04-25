@@ -2,11 +2,9 @@ package remocra.usecase.adresse
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.UserInfo
+import remocra.auth.WrappedUserInfo
 import remocra.data.AdresseData
-import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
-import remocra.data.enums.TypeSourceModification
 import remocra.db.AdresseRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -40,12 +38,12 @@ class CreateAdresseUsecase @Inject constructor(
         return element
     }
 
-    override fun execute(userInfo: UserInfo?, element: AdresseData): AdresseData {
+    override fun execute(userInfo: WrappedUserInfo, element: AdresseData): AdresseData {
         adresseRepository.insertAdresse(
             Adresse(
                 adresseDescription = element.description,
                 adresseId = element.adresseId,
-                adresseUtilisateur = userInfo!!.utilisateurId,
+                adresseUtilisateur = userInfo.utilisateurId!!,
                 adresseType = EtatAdresse.EN_COURS,
                 adresseDateConstat = dateUtils.now(),
                 adresseDateModification = null,
@@ -61,32 +59,26 @@ class CreateAdresseUsecase @Inject constructor(
         return element
     }
 
-    override fun checkDroits(userInfo: UserInfo) {
-        if (!userInfo.droits.contains(Droit.ADRESSES_C)) {
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADRESSES_C)) {
             throw RemocraResponseException(ErrorType.ADRESSE_FORBIDDEN_INSERT)
         }
     }
 
-    override fun postEvent(element: AdresseData, userInfo: UserInfo) {
+    override fun postEvent(element: AdresseData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
                 pojoId = element.adresseId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.ADRESSE,
-                auteurTracabilite = AuteurTracabiliteData(
-                    idAuteur = userInfo.utilisateurId,
-                    nom = userInfo.nom,
-                    prenom = userInfo.prenom,
-                    email = userInfo.email,
-                    typeSourceModification = TypeSourceModification.REMOCRA_WEB,
-                ),
+                auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
         )
     }
 
-    override fun checkContraintes(userInfo: UserInfo?, element: AdresseData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: AdresseData) {
         // no-op pas de contrainte
     }
 }
