@@ -91,6 +91,11 @@ const AnomalieForm = () => {
   const { categorieList, natureList, typeVisiteList } =
     anomalieReferentielState.data;
 
+  const isSysteme =
+    categorieList.filter((c) => {
+      return c.anomalieCategorieCode === "SYSTEME";
+    })[0].anomalieCategorieId === values.anomalieAnomalieCategorieId;
+
   return (
     <FormContainer>
       <TextInput label="Libellé" name="anomalieLibelle" required={true} />
@@ -141,140 +146,142 @@ const AnomalieForm = () => {
           label={"Rend non conforme"}
         />
       )}
-      <FieldArray
-        name={"poidsAnomalieList"}
-        render={(arrayHelpers) => (
-          <Card className={"mt-2"}>
-            <Card.Header>
-              <Row>
-                <Col xs={"auto"} className={"d-flex"}>
-                  <div className="fw-bold align-self-center">
-                    Nature de points d&apos;eau
-                  </div>
-                </Col>
-                <Col xs={"auto"} className={"d-flex"}>
-                  <Dropdown className={"align-self-center"}>
-                    <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                      <IconCreate /> Ajouter une nature
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {natureList
-                        .filter(
-                          (n) =>
-                            !values.poidsAnomalieList.some(
-                              (pa) => pa.poidsAnomalieNatureId === n.natureId,
-                            ),
-                        )
-                        .map((nature, idxN) => (
-                          <Dropdown.Item
-                            key={idxN}
-                            variant={"link"}
-                            className={"text-info"}
-                            onClick={() =>
-                              arrayHelpers.push({
-                                poidsAnomalieNatureId: nature.natureId,
-                              })
+      {!isSysteme && (
+        <FieldArray
+          name={"poidsAnomalieList"}
+          render={(arrayHelpers) => (
+            <Card className={"mt-2"}>
+              <Card.Header>
+                <Row>
+                  <Col xs={"auto"} className={"d-flex"}>
+                    <div className="fw-bold align-self-center">
+                      Nature de points d&apos;eau
+                    </div>
+                  </Col>
+                  <Col xs={"auto"} className={"d-flex"}>
+                    <Dropdown className={"align-self-center"}>
+                      <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                        <IconCreate /> Ajouter une nature
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        {natureList
+                          .filter(
+                            (n) =>
+                              !values.poidsAnomalieList.some(
+                                (pa) => pa.poidsAnomalieNatureId === n.natureId,
+                              ),
+                          )
+                          .map((nature, idxN) => (
+                            <Dropdown.Item
+                              key={idxN}
+                              variant={"link"}
+                              className={"text-info"}
+                              onClick={() =>
+                                arrayHelpers.push({
+                                  poidsAnomalieNatureId: nature.natureId,
+                                })
+                              }
+                            >
+                              {nature.natureLibelle}
+                            </Dropdown.Item>
+                          ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </Col>
+                </Row>
+              </Card.Header>
+              <Card.Body>
+                <ListGroup className="list-group-flush">
+                  {values.poidsAnomalieList.map((poidsAnomalie, idxPA) => (
+                    <ListGroup.Item key={idxPA}>
+                      <Row>
+                        <Col xs={"auto"} className={"d-flex"}>
+                          <div className="fw-bold align-self-center">
+                            {
+                              natureList.filter(
+                                (n) =>
+                                  n.natureId ===
+                                  poidsAnomalie.poidsAnomalieNatureId,
+                              )[0]?.natureLibelle
                             }
+                          </div>
+                        </Col>
+                        <Col xs={"auto"} className={"d-flex align-self-center"}>
+                          <Button
+                            variant={"link"}
+                            className={"text-danger"}
+                            onClick={() => arrayHelpers.remove(idxPA)}
                           >
-                            {nature.natureLibelle}
-                          </Dropdown.Item>
-                        ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Col>
-              </Row>
-            </Card.Header>
-            <Card.Body>
-              <ListGroup className="list-group-flush">
-                {values.poidsAnomalieList.map((poidsAnomalie, idxPA) => (
-                  <ListGroup.Item key={idxPA}>
-                    <Row>
-                      <Col xs={"auto"} className={"d-flex"}>
-                        <div className="fw-bold align-self-center">
-                          {
-                            natureList.filter(
-                              (n) =>
-                                n.natureId ===
-                                poidsAnomalie.poidsAnomalieNatureId,
-                            )[0]?.natureLibelle
-                          }
-                        </div>
-                      </Col>
-                      <Col xs={"auto"} className={"d-flex align-self-center"}>
-                        <Button
-                          variant={"link"}
-                          className={"text-danger"}
-                          onClick={() => arrayHelpers.remove(idxPA)}
-                        >
-                          <IconDelete />
-                        </Button>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col xs="3">
-                        <NumberInput
-                          name={`poidsAnomalieList[${idxPA}].poidsAnomalieValIndispoTerrestre`}
-                          label="Indispo terrestre"
-                          required={false}
-                          min={0}
-                          max={5}
-                          step={1}
-                        />
-                      </Col>
-                      <Col xs="3">
-                        <NumberInput
-                          name={`poidsAnomalieList[${idxPA}].poidsAnomalieValIndispoHbe`}
-                          label="Indispo HBE"
-                          required={false}
-                          min={0}
-                          max={5}
-                          step={1}
-                        />
-                      </Col>
-                      <Col xs="6" className={"d-flex"}>
-                        {!values.anomalieProtected && (
-                          <ButtonGroup className={"align-self-center"}>
-                            {typeVisiteList.map((typeVisite, idxTV) => (
-                              <ToggleButton
-                                key={`${idxPA}-${typeVisite}`}
-                                value={typeVisite}
-                                name={`poidsAnomalieList[${idxPA}].poidsAnomalieTypeVisite[${idxTV}]`}
-                                onClick={() => {
-                                  const res =
-                                    values.poidsAnomalieList[idxPA]
-                                      .poidsAnomalieTypeVisite ?? [];
-                                  if (res.indexOf(typeVisite) === -1) {
-                                    res.push(typeVisite);
-                                  } else {
-                                    res.splice(res.indexOf(typeVisite), 1);
-                                  }
-                                  setFieldValue(
-                                    `poidsAnomalieList[${idxPA}].poidsAnomalieTypeVisite`,
-                                    res,
-                                  );
-                                }}
-                                checked={values.poidsAnomalieList[
-                                  idxPA
-                                ]?.poidsAnomalieTypeVisite?.some(
-                                  (p) => p === typeVisite,
-                                )}
-                                type={"radio"}
-                                variant={"outline-primary"}
-                              >
-                                {typeVisite}
-                              </ToggleButton>
-                            ))}
-                          </ButtonGroup>
-                        )}
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            </Card.Body>
-          </Card>
-        )}
-      />
+                            <IconDelete />
+                          </Button>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col xs="3">
+                          <NumberInput
+                            name={`poidsAnomalieList[${idxPA}].poidsAnomalieValIndispoTerrestre`}
+                            label="Indispo terrestre"
+                            required={false}
+                            min={0}
+                            max={5}
+                            step={1}
+                          />
+                        </Col>
+                        <Col xs="3">
+                          <NumberInput
+                            name={`poidsAnomalieList[${idxPA}].poidsAnomalieValIndispoHbe`}
+                            label="Indispo HBE"
+                            required={false}
+                            min={0}
+                            max={5}
+                            step={1}
+                          />
+                        </Col>
+                        <Col xs="6" className={"d-flex"}>
+                          {!values.anomalieProtected && (
+                            <ButtonGroup className={"align-self-center"}>
+                              {typeVisiteList.map((typeVisite, idxTV) => (
+                                <ToggleButton
+                                  key={`${idxPA}-${typeVisite}`}
+                                  value={typeVisite}
+                                  name={`poidsAnomalieList[${idxPA}].poidsAnomalieTypeVisite[${idxTV}]`}
+                                  onClick={() => {
+                                    const res =
+                                      values.poidsAnomalieList[idxPA]
+                                        .poidsAnomalieTypeVisite ?? [];
+                                    if (res.indexOf(typeVisite) === -1) {
+                                      res.push(typeVisite);
+                                    } else {
+                                      res.splice(res.indexOf(typeVisite), 1);
+                                    }
+                                    setFieldValue(
+                                      `poidsAnomalieList[${idxPA}].poidsAnomalieTypeVisite`,
+                                      res,
+                                    );
+                                  }}
+                                  checked={values.poidsAnomalieList[
+                                    idxPA
+                                  ]?.poidsAnomalieTypeVisite?.some(
+                                    (p) => p === typeVisite,
+                                  )}
+                                  type={"radio"}
+                                  variant={"outline-primary"}
+                                >
+                                  {typeVisite}
+                                </ToggleButton>
+                              ))}
+                            </ButtonGroup>
+                          )}
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card.Body>
+            </Card>
+          )}
+        />
+      )}
       <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
