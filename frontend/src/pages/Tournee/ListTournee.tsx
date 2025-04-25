@@ -212,8 +212,9 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       pathname: url`/api/tournee/desaffecter/`,
       icon: <IconDesaffecter />,
       classEnable: "danger",
-      hide: (v: any) => {
-        return v.tourneeUtilisateurReservationLibelle == null;
+      textDisable: "La tournée n'est pas réservée.",
+      disable: (v: any) => {
+        return v.original.tourneeUtilisateurReservationLibelle == null;
       },
     });
   }
