@@ -15,6 +15,7 @@ import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 
 const ListAdresseSousTypeElement = () => {
   const listeTypeElement: IdCodeLibelleType[] = useGet(
@@ -82,6 +83,12 @@ const ListAdresseSousTypeElement = () => {
         title="Adresse - Sous type élément"
         icon={<IconAdresse />}
         urlRetour={URLS.MODULE_ADMIN}
+        right={
+          <CreateButton
+            title="Ajouter un sous type d'élément"
+            href={URLS.ADD_ADRESSE_SOUS_TYPE_ELEMENT}
+          />
+        }
       />
       <QueryTable
         columns={column}

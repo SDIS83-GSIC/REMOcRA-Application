@@ -11,6 +11,7 @@ import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Adresse
+import remocra.db.jooq.remocra.tables.pojos.AdresseSousTypeElement
 import remocra.db.jooq.remocra.tables.pojos.AdresseTypeAnomalie
 import remocra.db.jooq.remocra.tables.references.ADRESSE
 import remocra.db.jooq.remocra.tables.references.ADRESSE_SOUS_TYPE_ELEMENT
@@ -141,4 +142,14 @@ class AdresseRepository @Inject constructor(private val dsl: DSLContext) : Abstr
                 ADRESSE_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE.getSortField(adresseSousTypeElementTypeGeometrie),
             )
     }
+
+    fun insert(adresseSousTypeElement: AdresseSousTypeElement) =
+        dsl.insertInto(ADRESSE_SOUS_TYPE_ELEMENT).set(dsl.newRecord(ADRESSE_SOUS_TYPE_ELEMENT, adresseSousTypeElement)).execute()
+
+    fun checkCodeExists(code: String, id: UUID?) = dsl.fetchExists(
+        dsl.select(ADRESSE_SOUS_TYPE_ELEMENT.CODE)
+            .from(ADRESSE_SOUS_TYPE_ELEMENT)
+            .where(ADRESSE_SOUS_TYPE_ELEMENT.CODE.equalIgnoreCase(code))
+            .and(id?.let { DSL.and(ADRESSE_SOUS_TYPE_ELEMENT.ID.notEqual(id)) }),
+    )
 }
