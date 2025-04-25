@@ -3,6 +3,7 @@ package remocra.usecase.api
 import jakarta.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.OrganismeRepository
@@ -10,6 +11,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.eventbus.notification.NotificationEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
@@ -41,12 +43,30 @@ class RegenereClientKeycloakApiUseCase @Inject constructor(
     override fun execute(userInfo: UserInfo?, element: Organisme): Organisme {
         val authorization = userInfo!!.accessToken.toAuthorizationHeader()
 
-        keycloakApi.regenereSecret(
+        val response = keycloakApi.regenereSecret(
             authorization,
             element.organismeKeycloakId!!,
         ).execute()
 
-        // TODO envoyer le secret
+        if (!response.isSuccessful) {
+            val replacement = "${response.message()} - " +
+                "(${
+                    response.errorBody()?.source()
+                }"
+            throw RemocraResponseException(ErrorType.DROIT_API_REGENERE_CLIENT_KEYCLOAK, replacement)
+        }
+
+        // On poste un Event de notif pour prévenir l'organisme ici, parce qu'on a récupéré le secret
+        eventBus.post(
+            NotificationEvent(
+                notificationData = NotificationMailData(
+                    destinataires = setOf(element.organismeEmailContact!!),
+                    objet = "REMOcRA - Connexion API",
+                    corps = "Bonjour,<br />Vous trouverez ci-joint votre nouveau mot de passe pour vous connecter à l'API : ${response.body()!!.value} <br />Cordialement,",
+                ),
+                idJob = null,
+            ),
+        )
 
         return element
     }

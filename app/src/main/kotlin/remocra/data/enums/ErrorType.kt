@@ -551,6 +551,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         26007,
         "Erreur lors de la mise à jour dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
     ),
+    DROIT_API_REGENERE_CLIENT_KEYCLOAK(
+        26008,
+        "Erreur lors de la régénération des accès API: $PLACEHOLDER_ERROR_TYPE.",
+    ),
 
     //
     // ********************************************************************************

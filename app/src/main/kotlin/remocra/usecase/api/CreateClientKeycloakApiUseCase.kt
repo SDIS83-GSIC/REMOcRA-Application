@@ -3,6 +3,7 @@ package remocra.usecase.api
 import jakarta.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
+import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
 import remocra.db.OrganismeRepository
@@ -10,6 +11,7 @@ import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Organisme
+import remocra.eventbus.notification.NotificationEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
@@ -86,6 +88,24 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
                     typeSourceModification = TypeSourceModification.REMOCRA_WEB,
                 ),
                 date = dateUtils.now(),
+            ),
+        )
+
+        // on demande à Keycloak le client secret pour pouvoir l'envoyer à l'organisme
+        val credentialRepresentation = keycloakApi.regenereSecret(
+            userInfo.accessToken.toAuthorizationHeader(),
+            organismeRepository.getById(element.organismeId).organismeKeycloakId!!,
+        ).execute().body()
+
+        // On poste un Event de notif pour prévenir l'utilisateur
+        eventBus.post(
+            NotificationEvent(
+                notificationData = NotificationMailData(
+                    destinataires = setOf(element.organismeEmailContact!!),
+                    objet = "REMOcRA - Connexion API",
+                    corps = "Bonjour,<br />Vous trouverez ci-joint votre mot de passe pour vous connecter à l'API : ${credentialRepresentation!!.value} <br />Cordialement,",
+                ),
+                idJob = null,
             ),
         )
     }

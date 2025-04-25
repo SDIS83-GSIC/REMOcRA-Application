@@ -66,7 +66,7 @@ class UpdateOrganismeUseCase @Inject constructor(
             if (!response.isSuccessful) {
                 val replacement = "${response.message()} - " +
                     "(${
-                        response.errorBody()!!.source()
+                        response.errorBody()?.source()
                     }"
                 throw RemocraResponseException(ErrorType.DROIT_API_UPDATE_CLIENT_KEYCLOAK, replacement)
             }

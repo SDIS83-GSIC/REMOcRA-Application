@@ -2,6 +2,7 @@ package remocra.keycloak
 
 import com.google.common.net.HttpHeaders
 import remocra.keycloak.representations.ClientRepresentation
+import remocra.keycloak.representations.CredentialRepresentation
 import remocra.keycloak.representations.UserRepresentation
 import retrofit2.Call
 import retrofit2.http.Body
@@ -80,5 +81,5 @@ interface KeycloakApi {
     fun regenereSecret(
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Path("id") techniqueId: String,
-    ): Call<Void?>
+    ): Call<CredentialRepresentation>
 }
