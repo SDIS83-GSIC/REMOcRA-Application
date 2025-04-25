@@ -5,22 +5,36 @@ import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconAdresse } from "../../../components/Icon/Icon.tsx";
-import { BooleanColumn } from "../../../components/Table/columns.tsx";
+import {
+  ActionColumn,
+  BooleanColumn,
+} from "../../../components/Table/columns.tsx";
 import QueryTable, {
   columnType,
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import { referenceTypeGeometrie } from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 
 const ListAdresseSousTypeElement = () => {
+  const { user }: { user: UtilisateurEntity } = useAppContext();
   const listeTypeElement: IdCodeLibelleType[] = useGet(
     url`/api/adresse-sous-type-element/ref`,
   ).data;
+
+  const listeButton: ButtonType[] = [];
 
   const column: Array<columnType> = [
     {
@@ -75,7 +89,25 @@ const ListAdresseSousTypeElement = () => {
         />
       ),
     },
+    ActionColumn({
+      Header: "Actions",
+      accessor: "adresseSousTypeElementId",
+      buttons: listeButton,
+    }),
   ];
+
+  if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
+    listeButton.push({
+      disable: (v) => v.original.isUsed,
+      textDisable: `Impossible de modifier l'élément car il est utilisé dans une alerte déjà déclarée.`,
+      row: (row) => {
+        return row;
+      },
+      route: (adresseSousTypeElementId) =>
+        URLS.UPDATE_ADRESSE_SOUS_TYPE_ELEMENT(adresseSousTypeElementId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+  }
 
   return (
     <Container>

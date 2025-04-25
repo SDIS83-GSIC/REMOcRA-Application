@@ -70,12 +70,14 @@ type AdresseSousTypeElementType = {
   adresseSousTypeElementTypeGeometrie: string;
 };
 
-export const getInitialValue = () => ({
-  adresseSousTypeElementCode: null,
-  adresseSousTypeElementLibelle: null,
-  adresseSousTypeElementActif: false,
-  adresseSousTypeElementTypeElement: null,
-  adresseSousTypeElementTypeGeometrie: null,
+export const getInitialValue = (data?: AdresseSousTypeElementType) => ({
+  adresseSousTypeElementCode: data?.adresseSousTypeElementCode ?? null,
+  adresseSousTypeElementLibelle: data?.adresseSousTypeElementLibelle ?? null,
+  adresseSousTypeElementActif: data?.adresseSousTypeElementActif ?? false,
+  adresseSousTypeElementTypeElement:
+    data?.adresseSousTypeElementTypeElement ?? null,
+  adresseSousTypeElementTypeGeometrie:
+    data?.adresseSousTypeElementTypeGeometrie ?? null,
 });
 
 export const prepareValues = (values: AdresseSousTypeElementType) => ({

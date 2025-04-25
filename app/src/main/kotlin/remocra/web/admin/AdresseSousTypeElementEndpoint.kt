@@ -4,7 +4,9 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -19,6 +21,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.AdresseSousTypeElement
 import remocra.usecase.adresseSousTypeElement.CreateAdresseSousTypeElementUseCase
+import remocra.usecase.adresseSousTypeElement.UpdateAdresseSousTypeElementUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -31,6 +34,8 @@ class AdresseSousTypeElementEndpoint : AbstractEndpoint() {
     @Context lateinit var securityContext: SecurityContext
 
     @Inject lateinit var createAdresseSousTypeElementUseCase: CreateAdresseSousTypeElementUseCase
+
+    @Inject lateinit var updateAdresseSousTypeElementUseCase: UpdateAdresseSousTypeElementUseCase
 
     @POST
     @Path("/get/")
@@ -82,4 +87,28 @@ class AdresseSousTypeElementEndpoint : AbstractEndpoint() {
         @FormParam("adresseSousTypeElementTypeGeometrie")
         lateinit var adresseSousTypeElementTypeGeometrie: TypeGeometry
     }
+
+    @PUT
+    @Path("/update/{adresseSousTypeElementId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
+    fun update(@PathParam("adresseSousTypeElementId") adresseSousTypeElementId: UUID, adresseSousTypeElementInput: AdresseSousTypeElementInput): Response =
+        updateAdresseSousTypeElementUseCase.execute(
+            securityContext.userInfo,
+            AdresseSousTypeElement(
+                adresseSousTypeElementId = adresseSousTypeElementId,
+                adresseSousTypeElementCode = adresseSousTypeElementInput.adresseSousTypeElementCode,
+                adresseSousTypeElementLibelle = adresseSousTypeElementInput.adresseSousTypeElementLibelle,
+                adresseSousTypeElementActif = adresseSousTypeElementInput.adresseSousTypeElementActif,
+                adresseSousTypeElementTypeElement = adresseSousTypeElementInput.adresseSousTypeElementTypeElement,
+                adresseSousTypeElementTypeGeometrie = adresseSousTypeElementInput.adresseSousTypeElementTypeGeometrie,
+            ),
+        ).wrap()
+
+    @GET
+    @Path("/get/{adresseSousTypeElementId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
+    fun getSousTypeById(@PathParam("adresseSousTypeElementId") adresseSousTypeElementId: UUID) =
+        Response.ok(adresseRepository.getById(adresseSousTypeElementId)).build()
 }

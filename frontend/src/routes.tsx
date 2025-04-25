@@ -179,6 +179,7 @@ import CreateAdresseTypeElement from "./pages/Admin/adresseTypeElement/CreateAdr
 import UpdateAdresseTypeElement from "./pages/Admin/adresseTypeElement/UpdateAdresseTypeElement.tsx";
 import ListAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/ListAdresseSousTypeElement.tsx";
 import CreateAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/CreateAdresseSousTypeElement.tsx";
+import UpdateAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/UpdateAdresseSousTypeElement.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -282,6 +283,8 @@ export const URLS = {
 
   LIST_ADRESSE_SOUS_TYPE_ELEMENT: url`/admin/adresse-sous-type-element`,
   ADD_ADRESSE_SOUS_TYPE_ELEMENT: url`/admin/adresse-sous-type-element/create`,
+  UPDATE_ADRESSE_SOUS_TYPE_ELEMENT: (adresseSousTypeElementId: string) =>
+    url`/admin/adresse-sous-type-element/${adresseSousTypeElementId}`,
 
   PROFIL_DROIT_LIST: url`/admin/profil-droit`,
   PROFIL_DROIT_CREATE: url`/admin/profil-droit/create`,
@@ -1109,6 +1112,15 @@ export default [
         element: (
           <Authorization
             Component={CreateAdresseSousTypeElement}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "adresse-sous-type-element/:adresseSousTypeElementId",
+        element: (
+          <Authorization
+            Component={UpdateAdresseSousTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
