@@ -148,7 +148,7 @@ const ExecuteRapportPersonnalise = () => {
                         ?.slice(offset, offset + LIMIT)
                         ?.map((ligne, index) => {
                           return (
-                            <tr key={index}>
+                            <tr key={index} className={"fw-normal"}>
                               {ligne.map((e, key) => (
                                 <td key={key}>{e?.toString()}</td>
                               ))}
