@@ -167,4 +167,7 @@ class AdresseRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     fun isUsed(adresseSousTypeElementId: UUID): Boolean = dsl.fetchExists(
         dsl.select(ADRESSE_ELEMENT.ID).from(ADRESSE_ELEMENT).where(ADRESSE_ELEMENT.SOUS_TYPE.eq(adresseSousTypeElementId)),
     )
+
+    fun deleteById(adresseSousTypeElementId: UUID) =
+        dsl.deleteFrom(ADRESSE_SOUS_TYPE_ELEMENT).where(ADRESSE_SOUS_TYPE_ELEMENT.ID.eq(adresseSousTypeElementId)).execute()
 }

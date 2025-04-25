@@ -107,6 +107,16 @@ const ListAdresseSousTypeElement = () => {
         URLS.UPDATE_ADRESSE_SOUS_TYPE_ELEMENT(adresseSousTypeElementId),
       type: TYPE_BUTTON.UPDATE,
     });
+
+    listeButton.push({
+      disable: (v) => v.original.isUsed,
+      textDisable: `Impossible de supprimer l'élément car il est utilisé dans une alerte déjà déclarée.`,
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      pathname: url`/api/adresse-sous-type-element/delete/`,
+    });
   }
 
   return (

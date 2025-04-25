@@ -1,6 +1,7 @@
 package remocra.web.admin
 
 import jakarta.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -21,6 +22,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.AdresseSousTypeElement
 import remocra.usecase.adresseSousTypeElement.CreateAdresseSousTypeElementUseCase
+import remocra.usecase.adresseSousTypeElement.DeleteAdresseSousTypeElementUseCase
 import remocra.usecase.adresseSousTypeElement.UpdateAdresseSousTypeElementUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -36,6 +38,8 @@ class AdresseSousTypeElementEndpoint : AbstractEndpoint() {
     @Inject lateinit var createAdresseSousTypeElementUseCase: CreateAdresseSousTypeElementUseCase
 
     @Inject lateinit var updateAdresseSousTypeElementUseCase: UpdateAdresseSousTypeElementUseCase
+
+    @Inject lateinit var deleteAdresseSousTypeElementUseCase: DeleteAdresseSousTypeElementUseCase
 
     @POST
     @Path("/get/")
@@ -111,4 +115,13 @@ class AdresseSousTypeElementEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun getSousTypeById(@PathParam("adresseSousTypeElementId") adresseSousTypeElementId: UUID) =
         Response.ok(adresseRepository.getById(adresseSousTypeElementId)).build()
+
+    @DELETE
+    @Path("/delete/{adresseSousTypeElementId}")
+    @RequireDroits([Droit.ADMIN_NOMENCLATURE])
+    fun delete(@PathParam("adresseSousTypeElementId") adresseSousTypeElementId: UUID) =
+        deleteAdresseSousTypeElementUseCase.execute(
+            securityContext.userInfo,
+            adresseRepository.getById(adresseSousTypeElementId),
+        ).wrap()
 }
