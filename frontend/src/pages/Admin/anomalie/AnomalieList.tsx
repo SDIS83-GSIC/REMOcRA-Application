@@ -9,6 +9,7 @@ import {
   IconAnomalie,
   IconDelete,
   IconEdit,
+  IconSortList,
 } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
@@ -71,7 +72,21 @@ const AnomalieList = () => {
                 colSpan={natureCount + 1}
                 className={"bg-primary text-light text-center"}
               >
-                {categorie.anomalieCategorieLibelle}
+                <span className="fs-6">
+                  {categorie.anomalieCategorieLibelle}
+                </span>
+                <CustomLinkButton
+                  className="float-end fs-6"
+                  pathname={URLS.ANOMALIE_SORT(categorie.anomalieCategorieId)}
+                  variant={"light"}
+                >
+                  <TooltipCustom
+                    tooltipText={"Changer l'ordre des éléments"}
+                    tooltipId={"tooltipOrder"}
+                  >
+                    <IconSortList />
+                  </TooltipCustom>
+                </CustomLinkButton>
               </th>
             </tr>
             {anomalieList

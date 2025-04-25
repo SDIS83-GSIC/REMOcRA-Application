@@ -1,29 +1,29 @@
-import { IconAnomalie, IconList } from "../../../components/Icon/Icon.tsx";
+import { IconAnomalie, IconSortList } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import ListNomenclature from "../../../components/NomenclatureComponent/ListNomenclature.tsx";
 import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
-import LinkButton from "../../../components/Button/LinkButton.tsx";
-
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 const ListAnomalieCategorie = () => {
   const sortButton = (
-    <LinkButton pathname={URLS.SORT_ANOMALIE_CATEGORIE}>
-      <IconList /> Changer l&apos;ordre des éléments
-    </LinkButton>
+    <CustomLinkButton
+      pathname={URLS.SORT_ANOMALIE_CATEGORIE}
+      variant={"primary"}
+    >
+      <IconSortList /> Changer l&apos;ordre des éléments
+    </CustomLinkButton>
   );
 
   return (
-    <>
-      <ListNomenclature
-        pageTitle="Catégories d'anomalies"
-        addButtonTitle={"Ajouter une catégorie d'anomalie"}
-        pageIcon={<IconAnomalie />}
-        hasProtectedValue={false}
-        lienPageAjout={URLS.ADD_ANOMALIE_CATEGORIE}
-        typeNomenclature={NOMENCLATURE.ANOMALIE_CATEGORIE}
-        lienPageUpdate={URLS.UPDATE_ANOMALIE_CATEGORIE}
-        additionalButton={sortButton}
-      />
-    </>
+    <ListNomenclature
+      pageTitle="Catégories d'anomalies"
+      addButtonTitle={"Ajouter une catégorie d'anomalie"}
+      pageIcon={<IconAnomalie />}
+      hasProtectedValue={false}
+      lienPageAjout={URLS.ADD_ANOMALIE_CATEGORIE}
+      typeNomenclature={NOMENCLATURE.ANOMALIE_CATEGORIE}
+      lienPageUpdate={URLS.UPDATE_ANOMALIE_CATEGORIE}
+      additionalButton={sortButton}
+    />
   );
 };
 

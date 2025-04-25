@@ -114,6 +114,7 @@ import ListUtilisateur from "./pages/Admin/utilisateur/ListUtilisateur.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
 import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
 import AnomalieUpdate from "./pages/Admin/anomalie/AnomalieUpdate.tsx";
+import AnomalieSort from "./pages/Admin/anomalie/AnomalieSort.tsx";
 import CreateUtilisateur from "./pages/Admin/utilisateur/CreateUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import ListModuleCourrier from "./pages/ModuleDocumentCourrier/ListModuleCourrier.tsx";
@@ -427,6 +428,8 @@ export const URLS = {
   LIST_ANOMALIE: url`/admin/anomalie`,
   ANOMALIE_CREATE: url`/admin/anomalie/create`,
   ANOMALIE_UPDATE: (anomalieId) => url`/admin/anomalie/${anomalieId}`,
+  ANOMALIE_SORT: (anomalieCategorieId) =>
+    url`/admin/anomalie/sort/${anomalieCategorieId}`,
 
   ADD_UTILISATEUR: url`/admin/utilisateur/create`,
   LIST_UTILISATEUR: url`/admin/utilisateur`,
@@ -1844,6 +1847,15 @@ export default [
           <Authorization
             Component={AnomalieUpdate}
             droits={[TYPE_DROIT.ADMIN_ANOMALIES]}
+          />
+        ),
+      },
+      {
+        path: "anomalie/sort/:anomalieCategorieId",
+        element: (
+          <Authorization
+            Component={AnomalieSort}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
