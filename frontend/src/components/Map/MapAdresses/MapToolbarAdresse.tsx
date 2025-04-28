@@ -1,13 +1,22 @@
+import { Feature } from "ol";
+import { platformModifierKeyOnly } from "ol/events/condition";
+import { WKT } from "ol/format";
 import { DragBox, Draw, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
-import { shiftKeyOnly } from "ol/events/condition";
-import { Feature } from "ol";
-import { WKT } from "ol/format";
 import { object } from "yup";
+import { AdresseElementEntity } from "../../../Entities/AdresseElementEntity.tsx";
+import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
+import url from "../../../module/fetch.tsx";
+import Adresse from "../../../pages/Adresse/Adresse.tsx";
+import CreatElementAdresse from "../../../pages/Adresse/CreateElementAdresse.tsx";
+import { URLS } from "../../../routes.tsx";
+import CreateButton from "../../Button/CreateButton.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
+import MyFormik from "../../Form/MyFormik.tsx";
 import {
   IconDelete,
   IconLine,
@@ -15,20 +24,11 @@ import {
   IconPolygon,
   IconSelect,
 } from "../../Icon/Icon.tsx";
-import Volet from "../../Volet/Volet.tsx";
-import url from "../../../module/fetch.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
-import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
-import ToolbarButton from "../ToolbarButton.tsx";
-import CreatElementAdresse from "../../../pages/Adresse/CreateElementAdresse.tsx";
-import Adresse from "../../../pages/Adresse/Adresse.tsx";
-import { AdresseElementEntity } from "../../../Entities/AdresseElementEntity.tsx";
-import { URLS } from "../../../routes.tsx";
-import MyFormik from "../../Form/MyFormik.tsx";
-import CreateButton from "../../Button/CreateButton.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
-import { TooltipMapAdresse } from "../TooltipsMap.tsx";
+import Volet from "../../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "../MapUtils.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
+import { TooltipMapAdresse } from "../TooltipsMap.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -136,6 +136,7 @@ export const useToolbarAdresseContext = ({ map, workingLayer }) => {
 
     const selectCtrl = new Select({
       layers: [workingLayer],
+      toggleCondition: platformModifierKeyOnly,
     });
     const dragBoxCtrl = new DragBox({
       style: new Style({
@@ -148,7 +149,7 @@ export const useToolbarAdresseContext = ({ map, workingLayer }) => {
     dragBoxCtrl.on("boxend", function (e) {
       const selectedCtrlFeatures = selectCtrl.getFeatures().getArray();
 
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();

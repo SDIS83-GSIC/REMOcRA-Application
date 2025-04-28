@@ -1,5 +1,5 @@
 import { Feature } from "ol";
-import { shiftKeyOnly } from "ol/events/condition";
+import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
 import { DragBox, Draw, Select } from "ol/interaction";
@@ -325,6 +325,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
           }),
         }),
       }),
+      toggleCondition: platformModifierKeyOnly,
       hitTolerance: 4,
     });
     const dragBoxCtrl = new DragBox({
@@ -336,7 +337,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       minArea: 25,
     });
     dragBoxCtrl.on("boxend", function (e) {
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();

@@ -1,24 +1,24 @@
-import { Ref, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ButtonGroup } from "react-bootstrap";
+import { Map } from "ol";
+import { platformModifierKeyOnly } from "ol/events/condition";
+import { WKT } from "ol/format";
+import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { Stroke, Style } from "ol/style";
-import { DragBox, Draw, Modify, Select } from "ol/interaction";
-import { shiftKeyOnly } from "ol/events/condition";
-import { WKT } from "ol/format";
-import { Map } from "ol";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { Ref, useMemo } from "react";
+import { ButtonGroup } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import {
   IconCreate,
   IconEdit,
   IconSelect,
 } from "../../components/Icon/Icon.tsx";
-import { hasDroit } from "../../droits.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { URLS } from "../../routes.tsx";
-import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import ToolbarButton from "../../components/Map/ToolbarButton.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import url, { getFetchOptions } from "../../module/fetch.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { URLS } from "../../routes.tsx";
 
 export const useToolbarOldebContext = ({
   map,
@@ -81,7 +81,9 @@ export const useToolbarOldebContext = ({
         });
     });
 
-    const selectCtrl = new Select({});
+    const selectCtrl = new Select({
+      toggleCondition: platformModifierKeyOnly,
+    });
     const dragBoxCtrl = new DragBox({
       style: new Style({
         stroke: new Stroke({
@@ -92,7 +94,7 @@ export const useToolbarOldebContext = ({
     });
 
     dragBoxCtrl.on("boxend", (e) => {
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();

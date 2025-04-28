@@ -1,14 +1,14 @@
 import { Map } from "ol";
+import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
-import { shiftKeyOnly } from "ol/events/condition";
 import { DragBox, Draw, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
@@ -154,6 +154,7 @@ export const useToolbarPeiContext = ({
           }),
         }),
       }),
+      toggleCondition: platformModifierKeyOnly,
       hitTolerance: 4,
     });
     const dragBoxCtrl = new DragBox({
@@ -166,7 +167,7 @@ export const useToolbarPeiContext = ({
     });
 
     dragBoxCtrl.on("boxend", function (e) {
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();

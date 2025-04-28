@@ -1,20 +1,21 @@
-import { never, shiftKeyOnly } from "ol/events/condition";
-import { DragBox, Draw, Modify, Select, Translate } from "ol/interaction";
-import Map from "ol/Map";
-import { Fill, Stroke, Style } from "ol/style";
-import { asArray, asString } from "ol/color";
 import { Feature } from "ol";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
+import { asArray, asString } from "ol/color";
+import { never, platformModifierKeyOnly } from "ol/events/condition";
+import { getCenter, getHeight, getWidth } from "ol/extent";
 import { LineString, Point, Polygon } from "ol/geom";
-import View from "ol/View";
+import { DragBox, Draw, Modify, Select, Translate } from "ol/interaction";
+import VectorLayer from "ol/layer/Vector";
+import Map from "ol/Map";
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import View from "ol/View";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import FormRange from "react-bootstrap/FormRange";
-import { getCenter, getHeight, getWidth } from "ol/extent";
-import Volet from "../../Volet/Volet.tsx";
-import ToolbarButton from "../ToolbarButton.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../Accordion/Accordion.tsx";
 import {
   IconDelete,
   IconEdit,
@@ -27,9 +28,8 @@ import {
   IconStyle,
 } from "../../Icon/Icon.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../Accordion/Accordion.tsx";
+import Volet from "../../Volet/Volet.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
 
 const defaultStyle = new Style({
   fill: new Fill({
@@ -126,6 +126,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
 
     const selectCtrl = new Select({
       layers: [workingLayer],
+      toggleCondition: platformModifierKeyOnly,
     });
     const dragBoxCtrl = new DragBox({
       style: new Style({
@@ -136,7 +137,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
       minArea: 25,
     });
     dragBoxCtrl.on("boxend", function (e) {
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();

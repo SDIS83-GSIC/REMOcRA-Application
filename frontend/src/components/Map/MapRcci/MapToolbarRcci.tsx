@@ -1,12 +1,21 @@
-import { Stroke, Style } from "ol/style";
-import VectorLayer from "ol/layer/Vector";
-import { DragBox, Draw, Modify, Select } from "ol/interaction";
-import { shiftKeyOnly } from "ol/events/condition";
+import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
+import { DragBox, Draw, Modify, Select } from "ol/interaction";
+import VectorLayer from "ol/layer/Vector";
+import { Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { MutableRefObject, useMemo, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
-import ToolbarButton from "../ToolbarButton.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import RcciForm, {
+  getInitialValues,
+  prepareValues,
+  validationSchema,
+} from "../../../pages/Admin/rcci/RcciForm.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 import {
   IconCreate,
   IconCursorAdd,
@@ -16,21 +25,12 @@ import {
   IconMoveObjet,
   IconSelect,
 } from "../../Icon/Icon.tsx";
-import { hasDroit } from "../../../droits.tsx";
-import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
-import { useAppContext } from "../../App/AppProvider.tsx";
-import url, { getFetchOptions } from "../../../module/fetch.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import DeleteModal from "../../Modal/DeleteModal.tsx";
-import useModal from "../../Modal/ModalUtils.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
-import RcciForm, {
-  getInitialValues,
-  prepareValues,
-  validationSchema,
-} from "../../../pages/Admin/rcci/RcciForm.tsx";
+import useModal from "../../Modal/ModalUtils.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
 
 export const useToolbarRcciContext = ({
   map,
@@ -69,6 +69,7 @@ export const useToolbarRcciContext = ({
           }),
         }),
       }),
+      toggleCondition: platformModifierKeyOnly,
       hitTolerance: 4,
     });
     const dragBoxCtrl = new DragBox({
@@ -81,7 +82,7 @@ export const useToolbarRcciContext = ({
     });
 
     dragBoxCtrl.on("boxend", (e) => {
-      if (!shiftKeyOnly(e.mapBrowserEvent)) {
+      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();
