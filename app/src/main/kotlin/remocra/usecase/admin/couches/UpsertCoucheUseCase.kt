@@ -5,11 +5,13 @@ import com.google.inject.Inject
 import remocra.auth.UserInfo
 import remocra.data.CoucheFormData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeDataCache
 import remocra.db.CoucheRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Couche
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
+import remocra.eventbus.datacache.DataCacheModifiedEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
@@ -26,7 +28,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
     }
 
     override fun postEvent(element: CoucheFormData, userInfo: UserInfo) {
-        // no-op
+        eventBus.post(DataCacheModifiedEvent(TypeDataCache.COUCHE))
     }
 
     override fun execute(userInfo: UserInfo?, element: CoucheFormData): CoucheFormData {
@@ -45,7 +47,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                     groupeCoucheOrdre = groupeCouche.groupeCoucheOrdre,
                 ),
             )
-            groupeCouche.coucheList?.forEach {
+            groupeCouche.coucheList.forEach {
                     couche ->
                 coucheRepository.upsertCouche(
                     Couche(
