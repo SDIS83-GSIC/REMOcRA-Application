@@ -29,10 +29,10 @@ class TriAnomalieEndpoint : AbstractEndpoint() {
     @Context
     lateinit var securityContext: SecurityContext
 
-    class ListeTriInput {
+    data class ListeTriInput(
         @FormParam("listeObjet")
-        lateinit var listeObjet: List<UUID>
-    }
+        val listeObjet: List<UUID>,
+    )
 
     @GET
     @Path("/anomalie/get-ordre/{idCategorie}")

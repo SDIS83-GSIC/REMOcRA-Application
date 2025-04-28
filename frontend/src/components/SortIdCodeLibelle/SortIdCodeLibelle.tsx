@@ -151,7 +151,7 @@ const SortIdCodeLibelle = ({
         errorToast(await error.text());
       },
     },
-    true,
+    false,
   );
 
   const submitList = () => {
@@ -168,7 +168,7 @@ const SortIdCodeLibelle = ({
       .map((e) => {
         return e.id;
       });
-    execute.run({listeObjet: JSON.stringify(formattedData)});
+    execute.run({ listeObjet: formattedData });
   };
 
   return (
