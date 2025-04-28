@@ -27,6 +27,7 @@ data class Anomalie(
     val anomalieActif: Boolean,
     val anomalieProtected: Boolean,
     val anomalieRendNonConforme: Boolean,
+    val anomalieOrdre: Int?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -68,6 +69,13 @@ data class Anomalie(
         if (this.anomalieRendNonConforme != o.anomalieRendNonConforme) {
             return false
         }
+        if (this.anomalieOrdre == null) {
+            if (o.anomalieOrdre != null) {
+                return false
+            }
+        } else if (this.anomalieOrdre != o.anomalieOrdre) {
+            return false
+        }
         return true
     }
 
@@ -82,6 +90,7 @@ data class Anomalie(
         result = prime * result + this.anomalieActif.hashCode()
         result = prime * result + this.anomalieProtected.hashCode()
         result = prime * result + this.anomalieRendNonConforme.hashCode()
+        result = prime * result + (if (this.anomalieOrdre == null) 0 else this.anomalieOrdre.hashCode())
         return result
     }
 
@@ -96,6 +105,7 @@ data class Anomalie(
         sb.append(", ").append(anomalieActif)
         sb.append(", ").append(anomalieProtected)
         sb.append(", ").append(anomalieRendNonConforme)
+        sb.append(", ").append(anomalieOrdre)
 
         sb.append(")")
         return sb.toString()

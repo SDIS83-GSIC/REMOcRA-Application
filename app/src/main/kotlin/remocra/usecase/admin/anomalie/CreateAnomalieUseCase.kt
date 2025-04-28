@@ -55,7 +55,7 @@ class CreateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.INS
                 anomalieActif = element.anomalieActif,
                 anomalieProtected = element.anomalieProtected,
                 anomalieRendNonConforme = element.anomalieRendNonConforme,
-
+                anomalieOrdre = 0, // par défaut
             ),
         )
         element.poidsAnomalieList?.filter { p -> !p.isEmpty }?.forEach {

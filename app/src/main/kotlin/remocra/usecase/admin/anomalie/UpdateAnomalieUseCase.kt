@@ -68,6 +68,7 @@ class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPD
                 anomalieActif = element.anomalieActif,
                 anomalieProtected = element.anomalieProtected,
                 anomalieRendNonConforme = element.anomalieRendNonConforme,
+                anomalieOrdre = 0, // par défaut
             ),
         )
 

@@ -132,6 +132,11 @@ open class Anomalie(
      */
     val REND_NON_CONFORME: TableField<Record, Boolean?> = createField(DSL.name("anomalie_rend_non_conforme"), SQLDataType.BOOLEAN.nullable(false), this, "Indique si l'anomalie doit rendre non conforme (TRUE) ou indisponible (FALSE)")
 
+    /**
+     * The column <code>remocra.anomalie.anomalie_ordre</code>.
+     */
+    val ORDRE: TableField<Record, Int?> = createField(DSL.name("anomalie_ordre"), SQLDataType.INTEGER.defaultValue(DSL.field(DSL.raw("0"), SQLDataType.INTEGER)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
