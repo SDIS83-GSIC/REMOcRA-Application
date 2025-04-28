@@ -114,7 +114,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     // Commun aux deux
                     data += """
                         
-                        Dernière RECO : ${
+                        Dernière ROP : ${
                         peiData.lastRop?.let {
                             dateUtils.format(
                                 it,
@@ -122,7 +122,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                             )
                         }.takeIfNotNullElseNonRenseigne()
                     }
-                        Dernier CTP :  ${peiData.lastCtp?.let {
+                        Dernier CTP : ${peiData.lastCtp?.let {
                         dateUtils.format(
                             it,
                             DateUtils.PATTERN_NATUREL,
