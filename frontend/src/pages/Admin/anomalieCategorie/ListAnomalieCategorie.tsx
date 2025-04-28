@@ -18,7 +18,6 @@ const ListAnomalieCategorie = () => {
       pageTitle="Catégories d'anomalies"
       addButtonTitle={"Ajouter une catégorie d'anomalie"}
       pageIcon={<IconAnomalie />}
-      hasProtectedValue={false}
       lienPageAjout={URLS.ADD_ANOMALIE_CATEGORIE}
       typeNomenclature={NOMENCLATURE.ANOMALIE_CATEGORIE}
       lienPageUpdate={URLS.UPDATE_ANOMALIE_CATEGORIE}

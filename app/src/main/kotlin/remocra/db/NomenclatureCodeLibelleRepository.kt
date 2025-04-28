@@ -177,6 +177,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getProtectedField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
+                TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.PROTECTED
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.PROTECTED
                 TypeNomenclatureCodeLibelle.NATURE_DECI -> NATURE_DECI.PROTECTED
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.PROTECTED
