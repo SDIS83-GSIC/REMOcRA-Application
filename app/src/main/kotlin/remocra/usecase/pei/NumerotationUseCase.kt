@@ -109,7 +109,9 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_49 -> computeNumero49(pei)
             CodeSdis.SDIS_53 -> computeNumero53(pei)
             CodeSdis.SDIS_58 -> computeNumero58(pei)
-            CodeSdis.SDIS_66 -> computeNumero66(pei)
+            CodeSdis.SDIS_59, // TODO
+            CodeSdis.SDIS_66,
+            -> computeNumero66(pei)
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroMethodeC(pei)
@@ -157,6 +159,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
             CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
+            CodeSdis.SDIS_59, // TODO
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
@@ -895,6 +898,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_53,
             CodeSdis.SDIS_58,
+            CodeSdis.SDIS_59, // TODO
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
