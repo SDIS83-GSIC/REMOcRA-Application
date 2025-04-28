@@ -3,6 +3,7 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import remocra.GlobalConstants
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
@@ -32,6 +33,7 @@ class TriAnomalieRepository
     fun getListeAnomalieCategorieOrdonnee(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(ANOMALIE_CATEGORIE.ID.`as`("id"), ANOMALIE_CATEGORIE.CODE.`as`("code"), ANOMALIE_CATEGORIE.LIBELLE.`as`("libelle"))
             .from(ANOMALIE_CATEGORIE)
+            .where(ANOMALIE_CATEGORIE.CODE.notEqual(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
             .orderBy(ANOMALIE_CATEGORIE.ORDRE)
             .fetchInto()
 

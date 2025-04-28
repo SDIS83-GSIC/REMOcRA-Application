@@ -75,18 +75,20 @@ const AnomalieList = () => {
                 <span className="fs-6">
                   {categorie.anomalieCategorieLibelle}
                 </span>
-                <CustomLinkButton
-                  className="float-end fs-6"
-                  pathname={URLS.ANOMALIE_SORT(categorie.anomalieCategorieId)}
-                  variant={"light"}
-                >
-                  <TooltipCustom
-                    tooltipText={"Changer l'ordre des éléments"}
-                    tooltipId={"tooltipOrder"}
+                {categorie.anomalieCategorieCode !== "SYSTEME" && (
+                  <CustomLinkButton
+                    className="float-end fs-6"
+                    pathname={URLS.ANOMALIE_SORT(categorie.anomalieCategorieId)}
+                    variant={"light"}
                   >
-                    <IconSortList />
-                  </TooltipCustom>
-                </CustomLinkButton>
+                    <TooltipCustom
+                      tooltipText={"Changer l'ordre des éléments"}
+                      tooltipId={"tooltipOrder"}
+                    >
+                      <IconSortList />
+                    </TooltipCustom>
+                  </CustomLinkButton>
+                )}
               </th>
             </tr>
             {anomalieList

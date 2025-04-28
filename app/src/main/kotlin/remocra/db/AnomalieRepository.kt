@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.inline
 import org.jooq.impl.DSL.`when`
 import remocra.GlobalConstants
 import remocra.data.ApiAnomalieWithNature
@@ -36,7 +37,25 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      * Retourne l'ensemble des anomalies
      */
     fun getAllForAdmin(): Collection<Anomalie> =
-        dsl.selectFrom(ANOMALIE).fetchInto()
+        getSystemeForAdmin() + getNotSystemeForAdmin()
+
+    // Ensemble des anomalies système
+    private fun getSystemeForAdmin(): Collection<Anomalie> =
+        dsl.select(*ANOMALIE.fields(), inline(1).`as`("ens_order"))
+            .from(ANOMALIE)
+            .join(ANOMALIE_CATEGORIE).on(ANOMALIE_CATEGORIE.ID.eq(ANOMALIE.ANOMALIE_CATEGORIE_ID))
+            .where(ANOMALIE_CATEGORIE.CODE.eq(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
+            .orderBy(ANOMALIE.LIBELLE)
+            .fetchInto()
+
+    // Ensemble des anomalies hors système
+    private fun getNotSystemeForAdmin(): Collection<Anomalie> =
+        dsl.select(*ANOMALIE.fields(), inline(2).`as`("ens_order"))
+            .from(ANOMALIE)
+            .join(ANOMALIE_CATEGORIE).on(ANOMALIE_CATEGORIE.ID.eq(ANOMALIE.ANOMALIE_CATEGORIE_ID))
+            .where(ANOMALIE_CATEGORIE.CODE.ne(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
+            .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE)
+            .fetchInto()
 
     /**
      * Retourne l'ensemble des poids/anomalies
@@ -48,7 +67,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      * Retourne l'ensemble des catégories d'anomalie
      */
     fun getAllAnomalieCategorieForAdmin(): Collection<AnomalieCategorie> =
-        dsl.selectFrom(ANOMALIE_CATEGORIE).orderBy(ANOMALIE_CATEGORIE.ORDRE).fetchInto()
+        dsl.selectFrom(ANOMALIE_CATEGORIE).orderBy(ANOMALIE_CATEGORIE.CODE.sortAsc(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME), ANOMALIE_CATEGORIE.ORDRE).fetchInto()
 
     /**
      * Retourne l'ensemble des poids/anomalies pour une anomalie
