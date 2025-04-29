@@ -4,8 +4,9 @@ import { FC } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { IconClose, IconDragNDrop } from "../Icon/Icon.tsx";
+import { IconClose, IconDragNDrop, IconInfo } from "../Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 
 type SortableTourneePeiType = {
   id: string;
@@ -80,11 +81,40 @@ const SortableTableTourneePei = ({
       <Table bordered striped>
         <thead>
           <tr>
-            <th>Point d&apos;eau</th>
+            <th>
+              Point d&apos;eau
+              <TooltipCustom
+                tooltipText={
+                  <>
+                    Utilisez la fonctionnalité de glisser / déplacer à
+                    l&apos;aide du bouton <IconDragNDrop /> en début de ligne
+                    pour placer les PEI dans l&apos;ordre souhaité
+                  </>
+                }
+                tooltipId={"dragDropTournee"}
+              >
+                <IconInfo />
+              </TooltipCustom>
+            </th>
             <th>Nature</th>
             <th>Adresse</th>
             <th>Commune</th>
-            <th>Action</th>
+            <th>
+              Action
+              <TooltipCustom
+                tooltipText={
+                  <>
+                    Le bouton &nbsp;
+                    <IconClose />
+                    &nbsp; permet de supprimer le PEI correspondant de la
+                    tourn&eacute;e
+                  </>
+                }
+                tooltipId={"supprimeTournee"}
+              >
+                <IconInfo />
+              </TooltipCustom>
+            </th>
           </tr>
         </thead>
         <tbody>
