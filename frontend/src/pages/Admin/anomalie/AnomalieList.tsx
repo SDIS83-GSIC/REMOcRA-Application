@@ -70,25 +70,37 @@ const AnomalieList = () => {
             <tr>
               <th
                 colSpan={natureCount + 1}
-                className={"bg-primary text-light text-center"}
+                className="bg-primary text-light p-0"
               >
-                <span className="fs-6">
-                  {categorie.anomalieCategorieLibelle}
-                </span>
-                {categorie.anomalieCategorieCode !== "SYSTEME" && (
-                  <CustomLinkButton
-                    className="float-end fs-6"
-                    pathname={URLS.ANOMALIE_SORT(categorie.anomalieCategorieId)}
-                    variant={"light"}
-                  >
-                    <TooltipCustom
-                      tooltipText={"Changer l'ordre des éléments"}
-                      tooltipId={"tooltipOrder"}
-                    >
-                      <IconSortList />
-                    </TooltipCustom>
-                  </CustomLinkButton>
-                )}
+                <div
+                  className="d-flex align-items-center justify-content-between px-3"
+                  style={{ minHeight: "48px" }}
+                >
+                  <div className="w-100 text-center">
+                    <span className="fs-6">
+                      {categorie.anomalieCategorieLibelle}
+                    </span>
+                  </div>
+
+                  {categorie.anomalieCategorieCode !== "SYSTEME" && (
+                    <div className="d-flex align-items-center">
+                      <TooltipCustom
+                        tooltipText={"Changer l'ordre des éléments"}
+                        tooltipId={"tooltipOrder"}
+                      >
+                        <CustomLinkButton
+                          pathname={URLS.ANOMALIE_SORT(
+                            categorie.anomalieCategorieId,
+                          )}
+                          variant="link"
+                          className="text-light"
+                        >
+                          <IconSortList />
+                        </CustomLinkButton>
+                      </TooltipCustom>
+                    </div>
+                  )}
+                </div>
               </th>
             </tr>
             {anomalieList
