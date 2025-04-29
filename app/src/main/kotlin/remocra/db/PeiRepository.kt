@@ -406,6 +406,7 @@ class PeiRepository
             INFERIEUR_6_MOIS,
             INFERIEUR_12_MOIS,
             INFERIEUR_24_MOIS,
+            INFERIEUR_36_MOIS,
         }
 
         fun toCondition(dateUtils: DateUtils): Condition =
@@ -444,6 +445,8 @@ class PeiRepository
                                 .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(12)))
                             ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
                                 .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(24)))
+                            ProchaineDate.INFERIEUR_36_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_ROP.le(dateUtils.now().plusMonths(36)))
                         }
                     },
                     prochaineDateCtp?.let {
@@ -459,6 +462,8 @@ class PeiRepository
                                 .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(12)))
                             ProchaineDate.INFERIEUR_24_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
                                 .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(24)))
+                            ProchaineDate.INFERIEUR_36_MOIS -> DSL.and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.ge(dateUtils.now()))
+                                .and(V_PEI_VISITE_DATE.PEI_NEXT_CTP.le(dateUtils.now().plusMonths(36)))
                         }
                     },
                     adresse?.let {

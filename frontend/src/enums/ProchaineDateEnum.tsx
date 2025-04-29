@@ -5,6 +5,7 @@ enum PROCHAINE_DATE_ENUM {
   INFERIEUR_6_MOIS = "< 6 mois",
   INFERIEUR_12_MOIS = "< 12 mois",
   INFERIEUR_24_MOIS = "< 24 mois",
+  INFERIEUR_36_MOIS = "< 36 mois",
 }
 
 export default PROCHAINE_DATE_ENUM;

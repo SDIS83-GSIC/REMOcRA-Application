@@ -8,5 +8,6 @@ enum DELTA_DATE {
   INF_6_MOIS = "< 6 Mois",
   INF_12_MOIS = "< 12 Mois",
   INF_24_MOIS = "< 24 Mois",
+  INF_36_MOIS = "< 36 Mois",
 }
 export default DELTA_DATE;
