@@ -1,4 +1,4 @@
-package remocra.web.nomenclatures
+package remocra.web.anomalie
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.FormParam
@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
-import remocra.db.NomenclatureAnomalieCategorieRepository
+import remocra.db.TriAnomalieRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -20,9 +20,9 @@ import java.util.UUID
  */
 @Produces("application/json; charset=UTF-8")
 @Path("nomenclature-anomalie-categorie") // On garde la même architecture que NomenclatureCodeLibelleEndpoint dans le cas où ceci vient un jour à être généralisée
-class NomenclatureAnomalieCategorieEndpoint : AbstractEndpoint() {
+class TriAnomalieEndpoint : AbstractEndpoint() {
     @Inject
-    lateinit var nomenclatureAnomalieCategorieRepository: NomenclatureAnomalieCategorieRepository
+    lateinit var triAnomalieRepository: TriAnomalieRepository
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -34,17 +34,17 @@ class NomenclatureAnomalieCategorieEndpoint : AbstractEndpoint() {
 
     /**
      * @See remocra.db.NomenclatureCodeLibelleRepository.getAllForAdmin
-     * @See NomenclatureCodeLibelleEndpoint.get
+     * @See remocra.web.nomenclatures.NomenclatureCodeLibelleEndpoint.get
      */
     @GET
     @Path("/get-ordre")
     @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun getListeOrdonnee(): Response =
-        Response.ok(nomenclatureAnomalieCategorieRepository.getListeOrdonnee()).build()
+        Response.ok(triAnomalieRepository.getListeOrdonnee()).build()
 
     @PUT
     @Path("/update-ordre")
     @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun updateOrdre(liste: ListeTriInput): Response =
-        Response.ok(nomenclatureAnomalieCategorieRepository.updateOrdre(liste.listeObjet)).build()
+        Response.ok(triAnomalieRepository.updateOrdre(liste.listeObjet)).build()
 }

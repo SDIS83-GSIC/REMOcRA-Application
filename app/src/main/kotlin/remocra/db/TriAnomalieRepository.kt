@@ -7,7 +7,7 @@ import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import java.util.UUID
 
-class NomenclatureAnomalieCategorieRepository
+class TriAnomalieRepository
 @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
