@@ -505,7 +505,8 @@ class TourneeRepository
                 .join(ANOMALIE).on(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
                 .join(ANOMALIE_CATEGORIE).on(ANOMALIE.ANOMALIE_CATEGORIE_ID.eq(ANOMALIE_CATEGORIE.ID))
                 .where(ANOMALIE_CATEGORIE.CODE.ne(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME)) // notEqual
-                .groupBy(L_PEI_ANOMALIE.PEI_ID),
+                .groupBy(ANOMALIE.ORDRE, ANOMALIE_CATEGORIE.ORDRE, L_PEI_ANOMALIE.PEI_ID)
+                .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE),
         )
 
         val nextVisiteCteName = name("NEXT_VISITE_CTE")

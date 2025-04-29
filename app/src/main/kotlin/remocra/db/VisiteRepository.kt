@@ -152,6 +152,7 @@ class VisiteRepository
             .join(POIDS_ANOMALIE)
             .on(POIDS_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
             .and(POIDS_ANOMALIE.NATURE_ID.eq(PEI.NATURE_ID))
+            .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE)
             .fetchGroups(L_VISITE_ANOMALIE.VISITE_ID, CompletedAnomalie::class.java)
 
     data class CompletedAnomalie(

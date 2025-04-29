@@ -211,6 +211,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
                     .and(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID)),
             )
             .where(isActiveCondition(isActive = true))
+            .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE)
             .fetchInto()
 
     fun deleteLiaisonByPei(idPEi: UUID) = dsl.deleteFrom(L_PEI_ANOMALIE).where(L_PEI_ANOMALIE.PEI_ID.eq(idPEi)).execute()
@@ -272,11 +273,13 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
                     .and(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID)),
             )
             .where(isActiveCondition(isActive = true))
+            .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE)
             .fetchGroups(PEI.ID, CompletedAnomalie::class.java)
 
     fun getAnomalieCategorie(): Collection<AnomalieCategorie> =
         dsl.selectFrom(ANOMALIE_CATEGORIE)
             .where(ANOMALIE_CATEGORIE.ACTIF.isTrue)
+            .orderBy(ANOMALIE_CATEGORIE.ORDRE)
             .fetchInto()
 
     fun getAnomalieForExportCTP(): List<GlobalData.IdCodeLibelleData> =
