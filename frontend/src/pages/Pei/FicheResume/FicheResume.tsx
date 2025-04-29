@@ -41,10 +41,10 @@ const FicheResume = ({
       <Container>
         <Row>
           {Object.entries(mapColonneRow).map(([key, values]) => (
-            <Col key={key}>
+            <Col key={key} className={"mx-0 px-0"}>
               {Array.from(values).map((e, key) => {
                 return (
-                  <Row className="m-3" key={key}>
+                  <Row className="mx-0 my-3" key={key}>
                     <ElementResume
                       titre={e.titre}
                       value={e.data}
@@ -70,10 +70,10 @@ const ElementResume = ({
   typeResumeElement,
 }: ElementResumeType) => {
   return (
-    <div className="bg-light px-1 border rounded">
-      <div className="py-2 h2 text-center">{titre}</div>
+    <div className={"mx-0 px-0"}>
+      <div className="h2">{titre}</div>
       <Row>
-        <Col xs={"auto"} className={"mx-auto"}>
+        <Col xs={"auto"}>
           {typeResumeElement === TYPE_RESUME_ELEMENT.DISPONIBILITE ? (
             <ElementResumeDisponibilite value={value} />
           ) : typeResumeElement === TYPE_RESUME_ELEMENT.ANOMALIES ? (
@@ -115,10 +115,9 @@ const ElementResumeAnomalie = ({
   }[];
 }) => {
   return value.length > 0 ? (
-    <ul>
-      {" "}
+    <Row>
       {value.map((e, key) => (
-        <li
+        <Col
           key={key}
           className={classNames(
             e.valIndispoTerrestre === 5 && "fw-bold",
@@ -126,9 +125,9 @@ const ElementResumeAnomalie = ({
           )}
         >
           {e.anomalieLibelle}
-        </li>
+        </Col>
       ))}{" "}
-    </ul>
+    </Row>
   ) : (
     "Aucune anomalie pour ce PEI."
   );
