@@ -69,12 +69,12 @@ const ListDocumentHabilitable = () => {
       <Container>
         <PageTitle
           icon={<IconList />}
-          title={"Liste des documents habilitables"}
+          title={"Liste des documents"}
           right={
             hasDroit(user, TYPE_DROIT.DOCUMENTS_A) && (
               <CreateButton
                 href={URLS.ADD_DOCUMENT_HABILITABLE}
-                title={"Ajouter un document habilitable"}
+                title={"Ajouter un document"}
               />
             )
           }
@@ -88,7 +88,7 @@ const ListDocumentHabilitable = () => {
               header: "Informations utiles",
               content: (
                 <p>
-                  Les documents habilitables sont
+                  Les documents sont
                   <ul>
                     <li>
                       rattachables à zéro ou plusieurs <b>thématiques</b>

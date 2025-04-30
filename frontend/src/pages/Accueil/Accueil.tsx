@@ -230,7 +230,7 @@ function getLinks(
         },
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
-          label: "Liste des documents habilitables",
+          label: "Liste des documents",
           link: URLS.LIST_DOCUMENT_HABILITABLE,
         },
       ];

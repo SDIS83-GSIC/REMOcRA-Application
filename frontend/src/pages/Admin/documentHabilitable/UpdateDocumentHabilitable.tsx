@@ -19,10 +19,7 @@ const UpdateDocumentHabilitable = () => {
   );
   return (
     <Container>
-      <PageTitle
-        icon={<IconEdit />}
-        title={"Mise à jour d'un document habilitable"}
-      />
+      <PageTitle icon={<IconEdit />} title={"Mise à jour d'un document"} />
       <MyFormik
         initialValues={getInitialValues(data)}
         validationSchema={validationSchema}

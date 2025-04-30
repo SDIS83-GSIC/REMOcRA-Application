@@ -12,10 +12,7 @@ import DocumentHabilitable, {
 const CreateDocumentHabilitable = () => {
   return (
     <Container>
-      <PageTitle
-        icon={<IconCreate />}
-        title={"Création d'un document habilitable"}
-      />
+      <PageTitle icon={<IconCreate />} title={"Création d'un document"} />
       <MyFormik
         initialValues={getInitialValues()}
         validationSchema={validationSchema}
