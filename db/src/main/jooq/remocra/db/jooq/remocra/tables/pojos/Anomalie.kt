@@ -28,6 +28,8 @@ data class Anomalie(
     val anomalieProtected: Boolean,
     val anomalieRendNonConforme: Boolean,
     val anomalieOrdre: Int?,
+    val anomaliePoidsAnomalieSystemeValIndispoTerrestre: Int?,
+    val anomaliePoidsAnomalieSystemeValIndispoHbe: Int?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -76,6 +78,20 @@ data class Anomalie(
         } else if (this.anomalieOrdre != o.anomalieOrdre) {
             return false
         }
+        if (this.anomaliePoidsAnomalieSystemeValIndispoTerrestre == null) {
+            if (o.anomaliePoidsAnomalieSystemeValIndispoTerrestre != null) {
+                return false
+            }
+        } else if (this.anomaliePoidsAnomalieSystemeValIndispoTerrestre != o.anomaliePoidsAnomalieSystemeValIndispoTerrestre) {
+            return false
+        }
+        if (this.anomaliePoidsAnomalieSystemeValIndispoHbe == null) {
+            if (o.anomaliePoidsAnomalieSystemeValIndispoHbe != null) {
+                return false
+            }
+        } else if (this.anomaliePoidsAnomalieSystemeValIndispoHbe != o.anomaliePoidsAnomalieSystemeValIndispoHbe) {
+            return false
+        }
         return true
     }
 
@@ -91,6 +107,8 @@ data class Anomalie(
         result = prime * result + this.anomalieProtected.hashCode()
         result = prime * result + this.anomalieRendNonConforme.hashCode()
         result = prime * result + (if (this.anomalieOrdre == null) 0 else this.anomalieOrdre.hashCode())
+        result = prime * result + (if (this.anomaliePoidsAnomalieSystemeValIndispoTerrestre == null) 0 else this.anomaliePoidsAnomalieSystemeValIndispoTerrestre.hashCode())
+        result = prime * result + (if (this.anomaliePoidsAnomalieSystemeValIndispoHbe == null) 0 else this.anomaliePoidsAnomalieSystemeValIndispoHbe.hashCode())
         return result
     }
 
@@ -106,6 +124,8 @@ data class Anomalie(
         sb.append(", ").append(anomalieProtected)
         sb.append(", ").append(anomalieRendNonConforme)
         sb.append(", ").append(anomalieOrdre)
+        sb.append(", ").append(anomaliePoidsAnomalieSystemeValIndispoTerrestre)
+        sb.append(", ").append(anomaliePoidsAnomalieSystemeValIndispoHbe)
 
         sb.append(")")
         return sb.toString()

@@ -1,0 +1,2 @@
+ALTER TABLE remocra.anomalie ADD anomalie_poids_anomalie_systeme_val_indispo_terrestre int NULL;
+ALTER TABLE remocra.anomalie ADD anomalie_poids_anomalie_systeme_val_indispo_hbe int NULL;

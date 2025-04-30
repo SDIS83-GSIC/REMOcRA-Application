@@ -137,6 +137,18 @@ open class Anomalie(
      */
     val ORDRE: TableField<Record, Int?> = createField(DSL.name("anomalie_ordre"), SQLDataType.INTEGER.defaultValue(DSL.field(DSL.raw("0"), SQLDataType.INTEGER)), this, "")
 
+    /**
+     * The column
+     * <code>remocra.anomalie.anomalie_poids_anomalie_systeme_val_indispo_terrestre</code>.
+     */
+    val POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_TERRESTRE: TableField<Record, Int?> = createField(DSL.name("anomalie_poids_anomalie_systeme_val_indispo_terrestre"), SQLDataType.INTEGER, this, "")
+
+    /**
+     * The column
+     * <code>remocra.anomalie.anomalie_poids_anomalie_systeme_val_indispo_hbe</code>.
+     */
+    val POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_HBE: TableField<Record, Int?> = createField(DSL.name("anomalie_poids_anomalie_systeme_val_indispo_hbe"), SQLDataType.INTEGER, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -55,6 +55,8 @@ class CreateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.INS
                 anomalieActif = element.anomalieActif,
                 anomalieProtected = element.anomalieProtected,
                 anomalieRendNonConforme = element.anomalieRendNonConforme,
+                anomaliePoidsAnomalieSystemeValIndispoTerrestre = element.poidsAnomalieSystemeValIndispoTerrestre,
+                anomaliePoidsAnomalieSystemeValIndispoHbe = element.poidsAnomalieSystemeValIndispoHbe,
                 anomalieOrdre = 0, // par défaut
             ),
         )

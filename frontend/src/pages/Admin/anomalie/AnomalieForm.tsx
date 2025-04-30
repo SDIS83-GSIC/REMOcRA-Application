@@ -24,6 +24,7 @@ import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconDelete } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import {
+  numberPositif,
   requiredBoolean,
   requiredString,
 } from "../../../module/validators.tsx";
@@ -36,6 +37,8 @@ type AnomalieType = {
   anomalieActif: boolean;
   anomalieProtected: boolean;
   anomalieRendNonConforme: boolean;
+  poidsAnomalieSystemeValIndispoTerrestre: number;
+  poidsAnomalieSystemeValIndispoHbe: number;
   poidsAnomalieList: PoidsAnomalieType[];
 };
 
@@ -55,6 +58,9 @@ export const getInitialValues = (data?: any) => ({
   anomalieActif: data?.anomalieActif ?? false,
   anomalieProtected: data?.anomalieProtected ?? false,
   anomalieRendNonConforme: data?.anomalieRendNonConforme ?? false,
+  poidsAnomalieSystemeValIndispoTerrestre:
+    data?.poidsAnomalieSystemeValIndispoTerrestre,
+  poidsAnomalieSystemeValIndispoHbe: data?.poidsAnomalieSystemeValIndispoHbe,
   poidsAnomalieList: data?.poidsAnomalieList ?? [],
 });
 
@@ -66,6 +72,9 @@ export const prepareValues = (values: any) => ({
   anomalieActif: values.anomalieActif,
   anomalieProtected: values.anomalieProtected ?? false,
   anomalieRendNonConforme: values.anomalieRendNonConforme,
+  poidsAnomalieSystemeValIndispoTerrestre:
+    values.poidsAnomalieSystemeValIndispoTerrestre,
+  poidsAnomalieSystemeValIndispoHbe: values.poidsAnomalieSystemeValIndispoHbe,
   poidsAnomalieList: values.poidsAnomalieList ?? [],
 });
 
@@ -76,6 +85,8 @@ export const validationSchema = object({
   anomalieActif: requiredBoolean,
   anomalieProtected: requiredBoolean,
   anomalieRendNonConforme: requiredBoolean,
+  poidsAnomalieSystemeValIndispoTerrestre: numberPositif,
+  poidsAnomalieSystemeValIndispoHbe: numberPositif,
   poidsAnomalieList: array(),
 });
 
@@ -145,6 +156,43 @@ const AnomalieForm = () => {
           name={"anomalieRendNonConforme"}
           label={"Rend non conforme"}
         />
+      )}
+      {isSysteme && (
+        <Card className={"mt-2"}>
+          <Card.Header>
+            <Row>
+              <Col xs={"auto"} className={"d-flex"}>
+                <div className="fw-bold align-self-center">
+                  Valeurs opérationnelle et HBE
+                </div>
+              </Col>
+            </Row>
+          </Card.Header>
+          <Card.Body>
+            <Row>
+              <Col xs="3">
+                <NumberInput
+                  name={`poidsAnomalieSystemeValIndispoTerrestre`}
+                  label="Indispo terrestre"
+                  required={false}
+                  min={0}
+                  max={5}
+                  step={1}
+                />
+              </Col>
+              <Col xs="3">
+                <NumberInput
+                  name={`poidsAnomalieSystemeValIndispoHbe`}
+                  label="Indispo HBE"
+                  required={false}
+                  min={0}
+                  max={5}
+                  step={1}
+                />
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
       )}
       {!isSysteme && (
         <FieldArray

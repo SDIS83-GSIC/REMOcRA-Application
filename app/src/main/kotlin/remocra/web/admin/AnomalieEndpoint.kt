@@ -91,6 +91,8 @@ class AnomalieEndpoint : AbstractEndpoint() {
                     anomalieActif = anomalie.anomalieActif,
                     anomalieProtected = anomalie.anomalieProtected,
                     anomalieRendNonConforme = anomalie.anomalieRendNonConforme,
+                    poidsAnomalieSystemeValIndispoTerrestre = anomalie.anomaliePoidsAnomalieSystemeValIndispoTerrestre,
+                    poidsAnomalieSystemeValIndispoHbe = anomalie.anomaliePoidsAnomalieSystemeValIndispoHbe,
                     poidsAnomalieList = anomalieRepository.getAnomaliePoidsByAnomalieId(anomalieId).map { poidsAnomalie ->
                         PoidsAnomalieData(
                             poidsAnomalieId = poidsAnomalie.poidsAnomalieId,

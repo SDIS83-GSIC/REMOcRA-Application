@@ -92,6 +92,8 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .set(ANOMALIE.ANOMALIE_CATEGORIE_ID, anomalie.anomalieAnomalieCategorieId)
             .set(ANOMALIE.ACTIF, anomalie.anomalieActif)
             .set(ANOMALIE.REND_NON_CONFORME, anomalie.anomalieRendNonConforme)
+            .set(ANOMALIE.POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_TERRESTRE, anomalie.anomaliePoidsAnomalieSystemeValIndispoTerrestre)
+            .set(ANOMALIE.POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_HBE, anomalie.anomaliePoidsAnomalieSystemeValIndispoHbe)
             .where(ANOMALIE.ID.eq(anomalie.anomalieId))
             .execute()
 

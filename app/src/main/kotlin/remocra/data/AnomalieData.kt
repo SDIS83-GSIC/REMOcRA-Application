@@ -11,5 +11,7 @@ data class AnomalieData(
     val anomalieActif: Boolean,
     val anomalieProtected: Boolean = false,
     val anomalieRendNonConforme: Boolean,
+    val poidsAnomalieSystemeValIndispoTerrestre: Int?,
+    val poidsAnomalieSystemeValIndispoHbe: Int?,
     val poidsAnomalieList: Collection<PoidsAnomalieData>? = listOf(),
 )
