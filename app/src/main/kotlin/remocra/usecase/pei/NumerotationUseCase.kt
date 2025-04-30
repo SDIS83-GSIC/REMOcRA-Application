@@ -92,6 +92,7 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun computeNumero(pei: PeiForNumerotationData): String {
         return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_61,
             -> computeNumeroMethodeA(pei)
@@ -140,6 +141,7 @@ class NumerotationUseCase : AbstractUseCase() {
             return pei.peiNumeroInterne!!
         }
         return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
@@ -907,6 +909,7 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID?, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
