@@ -538,6 +538,7 @@ export default [
           <Authorization
             Component={UpdatePei}
             droits={[
+              TYPE_DROIT.PEI_R,
               TYPE_DROIT.PEI_U,
               TYPE_DROIT.PEI_CARACTERISTIQUES_U,
               TYPE_DROIT.PEI_NUMERO_INTERNE_U,

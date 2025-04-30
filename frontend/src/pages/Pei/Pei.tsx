@@ -26,7 +26,7 @@ import FormDocuments, {
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";
+import { IconCreate, IconEdit, IconOeil } from "../../components/Icon/Icon.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
@@ -483,40 +483,68 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     },
   );
 
+  // Affichage du titre et de l'icône en fonction du contexte et des droits
+  let titre = "";
+  let icon;
+  let showFormButtons = true;
+  if (isNew) {
+    titre = "Création d'un PEI";
+    icon = <IconCreate />;
+  } else {
+    if (
+      isAuthorized(user, [
+        TYPE_DROIT.PEI_U,
+        TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+        TYPE_DROIT.PEI_DEPLACEMENT_U,
+        TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+        TYPE_DROIT.PEI_ADRESSE_C,
+      ])
+    ) {
+      // Autorisé à une modification au moins partielle
+      titre =
+        "Modification du " +
+        values.peiTypePei +
+        " n°" +
+        values.peiNumeroComplet;
+      icon = <IconEdit />;
+    } else {
+      // Seul cas possible : lecture seule
+      titre =
+        "Visualisation du " +
+        values.peiTypePei +
+        " n°" +
+        values.peiNumeroComplet;
+      icon = <IconOeil />;
+      showFormButtons = false;
+    }
+  }
+
   return (
     selectData &&
     srid != null && (
       <FormContainer>
         <Container>
-          <PageTitle
-            icon={isNew ? <IconCreate /> : <IconEdit />}
-            title={
-              isNew
-                ? "Création d'un PEI"
-                : "Modification du " +
-                  values.peiTypePei +
-                  " n°" +
-                  values.peiNumeroComplet
-            }
-          />
+          <PageTitle icon={icon} title={titre} />
           <AccordionCustom
             activesKeys={activesKeys}
             handleShowClose={handleShowClose}
             list={listAccordions}
           />
 
-          <SubmitFormButtons
-            returnLink={true}
-            onClick={() => {
-              const coordonnees = geometrieState.data?.find(
-                (e) => e.srid === parseInt(srid),
-              );
-              setFieldValue("coordonneeX", coordonnees.coordonneeX);
-              setFieldValue("coordonneeY", coordonnees.coordonneeY);
-              setFieldValue("typeSystemeSrid", srid);
-              checkValidity(values, show, listValuesRequired);
-            }}
-          />
+          {showFormButtons && (
+            <SubmitFormButtons
+              returnLink={true}
+              onClick={() => {
+                const coordonnees = geometrieState.data?.find(
+                  (e) => e.srid === parseInt(srid),
+                );
+                setFieldValue("coordonneeX", coordonnees.coordonneeX);
+                setFieldValue("coordonneeY", coordonnees.coordonneeY);
+                setFieldValue("typeSystemeSrid", srid);
+                checkValidity(values, show, listValuesRequired);
+              }}
+            />
+          )}
         </Container>
       </FormContainer>
     )
@@ -582,7 +610,8 @@ const FormEntetePei = ({
     return { id: e.toString(), code: e.toString(), libelle: e.toString() };
   });
 
-  const hasDroitUpdate = isNew || hasDroit(user, TYPE_DROIT.PEI_U);
+  // Condition générale d'update du PEI : l'utilisateur doit posséder le droit PEI_U
+  const disablePeiUpdate = !isNew && !hasDroit(user, TYPE_DROIT.PEI_U);
 
   return (
     listNatureDeci && (
@@ -633,7 +662,7 @@ const FormEntetePei = ({
                 setOtherValues={() => {
                   setFieldValue("pibiDiametreId", null);
                 }}
-                disabled={!hasDroitUpdate}
+                disabled={disablePeiUpdate}
               />
             )}
           </Col>
@@ -649,7 +678,7 @@ const FormEntetePei = ({
               )}
               required={true}
               setValues={setValues}
-              disabled={!hasDroitUpdate}
+              disabled={disablePeiUpdate}
             />
           </Col>
           <Col>
@@ -662,7 +691,7 @@ const FormEntetePei = ({
               )}
               required={true}
               setValues={setValues}
-              disabled={!hasDroitUpdate}
+              disabled={disablePeiUpdate}
             />
           </Col>
           <Col>
@@ -675,7 +704,7 @@ const FormEntetePei = ({
               )}
               required={false}
               setValues={setValues}
-              disabled={!hasDroitUpdate}
+              disabled={disablePeiUpdate}
             />
           </Col>
         </Row>
@@ -694,7 +723,7 @@ const FormEntetePei = ({
                 setFieldValue("peiSiteId", null);
               }}
               setValues={setValues}
-              disabled={!hasDroitUpdate}
+              disabled={disablePeiUpdate}
             />
           </Col>
           {(codeNatureDeci === TYPE_NATURE_DECI.PRIVE ||
@@ -712,7 +741,7 @@ const FormEntetePei = ({
                   )}
                   required={false}
                   setValues={setValues}
-                  disabled={!hasDroitUpdate}
+                  disabled={disablePeiUpdate}
                 />
               </Col>
               <Col>
@@ -729,7 +758,7 @@ const FormEntetePei = ({
                   )}
                   required={false}
                   setValues={setValues}
-                  disabled={!hasDroitUpdate}
+                  disabled={disablePeiUpdate}
                 />
               </Col>
             </>
@@ -761,8 +790,11 @@ const FormLocalisationPei = ({
   isNew: boolean;
   user: UtilisateurEntity;
 }) => {
-  const hasDroitUpdate =
+  const canEdit =
     isNew || isAuthorized(user, [TYPE_DROIT.PEI_U, TYPE_DROIT.PEI_ADRESSE_C]);
+
+  const disableDeplacer =
+    !isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U);
 
   return (
     <>
@@ -796,7 +828,7 @@ const FormLocalisationPei = ({
               setFieldValue("coordonneeX", coordonneesToSave?.coordonneeX);
               setFieldValue("coordonneeY", coordonneesToSave?.coordonneeY);
             }}
-            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
+            disabled={disableDeplacer}
             className={"mt-3"}
           >
             {TypeSystemeSrid.map((e) => {
@@ -821,7 +853,7 @@ const FormLocalisationPei = ({
             label="Coordonnée X"
             name="coordonneeXToDisplay"
             required={true}
-            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
+            disabled={disableDeplacer}
           />
         </Col>
         <Col>
@@ -829,7 +861,7 @@ const FormLocalisationPei = ({
             label="Coordonnée Y"
             name="coordonneeYToDisplay"
             required={true}
-            disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U)}
+            disabled={disableDeplacer}
           />
         </Col>
       </Row>
@@ -845,7 +877,7 @@ const FormLocalisationPei = ({
             )}
             required={true}
             setValues={setValues}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
         <Col>
@@ -861,7 +893,7 @@ const FormLocalisationPei = ({
               )}
               required={false}
               setValues={setValues}
-              disabled={!hasDroitUpdate}
+              disabled={!canEdit}
             />
           )}
         </Col>
@@ -872,7 +904,7 @@ const FormLocalisationPei = ({
             name="peiNumeroVoie"
             label="Numéro de voie"
             required={false}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
         <Col>
@@ -880,7 +912,7 @@ const FormLocalisationPei = ({
             name="peiSuffixeVoie"
             label="Suffixe"
             required={false}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
         <Col>
@@ -896,7 +928,7 @@ const FormLocalisationPei = ({
             required={!values.voieSaisieLibre} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
             setValues={setValues}
             disabled={
-              !hasDroitUpdate ||
+              !canEdit ||
               (values.peiVoieTexte != null &&
                 values.peiVoieTexte?.trim() !== "")
             }
@@ -906,7 +938,7 @@ const FormLocalisationPei = ({
               <CheckBoxInput
                 name="voieSaisieLibre"
                 label="Voie non trouvée"
-                disabled={!hasDroitUpdate}
+                disabled={!canEdit}
               />
               {values.voieSaisieLibre && (
                 <TextInput
@@ -914,7 +946,7 @@ const FormLocalisationPei = ({
                   label="Voie (saisie libre)"
                   required={false} // TODO XOR entre voieId et voieText
                   disabled={
-                    !hasDroitUpdate ||
+                    !canEdit ||
                     (values.peiVoieId != null &&
                       values.peiVoieId?.trim() !== "")
                   }
@@ -927,7 +959,7 @@ const FormLocalisationPei = ({
           <CheckBoxInput
             name="peiEnFace"
             label="Situé en face"
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
       </Row>
@@ -940,7 +972,7 @@ const FormLocalisationPei = ({
             valueId={values.peiNiveauId}
             required={false}
             setValues={setValues}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
         <Col>
@@ -955,7 +987,7 @@ const FormLocalisationPei = ({
             )}
             required={false}
             setValues={setValues}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
         <Col>
@@ -966,7 +998,7 @@ const FormLocalisationPei = ({
             valueId={values.peiDomaineId}
             required={true}
             setValues={setValues}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
       </Row>
@@ -976,7 +1008,7 @@ const FormLocalisationPei = ({
             name="peiComplementAdresse"
             label="Complément d'adresse"
             required={false}
-            disabled={!hasDroitUpdate}
+            disabled={!canEdit}
           />
         </Col>
       </Row>

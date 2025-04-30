@@ -55,6 +55,7 @@ export const IconPeiPlusProche = () => <i className="fi fi-rr-career-path" />;
 export const IconDebitSimultane = () => (
   <i className="fi fi-br-gauge-circle-bolt" />
 );
+export const IconOeil = () => <i className="fi fi-rr-eye" />;
 
 export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 

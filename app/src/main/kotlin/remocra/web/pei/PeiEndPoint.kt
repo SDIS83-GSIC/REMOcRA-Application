@@ -178,7 +178,7 @@ class PeiEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/referentiel-for-upsert-pei/")
-    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_ADRESSE_C, Droit.PEI_DEPLACEMENT_U, Droit.PEI_NUMERO_INTERNE_U])
+    @RequireDroits([Droit.PEI_R, Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_ADRESSE_C, Droit.PEI_DEPLACEMENT_U, Droit.PEI_NUMERO_INTERNE_U])
     fun getReferentielUpdateOrCreatePei(
         @QueryParam("geometry") geometry: Geometry?,
         @QueryParam("peiId") peiId: UUID?,
@@ -287,7 +287,7 @@ class PeiEndPoint : AbstractEndpoint() {
      */
     @GET
     @Path("/get-geometrie-by-srid")
-    @RequireDroits([Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C, Droit.PEI_NUMERO_INTERNE_U])
+    @RequireDroits([Droit.PEI_R, Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C, Droit.PEI_NUMERO_INTERNE_U])
     fun getGeometrieByTypeSrid(
         @QueryParam("coordonneeX")
         coordonneeX: String?,

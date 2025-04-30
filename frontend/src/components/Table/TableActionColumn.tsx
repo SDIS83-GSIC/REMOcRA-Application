@@ -249,8 +249,8 @@ export const ActionButton = ({
             return (
               <TableActionColumn
                 row={row}
-                textEnable={"Voir plus"}
-                icon={<IconSee />}
+                textEnable={_button.textEnable ?? "Voir plus"}
+                icon={_button.icon ?? <IconSee />}
                 pathname={_button.route?.(row.value)}
               />
             );

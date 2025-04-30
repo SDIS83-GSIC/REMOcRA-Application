@@ -9,6 +9,7 @@ import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
   IconLocation,
+  IconOeil,
   IconSee,
   IconVisite,
 } from "../components/Icon/Icon.tsx";
@@ -311,6 +312,15 @@ function getColumnPeiByStringArray(
 
   {
     const listeButton: ButtonType[] = [];
+
+    const canEditPei = isAuthorized(user, [
+      TYPE_DROIT.PEI_U,
+      TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+      TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+      TYPE_DROIT.PEI_DEPLACEMENT_U,
+      TYPE_DROIT.PEI_ADRESSE_C,
+    ]);
+
     if (hasDroit(user, TYPE_DROIT.PEI_R)) {
       listeButton.push({
         row: (row) => {
@@ -325,16 +335,21 @@ function getColumnPeiByStringArray(
             "Fiche Résumé du PEI " + row.original.peiNumeroComplet,
         },
       });
+
+      // Si l'utilisateur ne peut pas update un PEI, on lui propose la fiche complète en lecture seule
+      if (!canEditPei) {
+        listeButton.push({
+          row: (row) => {
+            return row;
+          },
+          type: TYPE_BUTTON.SEE,
+          route: (idPei) => URLS.UPDATE_PEI(idPei),
+          icon: <IconOeil />,
+          textEnable: "Voir la fiche complète du PEI",
+        });
+      }
     }
-    if (
-      isAuthorized(user, [
-        TYPE_DROIT.PEI_U,
-        TYPE_DROIT.PEI_CARACTERISTIQUES_U,
-        TYPE_DROIT.PEI_NUMERO_INTERNE_U,
-        TYPE_DROIT.PEI_DEPLACEMENT_U,
-        TYPE_DROIT.PEI_ADRESSE_C,
-      ])
-    ) {
+    if (canEditPei) {
       listeButton.push({
         row: (row) => {
           return row;

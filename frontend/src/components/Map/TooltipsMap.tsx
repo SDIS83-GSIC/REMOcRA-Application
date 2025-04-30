@@ -16,6 +16,7 @@ import {
   IconClose,
   IconEdit,
   IconIndisponibiliteTemporaire,
+  IconOeil,
   IconSee,
   IconTournee,
   IconVisite,
@@ -40,6 +41,7 @@ import { refreshLayerGeoserver } from "./MapUtils.tsx";
 const TooltipMapPei = ({
   map,
   displayButtonEdit,
+  displayButtonSeeFichePei,
   displayButtonDelete,
   dataPeiLayer,
   disabledTooltip = false,
@@ -48,6 +50,7 @@ const TooltipMapPei = ({
 }: {
   map: Map;
   displayButtonEdit: boolean;
+  displayButtonSeeFichePei: boolean;
   displayButtonDelete: boolean;
   dataPeiLayer: any;
   disabledTooltip: boolean;
@@ -104,6 +107,21 @@ const TooltipMapPei = ({
           labelSee={"Voir la fiche de résumé du PEI"}
           autreActionBouton={
             <>
+              {displayButtonSeeFichePei && (
+                <Col className="p-1" xs={"auto"}>
+                  <TooltipCustom
+                    tooltipText={"Voir la fiche complète du PEI"}
+                    tooltipId={"fichepei"}
+                  >
+                    <CustomLinkButton
+                      pathname={URLS.UPDATE_PEI(elementId)}
+                      variant="primary"
+                    >
+                      <IconOeil />
+                    </CustomLinkButton>
+                  </TooltipCustom>
+                </Col>
+              )}
               {hasDroit(user, TYPE_DROIT.VISITE_R) && (
                 <Col className="p-1" xs={"auto"}>
                   <TooltipCustom

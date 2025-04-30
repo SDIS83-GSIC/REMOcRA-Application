@@ -399,6 +399,15 @@ const MapToolbarPei = ({
 }) => {
   const { user } = useAppContext();
 
+  // Pour afficher le *bon* bouton pour accéder à la fiche PEI (lecture, écriture)
+  const canEditPei = isAuthorized(user, [
+    TYPE_DROIT.PEI_U,
+    TYPE_DROIT.PEI_CARACTERISTIQUES_U,
+    TYPE_DROIT.PEI_DEPLACEMENT_U,
+    TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+    TYPE_DROIT.PEI_ADRESSE_C,
+  ]);
+
   return (
     <ButtonGroup>
       <ToolbarButton
@@ -545,13 +554,10 @@ const MapToolbarPei = ({
         map={map}
         dataPeiLayer={dataPeiLayer}
         displayButtonDelete={hasDroit(user, TYPE_DROIT.PEI_D)}
-        displayButtonEdit={isAuthorized(user, [
-          TYPE_DROIT.PEI_U,
-          TYPE_DROIT.PEI_CARACTERISTIQUES_U,
-          TYPE_DROIT.PEI_DEPLACEMENT_U,
-          TYPE_DROIT.PEI_NUMERO_INTERNE_U,
-          TYPE_DROIT.PEI_ADRESSE_C,
-        ])}
+        displayButtonEdit={canEditPei}
+        displayButtonSeeFichePei={
+          hasDroit(user, TYPE_DROIT.PEI_R) && !canEditPei
+        }
         disabledTooltip={activeTool === "deplacer-pei"}
         displayButtonEditDebitSimultane={hasDroit(
           user,
