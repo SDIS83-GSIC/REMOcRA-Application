@@ -92,7 +92,6 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun computeNumero(pei: PeiForNumerotationData): String {
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_61,
             -> computeNumeroMethodeA(pei)
@@ -100,6 +99,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> computeNumero09(pei)
             CodeSdis.SDIS_14 -> computeNumero14(pei)
             CodeSdis.SDIS_21 -> computeNumero21(pei)
+            CodeSdis.SDIS_22 -> computeNumero22(pei)
             CodeSdis.SDIS_38 -> computeNumero38(pei)
             CodeSdis.SDIS_39 -> computeNumero39(pei)
             CodeSdis.SDIS_42,
@@ -141,8 +141,8 @@ class NumerotationUseCase : AbstractUseCase() {
             return pei.peiNumeroInterne!!
         }
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
+            CodeSdis.SDIS_22,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
@@ -677,6 +677,16 @@ class NumerotationUseCase : AbstractUseCase() {
         val commune = ensureCommune(pei)
 
         return (codeZoneSpeciale ?: commune.communeCodeInsee) + "_%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
+     * <code insee commune>-<numéro interne>
+     * avec num_intern sur 4 chiffres
+     * Exemple : 22243-0007
+     *
+     */
+    private fun computeNumero22(pei: PeiForNumerotationData): String {
+        return (ensureCommune(pei).communeCodeInsee) + "-%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
