@@ -101,7 +101,7 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
         // Permet de définir un dossier par défaut pour la compilation du rapport
         DefaultJasperReportsContext.getInstance()
-            .setProperty(JRPropertiesUtil.PROPERTY_PREFIX + ".compiler.temp.dir", GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
+            .setProperty(JRPropertiesUtil.PROPERTY_PREFIX + "compiler.temp.dir", GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
 
         val courrier = JasperCompileManager.compileReport(location)
 
