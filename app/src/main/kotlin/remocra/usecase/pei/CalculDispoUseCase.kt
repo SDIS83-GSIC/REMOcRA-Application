@@ -204,7 +204,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.nature!!.natureCode == GlobalConstants.NATURE_PENA_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> {
                 if (pei.penaCapacite != null && pei.penaCapacite < 60) {
@@ -251,7 +251,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
@@ -281,7 +281,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pression == null || pei.pression < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
@@ -320,7 +320,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pression != null && pei.pression in 0.95..<1.0
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> false
@@ -350,7 +350,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pression != null && pei.pression > 6
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
@@ -380,7 +380,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> isPressionDynamiqueInsuffisanteDefault(pei)
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> {
@@ -428,7 +428,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique in 0.95..<1.0
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique >= 0.6 && pei.pressionDynamique < 1
@@ -458,7 +458,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> pei.pressionDynamique != null && pei.pressionDynamique >= 6
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique > 6
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
@@ -493,7 +493,23 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> pei.debit != null && pei.debit == 0
             CodeSdis.SDIS_14 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit < 30
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> {
+                return if (pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE) { // Si PEI en étude, alors indispo
+                    true
+                } else if (pei.diametreId == null) {
+                    // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit == null || pei.debit < 27
+                } else if (isDiametre80(pei)) {
+                    pei.debit == null || pei.debit < 27
+                } else if (isDiametre100(pei)) {
+                    pei.debit == null || pei.debit < 54
+                } else if (isDiametre150(pei)) {
+                    pei.debit == null || pei.debit < 60
+                } else {
+                    // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit == null || pei.debit < 27
+                }
+            }
             CodeSdis.SDIS_38 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_39 -> (pei.debit == null || pei.debit <= 29)
             CodeSdis.SDIS_42 -> pei.debit == null
@@ -613,7 +629,21 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit in 30..59
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> {
+                return if (pei.diametreId == null) {
+                    // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit != null && pei.debit in 27..<30
+                } else if (isDiametre80(pei)) {
+                    pei.debit != null && pei.debit in 27..<30
+                } else if (isDiametre100(pei)) {
+                    pei.debit != null && pei.debit in 54..<60
+                } else if (isDiametre150(pei)) {
+                    pei.debit != null && pei.debit in 60..<105
+                } else {
+                    // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit != null && pei.debit in 27..<30
+                }
+            }
             CodeSdis.SDIS_38 -> pei.debit != null && pei.debit in 15..29
             CodeSdis.SDIS_39 -> pei.debit != null && (pei.debit in 30..59)
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit < 30
@@ -720,7 +750,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_14 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> TODO("Définir les règles de volume / debitPression du SDIS 22")
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit > 500

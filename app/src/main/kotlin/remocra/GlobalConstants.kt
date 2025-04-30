@@ -36,6 +36,10 @@ object GlobalConstants {
     const val NATURE_PEN = "PEN"
     const val NATURE_PEA = "PEA"
 
+    // Propre au SDIS 22 - Les valeurs sont protected en base du 22
+    const val NATURE_PIBI_ETUDE = "PIBI_ETUDE"
+    const val NATURE_PENA_ETUDE = "PENA_ETUDE"
+
     // Clés des paramètres
     const val PARAM_PEI_RENUMEROTATION_INTERNE_AUTO = "PEI_RENUMEROTATION_INTERNE_AUTO"
     const val PEI_TOLERANCE_COMMUNE_METRES = "PEI_TOLERANCE_COMMUNE_METRES"
