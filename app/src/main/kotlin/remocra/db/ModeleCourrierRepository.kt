@@ -308,7 +308,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         isSuperAdmin: Boolean,
         typeModule: TypeModule,
     ): Collection<ModeleCourrierGenere> =
-        dsl.select(
+        dsl.selectDistinct(
             MODELE_COURRIER.ID,
             MODELE_COURRIER.LIBELLE,
             MODELE_COURRIER.DESCRIPTION,
@@ -347,17 +347,24 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                 }
             },
         )
-            .from(MODELE_COURRIER)
-            .join(L_MODELE_COURRIER_PROFIL_DROIT)
-            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
-            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-            .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
-            .join(UTILISATEUR)
-            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
-            .join(ORGANISME)
-            .on(
-                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
-                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+            .from(
+                isSuperAdmin.let {
+                    if (it) {
+                        MODELE_COURRIER
+                    } else {
+                        MODELE_COURRIER.join(L_MODELE_COURRIER_PROFIL_DROIT)
+                            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+                            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+                            .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+                            .join(UTILISATEUR)
+                            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                            .join(ORGANISME)
+                            .on(
+                                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+                            )
+                    }
+                },
             )
             .where(MODELE_COURRIER.ACTIF.isTrue)
             .and(
