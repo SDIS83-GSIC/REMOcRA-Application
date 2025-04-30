@@ -17,6 +17,7 @@ import DeleteModal from "../../../components/Modal/DeleteModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
+import { ANOMALIE_CATEGORIE_SYSTEME } from "../../../utils/constantsUtils.tsx";
 
 const AnomalieList = () => {
   const anomalieListState = useGet(url`/api/anomalie/list`);
@@ -131,40 +132,53 @@ const AnomalieList = () => {
                       </Button>
                     )}
                   </th>
-                  {natureList.map((nature, idxN) => (
-                    <td key={`${idxA}${idxN}`}>
-                      {anomaliePoidsList
-                        .filter(
-                          (ap) => ap.poidsAnomalieNatureId === nature.natureId,
-                        )
-                        .map((ap) =>
-                          ap.poidsAnomalieTypeVisite?.length > 0 ? (
-                            <TooltipCustom
-                              key={ap.anomaliePoidsId}
-                              tooltipId={ap.anomaliePoidsId}
-                              tooltipHeader={"Types de visite"}
-                              tooltipText={ap.poidsAnomalieTypeVisite.join(
-                                ", ",
-                              )}
-                            >
-                              {ap.poidsAnomalieValIndispoTerrestre || "-"}
-                              &nbsp;/&nbsp;
-                              {ap.poidsAnomalieValIndispoHbe || "-"}
-                              &nbsp;
-                              <Badge bg="primary" pill={true}>
-                                {ap.poidsAnomalieTypeVisite.length}
-                              </Badge>
-                            </TooltipCustom>
-                          ) : (
-                            <>
-                              {ap.poidsAnomalieValIndispoTerrestre || "-"}
-                              &nbsp;/&nbsp;
-                              {ap.poidsAnomalieValIndispoHbe || "-"}
-                            </>
-                          ),
-                        )}
+                  {categorie.anomalieCategorieCode ===
+                    ANOMALIE_CATEGORIE_SYSTEME && (
+                    <td colSpan={natureCount}>
+                      {anomalie.anomaliePoidsAnomalieSystemeValIndispoTerrestre ||
+                        "-"}
+                      &nbsp;/&nbsp;
+                      {anomalie.anomaliePoidsAnomalieSystemeValIndispoHbe ||
+                        "-"}
                     </td>
-                  ))}
+                  )}
+                  {categorie.anomalieCategorieCode !==
+                    ANOMALIE_CATEGORIE_SYSTEME &&
+                    natureList.map((nature, idxN) => (
+                      <td key={`${idxA}${idxN}`}>
+                        {anomaliePoidsList
+                          .filter(
+                            (ap) =>
+                              ap.poidsAnomalieNatureId === nature.natureId,
+                          )
+                          .map((ap) =>
+                            ap.poidsAnomalieTypeVisite?.length > 0 ? (
+                              <TooltipCustom
+                                key={ap.anomaliePoidsId}
+                                tooltipId={ap.anomaliePoidsId}
+                                tooltipHeader={"Types de visite"}
+                                tooltipText={ap.poidsAnomalieTypeVisite.join(
+                                  ", ",
+                                )}
+                              >
+                                {ap.poidsAnomalieValIndispoTerrestre || "-"}
+                                &nbsp;/&nbsp;
+                                {ap.poidsAnomalieValIndispoHbe || "-"}
+                                &nbsp;
+                                <Badge bg="primary" pill={true}>
+                                  {ap.poidsAnomalieTypeVisite.length}
+                                </Badge>
+                              </TooltipCustom>
+                            ) : (
+                              <>
+                                {ap.poidsAnomalieValIndispoTerrestre || "-"}
+                                &nbsp;/&nbsp;
+                                {ap.poidsAnomalieValIndispoHbe || "-"}
+                              </>
+                            ),
+                          )}
+                      </td>
+                    ))}
                 </tr>
               ))}
           </tbody>
