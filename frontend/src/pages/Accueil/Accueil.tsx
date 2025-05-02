@@ -1,4 +1,4 @@
-import { Alert, Button, Col, Row, Container } from "react-bootstrap";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
@@ -55,11 +55,24 @@ const Accueil = () => {
           <Col key={key}>
             {Array.from(values).map((e) => {
               const listeLink = getLinks(e.moduleType, user);
+              const aLeDroit = listeLink?.some((e) => e.aLeDroit === true);
+              const hasHtmlContent = e.moduleContenuHtml != null;
+              const isDocumentWithRight =
+                e.moduleType === TypeModuleRemocra.DOCUMENT &&
+                hasDroit(user, TYPE_DROIT.DOCUMENTS_R);
+              const isCourrierWithRight =
+                e.moduleType === TypeModuleRemocra.COURRIER &&
+                isAuthorized(user, [
+                  TYPE_DROIT.COURRIER_UTILISATEUR_R,
+                  TYPE_DROIT.COURRIER_ORGANISME_R,
+                ]);
+              const hasAccess =
+                aLeDroit ||
+                hasHtmlContent ||
+                isDocumentWithRight ||
+                isCourrierWithRight;
               return (
-                (listeLink?.find((e) => e.aLeDroit === true) != null ||
-                  e.moduleContenuHtml != null ||
-                  e.moduleType === TypeModuleRemocra.DOCUMENT ||
-                  e.moduleType === TypeModuleRemocra.COURRIER) && (
+                hasAccess && (
                   <Row key={e.moduleId} className="m-1">
                     <ModuleRemocra
                       moduleId={e.moduleId}
