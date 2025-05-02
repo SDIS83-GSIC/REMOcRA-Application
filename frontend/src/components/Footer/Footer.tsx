@@ -18,7 +18,14 @@ const Footer = ({ mentionCnil }: { mentionCnil: string }) => {
         <Image className={"h-100 p-1"} fluid src={europe} />
         <Image className={"h-100 p-1"} fluid src={atolcd} />
       </Col>
-      <Col xs={2} className={"text-light"}>
+      <Col xs={"auto"} className={"ms-auto me-2 text-light"}>
+        {version.value && (
+          <Badge pill bg="info">
+            {version.value.version}
+          </Badge>
+        )}
+      </Col>
+      <Col xs={"auto"} className={"text-light"}>
         <p className={"copyright mb-2 text-end"}>
           {mentionCnil && (
             <>
@@ -28,11 +35,6 @@ const Footer = ({ mentionCnil }: { mentionCnil: string }) => {
           )}
           Copyright © 2015 SDIS 83
         </p>
-        {version.value && (
-          <Badge pill bg="info">
-            {version.value.version}
-          </Badge>
-        )}
       </Col>
     </Row>
   );
