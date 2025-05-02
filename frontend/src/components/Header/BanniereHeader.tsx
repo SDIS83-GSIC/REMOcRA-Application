@@ -1,21 +1,11 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Badge, Image } from "react-bootstrap";
-import React from "react";
 import { useGet } from "../Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_ENVIRONNEMENT from "../../enums/TypeEnvironnement.tsx";
 
-const BanniereHeader = () => {
-  const listeParametre = useGet(
-    url`/api/parametres?${{
-      listeParametreCode: JSON.stringify(PARAMETRE.MESSAGE_ENTETE),
-    }}`,
-  );
-
-  const messageEntete =
-    listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE].parametreValeur;
+const BanniereHeader = ({ messageEntete }: { messageEntete: string }) => {
   const typeEnvironment = useGet(url`/api/app-settings/environment`);
   return (
     <Row className={"bg-primary h-100 p-0"}>

@@ -8,7 +8,7 @@ import logo_prt3 from "../../img/logo_prt3.png";
 import europe from "../../img/europe.png";
 import atolcd from "../../img/atolcd.png";
 
-const Footer = () => {
+const Footer = ({ mentionCnil }: { mentionCnil: string }) => {
   const version = useGet(url`/api/app-settings/version`);
   return (
     <Row className={"bg-primary h-100"} id="footer">
@@ -19,7 +19,15 @@ const Footer = () => {
         <Image className={"h-100 p-1"} fluid src={atolcd} />
       </Col>
       <Col xs={2} className={"text-light"}>
-        <p className={"copyright mb-2 text-end"}>Copyright © 2015 SDIS 83</p>
+        <p className={"copyright mb-2 text-end"}>
+          {mentionCnil && (
+            <>
+              {mentionCnil}
+              <br />
+            </>
+          )}
+          Copyright © 2015 SDIS 83
+        </p>
         {version.value && (
           <Badge pill bg="info">
             {version.value.version}
