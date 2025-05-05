@@ -31,6 +31,7 @@ const useLocalisation = () => {
       idType: string,
       urlDestination = URLS.DECI_CARTE,
     ) => {
+      let listePeiId: [] | undefined;
       (
         await fetch(
           url`${typeGeometry}/${idType}/geometrie`,
@@ -55,15 +56,17 @@ const useLocalisation = () => {
               const { geometry, srid: parsedSrid } = parseGeometry(resData);
               extent = geometry.getExtent();
               srid = parsedSrid;
+              listePeiId = [idType];
               break;
             }
             case GET_TYPE_GEOMETRY.TOURNEE:
             case GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP: {
               const geometries = resData.map(
-                (pei: string) => parseGeometry(pei).geometry,
+                (pei) => parseGeometry(pei.peiGeometrie).geometry,
               );
-              srid = parseGeometry(resData[0]).srid;
+              srid = parseGeometry(resData[0].peiGeometrie).srid;
               extent = new GeometryCollection(geometries).getExtent();
+              listePeiId = resData.map((e) => e.peiId);
               break;
             }
             case GET_TYPE_GEOMETRY.COMMUNE: {
@@ -99,6 +102,7 @@ const useLocalisation = () => {
                 ...(currentState?.from ?? []),
                 `${currentPathname}${search}`,
               ],
+              listePeiId: listePeiId,
               target: {
                 extent,
                 srid,

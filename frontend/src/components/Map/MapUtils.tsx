@@ -100,6 +100,7 @@ export function createPointLayer(
   map: Map,
   urlApi: (extent, projection) => string,
   projection: { name: string },
+  style?: Style,
 ) {
   const vectorSource = toOpenLayer({
     source: "GSON",
@@ -135,24 +136,26 @@ export function createPointLayer(
 
   const dl = new VectorLayer({
     source: vectorSource,
-    style: new Style({
-      fill: new Fill({
-        color: "rgba(0, 0, 0, 0)",
-      }),
-      stroke: new Stroke({
-        color: "rgba(0, 0, 0, 0)",
-        width: 4,
-      }),
-      image: new CircleStyle({
-        radius: 4,
-        stroke: new Stroke({
-          color: "rgba(0, 0, 0, 0)",
-        }),
+    style:
+      style ??
+      new Style({
         fill: new Fill({
           color: "rgba(0, 0, 0, 0)",
         }),
+        stroke: new Stroke({
+          color: "rgba(0, 0, 0, 0)",
+          width: 4,
+        }),
+        image: new CircleStyle({
+          radius: 4,
+          stroke: new Stroke({
+            color: "rgba(0, 0, 0, 0)",
+          }),
+          fill: new Fill({
+            color: "rgba(0, 0, 0, 0)",
+          }),
+        }),
       }),
-    }),
     extent: map.getView().calculateExtent(),
     opacity: 1,
     visible: true,

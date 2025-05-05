@@ -64,7 +64,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
-    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
+    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
@@ -83,11 +83,17 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .on(PIBI.ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
-                    isSuperAdmin,
-                ),
+                listePeiId.let {
+                    if (it.isNullOrEmpty()) {
+                        repositoryUtils.checkIsSuperAdminOrCondition(
+                            ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                                .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
+                            isSuperAdmin,
+                        )
+                    } else {
+                        PEI.ID.`in`(listePeiId)
+                    }
+                },
             )
             .fetchInto()
     }
@@ -95,7 +101,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI selon la zone de compétence
      */
-    fun getPeiWithinZone(zoneId: UUID?, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
+    fun getPeiWithinZone(zoneId: UUID?, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
@@ -114,7 +120,13 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .on(PIBI.ID.eq(PEI.ID))
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
-                repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin),
+                listePeiId.let {
+                    if (it.isNullOrEmpty()) {
+                        repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin)
+                    } else {
+                        PEI.ID.`in`(listePeiId)
+                    }
+                },
             )
             .fetchInto()
     }

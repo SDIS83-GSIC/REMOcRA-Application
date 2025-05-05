@@ -45,6 +45,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
         userInfo: UserInfo,
         criseId: UUID? = null,
         criseState: EvenementStatutMode? = null,
+        listePeiId: Set<UUID>? = null,
     ): LayersRes {
         val srid = sridFromEpsgCode(sridSource)
 
@@ -59,6 +60,7 @@ class GetPointCarteUseCase : AbstractUseCase() {
                         userInfo.zoneCompetence?.zoneIntegrationId,
                         srid,
                         userInfo.isSuperAdmin,
+                        listePeiId,
                     )
                 } else {
                     val geom =
@@ -68,10 +70,10 @@ class GetPointCarteUseCase : AbstractUseCase() {
                         geom.toGeomFromText(),
                         srid,
                         userInfo.isSuperAdmin,
+                        listePeiId,
                     )
                 }
             }
-
             TypeElementCarte.PEI_PROJET -> bbox.let {
                 if (it.isEmpty()) {
                     carteRepository.getPeiProjetWithinEtude(etudeId!!, srid)

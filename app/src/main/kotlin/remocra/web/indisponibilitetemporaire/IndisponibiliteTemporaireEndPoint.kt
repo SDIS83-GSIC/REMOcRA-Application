@@ -156,7 +156,9 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
     @Path("/{indispoTemporaireId}/geometrie")
     @RequireDroits([Droit.INDISPO_TEMP_R])
     fun getGeometrieById(@PathParam("indispoTemporaireId") indispoTemporaireId: UUID): Response {
-        return Response.ok(indisponibiliteTemporaireRepository.getGeometrieIndispoTemp(indispoTemporaireId)).build()
+        return Response.ok(
+            indisponibiliteTemporaireRepository.getGeometrieIndispoTemp(indispoTemporaireId),
+        ).build()
     }
 }
 

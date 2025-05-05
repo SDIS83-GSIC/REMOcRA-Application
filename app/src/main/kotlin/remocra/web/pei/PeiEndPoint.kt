@@ -329,4 +329,30 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getGeometrieById(@PathParam("idPei") idPei: UUID): Response {
         return Response.ok(peiRepository.getGeometriePei(idPei)).build()
     }
+
+    /**
+     * Renvoie les points d'eau au format GeoJSON pour assurer les interactions sur la carte
+     */
+    @GET
+    @Path("/hightlight/layer")
+    @RequireDroits([Droit.PEI_R])
+    fun hightlightLayer(
+        @QueryParam("bbox") bbox: String,
+        @QueryParam("srid") srid: String,
+        @QueryParam("listePeiId") listePeiId: Set<UUID>,
+    ): Response {
+        if (securityContext.userInfo == null) {
+            return forbidden().build()
+        }
+        return Response.ok(
+            getElementCarteUseCase.execute(
+                bbox,
+                srid,
+                null,
+                TypeElementCarte.PEI,
+                securityContext.userInfo!!,
+                listePeiId = listePeiId,
+            ),
+        ).build()
+    }
 }

@@ -15,9 +15,9 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
-import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
+import remocra.data.GeometrieWithPeiId
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
@@ -689,8 +689,8 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun getGeometrieTournee(tourneeId: UUID): Collection<Point> =
-        dsl.select(PEI.GEOMETRIE)
+    fun getGeometrieTournee(tourneeId: UUID): Collection<GeometrieWithPeiId> =
+        dsl.select(PEI.GEOMETRIE, PEI.ID)
             .from(PEI)
             .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .join(TOURNEE).on(TOURNEE.ID.eq(tourneeId)).and(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
