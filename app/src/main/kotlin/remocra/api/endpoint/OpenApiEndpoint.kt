@@ -1,7 +1,11 @@
 package remocra.api.endpoint
 
+import io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner
 import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.integration.SwaggerConfiguration
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
 import jakarta.annotation.security.PermitAll
 import jakarta.servlet.ServletConfig
 import jakarta.servlet.http.HttpServletRequest
@@ -24,6 +28,17 @@ import kotlin.reflect.jvm.javaMethod
 class OpenApiEndpoint : BaseOpenApiResource() {
     companion object {
         const val SWAGGER_UI_VERSION = "5.21.0"
+    }
+
+    init {
+        val oas = OpenAPI().info(Info().title("REMOcRA - API"))
+        val oasConfig = SwaggerConfiguration()
+            .openAPI(oas)
+            .prettyPrint(true)
+            .readAllResources(false)
+            .scannerClass(JaxrsAnnotationScanner::class.java.getName())
+
+        setOpenApiConfiguration(oasConfig)
     }
 
     @Context
