@@ -22,7 +22,7 @@ const MapLegend = forwardRef(
 
     useImperativeHandle(ref, () => ({
       addActiveLayer(layerId) {
-        setActiveLayers([...activeLayers, layerId]);
+        setActiveLayers((_activeLayers) => [..._activeLayers, layerId]);
       },
       removeActiveLayer(layerId) {
         setActiveLayers(activeLayers.filter((l) => l !== layerId));
