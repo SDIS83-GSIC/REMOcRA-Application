@@ -3,6 +3,7 @@ package remocra.auth
 object AuthnConstants {
     const val API_SERVLET_NAME = "API"
     const val API_PATH = "/api/"
+    const val OPENAPI_PATH = "/api/openapi"
     const val API_DECI_PATH = "/api/deci/"
     const val API_REFERENTIEL_PATH = "/api/deci/"
     const val API_MOBILE_PATH = "/api/mobile/"

@@ -85,6 +85,10 @@ class AuthModule(
                 return false
             }
 
+            if (path == AuthnConstants.OPENAPI_PATH || path.startsWith(AuthnConstants.OPENAPI_PATH + "/")) {
+                return false
+            }
+
             if (AuthnConstants.HEALTH_SERVLET_NAME == servletName) {
                 return false
             }

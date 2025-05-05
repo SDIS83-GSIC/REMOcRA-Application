@@ -1,4 +1,4 @@
-package remocra.web.api
+package remocra.api.endpoint
 
 import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource
 import io.swagger.v3.oas.annotations.Operation
@@ -16,8 +16,6 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
 import remocra.security.NoCsrf
-
-// TODO débrayer l'a12n, soit en faisant une exception dans la servlet, soit en faisant une servlet à part !
 
 @Path("/openapi")
 class OpenApiEndpoint : BaseOpenApiResource() {

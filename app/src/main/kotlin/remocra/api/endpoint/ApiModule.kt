@@ -4,7 +4,6 @@ import com.google.inject.Binder
 import com.google.inject.Module
 import remocra.apimobile.endpoint.MobileReferentielEndpoint
 import remocra.apimobile.endpoint.SynchroEndpoint
-import remocra.web.api.OpenApiEndpoint
 import remocra.web.registerResources
 
 object ApiModule : Module {
