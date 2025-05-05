@@ -4,6 +4,7 @@ import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.annotation.security.PermitAll
 import jakarta.servlet.ServletConfig
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -16,14 +17,17 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
 import remocra.security.NoCsrf
+import remocra.security.SecurityHeadersFilter
+import kotlin.reflect.jvm.javaMethod
 
 @Path("/openapi")
 class OpenApiEndpoint : BaseOpenApiResource() {
-    @Context
-    var config: ServletConfig? = null
+    companion object {
+        const val SWAGGER_UI_VERSION = "5.21.0"
+    }
 
     @Context
-    var app: Application? = null
+    lateinit var uriInfo: UriInfo
 
     @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
     @NoCsrf("Uniquement consultatif")
@@ -33,10 +37,11 @@ class OpenApiEndpoint : BaseOpenApiResource() {
     @Operation(hidden = true)
     @PermitAll
     @Throws(Exception::class)
-    fun getOpenApi(
-        @Context headers: HttpHeaders?,
-        @Context uriInfo: UriInfo?,
-        @PathParam("type") type: String?,
+    fun getOpenApiDescription(
+        @Context headers: HttpHeaders,
+        @Context config: ServletConfig,
+        @Context app: Application,
+        @PathParam("type") type: String,
     ): Response {
         return super.getOpenApi(headers, config, app, uriInfo, type)
     }
@@ -47,38 +52,35 @@ class OpenApiEndpoint : BaseOpenApiResource() {
     @Produces(MediaType.TEXT_HTML)
     @Operation(hidden = true)
     @PermitAll
-    fun showOpenApi(): Response {
+    fun showOpenApi(@Context req: HttpServletRequest): Response {
+        val nonce = req.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
+
         return Response.ok()
             .entity(
-                "\n" +
-                    "<!DOCTYPE html>\n" +
-                    "<html>\n" +
-                    "<head>\n" +
-                    "  <meta charset=\"UTF-8\">\n" +
-                    "  <title>API REMOcRA</title>\n" +
-                    "  <link rel=\"stylesheet\" type=\"text/css\"" +
-                    " href=\"//unpkg.com/swagger-ui-dist@3/swagger-ui.css\">\n" +
-                    "  <script" +
-                    " src=\"//unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js\"></script>\n" +
-                    "  <script" +
-                    " src=\"//unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js\"></script>\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "  <script>\n" +
-                    "window.onload = function() {\n" +
-                    "const ui = SwaggerUIBundle({\n" +
-                    "    url: \"openapi/openapi.yaml\",\n" +
-                    "    dom_id: '#swagger-ui',\n" +
-                    "    presets: [\n" +
-                    "      SwaggerUIBundle.presets.apis,\n" +
-                    "      SwaggerUIBundle.SwaggerUIStandalonePreset\n" +
-                    "    ],\n" +
-                    "  })\n" +
-                    "}\n" +
-                    "</script>\n" +
-                    "<div id=\"swagger-ui\">\n" +
-                    "</body>\n" +
-                    "</html>\n",
+                """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                  <meta charset="utf-8" />
+                  <meta name="viewport" content="width=device-width, initial-scale=1" />
+                  <meta name="description" content="SwaggerUI" />
+                  <title>API - Points d'eau</title>
+                  <link rel="stylesheet" href="/webjars/swagger-ui-dist/$SWAGGER_UI_VERSION/swagger-ui.css" />
+                </head>
+                <body>
+                <div id="swagger-ui"></div>
+                <script src="/webjars/swagger-ui-dist/$SWAGGER_UI_VERSION/swagger-ui-bundle.js"></script>
+                <script nonce="$nonce">
+                  window.onload = () => {
+                    window.ui = SwaggerUIBundle({
+                      url: "${uriInfo.baseUriBuilder.path(OpenApiEndpoint::class.java).path(this::getOpenApiDescription.javaMethod).build("yaml")}",
+                      dom_id: '#swagger-ui',
+                    });
+                  };
+                </script>
+                </body>
+                </html>
+                """.trimIndent(),
             )
             .build()
     }

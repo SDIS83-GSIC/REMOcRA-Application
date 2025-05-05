@@ -22,6 +22,7 @@ import org.eclipse.jetty.server.ServerConnector
 import org.eclipse.jetty.server.handler.QoSHandler
 import org.eclipse.jetty.session.DefaultSessionCache
 import org.eclipse.jetty.session.FileSessionDataStore
+import org.eclipse.jetty.util.resource.ResourceFactory
 import org.jboss.resteasy.core.ResteasyDeploymentImpl
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters
@@ -84,7 +85,13 @@ constructor(
         val tmpdir = Files.createTempDirectory(settings.tempDirPrefix).toFile()
         tmpdir.deleteOnExit()
         context.setAttribute(ServletContext.TEMPDIR, tmpdir)
-        context.setBaseResourceAsPath(settings.staticDir)
+        context.baseResource = ResourceFactory.combine(
+            ResourceFactory.of(context).newResource(settings.staticDir),
+            ResourceFactory.of(context).newClassLoaderResource("META-INF/resources/"),
+        )
+
+        context.addAliasCheck { pathInContext, resource -> pathInContext.endsWith("/") }
+
         context.errorHandler = ErrorPageErrorHandler()
         qosHandler.handler = context
 
@@ -115,16 +122,16 @@ constructor(
             EnumSet.of(REQUEST, ASYNC, FORWARD),
         )
 
+        // Securité
+        context.addFilter(FilterHolder(callbackFilter), AuthnConstants.CALLBACK_PATH, null)
+        context.addFilter(FilterHolder(logoutFilter), AuthnConstants.LOGOUT_PATH, null)
+        context.addFilter(FilterHolder(securityFilter), "/*", null)
+
         context.addFilter(
             FilterHolder(userInfoFilter),
             "/index.html",
             EnumSet.of(REQUEST, ASYNC, FORWARD),
         )
-
-        // Securité
-        context.addFilter(FilterHolder(callbackFilter), AuthnConstants.CALLBACK_PATH, null)
-        context.addFilter(FilterHolder(logoutFilter), AuthnConstants.LOGOUT_PATH, null)
-        context.addFilter(FilterHolder(securityFilter), "/*", null)
 
         // Resteasy
         val resteasy = ServletHolder(AuthnConstants.API_SERVLET_NAME, HttpServlet30Dispatcher::class.java)

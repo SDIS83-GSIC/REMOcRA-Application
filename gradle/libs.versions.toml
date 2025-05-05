@@ -65,6 +65,7 @@ commons-email = "org.apache.commons:commons-email2-jakarta:2.0.0-M1"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
 swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.27"
 swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.27"
+swagger-ui = "org.webjars.npm:swagger-ui-dist:5.21.0"
 
 geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "geotools" }
 geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }

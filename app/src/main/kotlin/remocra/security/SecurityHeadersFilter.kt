@@ -36,8 +36,8 @@ class SecurityHeadersFilter : HttpFilter() {
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin")
 
         var csp = BASE_CSP
-        if (req.httpServletMapping.servletName == AuthnConstants.DEFAULT_SERVLET_NAME) {
-            // Inutile de générer un nonce pour chaque requête, on n'en a besoin que si UserInfoFilter peut être dans la FilterChain
+        if (req.httpServletMapping.servletName == AuthnConstants.DEFAULT_SERVLET_NAME || req.requestURI.trimEnd('/') == AuthnConstants.OPENAPI_PATH) {
+            // Inutile de générer un nonce pour chaque requête, on n'en a besoin que s'il sera utilisé (UserInfoFilter ou OpenApiEndpoint)
             val nonce = Base64.getEncoder().withoutPadding().encodeToString(ByteArray(16).also { SecureRandom().nextBytes(it) })
             req.setAttribute(NONCE_ATTRIBUTE_NAME, nonce)
             csp += " ; script-src-elem 'self' 'nonce-$nonce'"

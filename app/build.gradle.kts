@@ -148,7 +148,7 @@ dependencies {
     api(libs.jackson.dataformat.csv)
 
     // OpenAPI
-//    api(libs.swagger.generator)
+    runtimeOnly(libs.swagger.ui)
     api(libs.swagger.core)
     api(libs.swagger.jaxrs)
 
