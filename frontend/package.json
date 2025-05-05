@@ -8,7 +8,7 @@
     "prebuild": "npm run cleanParcelBuild",
     "build": "parcel build --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html src/style.scss",
     "watch": "parcel watch --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html",
-    "lint:js": "eslint --cache --cache-location build/cache/eslint 'src/**/*.tsx' --max-warnings=25",
+    "lint:js": "eslint --cache --cache-location build/cache/eslint 'src/**/*.tsx' --max-warnings=24",
     "lint:css": "stylelint --cache --cache-location build/cache/stylelint 'src/**/*.{css,scss}'",
     "lint:html": "prettier --list-different 'src/**/*.html'",
     "lint": "run-p lint:*",
