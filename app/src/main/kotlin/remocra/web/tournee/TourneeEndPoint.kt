@@ -96,7 +96,7 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/acces-rapide")
-    @RequireDroits([Droit.TOURNEE_R])
+    @RequireDroits([Droit.TOURNEE_R, Droit.PEI_R])
     fun getTourneeForAccesRapide(
         @QueryParam("motifLibelle") motifLibelle: String,
     ): Response =
@@ -258,7 +258,7 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/get-libelle-tournee")
-    @RequireDroits([Droit.TOURNEE_R])
+    @RequireDroits([Droit.TOURNEE_R, Droit.PEI_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getTourneeForSelect(): Response {
         return Response.ok(
