@@ -138,7 +138,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getCis(peiId: UUID): String? {
         val zoneIntegrationCisTable = ZONE_INTEGRATION.`as`("ZONE_COMPETENCE_CIS")
         val organismeCisTable = ORGANISME.`as`("ORGANISME_CIS")
-        return dsl.select(
+        return dsl.selectDistinct(
             ORGANISME.LIBELLE,
         ).from(ORGANISME)
             .join(TOURNEE)
