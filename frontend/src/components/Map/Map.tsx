@@ -46,9 +46,6 @@ for (let i = 0; i < 20; i++) {
 // Échelle sur la carte suivant le niveau zoom
 const scaleControl = new ScaleLine({
   units: "metric",
-  bar: true,
-  steps: 5,
-  text: true,
   maxWidth: 200,
   minWidth: 100,
 });
