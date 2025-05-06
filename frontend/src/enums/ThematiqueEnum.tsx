@@ -1,0 +1,16 @@
+/**
+ * Enumération définissant les thématiques existantes et protégées
+ */
+enum THEMATIQUE {
+  OLDEBS = "OLDEBS",
+  PERMIS = "PERMIS",
+  RCI = "RCI",
+  DFCI = "DFCI",
+  ADRESSES = "ADRESSES",
+  RISQUES = "RISQUES",
+  DIVERS = "DIVERS",
+  CARTOGRAPHIE = "CARTOGRAPHIE",
+  POINT_EAU = "POINT_EAU",
+  COUVERTURE_HYDRAULIQUE = "COUVERTURE_HYDRAULIQUE",
+}
+export default THEMATIQUE;

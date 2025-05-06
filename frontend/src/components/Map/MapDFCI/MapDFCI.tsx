@@ -2,6 +2,7 @@ import { useRef } from "react";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import MapToolbarDFCI from "./MapToolbarDFCI.tsx";
 
 const MapDFCI = () => {
   const mapElement = useRef<HTMLDivElement>();
@@ -36,6 +37,7 @@ const MapDFCI = () => {
       mapElement={mapElement}
       toggleTool={toggleTool}
       activeTool={activeTool}
+      toolbarElement={mapToolbarRef.current && <MapToolbarDFCI />}
     />
   );
 };
