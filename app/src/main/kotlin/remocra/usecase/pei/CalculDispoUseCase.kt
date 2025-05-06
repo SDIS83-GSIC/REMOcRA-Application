@@ -228,7 +228,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> pei.penaCapacite == null || pei.penaCapacite < 60
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite < 10
@@ -261,7 +261,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite in 10..29
@@ -299,7 +299,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_95 -> isPressionInsuffisanteDefault(pei)
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_973 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -328,7 +328,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> false
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -357,7 +357,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> pei.pression != null && pei.pression >= 7
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -404,7 +404,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> isPressionDynamiqueInsuffisanteDefault(pei)
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> isPressionDynamiqueInsuffisanteDefault(pei)
             CodeSdis.SDIS_973 -> pei.pressionDynamique == null
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -433,7 +433,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> false
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -467,7 +467,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> pei.pressionDynamique != null && pei.pressionDynamique >= 6
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -561,7 +561,7 @@ class CalculDispoUseCase : AbstractUseCase() {
 
                 return false
             }
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> pei.debit == null || pei.debit < 30
             CodeSdis.SDIS_973 -> pei.debit == null || pei.debit < 30
             CodeSdis.BSPP -> pei.debit == null || pei.debit < 60
             CodeSdis.SDMIS -> false
@@ -676,7 +676,17 @@ class CalculDispoUseCase : AbstractUseCase() {
 
                 return false
             }
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> {
+                return if (pei.diametreId == null) {
+                    false
+                } else if (isDiametre100(pei)) {
+                    pei.debit != null && pei.debit in 30..59
+                } else if (isDiametre150(pei)) {
+                    pei.debit != null && pei.debit in 30..119
+                } else {
+                    false
+                }
+            }
             CodeSdis.SDIS_973 -> pei.debit != null && pei.debit >= 30 && pei.debit < 60
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> pei.debit != null && pei.debit < 30
@@ -721,7 +731,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> TODO("Définir les règles de volume / debitPression du SDIS 971")
+            CodeSdis.SDIS_971 -> false
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
