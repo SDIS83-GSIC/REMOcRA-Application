@@ -92,7 +92,6 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun computeNumero(pei: PeiForNumerotationData): String {
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_971 -> TODO("Définir la règle de numérotation du SDIS 971")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_61,
             -> computeNumeroMethodeA(pei)
@@ -124,6 +123,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_78 -> computeNumero78(pei)
             CodeSdis.SDIS_91 -> computeNumero91(pei)
             CodeSdis.SDIS_95 -> computeNumero95(pei)
+            CodeSdis.SDIS_971 -> computeNumero971(pei)
             CodeSdis.SDIS_973 -> computeNumero973(pei)
         }
     }
@@ -140,12 +140,12 @@ class NumerotationUseCase : AbstractUseCase() {
             return pei.peiNumeroInterne!!
         }
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_971 -> TODO("Définir la règle de numérotation du SDIS 971")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
+            CodeSdis.SDIS_971,
             CodeSdis.BSPP,
             CodeSdis.SDMIS,
             -> computeNumeroInterneMethodeA(pei)
@@ -766,6 +766,18 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * <commune_code>-<numéro interne>
+     * numéro interne sur 5 chiffres
+     * Exemple : BMA-00443, ABY-00001
+     */
+    private fun computeNumero971(pei: PeiForNumerotationData): String {
+        checkCommuneId(pei)
+
+        val commune = ensureCommune(pei)
+        return commune.communeCode + "-" + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
      * <code insee commune><PI.BI.PA><numéro interne>
      * sans espace
      * Exemple : 97309PI10, 97304PI122, 97314PA1
@@ -895,7 +907,6 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID?, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_971 -> TODO("Définir la règle de numérotation du SDIS 971")
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
@@ -905,6 +916,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
+            CodeSdis.SDIS_971,
             CodeSdis.SDIS_973,
             CodeSdis.BSPP,
             CodeSdis.SDMIS,
