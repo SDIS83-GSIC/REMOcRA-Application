@@ -75,6 +75,14 @@ class DocumentHabilitableEndpoint : AbstractEndpoint() {
             ),
         ).build()
 
+    @GET
+    @Path("/{code-thematique}")
+    @RequireDroits([Droit.DOCUMENTS_R])
+    fun getThematique(
+        @PathParam("code-thematique") codeThematique: String,
+    ): Response =
+        Response.ok(documentHabilitableRepository.getDocumentIdLibelleDateByCodeThematique(codeThematique)).build()
+
     /**
      * Télécharge le document.
      * @param documentId l'identifiant du document à télécharger

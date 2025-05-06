@@ -124,6 +124,23 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .where(DOCUMENT_HABILITABLE.ID.eq(documentHabilitableId))
             .fetchOneInto()
 
+    data class IdLibelleDate(
+        val id: UUID,
+        val libelle: String,
+        val date: ZonedDateTime,
+    )
+
+    fun getDocumentIdLibelleDateByCodeThematique(codeThematique: String): Collection<IdLibelleDate> =
+        dsl.select(DOCUMENT_HABILITABLE.ID.`as`("id"), DOCUMENT_HABILITABLE.LIBELLE.`as`("libelle"), DOCUMENT_HABILITABLE.DATE_MAJ.`as`("date"))
+            .from(DOCUMENT_HABILITABLE)
+            .join(L_THEMATIQUE_DOCUMENT_HABILITABLE)
+            .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .join(THEMATIQUE)
+            .on(THEMATIQUE.ID.eq(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID))
+            .where(THEMATIQUE.CODE.eq(codeThematique))
+            .orderBy(DOCUMENT_HABILITABLE.DATE_MAJ)
+            .fetchInto()
+
     fun insertDocumentHabilitable(documentHabilitable: DocumentHabilitable) =
         dsl.insertInto(DOCUMENT_HABILITABLE)
             .set(dsl.newRecord(DOCUMENT_HABILITABLE, documentHabilitable))
