@@ -3,7 +3,9 @@ import CircleStyle from "ol/style/Circle";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import url from "../../../module/fetch.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
@@ -18,6 +20,12 @@ const MapPei = () => {
   const [estSurligne, setEstSurligne] = useState(
     location.state?.listePeiId?.length === 0 ||
       location.state?.listePeiId == null,
+  );
+
+  const parametres = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.PEI_HIGHLIGHT_DUREE]),
+    }}`,
   );
 
   const {
@@ -128,8 +136,8 @@ const MapPei = () => {
     setTimeout(function () {
       map.removeLayer(l);
       setEstSurligne(true);
-    }, 10000);
-  }, [map, l]);
+    }, parametres.data[PARAMETRE.PEI_HIGHLIGHT_DUREE].parametreValeur * 1000);
+  }, [map, l, parametres]);
 
   return (
     <>
