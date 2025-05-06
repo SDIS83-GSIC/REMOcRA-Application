@@ -39,7 +39,12 @@ class SyncProfileAuthorizationGenerator : AuthorizationGenerator {
             userProfile.droits = if (utilisateur.utilisateurIsSuperAdmin == true) {
                 Droit.entries
             } else {
-                droitsRepository.getDroitsFromUser(userProfile.utilisateurId)
+                try {
+                    droitsRepository.getDroitsFromUser(userProfile.utilisateurId)
+                } catch (nsee: NoSuchElementException) {
+                    // L'utilisateur n'a aucun droit associé (typiquement pas de profil droit), il ne faut pas qu'il puisse se connecter ou que ça plante
+                    emptySet()
+                }
             }
 
             userProfile.profilDroits = droitsRepository.getProfilDroitFromUser(utilisateur.utilisateurId)
