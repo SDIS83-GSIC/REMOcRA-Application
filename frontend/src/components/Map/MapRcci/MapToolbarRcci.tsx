@@ -31,6 +31,8 @@ import useModal from "../../Modal/ModalUtils.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 export const useToolbarRcciContext = ({
   map,
@@ -358,6 +360,10 @@ const MapToolbarRcci = ({
   return (
     <>
       <ButtonGroup>
+        <VoletButtonListeDocumentThematique
+          codeThematique={THEMATIQUE.RCI}
+          titreVolet="Liste des documents liés aux RCCI"
+        />
         <ToolbarButton
           toolName={"select-rcci"}
           toolIcon={<IconSelect />}

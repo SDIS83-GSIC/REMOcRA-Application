@@ -19,6 +19,8 @@ import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
+import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 export const useToolbarOldebContext = ({
   map,
@@ -228,6 +230,10 @@ const OldebMapToolbar = ({
 
   return (
     <ButtonGroup>
+      <VoletButtonListeDocumentThematique
+        codeThematique={THEMATIQUE.OLDEBS}
+        titreVolet="Liste des documents liés aux OLDEB"
+      />
       <ToolbarButton
         toolName={"select-oldeb"}
         toolIcon={<IconSelect />}

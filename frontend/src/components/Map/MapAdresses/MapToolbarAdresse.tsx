@@ -29,6 +29,8 @@ import Volet from "../../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapAdresse } from "../TooltipsMap.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -320,6 +322,10 @@ const MapToolbarAdresse = ({
     typeWithSousType && (
       <Row>
         <Col xs={"auto"}>
+          <VoletButtonListeDocumentThematique
+            codeThematique={THEMATIQUE.ADRESSES}
+            titreVolet="Liste des documents liés aux adresses"
+          />
           <ToolbarButton
             toolName={"select-draw"}
             toolIcon={<IconSelect />}

@@ -16,6 +16,8 @@ import Volet from "../../Volet/Volet.tsx";
 import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 const defaultStyle = new Style({
   image: new Circle({
     radius: 5,
@@ -241,6 +243,10 @@ const MapToolbarPermis = ({
   return (
     <>
       <ButtonGroup>
+        <VoletButtonListeDocumentThematique
+          codeThematique={THEMATIQUE.PERMIS}
+          titreVolet="Liste des documents liés aux permis"
+        />
         <ToolbarButton
           toolName={"search-permis"}
           toolIcon={<IconSearch />}
