@@ -74,7 +74,7 @@ class CreateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
                 documentId = documentId,
                 documentHabilitableLibelle = element.documentHabilitableLibelle,
                 documentHabilitableDescription = element.documentHabilitableDescription,
-                documentHabilitableDateMaj = null,
+                documentHabilitableDateMaj = dateUtils.now(),
             ),
         )
 
