@@ -108,12 +108,6 @@ const Pagination = ({
 }: PaginationType) => {
   const [pagination, setPagination] = paginationState;
 
-  useEffect(() => {
-    if (pagination.offset >= count) {
-      setPagination({ offset: 0, limit: pagination.limit });
-    }
-  }, [setPagination, pagination, count]);
-
   const {
     canPrevious,
     canNext,
@@ -161,10 +155,13 @@ const Pagination = ({
           offset: offset,
         });
       }
+      if (pagination.offset >= count) {
+        setPagination({ offset: 0, limit: pagination.limit });
+      }
     }, 500); // délai de 500ms
 
     return () => clearTimeout(timeout);
-  }, [inputPage, itemsPerPage, setPagination, pagination]); // déclenche seulement si inputPage change
+  }, [inputPage, itemsPerPage, setPagination, pagination, count]); // déclenche seulement si inputPage change
   return (
     <div className={classnames(className, styles.pagination)}>
       <div className={styles.resultsDisplayed}>
