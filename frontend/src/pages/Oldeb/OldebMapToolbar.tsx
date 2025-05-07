@@ -245,7 +245,7 @@ const OldebMapToolbar = ({
         <ToolbarButton
           toolName={"create-oldeb"}
           toolIcon={<IconCreate />}
-          toolLabelTooltip={"Créer une OLD"}
+          toolLabelTooltip={"Créer une OLDEB"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
@@ -254,7 +254,7 @@ const OldebMapToolbar = ({
         <ToolbarButton
           toolName={"edit-oldeb"}
           toolIcon={<IconEdit />}
-          toolLabelTooltip={"Modifier une OLD"}
+          toolLabelTooltip={"Modifier une OLDEB"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
