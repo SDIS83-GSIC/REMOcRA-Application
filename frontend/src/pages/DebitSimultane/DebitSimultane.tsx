@@ -110,16 +110,19 @@ const DebitSimultane = () => {
               label="Numéro de dossier"
             />
           </Col>
-
+        </Row>
+        <Row className="mt-2">
           <Col className="bg-light p-2 border rounded">
             <div className="fw-bold text-center p-2">
               <IconInfo /> Information
             </div>
             <Row>
               <Col>Site : {values.siteLibelle ?? ""}</Col>
+            </Row>
+            <Row>
               <Col>Type de réseau : {values.typeReseauLibelle ?? ""}</Col>
             </Row>
-            <Row className="mt-2">
+            <Row>
               <Col>
                 Diamètre maximal de canalisation :{" "}
                 {values.maxDiametreCanalisation ?? ""}
@@ -127,22 +130,27 @@ const DebitSimultane = () => {
             </Row>
           </Col>
         </Row>
+        <div className="text-primary">
+          <hr />
+        </div>
         <Row className="mt-3">
-          <AddRemoveComponent
-            name="listeDebitSimultaneMesure"
-            createComponentToRepeat={createComponentToRepeat}
-            defaultElement={{
-              debitSimultaneMesureId: null,
-              debitSimultaneMesureDebitRequis: null,
-              debitSimultaneMesureDebitMesure: null,
-              debitSimultaneMesureDebitRetenu: null,
-              debitSimultaneMesureDateMesure: new Date(),
-              debitSimultaneMesureCommentaire: null,
-              debitSimultaneMesureIdentiqueReseauVille: false,
-              listePeiId: [],
-            }}
-            listeElements={values.listeDebitSimultaneMesure}
-          />
+          <Col>
+            <AddRemoveComponent
+              name="listeDebitSimultaneMesure"
+              createComponentToRepeat={createComponentToRepeat}
+              defaultElement={{
+                debitSimultaneMesureId: null,
+                debitSimultaneMesureDebitRequis: null,
+                debitSimultaneMesureDebitMesure: null,
+                debitSimultaneMesureDebitRetenu: null,
+                debitSimultaneMesureDateMesure: new Date(),
+                debitSimultaneMesureCommentaire: null,
+                debitSimultaneMesureIdentiqueReseauVille: false,
+                listePeiId: [],
+              }}
+              listeElements={values.listeDebitSimultaneMesure}
+            />
+          </Col>
         </Row>
         <SubmitFormButtons />
       </Container>
