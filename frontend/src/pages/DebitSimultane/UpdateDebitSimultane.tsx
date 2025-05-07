@@ -26,11 +26,10 @@ const UpdateDebitSimultane = ({
 
   const { data: listePeiSelectionnable } = useGet(
     url`/api/debit-simultane/pei?${{
-      geometry: `SRID=${srid}};POINT(${coordonneeX} ${coordonneeY})`,
+      geometry: `SRID=${srid};POINT(${coordonneeX} ${coordonneeY})`,
       typeReseauId: typeReseauId,
     }}`,
   );
-
   return (
     data && (
       <MyFormik
