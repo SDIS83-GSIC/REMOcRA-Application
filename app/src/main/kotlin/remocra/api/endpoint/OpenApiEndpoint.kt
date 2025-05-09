@@ -4,8 +4,10 @@ import io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner
 import io.swagger.v3.jaxrs2.integration.resources.BaseOpenApiResource
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.integration.SwaggerConfiguration
+import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.servers.Server
 import jakarta.annotation.security.PermitAll
 import jakarta.servlet.ServletConfig
 import jakarta.servlet.http.HttpServletRequest
@@ -22,6 +24,7 @@ import jakarta.ws.rs.core.UriInfo
 import remocra.auth.Public
 import remocra.security.NoCsrf
 import remocra.security.SecurityHeadersFilter
+import java.util.Collections
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/openapi")
@@ -30,8 +33,25 @@ class OpenApiEndpoint : BaseOpenApiResource() {
         const val SWAGGER_UI_VERSION = "5.21.0"
     }
 
+    @Context
+    lateinit var uriInfo: UriInfo
+
     init {
-        val oas = OpenAPI().info(Info().title("REMOcRA - API"))
+        val oas = OpenAPI()
+            .servers(Collections.singletonList(Server().url("/api")))
+            .info(Info().title("REMOcRA - API"))
+            .components(
+                Components()
+                    .addSecuritySchemes(
+                        "bearerAuth",
+                        io.swagger.v3.oas.models.security.SecurityScheme()
+                            .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"),
+                    ),
+            )
+            .security(listOf(io.swagger.v3.oas.models.security.SecurityRequirement().addList("bearerAuth")))
+
         val oasConfig = SwaggerConfiguration()
             .openAPI(oas)
             .prettyPrint(true)
@@ -40,9 +60,6 @@ class OpenApiEndpoint : BaseOpenApiResource() {
 
         setOpenApiConfiguration(oasConfig)
     }
-
-    @Context
-    lateinit var uriInfo: UriInfo
 
     @Public("Page de description des capacités de l'API, les appels à l'API, eux, sont authentifiés")
     @NoCsrf("Uniquement consultatif")
