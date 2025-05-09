@@ -31,7 +31,11 @@ const UpdatePeiPrescrit = ({
 
   return (
     <Container>
-      <PageTitle icon={<IconPrescrit />} title={pageTitle} />
+      <PageTitle
+        icon={<IconPrescrit />}
+        title={pageTitle}
+        displayReturnButton={false}
+      />
       <MyFormik
         initialValues={getInitialValues({
           peiPrescritId: peiPrescritId,

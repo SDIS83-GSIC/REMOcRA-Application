@@ -161,6 +161,12 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         return dsl.select(
             ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI_PRESCRIT.ID.`as`("elementId"),
+            PEI_PRESCRIT.NUM_DOSSIER,
+            PEI_PRESCRIT.DEBIT,
+            PEI_PRESCRIT.DATE,
+            PEI_PRESCRIT.AGENT,
+            PEI_PRESCRIT.NB_POTEAUX,
+            PEI_PRESCRIT.COMMENTAIRE,
         ).from(PEI_PRESCRIT)
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
@@ -406,11 +412,23 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class PeiPrescritsCarte(
         override val elementGeometrie: Point,
         override val elementId: UUID,
-        override var propertiesToDisplay: String? = null,
-
+        val peiPrescritNumDossier: String?,
+        val peiPrescritDebit: Int?,
+        val peiPrescritDate: ZonedDateTime?,
+        val peiPrescritAgent: String?,
+        val peiPrescritNbPoteaux: Int?,
+        val peiPrescritCommentaire: String?,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.PEI_PRESCRIT
+
+        override var propertiesToDisplay: String? =
+            "<b>Numéro de dossier :</b> ${peiPrescritNumDossier.orEmpty()}<br/>" +
+                "<b>Débit :</b> ${peiPrescritDebit?.toString().orEmpty()}<br/>" +
+                "<b>Date dépot :</b> ${peiPrescritDate?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL_DATE_ONLY, Locale.getDefault())).orEmpty()}<br/>" +
+                "<b>Agent :</b> ${peiPrescritAgent.orEmpty()}<br/>" +
+                "<b>Nombre de poteaux :</b> ${peiPrescritNbPoteaux?.toString().orEmpty()}<br/>" +
+                "<b>Commentaire :</b> ${peiPrescritCommentaire.orEmpty()}<br/>"
     }
 
     data class PermisCarte(

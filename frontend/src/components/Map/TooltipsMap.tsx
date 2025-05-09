@@ -592,7 +592,9 @@ export const TooltipMapEditPeiPrescrit = ({
       <Tooltip
         featureSelect={featureSelect}
         overlay={overlay}
-        onClickEdit={() => setShowUpdatePeiPrescrit(true)}
+        onClickEdit={() => {
+          setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined);
+        }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
         onClickDelete={() => {
@@ -621,6 +623,7 @@ export const TooltipMapEditPeiPrescrit = ({
           srid={map.getView().getProjection().getCode().split(":")[1]}
           onSubmit={() => {
             handleCloseUpdatePeiPrescrit();
+            dataPeiPrescritLayer.getSource().refresh();
             overlay?.setPosition(undefined);
           }}
         />
