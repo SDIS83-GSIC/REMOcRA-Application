@@ -39,4 +39,11 @@ class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) :
             .on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .where(ORGANISME.ID.eq(organismeId))
             .fetchSingleInto()
+
+    fun getByOrganismeId(organismeId: UUID): String =
+        dsl.select(TYPE_ORGANISME.CODE).from(TYPE_ORGANISME)
+            .join(ORGANISME)
+            .on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .where(ORGANISME.ID.eq(organismeId))
+            .fetchSingleInto()
 }

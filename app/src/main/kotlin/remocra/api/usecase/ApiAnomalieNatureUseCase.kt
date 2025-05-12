@@ -9,10 +9,9 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 
-class ApiAnomalieNatureUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var anomalieRepository: AnomalieRepository
+class ApiAnomalieNatureUseCase @Inject constructor(
+    private val anomalieRepository: AnomalieRepository,
+) : AbstractUseCase() {
 
     fun execute(natureCode: String, typeVisite: String?, typePei: TypePei, limit: Int?, offset: Int?): Collection<ApiAnomalieWithNature> {
         // On vérifie si le typeVisite est bien un TypeVisite

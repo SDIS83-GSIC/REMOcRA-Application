@@ -1,11 +1,9 @@
 package remocra.api.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import fr.sdis83.remocra.authn.ApiUserInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.inject.Inject
-import jakarta.inject.Provider
 import jakarta.validation.constraints.Max
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.DefaultValue
@@ -15,11 +13,13 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.api.CurrentApiUser
+import jakarta.ws.rs.core.SecurityContext
 import remocra.api.usecase.ApiPeiUseCase
 import remocra.auth.RequireDroitsApi
+import remocra.auth.organismeInfo
 import remocra.data.ApiPenaFormData
 import remocra.data.ApiPibiFormData
 import remocra.db.PeiRepository
@@ -33,9 +33,8 @@ import remocra.web.AbstractEndpoint
 @Produces("application/json; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON)
 class ApiPeiEndpoint : AbstractEndpoint() {
-    @Inject
-    @CurrentApiUser
-    var currentApiUser: Provider<ApiUserInfo>? = null
+    @Context
+    lateinit var securityContext: SecurityContext
 
     @Inject
     lateinit var peiUseCase: ApiPeiUseCase
@@ -81,7 +80,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     fun getPeiSpecifique(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
-        return peiUseCase.getPeiSpecifiqueAsResult(numeroComplet).wrap()
+        return peiUseCase.getPeiSpecifiqueAsResult(numeroComplet, securityContext.organismeInfo!!).wrap()
     }
 
     @GET
@@ -91,7 +90,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     fun getPeiCaracteristiques(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
-        return peiUseCase.getPeiCaracteristiques(numeroComplet).wrap()
+        return peiUseCase.getPeiCaracteristiques(numeroComplet, securityContext.organismeInfo!!).wrap()
     }
 
     @PUT
@@ -102,7 +101,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations du PEI") peiForm: ApiPibiFormData,
     ): Response {
-        return peiUseCase.updatePibiCaracteristiques(numeroComplet, peiForm).wrap()
+        return peiUseCase.updatePibiCaracteristiques(numeroComplet, peiForm, securityContext.organismeInfo!!).wrap()
     }
 
     @PUT
@@ -113,7 +112,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations du PEI") peiForm: ApiPenaFormData,
     ): Response {
-        return peiUseCase.updatePenaCaracteristiques(numeroComplet, peiForm).wrap()
+        return peiUseCase.updatePenaCaracteristiques(numeroComplet, peiForm, securityContext.organismeInfo!!).wrap()
     }
 
     @GET
@@ -124,7 +123,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm", required = true) @QueryParam("moment") moment: String?,
     ): Response {
         // Quand tout s'est bien passé, on sérialise, sinon on wrap comme d'habitude
-        val result = peiUseCase.diff(moment)
+        val result = peiUseCase.diff(moment, securityContext.organismeInfo!!)
         if (result is AbstractUseCase.Result.Success) {
             return Response.ok(objectMapper.writeValueAsString(result.entity), MediaType.APPLICATION_JSON).build()
         }

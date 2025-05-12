@@ -13,10 +13,13 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
+import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 import remocra.api.usecase.ApiVisitesUseCase
 import remocra.auth.RequireDroitsApi
+import remocra.auth.organismeInfo
 import remocra.data.ApiVisiteFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.exception.RemocraResponseException
@@ -30,6 +33,9 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var apiVisitesUseCase: ApiVisitesUseCase
+
+    @Context
+    lateinit var securityContext: SecurityContext
 
     @GET
     @Path("")
@@ -70,7 +76,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations de la visite", required = true) form: ApiVisiteFormData,
     ): Response {
-        return apiVisitesUseCase.addVisite(numeroComplet, form).wrap()
+        return apiVisitesUseCase.addVisite(numeroComplet, form, securityContext.organismeInfo!!).wrap()
     }
 
     @GET
@@ -82,7 +88,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,
     ): Response {
-        return apiVisitesUseCase.getVisiteSpecifique(numeroComplet, idVisite).wrap()
+        return apiVisitesUseCase.getVisiteSpecifique(numeroComplet, idVisite, securityContext.organismeInfo!!).wrap()
     }
 
     @PUT
@@ -110,6 +116,6 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,
     ): Response {
-        return apiVisitesUseCase.deleteVisite(numeroComplet, idVisite).wrap()
+        return apiVisitesUseCase.deleteVisite(numeroComplet, idVisite, securityContext.organismeInfo!!).wrap()
     }
 }

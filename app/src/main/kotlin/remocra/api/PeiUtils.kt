@@ -1,8 +1,8 @@
 package remocra.api
 
-import fr.sdis83.remocra.authn.ApiRole
-import fr.sdis83.remocra.authn.ApiUserInfo
 import remocra.GlobalConstants
+import remocra.auth.OrganismeInfo
+import remocra.db.jooq.remocra.enums.DroitApi
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -81,10 +81,13 @@ object PeiUtils {
         val typeOrganisme: String,
         val isApiAdmin: Boolean,
     ) {
-        constructor(userInfo: ApiUserInfo) : this(
-            userInfo.userId(),
-            userInfo.type(),
-            userInfo.roles().stream().anyMatch { it.equals(ApiRole.ADMINISTRER) },
+
+        constructor(
+            organismeInfo: OrganismeInfo,
+        ) : this(
+            organismeInfo.organismeId,
+            organismeInfo.typeOrganismeCode,
+            organismeInfo.droits.any { it == DroitApi.ADMINISTRER },
         )
     }
 }

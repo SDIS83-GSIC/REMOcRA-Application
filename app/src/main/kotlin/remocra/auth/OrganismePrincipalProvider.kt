@@ -8,11 +8,12 @@ import jakarta.inject.Singleton
 import net.ltgt.oauth.common.CachedTokenPrincipalProvider
 import net.ltgt.oauth.common.TokenPrincipal
 import remocra.db.OrganismeRepository
-import java.util.*
+import remocra.db.TypeOrganismeRepository
 
 @Singleton
 class OrganismePrincipalProvider @Inject constructor(
     private val organismeRepository: Provider<OrganismeRepository>,
+    private val typeOrganismeRepository: Provider<TypeOrganismeRepository>,
     authnSettings: AuthModule.AuthnSettings,
 ) : CachedTokenPrincipalProvider(Caffeine.from(authnSettings.tokenIntrospectionCacheSpec)) {
     override fun load(introspectionResponse: TokenIntrospectionSuccessResponse): TokenPrincipal? {
@@ -22,7 +23,12 @@ class OrganismePrincipalProvider @Inject constructor(
                 val droits = organismeRepository.get().getDroitApi(typeOrganismeId = organisme.organismeTypeOrganismeId)
                 return@let OrganismePrincipal(
                     introspectionResponse,
-                    OrganismeInfo(organisme.organismeId, organisme.organismeLibelle, droits),
+                    OrganismeInfo(
+                        organisme.organismeId,
+                        organisme.organismeLibelle,
+                        droits,
+                        typeOrganismeRepository.get().getByOrganismeId(organisme.organismeId),
+                    ),
                 )
             }
     }

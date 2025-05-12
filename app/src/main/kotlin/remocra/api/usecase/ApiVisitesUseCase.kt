@@ -1,11 +1,13 @@
 package remocra.api.usecase
 
 import jakarta.inject.Inject
+import remocra.auth.OrganismeInfo
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
+import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
@@ -14,15 +16,13 @@ import remocra.usecase.visites.DeleteVisiteUseCase
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class ApiVisitesUseCase : AbstractApiPeiUseCase() {
-    @Inject
-    lateinit var visiteRepository: VisiteRepository
-
-    @Inject
-    lateinit var createVisiteUseCase: CreateVisiteUseCase
-
-    @Inject
-    lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
+class ApiVisitesUseCase @Inject
+constructor(
+    override val peiRepository: PeiRepository,
+    private val visiteRepository: VisiteRepository,
+    private val createVisiteUseCase: CreateVisiteUseCase,
+    private val deleteVisiteUseCase: DeleteVisiteUseCase,
+) : AbstractApiPeiUseCase(peiRepository) {
 
     fun getAll(numeroComplet: String, typeVisiteString: String?, momentString: String?, derniereOnly: Boolean?, limit: Int?, offset: Int?): Result.Success {
         var moment: ZonedDateTime? = null
@@ -70,10 +70,10 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
      * @return [Result]
      *
      */
-    fun addVisite(numeroComplet: String, form: ApiVisiteFormData): Result {
-        val pei = getPeiSpecifique(numeroComplet)
+    fun addVisite(numeroComplet: String, form: ApiVisiteFormData, organismeInfo: OrganismeInfo): Result {
+        val pei = getPeiSpecifique(numeroComplet, organismeInfo)
         try {
-            checkDroits(pei)
+            checkDroits(pei, organismeInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -98,10 +98,10 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
         return createVisiteUseCase.execute(null, visiteData)
     }
 
-    fun getVisiteSpecifique(numeroComplet: String, visiteIdString: String): Result {
+    fun getVisiteSpecifique(numeroComplet: String, visiteIdString: String, organismeInfo: OrganismeInfo): Result {
         try {
-            val pei = getPeiSpecifique(numeroComplet)
-            checkDroits(pei)
+            val pei = getPeiSpecifique(numeroComplet, organismeInfo)
+            checkDroits(pei, organismeInfo)
 
             val visiteId = UUID.fromString(visiteIdString)
             val visite: ApiVisiteSpecifiqueData = visiteRepository.getVisiteForApi(visiteId)
@@ -118,10 +118,10 @@ class ApiVisitesUseCase : AbstractApiPeiUseCase() {
      *
      * @return [Result]
      */
-    fun deleteVisite(numeroComplet: String, visiteIdString: String): Result {
+    fun deleteVisite(numeroComplet: String, visiteIdString: String, organismeInfo: OrganismeInfo): Result {
         try {
             val visiteComplete = visiteRepository.getVisiteCompleteByVisiteId(UUID.fromString(visiteIdString))
-            val pei = getPeiSpecifique(numeroComplet)
+            val pei = getPeiSpecifique(numeroComplet, organismeInfo)
 
             if (visiteComplete.visitePeiId != pei.peiId) {
                 return Result.Error(ErrorType.VISITE_INEXISTANTE.toString())

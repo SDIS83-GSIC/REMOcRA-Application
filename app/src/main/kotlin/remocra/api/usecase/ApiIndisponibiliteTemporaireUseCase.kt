@@ -20,25 +20,14 @@ import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaire
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import java.util.UUID
 
-class ApiIndisponibiliteTemporaireUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase
-
-    @Inject
-    lateinit var updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
+class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
+    private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val peiRepository: PeiRepository,
+    private val createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase,
+    private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
+    private val objectMapper: ObjectMapper,
+) : AbstractUseCase() {
 
     fun getAll(codeOrganisme: String?, numeroComplet: String?, statut: String?, limit: Int?, offset: Int?): Collection<ApiIndispoTemporaireData> {
         // On vérifie que le statut de l'indisponibilité est conforme

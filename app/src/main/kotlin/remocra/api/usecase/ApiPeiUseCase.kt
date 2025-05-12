@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.api.PeiUtils
 import remocra.app.DataCacheProvider
+import remocra.auth.OrganismeInfo
 import remocra.data.ApiPenaFormData
 import remocra.data.ApiPibiFormData
 import remocra.data.AuteurTracabiliteData
@@ -11,6 +12,7 @@ import remocra.data.PeiData
 import remocra.data.PeiDiffData
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
+import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
 import remocra.db.TracabiliteRepository
@@ -22,31 +24,22 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
 import java.util.UUID
 
-class ApiPeiUseCase : AbstractApiPeiUseCase() {
+class ApiPeiUseCase @Inject
+constructor(
+    override val peiRepository: PeiRepository,
+    private val penaRepository: PenaRepository,
+    private val pibiRepository: PibiRepository,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val dataCacheProvider: DataCacheProvider,
+    private val objectMapper: ObjectMapper,
+) : AbstractApiPeiUseCase(peiRepository) {
 
-    @Inject
-    lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    lateinit var pibiRepository: PibiRepository
-
-    @Inject
-    lateinit var penaRepository: PenaRepository
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var updatePeiUseCase: UpdatePeiUseCase
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    fun getPeiCaracteristiques(numero: String): Result {
+    fun getPeiCaracteristiques(numero: String, organismeInfo: OrganismeInfo): Result {
         val peiId = peiRepository.getPeiIdFromNumero(numero)
             ?: return Result.Error(ErrorType.PEI_INEXISTANT.toString())
 //         TODO peut pas marcher sans avoir l'organisme connecté !
-        if (!this.isPeiAccessible(peiId)) {
+        if (!this.isPeiAccessible(peiId, organismeInfo)) {
             return Result.Error(
                 ErrorType.FORBIDDEN.toString(),
             )
@@ -62,7 +55,7 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
      * @param dateString La date format YYYY-MM-DD hh:mm à partir de laquelle rechercher les changements
      * @return List<PeiDiffData>
      */
-    fun diff(dateString: String?): Result {
+    fun diff(dateString: String?, organismeInfo: OrganismeInfo): Result {
         var moment: ZonedDateTime? = null
         var valide = true
         if (dateString != null) {
@@ -109,7 +102,7 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
         val listModifiedPei = diffs.map { it.peiId }.toSet()
 
         // Une seule requête pour calculer leur accessibilité, on se servira de la map<numero, POJO> par la suite
-        val mapAccessibilite = listPeiAccessibilite(listModifiedPei).associateBy { it.numero }
+        val mapAccessibilite = listPeiAccessibilite(listModifiedPei, organismeInfo).associateBy { it.numero }
 
         return Result.Success(diffs.filter { p -> mapAccessibilite[p.numeroComplet] != null && mapAccessibilite[p.numeroComplet]!!.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet) })
     }
@@ -122,15 +115,15 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
      * @param idPei ID du pei
      * @return
      */
-    fun userCanEditPei(idPei: UUID): Boolean {
-        val organisme: PeiUtils.OrganismeIdType = PeiUtils.OrganismeIdType(currentApiUser)
+    fun userCanEditPei(idPei: UUID, organismeInfo: OrganismeInfo): Boolean {
+        val organisme: PeiUtils.OrganismeIdType = PeiUtils.OrganismeIdType(organismeInfo)
 
         if (PeiUtils.isApiAdmin(organisme)) {
             return true
         }
 
         val peiAccessibilite =
-            listPeiAccessibilite(setOf(idPei))[0]
+            listPeiAccessibilite(setOf(idPei), organismeInfo)[0]
 
         if (PeiUtils.isApiAdmin(organisme)) {
             return true
@@ -151,10 +144,10 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
      * @param numeroComplet: Numéro complet du PEI à modifier
      * @param peiForm: Formulaire des données à modifier
      */
-    fun updatePibiCaracteristiques(numeroComplet: String, peiForm: ApiPibiFormData): Result {
+    fun updatePibiCaracteristiques(numeroComplet: String, peiForm: ApiPibiFormData, organismeInfo: OrganismeInfo): Result {
         val pei = peiRepository.getPeiFromNumero(numeroComplet)
         try {
-            checkDroits(pei)
+            checkDroits(pei, organismeInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -185,10 +178,10 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
      * @param numeroComplet: Numéro complet du PEI à modifier
      * @param peiForm: Formulaire des données à modifier
      */
-    fun updatePenaCaracteristiques(numeroComplet: String, peiForm: ApiPenaFormData): Result {
+    fun updatePenaCaracteristiques(numeroComplet: String, peiForm: ApiPenaFormData, organismeInfo: OrganismeInfo): Result {
         val pei = peiRepository.getPeiFromNumero(numeroComplet)
         try {
-            checkDroits(pei)
+            checkDroits(pei, organismeInfo)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)
         }
@@ -212,9 +205,9 @@ class ApiPeiUseCase : AbstractApiPeiUseCase() {
      * @param numeroComplet: String
      * @return [Result]
      */
-    fun getPeiSpecifiqueAsResult(numeroComplet: String): Result {
+    fun getPeiSpecifiqueAsResult(numeroComplet: String, organismeInfo: OrganismeInfo): Result {
         return try {
-            Result.Success(getPeiSpecifique(numeroComplet))
+            Result.Success(getPeiSpecifique(numeroComplet, organismeInfo))
         } catch (rre: RemocraResponseException) {
             Result.Error(rre.message)
         }
