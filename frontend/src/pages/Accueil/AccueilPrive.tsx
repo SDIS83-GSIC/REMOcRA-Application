@@ -134,7 +134,7 @@ function getLinks(
           link: URLS.LIST_ETUDE,
         },
       ];
-    case TypeModuleRemocra.CARTOGRAPHIE:
+    case TypeModuleRemocra.CARTOGRAPHIE_PERSONNALISEE:
       return [
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.CARTOGRAPHIES_E),

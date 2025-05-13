@@ -23,7 +23,7 @@ import javax.annotation.processing.Generated
 enum class TypeModule(@get:JvmName("literal") public val literal: String) : EnumType {
     DECI("DECI"),
     COUVERTURE_HYDRAULIQUE("COUVERTURE_HYDRAULIQUE"),
-    CARTOGRAPHIE("CARTOGRAPHIE"),
+    CARTOGRAPHIE_PERSONNALISEE("CARTOGRAPHIE_PERSONNALISEE"),
     OLDEBS("OLDEBS"),
     PERMIS("PERMIS"),
     RCI("RCI"),

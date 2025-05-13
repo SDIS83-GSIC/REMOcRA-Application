@@ -26,7 +26,7 @@ const MapPerso = () => {
     mapToolbarRef,
   } = useMapComponent({
     mapElement: mapElement,
-    typeModule: TypeModuleRemocra.PERSONNALISE,
+    typeModule: TypeModuleRemocra.CARTOGRAPHIE_PERSONNALISEE,
   });
 
   const {
