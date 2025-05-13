@@ -269,11 +269,11 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     url`/api/pei/referentiel-for-upsert-pei?${{
       geometry:
         "SRID=" +
-        values.srid +
+        values.typeSystemeSrid +
         ";POINT(" +
-        values.coordonneeX +
+        values.coordonneeXToDisplay +
         " " +
-        values.coordonneeY +
+        values.coordonneeYToDisplay +
         ")",
       peiId: values.peiId,
     }}`,
@@ -316,12 +316,15 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
         coordonneeY: values.coordonneeYToDisplay,
         srid: values.typeSystemeSrid,
       });
-    }
-
-    if (values.coordonneeX != null && values.coordonneeY != null) {
       selectDataState?.run({
-        coordonneeX: values.coordonneeX,
-        coordonneeY: values.coordonneeY,
+        geometry:
+          "SRID=" +
+          values.typeSystemeSrid +
+          ";POINT(" +
+          values.coordonneeXToDisplay +
+          " " +
+          values.coordonneeYToDisplay +
+          ")",
         peiId: values.peiId,
       });
     }
@@ -540,7 +543,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
                 );
                 setFieldValue("coordonneeX", coordonnees.coordonneeX);
                 setFieldValue("coordonneeY", coordonnees.coordonneeY);
-                setFieldValue("typeSystemeSrid", srid);
+                setFieldValue("srid", srid);
                 checkValidity(values, show, listValuesRequired);
               }}
             />
@@ -796,6 +799,80 @@ const FormLocalisationPei = ({
   const disableDeplacer =
     !isNew && !hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U);
 
+  function VerificationReferentiel() {
+    if (selectData !== undefined) {
+      if (
+        !selectData?.listAutoriteDeci
+          .map((e) => e.id)
+          .includes(values.peiAutoriteDeciId)
+      ) {
+        setFieldValue("peiAutoriteDeciId", null);
+      }
+      if (
+        !selectData?.listServicePublicDeci
+          .map((e) => e.id)
+          .includes(values.peiServicePublicDeciId)
+      ) {
+        setFieldValue("peiServicePublicDeciId", null);
+      }
+      if (
+        !selectData?.listMaintenanceDeci
+          .map((e) => e.id)
+          .includes(values.peiMaintenanceDeciId)
+      ) {
+        setFieldValue("peiMaintenanceDeciId", null);
+      }
+      if (
+        !selectData?.listGestionnaire
+          .map((e) => e.id)
+          .includes(values.peiGestionnaireId)
+      ) {
+        setFieldValue("peiGestionnaireId", null);
+      }
+      if (!selectData?.listSite.map((e) => e.id).includes(values.peiSiteId)) {
+        setFieldValue("peiSiteId", null);
+      }
+      if (
+        !selectData?.listCommune.map((e) => e.id).includes(values.peiCommuneId)
+      ) {
+        setFieldValue("peiCommuneId", null);
+      }
+      if (
+        !selectData?.listLieuDit.map((e) => e.id).includes(values.peiLieuDitId)
+      ) {
+        setFieldValue("peiLieuDitId", null);
+      }
+      if (!selectData?.listVoie.map((e) => e.id).includes(values.peiVoieId)) {
+        setFieldValue("peiVoieId", null);
+      }
+      if (
+        !selectData?.listModele.map((e) => e.id).includes(values.pibiModeleId)
+      ) {
+        setFieldValue("pibiModeleId", null);
+      }
+      if (
+        !selectData?.listServiceEau
+          .map((e) => e.id)
+          .includes(values.pibiServiceEauId)
+      ) {
+        setFieldValue("pibiServiceEauId", null);
+      }
+      if (
+        !selectData?.listPeiJumelage
+          .map((e) => e.id)
+          .includes(values.pibiJumeleId)
+      ) {
+        setFieldValue("pibiJumeleId", null);
+      }
+      if (
+        !selectData?.listDiametreWithNature
+          .map((e) => e.id)
+          .includes(values.pibiDiametreId)
+      ) {
+        setFieldValue("pibiDiametreId", null);
+      }
+    }
+  }
   return (
     <>
       <Row>
@@ -854,6 +931,10 @@ const FormLocalisationPei = ({
             name="coordonneeXToDisplay"
             required={true}
             disabled={disableDeplacer}
+            onChange={(v) => {
+              setFieldValue("coordonneeXToDisplay", v.target.value),
+                VerificationReferentiel();
+            }}
           />
         </Col>
         <Col>
@@ -862,6 +943,10 @@ const FormLocalisationPei = ({
             name="coordonneeYToDisplay"
             required={true}
             disabled={disableDeplacer}
+            onChange={(v) => {
+              setFieldValue("coordonneeYToDisplay", v.target.value),
+                VerificationReferentiel();
+            }}
           />
         </Col>
       </Row>
