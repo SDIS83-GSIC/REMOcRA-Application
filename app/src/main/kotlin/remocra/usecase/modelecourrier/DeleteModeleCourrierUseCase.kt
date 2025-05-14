@@ -41,7 +41,7 @@ class DeleteModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     override fun postEvent(element: ModeleCourrierData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(documents = null),
+                pojo = element.copy(part = null),
                 pojoId = element.modeleCourrierId!!,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MODELE_COURRIER,
@@ -63,17 +63,12 @@ class DeleteModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         // Puis on supprime les paramètres
         modeleCourrierRepository.deleteModeleCourrierParametre(element.modeleCourrierId)
 
-        // La table de liaison document / modèle
-        val documentsId = modeleCourrierRepository.getDocumentsId(element.modeleCourrierId)
-
-        modeleCourrierRepository.deleteLModeleCourrierDocument(documentsId)
-
         // Le modèle de courrier
         modeleCourrierRepository.deleteModeleCourrier(element.modeleCourrierId)
 
         // Et enfin les documents
-        documentRepository.deleteDocumentByIds(documentsId.toList())
+        documentRepository.deleteDocumentByIds(listOf(element.documentId!!))
 
-        return element.copy(documents = null)
+        return element.copy(part = null)
     }
 }

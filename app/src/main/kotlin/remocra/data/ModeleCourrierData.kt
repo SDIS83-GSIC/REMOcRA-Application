@@ -1,5 +1,6 @@
 package remocra.data
 
+import jakarta.servlet.http.Part
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import java.util.UUID
@@ -16,8 +17,10 @@ data class ModeleCourrierData(
     val modeleCourrierObjetEmail: String,
     val listeProfilDroitId: Collection<UUID>,
     val listeModeleCourrierParametre: Collection<ModeleCourrierParametreData>,
-    val documents: DocumentsData.DocumentsModeleCourrier?,
-    val listeDocuments: Collection<DocumentsData.DocumentModeleCourrierData>?,
+    val documentId: UUID?,
+    val documentNomFichier: String?,
+    val documentRepertoire: String?,
+    val part: Part?,
 )
 
 data class ModeleCourrierParametreData(

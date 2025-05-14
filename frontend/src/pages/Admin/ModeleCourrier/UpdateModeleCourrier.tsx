@@ -25,7 +25,7 @@ const UpdateModeleCourrier = () => {
       />
       <MyFormik
         initialValues={getInitialValues(data)}
-        prepareVariables={(values) => prepareVariables(values, data)}
+        prepareVariables={(values) => prepareVariables(values)}
         validationSchema={validationSchema}
         submitUrl={`/api/courriers/modeles/update/${modeleCourrierId}`}
         isPost={false}

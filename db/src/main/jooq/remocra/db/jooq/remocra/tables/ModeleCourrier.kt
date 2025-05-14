@@ -26,13 +26,12 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_MODELE_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_MODELE_COURRIER_ID_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_MODELE_COURRIER_CODE_KEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PARAMETRE__MODELE_COURRIER_PARAMETRE_MODELE_COURRIER_PARAMETRE_MODELE_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PKEY
+import remocra.db.jooq.remocra.keys.MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
-import remocra.db.jooq.remocra.tables.LModeleCourrierDocument.LModeleCourrierDocumentPath
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre.ModeleCourrierParametrePath
 import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
@@ -140,6 +139,12 @@ open class ModeleCourrier(
      */
     val OBJET_EMAIL: TableField<Record, String?> = createField(DSL.name("modele_courrier_objet_email"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column
+     * <code>remocra.modele_courrier.modele_courrier_document_id</code>.
+     */
+    val DOCUMENT_ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_document_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -174,23 +179,23 @@ open class ModeleCourrier(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = MODELE_COURRIER_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(MODELE_COURRIER_MODELE_COURRIER_CODE_KEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY)
 
-    private lateinit var _lModeleCourrierDocument: LModeleCourrierDocumentPath
+    private lateinit var _document: DocumentPath
 
     /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_modele_courrier_document</code> table
+     * Get the implicit join path to the <code>remocra.document</code> table.
      */
-    fun lModeleCourrierDocument(): LModeleCourrierDocumentPath {
-        if (!this::_lModeleCourrierDocument.isInitialized) {
-            _lModeleCourrierDocument = LModeleCourrierDocumentPath(this, null, L_MODELE_COURRIER_DOCUMENT__L_MODELE_COURRIER_DOCUMENT_MODELE_COURRIER_ID_FKEY.inverseKey)
+    fun document(): DocumentPath {
+        if (!this::_document.isInitialized) {
+            _document = DocumentPath(this, MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY, null)
         }
 
-        return _lModeleCourrierDocument
+        return _document
     }
 
-    val lModeleCourrierDocument: LModeleCourrierDocumentPath
-        get(): LModeleCourrierDocumentPath = lModeleCourrierDocument()
+    val document: DocumentPath
+        get(): DocumentPath = document()
 
     private lateinit var _lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
 
@@ -225,13 +230,6 @@ open class ModeleCourrier(
 
     val modeleCourrierParametre: ModeleCourrierParametrePath
         get(): ModeleCourrierParametrePath = modeleCourrierParametre()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.document</code> table
-     */
-    val document: DocumentPath
-        get(): DocumentPath = lModeleCourrierDocument().document()
 
     /**
      * Get the implicit many-to-many join path to the

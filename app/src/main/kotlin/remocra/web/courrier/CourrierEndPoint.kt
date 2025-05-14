@@ -25,7 +25,6 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.DestinataireData
-import remocra.data.DocumentsData
 import remocra.data.ModeleCourrierData
 import remocra.data.Params
 import remocra.data.courrier.form.CourrierData
@@ -141,12 +140,7 @@ class CourrierEndPoint : AbstractEndpoint() {
             securityContext.userInfo,
             modeleCourrier.copy(
                 modeleCourrierId = modeleCourrierId,
-                documents = DocumentsData.DocumentsModeleCourrier(
-                    objectId = modeleCourrierId,
-                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentModeleCourrierData>>(httpRequest.getTextPart("documents")),
-                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
-                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-                ),
+                part = httpRequest.parts.find { it.name == "part" },
             ),
         ).wrap()
     }
@@ -164,12 +158,7 @@ class CourrierEndPoint : AbstractEndpoint() {
         return updateModeleCourrierUseCase.execute(
             securityContext.userInfo,
             modeleCourrier.copy(
-                documents = DocumentsData.DocumentsModeleCourrier(
-                    objectId = modeleCourrierId,
-                    listDocument = objectMapper.readValue<List<DocumentsData.DocumentModeleCourrierData>>(httpRequest.getTextPart("documents")),
-                    listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")),
-                    listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-                ),
+                part = httpRequest.parts.find { it.name == "part" },
             ),
         ).wrap()
     }

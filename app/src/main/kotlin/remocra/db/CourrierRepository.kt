@@ -266,6 +266,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID))
             .where(UTILISATEUR.ACTIF.isTrue)
             .and(UTILISATEUR.CAN_BE_NOTIFIED.isTrue)
+            .and(UTILISATEUR.EMAIL.isNotNull)
             .union(
                 dsl.select(
                     ORGANISME.ID.`as`("destinataireId"),
@@ -277,7 +278,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .from(ORGANISME)
                     .join(PROFIL_ORGANISME)
                     .on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
-                    .where(ORGANISME.ACTIF.isTrue),
+                    .where(ORGANISME.ACTIF.isTrue)
+                    .and(ORGANISME.EMAIL_CONTACT.isNotNull),
             )
             .union(
                 dsl.select(
@@ -293,7 +295,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .on(FONCTION_CONTACT.ID.eq(CONTACT.FONCTION_CONTACT_ID))
                     .join(L_CONTACT_ORGANISME)
                     .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
-                    .where(CONTACT.ACTIF.isTrue),
+                    .where(CONTACT.ACTIF.isTrue)
+                    .and(CONTACT.EMAIL.isNotNull),
             )
             .union(
                 dsl.select(
@@ -318,7 +321,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
                     .join(GESTIONNAIRE)
                     .on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
-                    .where(CONTACT.ACTIF.isTrue),
+                    .where(CONTACT.ACTIF.isTrue)
+                    .and(CONTACT.EMAIL.isNotNull),
             )
 
     data class FilterDestinataire(

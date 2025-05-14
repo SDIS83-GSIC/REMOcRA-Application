@@ -1,11 +1,13 @@
 package remocra.usecase.modelecourrier
 
 import jakarta.inject.Inject
+import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.ModeleCourrierData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
+import remocra.db.DocumentRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,7 +20,7 @@ import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import remocra.usecase.document.UpsertDocumentModeleCourrierUseCase
+import remocra.usecase.document.DocumentUtils
 import remocra.utils.RequeteSqlUtils
 
 class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.UPDATE) {
@@ -27,7 +29,10 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     private lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
     @Inject
-    private lateinit var upsertDocumentModeleCourrierUseCase: UpsertDocumentModeleCourrierUseCase
+    private lateinit var documentRepository: DocumentRepository
+
+    @Inject
+    private lateinit var documentUtils: DocumentUtils
 
     @Inject
     private lateinit var requeteSqlUtils: RequeteSqlUtils
@@ -41,7 +46,7 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     override fun postEvent(element: ModeleCourrierData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(documents = null),
+                pojo = element.copy(part = null),
                 pojoId = element.modeleCourrierId!!,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MODELE_COURRIER,
@@ -65,6 +70,7 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     modeleCourrierModule = TypeModule.entries.find { it.name == element.modeleCourrierModule.name }!!,
                     modeleCourrierCorpsEmail = element.modeleCourrierCorpsEmail,
                     modeleCourrierObjetEmail = element.modeleCourrierObjetEmail,
+                    modeleCourrierDocumentId = element.documentId,
                 ),
             )
         }
@@ -101,19 +107,18 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
             )
         }
 
-        if (element.documents != null) {
-            val result = upsertDocumentModeleCourrierUseCase.execute(
-                userInfo,
-                element.documents,
-                transactionManager,
+        if (element.part != null) {
+            // On supprime document actuel en base et sur le disque
+            documentUtils.deleteFile(element.documentNomFichier!!, element.documentRepertoire!!)
+            documentUtils.saveFile(
+                element.part.inputStream.readAllBytes(),
+                element.part.submittedFileName,
+                GlobalConstants.DOSSIER_MODELES_COURRIERS + element.modeleCourrierId,
             )
-
-            if (result is Result.Error) {
-                throw IllegalArgumentException(result.message)
-            }
+            documentRepository.updateDocument(element.part.submittedFileName, "${GlobalConstants.DOSSIER_MODELES_COURRIERS}${element.modeleCourrierId}", element.documentId!!)
         }
 
-        return element.copy(documents = null)
+        return element.copy(part = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: ModeleCourrierData) {

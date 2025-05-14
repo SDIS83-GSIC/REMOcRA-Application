@@ -1,6 +1,7 @@
 package remocra.usecase.modelecourrier
 
 import jakarta.inject.Inject
+import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.ModeleCourrierData
@@ -13,14 +14,16 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
+import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import remocra.usecase.document.UpsertDocumentModeleCourrierUseCase
+import remocra.usecase.document.DocumentUtils
 import remocra.utils.RequeteSqlUtils
+import java.util.UUID
 
 class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.INSERT) {
 
@@ -28,7 +31,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     private lateinit var modeleCourrierRepository: ModeleCourrierRepository
 
     @Inject
-    private lateinit var upsertDocumentModeleCourrierUseCase: UpsertDocumentModeleCourrierUseCase
+    private lateinit var documentUtils: DocumentUtils
 
     @Inject
     private lateinit var documentRepository: DocumentRepository
@@ -45,7 +48,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     override fun postEvent(element: ModeleCourrierData, userInfo: UserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(documents = null),
+                pojo = element.copy(part = null),
                 pojoId = element.modeleCourrierId!!,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.MODELE_COURRIER,
@@ -56,7 +59,22 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     }
 
     override fun execute(userInfo: UserInfo?, element: ModeleCourrierData): ModeleCourrierData {
-        // On insère le rapport personnalisé
+        val documentId = UUID.randomUUID()
+
+        // On sauvegarde le document sur le disque
+        val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS + "/${element.modeleCourrierId}"
+        documentUtils.saveFile(element.part!!.inputStream.readAllBytes(), element.part.submittedFileName, repertoire)
+
+        // On récupère le document et on l'enregistre
+        documentRepository.insertDocument(
+            Document(
+                documentId = documentId,
+                documentDate = dateUtils.now(),
+                documentNomFichier = element.part.submittedFileName,
+                documentRepertoire = repertoire,
+            ),
+        )
+
         modeleCourrierRepository.run {
             insertModeleCourrier(
                 ModeleCourrier(
@@ -70,6 +88,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     modeleCourrierModule = TypeModule.entries.find { it.name == element.modeleCourrierModule.name }!!,
                     modeleCourrierCorpsEmail = element.modeleCourrierCorpsEmail,
                     modeleCourrierObjetEmail = element.modeleCourrierObjetEmail,
+                    modeleCourrierDocumentId = documentId,
                 ),
             )
         }
@@ -104,15 +123,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
             )
         }
 
-        if (element.documents != null) {
-            upsertDocumentModeleCourrierUseCase.execute(
-                userInfo,
-                element.documents,
-                transactionManager,
-            )
-        }
-
-        return element.copy(documents = null)
+        return element.copy(part = null)
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: ModeleCourrierData) {

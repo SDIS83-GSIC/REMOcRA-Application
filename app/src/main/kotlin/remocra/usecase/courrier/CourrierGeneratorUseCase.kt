@@ -1,14 +1,13 @@
 package remocra.usecase.courrier
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry
+import fr.opensagres.xdocreport.template.TemplateEngineKind
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.UriBuilder
-import net.sf.jasperreports.engine.DefaultJasperReportsContext
-import net.sf.jasperreports.engine.JREmptyDataSource
-import net.sf.jasperreports.engine.JRPropertiesUtil
-import net.sf.jasperreports.engine.JasperCompileManager
-import net.sf.jasperreports.engine.JasperRunManager
+import org.jooq.JSON
 import remocra.GlobalConstants
 import remocra.auth.UserInfo
 import remocra.data.courrier.form.ParametreCourrierInput
@@ -18,6 +17,9 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.DateUtils
 import remocra.utils.RequestUtils
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.nio.file.Paths
 import java.util.UUID
 
@@ -68,10 +70,6 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
         val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parametreCourrierInput.modeleCourrierId)
 
-        if (modeleCourrier.listeDocuments.isNullOrEmpty()) {
-            throw IllegalArgumentException("Aucun template n'a été défini pour ce courrier")
-        }
-
         transactionManager.transactionResult {
             // On va chercher la requête du rapport
             var requete = modeleCourrier.modeleCourrierSourceSql
@@ -91,27 +89,6 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
             mapParameters = modeleCourrierRepository.executeRequeteSql(requeteModifiee)
         }
 
-        if (mapParameters.isNullOrEmpty()) {
-            throw IllegalArgumentException("Impossible de récupérer les données pour remplir le template, aucune donnée retournée par la requête")
-        }
-
-        val main = modeleCourrier.listeDocuments.find { it.isMainReport }
-            ?: throw IllegalArgumentException("Doit avoir un rapport principal")
-        val location = "${main.documentRepertoire}/${main.documentNomFichier}"
-
-        // Permet de définir un dossier par défaut pour la compilation du rapport
-        DefaultJasperReportsContext.getInstance()
-            .setProperty(JRPropertiesUtil.PROPERTY_PREFIX + "compiler.temp.dir", GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
-
-        val courrier = JasperCompileManager.compileReport(location)
-
-        // On compile ensuite les sous rapports
-        if (modeleCourrier.listeDocuments.any { !it.isMainReport }) {
-            modeleCourrier.listeDocuments.filter { !it.isMainReport }.forEach {
-                mapParameters!![it.documentNomFichier] = JasperCompileManager.compileReport("${it.documentRepertoire}/${it.documentNomFichier}")
-            }
-        }
-
         // on ajoute la date
         mapParameters!!["dateGeneration"] = dateUtils.format(dateUtils.now(), DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY)
 
@@ -120,26 +97,57 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
         // et le nom de l'utilisateur connecté qui génére le courrier
         mapParameters!!["reference"] = parametreCourrierInput.courrierReference
-
-        val file = JasperRunManager.runReportToPdf(
-            courrier,
-            mapParameters,
-            JREmptyDataSource(),
+        val report = XDocReportRegistry.getRegistry().loadReport(
+            FileInputStream("${modeleCourrier.documentRepertoire}/${modeleCourrier.documentNomFichier}"),
+            TemplateEngineKind.Freemarker,
         )
+
+        val context = report.createContext()
+
+        val mapTemp = mapParameters
+        mapTemp!!.forEach {
+            (it.value as? JSON)?.let { it1 -> mapTemp[it.key] = objectMapper.readValue<List<Map<String, Any>>>(it1.data()) }
+        }
+
+        mapParameters = mapTemp
+
+        context.putMap(mapParameters)
 
         val nomFichier = "${modeleCourrier.modeleCourrierCode}-${
             dateUtils.format(dateUtils.now(), "yyyy-MM-dd-HH-mm-ss")
-        }.pdf"
+        }"
 
-        documentUtils.saveFile(file, nomFichier, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
-        return UrlCourrier(
-            url = uriBuilder
-                .queryParam("courrierName", Paths.get(nomFichier))
-                .build()
-                .toString(),
-            modeleCourrierId = modeleCourrier.modeleCourrierId!!,
-            courrierReference = parametreCourrierInput.courrierReference,
-        )
+        val filledOdt = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.odt")
+        val pdfFile = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.pdf")
+
+        FileOutputStream(filledOdt).use { out ->
+            report.process(context, out)
+        }
+
+        // génération du pdf
+        val process = ProcessBuilder(
+            "libreoffice",
+            "--headless",
+            "--convert-to",
+            "pdf",
+            "--outdir",
+            pdfFile.parent,
+            filledOdt.absolutePath,
+        ).inheritIO().start()
+
+        val exitCode = process.waitFor()
+        if (exitCode == 0 && pdfFile.exists()) {
+            return UrlCourrier(
+                url = uriBuilder
+                    .queryParam("courrierName", Paths.get("$nomFichier.pdf"))
+                    .build()
+                    .toString(),
+                modeleCourrierId = modeleCourrier.modeleCourrierId!!,
+                courrierReference = parametreCourrierInput.courrierReference,
+            )
+        } else {
+            throw IllegalArgumentException("Impossible de générer le pdf")
+        }
     }
 
     data class UrlCourrier(

@@ -6,15 +6,13 @@ import SortableAddRemoveComponent from "../../../components/DragNDrop/SortableAd
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
+  FileInput,
   FormContainer,
   Multiselect,
   SelectInput,
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import FormDocuments, {
-  setDocumentInFormData,
-} from "../../../components/Form/FormDocuments.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import {
   IconInfo,
@@ -55,11 +53,11 @@ type ModeleCourrierType = {
     modeleCourrierParametreSourceSqlLibelle: string | undefined;
     modeleCourrierParametreValeurDefaut: any | undefined;
   }[];
+  documentId: string;
+  documentNomFichier: string;
+  documentRepertoire: string;
   unavailableCode: number[];
-  documents: Document &
-    {
-      isMainReport: boolean;
-    }[];
+  documents: Document;
 };
 
 export const getInitialValues = (data?: ModeleCourrierType) => ({
@@ -95,22 +93,18 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
       ...e,
     })) ?? [],
   modeleCourrierSourceSql: data?.modeleCourrierSourceSql,
-  documents: data?.listeDocuments ?? [],
+  documentId: data?.documentId,
+  documentNomFichier: data?.documentNomFichier,
+  documentRepertoire: data?.documentRepertoire,
+  part: null,
 });
 
 export const validationSchema = object({});
 
-export const prepareVariables = (
-  values: ModeleCourrierType,
-  initialData: ModeleCourrierType,
-) => {
+export const prepareVariables = (values: ModeleCourrierType) => {
   const formData = new FormData();
 
-  setDocumentInFormData(
-    values?.documents,
-    initialData?.listeDocuments,
-    formData,
-  );
+  formData.append("part", values.part);
 
   formData.append(
     "modeleCourrier",
@@ -125,6 +119,9 @@ export const prepareVariables = (
       modeleCourrierObjetEmail: values.modeleCourrierObjetEmail,
       modeleCourrierCorpsEmail: values.modeleCourrierCorpsEmail,
       listeProfilDroitId: values.listeProfilDroitId,
+      documentId: values.documentId,
+      documentNomFichier: values.documentNomFichier,
+      documentRepertoire: values.documentRepertoire,
       listeModeleCourrierParametre: values.listeModeleCourrierParametre.map(
         (e, index) => {
           return {
@@ -341,21 +338,11 @@ const ModeleCourrier = () => {
           </Row>
           <Row className="mt-3">
             <Col>
-              <FormDocuments
-                documents={values.documents}
-                setFieldValue={setFieldValue}
-                otherFormParam={(index: number) => (
-                  <>
-                    <CheckBoxInput
-                      label="Est le rapport principal"
-                      name={`documents[${index}].isMainReport`}
-                      required={false}
-                    />
-                  </>
-                )}
-                defaultOtherProperties={{
-                  letudeDocumentLibelle: null,
-                }}
+              <FileInput
+                name="part"
+                accept="*.odt"
+                label="Template"
+                onChange={(e) => setFieldValue("part", e.target.files[0])}
               />
             </Col>
           </Row>

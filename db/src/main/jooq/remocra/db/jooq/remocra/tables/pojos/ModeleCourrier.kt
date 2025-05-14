@@ -30,6 +30,7 @@ data class ModeleCourrier(
     val modeleCourrierModule: TypeModule,
     val modeleCourrierCorpsEmail: String,
     val modeleCourrierObjetEmail: String,
+    val modeleCourrierDocumentId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -77,6 +78,13 @@ data class ModeleCourrier(
         if (this.modeleCourrierObjetEmail != o.modeleCourrierObjetEmail) {
             return false
         }
+        if (this.modeleCourrierDocumentId == null) {
+            if (o.modeleCourrierDocumentId != null) {
+                return false
+            }
+        } else if (this.modeleCourrierDocumentId != o.modeleCourrierDocumentId) {
+            return false
+        }
         return true
     }
 
@@ -93,6 +101,7 @@ data class ModeleCourrier(
         result = prime * result + this.modeleCourrierModule.hashCode()
         result = prime * result + this.modeleCourrierCorpsEmail.hashCode()
         result = prime * result + this.modeleCourrierObjetEmail.hashCode()
+        result = prime * result + (if (this.modeleCourrierDocumentId == null) 0 else this.modeleCourrierDocumentId.hashCode())
         return result
     }
 
@@ -109,6 +118,7 @@ data class ModeleCourrier(
         sb.append(", ").append(modeleCourrierModule)
         sb.append(", ").append(modeleCourrierCorpsEmail)
         sb.append(", ").append(modeleCourrierObjetEmail)
+        sb.append(", ").append(modeleCourrierDocumentId)
 
         sb.append(")")
         return sb.toString()
