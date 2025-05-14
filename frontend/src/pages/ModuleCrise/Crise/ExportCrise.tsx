@@ -9,6 +9,12 @@ import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.t
 const ExportCrise = () => {
   const { criseId } = useParams();
   const [params, setSearchParam] = useState<any>({});
+  const [dateDebExtraction, setDateDebExtraction] = useState(
+    formatDateTimeForDateTimeInput(new Date()),
+  );
+  const [dateFinExtraction, setDateFinExtraction] = useState(
+    formatDateTimeForDateTimeInput(new Date()),
+  );
 
   const setValue = (name: string, value: string) => {
     setSearchParam((previous: any) => ({
@@ -24,20 +30,22 @@ const ExportCrise = () => {
         name="dateDebExtraction"
         label="Extraire les informations entre le"
         required={true}
-        onChange={(e: { value: string }) =>
-          setValue("dateDebExtraction", new Date(e.value).toISOString())
-        }
-        value={formatDateTimeForDateTimeInput(new Date())}
+        onChange={(e: { value: string }) => {
+          setDateDebExtraction(e.value);
+          setValue("dateDebExtraction", new Date(e.value).toISOString());
+        }}
+        value={dateDebExtraction}
       />
 
       <SelectDateTimeInput
         name="dateFinExtraction"
         label="et le"
         required={true}
-        onChange={(e: { value: string }) =>
-          setValue("dateFinExtraction", new Date(e.value).toISOString())
-        }
-        value={formatDateTimeForDateTimeInput(new Date())}
+        onChange={(e: { value: string }) => {
+          setDateFinExtraction(e.value);
+          setValue("dateFinExtraction", new Date(e.value).toISOString());
+        }}
+        value={dateFinExtraction}
       />
 
       <h1>Export</h1>

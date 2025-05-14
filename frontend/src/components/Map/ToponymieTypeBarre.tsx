@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Map from "ol/Map";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { transform } from "ol/proj";
+import { transformExtent } from "ol/proj";
 import { WKT } from "ol/format";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 
@@ -71,10 +71,11 @@ const ToponymieTypeBarre = ({
         if (features.length === 0) {
           return;
         }
+
         const feature: any = features[0];
-        const coordSource = transform(
+        const coordSource = transformExtent(
           feature.geometry.coordinates,
-          `EPSG:${feature.srid}`,
+          `EPSG:${feature.geometry.srid}`,
           map.getView().getViewStateAndExtent().viewState.projection,
         );
         map.getView().setCenter(coordSource);

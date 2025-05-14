@@ -69,7 +69,7 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
       style,
       opacity: 1,
       visible: true,
-      minZoom: 12,
+      minZoom: 8,
       maxResolution: 99999,
       zIndex: 9999,
     });

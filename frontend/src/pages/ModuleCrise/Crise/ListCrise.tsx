@@ -25,9 +25,7 @@ import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import formatDateTime, {
-  formatDateTimeForDateTimeInput,
-} from "../../../utils/formatDateUtils.tsx";
+import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import filterValuesToVariable from "./FilterCrise.tsx";
 
@@ -124,7 +122,6 @@ const ListCrise = () => {
             name="criseDateFin"
             label="Date et heure de fin"
             required={true}
-            value={formatDateTimeForDateTimeInput(new Date())}
           />
         ),
         header: (row) => "Clore la crise : " + row.original.criseLibelle,

@@ -45,7 +45,7 @@ export const criseValidationSchema = object({
 });
 
 export const prepareCriseValues = (values: {
-  typeCrise: any;
+  typeCriseId: any;
   criseLibelle: any;
   criseDescription: any;
   listeCommuneId: any;
@@ -53,7 +53,7 @@ export const prepareCriseValues = (values: {
   listeToponymieId: any;
   couchesWMS: any;
 }) => ({
-  typeCrise: values.typeCrise,
+  typeCriseId: values.typeCriseId,
   criseLibelle: values.criseLibelle,
   criseDescription: values.criseDescription,
   listeCommuneId: values.listeCommuneId,

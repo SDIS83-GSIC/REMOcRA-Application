@@ -105,7 +105,7 @@ const ListDocument = ({
 
           {
             Header: "Localiser",
-            accessor: "documentGeometry",
+            accessor: "documentGeometrie",
             Cell: (value) => {
               return (
                 <>

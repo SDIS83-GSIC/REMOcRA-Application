@@ -1,6 +1,7 @@
 package remocra.usecase.crise.evenement
 
 import jakarta.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.UserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.EvenementData
@@ -15,17 +16,29 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.UpsertDocumentEvenementUseCase
 import java.util.UUID
 
-class UpdateEvenementUseCase : AbstractCUDUseCase<EvenementData>(TypeOperation.UPDATE) {
+class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOperation.UPDATE) {
 
     @Inject lateinit var evenementRepository: EvenementRepository
 
     @Inject lateinit var messageRepository: MessageRepository
 
     @Inject private lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
+    override fun getListGeometrie(element: EvenementData): Collection<Geometry> {
+        return element.evenementGeometrie?.let { listOf(it) } ?: emptyList()
+    }
+
+    override fun ensureSrid(element: EvenementData): EvenementData {
+        if (element.evenementGeometrie != null && element.evenementGeometrie.srid != appSettings.srid) {
+            return element.copy(
+                evenementGeometrie = transform(element.evenementGeometrie),
+            )
+        }
+        return element
+    }
 
     override fun checkDroits(userInfo: UserInfo) {
         if (!userInfo.droits.contains(Droit.EVENEMENT_U)) {

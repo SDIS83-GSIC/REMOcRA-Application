@@ -232,7 +232,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                     }
                 },
             ).and(
-                ST_Within(EVENEMENT.GEOMETRIE, bbox),
+                ST_Within(EVENEMENT.GEOMETRIE, ST_Transform(bbox, SRID)),
             )
             .fetchInto()
     }

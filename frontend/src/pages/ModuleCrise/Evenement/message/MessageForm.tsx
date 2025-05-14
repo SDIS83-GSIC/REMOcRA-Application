@@ -1,5 +1,6 @@
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
+import { useFormikContext } from "formik";
 import {
   FormContainer,
   FieldSet,
@@ -13,6 +14,7 @@ import {
   requiredString,
 } from "../../../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../../utils/formatDateUtils.tsx";
+import TagInput from "../../../../components/InputTag/InputTag.tsx";
 
 export const messageValidationSchema = object({
   messageObjet: requiredString,
@@ -22,6 +24,9 @@ export const messageValidationSchema = object({
 
 export const getInitialValue = (values: any, utilisateurId: any) => ({
   messageUtilisateurId: utilisateurId,
+  messageDateConstat: formatDateTimeForDateTimeInput(new Date()),
+  messageImportance: 3,
+  messageTags: [],
 });
 
 export const prepareMessageValues = (values: any) => ({
@@ -30,11 +35,13 @@ export const prepareMessageValues = (values: any) => ({
   messageDateConstat: new Date(values.messageDateConstat).toISOString(),
   messageImportance: values.messageImportance,
   messageOrigine: values.messageOrigine,
-  messageTags: values.messageTags,
+  messageTags: values.messageTags.join(", "),
   messageUtilisateurId: values.messageUtilisateurId,
 });
 
 const MessageForm = () => {
+  const { setFieldValue } = useFormikContext<any>();
+
   return (
     <FormContainer>
       <FieldSet title={"Nouveau message"}>
@@ -60,13 +67,11 @@ const MessageForm = () => {
               label="Date de constat"
               name={"messageDateConstat"}
               required={true}
-              value={formatDateTimeForDateTimeInput(new Date())}
             />
           </Col>
 
           <Col>
             <RangeInput
-              value={0}
               step={1}
               min={0}
               name={"messageImportance"}
@@ -85,7 +90,11 @@ const MessageForm = () => {
             />
           </Col>
           <Col>
-            <TextInput required={false} label="Tags" name={"messageTags"} />
+            <TagInput
+              onTagsChange={(tags) => setFieldValue("messageTags", tags)}
+              name={"messageTags"}
+              label={"Liste des tags"}
+            />
           </Col>
         </Row>
       </FieldSet>

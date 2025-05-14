@@ -94,7 +94,7 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
       <h3 className="mt-5">Informations générales</h3>
 
       <SelectForm
-        disabled={isReadOnly}
+        disabled={values.geometrieEvenement ? true : isReadOnly}
         name="evenementTypeId"
         listIdCodeLibelle={listeType}
         label="Type"

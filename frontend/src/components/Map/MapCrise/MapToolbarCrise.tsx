@@ -75,6 +75,7 @@ export const useToolbarCriseContext = ({
     setShowListEvent(false);
     setShowCreateEvent(false);
     workingLayer.getSource().clear();
+    setGeometryElement(null);
   };
 
   const [showTracee, setShowTracee] = useState(false);
@@ -290,6 +291,7 @@ const MapToolbarCrise = forwardRef(
     showCreateEvent: boolean;
     showListEvent: boolean;
     showListDocument: boolean;
+    setGeometryElement: (object: object) => void;
     setShowListDocument: (b: boolean) => void;
     setShowListEvent: (b: boolean) => void;
     setShowCreateEvent: (b: boolean) => void;
@@ -478,81 +480,75 @@ const MapToolbarCrise = forwardRef(
         </Volet>
 
         <Dropdown>
-          <Dropdown.Toggle id={"dropdown-"}>{"Edition"}</Dropdown.Toggle>
-
+          <Dropdown.Toggle id={"dropdown-"}>{"Dessiner"}</Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown>
-              <Dropdown.Toggle id={"dropdown-"}>{"Dessiner"}</Dropdown.Toggle>
-              <Dropdown.Menu>
-                {typeWithSousType?.map(
-                  (
-                    e: {
-                      criseCategorieLibelle: {
-                        toString: () => any;
-                      };
-                      listSousType: any[];
-                    },
-                    key: Key | null | undefined,
-                  ) => {
-                    return (
-                      <Col xs={"auto"} className={"py-2"} key={key}>
-                        <Dropdown>
-                          <Dropdown.Toggle id={"dropdown-"}>
-                            {e.criseCategorieLibelle?.toString()}
-                          </Dropdown.Toggle>
+            {typeWithSousType?.map(
+              (
+                e: {
+                  criseCategorieLibelle: {
+                    toString: () => any;
+                  };
+                  listSousType: any[];
+                },
+                key: Key | null | undefined,
+              ) => {
+                return (
+                  <Col xs={"auto"} className={"py-2"} key={key}>
+                    <Dropdown>
+                      <Dropdown.Toggle id={"dropdown-"}>
+                        {e.criseCategorieLibelle?.toString()}
+                      </Dropdown.Toggle>
 
-                          <Dropdown.Menu>
-                            {e.listSousType.map(
-                              (
-                                soustype: {
-                                  typeCriseCategorieGeometrie: string;
-                                  typeCriseCategorieId: any;
-                                  typeCriseCategorieLibelle: any;
-                                },
-                                key: Key | null | undefined,
-                              ) => {
-                                let icon;
-                                switch (soustype.typeCriseCategorieGeometrie) {
-                                  case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
-                                    icon = <IconPoint />;
-                                    break;
-                                  case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
-                                    icon = <IconLine />;
-                                    break;
-                                  case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
-                                    icon = <IconPolygon />;
-                                    break;
-                                }
+                      <Dropdown.Menu>
+                        {e.listSousType.map(
+                          (
+                            soustype: {
+                              typeCriseCategorieGeometrie: string;
+                              typeCriseCategorieId: any;
+                              typeCriseCategorieLibelle: any;
+                            },
+                            key: Key | null | undefined,
+                          ) => {
+                            let icon;
+                            switch (soustype.typeCriseCategorieGeometrie) {
+                              case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
+                                icon = <IconPoint />;
+                                break;
+                              case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
+                                icon = <IconLine />;
+                                break;
+                              case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
+                                icon = <IconPolygon />;
+                                break;
+                            }
 
-                                return (
-                                  <Dropdown.Item
-                                    onClick={() => {
-                                      setTypeEvenement(
-                                        soustype.typeCriseCategorieId,
-                                      );
-                                      toggleToolCallback(
-                                        "create-" +
-                                          soustype.typeCriseCategorieGeometrie.toLowerCase(),
-                                      );
-                                      setSousTypeElement(
-                                        soustype.typeCriseCategorieId,
-                                      );
-                                    }}
-                                    key={key}
-                                  >
-                                    {icon} {soustype?.typeCriseCategorieLibelle}
-                                  </Dropdown.Item>
-                                );
-                              },
-                            )}
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </Col>
-                    );
-                  },
-                )}
-              </Dropdown.Menu>
-            </Dropdown>
+                            return (
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setTypeEvenement(
+                                    soustype.typeCriseCategorieId,
+                                  );
+                                  toggleToolCallback(
+                                    "create-" +
+                                      soustype.typeCriseCategorieGeometrie.toLowerCase(),
+                                  );
+                                  setSousTypeElement(
+                                    soustype.typeCriseCategorieId,
+                                  );
+                                }}
+                                key={key}
+                              >
+                                {icon} {soustype?.typeCriseCategorieLibelle}
+                              </Dropdown.Item>
+                            );
+                          },
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </Col>
+                );
+              },
+            )}
           </Dropdown.Menu>
         </Dropdown>
 
