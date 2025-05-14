@@ -21,9 +21,6 @@ licensee {
     allowUrl("http://www.jooq.org/inc/LICENSE.txt") {
         because("Dual-licensed Apache-2.0 or jOOQ License")
     }
-    allowUrl("https://www.mozilla.org/en-US/MPL/2.0/") {
-        because("MPL-2.0")
-    }
     allowUrl("https://golang.org/LICENSE") {
         because("BSD-3-Clause")
     }
@@ -50,9 +47,6 @@ licensee {
     }
     allowUrl("https://github.com/geotools/geotools/blob/master/modules/plugin/epsg-hsql/LICENSE.txt") {
         because("LGPL-2.1")
-    }
-    allowUrl("http://jasperreports.sourceforge.net/license.html") {
-        because("LGPL-3.0")
     }
     allowUrl("https://jdbc.postgresql.org/about/license.html") {
         because("BSD-2-Clause")
@@ -172,11 +166,6 @@ dependencies {
     api(libs.pac4j.jakartaee)
 
     api(libs.apache.poi)
-
-    // jasper
-    api(libs.jasperreports)
-    api(libs.jasperreports.pdf)
-    api(libs.jasperreports.fronts)
 
     api(libs.xdocreport)
     api(libs.xdocreport.odt)
