@@ -85,6 +85,10 @@ licensee {
     allowDependency("tech.uom.lib", "uom-lib-common", "2.1") {
         because("BSD-3-Clause")
     }
+
+    allowDependency("oro", "oro", "2.0.8") {
+        because("Apache-2.0")
+    }
     // Fin des dépendances javax.measurement
 
     // On gère au niveau des dépendances directement plutôt que de la licence pour mieux contrôler le besoin
@@ -173,6 +177,12 @@ dependencies {
     api(libs.jasperreports)
     api(libs.jasperreports.pdf)
     api(libs.jasperreports.fronts)
+
+    api(libs.xdocreport)
+    api(libs.xdocreport.odt)
+    api(libs.xdocreport.freemarker)
+    api(libs.xdocreport.velocity)
+    api(libs.xdocreport.converter)
 }
 
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"
