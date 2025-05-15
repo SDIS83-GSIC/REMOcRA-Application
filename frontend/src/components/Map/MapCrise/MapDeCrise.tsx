@@ -24,9 +24,7 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
     [criseId, state],
   );
 
-  const listeCouches = useGet(
-    url`/api/crise/${criseId}/get-couches`,
-  )?.data;
+  const listeCouches = useGet(url`/api/crise/${criseId}/get-couches`)?.data;
 
   const {
     map,

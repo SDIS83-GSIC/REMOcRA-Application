@@ -188,51 +188,52 @@ const ComposantToRepeat = ({
   const selectedIds = listeElements?.map((e) => e.coucheId).filter(Boolean);
   const TypesCouches = useMemo(
     () =>
-      couchesWMS.data
-        ?.filter(({ coucheId }) => !selectedIds.includes(coucheId)) || [],
+      couchesWMS.data?.filter(
+        ({ coucheId }) => !selectedIds.includes(coucheId),
+      ) || [],
     [couchesWMS.data, selectedIds],
   );
 
   const { setFieldValue } = useFormikContext();
 
   return (
-      <Row className="align-items-center mt-3">
-        <Col>
-          <SelectInput
-            name={`couchesWMS[${index}].coucheId`}
-            label="Type"
-            options={TypesCouches}
-            getOptionValue={(t) => t.coucheId}
-            getOptionLabel={(t) => t.coucheLibelle}
-            onChange={(e) => {
-              setFieldValue(
-                `couchesWMS[${index}].coucheId`,
-                TypesCouches.find(
-                  (type: { coucheId: any }) => type.coucheId === e.coucheId,
-                )?.coucheId,
-              );
-            }}
-            defaultValue={couchesWMS.data?.find(
-              (type: { coucheId: any }) =>
-                type.coucheId === listeElements[index].coucheId,
-            )}
-            required={true}
-          />
-        </Col>
-        <Col>
-          <CheckBoxInput
-            name={`couchesWMS[${index}].operationnel`}
-            label={"Opérationnel"}
-          />
-        </Col>
-        <Col>
-          <CheckBoxInput
-            name={`couchesWMS[${index}].anticipation`}
-            label={"Anticipation"}
-          />
-        </Col>
-      </Row>
-   );
+    <Row className="align-items-center mt-3">
+      <Col>
+        <SelectInput
+          name={`couchesWMS[${index}].coucheId`}
+          label="Type"
+          options={TypesCouches}
+          getOptionValue={(t) => t.coucheId}
+          getOptionLabel={(t) => t.coucheLibelle}
+          onChange={(e) => {
+            setFieldValue(
+              `couchesWMS[${index}].coucheId`,
+              TypesCouches.find(
+                (type: { coucheId: any }) => type.coucheId === e.coucheId,
+              )?.coucheId,
+            );
+          }}
+          defaultValue={couchesWMS.data?.find(
+            (type: { coucheId: any }) =>
+              type.coucheId === listeElements[index].coucheId,
+          )}
+          required={true}
+        />
+      </Col>
+      <Col>
+        <CheckBoxInput
+          name={`couchesWMS[${index}].operationnel`}
+          label={"Opérationnel"}
+        />
+      </Col>
+      <Col>
+        <CheckBoxInput
+          name={`couchesWMS[${index}].anticipation`}
+          label={"Anticipation"}
+        />
+      </Col>
+    </Row>
+  );
 };
 
 export default Crise;
