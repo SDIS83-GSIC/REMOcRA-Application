@@ -1,10 +1,10 @@
+import classnames from "classnames";
 import { getUid } from "ol";
 import { forwardRef, ReactNode, useImperativeHandle, useState } from "react";
 import { Badge, Collapse, Form, Image, ListGroup } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import FormRange from "react-bootstrap/FormRange";
 import Row from "react-bootstrap/Row";
-import classnames from "classnames";
 import AccordionCustom, { useAccordionState } from "../Accordion/Accordion.tsx";
 import { IconMinus, IconPlus } from "../Icon/Icon.tsx";
 
@@ -18,7 +18,6 @@ const MapLegend = forwardRef(
   ) => {
     const [activeLayers, setActiveLayers] = useState([]);
     const [open, setOpen] = useState({});
-    const { handleShowClose, activesKeys } = useAccordionState([false]); // Tous les volets fermés par défaut
 
     useImperativeHandle(ref, () => ({
       addActiveLayer(layerId) {
@@ -133,16 +132,39 @@ const MapLegend = forwardRef(
         }),
       );
 
+    if (listeVoletsAccordion.length === 0) {
+      return;
+    }
+
     return (
-      <AccordionCustom
-        activesKeys={activesKeys}
-        handleShowClose={handleShowClose}
-        list={listeVoletsAccordion}
-        classNameBody={"p-1"}
-      />
+      listeVoletsAccordion && (
+        <AccordionMap listeVoletsAccordion={listeVoletsAccordion} />
+      )
     );
   },
 );
+
+const AccordionMap = ({
+  listeVoletsAccordion,
+}: {
+  listeVoletsAccordion: {
+    header: string;
+    content: ReactNode;
+  }[];
+}) => {
+  const { handleShowClose, activesKeys } = useAccordionState(
+    Array(listeVoletsAccordion.length).fill(true),
+  );
+
+  return (
+    <AccordionCustom
+      activesKeys={activesKeys}
+      handleShowClose={handleShowClose}
+      list={listeVoletsAccordion}
+      classNameBody={"p-1"}
+    />
+  );
+};
 
 MapLegend.displayName = "MapLegend";
 
