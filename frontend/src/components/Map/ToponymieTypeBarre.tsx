@@ -16,6 +16,7 @@ const ToponymieTypeBarre = ({
 
   return (
     <AsyncTypeahead
+      className="h-100"
       minLength={3}
       placeholder={"Zoomer sur le lieu..."}
       emptyLabel={"Aucun résultat"}

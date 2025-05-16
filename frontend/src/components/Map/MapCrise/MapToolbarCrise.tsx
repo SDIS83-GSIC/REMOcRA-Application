@@ -1,6 +1,6 @@
 import Map from "ol/Map";
 import { forwardRef, Key, useMemo, useState } from "react";
-import { Button, Col, Dropdown } from "react-bootstrap";
+import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { WKT } from "ol/format";
 import { Draw, Modify } from "ol/interaction";
 import { Style, Fill, Stroke } from "ol/style";
@@ -36,6 +36,7 @@ import AddTitleForm, {
   ValidationSchema,
 } from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
 import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -376,66 +377,166 @@ const MapToolbarCrise = forwardRef(
     const [typeEvenement, setTypeEvenement] = useState<string | undefined>(
       undefined,
     );
+
     return (
-      <>
-        <ToolbarButton
-          toolName={"select-crise"}
-          toolIcon={<IconSelect />}
-          toolLabelTooltip={"Sélectionner"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
+      <Row>
+        <Col xs={"auto"}>
+          <ToolbarButton
+            toolName={"select-crise"}
+            toolIcon={<IconSelect />}
+            toolLabelTooltip={"Sélectionner"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
 
-        {/* Evènements (création) */}
-        <Button
-          className="me-2"
-          onClick={() => {
-            setShowCreateEvent(!showCreateEvent);
-          }}
-        >
-          <IconEvent />
-        </Button>
+          {/* déplacer évènement */}
+          <ToolbarButton
+            toolName={"move-event"}
+            toolIcon={<IconMoveObjet />}
+            toolLabelTooltip={"Déplacer un événement"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
 
-        {/* Evènements (liste) */}
-        <Button
-          className="me-2"
-          onClick={() => {
-            setShowListEvent(!showListEvent);
-          }}
-        >
-          <IconList />
-        </Button>
+          {/* Evènements (création) */}
+          <TooltipCustom
+            tooltipId="crise-create-event"
+            tooltipText="Créer un nouvel événement"
+          >
+            <Button
+              className="m-2"
+              onClick={() => {
+                setShowCreateEvent(!showCreateEvent);
+              }}
+            >
+              <IconEvent />
+            </Button>
+          </TooltipCustom>
 
-        {/* documents */}
-        <Button
-          className="me-2"
-          onClick={() => {
-            setShowListDocument(!showListDocument);
-          }}
-        >
-          <IconDocument />
-        </Button>
+          {/* Evènements (liste) */}
+          <TooltipCustom
+            tooltipId="crise-list-event"
+            tooltipText="Afficher la liste des événements"
+          >
+            <Button
+              className="m-2"
+              onClick={() => {
+                setShowListEvent(!showListEvent);
+              }}
+            >
+              <IconList />
+            </Button>
+          </TooltipCustom>
 
-        {/* déplacer évènement */}
-        <ToolbarButton
-          toolName={"move-event"}
-          toolIcon={<IconMoveObjet />}
-          toolLabelTooltip={"Déplacer un événement"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
+          {/* documents */}
+          <TooltipCustom
+            tooltipId="crise-list-docs"
+            tooltipText="Afficher la liste des documents"
+          >
+            <Button
+              className="m-2"
+              onClick={() => {
+                setShowListDocument(!showListDocument);
+              }}
+            >
+              <IconDocument />
+            </Button>
+          </TooltipCustom>
 
-        <Button
-          className="me-2"
-          onClick={() => {
-            show();
-          }}
-        >
-          <IconCamera />
-        </Button>
+          <TooltipCustom
+            tooltipId="crise-capture"
+            tooltipText="Enregistre une capture"
+          >
+            <Button
+              className="m-2"
+              onClick={() => {
+                show();
+              }}
+            >
+              <IconCamera />
+            </Button>
+          </TooltipCustom>
+        </Col>
+        <Col xs={"auto"}>
+          {/* gestion toponymies */}
+          <ToponymieTypeBarre map={map} criseId={criseId} />
+        </Col>
+        <Col xs={"auto"}>
+          <Dropdown>
+            <Dropdown.Toggle className="m-2" id={"dropdown-"}>
+              {"Dessiner"}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {typeWithSousType?.map(
+                (
+                  e: {
+                    criseCategorieLibelle: {
+                      toString: () => any;
+                    };
+                    listSousType: any[];
+                  },
+                  key: Key | null | undefined,
+                ) => {
+                  return (
+                    <Row xs={"auto"} className={"m-2"} key={key}>
+                      <Dropdown>
+                        <Dropdown.Toggle id={"dropdown-"}>
+                          {e.criseCategorieLibelle?.toString()}
+                        </Dropdown.Toggle>
 
-        {/* gestion toponymies */}
-        <ToponymieTypeBarre map={map} criseId={criseId} />
+                        <Dropdown.Menu>
+                          {e.listSousType.map(
+                            (
+                              soustype: {
+                                typeCriseCategorieGeometrie: string;
+                                typeCriseCategorieId: any;
+                                typeCriseCategorieLibelle: any;
+                              },
+                              key: Key | null | undefined,
+                            ) => {
+                              let icon;
+                              switch (soustype.typeCriseCategorieGeometrie) {
+                                case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
+                                  icon = <IconPoint />;
+                                  break;
+                                case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
+                                  icon = <IconLine />;
+                                  break;
+                                case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
+                                  icon = <IconPolygon />;
+                                  break;
+                              }
+
+                              return (
+                                <Dropdown.Item
+                                  onClick={() => {
+                                    setTypeEvenement(
+                                      soustype.typeCriseCategorieId,
+                                    );
+                                    toggleToolCallback(
+                                      "create-" +
+                                        soustype.typeCriseCategorieGeometrie.toLowerCase(),
+                                    );
+                                    setSousTypeElement(
+                                      soustype.typeCriseCategorieId,
+                                    );
+                                  }}
+                                  key={key}
+                                >
+                                  {icon} {soustype?.typeCriseCategorieLibelle}
+                                </Dropdown.Item>
+                              );
+                            },
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </Row>
+                  );
+                },
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Col>
 
         <Volet
           handleClose={handleCloseEvent}
@@ -479,79 +580,6 @@ const MapToolbarCrise = forwardRef(
           />
         </Volet>
 
-        <Dropdown>
-          <Dropdown.Toggle id={"dropdown-"}>{"Dessiner"}</Dropdown.Toggle>
-          <Dropdown.Menu>
-            {typeWithSousType?.map(
-              (
-                e: {
-                  criseCategorieLibelle: {
-                    toString: () => any;
-                  };
-                  listSousType: any[];
-                },
-                key: Key | null | undefined,
-              ) => {
-                return (
-                  <Col xs={"auto"} className={"py-2"} key={key}>
-                    <Dropdown>
-                      <Dropdown.Toggle id={"dropdown-"}>
-                        {e.criseCategorieLibelle?.toString()}
-                      </Dropdown.Toggle>
-
-                      <Dropdown.Menu>
-                        {e.listSousType.map(
-                          (
-                            soustype: {
-                              typeCriseCategorieGeometrie: string;
-                              typeCriseCategorieId: any;
-                              typeCriseCategorieLibelle: any;
-                            },
-                            key: Key | null | undefined,
-                          ) => {
-                            let icon;
-                            switch (soustype.typeCriseCategorieGeometrie) {
-                              case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
-                                icon = <IconPoint />;
-                                break;
-                              case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
-                                icon = <IconLine />;
-                                break;
-                              case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
-                                icon = <IconPolygon />;
-                                break;
-                            }
-
-                            return (
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setTypeEvenement(
-                                    soustype.typeCriseCategorieId,
-                                  );
-                                  toggleToolCallback(
-                                    "create-" +
-                                      soustype.typeCriseCategorieGeometrie.toLowerCase(),
-                                  );
-                                  setSousTypeElement(
-                                    soustype.typeCriseCategorieId,
-                                  );
-                                }}
-                                key={key}
-                              >
-                                {icon} {soustype?.typeCriseCategorieLibelle}
-                              </Dropdown.Item>
-                            );
-                          },
-                        )}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </Col>
-                );
-              },
-            )}
-          </Dropdown.Menu>
-        </Dropdown>
-
         <TooltipMapEditEvenement
           state={state}
           map={map}
@@ -577,7 +605,7 @@ const MapToolbarCrise = forwardRef(
         >
           <AddTitleForm />
         </EditModal>
-      </>
+      </Row>
     );
   },
 );
