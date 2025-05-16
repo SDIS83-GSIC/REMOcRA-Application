@@ -17,6 +17,9 @@ const AdresseTypeahead = ({ map }: { map: Map }) => {
       searchText={"Recherche en cours"}
       isLoading={state.isLoading}
       options={state.options}
+      filterBy={
+        (options) => options // On récupère toutes les options que la requête nous renvoie !
+      }
       labelKey={(feature) => `${feature.properties.label}`}
       onSearch={(query) => {
         if (query.length < 3) {
