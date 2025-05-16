@@ -65,7 +65,6 @@
 .map-layers {
   grid-area: layers;
   width: 270px;
-  max-height: 600px;
   overflow-y: auto;
 }
 
