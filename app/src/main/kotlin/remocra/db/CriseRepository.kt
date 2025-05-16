@@ -100,7 +100,7 @@ class CriseRepository @Inject constructor(
             .join(TYPE_CRISE)
             .on(CRISE.TYPE_CRISE_ID.eq(TYPE_CRISE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(CRISE.LIBELLE))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(CRISE.STATUT_TYPE.sortAsc(TypeCriseStatut.EN_COURS), CRISE.DATE_DEBUT.desc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
