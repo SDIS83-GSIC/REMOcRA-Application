@@ -137,6 +137,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             RAPPORT_PERSONNALISE.DESCRIPTION,
             RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE,
             RAPPORT_PERSONNALISE.MODULE,
+            RAPPORT_PERSONNALISE.PROTECTED,
             multiset(
                 selectDistinct(PROFIL_DROIT.ID)
                     .from(PROFIL_DROIT)

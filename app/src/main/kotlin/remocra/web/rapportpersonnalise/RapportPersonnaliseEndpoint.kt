@@ -112,6 +112,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
                 rapportPersonnaliseDescription = element.rapportPersonnaliseDescription,
                 rapportPersonnaliseSourceSql = element.rapportPersonnaliseSourceSql,
                 rapportPersonnaliseModule = element.rapportPersonnaliseModule,
+                rapportPersonnaliseProtected = false,
                 listeProfilDroitId = element.listeProfilDroitId,
                 listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre,
             ),
@@ -138,6 +139,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
                 rapportPersonnaliseDescription = element.rapportPersonnaliseDescription,
                 rapportPersonnaliseSourceSql = element.rapportPersonnaliseSourceSql,
                 rapportPersonnaliseModule = element.rapportPersonnaliseModule,
+                rapportPersonnaliseProtected = element.rapportPersonnaliseProtected,
                 listeProfilDroitId = element.listeProfilDroitId,
                 listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre,
             ),
@@ -164,6 +166,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         val rapportPersonnaliseDescription: String? = null
         lateinit var rapportPersonnaliseSourceSql: String
         lateinit var rapportPersonnaliseModule: TypeModuleRapportCourrier
+        val rapportPersonnaliseProtected: Boolean = false
         var listeProfilDroitId: Collection<UUID> = listOf()
         val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData> = listOf()
     }

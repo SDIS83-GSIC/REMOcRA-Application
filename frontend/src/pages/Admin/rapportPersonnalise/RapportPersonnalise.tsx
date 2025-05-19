@@ -29,6 +29,7 @@ import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { createComponentRapportPersoToRepeat } from "./SortableParametreRapportPersonnalise.tsx";
 
 type RapportPersonnaliseType = {
+  rapportPersonnaliseProtected: boolean;
   rapportPersonnaliseActif: boolean;
   rapportPersonnaliseCode: string;
   rapportPersonnaliseLibelle: string;
@@ -55,6 +56,7 @@ type RapportPersonnaliseType = {
 };
 
 export const getInitialValues = (data?: RapportPersonnaliseType) => ({
+  rapportPersonnaliseProtected: data?.rapportPersonnaliseProtected ?? false,
   rapportPersonnaliseActif: data?.rapportPersonnaliseActif ?? true,
   rapportPersonnaliseCode: data?.rapportPersonnaliseCode ?? null,
   rapportPersonnaliseLibelle: data?.rapportPersonnaliseLibelle ?? null,
@@ -106,6 +108,7 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
 export const validationSchema = object({});
 
 export const prepareVariables = (values: RapportPersonnaliseType) => ({
+  rapportPersonnaliseProtected: values.rapportPersonnaliseProtected,
   rapportPersonnaliseActif: values.rapportPersonnaliseActif,
   rapportPersonnaliseCode: values.rapportPersonnaliseCode,
   rapportPersonnaliseLibelle: values.rapportPersonnaliseLibelle,
@@ -180,6 +183,7 @@ const RapportPersonnalise = () => {
                 }
                 name="rapportPersonnaliseCode"
                 required={true}
+                disabled={values?.rapportPersonnaliseProtected}
               />
             </Col>
             <Col>
@@ -244,11 +248,13 @@ const RapportPersonnalise = () => {
                   (type) => type.id === values.rapportPersonnaliseModule,
                 )}
                 required={true}
+                readOnly={values?.rapportPersonnaliseProtected}
               />
             </Col>
           </Row>
         </>
-      ) : stepActive === 1 ? (
+      ) : // Si l'élément est protected, on ne donne pas accès à la suite du stepper
+      stepActive === 1 && !values.rapportPersonnaliseProtected ? (
         <>
           <h3>Gestion des paramètres de la requête</h3>
           <p>
@@ -369,7 +375,8 @@ const RapportPersonnalise = () => {
             </Button>
           </Col>
         )}
-        {stepActive !== 2 && (
+        {/* Si l'élément est protected, on ne donne pas accès à la suite du stepper, donc pas de bouton suivant */}
+        {stepActive !== 2 && !values.rapportPersonnaliseProtected && (
           <Col>
             <Button
               disabled={
@@ -415,7 +422,10 @@ const RapportPersonnalise = () => {
         )}
       </Row>
       {/* Si c'est la dernière step, on permet la sauvegarde */}
-      {stepActive === 2 && <SubmitFormButtons returnLink={true} />}
+      {/* Si l'élément est protected, la première étape est aussi la dernière, on permet la sauvegarde */}
+      {(stepActive === 2 || values.rapportPersonnaliseProtected) && (
+        <SubmitFormButtons returnLink={true} />
+      )}
     </FormContainer>
   );
 };

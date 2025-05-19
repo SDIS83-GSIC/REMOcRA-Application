@@ -48,20 +48,31 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     }
 
     override fun execute(userInfo: UserInfo?, element: RapportPersonnaliseData): RapportPersonnaliseData {
-        // On insère le rapport personnalisé
-        rapportPersonnaliseRepository.updateRapportPersonnalise(
-            RapportPersonnalise(
-                rapportPersonnaliseId = element.rapportPersonnaliseId,
-                rapportPersonnaliseActif = element.rapportPersonnaliseActif,
-                rapportPersonnaliseCode = element.rapportPersonnaliseCode,
-                rapportPersonnaliseLibelle = element.rapportPersonnaliseLibelle,
-                rapportPersonnaliseProtected = false,
-                rapportPersonnaliseChampGeometrie = element.rapportPersonnaliseChampGeometrie,
-                rapportPersonnaliseDescription = element.rapportPersonnaliseDescription,
-                rapportPersonnaliseSourceSql = element.rapportPersonnaliseSourceSql,
-                rapportPersonnaliseModule = TypeModule.entries.find { it.name == element.rapportPersonnaliseModule.name }!!,
-            ),
-        )
+        // On récupère les informations d'origine pour s'assurer que l'élément n'est pas protected
+        val reference = rapportPersonnaliseRepository.getRapportPersonnalisePojo(element.rapportPersonnaliseId)
+        val elementToUpdate =
+            if (reference.rapportPersonnaliseProtected) {
+                // L'élément est protected, on n'autorise alors la modification que du libelle, du flag actif (et les profils (c'est fait plus loin))
+                reference.copy(
+                    rapportPersonnaliseLibelle = element.rapportPersonnaliseLibelle,
+                    rapportPersonnaliseActif = element.rapportPersonnaliseActif,
+                )
+            } else {
+                RapportPersonnalise(
+                    rapportPersonnaliseId = element.rapportPersonnaliseId,
+                    rapportPersonnaliseActif = element.rapportPersonnaliseActif,
+                    rapportPersonnaliseCode = element.rapportPersonnaliseCode,
+                    rapportPersonnaliseLibelle = element.rapportPersonnaliseLibelle,
+                    rapportPersonnaliseProtected = false,
+                    rapportPersonnaliseChampGeometrie = element.rapportPersonnaliseChampGeometrie,
+                    rapportPersonnaliseDescription = element.rapportPersonnaliseDescription,
+                    rapportPersonnaliseSourceSql = element.rapportPersonnaliseSourceSql,
+                    rapportPersonnaliseModule = TypeModule.entries.find { it.name == element.rapportPersonnaliseModule.name }!!,
+                )
+            }
+
+        // On met à jour le rapport personnalisé
+        rapportPersonnaliseRepository.updateRapportPersonnalise(elementToUpdate)
 
         // On delete les profils droit
         rapportPersonnaliseRepository.deleteLRapportPersonnaliseProfilDroit(element.rapportPersonnaliseId)
@@ -77,23 +88,26 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
         }
 
         // Les paramètres UPSERT
-        element.listeRapportPersonnaliseParametre.forEach { param ->
-            rapportPersonnaliseRepository.upsertRapportPersonnaliseParametre(
-                RapportPersonnaliseParametre(
-                    rapportPersonnaliseParametreId = param.rapportPersonnaliseParametreId,
-                    rapportPersonnaliseParametreRapportPersonnaliseId = element.rapportPersonnaliseId,
-                    rapportPersonnaliseParametreCode = param.rapportPersonnaliseParametreCode,
-                    rapportPersonnaliseParametreLibelle = param.rapportPersonnaliseParametreLibelle,
-                    rapportPersonnaliseParametreSourceSql = param.rapportPersonnaliseParametreSourceSql.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
-                    rapportPersonnaliseParametreDescription = param.rapportPersonnaliseParametreDescription,
-                    rapportPersonnaliseParametreSourceSqlId = param.rapportPersonnaliseParametreSourceSqlId.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
-                    rapportPersonnaliseParametreSourceSqlLibelle = param.rapportPersonnaliseParametreSourceSqlLibelle.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
-                    rapportPersonnaliseParametreValeurDefaut = param.rapportPersonnaliseParametreValeurDefaut,
-                    rapportPersonnaliseParametreIsRequired = param.rapportPersonnaliseParametreIsRequired,
-                    rapportPersonnaliseParametreType = param.rapportPersonnaliseParametreType,
-                    rapportPersonnaliseParametreOrdre = param.rapportPersonnaliseParametreOrdre,
-                ),
-            )
+        // Si l'élément est protégé, on ne touche a rien d'autre que ce qui a déja été mis à jour pour le moment
+        if (!reference.rapportPersonnaliseProtected) {
+            element.listeRapportPersonnaliseParametre.forEach { param ->
+                rapportPersonnaliseRepository.upsertRapportPersonnaliseParametre(
+                    RapportPersonnaliseParametre(
+                        rapportPersonnaliseParametreId = param.rapportPersonnaliseParametreId,
+                        rapportPersonnaliseParametreRapportPersonnaliseId = element.rapportPersonnaliseId,
+                        rapportPersonnaliseParametreCode = param.rapportPersonnaliseParametreCode,
+                        rapportPersonnaliseParametreLibelle = param.rapportPersonnaliseParametreLibelle,
+                        rapportPersonnaliseParametreSourceSql = param.rapportPersonnaliseParametreSourceSql.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
+                        rapportPersonnaliseParametreDescription = param.rapportPersonnaliseParametreDescription,
+                        rapportPersonnaliseParametreSourceSqlId = param.rapportPersonnaliseParametreSourceSqlId.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
+                        rapportPersonnaliseParametreSourceSqlLibelle = param.rapportPersonnaliseParametreSourceSqlLibelle.takeUnless { param.rapportPersonnaliseParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
+                        rapportPersonnaliseParametreValeurDefaut = param.rapportPersonnaliseParametreValeurDefaut,
+                        rapportPersonnaliseParametreIsRequired = param.rapportPersonnaliseParametreIsRequired,
+                        rapportPersonnaliseParametreType = param.rapportPersonnaliseParametreType,
+                        rapportPersonnaliseParametreOrdre = param.rapportPersonnaliseParametreOrdre,
+                    ),
+                )
+            }
         }
 
         return element

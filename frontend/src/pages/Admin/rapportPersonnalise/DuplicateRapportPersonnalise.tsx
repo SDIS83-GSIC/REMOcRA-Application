@@ -30,6 +30,7 @@ const DuplicateRapportPersonnalise = () => {
             rapportPersonnaliseCode: data.rapportPersonnaliseCode + "_COPY",
             rapportPersonnaliseLibelle:
               data.rapportPersonnaliseLibelle + " (copie)",
+            rapportPersonnaliseProtected: false,
           })}
           prepareVariables={(values) => prepareVariables(values)}
           validationSchema={validationSchema}

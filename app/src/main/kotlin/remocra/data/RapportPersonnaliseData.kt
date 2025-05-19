@@ -13,6 +13,7 @@ data class RapportPersonnaliseData(
     val rapportPersonnaliseDescription: String?,
     val rapportPersonnaliseSourceSql: String,
     val rapportPersonnaliseModule: TypeModuleRapportCourrier,
+    val rapportPersonnaliseProtected: Boolean,
     val listeProfilDroitId: Collection<UUID>,
     val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData>,
 )

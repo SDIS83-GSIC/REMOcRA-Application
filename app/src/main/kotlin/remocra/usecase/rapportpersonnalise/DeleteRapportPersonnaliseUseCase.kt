@@ -50,6 +50,8 @@ class DeleteRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     }
 
     override fun checkContraintes(userInfo: UserInfo?, element: RapportPersonnaliseData) {
-        // noop
+        if (element.rapportPersonnaliseProtected) {
+            throw RemocraResponseException(ErrorType.RAPPORT_PERSO_IS_PROTECTED)
+        }
     }
 }

@@ -177,6 +177,8 @@ const ListRapportPersonnalise = () => {
                   },
                   type: TYPE_BUTTON.DELETE,
                   pathname: url`/api/rapport-personnalise/delete/`,
+                  disable: (row) => row.original.rapportPersonnaliseProtected,
+                  textDisable: "Impossible de supprimer un rapport protégé",
                 },
                 {
                   row: (row) => {
