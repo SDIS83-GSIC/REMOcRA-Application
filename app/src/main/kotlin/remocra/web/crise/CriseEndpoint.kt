@@ -202,7 +202,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 hasDoc = hasDoc,
             ),
         )
-            .header("Content-Disposition", "attachment; filename=\"criseExport-${dateUtils.now()}.zip")
+            .header("Content-Disposition", "attachment; filename=\"criseExport-${dateUtils.now()}.zip\"")
             .build()
 
     @GET
