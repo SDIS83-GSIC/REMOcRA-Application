@@ -7,6 +7,7 @@ export const CheckBoxInput = ({
   required = false,
   disabled = false,
   type = "checkbox",
+  checked = false,
 }: any) => {
   return (
     <Form.Check
@@ -21,6 +22,7 @@ export const CheckBoxInput = ({
           value: data.target.checked,
         });
       }}
+      checked={checked}
     />
   );
 };
