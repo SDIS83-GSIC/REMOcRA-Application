@@ -1,7 +1,7 @@
+import { useFormikContext } from "formik";
 import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { DateTimeInput } from "../../../components/Form/Form.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
@@ -25,13 +25,16 @@ import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import formatDateTime from "../../../utils/formatDateUtils.tsx";
+import formatDateTime, {
+  formatDateTimeForDateTimeInput,
+} from "../../../utils/formatDateUtils.tsx";
+import { DateTimeInput } from "../../../components/Form/Form.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import filterValuesToVariable from "./FilterCrise.tsx";
 
-export const prepareValues = (data: any) => ({
-  criseDateFin: new Date(data.criseDateFin).toISOString(),
-});
+export const prepareValues = (data: any) => {
+  return { criseDateFin: new Date(data.criseDateFin).toISOString() };
+};
 
 const ListCrise = () => {
   const { user }: { user: UtilisateurEntity } = useAppContext();
@@ -117,16 +120,11 @@ const ListCrise = () => {
       textEnable: "Clore la crise",
       textDisable: "Impossible de clore une crise qui n'est plus en cours",
       editModal: {
-        content: () => (
-          <DateTimeInput
-            name="criseDateFin"
-            label="Date et heure de fin"
-            required={true}
-          />
-        ),
+        content: () => <PrivateDate />,
         header: (row) => "Clore la crise : " + row.original.criseLibelle,
         path: (row) => `/api/crise/${row.original.criseId}/clore`,
         prepareVariable: (value) => prepareValues(value),
+        value: { criseDateFin: formatDateTimeForDateTimeInput(new Date()) },
       },
     });
   }
@@ -229,6 +227,19 @@ const ListCrise = () => {
         })}
       />
     </Container>
+  );
+};
+
+const PrivateDate = () => {
+  const { values } = useFormikContext();
+
+  return (
+    <DateTimeInput
+      name="criseDateFin"
+      label="Date et heure de fin"
+      required={true}
+      value={values.criseDateFin}
+    />
   );
 };
 

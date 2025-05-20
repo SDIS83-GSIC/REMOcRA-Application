@@ -44,6 +44,7 @@ const TableActionColumn = ({
                 visible={editModal.visible}
                 query={editModal.path}
                 prepareVariables={editModal.prepareVariable}
+                value={editModal.value}
                 onSubmit={() =>
                   reload ? reload() : window.location.reload(false)
                 }
@@ -209,6 +210,7 @@ type EditModalType = ModaleType & {
   content?: (id: string) => ReactNode;
   path: (row: any) => string;
   prepareVariable: (row: any) => any;
+  value?: any;
 };
 
 export const ActionButton = ({
@@ -322,6 +324,7 @@ const EditModalButtonPrivate = ({ row, _button }: DeleteButtonType) => {
     header: _button.editModal?.header(row),
     path: _button.editModal.path(row),
     prepareVariable: _button.editModal.prepareVariable,
+    value: _button.editModal.value,
   };
   return (
     <TableActionColumn
