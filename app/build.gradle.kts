@@ -11,7 +11,7 @@ licensee {
     // allow("AGPL-3.0-only")
     // allow("AGPL-3.0-or-later")
     allow("BSD-3-Clause")
-    allow("BSD-2-Clause")
+    // allow("BSD-2-Clause")
     allow("MIT")
     allow("MIT-0")
     allow("Apache-2.0")
