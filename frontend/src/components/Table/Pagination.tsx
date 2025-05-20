@@ -22,11 +22,11 @@ const usePaginationInLocalStorage = () => {
     localStorage.setItem(PAGINATION_KEY, itemsPerPage.toString());
   }, [itemsPerPage]);
 
-  return [itemsPerPage, setItemsPerPage];
+  return [itemsPerPage, setItemsPerPage] as const;
 };
 
 export const usePaginationState = () => {
-  const { limit: l, offset: o = 0 }: { limit: number; offset: number } =
+  const { limit: l, offset: o = 0 }: { limit?: number; offset?: number } =
     useQueryParams();
   let val = l;
   if (l === undefined) {

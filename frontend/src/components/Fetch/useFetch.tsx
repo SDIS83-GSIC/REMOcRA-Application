@@ -1,4 +1,9 @@
-import { useAsync } from "react-async";
+import {
+  type AsyncOptions,
+  type DeferFn,
+  type PromiseFn,
+  useAsync,
+} from "react-async";
 import { useCallback } from "react";
 import { getFetchOptions } from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
@@ -28,10 +33,10 @@ export const doFetch = async (
   });
 };
 
-export function useGet(url: string, asyncOptions: object = {}) {
+export function useGet(url: string, asyncOptions: AsyncOptions<any> = {}) {
   return useAsync({
     ...asyncOptions,
-    promiseFn: useCallback(
+    promiseFn: useCallback<PromiseFn<any>>(
       (props, { signal }) => {
         const options = getFetchOptions({
           signal,
@@ -47,11 +52,11 @@ export function useGet(url: string, asyncOptions: object = {}) {
 /**
  * Permet de faire un appel à une URL en GET, au lancement via .run()
  */
-export function useGetRun(url: string, asyncOptions: object) {
+export function useGetRun(url: string, asyncOptions: AsyncOptions<any>) {
   return useAsync({
     ...asyncOptions,
-    deferFn: useCallback(
-      (props, { signal }) => {
+    deferFn: useCallback<DeferFn<any>>(
+      (args, props, { signal }) => {
         const options = getFetchOptions({
           signal,
           method: "GET",
@@ -65,24 +70,24 @@ export function useGetRun(url: string, asyncOptions: object) {
 
 export function usePost(
   url: string,
-  asyncOptions: object = {},
+  asyncOptions: AsyncOptions<any> = {},
   isMultipartFormData = false,
 ) {
   return useAsync({
     ...asyncOptions,
-    deferFn: useCallback(
-      (args, props, { signal }) => {
+    deferFn: useCallback<DeferFn<any>>(
+      ([body], props, { signal }) => {
         const options = isMultipartFormData
           ? getFetchOptions({
               signal,
               method: "POST",
-              body: args[0],
+              body,
             })
           : getFetchOptions({
               signal,
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(args[0]),
+              body: JSON.stringify(body),
             });
         return doFetch(url, options);
       },
@@ -91,10 +96,10 @@ export function usePost(
   });
 }
 
-export function useDelete(url: string, asyncOptions: object = {}) {
+export function useDelete(url: string, asyncOptions: AsyncOptions<any> = {}) {
   return useAsync({
     ...asyncOptions,
-    deferFn: useCallback(
+    deferFn: useCallback<DeferFn<any>>(
       (args, props, { signal }) => {
         const options = getFetchOptions({
           signal,
@@ -109,24 +114,24 @@ export function useDelete(url: string, asyncOptions: object = {}) {
 
 export function usePut(
   url: string,
-  asyncOptions: object = {},
+  asyncOptions: AsyncOptions<any> = {},
   isMultipartFormData: boolean,
 ) {
   return useAsync({
     ...asyncOptions,
-    deferFn: useCallback(
-      (args, props, { signal }) => {
+    deferFn: useCallback<DeferFn<any>>(
+      ([body], props, { signal }) => {
         const options = isMultipartFormData
           ? getFetchOptions({
               signal,
               method: "PUT",
-              body: args[0],
+              body,
             })
           : getFetchOptions({
               signal,
               method: "PUT",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(args[0]),
+              body: JSON.stringify(body),
             });
         return doFetch(url, options);
       },

@@ -4,7 +4,7 @@ import { parse } from "cookie";
 const csrfTokenHeaderName = "X-XTok";
 const csrfCookieName = location.protocol === "https:" ? "__Host-xt" : "xt";
 
-function getCsrfTokenFromCookie(cookie) {
+function getCsrfTokenFromCookie(cookie: string) {
   return parse(cookie)[csrfCookieName];
 }
 
@@ -46,14 +46,14 @@ export default function url(
   }, strings[0]);
 }
 
-export function getFetchOptions(options = {}): RequestInit {
+export function getFetchOptions(options: RequestInit = {}): RequestInit {
   return {
     ...options,
     credentials: "same-origin",
     headers: {
       Accept: "*/*",
       ...options.headers,
-      [csrfTokenHeaderName]: getCsrfToken(),
+      [csrfTokenHeaderName]: getCsrfToken()!,
     },
   };
 }

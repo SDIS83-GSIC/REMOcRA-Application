@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 const useQueryParams = () => {
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
-  const res = [];
+  const res: Record<string, unknown> = {};
   searchParams.forEach((value, key) => {
     let val;
     try {
