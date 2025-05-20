@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseCategorie
+import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -183,6 +184,7 @@ val CRISE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Crise.CRISE, DSL.na
 val CRISE_CATEGORIE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_crise_categorie_code_key"), arrayOf(CriseCategorie.CRISE_CATEGORIE.CODE), true)
 val CRISE_CATEGORIE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_crise_categorie_libelle_key"), arrayOf(CriseCategorie.CRISE_CATEGORIE.LIBELLE), true)
 val CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_pkey"), arrayOf(CriseCategorie.CRISE_CATEGORIE.ID), true)
+val CRISE_INDICATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CriseIndicateur.CRISE_INDICATEUR, DSL.name("crise_indicateur_pkey"), arrayOf(CriseIndicateur.CRISE_INDICATEUR.ID), true)
 val DASHBOARD_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Dashboard.DASHBOARD, DSL.name("dashboard_pkey"), arrayOf(Dashboard.DASHBOARD.ID), true)
 val DASHBOARD_COMPONENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DashboardComponent.DASHBOARD_COMPONENT, DSL.name("dashboard_component_pkey"), arrayOf(DashboardComponent.DASHBOARD_COMPONENT.ID), true)
 val DASHBOARD_QUERY_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DashboardQuery.DASHBOARD_QUERY, DSL.name("dashboard_query_pkey"), arrayOf(DashboardQuery.DASHBOARD_QUERY.ID), true)
@@ -392,6 +394,7 @@ val COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY: ForeignKey<Record, Record> = In
 val COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Courrier.COURRIER, DSL.name("courrier_courrier_document_id_fkey"), arrayOf(Courrier.COURRIER.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val COURRIER__COURRIER_COURRIER_EXPEDITEUR_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Courrier.COURRIER, DSL.name("courrier_courrier_expediteur_fkey"), arrayOf(Courrier.COURRIER.EXPEDITEUR), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val CRISE__CRISE_CRISE_TYPE_CRISE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Crise.CRISE, DSL.name("crise_crise_type_crise_id_fkey"), arrayOf(Crise.CRISE.TYPE_CRISE_ID), remocra.db.jooq.remocra.keys.TYPE_CRISE_PKEY, arrayOf(TypeCrise.TYPE_CRISE.ID), true)
+val CRISE_INDICATEUR__CRISE_INDICATEUR_CRISE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(CriseIndicateur.CRISE_INDICATEUR, DSL.name("crise_indicateur_crise_id_fkey"), arrayOf(CriseIndicateur.CRISE_INDICATEUR.CRISE_ID), remocra.db.jooq.remocra.keys.CRISE_PKEY, arrayOf(Crise.CRISE.ID), true)
 val DASHBOARD_COMPONENT__DASHBOARD_COMPONENT_DASHBOARD_COMPONENT_DAHSBOARD_QUERY_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DashboardComponent.DASHBOARD_COMPONENT, DSL.name("dashboard_component_dashboard_component_dahsboard_query_id_fkey"), arrayOf(DashboardComponent.DASHBOARD_COMPONENT.DAHSBOARD_QUERY_ID), remocra.db.jooq.remocra.keys.DASHBOARD_QUERY_PKEY, arrayOf(DashboardQuery.DASHBOARD_QUERY.ID), true)
 val DASHBOARD_CONFIG__DASHBOARD_CONFIG_DASHBOARD_CONFIG_DASHBOARD_COMPONENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DashboardConfig.DASHBOARD_CONFIG, DSL.name("dashboard_config_dashboard_config_dashboard_component_id_fkey"), arrayOf(DashboardConfig.DASHBOARD_CONFIG.DASHBOARD_COMPONENT_ID), remocra.db.jooq.remocra.keys.DASHBOARD_COMPONENT_PKEY, arrayOf(DashboardComponent.DASHBOARD_COMPONENT.ID), true)
 val DASHBOARD_CONFIG__DASHBOARD_CONFIG_DASHBOARD_CONFIG_DASHBOARD_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DashboardConfig.DASHBOARD_CONFIG, DSL.name("dashboard_config_dashboard_config_dashboard_id_fkey"), arrayOf(DashboardConfig.DASHBOARD_CONFIG.DASHBOARD_ID), remocra.db.jooq.remocra.keys.DASHBOARD_PKEY, arrayOf(Dashboard.DASHBOARD.ID), true)

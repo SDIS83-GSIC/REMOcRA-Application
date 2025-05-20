@@ -6,14 +6,27 @@ import { Vector } from "ol/source";
 import { GeoJSON } from "ol/format";
 import { bbox } from "ol/loadingstrategy";
 import VectorLayer from "ol/layer/Vector";
+import { getUid } from "ol";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
 const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
   const mapElement = useRef<HTMLDivElement>();
+
+  /** Permet d'afficher les géometries évènements */
+  const getLayerUrl = useCallback(
+    (extent: number[], projection: { getCode: () => string }) =>
+      `/api/crise/evenement/layer?bbox=${extent.join(",")}&srid=${projection.getCode()}&criseId=${criseId}&state=${state}`,
+    [criseId, state],
+  );
+
+  const listeCouches = useGet(
+    url`/api/crise/${criseId}/get-couches`,
+  )?.data;
 
   const {
     map,
@@ -27,13 +40,6 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.CRISE,
   });
-
-  /** Permet d'afficher les géometries évènements */
-  const getLayerUrl = useCallback(
-    (extent: number[], projection: { getCode: () => string }) =>
-      `/api/crise/evenement/layer?bbox=${extent.join(",")}&srid=${projection.getCode()}&criseId=${criseId}&state=${state}`,
-    [criseId, state],
-  );
 
   const dataEvenementLayer = useMemo(() => {
     if (!map) {
@@ -130,12 +136,41 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
     extraTools: extraTools,
   });
 
+  /**
+   * Met à jour la liste des couches actives sur la carte en fonction des couches WMS sélectionnées.
+   */
+  const listeDesCouches = listeCouches
+    ? availableLayers.map((group: any) => ({
+        ...group,
+        layers: group.layers.filter((layer: any) => {
+          const isActive = listeCouches.some(
+            (c: any) => c.code === layer.code && c[state.toLowerCase()],
+          );
+
+          const layerExists = map
+            ?.getLayers()
+            .getArray()
+            .includes(layer.openlayer);
+
+          if (!isActive && layerExists) {
+            map?.removeLayer(layer.openlayer);
+            layerListRef.current?.removeActiveLayer(getUid(layer.openlayer));
+          } else if (isActive && layer.active && !layerExists) {
+            map?.addLayer(layer.openlayer);
+            layerListRef.current?.addActiveLayer(getUid(layer.openlayer));
+          }
+
+          return isActive;
+        }),
+      }))
+    : [];
+
   return (
     <MapComponent
       map={map}
       workingLayer={workingLayer}
       mapElement={mapElement}
-      availableLayers={availableLayers} // les éléments de fonds IGN
+      availableLayers={listeDesCouches}
       addOrRemoveLayer={addOrRemoveLayer} // les éléments de fonds IGN
       layerListRef={layerListRef} // les éléments de fonds IGN
       mapToolbarRef={mapToolbarRef} // les boutons à modifier / rajouter

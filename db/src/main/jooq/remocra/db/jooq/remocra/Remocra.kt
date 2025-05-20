@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseCategorie
+import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -259,6 +260,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.crise_categorie</code>.
      */
     val CRISE_CATEGORIE: CriseCategorie get() = CriseCategorie.CRISE_CATEGORIE
+
+    /**
+     * The table <code>remocra.crise_indicateur</code>.
+     */
+    val CRISE_INDICATEUR: CriseIndicateur get() = CriseIndicateur.CRISE_INDICATEUR
 
     /**
      * The table <code>remocra.dashboard</code>.
@@ -920,6 +926,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Courrier.COURRIER,
         Crise.CRISE,
         CriseCategorie.CRISE_CATEGORIE,
+        CriseIndicateur.CRISE_INDICATEUR,
         Dashboard.DASHBOARD,
         DashboardComponent.DASHBOARD_COMPONENT,
         DashboardConfig.DASHBOARD_CONFIG,

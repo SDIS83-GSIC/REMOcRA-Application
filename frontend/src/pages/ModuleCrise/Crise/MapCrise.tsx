@@ -23,9 +23,9 @@ const ModuleMapCrise = () => {
   const criseState = useGet(url`/api/crise/` + criseId);
 
   const [checkBoxOption, setCheckBoxOption] = useState(options.operationnel);
-  const handleChange = (event: { target: { checked: boolean } }) => {
+  const handleChange = (event: { value: boolean }) => {
     setCheckBoxOption(
-      event.target.checked ? options.anticipation : options.operationnel,
+      event.value ? options.anticipation : options.operationnel,
     );
   };
 
@@ -38,7 +38,8 @@ const ModuleMapCrise = () => {
           right={
             <CheckBoxInput
               label={checkBoxOption.label}
-              type={"switch"}
+              type="switch"
+              checked={checkBoxOption.code === options.anticipation.code}
               onChange={handleChange}
             />
           }

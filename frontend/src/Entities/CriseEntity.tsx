@@ -14,6 +14,7 @@ export type CriseType = {
   typeCriseId: string;
   listeCommuneId: string[];
   listeToponymieId: string[];
+  couchesWMS: string[];
 };
 
 export default CriseStatutEnum;

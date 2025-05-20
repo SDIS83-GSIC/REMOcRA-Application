@@ -20,6 +20,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseCategorie
+import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
 import remocra.db.jooq.remocra.tables.DashboardConfig
@@ -233,6 +234,11 @@ val CRISE: Crise = Crise.CRISE
  * The table <code>remocra.crise_categorie</code>.
  */
 val CRISE_CATEGORIE: CriseCategorie = CriseCategorie.CRISE_CATEGORIE
+
+/**
+ * The table <code>remocra.crise_indicateur</code>.
+ */
+val CRISE_INDICATEUR: CriseIndicateur = CriseIndicateur.CRISE_INDICATEUR
 
 /**
  * The table <code>remocra.dashboard</code>.

@@ -1,11 +1,14 @@
 import { useFormikContext } from "formik";
 import { object } from "yup";
 import { useMemo } from "react";
+import { Row, Col } from "react-bootstrap";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
+  CheckBoxInput,
   DateTimeInput,
   FormContainer,
   Multiselect,
+  SelectInput,
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
@@ -20,6 +23,7 @@ import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemoveComponent.tsx";
 
 export const getInitialValues = (data?: CriseType) => ({
   typeCriseId: data?.typeCriseId ?? null,
@@ -30,6 +34,7 @@ export const getInitialValues = (data?: CriseType) => ({
     ? formatDateTimeForDateTimeInput(data?.criseDateDebut)
     : formatDateTimeForDateTimeInput(new Date()),
   listeToponymieId: data?.listeToponymieId ?? null,
+  couchesWMS: data?.couchesWMS ?? [],
 });
 
 export const criseValidationSchema = object({
@@ -39,13 +44,22 @@ export const criseValidationSchema = object({
   listeCommuneId: requiredArray,
 });
 
-export const prepareCriseValues = (values: CriseType) => ({
-  typeCriseId: values.typeCriseId,
+export const prepareCriseValues = (values: {
+  typeCrise: any;
+  criseLibelle: any;
+  criseDescription: any;
+  listeCommuneId: any;
+  criseDateDebut: Date;
+  listeToponymieId: any;
+  couchesWMS: any;
+}) => ({
+  typeCrise: values.typeCrise,
   criseLibelle: values.criseLibelle,
   criseDescription: values.criseDescription,
   listeCommuneId: values.listeCommuneId,
   criseDateDebut: new Date(values.criseDateDebut).toISOString(),
   listeToponymieId: values.listeToponymieId,
+  couchesWMS: values.couchesWMS,
 });
 
 const Crise = () => {
@@ -139,9 +153,86 @@ const Crise = () => {
         }}
       />
 
+      <AddRemoveComponent
+        name="couchesWMS"
+        label="Liste des couches WMS"
+        canAdd={true}
+        createComponentToRepeat={createComponentToRepeat}
+        listeElements={values.couchesWMS}
+        defaultElement={{
+          coucheId: null,
+          operationnel: false,
+          anticipation: false,
+        }}
+      />
+
       <SubmitFormButtons />
     </FormContainer>
   );
+};
+
+function createComponentToRepeat(index: any, listeElements: any[]) {
+  return <ComposantToRepeat index={index} listeElements={listeElements} />;
+}
+
+const ComposantToRepeat = ({
+  index,
+  listeElements,
+}: {
+  index: number;
+  listeElements: any[];
+}) => {
+  const couchesWMS = useGet(url`/api/crise/get-couches-wms`);
+
+  // logique de mappage et d'unicité
+  const selectedIds = listeElements?.map((e) => e.coucheId).filter(Boolean);
+  const TypesCouches = useMemo(
+    () =>
+      couchesWMS.data
+        ?.filter(({ coucheId }) => !selectedIds.includes(coucheId)) || [],
+    [couchesWMS.data, selectedIds],
+  );
+
+  const { setFieldValue } = useFormikContext();
+
+  return (
+      <Row className="align-items-center mt-3">
+        <Col>
+          <SelectInput
+            name={`couchesWMS[${index}].coucheId`}
+            label="Type"
+            options={TypesCouches}
+            getOptionValue={(t) => t.coucheId}
+            getOptionLabel={(t) => t.coucheLibelle}
+            onChange={(e) => {
+              setFieldValue(
+                `couchesWMS[${index}].coucheId`,
+                TypesCouches.find(
+                  (type: { coucheId: any }) => type.coucheId === e.coucheId,
+                )?.coucheId,
+              );
+            }}
+            defaultValue={couchesWMS.data?.find(
+              (type: { coucheId: any }) =>
+                type.coucheId === listeElements[index].coucheId,
+            )}
+            required={true}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name={`couchesWMS[${index}].operationnel`}
+            label={"Opérationnel"}
+          />
+        </Col>
+        <Col>
+          <CheckBoxInput
+            name={`couchesWMS[${index}].anticipation`}
+            label={"Anticipation"}
+          />
+        </Col>
+      </Row>
+   );
 };
 
 export default Crise;
