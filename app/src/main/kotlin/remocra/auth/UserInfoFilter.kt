@@ -23,6 +23,11 @@ class UserInfoFilter @Inject constructor(
     ) {
         val userInfo = (request.userPrincipal as RemocraUserPrincipal).userInfo
 
+        if (!userInfo.isActif) {
+            response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
+            return
+        }
+
         response.setHeader(HttpHeaders.CACHE_CONTROL, "private, no-store")
 
         // Il faut wrapper le ServletOutputStream pour bypasser une optimisation de Jetty
@@ -48,11 +53,7 @@ class UserInfoFilter @Inject constructor(
 
         val nonce = request.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
 
-        if (!userInfo.isActif) {
-            response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
-        } else {
-            val javascriptUser = objectMapper.writeValueAsString((userInfo).asJavascriptUserProfile())
-            response.outputStream?.println("""<script nonce="$nonce">const userInfo = $javascriptUser</script>""")
-        }
+        val javascriptUser = objectMapper.writeValueAsString((userInfo).asJavascriptUserProfile())
+        response.outputStream?.println("""<script nonce="$nonce">const userInfo = $javascriptUser</script>""")
     }
 }
