@@ -30,11 +30,14 @@ import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.db.jooq.remocra.keys.CRISE_PKEY
 import remocra.db.jooq.remocra.keys.CRISE__CRISE_CRISE_TYPE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COUCHE_CRISE__L_COUCHE_CRISE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_COMMUNE__L_CRISE_COMMUNE_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_DOCUMENT__L_CRISE_DOCUMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_TOPONYMIE_CRISE__L_TOPONYMIE_CRISE_CRISE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Couche.CouchePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
+import remocra.db.jooq.remocra.tables.LCoucheCrise.LCoucheCrisePath
 import remocra.db.jooq.remocra.tables.LCriseCommune.LCriseCommunePath
 import remocra.db.jooq.remocra.tables.LCriseDocument.LCriseDocumentPath
 import remocra.db.jooq.remocra.tables.LToponymieCrise.LToponymieCrisePath
@@ -192,6 +195,23 @@ open class Crise(
     val evenement: EvenementPath
         get(): EvenementPath = evenement()
 
+    private lateinit var _lCoucheCrise: LCoucheCrisePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_couche_crise</code> table
+     */
+    fun lCoucheCrise(): LCoucheCrisePath {
+        if (!this::_lCoucheCrise.isInitialized) {
+            _lCoucheCrise = LCoucheCrisePath(this, null, L_COUCHE_CRISE__L_COUCHE_CRISE_CRISE_ID_FKEY.inverseKey)
+        }
+
+        return _lCoucheCrise
+    }
+
+    val lCoucheCrise: LCoucheCrisePath
+        get(): LCoucheCrisePath = lCoucheCrise()
+
     private lateinit var _lCriseCommune: LCriseCommunePath
 
     /**
@@ -242,6 +262,13 @@ open class Crise(
 
     val lToponymieCrise: LToponymieCrisePath
         get(): LToponymieCrisePath = lToponymieCrise()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.couche</code> table
+     */
+    val couche: CouchePath
+        get(): CouchePath = lCoucheCrise().couche()
 
     /**
      * Get the implicit many-to-many join path to the

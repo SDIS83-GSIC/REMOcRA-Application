@@ -29,9 +29,12 @@ import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_CODE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_ORDRE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_PKEY
 import remocra.db.jooq.remocra.keys.COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COUCHE_CRISE__L_COUCHE_CRISE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_MODULE__L_COUCHE_MODULE_COUCHE_ID_FKEY
+import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.GroupeCouche.GroupeCouchePath
+import remocra.db.jooq.remocra.tables.LCoucheCrise.LCoucheCrisePath
 import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
 import remocra.db.jooq.remocra.tables.LCoucheModule.LCoucheModulePath
 import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
@@ -214,6 +217,23 @@ open class Couche(
     val groupeCouche: GroupeCouchePath
         get(): GroupeCouchePath = groupeCouche()
 
+    private lateinit var _lCoucheCrise: LCoucheCrisePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_couche_crise</code> table
+     */
+    fun lCoucheCrise(): LCoucheCrisePath {
+        if (!this::_lCoucheCrise.isInitialized) {
+            _lCoucheCrise = LCoucheCrisePath(this, null, L_COUCHE_CRISE__L_COUCHE_CRISE_COUCHE_ID_FKEY.inverseKey)
+        }
+
+        return _lCoucheCrise
+    }
+
+    val lCoucheCrise: LCoucheCrisePath
+        get(): LCoucheCrisePath = lCoucheCrise()
+
     private lateinit var _lCoucheDroit: LCoucheDroitPath
 
     /**
@@ -247,6 +267,13 @@ open class Couche(
 
     val lCoucheModule: LCoucheModulePath
         get(): LCoucheModulePath = lCoucheModule()
+
+    /**
+     * Get the implicit many-to-many join path to the <code>remocra.crise</code>
+     * table
+     */
+    val crise: CrisePath
+        get(): CrisePath = lCoucheCrise().crise()
 
     /**
      * Get the implicit many-to-many join path to the

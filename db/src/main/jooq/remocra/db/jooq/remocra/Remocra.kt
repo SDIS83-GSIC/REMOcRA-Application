@@ -47,6 +47,7 @@ import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
+import remocra.db.jooq.remocra.tables.LCoucheCrise
 import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LCoucheModule
 import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
@@ -373,6 +374,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_contact_role</code>.
      */
     val L_CONTACT_ROLE: LContactRole get() = LContactRole.L_CONTACT_ROLE
+
+    /**
+     * The table <code>remocra.l_couche_crise</code>.
+     */
+    val L_COUCHE_CRISE: LCoucheCrise get() = LCoucheCrise.L_COUCHE_CRISE
 
     /**
      * The table <code>remocra.l_couche_droit</code>.
@@ -937,6 +943,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
+        LCoucheCrise.L_COUCHE_CRISE,
         LCoucheDroit.L_COUCHE_DROIT,
         LCoucheModule.L_COUCHE_MODULE,
         LCourrierContactGestionnaire.L_COURRIER_CONTACT_GESTIONNAIRE,

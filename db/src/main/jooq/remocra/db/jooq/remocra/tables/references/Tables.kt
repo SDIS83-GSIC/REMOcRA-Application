@@ -43,6 +43,7 @@ import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
+import remocra.db.jooq.remocra.tables.LCoucheCrise
 import remocra.db.jooq.remocra.tables.LCoucheDroit
 import remocra.db.jooq.remocra.tables.LCoucheModule
 import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
@@ -347,6 +348,11 @@ val L_CONTACT_ORGANISME: LContactOrganisme = LContactOrganisme.L_CONTACT_ORGANIS
  * The table <code>remocra.l_contact_role</code>.
  */
 val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
+
+/**
+ * The table <code>remocra.l_couche_crise</code>.
+ */
+val L_COUCHE_CRISE: LCoucheCrise = LCoucheCrise.L_COUCHE_CRISE
 
 /**
  * The table <code>remocra.l_couche_droit</code>.
