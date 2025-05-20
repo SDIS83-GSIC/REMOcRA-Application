@@ -51,7 +51,7 @@ class AuthorizationFeature : DynamicFeature {
 
         when {
             isRequireDroitPresent -> {
-                val droitsPossibles = resourceInfo.resourceMethod.getAnnotation(RequireDroits::class.java).droits.toSet()
+                val droitsPossibles = resourceInfo.resourceMethod.getAnnotation(RequireDroits::class.java)!!.droits.toSet()
                 val pkg = "${resourceInfo.resourceClass.packageName}."
                 when {
                     pkg.startsWith("remocra.apimobile.") -> context.register(ApiMobileAuthorizationFilter(droitsPossibles))
@@ -59,7 +59,7 @@ class AuthorizationFeature : DynamicFeature {
                 }
             }
             isRequireDroitApiPresent -> {
-                context.register(ApiAuthorizationFilter(resourceInfo.resourceMethod.getAnnotation(RequireDroitsApi::class.java).droitsApi.toSet()))
+                context.register(ApiAuthorizationFilter(resourceInfo.resourceMethod.getAnnotation(RequireDroitsApi::class.java)!!.droitsApi.toSet()))
             }
             else -> assert(isPublic)
         }
@@ -84,7 +84,7 @@ private class ApiMobileAuthorizationFilter(
 ) : AbstractOauthAuthorizationFilter() {
     // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        securityContext.userInfo?.let { droitsPossibles.intersect(it.droits).isEmpty() } ?: false
+        securityContext.userInfo?.let { droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
 }
 
 @Priority(Priorities.AUTHORIZATION)
@@ -93,5 +93,5 @@ private class ApiAuthorizationFilter(
 ) : AbstractOauthAuthorizationFilter() {
     // L'annotation permet de définir chacun des droits donnant accès à la ressource (il en faut donc UN parmi ceux-ci)
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        securityContext.organismeInfo?.let { droitsPossibles.intersect(it.droits).isEmpty() } ?: false
+        securityContext.organismeInfo?.let { droitsPossibles.intersect(it.droits).isNotEmpty() } ?: false
 }
