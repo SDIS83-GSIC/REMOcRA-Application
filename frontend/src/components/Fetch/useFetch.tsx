@@ -19,9 +19,15 @@ export const doFetch = async (
     url === decodeURIComponent(url) ? encodeURI(url) : url,
     options,
   );
+
   if (res.status === 401) {
-    document.location.href = URLS.LOGIN;
+    window.location.reload();
   }
+
+  if (res.status === 403) {
+    document.location.href = URLS.ACCUEIL;
+  }
+
   if (!res.ok) {
     throw res;
   }
