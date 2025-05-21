@@ -34,7 +34,9 @@ const SquelettePage = ({
     listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE].parametreValeur;
   const titrePage = listeParametre.data?.[PARAMETRE.TITRE_PAGE].parametreValeur;
   useEffect(() => {
-    document.title = titrePage;
+    if (titrePage) {
+      document.title = titrePage;
+    }
   }, [titrePage]);
   return (
     <div id={"page"}>
