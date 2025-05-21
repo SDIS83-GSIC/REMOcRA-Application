@@ -370,27 +370,43 @@ export const useMapComponent = ({
   useEffect(() => {
     // On met dans l'URL le extent pour simplifier la navigation
     if (map) {
-      map.on("moveend", () => {
+      // On mémorise la dernière valeur connue de l'étendue pour éviter les navigations inutiles
+      let lastExtent = "";
+
+      const handleMoveEnd = () => {
         const view = map.getView();
-        const extent = view.calculateExtent();
-        const params = new URLSearchParams();
-        params.set("extent", extent.join(","));
-        navigate(`?${params.toString()}`, { replace: true, state: state });
-      });
+        const extent = view.calculateExtent().join(",");
 
+        // On vérifie si l'étendue a réellement changée pour éviter une boucle infinie
+        if (extent !== lastExtent) {
+          // Si elle a réellement changé, on la mémorise pour le prochain tour
+          lastExtent = extent;
+          const params = new URLSearchParams();
+          params.set("extent", extent);
+          navigate(`?${params.toString()}`, { replace: true, state: state });
+        }
+      };
+
+      map.on("moveend", handleMoveEnd);
+
+      // Récupération de l'étendue depuis les paramètres d'URL au chargement initial
       const params = new URLSearchParams(search);
-
+      const extentParam = params.get("extent");
       if (
-        params.get("extent") &&
+        extentParam &&
         typeModule !== TypeModuleRemocra.RAPPORT_PERSONNALISE
       ) {
-        const geom = params.get("extent")?.split(",");
+        const geom = extentParam.split(",").map(Number);
         if (!isEmpty(geom)) {
-          map.getView().fit(geom, {
-            maxZoom: 20,
-          });
+          // On adapte la vue à l'étendue si elle est présente dans l'URL
+          map.getView().fit(geom, { maxZoom: 20 });
         }
       }
+
+      // Nettoyage du listener lorsque le composant est démonté ou que la carte change
+      return () => {
+        map.un("moveend", handleMoveEnd);
+      };
     }
   }, [state, map, navigate, search, typeModule]);
 
