@@ -1,6 +1,7 @@
 package remocra.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.net.HttpHeaders
 import com.google.inject.Inject
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletOutputStream
@@ -28,6 +29,8 @@ class UserInfoFilter @Inject constructor(
             response.sendRedirect("/")
             return
         }
+
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "private, no-store")
 
         // Il faut wrapper le ServletOutputStream pour bypasser une optimisation de Jetty
         chain.doFilter(

@@ -20,7 +20,6 @@ import org.pac4j.core.exception.http.HttpAction
 import org.pac4j.core.http.ajax.AjaxRequestResolver
 import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver
 import org.pac4j.core.http.url.DefaultUrlResolver
-import org.pac4j.core.matching.matcher.DefaultMatchers
 import org.pac4j.core.redirect.RedirectionActionBuilder
 import org.pac4j.core.util.HttpActionHelper
 import org.pac4j.core.util.Pac4jConstants
@@ -166,11 +165,7 @@ class AuthModule(
             config,
             null,
             DefaultAuthorizers.IS_AUTHENTICATED,
-            java.lang.String.join(
-                ",",
-                DefaultMatchers.NOCACHE, // XXX: peut-être gérer plus finement le cache ?
-                "excludeStaticResources",
-            ),
+            "excludeStaticResources",
         )
     }
 
