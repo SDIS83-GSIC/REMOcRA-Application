@@ -86,6 +86,9 @@ licensee {
     ignoreDependencies("org.eclipse.emf") {
         because("EPL-1.0 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
     }
+    ignoreDependencies("com.lowagie") {
+        because("MPL-1.1 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
+    }
 }
 
 dependencies {
@@ -167,6 +170,7 @@ dependencies {
     api(libs.xdocreport.freemarker)
     api(libs.xdocreport.velocity)
     api(libs.xdocreport.converter)
+    api(libs.xdocreport.odfdom)
 }
 
 var frontendOutputDir = "$rootDir/frontend/build/parceljs"

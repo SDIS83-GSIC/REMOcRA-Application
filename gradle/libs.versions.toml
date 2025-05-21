@@ -90,6 +90,7 @@ xdocreport-odt = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.d
 xdocreport-freemarker = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker", version.ref = "xdocreport" }
 xdocreport-velocity = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.velocity", version.ref = "xdocreport" }
 xdocreport-converter = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter", version.ref = "xdocreport" }
+xdocreport-odfdom = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.odt.odfdom", version.ref = "xdocreport" }
 
 
 

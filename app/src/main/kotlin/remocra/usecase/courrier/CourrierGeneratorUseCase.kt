@@ -3,6 +3,9 @@ package remocra.usecase.courrier
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
+import fr.opensagres.xdocreport.converter.ConverterTypeTo
+import fr.opensagres.xdocreport.converter.ConverterTypeVia
+import fr.opensagres.xdocreport.converter.Options
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry
 import fr.opensagres.xdocreport.template.TemplateEngineKind
 import jakarta.ws.rs.ForbiddenException
@@ -117,37 +120,22 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
             dateUtils.format(dateUtils.now(), "yyyy-MM-dd-HH-mm-ss")
         }"
 
-        val filledOdt = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.odt")
         val pdfFile = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.pdf")
 
-        FileOutputStream(filledOdt).use { out ->
-            report.process(context, out)
+        val options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM)
+
+        FileOutputStream(pdfFile).use {
+            report.convert(context, options, it)
         }
 
-        // génération du pdf
-        val process = ProcessBuilder(
-            "libreoffice",
-            "--headless",
-            "--convert-to",
-            "pdf",
-            "--outdir",
-            pdfFile.parent,
-            filledOdt.absolutePath,
-        ).inheritIO().start()
-
-        val exitCode = process.waitFor()
-        if (exitCode == 0 && pdfFile.exists()) {
-            return UrlCourrier(
-                url = uriBuilder
-                    .queryParam("courrierName", Paths.get("$nomFichier.pdf"))
-                    .build()
-                    .toString(),
-                modeleCourrierId = modeleCourrier.modeleCourrierId!!,
-                courrierReference = parametreCourrierInput.courrierReference,
-            )
-        } else {
-            throw IllegalArgumentException("Impossible de générer le pdf")
-        }
+        return UrlCourrier(
+            url = uriBuilder
+                .queryParam("courrierName", Paths.get("$nomFichier.pdf"))
+                .build()
+                .toString(),
+            modeleCourrierId = modeleCourrier.modeleCourrierId!!,
+            courrierReference = parametreCourrierInput.courrierReference,
+        )
     }
 
     data class UrlCourrier(
