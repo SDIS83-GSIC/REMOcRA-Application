@@ -245,10 +245,12 @@ const MapToolbar = forwardRef(
       map,
       toggleTool,
       activeTool,
+      variant = "primary",
     }: {
       map: Map;
       toggleTool: (toolId: string) => void;
       activeTool: string;
+      variant: string;
     },
     ref,
   ) => {
@@ -288,6 +290,7 @@ const MapToolbar = forwardRef(
               className="m-2 rounded"
               onClick={zoomIn}
               disabled={zoom >= map.getView().getMaxZoom()}
+              variant={variant}
             >
               <IconZoomIn />
             </Button>
@@ -295,6 +298,7 @@ const MapToolbar = forwardRef(
               className="m-2 rounded"
               onClick={zoomOut}
               disabled={zoom <= map.getView().getMinZoom()}
+              variant={variant}
             >
               <IconZoomOut />
             </Button>
@@ -307,6 +311,7 @@ const MapToolbar = forwardRef(
               toolLabelTooltip={"Mesurer une distance"}
               toggleTool={toggleTool}
               activeTool={activeTool}
+              variant={variant}
             />
             <ToolbarButton
               toolName={"measure-area"}
@@ -314,6 +319,7 @@ const MapToolbar = forwardRef(
               toolLabelTooltip={"Mesurer une superficie"}
               toggleTool={toggleTool}
               activeTool={activeTool}
+              variant={variant}
             />
           </ButtonGroup>
         </ButtonToolbar>

@@ -133,6 +133,7 @@ const MapComponent = ({
   toolbarElement,
   toggleTool,
   activeTool,
+  variant = "primary",
 }: {
   map?: Map;
   workingLayer: any;
@@ -144,6 +145,7 @@ const MapComponent = ({
   toolbarElement?: ReactNode;
   toggleTool: any;
   activeTool: any;
+  variant: string;
 }) => {
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
@@ -181,12 +183,13 @@ const MapComponent = ({
               workingLayer={workingLayer}
               toggleTool={toggleTool}
               activeTool={activeTool}
+              variant={variant}
             />
           </Col>
           <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
         </Row>
       )}
-      <div ref={mapElement} className={"map-map border border-primary"} />
+      <div ref={mapElement} className={"map-map border border-" + variant} />
       <div className={"map-layers noprint"}>
         <MapLegend
           ref={layerListRef}

@@ -281,6 +281,7 @@ const MapToolbarCrise = forwardRef(
     setShowListDocument,
     setShowListEvent,
     setShowCreateEvent,
+    variant = "primary",
   }: {
     map?: Map;
     workingLayer: any;
@@ -300,6 +301,7 @@ const MapToolbarCrise = forwardRef(
     toggleTool: (toolId: string) => void;
     dataCriseLayer: any;
     setSousTypeElement: (object: object) => void;
+    variant: string;
   }) => {
     const typeWithSousType = useGet(
       url`/api/crise/${criseId}/evenement/type-sous-type`,
@@ -387,6 +389,7 @@ const MapToolbarCrise = forwardRef(
             toolLabelTooltip={"Sélectionner"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            variant={variant}
           />
 
           {/* déplacer évènement */}
@@ -396,6 +399,7 @@ const MapToolbarCrise = forwardRef(
             toolLabelTooltip={"Déplacer un événement"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            variant={variant}
           />
 
           {/* Evènements (création) */}
@@ -408,6 +412,7 @@ const MapToolbarCrise = forwardRef(
               onClick={() => {
                 setShowCreateEvent(!showCreateEvent);
               }}
+              variant={variant}
             >
               <IconEvent />
             </Button>
@@ -423,6 +428,7 @@ const MapToolbarCrise = forwardRef(
               onClick={() => {
                 setShowListEvent(!showListEvent);
               }}
+              variant={variant}
             >
               <IconList />
             </Button>
@@ -438,6 +444,7 @@ const MapToolbarCrise = forwardRef(
               onClick={() => {
                 setShowListDocument(!showListDocument);
               }}
+              variant={variant}
             >
               <IconDocument />
             </Button>
@@ -452,6 +459,7 @@ const MapToolbarCrise = forwardRef(
               onClick={() => {
                 show();
               }}
+              variant={variant}
             >
               <IconCamera />
             </Button>
@@ -463,7 +471,7 @@ const MapToolbarCrise = forwardRef(
         </Col>
         <Col xs={"auto"}>
           <Dropdown>
-            <Dropdown.Toggle className="m-2" id={"dropdown-"}>
+            <Dropdown.Toggle className="m-2" id={"dropdown-"} variant={variant}>
               {"Dessiner"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
@@ -480,7 +488,7 @@ const MapToolbarCrise = forwardRef(
                   return (
                     <Row xs={"auto"} className={"m-2"} key={key}>
                       <Dropdown>
-                        <Dropdown.Toggle id={"dropdown-"}>
+                        <Dropdown.Toggle id={"dropdown-"} variant={variant}>
                           {e.criseCategorieLibelle?.toString()}
                         </Dropdown.Toggle>
 

@@ -14,7 +14,15 @@ import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
-const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
+const MapCrise = ({
+  criseId,
+  state,
+  variant,
+}: {
+  criseId: string;
+  state: string;
+  variant: string;
+}) => {
   const mapElement = useRef<HTMLDivElement>();
 
   /** Permet d'afficher les géometries évènements */
@@ -196,9 +204,11 @@ const MapCrise = ({ criseId, state }: { criseId: string; state: string }) => {
             setShowListEvent={setShowListEvent}
             setShowCreateEvent={setShowCreateEvent}
             setShowListDocument={setShowListDocument}
+            variant={variant}
           />
         )
       }
+      variant={variant}
     />
   );
 };
