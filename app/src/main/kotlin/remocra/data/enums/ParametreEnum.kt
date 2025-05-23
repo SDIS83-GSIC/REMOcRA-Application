@@ -7,6 +7,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     TITRE_PAGE(ParametreSection.GENERAL),
     TOLERANCE_VOIES_METRES(ParametreSection.GENERAL),
     VITESSE_EAU(ParametreSection.GENERAL),
+    ACCUEIL_PUBLIC(ParametreSection.GENERAL),
 
     // Mobile
     AFFICHAGE_INDISPO(ParametreSection.MOBILE),
