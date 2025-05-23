@@ -1,6 +1,6 @@
 import { Button, Col, Image, Row, Table } from "react-bootstrap";
 import url from "../../module/fetch.tsx";
-import { LinkType } from "../../pages/Accueil/Accueil.tsx";
+import { LinkType } from "../../pages/Accueil/AccueilPrive.tsx";
 import { URLS } from "../../routes.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";

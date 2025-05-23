@@ -11,7 +11,6 @@ import net.ltgt.oauth.common.TokenIntrospector
 import net.ltgt.oauth.common.TokenPrincipalProvider
 import net.ltgt.oauth.rs.TokenFilter
 import java.util.UUID
-import net.ltgt.oidc.servlet.rs.IsAuthenticatedFilter as OidcIsAuthenticatedFilter
 
 /**
  * Permet de désactiver l'authent pour certaines resources JAX-RS
@@ -39,7 +38,6 @@ class AuthenticationFeature : DynamicFeature {
         when {
             pkg.startsWith("remocra.api.") -> context.register(ApiAuthenticationFilter::class.java)
             pkg.startsWith("remocra.apimobile.") -> context.register(ApiMobileAuthenticationFilter::class.java)
-            else -> context.register(OidcIsAuthenticatedFilter::class.java)
         }
     }
 }

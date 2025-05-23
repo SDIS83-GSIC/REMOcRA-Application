@@ -21,14 +21,14 @@ class UserInfoFilter @Inject constructor(
         response: HttpServletResponse,
         chain: FilterChain,
     ) {
-        val userInfo = (request.userPrincipal as RemocraUserPrincipal).userInfo
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "private, no-store")
 
-        if (!userInfo.isActif) {
+        val userInfo = (request.userPrincipal as? RemocraUserPrincipal)?.userInfo
+
+        if (userInfo?.isActif == false) {
             response.sendError(403, "Votre compte n'est pas actif. Veuillez contacter le SDIS.")
             return
         }
-
-        response.setHeader(HttpHeaders.CACHE_CONTROL, "private, no-store")
 
         // Il faut wrapper le ServletOutputStream pour bypasser une optimisation de Jetty
         chain.doFilter(
@@ -53,7 +53,8 @@ class UserInfoFilter @Inject constructor(
 
         val nonce = request.getAttribute(SecurityHeadersFilter.NONCE_ATTRIBUTE_NAME) as String
 
-        val javascriptUser = objectMapper.writeValueAsString((userInfo).asJavascriptUserProfile())
+        val javascriptUser = objectMapper.writeValueAsString((userInfo)?.asJavascriptUserProfile())
+
         response.outputStream?.println("""<script nonce="$nonce">const userInfo = $javascriptUser</script>""")
     }
 }

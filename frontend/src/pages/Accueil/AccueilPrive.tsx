@@ -1,0 +1,306 @@
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import Loading from "../../components/Elements/Loading/Loading.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import ModuleRemocra, {
+  TypeModuleRemocra,
+} from "../../components/ModuleRemocra/ModuleRemocra.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
+
+const AccueilPrive = ({ user }: { user: UtilisateurEntity }) => {
+  // On récupère les modules
+  const modulesState = useGet(url`/api/modules/`);
+
+  const messagePeiLongueIndispoState = useGet(
+    url`/api/message-pei-longue-indispo/`,
+  );
+
+  if (!modulesState.isResolved) {
+    return <Loading />;
+  }
+  const { data }: { data: Module[] } = modulesState;
+  const mapColonneRow = Object.groupBy(
+    data,
+    ({ moduleColonne }) => moduleColonne,
+  );
+
+  return (
+    <>
+      <Container>
+        {messagePeiLongueIndispoState?.data && (
+          <Row>
+            <Alert variant="danger">
+              <Alert.Heading>PEI indisponibles</Alert.Heading>
+              {messagePeiLongueIndispoState?.data.message}
+              <Button
+                variant="link"
+                href={URLS.MESSAGE_PEI_LONGUE_INDISPO_LISTE_PEI}
+              >
+                Voir plus
+              </Button>
+            </Alert>
+          </Row>
+        )}
+      </Container>
+      <Row>
+        {Object.entries(mapColonneRow).map(([key, values]) => (
+          <Col key={key}>
+            {Array.from(values).map((e) => {
+              const listeLink = getLinks(e.moduleType, user);
+              const aLeDroit = listeLink?.some((e) => e.aLeDroit === true);
+              const hasHtmlContent = e.moduleContenuHtml != null;
+              const isDocumentWithRight =
+                e.moduleType === TypeModuleRemocra.DOCUMENT &&
+                hasDroit(user, TYPE_DROIT.DOCUMENTS_R);
+              const isCourrierWithRight =
+                e.moduleType === TypeModuleRemocra.COURRIER &&
+                isAuthorized(user, [
+                  TYPE_DROIT.COURRIER_UTILISATEUR_R,
+                  TYPE_DROIT.COURRIER_ORGANISME_R,
+                ]);
+              const hasAccess =
+                aLeDroit ||
+                hasHtmlContent ||
+                isDocumentWithRight ||
+                isCourrierWithRight;
+              return (
+                hasAccess && (
+                  <Row key={e.moduleId} className="m-1">
+                    <ModuleRemocra
+                      moduleId={e.moduleId}
+                      type={e.moduleType}
+                      titre={e.moduleTitre}
+                      image={e.moduleLinkImage}
+                      contenuHtml={e.moduleContenuHtml}
+                      listeLink={listeLink}
+                      listeDocument={e.listeDocument}
+                    />
+                  </Row>
+                )
+              );
+            })}
+          </Col>
+        ))}
+      </Row>
+    </>
+  );
+};
+
+/**
+ * Fonction à alimenter.
+ * Permet de récupérer une liste de liens d'une module.
+ * @param typeModuleRemocra type du module
+ * @returns
+ */
+function getLinks(
+  typeModuleRemocra: TypeModuleRemocra,
+  user: UtilisateurEntity,
+): LinkType[] | undefined {
+  switch (typeModuleRemocra) {
+    case TypeModuleRemocra.DECI:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.PEI_R),
+          label: "Gestion des points d'eau",
+          link: URLS.ACCES_RAPIDE,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DECLARATION_PEI),
+          label: "Déclarer un PEI",
+          link: URLS.DECLARATION_PEI,
+        },
+        {
+          aLeDroit: isAuthorized(user, [
+            TYPE_DROIT.IMPORT_CTP_A,
+            TYPE_DROIT.IMPORT_CTP_PEI_DEPLACEMENT_U,
+          ]),
+          label: "Import CTP",
+          link: URLS.IMPORT_CTP,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.COURRIER_C),
+          label: "Générer un courrier",
+          link: URLS.GENERER_COURRIER(TypeModuleRemocra.DECI),
+        },
+      ];
+    case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.ETUDE_R),
+          label: "Liste des études",
+          link: URLS.LIST_ETUDE,
+        },
+      ];
+    case TypeModuleRemocra.CARTOGRAPHIE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.CARTOGRAPHIES_E),
+          label: "Cartographie personnalisée",
+          link: URLS.CARTOGRAPHIE_PERSONNALISEE,
+        },
+      ];
+    case TypeModuleRemocra.RCI:
+      return [
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.RCCI_A) ||
+            hasDroit(user, TYPE_DROIT.RCCI_R),
+          label: "Carte des départs de feu",
+          link: URLS.RCCI_MAP,
+        },
+      ];
+    case TypeModuleRemocra.OPERATIONS_DIVERSES:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E),
+          label: "Historique des opérations",
+          link: URLS.HISTORIQUE_OPERATIONS,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E),
+          label: "Résultats d'exécutions",
+          link: URLS.RESULTATS_EXECUTION,
+        },
+      ];
+    case TypeModuleRemocra.DFCI:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_R),
+          label: "Carte DFCI",
+          link: URLS.CARTE_DFCI,
+        },
+      ];
+    case TypeModuleRemocra.OLDEBS:
+      return [
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.OLDEB_C) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_D) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_R) ||
+            hasDroit(user, TYPE_DROIT.OLDEB_U),
+          label: "Liste des Obligations Légales de Débroussaillement",
+          link: URLS.OLDEB_LIST,
+        },
+      ];
+    case TypeModuleRemocra.PERMIS:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.PERMIS_R),
+          label: "Carte des Permis",
+          link: URLS.CARTE_PERMIS,
+        },
+      ];
+    case TypeModuleRemocra.ADRESSES:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.ADRESSES_C),
+          label: "Carte des adresses",
+          link: URLS.ADRESSE,
+        },
+      ];
+    case TypeModuleRemocra.RISQUES:
+      return;
+    case TypeModuleRemocra.CRISE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.CRISE_R),
+          label: "Liste des crises",
+          link: URLS.LIST_CRISES,
+        },
+      ];
+    case TypeModuleRemocra.ADMIN:
+      return [
+        {
+          aLeDroit: isAuthorized(user, [
+            TYPE_DROIT.ADMIN_ANOMALIES,
+            TYPE_DROIT.ADMIN_API,
+            TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE,
+            TYPE_DROIT.DASHBOARD_A,
+            TYPE_DROIT.ADMIN_DROITS,
+            TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
+            TYPE_DROIT.ADMIN_NOMENCLATURE,
+            TYPE_DROIT.ADMIN_PARAM_APPLI,
+            TYPE_DROIT.ADMIN_PARAM_APPLI_MOBILE,
+            TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
+            TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
+            TYPE_DROIT.ADMIN_ROLE_CONTACT,
+            TYPE_DROIT.ADMIN_TYPE_ETUDE,
+            TYPE_DROIT.ADMIN_UTILISATEURS_A,
+            TYPE_DROIT.ADMIN_ZONE_COMPETENCE,
+            TYPE_DROIT.GEST_SITE_A,
+            TYPE_DROIT.GEST_SITE_R,
+          ]),
+          label: "Administrer l'application",
+          link: URLS.MODULE_ADMIN,
+        },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DOCUMENTS_R),
+          label: "Liste des documents",
+          link: URLS.LIST_DOCUMENT_HABILITABLE,
+        },
+      ];
+    case TypeModuleRemocra.COURRIER:
+      return;
+    case TypeModuleRemocra.DOCUMENT:
+      return;
+    case TypeModuleRemocra.RAPPORT_PERSONNALISE:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E),
+          label: "Exécuter un rapport personnalisé",
+          link: URLS.EXECUTER_RAPPORT_PERSONNALISE,
+        },
+      ];
+    case TypeModuleRemocra.PEI_PRESCRIT:
+      return [
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A),
+          label: "Carte des points d'eau prescrits",
+          link: URLS.PEI_PRESCRIT,
+        },
+      ];
+    case TypeModuleRemocra.PERSONNALISE:
+      return;
+    case TypeModuleRemocra.DASHBOARD:
+      return [
+        {
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.DASHBOARD_A) ||
+            hasDroit(user, TYPE_DROIT.DASHBOARD_R),
+          label: "Accéder au tableau de bord",
+          link: URLS.DASHBOARD_LIST,
+        },
+      ];
+  }
+}
+
+/**
+ * label : label affiché du lien
+ * link : page référente
+ * aLeDroit : permet de savoir si l'utilisateur a les droits pour accéder à ce lien
+ */
+export type LinkType = {
+  label: string;
+  link: string;
+  aLeDroit: boolean;
+};
+
+type Module = {
+  moduleId: string;
+  moduleType: string;
+  moduleTitre: string;
+  moduleLinkImage: string;
+  moduleColonne: number;
+  moduleLigne: number;
+  moduleContenuHtml: string;
+  listeDocument: {
+    id: string;
+    libelle: string;
+    date: Date;
+  }[];
+};
+
+export default AccueilPrive;

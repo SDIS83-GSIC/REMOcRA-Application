@@ -10,7 +10,7 @@ import jakarta.servlet.SessionTrackingMode
 import net.ltgt.oidc.servlet.AuthenticationRedirector
 import net.ltgt.oidc.servlet.CallbackServlet
 import net.ltgt.oidc.servlet.Configuration
-import net.ltgt.oidc.servlet.IsAuthenticatedFilter
+import net.ltgt.oidc.servlet.LoginServlet
 import net.ltgt.oidc.servlet.LogoutServlet
 import net.ltgt.oidc.servlet.UserFilter
 import net.ltgt.oidc.servlet.UserPrincipalFactory
@@ -137,11 +137,8 @@ constructor(
         context.addServlet(CallbackServlet::class.java, AuthnConstants.CALLBACK_PATH)
         context.addServlet(LogoutServlet::class.java, AuthnConstants.LOGOUT_PATH)
 
-        context.addFilter(
-            IsAuthenticatedFilter::class.java,
-            "/index.html",
-            EnumSet.of(REQUEST, ASYNC, FORWARD),
-        )
+        context.addServlet(LoginServlet::class.java, AuthnConstants.LOGIN_PATH)
+
         context.addFilter(
             FilterHolder(userInfoFilter),
             "/index.html",

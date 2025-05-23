@@ -6,9 +6,6 @@ import RouteConfig from "./components/Router/RouteConfig.tsx";
 import { ToastProvider } from "./module/Toast/ToastProvider.tsx";
 import "./style.scss";
 
-/**
- * Ce fichier est le point d'entrée pour la partie authentifiée du site. Le userInfo ne doit jamais être nul.
- */
 const App = () => {
   return (
     <AppProvider>

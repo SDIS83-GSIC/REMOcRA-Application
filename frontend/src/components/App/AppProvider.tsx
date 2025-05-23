@@ -1,5 +1,3 @@
-/*global userInfo */
-
 import { createContext, ReactNode, useContext } from "react";
 import { get as getProjection } from "ol/proj";
 import proj4 from "proj4";
@@ -7,9 +5,10 @@ import { register } from "ol/proj/proj4";
 import { useGet } from "../Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 
 type AppContextProps = {
-  user: any;
+  user: UtilisateurEntity | null | undefined;
   epsg: { name: string; projection: string };
   srid: number;
   extent: number[];
@@ -20,6 +19,10 @@ const AppContext = createContext({});
 export const useAppContext = (): AppContextProps => {
   return useContext(AppContext) as AppContextProps;
 };
+
+declare global {
+  let userInfo: UtilisateurEntity | null | undefined;
+}
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const {

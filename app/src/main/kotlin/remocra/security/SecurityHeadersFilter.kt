@@ -23,8 +23,8 @@ class SecurityHeadersFilter : HttpFilter() {
             "style-src-elem 'self' 'unsafe-inline'; " +
             // On a besoin de unsafe-inline pour la ScaleLine OpenLayers: https://github.com/openlayers/openlayers/blob/bc0b4201dac2121b509de489a5c4770b57af50b9/src/ol/control/ScaleLine.js#L390
             "style-src-attr 'self' 'unsafe-inline'; " +
-            // On a besoin de data: pour OpenLayers…
-            "img-src 'self' data:"
+            // On a besoin de data: pour OpenLayers et https: pour permettre à l'admin d'ajouter des images sur la page d'accueil
+            "img-src 'self' data: https:"
     }
     override fun doFilter(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
         res.setHeader("X-Content-Type-Options", "nosniff")

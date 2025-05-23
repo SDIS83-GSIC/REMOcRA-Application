@@ -6,9 +6,8 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
-import LinkButton from "../Button/LinkButton.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import LinkButton from "../Button/LinkButton.tsx";
 
 export interface NavToProps {
   path: string;
@@ -28,7 +27,7 @@ const NavTo = ({ path, label, aLeDroit }: NavToProps) => {
   );
 };
 const Header = ({ links }: { links?: NavToProps[] }) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   return (
     <Row>
@@ -48,18 +47,34 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
               ))}
             </Nav>
             <Nav>
-              <p className="d-flex m-0 align-items-center text-light pe-3">
-                {`${user.prenom} ${user.nom} (${user.username})`}
-              </p>
-              <form method="post" action={URLS.LOGOUT}>
-                <Button
-                  type="submit"
-                  variant="link"
-                  className={"text-decoration-none text-light"}
-                >
-                  Déconnexion
-                </Button>
-              </form>
+              {user != null ? (
+                <>
+                  <p className="d-flex m-0 align-items-center text-light pe-3">
+                    {`${user.prenom} ${user.nom} (${user.username})`}
+                  </p>
+                  <form method="post" action={URLS.LOGOUT}>
+                    <Button
+                      type="submit"
+                      variant="link"
+                      className={"text-decoration-none text-light"}
+                    >
+                      Déconnexion
+                    </Button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <form method="post" action={URLS.LOGIN}>
+                    <Button
+                      type="submit"
+                      variant="link"
+                      className={"text-decoration-none text-light"}
+                    >
+                      Connexion
+                    </Button>
+                  </form>
+                </>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
