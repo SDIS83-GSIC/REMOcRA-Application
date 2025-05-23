@@ -2,12 +2,11 @@ import { Col, Container, Nav, Row } from "react-bootstrap";
 import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
 import { URLS } from "../../routes.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 
 const MenuAdmin = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const hasDroitAdministrationGenerale = isAuthorized(user, [
     TYPE_DROIT.ADMIN_COURRIER,

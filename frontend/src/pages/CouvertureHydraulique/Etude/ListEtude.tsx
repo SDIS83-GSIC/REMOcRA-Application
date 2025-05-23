@@ -25,7 +25,6 @@ import {
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
@@ -34,7 +33,7 @@ import filterValuesToVariable from "./FilterEtude.tsx";
 
 const ListEtude = () => {
   const typeEtudeState = useGet(url`/api/couverture-hydraulique/type-etudes`);
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
 
   const listeButton: ButtonType[] = [];

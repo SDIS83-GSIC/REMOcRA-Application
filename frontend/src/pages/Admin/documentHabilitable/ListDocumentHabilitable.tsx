@@ -15,7 +15,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
@@ -26,7 +25,7 @@ import AccordionCustom, {
 import FilterValues from "./FilterDocumentHabilitable.tsx";
 
 const ListDocumentHabilitable = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const thematiqueState = useGet(url`/api/thematique/`);
   const profilDroitState = useGet(url`/api/profil-droit`);
   const listeButton: ButtonType[] = [];

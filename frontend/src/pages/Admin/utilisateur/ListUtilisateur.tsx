@@ -19,7 +19,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -27,7 +26,7 @@ import { URLS } from "../../../routes.tsx";
 import FilterValues from "./FilterUtilisateur.tsx";
 
 const ListUtilisateur = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: profilDroitList } = useGet(url`/api/profil-droit`);
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);

@@ -4,11 +4,10 @@ import { URLS } from "../../routes.tsx";
 import SquelettePage from "../../pages/SquelettePage.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 
 const ModuleCrise = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const navLinks: NavToProps[] = [
     {
       path: URLS.LIST_CRISES,

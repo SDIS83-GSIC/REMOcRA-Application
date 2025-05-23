@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
@@ -46,7 +45,7 @@ const ListNomenclature = ({
   addButtonTitle: string;
   additionalButton?: ReactNode;
 }) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
 

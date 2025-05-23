@@ -29,7 +29,6 @@ import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { refreshLayerGeoserver } from "./MapUtils.tsx";
 
@@ -77,7 +76,7 @@ const TooltipMapPei = ({
     setShowUpdateDebitSimultane(false);
 
   const elementId = featureSelect?.getProperties().elementId;
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   return (
     <div ref={ref}>

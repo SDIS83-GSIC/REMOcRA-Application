@@ -34,7 +34,7 @@ import IterableVisiteForm from "./IterableVisiteForm.tsx";
 // Pour respecter la loi des Hooks et empécher de charger des données (useGet) pour un utilisateur qui n'a pas les droits
 // Le router appel ce composant qui s'occupe de vérifier les droits et de valider ou non le passage vers le formulaire
 const ValidateAccessSaisieVisiteTournee = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { tourneeId } = useParams();
 
   // La vérification suivante s'ajoute aux conditions dans l'appel au composant dans routes.tsx

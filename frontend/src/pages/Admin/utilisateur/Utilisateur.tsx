@@ -2,7 +2,6 @@ import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
@@ -65,7 +64,7 @@ export const prepareVariables = (values: UtilisateurType) => ({
 });
 
 const Utilisateur = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const [profilDroitDeduit, setProfilDroitDeduit] = useState<string>();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);

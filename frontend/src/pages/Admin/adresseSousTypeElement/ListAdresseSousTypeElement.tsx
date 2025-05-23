@@ -18,7 +18,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import { referenceTypeGeometrie } from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
@@ -29,7 +28,7 @@ import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 
 const ListAdresseSousTypeElement = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const listeTypeElement: IdCodeLibelleType[] = useGet(
     url`/api/adresse-sous-type-element/ref`,
   ).data;

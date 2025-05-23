@@ -28,7 +28,6 @@ import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 
@@ -184,7 +183,7 @@ export const AdminParametresInterne = () => {
   const { activesKeys, handleShowClose } = useAccordionState(
     Array(6).fill(false),
   );
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   return (
     values && (

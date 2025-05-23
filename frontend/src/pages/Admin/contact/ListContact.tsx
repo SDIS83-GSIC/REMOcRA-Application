@@ -18,7 +18,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_CIVILITE from "../../../enums/CiviliteEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
@@ -28,7 +27,7 @@ import FilterValues from "./FilterContact.tsx";
 
 const ListContact = () => {
   const { appartenanceId, appartenance } = useParams();
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
   if (

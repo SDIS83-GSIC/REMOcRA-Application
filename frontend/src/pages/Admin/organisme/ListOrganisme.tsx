@@ -23,7 +23,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -31,7 +30,7 @@ import { URLS } from "../../../routes.tsx";
 import filterValuesOrganisme from "./FilterOrganisme.tsx";
 
 const ListOrganisme = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
   if (hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) {

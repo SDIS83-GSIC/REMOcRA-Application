@@ -1,7 +1,6 @@
 import { useFormikContext } from "formik";
 import { Button, Col, Row } from "react-bootstrap";
 import PermisEntity from "../../Entities/PermisEntity.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
@@ -98,7 +97,7 @@ export const prepareVariables = (
 };
 
 const Permis = ({ readOnly }: { readOnly: boolean }) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { values, setFieldValue }: { values: any } = useFormikContext();
 
   const fetchPermisData = useGet(

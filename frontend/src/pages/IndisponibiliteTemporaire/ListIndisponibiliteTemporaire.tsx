@@ -8,7 +8,6 @@ import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableW
 import useLocalisation from "../../components/Localisation/useLocalisation.tsx";
 import { useFilterContext } from "../../components/Table/QueryTable.tsx";
 import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
@@ -26,7 +25,7 @@ const ListIndisponibiliteTemporaire = ({
   peiId?: string;
   colonnes?: COLUMN_INDISPONIBILITE_TEMPORAIRE[];
 }) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
 
   //TODO a aller chercher en base

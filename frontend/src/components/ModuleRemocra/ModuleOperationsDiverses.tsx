@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import SquelettePage from "../../pages/SquelettePage.tsx";
@@ -8,7 +7,7 @@ import { useAppContext } from "../App/AppProvider.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
 
 const ModuleOperationsDiverses = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const navLinks: NavToProps[] = [
     {
       path: URLS.HISTORIQUE_OPERATIONS,

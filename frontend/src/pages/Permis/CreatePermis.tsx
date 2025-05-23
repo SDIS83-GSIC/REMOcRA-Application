@@ -1,5 +1,4 @@
 import { Container } from "react-bootstrap";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
@@ -13,7 +12,7 @@ const CreatePermis = ({
   srid,
   onSubmit,
 }: CreatePermisType) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   return (
     <Container>
       <PageTitle

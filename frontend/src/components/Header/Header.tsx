@@ -6,8 +6,8 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
-import { useAppContext } from "../App/AppProvider.tsx";
 import LinkButton from "../Button/LinkButton.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 
 export interface NavToProps {
   path: string;

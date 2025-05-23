@@ -18,7 +18,6 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TypePeiEnum from "../../../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
@@ -27,7 +26,7 @@ import { URLS } from "../../../routes.tsx";
 import filterValuesNature from "./FilterNature.tsx";
 
 const ListNature = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const colonne = [
     {

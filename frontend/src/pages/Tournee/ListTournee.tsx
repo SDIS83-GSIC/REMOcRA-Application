@@ -31,7 +31,6 @@ import {
   TYPE_BUTTON,
 } from "../../components/Table/TableActionColumn.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
@@ -42,7 +41,7 @@ import { formatDate } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = ({ peiId }: { peiId: string }) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
 
   const column: Array<columnType> = [

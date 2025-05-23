@@ -14,7 +14,6 @@ import EditModal from "../../../components/Modal/EditModal.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import {
   ButtonType,
   TYPE_BUTTON,
@@ -37,7 +36,7 @@ const ListDocument = ({
   map: Map;
 }) => {
   const { visible, show, close } = useModal();
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const listeButton: ButtonType[] = [];
 
   const showEventLocation = (geometry: string) => {

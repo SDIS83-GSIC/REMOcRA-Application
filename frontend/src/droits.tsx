@@ -6,7 +6,7 @@ export const Authorization = (
   { Component, droits, isPublic = false }: AuthorizationEntity,
   props: any[],
 ) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   if (isPublic || (user && isAuthorized(user, droits ?? []))) {
     return <Component {...props} />;
@@ -21,12 +21,18 @@ type AuthorizationEntity = {
   isPublic?: boolean;
 };
 
-export function isAuthorized(user: UtilisateurEntity, droits: TYPE_DROIT[]) {
-  return droits.some((droit) => hasDroit(user, droit));
+export function isAuthorized(
+  user: UtilisateurEntity | null | undefined,
+  droits: TYPE_DROIT[],
+) {
+  return user ? droits.some((droit) => hasDroit(user, droit)) : false;
 }
 
-export function hasDroit(user: UtilisateurEntity, droit: TYPE_DROIT) {
-  return user.droits.includes(droit);
+export function hasDroit(
+  user: UtilisateurEntity | null | undefined,
+  droit: TYPE_DROIT,
+) {
+  return user ? user.droits.includes(droit) : false;
 }
 
 export const Forbidden = () => {

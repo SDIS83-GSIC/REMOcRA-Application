@@ -21,7 +21,6 @@ import {
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import CriseStatutEnum from "../../../Entities/CriseEntity.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
@@ -37,7 +36,7 @@ export const prepareValues = (data: any) => {
 };
 
 const ListCrise = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const listeButton: ButtonType[] = [];
 
   if (hasDroit(user, TYPE_DROIT.CRISE_R)) {

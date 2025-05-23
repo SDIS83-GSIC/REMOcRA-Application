@@ -3,14 +3,13 @@ import QueryTable, {
 } from "../../components/Table/QueryTable.tsx";
 import COLUMN_PEI from "../../enums/ColumnPeiEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
+import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { filterValuesToVariable } from "../../pages/Pei/FilterPei.tsx";
 import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
-import { useGet } from "../Fetch/useFetch.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
-import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import useLocalisation from "../Localisation/useLocalisation.tsx";
 
 const ListPei = ({
@@ -19,7 +18,7 @@ const ListPei = ({
   className,
   displayNone,
 }: ListePeiType) => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
 
   const { data: listeAnomaliePossible } = useGet(

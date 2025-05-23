@@ -20,7 +20,6 @@ import DeleteModal from "../../components/Modal/DeleteModal.tsx";
 import useModal from "../../components/Modal/ModalUtils.tsx";
 import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
@@ -36,7 +35,7 @@ import VisiteForm, {
 
 const Visite = () => {
   const { peiId } = useParams();
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
 
   const { visible, show, close, ref } = useModal();
 

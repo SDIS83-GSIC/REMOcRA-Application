@@ -26,7 +26,6 @@ import {
 } from "../../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -45,7 +44,7 @@ export const prepareVariables = (values) => {
 };
 
 const ListSite = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const { data } = useGet(url`/api/gestionnaire/get`);
 
   const listeButton: ButtonType[] = [];

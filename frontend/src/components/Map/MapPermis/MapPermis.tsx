@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
 import { transformExtent } from "ol/proj";
+import { useEffect, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { isAuthorized } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import SquelettePage from "../../../pages/SquelettePage.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
@@ -19,7 +18,7 @@ import MapToolbarPermis, {
 
 const MapPermis = () => {
   const { state } = useLocation();
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const mapElement = useRef<HTMLDivElement>();
 
   const {

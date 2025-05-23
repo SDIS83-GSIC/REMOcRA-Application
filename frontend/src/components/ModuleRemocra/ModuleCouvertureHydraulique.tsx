@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import SquelettePage from "../../pages/SquelettePage.tsx";
 import { URLS } from "../../routes.tsx";
@@ -8,7 +7,7 @@ import { useAppContext } from "../App/AppProvider.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
 
 const ModuleCouvertureHydraulique = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const navLinks: NavToProps[] = [
     {
       path: URLS.LIST_ETUDE,

@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import SquelettePage from "../../pages/SquelettePage.tsx";
 import { URLS } from "../../routes.tsx";
@@ -9,7 +8,7 @@ import Header, { NavToProps } from "../Header/Header.tsx";
 import { TypeModuleRemocra } from "./ModuleRemocra.tsx";
 
 const ModuleDeci = () => {
-  const { user }: { user: UtilisateurEntity } = useAppContext();
+  const { user } = useAppContext();
   const navLinks: NavToProps[] = [
     {
       path: URLS.ACCES_RAPIDE,
