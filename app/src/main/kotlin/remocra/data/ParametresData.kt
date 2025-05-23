@@ -46,7 +46,7 @@ data class ParametresSectionGeneral(
     val messageEntete: String?,
     val titrePage: String?,
     val toleranceVoiesMetres: Int?,
-
+    val accueilPublic: String?,
 )
 
 data class ParametresSectionMobile(

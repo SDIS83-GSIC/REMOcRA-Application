@@ -37,6 +37,7 @@ type ParametresSectionGeneral = {
   messageEntete: string;
   titrePage: string;
   toleranceVoiesMetres: number;
+  accueilPublic: string | undefined;
 };
 
 type ParametresSectionMobile = {
@@ -379,6 +380,16 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             defaultValue={values?.titrePage}
             tooltipText={
               "Utilisé dans le chargement des listes déroulantes des voies lorsque les géométries ne sont pas parfaitement en phase"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="general.accueilPublic"
+            required={false}
+            label="Personnaliser la page d'accueil publique"
+            tooltipText={
+              "Écrivez du HTML pour personnaliser votre page d'accueil publique."
             }
           />
         </AdminParametre>

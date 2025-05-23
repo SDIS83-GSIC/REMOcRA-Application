@@ -41,6 +41,7 @@ class ParametresUseCase : AbstractUseCase() {
             messageEntete = mapParametres.getStringOrNull(ParametreEnum.MESSAGE_ENTETE.name),
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
+            accueilPublic = mapParametres.getStringOrNull(ParametreEnum.ACCUEIL_PUBLIC.name),
         )
 
         val mobile = ParametresSectionMobile(

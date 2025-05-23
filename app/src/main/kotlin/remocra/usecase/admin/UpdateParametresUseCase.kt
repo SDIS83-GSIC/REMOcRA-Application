@@ -55,6 +55,10 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.TOLERANCE_VOIES_METRES,
                 parametresAdminData.general.toleranceVoiesMetres?.toString(),
             )
+            updateParametre(
+                ParametreEnum.ACCUEIL_PUBLIC,
+                parametresAdminData.general.accueilPublic,
+            )
 
             // Cartographie
             updateParametre(
