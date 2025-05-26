@@ -89,4 +89,11 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Path("id") techniqueId: String,
     ): Call<CredentialRepresentation>
+
+    @GET("clients")
+    @Headers("Content-Type: application/json")
+    fun getClientRemocraMobile(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
+        @Query("clientId") clientId: String = "remocra-mobile",
+    ): Call<List<ClientRepresentation>>
 }

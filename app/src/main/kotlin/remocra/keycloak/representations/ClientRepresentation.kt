@@ -9,4 +9,6 @@ data class ClientRepresentation(
     val serviceAccountsEnabled: Boolean = true,
     val implicitFlowEnabled: Boolean = false,
     val standardFlowEnabled: Boolean = false,
+    val redirectUris: List<String> = listOf(),
+    val attributes: Map<String, String> = mapOf(),
 )

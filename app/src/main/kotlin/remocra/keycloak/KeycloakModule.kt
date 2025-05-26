@@ -15,9 +15,11 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 class KeycloakModule(
     private val apiBaseUrl: HttpUrl,
     private val tokenBaseUrl: HttpUrl,
+    private val baseUriMobile: HttpUrl,
 ) : RemocraModule() {
 
     override fun configure() {
+        bind(KeycloakUri::class.java).toInstance(KeycloakUri(baseUriMobile.uri().toString()))
         HealthModule.addHealthCheck(binder(), "keycloak").to(KeycloakHealthChecker::class.java)
     }
 
@@ -63,7 +65,19 @@ class KeycloakModule(
                     .addPathSegment("openid-connect")
                     .addPathSegment("") // trailing slash
                     .build(),
+                HttpUrl.get(config.getString("base-uri"))
+                    .newBuilder()
+                    .addPathSegment("realms")
+                    .addPathSegment(config.getString("realm"))
+                    .addPathSegment(".well-known")
+                    .addPathSegment("openid-configuration")
+                    .addPathSegment("") // trailing slash
+                    .build(),
             )
         }
     }
 }
+
+data class KeycloakUri(
+    val baseUri: String,
+)
