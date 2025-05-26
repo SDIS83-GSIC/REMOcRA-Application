@@ -30,6 +30,11 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .fetchOneInto()
 
+    fun getUtilisateurByUsername(username: String): Utilisateur? =
+        dsl.selectFrom(UTILISATEUR)
+            .where(UTILISATEUR.USERNAME.eq(username))
+            .fetchOneInto()
+
     fun setActif(actif: Boolean, idUtilisateur: UUID) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
