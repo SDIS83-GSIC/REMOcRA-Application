@@ -17,6 +17,22 @@
         "$(env:REMOCRA_URL)/callback", # pour l'authentification,
         "$(env:REMOCRA_URL)/"          # pour la redirection après execute-actions-email
       ]
+    },
+    {
+      "clientId": "remocra-mobile",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "serviceAccountsEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "fr.sdis83.remocra.mobile:/login"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "fr.sdis83.remocra.mobile:/logout"
+      }
     }
   ],
   "users": [
