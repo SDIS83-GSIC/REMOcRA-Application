@@ -1,7 +1,6 @@
 package remocra.apimobile.endpoint
 
 import com.google.inject.Inject
-import jakarta.inject.Provider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.Part
 import jakarta.ws.rs.Consumes
@@ -14,6 +13,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
@@ -34,7 +34,7 @@ import remocra.apimobile.usecase.synchrovisite.SynchroVisiteUseCase
 import remocra.app.ParametresProvider
 import remocra.auth.Public
 import remocra.auth.RequireDroits
-import remocra.auth.UserInfo
+import remocra.auth.userInfo
 import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeCivilite
@@ -77,18 +77,17 @@ class SynchroEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var synchroFinTourneeUseCase: SynchroFinTourneeUseCase
 
-    //    @CurrentUser
-    @Inject
-    var currentUser: Provider<UserInfo>? = null
-
     @Inject
     lateinit var parametresProvider: ParametresProvider
+
+    @Context
+    lateinit var securityContext: SecurityContext
 
     @GET
     @Path("/tournees-dispos")
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun getTourneesDispos(): Response {
-        return Response.ok(tourneeUseCase.getTourneesDisponibles(currentUser!!.get())).build()
+        return Response.ok(tourneeUseCase.getTourneesDisponibles(securityContext.userInfo!!)).build()
     }
 
     @Path("/reserver-tournees")
@@ -99,7 +98,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("listIdTournees") listIdTournees: List<UUID>,
     ): Response {
         // On retourne les tournées réservées et celles qu'on n'a pas pu réserver
-        return Response.ok(tourneeUseCase.reserveTournees(listIdTournees, currentUser!!.get().utilisateurId))
+        return Response.ok(tourneeUseCase.reserveTournees(listIdTournees, securityContext.userInfo!!.utilisateurId))
             .build()
     }
 
@@ -108,7 +107,7 @@ class SynchroEndpoint : AbstractEndpoint() {
     @POST
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun annuleReservationTournee(@FormParam("idTournee") idTournee: UUID): Response {
-        return tourneeUseCase.annuleReservation(idTournee, currentUser!!.get().utilisateurId)
+        return tourneeUseCase.annuleReservation(idTournee, securityContext.userInfo!!.utilisateurId)
     }
 
     @Path("/create-pei")
@@ -126,7 +125,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("natureId") natureId: UUID,
     ) =
         synchroNewPeiUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             NewPeiForMobileApiData(
                 idPei,
                 gestionnaireId,
@@ -149,7 +148,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("gestionnaireCode") gestionnaireCode: String,
     ): Response {
         return synchroGestionnaireUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             Gestionnaire(
                 gestionnaireId = gestionnaireId,
                 gestionnaireCode = gestionnaireCode,
@@ -181,7 +180,7 @@ class SynchroEndpoint : AbstractEndpoint() {
     ) =
         // TODO voir pour les id commune, voie et lieu dit
         synchroContactUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             ContactForApiMobileData(
                 contactId = contactId,
                 gestionnaireId = gestionnaireId,
@@ -212,7 +211,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("contactId") contactId: UUID,
         @FormParam("roleId") roleId: UUID,
     ) = synchroContactRoleUseCase.execute(
-        currentUser!!.get(),
+        securityContext.userInfo!!,
         ContactRoleForApiMobileData(
             contactId = contactId,
             roleId = roleId,
@@ -230,7 +229,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         tourneeLibelle: String?,
     ): Response =
         synchroTourneeUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             TourneeSynchroForApiMobileData(
                 tourneeId,
                 tourneeLibelle,
@@ -256,7 +255,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("visiteObservations") visiteObservations: String?,
         @FormParam("hasAnomalieChanges") hasAnomalieChanges: Boolean,
     ) = synchroVisiteUseCase.execute(
-        userInfo = currentUser!!.get(),
+        userInfo = securityContext.userInfo!!,
         element = VisiteForApiMobileData(
             visiteId = visiteId,
             tourneeId = tourneeId,
@@ -283,7 +282,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("anomalieId") anomalieId: UUID,
     ): Response =
         synchroVisiteAnomalieUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             VisiteAnomalieForApiMobileData(
                 visiteId,
                 anomalieId,
@@ -304,7 +303,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         val photoBytes: ByteArray = partPhoto.inputStream.readAllBytes()
 
         return synchroPhotoPeiUseCase.execute(
-            currentUser!!.get(),
+            securityContext.userInfo!!,
             PhotoPeiForApiMobileData(
                 photoId = photoId,
                 peiId = peiId,
@@ -322,6 +321,6 @@ class SynchroEndpoint : AbstractEndpoint() {
         @PathParam("tourneeId")
         tourneeId: UUID,
     ): Response {
-        return Response.ok(synchroFinTourneeUseCase.execute(tourneeId, currentUser!!.get())).build()
+        return Response.ok(synchroFinTourneeUseCase.execute(tourneeId, securityContext.userInfo!!)).build()
     }
 }
