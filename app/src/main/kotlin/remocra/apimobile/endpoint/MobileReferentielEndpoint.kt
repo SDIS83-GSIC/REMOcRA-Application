@@ -29,7 +29,7 @@ class MobileReferentielEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
     @Path("/")
     @GET
-    fun getRefentiel(): Response {
+    fun getReferentiel(): Response {
         return Response.ok(buildReferentielUseCase.execute(securityContext.userInfo!!)).build()
     }
 }
