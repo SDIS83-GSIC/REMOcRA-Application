@@ -2,13 +2,16 @@ package remocra.apimobile.endpoint
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.apimobile.CompatibleVersions
 import remocra.apimobile.usecase.CheckUrlUseCase
 import remocra.auth.Public
 import remocra.web.AbstractEndpoint
@@ -24,10 +27,23 @@ class MobileCheckEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var checkUrlUseCase: CheckUrlUseCase
 
+    @Inject
+    lateinit var compatibleVersions: CompatibleVersions
+
     @Path("/")
     @Public("Point d'entrée pour tester l'accessibilité du serveur")
     @PUT
     fun check(): Response {
         return Response.ok(checkUrlUseCase.execute()).build()
+    }
+
+    @Path("/version")
+    @Public("Point d'entrée pour tester la version")
+    @GET
+    fun checkVersion(
+        @QueryParam("versionName")
+        versionName: String,
+    ): Response {
+        return Response.ok(compatibleVersions.checkCompat(versionName)).build()
     }
 }
