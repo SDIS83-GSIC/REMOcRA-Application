@@ -256,7 +256,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
     ): Collection<RapportPersonnaliseGenere> =
-        dsl.select(
+        dsl.selectDistinct(
             RAPPORT_PERSONNALISE.ID,
             RAPPORT_PERSONNALISE.LIBELLE,
             RAPPORT_PERSONNALISE.DESCRIPTION,
