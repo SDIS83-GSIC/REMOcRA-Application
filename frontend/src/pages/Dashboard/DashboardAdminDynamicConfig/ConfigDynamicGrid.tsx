@@ -28,6 +28,9 @@ type ConfigDynamicGridProps = {
 const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
   const { error: errorToast } = useToastContext();
 
+  // Boolean qui permet de savoir si le dashbord a été initialisé (les composants sont affichés)
+  const [init, setInit] = useState(false);
+
   const heightRow = 100;
   const nbCol = 4;
 
@@ -35,9 +38,6 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
   const [dashboardTitle, setDashboardtitle] = useState<string | null>(
     "Nouveau Dashboard",
   );
-  const [componentsListToMap, setComponentsListToMap] = useState<
-    DashboardComponentConfig[] | []
-  >();
   const [activeQuerysData, setActiveQuerysData] = useState<
     QueryData[] | null
   >(); // Liste des datas des requêtes
@@ -135,47 +135,6 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
     urlApiDashboard + props.activeDashboard.id,
     {},
   );
-  useEffect(() => {
-    if (
-      fetchDashboardConfig.isResolved &&
-      fetchDashboardConfig.data &&
-      props.componentsListDashboard &&
-      props.componentsListDashboard.length === 0 &&
-      props.activeDashboard.id
-    ) {
-      const newComponentList: ComponentDashboard[] = [];
-      const queryIds: string[] = [];
-      fetchDashboardConfig.data.forEach((element: DashboardComponentConfig) => {
-        setComponentsListToMap(
-          componentsListToMap ? [...componentsListToMap, element] : [element],
-        );
-
-        // Set les composants à affiché dans la grille
-        newComponentList.push({
-          id: element.componentId,
-          key: element.componentKey,
-          title: element.componentTitle,
-          config: element.componentConfig,
-          configPosition: {
-            x: element.componentConfigPosition
-              ? element.componentConfigPosition.componentX
-              : 0,
-            y: element.componentConfigPosition
-              ? element.componentConfigPosition.componentY
-              : 0,
-            size: element.componentConfigPosition
-              ? element.componentConfigPosition.componentSize
-              : 3,
-          },
-          queryId: element.componentQueryId,
-        });
-        if (!queryIds.includes(element.componentQueryId)) {
-          queryIds.push(element.componentQueryId);
-        }
-      });
-      props.setComponentsListDashboard(newComponentList);
-    }
-  }, [componentsListToMap, fetchDashboardConfig, props]);
 
   // Récupère en base les profils liés à un dashboard
   const fetchDashboardProfils = useGetRun(
@@ -196,8 +155,42 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
   } = useGetRun(urlApiComponentConfig + props.componentListIdSelected, {});
 
   useEffect(() => {
+    if (fetchDashboardConfig.data && !init) {
+      setInit(true);
+      const newComponentList: ComponentDashboard[] = [];
+      const queryIds: string[] = [];
+      fetchDashboardConfig.data?.forEach(
+        (element: DashboardComponentConfig) => {
+          // Set les composants à affiché dans la grille
+          newComponentList.push({
+            id: element.componentId,
+            key: element.componentKey,
+            title: element.componentTitle,
+            config: element.componentConfig,
+            configPosition: {
+              x: element.componentConfigPosition
+                ? element.componentConfigPosition.componentX
+                : 0,
+              y: element.componentConfigPosition
+                ? element.componentConfigPosition.componentY
+                : 0,
+              size: element.componentConfigPosition
+                ? element.componentConfigPosition.componentSize
+                : 3,
+            },
+            queryId: element.componentQueryId,
+          });
+          if (!queryIds.includes(element.componentQueryId)) {
+            queryIds.push(element.componentQueryId);
+          }
+        },
+      );
+      props.setComponentsListDashboard(newComponentList);
+    }
+
     if (
       fetchComponentDataResolved &&
+      fetchDashboardConfig?.data &&
       props.componentListIdSelected ===
         fetchComponentDataData.dashboardComponentId &&
       (!props.componentsListDashboard ||
@@ -239,6 +232,10 @@ const ConfigDynamicGrid = (props: ConfigDynamicGridProps) => {
     props.componentListIdSelected,
     props.componentsListDashboard,
     setComponentList,
+    fetchDashboardConfig,
+    init,
+    setInit,
+    props,
   ]);
 
   const handleDragStart = (event: any) => {
