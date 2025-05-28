@@ -100,10 +100,10 @@ class UtilisateurEndpoint : AbstractEndpoint() {
         val utilisateurTelephone: String? = null
 
         @FormParam("utilisateurOrganismeId")
-        lateinit var utilisateurOrganismeId: UUID
+        var utilisateurOrganismeId: UUID? = null
 
         @FormParam("utilisateurProfilUtilisateurId")
-        lateinit var utilisateurProfilUtilisateurId: UUID
+        var utilisateurProfilUtilisateurId: UUID? = null
 
         @FormParam("utilisateurCanBeNotified")
         var utilisateurCanBeNotified: Boolean = true
