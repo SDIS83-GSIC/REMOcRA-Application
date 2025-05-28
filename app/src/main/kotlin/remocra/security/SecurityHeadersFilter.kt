@@ -16,7 +16,7 @@ class SecurityHeadersFilter : HttpFilter() {
         private val RELAX_CSP_FOR_DEVELOPMENT = java.lang.Boolean.getBoolean("remocra.http.relax-csp-for-development")
 
         private val BASE_CSP = "base-uri 'self'; frame-ancestors 'none'; default-src 'self'; " +
-            "connect-src 'self' https://api-adresse.data.gouv.fr ${if (RELAX_CSP_FOR_DEVELOPMENT) "ws://localhost:*" else ""}; " +
+            "connect-src 'self' https://data.geopf.fr ${if (RELAX_CSP_FOR_DEVELOPMENT) "ws://localhost:*" else ""}; " +
             "script-src 'self' ${if (RELAX_CSP_FOR_DEVELOPMENT) "'unsafe-eval' 'unsafe-inline'" else ""}; " +
             // FIXME: on inclut unsafe-inline dans style-src-elem à cause de react-select: https://github.com/JedWatson/react-select/issues/4631
             // Il existe un workaround en passant le nonce à l'appli React, en utilisant @emotion/cache et un CacheProvider

@@ -32,7 +32,7 @@ const AdresseTypeahead = ({ map }: { map: Map }) => {
         );
         setState({ ...state, isLoading: true });
         fetch(
-          `https://api-adresse.data.gouv.fr/search?q=${query}&lat=${coord4326[0]}&lon=${coord4326[1]}`,
+          `https://data.geopf.fr/geocodage/search?q=${query}&lat=${coord4326[0]}&lon=${coord4326[1]}`,
         )
           .then((response) => response.json())
           .then((json) =>
