@@ -6,6 +6,7 @@ import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
+import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
 import { toOpenLayer } from "./Map.tsx";
 
 /**
@@ -182,9 +183,12 @@ export function addWktLayer(
 
   const wktFormat = new WKT();
   const feature = wktFormat.readFeature(wktString, {
-    dataProjection: projection.name, // Projection du WKT
-    featureProjection: projection.name, // Projection de la carte
+    dataProjection: projection.name,
+    featureProjection: projection.name,
   });
+
+  // On transforme en 3857
+  feature.getGeometry().transform(projection.name, EPSG_3857);
 
   workingLayer.getSource().addFeature(feature);
 
@@ -213,14 +217,15 @@ export function addWktLayer(
 
   // On zoom sur la carte avce un maxZoom
   const extent = workingLayer.getSource().getExtent();
+
   if (map.getSize()?.every((e) => e === 0)) {
     map.setSize([1000, 800]);
   }
 
   map.getView().fit(extent, {
     padding: [50, 50, 50, 50],
-    maxZoom: 18,
     size: map.getSize(),
+    maxZoom: 18,
   });
 }
 

@@ -123,9 +123,6 @@ const MapComponent = ({
   toggleTool: any;
   activeTool: any;
 }) => {
-  const { state, search } = useLocation();
-  const navigate = useNavigate();
-
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
 
@@ -149,46 +146,6 @@ const MapComponent = ({
     }
     toggleTool("move-view");
   }, [map]);
-
-  useEffect(() => {
-    if (state?.target && map) {
-      map
-        .getView()
-        .fit(
-          transformExtent(
-            state.target.extent,
-            `EPSG:${state.target.srid}`,
-            map.getView().getProjection().getCode(),
-          ),
-          { maxZoom: 20 },
-        );
-      window.history.replaceState({ from: state.from }, "");
-    }
-  }, [state, map]);
-
-  useEffect(() => {
-    // On met dans l'URL le extent pour simplifier la navigation
-    if (map) {
-      map.on("moveend", () => {
-        const view = map.getView();
-        const extent = view.calculateExtent();
-        const params = new URLSearchParams();
-        params.set("extent", extent.join(","));
-        navigate(`?${params.toString()}`, { replace: true, state: state });
-      });
-
-      const params = new URLSearchParams(search);
-
-      if (params.get("extent")) {
-        const geom = params.get("extent")?.split(",");
-        if (!isEmpty(geom)) {
-          map.getView().fit(geom, {
-            maxZoom: 20,
-          });
-        }
-      }
-    }
-  }, [state, map, navigate, search]);
 
   return (
     <div className={"map-wrapper"} id={"map-container"}>
@@ -228,6 +185,9 @@ export const useMapComponent = ({
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
 }) => {
+  const { state, search } = useLocation();
+  const navigate = useNavigate();
+
   const { epsg: projection, extent: defaultExtent, user } = useAppContext();
   const layersState = useGet(url`/api/layers/${typeModule}`, {});
   const afficheCoordonneesState = useGet(
@@ -390,6 +350,49 @@ export const useMapComponent = ({
       return createDataPeiLayer();
     }
   }, [map, projection]);
+
+  useEffect(() => {
+    if (state?.target && map) {
+      map
+        .getView()
+        .fit(
+          transformExtent(
+            state.target.extent,
+            `EPSG:${state.target.srid}`,
+            map.getView().getProjection().getCode(),
+          ),
+          { maxZoom: 20 },
+        );
+      window.history.replaceState({ from: state.from }, "");
+    }
+  }, [state, map]);
+
+  useEffect(() => {
+    // On met dans l'URL le extent pour simplifier la navigation
+    if (map) {
+      map.on("moveend", () => {
+        const view = map.getView();
+        const extent = view.calculateExtent();
+        const params = new URLSearchParams();
+        params.set("extent", extent.join(","));
+        navigate(`?${params.toString()}`, { replace: true, state: state });
+      });
+
+      const params = new URLSearchParams(search);
+
+      if (
+        params.get("extent") &&
+        typeModule !== TypeModuleRemocra.RAPPORT_PERSONNALISE
+      ) {
+        const geom = params.get("extent")?.split(",");
+        if (!isEmpty(geom)) {
+          map.getView().fit(geom, {
+            maxZoom: 20,
+          });
+        }
+      }
+    }
+  }, [state, map, navigate, search, typeModule]);
 
   return {
     map,
