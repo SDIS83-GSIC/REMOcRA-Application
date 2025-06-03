@@ -693,11 +693,11 @@ class PeiRepository
     fun getPeiAccessibility(listPei: Set<UUID>): List<ApiPeiAccessibility> =
         dsl
             .select(
-                PEI.ID,
-                PEI.NUMERO_COMPLET,
-                PEI.MAINTENANCE_DECI_ID,
-                PEI.SERVICE_PUBLIC_DECI_ID,
-                PIBI.SERVICE_EAU_ID,
+                PEI.ID.`as`("id"),
+                PEI.NUMERO_COMPLET.`as`("numeroComplet"),
+                PEI.MAINTENANCE_DECI_ID.`as`("maintenanceDeciId"),
+                PEI.SERVICE_PUBLIC_DECI_ID.`as`("servicePublicDeciId"),
+                PIBI.SERVICE_EAU_ID.`as`("serviceEauxId"),
             )
             .from(PEI)
             .leftJoin(PIBI)
@@ -1014,7 +1014,7 @@ data class ApiPeiAccessibility(
     val numeroComplet: String,
     val maintenanceDeciId: UUID,
     val servicePublicDeciId: UUID,
-    val serviceEauxId: UUID,
+    val serviceEauxId: UUID?,
 )
 
 /**

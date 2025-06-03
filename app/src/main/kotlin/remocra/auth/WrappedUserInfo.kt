@@ -126,6 +126,17 @@ class WrappedUserInfo {
     }
 
     /**
+     * Méthode utilitaire permettant d'aggréger les tests sur le type concret de l'utilisateur wrappé.
+     Facilitateur pour @see [hasDroits] lorsqu'on a un droit unitaire à tester
+     */
+    fun hasDroits(droitWeb: Droit? = null, droitsApi: Collection<DroitApi>? = null): Boolean {
+        return hasDroits(
+            droitsWeb = droitWeb.let { if (it != null) setOf(it) else null },
+            droitsApi = droitsApi,
+        )
+    }
+
+    /**
      * Permet de récupérer la source de la modification : REMOcRA Web, API ou Mobile
      */
     val typeSourceModification: TypeSourceModification

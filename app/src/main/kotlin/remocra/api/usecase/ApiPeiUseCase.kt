@@ -169,7 +169,6 @@ constructor(
         peiForm.reseauSurpresse?.apply { pibiData.pibiSurpresse = this }
         peiForm.reseauAdditive?.apply { pibiData.pibiAdditive = this }
 
-        // TODO voir comment on veut gérer ce cas, pour l'instant on n'a pas d'a12n dans l'API
         return updatePeiUseCase.execute(wrappedUserInfo, pibiData)
     }
 
@@ -195,7 +194,6 @@ constructor(
         peiForm.codeMateriau?.apply { penaData.penaMateriauId = dataCacheProvider.getMateriaux().values.first { it.materiauCode == this }.materiauId }
         peiForm.equipeHBE?.apply { penaData.penaDisponibiliteHbe }
 
-        // TODO idem PIBI
         return updatePeiUseCase.execute(wrappedUserInfo, penaData)
     }
 

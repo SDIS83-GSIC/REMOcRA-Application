@@ -10,6 +10,7 @@ import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.eventbus.tracabilite.TracabiliteEvent
@@ -49,19 +50,39 @@ class DeleteVisiteUseCase @Inject constructor(
     override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteData) {
         // Vérification des droits de création
         when (element.visiteTypeVisite) {
-            TypeVisite.CTP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_CTP_D)) {
+            TypeVisite.CTP -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_CTP_D,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_CTP_FORBIDDEN)
             }
-            TypeVisite.RECEPTION -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECEP_D)) {
+            TypeVisite.RECEPTION -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_RECEP_D,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECEPTION_FORBIDDEN)
             }
-            TypeVisite.RECO_INIT -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_INIT_D)) {
+            TypeVisite.RECO_INIT -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_RECO_INIT_D,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_RECO_INIT_FORBIDDEN)
             }
-            TypeVisite.ROP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_D)) {
+            TypeVisite.ROP -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_RECO_D,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_ROP_FORBIDDEN)
             }
-            TypeVisite.NP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_NP_D)) {
+            TypeVisite.NP -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_NP_D,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_D_NP_FORBIDDEN)
             }
         }

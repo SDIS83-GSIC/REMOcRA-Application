@@ -10,6 +10,7 @@ import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
@@ -80,7 +81,11 @@ class CreateIndisponibiliteTemporaireUseCase
     }
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_C)) {
+        if (!userInfo.hasDroits(
+                droitsWeb = setOf(Droit.INDISPO_TEMP_C),
+                droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+            )
+        ) {
             throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FORBIDDEN_CREATE)
         }
     }

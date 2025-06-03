@@ -10,6 +10,7 @@ import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
@@ -64,11 +65,19 @@ class CreateVisiteUseCase @Inject constructor(
 
         when (element.visiteTypeVisite) {
             TypeVisite.CTP ->
-                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_CONTROLE_TECHNIQUE_C)) {
+                if (!userInfo.hasDroits(
+                        droitWeb = Droit.VISITE_CONTROLE_TECHNIQUE_C,
+                        droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                    )
+                ) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_CTP_FORBIDDEN)
                 }
             TypeVisite.RECEPTION ->
-                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECEP_C)) {
+                if (!userInfo.hasDroits(
+                        droitWeb = Droit.VISITE_RECEP_C,
+                        droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                    )
+                ) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECEPTION_FORBIDDEN)
                 } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
@@ -76,17 +85,29 @@ class CreateVisiteUseCase @Inject constructor(
                     throw RemocraResponseException(errorType = ErrorType.VISITE_RECEPTION_NOT_FIRST)
                 }
             TypeVisite.RECO_INIT ->
-                if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_INIT_C)) {
+                if (!userInfo.hasDroits(
+                        droitWeb = Droit.VISITE_RECO_INIT_C,
+                        droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                    )
+                ) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_C_RECO_INIT_FORBIDDEN)
                 } else if (visiteRepository.visiteAlreadyExists(element.visitePeiId, element.visiteTypeVisite)) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_MEME_TYPE_EXISTE)
                 } else if (nbVisite != 1) {
                     throw RemocraResponseException(errorType = ErrorType.VISITE_RECO_INIT_NOT_FIRST)
                 }
-            TypeVisite.ROP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_RECO_C)) {
+            TypeVisite.ROP -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_RECO_C,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_ROP_FORBIDDEN)
             }
-            TypeVisite.NP -> if (!userInfo.hasDroit(droitWeb = Droit.VISITE_NON_PROGRAMME_C)) {
+            TypeVisite.NP -> if (!userInfo.hasDroits(
+                    droitWeb = Droit.VISITE_NON_PROGRAMME_C,
+                    droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
+                )
+            ) {
                 throw RemocraResponseException(errorType = ErrorType.VISITE_C_NP_FORBIDDEN)
             }
         }
