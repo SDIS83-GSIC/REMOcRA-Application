@@ -85,7 +85,7 @@ pipeline {
     stage ('Publish SBOM') {
       steps {
           smartDependencyTrackPublisher name: 'remocra-v3',
-            version: params.REMOCRA_VERSION,
+            version: versionMajorMinor(params.REMOCRA_VERSION),
             bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/bom.json'],
             classifier: 'APPLICATION',
             hierarchical: true
