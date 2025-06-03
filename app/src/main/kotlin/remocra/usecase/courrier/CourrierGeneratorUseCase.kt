@@ -120,6 +120,9 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
             dateUtils.format(dateUtils.now(), "yyyy-MM-dd-HH-mm-ss")
         }"
 
+        // On s'assure que le répertoire existe, sinon on le crée
+        documentUtils.ensureDirectory(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
+
         val pdfFile = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.pdf")
 
         val options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM)
