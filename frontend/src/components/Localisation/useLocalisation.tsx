@@ -95,6 +95,9 @@ const useLocalisation = () => {
             }
           }
 
+          // On sauvegarde les nouveaux search de la page courrante dans le localStorage
+          localStorage.setItem(currentPathname, search);
+
           navigate(urlDestination, {
             state: {
               ...currentState,
