@@ -65,6 +65,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                         coucheActive = couche.coucheActive,
                         coucheIcone = null,
                         coucheLegende = null,
+                        coucheProxy = false, // TODO à prendre en compte
                     ),
                 )
 

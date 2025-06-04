@@ -164,6 +164,11 @@ open class Couche(
      */
     val LEGENDE: TableField<Record, ByteArray?> = createField(DSL.name("couche_legende"), SQLDataType.BLOB, this, "Image de la légende de la couche")
 
+    /**
+     * The column <code>remocra.couche.couche_proxy</code>.
+     */
+    val PROXY: TableField<Record, Boolean?> = createField(DSL.name("couche_proxy"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

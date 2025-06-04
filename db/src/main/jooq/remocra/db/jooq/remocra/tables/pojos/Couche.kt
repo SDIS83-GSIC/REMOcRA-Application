@@ -34,6 +34,7 @@ data class Couche(
     val coucheActive: Boolean,
     val coucheIcone: ByteArray?,
     val coucheLegende: ByteArray?,
+    val coucheProxy: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -97,6 +98,13 @@ data class Couche(
         } else if (!Arrays.equals(this.coucheLegende, o.coucheLegende)) {
             return false
         }
+        if (this.coucheProxy == null) {
+            if (o.coucheProxy != null) {
+                return false
+            }
+        } else if (this.coucheProxy != o.coucheProxy) {
+            return false
+        }
         return true
     }
 
@@ -117,6 +125,7 @@ data class Couche(
         result = prime * result + this.coucheActive.hashCode()
         result = prime * result + (if (this.coucheIcone == null) 0 else Arrays.hashCode(this.coucheIcone))
         result = prime * result + (if (this.coucheLegende == null) 0 else Arrays.hashCode(this.coucheLegende))
+        result = prime * result + (if (this.coucheProxy == null) 0 else this.coucheProxy.hashCode())
         return result
     }
 
@@ -137,6 +146,7 @@ data class Couche(
         sb.append(", ").append(coucheActive)
         sb.append(", ").append("[binary...]")
         sb.append(", ").append("[binary...]")
+        sb.append(", ").append(coucheProxy)
 
         sb.append(")")
         return sb.toString()
