@@ -11,7 +11,7 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import "ol/ol.css";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
-import { TileWMS, WMTS } from "ol/source";
+import { OSM, TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
@@ -95,6 +95,11 @@ export function toOpenLayer(
           dataProjection: layer.projection,
           featureProjection: layer.projection,
         }),
+      });
+    case "OSM":
+      return new OSM({
+        url: layer.url,
+        crossOrigin: null,
       });
     default:
       return undefined;

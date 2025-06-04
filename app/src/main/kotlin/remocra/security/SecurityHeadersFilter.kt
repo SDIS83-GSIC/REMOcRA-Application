@@ -32,7 +32,8 @@ class SecurityHeadersFilter : HttpFilter() {
         res.setHeader("Referrer-Policy", "strict-origin")
         res.setHeader("Permissions-Policy", "accelerometer=(), camera=(), fullscreen=(self), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()")
         res.setHeader("Cross-Origin-Resource-Policy", "same-site")
-        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp")
+        // OSM memomaps n'autorise pas CORS et/ou n'utilise pas CORP, on passe donc par credentialless
+        res.setHeader("Cross-Origin-Embedder-Policy", "credentialless")
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin")
 
         var csp = BASE_CSP
