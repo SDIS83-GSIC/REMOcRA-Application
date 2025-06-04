@@ -49,12 +49,16 @@ class LayersRetriever {
                                 .path(GeoserverEndpoint::proxy.javaMethod)
                                 .build(module, couche.coucheCode)
                                 .toString()
-                        } else {
+                        } else if (couche.coucheProxy == true) {
+                            // Si la couche doit utiliser le proxy, on passe par notre CartoEndpoint
                             UriBuilder.fromPath(AuthnConstants.API_PATH)
                                 .path(CartoEndpoint::class.java)
                                 .path(CartoEndpoint::proxy.javaMethod)
                                 .build(module, couche.coucheCode)
                                 .toString()
+                        } else {
+                            // Sinon on utilise directement l'url renseignée
+                            couche.coucheUrl
                         },
                         format = couche.coucheFormat,
                         layer = couche.coucheNom,

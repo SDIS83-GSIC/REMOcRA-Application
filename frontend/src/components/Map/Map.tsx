@@ -77,6 +77,7 @@ export function toOpenLayer(
       });
     case "WMTS":
       return new WMTS({
+        crossOrigin: "anonymous",
         url: layer.url,
         layer: layer.layer,
         projection: layer.projection,
