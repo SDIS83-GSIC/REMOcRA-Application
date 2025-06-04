@@ -66,7 +66,7 @@ open class VPeiLastMesures(
            )
     SELECT last_ctrl_debit_pression.pei_id,
        visite_ctrl_debit_pression.visite_ctrl_debit_pression_debit AS debit,
-       visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression AS presion,
+       visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression AS pression,
        visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression_dyn AS pression_dyn
       FROM ((last_ctrl_debit_pression
         JOIN visite ON (((visite.visite_pei_id = last_ctrl_debit_pression.pei_id) AND (visite.visite_date = last_ctrl_debit_pression.date))))
@@ -99,9 +99,9 @@ open class VPeiLastMesures(
     val DEBIT: TableField<Record, Int?> = createField(DSL.name("debit"), SQLDataType.INTEGER, this, "")
 
     /**
-     * The column <code>remocra.v_pei_last_mesures.presion</code>.
+     * The column <code>remocra.v_pei_last_mesures.pression</code>.
      */
-    val PRESION: TableField<Record, BigDecimal?> = createField(DSL.name("presion"), SQLDataType.NUMERIC(5, 2), this, "")
+    val PRESSION: TableField<Record, BigDecimal?> = createField(DSL.name("pression"), SQLDataType.NUMERIC(5, 2), this, "")
 
     /**
      * The column <code>remocra.v_pei_last_mesures.pression_dyn</code>.

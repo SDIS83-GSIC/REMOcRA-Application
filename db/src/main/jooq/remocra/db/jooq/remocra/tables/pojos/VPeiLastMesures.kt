@@ -22,7 +22,7 @@ import javax.annotation.processing.Generated
 data class VPeiLastMesures(
     val peiId: UUID?,
     val debit: Int?,
-    val presion: BigDecimal?,
+    val pression: BigDecimal?,
     val pressionDyn: BigDecimal?,
 ) : Serializable {
 
@@ -51,11 +51,11 @@ data class VPeiLastMesures(
         } else if (this.debit != o.debit) {
             return false
         }
-        if (this.presion == null) {
-            if (o.presion != null) {
+        if (this.pression == null) {
+            if (o.pression != null) {
                 return false
             }
-        } else if (this.presion != o.presion) {
+        } else if (this.pression != o.pression) {
             return false
         }
         if (this.pressionDyn == null) {
@@ -73,7 +73,7 @@ data class VPeiLastMesures(
         var result = 1
         result = prime * result + (if (this.peiId == null) 0 else this.peiId.hashCode())
         result = prime * result + (if (this.debit == null) 0 else this.debit.hashCode())
-        result = prime * result + (if (this.presion == null) 0 else this.presion.hashCode())
+        result = prime * result + (if (this.pression == null) 0 else this.pression.hashCode())
         result = prime * result + (if (this.pressionDyn == null) 0 else this.pressionDyn.hashCode())
         return result
     }
@@ -83,7 +83,7 @@ data class VPeiLastMesures(
 
         sb.append(peiId)
         sb.append(", ").append(debit)
-        sb.append(", ").append(presion)
+        sb.append(", ").append(pression)
         sb.append(", ").append(pressionDyn)
 
         sb.append(")")
