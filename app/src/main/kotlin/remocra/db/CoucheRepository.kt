@@ -58,6 +58,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 coucheFormat = couche.coucheFormat,
                 couchePublic = couche.couchePublic,
                 coucheActive = couche.coucheActive,
+                coucheProxy = couche.coucheProxy ?: true,
                 coucheIconeUrl = null,
                 coucheLegendeUrl = null,
                 profilDroitList = getProfilDroitList(couche.coucheId).map { profilDroit -> profilDroit.profilDroitId },
@@ -128,6 +129,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.FORMAT, couche.coucheFormat)
             .set(COUCHE.PUBLIC, couche.couchePublic)
             .set(COUCHE.ACTIVE, couche.coucheActive)
+            .set(COUCHE.PROXY, couche.coucheProxy)
             .execute()
     }
 

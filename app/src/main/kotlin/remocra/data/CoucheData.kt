@@ -15,6 +15,7 @@ data class CoucheData(
     val coucheFormat: String,
     val couchePublic: Boolean,
     val coucheActive: Boolean,
+    val coucheProxy: Boolean,
     val coucheIconeUrl: String?,
     val coucheLegendeUrl: String?,
     val profilDroitList: Collection<UUID> = listOf(),

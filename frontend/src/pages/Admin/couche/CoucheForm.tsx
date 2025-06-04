@@ -34,6 +34,7 @@ type CoucheType = {
   coucheFormat: string;
   couchePublic: boolean;
   coucheActive: boolean;
+  coucheProxy: boolean;
   coucheIconeUrl?: string;
   coucheLegendeUrl?: string;
   coucheIcone?: File;
@@ -101,6 +102,7 @@ export const prepareValues = (values: CoucheFormType) => {
               coucheFormat: couche.coucheFormat,
               couchePublic: couche.couchePublic,
               coucheActive: couche.coucheActive,
+              coucheProxy: couche.coucheProxy,
               coucheIcone: couche.coucheIcone,
               coucheLegende: couche.coucheLegende,
               coucheIconeUrl: couche.coucheIconeUrl,
@@ -351,6 +353,12 @@ const CoucheForm = () => {
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.couchePublic`}
                             value={couche.couchePublic}
                             label={"Publique"}
+                          />
+                          <CheckBoxInput
+                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProxy`}
+                            value={couche.coucheProxy}
+                            label={"Utiliser le proxy pour charger la couche ?"}
+                            tooltipText="Si la case est décochée, la ressource sera chargée directement sans passer par le proxy de l'application. Utile pour l'affichage des fonds de plan."
                           />
                           <CheckBoxInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheActive`}

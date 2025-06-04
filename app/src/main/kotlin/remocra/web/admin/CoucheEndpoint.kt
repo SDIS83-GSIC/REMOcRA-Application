@@ -68,6 +68,7 @@ class CoucheEndpoint : AbstractEndpoint() {
                                     coucheFormat = couche.coucheFormat,
                                     couchePublic = couche.couchePublic,
                                     coucheActive = couche.coucheActive,
+                                    coucheProxy = couche.coucheProxy ?: false,
                                     coucheIconeUrl = couche.coucheIcone?.let {
                                         UriBuilder.fromPath(AuthnConstants.API_PATH)
                                             .path(LayersEndpoint::class.java)
