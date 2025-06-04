@@ -19,21 +19,18 @@ import java.sql.Types
 
 class GeometryBinding : Binding<Geometry, org.locationtech.jts.geom.Geometry> {
 
-    private val reader: WKBReader = WKBReader()
-    private val writer: WKTWriter = WKTWriter()
+    private val reader: ThreadLocal<WKBReader> = ThreadLocal.withInitial(::WKBReader)
+    private val writer: ThreadLocal<WKTWriter> = ThreadLocal.withInitial(::WKTWriter)
 
     override fun converter(): Converter<Geometry, org.locationtech.jts.geom.Geometry> {
         return object : Converter<Geometry, org.locationtech.jts.geom.Geometry> {
-            override fun from(geom: Geometry?): org.locationtech.jts.geom.Geometry? {
-                if (geom == null || geom.data() == "null") {
-                    return null
-                }
-                return reader.read(WKBReader.hexToBytes(geom.data()))
-            }
+            override fun from(geom: Geometry?): org.locationtech.jts.geom.Geometry? =
+                geom?.data()
+                    ?.takeUnless { it == "null" }
+                    ?.let { reader.get().read(WKBReader.hexToBytes(it)) }
 
-            override fun to(geom: org.locationtech.jts.geom.Geometry?): Geometry? {
-                return if (geom == null) null else Geometry.valueOf(writer.write(geom))
-            }
+            override fun to(geom: org.locationtech.jts.geom.Geometry?): Geometry? =
+                geom?.let { Geometry.valueOf(writer.get().write(it)) }
 
             override fun fromType(): Class<Geometry> {
                 return Geometry::class.java
