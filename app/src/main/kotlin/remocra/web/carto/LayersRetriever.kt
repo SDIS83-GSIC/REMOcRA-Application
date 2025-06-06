@@ -62,6 +62,7 @@ class LayersRetriever {
                             couche.coucheUrl
                         },
                         format = couche.coucheFormat,
+                        crossOrigin = couche.coucheCrossOrigin,
                         layer = couche.coucheNom,
                         active = couche.coucheActive,
                         icone = couche.coucheIcone?.let {
@@ -101,6 +102,7 @@ class LayersRetriever {
         val libelle: String,
         val layer: String?,
         val url: String,
+        val crossOrigin: String?,
         val format: String?,
         val active: Boolean = false,
         val icone: String?,

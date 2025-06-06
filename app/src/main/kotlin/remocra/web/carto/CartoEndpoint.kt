@@ -40,9 +40,14 @@ class CartoEndpoint : AbstractEndpoint() {
         @Context securityContext: SecurityContext,
     ): Response {
         val user = securityContext.userInfo
-
-        val couche = dataCacheProvider.get().mapCouches.values.firstOrNull {
-            it.coucheCode == code && (user!!.isSuperAdmin || it.couchePublic || it.profilDroitList.contains(user.profilDroits!!.profilDroitId))
+        val couche = if (user == null) {
+            dataCacheProvider.get().mapCouches.values.firstOrNull {
+                it.coucheCode == code && it.couchePublic
+            }
+        } else {
+            dataCacheProvider.get().mapCouches.values.firstOrNull {
+                it.coucheCode == code && (user.isSuperAdmin || it.couchePublic || it.profilDroitList.contains(user.profilDroits!!.profilDroitId))
+            }
         }
         if (couche == null) {
             // On ne sait pas ici si c'est un problème de droit ou de couche inexistante
