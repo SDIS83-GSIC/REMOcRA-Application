@@ -66,6 +66,7 @@ class CoucheEndpoint : AbstractEndpoint() {
                                     coucheUrl = couche.coucheUrl,
                                     coucheNom = couche.coucheNom,
                                     coucheFormat = couche.coucheFormat,
+                                    coucheCrossOrigin = couche.coucheCrossOrigin,
                                     couchePublic = couche.couchePublic,
                                     coucheActive = couche.coucheActive,
                                     coucheProxy = couche.coucheProxy ?: false,

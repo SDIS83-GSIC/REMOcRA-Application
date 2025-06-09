@@ -14,6 +14,7 @@ data class CoucheData(
     val coucheUrl: String,
     val coucheNom: String?,
     val coucheFormat: String?,
+    val coucheCrossOrigin: String?,
     val couchePublic: Boolean,
     val coucheActive: Boolean,
     val coucheProxy: Boolean,

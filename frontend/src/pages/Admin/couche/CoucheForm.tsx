@@ -1,37 +1,40 @@
-import { array, object } from "yup";
+import { FieldArray, useFormikContext } from "formik";
+import { useState } from "react";
 import { Button, Image, ListGroup } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import { FieldArray, useFormikContext } from "formik";
-import { useState } from "react";
+import { array, object } from "yup";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
+import DeleteButton from "../../../components/Button/DeleteButton.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
   FileInput,
   FormContainer,
   Multiselect,
+  SelectInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import { IconDelete } from "../../../components/Icon/Icon.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
-import DeleteButton from "../../../components/Button/DeleteButton.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
+import { IconDelete } from "../../../components/Icon/Icon.tsx";
+import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
+import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
+import url from "../../../module/fetch.tsx";
 
 type CoucheType = {
   coucheId?: string;
   coucheCode: string;
   coucheLibelle: string;
   coucheOrdre: number;
-  coucheSource: string;
+  coucheSource: SOURCE_CARTO;
   coucheProjection: string;
   coucheUrl: string;
   coucheNom: string;
   coucheFormat: string;
+  coucheCrossOrigin: string;
   couchePublic: boolean;
   coucheActive: boolean;
   coucheProxy: boolean;
@@ -100,6 +103,7 @@ export const prepareValues = (values: CoucheFormType) => {
               coucheUrl: couche.coucheUrl,
               coucheNom: couche.coucheNom,
               coucheFormat: couche.coucheFormat,
+              coucheCrossOrigin: couche.coucheCrossOrigin,
               couchePublic: couche.couchePublic,
               coucheActive: couche.coucheActive,
               coucheProxy: couche.coucheProxy,
@@ -147,6 +151,14 @@ const CoucheForm = () => {
 
   const listGroups = values.groupeCoucheList;
   const accordionGroups: { header: string; content: ReactNode }[] = [];
+
+  const typeSourceCarto = Object.values(SOURCE_CARTO).map((key) => {
+    return {
+      id: key,
+      code: key,
+      libelle: key,
+    };
+  });
 
   listGroups.map((group, index) => {
     const contentGroup = (
@@ -253,7 +265,26 @@ const CoucheForm = () => {
                         <Col xs={12} className="p-2 bg-secondary mt-2">
                           <h4 className={"m-0 p-0 text-center h6"}>Flux</h4>
                         </Col>
-
+                        <Col xs={12} lg={6} xxl={4}>
+                          <SelectInput
+                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheSource`}
+                            label="Source"
+                            options={typeSourceCarto}
+                            getOptionValue={(t) => t.id}
+                            getOptionLabel={(t) => t.libelle}
+                            onChange={(e) => {
+                              setFieldValue(
+                                `groupeCoucheList.${index}.coucheList.${groupIndex}.coucheSource`,
+                                typeSourceCarto.find((type) => type.id === e.id)
+                                  ?.id,
+                              );
+                            }}
+                            defaultValue={typeSourceCarto.find(
+                              (type) => type.id === couche.coucheSource,
+                            )}
+                            required={true}
+                          />
+                        </Col>
                         <Col xs={12} lg={6} xxl={4}>
                           <TextInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheUrl`}
@@ -263,42 +294,50 @@ const CoucheForm = () => {
                             required={true}
                           />
                         </Col>
-                        <Col xs={12} lg={6} xxl={4}>
-                          <TextInput
-                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheNom`}
-                            value={couche.coucheNom}
-                            label={"Nom"}
-                            placeholder={"Nom"}
-                            required={true}
-                          />
-                        </Col>
-                        <Col xs={12} lg={6} xxl={4}>
-                          <TextInput
-                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheSource`}
-                            value={couche.coucheSource}
-                            label={"Source"}
-                            placeholder={"Source"}
-                            required={true}
-                          />
-                        </Col>
-                        <Col xs={12} lg={6} xxl={4}>
-                          <TextInput
-                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProjection`}
-                            value={couche.coucheProjection}
-                            label={"Projection"}
-                            placeholder={"Projection"}
-                            required={true}
-                          />
-                        </Col>
-                        <Col xs={12} lg={6} xxl={4}>
-                          <TextInput
-                            name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheFormat`}
-                            value={couche.coucheFormat}
-                            label={"Format"}
-                            placeholder={"Format"}
-                            required={true}
-                          />
-                        </Col>
+
+                        {couche.coucheSource !== SOURCE_CARTO.OSM && (
+                          <>
+                            <Col xs={12} lg={6} xxl={4}>
+                              <TextInput
+                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheNom`}
+                                value={couche.coucheNom}
+                                label={"Nom"}
+                                placeholder={"Nom"}
+                                required={true}
+                              />
+                            </Col>
+                            <Col xs={12} lg={6} xxl={4}>
+                              <TextInput
+                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProjection`}
+                                value={couche.coucheProjection}
+                                label={"Projection"}
+                                placeholder={"Projection"}
+                                required={true}
+                              />
+                            </Col>
+                            <Col xs={12} lg={6} xxl={4}>
+                              <TextInput
+                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheFormat`}
+                                value={couche.coucheFormat}
+                                label={"Format"}
+                                placeholder={"Format"}
+                                required={true}
+                              />
+                            </Col>
+                          </>
+                        )}
+                        {(couche.coucheSource === SOURCE_CARTO.WMTS ||
+                          couche.coucheSource === SOURCE_CARTO.OSM) && (
+                          <Col xs={12} lg={6} xxl={4}>
+                            <TextInput
+                              name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheCrossOrigin`}
+                              value={couche.coucheCrossOrigin}
+                              label={"CrossOrigin"}
+                              placeholder={"CrossOrigin"}
+                              required={false}
+                            />
+                          </Col>
+                        )}
                         <Col xs={12} className="p-2 bg-secondary mt-2">
                           <h4 className={"m-0 p-0  text-center h6"}>
                             Autorisations
