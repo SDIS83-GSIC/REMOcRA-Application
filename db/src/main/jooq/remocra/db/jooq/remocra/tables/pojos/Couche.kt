@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import remocra.db.jooq.remocra.enums.SourceCarto
 import java.io.Serializable
 import java.util.Arrays
 import java.util.UUID
@@ -25,16 +26,17 @@ data class Couche(
     val coucheGroupeCoucheId: UUID,
     val coucheOrdre: Int,
     val coucheLibelle: String,
-    val coucheSource: String,
-    val coucheProjection: String,
+    val coucheSource: SourceCarto,
+    val coucheProjection: String?,
     val coucheUrl: String,
-    val coucheNom: String,
-    val coucheFormat: String,
+    val coucheNom: String?,
+    val coucheFormat: String?,
     val couchePublic: Boolean,
     val coucheActive: Boolean,
     val coucheIcone: ByteArray?,
     val coucheLegende: ByteArray?,
     val coucheProxy: Boolean?,
+    val coucheCrossOrigin: String?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -66,16 +68,28 @@ data class Couche(
         if (this.coucheSource != o.coucheSource) {
             return false
         }
-        if (this.coucheProjection != o.coucheProjection) {
+        if (this.coucheProjection == null) {
+            if (o.coucheProjection != null) {
+                return false
+            }
+        } else if (this.coucheProjection != o.coucheProjection) {
             return false
         }
         if (this.coucheUrl != o.coucheUrl) {
             return false
         }
-        if (this.coucheNom != o.coucheNom) {
+        if (this.coucheNom == null) {
+            if (o.coucheNom != null) {
+                return false
+            }
+        } else if (this.coucheNom != o.coucheNom) {
             return false
         }
-        if (this.coucheFormat != o.coucheFormat) {
+        if (this.coucheFormat == null) {
+            if (o.coucheFormat != null) {
+                return false
+            }
+        } else if (this.coucheFormat != o.coucheFormat) {
             return false
         }
         if (this.couchePublic != o.couchePublic) {
@@ -105,6 +119,13 @@ data class Couche(
         } else if (this.coucheProxy != o.coucheProxy) {
             return false
         }
+        if (this.coucheCrossOrigin == null) {
+            if (o.coucheCrossOrigin != null) {
+                return false
+            }
+        } else if (this.coucheCrossOrigin != o.coucheCrossOrigin) {
+            return false
+        }
         return true
     }
 
@@ -117,15 +138,16 @@ data class Couche(
         result = prime * result + this.coucheOrdre.hashCode()
         result = prime * result + this.coucheLibelle.hashCode()
         result = prime * result + this.coucheSource.hashCode()
-        result = prime * result + this.coucheProjection.hashCode()
+        result = prime * result + (if (this.coucheProjection == null) 0 else this.coucheProjection.hashCode())
         result = prime * result + this.coucheUrl.hashCode()
-        result = prime * result + this.coucheNom.hashCode()
-        result = prime * result + this.coucheFormat.hashCode()
+        result = prime * result + (if (this.coucheNom == null) 0 else this.coucheNom.hashCode())
+        result = prime * result + (if (this.coucheFormat == null) 0 else this.coucheFormat.hashCode())
         result = prime * result + this.couchePublic.hashCode()
         result = prime * result + this.coucheActive.hashCode()
         result = prime * result + (if (this.coucheIcone == null) 0 else Arrays.hashCode(this.coucheIcone))
         result = prime * result + (if (this.coucheLegende == null) 0 else Arrays.hashCode(this.coucheLegende))
         result = prime * result + (if (this.coucheProxy == null) 0 else this.coucheProxy.hashCode())
+        result = prime * result + (if (this.coucheCrossOrigin == null) 0 else this.coucheCrossOrigin.hashCode())
         return result
     }
 
@@ -147,6 +169,7 @@ data class Couche(
         sb.append(", ").append("[binary...]")
         sb.append(", ").append("[binary...]")
         sb.append(", ").append(coucheProxy)
+        sb.append(", ").append(coucheCrossOrigin)
 
         sb.append(")")
         return sb.toString()

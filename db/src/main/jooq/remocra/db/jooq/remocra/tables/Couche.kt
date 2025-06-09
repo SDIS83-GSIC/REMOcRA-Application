@@ -25,6 +25,7 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_CODE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_ORDRE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_PKEY
@@ -116,13 +117,13 @@ open class Couche(
      * The column <code>remocra.couche.couche_source</code>. Type de la couche
      * (WMS, WMTS, etc.)
      */
-    val SOURCE: TableField<Record, String?> = createField(DSL.name("couche_source"), SQLDataType.CLOB.nullable(false), this, "Type de la couche (WMS, WMTS, etc.)")
+    val SOURCE: TableField<Record, SourceCarto?> = createField(DSL.name("couche_source"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(SourceCarto::class.java), this, "Type de la couche (WMS, WMTS, etc.)")
 
     /**
      * The column <code>remocra.couche.couche_projection</code>. Référentiel de
      * la couche
      */
-    val PROJECTION: TableField<Record, String?> = createField(DSL.name("couche_projection"), SQLDataType.CLOB.nullable(false), this, "Référentiel de la couche")
+    val PROJECTION: TableField<Record, String?> = createField(DSL.name("couche_projection"), SQLDataType.CLOB, this, "Référentiel de la couche")
 
     /**
      * The column <code>remocra.couche.couche_url</code>. URL de la source
@@ -134,12 +135,12 @@ open class Couche(
      * The column <code>remocra.couche.couche_nom</code>. Nom de la couche issue
      * de la source
      */
-    val NOM: TableField<Record, String?> = createField(DSL.name("couche_nom"), SQLDataType.CLOB.nullable(false), this, "Nom de la couche issue de la source")
+    val NOM: TableField<Record, String?> = createField(DSL.name("couche_nom"), SQLDataType.CLOB, this, "Nom de la couche issue de la source")
 
     /**
      * The column <code>remocra.couche.couche_format</code>. Format de la couche
      */
-    val FORMAT: TableField<Record, String?> = createField(DSL.name("couche_format"), SQLDataType.CLOB.nullable(false), this, "Format de la couche")
+    val FORMAT: TableField<Record, String?> = createField(DSL.name("couche_format"), SQLDataType.CLOB, this, "Format de la couche")
 
     /**
      * The column <code>remocra.couche.couche_public</code>. Indique si la
@@ -168,6 +169,11 @@ open class Couche(
      * The column <code>remocra.couche.couche_proxy</code>.
      */
     val PROXY: TableField<Record, Boolean?> = createField(DSL.name("couche_proxy"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "")
+
+    /**
+     * The column <code>remocra.couche.couche_cross_origin</code>.
+     */
+    val CROSS_ORIGIN: TableField<Record, String?> = createField(DSL.name("couche_cross_origin"), SQLDataType.CLOB, this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

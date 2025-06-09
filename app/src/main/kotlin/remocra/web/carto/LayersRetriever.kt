@@ -6,6 +6,7 @@ import remocra.auth.AuthnConstants
 import remocra.auth.WrappedUserInfo
 import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
+import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.geoserver.GeoserverModule
 import java.util.UUID
@@ -95,12 +96,12 @@ class LayersRetriever {
         val id: UUID,
         val code: String,
         val ordre: Int,
-        val source: String,
-        val projection: String,
+        val source: SourceCarto,
+        val projection: String?,
         val libelle: String,
-        val layer: String,
+        val layer: String?,
         val url: String,
-        val format: String,
+        val format: String?,
         val active: Boolean = false,
         val icone: String?,
         val legende: String?,

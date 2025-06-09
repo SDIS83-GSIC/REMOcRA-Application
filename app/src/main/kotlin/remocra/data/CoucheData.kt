@@ -1,5 +1,6 @@
 package remocra.data
 
+import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.enums.TypeModule
 import java.util.UUID
 
@@ -8,11 +9,11 @@ data class CoucheData(
     val coucheCode: String,
     val coucheLibelle: String,
     val coucheOrdre: Int,
-    val coucheSource: String,
-    val coucheProjection: String,
+    val coucheSource: SourceCarto,
+    val coucheProjection: String?,
     val coucheUrl: String,
-    val coucheNom: String,
-    val coucheFormat: String,
+    val coucheNom: String?,
+    val coucheFormat: String?,
     val couchePublic: Boolean,
     val coucheActive: Boolean,
     val coucheProxy: Boolean,
