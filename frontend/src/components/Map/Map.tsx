@@ -9,6 +9,7 @@ import { GeoJSON, WKT } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import { bbox } from "ol/loadingstrategy";
 import "ol/ol.css";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
 import { OSM, TileWMS, WMTS } from "ol/source";
@@ -21,6 +22,7 @@ import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import { TYPE_AFFICHAGE_COORDONNEES } from "../../enums/TypeAffichageCoordonnees.tsx";
 import url from "../../module/fetch.tsx";
 import { EPSG_3857, EPSG_4326 } from "../../utils/constantsUtils.tsx";
@@ -62,7 +64,7 @@ export function toOpenLayer(
   layer: any,
 ): TileSource | WMTS | VectorSource | undefined {
   switch (layer.source) {
-    case "WMS":
+    case SOURCE_CARTO.WMS:
       return new TileWMS({
         url: layer.url,
         params: {
@@ -75,9 +77,9 @@ export function toOpenLayer(
           style: "normal",
         },
       });
-    case "WMTS":
+    case SOURCE_CARTO.WMTS:
       return new WMTS({
-        crossOrigin: "anonymous",
+        crossOrigin: layer.crossOrigin ?? "anonymous",
         url: layer.url,
         layer: layer.layer,
         projection: layer.projection,
@@ -86,7 +88,7 @@ export function toOpenLayer(
         tileGrid: tileGrid,
         style: "normal",
       });
-    case "GSON":
+    case SOURCE_CARTO.GEOJSON:
       return new VectorSource({
         url: layer.url,
         loader: layer.loader,
@@ -96,10 +98,24 @@ export function toOpenLayer(
           featureProjection: layer.projection,
         }),
       });
-    case "OSM":
+    case SOURCE_CARTO.OSM:
       return new OSM({
         url: layer.url,
-        crossOrigin: null,
+        crossOrigin: layer.crossOrigin ?? null,
+      });
+
+    case SOURCE_CARTO.WFS:
+      return new VectorSource({
+        url:
+          layer.url +
+          "&request=GetFeature&typename=" +
+          layer.layer +
+          "&outputFormat=" +
+          (layer.format ?? "application/json") +
+          "&srsname=" +
+          layer.projection,
+        format: new GeoJSON({}),
+        strategy: bbox,
       });
     default:
       return undefined;
@@ -273,10 +289,16 @@ export const useMapComponent = ({
         libelle: group.libelle,
         ordre: group.ordre,
         layers: group.layers.map((layer) => {
-          const openlayer = new TileLayer({
-            source: toOpenLayer(layer),
-            zIndex: layer.ordre,
-          });
+          const openlayer =
+            layer.source === SOURCE_CARTO.WFS
+              ? new VectorLayer({
+                  source: toOpenLayer(layer),
+                  zIndex: layer.ordre,
+                })
+              : new TileLayer({
+                  source: toOpenLayer(layer),
+                  zIndex: layer.ordre,
+                });
           if (layer.active) {
             map?.addLayer(openlayer);
             layerListRef.current?.addActiveLayer(getUid(openlayer));
