@@ -19,6 +19,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     MDP_ADMINISTRATEUR(ParametreSection.MOBILE),
     MODE_DECONNECTE(ParametreSection.MOBILE),
     CREATION_PEI_MOBILE(ParametreSection.MOBILE),
+    BRIDAGE_PHOTO(ParametreSection.MOBILE),
 
     // Cartographie
     COORDONNEES_FORMAT_AFFICHAGE(ParametreSection.CARTOGRAPHIE),
