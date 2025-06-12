@@ -59,7 +59,7 @@ data class ParametresSectionMobile(
     val mdpAdministrateur: String?,
     val modeDeconnecte: Boolean?,
     val creationPeiMobile: Boolean?,
-
+    val bridagePhoto: Boolean,
 )
 
 data class ParametresSectionCartographie(

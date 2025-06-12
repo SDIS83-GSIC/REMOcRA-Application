@@ -13,6 +13,7 @@ import remocra.data.ParametresSectionPermis
 import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
 import remocra.usecase.AbstractUseCase
+import remocra.utils.getBoolean
 import remocra.utils.getBooleanOrNull
 import remocra.utils.getInt
 import remocra.utils.getIntOrNull
@@ -54,6 +55,7 @@ class ParametresUseCase : AbstractUseCase() {
             mdpAdministrateur = mapParametres.getStringOrNull(ParametreEnum.MDP_ADMINISTRATEUR.name),
             modeDeconnecte = mapParametres.getBooleanOrNull(ParametreEnum.MODE_DECONNECTE.name),
             creationPeiMobile = mapParametres.getBooleanOrNull(ParametreEnum.CREATION_PEI_MOBILE.name),
+            bridagePhoto = mapParametres.getBoolean(ParametreEnum.BRIDAGE_PHOTO.name),
         )
 
         val cartographie = ParametresSectionCartographie(

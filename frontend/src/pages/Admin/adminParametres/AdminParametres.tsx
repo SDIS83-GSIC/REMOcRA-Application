@@ -48,6 +48,7 @@ type ParametresSectionMobile = {
   caracteristiquesPibi: string[];
   dureeValiditeToken: number;
   gestionAgent: string;
+  bridagePhoto: boolean;
 };
 
 type ParametresSectionCartographie = {
@@ -640,6 +641,16 @@ const AdminApplicationMobile = ({
             checked={values?.creationPeiMobile}
             tooltipText={
               "Active ou non la fonctionnalité de création de PEI depuis l'application mobile ; si activée, l'utilisateur devra toujours posséder le droit adéquat."
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="mobile.bridagePhoto"
+            label="Brider la taille des photos"
+            checked={values?.bridagePhoto}
+            tooltipText={
+              "Les photos prises par l'application mobile peut être de taille importante, et en fonction de la volumétrie des PEI des tournées, on peut avoir des problèmes de synchronisation. Réduire à environ 1920*1080px les photos limite drastiquement le poids de celles-ci, donc les problèmes liés lors de la synchronisation."
             }
           />
         </AdminParametre>

@@ -185,6 +185,11 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             updateParametre(ParametreEnum.MDP_ADMINISTRATEUR, parametresAdminData.mobile.mdpAdministrateur)
             updateParametre(ParametreEnum.MODE_DECONNECTE, parametresAdminData.mobile.modeDeconnecte?.toString())
             updateParametre(ParametreEnum.CREATION_PEI_MOBILE, parametresAdminData.mobile.creationPeiMobile?.toString())
+
+            updateParametre(
+                ParametreEnum.BRIDAGE_PHOTO,
+                parametresAdminData.mobile.bridagePhoto.toString(),
+            )
         }
         return element
     }
