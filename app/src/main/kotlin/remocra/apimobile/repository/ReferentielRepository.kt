@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
@@ -116,6 +117,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         return dsl
             .select(
                 CONTACT.ID,
+                CONTACT.ACTIF,
                 L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID,
                 CONTACT.FONCTION_CONTACT_ID,
                 CONTACT.CIVILITE,
@@ -143,6 +145,8 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             .leftJoin(FONCTION_CONTACT).on(CONTACT.FONCTION_CONTACT_ID.eq(FONCTION_CONTACT.ID))
             .leftJoin(LIEU_DIT).on(CONTACT.LIEU_DIT_ID.eq(LIEU_DIT.ID))
             .leftJoin(COMMUNE).on(CONTACT.COMMUNE_ID.eq(COMMUNE.ID))
+            .join(GESTIONNAIRE)
+            .on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
             .fetchInto()
     }
 

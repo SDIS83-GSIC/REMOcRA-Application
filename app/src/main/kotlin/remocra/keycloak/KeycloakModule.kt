@@ -35,8 +35,10 @@ class KeycloakModule(
 
     @Provides
     @Singleton
-    fun provideKeycloakApi(retrofit: Retrofit.Builder): KeycloakApi {
-        return retrofit.baseUrl(apiBaseUrl).build()
+    fun provideKeycloakApi(retrofit: Retrofit.Builder, mapper: ObjectMapper): KeycloakApi {
+        // On n'utilise pas toutes les propriétés des objets (UserRepresentation, RoleRepresentation
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        return retrofit.baseUrl(apiBaseUrl).addConverterFactory(JacksonConverterFactory.create(mapper)).build()
             .create(KeycloakApi::class.java)
     }
 

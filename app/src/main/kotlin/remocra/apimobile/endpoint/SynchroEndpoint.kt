@@ -183,6 +183,7 @@ class SynchroEndpoint : AbstractEndpoint() {
             securityContext.userInfo,
             ContactForApiMobileData(
                 contactId = contactId,
+                contactActif = true,
                 gestionnaireId = gestionnaireId,
                 contactFonctionContactId = contactFonctionContactId,
                 contactCivilite = contactCivilite,

@@ -5,6 +5,7 @@ import java.util.UUID
 
 class ContactForApiMobileData(
     val contactId: UUID,
+    val contactActif: Boolean,
     val gestionnaireId: UUID,
     val contactFonctionContactId: UUID?,
     val contactCivilite: TypeCivilite?,

@@ -9,7 +9,6 @@ import remocra.apimobile.repository.ReferentielRepository
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
-import remocra.data.GlobalData
 import remocra.data.enums.ParametreEnum
 import remocra.db.FonctionContactRepository
 import remocra.db.GestionnaireRepository
@@ -20,10 +19,13 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.pojos.Domaine
+import remocra.db.jooq.remocra.tables.pojos.FonctionContact
+import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.pojos.NatureDeci
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
+import remocra.db.jooq.remocra.tables.pojos.RoleContact
 import remocra.usecase.AbstractUseCase
 import remocra.utils.getLibelleTypeVisite
 import java.util.UUID
@@ -84,9 +86,9 @@ class BuildReferentielUseCase : AbstractUseCase() {
         return ReferentielResponse(
             listPei = buildAdresseCompleteUseCase.execute(referentielRepository.getPeiList()),
             listPeiAnomalies = referentielRepository.getPeiAnomalieList(),
-            listGestionnaire = gestionnaireRepository.getAll(),
+            listGestionnaire = gestionnaireRepository.getAllForMobile(),
             listContact = referentielRepository.getContactList(),
-            listRole = roleRepository.getAll(),
+            listRole = roleRepository.getAllForMobile(),
             listContactRole = referentielRepository.getContactRoleList(),
             listTypePei = TypePei.entries,
             listNature = dataCacheProvider.getNatures().values,
@@ -104,17 +106,17 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listDroit = userInfo.droits!!.map { it.name },
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
-            listFonctionContact = fonctionContactRepository.getAll(),
-            listDomaine = dataCacheProvider.getDomaines().values.filter { it.domaineActif },
+            listFonctionContact = fonctionContactRepository.getAllForMobile(),
+            listDomaine = dataCacheProvider.getDomaines().values,
         )
     }
 
     data class ReferentielResponse(
         val listPei: Collection<PeiForApiMobileData>,
         val listPeiAnomalies: Collection<PeiAnomalieForApiMobileData>,
-        val listGestionnaire: Collection<GlobalData.IdCodeLibelleData>,
+        val listGestionnaire: Collection<Gestionnaire>,
         val listContact: Collection<ContactForApiMobileData>,
-        val listRole: Collection<GlobalData.IdCodeLibelleData>,
+        val listRole: Collection<RoleContact>,
         val listContactRole: Collection<ContactRoleForApiMobileData>,
         val listTypePei: Collection<TypePei>,
         val listNature: Collection<Nature>,
@@ -125,7 +127,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
         val listTypeVisite: Collection<CodeLibelleTypeVisite>,
         val listParametre: Collection<Parametre>,
         val listDroit: Collection<String>,
-        val listFonctionContact: Collection<GlobalData.IdCodeLibelleData>,
+        val listFonctionContact: Collection<FonctionContact>,
         val listDomaine: Collection<Domaine>,
 
         val utilisateurConnecte: String,

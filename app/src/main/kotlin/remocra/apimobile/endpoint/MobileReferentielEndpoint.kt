@@ -26,7 +26,7 @@ class MobileReferentielEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var buildReferentielUseCase: BuildReferentielUseCase
 
-    @RequireDroits([Droit.MOBILE_GESTIONNAIRE_C])
+    @RequireDroits([Droit.PEI_R])
     @Path("/")
     @GET
     fun getReferentiel(): Response {

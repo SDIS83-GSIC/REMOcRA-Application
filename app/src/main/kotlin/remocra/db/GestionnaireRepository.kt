@@ -28,6 +28,12 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
             .orderBy(GESTIONNAIRE.LIBELLE)
             .fetchInto()
 
+    fun getAllForMobile(): Collection<Gestionnaire> =
+        dsl.selectFrom(GESTIONNAIRE)
+            .where(GESTIONNAIRE.ACTIF)
+            .orderBy(GESTIONNAIRE.LIBELLE)
+            .fetchInto()
+
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<GestionnaireWithHasContact> =
         dsl.select(
             *GESTIONNAIRE.fields(),
