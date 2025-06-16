@@ -42,7 +42,8 @@
       "serviceAccountClientId": "remocra",
       "clientRoles": {
         "realm-management": [
-          "manage-users"
+          "manage-users",
+          "manage-clients"
         ]
       }
     }
