@@ -47,6 +47,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiTypePei: data?.peiTypePei ?? null,
   peiDisponibiliteTerrestre: data?.peiDisponibiliteTerrestre ?? null,
   peiAnneeFabrication: data?.peiAnneeFabrication ?? null,
+  peiObservation: data?.peiObservation ?? null,
 
   coordonneeX: data?.coordonneeX ?? null,
   coordonneeY: data?.coordonneeY ?? null,
@@ -154,6 +155,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiAutoriteDeciId: values.peiAutoriteDeciId ?? null,
     peiServicePublicDeciId: values.peiServicePublicDeciId ?? null,
     peiMaintenanceDeciId: values.peiMaintenanceDeciId ?? null,
+    peiObservation: values.peiObservation ?? null,
 
     peiCommuneId: values.peiCommuneId ?? null,
     peiVoieId: values.peiVoieId ?? null,
@@ -766,6 +768,16 @@ const FormEntetePei = ({
               </Col>
             </>
           )}
+        </Row>
+        <Row className="mt-3">
+          <Col>
+            <TextAreaInput
+              name="peiObservation"
+              label="Observations"
+              required={false}
+              disabled={disablePeiUpdate}
+            />
+          </Col>
         </Row>
       </>
     )

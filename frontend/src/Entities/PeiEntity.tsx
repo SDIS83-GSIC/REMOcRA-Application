@@ -8,6 +8,7 @@ export type PeiEntity = {
   peiNumeroInterne: number;
   peiTypePei: TYPE_PEI;
   peiDisponibiliteTerrestre: DISPONIBILITE_PEI;
+  peiObservation: string;
 
   peiAutoriteDeciId: string;
   peiServicePublicDeciId: string;
