@@ -40,7 +40,7 @@ class CartoEndpoint : AbstractEndpoint() {
         @Context securityContext: SecurityContext,
     ): Response {
         val user = securityContext.userInfo
-        val couche = if (user == null) {
+        val couche = if (user.userInfo == null) {
             dataCacheProvider.get().mapCouches.values.firstOrNull {
                 it.coucheCode == code && it.couchePublic
             }
