@@ -82,7 +82,7 @@ pipeline {
             sh '''
               npm ci
               npm run lint
-              npm run build --no-cache
+              npm run build -- --no-cache
               npm sbom --sbom-format cyclonedx --omit dev --sbom-type application --package-lock-only true > npm-sbom.json
               '''
           }
