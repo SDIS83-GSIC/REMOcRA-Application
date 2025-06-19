@@ -5,6 +5,7 @@ import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
 import { toOpenLayer } from "./Map.tsx";
@@ -104,7 +105,7 @@ export function createPointLayer(
   style?: Style,
 ) {
   const vectorSource = toOpenLayer({
-    source: "GSON",
+    source: SOURCE_CARTO.GEOJSON,
     loader: async (
       extent: any,
       resolution: any,
