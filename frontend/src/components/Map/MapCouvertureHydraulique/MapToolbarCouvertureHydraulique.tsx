@@ -114,6 +114,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       .text()
       .then(() => {
         successToast("Couverture hydraulique effacée");
+        refreshLayerGeoserver(map);
       })
       .catch((reason: string) => {
         errorToast(reason);
@@ -540,7 +541,10 @@ const MapToolbarCouvertureHydraulique = ({
           etudeId={etudeId}
           listePeiId={listePeiId}
           listePeiProjetId={listePeiProjetId}
-          closeVolet={handleCloseTraceeCouverture}
+          closeVolet={() => {
+            refreshLayerGeoserver(map);
+            handleCloseTraceeCouverture();
+          }}
         />
       </Volet>
       <TooltipMapEditPeiProjet
