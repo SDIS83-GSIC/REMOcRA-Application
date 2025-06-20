@@ -233,7 +233,10 @@ export function addWktLayer(
 
 export function refreshLayerGeoserver(map: Map) {
   map.getLayers().forEach((layer) => {
-    if (layer.getSource().params_) {
+    if (layer.getSource().updateParams) {
+      layer.getSource().updateParams({
+        time: Date.now(),
+      });
       layer.getSource().refresh();
     }
   });
