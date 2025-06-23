@@ -307,31 +307,6 @@ const MapToolbarCrise = forwardRef(
       url`/api/crise/${criseId}/evenement/type-sous-type`,
     )?.data;
 
-    // Récupère les géométries des communes associées à une crise,
-    // puis les utilise pour ajuster la vue de la carte en fonction de l'étendue des géométries.
-    const CommuneGeometrie = useGet(
-      url`/api/crise/${criseId}/getCommuneGeometrie`,
-    )?.data;
-
-    if (CommuneGeometrie) {
-      const geometries = CommuneGeometrie.map((geo: any) =>
-        geo.split(";").pop(),
-      );
-
-      const wktString = "GEOMETRYCOLLECTION(" + geometries.join(",") + ")";
-      const feature = new WKT()
-        .readFeature(wktString)
-        .getGeometry()
-        ?.getExtent();
-
-      if (geometries) {
-        map?.getView().fit(feature, {
-          padding: [50, 50, 50, 50],
-          maxZoom: 20,
-        });
-      }
-    }
-
     const { visible, show, close } = useModal();
 
     const getMapGeometry = (): string => {

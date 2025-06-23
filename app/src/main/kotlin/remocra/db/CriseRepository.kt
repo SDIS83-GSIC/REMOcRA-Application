@@ -9,6 +9,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import org.locationtech.jts.geom.MultiPolygon
 import remocra.data.CouchesData
 import remocra.data.CouchesWms
 import remocra.data.CriseData
@@ -34,6 +35,7 @@ import remocra.db.jooq.remocra.tables.references.TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.utils.ST_Multi
 import remocra.utils.ST_Union
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
@@ -514,5 +516,12 @@ class CriseRepository @Inject constructor(
             .join(L_COUCHE_CRISE)
             .on(L_COUCHE_CRISE.COUCHE_ID.eq(COUCHE.ID))
             .where(L_COUCHE_CRISE.CRISE_ID.eq(criseId))
+            .fetchInto()
+
+    fun getCriseCommuneGeometrie(criseId: UUID): Collection<MultiPolygon> =
+        dsl.select(ST_Multi(COMMUNE.GEOMETRIE))
+            .from(L_CRISE_COMMUNE)
+            .join(COMMUNE).on(L_CRISE_COMMUNE.COMMUNE_ID.eq(COMMUNE.ID))
+            .where(L_CRISE_COMMUNE.CRISE_ID.eq(criseId))
             .fetchInto()
 }

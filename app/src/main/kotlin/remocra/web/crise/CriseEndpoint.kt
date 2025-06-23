@@ -648,4 +648,10 @@ class CriseEndpoint : AbstractEndpoint() {
             criseRepository.getCouchesByCrise(criseId),
         ).build()
     }
+
+    @GET
+    @Path("/{criseId}/geometrie")
+    @RequireDroits([Droit.CRISE_R, Droit.CRISE_U, Droit.CRISE_C, Droit.CRISE_D])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getGeometrieById(@PathParam("criseId") criseId: UUID): Response = Response.ok(criseRepository.getCriseCommuneGeometrie(criseId)).build()
 }

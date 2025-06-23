@@ -1,17 +1,17 @@
-import "ol/ol.css";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import CircleStyle from "ol/style/Circle";
-import { Fill, Stroke, Style } from "ol/style";
-import { Vector } from "ol/source";
-import { GeoJSON } from "ol/format";
-import { bbox } from "ol/loadingstrategy";
-import VectorLayer from "ol/layer/Vector";
 import { getUid } from "ol";
+import { GeoJSON } from "ol/format";
+import VectorLayer from "ol/layer/Vector";
+import { bbox } from "ol/loadingstrategy";
+import "ol/ol.css";
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import url, { getFetchOptions } from "../../../module/fetch.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
 import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
 const MapCrise = ({
@@ -61,8 +61,7 @@ const MapCrise = ({
       }),
     });
 
-    const vectorSource = new Vector({
-      extent: map.getView().calculateExtent(),
+    const vectorSource = new VectorSource({
       strategy: bbox,
       format: new GeoJSON({
         dataProjection: projection,

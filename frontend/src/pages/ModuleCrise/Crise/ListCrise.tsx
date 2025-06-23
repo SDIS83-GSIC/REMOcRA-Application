@@ -1,16 +1,21 @@
 import { useFormikContext } from "formik";
 import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import { DateTimeInput } from "../../../components/Form/Form.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
-  IconWarningCrise,
   IconClose,
-  IconSee,
-  IconMerge,
   IconExportCrise,
+  IconMerge,
+  IconSee,
+  IconWarningCrise,
 } from "../../../components/Icon/Icon.tsx";
+import useLocalisation, {
+  GET_TYPE_GEOMETRY,
+} from "../../../components/Localisation/useLocalisation.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
@@ -27,8 +32,6 @@ import { URLS } from "../../../routes.tsx";
 import formatDateTime, {
   formatDateTimeForDateTimeInput,
 } from "../../../utils/formatDateUtils.tsx";
-import { DateTimeInput } from "../../../components/Form/Form.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
 import filterValuesToVariable from "./FilterCrise.tsx";
 
 export const prepareValues = (data: any) => {
@@ -37,6 +40,8 @@ export const prepareValues = (data: any) => {
 
 const ListCrise = () => {
   const { user } = useAppContext();
+  const { fetchGeometry } = useLocalisation();
+
   const listeButton: ButtonType[] = [];
 
   if (hasDroit(user, TYPE_DROIT.CRISE_R)) {
@@ -51,8 +56,17 @@ const ListCrise = () => {
           CriseStatutEnum[v.original.criseStatutType],
         ),
       textDisable: "Impossible d'ouvrir une crise qui n'est plus en cours",
-      classEnable: "danger",
+      classEnable: "primary",
       textEnable: "Ouvrir la crise",
+      onClick: (criseId, row) => {
+        if (row.listeCommune.length > 0) {
+          fetchGeometry(
+            GET_TYPE_GEOMETRY.COMMUNE_CRISE,
+            criseId,
+            URLS.OUVRIR_CRISE(criseId),
+          );
+        }
+      },
       route: (criseId) => URLS.OUVRIR_CRISE(criseId),
     });
   }
