@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import { useFormikContext } from "formik";
 import { object } from "yup";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
@@ -7,10 +6,11 @@ import {
   FormContainer,
   Multiselect,
 } from "../../../components/Form/Form.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { CriseType } from "../../../Entities/CriseEntity.tsx";
 import url from "../../../module/fetch.tsx";
-import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 import { requiredDate } from "../../../module/validators.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (criseId: string | undefined) => ({
   criseId: criseId,
@@ -67,9 +67,7 @@ const CriseMergePage = ({ criseId }: { criseId: string | undefined }) => {
         }
       />
 
-      <Button type="submit" variant="primary">
-        Valider
-      </Button>
+      <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
 };

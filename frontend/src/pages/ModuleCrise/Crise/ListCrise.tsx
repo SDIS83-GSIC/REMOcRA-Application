@@ -98,7 +98,7 @@ const ListCrise = () => {
       classEnable: "info",
       textDisable: "Impossible de fusionner une crise qui n'est plus en cours",
       route: (criseId) => URLS.MERGE_CRISE(criseId),
-      type: TYPE_BUTTON.BUTTON,
+      type: TYPE_BUTTON.LINK,
       icon: <IconMerge />,
       textEnable: "Fusionner",
     });
