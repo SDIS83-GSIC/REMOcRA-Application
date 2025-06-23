@@ -1,11 +1,23 @@
+import { WKT } from "ol/format";
+import { fromExtent } from "ol/geom/Polygon";
+import { Draw, Modify } from "ol/interaction";
 import Map from "ol/Map";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import { forwardRef, Key, useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
-import { WKT } from "ol/format";
-import { Draw, Modify } from "ol/interaction";
-import { Style, Fill, Stroke } from "ol/style";
-import CircleStyle from "ol/style/Circle";
-import { fromExtent } from "ol/geom/Polygon";
+import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import AddTitleForm, {
+  getInitialValue,
+  prepareVariables,
+  ValidationSchema,
+} from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
+import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
+import CreateEvenement from "../../../pages/ModuleCrise/Evenement/createEvenement.tsx";
+import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 import {
   IconCamera,
   IconDocument,
@@ -15,28 +27,15 @@ import {
   IconMoveObjet,
   IconPoint,
   IconPolygon,
-  IconSelect,
 } from "../../Icon/Icon.tsx";
-import Volet from "../../Volet/Volet.tsx";
-import ToolbarButton from "../ToolbarButton.tsx";
-import CreateEvenement from "../../../pages/ModuleCrise/Evenement/createEvenement.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
-import url, { getFetchOptions } from "../../../module/fetch.tsx";
-import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
-import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
-import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
-import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
-import AddTitleForm, {
-  getInitialValue,
-  prepareVariables,
-  ValidationSchema,
-} from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
-import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
+import Volet from "../../Volet/Volet.tsx";
+import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import ToolbarButton from "../ToolbarButton.tsx";
+import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
+import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -358,15 +357,6 @@ const MapToolbarCrise = forwardRef(
     return (
       <Row>
         <Col xs={"auto"}>
-          <ToolbarButton
-            toolName={"select-crise"}
-            toolIcon={<IconSelect />}
-            toolLabelTooltip={"Sélectionner"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-            variant={variant}
-          />
-
           {/* déplacer évènement */}
           <ToolbarButton
             toolName={"move-event"}
