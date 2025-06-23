@@ -85,6 +85,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             PENA.CAPACITE,
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
+            DIAMETRE.LIBELLE,
         ).from(PEI)
             .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
