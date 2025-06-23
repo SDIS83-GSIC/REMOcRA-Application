@@ -1,24 +1,24 @@
-import { Button, Container } from "react-bootstrap";
 import Map from "ol/Map";
 import { WKT } from "ol/format";
-import { ActionColumn } from "../../../components/Table/columns.tsx";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { IconExport, IconLocation } from "../../../components/Icon/Icon.tsx";
+import EditModal from "../../../components/Modal/EditModal.tsx";
+import useModal from "../../../components/Modal/ModalUtils.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import url from "../../../module/fetch.tsx";
-import formatDateTime from "../../../utils/formatDateUtils.tsx";
-import { shortenString } from "../../../utils/fonctionsUtils.tsx";
-import useModal from "../../../components/Modal/ModalUtils.tsx";
-import EditModal from "../../../components/Modal/EditModal.tsx";
-import { hasDroit } from "../../../droits.tsx";
-import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
+import { hasDroit } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import url from "../../../module/fetch.tsx";
+import { shortenString } from "../../../utils/fonctionsUtils.tsx";
+import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import AddDocForm, {
   getInitialValue,
   prepareVariables,
@@ -69,13 +69,17 @@ const ListDocument = ({
 
   return (
     <Container>
-      <CreateButton
-        title={"Ajouter un document"}
-        onClick={() => {
-          show();
-        }}
-      />
-
+      <Row>
+        <Col xs={12} className="d-flex justify-content-end">
+          <CreateButton
+            title={"Ajouter un document"}
+            classnames={"my-2"}
+            onClick={() => {
+              show();
+            }}
+          />
+        </Col>
+      </Row>
       <QueryTable
         query={url`/api/crise/documents/getAllFromCrise/${criseId}`}
         columns={[
