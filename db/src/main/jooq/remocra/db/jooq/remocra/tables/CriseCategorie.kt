@@ -97,6 +97,11 @@ open class CriseCategorie(
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("crise_categorie_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.crise_categorie.crise_categorie_actif</code>.
+     */
+    val ACTIF: TableField<Record, Boolean?> = createField(DSL.name("crise_categorie_actif"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -86,6 +86,8 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     ADRESSE_TYPE_ANOMALIE("ADRESSE_TYPE_ANOMALIE"),
     ADRESSE_TYPE_ELEMENT("ADRESSE_TYPE_ELEMENT"),
     ADRESSE_SOUS_TYPE_ELEMENT("ADRESSE_SOUS_TYPE_ELEMENT"),
+    CRISE_CATEGORIE("CRISE_CATEGORIE"),
+    TYPE_CRISE("TYPE_CRISE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

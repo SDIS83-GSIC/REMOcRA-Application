@@ -22,6 +22,7 @@ data class TypeCrise(
     val typeCriseId: UUID,
     val typeCriseCode: String,
     val typeCriseLibelle: String,
+    val typeCriseActif: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -44,6 +45,13 @@ data class TypeCrise(
         if (this.typeCriseLibelle != o.typeCriseLibelle) {
             return false
         }
+        if (this.typeCriseActif == null) {
+            if (o.typeCriseActif != null) {
+                return false
+            }
+        } else if (this.typeCriseActif != o.typeCriseActif) {
+            return false
+        }
         return true
     }
 
@@ -53,6 +61,7 @@ data class TypeCrise(
         result = prime * result + this.typeCriseId.hashCode()
         result = prime * result + this.typeCriseCode.hashCode()
         result = prime * result + this.typeCriseLibelle.hashCode()
+        result = prime * result + (if (this.typeCriseActif == null) 0 else this.typeCriseActif.hashCode())
         return result
     }
 
@@ -62,6 +71,7 @@ data class TypeCrise(
         sb.append(typeCriseId)
         sb.append(", ").append(typeCriseCode)
         sb.append(", ").append(typeCriseLibelle)
+        sb.append(", ").append(typeCriseActif)
 
         sb.append(")")
         return sb.toString()

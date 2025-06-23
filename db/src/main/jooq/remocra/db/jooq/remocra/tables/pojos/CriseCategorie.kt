@@ -22,6 +22,7 @@ data class CriseCategorie(
     val criseCategorieId: UUID,
     val criseCategorieCode: String,
     val criseCategorieLibelle: String,
+    val criseCategorieActif: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -44,6 +45,13 @@ data class CriseCategorie(
         if (this.criseCategorieLibelle != o.criseCategorieLibelle) {
             return false
         }
+        if (this.criseCategorieActif == null) {
+            if (o.criseCategorieActif != null) {
+                return false
+            }
+        } else if (this.criseCategorieActif != o.criseCategorieActif) {
+            return false
+        }
         return true
     }
 
@@ -53,6 +61,7 @@ data class CriseCategorie(
         result = prime * result + this.criseCategorieId.hashCode()
         result = prime * result + this.criseCategorieCode.hashCode()
         result = prime * result + this.criseCategorieLibelle.hashCode()
+        result = prime * result + (if (this.criseCategorieActif == null) 0 else this.criseCategorieActif.hashCode())
         return result
     }
 
@@ -62,6 +71,7 @@ data class CriseCategorie(
         sb.append(criseCategorieId)
         sb.append(", ").append(criseCategorieCode)
         sb.append(", ").append(criseCategorieLibelle)
+        sb.append(", ").append(criseCategorieActif)
 
         sb.append(")")
         return sb.toString()
