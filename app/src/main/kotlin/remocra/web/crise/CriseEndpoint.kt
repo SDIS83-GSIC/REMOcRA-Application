@@ -461,12 +461,7 @@ class CriseEndpoint : AbstractEndpoint() {
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val evenementId = UUID.randomUUID()
-        val docsEvenement = DocumentsData.DocumentsEvenement(
-            objectId = evenementId,
-            listDocument = if (httpRequest.getTextPartOrNull("documents").isNullOrEmpty()) objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")) else emptyList(),
-            listeDocsToRemove = if (httpRequest.getTextPartOrNull("listeDocsToRemove").isNullOrEmpty()) objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")) else emptyList(),
-            listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-        )
+        val docsEvenement = getDocumentCrise(evenementId, httpRequest)
         return createEventUseCase.execute(
             securityContext.userInfo,
             EvenementData(
@@ -531,12 +526,7 @@ class CriseEndpoint : AbstractEndpoint() {
         state: EvenementStatutMode,
         @Context httpRequest: HttpServletRequest,
     ): Response {
-        val docsEvenement = DocumentsData.DocumentsEvenement(
-            objectId = evenementId,
-            listDocument = if (httpRequest.getTextPartOrNull("documents").isNullOrEmpty()) objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")) else emptyList(),
-            listeDocsToRemove = if (httpRequest.getTextPartOrNull("listeDocsToRemove").isNullOrEmpty()) objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")) else emptyList(),
-            listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
-        )
+        val docsEvenement = getDocumentCrise(evenementId, httpRequest)
         val evenementData =
             EvenementData(
                 evenementId = evenementId,
@@ -561,6 +551,14 @@ class CriseEndpoint : AbstractEndpoint() {
             evenementData,
         ).wrap()
     }
+
+    private fun getDocumentCrise(evenementId: UUID, httpRequest: HttpServletRequest) =
+        DocumentsData.DocumentsEvenement(
+            objectId = evenementId,
+            listDocument = if (!httpRequest.getTextPartOrNull("documents").isNullOrEmpty()) objectMapper.readValue<List<DocumentsData.DocumentEvenementData>>(httpRequest.getTextPart("documents")) else emptyList(),
+            listeDocsToRemove = if (httpRequest.getTextPartOrNull("listeDocsToRemove").isNullOrEmpty()) objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeDocsToRemove")) else emptyList(),
+            listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
+        )
 
     @POST
     @Path("/document/addDocument/{criseId}")
