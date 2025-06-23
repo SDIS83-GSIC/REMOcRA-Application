@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
-import { Button } from "react-bootstrap";
 import { object } from "yup";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -9,16 +9,16 @@ import {
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
-import EvenementType from "../../../Entities/EvenementEntity.tsx";
-import { requiredDate, requiredString } from "../../../module/validators.tsx";
-import SelectForm from "../../../components/Form/SelectForm.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
 import FormDocuments, {
   setDocumentInFormData,
 } from "../../../components/Form/FormDocuments.tsx";
-import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
+import SelectForm from "../../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import TagInput from "../../../components/InputTag/InputTag.tsx";
+import EvenementType from "../../../Entities/EvenementEntity.tsx";
+import url from "../../../module/fetch.tsx";
+import { requiredDate, requiredString } from "../../../module/validators.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (
   data: EvenementType | null,
@@ -176,10 +176,7 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
           levenementDocumentLibelle: null,
         }}
       />
-
-      <Button disabled={isReadOnly} type="submit" variant="primary">
-        Valider
-      </Button>
+      <SubmitFormButtons disabledValide={isReadOnly} />
     </FormContainer>
   );
 };
