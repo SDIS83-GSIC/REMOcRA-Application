@@ -3,6 +3,7 @@ import { WKT } from "ol/format";
 import { DragPan, Interaction, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
+import { transformExtent } from "ol/proj";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
@@ -247,4 +248,20 @@ export function desactiveMoveMap(map: Map) {
         interaction.setActive(false);
       }
     });
+}
+
+export function centrerToExtent(extent: any, map: Map, sridFrom: string) {
+  map
+    ?.getView()
+    .fit(
+      transformExtent(
+        extent,
+        `EPSG:${sridFrom}`,
+        map.getView().getProjection().getCode(),
+      ),
+      {
+        padding: [50, 50, 50, 50],
+        maxZoom: 20,
+      },
+    );
 }

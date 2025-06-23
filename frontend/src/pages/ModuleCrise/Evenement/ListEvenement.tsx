@@ -1,23 +1,24 @@
-import { Button, Container } from "react-bootstrap";
 import { WKT } from "ol/format";
 import { useEffect, useState } from "react";
-import { shortenString } from "../../../utils/fonctionsUtils.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import { Button, Container } from "react-bootstrap";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import useModal from "../../../components/Modal/ModalUtils.tsx";
-import EditModal from "../../../components/Modal/EditModal.tsx";
 import { IconFilter, IconLocation } from "../../../components/Icon/Icon.tsx";
+import { centrerToExtent } from "../../../components/Map/MapUtils.tsx";
 import MessageElement from "../../../components/message/messageElement.tsx";
+import EditModal from "../../../components/Modal/EditModal.tsx";
+import useModal from "../../../components/Modal/ModalUtils.tsx";
+import url from "../../../module/fetch.tsx";
+import { shortenString } from "../../../utils/fonctionsUtils.tsx";
+import FilterEvent from "./filterEvent.tsx";
 import MessageForm, {
   getInitialValue,
   messageValidationSchema,
   prepareMessageValues,
 } from "./message/MessageForm.tsx";
-import FilterEvent from "./filterEvent.tsx";
 
 type FilterEvenement = {
   filterType: string;
@@ -65,11 +66,14 @@ const ListEvenement = ({
     for (let i = 0; i < data?.length; i++) {
       const eventGeometry = data?.[i].evenementGeometrie;
       if (eventGeometry && data?.[i].evenementId === eventId) {
-        const geom = new WKT().readFeature(eventGeometry.split(";").pop());
-        map?.getView().fit(geom.get("geometry"), {
-          padding: [50, 50, 50, 50],
-          maxZoom: 20,
-        });
+        const tabGeom = eventGeometry.split(";");
+        const geom = new WKT().readFeature(tabGeom.pop());
+
+        centrerToExtent(
+          geom.get("geometry").getExtent(),
+          map,
+          tabGeom[0].split("=").pop(),
+        );
       }
     }
   };
