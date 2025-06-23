@@ -44,7 +44,7 @@ const ListCrise = () => {
       row: (row: any) => {
         return row;
       },
-      type: TYPE_BUTTON.BUTTON,
+      type: TYPE_BUTTON.LINK,
       icon: <IconSee />,
       disable: (v) =>
         [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
