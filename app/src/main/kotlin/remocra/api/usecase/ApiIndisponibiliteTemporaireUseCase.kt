@@ -19,6 +19,7 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
+import remocra.utils.limitOffset
 import java.util.UUID
 
 class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
@@ -59,7 +60,7 @@ class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
         )
 
         // TODO envoyer la zone de compétence de l'organisme connecté quand on aura le userInfo
-        val listIndispoTemp = indisponibiliteTemporaireRepository.getAllWithListPei(params, isSuperAdmin = false, zoneCompetenceId = null) // TODO
+        val listIndispoTemp = indisponibiliteTemporaireRepository.getAllWithListPei(params, isSuperAdmin = false, zoneCompetenceId = null).limitOffset(params.limit?.toLong(), params.offset?.toLong()) ?: emptyList() // TODO
 
         // On va ensuite chercher toutes les infos de traçabilité sur ces indipos
         val tracabilitesIndispoTemp = tracabiliteRepository.getIndispoTempTracabilite(listIndispoTemp.map { it.indisponibiliteTemporaireId })

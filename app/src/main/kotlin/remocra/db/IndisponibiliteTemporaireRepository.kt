@@ -6,7 +6,6 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
 import org.jooq.SelectJoinStep
-import org.jooq.SelectSeekStepN
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
@@ -39,33 +38,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
      * @return Une collection d'IndisponibiliteTemporaireWithPei correspondant aux critères.
      */
     fun getAllWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): Collection<IndisponibiliteTemporaireWithPei> {
-        return internalWithListPei(params, isSuperAdmin, zoneCompetenceId)
-            .limit(params.limit)
-            .offset(params.offset)
-            .fetchInto()
-    }
-
-    /**
-     * Compte le nombre d'éléments IndisponibiliteTemporaireWithPei correspondant aux paramètres de filtrage et de tri.
-     *
-     * @param params Les paramètres de filtrage et de tri.
-     * @return Le nombre d'éléments correspondants.
-     */
-    fun countAllWithListPei(filterBy: Filter?, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): Int =
-        internalWithListPei(
-            Params(limit = null, offset = null, filterBy = filterBy, sortBy = null),
-            isSuperAdmin,
-            zoneCompetenceId,
-        ).count()
-
-    /**
-     * Crée une requête SQL pour récupérer des enregistrements d'indisponibilités temporaires
-     * avec une liste associée de PEI, selon les paramètres donnés.
-     *
-     * @param params Les paramètres de filtrage et de tri.
-     * @return Une étape de requête SQL pour les résultats filtrés et triés.
-     */
-    private fun internalWithListPei(params: Params<Filter, Sort>, isSuperAdmin: Boolean, zoneCompetenceId: UUID?): SelectSeekStepN<Record> {
         val nomCte = name("liste_pei")
         val cte = nomCte.fields("id_it", "liste_numero_pei").`as`(
             DSL.select(
@@ -116,6 +88,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                     INDISPONIBILITE_TEMPORAIRE.DATE_FIN.asc(),
                 ),
             )
+            .fetchInto()
     }
 
     fun getIndispoTemporaireHorsZC(isSuperAdmin: Boolean, zoneCompetenceId: UUID?, listItId: List<UUID>): List<UUID> =
