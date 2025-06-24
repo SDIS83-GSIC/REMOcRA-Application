@@ -30,6 +30,8 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
 
     override fun getMapById(): Map<UUID, Anomalie> = dsl.selectFrom(ANOMALIE).where(ANOMALIE.ACTIF.isTrue).fetchInto<Anomalie>().associateBy { it.anomalieId }
 
+    fun getAllById(): Map<UUID, Anomalie> = dsl.selectFrom(ANOMALIE).where().fetchInto<Anomalie>().associateBy { it.anomalieId }
+
     fun getAnomalieById(anomalieId: UUID): Anomalie =
         dsl.selectFrom(ANOMALIE).where(ANOMALIE.ID.eq(anomalieId)).fetchSingleInto()
 

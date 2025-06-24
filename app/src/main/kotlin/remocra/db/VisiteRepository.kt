@@ -32,13 +32,13 @@ class VisiteRepository
         .orderBy(VISITE.DATE.desc())
         .fetchAnyInto()
 
-    fun getAvantDerniereVisite(peiId: UUID, visiteId: UUID): UUID =
+    fun getAvantDerniereVisite(peiId: UUID, visiteId: UUID): UUID? =
         dsl.select(VISITE.ID).from(VISITE)
             .where(VISITE.PEI_ID.eq(peiId))
             .and(VISITE.ID.ne(visiteId))
             .orderBy(VISITE.DATE.desc())
             .limit(1)
-            .fetchSingleInto()
+            .fetchOneInto()
 
     fun getLVisiteAnomalie(visiteId: UUID): Collection<UUID> {
         return dsl

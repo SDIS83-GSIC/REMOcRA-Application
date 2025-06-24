@@ -6,6 +6,7 @@ import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.data.PeiForCalculDispoData
 import remocra.data.enums.CodeSdis
+import remocra.db.AnomalieRepository
 import remocra.db.CalculDispoRepository
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PoidsAnomalieRepository
@@ -38,6 +39,9 @@ class CalculDispoUseCase : AbstractUseCase() {
 
     @Inject
     private lateinit var poidsAnomalieRepository: PoidsAnomalieRepository
+
+    @Inject
+    private lateinit var anomalieRepository: AnomalieRepository
 
     @Inject
     private lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
@@ -119,13 +123,14 @@ class CalculDispoUseCase : AbstractUseCase() {
 
         // on a besoin de la  dernière visite :
         val lastVisite = visiteRepository.getLastVisite(pei.peiId)
-        val anomaliesDerniereVisite: List<Anomalie> = lastVisite?.let { visiteRepository.getAnomaliesFromVisite(lastVisite.visiteId).map { dataCacheProvider.getAnomalies()[it]!! } }
+        val allAnomalies = anomalieRepository.getAllById()
+        val anomaliesDerniereVisite: List<Anomalie> = lastVisite?.let { visiteRepository.getAnomaliesFromVisite(lastVisite.visiteId).map { allAnomalies[it]!! } }
             ?: listOf()
 
         // On construit un set contenant toutes les anomalies possibles
         val setGlobalAnomalies: MutableSet<Anomalie> = mutableSetOf()
         if (anomaliesDebitPression.isNotEmpty()) {
-            setGlobalAnomalies.addAll(anomaliesDebitPression.map { dataCacheProvider.getAnomalies()[it]!! })
+            setGlobalAnomalies.addAll(anomaliesDebitPression.map { allAnomalies[it]!! })
         }
         if (anomaliesDerniereVisite.isNotEmpty()) {
             setGlobalAnomalies.addAll(anomaliesDerniereVisite)

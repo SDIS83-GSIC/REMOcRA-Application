@@ -98,17 +98,18 @@ class DeleteVisiteUseCase @Inject constructor(
 
         // On va ensuite chercher les anomalies de la nouvelle dernière visite
         val avantDernierVisiteId = visiteRepository.getAvantDerniereVisite(element.visitePeiId, element.visiteId)
+        if (avantDernierVisiteId != null) {
+            val listeAnomalie = visiteRepository.getLVisiteAnomalie(avantDernierVisiteId)
 
-        val listeAnomalie = visiteRepository.getLVisiteAnomalie(avantDernierVisiteId)
-
-        anomalieRepository.batchInsertLPeiAnomalie(
-            listeAnomalie.takeIf { it.isNotEmpty() }?.map {
-                LPeiAnomalie(
-                    peiId = element.visitePeiId,
-                    anomalieId = it,
-                )
-            } ?: listOf(),
-        )
+            anomalieRepository.batchInsertLPeiAnomalie(
+                listeAnomalie.takeIf { it.isNotEmpty() }?.map {
+                    LPeiAnomalie(
+                        peiId = element.visitePeiId,
+                        anomalieId = it,
+                    )
+                } ?: listOf(),
+            )
+        }
 
         // On supprime les autres données liées à la visite
         visiteRepository.deleteAllVisiteAnomalies(element.visiteId)
