@@ -708,7 +708,7 @@ class PeiRepository
     fun getListIdNumeroCompletInZoneCompetence(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
         dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
             .from(
-                userInfo?.isSuperAdmin?.let {
+                userInfo.isSuperAdmin.let {
                     if (it) {
                         PEI
                     } else PEI.join(ZONE_INTEGRATION)
@@ -716,6 +716,7 @@ class PeiRepository
                         .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
                 },
             )
+            .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
 
     fun deleteById(peiId: UUID) = dsl.deleteFrom(PEI).where(PEI.ID.eq(peiId)).execute()

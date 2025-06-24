@@ -174,12 +174,12 @@ const IndisponibiliteTemporaireForm = ({
               </Row>
             )}
           </Row>
-          <SectionTitle>PEI Concernés</SectionTitle>
+          <SectionTitle>PEI concernés</SectionTitle>
           <Row>
             <Col>
               <Multiselect
                 name={"listePei"}
-                label="PEI Concernés"
+                label="PEI concernés"
                 options={peiState?.data}
                 getOptionValue={(t) => t.peiId}
                 getOptionLabel={(t) => t.peiNumeroComplet}
