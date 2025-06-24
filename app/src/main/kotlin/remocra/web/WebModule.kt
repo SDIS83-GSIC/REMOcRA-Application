@@ -50,6 +50,7 @@ import remocra.web.rcci.RcciModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.toponymie.ToponymieModule
 import remocra.web.tracabilite.TracabiliteModule
+import remocra.web.typecrisecategorie.TypeCriseCategorieModule
 import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
 import remocra.web.visite.VisiteModule
@@ -105,6 +106,7 @@ object WebModule : RemocraModule() {
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
         install(CartoModule)
+        install(TypeCriseCategorieModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

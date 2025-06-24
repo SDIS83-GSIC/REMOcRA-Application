@@ -188,6 +188,7 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
+import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListTypeCriseCategorie.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -1817,7 +1818,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
@@ -1826,7 +1827,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
@@ -1835,7 +1836,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
@@ -1844,7 +1845,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateCriseCategorie}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
@@ -1853,7 +1854,7 @@ export default [
         element: (
           <Authorization
             Component={ListCriseCategorie}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
@@ -1862,7 +1863,16 @@ export default [
         element: (
           <Authorization
             Component={CreateCriseCategorie}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-crise-categorie",
+        element: (
+          <Authorization
+            Component={ListTypeCriseCategorie}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },

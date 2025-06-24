@@ -1,0 +1,6 @@
+enum TYPE_GEOMETRIE {
+  POINT = "POINT",
+  POLYGON = "POLYGON",
+  LINESTRING = "LINESTRING",
+}
+export default TYPE_GEOMETRIE;
