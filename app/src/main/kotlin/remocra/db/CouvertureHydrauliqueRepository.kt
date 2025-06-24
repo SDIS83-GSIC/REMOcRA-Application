@@ -137,7 +137,8 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             TYPE_ETUDE.ID.`as`("id"),
             TYPE_ETUDE.CODE.`as`("code"),
             TYPE_ETUDE.LIBELLE.`as`("libelle"),
-        ).from(TYPE_ETUDE).fetchInto()
+        ).from(TYPE_ETUDE)
+            .where(TYPE_ETUDE.ACTIF.isTrue).fetchInto()
 
     fun insertPeiProjetPA(etudeId: UUID, peiProjetId: UUID, debit: Int, geometrie: Geometry, natureDeciId: UUID) =
         dsl.insertInto(PEI_PROJET)
