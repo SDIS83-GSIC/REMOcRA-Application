@@ -273,11 +273,11 @@ class TourneeRepository
         fun toCondition(list: Collection<TourneeComplete>): Collection<TourneeComplete> {
             return when {
                 tourneeLibelle == 1 -> {
-                    list.sortedBy { it.tourneeLibelle.uppercase() }
+                    list.sortedBy { it.tourneeLibelle.uppercase().unaccent() }
                 }
 
                 tourneeLibelle == -1 -> {
-                    list.sortedByDescending { it.tourneeLibelle.uppercase() }
+                    list.sortedByDescending { it.tourneeLibelle.uppercase().unaccent() }
                 }
 
                 tourneeNbPei == 1 -> {
@@ -289,11 +289,11 @@ class TourneeRepository
                 }
 
                 organismeLibelle == 1 -> {
-                    list.sortedBy { it.organismeLibelle }
+                    list.sortedBy { it.organismeLibelle.unaccent() }
                 }
 
                 organismeLibelle == -1 -> {
-                    list.sortedByDescending { it.organismeLibelle }
+                    list.sortedByDescending { it.organismeLibelle.unaccent() }
                 }
 
                 tourneePourcentageAvancement == 1 -> {
@@ -305,11 +305,11 @@ class TourneeRepository
                 }
 
                 tourneeUtilisateurReservationLibelle == 1 -> {
-                    list.sortedBy { it.tourneeUtilisateurReservationLibelle }
+                    list.sortedBy { it.tourneeUtilisateurReservationLibelle?.unaccent() }
                 }
 
                 tourneeUtilisateurReservationLibelle == -1 -> {
-                    list.sortedByDescending { it.tourneeUtilisateurReservationLibelle }
+                    list.sortedByDescending { it.tourneeUtilisateurReservationLibelle?.unaccent() }
                 }
 
                 tourneeActif == 1 -> {
@@ -329,7 +329,7 @@ class TourneeRepository
                 }
 
                 else -> {
-                    list.sortedBy { it.tourneeLibelle }
+                    list.sortedBy { it.tourneeLibelle.unaccent() }
                 }
             }
         }
