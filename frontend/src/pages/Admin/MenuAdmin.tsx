@@ -452,7 +452,17 @@ const MenuAdmin = () => {
                     className="text-underline text-start"
                     pathname={URLS.LIST_TYPE_CRISE}
                   >
-                    Type de crise
+                    Types de crise
+                  </CustomLinkButton>
+                </Nav.Item>
+              )}
+              {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                <Nav.Item>
+                  <CustomLinkButton
+                    className="text-underline text-start"
+                    pathname={URLS.LIST_CRISE_CATEGORIE}
+                  >
+                    Catégories de crise
                   </CustomLinkButton>
                 </Nav.Item>
               )}

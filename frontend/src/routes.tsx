@@ -40,6 +40,9 @@ import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
 import CoucheList from "./pages/Admin/couche/CoucheList.tsx";
+import CreateCriseCategorie from "./pages/Admin/crise/criseCategorie/CreateCriseCategorie.tsx";
+import ListCriseCategorie from "./pages/Admin/crise/criseCategorie/ListCriseCategorie.tsx";
+import UpdateCriseCategorie from "./pages/Admin/crise/criseCategorie/UpdateCriseCategorie.tsx";
 import CreateTypeCrise from "./pages/Admin/crise/typeCrise/CreateTypeCrise.tsx";
 import ListTypeCrise from "./pages/Admin/crise/typeCrise/ListTypeCrise.tsx";
 import UpdateTypeCrise from "./pages/Admin/crise/typeCrise/UpdateTypeCrise.tsx";
@@ -395,6 +398,11 @@ export const URLS = {
   UPDATE_TYPE_CRISE: (typeCriseId: string) =>
     url`/admin/type-crise/update/` + typeCriseId,
   LIST_TYPE_CRISE: url`/admin/type-crise`,
+
+  ADD_CRISE_CATEGORIE: url`/admin/crise-categorie/create`,
+  UPDATE_CRISE_CATEGORIE: (criseCategorieId: string) =>
+    url`/admin/crise-categorie/update/` + criseCategorieId,
+  LIST_CRISE_CATEGORIE: url`/admin/crise-categorie`,
 
   ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
   UPDATE_ROLE_CONTACT: (roleContactId: string) =>
@@ -1827,6 +1835,33 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCrise}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+          />
+        ),
+      },
+      {
+        path: "crise-categorie/update/:criseCategorieId",
+        element: (
+          <Authorization
+            Component={UpdateCriseCategorie}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+          />
+        ),
+      },
+      {
+        path: "crise-categorie",
+        element: (
+          <Authorization
+            Component={ListCriseCategorie}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+          />
+        ),
+      },
+      {
+        path: "crise-categorie/create",
+        element: (
+          <Authorization
+            Component={CreateCriseCategorie}
             droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),

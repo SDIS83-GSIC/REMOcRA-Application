@@ -21,6 +21,7 @@ import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.CRISE
+import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
@@ -47,6 +48,7 @@ import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
+import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
@@ -68,6 +70,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI
@@ -92,6 +95,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ID
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ID
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ID
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ID
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ID
@@ -116,6 +120,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.CODE
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.CODE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.CODE
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.CODE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.CODE
@@ -140,6 +145,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.LIBELLE
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.LIBELLE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.LIBELLE
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.LIBELLE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.LIBELLE
@@ -164,6 +170,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ACTIF
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ACTIF
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ACTIF
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ACTIF
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ACTIF
@@ -207,7 +214,6 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                     TYPE_ORGANISME.ID,
                     TYPE_ORGANISME.LIBELLE,
                 )
-
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME ->
                     InfosFk(
                         TYPE_ORGANISME.PARENT_ID,
@@ -226,6 +232,10 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> setOf(InfosFkCible(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID))
                 TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> setOf(InfosFkCible(ADRESSE_SOUS_TYPE_ELEMENT, ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT))
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> setOf(InfosFkCible(ANOMALIE, ANOMALIE.ANOMALIE_CATEGORIE_ID))
+                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> setOf(
+                    InfosFkCible(L_TYPE_CRISE_CATEGORIE, L_TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID),
+                    InfosFkCible(TYPE_CRISE_CATEGORIE, TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID),
+                )
                 TypeNomenclatureCodeLibelle.DIAMETRE -> setOf(InfosFkCible(PIBI, PIBI.DIAMETRE_ID), InfosFkCible(L_DIAMETRE_NATURE, L_DIAMETRE_NATURE.DIAMETRE_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.DIAMETRE_ID))
                 TypeNomenclatureCodeLibelle.DOMAINE -> setOf(InfosFkCible(PEI, PEI.DOMAINE_ID), InfosFkCible(NEW_PEI, NEW_PEI.DOMAINE_ID))
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> setOf(InfosFkCible(MODELE_PIBI, MODELE_PIBI.MARQUE_ID), InfosFkCible(PIBI, PIBI.MARQUE_PIBI_ID))

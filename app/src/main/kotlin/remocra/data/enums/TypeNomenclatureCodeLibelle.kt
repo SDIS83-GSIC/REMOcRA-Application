@@ -7,6 +7,7 @@ enum class TypeNomenclatureCodeLibelle {
     ADRESSE_TYPE_ANOMALIE,
     ADRESSE_TYPE_ELEMENT,
     ANOMALIE_CATEGORIE,
+    CRISE_CATEGORIE,
     DIAMETRE,
     DOMAINE,
     MARQUE_PIBI,
