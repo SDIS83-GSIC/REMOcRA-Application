@@ -40,6 +40,9 @@ import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
 import CoucheList from "./pages/Admin/couche/CoucheList.tsx";
+import CreateTypeCrise from "./pages/Admin/crise/typeCrise/CreateTypeCrise.tsx";
+import ListTypeCrise from "./pages/Admin/crise/typeCrise/ListTypeCrise.tsx";
+import UpdateTypeCrise from "./pages/Admin/crise/typeCrise/UpdateTypeCrise.tsx";
 import CreateDiametre from "./pages/Admin/diametre/CreateDiametre.tsx";
 import ListDiametre from "./pages/Admin/diametre/ListDiametre.tsx";
 import UpdateDiametre from "./pages/Admin/diametre/UpdateDiametre.tsx";
@@ -387,6 +390,11 @@ export const URLS = {
   UPDATE_THEMATIQUE: (thematiqueId: string) =>
     url`/admin/thematique/update/` + thematiqueId,
   LIST_THEMATIQUE: url`/admin/thematique`,
+
+  ADD_TYPE_CRISE: url`/admin/type-crise/create`,
+  UPDATE_TYPE_CRISE: (typeCriseId: string) =>
+    url`/admin/type-crise/update/` + typeCriseId,
+  LIST_TYPE_CRISE: url`/admin/type-crise`,
 
   ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
   UPDATE_ROLE_CONTACT: (roleContactId: string) =>
@@ -1793,6 +1801,33 @@ export default [
           <Authorization
             Component={UpdateContact}
             droits={[TYPE_DROIT.GEST_SITE_A, TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-crise/update/:typeCriseId",
+        element: (
+          <Authorization
+            Component={UpdateTypeCrise}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+          />
+        ),
+      },
+      {
+        path: "type-crise",
+        element: (
+          <Authorization
+            Component={ListTypeCrise}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+          />
+        ),
+      },
+      {
+        path: "type-crise/create",
+        element: (
+          <Authorization
+            Component={CreateTypeCrise}
+            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },

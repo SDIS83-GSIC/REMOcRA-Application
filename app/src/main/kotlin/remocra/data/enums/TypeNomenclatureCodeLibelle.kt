@@ -19,6 +19,7 @@ enum class TypeNomenclatureCodeLibelle {
     ROLE_CONTACT,
     THEMATIQUE,
     TYPE_CANALISATION,
+    TYPE_CRISE,
     TYPE_ETUDE,
     TYPE_ORGANISME,
     TYPE_PENA_ASPIRATION,

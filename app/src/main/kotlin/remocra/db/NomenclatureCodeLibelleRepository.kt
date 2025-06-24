@@ -20,6 +20,7 @@ import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.CRISE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
@@ -29,6 +30,7 @@ import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
+import remocra.db.jooq.remocra.tables.references.L_TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
 import remocra.db.jooq.remocra.tables.references.MATERIAU
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
@@ -44,6 +46,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
+import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
@@ -77,6 +80,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> TYPE_CRISE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION
@@ -100,6 +104,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.ID
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.ID
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.ID
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> TYPE_CRISE.ID
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.ID
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.ID
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.ID
@@ -123,6 +128,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.CODE
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.CODE
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.CODE
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> TYPE_CRISE.CODE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.CODE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.CODE
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.CODE
@@ -146,6 +152,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.LIBELLE
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.LIBELLE
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> TYPE_CRISE.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.LIBELLE
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.LIBELLE
@@ -169,6 +176,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.ACTIF
                 TypeNomenclatureCodeLibelle.THEMATIQUE -> THEMATIQUE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> TYPE_CANALISATION.ACTIF
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> TYPE_CRISE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ETUDE -> TYPE_ETUDE.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.ACTIF
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> TYPE_PENA_ASPIRATION.ACTIF
@@ -207,7 +215,6 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                         TYPE_ORGANISME.`as`("typeOrganismeFk").ID,
                         TYPE_ORGANISME.`as`("typeOrganismeFk").LIBELLE,
                     )
-
                 else -> null
             }
 
@@ -245,6 +252,10 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                     InfosFkCible(PROFIL_UTILISATEUR, PROFIL_UTILISATEUR.TYPE_ORGANISME_ID),
                     InfosFkCible(PROFIL_ORGANISME, PROFIL_ORGANISME.TYPE_ORGANISME_ID),
                     InfosFkCible(ORGANISME, ORGANISME.TYPE_ORGANISME_ID),
+                )
+                TypeNomenclatureCodeLibelle.TYPE_CRISE -> setOf(
+                    InfosFkCible(CRISE, CRISE.TYPE_CRISE_ID),
+                    InfosFkCible(L_TYPE_CRISE_CATEGORIE, L_TYPE_CRISE_CATEGORIE.TYPE_CRISE_ID),
                 )
                 TypeNomenclatureCodeLibelle.TYPE_PENA_ASPIRATION -> setOf(InfosFkCible(PENA_ASPIRATION, PENA_ASPIRATION.TYPE_PENA_ASPIRATION_ID))
             }

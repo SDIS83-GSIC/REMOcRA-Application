@@ -21,7 +21,7 @@ const CreateNomenclature = ({
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
   titrePage: string;
-  isFkRequired: boolean;
+  isFkRequired?: boolean;
 }) => {
   const location = useLocation();
   const state = location.state ?? {};

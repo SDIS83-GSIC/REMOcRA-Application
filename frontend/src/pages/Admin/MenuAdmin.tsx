@@ -446,6 +446,16 @@ const MenuAdmin = () => {
                   </Nav.Item>
                 )}
               </Nav>
+              {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                <Nav.Item>
+                  <CustomLinkButton
+                    className="text-underline text-start"
+                    pathname={URLS.LIST_TYPE_CRISE}
+                  >
+                    Type de crise
+                  </CustomLinkButton>
+                </Nav.Item>
+              )}
             </Col>
           )}
         </Row>
