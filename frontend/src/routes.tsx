@@ -190,6 +190,7 @@ import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTourne
 import Visite from "./pages/Visite/Visite.tsx";
 import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListTypeCriseCategorie.tsx";
 import CreateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateTypeCriseCategorie.tsx";
+import UpdateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateTypeCriseCategorie.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -408,6 +409,8 @@ export const URLS = {
 
   ADD_TYPE_CRISE_CATEGORIE: url`/admin/type-crise-categorie/create`,
   LIST_TYPE_CRISE_CATEGORIE: url`/admin/type-crise-categorie`,
+  UPDATE_TYPE_CRISE_CATEGORIE: (typeCriseCategorieId: string) =>
+    url`/admin/type-crise-categorie/update/` + typeCriseCategorieId,
 
   ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
   UPDATE_ROLE_CONTACT: (roleContactId: string) =>
@@ -1885,6 +1888,15 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCriseCategorie}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "type-crise-categorie/update/:typeCriseCategorieId",
+        element: (
+          <Authorization
+            Component={UpdateTypeCriseCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

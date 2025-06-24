@@ -2,8 +2,11 @@ package remocra.web.typecrisecategorie
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.FormParam
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -18,6 +21,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
 import remocra.usecase.crise.typecrisecategorie.CreateTypeCriseCategorieUseCase
+import remocra.usecase.crise.typecrisecategorie.UpdateTypeCriseCategorieUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -28,6 +32,8 @@ class TypeCriseCategorieEndpoint : AbstractEndpoint() {
     @Inject lateinit var typeCriseCatagorieRepository: TypeCriseCatagorieRepository
 
     @Inject lateinit var createTypeCriseCatagorieUseCase: CreateTypeCriseCategorieUseCase
+
+    @Inject lateinit var updateTypeCriseCatagorieUseCase: UpdateTypeCriseCategorieUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -70,5 +76,35 @@ class TypeCriseCategorieEndpoint : AbstractEndpoint() {
 
         @FormParam("typeCriseCategorieTypeGeometrie")
         lateinit var typeCriseCategorieCriseCategorieId: UUID
+    }
+
+    @PUT
+    @Path("/update/{typeCriseCategorieId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    fun put(
+        @PathParam("typeCriseCategorieId")
+        typeCriseCategorieId: UUID,
+        element: TypeCriseCategorieInput,
+    ): Response {
+        return updateTypeCriseCatagorieUseCase.execute(
+            securityContext.userInfo,
+            TypeCriseCategorie(
+                typeCriseCategorieId = typeCriseCategorieId,
+                typeCriseCategorieCode = element.typeCriseCategorieCode,
+                typeCriseCategorieLibelle = element.typeCriseCategorieLibelle,
+                typeCriseCategorieTypeGeometrie = element.typeCriseCategorieTypeGeometrie,
+                typeCriseCategorieCriseCategorieId = element.typeCriseCategorieCriseCategorieId,
+            ),
+        ).wrap()
+    }
+
+    @GET
+    @Path("/get/{typeCriseCategorieId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    fun get(
+        @PathParam("typeCriseCategorieId")
+        typeCriseCategorieId: UUID,
+    ): Response {
+        return Response.ok(typeCriseCatagorieRepository.getById(typeCriseCategorieId)).build()
     }
 }

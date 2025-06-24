@@ -1,17 +1,27 @@
 import { Container } from "react-bootstrap";
 import CreateButton from "../../../../components/Button/CreateButton.tsx";
+import { useAppContext } from "../../../../components/App/AppProvider.tsx";
 import PageTitle from "../../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../../components/Form/SelectEnumOption.tsx";
 import { IconCrise } from "../../../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../../components/Table/TableActionColumn.tsx";
+import { hasDroit } from "../../../../droits.tsx";
+import TYPE_DROIT from "../../../../enums/DroitEnum.tsx";
 import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
+import { URLS } from "../../../../routes.tsx";
 import filterValuesTypeCriseCategorie from "./FilterTypeCriseCategorie.tsx";
 
 const ListTypeCriseCategorie = () => {
+  const { user } = useAppContext();
   const colonne = [
     {
       Header: "Code",
@@ -43,6 +53,26 @@ const ListTypeCriseCategorie = () => {
       Filter: <FilterInput type="text" name="criseCategorieLibelle" />,
     },
   ];
+
+  const listeButton: ButtonType[] = [];
+
+  if (hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.UPDATE,
+      route: (data) => URLS.UPDATE_TYPE_CRISE_CATEGORIE(data),
+    });
+  }
+
+  colonne.push(
+    ActionColumn({
+      Header: "Actions",
+      accessor: "typeCriseCategorieId",
+      buttons: listeButton,
+    }),
+  );
 
   return (
     <>

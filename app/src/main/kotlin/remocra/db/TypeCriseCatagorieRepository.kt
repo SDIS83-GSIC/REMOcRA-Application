@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
+import java.util.UUID
 
 class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -71,4 +72,15 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
         dsl.insertInto(TYPE_CRISE_CATEGORIE)
             .set(dsl.newRecord(TYPE_CRISE_CATEGORIE, typeCriseCategorie))
             .execute()
+
+    fun update(typeCriseCategorie: TypeCriseCategorie) =
+        dsl.update(TYPE_CRISE_CATEGORIE)
+            .set(dsl.newRecord(TYPE_CRISE_CATEGORIE, typeCriseCategorie))
+            .where(TYPE_CRISE_CATEGORIE.ID.eq(typeCriseCategorie.typeCriseCategorieId))
+            .execute()
+
+    fun getById(typeCriseCategorieId: UUID): TypeCriseCategorie =
+        dsl.selectFrom(TYPE_CRISE_CATEGORIE)
+            .where(TYPE_CRISE_CATEGORIE.ID.eq(typeCriseCategorieId))
+            .fetchSingleInto()
 }

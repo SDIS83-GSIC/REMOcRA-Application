@@ -68,7 +68,7 @@ export const TypeCriseCategorie = () => {
           listIdCodeLibelle={listTypeGeometrie}
           label="Type de géométrie"
           defaultValue={listTypeGeometrie?.find(
-            (e) => e.code === values.natureTypePei,
+            (e) => e.code === values.typeCriseCategorieTypeGeometrie,
           )}
           required={true}
           setValues={setValues}
@@ -85,7 +85,7 @@ export const TypeCriseCategorie = () => {
           }
           getOptionValue={(t) => t.criseCategorieId}
           getOptionLabel={(t) => t.criseCategorieLibelle}
-          value={
+          defaultValue={
             Object.values(criseCategorieState.data)?.find(
               (r) =>
                 r.criseCategorieId ===
