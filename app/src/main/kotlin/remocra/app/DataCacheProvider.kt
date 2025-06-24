@@ -10,6 +10,7 @@ import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.TypeDataCache
 import remocra.db.AnomalieRepository
 import remocra.db.CoucheRepository
+import remocra.db.CriseCategorieRepository
 import remocra.db.DiametreRepository
 import remocra.db.DomaineRepository
 import remocra.db.MarquePibiRepository
@@ -22,11 +23,13 @@ import remocra.db.OldebRepository
 import remocra.db.RcciRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
+import remocra.db.TypeCriseRepository
 import remocra.db.TypeOrganismeRepository
 import remocra.db.TypeReseauRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
+import remocra.db.jooq.remocra.tables.pojos.CriseCategorie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
@@ -53,6 +56,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.pojos.TypeCrise
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 import remocra.eventbus.EventListener
@@ -67,6 +71,7 @@ class DataCacheProvider
 constructor(
     private val anomalieRepository: AnomalieRepository,
     private val coucheRepository: CoucheRepository,
+    private val criseCategorieRepository: CriseCategorieRepository,
     private val diametreRepository: DiametreRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
@@ -79,6 +84,7 @@ constructor(
     private val rcciRepository: RcciRepository,
     private val reservoirRepository: ReservoirRepository,
     private val typeCanalisationRepository: TypeCanalisationRepository,
+    private val typeCriseRepository: TypeCriseRepository,
     private val typeOrganismeRepository: TypeOrganismeRepository,
     private val typeReseauRepository: TypeReseauRepository,
     private val utilisateurRepository: UtilisateurRepository,
@@ -106,6 +112,7 @@ constructor(
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
             TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
             TypeDataCache.COUCHE -> dataCache.mapCouches = coucheRepository.getMapById()
+            TypeDataCache.CRISE_CATEGORIE -> dataCache.mapCriseCategorie = criseCategorieRepository.getMapById()
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -124,6 +131,7 @@ constructor(
             TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
             TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
             TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
+            TypeDataCache.TYPE_CRISE -> dataCache.mapTypeCrise = typeCriseRepository.getMapById()
             TypeDataCache.TYPE_ORGANISME -> dataCache.mapTypeOrganisme = typeOrganismeRepository.getMapById()
             TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
             TypeDataCache.OLDEB_TYPE_ACTION -> dataCache.mapOldebTypeAction = oldebRepository.getTypeAction()
@@ -147,6 +155,7 @@ constructor(
         val anomalies = anomalieRepository.getMapById()
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
         val couches = coucheRepository.getMapById()
+        val criseCategorie = criseCategorieRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
@@ -173,6 +182,7 @@ constructor(
         val mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
         val reservoir = reservoirRepository.getMapById()
         val typeCanalisation = typeCanalisationRepository.getMapById()
+        val typeCrise = typeCriseRepository.getMapById()
         val typeOrganisme = typeOrganismeRepository.getMapById()
         val typeReseau = typeReseauRepository.getMapById()
         val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
@@ -181,6 +191,7 @@ constructor(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
             mapCouches = couches,
+            mapCriseCategorie = criseCategorie,
             mapDiametre = diametres,
             mapDomaine = domaines,
             mapMateriau = materiaux,
@@ -207,6 +218,7 @@ constructor(
             mapRcciTypePrometheePartition = mapRcciTypePrometheePartition,
             mapReservoir = reservoir,
             mapTypeCanalisation = typeCanalisation,
+            mapTypeCrise = typeCrise,
             mapTypeOrganisme = typeOrganisme,
             mapTypeReseau = typeReseau,
             utilisateurSysteme = utilisateurSysteme,
@@ -220,6 +232,7 @@ constructor(
         TypeDataCache.ANOMALIE -> getAnomalies()
         TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
         TypeDataCache.COUCHE -> get().mapCouches
+        TypeDataCache.CRISE_CATEGORIE -> get().mapCriseCategorie
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -248,6 +261,7 @@ constructor(
         TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> getMapRcciTypePrometheePartition()
         TypeDataCache.RESERVOIR -> getReservoirs()
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
+        TypeDataCache.TYPE_CRISE -> get().mapTypeCrise
         TypeDataCache.TYPE_ORGANISME -> get().mapTypeOrganisme
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
     }
@@ -293,6 +307,7 @@ constructor(
         TypeDataCache.ANOMALIE -> Anomalie::class.java
         TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
         TypeDataCache.COUCHE -> CoucheData::class.java
+        TypeDataCache.CRISE_CATEGORIE -> CriseCategorie::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java
@@ -322,6 +337,7 @@ constructor(
         TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> RcciTypePrometheePartition::class.java
         TypeDataCache.RESERVOIR -> Reservoir::class.java
         TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
+        TypeDataCache.TYPE_CRISE -> TypeCrise::class.java
         TypeDataCache.TYPE_ORGANISME -> TypeOrganisme::class.java
         TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
     }

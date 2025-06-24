@@ -2,6 +2,7 @@ package remocra.data
 
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
 import remocra.db.jooq.remocra.tables.pojos.AnomalieCategorie
+import remocra.db.jooq.remocra.tables.pojos.CriseCategorie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Domaine
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
@@ -28,6 +29,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
+import remocra.db.jooq.remocra.tables.pojos.TypeCrise
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
@@ -37,6 +39,7 @@ data class DataCache(
     var mapAnomalie: Map<UUID, Anomalie>,
     var mapAnomalieCategorie: Map<UUID, AnomalieCategorie>,
     var mapCouches: Map<UUID, CoucheData>,
+    var mapCriseCategorie: Map<UUID, CriseCategorie>,
     var mapDiametre: Map<UUID, Diametre>,
     var mapDomaine: Map<UUID, Domaine>,
     var mapMarquePibi: Map<UUID, MarquePibi>,
@@ -63,6 +66,7 @@ data class DataCache(
     var mapRcciTypePrometheePartition: Map<UUID, RcciTypePrometheePartition>,
     var mapReservoir: Map<UUID, Reservoir>,
     var mapTypeCanalisation: Map<UUID, TypeCanalisation>,
+    var mapTypeCrise: Map<UUID, TypeCrise>,
     var mapTypeOrganisme: Map<UUID, TypeOrganisme>,
     var mapTypeReseau: Map<UUID, TypeReseau>,
     var utilisateurSysteme: Utilisateur,
