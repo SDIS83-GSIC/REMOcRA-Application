@@ -64,6 +64,14 @@ const ListTypeCriseCategorie = () => {
       type: TYPE_BUTTON.UPDATE,
       route: (data) => URLS.UPDATE_TYPE_CRISE_CATEGORIE(data),
     });
+
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.DELETE,
+      pathname: url`/api/type-crise-categorie/delete/`,
+    });
   }
 
   colonne.push(

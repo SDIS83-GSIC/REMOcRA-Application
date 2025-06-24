@@ -1,6 +1,7 @@
 package remocra.db
 
 import com.google.inject.Inject
+import kotlinx.coroutines.selects.select
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
@@ -10,6 +11,7 @@ import remocra.data.TypeCriseCategorieData
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
 import java.util.UUID
 
@@ -35,6 +37,8 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
     fun countAllForAdmin(filterBy: Filter?): Int =
         dsl.selectCount()
             .from(TYPE_CRISE_CATEGORIE)
+            .join(CRISE_CATEGORIE)
+            .on(CRISE_CATEGORIE.ID.eq(TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID))
             .where(filterBy?.toCondition())
             .fetchSingleInto()
 
@@ -83,4 +87,12 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
         dsl.selectFrom(TYPE_CRISE_CATEGORIE)
             .where(TYPE_CRISE_CATEGORIE.ID.eq(typeCriseCategorieId))
             .fetchSingleInto()
+
+    fun delete(typeCriseCategorieId: UUID) =
+        dsl.deleteFrom(TYPE_CRISE_CATEGORIE)
+            .where(TYPE_CRISE_CATEGORIE.ID.eq(typeCriseCategorieId))
+            .execute()
+
+    fun fetchExistsInEvenement(typeCriseCategorieId: UUID) =
+        dsl.fetchExists(dsl.select(EVENEMENT.ID).from(EVENEMENT).where(EVENEMENT.TYPE_CRISE_CATEGORIE_ID.eq(typeCriseCategorieId)))
 }

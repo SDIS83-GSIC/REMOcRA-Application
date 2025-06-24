@@ -1,6 +1,7 @@
 package remocra.web.typecrisecategorie
 
 import jakarta.inject.Inject
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -21,6 +22,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
 import remocra.usecase.crise.typecrisecategorie.CreateTypeCriseCategorieUseCase
+import remocra.usecase.crise.typecrisecategorie.DeleteTypeCriseCategorieUseCase
 import remocra.usecase.crise.typecrisecategorie.UpdateTypeCriseCategorieUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -34,6 +36,8 @@ class TypeCriseCategorieEndpoint : AbstractEndpoint() {
     @Inject lateinit var createTypeCriseCatagorieUseCase: CreateTypeCriseCategorieUseCase
 
     @Inject lateinit var updateTypeCriseCatagorieUseCase: UpdateTypeCriseCategorieUseCase
+
+    @Inject lateinit var deleteTypeCriseCatagorieUseCase: DeleteTypeCriseCategorieUseCase
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -106,5 +110,18 @@ class TypeCriseCategorieEndpoint : AbstractEndpoint() {
         typeCriseCategorieId: UUID,
     ): Response {
         return Response.ok(typeCriseCatagorieRepository.getById(typeCriseCategorieId)).build()
+    }
+
+    @DELETE
+    @Path("/delete/{typeCriseCategorieId}")
+    @RequireDroits([Droit.ADMIN_DROITS])
+    fun delete(
+        @PathParam("typeCriseCategorieId")
+        typeCriseCategorieId: UUID,
+    ): Response {
+        return deleteTypeCriseCatagorieUseCase.execute(
+            securityContext.userInfo,
+            typeCriseCatagorieRepository.getById(typeCriseCategorieId),
+        ).wrap()
     }
 }

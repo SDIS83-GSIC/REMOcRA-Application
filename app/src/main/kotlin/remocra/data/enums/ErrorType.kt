@@ -337,6 +337,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_NOMENC_FORBIDDEN_REMOVAL(8203, "Vous n'avez pas les droits de suppression des nomenclatures", Status.FORBIDDEN),
     ADMIN_NOMENC_SAME_ELEMENT(8204, "Vous ne pouvez pas définir l'objet parent avec la valeur courante"),
     ADMIN_NOMENC_CODE_EXISTS(8205, "Ce code existe déjà pour un autre élément"),
+    ADMIN_NOMENC_IMPOSSIBLE_SUPPRIME(8206, "Impossible de supprimer l'élément. Il est toujours référencé vers une autre table."),
 
     //
     // ********************************************************************************
