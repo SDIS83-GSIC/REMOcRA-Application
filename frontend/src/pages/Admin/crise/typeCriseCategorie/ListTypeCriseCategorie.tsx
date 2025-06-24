@@ -1,4 +1,5 @@
 import { Container } from "react-bootstrap";
+import CreateButton from "../../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../../components/Form/SelectEnumOption.tsx";
@@ -49,6 +50,12 @@ const ListTypeCriseCategorie = () => {
         <PageTitle
           title="Liste des types de catégories de crise"
           icon={<IconCrise />}
+          right={
+            <CreateButton
+              title="Ajouter un type de catégorie de crise"
+              href={URLS.ADD_TYPE_CRISE_CATEGORIE}
+            />
+          }
         />
         <QueryTable
           query={url`/api/type-crise-categorie`}

@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import remocra.data.Params
 import remocra.data.TypeCriseCategorieData
 import remocra.db.jooq.remocra.enums.TypeGeometry
+import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
 
@@ -47,7 +48,7 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
                 typeCriseCategorieCode?.let { DSL.and(TYPE_CRISE_CATEGORIE.CODE.containsIgnoreCaseUnaccent(it)) },
                 typeCriseCategorieLibelle?.let { DSL.and(TYPE_CRISE_CATEGORIE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                 typeCriseCategorieTypeGeometrie?.let { DSL.and(TYPE_CRISE_CATEGORIE.TYPE_GEOMETRIE.eq(it)) },
-                criseCategorieLibelle?.let { DSL.and(TYPE_CRISE_CATEGORIE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                criseCategorieLibelle?.let { DSL.and(CRISE_CATEGORIE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
             ),
         )
     }
@@ -65,4 +66,9 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
             CRISE_CATEGORIE.LIBELLE.getSortField(criseCategorieLibelle),
         )
     }
+
+    fun insert(typeCriseCategorie: TypeCriseCategorie) =
+        dsl.insertInto(TYPE_CRISE_CATEGORIE)
+            .set(dsl.newRecord(TYPE_CRISE_CATEGORIE, typeCriseCategorie))
+            .execute()
 }
