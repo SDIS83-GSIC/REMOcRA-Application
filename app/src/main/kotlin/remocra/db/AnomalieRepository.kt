@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.case_
 import org.jooq.impl.DSL.inline
 import org.jooq.impl.DSL.`when`
 import remocra.GlobalConstants
@@ -69,7 +70,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      * Retourne l'ensemble des catégories d'anomalie
      */
     fun getAllAnomalieCategorieForAdmin(): Collection<AnomalieCategorie> =
-        dsl.selectFrom(ANOMALIE_CATEGORIE).orderBy(ANOMALIE_CATEGORIE.CODE.sortAsc(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME), ANOMALIE_CATEGORIE.ORDRE).fetchInto()
+        dsl.selectFrom(ANOMALIE_CATEGORIE).orderBy(case_(ANOMALIE_CATEGORIE.CODE).`when`(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME, 1000).else_(ANOMALIE_CATEGORIE.ORDRE)).fetchInto()
 
     /**
      * Retourne l'ensemble des poids/anomalies pour une anomalie
