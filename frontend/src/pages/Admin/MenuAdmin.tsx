@@ -309,6 +309,16 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
+                      pathname={URLS.LIST_DIAMETRE}
+                    >
+                      Diamètres
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
+                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
                       pathname={URLS.LIST_DOMAINE}
                     >
                       Domaines
@@ -402,16 +412,6 @@ const MenuAdmin = () => {
                       pathname={URLS.LIST_TYPE_CANALISATION}
                     >
                       Types de canalisations
-                    </CustomLinkButton>
-                  </Nav.Item>
-                )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.LIST_DIAMETRE}
-                    >
-                      Types de diamètres
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
