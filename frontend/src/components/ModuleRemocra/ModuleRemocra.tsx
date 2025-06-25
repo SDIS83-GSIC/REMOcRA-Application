@@ -1,4 +1,5 @@
 import { Button, Col, Image, Row, Table } from "react-bootstrap";
+import { classNames } from "@react-pdf-viewer/core";
 import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/AccueilPrive.tsx";
 import { URLS } from "../../routes.tsx";
@@ -66,8 +67,8 @@ const ModuleDocumentCourrier = ({
         <thead>
           <tr>
             <th>Libellé</th>
-            <th>Date de dernière mise à jour</th>
-            <th />
+            <th width={150}>Mise à jour</th>
+            <th width={50} />
           </tr>
         </thead>
         <tbody>
@@ -75,10 +76,14 @@ const ModuleDocumentCourrier = ({
             return (
               <tr key={index}>
                 <td>{e.libelle}</td>
-                <td>{e.date && formatDateTime(e.date)}</td>
-                <td>
+                <td width={150}>{e.date && formatDateTime(e.date)}</td>
+                <td width={50} className="p-0 m-0">
                   <Button
-                    className={"text-warning"}
+                    variant={"link"}
+                    className={classNames(
+                      "p-0 m-0",
+                      "text-decoration-none text-primary",
+                    )}
                     href={
                       moduleType === TypeModuleRemocra.DOCUMENT
                         ? url`/api/document-habilitable/telecharger/` + e.id
