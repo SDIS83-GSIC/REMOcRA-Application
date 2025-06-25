@@ -229,7 +229,11 @@ function getColumnPeiByStringArray(
           accessor: "peiNextRop",
           sortField: "peiNextRop",
           Cell: (value) => {
-            return <div>{value.value ? formatDate(value.value) : ""}</div>;
+            return (
+              <div className="text-center">
+                {value.value ? formatDate(value.value) : ""}
+              </div>
+            );
           },
           Filter: (
             <SelectEnumOption
@@ -245,7 +249,11 @@ function getColumnPeiByStringArray(
           accessor: "peiNextCtp",
           sortField: "peiNextCtp",
           Cell: (value) => {
-            return <div>{value.value ? formatDate(value.value) : ""}</div>;
+            return (
+              <div className="text-center">
+                {value.value ? formatDate(value.value) : ""}
+              </div>
+            );
           },
           Filter: (
             <SelectEnumOption
