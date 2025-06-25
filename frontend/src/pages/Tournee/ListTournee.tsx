@@ -234,6 +234,10 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       textEnable: "Forcer l'avancement de la tournée à 0",
       pathname: url`/api/tournee/avancement-force-0/`,
       icon: <IconZeroPourcent />,
+      confirmModal: {
+        header: "Forcer l'avancement de la tournée à 0% ?",
+        content: "Voulez-vous continuer ? ",
+      },
       disable: (v) => {
         return v.original.tourneePourcentageAvancement === 0 || isDisabled(v);
       },
@@ -253,6 +257,10 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       },
       textEnable: "Forcer l'avancement de la tournée à 100",
       pathname: url`/api/tournee/avancement-force-100/`,
+      confirmModal: {
+        header: "Forcer l'avancement de la tournée à 100% ?",
+        content: "Voulez-vous continuer ? ",
+      },
       icon: <IconCentPourcent />,
       disable: (v) => {
         return v.original.tourneePourcentageAvancement === 100 || isDisabled(v);
