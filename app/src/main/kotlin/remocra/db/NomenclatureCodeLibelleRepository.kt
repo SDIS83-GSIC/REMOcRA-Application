@@ -313,7 +313,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val libelle: Int?,
         val actif: Int?,
         val protected: Int?,
-        val libelleFk: String?,
+        val libelleFk: Int?,
         var type: TypeNomenclatureCodeLibelle?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
