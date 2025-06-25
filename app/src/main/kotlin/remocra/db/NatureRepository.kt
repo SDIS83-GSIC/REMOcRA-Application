@@ -39,6 +39,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         val natureActif: Boolean?,
         val natureCode: String?,
         val natureLibelle: String?,
+        val diametreId: UUID?,
         val natureTypePei: TypePei?,
         val natureProtected: Boolean?,
     ) {
@@ -47,6 +48,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 natureActif?.let { DSL.and(NATURE.ACTIF.eq(natureActif)) },
                 natureCode?.let { DSL.and(NATURE.CODE.containsIgnoreCaseUnaccent(natureCode)) },
                 natureLibelle?.let { DSL.and(NATURE.LIBELLE.containsIgnoreCaseUnaccent(natureLibelle)) },
+                diametreId?.let { DSL.and(L_DIAMETRE_NATURE.DIAMETRE_ID.eq(diametreId)) },
                 natureTypePei?.let { DSL.and(NATURE.TYPE_PEI.eq(natureTypePei)) },
                 natureProtected?.let { DSL.and(NATURE.PROTECTED.eq(natureProtected)) },
             ),
@@ -70,11 +72,23 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         )
     }
 
-    fun getTable(params: Params<Filter, Sort>): Collection<Nature> =
-        dsl.select(NATURE.fields().asList()).from(NATURE).where(
-            params.filterBy?.toCondition()
-                ?: DSL.trueCondition(),
-        )
+    fun getTable(params: Params<Filter, Sort>): Collection<NatureWithDiametres> =
+        dsl.select(NATURE.fields().asList()).select(
+            DSL.multiset(
+                dsl.select(L_DIAMETRE_NATURE.DIAMETRE_ID)
+                    .from(L_DIAMETRE_NATURE)
+                    .where(L_DIAMETRE_NATURE.NATURE_ID.eq(NATURE.ID)),
+            ).convertFrom { record ->
+                record?.map { r ->
+                    r.value1().let { it as UUID }
+                }
+            }.`as`("diametreIds"),
+        ).from(NATURE)
+            .leftJoin(L_DIAMETRE_NATURE).on(NATURE.ID.eq(L_DIAMETRE_NATURE.NATURE_ID))
+            .where(
+                params.filterBy?.toCondition()
+                    ?: DSL.trueCondition(),
+            )
             .orderBy(
                 params.sortBy?.toCondition()
                     ?: listOf(NATURE.CODE),
@@ -82,10 +96,12 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .fetchInto()
 
     fun getCount(params: Params<Filter, Sort>): Int =
-        dsl.selectCount().from(NATURE).where(
-            params.filterBy?.toCondition()
-                ?: DSL.trueCondition(),
-        ).fetchSingleInto()
+        dsl.selectCount().from(NATURE)
+            .leftJoin(L_DIAMETRE_NATURE).on(NATURE.ID.eq(L_DIAMETRE_NATURE.NATURE_ID))
+            .where(
+                params.filterBy?.toCondition()
+                    ?: DSL.trueCondition(),
+            ).fetchSingleInto()
 
     fun getById(id: UUID): Nature? =
         dsl.select(NATURE.fields().asList()).from(NATURE).where(NATURE.ID.eq(id)).fetchOneInto()
