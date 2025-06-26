@@ -130,7 +130,7 @@ const MapPei = () => {
   }, [map, stateListePeiId, estSurligne, projection]);
 
   useEffect(() => {
-    if (!map || !l) {
+    if (!map || !l || !parametres.data) {
       return;
     }
     setTimeout(function () {
