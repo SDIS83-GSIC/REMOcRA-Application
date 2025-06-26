@@ -627,6 +627,10 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
               ] !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
             );
           },
+          confirmModal: {
+            header: "Clore l'indisponibilité temporaire ?",
+            content: "Voulez-vous continuer ? ",
+          },
           textDisable:
             "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
           textEnable: "Clore l'indisponibilité temporaire",

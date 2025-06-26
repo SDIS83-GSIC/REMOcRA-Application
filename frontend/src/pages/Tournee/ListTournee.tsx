@@ -210,6 +210,10 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       textEnable: "Retirer la réservation",
       pathname: url`/api/tournee/desaffecter/`,
       icon: <IconDesaffecter />,
+      confirmModal: {
+        header: "Retirer la réservation ?",
+        content: "Voulez-vous continuer ? ",
+      },
       classEnable: "danger",
       textDisable: "La tournée n'est pas réservée.",
       disable: (v: any) => {
