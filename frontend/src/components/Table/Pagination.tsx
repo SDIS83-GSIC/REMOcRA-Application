@@ -155,7 +155,8 @@ const Pagination = ({
           offset: offset,
         });
       }
-      if (pagination.offset >= count) {
+
+      if (count > 0 && pagination.offset >= count) {
         setPagination({ offset: 0, limit: pagination.limit });
       }
     }, 500); // délai de 500ms
