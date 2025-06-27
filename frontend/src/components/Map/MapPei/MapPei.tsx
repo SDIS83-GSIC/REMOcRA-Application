@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import CreatePei from "../../../pages/Pei/CreatePei.tsx";
+import UpdatePei from "../../../pages/Pei/UpdatePei.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
@@ -20,6 +21,8 @@ const MapPei = () => {
 
   const [showFormPei, setShowFormPei] = useState(false);
   const [coordonneesPeiCreate, setCoordonneesPeiCreate] = useState(null);
+
+  const [peiIdUpdate, setPeiIdUpdate] = useState(null);
 
   const location = useLocation();
   const [estSurligne, setEstSurligne] = useState(
@@ -186,6 +189,8 @@ const MapPei = () => {
                   closeModal={close}
                   refModal={ref}
                   visibleModal={visible}
+                  setPeiIdUpdate={setPeiIdUpdate}
+                  setShowFormPei={setShowFormPei}
                 />
               )
             }
@@ -193,7 +198,7 @@ const MapPei = () => {
         </Col>
         {showFormPei && (
           <Col xs={5} className="bg-light p-2">
-            {coordonneesPeiCreate && (
+            {coordonneesPeiCreate ? (
               <CreatePei
                 coordonneesPeiCreate={coordonneesPeiCreate}
                 close={() => {
@@ -203,6 +208,17 @@ const MapPei = () => {
                 }}
                 map={map}
               />
+            ) : (
+              peiIdUpdate && (
+                <UpdatePei
+                  peiIdUpdate={peiIdUpdate}
+                  close={() => {
+                    setPeiIdUpdate(null);
+                    setShowFormPei(false);
+                  }}
+                  map={map}
+                />
+              )
             )}
           </Col>
         )}

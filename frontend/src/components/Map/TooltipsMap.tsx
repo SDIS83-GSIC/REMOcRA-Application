@@ -46,6 +46,8 @@ const TooltipMapPei = ({
   disabledTooltip = false,
   displayButtonEditDebitSimultane,
   dataDebitSimultaneLayer,
+  setShowFormPei,
+  setPeiIdUpdate,
 }: {
   map: Map;
   displayButtonEdit: boolean;
@@ -55,6 +57,8 @@ const TooltipMapPei = ({
   disabledTooltip: boolean;
   displayButtonEditDebitSimultane: boolean;
   dataDebitSimultaneLayer: any;
+  setPeiIdUpdate: (v: string) => void;
+  setShowFormPei: (v: boolean) => void;
 }) => {
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -87,7 +91,10 @@ const TooltipMapPei = ({
           featureSelect={featureSelect}
           overlay={overlay}
           displayButtonEdit={displayButtonEdit}
-          hrefEdit={URLS.UPDATE_PEI(elementId)}
+          onClickEdit={() => {
+            setShowFormPei(true);
+            setPeiIdUpdate(elementId);
+          }}
           labelEdit={"Modifier le PEI"}
           displayButtonDelete={displayButtonDelete}
           deletePath={`/api/pei/delete/` + elementId}

@@ -373,6 +373,8 @@ const MapToolbarPei = ({
   closeModal,
   refModal,
   visibleModal,
+  setPeiIdUpdate,
+  setShowFormPei,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -396,6 +398,8 @@ const MapToolbarPei = ({
   visibleModal: boolean;
   closeModal: () => void;
   refModal: any;
+  setPeiIdUpdate: (v: string) => void;
+  setShowFormPei: (v: boolean) => void;
 }) => {
   const { user } = useAppContext();
 
@@ -563,6 +567,8 @@ const MapToolbarPei = ({
           user,
           TYPE_DROIT.DEBITS_SIMULTANES_A,
         )}
+        setShowFormPei={setShowFormPei}
+        setPeiIdUpdate={setPeiIdUpdate}
         dataDebitSimultaneLayer={dataDebitSimultaneLayer}
       />
     </ButtonGroup>
