@@ -22,6 +22,7 @@ import remocra.web.couverturehydraulique.CouvertureHydrauliqueModule
 import remocra.web.crise.CriseModule
 import remocra.web.dashboard.DashboardModule
 import remocra.web.debitsimultane.DebitSimultaneModule
+import remocra.web.dfci.DfciModule
 import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
@@ -107,6 +108,7 @@ object WebModule : RemocraModule() {
         install(MessagePeiLongueIndispoModule)
         install(CartoModule)
         install(TypeCriseCategorieModule)
+        install(DfciModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()
