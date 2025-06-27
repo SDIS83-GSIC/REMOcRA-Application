@@ -97,7 +97,7 @@ const MapPei = () => {
     );
   }, [map, projection]);
 
-  const { toggleTool, activeTool } = useToolbarContext({
+  const { toggleTool, activeTool, disabledTool } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
     extraTools: extraTools,
@@ -191,6 +191,8 @@ const MapPei = () => {
                   visibleModal={visible}
                   setPeiIdUpdate={setPeiIdUpdate}
                   setShowFormPei={setShowFormPei}
+                  showFormPei={showFormPei}
+                  disabledTool={disabledTool}
                 />
               )
             }

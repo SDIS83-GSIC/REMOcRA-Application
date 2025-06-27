@@ -375,6 +375,9 @@ const MapToolbarPei = ({
   visibleModal,
   setPeiIdUpdate,
   setShowFormPei,
+  showFormPei,
+  peiIdUpdate,
+  disabledTool,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -400,6 +403,9 @@ const MapToolbarPei = ({
   refModal: any;
   setPeiIdUpdate: (v: string) => void;
   setShowFormPei: (v: boolean) => void;
+  showFormPei: boolean;
+  peiIdUpdate: string;
+  disabledTool: (toolId: string) => void;
 }) => {
   const { user } = useAppContext();
 
@@ -425,7 +431,12 @@ const MapToolbarPei = ({
         <ToolbarButton
           toolName={"create-pei"}
           toolIcon={<IconCreate />}
-          toolLabelTooltip={"Créer un PEI"}
+          disabled={showFormPei && !peiIdUpdate}
+          toolLabelTooltip={
+            showFormPei && peiIdUpdate
+              ? "Un formulaire est en cours d'édition"
+              : "Créer un PEI"
+          }
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
@@ -434,21 +445,31 @@ const MapToolbarPei = ({
         <ToolbarButton
           toolName={"deplacer-pei"}
           toolIcon={<IconMoveObjet />}
-          toolLabelTooltip={"Déplacer un PEI"}
+          toolLabelTooltip={
+            showFormPei
+              ? "Un formulaire est en cours d'édition"
+              : "Déplacer un PEI"
+          }
           toggleTool={toggleToolCallback}
+          disabled={showFormPei}
           activeTool={activeTool}
         />
       )}
       {hasDroit(user, TYPE_DROIT.INDISPO_TEMP_C) && (
         <>
           <TooltipCustom
-            tooltipText={"Créer une indisponibilité temporaire"}
+            tooltipText={
+              showFormPei
+                ? "Un formulaire est en cours d'édition"
+                : "Créer une indisponibilité temporaire"
+            }
             tooltipId={"indispo-temp-carte"}
           >
             <Button
               variant="outline-primary"
               onClick={createIndispoTemp}
               className="rounded m-2"
+              disabled={showFormPei}
             >
               <IconIndisponibiliteTemporaire />
             </Button>
@@ -465,7 +486,11 @@ const MapToolbarPei = ({
       {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
         <>
           <TooltipCustom
-            tooltipText={"Ajouter des PEI de même nature DECI à une tournée"}
+            tooltipText={
+              showFormPei
+                ? "Un formulaire est en cours d'édition"
+                : "Ajouter des PEI de même nature DECI à une tournée"
+            }
             tooltipId={"affecter-pei-tournee-carte"}
           >
             <Button
@@ -473,8 +498,9 @@ const MapToolbarPei = ({
               onClick={createUpdateTournee}
               className="rounded m-2"
               disabled={
-                listePeiTourneePrive.length === 0 &&
-                listePeiTourneePublic.length === 0
+                (listePeiTourneePrive.length === 0 &&
+                  listePeiTourneePublic.length === 0) ||
+                showFormPei
               }
             >
               <IconTournee />
@@ -570,6 +596,8 @@ const MapToolbarPei = ({
         setShowFormPei={setShowFormPei}
         setPeiIdUpdate={setPeiIdUpdate}
         dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+        showFormPei={showFormPei}
+        disabledCreateButton={() => disabledTool("create-pei")}
       />
     </ButtonGroup>
   );

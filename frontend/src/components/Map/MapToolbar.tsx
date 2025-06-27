@@ -208,6 +208,13 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
     };
   }, [map]);
 
+  function disabledTool(toolId) {
+    if (activeTool === toolId) {
+      setActiveTool(null);
+      tools[toolId]?.action(false);
+    }
+  }
+
   function toggleTool(toolId) {
     let newTool = null;
     if (activeTool === toolId) {
@@ -236,6 +243,7 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
   return {
     activeTool,
     toggleTool,
+    disabledTool,
   };
 };
 
