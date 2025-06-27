@@ -1,3 +1,4 @@
+import classnames from "classnames";
 import UtilisateurEntity from "../Entities/UtilisateurEntity.tsx";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
@@ -50,6 +51,10 @@ function getColumnPeiByStringArray(
   listeAnomaliePossible: Array<IdCodeLibelleType>,
   fetchGeometry: (typeGeometrie: string, idPei: string) => void,
   displayFicheResumeStandalone: boolean = false,
+  delaisWarnCTP: number,
+  delaisUrgentCTP: number,
+  delaisWarnRECO: number,
+  delaisUrgentRECO: number,
 ): Array<columnType> {
   const column: Array<columnType> = [];
 
@@ -231,9 +236,11 @@ function getColumnPeiByStringArray(
           sortField: "peiNextRop",
           Cell: (value) => {
             return (
-              <div className="text-center">
-                {value.value ? formatDate(value.value) : ""}
-              </div>
+              <DateHighlightCell
+                date={value.value}
+                paramUrgent={delaisUrgentRECO}
+                paramWarning={delaisWarnRECO}
+              />
             );
           },
           Filter: (
@@ -251,9 +258,11 @@ function getColumnPeiByStringArray(
           sortField: "peiNextCtp",
           Cell: (value) => {
             return (
-              <div className="text-center">
-                {value.value ? formatDate(value.value) : ""}
-              </div>
+              <DateHighlightCell
+                date={value.value}
+                paramUrgent={delaisUrgentCTP}
+                paramWarning={delaisWarnCTP}
+              />
             );
           },
           Filter: (
@@ -669,5 +678,51 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
 
   return column;
 }
+/**
+ * Composant React qui affiche une date stylisée selon son niveau d'urgence.
+ *
+ * La date est comparée à `now + paramUrgent` et `now + paramWarning` :
+ * - Si elle est avant `now + paramUrgent`, elle est considérée comme urgente (texte en rouge)
+ * - Si elle est avant `now + paramWarning`, elle est considérée comme un avertissement (texte en orange/jaune)
+ * - Sinon, elle est affichée normalement
+ */
+const DateHighlightCell = ({
+  date,
+  paramUrgent,
+  paramWarning,
+}: {
+  date: Date;
+  paramUrgent: number;
+  paramWarning: number;
+}) => {
+  const now = new Date();
 
+  const dateUrgent = new Date(now);
+  dateUrgent.setDate(now.getDate() + Number(paramUrgent));
+
+  const dateWarning = new Date(now);
+  dateWarning.setDate(now.getDate() + Number(paramWarning));
+
+  const dateToCompare = new Date(date); // pour la mettre au même format que les autres peu importe l'entrée
+
+  let isUrgent = false,
+    isWarning = false;
+
+  if (dateToCompare < dateUrgent) {
+    isUrgent = true;
+  } else if (dateToCompare < dateWarning) {
+    isWarning = true;
+  }
+
+  return (
+    <div
+      className={classnames(
+        "text-center",
+        isUrgent ? "text-danger" : isWarning ? "text-warning" : "",
+      )}
+    >
+      {date ? formatDate(date) : ""}
+    </div>
+  );
+};
 export default getColumnPeiByStringArray;

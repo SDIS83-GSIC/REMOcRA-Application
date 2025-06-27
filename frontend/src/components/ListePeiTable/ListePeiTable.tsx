@@ -28,6 +28,10 @@ const ListPei = ({
   let peiColonnes: COLUMN_PEI[] = [];
   let isFicheResumeStandalone = false;
 
+  let delaisWarnCTP: number,
+    delaisUrgentCTP: number,
+    delaisWarnRECO: number,
+    delaisUrgentRECO: number;
   const parametrePeiColonnes = PARAMETRE.PEI_COLONNES;
   const paramPeiFicheResumeStandalone = PARAMETRE.PEI_FICHE_RESUME_STANDALONE;
 
@@ -36,6 +40,10 @@ const ListPei = ({
       listeParametreCode: JSON.stringify([
         parametrePeiColonnes,
         paramPeiFicheResumeStandalone,
+        PARAMETRE.PEI_DELAI_CTRL_URGENT,
+        PARAMETRE.PEI_DELAI_CTRL_WARN,
+        PARAMETRE.PEI_DELAI_RECO_URGENT,
+        PARAMETRE.PEI_DELAI_RECO_WARN,
       ]),
     }}`,
   );
@@ -48,6 +56,15 @@ const ListPei = ({
     isFicheResumeStandalone = JSON.parse(
       listeParametre?.data?.[paramPeiFicheResumeStandalone].parametreValeur,
     );
+
+    delaisWarnCTP =
+      listeParametre?.data?.[PARAMETRE.PEI_DELAI_CTRL_WARN].parametreValeur;
+    delaisUrgentCTP =
+      listeParametre?.data?.[PARAMETRE.PEI_DELAI_CTRL_URGENT].parametreValeur;
+    delaisWarnRECO =
+      listeParametre?.data?.[PARAMETRE.PEI_DELAI_RECO_WARN].parametreValeur;
+    delaisUrgentRECO =
+      listeParametre?.data?.[PARAMETRE.PEI_DELAI_RECO_URGENT].parametreValeur;
   }
 
   const filter = {
@@ -108,6 +125,10 @@ const ListPei = ({
           listeAnomaliePossible,
           fetchGeometry,
           isFicheResumeStandalone,
+          delaisWarnCTP,
+          delaisUrgentCTP,
+          delaisWarnRECO,
+          delaisUrgentRECO,
         )}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}
