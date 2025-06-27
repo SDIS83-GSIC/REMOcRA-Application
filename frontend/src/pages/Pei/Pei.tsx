@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
 import { useEffect, useMemo } from "react";
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -250,7 +250,15 @@ type SelectDataType = {
   })[];
 };
 
-const Pei = ({ isNew = false }: { isNew?: boolean }) => {
+const Pei = ({
+  isNew = false,
+  close,
+  returnBouton = true,
+}: {
+  isNew?: boolean;
+  close: () => void;
+  returnBouton: boolean;
+}) => {
   // On récupère l'utilisateur pour prendre en compte les droits
   const { user, srid }: { user: UtilisateurEntity; srid: number } =
     useAppContext();
@@ -529,7 +537,22 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
     srid != null && (
       <FormContainer>
         <Container>
-          <PageTitle icon={icon} title={titre} />
+          <PageTitle
+            icon={icon}
+            title={titre}
+            displayReturnButton={returnBouton}
+            right={
+              !returnBouton && (
+                <Button
+                  variant="danger"
+                  className={"text-white"}
+                  onClick={close}
+                >
+                  Fermer
+                </Button>
+              )
+            }
+          />
           <AccordionCustom
             activesKeys={activesKeys}
             handleShowClose={handleShowClose}
@@ -538,7 +561,7 @@ const Pei = ({ isNew = false }: { isNew?: boolean }) => {
 
           {showFormButtons && (
             <SubmitFormButtons
-              returnLink={true}
+              returnLink={returnBouton}
               onClick={() => {
                 const coordonnees = geometrieState.data?.find(
                   (e) => e.srid === parseInt(srid),

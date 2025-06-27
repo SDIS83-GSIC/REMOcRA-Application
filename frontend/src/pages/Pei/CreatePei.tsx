@@ -1,45 +1,49 @@
-import { useLocation } from "react-router-dom";
+import { Map } from "ol";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import { PeiEntity } from "../../Entities/PeiEntity.tsx";
-import { URLS } from "../../routes.tsx";
 import Pei, {
   getInitialValues,
   prepareVariables,
   validationSchema,
 } from "./Pei.tsx";
 
-const CreatePei = () => {
-  // En cas de création via la carte, on récupère les coordonnées passées dans le state
-  const location = useLocation();
-  const state = location.state ?? {};
-  const {
-    coordonneeX: coordonneeX = null,
-    coordonneeY: coordonneeY = null,
-    srid: srid = null,
-    ...rest
-  } = state;
+const CreatePei = ({
+  coordonneesPeiCreate,
+  close,
+  map,
+}: {
+  coordonneesPeiCreate: {
+    coordonneeX: string;
+    coordonneY: string;
+    srid: number;
+  };
+  close: () => void;
+  map: Map;
+}) => {
   const initialValues = getInitialValues({
-    coordonneeX,
-    coordonneeY,
-    srid: srid ? parseInt(srid) : srid,
+    coordonneeX: coordonneesPeiCreate.coordonneeX,
+    coordonneeY: coordonneesPeiCreate.coordonneeY,
+    srid: parseInt(coordonneesPeiCreate.srid),
   } as PeiEntity);
 
-  if (state) {
-    window.history.replaceState(rest, "");
-  }
-
   return (
-    <MyFormik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      isPost={true}
-      isMultipartFormData={true}
-      submitUrl={`/api/pei/create/`}
-      prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={URLS.PEI}
-    >
-      <Pei isNew={true} />
-    </MyFormik>
+    <>
+      <MyFormik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        isPost={true}
+        isMultipartFormData={true}
+        submitUrl={`/api/pei/create/`}
+        prepareVariables={(values) => prepareVariables(values)}
+        onSubmit={() => {
+          close();
+          refreshLayerGeoserver(map);
+        }}
+      >
+        <Pei isNew={true} close={close} returnBouton={false} />
+      </MyFormik>
+    </>
   );
 };
 

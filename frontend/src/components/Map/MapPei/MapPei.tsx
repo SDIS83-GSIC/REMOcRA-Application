@@ -1,9 +1,11 @@
 import { Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
-import url from "../../../module/fetch.tsx";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
+import url from "../../../module/fetch.tsx";
+import CreatePei from "../../../pages/Pei/CreatePei.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
@@ -15,6 +17,9 @@ import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
 
 const MapPei = () => {
   const mapElement = useRef<HTMLDivElement>();
+
+  const [showFormPei, setShowFormPei] = useState(false);
+  const [coordonneesPeiCreate, setCoordonneesPeiCreate] = useState(null);
 
   const location = useLocation();
   const [estSurligne, setEstSurligne] = useState(
@@ -65,6 +70,8 @@ const MapPei = () => {
     map,
     workingLayer,
     dataPeiLayer,
+    setShowFormPei,
+    setCoordonneesPeiCreate,
   });
 
   /**
@@ -142,46 +149,64 @@ const MapPei = () => {
   return (
     <>
       <PageTitle title="Carte" icon={<IconPei />} />
-
-      <MapComponent
-        map={map}
-        workingLayer={workingLayer}
-        availableLayers={availableLayers}
-        addOrRemoveLayer={addOrRemoveLayer}
-        layerListRef={layerListRef}
-        mapToolbarRef={mapToolbarRef}
-        mapElement={mapElement}
-        toggleTool={toggleTool}
-        activeTool={activeTool}
-        toolbarElement={
-          mapToolbarRef.current && (
-            <MapToolbarPei
-              toggleTool={toggleTool}
-              activeTool={activeTool}
-              map={map}
-              dataPeiLayer={dataPeiLayer}
-              showCreateIndispoTemp={showCreateIndispoTemp}
-              handleCloseIndispoTemp={handleCloseIndispoTemp}
-              listePeiId={listePeiId}
-              createIndispoTemp={createIndispoTemp}
-              listePeiTourneePrive={listePeiTourneePrive}
-              listePeiTourneePublic={listePeiTourneePublic}
-              createUpdateTournee={createUpdateTournee}
-              handleCloseTournee={handleCloseTournee}
-              showCreateTournee={showCreateTournee}
-              dataDebitSimultaneLayer={dataDebitSimultaneLayer}
-              createDebitSimultane={createDebitSimultane}
-              handleCloseDebitSimultane={handleCloseDebitSimultane}
-              showCreateDebitSimultane={showCreateDebitSimultane}
-              listePeiIdDebitSimultane={listePeiIdDebitSimultane}
-              typeReseauId={typeReseauId}
-              closeModal={close}
-              refModal={ref}
-              visibleModal={visible}
-            />
-          )
-        }
-      />
+      <Row className={"map-wrapper"}>
+        <Col>
+          <MapComponent
+            map={map}
+            workingLayer={workingLayer}
+            availableLayers={availableLayers}
+            addOrRemoveLayer={addOrRemoveLayer}
+            layerListRef={layerListRef}
+            mapToolbarRef={mapToolbarRef}
+            mapElement={mapElement}
+            toggleTool={toggleTool}
+            activeTool={activeTool}
+            toolbarElement={
+              mapToolbarRef.current && (
+                <MapToolbarPei
+                  toggleTool={toggleTool}
+                  activeTool={activeTool}
+                  map={map}
+                  dataPeiLayer={dataPeiLayer}
+                  showCreateIndispoTemp={showCreateIndispoTemp}
+                  handleCloseIndispoTemp={handleCloseIndispoTemp}
+                  listePeiId={listePeiId}
+                  createIndispoTemp={createIndispoTemp}
+                  listePeiTourneePrive={listePeiTourneePrive}
+                  listePeiTourneePublic={listePeiTourneePublic}
+                  createUpdateTournee={createUpdateTournee}
+                  handleCloseTournee={handleCloseTournee}
+                  showCreateTournee={showCreateTournee}
+                  dataDebitSimultaneLayer={dataDebitSimultaneLayer}
+                  createDebitSimultane={createDebitSimultane}
+                  handleCloseDebitSimultane={handleCloseDebitSimultane}
+                  showCreateDebitSimultane={showCreateDebitSimultane}
+                  listePeiIdDebitSimultane={listePeiIdDebitSimultane}
+                  typeReseauId={typeReseauId}
+                  closeModal={close}
+                  refModal={ref}
+                  visibleModal={visible}
+                />
+              )
+            }
+          />
+        </Col>
+        {showFormPei && (
+          <Col xs={5} className="bg-light p-2">
+            {coordonneesPeiCreate && (
+              <CreatePei
+                coordonneesPeiCreate={coordonneesPeiCreate}
+                close={() => {
+                  workingLayer.getSource().clear();
+                  setCoordonneesPeiCreate(null);
+                  setShowFormPei(false);
+                }}
+                map={map}
+              />
+            )}
+          </Col>
+        )}
+      </Row>
     </>
   );
 };

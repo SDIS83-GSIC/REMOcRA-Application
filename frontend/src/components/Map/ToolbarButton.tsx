@@ -18,6 +18,7 @@ const ToolbarButton = ({
   activeTool: string | undefined;
   disabled?: boolean;
   variant?: string;
+  onClick?: () => void;
 }) => {
   return (
     <TooltipCustom tooltipText={toolLabelTooltip} tooltipId={toolName}>

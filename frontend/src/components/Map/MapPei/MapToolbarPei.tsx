@@ -6,7 +6,6 @@ import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
@@ -15,7 +14,6 @@ import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import CreateDebitSimultane from "../../../pages/DebitSimultane/CreateDebitSimultane.tsx";
 import CreateIndisponibiliteTemporaire from "../../../pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import AffecterPeiTourneeMap from "../../../pages/Tournee/AffecterPeiTourneeMap.tsx";
-import { URLS } from "../../../routes.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import {
   IconCreate,
@@ -37,11 +35,13 @@ export const useToolbarPeiContext = ({
   map,
   workingLayer,
   dataPeiLayer,
+  setShowFormPei,
+  setCoordonneesPeiCreate,
 }: {
   map: Map;
+  setShowFormPei: (v: boolean) => void;
+  setCoordonneesPeiCreate: (e: any) => void;
 }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const { visible, show, close, ref } = useModal();
   const { success: successToast, error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
@@ -100,6 +100,10 @@ export const useToolbarPeiContext = ({
         }
       },
     });
+    createCtrl.on("drawstart", async () => {
+      // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
+      workingLayer.getSource().clear();
+    });
     createCtrl.on("drawend", async (event) => {
       const feature = event.feature;
       (
@@ -121,17 +125,11 @@ export const useToolbarPeiContext = ({
         .text()
         .then((text) => {
           if (text === "true") {
-            navigate(URLS.CREATE_PEI, {
-              state: {
-                ...location.state,
-                from: [
-                  ...location.state.from,
-                  `${location.pathname}${location.search}`,
-                ],
-                coordonneeX: feature.getGeometry().getFlatCoordinates()[0],
-                coordonneeY: feature.getGeometry().getFlatCoordinates()[1],
-                srid: map.getView().getProjection().getCode().split(":").pop(),
-              },
+            setShowFormPei(true);
+            setCoordonneesPeiCreate({
+              coordonneeX: feature.getGeometry().getFlatCoordinates()[0],
+              coordonneeY: feature.getGeometry().getFlatCoordinates()[1],
+              srid: map.getView().getProjection().getCode().split(":").pop(),
             });
           } else {
             workingLayer.getSource().removeFeature(event.feature);
