@@ -192,6 +192,7 @@ const MapPei = () => {
                   setPeiIdUpdate={setPeiIdUpdate}
                   setShowFormPei={setShowFormPei}
                   showFormPei={showFormPei}
+                  peiIdUpdate={peiIdUpdate}
                   disabledTool={disabledTool}
                 />
               )
@@ -199,29 +200,31 @@ const MapPei = () => {
           />
         </Col>
         {showFormPei && (
-          <Col xs={5} className="bg-light p-2">
-            {coordonneesPeiCreate ? (
-              <CreatePei
-                coordonneesPeiCreate={coordonneesPeiCreate}
-                close={() => {
-                  workingLayer.getSource().clear();
-                  setCoordonneesPeiCreate(null);
-                  setShowFormPei(false);
-                }}
-                map={map}
-              />
-            ) : (
-              peiIdUpdate && (
-                <UpdatePei
-                  peiIdUpdate={peiIdUpdate}
+          <Col xs={5} className="border-primary border-start border-3">
+            <div className="bg-light p-2 ">
+              {coordonneesPeiCreate ? (
+                <CreatePei
+                  coordonneesPeiCreate={coordonneesPeiCreate}
                   close={() => {
-                    setPeiIdUpdate(null);
+                    workingLayer.getSource().clear();
+                    setCoordonneesPeiCreate(null);
                     setShowFormPei(false);
                   }}
                   map={map}
                 />
-              )
-            )}
+              ) : (
+                peiIdUpdate && (
+                  <UpdatePei
+                    peiIdUpdate={peiIdUpdate}
+                    close={() => {
+                      setPeiIdUpdate(null);
+                      setShowFormPei(false);
+                    }}
+                    map={map}
+                  />
+                )
+              )}
+            </div>
           </Col>
         )}
       </Row>
