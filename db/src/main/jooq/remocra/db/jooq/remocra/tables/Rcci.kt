@@ -30,6 +30,8 @@ import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Direction
+import remocra.db.jooq.remocra.enums.OuiNonNa
+import remocra.db.jooq.remocra.enums.RisqueMeteo
 import remocra.db.jooq.remocra.indexes.RCCI_GEOMETRIE_IDX
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_RCCI_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_PKEY
@@ -38,16 +40,20 @@ import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKE
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
 import remocra.db.jooq.remocra.tables.RcciDocument.RcciDocumentPath
+import remocra.db.jooq.remocra.tables.RcciIndiceRothermel.RcciIndiceRothermelPath
 import remocra.db.jooq.remocra.tables.RcciTypeDegreCertitude.RcciTypeDegreCertitudePath
 import remocra.db.jooq.remocra.tables.RcciTypeOrigineAlerte.RcciTypeOrigineAlertePath
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie.RcciTypePrometheeCategoriePath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
+import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -149,11 +155,6 @@ open class Rcci(
     val GDH: TableField<Record, ZonedDateTime?> = createField(DSL.name("rcci_gdh"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     /**
-     * The column <code>remocra.rcci.rcci_gel_lieux</code>.
-     */
-    val GEL_LIEUX: TableField<Record, Boolean?> = createField(DSL.name("rcci_gel_lieux"), SQLDataType.BOOLEAN, this, "")
-
-    /**
      * The column <code>remocra.rcci.rcci_geometrie</code>.
      */
     val GEOMETRIE: TableField<Record, Geometry?> = createField(DSL.name("rcci_geometrie"), SQLDataType.GEOMETRY.nullable(false), this, "", GeometryBinding())
@@ -162,11 +163,6 @@ open class Rcci(
      * The column <code>remocra.rcci.rcci_hygrometrie</code>.
      */
     val HYGROMETRIE: TableField<Record, Int?> = createField(DSL.name("rcci_hygrometrie"), SQLDataType.INTEGER, this, "")
-
-    /**
-     * The column <code>remocra.rcci.rcci_indice_rothermel</code>.
-     */
-    val INDICE_ROTHERMEL: TableField<Record, Int?> = createField(DSL.name("rcci_indice_rothermel"), SQLDataType.INTEGER, this, "")
 
     /**
      * The column <code>remocra.rcci.rcci_point_eclosion</code>.
@@ -204,14 +200,9 @@ open class Rcci(
     val TEMPERATURE: TableField<Record, Double?> = createField(DSL.name("rcci_temperature"), SQLDataType.DOUBLE, this, "")
 
     /**
-     * The column <code>remocra.rcci.rcci_vent_local</code>.
+     * The column <code>remocra.rcci.rcci_voie_texte</code>.
      */
-    val VENT_LOCAL: TableField<Record, Boolean?> = createField(DSL.name("rcci_vent_local"), SQLDataType.BOOLEAN, this, "")
-
-    /**
-     * The column <code>remocra.rcci.rcci_voie</code>.
-     */
-    val VOIE: TableField<Record, String?> = createField(DSL.name("rcci_voie"), SQLDataType.CLOB, this, "")
+    val VOIE_TEXTE: TableField<Record, String?> = createField(DSL.name("rcci_voie_texte"), SQLDataType.CLOB, this, "")
 
     /**
      * The column <code>remocra.rcci.rcci_commune_id</code>.
@@ -259,6 +250,31 @@ open class Rcci(
      */
     val UTILISATEUR_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_utilisateur_id"), SQLDataType.UUID.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.rcci.rcci_risque_meteo</code>.
+     */
+    val RISQUE_METEO: TableField<Record, RisqueMeteo?> = createField(DSL.name("rcci_risque_meteo"), SQLDataType.VARCHAR.asEnumDataType(RisqueMeteo::class.java), this, "")
+
+    /**
+     * The column <code>remocra.rcci.rcci_rcci_indice_rothermel_id</code>.
+     */
+    val RCCI_INDICE_ROTHERMEL_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_rcci_indice_rothermel_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.rcci.rcci_vent_local</code>.
+     */
+    val VENT_LOCAL: TableField<Record, OuiNonNa?> = createField(DSL.name("rcci_vent_local"), SQLDataType.VARCHAR.asEnumDataType(OuiNonNa::class.java), this, "")
+
+    /**
+     * The column <code>remocra.rcci.rcci_gel_lieux</code>.
+     */
+    val GEL_LIEUX: TableField<Record, OuiNonNa?> = createField(DSL.name("rcci_gel_lieux"), SQLDataType.VARCHAR.asEnumDataType(OuiNonNa::class.java), this, "")
+
+    /**
+     * The column <code>remocra.rcci.rcci_voie_id</code>.
+     */
+    val VOIE_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_voie_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -293,7 +309,7 @@ open class Rcci(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getIndexes(): List<Index> = listOf(RCCI_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = RCCI_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(RCCI__RCCI_RCCI_COMMUNE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(RCCI__RCCI_RCCI_COMMUNE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY, RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY, RCCI__RCCI_RCCI_VOIE_ID_FKEY)
 
     private lateinit var _commune: CommunePath
 
@@ -379,6 +395,23 @@ open class Rcci(
     val rcciRcciRcciArriveeSdisIdFkey: UtilisateurPath
         get(): UtilisateurPath = rcciRcciRcciArriveeSdisIdFkey()
 
+    private lateinit var _rcciIndiceRothermel: RcciIndiceRothermelPath
+
+    /**
+     * Get the implicit join path to the
+     * <code>remocra.rcci_indice_rothermel</code> table.
+     */
+    fun rcciIndiceRothermel(): RcciIndiceRothermelPath {
+        if (!this::_rcciIndiceRothermel.isInitialized) {
+            _rcciIndiceRothermel = RcciIndiceRothermelPath(this, RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKEY, null)
+        }
+
+        return _rcciIndiceRothermel
+    }
+
+    val rcciIndiceRothermel: RcciIndiceRothermelPath
+        get(): RcciIndiceRothermelPath = rcciIndiceRothermel()
+
     private lateinit var _rcciTypeDegreCertitude: RcciTypeDegreCertitudePath
 
     /**
@@ -446,6 +479,22 @@ open class Rcci(
 
     val rcciRcciUtilisateurIdFkey: UtilisateurPath
         get(): UtilisateurPath = rcciRcciUtilisateurIdFkey()
+
+    private lateinit var _voie: VoiePath
+
+    /**
+     * Get the implicit join path to the <code>remocra.voie</code> table.
+     */
+    fun voie(): VoiePath {
+        if (!this::_voie.isInitialized) {
+            _voie = VoiePath(this, RCCI__RCCI_RCCI_VOIE_ID_FKEY, null)
+        }
+
+        return _voie
+    }
+
+    val voie: VoiePath
+        get(): VoiePath = voie()
 
     private lateinit var _rcciDocument: RcciDocumentPath
 

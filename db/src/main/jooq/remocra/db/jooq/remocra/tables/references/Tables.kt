@@ -122,6 +122,7 @@ import remocra.db.jooq.remocra.tables.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.RapportPersonnaliseParametre
 import remocra.db.jooq.remocra.tables.Rcci
 import remocra.db.jooq.remocra.tables.RcciDocument
+import remocra.db.jooq.remocra.tables.RcciIndiceRothermel
 import remocra.db.jooq.remocra.tables.RcciTypeDegreCertitude
 import remocra.db.jooq.remocra.tables.RcciTypeOrigineAlerte
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
@@ -746,6 +747,11 @@ val RCCI: Rcci = Rcci.RCCI
  * The table <code>remocra.rcci_document</code>.
  */
 val RCCI_DOCUMENT: RcciDocument = RcciDocument.RCCI_DOCUMENT
+
+/**
+ * The table <code>remocra.rcci_indice_rothermel</code>.
+ */
+val RCCI_INDICE_ROTHERMEL: RcciIndiceRothermel = RcciIndiceRothermel.RCCI_INDICE_ROTHERMEL
 
 /**
  * The table <code>remocra.rcci_type_degre_certitude</code>.

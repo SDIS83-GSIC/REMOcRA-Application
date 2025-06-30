@@ -5,6 +5,8 @@ package remocra.db.jooq.remocra.tables.pojos
 
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Direction
+import remocra.db.jooq.remocra.enums.OuiNonNa
+import remocra.db.jooq.remocra.enums.RisqueMeteo
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -32,10 +34,8 @@ data class Rcci(
     val rcciForceVent: Int?,
     val rcciForcesOrdre: String?,
     val rcciGdh: ZonedDateTime?,
-    val rcciGelLieux: Boolean?,
     val rcciGeometrie: Geometry,
     val rcciHygrometrie: Int?,
-    val rcciIndiceRothermel: Int?,
     val rcciPointEclosion: String,
     val rcciPremierCos: String?,
     val rcciPremierEngin: String?,
@@ -43,8 +43,7 @@ data class Rcci(
     val rcciSuperficieReferent: Double?,
     val rcciSuperficieSecours: Double?,
     val rcciTemperature: Double?,
-    val rcciVentLocal: Boolean?,
-    val rcciVoie: String?,
+    val rcciVoieTexte: String?,
     val rcciCommuneId: UUID?,
     val rcciRcciTypePrometheeCategorieId: UUID?,
     val rcciRcciTypeDegreCertitudeId: UUID?,
@@ -54,6 +53,11 @@ data class Rcci(
     val rcciRcciArriveeGendarmerieId: UUID?,
     val rcciRcciArriveePoliceId: UUID?,
     val rcciUtilisateurId: UUID,
+    val rcciRisqueMeteo: RisqueMeteo?,
+    val rcciRcciIndiceRothermelId: UUID?,
+    val rcciVentLocal: OuiNonNa?,
+    val rcciGelLieux: OuiNonNa?,
+    val rcciVoieId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -125,13 +129,6 @@ data class Rcci(
         } else if (this.rcciGdh != o.rcciGdh) {
             return false
         }
-        if (this.rcciGelLieux == null) {
-            if (o.rcciGelLieux != null) {
-                return false
-            }
-        } else if (this.rcciGelLieux != o.rcciGelLieux) {
-            return false
-        }
         if (this.rcciGeometrie != o.rcciGeometrie) {
             return false
         }
@@ -140,13 +137,6 @@ data class Rcci(
                 return false
             }
         } else if (this.rcciHygrometrie != o.rcciHygrometrie) {
-            return false
-        }
-        if (this.rcciIndiceRothermel == null) {
-            if (o.rcciIndiceRothermel != null) {
-                return false
-            }
-        } else if (this.rcciIndiceRothermel != o.rcciIndiceRothermel) {
             return false
         }
         if (this.rcciPointEclosion != o.rcciPointEclosion) {
@@ -194,18 +184,11 @@ data class Rcci(
         } else if (this.rcciTemperature != o.rcciTemperature) {
             return false
         }
-        if (this.rcciVentLocal == null) {
-            if (o.rcciVentLocal != null) {
+        if (this.rcciVoieTexte == null) {
+            if (o.rcciVoieTexte != null) {
                 return false
             }
-        } else if (this.rcciVentLocal != o.rcciVentLocal) {
-            return false
-        }
-        if (this.rcciVoie == null) {
-            if (o.rcciVoie != null) {
-                return false
-            }
-        } else if (this.rcciVoie != o.rcciVoie) {
+        } else if (this.rcciVoieTexte != o.rcciVoieTexte) {
             return false
         }
         if (this.rcciCommuneId == null) {
@@ -263,6 +246,41 @@ data class Rcci(
         if (this.rcciUtilisateurId != o.rcciUtilisateurId) {
             return false
         }
+        if (this.rcciRisqueMeteo == null) {
+            if (o.rcciRisqueMeteo != null) {
+                return false
+            }
+        } else if (this.rcciRisqueMeteo != o.rcciRisqueMeteo) {
+            return false
+        }
+        if (this.rcciRcciIndiceRothermelId == null) {
+            if (o.rcciRcciIndiceRothermelId != null) {
+                return false
+            }
+        } else if (this.rcciRcciIndiceRothermelId != o.rcciRcciIndiceRothermelId) {
+            return false
+        }
+        if (this.rcciVentLocal == null) {
+            if (o.rcciVentLocal != null) {
+                return false
+            }
+        } else if (this.rcciVentLocal != o.rcciVentLocal) {
+            return false
+        }
+        if (this.rcciGelLieux == null) {
+            if (o.rcciGelLieux != null) {
+                return false
+            }
+        } else if (this.rcciGelLieux != o.rcciGelLieux) {
+            return false
+        }
+        if (this.rcciVoieId == null) {
+            if (o.rcciVoieId != null) {
+                return false
+            }
+        } else if (this.rcciVoieId != o.rcciVoieId) {
+            return false
+        }
         return true
     }
 
@@ -279,10 +297,8 @@ data class Rcci(
         result = prime * result + (if (this.rcciForceVent == null) 0 else this.rcciForceVent.hashCode())
         result = prime * result + (if (this.rcciForcesOrdre == null) 0 else this.rcciForcesOrdre.hashCode())
         result = prime * result + (if (this.rcciGdh == null) 0 else this.rcciGdh.hashCode())
-        result = prime * result + (if (this.rcciGelLieux == null) 0 else this.rcciGelLieux.hashCode())
         result = prime * result + this.rcciGeometrie.hashCode()
         result = prime * result + (if (this.rcciHygrometrie == null) 0 else this.rcciHygrometrie.hashCode())
-        result = prime * result + (if (this.rcciIndiceRothermel == null) 0 else this.rcciIndiceRothermel.hashCode())
         result = prime * result + this.rcciPointEclosion.hashCode()
         result = prime * result + (if (this.rcciPremierCos == null) 0 else this.rcciPremierCos.hashCode())
         result = prime * result + (if (this.rcciPremierEngin == null) 0 else this.rcciPremierEngin.hashCode())
@@ -290,8 +306,7 @@ data class Rcci(
         result = prime * result + (if (this.rcciSuperficieReferent == null) 0 else this.rcciSuperficieReferent.hashCode())
         result = prime * result + (if (this.rcciSuperficieSecours == null) 0 else this.rcciSuperficieSecours.hashCode())
         result = prime * result + (if (this.rcciTemperature == null) 0 else this.rcciTemperature.hashCode())
-        result = prime * result + (if (this.rcciVentLocal == null) 0 else this.rcciVentLocal.hashCode())
-        result = prime * result + (if (this.rcciVoie == null) 0 else this.rcciVoie.hashCode())
+        result = prime * result + (if (this.rcciVoieTexte == null) 0 else this.rcciVoieTexte.hashCode())
         result = prime * result + (if (this.rcciCommuneId == null) 0 else this.rcciCommuneId.hashCode())
         result = prime * result + (if (this.rcciRcciTypePrometheeCategorieId == null) 0 else this.rcciRcciTypePrometheeCategorieId.hashCode())
         result = prime * result + (if (this.rcciRcciTypeDegreCertitudeId == null) 0 else this.rcciRcciTypeDegreCertitudeId.hashCode())
@@ -301,6 +316,11 @@ data class Rcci(
         result = prime * result + (if (this.rcciRcciArriveeGendarmerieId == null) 0 else this.rcciRcciArriveeGendarmerieId.hashCode())
         result = prime * result + (if (this.rcciRcciArriveePoliceId == null) 0 else this.rcciRcciArriveePoliceId.hashCode())
         result = prime * result + this.rcciUtilisateurId.hashCode()
+        result = prime * result + (if (this.rcciRisqueMeteo == null) 0 else this.rcciRisqueMeteo.hashCode())
+        result = prime * result + (if (this.rcciRcciIndiceRothermelId == null) 0 else this.rcciRcciIndiceRothermelId.hashCode())
+        result = prime * result + (if (this.rcciVentLocal == null) 0 else this.rcciVentLocal.hashCode())
+        result = prime * result + (if (this.rcciGelLieux == null) 0 else this.rcciGelLieux.hashCode())
+        result = prime * result + (if (this.rcciVoieId == null) 0 else this.rcciVoieId.hashCode())
         return result
     }
 
@@ -317,10 +337,8 @@ data class Rcci(
         sb.append(", ").append(rcciForceVent)
         sb.append(", ").append(rcciForcesOrdre)
         sb.append(", ").append(rcciGdh)
-        sb.append(", ").append(rcciGelLieux)
         sb.append(", ").append(rcciGeometrie)
         sb.append(", ").append(rcciHygrometrie)
-        sb.append(", ").append(rcciIndiceRothermel)
         sb.append(", ").append(rcciPointEclosion)
         sb.append(", ").append(rcciPremierCos)
         sb.append(", ").append(rcciPremierEngin)
@@ -328,8 +346,7 @@ data class Rcci(
         sb.append(", ").append(rcciSuperficieReferent)
         sb.append(", ").append(rcciSuperficieSecours)
         sb.append(", ").append(rcciTemperature)
-        sb.append(", ").append(rcciVentLocal)
-        sb.append(", ").append(rcciVoie)
+        sb.append(", ").append(rcciVoieTexte)
         sb.append(", ").append(rcciCommuneId)
         sb.append(", ").append(rcciRcciTypePrometheeCategorieId)
         sb.append(", ").append(rcciRcciTypeDegreCertitudeId)
@@ -339,6 +356,11 @@ data class Rcci(
         sb.append(", ").append(rcciRcciArriveeGendarmerieId)
         sb.append(", ").append(rcciRcciArriveePoliceId)
         sb.append(", ").append(rcciUtilisateurId)
+        sb.append(", ").append(rcciRisqueMeteo)
+        sb.append(", ").append(rcciRcciIndiceRothermelId)
+        sb.append(", ").append(rcciVentLocal)
+        sb.append(", ").append(rcciGelLieux)
+        sb.append(", ").append(rcciVoieId)
 
         sb.append(")")
         return sb.toString()

@@ -126,6 +126,7 @@ import remocra.db.jooq.remocra.tables.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.RapportPersonnaliseParametre
 import remocra.db.jooq.remocra.tables.Rcci
 import remocra.db.jooq.remocra.tables.RcciDocument
+import remocra.db.jooq.remocra.tables.RcciIndiceRothermel
 import remocra.db.jooq.remocra.tables.RcciTypeDegreCertitude
 import remocra.db.jooq.remocra.tables.RcciTypeOrigineAlerte
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
@@ -774,6 +775,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val RCCI_DOCUMENT: RcciDocument get() = RcciDocument.RCCI_DOCUMENT
 
     /**
+     * The table <code>remocra.rcci_indice_rothermel</code>.
+     */
+    val RCCI_INDICE_ROTHERMEL: RcciIndiceRothermel get() = RcciIndiceRothermel.RCCI_INDICE_ROTHERMEL
+
+    /**
      * The table <code>remocra.rcci_type_degre_certitude</code>.
      */
     val RCCI_TYPE_DEGRE_CERTITUDE: RcciTypeDegreCertitude get() = RcciTypeDegreCertitude.RCCI_TYPE_DEGRE_CERTITUDE
@@ -1040,6 +1046,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         RapportPersonnaliseParametre.RAPPORT_PERSONNALISE_PARAMETRE,
         Rcci.RCCI,
         RcciDocument.RCCI_DOCUMENT,
+        RcciIndiceRothermel.RCCI_INDICE_ROTHERMEL,
         RcciTypeDegreCertitude.RCCI_TYPE_DEGRE_CERTITUDE,
         RcciTypeOrigineAlerte.RCCI_TYPE_ORIGINE_ALERTE,
         RcciTypePrometheeCategorie.RCCI_TYPE_PROMETHEE_CATEGORIE,
