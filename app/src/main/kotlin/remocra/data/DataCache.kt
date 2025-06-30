@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
+import remocra.db.jooq.remocra.tables.pojos.RcciIndiceRothermel
 import remocra.db.jooq.remocra.tables.pojos.RcciTypeDegreCertitude
 import remocra.db.jooq.remocra.tables.pojos.RcciTypeOrigineAlerte
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeCategorie
@@ -60,6 +61,7 @@ data class DataCache(
     var mapOldebTypeResidence: Map<UUID, OldebTypeResidence>,
     var mapOldebTypeSuite: Map<UUID, OldebTypeSuite>,
     var mapOldebTypeZoneUrbanisme: Map<UUID, OldebTypeZoneUrbanisme>,
+    var mapRcciIndiceRothermel: Map<UUID, RcciIndiceRothermel>,
     var mapRcciTypeDegreCertitude: Map<UUID, RcciTypeDegreCertitude>,
     var mapRcciTypeOrigineAlerte: Map<UUID, RcciTypeOrigineAlerte>,
     var mapRcciTypePrometheeCategorie: Map<UUID, RcciTypePrometheeCategorie>,

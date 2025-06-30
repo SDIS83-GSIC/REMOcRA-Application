@@ -20,6 +20,7 @@ import remocra.db.NatureDeciRepository
 import remocra.db.NatureRepository
 import remocra.db.NiveauRepository
 import remocra.db.OldebRepository
+import remocra.db.RcciIndiceRothermelRepository
 import remocra.db.RcciRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
@@ -50,6 +51,7 @@ import remocra.db.jooq.remocra.tables.pojos.OldebTypeDebroussaillement
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeResidence
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeSuite
 import remocra.db.jooq.remocra.tables.pojos.OldebTypeZoneUrbanisme
+import remocra.db.jooq.remocra.tables.pojos.RcciIndiceRothermel
 import remocra.db.jooq.remocra.tables.pojos.RcciTypeDegreCertitude
 import remocra.db.jooq.remocra.tables.pojos.RcciTypeOrigineAlerte
 import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheeCategorie
@@ -84,6 +86,7 @@ constructor(
     private val niveauRepository: NiveauRepository,
     private val oldebRepository: OldebRepository,
     private val rcciRepository: RcciRepository,
+    private val rcciIndiceRothermelRepository: RcciIndiceRothermelRepository,
     private val reservoirRepository: ReservoirRepository,
     private val typeCanalisationRepository: TypeCanalisationRepository,
     private val typeCriseRepository: TypeCriseRepository,
@@ -138,6 +141,7 @@ constructor(
             TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> dataCache.mapOldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
             TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> dataCache.mapOldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
             TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> dataCache.mapOldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
+            TypeDataCache.RCCI_INDICE_ROTHERMEL -> dataCache.mapRcciIndiceRothermel = rcciIndiceRothermelRepository.getMapById()
             TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
             TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
             TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
@@ -179,6 +183,7 @@ constructor(
         val oldebTypeResidence = oldebRepository.getTypeResidence()
         val oldebTypeSuite = oldebRepository.getTypeSuite()
         val oldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
+        val mapIndiceRothermel = rcciIndiceRothermelRepository.getMapById()
         val mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
         val mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
         val mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
@@ -216,6 +221,7 @@ constructor(
             mapOldebTypeResidence = oldebTypeResidence,
             mapOldebTypeSuite = oldebTypeSuite,
             mapOldebTypeZoneUrbanisme = oldebTypeZoneUrbanisme,
+            mapRcciIndiceRothermel = mapIndiceRothermel,
             mapRcciTypeDegreCertitude = mapRcciTypeDegreCertitude,
             mapRcciTypeOrigineAlerte = mapRcciTypeOrigineAlerte,
             mapRcciTypePrometheeCategorie = mapRcciTypePrometheeCategorie,
@@ -260,6 +266,7 @@ constructor(
         TypeDataCache.OLDEB_TYPE_RESIDENCE -> get().mapOldebTypeResidence
         TypeDataCache.OLDEB_TYPE_SUITE -> get().mapOldebTypeSuite
         TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> get().mapOldebTypeZoneUrbanisme
+        TypeDataCache.RCCI_INDICE_ROTHERMEL -> get().mapRcciIndiceRothermel
         TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> getMapRcciTypeDegreCertitude()
         TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> getMapRcciTypeOrigineAlerte()
         TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> getMapRcciTypePrometheeCategorie()
@@ -337,6 +344,7 @@ constructor(
         TypeDataCache.OLDEB_TYPE_RESIDENCE -> OldebTypeResidence::class.java
         TypeDataCache.OLDEB_TYPE_SUITE -> OldebTypeSuite::class.java
         TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> OldebTypeZoneUrbanisme::class.java
+        TypeDataCache.RCCI_INDICE_ROTHERMEL -> RcciIndiceRothermel::class.java
         TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> RcciTypeDegreCertitude::class.java
         TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> RcciTypeOrigineAlerte::class.java
         TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> RcciTypePrometheeCategorie::class.java
