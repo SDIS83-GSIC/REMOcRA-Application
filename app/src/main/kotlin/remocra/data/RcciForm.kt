@@ -3,6 +3,8 @@ package remocra.data
 import jakarta.servlet.http.Part
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Direction
+import remocra.db.jooq.remocra.enums.OuiNonNa
+import remocra.db.jooq.remocra.enums.RisqueMeteo
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -22,10 +24,9 @@ data class RcciForm(
     val rcciForceVent: Int?,
     val rcciForcesOrdre: String?,
     val rcciGdh: ZonedDateTime?,
-    val rcciGelLieux: Boolean?,
+    val rcciGelLieux: OuiNonNa?,
     val rcciGeometrie: Geometry,
     val rcciHygrometrie: Int?,
-    val rcciIndiceRothermel: Int?,
     val rcciPointEclosion: String,
     val rcciPremierCos: String?,
     val rcciPremierEngin: String?,
@@ -33,8 +34,9 @@ data class RcciForm(
     val rcciSuperficieReferent: Double?,
     val rcciSuperficieSecours: Double?,
     val rcciTemperature: Double?,
-    val rcciVentLocal: Boolean?,
-    val rcciVoie: String?,
+    val rcciVentLocal: OuiNonNa?,
+    val rcciVoieTexte: String?,
+    val rcciVoieId: UUID?,
     val rcciCommuneId: UUID?,
     val rcciRcciTypePrometheeCategorieId: UUID?,
     val rcciRcciTypeDegreCertitudeId: UUID?,
@@ -44,6 +46,8 @@ data class RcciForm(
     val rcciRcciArriveeGendarmerieId: UUID?,
     val rcciRcciArriveePoliceId: UUID?,
     val rcciUtilisateurId: UUID,
+    val rcciRcciIndiceRothermelId: UUID?,
+    val rcciRisqueMeteo: RisqueMeteo?,
     val documentList: List<RcciDocument>? = listOf(),
 )
 

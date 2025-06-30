@@ -34,10 +34,9 @@ class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepo
                 rcciForceVent = it.rcciForceVent,
                 rcciForcesOrdre = it.rcciForcesOrdre,
                 rcciGdh = it.rcciGdh,
-                rcciGelLieux = TODO(),
+                rcciGelLieux = it.rcciGelLieux,
                 rcciGeometrie = it.rcciGeometrie,
                 rcciHygrometrie = it.rcciHygrometrie,
-                rcciIndiceRothermel = TODO(),
                 rcciPointEclosion = it.rcciPointEclosion,
                 rcciPremierCos = it.rcciPremierCos,
                 rcciPremierEngin = it.rcciPremierEngin,
@@ -45,8 +44,7 @@ class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepo
                 rcciSuperficieReferent = it.rcciSuperficieReferent,
                 rcciSuperficieSecours = it.rcciSuperficieSecours,
                 rcciTemperature = it.rcciTemperature,
-                rcciVentLocal = TODO(),
-                rcciVoie = it.rcciVoieTexte, // TODO gestion des voies
+                rcciVentLocal = it.rcciVentLocal,
                 rcciCommuneId = it.rcciCommuneId,
                 rcciRcciTypePrometheeCategorieId = it.rcciRcciTypePrometheeCategorieId,
                 rcciRcciTypeDegreCertitudeId = it.rcciRcciTypeDegreCertitudeId,
@@ -56,8 +54,7 @@ class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepo
                 rcciRcciArriveeGendarmerieId = it.rcciRcciArriveeGendarmerieId,
                 rcciRcciArriveePoliceId = it.rcciRcciArriveePoliceId,
                 rcciUtilisateurId = it.rcciUtilisateurId,
-                documentList = rcciRepository.selectDocument(it.rcciId).map {
-                        document ->
+                documentList = rcciRepository.selectDocument(it.rcciId).map { document ->
                     RcciDocument(
                         documentId = document.documentId,
                         documentNom = document.documentNomFichier,
@@ -68,6 +65,10 @@ class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepo
                             .toString(),
                     )
                 },
+                rcciVoieTexte = it.rcciVoieTexte,
+                rcciVoieId = it.rcciVoieId,
+                rcciRcciIndiceRothermelId = it.rcciRcciIndiceRothermelId,
+                rcciRisqueMeteo = it.rcciRisqueMeteo,
             )
         }
 

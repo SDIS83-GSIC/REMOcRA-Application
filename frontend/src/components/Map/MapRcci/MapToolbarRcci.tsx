@@ -291,6 +291,7 @@ export const useToolbarRcciContext = ({
       },
       "edit-rcci": {
         action: toggleEdit,
+        actionPossibleEnDeplacement: false,
       },
       "delete-rcci": {
         action: toggleDelete,

@@ -22,6 +22,7 @@ export enum NOMENCLATURE {
   PROFIL_UTILISATEUR = "profil_utilisateur",
   ROLE_CONTACT = "role_contact",
   THEMATIQUE = "thematique",
+  RCCI_INDICE_ROTHERMEL = "rcci_indice_rothermel",
   RCCI_TYPE_PROMETHEE_FAMILLE = "rcci_type_promethee_famille",
   RCCI_TYPE_PROMETHEE_PARTITION = "rcci_type_promethee_partition",
   RCCI_TYPE_PROMETHEE_CATEGORIE = "rcci_type_promethee_categorie",

@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
 import { useFormikContext } from "formik";
-import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
-import { array, boolean, number, object, string } from "yup";
 import { WKT } from "ol/format";
 import { transform } from "ol/proj";
+import { useEffect, useState } from "react";
+import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
+import { array, number, object, string } from "yup";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import DeleteButton from "../../../components/Button/DeleteButton.tsx";
+import { useGet, usePost } from "../../../components/Fetch/useFetch.tsx";
 import {
   DateTimeInput,
   FieldSet,
@@ -13,8 +16,18 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
-import { useGet, usePost } from "../../../components/Fetch/useFetch.tsx";
+import {
+  IconDelete,
+  IconExport,
+  IconWarning,
+} from "../../../components/Icon/Icon.tsx";
+import DIRECTION from "../../../enums/DirectionEnum.tsx";
+import nomenclaturesEnum from "../../../enums/NomenclaturesEnum.tsx";
+import OUI_NON_NA from "../../../enums/OuiNonNAEnum.tsx";
+import RISQUE_METEO from "../../../enums/RisqueMeteoEnum.tsx";
+import TypeSystemeSrid from "../../../enums/TypeSystemeSrid.tsx";
 import url from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import {
   date,
   numberPositif,
@@ -22,18 +35,7 @@ import {
   requiredDate,
   requiredString,
 } from "../../../module/validators.tsx";
-import nomenclaturesEnum from "../../../enums/NomenclaturesEnum.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import TypeSystemeSrid from "../../../enums/TypeSystemeSrid.tsx";
-import {
-  IconDelete,
-  IconExport,
-  IconWarning,
-} from "../../../components/Icon/Icon.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import DeleteButton from "../../../components/Button/DeleteButton.tsx";
-import DIRECTION from "../../../enums/DirectionEnum.tsx";
 
 type FormType = {
   rcci: RcciFormType;
@@ -51,7 +53,7 @@ type RcciFormType = {
   rcciForceVent?: number;
   rcciForcesOrdre?: string;
   rcciGdh?: Date;
-  rcciGelLieux?: boolean;
+  rcciGelLieux?: OUI_NON_NA;
   rcciGeometrie: string;
   rcciX: string; // placeholder pour formulaire
   rcciY: string; // placeholder pour formulaire
@@ -65,8 +67,9 @@ type RcciFormType = {
   rcciSuperficieReferent?: number;
   rcciSuperficieSecours?: number;
   rcciTemperature?: number;
-  rcciVentLocal?: boolean;
-  rcciVoie?: string;
+  rcciVentLocal?: OUI_NON_NA;
+  rcciVoieTexte?: string;
+  rcciVoieId?: string;
   rcciCommuneId?: string;
   rcciRcciTypePrometheeFamilleId?: string; // placeholder pour formulaire
   rcciRcciTypePrometheePartitionId?: string; // placeholder pour formulaire
@@ -77,7 +80,9 @@ type RcciFormType = {
   rcciRcciArriveeSdisId?: string;
   rcciRcciArriveeGendarmerieId?: string;
   rcciRcciArriveePoliceId?: string;
+  rcciRcciIndiceRothermelId?: string;
   rcciUtilisateurId: string;
+  rcciRisqueMeteo: RISQUE_METEO;
   documentList: RcciDocumentType[];
 };
 
@@ -129,7 +134,8 @@ export const getInitialValues = (
       rcciY: y,
       rcciSrid: srid ?? null,
       rcciHygrometrie: data.rcci?.rcciHygrometrie ?? undefined,
-      rcciIndiceRothermel: data.rcci?.rcciIndiceRothermel ?? undefined,
+      rcciRcciIndiceRothermelId:
+        data.rcci?.rcciRcciIndiceRothermelId ?? undefined,
       rcciPointEclosion: data.rcci?.rcciPointEclosion ?? null,
       rcciPremierCos: data.rcci?.rcciPremierCos ?? undefined,
       rcciPremierEngin: data.rcci?.rcciPremierEngin ?? undefined,
@@ -138,7 +144,8 @@ export const getInitialValues = (
       rcciSuperficieSecours: data.rcci?.rcciSuperficieSecours ?? undefined,
       rcciTemperature: data.rcci?.rcciTemperature ?? undefined,
       rcciVentLocal: data.rcci?.rcciVentLocal ?? undefined,
-      rcciVoie: data.rcci?.rcciVoie ?? undefined,
+      rcciVoieTexte: data.rcci?.rcciVoieTexte ?? undefined,
+      rcciVoieId: data.rcci?.rcciVoieId ?? undefined,
       rcciCommuneId: data.rcci?.rcciCommuneId ?? undefined,
       rcciRcciTypePrometheeFamilleId:
         data.rcci?.rcciRcciTypePrometheeFamilleId ?? undefined,
@@ -156,6 +163,7 @@ export const getInitialValues = (
       rcciRcciArriveeGendarmerieId:
         data.rcci?.rcciRcciArriveeGendarmerieId ?? undefined,
       rcciRcciArriveePoliceId: data.rcci?.rcciRcciArriveePoliceId ?? undefined,
+      rcciRisqueMeteo: data.rcci?.rcciRisqueMeteo ?? undefined,
       rcciUtilisateurId: data.rcci?.rcciUtilisateurId ?? userId,
       documentList: data.rcci?.documentList ?? undefined,
       ...data.rcci,
@@ -198,7 +206,7 @@ export const prepareValues = (values: {
         values.rcci.rcciY +
         ")",
       rcciHygrometrie: values.rcci.rcciHygrometrie,
-      rcciIndiceRothermel: values.rcci.rcciIndiceRothermel,
+      rcciRcciIndiceRothermelId: values.rcci.rcciRcciIndiceRothermelId,
       rcciPointEclosion: values.rcci.rcciPointEclosion,
       rcciPremierCos: values.rcci.rcciPremierCos,
       rcciPremierEngin: values.rcci.rcciPremierEngin,
@@ -207,7 +215,8 @@ export const prepareValues = (values: {
       rcciSuperficieSecours: values.rcci.rcciSuperficieSecours,
       rcciTemperature: values.rcci.rcciTemperature,
       rcciVentLocal: values.rcci.rcciVentLocal,
-      rcciVoie: values.rcci.rcciVoie,
+      rcciVoieTexte: values.rcci.rcciVoieTexte,
+      rcciVoieId: values.rcci.rcciVoieId,
       rcciCommuneId: values.rcci.rcciCommuneId,
       rcciRcciTypePrometheeCategorieId:
         values.rcci.rcciRcciTypePrometheeCategorieId,
@@ -218,6 +227,7 @@ export const prepareValues = (values: {
       rcciRcciArriveeGendarmerieId: values.rcci.rcciRcciArriveeGendarmerieId,
       rcciRcciArriveePoliceId: values.rcci.rcciRcciArriveePoliceId,
       rcciUtilisateurId: values.rcci.rcciUtilisateurId,
+      rcciRisqueMeteo: values.rcci?.rcciRisqueMeteo,
       documentList: values.rcci.documentList,
     }),
   );
@@ -241,13 +251,12 @@ export const validationSchema = object({
     rcciForceVent: numberPositif,
     rcciForcesOrdre: string(),
     rcciGdh: date,
-    rcciGelLieux: boolean(),
-    // rcciGeometrie: string,
+    rcciGelLieux: string(),
     rcciX: requiredString,
     rcciY: requiredString,
     rcciSrid: requiredString,
     rcciHygrometrie: percentage,
-    rcciIndiceRothermel: percentage,
+    rcciIndiceRothermelId: string(),
     rcciPointEclosion: requiredString,
     rcciPremierCos: string(),
     rcciPremierEngin: string(),
@@ -255,8 +264,9 @@ export const validationSchema = object({
     rcciSuperficieReferent: numberPositif,
     rcciSuperficieSecours: numberPositif,
     rcciTemperature: number(),
-    rcciVentLocal: boolean(),
-    rcciVoie: string(),
+    rcciVentLocal: string(),
+    rcciVoieTexte: string(),
+    rcciVoieId: string(),
     rcciCommuneId: string(),
     rcciRcciTypePrometheeCategorieId: string(),
     rcciRcciTypeDegreCertitudeId: string(),
@@ -266,6 +276,7 @@ export const validationSchema = object({
     rcciRcciArriveeGendarmerieId: string(),
     rcciRcciArriveePoliceId: string(),
     rcciUtilisateurId: requiredString,
+    rcciRisqueMeteo: string(),
     documentList: array(),
   }),
 });
@@ -303,6 +314,11 @@ const RcciForm = () => {
   const rcciTypeOrigineAlerteState = useGet(
     url`/api/nomenclatures/list/${nomenclaturesEnum.RCCI_TYPE_ORIGINE_ALERTE}`,
   );
+
+  const rcciIndiceRothermelState = useGet(
+    url`/api/nomenclatures/list/${nomenclaturesEnum.RCCI_INDICE_ROTHERMEL}`,
+  );
+
   const directionList = Object.entries(DIRECTION).map(([key, value]) => {
     return {
       id: key,
@@ -342,6 +358,22 @@ const RcciForm = () => {
       errorToast("Champs obligatoires non renseignés");
     }
   }, [isSubmitting, errors, errorToast]);
+
+  const listOuiNonNA = Object.entries(OUI_NON_NA).map(([key, value]) => {
+    return {
+      id: key,
+      code: value,
+      libelle: value,
+    };
+  });
+
+  const listRisqueMeteo = Object.entries(RISQUE_METEO).map(([key, value]) => {
+    return {
+      id: key,
+      code: value,
+      libelle: value,
+    };
+  });
 
   return (
     <>
@@ -401,7 +433,7 @@ const RcciForm = () => {
               <Col>
                 <TextInput
                   label="Voie"
-                  name={"rcci.rcciVoie"}
+                  name={"rcci.rcciVoieTexte"}
                   required={false}
                 />
               </Col>
@@ -554,10 +586,15 @@ const RcciForm = () => {
                 />
               </Col>
               <Col>
-                <TextInput
+                <SelectForm
+                  name={"rcci.rcciVentLocal"}
+                  listIdCodeLibelle={listOuiNonNA}
                   label="Vent local"
-                  name={"rcci.rcciVent"}
+                  defaultValue={listOuiNonNA?.find(
+                    (v) => v.id === values?.rcci.rcciVentLocal,
+                  )}
                   required={false}
+                  setFieldValue={setFieldValue}
                 />
               </Col>
             </Row>
@@ -606,20 +643,27 @@ const RcciForm = () => {
             </Row>
             <Row>
               <Col>
-                <NumberInput
-                  label={"Indice ROTHERMEL"}
-                  name={"rcci.rcciIndiceRothermel"}
+                <SelectForm
+                  name={"rcci.rcciRcciIndiceRothermelId"}
+                  label="Indice ROTHERMEL"
+                  listIdCodeLibelle={rcciIndiceRothermelState.data}
+                  defaultValue={rcciIndiceRothermelState.data?.find(
+                    (v) => v.id === values.rcci.rcciRcciIndiceRothermelId,
+                  )}
                   required={false}
-                  step={10}
-                  min={0}
-                  max={100}
+                  setFieldValue={setFieldValue}
                 />
               </Col>
               <Col>
-                <TextInput
-                  label={"Risque météo"}
-                  name={"rcci.rcciRi"}
+                <SelectForm
+                  name={"rcci.rcciRisqueMeteo"}
+                  listIdCodeLibelle={listRisqueMeteo}
+                  label="Risque météo"
+                  defaultValue={listRisqueMeteo?.find(
+                    (v) => v.id === values?.rcci.rcciRisqueMeteo,
+                  )}
                   required={false}
+                  setFieldValue={setFieldValue}
                 />
               </Col>
             </Row>
@@ -681,10 +725,15 @@ const RcciForm = () => {
             </Row>
             <Row>
               <Col>
-                <TextInput
-                  label={"Gel des lieux"}
+                <SelectForm
                   name={"rcci.rcciGelLieux"}
+                  listIdCodeLibelle={listOuiNonNA}
+                  label="Gel des lieux"
+                  defaultValue={listOuiNonNA?.find(
+                    (v) => v.id === values?.rcci.rcciGelLieux,
+                  )}
                   required={false}
+                  setFieldValue={setFieldValue}
                 />
               </Col>
               <Col />
