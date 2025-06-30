@@ -67,6 +67,7 @@ class VisiteEndPoint : AbstractEndpoint() {
             typePei = peiRepository.getTypePei(idPei = peiId),
             lastCDP = visiteRepository.getLastVisiteDebitPression(peiId = peiId),
             numeroComplet = peiRepository.getNumeroCompletPei(idPei = peiId),
+            commune = peiRepository.getCommuneName(idPei = peiId),
         )
         return Response.ok().entity(dataToSend).build()
     }
@@ -76,6 +77,7 @@ class VisiteEndPoint : AbstractEndpoint() {
         val typePei: TypePei,
         val lastCDP: VisiteCtrlDebitPression?,
         val numeroComplet: String,
+        val commune: String,
     )
 
     @PUT

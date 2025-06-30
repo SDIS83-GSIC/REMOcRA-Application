@@ -999,6 +999,13 @@ class PeiRepository
             .orderBy(remocra.db.jooq.remocra.tables.references.PEI.NUMERO_COMPLET)
             .fetchInto()
 
+    fun getCommuneName(idPei: UUID): String = dsl.select(COMMUNE.LIBELLE.`as`("commune"))
+        .from(PEI)
+        .join(COMMUNE)
+        .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+        .where(PEI.ID.eq(idPei))
+        .fetchSingleInto()
+
     data class PeiShortData(
         val peiId: UUID,
         val peiNumeroComplet: String,
