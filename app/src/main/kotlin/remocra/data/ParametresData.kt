@@ -109,4 +109,5 @@ data class ParametresSectionPei(
     val caracteristiquesPenaTooltipWeb: List<PeiCaracteristique>?,
     val caracteristiquesPibiTooltipWeb: List<PeiCaracteristique>?,
     val peiNombreHistorique: Int?,
+    val peiFicheResumeStandalone: Boolean?,
 )

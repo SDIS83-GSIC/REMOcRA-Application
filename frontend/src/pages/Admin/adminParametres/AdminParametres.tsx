@@ -71,6 +71,7 @@ type ParametresSectionPei = {
   bufferCarte: number;
   caracteristiquesPenaTooltipWeb: string[] | undefined;
   caracteristiquesPibiTooltipWeb: string[] | undefined;
+  peiFicheResumeStandalone: boolean;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -851,6 +852,15 @@ const AdminPei = ({
   return (
     values && (
       <>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiFicheResumeStandalone"
+            label="Activer la fiche Résumé en affichage autonome"
+            tooltipText={
+              "La fiche Résumé permet d'afficher de l'information condensée sur le PEI ; outre son accessibilité en 1er accordéon de la fiche PEI, vous pouvez, en activant cette option, la voir apparaître comme action spécifique dans la liste des PEI et l'infobulle du PEI dans la carto. Attention, elle est forcément utilisée pour le module de risque en mode grand public"
+            }
+          />
+        </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.bufferCarte"
@@ -925,7 +935,7 @@ const AdminPei = ({
             name={"pei.peiColonnes"}
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiDeplacementDistWarn"
             label="Seuil de déplacement d'un PEI import CTP"
