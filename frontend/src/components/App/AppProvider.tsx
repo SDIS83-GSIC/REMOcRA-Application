@@ -30,7 +30,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     data: projectionProps,
   }: {
     isLoading: boolean;
-    data: { name: string; projection: string; extent: number[] };
+    data: {
+      name: string;
+      projection: string;
+      extent: number[];
+      extentSRID: string;
+    };
   } = useGet(url`/api/app-settings/epsg`);
   if (isLoading && !projectionProps) {
     return <Loading />;
@@ -50,6 +55,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         },
         srid: projectionProps.name.split(":").pop(),
         extent: projectionProps.extent,
+        extentSRID: projectionProps.extentSRID,
       }}
     >
       {children}

@@ -1,6 +1,5 @@
 package remocra.app
 
-import org.geotools.referencing.CRS
 import remocra.data.enums.CodeSdis
 import remocra.data.enums.Environment
 
@@ -12,20 +11,7 @@ data class AppSettings(val environment: Environment, val codeSdis: CodeSdis, val
         get() = epsg.name.split(":")[1].toInt()
 }
 
-data class Epsg(val name: String, val projection: String) {
-    /**
-     *  Renvoie les 4 coordoonnées de l'étendue du référentiel en EPSG:4326
-     *  Utilisé pour l'affichage par défaut de la carte
-     */
-    val extent: Array<Double> = CRS.getGeographicBoundingBox(CRS.decode(this.name)).let {
-        arrayOf(
-            it.westBoundLongitude,
-            it.southBoundLatitude,
-            it.eastBoundLongitude,
-            it.northBoundLatitude,
-        )
-    }
-}
+data class Epsg(val name: String, val projection: String)
 
 data class Nexsis(
     val mock: Boolean,

@@ -4,7 +4,7 @@ import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY, degreesToStringHDMS } from "ol/coordinate";
-import { getCenter, getTopLeft, getWidth, isEmpty } from "ol/extent";
+import { getTopLeft, getWidth, isEmpty } from "ol/extent";
 import { GeoJSON, WKT } from "ol/format";
 import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
@@ -213,7 +213,12 @@ export const useMapComponent = ({
   const { state, search } = useLocation();
   const navigate = useNavigate();
 
-  const { epsg: projection, extent: defaultExtent, user } = useAppContext();
+  const {
+    epsg: projection,
+    extent: defaultExtent,
+    user,
+    extentSRID,
+  } = useAppContext();
   const layersState = useGet(url`/api/layers/${typeModule}`, {});
   const afficheCoordonneesState = useGet(
     url`/api/parametres?${{
@@ -230,7 +235,6 @@ export const useMapComponent = ({
     if (!projection || !mapElement.current || !afficheCoordonneesState.data) {
       return;
     }
-
     const initialMap = new Map({
       controls: defaultControls().extend([
         new FullScreen({ source: "map-container" }),
@@ -264,7 +268,6 @@ export const useMapComponent = ({
       view: new View({
         zoom: 6,
         projection: EPSG_3857,
-        center: getCenter(transformExtent(defaultExtent, EPSG_4326, EPSG_3857)), // Centre depuis l'étendue fournie par le serveur
       }),
     });
 
@@ -277,6 +280,12 @@ export const useMapComponent = ({
         .fit(transformExtent(rawExtent, projection.name, EPSG_3857), {
           maxZoom: 20,
         });
+    } else {
+      initialMap
+        .getView()
+        .fit(transformExtent(defaultExtent, extentSRID, EPSG_3857), {
+          maxZoom: 20,
+        }); // Centre depuis l'étendue fournie par le serveur)
     }
 
     return initialMap;

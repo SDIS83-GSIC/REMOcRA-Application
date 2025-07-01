@@ -153,4 +153,10 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
             .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
             .fetchSingleInto()
     }
+
+    fun getGeometrieByCode(code: String?): Geometry? = dsl
+        .select(ZONE_INTEGRATION.GEOMETRIE)
+        .from(ZONE_INTEGRATION)
+        .where(ZONE_INTEGRATION.CODE.eq(code))
+        .fetchOne()?.get(ZONE_INTEGRATION.GEOMETRIE)
 }

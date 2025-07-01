@@ -7,6 +7,7 @@ import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Response
 import remocra.app.AppSettings
 import remocra.auth.Public
+import remocra.usecase.emprisenative.GetEmpriseNativeUseCase
 
 @Path("/app-settings")
 @Produces("application/json; charset=UTF-8")
@@ -14,11 +15,13 @@ class AppSettingsEndPoint {
 
     @Inject lateinit var appSettings: AppSettings
 
+    @Inject lateinit var getEmpriseNativeUseCase: GetEmpriseNativeUseCase
+
     @GET
     @Path("/epsg")
     @Public("Le paramètre EPSG n'est pas lié à un droit")
     fun getEpsg() =
-        Response.ok(appSettings.epsg).build()
+        Response.ok(getEmpriseNativeUseCase.execute()).build()
 
     @GET
     @Path("/environment")
