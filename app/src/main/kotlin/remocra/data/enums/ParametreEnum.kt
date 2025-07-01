@@ -23,6 +23,7 @@ enum class ParametreEnum(val section: ParametreSection) {
 
     // Cartographie
     COORDONNEES_FORMAT_AFFICHAGE(ParametreSection.CARTOGRAPHIE),
+    EMPRISE_NATIVE(ParametreSection.CARTOGRAPHIE),
 
     // Couverture hydraulique
     DECI_DISTANCE_MAX_PARCOURS(ParametreSection.COUVERTURE_HYDRAULIQUE),
