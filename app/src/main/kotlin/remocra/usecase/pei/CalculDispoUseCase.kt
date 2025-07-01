@@ -568,7 +568,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             }
             CodeSdis.SDIS_971 -> pei.debit == null || pei.debit < 30
             CodeSdis.SDIS_973 -> pei.debit == null || pei.debit < 30
-            CodeSdis.BSPP -> pei.debit == null || pei.debit < 60
+            CodeSdis.BSPP -> pei.debit != null && pei.debit < 60
             CodeSdis.SDMIS -> false
         }
     }
