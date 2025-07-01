@@ -1,8 +1,10 @@
 import { Feature, Map, Overlay } from "ol";
 import { WKT } from "ol/format";
-import { ReactNode, Ref, useEffect, useRef, useState } from "react";
+import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGet } from "../Fetch/useFetch.tsx";
+import url from "../../module/fetch.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
@@ -30,7 +32,7 @@ import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.t
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
-import { refreshLayerGeoserver } from "./MapUtils.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -88,6 +90,25 @@ const TooltipMapPei = ({
 
   const textDisable = "Un formulaire est en cours d'édition";
 
+  const paramPeiFicheResumeStandalone = PARAMETRE.PEI_FICHE_RESUME_STANDALONE;
+
+  const parametresState = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(paramPeiFicheResumeStandalone),
+    }}`,
+    {},
+  );
+
+  const isFicheResumeStandalone = useMemo<boolean>(() => {
+    if (!parametresState.isResolved) {
+      return false;
+    }
+
+    return JSON.parse(
+      parametresState?.data[paramPeiFicheResumeStandalone].parametreValeur,
+    );
+  }, [parametresState, paramPeiFicheResumeStandalone]);
+
   return (
     <div ref={ref}>
       {featureSelect?.getProperties().typeElementCarte ===
@@ -119,7 +140,7 @@ const TooltipMapPei = ({
                 : "Supprimer le PEI"
           }
           disabledDelete={showFormPei}
-          displayButtonSee={true}
+          displayButtonSee={isFicheResumeStandalone}
           onClickSee={() => setShowFichePei(true)}
           labelSee={"Voir la fiche de résumé du PEI"}
           autreActionBouton={
@@ -204,19 +225,21 @@ const TooltipMapPei = ({
                     </TooltipCustom>
                   </Col>
                 )}
-              <Volet
-                handleClose={handleCloseFichePei}
-                show={showFichePei}
-                className="w-auto"
-              >
-                <FicheResume
-                  peiId={elementId}
-                  titre={
-                    "Fiche Résumé du PEI " +
-                    featureSelect?.getProperties().peiNumeroComplet
-                  }
-                />
-              </Volet>
+              {isFicheResumeStandalone && (
+                <Volet
+                  handleClose={handleCloseFichePei}
+                  show={showFichePei}
+                  className="w-auto"
+                >
+                  <FicheResume
+                    peiId={elementId}
+                    titre={
+                      "Fiche Résumé du PEI " +
+                      featureSelect?.getProperties().peiNumeroComplet
+                    }
+                  />
+                </Volet>
+              )}
               <Volet
                 handleClose={() => {
                   handleCloseIndispoTemp();

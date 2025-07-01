@@ -49,6 +49,7 @@ function getColumnPeiByStringArray(
   parametres: Array<COLUMN_PEI>,
   listeAnomaliePossible: Array<IdCodeLibelleType>,
   fetchGeometry: (typeGeometrie: string, idPei: string) => void,
+  displayFicheResumeStandalone: boolean = false,
 ): Array<columnType> {
   const column: Array<columnType> = [];
 
@@ -329,7 +330,10 @@ function getColumnPeiByStringArray(
       TYPE_DROIT.PEI_ADRESSE_C,
     ]);
 
-    if (hasDroit(user, TYPE_DROIT.PEI_R)) {
+    if (
+      displayFicheResumeStandalone === true &&
+      hasDroit(user, TYPE_DROIT.PEI_R)
+    ) {
       listeButton.push({
         row: (row) => {
           return row;

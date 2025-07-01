@@ -26,12 +26,17 @@ const ListPei = ({
   );
 
   let peiColonnes: COLUMN_PEI[] = [];
+  let isFicheResumeStandalone = false;
 
   const parametrePeiColonnes = PARAMETRE.PEI_COLONNES;
+  const paramPeiFicheResumeStandalone = PARAMETRE.PEI_FICHE_RESUME_STANDALONE;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
-      listeParametreCode: JSON.stringify(parametrePeiColonnes),
+      listeParametreCode: JSON.stringify([
+        parametrePeiColonnes,
+        paramPeiFicheResumeStandalone,
+      ]),
     }}`,
   );
 
@@ -40,6 +45,9 @@ const ListPei = ({
     peiColonnes = listeParametre?.data?.[parametrePeiColonnes].parametreValeur
       ? JSON.parse(listeParametre?.data?.[parametrePeiColonnes].parametreValeur)
       : peiColonnes;
+    isFicheResumeStandalone = JSON.parse(
+      listeParametre?.data?.[paramPeiFicheResumeStandalone].parametreValeur,
+    );
   }
 
   const filter = {
@@ -99,6 +107,7 @@ const ListPei = ({
           peiColonnes,
           listeAnomaliePossible,
           fetchGeometry,
+          isFicheResumeStandalone,
         )}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}
