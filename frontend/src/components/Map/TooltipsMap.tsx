@@ -142,7 +142,7 @@ const TooltipMapPei = ({
           disabledDelete={showFormPei}
           displayButtonSee={isFicheResumeStandalone}
           onClickSee={() => setShowFichePei(true)}
-          labelSee={"Voir la fiche de résumé du PEI"}
+          labelSee={"Voir la fiche Résumé du PEI"}
           autreActionBouton={
             <>
               {displayButtonSeeFichePei && (
@@ -851,4 +851,55 @@ const useTooltipMap = ({
   }, [map, ref, disabled]);
 
   return { featureSelect, overlay };
+};
+
+/**
+ * Permet d'afficher une tooltip sur la carte des risques
+ * @param map : la carte
+ * @returns la tooltip
+ */
+export const TooltipMapRisque = ({
+  map,
+  displayButtonSeeFichePei,
+}: {
+  map: Map;
+  displayButtonSeeFichePei: boolean;
+}) => {
+  const ref = useRef(null);
+  const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+
+  const [showFichePei, setShowFichePei] = useState(false);
+  const handleCloseFichePei = () => setShowFichePei(false);
+
+  const elementId = featureSelect?.getProperties().elementId;
+
+  return (
+    <div ref={ref}>
+      <Tooltip
+        disabled={false}
+        featureSelect={featureSelect}
+        overlay={overlay}
+        displayButtonEdit={false}
+        disabledEdit={true}
+        displayButtonDelete={false}
+        disabledDelete={true}
+        displayButtonSee={displayButtonSeeFichePei}
+        onClickSee={() => setShowFichePei(true)}
+        labelSee={"Voir la fiche Résumé du PEI"}
+      />
+      <Volet
+        handleClose={handleCloseFichePei}
+        show={showFichePei}
+        className="w-auto"
+      >
+        <FicheResume
+          peiId={elementId}
+          titre={
+            "Fiche Résumé du PEI " +
+            featureSelect?.getProperties().peiNumeroComplet
+          }
+        />
+      </Volet>
+    </div>
+  );
 };
