@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.FicheResumeBlocData
@@ -39,7 +40,7 @@ class FicheResumeEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{peiId}")
-    @RequireDroits([Droit.PEI_R])
+    @Public("La fiche Résumé doit être accessible au grand public")
     fun getElementFiche(
         @PathParam("peiId")
         peiId: UUID,

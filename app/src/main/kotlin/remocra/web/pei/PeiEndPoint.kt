@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Geometry
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
@@ -297,7 +298,7 @@ class PeiEndPoint : AbstractEndpoint() {
      */
     @GET
     @Path("/layer")
-    @RequireDroits([Droit.PEI_R])
+    @Public("La couches des PEI est accessible en mode grand public (carte des risques)")
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response {
         return Response.ok(
             getElementCarteUseCase.execute(

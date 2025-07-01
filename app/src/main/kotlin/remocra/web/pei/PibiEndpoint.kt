@@ -7,8 +7,7 @@ import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import remocra.auth.RequireDroits
-import remocra.db.jooq.remocra.enums.Droit
+import remocra.auth.Public
 import remocra.usecase.ficheresume.HistoriqueDebitChart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -22,7 +21,7 @@ class PibiEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/historique/{pibiId}")
-    @RequireDroits([Droit.PEI_R])
+    @Public("La fiche Résumé doit être accessible au grand public")
     fun getDataChartFicheResume(
         @PathParam("pibiId")
         pibiId: UUID,

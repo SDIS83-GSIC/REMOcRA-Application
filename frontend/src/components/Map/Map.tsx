@@ -268,7 +268,7 @@ export const useMapComponent = ({
       }),
     });
 
-    if (user.zoneIntegrationExtent) {
+    if (user?.zoneIntegrationExtent) {
       const rawExtent = new WKT()
         .readGeometry(user.zoneIntegrationExtent.split(";").pop())
         .getExtent();

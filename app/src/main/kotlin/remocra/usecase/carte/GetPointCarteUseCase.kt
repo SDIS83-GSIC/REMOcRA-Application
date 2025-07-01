@@ -51,13 +51,10 @@ class GetPointCarteUseCase : AbstractUseCase() {
 
         val feature = when (typeElementCarte) {
             TypeElementCarte.PEI -> bbox.let {
-                if (userInfo.zoneCompetence == null && !userInfo.isSuperAdmin) {
-                    logger.error("L'utilisateur n'a pas de zone de compétence.")
-                    throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
-                }
                 if (it.isEmpty()) {
-                    carteRepository.getPeiWithinZone(
+                    carteRepository.getPeiWithinZoneAndBbox(
                         userInfo.zoneCompetence?.zoneIntegrationId,
+                        null,
                         srid,
                         userInfo.isSuperAdmin,
                         listePeiId,

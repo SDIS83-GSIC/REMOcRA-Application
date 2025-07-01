@@ -64,7 +64,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
-    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
+    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
@@ -81,48 +81,23 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(PIBI)
             .on(PIBI.ID.eq(PEI.ID))
-            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .let {
+                if (zoneId != null) {
+                    it.leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+                } else {
+                    it
+                }
+            }
             .where(
                 listePeiId.let {
                     if (it.isNullOrEmpty()) {
                         repositoryUtils.checkIsSuperAdminOrCondition(
-                            ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                                .and(ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox)),
+                            zoneId?.let {
+                                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                                    .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
+                            } ?: DSL.noCondition(),
                             isSuperAdmin,
                         )
-                    } else {
-                        PEI.ID.`in`(listePeiId)
-                    }
-                },
-            )
-            .fetchInto()
-    }
-
-    /**
-     * Récupère les PEI selon la zone de compétence
-     */
-    fun getPeiWithinZone(zoneId: UUID?, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
-        return dsl.select(
-            ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
-            PEI.ID.`as`("elementId"),
-            hasIndispoTemp,
-            hasTournee,
-            hasDebitSimultane,
-            NATURE_DECI.CODE,
-            PIBI.TYPE_RESEAU_ID,
-            PEI.NUMERO_COMPLET,
-        )
-            .from(PEI)
-            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
-            .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
-            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
-            .leftJoin(PIBI)
-            .on(PIBI.ID.eq(PEI.ID))
-            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
-            .where(
-                listePeiId.let {
-                    if (it.isNullOrEmpty()) {
-                        repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin)
                     } else {
                         PEI.ID.`in`(listePeiId)
                     }
