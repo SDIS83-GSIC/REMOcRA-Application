@@ -58,7 +58,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     /**
      * Retourne les communes qui sont à moins de PEI_TOLERANCE_COMMUNE_METRES mètres de la géométrie passée en paramètre
      */
-    fun getCommunesPei(geometry: Field<Geometry?>, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
+    fun getCommunesByPoint(geometry: Field<Geometry?>, toleranceCommuneMetres: Int): List<GlobalData.IdCodeLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
             .from(COMMUNE)
             .where(

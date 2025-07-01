@@ -18,6 +18,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.RcciForm
@@ -30,6 +31,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.rcci.CreateRcciUseCase
 import remocra.usecase.rcci.DeleteRcciUseCase
+import remocra.usecase.rcci.GetReferentielRcciUseCase
 import remocra.usecase.rcci.SelectRcciUseCase
 import remocra.usecase.rcci.UpdateRcciGeometryUseCase
 import remocra.usecase.rcci.UpdateRcciUseCase
@@ -63,6 +65,8 @@ class RcciEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateRcciGeometryUseCase: UpdateRcciGeometryUseCase
 
     @Inject lateinit var deleteRcciUseCase: DeleteRcciUseCase
+
+    @Inject lateinit var getReferentielRcciUseCase: GetReferentielRcciUseCase
 
     @GET
     @Path("/layer")
@@ -130,13 +134,10 @@ class RcciEndpoint : AbstractEndpoint() {
     @GET
     @Path("/refs")
     @RequireDroits([Droit.RCCI_A])
-    fun refs(): Response =
+    fun refs(
+        @QueryParam("geometrie") geometrie: Geometry?,
+    ): Response =
         Response.ok(
-            object {
-                val ddtmonf = utilisateurRepository.getUtilisateurDdtmonf()
-                val sdis = utilisateurRepository.getUtilisateurSdis()
-                val gendarmerie = utilisateurRepository.getUtilisateurGendarmerie()
-                val police = utilisateurRepository.getUtilisateurPolice()
-            },
+            getReferentielRcciUseCase.get(geometrie),
         ).build()
 }

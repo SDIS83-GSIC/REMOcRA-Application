@@ -6,8 +6,13 @@ import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
 import { array, number, object, string } from "yup";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import DeleteButton from "../../../components/Button/DeleteButton.tsx";
-import { useGet, usePost } from "../../../components/Fetch/useFetch.tsx";
 import {
+  useGet,
+  useGetRun,
+  usePost,
+} from "../../../components/Fetch/useFetch.tsx";
+import {
+  CheckBoxInput,
   DateTimeInput,
   FieldSet,
   FileInput,
@@ -166,6 +171,9 @@ export const getInitialValues = (
       rcciRisqueMeteo: data.rcci?.rcciRisqueMeteo ?? undefined,
       rcciUtilisateurId: data.rcci?.rcciUtilisateurId ?? userId,
       documentList: data.rcci?.documentList ?? undefined,
+      voieSaisieLibre:
+        data?.rcci?.rcciVoieTexte != null &&
+        data?.rcci?.rcciVoieTexte?.trim() !== "",
       ...data.rcci,
     },
     documentList: data?.documentList || [],
@@ -215,7 +223,11 @@ export const prepareValues = (values: {
       rcciSuperficieSecours: values.rcci.rcciSuperficieSecours,
       rcciTemperature: values.rcci.rcciTemperature,
       rcciVentLocal: values.rcci.rcciVentLocal,
-      rcciVoieTexte: values.rcci.rcciVoieTexte,
+      rcciVoieTexte:
+        values.rcci.rcciVoieTexte != null &&
+        values.rcci.rcciVoieTexte?.trim() !== ""
+          ? values.rcci.rcciVoieTexte
+          : null,
       rcciVoieId: values.rcci.rcciVoieId,
       rcciCommuneId: values.rcci.rcciCommuneId,
       rcciRcciTypePrometheeCategorieId:
@@ -298,7 +310,6 @@ const RcciForm = () => {
     libelle: v.nomSystem,
   }));
 
-  const communeState = useGet(url`/api/commune/get-libelle-commune`);
   const rcciTypePrometheeFamilleState = useGet(
     url`/api/nomenclatures/list/${nomenclaturesEnum.RCCI_TYPE_PROMETHEE_FAMILLE}`,
   );
@@ -326,9 +337,13 @@ const RcciForm = () => {
       libelle: value,
     };
   });
-  const utilisateurRefState = useGet(url`/api/rcci/refs`);
+  const referentielState = useGetRun(
+    url`/api/rcci/refs?${{ geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})` }}`,
+  );
 
   const { isLoading, data, run } = usePost(url`/api/dfci/check`);
+
+  const { run: runReferentielState } = referentielState;
 
   useEffect(() => {
     if (!values.rcci.rcciX || !values.rcci.rcciY) {
@@ -337,7 +352,17 @@ const RcciForm = () => {
     run({
       geometry: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
     });
-  }, [run, values.rcci.rcciSrid, values.rcci.rcciX, values.rcci.rcciY]);
+
+    runReferentielState({
+      geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
+    });
+  }, [
+    run,
+    values.rcci.rcciSrid,
+    values.rcci.rcciX,
+    values.rcci.rcciY,
+    runReferentielState,
+  ]);
 
   useEffect(() => {
     setFieldValue("rcci.rcciCarroyageDfci", data?.carroyageDfciCoordonneee);
@@ -422,20 +447,47 @@ const RcciForm = () => {
                 <SelectForm
                   label="Commune"
                   name={"rcci.rcciCommuneId"}
-                  listIdCodeLibelle={communeState.data}
-                  defaultValue={communeState.data?.find(
+                  listIdCodeLibelle={referentielState.data?.listCommune}
+                  defaultValue={referentielState.data?.listCommune?.find(
                     (v) => v.id === values.rcci.rcciCommuneId,
                   )}
                   setFieldValue={setFieldValue}
                   required={false}
                 />
               </Col>
+
               <Col>
-                <TextInput
+                <SelectForm
+                  name={"rcci.rcciVoieId"}
+                  listIdCodeLibelle={referentielState.data?.listVoie?.filter(
+                    (e) => e.communeId === values.rcci.rcciCommuneId,
+                  )}
                   label="Voie"
-                  name={"rcci.rcciVoieTexte"}
-                  required={false}
+                  defaultValue={referentielState.data?.listVoie?.find(
+                    (e) => e.id === values.rcci.rcciVoieId,
+                  )}
+                  required={!values.voieSaisieLibre} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
+                  setFieldValue={setFieldValue}
+                  disabled={
+                    values.rcci.rcciVoieTexte != null &&
+                    values.rcci.rcciVoieTexte?.trim() !== ""
+                  }
                 />
+                <CheckBoxInput
+                  name="voieSaisieLibre"
+                  label="Voie non trouvée"
+                />
+                {values.voieSaisieLibre && (
+                  <TextInput
+                    name="rcci.rcciVoieTexte"
+                    label="Voie (saisie libre)"
+                    required={false}
+                    disabled={
+                      values.rcci.rcciVoieId != null &&
+                      values.rcci.rcciVoieId?.trim() !== ""
+                    }
+                  />
+                )}
               </Col>
             </Row>
             <Row>
@@ -454,8 +506,8 @@ const RcciForm = () => {
                 <SelectForm
                   name={"rcci.rcciRcciArriveeDdtmOnfId"}
                   label="DDTM - ONF"
-                  listIdCodeLibelle={utilisateurRefState.data?.ddtmonf}
-                  defaultValue={utilisateurRefState.data?.ddtmonf?.find(
+                  listIdCodeLibelle={referentielState.data?.ddtmonf}
+                  defaultValue={referentielState.data?.ddtmonf?.find(
                     (v) => v.id === values.rcci.rcciRcciArriveeDdtmOnfId,
                   )}
                   required={false}
@@ -466,8 +518,8 @@ const RcciForm = () => {
                 <SelectForm
                   name={"rcci.rcciRcciArriveeSdisId"}
                   label="SDIS"
-                  listIdCodeLibelle={utilisateurRefState.data?.sdis}
-                  defaultValue={utilisateurRefState.data?.sdis?.find(
+                  listIdCodeLibelle={referentielState.data?.sdis}
+                  defaultValue={referentielState.data?.sdis?.find(
                     (v) => v.id === values.rcci.rcciRcciArriveeSdisId,
                   )}
                   required={false}
@@ -480,8 +532,8 @@ const RcciForm = () => {
                 <SelectForm
                   name={"rcci.rcciArriveeGendarmerieId"}
                   label="Gendarmerie"
-                  listIdCodeLibelle={utilisateurRefState.data?.gendarmerie}
-                  defaultValue={utilisateurRefState.data?.gendarmerie?.find(
+                  listIdCodeLibelle={referentielState.data?.gendarmerie}
+                  defaultValue={referentielState.data?.gendarmerie?.find(
                     (v) => v.id === values.rcci.rcciRcciArriveeGendarmerieId,
                   )}
                   required={false}
@@ -492,8 +544,8 @@ const RcciForm = () => {
                 <SelectForm
                   name={"rcci.rcciRcciArriveePoliceId"}
                   label="Police"
-                  listIdCodeLibelle={utilisateurRefState.data?.police}
-                  defaultValue={utilisateurRefState.data?.police?.find(
+                  listIdCodeLibelle={referentielState.data?.police}
+                  defaultValue={referentielState.data?.police?.find(
                     (v) => v.id === values.rcci.rcciRcciArriveePoliceId,
                   )}
                   required={false}

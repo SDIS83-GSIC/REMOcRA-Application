@@ -58,7 +58,7 @@ export function useGet(url: string, asyncOptions: AsyncOptions<any> = {}) {
 /**
  * Permet de faire un appel à une URL en GET, au lancement via .run()
  */
-export function useGetRun(url: string, asyncOptions: AsyncOptions<any>) {
+export function useGetRun(url: string, asyncOptions: AsyncOptions<any> = {}) {
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback<DeferFn<any>>(

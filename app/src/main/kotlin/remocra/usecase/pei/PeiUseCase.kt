@@ -26,6 +26,7 @@ import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.messagelongueindispo.GetMessagePeiLongueIndispoUseCase
+import remocra.utils.GetCommuneVoieUseCase
 import remocra.utils.toGeomFromText
 import remocra.utils.transform
 import java.util.UUID
@@ -78,6 +79,9 @@ class PeiUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var getMessagePeiLongueIndispoUseCase: GetMessagePeiLongueIndispoUseCase
+
+    @Inject
+    lateinit var getCommuneVoieUseCase: GetCommuneVoieUseCase
 
     @Inject
     lateinit var appSettings: AppSettings
@@ -141,9 +145,10 @@ class PeiUseCase : AbstractUseCase() {
             // On transforme la source dans la bonne projection
             val geom = transform(geometry, CRS.decode(appSettings.epsg.name), appSettings.srid)
 
-            listCommune = communeRepository.getCommunesPei(geom.toGeomFromText(), toleranceCommune)
-            val listIdCommune = listCommune.map { it.id }
-            listVoiePei = voieRepository.getVoies(geom.toGeomFromText(), toleranceVoie, listIdCommune)
+            val communesVoies = getCommuneVoieUseCase.execute(geom)
+            listCommune = communesVoies.listCommunes
+            listVoiePei = communesVoies.listVoies
+
             listAutoriteDeci = organismeRepository
                 .getAutoriteDeciPei(geom.toGeomFromText(), toleranceCommune).onEach {
                     when (it.codeTypeOrganisme.uppercase()) {
@@ -153,7 +158,7 @@ class PeiUseCase : AbstractUseCase() {
                     }
                 }
 
-            listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listIdCommune)
+            listLieuDit = lieuDitRepository.getLieuDitWithCommunePei(listCommune.map { it.id })
             listPeiJumelage = pibiRepository.getBiCanJumele(geom.toGeomFromText(), peiId)
             listMaintenanceDeci =
                 organismeRepository.getMaintenanceDeciPei(geom.toGeomFromText(), toleranceCommune)
