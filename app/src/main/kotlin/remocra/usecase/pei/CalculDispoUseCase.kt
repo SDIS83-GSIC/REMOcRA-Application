@@ -548,6 +548,9 @@ class CalculDispoUseCase : AbstractUseCase() {
             }
 
             CodeSdis.SDIS_95 -> {
+                if (pei.diametreId == null) {
+                    return false
+                }
                 if (isDiametre80(pei)) {
                     if (pei.debit != null && pei.debit < 15) {
                         return true
@@ -663,6 +666,9 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89 -> pei.debit != null && pei.debit in 15..29
             CodeSdis.SDIS_91 -> false
             CodeSdis.SDIS_95 -> {
+                if (pei.diametre == null) {
+                    return false
+                }
                 if (isDiametre80(pei)) {
                     if (pei.debit != null && pei.debit in 15..29) {
                         return true
