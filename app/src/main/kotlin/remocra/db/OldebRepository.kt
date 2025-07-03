@@ -158,37 +158,37 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     }
 
     fun getTypeAction(): Map<UUID, OldebTypeAction> =
-        dsl.selectFrom(OLDEB_TYPE_ACTION).fetchInto<OldebTypeAction>().associateBy { it.oldebTypeActionId }
+        dsl.selectFrom(OLDEB_TYPE_ACTION).orderBy(OLDEB_TYPE_ACTION.LIBELLE).fetchInto<OldebTypeAction>().associateBy { it.oldebTypeActionId }
 
     fun getTypeAvisMap(): Map<UUID, OldebTypeAvis> =
-        dsl.selectFrom(OLDEB_TYPE_AVIS).fetchInto<OldebTypeAvis>().associateBy { it.oldebTypeAvisId }
+        dsl.selectFrom(OLDEB_TYPE_AVIS).orderBy(OLDEB_TYPE_AVIS.LIBELLE).fetchInto<OldebTypeAvis>().associateBy { it.oldebTypeAvisId }
 
     fun getTypeDebroussaillementMap(): Map<UUID, OldebTypeDebroussaillement> =
-        dsl.selectFrom(OLDEB_TYPE_DEBROUSSAILLEMENT).fetchInto<OldebTypeDebroussaillement>().associateBy { it.oldebTypeDebroussaillementId }
+        dsl.selectFrom(OLDEB_TYPE_DEBROUSSAILLEMENT).orderBy(OLDEB_TYPE_DEBROUSSAILLEMENT.LIBELLE).fetchInto<OldebTypeDebroussaillement>().associateBy { it.oldebTypeDebroussaillementId }
 
     fun getTypeAnomalie(): Map<UUID, OldebTypeAnomalie> =
-        dsl.selectFrom(OLDEB_TYPE_ANOMALIE).fetchInto<OldebTypeAnomalie>().associateBy { it.oldebTypeAnomalieId }
+        dsl.selectFrom(OLDEB_TYPE_ANOMALIE).orderBy(OLDEB_TYPE_ANOMALIE.LIBELLE).fetchInto<OldebTypeAnomalie>().associateBy { it.oldebTypeAnomalieId }
 
     fun getTypeCategorieAnomalie(): Map<UUID, OldebTypeCategorieAnomalie> =
-        dsl.selectFrom(OLDEB_TYPE_CATEGORIE_ANOMALIE).fetchInto<OldebTypeCategorieAnomalie>().associateBy { it.oldebTypeCategorieAnomalieId }
+        dsl.selectFrom(OLDEB_TYPE_CATEGORIE_ANOMALIE).orderBy(OLDEB_TYPE_CATEGORIE_ANOMALIE.LIBELLE).fetchInto<OldebTypeCategorieAnomalie>().associateBy { it.oldebTypeCategorieAnomalieId }
 
     fun getTypeAcces(): Map<UUID, OldebTypeAcces> =
-        dsl.selectFrom(OLDEB_TYPE_ACCES).fetchInto<OldebTypeAcces>().associateBy { it.oldebTypeAccesId }
+        dsl.selectFrom(OLDEB_TYPE_ACCES).orderBy(OLDEB_TYPE_ACCES.LIBELLE).fetchInto<OldebTypeAcces>().associateBy { it.oldebTypeAccesId }
 
     fun getTypeResidence(): Map<UUID, OldebTypeResidence> =
-        dsl.selectFrom(OLDEB_TYPE_RESIDENCE).fetchInto<OldebTypeResidence>().associateBy { it.oldebTypeResidenceId }
+        dsl.selectFrom(OLDEB_TYPE_RESIDENCE).orderBy(OLDEB_TYPE_RESIDENCE.LIBELLE).fetchInto<OldebTypeResidence>().associateBy { it.oldebTypeResidenceId }
 
     fun getTypeSuite(): Map<UUID, OldebTypeSuite> =
-        dsl.selectFrom(OLDEB_TYPE_SUITE).fetchInto<OldebTypeSuite>().associateBy { it.oldebTypeSuiteId }
+        dsl.selectFrom(OLDEB_TYPE_SUITE).orderBy(OLDEB_TYPE_SUITE.LIBELLE).fetchInto<OldebTypeSuite>().associateBy { it.oldebTypeSuiteId }
 
     fun getTypeZoneUrbanismeMap(): Map<UUID, OldebTypeZoneUrbanisme> =
-        dsl.selectFrom(OLDEB_TYPE_ZONE_URBANISME).fetchInto<OldebTypeZoneUrbanisme>().associateBy { it.oldebTypeZoneUrbanismeId }
+        dsl.selectFrom(OLDEB_TYPE_ZONE_URBANISME).orderBy(OLDEB_TYPE_ZONE_URBANISME.LIBELLE).fetchInto<OldebTypeZoneUrbanisme>().associateBy { it.oldebTypeZoneUrbanismeId }
 
     fun getTypeCaracteristiqueMap(): Map<UUID, OldebTypeCaracteristique> =
-        dsl.selectFrom(OLDEB_TYPE_CARACTERISTIQUE).fetchInto<OldebTypeCaracteristique>().associateBy { it.oldebTypeCaracteristiqueId }
+        dsl.selectFrom(OLDEB_TYPE_CARACTERISTIQUE).orderBy(OLDEB_TYPE_CARACTERISTIQUE.LIBELLE).fetchInto<OldebTypeCaracteristique>().associateBy { it.oldebTypeCaracteristiqueId }
 
     fun getTypeCategorieCaracteristiqueMap(): Map<UUID, OldebTypeCategorieCaracteristique> =
-        dsl.selectFrom(OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE).fetchInto<OldebTypeCategorieCaracteristique>().associateBy { it.oldebTypeCategorieCaracteristiqueId }
+        dsl.selectFrom(OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE).orderBy(OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE.LIBELLE).fetchInto<OldebTypeCategorieCaracteristique>().associateBy { it.oldebTypeCategorieCaracteristiqueId }
     fun getLinkedTypeCaracteristiqueList(): List<GlobalData.IdCodeLibelleLienData> =
         dsl.select(
             OLDEB_TYPE_CARACTERISTIQUE.ID.`as`("id"),

@@ -19,7 +19,7 @@ import java.util.UUID
 class NatureRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Nature>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Nature> =
-        dsl.selectFrom(NATURE).where(NATURE.ACTIF.isTrue).fetchInto<Nature>().associateBy { it.natureId }
+        dsl.selectFrom(NATURE).where(NATURE.ACTIF.isTrue).orderBy(NATURE.LIBELLE).fetchInto<Nature>().associateBy { it.natureId }
 
     /**
      * Retourne l'ensemble des natures

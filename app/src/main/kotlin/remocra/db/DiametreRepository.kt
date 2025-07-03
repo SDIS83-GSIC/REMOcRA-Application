@@ -12,7 +12,7 @@ import java.util.UUID
 class DiametreRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Diametre>, AbstractRepository() {
 
     override fun getMapById(): Map<UUID, Diametre> =
-        dsl.selectFrom(DIAMETRE).where(DIAMETRE.ACTIF.isTrue).fetchInto<Diametre>().associateBy { it.diametreId }
+        dsl.selectFrom(DIAMETRE).where(DIAMETRE.ACTIF.isTrue).orderBy(DIAMETRE.LIBELLE).fetchInto<Diametre>().associateBy { it.diametreId }
 
     fun getDiametreWithIdNature(): Collection<DiametreWithNature> =
         dsl.select(

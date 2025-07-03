@@ -10,5 +10,6 @@ class NiveauRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
 
     override fun getMapById(): Map<UUID, Niveau> = dsl.selectFrom(NIVEAU)
         .where(NIVEAU.ACTIF.isTrue)
+        .orderBy(NIVEAU.LIBELLE)
         .fetchInto<Niveau>().associateBy { it.niveauId }
 }

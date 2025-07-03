@@ -8,5 +8,5 @@ import java.util.UUID
 
 class ReservoirRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Reservoir>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, Reservoir> = dsl.selectFrom(RESERVOIR).where(RESERVOIR.ACTIF.isTrue).fetchInto<Reservoir>().associateBy { it.reservoirId }
+    override fun getMapById(): Map<UUID, Reservoir> = dsl.selectFrom(RESERVOIR).where(RESERVOIR.ACTIF.isTrue).orderBy(RESERVOIR.LIBELLE).fetchInto<Reservoir>().associateBy { it.reservoirId }
 }

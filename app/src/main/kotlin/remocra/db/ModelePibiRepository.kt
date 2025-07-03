@@ -8,7 +8,7 @@ import java.util.UUID
 
 class ModelePibiRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<ModelePibi>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, ModelePibi> = dsl.selectFrom(MODELE_PIBI).where(MODELE_PIBI.ACTIF.isTrue).fetchInto<ModelePibi>().associateBy { it.modelePibiId }
+    override fun getMapById(): Map<UUID, ModelePibi> = dsl.selectFrom(MODELE_PIBI).where(MODELE_PIBI.ACTIF.isTrue).orderBy(MODELE_PIBI.LIBELLE).fetchInto<ModelePibi>().associateBy { it.modelePibiId }
 
     fun getModeleWithMarque(): Collection<ModeleWithMarque> =
         dsl.select(

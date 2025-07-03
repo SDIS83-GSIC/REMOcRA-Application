@@ -10,7 +10,7 @@ import java.util.UUID
 
 class TypeOrganismeRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeOrganisme>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, TypeOrganisme> = dsl.selectFrom(TYPE_ORGANISME).where(TYPE_ORGANISME.ACTIF.isTrue).fetchInto<TypeOrganisme>().associateBy { it.typeOrganismeId }
+    override fun getMapById(): Map<UUID, TypeOrganisme> = dsl.selectFrom(TYPE_ORGANISME).where(TYPE_ORGANISME.ACTIF.isTrue).orderBy(TYPE_ORGANISME.LIBELLE).fetchInto<TypeOrganisme>().associateBy { it.typeOrganismeId }
 
     fun getAll(limit: Int?, offset: Int?): Collection<TypeOrganisme> =
         dsl.selectFrom(TYPE_ORGANISME)

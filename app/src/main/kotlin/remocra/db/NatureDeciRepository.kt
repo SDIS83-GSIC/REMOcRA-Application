@@ -18,6 +18,6 @@ class NatureDeciRepository @Inject constructor(private val dsl: DSLContext) : No
         val natureDeciId: UUID,
         val natureDeciLibelle: String,
     )
-    override fun getMapById(): Map<UUID, NatureDeci> = dsl.selectFrom(NATURE_DECI).where(NATURE_DECI.ACTIF.isTrue)
+    override fun getMapById(): Map<UUID, NatureDeci> = dsl.selectFrom(NATURE_DECI).where(NATURE_DECI.ACTIF.isTrue).orderBy(NATURE_DECI.LIBELLE)
         .fetchInto<NatureDeci>().associateBy { it.natureDeciId }
 }

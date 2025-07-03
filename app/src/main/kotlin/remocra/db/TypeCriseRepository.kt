@@ -8,5 +8,5 @@ import java.util.UUID
 
 class TypeCriseRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeCrise>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, TypeCrise> = dsl.selectFrom(TYPE_CRISE).where(TYPE_CRISE.ACTIF.isTrue).fetchInto<TypeCrise>().associateBy { it.typeCriseId }
+    override fun getMapById(): Map<UUID, TypeCrise> = dsl.selectFrom(TYPE_CRISE).where(TYPE_CRISE.ACTIF.isTrue).orderBy(TYPE_CRISE.LIBELLE).fetchInto<TypeCrise>().associateBy { it.typeCriseId }
 }

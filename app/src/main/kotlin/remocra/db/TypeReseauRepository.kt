@@ -8,5 +8,5 @@ import java.util.UUID
 
 class TypeReseauRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeReseau>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, TypeReseau> = dsl.selectFrom(TYPE_RESEAU).where(TYPE_RESEAU.ACTIF.isTrue).fetchInto<TypeReseau>().associateBy { it.typeReseauId }
+    override fun getMapById(): Map<UUID, TypeReseau> = dsl.selectFrom(TYPE_RESEAU).where(TYPE_RESEAU.ACTIF.isTrue).orderBy(TYPE_RESEAU.LIBELLE).fetchInto<TypeReseau>().associateBy { it.typeReseauId }
 }

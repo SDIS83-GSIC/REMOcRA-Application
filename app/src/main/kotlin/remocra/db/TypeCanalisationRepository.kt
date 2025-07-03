@@ -8,5 +8,5 @@ import java.util.UUID
 
 class TypeCanalisationRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<TypeCanalisation>, AbstractRepository() {
 
-    override fun getMapById(): Map<UUID, TypeCanalisation> = dsl.selectFrom(TYPE_CANALISATION).where(TYPE_CANALISATION.ACTIF.isTrue).fetchInto<TypeCanalisation>().associateBy { it.typeCanalisationId }
+    override fun getMapById(): Map<UUID, TypeCanalisation> = dsl.selectFrom(TYPE_CANALISATION).where(TYPE_CANALISATION.ACTIF.isTrue).orderBy(TYPE_CANALISATION.LIBELLE).fetchInto<TypeCanalisation>().associateBy { it.typeCanalisationId }
 }

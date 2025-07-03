@@ -61,17 +61,17 @@ class RcciRepository @Inject constructor(private val dsl: DSLContext) : Abstract
      * REFERENTIEL
      */
     fun getMapTypePrometheeFamille(): Map<UUID, RcciTypePrometheeFamille> =
-        dsl.selectFrom(RCCI_TYPE_PROMETHEE_FAMILLE).fetchInto<RcciTypePrometheeFamille>().associateBy { it.rcciTypePrometheeFamilleId }
+        dsl.selectFrom(RCCI_TYPE_PROMETHEE_FAMILLE).orderBy(RCCI_TYPE_PROMETHEE_FAMILLE.LIBELLE).fetchInto<RcciTypePrometheeFamille>().associateBy { it.rcciTypePrometheeFamilleId }
 
     fun getMapTypePrometheePartition(): Map<UUID, RcciTypePrometheePartition> =
-        dsl.selectFrom(RCCI_TYPE_PROMETHEE_PARTITION).fetchInto<RcciTypePrometheePartition>().associateBy { it.rcciTypePrometheePartitionId }
+        dsl.selectFrom(RCCI_TYPE_PROMETHEE_PARTITION).orderBy(RCCI_TYPE_PROMETHEE_PARTITION.LIBELLE).fetchInto<RcciTypePrometheePartition>().associateBy { it.rcciTypePrometheePartitionId }
 
     fun getMapTypePrometheeCategorie(): Map<UUID, RcciTypePrometheeCategorie> =
-        dsl.selectFrom(RCCI_TYPE_PROMETHEE_CATEGORIE).fetchInto<RcciTypePrometheeCategorie>().associateBy { it.rcciTypePrometheeCategorieId }
+        dsl.selectFrom(RCCI_TYPE_PROMETHEE_CATEGORIE).orderBy(RCCI_TYPE_PROMETHEE_CATEGORIE.LIBELLE).fetchInto<RcciTypePrometheeCategorie>().associateBy { it.rcciTypePrometheeCategorieId }
 
     fun getMapTypeOrigineAlerte(): Map<UUID, RcciTypeOrigineAlerte> =
-        dsl.selectFrom(RCCI_TYPE_ORIGINE_ALERTE).fetchInto<RcciTypeOrigineAlerte>().associateBy { it.rcciTypeOrigineAlerteId }
+        dsl.selectFrom(RCCI_TYPE_ORIGINE_ALERTE).orderBy(RCCI_TYPE_ORIGINE_ALERTE.LIBELLE).fetchInto<RcciTypeOrigineAlerte>().associateBy { it.rcciTypeOrigineAlerteId }
 
     fun getMapTypeDegreCertitude(): Map<UUID, RcciTypeDegreCertitude> =
-        dsl.selectFrom(RCCI_TYPE_DEGRE_CERTITUDE).fetchInto<RcciTypeDegreCertitude>().associateBy { it.rcciTypeDegreCertitudeId }
+        dsl.selectFrom(RCCI_TYPE_DEGRE_CERTITUDE).orderBy(RCCI_TYPE_DEGRE_CERTITUDE.LIBELLE).fetchInto<RcciTypeDegreCertitude>().associateBy { it.rcciTypeDegreCertitudeId }
 }
