@@ -21,6 +21,7 @@ enum class TypeNomenclatureCodeLibelle {
     THEMATIQUE,
     TYPE_CANALISATION,
     TYPE_CRISE,
+    TYPE_ENGIN,
     TYPE_ETUDE,
     TYPE_ORGANISME,
     TYPE_PENA_ASPIRATION,

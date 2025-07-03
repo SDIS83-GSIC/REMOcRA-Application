@@ -192,6 +192,9 @@ import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListT
 import CreateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateTypeCriseCategorie.tsx";
 import UpdateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateTypeCriseCategorie.tsx";
 import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
+import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
+import UpdateTypeEngin from "./pages/Admin/typeEngin/UpdateTypeEngin.tsx";
+import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -340,6 +343,10 @@ export const URLS = {
     url`/admin/marque-pibi/update/` + marquePibiId,
   LIST_MARQUE_PIBI: url`/admin/marque-pibi`,
 
+  ADD_TYPE_ENGIN: url`/admin/type-engin/create`,
+  UPDATE_TYPE_ENGIN: (typeEnginId: string) =>
+    url`/admin/type-engin/update/` + typeEnginId,
+  LIST_TYPE_ENGIN: url`/admin/type-engin`,
   ADD_MATERIAU: url`/admin/materiau/create`,
   UPDATE_MATERIAU: (materiauId: string) =>
     url`/admin/materiau/update/` + materiauId,
@@ -1346,6 +1353,33 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCanalisation}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "type-engin",
+        element: (
+          <Authorization
+            Component={ListTypeEngin}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "type-engin/update/:typeEnginId",
+        element: (
+          <Authorization
+            Component={UpdateTypeEngin}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "type-engin/create",
+        element: (
+          <Authorization
+            Component={CreateTypeEngin}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),

@@ -425,6 +425,16 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
+                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
+                      pathname={URLS.LIST_TYPE_ENGIN}
+                    >
+                      Types d&apos;engins
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_TYPE_ETUDE) && (
                   <Nav.Item>
                     <CustomLinkButton

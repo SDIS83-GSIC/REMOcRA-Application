@@ -26,15 +26,18 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
+import remocra.db.jooq.remocra.keys.L_PENA_TYPE_ENGIN__L_PENA_TYPE_ENGIN_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA_ASPIRATION__PENA_ASPIRATION_PENA_ASPIRATION_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA_PKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_ID_FKEY
 import remocra.db.jooq.remocra.keys.PENA__PENA_PENA_MATERIAU_ID_FKEY
 import remocra.db.jooq.remocra.keys.PIBI__PIBI_PIBI_PENA_ID_FKEY
+import remocra.db.jooq.remocra.tables.LPenaTypeEngin.LPenaTypeEnginPath
 import remocra.db.jooq.remocra.tables.Materiau.MateriauPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.PenaAspiration.PenaAspirationPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
+import remocra.db.jooq.remocra.tables.TypeEngin.TypeEnginPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -198,6 +201,23 @@ open class Pena(
     val materiau: MateriauPath
         get(): MateriauPath = materiau()
 
+    private lateinit var _lPenaTypeEngin: LPenaTypeEnginPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_pena_type_engin</code> table
+     */
+    fun lPenaTypeEngin(): LPenaTypeEnginPath {
+        if (!this::_lPenaTypeEngin.isInitialized) {
+            _lPenaTypeEngin = LPenaTypeEnginPath(this, null, L_PENA_TYPE_ENGIN__L_PENA_TYPE_ENGIN_PENA_ID_FKEY.inverseKey)
+        }
+
+        return _lPenaTypeEngin
+    }
+
+    val lPenaTypeEngin: LPenaTypeEnginPath
+        get(): LPenaTypeEnginPath = lPenaTypeEngin()
+
     private lateinit var _penaAspiration: PenaAspirationPath
 
     /**
@@ -230,6 +250,13 @@ open class Pena(
 
     val pibi: PibiPath
         get(): PibiPath = pibi()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.type_engin</code> table
+     */
+    val typeEngin: TypeEnginPath
+        get(): TypeEnginPath = lPenaTypeEngin().typeEngin()
     override fun `as`(alias: String): Pena = Pena(DSL.name(alias), this)
     override fun `as`(alias: Name): Pena = Pena(alias, this)
     override fun `as`(alias: Table<*>): Pena = Pena(alias.qualifiedName, this)

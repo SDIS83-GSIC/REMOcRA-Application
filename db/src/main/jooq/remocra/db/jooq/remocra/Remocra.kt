@@ -65,6 +65,7 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
@@ -140,6 +141,7 @@ import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
 import remocra.db.jooq.remocra.tables.TypeCriseCategorie
+import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
@@ -465,6 +467,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_pei_document</code>.
      */
     val L_PEI_DOCUMENT: LPeiDocument get() = LPeiDocument.L_PEI_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_pena_type_engin</code>.
+     */
+    val L_PENA_TYPE_ENGIN: LPenaTypeEngin get() = LPenaTypeEngin.L_PENA_TYPE_ENGIN
 
     /**
      * The table <code>remocra.l_permis_cadastre_parcelle</code>.
@@ -842,6 +849,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TYPE_CRISE_CATEGORIE: TypeCriseCategorie get() = TypeCriseCategorie.TYPE_CRISE_CATEGORIE
 
     /**
+     * The table <code>remocra.type_engin</code>.
+     */
+    val TYPE_ENGIN: TypeEngin get() = TypeEngin.TYPE_ENGIN
+
+    /**
      * The table <code>remocra.type_organisme</code>.
      */
     val TYPE_ORGANISME: TypeOrganisme get() = TypeOrganisme.TYPE_ORGANISME
@@ -967,6 +979,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
+        LPenaTypeEngin.L_PENA_TYPE_ENGIN,
         LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE,
         LPermisDocument.L_PERMIS_DOCUMENT,
         LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE,
@@ -1042,6 +1055,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         TypeCanalisation.TYPE_CANALISATION,
         TypeCrise.TYPE_CRISE,
         TypeCriseCategorie.TYPE_CRISE_CATEGORIE,
+        TypeEngin.TYPE_ENGIN,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,
         TypePermisAvis.TYPE_PERMIS_AVIS,

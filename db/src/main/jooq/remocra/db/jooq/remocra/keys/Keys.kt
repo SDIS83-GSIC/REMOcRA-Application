@@ -66,6 +66,7 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
@@ -141,6 +142,7 @@ import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
 import remocra.db.jooq.remocra.tables.TypeCriseCategorie
+import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
@@ -231,6 +233,7 @@ val L_INDISPONIBILITE_TEMPORAIRE_PEI_PKEY: UniqueKey<Record> = Internal.createUn
 val L_MODELE_COURRIER_PROFIL_DROIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT, DSL.name("l_modele_courrier_profil_droit_pkey"), arrayOf(LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID, LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID), true)
 val L_PEI_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID, LPeiAnomalie.L_PEI_ANOMALIE.ANOMALIE_ID), true)
 val L_PEI_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID, LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), true)
+val L_PENA_TYPE_ENGIN_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPenaTypeEngin.L_PENA_TYPE_ENGIN, DSL.name("l_pena_type_engin_pkey"), arrayOf(LPenaTypeEngin.L_PENA_TYPE_ENGIN.PENA_ID, LPenaTypeEngin.L_PENA_TYPE_ENGIN.TYPE_ENGIN_ID), true)
 val L_PERMIS_CADASTRE_PARCELLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE, DSL.name("l_permis_cadastre_parcelle_pkey"), arrayOf(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE.PERMIS_ID, LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE.CADASTRE_PARCELLE_ID), true)
 val L_PERMIS_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LPermisDocument.L_PERMIS_DOCUMENT, DSL.name("l_permis_document_pkey"), arrayOf(LPermisDocument.L_PERMIS_DOCUMENT.PERMIS_ID, LPermisDocument.L_PERMIS_DOCUMENT.DOCUMENT_ID), true)
 val L_PROFIL_DROIT_DOCUMENT_HABILITABLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE, DSL.name("l_profil_droit_document_habilitable_pkey"), arrayOf(LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID, LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID), true)
@@ -351,6 +354,8 @@ val TYPE_CRISE_TYPE_CRISE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey
 val TYPE_CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_pkey"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.ID), true)
 val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_code_key"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.CODE), true)
 val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_libelle_key"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.LIBELLE), true)
+val TYPE_ENGIN_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeEngin.TYPE_ENGIN, DSL.name("type_engin_pkey"), arrayOf(TypeEngin.TYPE_ENGIN.ID), true)
+val TYPE_ENGIN_TYPE_ENGIN_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeEngin.TYPE_ENGIN, DSL.name("type_engin_type_engin_code_key"), arrayOf(TypeEngin.TYPE_ENGIN.CODE), true)
 val TYPE_ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_pkey"), arrayOf(TypeOrganisme.TYPE_ORGANISME.ID), true)
 val TYPE_ORGANISME_TYPE_ORGANISME_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_type_organisme_code_key"), arrayOf(TypeOrganisme.TYPE_ORGANISME.CODE), true)
 val TYPE_PENA_ASPIRATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypePenaAspiration.TYPE_PENA_ASPIRATION, DSL.name("type_pena_aspiration_pkey"), arrayOf(TypePenaAspiration.TYPE_PENA_ASPIRATION.ID), true)
@@ -454,6 +459,8 @@ val L_PEI_ANOMALIE__L_PEI_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> 
 val L_PEI_ANOMALIE__L_PEI_ANOMALIE_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiAnomalie.L_PEI_ANOMALIE, DSL.name("l_pei_anomalie_pei_id_fkey"), arrayOf(LPeiAnomalie.L_PEI_ANOMALIE.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_document_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val L_PEI_DOCUMENT__L_PEI_DOCUMENT_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPeiDocument.L_PEI_DOCUMENT, DSL.name("l_pei_document_pei_id_fkey"), arrayOf(LPeiDocument.L_PEI_DOCUMENT.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
+val L_PENA_TYPE_ENGIN__L_PENA_TYPE_ENGIN_PENA_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPenaTypeEngin.L_PENA_TYPE_ENGIN, DSL.name("l_pena_type_engin_pena_id_fkey"), arrayOf(LPenaTypeEngin.L_PENA_TYPE_ENGIN.PENA_ID), remocra.db.jooq.remocra.keys.PENA_PKEY, arrayOf(Pena.PENA.ID), true)
+val L_PENA_TYPE_ENGIN__L_PENA_TYPE_ENGIN_TYPE_ENGIN_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPenaTypeEngin.L_PENA_TYPE_ENGIN, DSL.name("l_pena_type_engin_type_engin_id_fkey"), arrayOf(LPenaTypeEngin.L_PENA_TYPE_ENGIN.TYPE_ENGIN_ID), remocra.db.jooq.remocra.keys.TYPE_ENGIN_PKEY, arrayOf(TypeEngin.TYPE_ENGIN.ID), true)
 val L_PERMIS_CADASTRE_PARCELLE__L_PERMIS_CADASTRE_PARCELLE_CADASTRE_PARCELLE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE, DSL.name("l_permis_cadastre_parcelle_cadastre_parcelle_id_fkey"), arrayOf(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE.CADASTRE_PARCELLE_ID), remocra.db.jooq.remocra.keys.CADASTRE_PARCELLE_PKEY, arrayOf(CadastreParcelle.CADASTRE_PARCELLE.ID), true)
 val L_PERMIS_CADASTRE_PARCELLE__L_PERMIS_CADASTRE_PARCELLE_PERMIS_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE, DSL.name("l_permis_cadastre_parcelle_permis_id_fkey"), arrayOf(LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE.PERMIS_ID), remocra.db.jooq.remocra.keys.PERMIS_PKEY, arrayOf(Permis.PERMIS.ID), true)
 val L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LPermisDocument.L_PERMIS_DOCUMENT, DSL.name("l_permis_document_document_id_fkey"), arrayOf(LPermisDocument.L_PERMIS_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)

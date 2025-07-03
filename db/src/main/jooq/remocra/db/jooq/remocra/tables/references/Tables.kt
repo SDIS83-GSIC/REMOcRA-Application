@@ -61,6 +61,7 @@ import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
+import remocra.db.jooq.remocra.tables.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
@@ -136,6 +137,7 @@ import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
 import remocra.db.jooq.remocra.tables.TypeCriseCategorie
+import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
 import remocra.db.jooq.remocra.tables.TypePermisAvis
@@ -439,6 +441,11 @@ val L_PEI_ANOMALIE: LPeiAnomalie = LPeiAnomalie.L_PEI_ANOMALIE
  * The table <code>remocra.l_pei_document</code>.
  */
 val L_PEI_DOCUMENT: LPeiDocument = LPeiDocument.L_PEI_DOCUMENT
+
+/**
+ * The table <code>remocra.l_pena_type_engin</code>.
+ */
+val L_PENA_TYPE_ENGIN: LPenaTypeEngin = LPenaTypeEngin.L_PENA_TYPE_ENGIN
 
 /**
  * The table <code>remocra.l_permis_cadastre_parcelle</code>.
@@ -814,6 +821,11 @@ val TYPE_CRISE: TypeCrise = TypeCrise.TYPE_CRISE
  * The table <code>remocra.type_crise_categorie</code>.
  */
 val TYPE_CRISE_CATEGORIE: TypeCriseCategorie = TypeCriseCategorie.TYPE_CRISE_CATEGORIE
+
+/**
+ * The table <code>remocra.type_engin</code>.
+ */
+val TYPE_ENGIN: TypeEngin = TypeEngin.TYPE_ENGIN
 
 /**
  * The table <code>remocra.type_organisme</code>.

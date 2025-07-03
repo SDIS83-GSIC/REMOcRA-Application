@@ -28,6 +28,7 @@ export enum NOMENCLATURE {
   RCCI_TYPE_DEGRE_CERTITUDE = "rcci_type_degre_certitude",
   RCCI_TYPE_ORIGINE_ALERTE = "rcci_type_origine_alerte",
   DIRECTION = "direction",
+  TYPE_ENGIN = "type_engin",
   TYPE_ETUDE = "type_etude",
   TYPE_CANALISATION = "type_canalisation",
   TYPE_CRISE = "type_crise",
