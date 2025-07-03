@@ -296,7 +296,7 @@ const Visite = () => {
                                     }
                                   </div>
                                   <div>
-                                    Débit à 1 bar (m3/h) :{" "}
+                                    Débit à 1 bar (m³/h) :{" "}
                                     {
                                       currentVisite.ctrlDebitPression
                                         .visiteCtrlDebitPressionDebit

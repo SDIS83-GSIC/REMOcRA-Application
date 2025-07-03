@@ -272,7 +272,7 @@ const ComposantToRepeat = ({
                 e.target.checked,
               );
               if (!e.target.checked) {
-                // Formule: Q (m3/s) = V * S = Vitesse_eau*(π*D²)/4; Q (m3/h) = Q(m3/s)*3600
+                // Formule: Q (m³/s) = V * S = Vitesse_eau*(π*D²)/4; Q (m³/h) = Q(m³/s)*3600
                 setFieldValue(
                   `listeDebitSimultaneMesure[${index}].debitSimultaneMesureDebitMesure`,
                   Math.floor(

@@ -65,8 +65,8 @@ class PeiCaracteristiquesUseCase : AbstractUseCase() {
     private fun Any?.formatValue(peiCaracteristique: PeiCaracteristique): String {
         return when (peiCaracteristique) {
             PeiCaracteristique.DATE_RECEPTION -> if ((this == null)) "Non renseignée" else dateUtils.formatNaturelDateHeureMinute(this as ZonedDateTime)
-            PeiCaracteristique.CAPACITE -> if ((this == null)) "Non renseignée" else "$this m3"
-            PeiCaracteristique.DEBIT -> if ((this == null)) "Non renseigné" else "$this m3/h"
+            PeiCaracteristique.CAPACITE -> if ((this == null)) "Non renseignée" else "$this m³"
+            PeiCaracteristique.DEBIT -> if ((this == null)) "Non renseigné" else "$this m³/h"
             else -> this?.toString() ?: ""
         }
     }

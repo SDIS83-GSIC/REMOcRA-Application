@@ -292,7 +292,7 @@ const VisiteForm = ({
                       <div>
                         <PositiveNumberInput
                           name="ctrlDebitPression.ctrlDebit"
-                          label="Débit à 1 bar (m3/h) : "
+                          label="Débit à 1 bar (m³/h) : "
                           min={0}
                           required={false}
                         />

@@ -272,7 +272,7 @@ const SimplifiedVisiteForm = ({
                         <div>
                           <PositiveNumberInput
                             name={`listeSimplifiedVisite[${index}].ctrlDebitPression.ctrlDebit`}
-                            label="Débit à 1 bar (m3/h) : "
+                            label="Débit à 1 bar (m³/h) : "
                             min={0}
                             required={false}
                           />
