@@ -51,6 +51,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     PEI_TOLERANCE_COMMUNE_METRES(ParametreSection.PEI),
     PEI_RENUMEROTATION_INTERNE_AUTO(ParametreSection.PEI),
     PEI_FICHE_RESUME_STANDALONE(ParametreSection.PEI),
+    PEI_DISPLAY_TYPE_ENGIN(ParametreSection.PEI),
     VOIE_SAISIE_LIBRE(ParametreSection.PEI),
     TYPE_VISITE_CDP(ParametreSection.PEI),
     DECLARATION_PEI_DESTINATAIRE_EMAIL(ParametreSection.PEI),

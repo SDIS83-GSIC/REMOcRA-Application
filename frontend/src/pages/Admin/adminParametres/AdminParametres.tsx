@@ -72,6 +72,7 @@ type ParametresSectionPei = {
   caracteristiquesPenaTooltipWeb: string[] | undefined;
   caracteristiquesPibiTooltipWeb: string[] | undefined;
   peiFicheResumeStandalone: boolean;
+  peiDisplayTypeEngin: boolean;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -858,6 +859,15 @@ const AdminPei = ({
             label="Activer la fiche Résumé en affichage autonome"
             tooltipText={
               "La fiche Résumé permet d'afficher de l'information condensée sur le PEI ; outre son accessibilité en 1er accordéon de la fiche PEI, vous pouvez, en activant cette option, la voir apparaître comme action spécifique dans la liste des PEI et l'infobulle du PEI dans la carto. Attention, elle est forcément utilisée pour le module de risque en mode grand public"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiDisplayTypeEngin"
+            label="Permettre la saisie des types d'engins dans la fiche PEI"
+            tooltipText={
+              "Permet d'afficher le composant de saisie des types d'engins dans la fiche PEI, sinon il sera masqué"
             }
           />
         </AdminParametre>

@@ -94,6 +94,7 @@ class ParametresUseCase : AbstractUseCase() {
             caracteristiquesPibiTooltipWeb = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name, objectMapper),
             peiNombreHistorique = mapParametres.getIntOrNull(ParametreEnum.PEI_NOMBRE_HISTORIQUE.name),
             peiFicheResumeStandalone = mapParametres.getBooleanOrNull(ParametreEnum.PEI_FICHE_RESUME_STANDALONE.name),
+            peiDisplayTypeEngin = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DISPLAY_TYPE_ENGIN.name),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(
