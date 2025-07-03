@@ -112,7 +112,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     modeleCourrierParametreSourceSql = param.modeleCourrierParametreSourceSql.takeUnless { param.modeleCourrierParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
                     modeleCourrierParametreDescription = param.modeleCourrierParametreDescription,
                     modeleCourrierParametreSourceSqlId = param.modeleCourrierParametreSourceSqlId.takeUnless { param.modeleCourrierParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
-                    modeleCourrierParametreSourceSqlLibelle = param.modeleCourrierParametreLibelle.takeUnless { param.modeleCourrierParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
+                    modeleCourrierParametreSourceSqlLibelle = param.modeleCourrierParametreSourceSqlLibelle.takeUnless { param.modeleCourrierParametreType != TypeParametreRapportCourrier.SELECT_INPUT },
                     modeleCourrierParametreValeurDefaut = param.modeleCourrierParametreValeurDefaut,
                     modeleCourrierParametreIsRequired = param.modeleCourrierParametreIsRequired,
                     modeleCourrierParametreType = param.modeleCourrierParametreType,
