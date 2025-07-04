@@ -30,6 +30,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeCrise
+import remocra.db.jooq.remocra.tables.pojos.TypeEngin
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
@@ -67,6 +68,7 @@ data class DataCache(
     var mapReservoir: Map<UUID, Reservoir>,
     var mapTypeCanalisation: Map<UUID, TypeCanalisation>,
     var mapTypeCrise: Map<UUID, TypeCrise>,
+    var mapTypeEngin: Map<UUID, TypeEngin>,
     var mapTypeOrganisme: Map<UUID, TypeOrganisme>,
     var mapTypeReseau: Map<UUID, TypeReseau>,
     var utilisateurSysteme: Utilisateur,

@@ -24,6 +24,7 @@ import remocra.db.RcciRepository
 import remocra.db.ReservoirRepository
 import remocra.db.TypeCanalisationRepository
 import remocra.db.TypeCriseRepository
+import remocra.db.TypeEnginRepository
 import remocra.db.TypeOrganismeRepository
 import remocra.db.TypeReseauRepository
 import remocra.db.UtilisateurRepository
@@ -57,6 +58,7 @@ import remocra.db.jooq.remocra.tables.pojos.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.pojos.TypeCrise
+import remocra.db.jooq.remocra.tables.pojos.TypeEngin
 import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.db.jooq.remocra.tables.pojos.TypeReseau
 import remocra.eventbus.EventListener
@@ -87,6 +89,7 @@ constructor(
     private val typeCriseRepository: TypeCriseRepository,
     private val typeOrganismeRepository: TypeOrganismeRepository,
     private val typeReseauRepository: TypeReseauRepository,
+    private val typeEnginRepository: TypeEnginRepository,
     private val utilisateurRepository: UtilisateurRepository,
     // private val nomenclatureCodeLibelleRepository: NomenclatureCodeLibelleRepository,
 
@@ -124,16 +127,6 @@ constructor(
             -> dataCache.mapNature = natureRepository.getMapById()
             TypeDataCache.NATURE_DECI -> dataCache.mapNatureDeci = natureDeciRepository.getMapById()
             TypeDataCache.NIVEAU -> dataCache.mapNiveau = niveauRepository.getMapById()
-            TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
-            TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
-            TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
-            TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> dataCache.mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
-            TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
-            TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
-            TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
-            TypeDataCache.TYPE_CRISE -> dataCache.mapTypeCrise = typeCriseRepository.getMapById()
-            TypeDataCache.TYPE_ORGANISME -> dataCache.mapTypeOrganisme = typeOrganismeRepository.getMapById()
-            TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
             TypeDataCache.OLDEB_TYPE_ACTION -> dataCache.mapOldebTypeAction = oldebRepository.getTypeAction()
             TypeDataCache.OLDEB_TYPE_AVIS -> dataCache.mapOldebTypeAvis = oldebRepository.getTypeAvisMap()
             TypeDataCache.OLDEB_TYPE_DEBROUSSAILLEMENT -> dataCache.mapOldebTypeDebrousaillement = oldebRepository.getTypeDebroussaillementMap()
@@ -145,6 +138,17 @@ constructor(
             TypeDataCache.OLDEB_TYPE_ZONE_URBANISME -> dataCache.mapOldebTypeZoneUrbanisme = oldebRepository.getTypeZoneUrbanismeMap()
             TypeDataCache.OLDEB_TYPE_CARACTERISTIQUE -> dataCache.mapOldebTypeCaracteristique = oldebRepository.getTypeCaracteristiqueMap()
             TypeDataCache.OLDEB_TYPE_CATEGORIE_CARACTERISTIQUE -> dataCache.mapOldebTypeCategorieCaracteristique = oldebRepository.getTypeCategorieCaracteristiqueMap()
+            TypeDataCache.RCCI_TYPE_DEGRE_CERTITUDE -> dataCache.mapRcciTypeDegreCertitude = rcciRepository.getMapTypeDegreCertitude()
+            TypeDataCache.RCCI_TYPE_ORIGINE_ALERTE -> dataCache.mapRcciTypeOrigineAlerte = rcciRepository.getMapTypeOrigineAlerte()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_CATEGORIE -> dataCache.mapRcciTypePrometheeCategorie = rcciRepository.getMapTypePrometheeCategorie()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_FAMILLE -> dataCache.mapRcciTypePrometheeFamille = rcciRepository.getMapTypePrometheeFamille()
+            TypeDataCache.RCCI_TYPE_PROMETHEE_PARTITION -> dataCache.mapRcciTypePrometheePartition = rcciRepository.getMapTypePrometheePartition()
+            TypeDataCache.RESERVOIR -> dataCache.mapReservoir = reservoirRepository.getMapById()
+            TypeDataCache.TYPE_CANALISATION -> dataCache.mapTypeCanalisation = typeCanalisationRepository.getMapById()
+            TypeDataCache.TYPE_CRISE -> dataCache.mapTypeCrise = typeCriseRepository.getMapById()
+            TypeDataCache.TYPE_ENGIN -> dataCache.mapTypeEngin = typeEnginRepository.getMapById()
+            TypeDataCache.TYPE_ORGANISME -> dataCache.mapTypeOrganisme = typeOrganismeRepository.getMapById()
+            TypeDataCache.TYPE_RESEAU -> dataCache.mapTypeReseau = typeReseauRepository.getMapById()
         }
     }
 
@@ -183,6 +187,7 @@ constructor(
         val reservoir = reservoirRepository.getMapById()
         val typeCanalisation = typeCanalisationRepository.getMapById()
         val typeCrise = typeCriseRepository.getMapById()
+        val typeEngin = typeEnginRepository.getMapById()
         val typeOrganisme = typeOrganismeRepository.getMapById()
         val typeReseau = typeReseauRepository.getMapById()
         val utilisateurSysteme = utilisateurRepository.getUtilisateurSysteme()
@@ -219,6 +224,7 @@ constructor(
             mapReservoir = reservoir,
             mapTypeCanalisation = typeCanalisation,
             mapTypeCrise = typeCrise,
+            mapTypeEngin = typeEngin,
             mapTypeOrganisme = typeOrganisme,
             mapTypeReseau = typeReseau,
             utilisateurSysteme = utilisateurSysteme,
@@ -262,6 +268,7 @@ constructor(
         TypeDataCache.RESERVOIR -> getReservoirs()
         TypeDataCache.TYPE_CANALISATION -> get().mapTypeCanalisation
         TypeDataCache.TYPE_CRISE -> get().mapTypeCrise
+        TypeDataCache.TYPE_ENGIN -> get().mapTypeEngin
         TypeDataCache.TYPE_ORGANISME -> get().mapTypeOrganisme
         TypeDataCache.TYPE_RESEAU -> get().mapTypeReseau
     }
@@ -338,6 +345,7 @@ constructor(
         TypeDataCache.RESERVOIR -> Reservoir::class.java
         TypeDataCache.TYPE_CANALISATION -> TypeCanalisation::class.java
         TypeDataCache.TYPE_CRISE -> TypeCrise::class.java
+        TypeDataCache.TYPE_ENGIN -> TypeEngin::class.java
         TypeDataCache.TYPE_ORGANISME -> TypeOrganisme::class.java
         TypeDataCache.TYPE_RESEAU -> TypeReseau::class.java
     }
