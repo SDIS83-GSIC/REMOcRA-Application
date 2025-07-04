@@ -198,6 +198,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
         if (peiData is PenaData) {
             penaRepository.upsertPena(peiData)
+
+            penaRepository.deleteLienPenaTypeEngin(peiData.peiId)
+            peiData.typeEnginIds?.let { typeEnginIds -> penaRepository.addLienPenaTypeEngin(peiData.peiId, typeEnginIds) }
         }
     }
 

@@ -16,6 +16,7 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
   FormContainer,
+  Multiselect,
   NumberInput,
   TextAreaInput,
   TextInput,
@@ -106,6 +107,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   penaQuantiteAppoint: data?.penaQuantiteAppoint ?? null,
   penaDisponibiliteHbe: data?.penaDisponibiliteHbe ?? null,
   penaEquipeHbe: data?.penaEquipeHbe ?? false,
+  typeEnginIds: data?.typeEnginIds ?? [],
 
   documents: data?.documents ?? [],
 
@@ -225,6 +227,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
               data?.penaDisponibiliteHbe ??
               DISPONIBILITE_PEI.INDISPONIBLE.toUpperCase(),
             penaEquipeHbe: values.penaEquipeHbe,
+            typeEnginIds: values.typeEnginIds ?? [],
           },
     ),
   );
@@ -299,10 +302,14 @@ const Pei = ({
   );
 
   const parametreVoieSaisieLibre = PARAMETRE.VOIE_SAISIE_LIBRE;
+  const parametrePeiDisplayTypeEngin = PARAMETRE.PEI_DISPLAY_TYPE_ENGIN;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
-      listeParametreCode: JSON.stringify(parametreVoieSaisieLibre),
+      listeParametreCode: JSON.stringify([
+        parametreVoieSaisieLibre,
+        parametrePeiDisplayTypeEngin,
+      ]),
     }}`,
   );
 
@@ -314,7 +321,16 @@ const Pei = ({
     return JSON.parse(
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
-  }, [listeParametre.isResolved]);
+  }, [listeParametre, parametreVoieSaisieLibre]);
+  const displayTypeEngin = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
+      listeParametre?.data[parametrePeiDisplayTypeEngin].parametreValeur,
+    );
+  }, [listeParametre, parametrePeiDisplayTypeEngin]);
 
   useEffect(() => {
     if (
@@ -460,7 +476,9 @@ const Pei = ({
           <FormPena
             values={values}
             setValues={setValues}
+            setFieldValue={setFieldValue}
             hasDroitCaracteristique={hasDroitCaracteristique}
+            displayTypeEngin={displayTypeEngin}
           />
         ) : (
           <div>Veuillez renseigner le type de PEI</div>
@@ -1362,12 +1380,18 @@ const FormPibi = ({
 const FormPena = ({
   values,
   setValues,
+  setFieldValue,
   hasDroitCaracteristique,
+  displayTypeEngin = false,
 }: {
   values: PeiEntity;
   setValues: (e: any) => void;
+  setFieldValue: (champ: string, newValue: any | undefined) => void;
   hasDroitCaracteristique: boolean;
+  displayTypeEngin: boolean;
 }) => {
+  const typeEnginState = useGet(url`/api/nomenclatures/type_engin`);
+
   return (
     <>
       <Row>
@@ -1423,6 +1447,37 @@ const FormPena = ({
           />
         </Col>
       </Row>
+      {displayTypeEngin && (
+        <Row className="mt-3">
+          <Col xs={4}>
+            <Multiselect
+              name={"typeEnginIds"}
+              label="Types d'engins compatibles"
+              required={false}
+              options={
+                typeEnginState?.data ? Object.values(typeEnginState?.data) : []
+              }
+              getOptionValue={(t) => t.typeEnginId}
+              getOptionLabel={(t) => t.typeEnginLibelle}
+              value={
+                typeEnginState?.data
+                  ? values?.typeEnginIds?.map((e) =>
+                      Object.values(typeEnginState?.data)?.find(
+                        (r) => r.typeEnginId === e,
+                      ),
+                    )
+                  : undefined
+              }
+              onChange={(typeEngin) => {
+                const typeEnginId = typeEngin.map((e) => e.typeEnginId);
+                typeEnginId.length > 0
+                  ? setFieldValue("typeEnginIds", typeEnginId)
+                  : setFieldValue("typeEnginIds", []);
+              }}
+            />
+          </Col>
+        </Row>
+      )}
     </>
   );
 };

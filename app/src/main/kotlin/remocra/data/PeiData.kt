@@ -190,6 +190,7 @@ data class PenaData(
     var penaQuantiteAppoint: Double?,
     var penaMateriauId: UUID? = null,
     var penaEquipeHbe: Boolean = false,
+    var typeEnginIds: Collection<UUID> = emptyList(),
 ) : PeiData(
     peiId,
     peiNumeroComplet,
