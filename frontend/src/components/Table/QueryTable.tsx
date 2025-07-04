@@ -268,23 +268,48 @@ function QueryTable({
 
   const makeHeader = (column: any, key: string) => {
     const { Header, sortField, classNameHeader, width, Filter } = column;
-    const isSortedAsc = sortBy[sortField] === "1";
-    const isSortedDesc = sortBy[sortField] === "-1";
+    const isSortedAsc = sortBy[sortField] < 0;
+    const isSortedDesc = sortBy[sortField] > 0;
 
     const toggleSort = () => {
       if (!sortField) {
         return;
       }
+
       setSortBy((prevSortBy) => {
         const newSortBy = { ...prevSortBy };
-        if (isSortedAsc) {
-          newSortBy[sortField] = "-1";
-        } else if (isSortedDesc) {
+
+        const sortFields = Object.keys(newSortBy).filter(
+          (field) => field !== sortField,
+        );
+
+        // Determine if current field is being sorted
+        const isAsc = newSortBy[sortField] > 0;
+        const isDesc = newSortBy[sortField] < 0;
+
+        if (isAsc) {
+          // From ASC to DESC
+          sortFields.push(sortField);
+          newSortBy[sortField] = `-${sortFields.length}`;
+        } else if (isDesc) {
+          // Remove sort field
           delete newSortBy[sortField];
         } else {
-          newSortBy[sortField] = "1";
+          // Add as ASC at the end
+          sortFields.push(sortField);
+          newSortBy[sortField] = `${sortFields.length}`;
         }
-        return newSortBy;
+
+        // Recalculate all weights in order
+        const finalSortBy: Record<string, string> = {};
+        let i = 1;
+        for (const field of Object.keys(newSortBy)) {
+          const isNegative = newSortBy[field] < 0;
+          finalSortBy[field] = `${isNegative ? "-" : ""}${i}`;
+          i++;
+        }
+
+        return finalSortBy;
       });
     };
     return (
