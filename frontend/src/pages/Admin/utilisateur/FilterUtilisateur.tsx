@@ -8,6 +8,7 @@ type FilterUtilisateurType = {
   utilisateurOrganismeId?: string | undefined;
   utilisateurProfilUtilisateurId?: string | undefined;
   profilDroitId?: string | undefined;
+  utilisateurActif?: boolean | undefined;
 };
 
 const FilterValues = ({
@@ -20,6 +21,7 @@ const FilterValues = ({
   utilisateurOrganismeId,
   utilisateurProfilUtilisateurId,
   profilDroitId,
+  utilisateurActif,
 }: FilterUtilisateurType) => {
   const filter: FilterUtilisateurType = {};
 
@@ -36,6 +38,7 @@ const FilterValues = ({
     "utilisateurProfilUtilisateurId",
   );
   filterProperty(filter, profilDroitId, "profilDroitId");
+  filterProperty(filter, utilisateurActif, "utilisateurActif");
 
   return filter;
 };
