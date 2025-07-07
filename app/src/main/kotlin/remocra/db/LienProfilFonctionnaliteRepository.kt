@@ -85,12 +85,12 @@ class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DS
 
     data class Sort(
         val organisme: Int?,
-        val utilistaeur: Int?,
+        val utilisateur: Int?,
         val fonctionnalite: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             PROFIL_ORGANISME.LIBELLE.getSortField(organisme),
-            PROFIL_UTILISATEUR.LIBELLE.getSortField(utilistaeur),
+            PROFIL_UTILISATEUR.LIBELLE.getSortField(utilisateur),
             PROFIL_DROIT.LIBELLE.getSortField(fonctionnalite),
         )
     }
