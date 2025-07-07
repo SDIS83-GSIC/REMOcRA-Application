@@ -1,4 +1,4 @@
-package remocra.data.couverturehydraulique
+package remocra.couverturehydraulique
 
 import java.util.UUID
 

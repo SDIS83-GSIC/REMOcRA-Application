@@ -9,11 +9,11 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.MultiPolygon
+import remocra.couverturehydraulique.Batiment
+import remocra.couverturehydraulique.Reseau
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiProjetData
-import remocra.data.couverturehydraulique.Batiment
-import remocra.data.couverturehydraulique.Reseau
 import remocra.db.jooq.couverturehydraulique.enums.EtudeStatut
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.pojos.PeiProjet

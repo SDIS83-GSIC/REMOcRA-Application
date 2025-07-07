@@ -1,4 +1,4 @@
-package remocra.usecase.couverturehydraulique
+package remocra.couverturehydraulique.usecase
 
 import jakarta.inject.Inject
 import org.geotools.api.data.FileDataStoreFinder
@@ -8,9 +8,9 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.auth.WrappedUserInfo
-import remocra.data.couverturehydraulique.Batiment
-import remocra.data.couverturehydraulique.Reseau
-import remocra.data.couverturehydraulique.ReseauBatimentPeiProjet
+import remocra.couverturehydraulique.Batiment
+import remocra.couverturehydraulique.Reseau
+import remocra.couverturehydraulique.ReseauBatimentPeiProjet
 import remocra.data.enums.ErrorType
 import remocra.db.CouvertureHydrauliqueRepository
 import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet

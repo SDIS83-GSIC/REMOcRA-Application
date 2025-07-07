@@ -1,4 +1,4 @@
-package remocra.data.couverturehydraulique
+package remocra.couverturehydraulique
 
 import org.locationtech.jts.geom.Geometry
 

@@ -1,4 +1,4 @@
-package remocra.data.couverturehydraulique
+package remocra.couverturehydraulique
 
 data class ClosestPeiData(
     val longitude: Double,

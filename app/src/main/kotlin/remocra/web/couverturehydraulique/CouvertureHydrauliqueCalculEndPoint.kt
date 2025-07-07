@@ -13,12 +13,12 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.couverturehydraulique.CalculData
-import remocra.data.couverturehydraulique.ClosestPeiData
+import remocra.couverturehydraulique.CalculData
+import remocra.couverturehydraulique.ClosestPeiData
+import remocra.couverturehydraulique.usecase.CalculCouvertureUseCase
+import remocra.couverturehydraulique.usecase.ClosestPeiUseCase
 import remocra.db.CouvertureHydrauliqueCalculRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecase.couverturehydraulique.CalculCouvertureUseCase
-import remocra.usecase.couverturehydraulique.ClosestPeiUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 

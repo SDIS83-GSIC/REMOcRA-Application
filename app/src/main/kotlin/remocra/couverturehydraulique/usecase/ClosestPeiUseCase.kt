@@ -1,11 +1,11 @@
-package remocra.usecase.couverturehydraulique
+package remocra.couverturehydraulique.usecase
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.app.ParametresProvider
-import remocra.data.couverturehydraulique.ClosestPeiData
+import remocra.couverturehydraulique.ClosestPeiData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
 import remocra.db.CouvertureHydrauliqueCalculRepository

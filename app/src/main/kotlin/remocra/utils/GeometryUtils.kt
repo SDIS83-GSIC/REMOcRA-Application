@@ -5,8 +5,11 @@ import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
 import org.jooq.Field
 import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
+import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
 import org.locationtech.jts.io.WKTReader
@@ -80,4 +83,19 @@ fun transform(input: Geometry, targetCRS: CoordinateReferenceSystem, srid: Int):
         ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
     geom.srid = srid
     return geom
+}
+
+/**
+ * Normalise un point en copiant sa coordonnée et en appliquant le SRID donné (par défaut 2154)
+ */
+fun normalizePoint(point: Point, srid: Int): Point {
+    val coordinateCopy = Coordinate(point.coordinate)
+    return GeometryFactory(PrecisionModel(), srid).createPoint(coordinateCopy)
+}
+
+/**
+ * Calcule la distance entre deux géométries
+ */
+fun distanceBetween(geometryA: Geometry, geometryB: Geometry): Double {
+    return geometryA.distance(geometryB)
 }
