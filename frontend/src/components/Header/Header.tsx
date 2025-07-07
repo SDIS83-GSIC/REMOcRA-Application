@@ -52,7 +52,13 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
                   <p className="d-flex m-0 align-items-center text-light pe-3">
                     {`${user.prenom} ${user.nom} (${user.username})`}
                   </p>
-                  <form method="post" action={URLS.LOGOUT}>
+                  <form
+                    method="post"
+                    action={URLS.LOGOUT}
+                    onSubmit={() => {
+                      localStorage.clear();
+                    }}
+                  >
                     <Button
                       type="submit"
                       variant="link"
@@ -64,7 +70,13 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
                 </>
               ) : (
                 <>
-                  <form method="post" action={URLS.LOGIN}>
+                  <form
+                    method="post"
+                    action={URLS.LOGIN}
+                    onSubmit={() => {
+                      localStorage.clear();
+                    }}
+                  >
                     <Button
                       type="submit"
                       variant="link"
