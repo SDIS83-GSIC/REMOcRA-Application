@@ -73,7 +73,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     }
 
     fun getTable(params: Params<Filter, Sort>): Collection<NatureWithDiametres> =
-        dsl.select(NATURE.fields().asList()).select(
+        dsl.selectDistinct(NATURE.fields().asList()).select(
             DSL.multiset(
                 dsl.select(L_DIAMETRE_NATURE.DIAMETRE_ID)
                     .from(L_DIAMETRE_NATURE)
@@ -96,7 +96,8 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .fetchInto()
 
     fun getCount(params: Params<Filter, Sort>): Int =
-        dsl.selectCount().from(NATURE)
+        dsl.select(DSL.countDistinct(NATURE.ID))
+            .from(NATURE)
             .leftJoin(L_DIAMETRE_NATURE).on(NATURE.ID.eq(L_DIAMETRE_NATURE.NATURE_ID))
             .where(
                 params.filterBy?.toCondition()
