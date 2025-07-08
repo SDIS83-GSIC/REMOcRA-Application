@@ -114,6 +114,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         // Suppression dans la table PIBI ou PENA
         when (element.peiTypePei) {
             TypePei.PENA -> {
+                penaRepository.deleteLienPenaTypeEngin(element.peiId)
                 penaRepository.deleteById(element.peiId)
             }
 
