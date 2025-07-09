@@ -78,6 +78,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                     isSuperAdmin,
                 ),
             )
+            .orderBy(COUCHE.ORDRE.desc())
             .fetchInto<Couche>().groupBy { it.coucheGroupeCoucheId }
 
     fun getProfilDroitList(coucheId: UUID): List<ProfilDroit> =
@@ -95,7 +96,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
 
     fun getCoucheList(groupeCoucheId: UUID): List<Couche> = dsl.selectFrom(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchInto<Couche>()
 
-    fun getGroupeCoucheList(): List<GroupeCouche> = dsl.selectFrom(GROUPE_COUCHE).fetchInto<GroupeCouche>()
+    fun getGroupeCoucheList(): List<GroupeCouche> = dsl.selectFrom(GROUPE_COUCHE).orderBy(GROUPE_COUCHE.ORDRE.desc()).fetchInto<GroupeCouche>()
 
     fun getIcone(idCouche: UUID): ByteArray? =
         dsl.select(COUCHE.ICONE).from(COUCHE).where(COUCHE.ID.eq(idCouche)).fetchOne(COUCHE.ICONE)
