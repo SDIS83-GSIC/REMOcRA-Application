@@ -4,7 +4,7 @@ object GlobalConstants {
     const val UTILISATEUR_SYSTEME_USERNAME = "UTILISATEUR_SYSTEME"
 
     /** Type prédéfini pour un organisme de type "service des eaux"  */
-    const val SERVICE_EAUX: String = "SERVICEEAUX"
+    const val SERVICE_EAUX: String = "SERVICE_EAUX"
 
     /** Type prédéfini pour un organisme de type "prestataire technique"  */
     const val PRESTATAIRE_TECHNIQUE: String = "PRESTATAIRE_TECHNIQUE"
