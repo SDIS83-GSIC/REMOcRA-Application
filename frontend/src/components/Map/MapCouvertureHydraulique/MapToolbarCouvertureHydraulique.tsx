@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
-import { DragBox, Draw, Select } from "ol/interaction";
+import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -385,10 +385,17 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 
     const selectProjetCtrl = new Select();
 
+    const modifyCtrl = new Modify({
+      features: selectProjetCtrl.getFeatures(),
+      source: dataPeiProjetLayer,
+      snapToPointer: true,
+    });
+
     function toggleDeplacerPeiProjet(active = false) {
       toggleDeplacerPoint(
         active,
         selectProjetCtrl,
+        modifyCtrl,
         map,
         `/api/couverture-hydraulique/pei-projet/move/`,
         dataPeiProjetLayer,

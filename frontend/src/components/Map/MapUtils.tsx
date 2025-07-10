@@ -25,19 +25,16 @@ import { toOpenLayer } from "./Map.tsx";
 function toggleDeplacerPoint(
   active = false,
   selectCtrl: Select,
+  modifyCtrl: Modify,
   map: Map,
   urlApi: string,
   dataLayer: any,
   successToast: (e: string) => void,
   errorToast: (e: string) => void,
-  conditionObjetSelectionne = (feature: Feature) => feature != null, // unused ?
+  conditionObjetSelectionne = (feature: Feature) => feature != null,
 ) {
   const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
-  let modifyCtrl = new Modify({
-    features: selectCtrl.getFeatures(),
-    source: dataLayer,
-    snapToPointer: true,
-  });
+
   if (active) {
     const idx2 = map?.getInteractions().getArray().indexOf(modifyCtrl);
     if (idx1 === -1 && idx2 === -1) {
@@ -46,8 +43,6 @@ function toggleDeplacerPoint(
       selectCtrl.on("select", function (evt) {
         evt.selected.forEach(async function (feature) {
           if (conditionObjetSelectionne(feature)) {
-            map.addInteraction(modifyCtrl);
-          } else {
             map.addInteraction(modifyCtrl);
           }
         });
@@ -87,7 +82,6 @@ function toggleDeplacerPoint(
   } else {
     map.removeInteraction(selectCtrl);
     map.removeInteraction(modifyCtrl);
-    modifyCtrl = null;
   }
 }
 

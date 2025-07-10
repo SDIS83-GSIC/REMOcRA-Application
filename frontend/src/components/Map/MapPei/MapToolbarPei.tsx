@@ -1,7 +1,7 @@
 import { Map } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
-import { DragBox, Draw, Select } from "ol/interaction";
+import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
@@ -267,10 +267,17 @@ export const useToolbarPeiContext = ({
 
     const selectPeiCtrl = new Select();
 
+    const modifyCtrl = new Modify({
+      features: selectPeiCtrl.getFeatures(),
+      source: dataPeiLayer,
+      snapToPointer: true,
+    });
+
     function toggleDeplacerPei(active = false) {
       toggleDeplacerPoint(
         active,
         selectPeiCtrl,
+        modifyCtrl,
         map,
         `/api/pei/deplacer/`,
         dataPeiLayer,
