@@ -23,6 +23,8 @@ import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
+import EditModal from "../../Modal/EditModal.tsx";
+import useModal from "../../Modal/ModalUtils.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -60,6 +62,11 @@ export const useToolbarCouvertureHydrauliqueContext = ({
   const handleCloseTraceeCouverture = () => setShowTraceeCouverture(false);
   const [listePeiId] = useState<string[]>([]);
   const [listePeiProjetId] = useState<string[]>([]);
+
+  const { visible: visibleMove, show: showMove, close: closeMove } = useModal();
+
+  const [peiProjetIdMove, setPeiProjetIdMove] = useState<string | null>(null);
+  const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
 
   /**
    * Permet de dessiner un point pour la création des PEI en projet
@@ -397,10 +404,11 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         selectProjetCtrl,
         modifyCtrl,
         map,
-        `/api/couverture-hydraulique/pei-projet/move/`,
-        dataPeiProjetLayer,
-        successToast,
-        errorToast,
+        (feature, pointId) => {
+          setGeometrieMove(feature);
+          setPeiProjetIdMove(pointId);
+          showMove();
+        },
         (feature) => feature.getProperties().typeElementCarte === "PEI_PROJET",
       );
     }
@@ -435,6 +443,10 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     showTraceeCouverture,
     listePeiId,
     listePeiProjetId,
+    peiProjetIdMove,
+    geometrieMove,
+    closeMove,
+    visibleMove,
   };
 };
 
@@ -454,6 +466,10 @@ const MapToolbarCouvertureHydraulique = ({
   listePeiProjetId,
   toggleTool: toggleToolCallback,
   activeTool,
+  peiProjetIdMove,
+  geometrieMove,
+  closeMove,
+  visibleMove,
 }: {
   map?: Map;
   dataPeiLayer: any;
@@ -472,6 +488,10 @@ const MapToolbarCouvertureHydraulique = ({
   listePeiProjetId: string[];
   toggleTool: (toolId: string) => void;
   activeTool: string;
+  peiProjetIdMove: string | null;
+  geometrieMove: string | null;
+  closeMove: () => void;
+  visibleMove: boolean;
 }) => {
   return (
     <>
@@ -561,6 +581,30 @@ const MapToolbarCouvertureHydraulique = ({
         dataPeiProjetLayer={dataPeiProjetLayer}
         disabled={activeTool === "deplacer-pei-projet"}
       />
+      {peiProjetIdMove && geometrieMove && (
+        <EditModal
+          closeModal={() => {
+            dataPeiProjetLayer.getSource().refresh();
+            closeMove();
+          }}
+          query={url`/api/couverture-hydraulique/pei-projet/move/${peiProjetIdMove}`}
+          submitLabel={"Valider"}
+          visible={visibleMove}
+          header={"Déplacer le PEI"}
+          onSubmit={() => {
+            dataPeiProjetLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
+          }}
+          prepareVariables={(values) => ({
+            geometry: values.geometrie,
+          })}
+          getInitialValues={() => ({
+            geometrie: geometrieMove,
+          })}
+        >
+          <p>Voulez-vous déplacer le PEI ?</p>
+        </EditModal>
+      )}
     </>
   );
 };

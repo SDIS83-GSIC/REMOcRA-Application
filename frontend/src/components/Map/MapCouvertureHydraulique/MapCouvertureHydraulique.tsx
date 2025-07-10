@@ -66,6 +66,10 @@ const MapCouvertureHydraulique = ({
     showTraceeCouverture,
     listePeiId,
     listePeiProjetId,
+    geometrieMove,
+    peiProjetIdMove,
+    closeMove,
+    visibleMove,
   } = useToolbarCouvertureHydrauliqueContext({
     map,
     workingLayer,
@@ -110,6 +114,10 @@ const MapCouvertureHydraulique = ({
             listePeiProjetId={listePeiProjetId}
             toggleTool={toggleTool}
             activeTool={activeTool}
+            geometrieMove={geometrieMove}
+            peiProjetIdMove={peiProjetIdMove}
+            closeMove={closeMove}
+            visibleMove={visibleMove}
           />
         )
       }

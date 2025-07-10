@@ -213,7 +213,7 @@ class PeiEndPoint : AbstractEndpoint() {
         return result.wrap()
     }
 
-    @PUT
+    @POST
     @Path("/deplacer/{peiId}")
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     fun updateLocalisation(

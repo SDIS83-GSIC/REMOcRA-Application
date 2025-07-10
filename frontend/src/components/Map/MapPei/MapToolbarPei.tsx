@@ -23,6 +23,7 @@ import {
   IconSelect,
   IconTournee,
 } from "../../Icon/Icon.tsx";
+import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
 import SimpleModal from "../../Modal/SimpleModal.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
@@ -43,7 +44,10 @@ export const useToolbarPeiContext = ({
   setCoordonneesPeiCreate: (e: any) => void;
 }) => {
   const { visible, show, close, ref } = useModal();
-  const { success: successToast, error: errorToast } = useToastContext();
+
+  const { visible: visibleMove, show: showMove, close: closeMove } = useModal();
+
+  const { error: errorToast } = useToastContext();
   const [listePeiId] = useState<string[]>([]);
   const [listePeiTourneePublic, setListePeiTourneePublic] = useState<
     { peiId: string; numeroComplet: string }[]
@@ -66,6 +70,10 @@ export const useToolbarPeiContext = ({
   >([]);
 
   const [typeReseauId, setTypeReseauId] = useState<string>();
+
+  const [peiIdMove, setPeiIdMove] = useState<string | null>(null);
+
+  const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
 
   const tools = useMemo(() => {
     if (!map) {
@@ -279,11 +287,17 @@ export const useToolbarPeiContext = ({
         selectPeiCtrl,
         modifyCtrl,
         map,
-        `/api/pei/deplacer/`,
-        dataPeiLayer,
-        successToast,
-        errorToast,
+        (feature, pointId) => {
+          setGeometrieMove(feature);
+          setPeiIdMove(pointId);
+          showMove();
+        },
       );
+
+      if (!active) {
+        setPeiIdMove(null);
+        setGeometrieMove(null);
+      }
     }
 
     const tools = {
@@ -354,6 +368,10 @@ export const useToolbarPeiContext = ({
     ref,
     visible,
     close,
+    peiIdMove,
+    geometrieMove,
+    closeMove,
+    visibleMove,
   };
 };
 
@@ -385,6 +403,10 @@ const MapToolbarPei = ({
   showFormPei,
   peiIdUpdate,
   disabledTool,
+  peiIdMove,
+  geometrieMove,
+  closeMove,
+  visibleMove,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -413,6 +435,10 @@ const MapToolbarPei = ({
   showFormPei: boolean;
   peiIdUpdate: string;
   disabledTool: (toolId: string) => void;
+  peiIdMove: string | null;
+  geometrieMove: string | null;
+  closeMove: () => void;
+  visibleMove: boolean;
 }) => {
   const { user } = useAppContext();
 
@@ -606,6 +632,31 @@ const MapToolbarPei = ({
         showFormPei={showFormPei}
         disabledCreateButton={() => disabledTool("create-pei")}
       />
+      {peiIdMove && geometrieMove && (
+        <EditModal
+          closeModal={() => {
+            dataPeiLayer.getSource().refresh();
+            closeMove();
+          }}
+          canModify={canEditPei}
+          query={url`/api/pei/deplacer/${peiIdMove}`}
+          submitLabel={"Valider"}
+          visible={visibleMove}
+          header={"Déplacer le PEI"}
+          onSubmit={() => {
+            dataPeiLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
+          }}
+          prepareVariables={(values) => ({
+            geometry: values.geometrie,
+          })}
+          getInitialValues={() => ({
+            geometrie: geometrieMove,
+          })}
+        >
+          <p>Voulez-vous déplacer le PEI ?</p>
+        </EditModal>
+      )}
     </ButtonGroup>
   );
 };

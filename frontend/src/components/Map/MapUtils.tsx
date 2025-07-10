@@ -15,10 +15,9 @@ import { toOpenLayer } from "./Map.tsx";
  * Permet de déplacer un objet
  * @param active : si le toggle est séléctionné ou non
  * @param selectCtrl : le select qui sera utilisé
+ * @param modifyCtrl : le modify qui sera utilisé
  * @param map : la carte
- * @param urlApi : Le point d'api pour permet le déplacement de l'object
- * @param successToast
- * @param errorToast
+ * @param onMoveEnd : la fonction qui sera appelée à la fin du déplacement
  * @param conditionObjetSelectionne : La condition pour pouvoir déplacer l'objet (par exemple, il doit s'agit d'un PEI en projet pour la couverture hydraulique)
  */
 
@@ -27,10 +26,7 @@ function toggleDeplacerPoint(
   selectCtrl: Select,
   modifyCtrl: Modify,
   map: Map,
-  urlApi: string,
-  dataLayer: any,
-  successToast: (e: string) => void,
-  errorToast: (e: string) => void,
+  onMoveEnd: (feature: string, pointId: string) => void,
   conditionObjetSelectionne = (feature: Feature) => feature != null,
 ) {
   const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
@@ -39,43 +35,19 @@ function toggleDeplacerPoint(
     const idx2 = map?.getInteractions().getArray().indexOf(modifyCtrl);
     if (idx1 === -1 && idx2 === -1) {
       map.addInteraction(selectCtrl);
-
-      selectCtrl.on("select", function (evt) {
-        evt.selected.forEach(async function (feature) {
-          if (conditionObjetSelectionne(feature)) {
-            map.addInteraction(modifyCtrl);
-          }
-        });
-      });
+      map.addInteraction(modifyCtrl);
 
       modifyCtrl.on("modifyend", function (evt) {
         evt.features.forEach(async function (feature) {
           if (conditionObjetSelectionne(feature)) {
-            const res = await fetch(
-              url`${urlApi}` + feature.getProperties().elementId,
-              getFetchOptions({
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  geometry:
-                    "SRID=" +
-                    map.getView().getProjection().getCode().split(":").pop() +
-                    ";" +
-                    new WKT().writeFeature(feature),
-                }),
-              }),
+            onMoveEnd(
+              "SRID=" +
+                map.getView().getProjection().getCode().split(":").pop() +
+                ";" +
+                new WKT().writeFeature(feature),
+              feature.getProperties().elementId,
             );
-
-            if (res.ok) {
-              successToast("L'élément a bien été déplacé.");
-            } else {
-              res.text().then((reason: string) => {
-                errorToast(reason);
-                dataLayer.getSource().refresh();
-              });
-            }
           }
-          refreshLayerGeoserver(map);
         });
       });
     }

@@ -156,7 +156,7 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
         ).wrap()
     }
 
-    @PUT
+    @POST
     @Path("/pei-projet/move/{peiProjetId}")
     @RequireDroits([Droit.ETUDE_U])
     @Produces(MediaType.APPLICATION_JSON)

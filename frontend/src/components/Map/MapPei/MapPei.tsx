@@ -69,6 +69,11 @@ const MapPei = () => {
     close,
     ref,
     visible,
+    visibleMove,
+    refMove,
+    closeMove,
+    peiIdMove,
+    geometrieMove,
   } = useToolbarPeiContext({
     map,
     workingLayer,
@@ -194,6 +199,11 @@ const MapPei = () => {
                   showFormPei={showFormPei}
                   peiIdUpdate={peiIdUpdate}
                   disabledTool={disabledTool}
+                  closeMove={closeMove}
+                  refMove={refMove}
+                  visibleMove={visibleMove}
+                  peiIdMove={peiIdMove}
+                  geometrieMove={geometrieMove}
                 />
               )
             }
