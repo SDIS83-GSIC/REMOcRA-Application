@@ -1,7 +1,7 @@
 import { default as classNames } from "classnames";
 import { useFormik } from "formik";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -324,8 +324,8 @@ function QueryTable({
                   onChange: ({ name, value }) =>
                     formik.setFieldValue(name, value),
                   onBlur: formik.handleBlur,
-                  defaultValue: formik?.values[Filter?.props?.name],
-                  value: formik?.values[Filter?.props?.name],
+                  defaultValue: formik?.values[Filter?.props?.name] || "",
+                  value: formik?.values[Filter?.props?.name] || "",
                 })}
               </Col>
             </Row>
@@ -336,6 +336,37 @@ function QueryTable({
   };
   return (
     <div>
+      <div className="d-flex justify-content-end mb-2">
+        <Button
+          variant="danger"
+          className="text-light"
+          onClick={() => {
+            const searchParams = new URLSearchParams(location?.search);
+            searchParams.delete("filterBy");
+
+            // Réinitialiser tous les filtres
+            setFilterBy({});
+            setValues({});
+            formik.setValues({});
+            formik.resetForm({ values: emptyFilter });
+
+            // On remet la pagination à zéro
+            setPagination({ offset: 0, limit: pagination.limit });
+
+            // On met à jour l'URL
+            navigate(
+              {
+                search: decodeURIComponent(searchParams.toString()),
+              },
+              {
+                state: location.state,
+              },
+            );
+          }}
+        >
+          Effacer les filtres
+        </Button>
+      </div>
       <Table
         striped
         bordered

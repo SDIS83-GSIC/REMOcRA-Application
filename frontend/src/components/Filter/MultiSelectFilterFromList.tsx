@@ -36,8 +36,9 @@ const MultiSelectFilterFromList = ({
         name={name}
         options={listIdCodeLibelle}
         value={
-          value?.map((e) => listIdCodeLibelle?.find((r) => r.id === e)) ??
-          undefined
+          value !== ""
+            ? value?.map((e) => listIdCodeLibelle?.find((r) => r.id === e))
+            : []
         }
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
