@@ -136,31 +136,18 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val capacite: Int?,
     )
 
-    fun getCis(peiId: UUID): String? {
-        val zoneIntegrationCisTable = ZONE_INTEGRATION.`as`("ZONE_COMPETENCE_CIS")
-        val organismeCisTable = ORGANISME.`as`("ORGANISME_CIS")
-        return dsl.selectDistinct(
-            ORGANISME.LIBELLE,
-        ).from(ORGANISME)
-            .join(TOURNEE)
-            .on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
-            .join(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
-            .join(L_TOURNEE_PEI)
-            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .join(PEI)
-            .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
-            .join(zoneIntegrationCisTable)
-            .on(ST_Within(ZONE_INTEGRATION.GEOMETRIE, zoneIntegrationCisTable.GEOMETRIE))
-            .join(organismeCisTable)
-            .on(organismeCisTable.ZONE_INTEGRATION_ID.eq(zoneIntegrationCisTable.ID))
-            .join(TYPE_ORGANISME)
-            .on(TYPE_ORGANISME.ID.eq(organismeCisTable.TYPE_ORGANISME_ID))
-            .where(TYPE_ORGANISME.CODE.eq(GlobalConstants.TYPE_ORGANISME_CIS))
-            .and(PEI.ID.eq(peiId))
-            .and(ST_Within(PEI.GEOMETRIE, zoneIntegrationCisTable.GEOMETRIE))
-            .fetchOneInto()
-    }
+    fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(
+        ORGANISME.LIBELLE,
+    ).from(ORGANISME)
+        .join(TYPE_ORGANISME)
+        .on(TYPE_ORGANISME.ID.eq(ORGANISME.TYPE_ORGANISME_ID))
+        .and(TYPE_ORGANISME.CODE.eq(GlobalConstants.TYPE_ORGANISME_CIS))
+        .join(ZONE_INTEGRATION)
+        .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
+        .join(PEI)
+        .on(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+        .where(PEI.ID.eq(peiId))
+        .fetchInto()
 
     fun getLastObservation(peiId: UUID): String? =
         dsl.select(VISITE.OBSERVATION)

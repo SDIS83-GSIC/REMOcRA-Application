@@ -145,7 +145,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         ResumeElement(
                             type = it.ficheResumeBlocTypeResumeData,
                             titre = it.ficheResumeBlocTitre,
-                            data = ficheResumeRepository.getCis(peiId),
+                            data = ficheResumeRepository.getCis(peiId)?.joinToString(),
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
                         ),
