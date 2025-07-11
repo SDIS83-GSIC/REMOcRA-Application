@@ -48,6 +48,7 @@ open class PeiData(
     open val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
+    open val peiGestionnaireIdInitial: UUID? = peiGestionnaireId,
 ) {
     val coordonneeX: Double
         get() = peiGeometrie.coordinate.x

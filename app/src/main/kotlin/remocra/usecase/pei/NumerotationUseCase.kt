@@ -6,10 +6,12 @@ import remocra.app.AppSettings
 import remocra.data.PeiForNumerotationData
 import remocra.data.enums.CodeSdis
 import remocra.db.CommuneRepository
+import remocra.db.GestionnaireRepository
 import remocra.db.NumerotationRepository
 import remocra.db.ZoneIntegrationRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Commune
+import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.usecase.AbstractUseCase
 import java.util.Locale
@@ -80,6 +82,9 @@ class NumerotationUseCase : AbstractUseCase() {
     @Inject
     private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
 
+    @Inject
+    private lateinit var gestionnaireRepository: GestionnaireRepository
+
     /**
      * Point d'entrée pour calculer le numéro complet d'un PEI.
      * Prend en compte, sous forme précâblée, toutes les contraintes de chaque SDIS, au travers de méthodes dédiées.
@@ -110,7 +115,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_49 -> computeNumero49(pei)
             CodeSdis.SDIS_53 -> computeNumero53(pei)
             CodeSdis.SDIS_58 -> computeNumero58(pei)
-            CodeSdis.SDIS_59, // TODO
+            CodeSdis.SDIS_59 -> computeNumero59(pei)
             CodeSdis.SDIS_66,
             -> computeNumero66(pei)
             CodeSdis.SDIS_71,
@@ -163,7 +168,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
             CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
-            CodeSdis.SDIS_59, // TODO
+            CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
@@ -445,6 +450,23 @@ class NumerotationUseCase : AbstractUseCase() {
         return defaultValue
     }
 
+    /** numéro interne en fonction de la commune ou zone spéciale et de la nature DECI */
+    private fun computeNumeroInterne59(pei: PeiForNumerotationData): Int {
+        checkNature(pei)
+        checkNatureDeci(pei)
+
+        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
+            typePei = null,
+            peiNatureId = null,
+            peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
+            peiZoneSpecialeId = null,
+            peiNatureDeciId = pei.natureDeci!!.natureDeciId,
+        )
+
+        val max = if (listPeiNumeroInterne.isEmpty()) MAX_PEI_NUMERO_INTERNE else listPeiNumeroInterne.last()
+        return listPeiNumeroInterne.getNextNumeroInterne(1, max)
+    }
+
     /**
      * Garantit que l'objet PEI a bien son objet *commune* chargé, soit parce qu'il l'est déjà, soit en le faisant au travers du *peiCommuneId*
      * Modifie le paramètre d'entrée *pei* pour éviter tout appel ultérieur
@@ -455,6 +477,18 @@ class NumerotationUseCase : AbstractUseCase() {
             pei.commune = communeRepository.getById(pei.peiCommuneId!!)
         }
         return pei.commune!!
+    }
+
+    /**
+     * Garantit que l'objet PEI a bien son objet *commune* chargé, soit parce qu'il l'est déjà, soit en le faisant au travers du *peiGestionnaireId*
+     * Modifie le paramètre d'entrée *pei* pour éviter tout appel ultérieur
+     * @return Gestionnaire
+     */
+    private fun ensureGestionnaire(pei: PeiForNumerotationData): Gestionnaire {
+        if (pei.gestionnaire == null) {
+            pei.gestionnaire = gestionnaireRepository.getById(pei.gestionnaireId!!)
+        }
+        return pei.gestionnaire!!
     }
 
     /**
@@ -778,6 +812,27 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * PEI Public : <code insee commune>_<numéro interne>
+     * PEI Privé : <code gestionnaire>_<numéro interne>
+     * numéro interne sur 5 chiffres:
+     * Exemple : 59039_00004 - PEI public sur la commune d'AWOINGT
+     * Exemple : 1242_00004 - PEI privé sur la commune d'AWOINGT
+     */
+    private fun computeNumero59(pei: PeiForNumerotationData): String {
+        checkNatureDeci(pei)
+        if (isNatureDeciPrive(pei) || isNatureDeciConventionne(pei)) {
+            checkGestionnaire(pei)
+            val gestionnaire = ensureGestionnaire(pei)
+            return gestionnaire.gestionnaireCode + "_" + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        } else if (isNatureDeciPublic(pei)) {
+            checkCommuneId(pei)
+            val commune = ensureCommune(pei)
+            return commune.communeCodeInsee + "_" + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        }
+        throw IllegalArgumentException("Cas non pris en compte pour la numérotation")
+    }
+
+    /**
      * <commune_code>-<numéro interne>
      * numéro interne sur 5 chiffres
      * Exemple : BMA-00443, ABY-00001
@@ -855,6 +910,12 @@ class NumerotationUseCase : AbstractUseCase() {
         }
     }
 
+    private fun checkGestionnaire(pei: PeiForNumerotationData) {
+        if (pei.gestionnaireId == null) {
+            throw IllegalArgumentException("Pas de gestionnaire pour la numérotation")
+        }
+    }
+
     private fun checkNature(pei: PeiForNumerotationData) {
         if (pei.nature == null) {
             throw IllegalArgumentException("Pas de nature pour la numérotation")
@@ -880,6 +941,23 @@ class NumerotationUseCase : AbstractUseCase() {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_78 ->
                 domaineId != domaineIdInitial
+            else -> false
+        }
+    }
+
+    /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de gestionnaire. <br />
+     *
+     *
+     * @param gestionnaireId id du domaine courante
+     * @param gestionnaireIdInitial id du domaine en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneGestionnaire(gestionnaireId: UUID?, gestionnaireIdInitial: UUID?): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_59 ->
+                gestionnaireId != gestionnaireIdInitial
             else -> false
         }
     }

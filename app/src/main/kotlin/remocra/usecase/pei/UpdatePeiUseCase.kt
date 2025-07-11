@@ -32,9 +32,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
             if (TypePei.PIBI == typePei) {
                 pibiRepository.getInfoPibi(peiId)
             } else {
-                penaRepository.getInfoPena(
-                    peiId,
-                )
+                penaRepository.getInfoPena(peiId)
             }
 
         execute(

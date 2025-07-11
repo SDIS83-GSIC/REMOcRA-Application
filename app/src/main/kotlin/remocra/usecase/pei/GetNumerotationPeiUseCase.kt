@@ -21,6 +21,7 @@ class GetNumerotationPeiUseCase @Inject constructor(
             peiId = element.peiId,
             peiCommuneId = element.peiCommuneId,
             peiZoneSpecialeId = element.peiZoneSpecialeId,
+            gestionnaireId = element.peiGestionnaireId,
             domaine = dataCacheProvider.getDomaines().values.firstOrNull { it.domaineId == element.peiDomaineId },
             nature = dataCacheProvider.getNatures().values.firstOrNull { it.natureId == element.peiNatureId },
             natureDeci = dataCacheProvider.getNaturesDeci().values.firstOrNull { it.natureDeciId == element.peiNatureDeciId },
