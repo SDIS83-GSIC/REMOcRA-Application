@@ -92,9 +92,11 @@ function buildDynamicForm(
               element.listeSelectInput?.find((r) => r.id === e.id).id,
             );
           }}
-          defaultValue={element.listeSelectInput?.find(
-            (r) => r.id === values[element.dynamicFormParametreCode],
-          )}
+          defaultValue={element.listeSelectInput?.find((r) => {
+            return values[element.dynamicFormParametreCode]
+              ? r.id === values[element.dynamicFormParametreCode]
+              : r.id === element?.dynamicFormParametreValeurDefaut;
+          })}
           tooltipText={element.dynamicFormParametreDescription}
         />
       );
