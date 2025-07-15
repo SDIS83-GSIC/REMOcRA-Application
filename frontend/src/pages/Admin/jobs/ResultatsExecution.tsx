@@ -1,22 +1,20 @@
 import { Formik } from "formik";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
+import { IconList } from "../../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import EtatJobEnum from "../../../enums/EtatJobEnum.tsx";
-import TaskType from "../../../enums/TaskTypeEnum.tsx";
-import url from "../../../module/fetch.tsx";
-import formatDateTime from "../../../utils/formatDateUtils.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
-import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { ActionColumn } from "../../../components/Table/columns.tsx";
-import { URLS } from "../../../routes.tsx";
 import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
+import EtatJobEnum from "../../../enums/EtatJobEnum.tsx";
+import TaskType from "../../../enums/TaskTypeEnum.tsx";
+import { URLS } from "../../../routes.tsx";
+import formatDateTime from "../../../utils/formatDateUtils.tsx";
 import filterValuesToVariable from "./FilterResultatsExecution.tsx";
 
 const ResultatsExecution = () => {
@@ -42,7 +40,12 @@ const FormTable = () => {
     type: TYPE_BUTTON.SEE,
   });
 
-  const typeTaskState = useGet(url`/api/jobs/types-task`);
+  const listeTypeTask = Object.entries(TaskType).map(([, e]) => ({
+    id: e.id,
+    code: e.code,
+    libelle: e.label,
+  }));
+
   return (
     <QueryTable
       query="/api/jobs/list"
@@ -56,13 +59,9 @@ const FormTable = () => {
           Cell: (value) => {
             return <div>{TaskType[value?.value]?.label ?? value?.value}</div>;
           },
-          Filter: typeTaskState?.data && (
+          Filter: (
             <SelectFilterFromList
-              listIdCodeLibelle={typeTaskState?.data.map((e) => ({
-                id: e,
-                code: e,
-                libelle: TaskType[e]?.label ?? e,
-              }))}
+              listIdCodeLibelle={listeTypeTask}
               name={"typeTask"}
             />
           ),
