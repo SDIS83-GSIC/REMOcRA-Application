@@ -106,8 +106,7 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
             .from(JOB)
             .innerJoin(TASK).on(JOB.TASK_ID.eq(TASK.ID))
             .where(params.filterBy?.toCondition())
-            .groupBy(JOB.ID, TASK.TYPE)
-            .orderBy(params.sortBy?.toCondition())
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(JOB.DATE_DEBUT.desc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto<JobTask>()
@@ -149,13 +148,13 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
     }
 
     data class Sort(
-        val taskType: Int?,
+        val typeTask: Int?,
         val jobDateDebut: Int?,
         val jobDateFin: Int?,
         val jobEtatJob: Int?,
     ) {
         fun toCondition() = listOfNotNull(
-            TASK.TYPE.getSortField(taskType),
+            TASK.TYPE.getSortField(typeTask),
             JOB.DATE_DEBUT.getSortField(jobDateDebut),
             JOB.DATE_FIN.getSortField(jobDateFin),
             JOB.ETAT_JOB.getSortField(jobEtatJob),
