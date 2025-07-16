@@ -423,7 +423,10 @@ export const useMapComponent = ({
           lastExtent = extent;
           const params = new URLSearchParams();
           params.set("extent", extent);
-          navigate(`?${params.toString()}`, { replace: true, state: state });
+          navigate(`?${params.toString()}`, {
+            replace: true,
+            state: { ...state, target: undefined },
+          });
         }
       };
 
