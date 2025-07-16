@@ -728,7 +728,9 @@ export const TooltipMapEditPermis = ({
       <Tooltip
         featureSelect={featureSelect}
         overlay={overlay}
-        onClickEdit={() => setShowUpdatePermis(true)}
+        onClickEdit={() => {
+          setShowUpdatePermis(true), setShowPermisReadOnly(false);
+        }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
         onClickDelete={() => {
@@ -739,7 +741,9 @@ export const TooltipMapEditPermis = ({
         deletePath={"/api/permis/" + featureSelect?.getProperties().elementId}
         disabled={disabled}
         displayButtonSee={true}
-        onClickSee={() => setShowPermisReadOnly(true)}
+        onClickSee={() => {
+          setShowPermisReadOnly(true), setShowUpdatePermis(false);
+        }}
       />
       <Volet
         handleClose={handleCloseUpdatePermis}

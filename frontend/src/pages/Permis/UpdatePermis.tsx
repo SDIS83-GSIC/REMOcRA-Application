@@ -40,9 +40,13 @@ const UpdatePermis = ({
     !resolvedData.permis.permisGeometrie.includes(coordonneeX) &&
     !resolvedData.permis.permisGeometrie.includes(coordonneeY);
 
-  const pageTitle = resolvedData.permis.permisLibelle
-    ? `Modification du permis ${resolvedData.permis.permisLibelle}`
-    : "Modification d'un permis";
+  const pageTitle = readOnly
+    ? resolvedData.permis.permisLibelle
+      ? `Visualisation du permis ${resolvedData.permis.permisLibelle}`
+      : "Visualisation d'un permis"
+    : resolvedData.permis.permisLibelle
+      ? `Modification du permis ${resolvedData.permis.permisLibelle}`
+      : "Modification d'un permis";
 
   return (
     <Container>

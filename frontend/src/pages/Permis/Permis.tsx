@@ -345,7 +345,7 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
       ) : (
         <>
           <Row>
-            <p className="fw-bold mt-2">Document </p>
+            <p className="fw-bold mt-2">Document</p>
           </Row>
           {values.documents.length > 0 ? (
             <Row>
@@ -361,8 +361,13 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
                 );
               })}
             </Row>
-          ) : (
+          ) : hasDroit(user, TYPE_DROIT.PERMIS_DOCUMENTS_C) ? (
             <p>Aucun document fourni</p>
+          ) : (
+            <p>
+              Vous n&apos;avez pas les droits nécessaires pour déposer des
+              documents.
+            </p>
           )}
         </>
       )}
