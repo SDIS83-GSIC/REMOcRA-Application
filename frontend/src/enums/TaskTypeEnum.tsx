@@ -118,7 +118,8 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
         required: false,
         label:
           "Délai de conservation des informations d'exécution des tâches terminées (en jours) :",
-        tooltipMessage: "Les logs des tâches en erreur seront conservés",
+        tooltipMessage:
+          "Les logs des tâches en erreur seront conservés. Les logs des tâches Terminée, Notifié et bloquées au statut En cours seront supprimés si la date d'exécution est antérieure à ce paramètre.",
       },
     },
     notification: false,

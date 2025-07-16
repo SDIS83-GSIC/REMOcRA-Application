@@ -162,13 +162,19 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
     }
 
     fun getIdJobsOlderThanDays(nbDays: Long): List<UUID> =
-        dsl.selectDistinct(JOB.ID)
+        dsl.select(JOB.ID)
             .from(JOB)
-            .where(JOB.ETAT_JOB.`in`(EtatJob.TERMINE, EtatJob.NOTIFIE))
+            .where(JOB.ETAT_JOB.`in`(EtatJob.TERMINE, EtatJob.NOTIFIE, EtatJob.EN_COURS))
             .and(
                 JOB.DATE_FIN
                     .plus(field("INTERVAL '$nbDays days'", String::class.java))
-                    .lessThan(dateUtils.now()),
+                    .lessThan(dateUtils.now())
+                    .or(
+                        JOB.DATE_FIN.isNull.and(
+                            JOB.DATE_DEBUT.plus(field("INTERVAL '$nbDays days'", String::class.java))
+                                .lessThan(dateUtils.now()),
+                        ),
+                    ),
             )
             .fetchInto()
 
