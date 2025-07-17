@@ -40,6 +40,12 @@ object GlobalConstants {
     const val NATURE_PIBI_ETUDE = "PIBI_ETUDE"
     const val NATURE_PENA_ETUDE = "PENA_ETUDE"
 
+    // Propre au SDIS 59 - Les valeurs sont protected en base du 59
+    const val NATURE_ALIMENTATION_POTEAU_RELAIS = "ALI_PR"
+    const val NATURE_ALIMENTATION_DE_CONDUITE = "ALI_COND"
+    const val NATURE_REFOULEMENT_DE_CONDUITE = "REFL_COND"
+    const val NATURE_POTEAU_RELAIS = "REFL_PR"
+
     // Clés des paramètres
     const val PARAM_PEI_RENUMEROTATION_INTERNE_AUTO = "PEI_RENUMEROTATION_INTERNE_AUTO"
     const val PEI_TOLERANCE_COMMUNE_METRES = "PEI_TOLERANCE_COMMUNE_METRES"
