@@ -97,8 +97,9 @@ xdocreport-odfdom = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocrepor
 [plugins]
 android-lint = "com.android.lint:8.7.3"
 cyclonedx = "org.cyclonedx.bom:1.7.4"
-flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+flyway = "net.ltgt.flyway:0.2.0"
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
+jooq = "net.ltgt.jooq-kotlin:0.1.0"
 jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.1.2"
 kotlin = "org.jetbrains.kotlin.jvm:2.0.20"
 licensee = "app.cash.licensee:1.11.0"
