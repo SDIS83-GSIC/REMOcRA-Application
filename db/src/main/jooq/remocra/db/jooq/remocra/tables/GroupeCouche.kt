@@ -27,7 +27,6 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY
-import remocra.db.jooq.remocra.keys.GROUPE_COUCHE_GROUPE_COUCHE_ORDRE_KEY
 import remocra.db.jooq.remocra.keys.GROUPE_COUCHE_PKEY
 import remocra.db.jooq.remocra.tables.Couche.CouchePath
 import java.util.UUID
@@ -132,7 +131,7 @@ open class GroupeCouche(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = GROUPE_COUCHE_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY, GROUPE_COUCHE_GROUPE_COUCHE_ORDRE_KEY)
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(GROUPE_COUCHE_GROUPE_COUCHE_CODE_KEY)
 
     private lateinit var _couche: CouchePath
 
