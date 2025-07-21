@@ -537,6 +537,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     ADMIN_COUCHES(25000, "Vous n'avez pas les droits de modification des couches", Status.FORBIDDEN),
+    ADMIN_COUCHES_ORDRE_UNIQUE(25001, "L'ordre des couches et des groupes de couche doit être unique"),
+    ADMIN_COUCHES_CODE_UNIQUE(25002, "Le code de la couche et des groupes de couche doit être unique"),
 
     // Paramètres API
     DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),

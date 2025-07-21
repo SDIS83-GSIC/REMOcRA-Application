@@ -100,27 +100,24 @@ class CoucheEndpoint : AbstractEndpoint() {
     fun put(
         @Context httpRequest: HttpServletRequest,
     ): Response =
-        Response.ok(
-            updateCouche.execute(
-                securityContext.userInfo,
-                CoucheFormData(
-                    data = objectMapper.readValue<List<GroupeCoucheData>>(httpRequest.getTextPart("data")),
-                    iconeList = httpRequest.parts.filter { it.name.startsWith("icone_") }.map {
-                        val code = it.name.substringAfter("icone_")
-                        CoucheImageData(
-                            code = code,
-                            data = it,
-                        )
-                    },
-                    legendeList = httpRequest.parts.filter { it.name.startsWith("legende_") }.map {
-                        val code = it.name.substringAfter("legende_")
-                        CoucheImageData(
-                            code = code,
-                            data = it,
-                        )
-                    },
-                ),
+        updateCouche.execute(
+            securityContext.userInfo,
+            CoucheFormData(
+                data = objectMapper.readValue<List<GroupeCoucheData>>(httpRequest.getTextPart("data")),
+                iconeList = httpRequest.parts.filter { it.name.startsWith("icone_") }.map {
+                    val code = it.name.substringAfter("icone_")
+                    CoucheImageData(
+                        code = code,
+                        data = it,
+                    )
+                },
+                legendeList = httpRequest.parts.filter { it.name.startsWith("legende_") }.map {
+                    val code = it.name.substringAfter("legende_")
+                    CoucheImageData(
+                        code = code,
+                        data = it,
+                    )
+                },
             ),
-            //    updateCouche.execute()
-        ).build()
+        ).wrap()
 }

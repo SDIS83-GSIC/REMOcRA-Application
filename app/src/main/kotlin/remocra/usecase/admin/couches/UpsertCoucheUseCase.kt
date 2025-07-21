@@ -93,6 +93,24 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheFormData) {
-        // no-op
+        // L'ordre des groupes et des couches doit être unique
+        val coucheOrdres = element.data.flatMap { it.coucheList }.map { it.coucheOrdre }
+        val groupeCoucheOrdres = element.data.map { it.groupeCoucheOrdre }
+        if (groupeCoucheOrdres.distinct().size != groupeCoucheOrdres.size ||
+            coucheOrdres.distinct().size != coucheOrdres.size
+        ) {
+            throw RemocraResponseException(
+                ErrorType.ADMIN_COUCHES_ORDRE_UNIQUE,
+            )
+        }
+
+        // Le code de chaque couche et groupe de couches doit être unique
+        val coucheCodes = element.data.flatMap { it.coucheList }.map { it.coucheCode }
+        val groupeCoucheCodes = element.data.map { it.groupeCoucheCode }
+        if (coucheCodes.distinct().size != coucheCodes.size || groupeCoucheCodes.distinct().size != groupeCoucheCodes.size) {
+            throw RemocraResponseException(
+                ErrorType.ADMIN_COUCHES_CODE_UNIQUE,
+            )
+        }
     }
 }
