@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Pagination, Row } from "react-bootstrap";
+import { Col, Pagination, Row } from "react-bootstrap";
 
 export const LIMIT = 10;
 
@@ -115,24 +115,27 @@ const PaginationFront = ({
   }, [values, currentPage, setCurrentPage, setOffset]);
 
   return (
-    <Row>
-      <Pagination className={"my-3 d-flex justify-content-center"}>
-        <Pagination.Prev
-          onClick={() => {
-            setCurrentPage(currentPage - 1);
-            setOffset(offset - LIMIT);
-          }}
-          disabled={currentPage === 1}
-        />
-        {paginationItems}
-        <Pagination.Next
-          onClick={() => {
-            setCurrentPage(currentPage + 1);
-            setOffset(offset + LIMIT);
-          }}
-          disabled={currentPage === totalPage}
-        />
-      </Pagination>
+    <Row className="align-items-center">
+      <Col xs={10} className="text-center">
+        <Pagination className={"my-3 d-flex justify-content-center"}>
+          <Pagination.Prev
+            onClick={() => {
+              setCurrentPage(currentPage - 1);
+              setOffset(offset - LIMIT);
+            }}
+            disabled={currentPage === 1}
+          />
+          {paginationItems}
+          <Pagination.Next
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              setOffset(offset + LIMIT);
+            }}
+            disabled={currentPage === totalPage}
+          />
+        </Pagination>
+      </Col>
+      <Col xs={2}>{values?.length} résultat(s)</Col>
     </Row>
   );
 };
