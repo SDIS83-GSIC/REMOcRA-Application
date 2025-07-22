@@ -131,7 +131,7 @@ class ModuleEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/courriers/all")
-    @Public("Les courrier ne sont pas liés à un droit")
+    @RequireDroits([Droit.COURRIER_ADMIN_R, Droit.COURRIER_ORGANISME_R, Droit.COURRIER_UTILISATEUR_R])
     fun getCourriersForListWithThematique(
         @QueryParam("moduleId")
         moduleId: UUID,

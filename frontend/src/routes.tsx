@@ -2218,7 +2218,11 @@ export default [
     element: (
       <Authorization
         Component={ListModuleCourrier}
-        droits={[TYPE_DROIT.COURRIER_UTILISATEUR_R]}
+        droits={[
+          TYPE_DROIT.COURRIER_UTILISATEUR_R,
+          TYPE_DROIT.COURRIER_ADMIN_R,
+          TYPE_DROIT.COURRIER_ORGANISME_R,
+        ]}
       />
     ),
   },
