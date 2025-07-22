@@ -30,7 +30,7 @@ import filterValuesToVariable from "./FilterRapportPersonnalise.tsx";
 const ListRapportPersonnalise = () => {
   const profilDroitState = useGet(url`/api/profil-droit`);
   const rapportPersonnaliseTypeModule = useGet(
-    url`/api/rapport-personnalise/get-type-module`,
+    url`/api/modules/get-type-module`,
   );
   return (
     <>

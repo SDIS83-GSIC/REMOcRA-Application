@@ -89,13 +89,6 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
             ),
         ).build()
 
-    @GET
-    @Path("/get-type-module")
-    @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])
-    @Produces(MediaType.APPLICATION_JSON)
-    fun getTypeModule() =
-        Response.ok(TypeModuleRapportCourrier.entries).build()
-
     @Path("/create")
     @POST
     @RequireDroits([Droit.ADMIN_RAPPORTS_PERSO])

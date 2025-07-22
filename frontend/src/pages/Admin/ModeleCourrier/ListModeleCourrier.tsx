@@ -24,9 +24,7 @@ import filterValuesToVariable from "./FilterModeleCourrier.tsx";
 
 const ListModeleCourrier = () => {
   const profilDroitState = useGet(url`/api/profil-droit`);
-  const modeleCourrierTypeModule = useGet(
-    url`/api/rapport-personnalise/get-type-module`,
-  );
+  const modeleCourrierTypeModule = useGet(url`/api/modules/get-type-module`);
   return (
     <>
       <Container>

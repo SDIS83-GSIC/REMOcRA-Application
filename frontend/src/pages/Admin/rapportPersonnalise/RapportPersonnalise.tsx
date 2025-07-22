@@ -143,7 +143,7 @@ export const prepareVariables = (values: RapportPersonnaliseType) => ({
 const RapportPersonnalise = () => {
   const { setFieldValue, values } = useFormikContext<RapportPersonnaliseType>();
   const rapportPersonnaliseTypeModule = useGet(
-    url`/api/rapport-personnalise/get-type-module`,
+    url`/api/modules/get-type-module`,
   );
 
   const profilDroitState = useGet(url`/api/profil-droit`);

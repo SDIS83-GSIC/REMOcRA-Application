@@ -146,9 +146,7 @@ export const prepareVariables = (values: ModeleCourrierType) => {
 
 const ModeleCourrier = () => {
   const { setFieldValue, values } = useFormikContext<ModeleCourrierType>();
-  const modeleCourrierTypeModule = useGet(
-    url`/api/rapport-personnalise/get-type-module`,
-  );
+  const modeleCourrierTypeModule = useGet(url`/api/modules/get-type-module`);
 
   const profilDroitState = useGet(url`/api/profil-droit`);
 
