@@ -256,7 +256,7 @@ function getLinks(
       return [
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E),
-          label: "Exécuter un rapport personnalisé",
+          label: "Exécuter des rapports personnalisés",
           link: URLS.EXECUTER_RAPPORT_PERSONNALISE,
         },
       ];

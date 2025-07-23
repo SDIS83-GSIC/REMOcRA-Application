@@ -314,7 +314,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                     UTILISATEUR.ID.eq(utilisateurId),
                     isSuperAdmin = isSuperAdmin,
                 ),
-            )
+            ).orderBy(RAPPORT_PERSONNALISE.LIBELLE)
             .fetchInto()
 
     data class RapportPersonnaliseGenere(

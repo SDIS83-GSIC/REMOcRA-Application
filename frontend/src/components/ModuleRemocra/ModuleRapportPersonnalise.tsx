@@ -11,7 +11,7 @@ const ModuleRapportPersonnalise = () => {
   const navLinks: NavToProps[] = [
     {
       path: URLS.EXECUTER_RAPPORT_PERSONNALISE,
-      label: "Exécuter un rapport personnalisé",
+      label: "Exécuter des rapports personnalisés",
       aLeDroit: hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E),
     },
   ];
