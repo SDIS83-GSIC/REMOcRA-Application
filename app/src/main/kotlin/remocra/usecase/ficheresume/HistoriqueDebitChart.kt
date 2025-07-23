@@ -8,6 +8,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.PibiRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.usecase.AbstractUseCase
+import java.math.BigDecimal
 import java.util.UUID
 
 class HistoriqueDebitChart : AbstractUseCase() {
@@ -43,16 +44,21 @@ class HistoriqueDebitChart : AbstractUseCase() {
 
         return DebitPressionChartWithMoyenne(
             data = historique,
-            moyenneDebit = historique.map { it.debit }.filterNotNull().average(),
-            moyennePression = historique.map { it.pression }.filterNotNull().average(),
-            moyennePressionDyn = historique.map { it.pressionDyn }.filterNotNull().average(),
+            moyenneDebit = historique.mapNotNull { it.debit }.average().round(),
+            moyennePression = historique.mapNotNull { it.pression }.average().round(),
+            moyennePressionDyn = historique.mapNotNull { it.pressionDyn }.average().round(),
         )
     }
 
     data class DebitPressionChartWithMoyenne(
         val data: List<PibiRepository.DebitPressionChart>?,
-        val moyenneDebit: Double,
-        val moyennePression: Double,
-        val moyennePressionDyn: Double,
+        val moyenneDebit: BigDecimal?,
+        val moyennePression: BigDecimal?,
+        val moyennePressionDyn: BigDecimal?,
     )
+
+    private fun Double?.round(): BigDecimal? = this
+        ?.takeIf { !it.isNaN() }
+        ?.toBigDecimal()
+        ?.setScale(2, java.math.RoundingMode.HALF_UP)
 }
