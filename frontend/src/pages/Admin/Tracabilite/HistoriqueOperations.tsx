@@ -15,6 +15,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../../routes.tsx";
 import { formatDateHeure } from "../../../utils/formatDateUtils.tsx";
 import { SelectOption, useRefs } from "./useRefs.ts";
@@ -37,6 +38,9 @@ const HistoriqueOperations = () => {
     url`/api/tracabilite/search?${searchParams}`,
     {},
   );
+
+  const { success: successToast } = useToastContext();
+
   const tracabilites: Tracabilite[] = searchParams.size ? data || [] : [];
 
   const initialValues: FormValues = {
@@ -52,6 +56,12 @@ const HistoriqueOperations = () => {
     utilisateur: searchParams.get("utilisateur") ?? "",
     objetId: searchParams.get("objetId") ?? "",
   };
+
+  useEffect(() => {
+    if (data?.length === 0) {
+      successToast("Aucune donnée pour cette recherche.");
+    }
+  }, [data, successToast]);
 
   useEffect(() => {
     if (!searchParams.size) {
