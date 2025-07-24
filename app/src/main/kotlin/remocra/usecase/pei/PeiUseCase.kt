@@ -83,8 +83,6 @@ class PeiUseCase : AbstractUseCase() {
     lateinit var appSettings: AppSettings
 
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: WrappedUserInfo): List<PeiRepository.PeiForTableau> {
-        val listePei = peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
-
         return peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
     }
 

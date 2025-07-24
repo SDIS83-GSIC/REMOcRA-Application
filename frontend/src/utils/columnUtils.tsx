@@ -382,9 +382,10 @@ function getColumnPeiByStringArray(
     if (hasDroit(user, TYPE_DROIT.PEI_D)) {
       listeButton.push({
         disable: (v) => {
-          return v.original.tourneeLibelle != null;
+          return v.original.hasTourneeReservee;
         },
-        textDisable: "Impossible de supprimer un PEI affecté à une tournée",
+        textDisable:
+          "Impossible de supprimer un PEI affecté à une tournée réservée",
         row: (row) => {
           return row;
         },

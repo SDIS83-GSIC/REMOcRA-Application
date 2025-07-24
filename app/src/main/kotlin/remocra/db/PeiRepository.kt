@@ -6,7 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record16
+import org.jooq.Record17
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -171,8 +171,9 @@ class PeiRepository
                     servicePublicDeci = record.component12(),
                     listeAnomalie = record.component13(),
                     tourneeLibelle = record.component14(),
-                    peiNextRop = record.component15(),
-                    peiNextCtp = record.component16(),
+                    hasTourneeReservee = record.component15(),
+                    peiNextRop = record.component16(),
+                    peiNextCtp = record.component17(),
                 )
             }
 
@@ -238,7 +239,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record16<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String, ZonedDateTime?, ZonedDateTime?>> {
+    ): SelectForUpdateStep<Record17<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?>> {
         val concatTourneeLibelleNomCte = name("tournees_libelle")
         val concatTourneeLibelle =
             concatTourneeLibelleNomCte.fields("tournee_id", "concat_tournee_libelle").`as`(
@@ -252,6 +253,13 @@ class PeiRepository
             )
         val peiIdCte = field(name("tournees_libelle", "tournee_id"), SQLDataType.UUID)
         val tourneeLibelleField = field(name("tournees_libelle", "concat_tournee_libelle"), SQLDataType.VARCHAR)
+
+        val hasTourneeReservee = DSL.exists(
+            DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
+                .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+                .and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull),
+        )
+            .`as`("hasTourneeReservee")
 
         return dsl.with(concatTourneeLibelle).select(
             PEI.ID,
@@ -279,6 +287,7 @@ class PeiRepository
                 }
             },
             tourneeLibelleField,
+            hasTourneeReservee,
             V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
         )
@@ -311,6 +320,8 @@ class PeiRepository
             .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .leftJoin(TOURNEE)
+            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .let {
@@ -348,6 +359,7 @@ class PeiRepository
                 V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
                 tourneeLibelleField,
+                hasTourneeReservee,
             )
             .orderBy(
                 param.sortBy?.toCondition(tourneeLibelleField).takeIf { !it.isNullOrEmpty() } ?: listOf(
@@ -376,6 +388,7 @@ class PeiRepository
         val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
+        val hasTourneeReservee: Boolean,
     )
 
     data class Filter(

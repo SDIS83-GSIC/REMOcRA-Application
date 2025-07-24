@@ -34,6 +34,7 @@ import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.RCCI
+import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.DateUtils
 import remocra.utils.ST_Transform
@@ -51,10 +52,22 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
                 .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)),
         ).`as`("hasIndispoTemp")
+
         val hasTournee = DSL.exists(
             DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
                 .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)),
         ).`as`("hasTournee")
+
+        val hasTourneeReservee = DSL.exists(
+            DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
+                .join(TOURNEE)
+                .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
+                .where(
+                    L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)
+                        .and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull),
+                ),
+        ).`as`("hasTourneeReservee")
+
         val hasDebitSimultane = DSL.exists(
             DSL.select(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID).from(L_DEBIT_SIMULTANE_MESURE_PEI)
                 .where(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID.eq(PEI.ID)),
@@ -70,6 +83,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             PEI.ID.`as`("elementId"),
             hasIndispoTemp,
             hasTournee,
+            hasTourneeReservee,
             hasDebitSimultane,
             NATURE_DECI.CODE,
             PIBI.TYPE_RESEAU_ID,
@@ -352,6 +366,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         override val elementId: UUID,
         override var propertiesToDisplay: String? = null,
         val hasIndispoTemp: Boolean = false,
+        val hasTourneeReservee: Boolean = false,
         val hasTournee: Boolean = false,
         val hasDebitSimultane: Boolean = false,
         val natureDeciCode: String,

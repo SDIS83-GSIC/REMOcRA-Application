@@ -33,6 +33,7 @@ import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import { refreshLayerGeoserver } from "./MapUtils.tsx";
 
 /**
  * Permet d'afficher une tooltip sur la carte lorsque l'utilisateur clique sur un point
@@ -133,8 +134,8 @@ const TooltipMapPei = ({
             overlay?.setPosition(undefined);
           }}
           labelDelete={
-            featureSelect?.getProperties().hasTournee
-              ? "Impossible de supprimer un PEI affecté à une tournée"
+            featureSelect?.getProperties().hasTourneeReservee
+              ? "Impossible de supprimer un PEI affecté à une tournée réservée"
               : showFormPei
                 ? textDisable
                 : "Supprimer le PEI"
@@ -458,7 +459,7 @@ const Tooltip = ({
                           path={deletePath}
                           disabled={
                             !displayButtonDelete ||
-                            featureSelect?.getProperties().hasTournee ||
+                            featureSelect?.getProperties().hasTourneeReservee ||
                             disabledDelete
                           }
                           title={false}

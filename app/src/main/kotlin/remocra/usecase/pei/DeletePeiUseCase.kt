@@ -83,10 +83,6 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         // Gestion des tournées
         val listeTournee = tourneeRepository.getTourneeByPei(element.peiId)
         listeTournee.forEach { tournee: Tournee ->
-            // impossible de modifier une tournée réservée
-            if (tournee.tourneeReservationUtilisateurId != null) {
-                throw RemocraResponseException(ErrorType.PEI_TOURNEE_LECTURE_SEULE)
-            }
             tourneeRepository.deleteLTourneePeiByTourneeAndPeiId(tourneeId = tournee.tourneeId, peiId = element.peiId)
         }
 
@@ -145,6 +141,11 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         // Si le PEI a un débit simultané, on n'autorise pas sa suppression
         if (debitSimultaneRepository.existDebitSimultaneWithPibi(element.peiId) && element.peiTypePei == TypePei.PIBI) {
             throw RemocraResponseException(ErrorType.PEI_DELETE_DEBIT_SIMULTANE)
+        }
+
+        // Si le PEI n'est pas rattachée à une tournée réservée on autorise la suppression sinon non
+        if (tourneeRepository.getTourneeByPei(element.peiId).map { it.tourneeReservationUtilisateurId }.all { it == null }) {
+            throw RemocraResponseException(ErrorType.PEI_TOURNEE_LECTURE_SEULE)
         }
     }
 }
