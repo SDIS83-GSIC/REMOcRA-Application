@@ -425,7 +425,7 @@ export const useMapComponent = ({
           params.set("extent", extent);
           navigate(`?${params.toString()}`, {
             replace: true,
-            state: { ...state, target: undefined },
+            state: { from: state.from },
           });
         }
       };
