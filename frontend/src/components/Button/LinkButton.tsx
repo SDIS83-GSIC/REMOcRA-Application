@@ -11,6 +11,7 @@ const LinkButton = ({
   classname,
   onClick,
   disabled = false,
+  search,
 }: {
   pathname: string;
   state?: object;
@@ -19,6 +20,7 @@ const LinkButton = ({
   classname?: string;
   onClick?: (...args: any[]) => void;
   disabled?: boolean;
+  search?: string | null;
 }) => {
   const {
     pathname: currentPathname,
@@ -28,7 +30,7 @@ const LinkButton = ({
   const statePrevious = currentState?.from ?? [];
 
   // Si on a des search param pour la page destination, on les charge
-  const newSearch = localStorage.getItem(pathname);
+  const newSearch = search ?? localStorage.getItem(pathname);
 
   // Puis on sauvegarde les nouveaux search de la page courrante
   localStorage.setItem(currentPathname, currentSearch);

@@ -11,10 +11,16 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
+import { hasDroit } from "../../../droits.tsx";
 import DISPONIBILITE_PEI from "../../../enums/DisponibiliteEnum.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
 
 const FicheResume = ({
@@ -59,6 +65,8 @@ const FicheResume = ({
         <Row>
           <HistoriqueDebitPression pibiId={peiId} />
         </Row>
+
+        <VoirHistoriquePei peiId={peiId} />
       </Container>
     </>
   );
@@ -213,6 +221,51 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
           </Col>
         </Row>
       </>
+    )
+  );
+};
+
+const VoirHistoriquePei = ({ peiId }: { peiId: string }) => {
+  const { user } = useAppContext();
+  const searchParams = new URLSearchParams({
+    typeObjet: "PEI",
+    objetId: peiId,
+  });
+
+  return (
+    hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E) && (
+      <Row className="mt-2">
+        <h4>Historique du PEI</h4>
+        <Row>
+          <Col>
+            <p className="text-muted">
+              Le bouton ci-dessous vous permet de consulter l&apos;historique
+              complet des opérations effectuées sur ce Point d&apos;Eau Incendie
+              (PEI). Cette section vous donne accès à :
+            </p>
+            <ul className="text-muted">
+              <li>
+                L&apos;ensemble des modifications apportées au PEI au fil du
+                temps
+              </li>
+              <li>Les informations sur les auteurs de chaque changement</li>
+              <li>Les dates précises de chaque intervention</li>
+            </ul>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="text-center mt-2">
+            <CustomLinkButton
+              pathname={URLS.HISTORIQUE_OPERATIONS}
+              search={searchParams.toString()}
+              variant="primary"
+            >
+              <IconUtilisateurs /> Voir l&apos;historique des opérations sur ce
+              PEI
+            </CustomLinkButton>
+          </Col>
+        </Row>
+      </Row>
     )
   );
 };

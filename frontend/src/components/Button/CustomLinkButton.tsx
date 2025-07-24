@@ -11,11 +11,13 @@ const CustomLinkButton = ({
   state,
   variant = "link",
   onClick,
+  search,
 }: CustomLinkButtonType) => {
   return (
     <LinkButton
       variant={variant}
       classname={classNames("text-decoration-none", className)}
+      search={search}
       disabled={disabled}
       pathname={pathname}
       state={state}
@@ -34,6 +36,7 @@ type CustomLinkButtonType = {
   state?: object;
   children: ReactNode;
   onClick?: (...args: any[]) => void;
+  search?: string | null;
 };
 
 export default CustomLinkButton;
