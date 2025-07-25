@@ -140,6 +140,8 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
     )
         .from(ZONE_INTEGRATION)
         .where(ZONE_INTEGRATION.ACTIF.isTrue)
+        .and(ZONE_INTEGRATION.TYPE.eq(TypeZoneIntegration.ZONE_COMPETENCE))
+        .orderBy(ZONE_INTEGRATION.LIBELLE)
         .fetchInto()
 
     fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>): Boolean {

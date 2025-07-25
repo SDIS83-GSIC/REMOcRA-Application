@@ -374,5 +374,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
     )
         .from(UTILISATEUR)
         .where(UTILISATEUR.ACTIF.isTrue)
+        .orderBy(UTILISATEUR.USERNAME)
         .fetchInto()
 }
