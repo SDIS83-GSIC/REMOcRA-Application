@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.tables.pojos.Commune
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
+import remocra.utils.ST_Distance
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -67,7 +68,12 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
                     toleranceCommuneMetres.toDouble(),
                 ),
             )
-            .orderBy(COMMUNE.LIBELLE)
+            .orderBy(
+                ST_Distance(
+                    ST_Transform(geometry, SRID),
+                    COMMUNE.GEOMETRIE,
+                ),
+            )
             .fetchInto()
 
     fun getCommunePei(geometry: Field<Geometry?>): UUID? =

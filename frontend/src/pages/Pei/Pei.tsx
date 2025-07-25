@@ -361,6 +361,10 @@ const Pei = ({
       setFieldValue("coordonneeX", coordonnees?.coordonneeX);
       setFieldValue("coordonneeY", coordonnees?.coordonneeY);
     }
+
+    if (selectDataState?.data?.listCommune?.length !== 0) {
+      setFieldValue("peiCommuneId", selectDataState?.data?.listCommune[0].id);
+    }
   }, [
     setFieldValue,
     values.coordonneeX,
