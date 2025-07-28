@@ -144,7 +144,7 @@ class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DEL
         }
 
         // Si le PEI n'est pas rattachée à une tournée réservée on autorise la suppression sinon non
-        if (tourneeRepository.getTourneeByPei(element.peiId).map { it.tourneeReservationUtilisateurId }.all { it == null }) {
+        if (tourneeRepository.getTourneeByPei(element.peiId).map { it.tourneeReservationUtilisateurId }.any { it != null }) {
             throw RemocraResponseException(ErrorType.PEI_TOURNEE_LECTURE_SEULE)
         }
     }

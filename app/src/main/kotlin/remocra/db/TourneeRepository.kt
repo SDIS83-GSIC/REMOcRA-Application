@@ -206,7 +206,8 @@ class TourneeRepository
     fun getTourneeByPei(peiId: UUID): List<Tournee> =
         getTourneeByIdOrPei()
             .join(L_TOURNEE_PEI)
-            .on(L_TOURNEE_PEI.PEI_ID.eq(peiId))
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
             .fetchInto()
 
     fun getTourneeIdLibelleByMotif(userInfo: WrappedUserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
