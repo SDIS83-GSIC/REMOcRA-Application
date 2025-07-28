@@ -1,6 +1,6 @@
 import { isValid, parseISO } from "date-fns";
 import { Formik, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Button, Col, Container, Row, Stack, Table } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
@@ -43,19 +43,21 @@ const HistoriqueOperations = () => {
 
   const tracabilites: Tracabilite[] = searchParams.size ? data || [] : [];
 
-  const initialValues: FormValues = {
-    typeObjet: searchParams.get("typeObjet"),
-    typeOperation: searchParams.get("typeOperation"),
-    typeUtilisateur: searchParams.get("typeUtilisateur"),
-    debut: isValid(parseISO(searchParams.get("debut") ?? ""))
-      ? searchParams.get("debut")
-      : "",
-    fin: isValid(parseISO(searchParams.get("fin") ?? ""))
-      ? searchParams.get("fin")
-      : "",
-    utilisateur: searchParams.get("utilisateur") ?? "",
-    objetId: searchParams.get("objetId") ?? "",
-  };
+  const initialValues = useMemo((): FormValues => {
+    return {
+      typeObjet: searchParams.get("typeObjet"),
+      typeOperation: searchParams.get("typeOperation"),
+      typeUtilisateur: searchParams.get("typeUtilisateur"),
+      debut: isValid(parseISO(searchParams.get("debut") ?? ""))
+        ? searchParams.get("debut")
+        : "",
+      fin: isValid(parseISO(searchParams.get("fin") ?? ""))
+        ? searchParams.get("fin")
+        : "",
+      utilisateur: searchParams.get("utilisateur") ?? "",
+      objetId: searchParams.get("objetId") ?? "",
+    };
+  }, [searchParams]);
 
   useEffect(() => {
     if (data?.length === 0) {
@@ -74,7 +76,7 @@ const HistoriqueOperations = () => {
     if (hasSomeValueFiltered) {
       run();
     }
-  }, [searchParams]);
+  }, [searchParams, run, initialValues]);
 
   if (isLoading) {
     return <Loading />;
