@@ -10,4 +10,5 @@ enum class TypeElementCarte {
     RCCI,
     ADRESSE,
     CRISE,
+    PEI_HIGHLIGHT,
 }

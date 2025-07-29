@@ -77,7 +77,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     /**
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
-    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean, listePeiId: Set<UUID>?): Collection<PeiCarte> {
+    fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
@@ -95,27 +95,32 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(PIBI)
             .on(PIBI.ID.eq(PEI.ID))
-            .let {
-                if (zoneId != null) {
-                    it.leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
-                } else {
-                    it
-                }
-            }
             .where(
-                listePeiId.let {
-                    if (it.isNullOrEmpty()) {
-                        repositoryUtils.checkIsSuperAdminOrCondition(
-                            zoneId?.let {
-                                ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                                    .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
-                            } ?: DSL.noCondition(),
-                            isSuperAdmin,
-                        )
-                    } else {
-                        PEI.ID.`in`(listePeiId)
-                    }
-                },
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    zoneId?.let {
+                        ST_Within(
+                            PEI.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue
+                            .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
+                    } ?: DSL.noCondition(),
+                    isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+    }
+
+    fun getPeiHighlightWithinZoneAndBbox(srid: Int, listePeiId: Set<UUID>?): Collection<PeiHighLightCarte> {
+        return dsl.select(
+            ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI.ID.`as`("elementId"),
+        )
+            .from(PEI)
+            .where(
+                PEI.ID.`in`(listePeiId),
             )
             .fetchInto()
     }
@@ -301,10 +306,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .on(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID.eq(DEBIT_SIMULTANE_MESURE.ID))
             .join(PIBI)
             .on(PIBI.ID.eq(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID))
-            .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
+                    ST_Within(
+                        DEBIT_SIMULTANE.GEOMETRIE,
+                        DSL.field(
+                            DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                        ),
+                    ).isTrue
                         .and(bbox?.let { ST_Within(ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid), bbox) }),
                     isSuperAdmin,
                 ),
@@ -359,6 +369,15 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
         // Propriétés à afficher dans la tooltip
         abstract var propertiesToDisplay: String?
+    }
+
+    data class PeiHighLightCarte(
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
+        override var propertiesToDisplay: String? = null,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.PEI_HIGHLIGHT
     }
 
     data class PeiCarte(

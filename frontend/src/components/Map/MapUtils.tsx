@@ -10,6 +10,7 @@ import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
 import { toOpenLayer } from "./Map.tsx";
+import { optimizeVectorLayer } from "./MapPerformanceUtils.tsx";
 
 /**
  * Permet de déplacer un objet
@@ -80,23 +81,30 @@ export function createPointLayer(
       success: (arg0: any) => void,
       failure: () => void,
     ) => {
-      const res = await fetch(
-        url`${urlApi(extent, projection)}`,
-        getFetchOptions({ method: "GET" }),
-      );
-      res
-        .text()
-        .then((text) => {
-          const features = vectorSource
-            .getFormat()
-            .readFeatures(JSON.parse(text));
+      try {
+        const res = await fetch(
+          url`${urlApi(extent, projection)}`,
+          getFetchOptions({ method: "GET" }),
+        );
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const text = await res.text();
+        const features = vectorSource
+          .getFormat()
+          .readFeatures(JSON.parse(text));
+
+        // Optimisation : batch l'ajout des features
+        if (features.length > 0) {
           vectorSource.addFeatures(features);
-          success(features);
-        })
-        .catch(() => {
-          vectorSource.removeLoadedExtent(extent);
-          failure();
-        });
+        }
+        success(features);
+      } catch (error) {
+        vectorSource.removeLoadedExtent(extent);
+        failure();
+      }
     },
     extent: map.getView().calculateExtent(),
     projection: projection.name,
@@ -132,7 +140,12 @@ export function createPointLayer(
     minResolution: 0,
     maxResolution: 99999,
     zIndex: 9999,
+    updateWhileAnimating: false,
+    updateWhileInteracting: false,
+    renderBuffer: 100,
   });
+
+  optimizeVectorLayer(dl);
 
   map.addLayer(dl);
 

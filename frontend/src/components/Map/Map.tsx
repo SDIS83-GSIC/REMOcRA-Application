@@ -32,6 +32,13 @@ import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
 import MapLegend from "./MapLegend.tsx";
 import MapToolbar from "./MapToolbar.tsx";
 import { createPointLayer } from "./MapUtils.tsx";
+import {
+  optimizeMap,
+  optimizeTileLayer,
+  optimizeVectorLayer,
+  debounce,
+  throttle,
+} from "./MapPerformanceUtils.tsx";
 import "./map.css";
 
 const resolutions = [];
@@ -76,6 +83,14 @@ export function toOpenLayer(
           tileGrid: tileGrid,
           style: "normal",
         },
+        // Optimisations de performance
+        cacheSize: 512, // Cache plus important pour les tuiles
+        transition: 0, // Désactive les transitions pour un affichage plus rapide
+        tileLoadFunction: (tile: any, src: string) => {
+          const image = tile.getImage();
+          image.crossOrigin = layer.crossOrigin ?? "anonymous";
+          image.src = src;
+        },
       });
     case SOURCE_CARTO.WMTS:
       return new WMTS({
@@ -87,6 +102,14 @@ export function toOpenLayer(
         format: layer.format ?? "image/png",
         tileGrid: tileGrid,
         style: "normal",
+        // Optimisations de performance
+        cacheSize: 512,
+        transition: 0,
+        tileLoadFunction: (tile: any, src: string) => {
+          const image = tile.getImage();
+          image.crossOrigin = layer.crossOrigin ?? "anonymous";
+          image.src = src;
+        },
       });
     case SOURCE_CARTO.GEOJSON:
       return new VectorSource({
@@ -102,6 +125,14 @@ export function toOpenLayer(
       return new OSM({
         url: layer.url,
         crossOrigin: layer.crossOrigin ?? null,
+        // Optimisations de performance
+        cacheSize: 512,
+        transition: 0,
+        tileLoadFunction: (tile: any, src: string) => {
+          const image = tile.getImage();
+          image.crossOrigin = layer.crossOrigin ?? null;
+          image.src = src;
+        },
       });
 
     case SOURCE_CARTO.WFS:
@@ -291,30 +322,51 @@ export const useMapComponent = ({
     return initialMap;
   }, [mapElement.current, projection, afficheCoordonneesState.data]);
 
+  // Application des optimisations de performance après création de la carte
+  useEffect(() => {
+    if (map) {
+      optimizeMap(map);
+    }
+  }, [map]);
+
   // Ajout des couches disponibles depuis le serveur
   const availableLayers = useMemo(() => {
     if (!layersState.data) {
       return [];
     }
-    return layersState.data.map((group) => {
+    return layersState.data.map((group: any) => {
       return {
         libelle: group.libelle,
         ordre: group.ordre,
-        layers: group.layers.map((layer) => {
-          const openlayer =
-            layer.source === SOURCE_CARTO.WFS
-              ? new VectorLayer({
-                  source: toOpenLayer(layer),
-                  zIndex: layer.ordre,
-                })
-              : new TileLayer({
-                  source: toOpenLayer(layer),
-                  zIndex: layer.ordre,
-                });
+        layers: group.layers.map((layer: any) => {
+          let openlayer;
+
+          if (layer.source === SOURCE_CARTO.WFS) {
+            // Couche vectorielle WFS
+            openlayer = new VectorLayer({
+              source: toOpenLayer(layer) as VectorSource,
+              zIndex: layer.ordre,
+              updateWhileAnimating: false,
+              updateWhileInteracting: false,
+              renderBuffer: 100,
+            });
+            optimizeVectorLayer(openlayer);
+          } else {
+            // Couche de tuiles (WMS, WMTS, OSM)
+            openlayer = new TileLayer({
+              source: toOpenLayer(layer) as TileSource,
+              zIndex: layer.ordre,
+              preload: 1,
+              useInterimTilesOnError: false,
+            });
+            optimizeTileLayer(openlayer);
+          }
+
           if (layer.active) {
             map?.addLayer(openlayer);
             layerListRef.current?.addActiveLayer(getUid(openlayer));
           }
+
           return {
             ...layer,
             openlayer: openlayer,
@@ -327,7 +379,7 @@ export const useMapComponent = ({
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {
     const index = map?.getLayers().getArray().indexOf(layer.openlayer);
-    if (index > -1) {
+    if (index !== undefined && index > -1) {
       map?.removeLayer(layer.openlayer);
       layerListRef.current?.removeActiveLayer(getUid(layer.openlayer));
     } else {
@@ -413,7 +465,8 @@ export const useMapComponent = ({
       // On mémorise la dernière valeur connue de l'étendue pour éviter les navigations inutiles
       let lastExtent = "";
 
-      const handleMoveEnd = () => {
+      // Débounce les événements de fin de mouvement pour éviter trop d'appels
+      const debouncedHandleMoveEnd = debounce(() => {
         const view = map.getView();
         const extent = view.calculateExtent().join(",");
 
@@ -428,9 +481,15 @@ export const useMapComponent = ({
             state: { from: state.from },
           });
         }
-      };
+      }, 300); // Délai de 300ms
 
-      map.on("moveend", handleMoveEnd);
+      // Throttle les événements de zoom pour améliorer les performances
+      const throttledHandleZoom = throttle(() => {
+        // Actions spécifiques au zoom si nécessaire
+      }, 100); // Délai de 100ms
+
+      map.on("moveend", debouncedHandleMoveEnd);
+      map.getView().on("change:resolution", throttledHandleZoom);
 
       // Récupération de l'étendue depuis les paramètres d'URL au chargement initial
       const params = new URLSearchParams(search);
@@ -448,7 +507,8 @@ export const useMapComponent = ({
 
       // Nettoyage du listener lorsque le composant est démonté ou que la carte change
       return () => {
-        map.un("moveend", handleMoveEnd);
+        map.un("moveend", debouncedHandleMoveEnd);
+        map.getView().un("change:resolution", throttledHandleZoom);
       };
     }
   }, [state, map, navigate, search, typeModule]);

@@ -334,8 +334,8 @@ class PeiEndPoint : AbstractEndpoint() {
                 bbox,
                 srid,
                 null,
-                TypeElementCarte.PEI,
-                securityContext.userInfo!!,
+                TypeElementCarte.PEI_HIGHLIGHT,
+                securityContext.userInfo,
                 listePeiId = listePeiId,
             ),
         ).build()

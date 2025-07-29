@@ -57,7 +57,6 @@ class GetPointCarteUseCase : AbstractUseCase() {
                         null,
                         srid,
                         userInfo.isSuperAdmin,
-                        listePeiId,
                     )
                 } else {
                     val geom =
@@ -67,7 +66,6 @@ class GetPointCarteUseCase : AbstractUseCase() {
                         geom.toGeomFromText(),
                         srid,
                         userInfo.isSuperAdmin,
-                        listePeiId,
                     )
                 }
             }
@@ -150,6 +148,11 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid, criseState)
                 }
             }
+            TypeElementCarte.PEI_HIGHLIGHT ->
+                carteRepository.getPeiHighlightWithinZoneAndBbox(
+                    srid,
+                    listePeiId,
+                )
         }
 
         if (typeElementCarte == TypeElementCarte.PEI) {

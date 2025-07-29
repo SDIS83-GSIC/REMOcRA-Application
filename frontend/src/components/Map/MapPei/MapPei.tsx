@@ -12,6 +12,7 @@ import { useGet } from "../../Fetch/useFetch.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
+import { optimizeVectorLayer } from "../MapPerformanceUtils.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
 import MapToolbarPei, { useToolbarPeiContext } from "./MapToolbarPei.tsx";
@@ -83,15 +84,15 @@ const MapPei = () => {
   });
 
   /**
-   * Permet d'afficher les PEI en projet
-   * @param etudeId l'étude concernée
+   * Permet d'afficher les débits simultanés
    * @returns
    */
   const dataDebitSimultaneLayer = useMemo(() => {
     if (!map) {
       return;
     }
-    return createPointLayer(
+
+    const layer = createPointLayer(
       map,
       (extent, projection) =>
         `/api/debit-simultane/layer?bbox=` +
@@ -100,6 +101,11 @@ const MapPei = () => {
         projection.getCode(),
       projection,
     );
+    if (layer) {
+      optimizeVectorLayer(layer);
+    }
+
+    return layer;
   }, [map, projection]);
 
   const { toggleTool, activeTool, disabledTool } = useToolbarContext({
@@ -110,17 +116,24 @@ const MapPei = () => {
 
   const stateListePeiId = location.state?.listePeiId;
 
-  // On construit la couche de surbrillance
-  const l = useMemo(() => {
-    if (!map || !stateListePeiId) {
+  // On construit la couche de surbrillance optimisée
+  const highlightLayer = useMemo(() => {
+    if (!map || !stateListePeiId || estSurligne) {
       return;
     }
 
-    if (estSurligne) {
-      return;
-    }
+    // Style optimisé avec cache
+    const highlightStyle = new Style({
+      image: new CircleStyle({
+        radius: 16,
+        stroke: new Stroke({
+          color: "rgba(217, 131, 226, 0.7)",
+          width: 4,
+        }),
+      }),
+    });
 
-    const l = createPointLayer(
+    const layer = createPointLayer(
       map,
       (extent, projection) =>
         url`/api/pei/hightlight/layer?bbox=` +
@@ -130,29 +143,30 @@ const MapPei = () => {
         "&listePeiId=" +
         stateListePeiId,
       projection,
-      new Style({
-        image: new CircleStyle({
-          radius: 16,
-          stroke: new Stroke({
-            color: "rgba(217, 131, 226, 0.7)",
-            width: 4,
-          }),
-        }),
-      }),
+      highlightStyle,
     );
 
-    return l;
+    // Application des optimisations de performance
+    if (layer) {
+      optimizeVectorLayer(layer);
+      // Configuration spécifique pour la couche highlight
+      layer.setZIndex(8999);
+      layer.set("renderBuffer", 50);
+    }
+
+    return layer;
   }, [map, stateListePeiId, estSurligne, projection]);
 
   useEffect(() => {
-    if (!map || !l || !parametres.data) {
+    if (!map || !highlightLayer || !parametres.data) {
       return;
     }
+
     setTimeout(function () {
-      map.removeLayer(l);
+      map.removeLayer(highlightLayer);
       setEstSurligne(true);
     }, parametres.data[PARAMETRE.PEI_HIGHLIGHT_DUREE].parametreValeur * 1000);
-  }, [map, l, parametres]);
+  }, [map, highlightLayer, parametres]);
 
   return (
     <>
