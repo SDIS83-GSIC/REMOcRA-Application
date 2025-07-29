@@ -1,12 +1,19 @@
+import { useLocation, Navigate } from "react-router-dom";
 import { useAppContext } from "./components/App/AppProvider.tsx";
 import UtilisateurEntity from "./Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "./enums/DroitEnum.tsx";
+import { URLS } from "./routes.tsx";
 
 export const Authorization = (
   { Component, droits, isPublic = false }: AuthorizationEntity,
   props: any[],
 ) => {
   const { user } = useAppContext();
+  const location = useLocation();
+
+  if (!user && !isPublic) {
+    return <Navigate to={URLS.ACCUEIL} state={location.state} replace />;
+  }
 
   if (isPublic || (user && isAuthorized(user, droits ?? []))) {
     return <Component {...props} />;
