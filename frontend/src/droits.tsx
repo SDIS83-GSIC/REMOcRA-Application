@@ -3,6 +3,8 @@ import { useAppContext } from "./components/App/AppProvider.tsx";
 import UtilisateurEntity from "./Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "./enums/DroitEnum.tsx";
 import { URLS } from "./routes.tsx";
+import SquelettePage from "./pages/SquelettePage.tsx";
+import Header from "./components/Header/Header.tsx";
 
 export const Authorization = (
   { Component, droits, isPublic = false }: AuthorizationEntity,
@@ -19,7 +21,13 @@ export const Authorization = (
     return <Component {...props} />;
   }
 
-  return <Forbidden />;
+  return (
+    <>
+      <SquelettePage navbar={<Header />} fluid={true} banner={true}>
+        <Forbidden />
+      </SquelettePage>
+    </>
+  );
 };
 
 type AuthorizationEntity = {
