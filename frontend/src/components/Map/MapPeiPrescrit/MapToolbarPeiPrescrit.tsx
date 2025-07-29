@@ -4,12 +4,15 @@ import { Draw } from "ol/interaction";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
+import { hasDroit } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import CreatePeiPrescrit from "../../../pages/PeiPrescrit/CreatePeiPrescrit.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 import { IconCreate } from "../../Icon/Icon.tsx";
 import Volet from "../../Volet/Volet.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiPrescrit } from "../TooltipsMap.tsx";
-import { refreshLayerGeoserver } from "../MapUtils.tsx";
 
 const defaultStyle = new Style({
   image: new Circle({
@@ -102,17 +105,21 @@ const MapToolbarPeiPrescrit = ({
   toggleTool: (toolId: string) => void;
   activeTool: string;
 }) => {
+  const { user } = useAppContext();
+
   return (
     <>
-      <ButtonGroup>
-        <ToolbarButton
-          toolName={"create-pei-prescrits"}
-          toolIcon={<IconCreate />}
-          toolLabelTooltip={"Prescrire des points d'eau"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
-        />
-      </ButtonGroup>
+      {hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A) && (
+        <ButtonGroup>
+          <ToolbarButton
+            toolName={"create-pei-prescrits"}
+            toolIcon={<IconCreate />}
+            toolLabelTooltip={"Prescrire des points d'eau"}
+            toggleTool={toggleToolCallback}
+            activeTool={activeTool}
+          />
+        </ButtonGroup>
+      )}
       <Volet
         handleClose={handleClosePeiPrescrit}
         show={showCreatePeiPrescrit}
@@ -132,7 +139,7 @@ const MapToolbarPeiPrescrit = ({
       </Volet>
       <TooltipMapEditPeiPrescrit
         map={map}
-        disabledEditPeiPrescrit={false}
+        disabledEditPeiPrescrit={!hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A)}
         dataPeiPrescritLayer={dataPeiPrescritLayer}
         disabled={false}
       />

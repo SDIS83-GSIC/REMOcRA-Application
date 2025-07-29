@@ -264,7 +264,9 @@ function getLinks(
     case TypeModuleRemocra.PEI_PRESCRIT:
       return [
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A),
+          aLeDroit:
+            hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_A) ||
+            hasDroit(user, TYPE_DROIT.PEI_PRESCRIT_R),
           label: "Carte des points d'eau prescrits",
           link: URLS.PEI_PRESCRIT,
         },
