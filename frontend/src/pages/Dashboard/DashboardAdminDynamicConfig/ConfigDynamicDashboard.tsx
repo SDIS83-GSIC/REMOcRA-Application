@@ -1,9 +1,11 @@
-import { Nav, Button } from "react-bootstrap";
 import { useState } from "react";
-import { DashboardItemParam } from "../Constants.tsx";
+import { Button, Nav } from "react-bootstrap";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconGaugeComponent } from "../../../components/Icon/Icon.tsx";
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { DashboardItemParam } from "../Constants.tsx";
 import ConfigDynamicGrid from "./ConfigDynamicGrid.tsx";
 
 type ConfigDynamicDashboardProps = {
@@ -134,6 +136,10 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
   return (
     <>
+      <PageTitle
+        icon={<IconGaugeComponent />}
+        title={"Édition des tableaux de bord et profils associés"}
+      />
       <div className="flex-grow-1 d-flex flex-column">
         <div className="d-flex align-items-center">
           <Nav variant="tabs">
