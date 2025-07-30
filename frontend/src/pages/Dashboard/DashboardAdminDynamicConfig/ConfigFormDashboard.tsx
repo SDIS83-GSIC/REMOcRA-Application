@@ -1,6 +1,7 @@
-import { Alert, Button, Col, Row } from "react-bootstrap";
 import { useFormikContext } from "formik";
 import { useState } from "react";
+import { Alert, Button, Col, Row } from "react-bootstrap";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   FormContainer,
   Multiselect,
@@ -8,11 +9,11 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
+import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
+import { ProfilUtilisateurEntity } from "../../../Entities/ProfilUtilisateurEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import { ComponentDashboard } from "../Constants.tsx";
-import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
 
 type ConfigFormDashboardProps = {
   editTabIndex: number | undefined | null;
@@ -122,8 +123,9 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
                 options={profilUtilisateurList}
                 value={
                   values.profilsId
-                    ? profilUtilisateurList?.filter((p) =>
-                        values.profilsId.includes(p),
+                    ? profilUtilisateurList?.filter(
+                        (p: ProfilUtilisateurEntity) =>
+                          values.profilsId.includes(p),
                       )
                     : props.dashboardProfilsUtilisateur
                 }

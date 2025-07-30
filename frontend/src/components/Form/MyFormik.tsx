@@ -112,7 +112,7 @@ type MyFormikProps = {
   errorToastMessage?: string;
   warningToastMessage?: string;
   isMultipartFormData?: boolean;
-  innerRef: any;
+  innerRef?: any;
 };
 
 const MyFormik = (props: MyFormikProps) => {

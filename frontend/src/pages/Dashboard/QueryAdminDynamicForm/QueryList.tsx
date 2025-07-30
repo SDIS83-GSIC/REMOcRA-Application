@@ -28,7 +28,7 @@ type QueryListProps = {
   setData: (arg0: any) => void;
   activeQuery: QueryParam | undefined | null;
   setActiveQuery: (arg0: any) => void;
-  openListComponent: ComponentDashboard[] | undefined;
+  openListComponent: ComponentDashboard[] | null | undefined;
   setOpenListComponent: (arg0: any) => void;
   setSelectedComponent: (arg0: any) => void;
   queryGlobalData: any;

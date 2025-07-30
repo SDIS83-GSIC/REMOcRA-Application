@@ -6,7 +6,9 @@ import url from "../../../module/fetch.tsx";
 
 type QueryComponentListProps = {
   openListQuery: DashboardParam[] | undefined;
-  setComponentsListDashboard: (arg0: string) => void;
+  setComponentsListDashboard: React.Dispatch<
+    React.SetStateAction<ComponentDashboard[] | undefined>
+  >;
   componentsListDashboard: ComponentDashboard[] | undefined;
 };
 
@@ -46,7 +48,10 @@ const QueryComponentList = ({
         configPosition: configPosition,
       };
 
-      setComponentsListDashboard((prev) => [...prev, componentAdd]);
+      setComponentsListDashboard((prev: ComponentDashboard[] | undefined) => [
+        ...(prev ?? []),
+        componentAdd,
+      ]);
     }
   }, [configDataQuerys, setComponentsListDashboard]);
 

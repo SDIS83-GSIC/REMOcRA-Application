@@ -1,5 +1,6 @@
 import { useFormikContext } from "formik";
 import { Alert, Button, Card, Col } from "react-bootstrap";
+import { object } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
@@ -51,6 +52,8 @@ const QueryForm = (props: QueryFormProps) => {
           submitUrl={urlApiQuery}
           onSubmit={(values) => updateData(values)}
           successToastMessage="La requête est valide"
+          prepareVariables={() => ({})}
+          validationSchema={object({})}
         >
           <InnerQueryForm />
         </MyFormik>

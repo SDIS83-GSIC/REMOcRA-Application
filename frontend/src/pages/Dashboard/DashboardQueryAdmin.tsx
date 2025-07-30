@@ -1,15 +1,16 @@
 import { useRef, useState } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
-import url from "../../module/fetch.tsx";
-import MyFormik from "../../components/Form/MyFormik.tsx";
+import { object } from "yup";
 import { FormContainer } from "../../components/Form/Form.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
+import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { ComponentDashboard, QueryParam } from "./Constants.tsx";
+import ConfigDynamicComponent from "./QueryAdminDynamicForm/ConfigDynamicComponent.tsx";
 import ConfigForm from "./QueryAdminDynamicForm/ConfigForm.tsx";
 import QueryForm from "./QueryAdminDynamicForm/QueryForm.tsx";
 import QueryList from "./QueryAdminDynamicForm/QueryList.tsx";
-import ConfigDynamicComponent from "./QueryAdminDynamicForm/ConfigDynamicComponent.tsx";
-import { ComponentDashboard, QueryParam } from "./Constants.tsx";
 
 const ComponentBoardQueryAdmin = () => {
   const queryListRef = useRef<HTMLDivElement>();
@@ -22,8 +23,9 @@ const ComponentBoardQueryAdmin = () => {
 
   const [selectedComponent, setSelectedComponent] =
     useState<ComponentDashboard | null>(null); // Index composant ouvert actif
-  const [openListComponent, setOpenListComponent] =
-    useState<ComponentDashboard[]>(); // Liste composants de la requête
+  const [openListComponent, setOpenListComponent] = useState<
+    ComponentDashboard[] | null
+  >(); // Liste composants de la requête
 
   const [availableOptions, setAvailableOptions] = useState([]); // liste des options disponibles pour les champs
 
@@ -34,18 +36,19 @@ const ComponentBoardQueryAdmin = () => {
   const urlApiUpdateRegister = url`/api/dashboard/update-query`;
 
   const getPrepareVariables = () => {
-    const componentData: { id: number; key: any; title: any; config: any }[] =
-      openListComponent
-        ? openListComponent.map((component) => {
-            return {
-              ...(component.id && { componentId: component.id }),
-              ...(component.queryId && { componentQueryId: component.queryId }),
-              componentKey: component.key,
-              componentTitle: component.title,
-              componentConfig: JSON.stringify(component.config),
-            };
-          })
-        : null;
+    const componentData:
+      | { id: number; key: any; title: any; config: any }[]
+      | null = openListComponent
+      ? openListComponent.map((component) => {
+          return {
+            ...(component.id && { componentId: component.id }),
+            ...(component.queryId && { componentQueryId: component.queryId }),
+            componentKey: component.key,
+            componentTitle: component.title,
+            componentConfig: JSON.stringify(component.config),
+          };
+        })
+      : null;
 
     if (componentData) {
       const queryComponentData = {
@@ -71,7 +74,6 @@ const ComponentBoardQueryAdmin = () => {
     setSelectedComponent(null);
     setActiveQuery(null);
     setOpenListComponent(null);
-    queryListRef.current.setOpenListQuery(null);
   };
 
   return (
@@ -108,6 +110,7 @@ const ComponentBoardQueryAdmin = () => {
         </Col>
         {activeQuery && (
           <MyFormik
+            validationSchema={object({})}
             initialValues={getInitialValues()}
             innerRef={formikRef}
             isPost={activeQuery.id ? false : true}

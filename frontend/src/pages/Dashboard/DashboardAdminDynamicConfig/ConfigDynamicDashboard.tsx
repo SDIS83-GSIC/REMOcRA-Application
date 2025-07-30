@@ -221,7 +221,6 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             editTabIndex={props.editTabIndex}
             componentsListDashboard={props.componentsListDashboard}
             setComponentsListDashboard={props.setComponentsListDashboard}
-            setEditTabIndex={props.setEditTabIndex}
             activeDashboard={props.activeDashboard}
           />
         ) : (

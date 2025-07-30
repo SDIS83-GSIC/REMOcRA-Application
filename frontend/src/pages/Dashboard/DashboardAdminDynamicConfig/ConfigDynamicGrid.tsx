@@ -1,6 +1,7 @@
 import { DndContext } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { object } from "yup";
 import { useGetRun, usePost } from "../../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import url from "../../../module/fetch.tsx";
@@ -33,11 +34,10 @@ const getInitialValues = (componentSelected: any) => ({
 });
 
 const getPrepareVariables = (
-  activeDashboard,
-  componentsListDashboard,
-  setComponentsListDashboard,
-  dashboardTitle,
-  dashboardProfil,
+  activeDashboard: DashboardItemParam,
+  componentsListDashboard: ComponentDashboard[] | null,
+  dashboardTitle: string | null,
+  dashboardProfil: any | null,
 ) => {
   // Configure les données à envoyés au service
   return {
@@ -241,6 +241,8 @@ const ConfigDynamicGrid = ({
   return (
     <Container fluid>
       <MyFormik
+        validationSchema={object({})}
+        onSubmit={() => {}}
         initialValues={getInitialValues(componentSelected)}
         submitUrl={
           activeDashboard.id ? urlApiUpdateDashboard : urlApiSaveDashboard
@@ -251,7 +253,6 @@ const ConfigDynamicGrid = ({
           getPrepareVariables(
             activeDashboard,
             componentsListDashboard,
-            setComponentsListDashboard,
             dashboardTitle,
             dashboardProfil,
           )
@@ -263,7 +264,7 @@ const ConfigDynamicGrid = ({
           setComponentSelected={setComponentSelected}
           componentsListDashboard={componentsListDashboard}
           setComponentsListDashboard={setComponentsListDashboard}
-          componentSelected={componentSelected}
+          componentSelected={componentSelected ?? undefined}
           numberRowGrid={numberRowGrid}
           setNumberRowGrid={setNumberRowGrid}
           removeRowUnused={removeRowUnused}
@@ -329,8 +330,10 @@ const ListComponents = ({
   componentSelected,
 }: {
   componentsListDashboard: ComponentDashboard[];
-  setComponentsListDashboard: (e: ComponentDashboard[]) => void;
-  componentSelected: ComponentDashboard | undefined;
+  setComponentsListDashboard: React.Dispatch<
+    React.SetStateAction<ComponentDashboard[]>
+  >;
+  componentSelected: ComponentDashboard | null | undefined;
 }) => {
   const { data: dataQuerys, run: runDataQuerys } = usePost(
     url`/api/dashboard/get-list-data-query/`,
@@ -355,7 +358,7 @@ const ListComponents = ({
   useEffect(() => {
     if (dataQuerys) {
       // On met à jour les données des composants avec les données des requêtes
-      setComponentsListDashboard((prev) => {
+      setComponentsListDashboard((prev: ComponentDashboard[]) => {
         return prev.map((component: ComponentDashboard): ComponentDashboard => {
           const queryData: QueryData | undefined = dataQuerys?.find(
             (query: QueryData) => query.queryId === component.queryId,

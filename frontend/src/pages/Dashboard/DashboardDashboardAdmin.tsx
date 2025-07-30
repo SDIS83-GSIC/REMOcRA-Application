@@ -20,8 +20,9 @@ const ComponentBoardDashboardAdmin = () => {
   const [activeDashboard, setActiveDashboard] =
     useState<DashboardItemParam | null>(null); // Dashboard ouvert à l'écran
 
-  const [componentsListDashboard, setComponentsListDashboard] =
-    useState<ComponentDashboard[]>(null); // Composant sélectionner dans la grid
+  const [componentsListDashboard, setComponentsListDashboard] = useState<
+    ComponentDashboard[] | undefined
+  >(undefined); // Composant sélectionner dans la grid
 
   const urlApiQuerys = url`/api/dashboard/get-query-list-all`;
   const urlApiDashboards = url`/api/dashboard/get-list-dashboard`;

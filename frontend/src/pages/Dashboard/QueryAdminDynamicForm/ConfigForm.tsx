@@ -5,7 +5,7 @@ import { TextInput } from "../../../components/Form/Form.tsx";
 export type ExtraField = { [x: string]: { fieldName: any } }; // Champs pour composant Table
 
 type ConfigFormProps = {
-  openListComponent: ComponentDashboard[] | undefined;
+  openListComponent: ComponentDashboard[] | undefined | null;
   setOpenListComponent: (arg0: any) => void;
   selectedComponent: ComponentDashboard | null;
   setSelectedComponent: (arg0: any) => void;

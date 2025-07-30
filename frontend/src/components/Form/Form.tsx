@@ -303,8 +303,15 @@ export const NumberInput = ({
   readOnly = false,
   value,
   tooltipText,
+  min,
+  step,
+  max,
   ...rest
-}: InputType) => {
+}: InputType & {
+  min?: number;
+  step?: number;
+  max?: number;
+}) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
@@ -318,10 +325,11 @@ export const NumberInput = ({
       <Form.Control
         id={name}
         type="number"
-        min={rest.min ?? 1}
-        step={rest.step ?? 0.1}
+        min={min ?? 1}
+        step={step ?? 0.1}
         readOnly={readOnly}
         defaultValue={value ?? ""}
+        max={max ?? undefined}
         {...field}
         {...rest}
       />

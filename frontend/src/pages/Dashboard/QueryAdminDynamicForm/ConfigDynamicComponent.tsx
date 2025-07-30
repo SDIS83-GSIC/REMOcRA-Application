@@ -11,7 +11,7 @@ import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 type ConfigDynamicComponentProps = {
   data: any;
   setData: (arg0: null) => void;
-  openListComponent: ComponentDashboard[] | undefined;
+  openListComponent: ComponentDashboard[] | undefined | null;
   setOpenListComponent: (arg0: any[]) => void;
   queryGlobalData: any[];
   selectedComponent: ComponentDashboard | null;
