@@ -300,10 +300,12 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           title={"Liste des tournées"}
           displayReturnButton={peiId == null}
           right={
-            <CreateButton
-              href={URLS.CREATE_TOURNEE}
-              title={"Ajouter une tournée"}
-            />
+            hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
+              <CreateButton
+                href={URLS.CREATE_TOURNEE}
+                title={"Ajouter une tournée"}
+              />
+            )
           }
         />
       </Container>
