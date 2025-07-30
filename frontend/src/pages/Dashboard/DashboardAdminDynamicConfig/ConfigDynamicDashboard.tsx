@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Button, Nav } from "react-bootstrap";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconGaugeComponent } from "../../../components/Icon/Icon.tsx";
+import {
+  IconDelete,
+  IconEdit,
+  IconGaugeComponent,
+} from "../../../components/Icon/Icon.tsx";
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
@@ -177,13 +182,13 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                         <Button
                           variant="link"
                           size="sm"
+                          className="text-info ms-2 text-decoration-none"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditTab(dashboard.index || 0);
                           }}
-                          className="ms-2"
                         >
-                          ✎
+                          <IconEdit />
                         </Button>
                         <Button
                           variant="link"
@@ -193,9 +198,9 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                             setIdtoremove(dashboard.index || 0);
                             setDisabledModal(true);
                           }}
-                          className="ms-2"
+                          className="ms-2 text-danger text-decoration-none"
                         >
-                          &times;
+                          <IconDelete />
                         </Button>
                       </>
                     ) : null}
@@ -206,9 +211,10 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
           {/* Bouton pour ajouter un nouvel onglet */}
           {props.editTabIndex === null ? (
-            <Button className="ms-2" onClick={handleAddDashboard}>
-              Ajouter +
-            </Button>
+            <div className="ms-auto">
+              {" "}
+              <CreateButton title={"Ajouter"} onClick={handleAddDashboard} />
+            </div>
           ) : (
             <Button
               variant="secondary"

@@ -83,7 +83,7 @@ const ComponentBoardDashboardAdmin = () => {
       <Outlet />
 
       <Row>
-        <Col sm={9}>
+        <Col sm={activeDashboard && editTabIndex !== null ? 9 : 12}>
           <ConfigDynamicDashboard
             openListDashboard={openListDashboard}
             setOpenListDashboard={setOpenListDashboard}
