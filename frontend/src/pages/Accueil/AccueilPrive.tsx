@@ -204,7 +204,7 @@ function getLinks(
     case TypeModuleRemocra.RISQUES:
       return [
         {
-          aLeDroit: true, // est accessible en mode grand public
+          aLeDroit: hasDroit(user, TYPE_DROIT.RISQUE_R),
           label: "Carte des risques",
           link: URLS.RISQUE,
         },
