@@ -1,14 +1,16 @@
-import { Col, Container, Row } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import { IconGaugeComponent } from "../../components/Icon/Icon.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
   ComponentDashboard,
   DashboardComponentConfig,
   DashboardItemParam,
   formatData,
-  QueryData,
+  QueryDataFormated,
 } from "./Constants.tsx";
 import DashboardItem from "./DashboardAdminDynamicConfig/DashboardItem.tsx";
 
@@ -17,7 +19,9 @@ const ComponentBoardList = () => {
 
   const [dashboardUser, setDashoardUser] =
     useState<DashboardItemParam | null>(); // Liste des onglets dashboard
-  const [listQuerysData, setListQuerysData] = useState<QueryData[] | null>(); // Liste des datas des requêtes
+  const [listQuerysData, setListQuerysData] = useState<
+    QueryDataFormated[] | null
+  >(); // Liste des datas des requêtes
   const [componentsListDashboard, setComponentsListDashboard] =
     useState<ComponentDashboard[]>(); // Composant sélectionner dans la grid
 
@@ -26,7 +30,7 @@ const ComponentBoardList = () => {
 
   const urlApiDataQuerys = url`/api/dashboard/get-list-data-query/`;
 
-  // Récupère tous les dashboards en base liés au profil utilisateur
+  // Récupère tous les composants en base liés au profil utilisateur
   const fetchDataDashboard = useGet(
     url`/api/dashboard/get-dashboard-user/`,
     {},
@@ -47,11 +51,12 @@ const ComponentBoardList = () => {
       )
         .json()
         .then((resData) => {
-          const newActiveQuerysData: QueryData[] = [];
+          const newActiveQuerysData: QueryDataFormated[] = [];
           // Formatte et stocke les datas des requêtes SQL pour usage des composants
           resData.forEach((dataQuery: any) => {
             const dataFormatted = formatData(dataQuery);
             newActiveQuerysData.push({
+              ...dataQuery,
               id: dataQuery.queryId,
               data: dataFormatted,
             });
@@ -80,11 +85,11 @@ const ComponentBoardList = () => {
   useEffect(() => {
     if (fetchDataDashboard.isResolved && fetchDataDashboard.data) {
       setDashoardUser({
-        id: fetchDataDashboard.data.dashboardId,
-        title: fetchDataDashboard.data.dashboardTitle,
+        id: fetchDataDashboard.data?.dashboardId,
+        title: fetchDataDashboard.data?.dashboardTitle,
       });
       const newComponentList: ComponentDashboard[] = [];
-      fetchDataDashboard.data.dashboardComponents.forEach(
+      fetchDataDashboard.data?.dashboardComponents?.forEach(
         (element: DashboardComponentConfig) => {
           // Set les composants à affiché dans la grille
           newComponentList.push({
@@ -155,9 +160,10 @@ const ComponentBoardList = () => {
     <>
       {dashboardUser && dashboardUser.id ? (
         <Container fluid>
-          <Row className="my-3">
-            <h3 className="text-primary">{dashboardUser?.title}</h3>
-          </Row>
+          <PageTitle
+            icon={<IconGaugeComponent />}
+            title={dashboardUser?.title}
+          />
           {/* Grid Layout */}
           <Row className="position-relative">
             {!componentsListDashboard && (

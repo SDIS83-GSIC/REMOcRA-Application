@@ -137,6 +137,11 @@ export type QueryData = {
   querySql: string;
 };
 
+export type QueryDataFormated = QueryData & {
+  data: any;
+  id: string;
+};
+
 export type ComponentDashboard = {
   index?: number;
   id: any;
