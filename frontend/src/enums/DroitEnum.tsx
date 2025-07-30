@@ -342,7 +342,10 @@ export const TypeDroitLabel = new Map<string, string>([
   ],
   [TYPE_DROIT.PEI_PRESCRIT_R, "Consulter les points d'eau prescrits"],
   [TYPE_DROIT.PEI_R, "Consulter les PEI"],
-  [TYPE_DROIT.PEI_U, "Modifier un PEI"],
+  [
+    TYPE_DROIT.PEI_U,
+    "Modification des informations générales, de l'adresse et des documents d'un PEI",
+  ],
   [TYPE_DROIT.PERMIS_A, "Créer, éditer, supprimer les permis"],
   [
     TYPE_DROIT.PERMIS_DOCUMENTS_C,
