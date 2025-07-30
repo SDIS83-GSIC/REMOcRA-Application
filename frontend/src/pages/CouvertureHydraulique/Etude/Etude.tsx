@@ -67,7 +67,6 @@ const Etude = () => {
           required={false}
         />
         <h3 className="mt-5">Communes de l&apos;étude</h3>
-        {/** TODO Prendre en compte la zone de compétence de l'utilisateur pour proposer des communes cohérentes */}
         <Multiselect
           name={"listeCommune"}
           label="Liste des communes de l'étude"
