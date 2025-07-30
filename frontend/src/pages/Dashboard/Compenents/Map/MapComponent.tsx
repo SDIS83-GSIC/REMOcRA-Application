@@ -20,7 +20,7 @@ const MapDashboardComponent = (data: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { warning: warningToast } = useToastContext();
   const dataMapped = setSimpleValueMapped(
-    data.data ? data.data : [],
+    data?.data ? data.data : [],
     data.config ? data.config : [],
   );
 
@@ -79,10 +79,9 @@ const MapDashboardComponent = (data: any) => {
     map
       .getLayers()
       .getArray()
+      .filter((l) => l !== OSM_LAYER)
       .forEach((l) => {
-        if (l instanceof LayerGroup) {
-          map.removeLayer(l);
-        }
+        map.removeLayer(l);
       });
 
     // JSONParseException
@@ -107,7 +106,7 @@ const MapDashboardComponent = (data: any) => {
         features: new GeoJSON().readFeatures(geojsonObject).map((feature) => {
           feature
             .getGeometry()
-            .transform(feature.getProperties().epsg, "EPSG:3857"); // EPSG par défaut de la View
+            .transform(feature.getProperties().epsg, EPSG_3857); // EPSG par défaut de la View
           return feature;
         }),
       });

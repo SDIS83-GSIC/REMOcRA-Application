@@ -99,7 +99,13 @@ class RequestUtils {
     fun mapQueryToFieldData(data: Result<Record>, queryRequest: DashboardQueryRequestData): FieldData? {
         // Extraction des noms de champs
         if (data.isEmpty()) {
-            return null
+            return FieldData(
+                queryId = queryRequest.queryId,
+                queryTitle = queryRequest.queryTitle,
+                querySql = queryRequest.query,
+                name = listOf(),
+                values = null,
+            )
         }
         val fields = data[0].fields().map { it.name } as? List<String> ?: throw RemocraResponseException(ErrorType.DASHBOARD_FIELD_REQUIRE)
 

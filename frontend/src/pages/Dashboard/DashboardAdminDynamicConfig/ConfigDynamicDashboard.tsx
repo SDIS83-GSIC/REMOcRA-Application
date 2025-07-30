@@ -11,8 +11,6 @@ type ConfigDynamicDashboardProps = {
   setOpenListDashboard: any;
   activeDashboard: DashboardItemParam | null;
   setActiveDashboard: (arg0: any) => void;
-  componentListIdSelected: string;
-  setcomponentListIdSelected: (arg0: string) => void;
   editTabIndex: number | null | undefined;
   setEditTabIndex: any;
   componentsListDashboard: any;
@@ -93,7 +91,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       .json()
       .then(() => {
         updateDashboardList(indexKey);
-        successToast("Le dashboard à correctement été supprimé");
+        successToast("Le dashboard a correctement été supprimé");
       })
       .catch((reason: string) => {
         errorToast(reason);
@@ -129,7 +127,6 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
   // Annule l'édition du dashboard
   const handleCancelEdit = () => {
-    props.setcomponentListIdSelected("");
     props.setComponentsListDashboard(null);
     props.setActiveDashboard(null);
     props.setEditTabIndex(null);
@@ -221,8 +218,6 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       <div className="flex-grow-1 mt-3">
         {props.activeDashboard ? (
           <ConfigDynamicGrid
-            componentListIdSelected={props.componentListIdSelected}
-            setcomponentListIdSelected={props.setcomponentListIdSelected}
             editTabIndex={props.editTabIndex}
             componentsListDashboard={props.componentsListDashboard}
             setComponentsListDashboard={props.setComponentsListDashboard}

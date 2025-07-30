@@ -1,25 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, ListGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ComponentDashboard, ICONS, DashboardParam } from "../Constants.tsx";
+import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import url from "../../../module/fetch.tsx";
 
 type QueryComponentListProps = {
   openListQuery: DashboardParam[] | undefined;
-  componentListIdSelected: string;
-  setComponentListIdSelected: (arg0: string) => void;
+  setComponentsListDashboard: (arg0: string) => void;
   componentsListDashboard: ComponentDashboard[] | undefined;
 };
 
-const QueryComponentList = (props: QueryComponentListProps) => {
-  const [clickedItemId, setClickedItemId] = useState<string | null>(null); // ID composant sélectionné (pour visuel action click)
+const QueryComponentList = ({
+  openListQuery,
+  setComponentsListDashboard,
+  componentsListDashboard,
+}: QueryComponentListProps) => {
+  const [queryId, setQueryId] = useState<string | null>(null); // ID de la requête sélectionnée
+
+  const { run: runDataQuerys, data: configDataQuerys } = useGetRun(
+    url`/api/dashboard/get-component-config/` + queryId,
+    {},
+  );
+
+  useEffect(() => {
+    if (queryId) {
+      runDataQuerys();
+    }
+  }, [queryId, runDataQuerys]);
+
+  useEffect(() => {
+    if (configDataQuerys) {
+      // Position initial lors de l'ajout d'un nouveau composant
+      const configPosition = {
+        size: 3,
+        x: 0,
+        y: 0,
+      };
+      // Créer le nouveau composant
+      const componentAdd = {
+        id: configDataQuerys.dashboardComponentId,
+        queryId: configDataQuerys.dashboardComponentDahsboardQueryId,
+        key: configDataQuerys.dashboardComponentKey,
+        title: configDataQuerys.dashboardComponentTitle,
+        config: configDataQuerys.dashboardComponentConfig,
+        configPosition: configPosition,
+      };
+
+      setComponentsListDashboard((prev) => [...prev, componentAdd]);
+    }
+  }, [configDataQuerys, setComponentsListDashboard]);
 
   // Ajoute l'ID du composant sélectionné
   const handleItemClick = (id: string) => {
-    setClickedItemId(id);
-    props.setComponentListIdSelected(id);
-
-    setTimeout(() => {
-      setClickedItemId(null);
-    }, 200);
+    setQueryId(id);
   };
 
   return (
@@ -32,8 +65,8 @@ const QueryComponentList = (props: QueryComponentListProps) => {
         className="overflow-auto"
         style={{ maxHeight: "400px" }}
       >
-        {props.openListQuery &&
-          props.openListQuery.map((query) => (
+        {openListQuery &&
+          openListQuery.map((query) => (
             <ListGroup.Item key={query.id} className="mb-3">
               <OverlayTrigger
                 placement="top"
@@ -55,8 +88,8 @@ const QueryComponentList = (props: QueryComponentListProps) => {
                       componentKey: string;
                     }) => {
                       // Si composant déjà sélectionné on le désactive
-                      const isInDashboard = props.componentsListDashboard
-                        ? props.componentsListDashboard.find(
+                      const isInDashboard = componentsListDashboard
+                        ? componentsListDashboard.find(
                             (componentInDashboard) =>
                               componentInDashboard.id === component.componentId,
                           )
@@ -69,7 +102,7 @@ const QueryComponentList = (props: QueryComponentListProps) => {
                           className={`d-flex justify-content-between align-items-center ${
                             isInDashboard
                               ? "bg-light text-muted"
-                              : clickedItemId === component.componentId
+                              : queryId === component.componentId
                                 ? "bg-primary text-white"
                                 : ""
                           }`}

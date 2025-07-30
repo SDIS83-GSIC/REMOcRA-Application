@@ -20,7 +20,6 @@ const ComponentBoardDashboardAdmin = () => {
   const [activeDashboard, setActiveDashboard] =
     useState<DashboardItemParam | null>(null); // Dashboard ouvert à l'écran
 
-  const [componentListIdSelected, setComponentListIdSelected] = useState(""); // Id du composant seléctionner dans la liste des requêtes et composant
   const [componentsListDashboard, setComponentsListDashboard] =
     useState<ComponentDashboard[]>(null); // Composant sélectionner dans la grid
 
@@ -89,8 +88,6 @@ const ComponentBoardDashboardAdmin = () => {
             setOpenListDashboard={setOpenListDashboard}
             activeDashboard={activeDashboard}
             setActiveDashboard={setActiveDashboard}
-            componentListIdSelected={componentListIdSelected}
-            setcomponentListIdSelected={setComponentListIdSelected}
             editTabIndex={editTabIndex}
             setEditTabIndex={setEditTabIndex}
             componentsListDashboard={componentsListDashboard}
@@ -101,8 +98,7 @@ const ComponentBoardDashboardAdmin = () => {
           <Col sm={3}>
             <QueryComponentList
               openListQuery={openListQuery}
-              componentListIdSelected={componentListIdSelected}
-              setComponentListIdSelected={setComponentListIdSelected}
+              setComponentsListDashboard={setComponentsListDashboard}
               componentsListDashboard={componentsListDashboard}
             />
           </Col>

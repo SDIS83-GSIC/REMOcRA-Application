@@ -20,7 +20,6 @@ type ConfigFormDashboardProps = {
   setComponentSelected: (arg0: any) => void;
   componentsListDashboard: ComponentDashboard[];
   setComponentsListDashboard: (arg0: any) => void;
-  setcomponentListIdSelected: (arg0: string) => void;
   numberRowGrid: number;
   setNumberRowGrid: (arg0: number) => void;
   removeRowUnused: (arg0: ComponentDashboard[]) => void;
@@ -81,7 +80,6 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
       );
       props.setComponentsListDashboard(newComponentList);
       props.setComponentSelected(null);
-      props.setcomponentListIdSelected("");
 
       props.removeRowUnused(newComponentList);
     }
@@ -120,7 +118,7 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
             >
               <Multiselect
                 name="listGroupAuthorized"
-                label="Liste des groupes autorisés :"
+                label="Liste des profils utilisateurs autorisés :"
                 options={profilUtilisateurList}
                 value={
                   values.profilsId

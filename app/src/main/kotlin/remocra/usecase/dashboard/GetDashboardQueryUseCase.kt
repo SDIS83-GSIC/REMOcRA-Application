@@ -63,8 +63,8 @@ class GetDashboardQueryUseCase : AbstractUseCase() {
         return requestSql?.let { validateQuery(it, false) }
     }
 
-    fun getDataQuerys(queryIds: QueryIds, userInfo: WrappedUserInfo): MutableList<RequestUtils.FieldData> {
-        val results: MutableList<RequestUtils.FieldData> = mutableListOf() // Liste pour stocker les résultats
+    fun getDataQuerys(queryIds: QueryIds, userInfo: WrappedUserInfo): MutableList<RequestUtils.FieldData?> {
+        val results: MutableList<RequestUtils.FieldData?> = mutableListOf() // Liste pour stocker les résultats
 
         for (queryId in queryIds.dashboardQueryIds) {
             val result = getDataQuery(queryId, userInfo)

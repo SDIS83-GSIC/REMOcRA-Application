@@ -24,7 +24,7 @@ export const formatData = (data: { name: any; values: any }) => {
   if (data) {
     const { name, values } = data;
 
-    return values.map((valueArray: { [x: string]: any }) => {
+    return values?.map((valueArray: { [x: string]: any }) => {
       const dict: { [key: string]: any } = {};
       name.forEach((key: string, index: string | number) => {
         dict[key] = valueArray[index];
@@ -130,8 +130,11 @@ export const ICONS = {
 
 // Liste des types d'objets utilisés dans le module
 export type QueryData = {
-  id: string | undefined;
-  data: any;
+  name: string[];
+  queryId: string;
+  values: any[];
+  queryTitle: string;
+  querySql: string;
 };
 
 export type ComponentDashboard = {
