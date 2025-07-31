@@ -347,7 +347,7 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{criseId}/evenement/type-sous-type")
-    @RequireDroits([Droit.CRISE_C])
+    @RequireDroits([Droit.CRISE_C, Droit.CRISE_U])
     fun getTypeSousType(
         @PathParam("criseId")
         criseId: UUID,
@@ -359,7 +359,7 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/documents/getAllFromCrise/{criseId}")
-    @RequireDroits([Droit.CRISE_C])
+    @RequireDroits([Droit.CRISE_C, Droit.CRISE_R, Droit.CRISE_U])
     fun getAllFromCrise(
         @PathParam("criseId")
         criseId: UUID,
@@ -417,7 +417,7 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/evenement/message")
-    @RequireDroits([Droit.CRISE_C])
+    @RequireDroits([Droit.CRISE_R, Droit.CRISE_C, Droit.CRISE_U])
     fun getAllMessages(): Response {
         return Response.ok(
             messageRepository.getAllMessages(),
@@ -610,7 +610,7 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/{criseId}/screen")
-    @RequireDroits([Droit.CRISE_C])
+    @RequireDroits([Droit.CRISE_C, Droit.CRISE_U])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     fun doScreen(
         @PathParam("criseId") criseId: UUID,

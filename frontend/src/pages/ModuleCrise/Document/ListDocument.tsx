@@ -14,7 +14,7 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
-import { hasDroit } from "../../../droits.tsx";
+import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { shortenString } from "../../../utils/fonctionsUtils.tsx";
@@ -69,17 +69,19 @@ const ListDocument = ({
 
   return (
     <Container>
-      <Row>
-        <Col xs={12} className="d-flex justify-content-end">
-          <CreateButton
-            title={"Ajouter un document"}
-            classnames={"my-2"}
-            onClick={() => {
-              show();
-            }}
-          />
-        </Col>
-      </Row>
+      {isAuthorized(user, [TYPE_DROIT.CRISE_C, TYPE_DROIT.CRISE_U]) && (
+        <Row>
+          <Col xs={12} className="d-flex justify-content-end">
+            <CreateButton
+              title={"Ajouter un document"}
+              classnames={"my-2"}
+              onClick={() => {
+                show();
+              }}
+            />
+          </Col>
+        </Row>
+      )}
       <QueryTable
         query={url`/api/crise/documents/getAllFromCrise/${criseId}`}
         columns={[

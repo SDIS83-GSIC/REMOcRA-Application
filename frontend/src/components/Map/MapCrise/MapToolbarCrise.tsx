@@ -6,7 +6,9 @@ import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, Key, useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
+import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import AddTitleForm, {
@@ -17,6 +19,7 @@ import AddTitleForm, {
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
 import CreateEvenement from "../../../pages/ModuleCrise/Evenement/createEvenement.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import {
   IconCamera,
@@ -302,10 +305,7 @@ const MapToolbarCrise = forwardRef(
     setSousTypeElement: (object: object) => void;
     variant: string;
   }) => {
-    const typeWithSousType = useGet(
-      url`/api/crise/${criseId}/evenement/type-sous-type`,
-    )?.data;
-
+    const { user } = useAppContext();
     const { visible, show, close } = useModal();
 
     const getMapGeometry = (): string => {
@@ -357,32 +357,34 @@ const MapToolbarCrise = forwardRef(
     return (
       <Row>
         <Col xs={"auto"}>
-          {/* déplacer évènement */}
-          <ToolbarButton
-            toolName={"move-event"}
-            toolIcon={<IconMoveObjet />}
-            toolLabelTooltip={"Déplacer un événement"}
-            toggleTool={toggleToolCallback}
-            activeTool={activeTool}
-            variant={variant}
-          />
-
-          {/* Evènements (création) */}
-          <TooltipCustom
-            tooltipId="crise-create-event"
-            tooltipText="Créer un nouvel événement"
-          >
-            <Button
-              className="m-2"
-              onClick={() => {
-                setShowCreateEvent(!showCreateEvent);
-              }}
-              variant={variant}
-            >
-              <IconEvent />
-            </Button>
-          </TooltipCustom>
-
+          {hasDroit(user, TYPE_DROIT.CRISE_C) && (
+            <>
+              {/* déplacer évènement */}
+              <ToolbarButton
+                toolName={"move-event"}
+                toolIcon={<IconMoveObjet />}
+                toolLabelTooltip={"Déplacer un événement"}
+                toggleTool={toggleToolCallback}
+                activeTool={activeTool}
+                variant={variant}
+              />
+              {/* Evènements (création) */}
+              <TooltipCustom
+                tooltipId="crise-create-event"
+                tooltipText="Créer un nouvel événement"
+              >
+                <Button
+                  className="m-2"
+                  onClick={() => {
+                    setShowCreateEvent(!showCreateEvent);
+                  }}
+                  variant={variant}
+                >
+                  <IconEvent />
+                </Button>
+              </TooltipCustom>
+            </>
+          )}
           {/* Evènements (liste) */}
           <TooltipCustom
             tooltipId="crise-list-event"
@@ -415,102 +417,38 @@ const MapToolbarCrise = forwardRef(
             </Button>
           </TooltipCustom>
 
-          <TooltipCustom
-            tooltipId="crise-capture"
-            tooltipText="Enregistre une capture"
-          >
-            <Button
-              className="m-2"
-              onClick={() => {
-                show();
-              }}
-              variant={variant}
+          {isAuthorized(user, [TYPE_DROIT.CRISE_C, TYPE_DROIT.CRISE_U]) && (
+            <TooltipCustom
+              tooltipId="crise-capture"
+              tooltipText="Enregistre une capture"
             >
-              <IconCamera />
-            </Button>
-          </TooltipCustom>
+              <Button
+                className="m-2"
+                onClick={() => {
+                  show();
+                }}
+                variant={variant}
+              >
+                <IconCamera />
+              </Button>
+            </TooltipCustom>
+          )}
         </Col>
         <Col xs={"auto"}>
           {/* gestion toponymies */}
           <ToponymieTypeBarre map={map} criseId={criseId} />
         </Col>
-        <Col xs={"auto"}>
-          <Dropdown>
-            <Dropdown.Toggle className="m-2" id={"dropdown-"} variant={variant}>
-              {"Dessiner"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {typeWithSousType?.map(
-                (
-                  e: {
-                    criseCategorieLibelle: {
-                      toString: () => any;
-                    };
-                    listSousType: any[];
-                  },
-                  key: Key | null | undefined,
-                ) => {
-                  return (
-                    <Row xs={"auto"} className={"m-2"} key={key}>
-                      <Dropdown>
-                        <Dropdown.Toggle id={"dropdown-"} variant={variant}>
-                          {e.criseCategorieLibelle?.toString()}
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          {e.listSousType.map(
-                            (
-                              soustype: {
-                                typeCriseCategorieGeometrie: string;
-                                typeCriseCategorieId: any;
-                                typeCriseCategorieLibelle: any;
-                              },
-                              key: Key | null | undefined,
-                            ) => {
-                              let icon;
-                              switch (soustype.typeCriseCategorieGeometrie) {
-                                case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
-                                  icon = <IconPoint />;
-                                  break;
-                                case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
-                                  icon = <IconLine />;
-                                  break;
-                                case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
-                                  icon = <IconPolygon />;
-                                  break;
-                              }
-
-                              return (
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setTypeEvenement(
-                                      soustype.typeCriseCategorieId,
-                                    );
-                                    toggleToolCallback(
-                                      "create-" +
-                                        soustype.typeCriseCategorieGeometrie.toLowerCase(),
-                                    );
-                                    setSousTypeElement(
-                                      soustype.typeCriseCategorieId,
-                                    );
-                                  }}
-                                  key={key}
-                                >
-                                  {icon} {soustype?.typeCriseCategorieLibelle}
-                                </Dropdown.Item>
-                              );
-                            },
-                          )}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </Row>
-                  );
-                },
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-
+        {hasDroit(user, TYPE_DROIT.CRISE_C) && (
+          <Col xs={"auto"}>
+            <DropdownTypeSousType
+              criseId={criseId}
+              variant={variant}
+              setTypeEvenement={setTypeEvenement}
+              toggleToolCallback={toggleToolCallback}
+              setSousTypeElement={setSousTypeElement}
+            />
+          </Col>
+        )}
         <Volet
           handleClose={handleCloseEvent}
           show={showListEvent}
@@ -586,3 +524,92 @@ const MapToolbarCrise = forwardRef(
 MapToolbarCrise.displayName = "MapToolbarCrise";
 
 export default MapToolbarCrise;
+
+const DropdownTypeSousType = ({
+  criseId,
+  variant,
+  setTypeEvenement,
+  toggleToolCallback,
+  setSousTypeElement,
+}: {
+  criseId: string;
+  variant: string;
+  setTypeEvenement: (typeCriseCategorieId: string) => void;
+  toggleToolCallback: (typeCriseCategorieGeometrie: string) => void;
+  setSousTypeElement: (typeCriseCategorieId: object) => void;
+}) => {
+  const typeWithSousType = useGet(
+    url`/api/crise/${criseId}/evenement/type-sous-type`,
+  )?.data;
+
+  return (
+    <Dropdown>
+      <Dropdown.Toggle className="m-2" id={"dropdown-"} variant={variant}>
+        {"Dessiner"}
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        {typeWithSousType?.map(
+          (
+            e: {
+              criseCategorieLibelle: {
+                toString: () => any;
+              };
+              listSousType: any[];
+            },
+            key: Key | null | undefined,
+          ) => {
+            return (
+              <Row xs={"auto"} className={"m-2"} key={key}>
+                <Dropdown>
+                  <Dropdown.Toggle id={"dropdown-"} variant={variant}>
+                    {e.criseCategorieLibelle?.toString()}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {e.listSousType.map(
+                      (
+                        soustype: {
+                          typeCriseCategorieGeometrie: string;
+                          typeCriseCategorieId: any;
+                          typeCriseCategorieLibelle: any;
+                        },
+                        key: Key | null | undefined,
+                      ) => {
+                        let icon;
+                        switch (soustype.typeCriseCategorieGeometrie) {
+                          case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
+                            icon = <IconPoint />;
+                            break;
+                          case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
+                            icon = <IconLine />;
+                            break;
+                          case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
+                            icon = <IconPolygon />;
+                            break;
+                        }
+                        return (
+                          <Dropdown.Item
+                            onClick={() => {
+                              setTypeEvenement(soustype.typeCriseCategorieId);
+                              toggleToolCallback(
+                                "create-" +
+                                  soustype.typeCriseCategorieGeometrie.toLowerCase(),
+                              );
+                              setSousTypeElement(soustype.typeCriseCategorieId);
+                            }}
+                            key={key}
+                          >
+                            {icon} {soustype?.typeCriseCategorieLibelle}
+                          </Dropdown.Item>
+                        );
+                      },
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Row>
+            );
+          },
+        )}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};

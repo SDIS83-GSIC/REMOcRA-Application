@@ -11,6 +11,8 @@ import { centrerToExtent } from "../../../components/Map/MapUtils.tsx";
 import MessageElement from "../../../components/message/messageElement.tsx";
 import EditModal from "../../../components/Modal/EditModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
+import { isAuthorized } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { shortenString } from "../../../utils/fonctionsUtils.tsx";
 import FilterEvent from "./filterEvent.tsx";
@@ -93,15 +95,17 @@ const ListEvenement = ({
         header: shortenString(e.evenementLibelle, 35),
         content: (
           <>
-            <Button
-              style={{ marginBottom: "10px", marginRight: "15px" }}
-              onClick={() => {
-                setEvenementId(e.evenementId);
-                show();
-              }}
-            >
-              nouveau message
-            </Button>
+            {isAuthorized(user, [TYPE_DROIT.CRISE_C, TYPE_DROIT.CRISE_U]) && (
+              <Button
+                style={{ marginBottom: "10px", marginRight: "15px" }}
+                onClick={() => {
+                  setEvenementId(e.evenementId);
+                  show();
+                }}
+              >
+                Nouveau message
+              </Button>
+            )}
 
             {e.evenementGeometrie && (
               <Button
