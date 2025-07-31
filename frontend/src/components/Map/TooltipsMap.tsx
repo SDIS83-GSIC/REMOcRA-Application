@@ -391,6 +391,7 @@ const Tooltip = ({
               display: "none",
             },
           }}
+          style={{ transform: "translateY(-20px)" }}
         >
           <Popover.Header>
             <Row>
