@@ -521,6 +521,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DASHBOARD_FIELD_REQUIRE(23005, "Aucune donnée"),
     DASHBOARD_VALIDATE_QUERY(23006, "Erreur de validation de la requête."),
     DASHBOARD_FORBIDDEN_CUD(23007, "Vous n'avez pas les droits de d'éditer", Status.FORBIDDEN),
+    DASHBOARD_QUERY_IN_USE(23008, "La requête est utilisée par un ou plusieurs tableaux de bord et ne peut pas être supprimée."),
 
     //
     // ********************************************************************************

@@ -20,7 +20,10 @@ class DeleteQueryUseCase : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {
         }
     }
     override fun checkContraintes(userInfo: WrappedUserInfo, element: UUID) {
-        return
+        // Vérifier que la requête n'est pas utilisée dans un dashboard
+        if (dashboardRepository.getComponentsByQuery(element).isNotEmpty()) {
+            throw RemocraResponseException(ErrorType.DASHBOARD_QUERY_IN_USE)
+        }
     }
     override fun execute(userInfo: WrappedUserInfo, element: UUID): UUID {
         dashboardRepository.deleteComponentsByQueryIds(element)

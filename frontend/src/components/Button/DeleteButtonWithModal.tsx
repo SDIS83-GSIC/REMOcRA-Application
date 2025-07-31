@@ -8,20 +8,24 @@ const DeleteButtonWithModal = ({
   reload,
   title = true,
   disabled = false,
+  variant = "danger",
+  className = "text-white",
 }: {
   path: string;
   reload: () => void;
   title: boolean;
   disabled: boolean;
+  variant?: string;
+  className?: string;
 }) => {
   const { visible, show, close, ref } = useModal();
   return (
     <>
       <Button
-        variant={"danger"}
+        variant={variant}
         disabled={disabled}
         onClick={show}
-        className={"text-white"}
+        className={className}
       >
         <IconDelete />
         {title && <>&nbsp;Supprimer</>}

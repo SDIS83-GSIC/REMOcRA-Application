@@ -7,9 +7,9 @@ import {
 } from "react";
 import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
+import DeleteButtonWithModal from "../../../components/Button/DeleteButtonWithModal.tsx";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
-import { IconDelete, IconEdit } from "../../../components/Icon/Icon.tsx";
-import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
+import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
@@ -54,9 +54,7 @@ const QueryList = forwardRef(
     }: QueryListProps,
     ref,
   ) => {
-    const { error: errorToast, success: successToast } = useToastContext();
-    const [disabledModal, setDisabledModal] = useState(false);
-    const [idToRemove, setIdtoremove] = useState<string | null>();
+    const { error: errorToast } = useToastContext();
 
     const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
 
@@ -237,31 +235,6 @@ const QueryList = forwardRef(
       setOpenListComponent(null);
     };
 
-    // Supprime la requête et composants associés
-    const handleDeleteQuery = () => {
-      const fetchDataDelete = async () => {
-        (
-          await fetch(
-            urlApiDeleteQuery + idToRemove,
-            getFetchOptions({
-              method: "DELETE",
-              headers: { "Content-Type": "application/json" },
-            }),
-          )
-        )
-          .text()
-          .then(() => {
-            successToast("La requête a bien été supprimée.");
-            // Refresh la liste des requêtes
-            fetchData.run();
-          })
-          .catch((reason: string) => {
-            errorToast(reason);
-          });
-      };
-      fetchDataDelete();
-    };
-
     // Récupère les requêtes en base lors du premier chargement du composant
     useEffect(() => {
       if (!openListQuery && !fetchData.isLoading) {
@@ -347,17 +320,16 @@ const QueryList = forwardRef(
                       </Button>
                     </Col>
                     <Col sm={2}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="text-danger text-decoration-none"
-                        onClick={() => {
-                          setIdtoremove(id);
-                          setDisabledModal(true);
+                      <DeleteButtonWithModal
+                        path={urlApiDeleteQuery + id}
+                        reload={() => {
+                          fetchData.run();
                         }}
-                      >
-                        <IconDelete />
-                      </Button>
+                        variant="link"
+                        className="text-danger text-decoration-none"
+                        title={false}
+                        disabled={false}
+                      />
                     </Col>
                   </Row>
                 </ListGroup.Item>
@@ -367,14 +339,6 @@ const QueryList = forwardRef(
             )}
           </ListGroup>
         )}
-        <ConfirmModal
-          visible={disabledModal}
-          content="Supprimer la requête ?"
-          closeModal={() => setDisabledModal(false)}
-          query={""}
-          href="#"
-          onConfirm={() => handleDeleteQuery()}
-        />
       </Card>
     );
   },
