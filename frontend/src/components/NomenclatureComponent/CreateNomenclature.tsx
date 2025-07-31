@@ -20,7 +20,7 @@ const CreateNomenclature = ({
 }: {
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
-  titrePage: string;
+  titrePage?: string;
   isFkRequired?: boolean;
 }) => {
   const location = useLocation();

@@ -24,7 +24,7 @@ const UpdateNomenclature = ({
   nomenclatureId: string;
   typeNomenclature: NOMENCLATURE;
   redirectLink: string;
-  titrePage: string;
+  titrePage?: string;
   isFkRequired?: boolean;
 }) => {
   const nomenclatureState = useGet(
