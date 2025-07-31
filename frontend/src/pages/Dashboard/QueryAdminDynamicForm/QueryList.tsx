@@ -205,7 +205,6 @@ const QueryList = forwardRef(
           // Set les datas à afficher dans le premier composant, pour visualisation
           if (openListComponent && openListComponent.length > 0) {
             setData(null);
-            setSelectedComponent(openListComponent[0]);
           }
         })
         .catch((reason: string) => {
@@ -226,6 +225,10 @@ const QueryList = forwardRef(
     const handleSaveQuery = () => {
       formikRef.current?.submitForm(); // Ref pour l'enregistrement de la requête et composants
       fetchData.run();
+      setIsAdding(false);
+      setSelectedComponent(null);
+      setAvailableOptions([]);
+      setQueryGlobalData(null);
     };
 
     // Annule l'édition de la requête
@@ -234,6 +237,8 @@ const QueryList = forwardRef(
       setActiveQuery(null);
       setSelectedComponent(null);
       setOpenListComponent(null);
+      setAvailableOptions([]);
+      setQueryGlobalData(null);
     };
 
     // Récupère les requêtes en base lors du premier chargement du composant
