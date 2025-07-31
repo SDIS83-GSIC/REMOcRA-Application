@@ -33,6 +33,8 @@ const PieChartConfig = (options: {
         onChange={(value) => handleChange("name", value.value)}
         options={options.fieldOptions}
         defaultValue={fieldName}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
       />
       <SelectInput
         required={false}
@@ -41,6 +43,8 @@ const PieChartConfig = (options: {
         onChange={(value) => handleChange("value", value.value)}
         defaultValue={fieldValue}
         options={options.fieldOptions}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
       />
     </>
   );

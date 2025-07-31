@@ -13,7 +13,7 @@ const CounterComponent = (data: any) => {
 
     let sumData = 0;
     dataMapped.forEach((data: { value: number }) => {
-      return (sumData += parseInt(data.value));
+      return (sumData += data.value);
     });
 
     return (

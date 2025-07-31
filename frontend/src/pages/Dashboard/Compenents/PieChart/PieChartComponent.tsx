@@ -25,7 +25,13 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
     value: parseInt(item.value), // Convertir `value` en entier
   }));
 
-  const renderCustomizedLabel = ({ percent, value }) => {
+  const renderCustomizedLabel = ({
+    percent,
+    value,
+  }: {
+    percent: number;
+    value: number;
+  }) => {
     if (!percent) {
       return null;
     }

@@ -41,6 +41,8 @@ const CounterConfig = (options: any) => {
         onChange={(value) => handleChange("value", value.value)}
         defaultValue={fieldValue}
         options={options.fieldOptions}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
       />
     </>
   );

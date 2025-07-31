@@ -76,6 +76,8 @@ const GaugeConfig = (options: any) => {
         onChange={(value) => handleChange("value", value.value)}
         defaultValue={fieldValue}
         options={options.fieldOptions}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
       />
 
       {/* Sélection de la valeur maximale */}
@@ -86,6 +88,8 @@ const GaugeConfig = (options: any) => {
         onChange={(value) => handleChange("max", value.value)}
         defaultValue={fieldMax}
         options={options.fieldOptions}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
       />
 
       {/* Configuration des limites (couleurs et max) */}

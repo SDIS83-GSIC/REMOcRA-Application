@@ -104,9 +104,10 @@ const MapDashboardComponent = (data: any) => {
       const vectorSource = new VectorSource({
         // Garde-fou : conversion individuelle des géométries depuis leur propre EPSG
         features: new GeoJSON().readFeatures(geojsonObject).map((feature) => {
-          feature
-            .getGeometry()
-            .transform(feature.getProperties().epsg, EPSG_3857); // EPSG par défaut de la View
+          const geometry = feature.getGeometry();
+          if (geometry) {
+            geometry.transform(feature.getProperties().epsg, EPSG_3857); // EPSG par défaut de la View
+          }
           return feature;
         }),
       });

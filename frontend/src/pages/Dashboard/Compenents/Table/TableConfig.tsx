@@ -55,6 +55,8 @@ const TableConfig = (options: any) => {
             name={`value-${index}`}
             label="Valeur de la colonne"
             options={options.fieldOptions}
+            getOptionLabel={(option: any) => option.value}
+            getOptionValue={(option: any) => option.value}
             defaultValue={
               column.col.value
                 ? options.fieldOptions.find(
