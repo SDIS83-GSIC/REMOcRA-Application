@@ -356,19 +356,18 @@ function getColumnPeiByStringArray(
             "Fiche Résumé du PEI " + row.original.peiNumeroComplet,
         },
       });
-
-      // Si l'utilisateur ne peut pas update un PEI, on lui propose la fiche complète en lecture seule
-      if (!canEditPei) {
-        listeButton.push({
-          row: (row) => {
-            return row;
-          },
-          type: TYPE_BUTTON.SEE,
-          route: (idPei) => URLS.UPDATE_PEI(idPei),
-          icon: <IconOeil />,
-          textEnable: "Voir la fiche complète du PEI",
-        });
-      }
+    }
+    // Si l'utilisateur ne peut pas update un PEI, on lui propose la fiche complète en lecture seule
+    if (!canEditPei) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.SEE,
+        route: (idPei) => URLS.UPDATE_PEI(idPei),
+        icon: <IconOeil />,
+        textEnable: "Voir la fiche complète du PEI",
+      });
     }
     if (canEditPei) {
       listeButton.push({
