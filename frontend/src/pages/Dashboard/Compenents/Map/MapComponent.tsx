@@ -70,7 +70,7 @@ const MapDashboardComponent = (data: any) => {
       !map ||
       !dataMapped ||
       !Array.isArray(dataMapped) ||
-      dataMapped.some((item) => !item.geojson)
+      data.data === undefined
     ) {
       return;
     }
@@ -153,7 +153,7 @@ const MapDashboardComponent = (data: any) => {
     } catch (e) {
       warningToast("Géométrie invalide");
     }
-  }, [map, data.config, dataMapped, warningToast]);
+  }, [map, data.config, dataMapped, warningToast, data.data]);
 
   return (
     <Container fluid className="h-100">
