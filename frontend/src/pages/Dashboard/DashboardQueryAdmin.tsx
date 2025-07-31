@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 import { object } from "yup";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import { IconHorizontalChartComponent } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { ComponentDashboard, QueryParam } from "./Constants.tsx";
@@ -77,9 +79,12 @@ const ComponentBoardQueryAdmin = () => {
   };
 
   return (
-    <>
+    <Container fluid>
       <Outlet />
-
+      <PageTitle
+        icon={<IconHorizontalChartComponent />}
+        title="Édition des requêtes et composants associés"
+      />
       <Row>
         <Col sm={3}>
           <QueryList
@@ -150,7 +155,7 @@ const ComponentBoardQueryAdmin = () => {
           </MyFormik>
         )}
       </Row>
-    </>
+    </Container>
   );
 };
 

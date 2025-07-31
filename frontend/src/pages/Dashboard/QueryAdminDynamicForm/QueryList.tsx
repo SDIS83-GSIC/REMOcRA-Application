@@ -5,14 +5,14 @@ import {
   useImperativeHandle,
   useState,
 } from "react";
-import {
-  Button,
-  Card,
-  ListGroup,
-  OverlayTrigger,
-  Tooltip,
-} from "react-bootstrap";
+import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
+import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import { IconDelete, IconEdit } from "../../../components/Icon/Icon.tsx";
+import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import {
   ComponentDashboard,
   COMPONENTS,
@@ -20,9 +20,6 @@ import {
   formatData,
   QueryParam,
 } from "../Constants.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
-import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 
 type QueryListProps = {
   setData: (arg0: any) => void;
@@ -39,326 +36,349 @@ type QueryListProps = {
   setIsAdding: (arg0: boolean) => void;
 };
 
-const QueryList = forwardRef((props: QueryListProps, ref) => {
-  const { error: errorToast, success: successToast } = useToastContext();
-  const [disabledModal, setDisabledModal] = useState(false);
-  const [idToRemove, setIdtoremove] = useState<string | null>();
+const QueryList = forwardRef(
+  (
+    {
+      setData,
+      activeQuery,
+      setActiveQuery,
+      openListComponent,
+      setOpenListComponent,
+      setSelectedComponent,
+      queryGlobalData,
+      setQueryGlobalData,
+      setAvailableOptions,
+      formikRef,
+      isAdding,
+      setIsAdding,
+    }: QueryListProps,
+    ref,
+  ) => {
+    const { error: errorToast, success: successToast } = useToastContext();
+    const [disabledModal, setDisabledModal] = useState(false);
+    const [idToRemove, setIdtoremove] = useState<string | null>();
 
-  const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
+    const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
 
-  const urlApiQueryList = url`/api/dashboard/get-list-query`;
-  const urlApiGetQueryComponent = url`/api/dashboard/get-components/`;
-  const urlApiDeleteQuery = url`/api/dashboard/delete-query/`;
-  const urlApiQuery = url`/api/dashboard/validate-query`;
+    const urlApiQueryList = url`/api/dashboard/get-list-query`;
+    const urlApiGetQueryComponent = url`/api/dashboard/get-components/`;
+    const urlApiDeleteQuery = url`/api/dashboard/delete-query/`;
+    const urlApiQuery = url`/api/dashboard/validate-query`;
 
-  useImperativeHandle(ref, () => ({
-    setOpenListQuery(value: any) {
-      setOpenListQuery(value);
-    },
-  }));
+    useImperativeHandle(ref, () => ({
+      setOpenListQuery(value: any) {
+        setOpenListQuery(value);
+      },
+    }));
 
-  // Récupère la liste des requêtes en base
-  const fetchData = useGetRun(urlApiQueryList, {});
+    // Récupère la liste des requêtes en base
+    const fetchData = useGetRun(urlApiQueryList, {});
 
-  useEffect(() => {
-    if (fetchData.isResolved && fetchData.data) {
-      const queryList: { id: any; query: any; title: any }[] =
-        fetchData.data.map(
-          (element: {
-            dashboardQueryId: any;
-            dashboardQueryQuery: any;
-            dashboardQueryTitle: any;
-          }) => {
+    useEffect(() => {
+      if (fetchData.isResolved && fetchData.data) {
+        const queryList: { id: any; query: any; title: any }[] =
+          fetchData.data.map(
+            (element: {
+              dashboardQueryId: any;
+              dashboardQueryQuery: any;
+              dashboardQueryTitle: any;
+            }) => {
+              return {
+                id: element.dashboardQueryId,
+                query: element.dashboardQueryQuery,
+                title: element.dashboardQueryTitle,
+              };
+            },
+          );
+        setOpenListQuery(queryList);
+      }
+    }, [fetchData.data, fetchData.isResolved, setOpenListQuery]);
+
+    // Définit les propriétés par défaut pour l'ajout d'une nouvelle requête
+    const handleAddQuery = () => {
+      const newQuery = {
+        query: "",
+        title: "Titre nouvelle requête",
+      };
+      setIsAdding(true); // Définit le statut en cours d'édition
+      setOpenListComponent([]);
+      setData(null);
+      setActiveQuery(newQuery);
+    };
+
+    // Met à jour la requête en cas d'édition
+    const handleEditQuery = (id: string | undefined) => {
+      // Active la requête dans la liste
+      setIsAdding(true); // Définit le statut en cours d'édition
+      setActiveQuery(
+        openListQuery ? openListQuery.find((query) => query.id === id) : null,
+      );
+    };
+
+    // Récupère les composant liés à la requête
+    const fetchQueryComponent = useGetRun(
+      urlApiGetQueryComponent + activeQuery?.id,
+      {},
+    );
+
+    useEffect(() => {
+      if (activeQuery && activeQuery.id) {
+        // Si une requête est active, on récupère les composants associés
+        setOpenListComponent(null); // Réinitialise la liste des composants
+        fetchQueryComponent.run();
+      }
+    }, [activeQuery]);
+
+    useEffect(() => {
+      if (
+        fetchQueryComponent.isResolved &&
+        fetchQueryComponent.data &&
+        !openListComponent
+      ) {
+        // Set les composants de la requête sans datas
+        const componentList: {
+          id: string;
+          queryId: string;
+          index: number;
+          key: string;
+          component: any;
+          formConfig: any;
+          title: string;
+          config: any;
+        }[] = fetchQueryComponent.data.map(
+          (
+            element: {
+              dashboardComponentId: string;
+              dashboardComponentKey: string;
+              dashboardComponentTitle: string;
+              dashboardComponentConfig: any;
+              dashboardComponentDahsboardQueryId: string;
+            },
+            index: number,
+          ) => {
             return {
-              id: element.dashboardQueryId,
-              query: element.dashboardQueryQuery,
-              title: element.dashboardQueryTitle,
+              id: element.dashboardComponentId,
+              queryId: element.dashboardComponentDahsboardQueryId || "",
+              index: index,
+              key: element.dashboardComponentKey,
+              component:
+                COMPONENTS[
+                  element.dashboardComponentKey as keyof typeof COMPONENTS
+                ],
+              formConfig:
+                FORM_CONFIG[
+                  element.dashboardComponentKey as keyof typeof FORM_CONFIG
+                ],
+              title: element.dashboardComponentTitle,
+              config: element.dashboardComponentConfig,
             };
           },
         );
-      setOpenListQuery(queryList);
-    }
-  }, [fetchData.data, fetchData.isResolved, setOpenListQuery]);
+        setOpenListComponent(componentList);
+      }
+    }, [
+      fetchQueryComponent.data,
+      fetchQueryComponent.isResolved,
+      openListComponent,
+      setOpenListComponent,
+    ]);
 
-  // Définit les propriétés par défaut pour l'ajout d'une nouvelle requête
-  const handleAddQuery = () => {
-    const newQuery = {
-      query: "",
-      title: "Titre nouvelle requête",
-    };
-    props.setIsAdding(true); // Définit le statut en cours d'édition
-    props.setOpenListComponent([]);
-    props.setData(null);
-    props.setActiveQuery(newQuery);
-  };
-
-  // Met à jour la requête en cas d'édition
-  const handleEditQuery = (id: string | undefined) => {
-    // Active la requête dans la liste
-    props.setIsAdding(true); // Définit le statut en cours d'édition
-    props.setActiveQuery(
-      openListQuery ? openListQuery.find((query) => query.id === id) : null,
-    );
-  };
-
-  // Récupère les composant liés à la requête
-  const fetchQueryComponent = useGetRun(
-    urlApiGetQueryComponent + props.activeQuery?.id,
-    {},
-  );
-  useEffect(() => {
-    if (
-      fetchQueryComponent.isResolved &&
-      fetchQueryComponent.data &&
-      !props.openListComponent
-    ) {
-      // Set les composants de la requête sans datas
-      const componentList: {
-        id: string;
-        queryId: string;
-        index: number;
-        key: string;
-        component: any;
-        formConfig: any;
-        title: string;
-        config: any;
-      }[] = fetchQueryComponent.data.map(
-        (
-          element: {
-            dashboardComponentId: string;
-            dashboardComponentKey: string;
-            dashboardComponentTitle: string;
-            dashboardComponentConfig: any;
-            dashboardComponentDahsboardQueryId: string;
-          },
-          index: number,
-        ) => {
-          return {
-            id: element.dashboardComponentId,
-            queryId: element.dashboardComponentDahsboardQueryId || "",
-            index: index,
-            key: element.dashboardComponentKey,
-            component:
-              COMPONENTS[
-                element.dashboardComponentKey as keyof typeof COMPONENTS
-              ],
-            formConfig:
-              FORM_CONFIG[
-                element.dashboardComponentKey as keyof typeof FORM_CONFIG
-              ],
-            title: element.dashboardComponentTitle,
-            config: element.dashboardComponentConfig,
-          };
-        },
-      );
-      props.setOpenListComponent(componentList);
-    }
-  }, [
-    fetchQueryComponent.data,
-    fetchQueryComponent.isResolved,
-    props.openListComponent,
-    props.setOpenListComponent,
-  ]);
-
-  // Valide la requête et récupère les datas correspondantes
-  /*const fetchDataQuery = */ useCallback(async () => {
-    (
-      await fetch(
-        urlApiQuery,
-        getFetchOptions({
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: props.activeQuery?.query,
-            queryTitle: props.activeQuery?.title,
-          }),
-        }),
-      )
-    )
-      .json()
-      .then((res) => {
-        // Format les données pour exploitations par les composants
-        const dataFormatted = formatData(res);
-        props.setAvailableOptions(Object.keys(dataFormatted[0]));
-        props.setQueryGlobalData(dataFormatted);
-        // Set les datas à afficher dans le premier composant, pour visualisation
-        if (props.openListComponent && props.openListComponent.length > 0) {
-          props.setData(null);
-          props.setSelectedComponent(props.openListComponent[0]);
-        }
-      })
-      .catch((reason: string) => {
-        errorToast(reason);
-      });
-  }, [
-    errorToast,
-    props.activeQuery,
-    props.setAvailableOptions,
-    props.setQueryGlobalData,
-    props.setData,
-    props.setSelectedComponent,
-    props.setOpenListComponent,
-    urlApiQuery,
-  ]);
-
-  // Enregistre la config pour la requête
-  const handleSaveQuery = () => {
-    props.formikRef.current?.submitForm(); // Ref pour l'enregistrement de la requête et composants
-  };
-
-  // Annule l'édition de la requête
-  const handleCancelQuery = () => {
-    props.setIsAdding(false); // Désactive le mode "Ajout"
-    props.setActiveQuery(null);
-    props.setSelectedComponent(null);
-    props.setOpenListComponent(null);
-  };
-
-  // Supprime la requête et composants associés
-  const handleDeleteQuery = () => {
-    const fetchDataDelete = async () => {
+    // Valide la requête et récupère les datas correspondantes
+    const fetchDataQuery = useCallback(async () => {
       (
         await fetch(
-          urlApiDeleteQuery + idToRemove,
+          urlApiQuery,
           getFetchOptions({
-            method: "DELETE",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query: activeQuery?.query,
+              queryTitle: activeQuery?.title,
+            }),
           }),
         )
       )
-        .text()
-        .then(() => {
-          successToast("La requête a bien été supprimée.");
-          // Refresh la liste des requêtes
-          fetchData.run();
+        .json()
+        .then((res) => {
+          // Format les données pour exploitations par les composants
+          const dataFormatted = formatData(res);
+          setAvailableOptions(Object.keys(dataFormatted[0]));
+          setQueryGlobalData(dataFormatted);
+          // Set les datas à afficher dans le premier composant, pour visualisation
+          if (openListComponent && openListComponent.length > 0) {
+            setData(null);
+            setSelectedComponent(openListComponent[0]);
+          }
         })
         .catch((reason: string) => {
           errorToast(reason);
         });
+    }, [
+      errorToast,
+      activeQuery,
+      setAvailableOptions,
+      setQueryGlobalData,
+      setData,
+      setSelectedComponent,
+      setOpenListComponent,
+      urlApiQuery,
+    ]);
+
+    // Enregistre la config pour la requête
+    const handleSaveQuery = () => {
+      formikRef.current?.submitForm(); // Ref pour l'enregistrement de la requête et composants
     };
-    fetchDataDelete();
-  };
 
-  // Récupère les requêtes en base lors du premier chargement du composant
-  useEffect(() => {
-    if (!openListQuery && !fetchData.isLoading) {
-      fetchData.run();
-    }
-  }, [fetchData, openListQuery]);
+    // Annule l'édition de la requête
+    const handleCancelQuery = () => {
+      setIsAdding(false); // Désactive le mode "Ajout"
+      setActiveQuery(null);
+      setSelectedComponent(null);
+      setOpenListComponent(null);
+    };
 
-  // Récupère les composant de la requête éditer
-  useEffect(() => {
-    if (
-      props.activeQuery &&
-      props.activeQuery.id &&
-      !props.openListComponent &&
-      !fetchQueryComponent.isLoading
-    ) {
-      fetchQueryComponent.run();
-    }
-  }, [fetchQueryComponent, props.activeQuery, props.openListComponent]);
+    // Supprime la requête et composants associés
+    const handleDeleteQuery = () => {
+      const fetchDataDelete = async () => {
+        (
+          await fetch(
+            urlApiDeleteQuery + idToRemove,
+            getFetchOptions({
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+            }),
+          )
+        )
+          .text()
+          .then(() => {
+            successToast("La requête a bien été supprimée.");
+            // Refresh la liste des requêtes
+            fetchData.run();
+          })
+          .catch((reason: string) => {
+            errorToast(reason);
+          });
+      };
+      fetchDataDelete();
+    };
 
-  // Récupères les datas de la requête éditée
-  // useEffect(() => {
-  //   if (
-  //     props.activeQuery &&
-  //     props.activeQuery.id &&
-  //     !props.queryGlobalData &&
-  //     props.openListComponent
-  //   ) {
-  //     fetchDataQuery();
-  //   }
-  // }, [
-  //   fetchDataQuery,
-  //   props.activeQuery,
-  //   props.openListComponent,
-  //   props.queryGlobalData,
-  // ]);
+    // Récupère les requêtes en base lors du premier chargement du composant
+    useEffect(() => {
+      if (!openListQuery && !fetchData.isLoading) {
+        fetchData.run();
+      }
+    }, [fetchData, openListQuery]);
 
-  return (
-    <Card className="m-3">
-      <Card.Header className="d-flex justify-content-between align-items-center">
-        <span>Liste des requêtes</span>
-        {!props.isAdding && (
-          <Button variant="primary" size="sm" onClick={handleAddQuery}>
-            Ajouter
-          </Button>
-        )}
-      </Card.Header>
+    // Récupère les composant de la requête éditer
+    useEffect(() => {
+      if (
+        activeQuery &&
+        activeQuery.id &&
+        !openListComponent &&
+        !fetchQueryComponent.isLoading
+      ) {
+        fetchQueryComponent.run();
+      }
+    }, [fetchQueryComponent, activeQuery, openListComponent]);
 
-      {props.isAdding && (
-        <Card.Body>
-          <h5 className="mb-3">{props.activeQuery?.title}</h5>
-          <div className="d-flex justify-content-between">
-            <Button variant="success" onClick={handleSaveQuery}>
-              Enregistrer
-            </Button>
-            <Button variant="secondary" onClick={handleCancelQuery}>
-              Annuler
-            </Button>
-          </div>
-        </Card.Body>
-      )}
+    // Récupères les datas de la requête éditée
+    useEffect(() => {
+      if (
+        activeQuery &&
+        activeQuery.id &&
+        !queryGlobalData &&
+        openListComponent
+      ) {
+        fetchDataQuery();
+      }
+    }, [fetchDataQuery, activeQuery, openListComponent, queryGlobalData]);
 
-      {!props.isAdding && (
-        <ListGroup
-          variant="flush"
-          style={{ maxHeight: "400px", overflowY: "auto" }}
-        >
-          {openListQuery && openListQuery.length > 0 ? (
-            openListQuery.map(({ id, title }) => (
-              <ListGroup.Item
-                key={id}
-                className="justify-content-between align-items-center"
-              >
-                <OverlayTrigger
-                  placement="top"
-                  overlay={
-                    <Tooltip id={`tooltip-${id}`}>
-                      {title} {/* Affiche le texte complet dans le tooltip */}
-                    </Tooltip>
-                  }
-                >
-                  <span className="text-truncate d-block">{title}</span>
-                </OverlayTrigger>
-                <div className="mt-2 d-flex justify-content-sm-between">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleEditQuery(id)}
-                  >
-                    Éditer
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => {
-                      setIdtoremove(id);
-                      setDisabledModal(true);
-                    }}
-                  >
-                    Supprimer
-                  </Button>
-                </div>
-              </ListGroup.Item>
-            ))
-          ) : (
-            <ListGroup.Item>Aucune requête ajoutée.</ListGroup.Item>
+    return (
+      <Card className="m-3">
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <h3>Liste des requêtes</h3>
+          {!isAdding && (
+            <CreateButton title={"Ajouter"} onClick={handleAddQuery} />
           )}
-        </ListGroup>
-      )}
-      <ConfirmModal
-        visible={disabledModal}
-        content="Supprimer la requête ?"
-        closeModal={() => setDisabledModal(false)}
-        query={""}
-        href="#"
-        onConfirm={() => handleDeleteQuery()}
-      />
-    </Card>
-  );
-});
+        </Card.Header>
+
+        {isAdding && (
+          <Card.Body>
+            <h5 className="mb-3">{activeQuery?.title}</h5>
+            <div className="d-flex justify-content-between">
+              <Button variant="secondary" onClick={handleCancelQuery}>
+                Annuler
+              </Button>
+              <Button variant="primary" onClick={handleSaveQuery}>
+                Enregistrer
+              </Button>
+            </div>
+          </Card.Body>
+        )}
+
+        {!isAdding && (
+          <ListGroup
+            variant="flush"
+            style={{ maxHeight: "400px", overflowY: "auto" }}
+          >
+            {openListQuery && openListQuery.length > 0 ? (
+              openListQuery.map(({ id, title }) => (
+                <ListGroup.Item
+                  key={id}
+                  className="justify-content-between align-items-center"
+                >
+                  <Row>
+                    <Col sm={8} className="text-truncate d-block">
+                      <TooltipCustom
+                        tooltipId={`query-title-tooltip-${id}`}
+                        tooltipText={title}
+                      >
+                        <span>{title}</span>
+                      </TooltipCustom>
+                    </Col>
+                    <Col sm={2}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="me-2 text-info text-decoration-none"
+                        onClick={() => handleEditQuery(id)}
+                      >
+                        <IconEdit />
+                      </Button>
+                    </Col>
+                    <Col sm={2}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-danger text-decoration-none"
+                        onClick={() => {
+                          setIdtoremove(id);
+                          setDisabledModal(true);
+                        }}
+                      >
+                        <IconDelete />
+                      </Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            ) : (
+              <ListGroup.Item>Aucune requête ajoutée.</ListGroup.Item>
+            )}
+          </ListGroup>
+        )}
+        <ConfirmModal
+          visible={disabledModal}
+          content="Supprimer la requête ?"
+          closeModal={() => setDisabledModal(false)}
+          query={""}
+          href="#"
+          onConfirm={() => handleDeleteQuery()}
+        />
+      </Card>
+    );
+  },
+);
 
 QueryList.displayName = "QueryList";
 

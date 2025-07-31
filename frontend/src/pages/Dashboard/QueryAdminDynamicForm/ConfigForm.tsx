@@ -1,6 +1,6 @@
 import { Card } from "react-bootstrap";
-import { ComponentDashboard } from "../Constants.tsx";
 import { TextInput } from "../../../components/Form/Form.tsx";
+import { ComponentDashboard } from "../Constants.tsx";
 
 export type ExtraField = { [x: string]: { fieldName: any } }; // Champs pour composant Table
 

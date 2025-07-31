@@ -52,7 +52,7 @@ const QueryForm = (props: QueryFormProps) => {
           submitUrl={urlApiQuery}
           onSubmit={(values) => updateData(values)}
           successToastMessage="La requête est valide"
-          prepareVariables={() => ({})}
+          prepareVariables={(values) => values}
           validationSchema={object({})}
         >
           <InnerQueryForm />
@@ -156,9 +156,8 @@ const InnerQueryForm = () => {
           className="mt-2 mb-2 text-muted d-flex align-items-center"
         >
           <span>
-            {" "}
-            {IconInfo()} Tester la requête pour enregistrer les modifications
-            sur le titre et/ou la requête .{" "}
+            <IconInfo /> Tester la requête pour enregistrer les modifications
+            sur le titre et/ou la requête.
           </span>
         </Alert>
 
