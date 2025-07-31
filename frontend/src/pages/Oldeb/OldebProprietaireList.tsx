@@ -1,4 +1,5 @@
 import { Container } from "react-bootstrap";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
@@ -12,21 +13,26 @@ import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import filterValuesToVariable from "./OldebProprietaireFilter.tsx";
 
 const OldebProprietaireList = () => {
+  const { user } = useAppContext();
   return (
     <Container>
       <PageTitle
         icon={<IconProprietaire />}
         title={"Liste des propriétaires"}
         right={
-          <CreateButton
-            href={URLS.OLDEB_PROPRIETAIRE_CREATE}
-            title={"Créer un propriétaire"}
-          />
+          hasDroit(user, TYPE_DROIT.OLDEB_C) && (
+            <CreateButton
+              href={URLS.OLDEB_PROPRIETAIRE_CREATE}
+              title={"Créer un propriétaire"}
+            />
+          )
         }
       />
       <QueryTable
