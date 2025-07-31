@@ -225,6 +225,7 @@ const QueryList = forwardRef(
     // Enregistre la config pour la requête
     const handleSaveQuery = () => {
       formikRef.current?.submitForm(); // Ref pour l'enregistrement de la requête et composants
+      fetchData.run();
     };
 
     // Annule l'édition de la requête
