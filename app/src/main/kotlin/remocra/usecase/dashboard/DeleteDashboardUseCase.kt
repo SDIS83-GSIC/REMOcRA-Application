@@ -2,6 +2,7 @@ package remocra.usecase.dashboard
 
 import com.google.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.DashboardConfigData
 import remocra.data.enums.ErrorType
 import remocra.db.DashboardRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -10,9 +11,8 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
-import java.util.UUID
 
-class DeleteDashboardUseCase : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {
+class DeleteDashboardUseCase : AbstractCUDUseCase<DashboardConfigData>(TypeOperation.DELETE) {
 
     @Inject
     lateinit var dashboardRepository: DashboardRepository
@@ -23,20 +23,20 @@ class DeleteDashboardUseCase : AbstractCUDUseCase<UUID>(TypeOperation.DELETE) {
         }
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: UUID) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: DashboardConfigData) {}
 
-    override fun execute(userInfo: WrappedUserInfo, element: UUID): UUID {
-        dashboardRepository.deleteProfil(element)
-        dashboardRepository.deleteConfig(element)
-        dashboardRepository.deleteDashboard(element)
+    override fun execute(userInfo: WrappedUserInfo, element: DashboardConfigData): DashboardConfigData {
+        dashboardRepository.deleteProfil(element.dashboardId)
+        dashboardRepository.deleteConfig(element.dashboardId)
+        dashboardRepository.deleteDashboard(element.dashboardId)
         return element
     }
 
-    override fun postEvent(element: UUID, userInfo: WrappedUserInfo) {
+    override fun postEvent(element: DashboardConfigData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
-                pojoId = element,
+                pojoId = element.dashboardId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.DASHBOARD,
                 auteurTracabilite = userInfo.getInfosTracabilite(),

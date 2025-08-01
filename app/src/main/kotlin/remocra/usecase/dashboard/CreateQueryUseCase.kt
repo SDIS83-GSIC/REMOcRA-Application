@@ -58,7 +58,7 @@ class CreateQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeOperation.
                 pojo = element,
                 pojoId = element.queryId,
                 typeOperation = typeOperation,
-                typeObjet = TypeObjet.DASHBOARD,
+                typeObjet = TypeObjet.DASHBOARD_QUERY,
                 auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),

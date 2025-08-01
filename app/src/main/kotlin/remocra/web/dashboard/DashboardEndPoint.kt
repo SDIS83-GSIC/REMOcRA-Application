@@ -118,7 +118,7 @@ class DashboardEndPoint : AbstractEndpoint() {
     @DELETE
     @Path("/delete-query/{id}")
     @RequireDroits([Droit.DASHBOARD_A])
-    fun delete(@PathParam("id") id: UUID): Response = deleteDashboardQueryUseCase.execute(securityContext.userInfo, id).wrap()
+    fun delete(@PathParam("id") id: UUID): Response = deleteDashboardQueryUseCase.execute(securityContext.userInfo, dashboardRepository.getDashboardQueryData(id)).wrap()
 
     @GET
     @Path("/get-component-config/{id}")
@@ -154,5 +154,5 @@ class DashboardEndPoint : AbstractEndpoint() {
     @DELETE
     @Path("/delete-dashboard/{id}")
     @RequireDroits([Droit.DASHBOARD_A])
-    fun deleteDashboard(@PathParam("id") id: UUID): Response = deleteDashboardUseCase.execute(securityContext.userInfo, id).wrap()
+    fun deleteDashboard(@PathParam("id") id: UUID): Response = deleteDashboardUseCase.execute(securityContext.userInfo, dashboardRepository.getDashboardConfigData(id)).wrap()
 }

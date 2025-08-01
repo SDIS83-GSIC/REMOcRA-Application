@@ -5,8 +5,11 @@ import org.jooq.DSLContext
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.select
 import remocra.auth.WrappedUserInfo
+import remocra.data.ComponentConfigData
 import remocra.data.DashboardComponentData
 import remocra.data.DashboardComponentInfoData
+import remocra.data.DashboardConfigData
+import remocra.data.DashboardQueryData
 import remocra.data.DashboardQueryInfoData
 import remocra.data.DashboardQueryRequestData
 import remocra.db.jooq.remocra.tables.pojos.Dashboard
@@ -77,6 +80,15 @@ class DashboardRepository
 
     fun getComponentsByQuery(queryId: UUID): Collection<DashboardComponent> =
         dsl.select(*DASHBOARD_COMPONENT.fields()).from(DASHBOARD_COMPONENT).where(DASHBOARD_COMPONENT.DAHSBOARD_QUERY_ID.eq(queryId)).fetchInto()
+
+    fun existsComponentsConfigByQuery(queryId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(DASHBOARD_CONFIG.DASHBOARD_COMPONENT_ID)
+                .from(DASHBOARD_CONFIG)
+                .join(DASHBOARD_COMPONENT)
+                .on(DASHBOARD_CONFIG.DASHBOARD_COMPONENT_ID.eq(DASHBOARD_COMPONENT.ID))
+                .where(DASHBOARD_COMPONENT.DAHSBOARD_QUERY_ID.eq(queryId)),
+        )
 
     fun getComponentsConfig(componentId: UUID): DashboardComponent? =
         dsl.select(*DASHBOARD_COMPONENT.fields()).from(DASHBOARD_COMPONENT).where(DASHBOARD_COMPONENT.ID.eq(componentId)).fetchOneInto()
@@ -190,4 +202,71 @@ class DashboardRepository
         dsl.deleteFrom(DASHBOARD)
             .where(DASHBOARD.ID.eq(dashboardId))
             .execute()
+
+    fun getDashboardQueryData(dashboardQueryId: UUID): DashboardQueryData =
+        dsl.select(
+            DASHBOARD_QUERY.ID.`as`("queryId"),
+            DASHBOARD_QUERY.TITLE.`as`("queryTitle"),
+            DASHBOARD_QUERY.QUERY.`as`("queryQuery"),
+            multiset(
+                select(
+                    DASHBOARD_COMPONENT.ID.`as`("componentId"),
+                    DASHBOARD_COMPONENT.KEY.`as`("componentKey"),
+                    DASHBOARD_COMPONENT.TITLE.`as`("componentTitle"),
+                    DASHBOARD_COMPONENT.CONFIG.`as`("componentConfig"),
+                    DASHBOARD_CONFIG.DASHBOARD_COMPONENT_POSITION_CONFIG.`as`("componentConfigPosition"),
+                )
+                    .from(DASHBOARD_COMPONENT)
+                    .join(DASHBOARD_CONFIG)
+                    .on(DASHBOARD_COMPONENT.ID.eq(DASHBOARD_CONFIG.DASHBOARD_COMPONENT_ID))
+                    .where(DASHBOARD_COMPONENT.DAHSBOARD_QUERY_ID.eq(DASHBOARD_QUERY.ID)),
+            ).convertFrom { result ->
+                result.map { record ->
+                    DashboardComponentData(
+                        componentId = record[DASHBOARD_COMPONENT.ID]!!,
+                        componentKey = record[DASHBOARD_COMPONENT.KEY]!!,
+                        componentTitle = record[DASHBOARD_COMPONENT.TITLE]!!,
+                        componentConfig = record[DASHBOARD_COMPONENT.CONFIG]!!,
+                        componentQueryId = record[DASHBOARD_COMPONENT.DAHSBOARD_QUERY_ID]!!,
+                        componentConfigPosition = record[DASHBOARD_CONFIG.DASHBOARD_COMPONENT_POSITION_CONFIG],
+                    )
+                }
+            }.`as`("queryComponents"),
+        )
+            .from(DASHBOARD_QUERY)
+            .where(DASHBOARD_QUERY.ID.eq(dashboardQueryId))
+            .fetchSingleInto()
+
+    fun getDashboardConfigData(dashboardId: UUID): DashboardConfigData =
+        dsl.select(
+            DASHBOARD.ID.`as`("dashboardId"),
+            DASHBOARD.TITLE.`as`("dashboardTitle"),
+            multiset(
+                select(
+                    DASHBOARD_COMPONENT.ID,
+                    DASHBOARD_COMPONENT.CONFIG,
+                )
+                    .from(DASHBOARD_COMPONENT)
+                    .join(DASHBOARD_CONFIG)
+                    .on(DASHBOARD_COMPONENT.ID.eq(DASHBOARD_CONFIG.DASHBOARD_COMPONENT_ID))
+                    .where(DASHBOARD_CONFIG.DASHBOARD_ID.eq(DASHBOARD.ID)),
+            ).convertFrom { result ->
+                result.map { record ->
+                    ComponentConfigData(
+                        componentId = record[DASHBOARD_COMPONENT.ID]!!,
+                        componentConfig = record[DASHBOARD_COMPONENT.CONFIG]!!,
+                    )
+                }
+            }.`as`("dashboardComponents"),
+            multiset(
+                select(L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID)
+                    .from(L_DASHBOARD_PROFIL)
+                    .where(L_DASHBOARD_PROFIL.DASHBOARD_ID.eq(DASHBOARD.ID)),
+            ).convertFrom { result ->
+                result.map { record -> record[L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID]!! }
+            }.`as`("dashboardProfilsId"),
+        )
+            .from(DASHBOARD)
+            .where(DASHBOARD.ID.eq(dashboardId))
+            .fetchSingleInto()
 }

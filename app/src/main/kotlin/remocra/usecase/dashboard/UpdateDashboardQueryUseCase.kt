@@ -79,7 +79,7 @@ class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeO
                 pojo = element,
                 pojoId = element.queryId,
                 typeOperation = typeOperation,
-                typeObjet = TypeObjet.DASHBOARD,
+                typeObjet = TypeObjet.DASHBOARD_QUERY,
                 auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),
