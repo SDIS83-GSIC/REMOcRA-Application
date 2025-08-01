@@ -140,3 +140,33 @@ h3 {
 :-moz-full-screen {
   background-color: #fff !important;
 }
+
+.container-profil {
+  width: 97vw;
+  height: 70vh;
+  overflow: scroll;
+}
+
+/* Fixe la première ligne */
+.container-profil .table thead {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.table th.sticky-col-1,
+.table td.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  background-color: white;
+  z-index: 5;
+}
+
+.section-header-cell {
+  position: sticky;
+  left: 3vw;
+  z-index: 4;
+  text-align: center;
+  width: 97vw; /* fixe la largeur ici */
+}
