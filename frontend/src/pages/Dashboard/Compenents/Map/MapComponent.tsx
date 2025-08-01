@@ -1,16 +1,18 @@
 import { Map, View } from "ol";
-import { GeoJSON } from "ol/format";
+import { GeoJSON, WKT } from "ol/format";
+import LayerGroup from "ol/layer/Group";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import LayerGroup from "ol/layer/Group";
+import { transformExtent } from "ol/proj";
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
-import { useEffect, useMemo, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
 import { Fill, Stroke, Style } from "ol/style";
-import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
+import { useEffect, useRef, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { useAppContext } from "../../../../components/App/AppProvider.tsx";
 import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
 import { EPSG_3857 } from "../../../../utils/constantsUtils.tsx";
+import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const OSM_LAYER = new TileLayer({
   source: new OSM(),
@@ -18,6 +20,13 @@ const OSM_LAYER = new TileLayer({
 
 const MapDashboardComponent = (data: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const {
+    user,
+    epsg: projection,
+    extent: defaultExtent,
+    extentSRID,
+  } = useAppContext();
+
   const { warning: warningToast } = useToastContext();
   const dataMapped = setSimpleValueMapped(
     data?.data ? data.data : [],
@@ -45,14 +54,16 @@ const MapDashboardComponent = (data: any) => {
     // Si le pourcentage dépasse toutes les limites, utiliser la dernière couleur
     return sortedLimits[sortedLimits.length - 1].color;
   };
+  const [map, setMap] = useState<Map | null>(null);
 
-  // Hack Lint dependency array useMemo
-  const currentRef = mapRef.current;
-  const map = useMemo(() => {
+  // Initialisation de la carte
+  useEffect(() => {
+    const currentRef = mapRef.current;
     if (!currentRef) {
       return;
     }
-    const map = new Map({
+
+    const newMap = new Map({
       target: currentRef,
       layers: [OSM_LAYER],
       view: new View({
@@ -62,8 +73,32 @@ const MapDashboardComponent = (data: any) => {
         padding: [50, 50, 50, 50],
       }),
     });
-    return map;
-  }, [currentRef]);
+
+    // L'extent de la map est défini par défaut à la zone de compétence de l'utilisateur ou à l'emprise définie par défaut
+    if (user?.zoneIntegrationExtent) {
+      const rawExtent = new WKT()
+        .readGeometry(user.zoneIntegrationExtent.split(";").pop())
+        .getExtent();
+      newMap
+        ?.getView()
+        .fit(transformExtent(rawExtent, projection.name, EPSG_3857), {
+          maxZoom: 20,
+        });
+    } else {
+      newMap
+        .getView()
+        .fit(transformExtent(defaultExtent, extentSRID, EPSG_3857), {
+          maxZoom: 20,
+        }); // Centre depuis l'étendue fournie par le serveur)
+    }
+
+    setMap(newMap);
+
+    // Cleanup function pour détruire la carte quand le composant se démonte
+    return () => {
+      newMap.setTarget(undefined);
+    };
+  }, [user?.zoneIntegrationExtent, projection.name, defaultExtent, extentSRID]);
 
   useEffect(() => {
     if (
@@ -79,8 +114,8 @@ const MapDashboardComponent = (data: any) => {
     map
       .getLayers()
       .getArray()
-      .filter((l) => l !== OSM_LAYER)
-      .forEach((l) => {
+      .filter((l: any) => l !== OSM_LAYER)
+      .forEach((l: any) => {
         map.removeLayer(l);
       });
 

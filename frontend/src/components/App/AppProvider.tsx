@@ -12,6 +12,7 @@ type AppContextProps = {
   epsg: { name: string; projection: string };
   srid: number;
   extent: number[];
+  extentSRID: string;
 };
 
 const AppContext = createContext({});
