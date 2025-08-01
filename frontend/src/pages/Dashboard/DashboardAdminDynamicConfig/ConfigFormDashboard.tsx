@@ -130,7 +130,7 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
                     : props.dashboardProfilsUtilisateur
                 }
                 getOptionValue={(p) => p.profilUtilisateurId}
-                getOptionLabel={(p) => p.profilUtilisateurCode}
+                getOptionLabel={(p) => p.profilUtilisateurLibelle}
                 onChange={(profils) => {
                   if (!profils) {
                     setFieldValue("profilsId", []);
