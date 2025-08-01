@@ -18,8 +18,8 @@ const DashboardItem = (props: DashboardItemProps) => {
     position: "absolute" as const,
     top: `${props.component.configPosition.y * props.heightRow}px`,
     left: `${props.component.configPosition.x * 25}%`,
-    width: `${props.component.configPosition.size * 25}%`,
-    height: `calc(${props.component.configPosition.size * props.heightRow}px - 2rem)`,
+    width: `${(props.component.configPosition.largeur ?? 1) * 25}%`,
+    height: `calc(${(props.component.configPosition.hauteur ?? 1) * props.heightRow}px - 2rem)`,
     zIndex: props.isSelected ? 10 : 1,
   };
 

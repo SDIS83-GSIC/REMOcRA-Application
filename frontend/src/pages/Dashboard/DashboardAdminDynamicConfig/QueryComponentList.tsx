@@ -34,7 +34,8 @@ const QueryComponentList = ({
     if (configDataQuerys) {
       // Position initial lors de l'ajout d'un nouveau composant
       const configPosition = {
-        size: 3,
+        largeur: 2,
+        hauteur: 2,
         x: 0,
         y: 0,
       };

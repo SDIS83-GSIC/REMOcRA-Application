@@ -150,7 +150,7 @@ export type ComponentDashboard = {
   key: any;
   title: any;
   config: any;
-  configPosition?: { x: number; y: number; size: number };
+  configPosition?: { x: number; y: number; largeur: number; hauteur: number };
   component?: any;
   formConfig?: any;
   data?: any;
@@ -179,7 +179,8 @@ export type DashboardComponentConfig = {
   componentId: string;
   componentQueryId: string;
   componentConfigPosition?: {
-    componentSize: number;
+    componentLargeur: number;
+    componentHauteur: number;
     componentX: number;
     componentY: number;
   };

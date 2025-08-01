@@ -44,20 +44,22 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
     {},
   );
 
-  const handleChangeSize = (size: number, id: number) => {
+  const handleChangeSize = (largeur: number, hauteur: number, id: number) => {
     // Change la taille du composant
     if (props.componentsListDashboard) {
       const componentFiltered = props.componentsListDashboard.find(
         (component) => component.id === id,
       );
+
       // Vérifie qu'on ne dépasse pas la grille
       if (
         componentFiltered &&
         componentFiltered.configPosition &&
-        componentFiltered.configPosition.x + size <= MAX_SIZE &&
-        componentFiltered.configPosition.y + size <= props.numberRowGrid
+        componentFiltered.configPosition.x + largeur <= MAX_SIZE &&
+        componentFiltered.configPosition.y + hauteur <= props.numberRowGrid
       ) {
-        componentFiltered.configPosition.size = size;
+        componentFiltered.configPosition.hauteur = hauteur;
+        componentFiltered.configPosition.largeur = largeur;
         props.setComponentSelected(componentFiltered);
 
         const newComponentList = props.componentsListDashboard.map(
@@ -162,12 +164,34 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
               step={1}
               max={MAX_SIZE}
               required={false}
-              name="sizeComponent"
-              label={`Taille du composant (1-${MAX_SIZE}) :`}
+              name="largeurComponent"
+              label={`Largeur du composant (1-${MAX_SIZE}) :`}
               onChange={(e: any) => {
                 const size = parseInt(e.target.value);
                 if (!isNaN(size)) {
-                  handleChangeSize(size, props.componentSelected?.id);
+                  handleChangeSize(
+                    size,
+                    values.hauteurComponent,
+                    props.componentSelected?.id,
+                  );
+                }
+              }}
+            />
+            <NumberInput
+              min={1}
+              step={1}
+              max={MAX_SIZE}
+              required={false}
+              name="hauteurComponent"
+              label={`Hauteur du composant (1-${MAX_SIZE}) :`}
+              onChange={(e: any) => {
+                const size = parseInt(e.target.value);
+                if (!isNaN(size)) {
+                  handleChangeSize(
+                    values.largeurComponent,
+                    size,
+                    props.componentSelected?.id,
+                  );
                 }
               }}
             />

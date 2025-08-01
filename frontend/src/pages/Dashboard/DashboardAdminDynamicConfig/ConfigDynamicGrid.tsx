@@ -28,9 +28,13 @@ const NB_COL = 4; // Nombre de colonnes dans la grille
 
 const getInitialValues = (componentSelected: any) => ({
   // Initialise la taille par défaut d'un nouveau composant
-  sizeComponent:
+  hauteurComponent:
     componentSelected && componentSelected.configPosition
-      ? componentSelected.configPosition.size
+      ? (componentSelected.configPosition.hauteur ?? 1)
+      : 1,
+  largeurComponent:
+    componentSelected && componentSelected.configPosition
+      ? (componentSelected.configPosition.largeur ?? 1)
       : 1,
 });
 
@@ -50,7 +54,8 @@ const getPrepareVariables = (
       ? componentsListDashboard.map((component: ComponentDashboard) => ({
           componentId: component.id,
           componentConfig: JSON.stringify({
-            componentSize: component.configPosition?.size,
+            componentLargeur: component.configPosition?.largeur,
+            componentHauteur: component.configPosition?.hauteur,
             componentX: component.configPosition?.x,
             componentY: component.configPosition?.y,
           }),
@@ -114,7 +119,8 @@ const ConfigDynamicGrid = ({
       componentsListDashboard.length > 0 &&
       componentSelected &&
       componentSelected.configPosition &&
-      newX + componentSelected.configPosition.size <= NB_COL &&
+      newX + (componentSelected.configPosition.largeur ?? 1) <= NB_COL &&
+      newY + (componentSelected.configPosition.hauteur ?? 1) <= NB_COL &&
       posX <= NB_COL &&
       posX >= 0 &&
       posY <= componentsListDashboard.length * NB_COL &&
@@ -146,9 +152,9 @@ const ConfigDynamicGrid = ({
     let lowestRow = -1;
 
     componentList.forEach(
-      (component: { configPosition: { y: any; size: any } }) => {
-        const { y, size } = component.configPosition;
-        const bottomLine = parseInt(y) + parseInt(size); // Ligne la plus basse occupée par ce composant
+      (component: { configPosition: { y: any; hauteur: any } }) => {
+        const { y, hauteur } = component.configPosition;
+        const bottomLine = parseInt(y) + parseInt(hauteur); // Ligne la plus basse occupée par ce composant
         if (bottomLine > lowestRow) {
           lowestRow = bottomLine; // Mettre à jour la ligne la plus basse
         }
@@ -198,9 +204,12 @@ const ConfigDynamicGrid = ({
             y: element.componentConfigPosition
               ? element.componentConfigPosition.componentY
               : 0,
-            size: element.componentConfigPosition
-              ? element.componentConfigPosition.componentSize
-              : 3,
+            largeur: element.componentConfigPosition
+              ? element.componentConfigPosition.componentLargeur
+              : 2,
+            hauteur: element.componentConfigPosition
+              ? element.componentConfigPosition.componentHauteur
+              : 2,
           },
           queryId: element.componentQueryId,
         });

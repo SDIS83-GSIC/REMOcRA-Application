@@ -104,9 +104,12 @@ const ComponentBoardList = () => {
               y: element.componentConfigPosition
                 ? element.componentConfigPosition.componentY
                 : 0,
-              size: element.componentConfigPosition
-                ? element.componentConfigPosition.componentSize
-                : 3,
+              largeur: element.componentConfigPosition
+                ? element.componentConfigPosition.componentLargeur
+                : 2,
+              hauteur: element.componentConfigPosition
+                ? element.componentConfigPosition.componentHauteur
+                : 2,
             },
             queryId: element.componentQueryId,
           });
@@ -131,7 +134,7 @@ const ComponentBoardList = () => {
     setNumberRowGrid(
       sortedComponents[0].configPosition
         ? sortedComponents[0].configPosition.y +
-            sortedComponents[0].configPosition.size
+            sortedComponents[0].configPosition.hauteur
         : 0,
     );
   };
