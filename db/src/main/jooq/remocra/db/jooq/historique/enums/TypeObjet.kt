@@ -90,6 +90,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     TYPE_CRISE("TYPE_CRISE"),
     TYPE_CRISE_CATEGORIE("TYPE_CRISE_CATEGORIE"),
     TYPE_ENGIN("TYPE_ENGIN"),
+    DASHBOARD_QUERY("DASHBOARD_QUERY"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
