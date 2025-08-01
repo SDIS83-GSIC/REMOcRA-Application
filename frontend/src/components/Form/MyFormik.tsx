@@ -113,6 +113,7 @@ type MyFormikProps = {
   warningToastMessage?: string;
   isMultipartFormData?: boolean;
   innerRef?: any;
+  fluid?: boolean;
 };
 
 const MyFormik = (props: MyFormikProps) => {
@@ -126,6 +127,7 @@ const MyFormik = (props: MyFormikProps) => {
     props.successToastMessage,
     props.errorToastMessage,
     props.warningToastMessage,
+    props.fluid ?? false,
   );
 
   return (
@@ -146,7 +148,7 @@ const MyFormik = (props: MyFormikProps) => {
         }
       }}
     >
-      <Container>
+      <Container fluid={props.fluid}>
         {errorMessage && <div className="text-danger">{errorMessage}</div>}
         {props.children}
       </Container>
