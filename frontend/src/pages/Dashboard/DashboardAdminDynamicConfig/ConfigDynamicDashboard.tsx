@@ -137,6 +137,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
     props.setComponentsListDashboard(null);
     props.setActiveDashboard(null);
     props.setEditTabIndex(null);
+    window.location.reload();
   };
 
   return (
@@ -234,6 +235,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             componentsListDashboard={props.componentsListDashboard}
             setComponentsListDashboard={props.setComponentsListDashboard}
             activeDashboard={props.activeDashboard}
+            setActiveDashboard={props.setActiveDashboard}
           />
         ) : (
           <div className="alert alert-primary" role="alert">

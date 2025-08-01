@@ -20,6 +20,7 @@ type ConfigDynamicGridProps = {
   componentsListDashboard: ComponentDashboard[];
   setComponentsListDashboard: (arg0: any) => void;
   activeDashboard: DashboardItemParam;
+  setActiveDashboard: (arg0: DashboardItemParam) => void;
 };
 
 const HEIGHT_ROW = 200;
@@ -68,6 +69,7 @@ const ConfigDynamicGrid = ({
   componentsListDashboard,
   setComponentsListDashboard,
   activeDashboard,
+  setActiveDashboard,
 }: ConfigDynamicGridProps) => {
   const [dashboardProfil, setDashboardProfil] = useState<any | null>();
   const [dashboardTitle, setDashboardtitle] = useState<string | null>(
@@ -242,7 +244,12 @@ const ConfigDynamicGrid = ({
     <Container fluid>
       <MyFormik
         validationSchema={object({})}
-        onSubmit={() => {}}
+        onSubmit={(dashboard) => {
+          setActiveDashboard({
+            id: dashboard.dashboardId,
+            title: dashboard.dashboardTitle,
+          });
+        }}
         initialValues={getInitialValues(componentSelected)}
         submitUrl={
           activeDashboard.id ? urlApiUpdateDashboard : urlApiSaveDashboard
