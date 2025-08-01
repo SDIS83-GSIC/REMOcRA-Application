@@ -3,6 +3,7 @@ import { GeoJSON, WKT } from "ol/format";
 import LayerGroup from "ol/layer/Group";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import Overlay from "ol/Overlay";
 import { transformExtent } from "ol/proj";
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
@@ -20,6 +21,7 @@ const OSM_LAYER = new TileLayer({
 
 const MapDashboardComponent = (data: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const {
     user,
     epsg: projection,
@@ -55,11 +57,13 @@ const MapDashboardComponent = (data: any) => {
     return sortedLimits[sortedLimits.length - 1].color;
   };
   const [map, setMap] = useState<Map | null>(null);
+  const [, setTooltip] = useState<Overlay | null>(null);
 
   // Initialisation de la carte
   useEffect(() => {
     const currentRef = mapRef.current;
-    if (!currentRef) {
+    const tooltipElement = tooltipRef.current;
+    if (!currentRef || !tooltipElement) {
       return;
     }
 
@@ -72,6 +76,55 @@ const MapDashboardComponent = (data: any) => {
         center: [244598, 5921729], // FIXME : récupérer la zone de l'utilisateur ?
         padding: [50, 50, 50, 50],
       }),
+    });
+
+    // Créer l'overlay pour la tooltip
+    const newTooltip = new Overlay({
+      element: tooltipElement,
+      offset: [10, 0],
+      positioning: "bottom-left",
+    });
+    newMap.addOverlay(newTooltip);
+    setTooltip(newTooltip);
+
+    // Événements pour la tooltip
+    newMap.on("pointermove", (evt) => {
+      const feature = newMap.forEachFeatureAtPixel(
+        evt.pixel,
+        (feature) => feature,
+      );
+
+      if (feature) {
+        const properties = feature.getProperties();
+        const coordinate = evt.coordinate;
+
+        // Calculer le pourcentage
+        const value = parseFloat(properties.value) || 0;
+        const max = parseFloat(properties.max) || 1;
+        const percentage = ((value / max) * 100).toFixed(1);
+
+        // Contenu de la tooltip
+        tooltipElement.innerHTML = `
+          <div style="
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            width: 300px;
+          ">
+            <div><strong>Informations</strong></div>
+            <div>${data.config.value} : ${value}</div>
+            <div>${data.config.max} : ${max}</div>
+            <div>Pourcentage: ${percentage}%</div>
+          </div>
+        `;
+
+        newTooltip.setPosition(coordinate);
+        tooltipElement.style.display = "block";
+      } else {
+        tooltipElement.style.display = "none";
+      }
     });
 
     // L'extent de la map est défini par défaut à la zone de compétence de l'utilisateur ou à l'emprise définie par défaut
@@ -98,7 +151,13 @@ const MapDashboardComponent = (data: any) => {
     return () => {
       newMap.setTarget(undefined);
     };
-  }, [user?.zoneIntegrationExtent, projection.name, defaultExtent, extentSRID]);
+  }, [
+    user?.zoneIntegrationExtent,
+    projection.name,
+    defaultExtent,
+    extentSRID,
+    data.config,
+  ]);
 
   useEffect(() => {
     if (
@@ -195,6 +254,15 @@ const MapDashboardComponent = (data: any) => {
       <Row className="h-100">
         <Col className="h-100">
           <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
+          <div
+            ref={tooltipRef}
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+              display: "none",
+              zIndex: 1000,
+            }}
+          />
         </Col>
       </Row>
     </Container>
