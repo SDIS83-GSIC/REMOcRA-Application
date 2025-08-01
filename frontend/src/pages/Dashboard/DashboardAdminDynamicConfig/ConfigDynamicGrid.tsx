@@ -277,27 +277,27 @@ const ConfigDynamicGrid = ({
       {/* Grid Layout */}
       <Row className="position-relative">
         {/* D&D actif seulement en édition */}
+        {Array.from({ length: NB_COL }, (_, colIndex) => (
+          <Col
+            id="col-grid-component"
+            key={colIndex}
+            className="border p-0 position-relative"
+            style={{ height: "100%" }}
+          >
+            {Array.from({ length: numberRowGrid }, (_, rowIndex) => (
+              <div
+                key={`${colIndex}-${rowIndex}`}
+                id={`${colIndex}-${rowIndex}`}
+                className="droppable border"
+                style={{
+                  height: HEIGHT_ROW + "px", // Hauteur des lignes
+                }}
+              />
+            ))}
+          </Col>
+        ))}
         {editTabIndex !== null ? (
           <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            {Array.from({ length: NB_COL }, (_, colIndex) => (
-              <Col
-                id="col-grid-component"
-                key={colIndex}
-                className="border p-0 position-relative"
-                style={{ height: "100%" }}
-              >
-                {Array.from({ length: numberRowGrid }, (_, rowIndex) => (
-                  <div
-                    key={`${colIndex}-${rowIndex}`}
-                    id={`${colIndex}-${rowIndex}`}
-                    className="droppable border"
-                    style={{
-                      height: HEIGHT_ROW + "px", // Hauteur des lignes
-                    }}
-                  />
-                ))}
-              </Col>
-            ))}
             <ListComponents
               componentsListDashboard={componentsListDashboard}
               setComponentsListDashboard={setComponentsListDashboard}
