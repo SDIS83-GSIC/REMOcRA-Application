@@ -62,13 +62,14 @@ class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeO
                     ),
                 )
             }
-
-            // Supprimer les composants qui ne sont plus présents dans la nouvelle liste
-            val newComponentIds = element.queryComponents.map { it.componentId }.toSet()
-            val componentsToDelete = componentIds - newComponentIds
-            dashboardRepository.deleteComponentsInDashboard(componentsToDelete)
-            dashboardRepository.deleteComponents(componentsToDelete)
         }
+
+        // Supprimer les composants qui ne sont plus présents dans la nouvelle liste
+        val newComponentIds = element.queryComponents.map { it.componentId }.toSet()
+        val componentsToDelete = componentIds - newComponentIds
+        dashboardRepository.deleteComponentsInDashboard(componentsToDelete)
+        dashboardRepository.deleteComponents(componentsToDelete)
+
         return element
     }
 
