@@ -6,18 +6,18 @@ import {
   IconPieChartComponent,
   IconTableComponent,
 } from "../../components/Icon/Icon.tsx";
-import CounterComponent from "./Compenents/Counter/CounterComponent.tsx";
-import CounterConfig from "./Compenents/Counter/CounterConfig.tsx";
-import GaugeComponent from "./Compenents/Gauge/GaugeComponent.tsx";
-import GaugeConfig from "./Compenents/Gauge/GaugeConfig.tsx";
-import HorizontalCharConfig from "./Compenents/HorizontalChar/HorizontalCharConfig.tsx";
-import HorizontalChartComponent from "./Compenents/HorizontalChar/HorizontalChartComponent.tsx";
-import MapComponent from "./Compenents/Map/MapComponent.tsx";
-import MapConfig from "./Compenents/Map/MapConfig.tsx";
-import PieChartComponent from "./Compenents/PieChart/PieChartComponent.tsx";
-import PieChartConfig from "./Compenents/PieChart/PieChartConfig.tsx";
-import TableComponent from "./Compenents/Table/TableComponent.tsx";
-import TableConfig from "./Compenents/Table/TableConfig.tsx";
+import CounterComponent from "./Components/Counter/CounterComponent.tsx";
+import CounterConfig from "./Components/Counter/CounterConfig.tsx";
+import GaugeComponent from "./Components/Gauge/GaugeComponent.tsx";
+import GaugeConfig from "./Components/Gauge/GaugeConfig.tsx";
+import HorizontalCharConfig from "./Components/HorizontalChar/HorizontalCharConfig.tsx";
+import HorizontalChartComponent from "./Components/HorizontalChar/HorizontalChartComponent.tsx";
+import MapComponent from "./Components/Map/MapComponent.tsx";
+import MapConfig from "./Components/Map/MapConfig.tsx";
+import PieChartComponent from "./Components/PieChart/PieChartComponent.tsx";
+import PieChartConfig from "./Components/PieChart/PieChartConfig.tsx";
+import TableComponent from "./Components/Table/TableComponent.tsx";
+import TableConfig from "./Components/Table/TableConfig.tsx";
 
 export const formatData = (data: { name: any; values: any }) => {
   // Format les données en sortie de service pour exploitation par les composants
