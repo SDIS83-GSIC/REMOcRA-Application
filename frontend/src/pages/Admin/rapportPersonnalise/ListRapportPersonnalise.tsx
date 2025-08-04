@@ -1,10 +1,11 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFilterFromList.tsx";
 import SelectFilterFromList from "../../../components/Filter/SelectFilterFromList.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconDuplicate,
@@ -47,12 +48,12 @@ const ListRapportPersonnalise = () => {
                 />
               </Col>
               <Col>
-                <Button
+                <CustomLinkButton
                   variant="primary"
-                  href={URLS.IMPORTER_RAPPORT_PERSONNALISE}
+                  pathname={URLS.IMPORTER_RAPPORT_PERSONNALISE}
                 >
                   Importer
-                </Button>
+                </CustomLinkButton>
               </Col>
             </Row>
           }
