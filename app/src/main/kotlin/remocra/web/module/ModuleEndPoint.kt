@@ -149,5 +149,5 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Public("Les types de module ne sont pas liées à un droit.")
     @Produces(MediaType.APPLICATION_JSON)
     fun getTypeModule() =
-        Response.ok(TypeModuleRapportCourrier.entries).build()
+        Response.ok(TypeModuleRapportCourrier.entries.sortedBy { it.name }).build()
 }

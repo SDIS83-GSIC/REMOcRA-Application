@@ -61,7 +61,9 @@ const FormTable = () => {
           },
           Filter: (
             <SelectFilterFromList
-              listIdCodeLibelle={listeTypeTask}
+              listIdCodeLibelle={listeTypeTask.sort((a, b) =>
+                a.libelle.localeCompare(b.libelle),
+              )}
               name={"typeTask"}
             />
           ),
