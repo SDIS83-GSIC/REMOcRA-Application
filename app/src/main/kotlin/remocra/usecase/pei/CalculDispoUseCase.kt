@@ -793,27 +793,23 @@ class CalculDispoUseCase : AbstractUseCase() {
 
     /**
      * Enumération de toutes les "anomalies système" pouvant influer sur la disponibilité d'un PEI.
-     *
-     * La propriété "rendIndispo" permet de différentier le cas du "non conforme :
-     * * rendIndispo == true --> PEI indisponible
-     * * rendIndispo == false --> PEI non conforme
      */
-    enum class TypePredicatDispo(val rendIndispo: Boolean) {
-        PRESSION_INSUFF(true),
-        PRESSION_NON_CONFORME(false),
-        PRESSION_TROP_ELEVEE(true),
+    enum class TypePredicatDispo() {
+        PRESSION_INSUFF,
+        PRESSION_NON_CONFORME,
+        PRESSION_TROP_ELEVEE,
 
-        PRESSION_DYN_INSUFF(true),
-        PRESSION_DYN_NON_CONFORME(false),
-        PRESSION_DYN_TROP_ELEVEE(true),
+        PRESSION_DYN_INSUFF,
+        PRESSION_DYN_NON_CONFORME,
+        PRESSION_DYN_TROP_ELEVEE,
 
-        DEBIT_INSUFF(true),
-        DEBIT_NON_CONFORME(false),
-        DEBIT_TROP_ELEVE(true),
+        DEBIT_INSUFF,
+        DEBIT_NON_CONFORME,
+        DEBIT_TROP_ELEVE,
 
         // Pour les PENA
-        VOLUME_INSUFF(true),
-        VOLUME_NON_CONFORME(false),
+        VOLUME_INSUFF,
+        VOLUME_NON_CONFORME,
     }
 
     /**
