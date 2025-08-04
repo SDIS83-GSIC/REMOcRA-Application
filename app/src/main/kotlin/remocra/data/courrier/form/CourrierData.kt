@@ -10,4 +10,5 @@ data class CourrierData(
     val modeleCourrierId: UUID,
     val nomDocumentTmp: String,
     val listeDestinataire: Collection<DestinataireData>,
+    val codeThematique: String,
 )

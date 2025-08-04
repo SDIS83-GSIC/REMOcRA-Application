@@ -54,6 +54,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
     ): CourrierData {
         // On va chercher le le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
+        val thematiques = thematiqueRepository.getAll()
 
         val repertoire = Paths.get(GlobalConstants.DOSSIER_DOCUMENT_COURRIER, element.documentId.toString())
         // On va créer un document
@@ -78,6 +79,11 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
                 courrierObjet = modeleCourrier.modeleCourrierObjetEmail,
                 courrierExpediteur = userInfo?.organismeId,
             ),
+        )
+
+        thematiqueRepository.insertLThematiqueCourrier(
+            thematiqueId = thematiques.find { it.code == element.codeThematique }!!.id,
+            courrierId = element.courrierId,
         )
 
         // Puis pour chaque destinataire on insère dans la table de liaison qui va bien

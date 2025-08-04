@@ -26,6 +26,7 @@ import { URLS } from "../../routes.tsx";
 import GenererForm, {
   DynamicFormWithParametre,
 } from "../../utils/buildDynamicForm.tsx";
+import { getThematiqueFromTypeModule } from "../../utils/fonctionsUtils.tsx";
 import {
   getInitialValues,
   prepareVariables,
@@ -43,7 +44,11 @@ type ContextType = {
 
 const GenereCourrier = () => {
   const { typeModule } = useParams();
-  const [urlCourrier, setUrlCourrier] = useState(null);
+  const [urlCourrier, setUrlCourrier] = useState<{
+    url: string;
+    modeleCourrierId: string;
+    courrierReference: string;
+  } | null>(null);
   const navigate = useNavigate();
   const { activesKeys, handleShowClose } = useAccordionState([true, false]);
 
@@ -77,7 +82,7 @@ const GenereCourrier = () => {
                     prepareVariables={(values) => prepareVariables(values)}
                     onSubmit={(url) => {
                       setUrlCourrier(url);
-                      navigate(URLS.VIEW_COURRIER(typeModule));
+                      navigate(URLS.VIEW_COURRIER(typeModule!));
                     }}
                   >
                     <GenererForm
@@ -102,6 +107,7 @@ const GenereCourrier = () => {
                 urlCourrier={urlCourrier.url}
                 modeleCourrierId={urlCourrier.modeleCourrierId}
                 courrierReference={urlCourrier.courrierReference}
+                thematique={getThematiqueFromTypeModule(typeModule)}
               />
             ) : (
               <Row>Veuillez générer le courrier avant de notifier.</Row>
@@ -124,10 +130,12 @@ const ListDestinataire = ({
   urlCourrier,
   modeleCourrierId,
   courrierReference,
+  thematique,
 }: {
   urlCourrier: string;
   modeleCourrierId: string;
   courrierReference: string;
+  thematique: string;
 }) => {
   const [listeDestinataire, setListeDestinataire] = useState<
     {
@@ -152,6 +160,7 @@ const ListDestinataire = ({
             nomDocument: urlCourrier.split("courrierName=")[1],
             listeDestinataire: listeDestinataire,
             courrierReference: courrierReference,
+            codeThematique: thematique,
           }),
         }),
       )

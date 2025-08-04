@@ -1,5 +1,7 @@
+import { TypeModuleRemocra } from "../components/ModuleRemocra/ModuleRemocra.tsx";
 import url, { getFetchOptions } from "../module/fetch.tsx";
 import { URLS } from "../routes.tsx";
+import { THEMATIQUE_POINT_EAU, THEMATIQUE_RCI } from "./constantsUtils.tsx";
 
 function isEmptyOrNull(value: string) {
   return value == null || value.trim().length === 0;
@@ -87,5 +89,40 @@ export function navigateGoBack(
     navigate(urlRetour);
   } else {
     navigate(URLS.ACCUEIL);
+  }
+}
+
+/**
+ * Permet d'obtenir la thématique associée à un type de module pour les courriers.
+ * Pour l'instant, seules les thématiques "Point d'eau" et "RCCI" sont utilisées pour les courriers
+ * @param typeModule
+ * @returns
+ */
+export function getThematiqueFromTypeModule(
+  typeModule: string | undefined,
+): string {
+  switch (typeModule) {
+    case TypeModuleRemocra.DECI:
+      return THEMATIQUE_POINT_EAU;
+    case TypeModuleRemocra.RCI:
+      return THEMATIQUE_RCI;
+    case TypeModuleRemocra.COUVERTURE_HYDRAULIQUE:
+    case TypeModuleRemocra.CARTOGRAPHIE_PERSONNALISEE:
+    case TypeModuleRemocra.OPERATIONS_DIVERSES:
+    case TypeModuleRemocra.DFCI:
+    case TypeModuleRemocra.OLDEBS:
+    case TypeModuleRemocra.PERMIS:
+    case TypeModuleRemocra.ADRESSES:
+    case TypeModuleRemocra.RISQUES:
+    case TypeModuleRemocra.CRISE:
+    case TypeModuleRemocra.ADMIN:
+    case TypeModuleRemocra.COURRIER:
+    case TypeModuleRemocra.DOCUMENT:
+    case TypeModuleRemocra.RAPPORT_PERSONNALISE:
+    case TypeModuleRemocra.PEI_PRESCRIT:
+    case TypeModuleRemocra.PERSONNALISE:
+    case TypeModuleRemocra.DASHBOARD:
+    default:
+      return THEMATIQUE_POINT_EAU;
   }
 }

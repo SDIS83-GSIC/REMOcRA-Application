@@ -166,4 +166,14 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(date),
         )
     }
+
+    fun insertLThematiqueCourrier(
+        thematiqueId: UUID,
+        courrierId: UUID,
+    ) {
+        dsl.insertInto(L_THEMATIQUE_COURRIER)
+            .set(L_THEMATIQUE_COURRIER.COURRIER_ID, courrierId)
+            .set(L_THEMATIQUE_COURRIER.THEMATIQUE_ID, thematiqueId)
+            .execute()
+    }
 }
