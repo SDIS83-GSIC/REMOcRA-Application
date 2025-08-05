@@ -164,7 +164,6 @@ export function toOpenLayer(
 
 const MapComponent = ({
   map,
-  workingLayer,
   availableLayers,
   addOrRemoveLayer,
   layerListRef,
@@ -176,7 +175,6 @@ const MapComponent = ({
   variant = "primary",
 }: {
   map?: Map;
-  workingLayer: any;
   availableLayers: any[];
   addOrRemoveLayer: (layer: any) => void;
   layerListRef: any;
@@ -185,7 +183,7 @@ const MapComponent = ({
   toolbarElement?: ReactNode;
   toggleTool: any;
   activeTool: any;
-  variant: string;
+  variant?: string;
 }) => {
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
@@ -220,7 +218,6 @@ const MapComponent = ({
             <MapToolbar
               ref={mapToolbarRef}
               map={map}
-              workingLayer={workingLayer}
               toggleTool={toggleTool}
               activeTool={activeTool}
               variant={variant}
@@ -270,8 +267,13 @@ export const useMapComponent = ({
     }}`,
     {},
   );
-  const layerListRef = useRef<MapLegend>();
-  const mapToolbarRef = useRef<MapToolbar>();
+  type MapLegendRef = {
+    addActiveLayer: (uid: string) => void;
+    removeActiveLayer: (uid: string) => void;
+    getActiveLayers: () => string[];
+  };
+  const layerListRef = useRef<MapLegendRef>(null);
+  const mapToolbarRef = useRef<typeof MapToolbar>();
 
   const map = useMemo(() => {
     if (!projection || !mapElement.current || !afficheCoordonneesState.data) {
@@ -286,6 +288,9 @@ export const useMapComponent = ({
               PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
             ].parametreValeur === TYPE_AFFICHAGE_COORDONNEES.DEGRES_DECIMAUX
               ? (coordinate) => {
+                  if (!coordinate) {
+                    return "";
+                  }
                   const coord = transform(
                     coordinate,
                     projection.name,
@@ -420,7 +425,6 @@ export const useMapComponent = ({
           }),
         });
       },
-      visibility: true,
       opacity: 1,
       zIndex: 9000,
     });
@@ -431,6 +435,9 @@ export const useMapComponent = ({
   }
 
   function createDataPeiLayer() {
+    if (!map) {
+      return;
+    }
     return createPointLayer(
       map,
       (extent, projection) =>

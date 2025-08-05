@@ -44,9 +44,9 @@ const measureStyle = new Style({
   }),
 });
 
-const formatLength = function (line) {
+const formatLength = function (line: LineString): string {
   const length = getLength(line); // m
-  let output;
+  let output: string;
   if (length > 1000) {
     output = Math.round((length / 1000) * 100) / 100 + " " + "km";
   } else {
@@ -55,9 +55,9 @@ const formatLength = function (line) {
   return output;
 };
 
-const formatArea = function (polygon) {
+const formatArea = function (polygon: Polygon): string {
   const area = getArea(polygon); // m²
-  let output;
+  let output: string;
   // Au dessus de 10 000 m², on passe en hectares ; 1ha == 10 000 m² == 100 m * 100 m
   if (area > 10000) {
     output = Math.round((area / 10000) * 100) / 100 + " ha";
@@ -67,13 +67,22 @@ const formatArea = function (polygon) {
   return output;
 };
 
-export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
-  const [activeTool, setActiveTool] = useState<string>("");
+export const useToolbarContext = ({
+  map,
+  workingLayer,
+  extraTools = {},
+}: {
+  map: Map;
+  workingLayer: any;
+  extraTools?: any;
+}) => {
+  const [activeTool, setActiveTool] = useState<string | null>("");
 
-  const measureOverlayArray = [];
-  const geometryOverlayArray = [];
+  const measureOverlayArray: Overlay[] = [];
+  const geometryOverlayArray: Overlay[] = [];
 
-  let measureTooltipElement, measureTooltip;
+  let measureTooltipElement: HTMLDivElement | null,
+    measureTooltip: Overlay | undefined;
 
   function createMeasureTooltip() {
     if (measureTooltipElement) {
@@ -119,41 +128,62 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       toggleMeasure(active, "Polygon");
     }
 
-    let listener;
-    const drawstartCallback = (evt) => {
+    let listener: ReturnType<typeof unByKey> | undefined;
+
+    interface GeometryChangeEvent {
+      target: Polygon | LineString;
+    }
+
+    const drawstartCallback = (evt: any) => {
       const sketch = evt.feature;
-      let tooltipCoord = evt.coordinate;
-      listener = sketch.getGeometry().on("change", function (evt) {
-        createMeasureTooltip();
-        const geom = evt.target;
-        let output;
-        if (geom instanceof Polygon) {
-          output = formatArea(geom);
-          tooltipCoord = geom.getInteriorPoint().getCoordinates();
-        } else if (geom instanceof LineString) {
-          output = formatLength(geom);
-          tooltipCoord = geom.getLastCoordinate();
-        }
-        measureTooltipElement.innerHTML = output;
-        measureTooltip.setPosition(tooltipCoord);
-      });
+      let tooltipCoord: number[] = evt.coordinate;
+      listener = sketch
+        .getGeometry()
+        .on("change", function (evt: GeometryChangeEvent) {
+          createMeasureTooltip();
+          const geom = evt.target;
+          let output: string = "";
+          if (geom instanceof Polygon) {
+            output = formatArea(geom);
+            tooltipCoord = geom.getInteriorPoint().getCoordinates();
+          } else if (geom instanceof LineString) {
+            output = formatLength(geom);
+            tooltipCoord = geom.getLastCoordinate();
+          }
+          if (measureTooltipElement && output) {
+            measureTooltipElement.innerHTML = output;
+          }
+          if (measureTooltip) {
+            measureTooltip.setPosition(tooltipCoord);
+          }
+        });
     };
 
-    const drawendCallback = (evt) => {
+    const drawendCallback = (evt: any) => {
       geometryOverlayArray.push(evt.feature);
-      measureTooltipElement.className = "ol-tooltip ol-tooltip-static";
-      measureTooltip.setOffset([0, -7]);
+      if (measureTooltipElement) {
+        measureTooltipElement.className = "ol-tooltip ol-tooltip-static";
+      }
+      if (measureTooltip) {
+        measureTooltip.setOffset([0, -7]);
+      }
       // unset sketch
       // unset tooltip so that a new one can be created
       measureTooltipElement = null;
-      unByKey(listener);
+      if (listener) {
+        unByKey(listener);
+      }
     };
 
     const measureLengthCtrl = new Draw({
       source: workingLayer.getSource(),
       type: "LineString",
       style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
+        const geometry = feature.getGeometry();
+        if (!geometry) {
+          return;
+        }
+        const geometryType = geometry.getType();
         if (geometryType === "LineString" || geometryType === "Point") {
           return measureStyle;
         }
@@ -166,7 +196,11 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
       source: workingLayer.getSource(),
       type: "Polygon",
       style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
+        const geometry = feature.getGeometry();
+        if (!geometry) {
+          return;
+        }
+        const geometryType = geometry.getType();
         if (geometryType === "Polygon" || geometryType === "Point") {
           return measureStyle;
         }
@@ -175,7 +209,7 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
     measureAreaCtrl.on("drawstart", drawstartCallback);
     measureAreaCtrl.on("drawend", drawendCallback);
 
-    function toggleMeasure(active = false, type) {
+    function toggleMeasure(active = false, type: string) {
       const ctrl = type === "LineString" ? measureLengthCtrl : measureAreaCtrl;
       const idx = map.getInteractions().getArray().indexOf(ctrl);
       if (active) {
@@ -208,14 +242,14 @@ export const useToolbarContext = ({ map, workingLayer, extraTools = {} }) => {
     };
   }, [map]);
 
-  function disabledTool(toolId) {
+  function disabledTool(toolId: string) {
     if (activeTool === toolId) {
       setActiveTool(null);
       tools[toolId]?.action(false);
     }
   }
 
-  function toggleTool(toolId) {
+  function toggleTool(toolId: string) {
     let newTool = null;
     if (activeTool === toolId) {
       setActiveTool(null);
@@ -262,28 +296,30 @@ const MapToolbar = forwardRef(
     },
     ref,
   ) => {
-    const [zoom, setZoom] = useState<number>();
+    const [zoom, setZoom] = useState<number>(
+      Math.floor(map.getView().getZoom() ?? 0),
+    );
 
     useEffect(() => {
       // setActiveTool("move");
-      setZoom(Math.floor(map.getView().getZoom()));
-    }, []);
+      setZoom(Math.floor(map.getView().getZoom() ?? 0));
+    }, [setZoom, map]);
 
     map.getView().on("change:resolution", () => {
-      if (map.getView().getZoom() % 1 === 0) {
-        setZoom(Math.floor(map.getView().getZoom()));
+      if ((map.getView().getZoom() ?? 0) % 1 === 0) {
+        setZoom(Math.floor(map.getView().getZoom() ?? 0));
       }
     });
 
     function zoomIn() {
-      if (map.getView().getZoom() < map.getView().getMaxZoom()) {
-        map.getView().setZoom(Math.floor(map.getView().getZoom() + 1));
+      if ((map.getView().getZoom() ?? 0) < map.getView().getMaxZoom()) {
+        map.getView().setZoom(Math.floor((map.getView().getZoom() ?? 0) + 1));
       }
     }
 
     function zoomOut() {
-      if (map.getView().getZoom() > map.getView().getMinZoom()) {
-        map.getView().setZoom(Math.floor(map.getView().getZoom() - 1));
+      if ((map.getView().getZoom() ?? 0) > map.getView().getMinZoom()) {
+        map.getView().setZoom(Math.floor((map.getView().getZoom() ?? 0) - 1));
       }
     }
 

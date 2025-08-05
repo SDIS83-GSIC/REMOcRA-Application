@@ -173,7 +173,6 @@ const MapCrise = ({
   return (
     <MapComponent
       map={map}
-      workingLayer={workingLayer}
       mapElement={mapElement}
       availableLayers={listeDesCouches}
       addOrRemoveLayer={addOrRemoveLayer} // les éléments de fonds IGN

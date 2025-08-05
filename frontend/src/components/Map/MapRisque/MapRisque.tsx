@@ -59,7 +59,6 @@ const MapRisque = () => {
       <PageTitle title="Carte des Risques" icon={<IconRisque />} />
       <MapComponent
         map={map}
-        workingLayer={workingLayer}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}

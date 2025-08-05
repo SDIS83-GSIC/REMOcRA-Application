@@ -96,7 +96,6 @@ const MapPermis = () => {
       <PageTitle title="Carte des Permis" icon={<IconPermis />} />
       <MapComponent
         map={map}
-        workingLayer={workingLayer}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}

@@ -29,7 +29,6 @@ const MapDFCI = () => {
   return (
     <MapComponent
       map={map}
-      workingLayer={workingLayer}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}
       layerListRef={layerListRef}

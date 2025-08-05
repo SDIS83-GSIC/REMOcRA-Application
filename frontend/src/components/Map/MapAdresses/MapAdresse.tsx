@@ -76,7 +76,6 @@ const MapAdresse = () => {
       <PageTitle title="Adresse" icon={<IconAdresse />} />
       <MapComponent
         map={map}
-        workingLayer={workingLayer}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
@@ -96,7 +95,6 @@ const MapAdresse = () => {
             dataAdresseLayer={dataAdresseLayer}
             supprimerFeature={supprimerFeature}
             selectedFeatures={selectedFeatures}
-            workingLayer={workingLayer}
             geometryElement={geometryElement}
             setListAdresseElement={setListAdresseElement}
             listAdresseElement={listAdresseElement}

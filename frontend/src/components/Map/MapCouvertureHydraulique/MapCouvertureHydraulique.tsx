@@ -89,7 +89,6 @@ const MapCouvertureHydraulique = ({
   return (
     <MapComponent
       map={map}
-      workingLayer={workingLayer}
       mapElement={mapElement}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}

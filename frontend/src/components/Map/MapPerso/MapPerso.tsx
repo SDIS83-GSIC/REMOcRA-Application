@@ -65,7 +65,6 @@ const MapPerso = () => {
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
           map={map}
-          workingLayer={workingLayer}
           availableLayers={availableLayers}
           addOrRemoveLayer={addOrRemoveLayer}
           layerListRef={layerListRef}
