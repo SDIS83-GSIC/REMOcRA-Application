@@ -167,7 +167,7 @@ class CouvertureHydrauliqueCalculRepository @Inject constructor(
             .selectFrom(
                 """
                     couverturehydraulique.plus_proche_pei(
-                        ST_GeomFromText('${point.toText()}', $srid), $distanceMaxParcours
+                        ST_Transform(ST_GeomFromText('${point.toText()}', $srid), ${appSettings.srid}), $distanceMaxParcours
                     )
                 """,
             )

@@ -13,6 +13,7 @@ import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
 import CreatePeiProjet from "../../../pages/CouvertureHydraulique/PeiProjet/CreatePeiProjet.tsx";
+import { EPSG_3857 } from "../../../utils/constantsUtils.tsx";
 import { doFetch } from "../../Fetch/useFetch.tsx";
 import {
   IconCreate,
@@ -212,8 +213,9 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         const distance = result.dist;
 
         // Affichage des features
-        cheminPlusCourtFeaturePei(workingLayer, wktPei, distance);
-        cheminPlusCourtFeatureChemin(workingLayer, wktChemin);
+        const sridSource = "EPSG:" + wktPei.split(";")[0].split("=").pop();
+        cheminPlusCourtFeaturePei(workingLayer, wktPei, distance, sridSource);
+        cheminPlusCourtFeatureChemin(workingLayer, wktChemin, sridSource);
         cheminPlusCourtFeatureClic(workingLayer, geometry);
       } else {
         errorToast("Aucun PEI n'a été trouvé.");
@@ -241,6 +243,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       workingLayer: any,
       wktPei: string,
       distance: number,
+      sridSource: string,
     ) {
       if (wktPei == null) {
         return;
@@ -248,7 +251,11 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       const featurePei = new WKT().readFeature(wktPei.split(";")[1]);
 
       const circle = new Feature(
-        new Circle(featurePei.get("geometry").flatCoordinates),
+        new Circle(
+          featurePei
+            .get("geometry")
+            ?.transform(sridSource, EPSG_3857).flatCoordinates,
+        ),
       );
 
       circle.setStyle(
@@ -265,11 +272,11 @@ export const useToolbarCouvertureHydrauliqueContext = ({
             font: "16px Calibri,sans-serif",
             overflow: true,
             fill: new Fill({
-              color: "white",
+              color: "black",
             }),
             text: Math.round(distance) + " m",
             offsetY: -20,
-            stroke: new Stroke({ color: "black", width: 2 }),
+            //stroke: new Stroke({ color: "black", width: 2 }),
           }),
         }),
       );
@@ -283,11 +290,16 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     function cheminPlusCourtFeatureChemin(
       workingLayer: any,
       wktChemin: string,
+      sridSource: string,
     ) {
       const featureChemin = new WKT().readFeature(wktChemin);
       const path = new Feature({
         geometry: new MultiLineString(
-          (featureChemin.getGeometry() as MultiLineString).getCoordinates(),
+          (
+            featureChemin
+              .getGeometry()
+              ?.transform(sridSource, EPSG_3857) as MultiLineString
+          ).getCoordinates(),
         ),
         name: "chemin",
       });
