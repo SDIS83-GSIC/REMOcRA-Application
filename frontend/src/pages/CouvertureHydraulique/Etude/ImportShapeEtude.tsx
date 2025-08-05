@@ -16,11 +16,21 @@ export const getInitialValues = () => ({
 });
 
 export const validationSchema = object({});
-export const prepareVariables = (values) => {
+export const prepareVariables = (values: {
+  fileReseau: Blob | null;
+  fileBatiment: Blob | null;
+  filePeiProjet: Blob | null;
+}) => {
   const formData = new FormData();
-  formData.append("fileReseau", values.fileReseau);
-  formData.append("fileBatiment", values.fileBatiment);
-  formData.append("filePeiProjet", values.filePeiProjet);
+  if (values.fileReseau) {
+    formData.append("fileReseau", values.fileReseau);
+  }
+  if (values.fileBatiment) {
+    formData.append("fileBatiment", values.fileBatiment);
+  }
+  if (values.filePeiProjet) {
+    formData.append("filePeiProjet", values.filePeiProjet);
+  }
   return formData;
 };
 
@@ -42,6 +52,7 @@ const ImportShapeEtude = () => {
         prepareVariables={(values) => prepareVariables(values)}
         // TODO redirect vers la carte
         redirectUrl={URLS.LIST_ETUDE}
+        onSubmit={() => {}}
       >
         <FormImportShape />
       </MyFormik>

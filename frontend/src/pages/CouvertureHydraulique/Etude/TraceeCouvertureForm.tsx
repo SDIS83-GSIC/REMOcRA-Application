@@ -14,7 +14,10 @@ type TraceeCouvertureType = {
   useReseauImporteWithReseauCourant: boolean;
 };
 
-export const getInitialValues = (listePeiId, listePeiProjetId) => ({
+export const getInitialValues = (
+  listePeiId: string[],
+  listePeiProjetId: string[],
+) => ({
   useReseauImporte: false,
   useReseauImporteWithReseauCourant: false,
   listePeiId: listePeiId,

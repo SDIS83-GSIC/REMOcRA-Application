@@ -21,8 +21,9 @@ const MapEtude = () => {
         <MapCouvertureHydraulique
           etudeId={etudeId}
           disabledEditPeiProjet={
-            EtudeStatutEnum[etudeState?.data?.etudeStatut] ===
-            EtudeStatutEnum.TERMINEE
+            EtudeStatutEnum[
+              etudeState?.data?.etudeStatut as keyof typeof EtudeStatutEnum
+            ] === EtudeStatutEnum.TERMINEE
           }
           reseauImporte={etudeState?.data?.reseauImporte}
         />

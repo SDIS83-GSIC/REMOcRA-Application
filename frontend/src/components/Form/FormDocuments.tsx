@@ -23,15 +23,15 @@ const FormDocuments = ({
   setFieldValue,
   otherFormParam,
   defaultOtherProperties,
-  disabled,
-  readOnly,
+  disabled = false,
+  readOnly = false,
 }: {
-  documents: Document[];
+  documents: any;
   defaultOtherProperties: any;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   otherFormParam: (index: number, listeElements: any[]) => ReactNode;
-  disabled: boolean;
-  readOnly: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 }) => {
   function formDocumentsToRepeat(index: number, listeElements: any[]) {
     return (
@@ -87,8 +87,8 @@ const FormDocuments = ({
 };
 
 export function setDocumentInFormData(
-  documentsApresModif: Document[],
-  documentsAvantModif: Document[],
+  documentsApresModif: any,
+  documentsAvantModif: any,
   formData: FormData,
 ) {
   documentsApresModif.map((e) => {
@@ -103,13 +103,13 @@ export function setDocumentInFormData(
     JSON.stringify(
       documentsAvantModif
         ?.filter(
-          (e) =>
+          (e: Document) =>
             !documentsApresModif
-              .map((e) => e.documentId)
+              .map((e: Document) => e.documentId)
               .includes(e.documentId),
         )
-        .filter((e) => e != null)
-        .map((e) => e.documentId) ?? [],
+        .filter((e: Document | null) => e != null)
+        .map((e: Document) => e.documentId) ?? [],
     ),
   );
 }

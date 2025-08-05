@@ -47,8 +47,8 @@ export const prepareVariables = (values: PeiProjetEntity) => ({
 });
 
 const PeiProjet = () => {
-  const { values, setValues, setFieldValue }: { values: PeiProjetEntity } =
-    useFormikContext();
+  const { values, setValues, setFieldValue } =
+    useFormikContext<PeiProjetEntity>();
 
   const listeTypePeiProjet: IdCodeLibelleType[] = Object.values(
     TypePeiProjet,

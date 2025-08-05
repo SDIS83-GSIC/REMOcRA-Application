@@ -39,7 +39,7 @@ const ListEtude = () => {
   const listeButton: ButtonType[] = [];
   if (hasDroit(user, TYPE_DROIT.ETUDE_R)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.LINK,
@@ -60,7 +60,7 @@ const ListEtude = () => {
 
   if (hasDroit(user, TYPE_DROIT.ETUDE_U)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       route: (etudeId) => URLS.UPDATE_ETUDE(etudeId),
@@ -69,13 +69,15 @@ const ListEtude = () => {
   }
   if (hasDroit(user, TYPE_DROIT.ETUDE_D)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
       disable: (v) => {
         return (
-          EtudeStatutEnum[v.original.etudeStatut] === EtudeStatutEnum.TERMINEE
+          EtudeStatutEnum[
+            v.original.etudeStatut as keyof typeof EtudeStatutEnum
+          ] === EtudeStatutEnum.TERMINEE
         );
       },
       textDisable: "Impossible de clore une étude qui n'est pas en cours",
@@ -87,7 +89,7 @@ const ListEtude = () => {
   }
   if (hasDroit(user, TYPE_DROIT.ETUDE_U)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       route: (etudeId) => URLS.IMPORTER_COUVERTURE_HYDRAULIQUE(etudeId),
@@ -115,6 +117,8 @@ const ListEtude = () => {
         />
         <QueryTable
           query={url`/api/couverture-hydraulique`}
+          getList={(data: any) => data}
+          getCount={(data: any) => data}
           columns={[
             {
               Header: "Type d'étude",
@@ -152,7 +156,10 @@ const ListEtude = () => {
               Cell: (value) => {
                 return (
                   <div>
-                    {value?.value != null && EtudeStatutEnum[value.value]}
+                    {value?.value != null &&
+                      EtudeStatutEnum[
+                        value.value as keyof typeof EtudeStatutEnum
+                      ]}
                   </div>
                 );
               },
@@ -171,7 +178,10 @@ const ListEtude = () => {
                   <div>
                     {value?.value
                       ?.map(
-                        (e) =>
+                        (e: {
+                          communeLibelle: string;
+                          communeCodeInsee: string;
+                        }) =>
                           e.communeLibelle + " (" + e.communeCodeInsee + ")",
                       )
                       ?.join(", ")}

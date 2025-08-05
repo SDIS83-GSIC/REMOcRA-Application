@@ -22,7 +22,7 @@ const UpdatePeiProjet = ({
   peiProjetId: string;
   coordonneeX: number;
   coordonneeY: number;
-  srid: number;
+  srid: string;
   onSubmit: () => void;
 }) => {
   const { data } = useGet(

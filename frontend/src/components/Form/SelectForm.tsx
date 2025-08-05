@@ -31,9 +31,9 @@ const SelectForm = ({
 }: SelectFormType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
-  const onChange = ({ name, value }) => {
+  const onChange = ({ name, value }: { name: string; value: string }) => {
     setValues != null &&
-      setValues((prevValues) => ({
+      setValues((prevValues: any) => ({
         ...prevValues,
         [name]: value,
       }));
@@ -43,7 +43,7 @@ const SelectForm = ({
   const list = listIdCodeLibelle ?? [];
   return (
     <DivWithError name={name} error={error}>
-      {label && <FormLabel label={label} required={required} />}
+      {label && <FormLabel name={name} label={label} required={required} />}
       <Form.Select
         name={name}
         disabled={disabled}

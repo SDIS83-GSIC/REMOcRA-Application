@@ -545,7 +545,7 @@ export const TooltipMapEditPeiProjet = ({
           coordonneeY={
             featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
           }
-          srid={map.getView().getProjection().getCode().split(":").pop()}
+          srid={map.getView().getProjection().getCode().split(":").pop()!}
           onSubmit={() => {
             handleCloseUpdatePeiProjet();
             overlay?.setPosition(undefined);

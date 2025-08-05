@@ -406,8 +406,8 @@ function QueryTable({
 type QueryTableType = {
   displayNone?: boolean;
   query: string;
-  queryParams: object[];
-  asyncOptions: object[];
+  queryParams?: object[];
+  asyncOptions?: object[];
   getList: (data: any) => object[];
   getCount: (data: any) => number;
   count?: number;

@@ -16,7 +16,7 @@ import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 
-export const getInitialValues = (data: EtudeType) => ({
+export const getInitialValues = (data?: EtudeType) => ({
   typeEtudeId: data?.typeEtudeId ?? null,
   etudeNumero: data?.etudeNumero ?? null,
   etudeLibelle: data?.etudeLibelle ?? null,
@@ -26,22 +26,29 @@ export const getInitialValues = (data: EtudeType) => ({
 });
 
 export const validationSchema = object({});
-export const prepareVariables = (values: EtudeType, initialData: EtudeType) => {
+export const prepareVariables = (
+  values: EtudeType,
+  initialData?: EtudeType,
+) => {
   const formData = new FormData();
-  setDocumentInFormData(values?.documents, initialData?.documents, formData);
+  setDocumentInFormData(
+    values?.documents,
+    initialData?.documents || [],
+    formData,
+  );
 
   formData.append("typeEtudeId", values.typeEtudeId);
   formData.append("etudeNumero", values.etudeNumero);
   formData.append("etudeLibelle", values.etudeLibelle);
-  formData.append("etudeDescription", values.etudeDescription);
+  values.etudeDescription &&
+    formData.append("etudeDescription", values.etudeDescription);
   formData.append("listeCommuneId", JSON.stringify(values.listeCommuneId));
 
   return formData;
 };
 
 const Etude = () => {
-  const { setValues, setFieldValue, values }: { values: EtudeType } =
-    useFormikContext();
+  const { setValues, setFieldValue, values } = useFormikContext<EtudeType>();
   const typeEtudeState = useGet(url`/api/couverture-hydraulique/type-etudes`);
   const communeState = useGet(url`/api/commune/get-libelle-commune`);
 
@@ -54,7 +61,7 @@ const Etude = () => {
           listIdCodeLibelle={typeEtudeState?.data}
           label="Type de l'étude"
           defaultValue={typeEtudeState?.data?.find(
-            (e) => e.id === values.typeEtudeId,
+            (e: IdCodeLibelleType) => e.id === values.typeEtudeId,
           )}
           required={true}
           setValues={setValues}
@@ -79,7 +86,7 @@ const Etude = () => {
             ) ?? undefined
           }
           onChange={(commune) => {
-            const communeId = commune.map((e) => e.id);
+            const communeId = commune.map((e: IdCodeLibelleType) => e.id);
             communeId.length > 0
               ? setFieldValue("listeCommuneId", communeId)
               : setFieldValue("listeCommuneId", undefined);

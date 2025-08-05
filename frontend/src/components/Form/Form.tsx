@@ -15,7 +15,7 @@ import "./form.css";
 
 type InputType = {
   name: string;
-  label?: string;
+  label?: string | ReactNode;
   required?: boolean;
   readOnly?: boolean;
   value?: string | any;

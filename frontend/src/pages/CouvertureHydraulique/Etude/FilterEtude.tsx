@@ -29,7 +29,7 @@ export default filterValuesToVariable;
 function filterPropertyEtude(
   filter: FilterEtudeType,
   value: string | undefined,
-  name: string,
+  name: keyof FilterEtudeType,
 ) {
   if (value != null && value.trim() !== "") {
     filter[name] = value;

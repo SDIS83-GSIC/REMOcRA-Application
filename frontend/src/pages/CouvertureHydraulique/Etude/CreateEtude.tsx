@@ -14,13 +14,14 @@ const CreateEtude = () => {
     <Container>
       <PageTitle icon={<IconEtude />} title={"Création d'une étude"} />
       <MyFormik
-        initialValues={getInitialValues(null)}
+        initialValues={getInitialValues()}
         validationSchema={validationSchema}
         isPost={true}
         isMultipartFormData={true}
         submitUrl={`/api/couverture-hydraulique/etude/create/`}
-        prepareVariables={(values) => prepareVariables(values, null)}
+        prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={URLS.LIST_ETUDE}
+        onSubmit={() => {}}
       >
         <Etude />
       </MyFormik>

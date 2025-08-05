@@ -26,6 +26,7 @@ export type SelectFormType = SelectType & {
   setValues?: (e: any) => void;
   setFieldValue?: (name: string, value: any) => void;
   setOtherValues?: () => void;
+  defaultValue?: IdCodeLibelleType | null;
 };
 
 export type SelectNomenclaturesFormType = {
