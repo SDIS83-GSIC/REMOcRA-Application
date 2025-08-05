@@ -8,6 +8,7 @@ import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button } from "react-bootstrap";
+import { object } from "yup";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import TraceeCouvertureForm from "../../../pages/CouvertureHydraulique/Etude/TraceeCouvertureForm.tsx";
@@ -19,12 +20,12 @@ import {
   IconPeiPlusProche,
   IconSelect,
 } from "../../Icon/Icon.tsx";
+import EditModal from "../../Modal/EditModal.tsx";
+import useModal from "../../Modal/ModalUtils.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
-import EditModal from "../../Modal/EditModal.tsx";
-import useModal from "../../Modal/ModalUtils.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -53,6 +54,13 @@ export const useToolbarCouvertureHydrauliqueContext = ({
   dataPeiProjetLayer,
   etudeId,
   reseauImporte,
+}: {
+  map?: Map;
+  workingLayer: any;
+  dataPeiLayer: any;
+  dataPeiProjetLayer: any;
+  etudeId: string;
+  reseauImporte: boolean;
 }) => {
   const { success: successToast, error: errorToast } = useToastContext();
   const [showCreatePeiProjet, setShowPeiProjet] = useState(false);
@@ -121,7 +129,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       .text()
       .then(() => {
         successToast("Couverture hydraulique effacée");
-        refreshLayerGeoserver(map);
+        refreshLayerGeoserver(map!);
       })
       .catch((reason: string) => {
         errorToast(reason);
@@ -137,7 +145,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       source: workingLayer.getSource(),
       type: "Point",
       style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
+        const geometryType = feature.getGeometry()?.getType();
         if (geometryType === "Point") {
           return drawStyle;
         }
@@ -148,7 +156,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       workingLayer.getSource().clear();
     });
     createPeiProjetCtrl.on("drawend", async (event) => {
-      const geometry = event.feature.getGeometry();
+      const geometry = event.feature.getGeometry() as Point;
       setPointPeiProjet(geometry);
       setShowPeiProjet(true);
     });
@@ -163,10 +171,10 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         .indexOf(createPeiProjetCtrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(createPeiProjetCtrl);
+          map!.addInteraction(createPeiProjetCtrl);
         }
       } else {
-        map.removeInteraction(createPeiProjetCtrl);
+        map!.removeInteraction(createPeiProjetCtrl);
       }
     }
 
@@ -174,7 +182,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       source: workingLayer.getSource(),
       type: "Point",
       style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
+        const geometryType = feature.getGeometry()?.getType();
         if (geometryType === "Point") {
           return drawStyle;
         }
@@ -185,15 +193,15 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       workingLayer.getSource().clear();
     });
     peiPlusProcheCtrl.on("drawend", async (event) => {
-      const geometry = event.feature.getGeometry();
+      const geometry = event.feature.getGeometry() as Point;
       const result = await doFetch(
         url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
         getFetchOptions({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            longitude: geometry.getFlatCoordinates()[0],
-            latitude: geometry.getFlatCoordinates()[1],
+            longitude: geometry!.getFlatCoordinates()[0],
+            latitude: geometry!.getFlatCoordinates()[1],
             srid: map.getView().getProjection().getCode().split(":")[1],
           }),
         }),
@@ -219,10 +227,10 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       const idx = map?.getInteractions().getArray().indexOf(peiPlusProcheCtrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(peiPlusProcheCtrl);
+          map!.addInteraction(peiPlusProcheCtrl);
         }
       } else {
-        map.removeInteraction(peiPlusProcheCtrl);
+        map!.removeInteraction(peiPlusProcheCtrl);
       }
     }
 
@@ -231,7 +239,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
      */
     function cheminPlusCourtFeaturePei(
       workingLayer: any,
-      wktPei: Geometry,
+      wktPei: string,
       distance: number,
     ) {
       if (wktPei == null) {
@@ -274,12 +282,12 @@ export const useToolbarCouvertureHydrauliqueContext = ({
      */
     function cheminPlusCourtFeatureChemin(
       workingLayer: any,
-      wktChemin: Geometry,
+      wktChemin: string,
     ) {
       const featureChemin = new WKT().readFeature(wktChemin);
       const path = new Feature({
         geometry: new MultiLineString(
-          featureChemin.getGeometry().getCoordinates(),
+          (featureChemin.getGeometry() as MultiLineString).getCoordinates(),
         ),
         name: "chemin",
       });
@@ -337,11 +345,6 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       hitTolerance: 4,
     });
     const dragBoxCtrl = new DragBox({
-      style: new Style({
-        stroke: new Stroke({
-          color: [0, 0, 255, 1],
-        }),
-      }),
       minArea: 25,
     });
     dragBoxCtrl.on("boxend", function (e) {
@@ -379,14 +382,14 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
       if (active) {
         if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(selectCtrl);
-          map.addInteraction(dragBoxCtrl);
+          map!.addInteraction(selectCtrl);
+          map!.addInteraction(dragBoxCtrl);
         }
       } else {
         listePeiId.splice(0, listePeiId.length);
         listePeiProjetId.splice(0, listePeiProjetId.length);
-        map.removeInteraction(selectCtrl);
-        map.removeInteraction(dragBoxCtrl);
+        map!.removeInteraction(selectCtrl);
+        map!.removeInteraction(dragBoxCtrl);
       }
     }
 
@@ -403,7 +406,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         active,
         selectProjetCtrl,
         modifyCtrl,
-        map,
+        map!,
         (feature, pointId) => {
           setGeometrieMove(feature);
           setPeiProjetIdMove(pointId);
@@ -453,6 +456,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 const MapToolbarCouvertureHydraulique = ({
   map,
   dataPeiProjetLayer,
+  workingLayer,
   etudeId,
   disabledEditPeiProjet,
   calculCouverture,
@@ -471,8 +475,7 @@ const MapToolbarCouvertureHydraulique = ({
   closeMove,
   visibleMove,
 }: {
-  map?: Map;
-  dataPeiLayer: any;
+  map: Map;
   dataPeiProjetLayer: any;
   workingLayer: any;
   etudeId: string;
@@ -480,10 +483,10 @@ const MapToolbarCouvertureHydraulique = ({
   calculCouverture: () => void;
   clearCouverture: () => void;
   handleClosePeiProjet: () => void;
-  showCreatePeiProjet: () => void;
-  pointPeiProjet: string[];
+  showCreatePeiProjet: boolean;
+  pointPeiProjet: Point | null;
   handleCloseTraceeCouverture: () => void;
-  showTraceeCouverture: () => void;
+  showTraceeCouverture: boolean;
   listePeiId: string[];
   listePeiProjetId: string[];
   toggleTool: (toolId: string) => void;
@@ -548,11 +551,12 @@ const MapToolbarCouvertureHydraulique = ({
         className="w-auto"
       >
         <CreatePeiProjet
-          coordonneeX={pointPeiProjet?.getFlatCoordinates()[0]}
-          coordonneeY={pointPeiProjet?.getFlatCoordinates()[1]}
-          srid={map.getView().getProjection().getCode().split(":").pop()}
+          coordonneeX={pointPeiProjet?.getFlatCoordinates()[0] ?? 0}
+          coordonneeY={pointPeiProjet?.getFlatCoordinates()[1] ?? 0}
+          srid={map.getView().getProjection().getCode().split(":").pop()!}
           etudeId={etudeId}
           onSubmit={() => {
+            workingLayer.getSource().clear();
             dataPeiProjetLayer.getSource().refresh();
             refreshLayerGeoserver(map);
             handleClosePeiProjet();
@@ -576,7 +580,7 @@ const MapToolbarCouvertureHydraulique = ({
       </Volet>
       <TooltipMapEditPeiProjet
         etudeId={etudeId}
-        map={map}
+        map={map!}
         disabledEditPeiProjet={disabledEditPeiProjet}
         dataPeiProjetLayer={dataPeiProjetLayer}
         disabled={activeTool === "deplacer-pei-projet"}
@@ -601,6 +605,8 @@ const MapToolbarCouvertureHydraulique = ({
           getInitialValues={() => ({
             geometrie: geometrieMove,
           })}
+          validationSchema={object({})}
+          canModify={true}
         >
           <p>Voulez-vous déplacer le PEI ?</p>
         </EditModal>

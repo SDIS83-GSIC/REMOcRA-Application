@@ -72,7 +72,7 @@ export const useToolbarContext = ({
   workingLayer,
   extraTools = {},
 }: {
-  map: Map;
+  map?: Map;
   workingLayer: any;
   extraTools?: any;
 }) => {
@@ -98,7 +98,7 @@ export const useToolbarContext = ({
       insertFirst: false,
     });
     measureOverlayArray.push(measureTooltip);
-    map.addOverlay(measureTooltip);
+    map!.addOverlay(measureTooltip);
   }
 
   const tools = useMemo(() => {
@@ -109,10 +109,10 @@ export const useToolbarContext = ({
     const dragPanCtrl = new DragPan();
 
     function toggleMove(active = false) {
-      const idx = map.getInteractions().getArray().indexOf(dragPanCtrl);
+      const idx = map!.getInteractions().getArray().indexOf(dragPanCtrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(dragPanCtrl);
+          map!.addInteraction(dragPanCtrl);
         }
         dragPanCtrl.setActive(true);
       } else {
@@ -211,14 +211,14 @@ export const useToolbarContext = ({
 
     function toggleMeasure(active = false, type: string) {
       const ctrl = type === "LineString" ? measureLengthCtrl : measureAreaCtrl;
-      const idx = map.getInteractions().getArray().indexOf(ctrl);
+      const idx = map!.getInteractions().getArray().indexOf(ctrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(ctrl);
+          map!.addInteraction(ctrl);
         }
       } else {
-        map.removeInteraction(ctrl);
-        measureOverlayArray.forEach((o) => map.removeOverlay(o));
+        map!.removeInteraction(ctrl);
+        measureOverlayArray.forEach((o) => map!.removeOverlay(o));
         measureOverlayArray.splice(0, measureOverlayArray.length);
         workingLayer.getSource().removeFeatures(geometryOverlayArray);
         geometryOverlayArray.splice(0, geometryOverlayArray.length);
@@ -266,7 +266,7 @@ export const useToolbarContext = ({
     tools["move-view"].action(
       tools[toolId]?.actionPossibleEnDeplacement !== false ||
         newTool == null ||
-        map
+        map!
           .getInteractions()
           .getArray()
           .find((interaction: Interaction) => interaction instanceof DragPan)

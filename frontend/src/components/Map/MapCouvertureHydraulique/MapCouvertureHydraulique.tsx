@@ -97,11 +97,13 @@ const MapCouvertureHydraulique = ({
       toggleTool={toggleTool}
       activeTool={activeTool}
       toolbarElement={
-        mapToolbarRef.current && (
+        mapToolbarRef.current &&
+        map && (
           <MapToolbarCouvertureHydraulique
-            map={map}
-            etudeId={etudeId}
+            map={map!}
             dataPeiProjetLayer={dataPeiProjetLayer}
+            workingLayer={workingLayer}
+            etudeId={etudeId}
             disabledEditPeiProjet={disabledEditPeiProjet}
             calculCouverture={calculCouverture}
             clearCouverture={clearCouverture}
@@ -113,7 +115,7 @@ const MapCouvertureHydraulique = ({
             listePeiId={listePeiId}
             listePeiProjetId={listePeiProjetId}
             toggleTool={toggleTool}
-            activeTool={activeTool}
+            activeTool={activeTool ?? ""}
             geometrieMove={geometrieMove}
             peiProjetIdMove={peiProjetIdMove}
             closeMove={closeMove}

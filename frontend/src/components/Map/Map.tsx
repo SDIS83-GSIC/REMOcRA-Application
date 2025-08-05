@@ -496,7 +496,7 @@ export const useMapComponent = ({
           params.set("extent", extent);
           navigate(`?${params.toString()}`, {
             replace: true,
-            state: { from: state.from },
+            state: { from: state?.from },
           });
         }
       }, 300); // Délai de 300ms
