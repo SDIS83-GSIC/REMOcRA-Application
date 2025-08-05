@@ -107,7 +107,7 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         }
                     } else {
                         """
-                           Capacité : ${peiData.capacite?.toString()?.takeIfNotNullElseNonRenseigne()}
+                           Capacité : ${peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()}
                         """.trimIndent()
                     }
 
@@ -187,5 +187,5 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
     )
 
     private fun String?.takeIfNotNullElseNonRenseigne() =
-        this.takeIf { !it.isNullOrBlank() } ?: "Non renseigné"
+        this.takeIf { !it.isNullOrBlank() && it != "null" } ?: "Non renseigné"
 }

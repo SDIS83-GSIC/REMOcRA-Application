@@ -133,7 +133,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val pibiJumele: String?,
         val diametreLibelle: String?,
         val pibiDiametreCanalisation: Int?,
-        val capacite: Int?,
+        val penaCapacite: Int?,
     )
 
     fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(
