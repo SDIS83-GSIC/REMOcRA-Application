@@ -3,7 +3,7 @@ import { classNames } from "@react-pdf-viewer/core";
 import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/AccueilPrive.tsx";
 import { URLS } from "../../routes.tsx";
-import formatDateTime from "../../utils/formatDateUtils.tsx";
+import formatDateTime, { formatDate } from "../../utils/formatDateUtils.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import { IconExport } from "../Icon/Icon.tsx";
 
@@ -61,13 +61,16 @@ const ModuleDocumentCourrier = ({
   moduleId: string;
   moduleType: TypeModuleRemocra;
 }) => {
+  const isTypeDocument = moduleType === TypeModuleRemocra.DOCUMENT;
+  const majWidth = isTypeDocument ? 100 : 150;
+
   return (
     <>
       <Table bordered striped>
         <thead>
           <tr>
             <th>Libellé</th>
-            <th width={150}>Mise à jour</th>
+            <th width={majWidth}>Mise à jour</th>
             <th width={50} />
           </tr>
         </thead>
@@ -76,7 +79,12 @@ const ModuleDocumentCourrier = ({
             return (
               <tr key={index}>
                 <td>{e.libelle}</td>
-                <td width={150}>{e.date && formatDateTime(e.date)}</td>
+                <td width={majWidth}>
+                  {e.date &&
+                    (isTypeDocument
+                      ? formatDate(e.date)
+                      : formatDateTime(e.date))}
+                </td>
                 <td width={50} className="p-0 m-0">
                   <Button
                     variant={"link"}
