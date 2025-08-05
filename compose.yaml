@@ -83,6 +83,12 @@ services:
     environment:
       - HOP_SERVER_USER=admin
       - HOP_SERVER_PASS=admin
+      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME:-remocra}
+      - POSTGRES_DB_USERNAME=${POSTGRES_DB_USERNAME:-remocra}
+      - POSTGRES_DB_PASSWORD=${POSTGRES_DB_PASSWORD:-remocra}
+      - POSTGRES_DB_HOSTNAME=${POSTGRES_DB_HOSTNAME:-db}
+      - POSTGRES_DB_PORT=${POSTGRES_DB_PORT:-5432}
+
     volumes:
       - ./.data/apache_hop/tasks:/files/tasks/
       - ./.data/apache_hop/config:/files/metadata/async-web-service/
