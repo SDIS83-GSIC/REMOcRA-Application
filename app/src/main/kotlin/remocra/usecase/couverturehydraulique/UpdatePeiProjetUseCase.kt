@@ -1,6 +1,7 @@
 package remocra.usecase.couverturehydraulique
 
 import com.google.inject.Inject
+import org.locationtech.jts.geom.Geometry
 import remocra.auth.WrappedUserInfo
 import remocra.data.PeiProjetData
 import remocra.data.enums.ErrorType
@@ -11,9 +12,9 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.AbstractCUDGeometrieUseCase
 
-class UpdatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.UPDATE) {
+class UpdatePeiProjetUseCase : AbstractCUDGeometrieUseCase<PeiProjetData>(TypeOperation.UPDATE) {
     @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -74,5 +75,15 @@ class UpdatePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.U
                 }
             }
         }
+    }
+
+    override fun getListGeometrie(element: PeiProjetData): Collection<Geometry> {
+        return listOf(element.peiProjetGeometrie)
+    }
+
+    override fun ensureSrid(element: PeiProjetData): PeiProjetData {
+        return element.copy(
+            peiProjetGeometrie = transform(element.peiProjetGeometrie),
+        )
     }
 }
