@@ -30,15 +30,15 @@ import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
 import MapLegend from "./MapLegend.tsx";
-import MapToolbar from "./MapToolbar.tsx";
-import { createPointLayer } from "./MapUtils.tsx";
 import {
+  debounce,
   optimizeMap,
   optimizeTileLayer,
   optimizeVectorLayer,
-  debounce,
   throttle,
 } from "./MapPerformanceUtils.tsx";
+import MapToolbar from "./MapToolbar.tsx";
+import { createPointLayer } from "./MapUtils.tsx";
 import "./map.css";
 
 const resolutions = [];
@@ -69,20 +69,28 @@ const tileGrid = new WMTSTileGrid({
 // Déclaration OL depuis une définition de couche
 export function toOpenLayer(
   layer: any,
+  etudeId?: string,
 ): TileSource | WMTS | VectorSource | undefined {
   switch (layer.source) {
-    case SOURCE_CARTO.WMS:
+    case SOURCE_CARTO.WMS: {
+      const wmsParams: any = {
+        LAYERS: layer.layer,
+        TILED: true,
+        projection: layer.projection,
+        matrixSet: "PM",
+        format: layer.format ?? "image/png",
+        tileGrid: tileGrid,
+        style: "normal",
+      };
+
+      // Ajout du paramètre viewParams seulement si etudeId est renseigné
+      if (etudeId) {
+        wmsParams.viewParams = `idEtude:${encodeURIComponent(etudeId)}`;
+      }
+
       return new TileWMS({
         url: layer.url,
-        params: {
-          LAYERS: layer.layer,
-          TILED: true,
-          projection: layer.projection,
-          matrixSet: "PM",
-          format: layer.format ?? "image/png",
-          tileGrid: tileGrid,
-          style: "normal",
-        },
+        params: wmsParams,
         // Optimisations de performance
         cacheSize: 512, // Cache plus important pour les tuiles
         transition: 0, // Désactive les transitions pour un affichage plus rapide
@@ -92,6 +100,7 @@ export function toOpenLayer(
           image.src = src;
         },
       });
+    }
     case SOURCE_CARTO.WMTS:
       return new WMTS({
         crossOrigin: layer.crossOrigin ?? "anonymous",
@@ -236,10 +245,12 @@ export const useMapComponent = ({
   mapElement,
   typeModule,
   displayPei = true,
+  etudeId,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
+  etudeId?: string;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -320,7 +331,7 @@ export const useMapComponent = ({
     }
 
     return initialMap;
-  }, [mapElement.current, projection, afficheCoordonneesState.data]);
+  }, [mapElement.current, projection, afficheCoordonneesState.data, etudeId]);
 
   // Application des optimisations de performance après création de la carte
   useEffect(() => {
@@ -354,7 +365,7 @@ export const useMapComponent = ({
           } else {
             // Couche de tuiles (WMS, WMTS, OSM)
             openlayer = new TileLayer({
-              source: toOpenLayer(layer) as TileSource,
+              source: toOpenLayer(layer, etudeId) as TileSource,
               zIndex: layer.ordre,
               preload: 1,
               useInterimTilesOnError: false,
@@ -374,7 +385,7 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map]);
+  }, [layersState.data, map, etudeId]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {

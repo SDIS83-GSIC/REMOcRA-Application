@@ -31,6 +31,7 @@ const MapCouvertureHydraulique = ({
   } = useMapComponent({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.COUVERTURE_HYDRAULIQUE,
+    etudeId: etudeId,
   });
 
   /**
