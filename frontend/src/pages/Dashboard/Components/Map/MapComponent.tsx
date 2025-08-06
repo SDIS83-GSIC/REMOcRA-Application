@@ -113,7 +113,7 @@ const MapDashboardComponent = (data: any) => {
             font-size: 12px;
             width: 300px;
           ">
-            <div><strong>Informations</strong></div>
+            <div><strong>${properties.libelle ?? "Informations"}</strong></div>
             <div>${data.config.value} : ${value}</div>
             <div>${data.config.max} : ${max}</div>
             <div>Pourcentage: ${percentage}%</div>

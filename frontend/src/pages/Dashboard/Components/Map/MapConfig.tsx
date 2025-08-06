@@ -22,6 +22,11 @@ const MapConfig = (options: any) => {
       (option: any) => option.value === options.config.max,
     ) || "";
 
+  const fieldLibelle =
+    options.fieldOptions.find(
+      (option: any) => option.value === options.config.libelle,
+    ) || "";
+
   // Gérer les limites dynamiquement
   const [limits, setLimits] = useState(options.config.limits || []);
 
@@ -70,6 +75,17 @@ const MapConfig = (options: any) => {
 
   return (
     <>
+      {/* Champ pour `value` */}
+      <SelectInput
+        required={false}
+        name={"value"}
+        label="Libellé de l'objet"
+        onChange={(value) => handleChange("libelle", value.value)}
+        defaultValue={fieldLibelle}
+        options={options.fieldOptions}
+        getOptionLabel={(option: any) => option.value}
+        getOptionValue={(option: any) => option.value}
+      />
       {/* Champ pour `geojson` */}
       <SelectInput
         required={false}
