@@ -243,26 +243,26 @@ class PeiEndPoint : AbstractEndpoint() {
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val pei = getPeiData(httpRequest)
-
         val result = createPeiUseCase.execute(
             securityContext.userInfo,
             pei,
         )
+        // Si on n'a pas réussi à insérer le PEI, on remonte l'erreur
+        if (result !is AbstractUseCase.Result.Success && result !is AbstractUseCase.Result.Created) { return result.wrap() }
 
-        // Si on n'a pas réussi à insérer le PEI
-        if (result !is AbstractUseCase.Result.Success) {
-            return result.wrap()
-        }
-
-        return upsertDocumentPeiUseCase.execute(
+        val resultInsertDoc = upsertDocumentPeiUseCase.execute(
             securityContext.userInfo,
             DocumentsPei(
                 objectId = pei.peiId,
                 listDocument = objectMapper.readValue<List<DocumentData>>(httpRequest.getTextPart("documents")),
-                listeDocsToRemove = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("documentIdToRemove")),
+                listeDocsToRemove = listOf(), // Liste vide : à la création d'un pei, on ne peut pas retirer des éléments qui n'existaient pas
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
-        ).wrap()
+        )
+        // En cas d'erreur à l'insertion des documents, on remonte l'erreur
+        if (resultInsertDoc !is AbstractUseCase.Result.Success) { return resultInsertDoc.wrap() }
+        // Sinon, le front attend le résultat de l'insertion du PEI
+        return result.wrap()
     }
 
     private fun getPeiData(httpRequest: HttpServletRequest) =
