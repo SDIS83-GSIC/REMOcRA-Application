@@ -167,6 +167,7 @@ class DashboardRepository
         dsl.update(DASHBOARD)
             .set(dsl.newRecord(DASHBOARD, dashboard))
             .where(DASHBOARD.ID.eq(dashboard.dashboardId))
+            .execute()
 
     fun deleteComponentsInDashboard(componentIds: Collection<UUID>) =
         dsl.deleteFrom(DASHBOARD_CONFIG)
