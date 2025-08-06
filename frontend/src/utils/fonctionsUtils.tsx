@@ -3,7 +3,7 @@ import url, { getFetchOptions } from "../module/fetch.tsx";
 import { URLS } from "../routes.tsx";
 import { THEMATIQUE_POINT_EAU, THEMATIQUE_RCI } from "./constantsUtils.tsx";
 
-function isEmptyOrNull(value: string) {
+function isEmptyOrNull(value: string | undefined | null): boolean {
   return value == null || value.trim().length === 0;
 }
 

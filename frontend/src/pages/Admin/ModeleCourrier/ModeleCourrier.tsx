@@ -15,6 +15,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import {
+  IconExport,
   IconInfo,
   IconNextPage,
   IconPreviousPage,
@@ -58,6 +59,7 @@ type ModeleCourrierType = {
   documentRepertoire: string;
   unavailableCode: number[];
   documents: Document;
+  part: File | null;
 };
 
 export const getInitialValues = (data?: ModeleCourrierType) => ({
@@ -72,25 +74,23 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
   listeProfilDroitId: data?.listeProfilDroitId ?? [],
   listeModeleCourrierParametre:
     data?.listeModeleCourrierParametre.map((e) => ({
-      modeleCourrierParametreSourceSqlDebut: e.modeleCourrierParametreSourceSql
-        ? e.modeleCourrierParametreSourceSql?.split(
-            e.modeleCourrierParametreSourceSqlId
-              ? e.modeleCourrierParametreSourceSqlId
-              : null,
-          )[0]
-        : null,
-      modeleCourrierParametreSourceSqlFin: e.modeleCourrierParametreSourceSql
-        ? e.modeleCourrierParametreSourceSql
-            ?.split(
-              e.modeleCourrierParametreSourceSqlLibelle
-                ? e.modeleCourrierParametreSourceSqlLibelle + " as libelle"
-                : null,
-            )
-            .slice(-1)[0]
-        : null,
+      ...e,
+      modeleCourrierParametreSourceSqlDebut:
+        e.modeleCourrierParametreSourceSql &&
+        e.modeleCourrierParametreSourceSqlId
+          ? e.modeleCourrierParametreSourceSql.split(
+              e.modeleCourrierParametreSourceSqlId,
+            )[0]
+          : null,
+      modeleCourrierParametreSourceSqlFin:
+        e.modeleCourrierParametreSourceSql &&
+        e.modeleCourrierParametreSourceSqlLibelle
+          ? e.modeleCourrierParametreSourceSql
+              .split(e.modeleCourrierParametreSourceSqlLibelle + " as libelle")
+              .slice(-1)[0]
+          : null,
       // Le composant drag and drop a besoin d'un identifiant unique, donc on passe par un random
       id: Math.random(),
-      ...e,
     })) ?? [],
   modeleCourrierSourceSql: data?.modeleCourrierSourceSql,
   documentId: data?.documentId,
@@ -104,7 +104,9 @@ export const validationSchema = object({});
 export const prepareVariables = (values: ModeleCourrierType) => {
   const formData = new FormData();
 
-  formData.append("part", values.part);
+  if (values.part) {
+    formData.append("part", values.part);
+  }
 
   formData.append(
     "modeleCourrier",
@@ -150,7 +152,7 @@ const ModeleCourrier = () => {
 
   const profilDroitState = useGet(url`/api/profil-droit`);
 
-  const listeModule = modeleCourrierTypeModule.data?.map((e) => ({
+  const listeModule = modeleCourrierTypeModule.data?.map((e: string) => ({
     id: e,
     code: e,
     libelle: e,
@@ -242,11 +244,14 @@ const ModeleCourrier = () => {
                 onChange={(e) => {
                   setFieldValue(
                     `modeleCourrierModule`,
-                    listeModule?.find((type) => type.id === e.id).id,
+                    listeModule?.find(
+                      (type: IdCodeLibelleType) => type.id === e.id,
+                    ).id,
                   );
                 }}
                 defaultValue={listeModule?.find(
-                  (type) => type.id === values.modeleCourrierModule,
+                  (type: IdCodeLibelleType) =>
+                    type.id === values.modeleCourrierModule,
                 )}
                 required={true}
               />
@@ -335,14 +340,26 @@ const ModeleCourrier = () => {
             </Col>
           </Row>
           <Row className="mt-3">
-            <Col>
+            <Col xs={values.documentId ? 8 : 12}>
               <FileInput
                 name="part"
                 accept="*.odt"
                 label="Template"
+                required={!values.documentId}
                 onChange={(e) => setFieldValue("part", e.target.files[0])}
               />
             </Col>
+            {/* On permet le téléchargement du document s'il existe */}
+            {values.documentId && (
+              <Col xs={4} className="d-flex align-items-end">
+                <Button
+                  variant={"link"}
+                  href={url`/api/documents/telecharger/` + values.documentId}
+                >
+                  <IconExport /> Télécharger le modèle de courrier
+                </Button>
+              </Col>
+            )}
           </Row>
         </>
       )}
@@ -382,9 +399,8 @@ const ModeleCourrier = () => {
                     values.listeModeleCourrierParametre
                       .filter(
                         (e) =>
-                          TYPE_PARAMETRE_RAPPORT_COURRIER[
-                            e.modeleCourrierParametreType
-                          ] === TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT,
+                          e.modeleCourrierParametreType ===
+                          TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT,
                       )
                       .some(
                         (e) =>
