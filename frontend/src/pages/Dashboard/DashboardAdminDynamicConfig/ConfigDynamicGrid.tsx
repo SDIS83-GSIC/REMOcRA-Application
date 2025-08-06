@@ -263,8 +263,8 @@ const ConfigDynamicGrid = ({
         submitUrl={
           activeDashboard.id ? urlApiUpdateDashboard : urlApiSaveDashboard
         }
-        successToastMessage="Le dahsboard a correctement été enregistré"
-        errorToastMessage="Le dashbboard n'a pas été correctement enregistré"
+        successToastMessage="Le tableau de bord a correctement été enregistré"
+        errorToastMessage="Le tableau de bord n'a pas été correctement enregistré"
         prepareVariables={() =>
           getPrepareVariables(
             activeDashboard,

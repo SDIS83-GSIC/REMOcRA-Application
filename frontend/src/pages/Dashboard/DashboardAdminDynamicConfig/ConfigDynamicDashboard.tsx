@@ -98,7 +98,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       .json()
       .then(() => {
         updateDashboardList(indexKey);
-        successToast("Le dashboard a correctement été supprimé");
+        successToast("Le tableau de bord a correctement été supprimé");
       })
       .catch((reason: string) => {
         errorToast(reason);
@@ -247,7 +247,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       {disabledModal && (
         <ConfirmModal
           visible={true}
-          content="Supprimer le dashboard ?"
+          content="Supprimer le tableau de bord ?"
           closeModal={() => setDisabledModal(false)}
           query={""}
           href="#"
