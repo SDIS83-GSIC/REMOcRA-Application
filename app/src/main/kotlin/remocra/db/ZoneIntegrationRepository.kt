@@ -130,6 +130,7 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             ZONE_INTEGRATION.CODE.getSortField(zoneIntegrationCode),
             ZONE_INTEGRATION.LIBELLE.getSortField(zoneIntegrationLibelle),
+            ZONE_INTEGRATION.ACTIF.getSortField(zoneIntegrationActif),
         )
     }
 
