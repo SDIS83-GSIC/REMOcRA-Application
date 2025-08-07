@@ -182,7 +182,7 @@ type CheckBoxInputType = {
   required?: boolean;
   disabled?: boolean;
   checked?: boolean;
-  tooltipText?: string;
+  tooltipText?: string | ReactNode;
   onChange?: (...args: any[]) => void;
 };
 

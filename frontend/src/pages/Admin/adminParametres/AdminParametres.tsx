@@ -45,8 +45,10 @@ type ParametresSectionMobile = {
   modeDeconnecte: boolean;
   creationPeiMobile: boolean;
   affichageSymbolesNormalises: boolean;
-  caracteristiquesPena: string[];
-  caracteristiquesPibi: string[];
+  caracteristiquesPena: [];
+  caracteristiquesPibi: [];
+  caracteristiquesPibiIds: { id: string }[];
+  caracteristiquesPenaIds: { id: string }[];
   dureeValiditeToken: number;
   gestionAgent: string;
   bridagePhoto: boolean;
@@ -69,12 +71,19 @@ type ParametresSectionPermis = {
 
 type ParametresSectionPei = {
   peiColonnes: string[] | undefined;
+  peiColonnesIds: { id: string; libelle: string }[] | undefined;
   peiNombreHistorique: number | undefined;
   bufferCarte: number;
   caracteristiquesPenaTooltipWeb: string[] | undefined;
   caracteristiquesPibiTooltipWeb: string[] | undefined;
+  caracteristiquesPenaTooltipWebIds: { id: string }[];
+  caracteristiquesPibiTooltipWebIds: { id: string }[];
   peiFicheResumeStandalone: boolean;
   peiDisplayTypeEngin: boolean;
+  peiGenerationCarteTournee: boolean;
+  peiMethodeTriAlphanumerique: boolean;
+  peiRenumerotationInterneAuto: boolean;
+  voieSaisieLibre: boolean;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -102,15 +111,16 @@ export const getInitialValues = (
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
+  peiLongueIndispo: ParametresSectionPeiLongueIndispo;
 } => ({
   general: data?.general,
   mobile: {
     ...data?.mobile,
-    caracteristiquesPibi:
+    caracteristiquesPibiIds:
       data?.mobile?.caracteristiquesPibi?.map((e) => ({
         id: e,
       })) ?? [],
-    caracteristiquesPena:
+    caracteristiquesPenaIds:
       data?.mobile?.caracteristiquesPena?.map((e) => ({
         id: e,
       })) ?? [],
@@ -120,12 +130,12 @@ export const getInitialValues = (
   permis: data?.permis,
   pei: {
     ...data?.pei,
-    peiColonnes: data?.pei?.peiColonnes?.map((e) => ({ id: e, libelle: e })),
-    caracteristiquesPibiTooltipWeb:
+    peiColonnesIds: data?.pei?.peiColonnes?.map((e) => ({ id: e, libelle: e })),
+    caracteristiquesPibiTooltipWebIds:
       data?.pei?.caracteristiquesPibiTooltipWeb?.map((e) => ({
         id: e,
       })) ?? [],
-    caracteristiquesPenaTooltipWeb:
+    caracteristiquesPenaTooltipWebIds:
       data?.pei?.caracteristiquesPenaTooltipWeb?.map((e) => ({
         id: e,
       })) ?? [],
@@ -141,9 +151,9 @@ export const prepareVariables = (values: AdminParametresValue) => {
     mobile: {
       ...values?.mobile,
       caracteristiquesPena:
-        values?.mobile?.caracteristiquesPena?.map((e) => e.id) ?? [],
+        values?.mobile?.caracteristiquesPenaIds?.map((e) => e.id) ?? [],
       caracteristiquesPibi:
-        values?.mobile?.caracteristiquesPibi?.map((e) => e.id) ?? [],
+        values?.mobile?.caracteristiquesPibiIds?.map((e) => e.id) ?? [],
     },
     cartographie: values?.cartographie,
     couvertureHydraulique: {
@@ -154,11 +164,11 @@ export const prepareVariables = (values: AdminParametresValue) => {
     permis: values?.permis,
     pei: {
       ...values?.pei,
-      peiColonnes: values?.pei?.peiColonnes?.map((e) => e.id) ?? [],
+      peiColonnes: values?.pei?.peiColonnesIds?.map((e) => e.id) ?? [],
       caracteristiquesPenaTooltipWeb:
-        values?.pei?.caracteristiquesPenaTooltipWeb?.map((e) => e.id) ?? [],
+        values?.pei?.caracteristiquesPenaTooltipWebIds?.map((e) => e.id) ?? [],
       caracteristiquesPibiTooltipWeb:
-        values?.pei?.caracteristiquesPibiTooltipWeb?.map((e) => e.id) ?? [],
+        values?.pei?.caracteristiquesPibiTooltipWebIds?.map((e) => e.id) ?? [],
     },
     peiLongueIndispo: values?.peiLongueIndispo,
   };
@@ -175,6 +185,7 @@ const AdminParametres = () => {
       isPost={false}
       submitUrl={`/api/admin/parametres`}
       prepareVariables={(values) => prepareVariables(values)}
+      onSubmit={() => {}}
     >
       <AdminParametresInterne />
     </MyFormik>
@@ -182,8 +193,7 @@ const AdminParametres = () => {
 };
 
 export const AdminParametresInterne = () => {
-  const { values, setValues, setFieldValue }: { values: AdminParametresValue } =
-    useFormikContext();
+  const { values, setFieldValue } = useFormikContext<AdminParametresValue>();
   const allCaracteristiques = useGet(url`/api/admin/pei-caracteristique`)?.data;
   const { activesKeys, handleShowClose } = useAccordionState(
     Array(6).fill(false),
@@ -203,22 +213,12 @@ export const AdminParametresInterne = () => {
                 ? [
                     {
                       header: "Général",
-                      content: (
-                        <AdminGeneral
-                          values={values.general}
-                          setValues={setValues}
-                          setFieldValue={setFieldValue}
-                        />
-                      ),
+                      content: <AdminGeneral values={values.general} />,
                     },
                     {
                       header: "Cartographie",
                       content: (
-                        <AdminCartographie
-                          values={values.cartographie}
-                          setValues={setValues}
-                          setFieldValue={setFieldValue}
-                        />
+                        <AdminCartographie values={values.cartographie} />
                       ),
                     },
                     {
@@ -226,20 +226,12 @@ export const AdminParametresInterne = () => {
                       content: (
                         <AdminCouvertureHydraulique
                           values={values.couvertureHydraulique}
-                          setValues={setValues}
-                          setFieldValue={setFieldValue}
                         />
                       ),
                     },
                     {
                       header: "Permis",
-                      content: (
-                        <AdminPermis
-                          values={values.permis}
-                          setValues={setValues}
-                          setFieldValue={setFieldValue}
-                        />
-                      ),
+                      content: <AdminPermis values={values.permis} />,
                     },
                     {
                       header: "PEI",
@@ -268,8 +260,6 @@ export const AdminParametresInterne = () => {
                       content: (
                         <AdminApplicationMobile
                           values={values.mobile}
-                          setValues={setValues}
-                          setFieldValue={setFieldValue}
                           allCaracteristiques={allCaracteristiques}
                         />
                       ),
@@ -364,7 +354,6 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
           <TextInput
             name="general.messageEntete"
             label="Message d'entête"
-            defaultValue={values?.messageEntete}
             tooltipText={"Message affiché dans le cartouche d'entête"}
             required={false}
           />
@@ -373,7 +362,6 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
           <TextInput
             name="general.titrePage"
             label="Titre de la page"
-            defaultValue={values?.titrePage}
             tooltipText={"Titre affiché dans l'entête du navigateur"}
           />
         </AdminParametre>
@@ -381,7 +369,6 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
           <PositiveNumberInput
             name="general.toleranceVoiesMetres"
             label="Tolérance (en m) de chargement des voies"
-            defaultValue={values?.titrePage}
             tooltipText={
               "Utilisé dans le chargement des listes déroulantes des voies lorsque les géométries ne sont pas parfaitement en phase"
             }
@@ -407,7 +394,7 @@ const AdminApplicationMobile = ({
   allCaracteristiques,
 }: {
   values: ParametresSectionMobile;
-  allCaracteristiques: string[];
+  allCaracteristiques: any[];
 }) => {
   const { setFieldValue } = useFormikContext();
   // Charger toutes les caractéristiques
@@ -420,7 +407,7 @@ const AdminApplicationMobile = ({
   } = useTransferList({
     listeDisponible: null,
     listeSelectionne: null,
-    nameFormik: "mobile.caracteristiquesPibi",
+    nameFormik: "mobile.caracteristiquesPibiIds",
   });
 
   const {
@@ -431,14 +418,14 @@ const AdminApplicationMobile = ({
   } = useTransferList({
     listeDisponible: null,
     listeSelectionne: null,
-    nameFormik: "mobile.caracteristiquesPena",
+    nameFormik: "mobile.caracteristiquesPenaIds",
   });
 
   useMemo(() => {
     if (
       !allCaracteristiques ||
-      !values?.caracteristiquesPibi ||
-      !values?.caracteristiquesPena
+      !values?.caracteristiquesPibiIds ||
+      !values?.caracteristiquesPenaIds
     ) {
       return;
     }
@@ -447,13 +434,13 @@ const AdminApplicationMobile = ({
       setAvailablePibiOptions(
         allCaracteristiques.filter(
           (item: any) => item.type === "PIBI" || item.type === "GENERAL",
-        ),
+        ) as any[],
       );
     }
     if (selectedPibiOptions == null) {
       setSelectedPibiOptions(
         allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPibi
+          return values?.caracteristiquesPibiIds
             ?.map((e) => e.id)
             .includes(item.id);
         }),
@@ -470,7 +457,7 @@ const AdminApplicationMobile = ({
     if (selectedPenaOptions == null) {
       setSelectedPenaOptions(
         allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPena
+          return values?.caracteristiquesPenaIds
             ?.map((e) => e.id)
             .includes(item.id);
         }),
@@ -569,7 +556,7 @@ const AdminApplicationMobile = ({
             }
             defaultValue={typeAgent.find((e) => e.id === values.gestionAgent)}
           />
-          <SeeMoreButton id={"infoAgent"}>
+          <SeeMoreButton>
             <>
               <p className="m-2">
                 C&apos;est un champ texte mixé avec une liste déroulante, comme
@@ -737,7 +724,7 @@ const AdminCouvertureHydraulique = ({
             label="Distance max de parcours (en m)"
           />
         </AdminParametre>
-        <AdminParametre explication="" type={TYPE_PARAMETRE.MULTI_INT}>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_INT}>
           {/*Séparation par des virgule vérifié en backend*/}
           <TextInput
             name="couvertureHydraulique.deciIsodistances"
@@ -761,7 +748,7 @@ const AdminPei = ({
   allCaracteristiques,
 }: {
   values: ParametresSectionPei;
-  allCaracteristiques: string[];
+  allCaracteristiques: any[];
 }) => {
   //Pour les colonnes PEI
 
@@ -778,20 +765,20 @@ const AdminPei = ({
   } = useTransferList({
     listeDisponible: null,
     listeSelectionne: null,
-    nameFormik: "pei.peiColonnes",
+    nameFormik: "pei.peiColonnesIds",
   });
 
   useMemo(() => {
-    if (!values?.peiColonnes) {
+    if (!values?.peiColonnesIds) {
       return;
     }
     if (availableOptions == null) {
       setAvailableOptions(
-        listPossible.filter((e) => !values.peiColonnes?.includes(e)),
+        listPossible.filter((e) => !values.peiColonnesIds?.includes(e)),
       );
     }
     if (selectedOptions == null) {
-      setSelectedOptions(values?.peiColonnes);
+      setSelectedOptions(values?.peiColonnesIds);
     }
   }, [
     values,
@@ -810,7 +797,7 @@ const AdminPei = ({
   } = useTransferList({
     listeDisponible: null,
     listeSelectionne: null,
-    nameFormik: "pei.caracteristiquesPibiTooltipWeb",
+    nameFormik: "pei.caracteristiquesPibiTooltipWebIds",
   });
 
   const {
@@ -821,14 +808,14 @@ const AdminPei = ({
   } = useTransferList({
     listeDisponible: null,
     listeSelectionne: null,
-    nameFormik: "pei.caracteristiquesPenaTooltipWeb",
+    nameFormik: "pei.caracteristiquesPenaTooltipWebIds",
   });
 
   useMemo(() => {
     if (
       !allCaracteristiques ||
-      !values?.caracteristiquesPenaTooltipWeb ||
-      !values?.caracteristiquesPibiTooltipWeb
+      !values?.caracteristiquesPenaTooltipWebIds ||
+      !values?.caracteristiquesPibiTooltipWebIds
     ) {
       return;
     }
@@ -843,7 +830,7 @@ const AdminPei = ({
     if (selectedPibiOptions == null) {
       setSelectedPibiOptions(
         allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPibiTooltipWeb
+          return values?.caracteristiquesPibiTooltipWebIds
             ?.map((e) => e.id)
             .includes(item.id);
         }),
@@ -860,7 +847,7 @@ const AdminPei = ({
     if (selectedPenaOptions == null) {
       setSelectedPenaOptions(
         allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPenaTooltipWeb
+          return values?.caracteristiquesPenaTooltipWebIds
             ?.map((e) => e.id)
             .includes(item.id);
         }),
@@ -919,7 +906,7 @@ const AdminPei = ({
               "et dans quel ordre elles se présentent"
             }
             required={false}
-            name={"pei.caracteristiquesPibiTooltipWeb"}
+            name={"pei.caracteristiquesPibiTooltipWebIds"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
@@ -935,7 +922,7 @@ const AdminPei = ({
               "et dans quel ordre elles se présentent"
             }
             required={false}
-            name={"pei.caracteristiquesPenaTooltipWeb"}
+            name={"pei.caracteristiquesPenaTooltipWebIds"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
@@ -1138,13 +1125,14 @@ const AdminPeiLongueIndispo = ({
             value={
               values?.peiLongueIndisponibiliteTypeOrganisme?.map((e) =>
                 typeOrganismeState?.data?.find(
-                  (r) => r.typeOrganismeCode === e,
+                  (r: { typeOrganismeCode: string }) =>
+                    r.typeOrganismeCode === e,
                 ),
               ) ?? undefined
             }
             onChange={(typeOrganisme) => {
               const typeOrganismeCode = typeOrganisme.map(
-                (e) => e.typeOrganismeCode,
+                (e: { typeOrganismeCode: string }) => e.typeOrganismeCode,
               );
               typeOrganismeCode.length > 0
                 ? setFieldValue(

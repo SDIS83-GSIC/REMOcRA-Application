@@ -21,7 +21,7 @@ const TransferList = ({
   tooltipText,
   name,
 }: TransferListType) => {
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
     // Si aucun élément n'est relâché, on ne fait rien
@@ -31,8 +31,8 @@ const TransferList = ({
 
     // Trouve l'élément actif dans l'une des deux listes
     const activeItem =
-      availableOptions.find((item) => item.id === active.id) ||
-      selectedOptions.find((item) => item.id === active.id);
+      availableOptions?.find((item) => item.id === active.id) ||
+      selectedOptions?.find((item) => item.id === active.id);
 
     if (!activeItem) {
       return;
@@ -41,36 +41,38 @@ const TransferList = ({
     // Déplacement entre les listes
     if (
       over.id === "available" ||
-      (availableOptions.some((item) => item.id === over.id) &&
-        selectedOptions.some((item) => item.id === active.id))
+      (availableOptions?.some((item) => item.id === over.id) &&
+        selectedOptions?.some((item) => item.id === active.id))
     ) {
       // Déplacer de `selectedOptions` vers `availableOptions`
-      setSelectedOptions((prev) =>
-        prev.filter((item) => item.id !== active.id),
+      setSelectedOptions((prev: ItemType[]) =>
+        prev.filter((item: ItemType) => item.id !== active.id),
       );
-      setAvailableOptions((prev) => [...prev, activeItem]);
+      setAvailableOptions((prev: ItemType[]) => [...prev, activeItem]);
     } else if (
       (over.id === "selected" ||
-        selectedOptions.some((item) => item.id === over.id)) &&
-      availableOptions.some((item) => item.id === active.id)
+        selectedOptions?.some((item) => item.id === over.id)) &&
+      availableOptions?.some((item) => item.id === active.id)
     ) {
       // Déplacer de `availableOptions` vers `selectedOptions`
-      setAvailableOptions((prev) =>
-        prev.filter((item) => item.id !== active.id),
+      setAvailableOptions((prev: ItemType[]) =>
+        prev.filter((item: ItemType) => item.id !== active.id),
       );
-      setSelectedOptions((prev) => [...prev, activeItem]);
+      setSelectedOptions((prev: ItemType[]) => [...prev, activeItem]);
     }
     // Réorganisation dans `selectedOptions`
     else if (
       over.id !== "available" &&
-      selectedOptions.some((item) => item.id === active.id)
+      selectedOptions?.some((item) => item.id === active.id)
     ) {
       const oldIndex = selectedOptions.findIndex(
         (item) => item.id === active.id,
       );
       const newIndex = selectedOptions.findIndex((item) => item.id === over.id);
 
-      setSelectedOptions((items) => arrayMove(items, oldIndex, newIndex));
+      setSelectedOptions((items: ItemType[]) =>
+        arrayMove(items, oldIndex, newIndex),
+      );
     }
   };
 
@@ -132,8 +134,8 @@ const DroppableList = ({ id, items, title }: DroppableSortType) => {
           {title}
         </Col>
         <Col xs={12} ref={setNodeRef} className="list-group">
-          {items.map((item) => (
-            <DraggableItem key={item} item={item} />
+          {items.map((item: ItemType) => (
+            <DraggableItem key={item.id} item={item} />
           ))}
         </Col>
       </>
@@ -176,8 +178,8 @@ const DraggableItem = ({ item }: { item: ItemType }) => {
 };
 
 type TransferListType = {
-  availableOptions: ItemType[];
-  selectedOptions: ItemType[];
+  availableOptions: ItemType[] | null | undefined;
+  selectedOptions: ItemType[] | null | undefined;
   setAvailableOptions: any;
   setSelectedOptions: any;
   required?: boolean;
@@ -212,13 +214,17 @@ export const useTransferList = ({
   listeSelectionne,
   nameFormik,
 }: {
-  listeDisponible: [];
-  listeSelectionne: [];
+  listeDisponible: ItemType[] | undefined | null;
+  listeSelectionne: ItemType[] | undefined | null;
   nameFormik: string;
 }) => {
   const { setFieldValue } = useFormikContext();
-  const [availableOptions, setAvailableOptions] = useState(listeDisponible);
-  const [selectedOptions, setSelectedOptions] = useState(listeSelectionne);
+  const [availableOptions, setAvailableOptions] = useState<
+    ItemType[] | undefined | null
+  >(listeDisponible);
+  const [selectedOptions, setSelectedOptions] = useState<
+    ItemType[] | undefined | null
+  >(listeSelectionne);
 
   useEffect(() => {
     if (
