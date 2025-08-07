@@ -85,6 +85,8 @@ object GlobalConstants {
 
     val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
 
+    val DOSSIER_CARTE_TOURNEE_TEMPLATE = DOSSIER_MODELES + "carte_tournee/"
+
     val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"
 
     val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES + "export_ctp/"
@@ -147,4 +149,6 @@ object GlobalConstants {
     const val PLACEHOLDER_ERROR_TYPE: String = "#PLACEHOLDER#"
 
     const val DELIMITER_CSV = ';'
+
+    const val COUCHE_TOURNEE = "remocra:TOURNEE"
 }

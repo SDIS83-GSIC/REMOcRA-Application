@@ -1,0 +1,81 @@
+= Génération de carte tournée via GeoServer
+
+== Contexte
+
+Un endpoint a été mis en place pour générer une image de la carte d'une tournée. Le rendu s'appuie sur une couche WMS agrégée dans GeoServer, avec gestion de l'orientation (portrait/paysage), buffer autour de la géométrie et ratios A4.
+
+== À faire / À savoir
+
+=== 1. Côté GeoServer
+
+==== a. Créer l’agrégat de couche
+- Nom : `TOURNEE`
+- Entrepôt : `remocra`
+- Type : couche SQL / vue
+- Ajouter la couche PEI (la requete de la couche doit exposer un champ "opacite")
+
+==== b. Style SLD
+
+Dans le `Style SLD` associé à la couche, **penser à ajouter l’opacité** sur les symboles :
+
+[source,xml]
+----
+<CssParameter name="fill-opacity">
+  <ogc:PropertyName>opacite</ogc:PropertyName>
+</CssParameter>
+----
+
+⚠️ Ceci permet d’afficher les autres PEI en semi-transparence quand ils ne sont pas dans la tournée en cours.
+
+
+⚠️ NE PAS OUBLIER : Supprimer l'expression régulière de validation
+
+==== c. Requête SQL de la vue / couche
+
+Dans la requête SQL définissant la couche `PEI`, bien ajouter le calcul d’opacité dynamique :
+
+[source,sql]
+----
+CASE
+  WHEN CAST('%tournee_id%' AS TEXT) = ltp.tournee_id::TEXT THEN 1
+  WHEN CAST('%tournee_id%' AS TEXT) = '-1' THEN 1
+  ELSE 0.25
+END AS "opacite"
+----
+
+> `%tournee_id%` est un paramètre injecté via `VIEWPARAMS` dans la requête WMS.
+
+=== 2. Côté code (Kotlin)
+
+==== a. Orientation / Buffer
+
+Un calcul d'emprise dynamique (`bbox`) est fait à partir des coordonnées PEI de la tournée :
+
+- Un buffer est ajouté en allant chercher en base le paramètre "BUFFER_CARTE"..
+- Le format est ajusté en fonction du ratio A4 portrait/paysage.
+- Une taille minimale (en px) est forcée pour éviter des cartes trop étroites. (les valeurs correspondent à la taille
+d'une page A4 à 300 dpi (iso v2))
+
+==== b. Paramètres envoyés à GeoServer
+
+Requête WMS standard avec `VIEWPARAMS` :
+
+- `tournee_id` : utilisé pour filtrer les PEI de la tournée
+- `WIDTH` / `HEIGHT` : fixés en fonction de l’orientation
+- `SRS` : EPSG dynamique (config)
+
+Exemple de params :
+
+[source]
+----
+"VIEWPARAMS"  to "tournee_id:$tourneeId",
+"FORMAT"      to "image/png",
+"TRANSPARENT" to "true",
+"WIDTH"       to "827",
+"HEIGHT"      to "1170",
+----
+
+
+==== c. Templates
+
+Il existe 2 templates : un pour le format paysage et un pour le portrait. Les templates devront être positionnés dans le répertoire `/var/lib/remocra/modeles/carte_tournee/` et devront être nommés `carte_tournee_paysage.pdf` et `carte_tournee_portrait.pdf`.

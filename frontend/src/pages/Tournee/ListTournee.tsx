@@ -4,11 +4,13 @@ import Form from "react-bootstrap/Form";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
   IconCentPourcent,
   IconDesaffecter,
+  IconeGenereCarteTournee,
   IconList,
   IconLocation,
   IconSortList,
@@ -32,8 +34,10 @@ import { hasDroit, isAuthorized } from "../../droits.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
@@ -41,6 +45,16 @@ import { filterValuesToVariable } from "./FilterTournee.tsx";
 const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
+  const { error: errorToast } = useToastContext();
+
+  const parametreGenerationCarteTournee = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(
+        PARAMETRE.PEI_GENERATION_CARTE_TOURNEE,
+      ),
+    }}`,
+    {},
+  )?.data?.[PARAMETRE.PEI_GENERATION_CARTE_TOURNEE].parametreValeur;
 
   const column: Array<columnType> = [
     {
@@ -282,6 +296,62 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     textEnable: "Localiser",
     classEnable: "primary",
   });
+
+  if (parametreGenerationCarteTournee) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      onClick: async (tourneeId) => {
+        try {
+          const response = await fetch(
+            url`/api/tournee/genere-carte-tournee/${tourneeId}`,
+          );
+          if (!response.ok) {
+            if (response.status === 500) {
+              const errorText = await response.text();
+              errorToast(`${errorText}`);
+            }
+            return;
+          }
+
+          // Vérifie le type de contenu
+          const contentType = response.headers.get("Content-Type");
+          if (!contentType || !contentType.includes("application/pdf")) {
+            const errorText = await response.text();
+            errorToast(errorText || "Le fichier retourné n'est pas un PDF.");
+            return;
+          }
+
+          const blob = await response.blob();
+          // Récupère le nom du fichier depuis l'en-tête Content-Disposition
+          const disposition = response.headers.get("Content-Disposition");
+          let filename = "carte-tournee.pdf";
+          if (disposition && disposition.includes("filename=")) {
+            filename = disposition
+              .split("filename=")[1]
+              .split(";")[0]
+              .replace(/['"]/g, "")
+              .trim();
+          }
+          const urlBlob = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = urlBlob;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(urlBlob);
+        } catch (error) {
+          errorToast("Une erreur est survenue");
+        }
+      },
+      type: TYPE_BUTTON.BUTTON,
+      icon: <IconeGenereCarteTournee />,
+      textEnable: "Générer Carte de la tournée",
+      classEnable: "success",
+    });
+  }
 
   column.push(
     ActionColumn({

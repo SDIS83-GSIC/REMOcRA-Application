@@ -25,11 +25,13 @@ import remocra.db.TourneeRepository.PeiTourneeForDnD
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
+import remocra.security.NoCsrf
 import remocra.usecase.tournee.CreateTourneeUseCase
 import remocra.usecase.tournee.DeleteTourneeUseCase
 import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
+import remocra.usecase.tournee.GenereCarteTourneeUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
@@ -67,6 +69,9 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var forcerAvancementTourneeUseCase: ForcerAvancementTourneeUseCase
+
+    @Inject
+    lateinit var genereCarteTourneeUseCase: GenereCarteTourneeUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -122,6 +127,18 @@ class TourneeEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.TOURNEE_A])
     fun getTourneeById(@PathParam("tourneeId") tourneeId: UUID): Response =
         Response.ok().entity(tourneeRepository.getTourneeById(tourneeId)).build()
+
+    @GET
+    @Path("/genere-carte-tournee/{tourneeId}")
+    @Produces("application/pdf")
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
+    fun getGenereCarteTournee(@PathParam("tourneeId") tourneeId: UUID): Response {
+        val carteTournee = genereCarteTourneeUseCase.getCarteTournee(tourneeId)
+        return Response.ok(carteTournee.file)
+            .header("Content-Disposition", "attachment; filename=\"${carteTournee.fileName}\"")
+            .build()
+    }
 
     @POST
     @Path("/createTournee")

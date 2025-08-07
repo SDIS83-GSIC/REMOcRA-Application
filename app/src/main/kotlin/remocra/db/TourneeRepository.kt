@@ -742,6 +742,14 @@ class TourneeRepository
             .from(TOURNEE)
             .orderBy(TOURNEE.LIBELLE)
             .fetchInto()
+
+    fun getNbPei(tourneeId: UUID): Int =
+        dsl.selectCount()
+            .from(PEI)
+            .join(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .fetchSingleInto()
 }
 
 data class TourneeShortData(
