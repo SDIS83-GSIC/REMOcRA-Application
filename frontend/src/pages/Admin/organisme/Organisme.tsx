@@ -4,7 +4,6 @@ import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   FormContainer,
-  FormLabel,
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
@@ -150,33 +149,33 @@ export const OrganismeForm = () => {
       <TextInput name="organismeCode" label="Code" required={true} />
       <TextInput name="organismeLibelle" label="Libellé" required={true} />
       <TextInput name="organismeEmailContact" label="Email" required={false} />
-      <FormLabel label="Profil" />
       <SelectForm
         name="organismeProfilOrganismeId"
+        label="Profil"
         listIdCodeLibelle={profilOrganismeList}
         setValues={setValues}
         required={true}
         defaultValue={defaultProfilOrganisme}
       />
-      <FormLabel label="Type" />
       <SelectForm
         name="organismeTypeOrganismeId"
+        label="Type"
         listIdCodeLibelle={typeOrganismeList}
         setValues={setValues}
         required={true}
         defaultValue={defaultTypeOrganisme}
       />
-      <FormLabel label="Zone de compétence" />
       <SelectForm
         name="organismeZoneIntegrationId"
+        label="Zone de compétence"
         listIdCodeLibelle={zoneIntegration.data}
         setValues={setValues}
         required={true}
         defaultValue={defaultZoneIntegration}
       />
-      <FormLabel label="Organisme parent" />
       <SelectForm
         name="organismeParentId"
+        label="Organisme parent"
         listIdCodeLibelle={organismeList}
         setValues={setValues}
         required={false}
