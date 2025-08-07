@@ -172,4 +172,11 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         .from(ZONE_INTEGRATION)
         .where(ZONE_INTEGRATION.CODE.eq(code))
         .fetchOne()?.get(ZONE_INTEGRATION.GEOMETRIE)
+
+    fun getZSIdsByGeometrie(geometry: Field<Geometry?>): Collection<UUID?> =
+        dsl.select(ZONE_INTEGRATION.ID)
+            .from(ZONE_INTEGRATION)
+            .where(ST_Within(ST_Transform(geometry, SRID), ZONE_INTEGRATION.GEOMETRIE))
+            .and(ZONE_INTEGRATION.TYPE.eq(TypeZoneIntegration.ZONE_SPECIALE))
+            .fetchInto()
 }

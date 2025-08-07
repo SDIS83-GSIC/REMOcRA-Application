@@ -394,6 +394,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE_POINT(9210, "La géométrie ne doit pas être nulle et doit être de type Point."),
     IMPORT_ZONES_INTEGRATION_CODE_NULL(9211, "Le code ne doit pas être nul."),
     IMPORT_ZONES_INTEGRATION_LIBELLE_NULL(9212, "Le libellé ne doit pas être nul."),
+    ZONE_SPECIALE_MULTIPLE(9220, "La géométrie fournie se trouve sur plusieurs zones spéciales."),
 
     //
     // ********************************************************************************

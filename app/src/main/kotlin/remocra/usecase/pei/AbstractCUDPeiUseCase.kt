@@ -25,6 +25,7 @@ import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.zoneintegration.ComputeZoneSpecialeUseCase
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -38,6 +39,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject
     lateinit var calculDispoUseCase: CalculDispoUseCase
+
+    @Inject
+    lateinit var computeZoneSpecialeUseCase: ComputeZoneSpecialeUseCase
 
     @Inject
     lateinit var visiteRepository: VisiteRepository
@@ -97,6 +101,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     override fun execute(userInfo: WrappedUserInfo, element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
+            // Calcul de la zone spéciale
+            val computedPeiZoneSpecialeId = computeZoneSpecialeUseCase.computeZoneSpeciale(element.peiGeometrie)
+            element.peiZoneSpecialeId = computedPeiZoneSpecialeId
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
             if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
                 parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
