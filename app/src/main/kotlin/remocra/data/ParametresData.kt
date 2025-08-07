@@ -64,6 +64,7 @@ data class ParametresSectionMobile(
 
 data class ParametresSectionCartographie(
     val coordonneesFormatAffichage: String?,
+    val empriseNative: String?,
 )
 
 data class ParametresSectionPeiLongueIndispo(

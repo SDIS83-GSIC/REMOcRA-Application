@@ -65,6 +65,10 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.COORDONNEES_FORMAT_AFFICHAGE,
                 parametresAdminData.cartographie.coordonneesFormatAffichage,
             )
+            updateParametre(
+                ParametreEnum.EMPRISE_NATIVE,
+                parametresAdminData.cartographie.empriseNative,
+            )
 
             // Couverture hydraulique
             updateParametre(

@@ -30,6 +30,7 @@ import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -53,6 +54,7 @@ type ParametresSectionMobile = {
 
 type ParametresSectionCartographie = {
   coordonneesFormatAffichage: string;
+  empriseNative: string | undefined;
 };
 
 type ParametresSectionCouvertureHydraulique = {
@@ -668,6 +670,10 @@ const AdminCartographie = ({
 }) => {
   const { setFieldValue } = useFormikContext();
 
+  const { data: zoneCompetence } = useGet(
+    url`/api/zone-integration/get-active`,
+  );
+
   return (
     values && (
       <>
@@ -686,6 +692,29 @@ const AdminCartographie = ({
             }
             defaultValue={typeAffichageCoordonnees.find(
               (e) => e.id === values.coordonneesFormatAffichage,
+            )}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="cartographie.empriseNative"
+            label="Emprise par défaut de la carte"
+            options={zoneCompetence}
+            getOptionValue={(v) => v.code}
+            getOptionLabel={(v) => v.libelle}
+            required={false}
+            tooltipText={
+              "Emprise géographique affichée par défaut sur la carte lorsque l'utilisateur n'est pas connecté ou lorsqu'il n'a pas de zone de compétence définie (cas des super administrateurs)"
+            }
+            onChange={(e) =>
+              setFieldValue(
+                `cartographie.empriseNative`,
+                zoneCompetence?.find((zc: IdCodeLibelleType) => zc.id === e.id)
+                  ?.code,
+              )
+            }
+            defaultValue={zoneCompetence?.find(
+              (e: IdCodeLibelleType) => e.code === values.empriseNative,
             )}
           />
         </AdminParametre>

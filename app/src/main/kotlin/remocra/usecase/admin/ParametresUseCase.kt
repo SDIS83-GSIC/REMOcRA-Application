@@ -60,6 +60,7 @@ class ParametresUseCase : AbstractUseCase() {
 
         val cartographie = ParametresSectionCartographie(
             coordonneesFormatAffichage = mapParametres.getStringOrNull(ParametreEnum.COORDONNEES_FORMAT_AFFICHAGE.name),
+            empriseNative = mapParametres.getStringOrNull(ParametreEnum.EMPRISE_NATIVE.name),
         )
 
         val couvertureHydraulique = ParametresSectionCouvertureHydraulique(
