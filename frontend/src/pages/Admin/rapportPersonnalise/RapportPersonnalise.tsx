@@ -337,6 +337,7 @@ const RapportPersonnalise = () => {
                 <TextAreaInput
                   name="rapportPersonnaliseSourceSql"
                   label="Requête SQL"
+                  rows={15}
                 />
               </Col>
             ) : (
@@ -345,6 +346,7 @@ const RapportPersonnalise = () => {
                   <TextAreaInput
                     name="rapportPersonnaliseSourceSqlDebut"
                     label="Requête SQL"
+                    rows={8}
                   />
                 </Col>
                 <Row className="m-2">
@@ -355,7 +357,10 @@ const RapportPersonnalise = () => {
                   <Col>&#41; as geometrie</Col>
                 </Row>
                 <Col>
-                  <TextAreaInput name="rapportPersonnaliseSourceSqlFin" />
+                  <TextAreaInput
+                    name="rapportPersonnaliseSourceSqlFin"
+                    rows={8}
+                  />
                 </Col>
               </>
             )}

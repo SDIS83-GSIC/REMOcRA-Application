@@ -150,7 +150,8 @@ export const TextAreaInput = ({
   value,
   tooltipText,
   onChange,
-}: InputType) => {
+  rows = 3,
+}: InputType & { rows?: number }) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
@@ -165,7 +166,7 @@ export const TextAreaInput = ({
         id={name}
         required={required}
         as="textarea"
-        rows={3}
+        rows={rows}
         readOnly={readOnly}
         disabled={disabled}
         defaultValue={value ?? ""}
