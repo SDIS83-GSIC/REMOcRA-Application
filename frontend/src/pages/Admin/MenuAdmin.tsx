@@ -339,6 +339,16 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
+                      pathname={URLS.LIST_FONCTION_CONTACT}
+                    >
+                      Fonctions des contacts
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
+                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
                       pathname={URLS.LIST_MARQUE_PIBI}
                     >
                       Marques de PIBI

@@ -197,6 +197,9 @@ import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
 import UpdateTypeEngin from "./pages/Admin/typeEngin/UpdateTypeEngin.tsx";
 import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
+import ListFonctionContact from "./pages/Admin/fonctionContact/ListFonctionContact.tsx";
+import UpdateFonctionContact from "./pages/Admin/fonctionContact/UpdateFonctionContact.tsx";
+import CreateFonctionContact from "./pages/Admin/fonctionContact/CreateFonctionContact.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -339,6 +342,11 @@ export const URLS = {
   UPDATE_DOMAINE: (domaineId: string) =>
     url`/admin/domaine/update/` + domaineId,
   LIST_DOMAINE: url`/admin/domaine`,
+
+  ADD_FONCTION_CONTACT: url`/admin/fonction-contact/create`,
+  UPDATE_FONCTION_CONTACT: (fonctionContactId: string) =>
+    url`/admin/fonction-contact/update/` + fonctionContactId,
+  LIST_FONCTION_CONTACT: url`/admin/fonction-contact`,
 
   ADD_MARQUE_PIBI: url`/admin/marque-pibi/create`,
   UPDATE_MARQUE_PIBI: (marquePibiId: string) =>
@@ -1277,6 +1285,33 @@ export default [
         element: (
           <Authorization
             Component={CreateDomaine}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "fonction-contact",
+        element: (
+          <Authorization
+            Component={ListFonctionContact}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "fonction-contact/update/:fonctionContactId",
+        element: (
+          <Authorization
+            Component={UpdateFonctionContact}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "fonction-contact/create",
+        element: (
+          <Authorization
+            Component={CreateFonctionContact}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),

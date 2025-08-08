@@ -10,6 +10,7 @@ enum class TypeNomenclatureCodeLibelle {
     CRISE_CATEGORIE,
     DIAMETRE,
     DOMAINE,
+    FONCTION_CONTACT,
     MARQUE_PIBI,
     MATERIAU,
     MODELE_PIBI,

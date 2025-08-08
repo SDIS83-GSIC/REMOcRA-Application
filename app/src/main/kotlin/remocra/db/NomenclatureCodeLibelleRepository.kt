@@ -20,10 +20,12 @@ import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.CRISE
 import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
@@ -76,6 +78,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI
                 TypeNomenclatureCodeLibelle.MATERIAU -> MATERIAU
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI
@@ -102,6 +105,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ID
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.ID
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ID
                 TypeNomenclatureCodeLibelle.MATERIAU -> MATERIAU.ID
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI.ID
@@ -128,6 +132,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.CODE
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.CODE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.CODE
                 TypeNomenclatureCodeLibelle.MATERIAU -> MATERIAU.CODE
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI.CODE
@@ -154,6 +159,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.LIBELLE
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.LIBELLE
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.LIBELLE
                 TypeNomenclatureCodeLibelle.MATERIAU -> MATERIAU.LIBELLE
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI.LIBELLE
@@ -180,6 +186,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ACTIF
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.ACTIF
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> MARQUE_PIBI.ACTIF
                 TypeNomenclatureCodeLibelle.MATERIAU -> MATERIAU.ACTIF
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> MODELE_PIBI.ACTIF
@@ -202,6 +209,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             when (type) {
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.PROTECTED
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.PROTECTED
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.PROTECTED
                 TypeNomenclatureCodeLibelle.NATURE_DECI -> NATURE_DECI.PROTECTED
                 TypeNomenclatureCodeLibelle.TYPE_ORGANISME -> TYPE_ORGANISME.PROTECTED
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> ROLE_CONTACT.PROTECTED
@@ -246,6 +254,10 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 )
                 TypeNomenclatureCodeLibelle.DIAMETRE -> setOf(InfosFkCible(PIBI, PIBI.DIAMETRE_ID), InfosFkCible(L_DIAMETRE_NATURE, L_DIAMETRE_NATURE.DIAMETRE_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.DIAMETRE_ID))
                 TypeNomenclatureCodeLibelle.DOMAINE -> setOf(InfosFkCible(PEI, PEI.DOMAINE_ID), InfosFkCible(NEW_PEI, NEW_PEI.DOMAINE_ID))
+                TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> setOf(
+                    InfosFkCible(CONTACT, CONTACT.FONCTION_CONTACT_ID),
+                    InfosFkCible(remocra.db.jooq.incoming.tables.references.CONTACT, remocra.db.jooq.incoming.tables.references.CONTACT.FONCTION_CONTACT_ID),
+                )
                 TypeNomenclatureCodeLibelle.MARQUE_PIBI -> setOf(InfosFkCible(MODELE_PIBI, MODELE_PIBI.MARQUE_ID), InfosFkCible(PIBI, PIBI.MARQUE_PIBI_ID))
                 TypeNomenclatureCodeLibelle.MATERIAU -> setOf(InfosFkCible(PENA, PENA.MATERIAU_ID))
                 TypeNomenclatureCodeLibelle.MODELE_PIBI -> setOf(InfosFkCible(PIBI, PIBI.MODELE_PIBI_ID))

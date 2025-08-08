@@ -9,6 +9,7 @@ export enum NOMENCLATURE {
   CRISE_CATEGORIE = "crise_categorie",
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
+  FONCTION_CONTACT = "fonction_contact",
   NATURE = "nature",
   NATURE_PIBI = "nature_pibi",
   NATURE_PENA = "nature_pena",
