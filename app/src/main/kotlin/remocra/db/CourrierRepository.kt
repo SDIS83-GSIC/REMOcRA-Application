@@ -1,8 +1,10 @@
 package remocra.db
 
 import com.google.inject.Inject
+import org.jooq.CommonTableExpression
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Record3
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
@@ -46,6 +48,46 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
 
     companion object {
         private val expediteurAlias: Table<*> = ORGANISME.`as`("EXPEDITEUR")
+
+        private val destinataireNomCte = name("destinataire")
+        private val destinataireCte =
+            destinataireNomCte.fields("courrier_id", "destinataire_email", "accuse_reception").`as`(
+                DSL.select(
+                    L_COURRIER_UTILISATEUR.COURRIER_ID,
+                    UTILISATEUR.EMAIL,
+                    DSL.`when`(L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION.isNotNull(), DSL.`val`(true))
+                        .otherwise(DSL.`val`(false)).`as`("accuse_reception"),
+                )
+                    .from(L_COURRIER_UTILISATEUR)
+                    .join(UTILISATEUR).on(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
+                    .union(
+                        DSL.select(
+                            L_COURRIER_ORGANISME.COURRIER_ID,
+                            ORGANISME.EMAIL_CONTACT,
+                            DSL.`val`<Boolean>(null).`as`("accuse_reception"),
+                        )
+                            .from(L_COURRIER_ORGANISME)
+                            .join(ORGANISME).on(L_COURRIER_ORGANISME.ORGANISME_ID.eq(ORGANISME.ID)),
+                    )
+                    .union(
+                        DSL.select(
+                            L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID,
+                            CONTACT.EMAIL,
+                            DSL.`val`<Boolean>(null).`as`("accuse_reception"),
+                        )
+                            .from(L_COURRIER_CONTACT_GESTIONNAIRE)
+                            .join(CONTACT).on(L_COURRIER_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID)),
+                    )
+                    .union(
+                        DSL.select(
+                            L_COURRIER_CONTACT_ORGANISME.COURRIER_ID,
+                            CONTACT.EMAIL,
+                            DSL.`val`<Boolean>(null).`as`("accuse_reception"),
+                        )
+                            .from(L_COURRIER_CONTACT_ORGANISME)
+                            .join(CONTACT).on(L_COURRIER_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID)),
+                    ),
+            )
     }
 
     fun setAccuse(courrierId: UUID, userId: UUID) = dsl.update(L_COURRIER_UTILISATEUR)
@@ -66,133 +108,105 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         listeThematiqueId: Collection<UUID>,
         userInfo: WrappedUserInfo,
         params: Params<Filter, Sort>?,
-    ): Collection<CourrierComplet> {
-        return dsl.selectDistinct(
-//            Info courrier
+    ): Collection<CourrierComplet> =
+        dsl.with(destinataireCte).selectDistinct(
             COURRIER.ID,
             COURRIER.REFERENCE,
             expediteurAlias.field(ORGANISME.LIBELLE)!!.`as`("courrierExpediteur"),
             COURRIER.OBJET,
-//            Infos Document
             DOCUMENT.DATE,
             COURRIER.DOCUMENT_ID,
-//        Infos Destinataire
             multiset(
-                selectDistinct(UTILISATEUR.EMAIL, L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION)
-                    .from(UTILISATEUR)
-                    .join(L_COURRIER_UTILISATEUR)
-                    .on(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(COURRIER.ID))
-                    .and(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
-                    .where(
-                        params?.filterBy?.accuse?.let { L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION.isNotNull().eq(it) }
-                            ?: DSL.noCondition(),
-                    ),
+                dsl.select(
+                    destinataireCte.field("courrier_id", UUID::class.java),
+                    destinataireCte.field("destinataire_email", String::class.java),
+                    destinataireCte.field("accuse_reception", Boolean::class.java),
+                )
+                    .from(destinataireCte)
+                    .where(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID)),
             ).convertFrom { record ->
                 record?.map { r ->
                     Destinataire(
-                        email = r.value1()!!,
-                        accuse = r.value2() != null,
+                        email = r.get("destinataire_email", String::class.java),
+                        accuse = r.get("accuse_reception") as Boolean?,
                     )
                 }
             }.`as`("emailDestinataire"),
         )
             .from(COURRIER)
-            .join(DOCUMENT)
-            .on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
-            .join(L_THEMATIQUE_COURRIER)
-            .on(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(COURRIER.ID))
-            .leftJoin(L_COURRIER_UTILISATEUR)
-            .on(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(COURRIER.ID))
-            .join(UTILISATEUR)
-            .on(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
-            .leftJoin(ORGANISME)
-            .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
-            .join(expediteurAlias)
-            .on(COURRIER.EXPEDITEUR.eq(expediteurAlias.field(ORGANISME.ID)))
+            .join(expediteurAlias).on(COURRIER.EXPEDITEUR.eq(expediteurAlias.field(ORGANISME.ID)))
+            .join(DOCUMENT).on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .join(L_THEMATIQUE_COURRIER).on(COURRIER.ID.eq(L_THEMATIQUE_COURRIER.COURRIER_ID))
+            .leftJoin(L_COURRIER_UTILISATEUR).on(COURRIER.ID.eq(L_COURRIER_UTILISATEUR.COURRIER_ID))
+            .join(destinataireCte).on(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID))
             .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
             /**
-             Si superAdmin ou que tu es expéditeur ou que tu es destinataire ou que l'organisme d'un des destinataires
-             t'es affilié
+             Si superAdmin
+             ou que tu es expéditeur == Mon organisme est l'expéditeur => userInfo.organismeId == COURRIER.EXPEDITEUR
+             ou que tu es destinataire => L_COURRIER_UTILISATEUR.UTILISATEUR_ID = userInfo.utilisateurId
+             ou que l'organisme d'un des destinataires t'est affilié => COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds)
              **/
             .and(
-                repositoryUtils
-                    .checkIsSuperAdminOrCondition(
-                        UTILISATEUR.ID.eq(userInfo.utilisateurId)
-                            .or(
-                                ORGANISME.ID
-                                    .`in`(userInfo.affiliatedOrganismeIds),
-                            ),
-                        userInfo.isSuperAdmin,
-                    ),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    COURRIER.EXPEDITEUR.eq(userInfo.organismeId)
+                        .or(COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds))
+                        .or(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(userInfo.utilisateurId)),
+                    userInfo.isSuperAdmin,
+                ),
             )
-            .and(params?.filterBy?.toCondition(expediteurAlias) ?: DSL.noCondition())
+            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte) ?: DSL.noCondition())
             .orderBy(
                 params?.sortBy?.toCondition()
                     .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE.desc()),
             )
             .limit(params?.limit)
             .fetchInto()
-    }
+
     fun countCourrierCompletWithThematique(
         listeThematiqueId: Collection<UUID>,
         userInfo: WrappedUserInfo,
         params: Params<Filter, Sort>?,
     ): Int =
-        dsl.selectDistinct(
-//            Info courrier
+        dsl.with(destinataireCte).selectDistinct(
             COURRIER.ID,
         )
             .from(COURRIER)
-            .join(DOCUMENT)
-            .on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
-            .join(L_THEMATIQUE_COURRIER)
-            .on(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(COURRIER.ID))
-            .leftJoin(L_COURRIER_UTILISATEUR)
-            .on(L_COURRIER_UTILISATEUR.COURRIER_ID.eq(COURRIER.ID))
-            .join(UTILISATEUR)
-            .on(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(UTILISATEUR.ID))
-            .leftJoin(ORGANISME)
-            .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
-            .join(expediteurAlias)
-            .on(COURRIER.EXPEDITEUR.eq(expediteurAlias.field(ORGANISME.ID)))
+            .join(expediteurAlias).on(COURRIER.EXPEDITEUR.eq(expediteurAlias.field(ORGANISME.ID)))
+            .join(DOCUMENT).on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
+            .join(L_THEMATIQUE_COURRIER).on(COURRIER.ID.eq(L_THEMATIQUE_COURRIER.COURRIER_ID))
+            .leftJoin(L_COURRIER_UTILISATEUR).on(COURRIER.ID.eq(L_COURRIER_UTILISATEUR.COURRIER_ID))
+            .join(destinataireCte).on(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID))
             .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
-            /**
-             Si superAdmin ou que tu es expéditeur ou que tu es destinataire ou que l'organisme d'un des destinataires
-             t'es affilié
-             **/
             .and(
-                repositoryUtils
-                    .checkIsSuperAdminOrCondition(
-                        UTILISATEUR.ID.eq(userInfo.utilisateurId)
-                            .or(
-                                ORGANISME.ID
-                                    .`in`(userInfo.affiliatedOrganismeIds),
-                            ),
-                        userInfo.isSuperAdmin,
-                    ),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    COURRIER.EXPEDITEUR.eq(userInfo.organismeId)
+                        .or(COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds))
+                        .or(L_COURRIER_UTILISATEUR.COURRIER_ID.`in`(DSL.select(L_COURRIER_UTILISATEUR.COURRIER_ID).from(L_COURRIER_UTILISATEUR).where(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(userInfo.utilisateurId)))),
+                    userInfo.isSuperAdmin,
+                ),
             )
-            .and(params?.filterBy?.toCondition(expediteurAlias) ?: DSL.noCondition())
+            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte) ?: DSL.noCondition())
             .count()
 
     data class Filter(
         val courrierObjet: String?,
         val courrierReference: String?,
         val courrierExpediteur: String?,
-        val emailDestinataire: List<UUID>?,
+        val emailDestinataire: String?,
         val accuse: Boolean?,
     ) {
-        fun toCondition(expediteurAlias: Table<*>): Condition =
+        fun toCondition(expediteurAlias: Table<*>, destinataireCte: CommonTableExpression<Record3<UUID?, String?, Boolean?>?>): Condition =
             DSL.and(
                 listOfNotNull(
                     courrierObjet?.let { DSL.and(COURRIER.OBJET.containsIgnoreCaseUnaccent(it)) },
                     courrierReference?.let { DSL.and(COURRIER.REFERENCE.containsIgnoreCaseUnaccent(it)) },
                     courrierExpediteur?.let { expediteurAlias.field(ORGANISME.LIBELLE)!!.containsIgnoreCaseUnaccent(it) },
-                    emailDestinataire?.let { DSL.and(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.`in`(it)) },
+                    emailDestinataire?.let { DSL.and(destinataireCte.field("destinataire_email", String::class.java)!!.containsIgnoreCaseUnaccent(it)) },
                     accuse?.let {
                         if (accuse) {
-                            DSL.and(L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION.isNotNull)
+                            DSL.and(destinataireCte.field("accuse_reception", Boolean::class.java)?.isTrue)
                         } else {
-                            DSL.and(L_COURRIER_UTILISATEUR.ACCUSE_RECEPTION.isNull)
+                            DSL.and(destinataireCte.field("accuse_reception", Boolean::class.java)?.isFalse)
                         }
                     },
                 ),
@@ -200,18 +214,20 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
     }
 
     data class Sort(
-        val objet: Int?,
-        val date: Int?,
+        val courrierObjet: Int?,
+        val courrierReference: Int?,
+        val courrierExpediteur: Int?,
     ) {
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
-            objet?.let { "objet" to it },
-            date?.let { "date" to it },
+            courrierObjet?.let { "courrierObjet" to it },
+            courrierReference?.let { "courrierReference" to it },
+            courrierExpediteur?.let { "courrierExpediteur" to it },
         )
-
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
             when (pair.first) {
-                "objet" -> COURRIER.OBJET.getSortField(pair.second)
-                "date" -> DOCUMENT.DATE.getSortField(pair.second)
+                "courrierObjet" -> COURRIER.OBJET.getSortField(pair.second)
+                "courrierReference" -> COURRIER.REFERENCE.getSortField(pair.second)
+                "courrierExpediteur" -> expediteurAlias.field(ORGANISME.LIBELLE)?.getSortField(pair.second)
                 else -> null
             }
         }
@@ -225,12 +241,11 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val courrierExpediteur: String?,
         val documentDate: ZonedDateTime,
         val emailDestinataire: Collection<Destinataire>,
-        val courrierAccuse: Boolean,
     )
 
     data class Destinataire(
         val email: String,
-        val accuse: Boolean,
+        val accuse: Boolean?,
     )
 
     fun getAllDestinataires(filterBy: FilterDestinataire?, sortBy: SortDestinataire?, limit: Int?, offset: Int?): Collection<DestinataireData> {

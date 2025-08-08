@@ -1,8 +1,8 @@
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import React from "react";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
+import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import Header from "../../components/Header/Header.tsx";
 import {
   IconAccuse,
@@ -14,18 +14,14 @@ import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
 import SquelettePage from "../SquelettePage.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
-import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
-import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
-import MultiSelectFilterFromList from "../../components/Filter/MultiSelectFilterFromList.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
 import FilterValues from "./FilterModuleCourrier.tsx";
 
 const ListModuleCourrier = () => {
   const { moduleId } = useParams();
-  const listeIdMailUtilisateur = useGet(url`/api/utilisateur/get-id-mail`);
   return (
     <SquelettePage navbar={<Header />}>
       <Container>
@@ -50,18 +46,7 @@ const ListModuleCourrier = () => {
             {
               Header: "Destinataires",
               accessor: "emailDestinataire",
-              sortField: "emailDestinataire",
-              Filter: (
-                <MultiSelectFilterFromList
-                  name={"emailDestinataire"}
-                  listIdCodeLibelle={listeIdMailUtilisateur?.data?.map((e) => ({
-                    id: e.utilisateurId,
-                    code: e.utilisateurEmail,
-                    libelle: e.utilisateurEmail,
-                  }))}
-                />
-              ),
-              width: 300,
+              Filter: <FilterInput type="text" name="emailDestinataire" />,
               Cell: (value) => {
                 return value.value.map((v, key) => {
                   return (
@@ -73,7 +58,7 @@ const ListModuleCourrier = () => {
               },
             },
             {
-              Header: "Accuse",
+              Header: "Accusé",
               accessor: "emailDestinataire",
               Filter: <SelectEnumOption options={VRAI_FAUX} name={"accuse"} />,
               Cell: (value) => {
@@ -99,7 +84,7 @@ const ListModuleCourrier = () => {
             },
 
             {
-              Header: "Expiditeur",
+              Header: "Expéditeur",
               accessor: "courrierExpediteur",
               sortField: "courrierExpediteur",
               Filter: <FilterInput type="text" name="courrierExpediteur" />,
