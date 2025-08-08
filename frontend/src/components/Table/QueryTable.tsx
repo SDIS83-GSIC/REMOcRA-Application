@@ -408,8 +408,8 @@ type QueryTableType = {
   query: string;
   queryParams?: object[];
   asyncOptions?: object[];
-  getList: (data: any) => object[];
-  getCount: (data: any) => number;
+  getList?: (data: any) => object[];
+  getCount?: (data: any) => number;
   count?: number;
   paginationState?: [
     { offset: number; limit: number },
@@ -427,7 +427,7 @@ type QueryTableType = {
 export type columnType = {
   Header?: string | ReactNode;
   Filter?: ReactNode;
-  accessor: string | (() => ReactNode);
+  accessor: string | ((e: any) => any);
   sortField?: (() => string) | string;
   Cell?: (value: any) => ReactNode;
   className?: string;

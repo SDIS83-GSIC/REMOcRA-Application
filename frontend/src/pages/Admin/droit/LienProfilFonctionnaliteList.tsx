@@ -1,14 +1,15 @@
 import Container from "react-bootstrap/Container";
-import url from "../../../module/fetch.tsx";
-import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
-import { URLS } from "../../../routes.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import { IconList } from "../../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import { ActionColumn } from "../../../components/Table/columns.tsx";
 import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 
 const LienProfilFonctionnaliteList = () => {
   return (
@@ -34,6 +35,7 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Profil organisme",
             accessor: "profilOrganismeLibelle",
             sortField: "organisme",
+            Filter: <FilterInput name="organisme" type="text" />,
           },
           {
             accessor: () => <span className={"fst-italic"}>et</span>,
@@ -42,6 +44,7 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Profil utilisateur",
             accessor: "profilUtilisateurLibelle",
             sortField: "utilisateur",
+            Filter: <FilterInput name="utilisateur" type="text" />,
           },
           {
             accessor: () => <span className={"fst-bold"}>→</span>,
@@ -50,6 +53,7 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Groupe de fonctionnalités",
             accessor: "profilDroitLibelle",
             sortField: "fonctionnalite",
+            Filter: <FilterInput name="fonctionnalite" type="text" />,
           },
           ActionColumn({
             Header: "Actions",
@@ -61,7 +65,7 @@ const LienProfilFonctionnaliteList = () => {
             },
             buttons: [
               {
-                row: (row) => {
+                row: (row: any) => {
                   return row;
                 },
                 route: ({ profilOrganismeId, profilUtilisateurId }) =>
