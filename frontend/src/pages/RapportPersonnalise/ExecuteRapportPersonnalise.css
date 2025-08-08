@@ -1,0 +1,41 @@
+/* Styles pour le redimensionnement des colonnes */
+.resizable-table {
+  table-layout: fixed;
+  width: auto;
+}
+
+.resizable-table th {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.column-resizer {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+  border-right: 2px solid transparent;
+  z-index: 1;
+  transition: border-color 0.2s ease;
+}
+
+.column-resizer:hover {
+  border-right: 2px solid #007bff !important;
+}
+
+.resizable-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Indicateur visuel pendant le redimensionnement */
+body.resizing {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
