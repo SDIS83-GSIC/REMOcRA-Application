@@ -15,7 +15,7 @@ class MailService @Inject constructor(private val settings: MailSettings) {
 
         bcc.forEach(email::addBcc)
         email.subject = subject
-        email.setMsg(body)
+        email.setMsg("<html><body><p>$body</p></body></html>")
 
         email.send()
     }
@@ -37,6 +37,10 @@ class MailService @Inject constructor(private val settings: MailSettings) {
         // TODO prendre en compte le SSL sur demande, tout le temps ? overrider pour la conf maildev
         email.isSSLOnConnect = false
         email.setFrom(settings.from)
+
+        // Définir l'encodage UTF-8
+        email.setCharset("UTF-8")
+
         return email
     }
 }
