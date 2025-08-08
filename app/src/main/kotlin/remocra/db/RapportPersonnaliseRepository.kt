@@ -88,9 +88,9 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                     rapportPersonnaliseModule?.let { DSL.and(RAPPORT_PERSONNALISE.MODULE.eq(TypeModule.entries.find { t -> t.name == it.name })) },
                     rapportPersonnaliseChampGeometrie?.let {
                         if (it) {
-                            DSL.and(RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.isNull)
-                        } else {
                             DSL.and(RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.isNotNull)
+                        } else {
+                            DSL.and(RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.isNull)
                         }
                     },
                     listeProfilDroitId?.let { DSL.and(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.`in`(it)) },
@@ -111,7 +111,14 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             RAPPORT_PERSONNALISE.LIBELLE.getSortField(rapportPersonnaliseLibelle),
             RAPPORT_PERSONNALISE.ACTIF.getSortField(rapportPersonnaliseActif),
             RAPPORT_PERSONNALISE.PROTECTED.getSortField(rapportPersonnaliseProtected),
-            RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.getSortField(rapportPersonnaliseChampGeometrie),
+            RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.let {
+                // C'est un champ booléen qu'on affiche, si le champ est null, on le considère comme faux
+                when (rapportPersonnaliseChampGeometrie) {
+                    1 -> it.asc()
+                    -1 -> it.desc()
+                    else -> null
+                }
+            },
         )
     }
 
