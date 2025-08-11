@@ -18,7 +18,7 @@ data class DebitSimultaneMesureData(
     val debitSimultaneMesureDebitRetenu: Int?,
     val debitSimultaneMesureDateMesure: ZonedDateTime,
     val debitSimultaneMesureCommentaire: String?,
-    val debitSimultaneMesureIdentiqueReseauVille: Boolean?,
+    val debitSimultaneMesureIdentiqueReseauVille: Boolean = false,
     val listePeiId: Collection<UUID>,
     val documentNomFichier: String?,
     val documentId: UUID?,

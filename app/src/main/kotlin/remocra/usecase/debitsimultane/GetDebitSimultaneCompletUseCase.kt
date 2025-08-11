@@ -51,7 +51,7 @@ class GetDebitSimultaneCompletUseCase : AbstractUseCase() {
                     debitSimultaneMesureDebitRetenu = it.debitSimultaneMesureDebitRetenu,
                     debitSimultaneMesureDateMesure = it.debitSimultaneMesureDateMesure,
                     debitSimultaneMesureCommentaire = it.debitSimultaneMesureCommentaire,
-                    debitSimultaneMesureIdentiqueReseauVille = it.debitSimultaneMesureIdentiqueReseauVille,
+                    debitSimultaneMesureIdentiqueReseauVille = it.debitSimultaneMesureIdentiqueReseauVille ?: false,
                     listePeiId = it.listePibi.map { it.pibiId },
                     it.documentNomFichier,
                     it.documentId,

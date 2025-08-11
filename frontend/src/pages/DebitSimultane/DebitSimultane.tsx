@@ -78,6 +78,8 @@ export const prepareVariables = (values: DebitSimultaneType) => {
         debitSimultaneMesureDebitRetenu: e.debitSimultaneMesureDebitRetenu,
         debitSimultaneMesureDateMesure: e.debitSimultaneMesureDateMesure,
         debitSimultaneMesureCommentaire: e.debitSimultaneMesureCommentaire,
+        debitSimultaneMesureIdentiqueReseauVille:
+          e.debitSimultaneMesureIdentiqueReseauVille ?? false,
         listePeiId: e.listePeiId,
         documentNomFichier: e.documentNomFichier,
       })),
