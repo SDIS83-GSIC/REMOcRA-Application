@@ -19,6 +19,7 @@ import {
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredEmail } from "../../../module/validators.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type UtilisateurType = {
   utilisateurActif: boolean;
@@ -78,11 +79,16 @@ const Utilisateur = () => {
   useEffect(() => {
     setProfilDroitDeduit(
       profilDroitWithProfilsList?.find(
-        (e) =>
+        (e: {
+          profilUtilisateurId: string;
+          profilOrganismeId: string;
+          libelle: string;
+        }) =>
           e.profilUtilisateurId === values.utilisateurProfilUtilisateurId &&
           e.profilOrganismeId ===
-            organismeList?.find((e) => e.id === values.utilisateurOrganismeId)
-              ?.lienId,
+            organismeList?.find(
+              (e: { id: string }) => e.id === values.utilisateurOrganismeId,
+            )?.lienId,
       )?.libelle,
     );
   }, [
@@ -133,7 +139,7 @@ const Utilisateur = () => {
           <TextInput label="Prénom" name="utilisateurPrenom" required={true} />
         </Col>
       </Row>
-      {user.isSuperAdmin && (
+      {user?.isSuperAdmin && (
         <Row className="mt-3">
           <Col>
             <TooltipCustom
@@ -152,7 +158,7 @@ const Utilisateur = () => {
           <Col> </Col> <Col> </Col>
         </Row>
       )}
-      {((!values.utilisateurIsSuperAdmin && user.isSuperAdmin) ||
+      {((!values.utilisateurIsSuperAdmin && user?.isSuperAdmin) ||
         !values.utilisateurIsSuperAdmin) && (
         <Row className="mt-3">
           <Col>
@@ -161,7 +167,8 @@ const Utilisateur = () => {
               listIdCodeLibelle={organismeList}
               label="Organisme"
               defaultValue={organismeList?.find(
-                (e) => e.id === values.utilisateurOrganismeId,
+                (e: IdCodeLibelleType) =>
+                  e.id === values.utilisateurOrganismeId,
               )}
               required={true}
               setValues={setValues}
@@ -176,7 +183,8 @@ const Utilisateur = () => {
               listIdCodeLibelle={profilUtilisateurList}
               label="Profil utilisateur"
               defaultValue={profilUtilisateurList?.find(
-                (e) => e.id === values.utilisateurProfilUtilisateurId,
+                (e: IdCodeLibelleType) =>
+                  e.id === values.utilisateurProfilUtilisateurId,
               )}
               required={true}
               setValues={setValues}
@@ -187,7 +195,7 @@ const Utilisateur = () => {
           </Col>
           <Col className="bg-light p-3 border rounded">
             <div className="fw-bold p-2 text-center">
-              <IconInfo /> Profil droit
+              <IconInfo /> Profil droit <span className="text-danger">*</span>
             </div>
             <div className="text-center">
               {profilDroitDeduit != null ? (
@@ -202,7 +210,10 @@ const Utilisateur = () => {
           </Col>
         </Row>
       )}
-      <SubmitFormButtons returnLink={true} />
+      <SubmitFormButtons
+        returnLink={true}
+        disabledValide={!profilDroitDeduit && !values.utilisateurIsSuperAdmin}
+      />
     </FormContainer>
   );
 };
