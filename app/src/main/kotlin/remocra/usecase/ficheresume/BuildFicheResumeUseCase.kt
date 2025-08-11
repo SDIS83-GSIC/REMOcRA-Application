@@ -2,6 +2,7 @@ package remocra.usecase.ficheresume
 
 import com.google.inject.Inject
 import remocra.db.FicheResumeRepository
+import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeResumeElement
 import remocra.usecase.AbstractUseCase
@@ -42,7 +43,10 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         ResumeElement(
                             type = it.ficheResumeBlocTypeResumeData,
                             titre = it.ficheResumeBlocTitre,
-                            data = peiData.peiDisponibiliteTerrestre,
+                            data = DisponibiliteWithIndispoTemp(
+                                disponibilite = peiData.peiDisponibiliteTerrestre,
+                                hasIndispoTemp = peiData.hasIndispoTemp,
+                            ),
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
                         ),
@@ -184,6 +188,11 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
         val data: Any?, // On renvoie soit une liste, soit un string
         val colonne: Int,
         val ligne: Int,
+    )
+
+    data class DisponibiliteWithIndispoTemp(
+        val disponibilite: Disponibilite,
+        val hasIndispoTemp: Boolean,
     )
 
     private fun String?.takeIfNotNullElseNonRenseigne() =

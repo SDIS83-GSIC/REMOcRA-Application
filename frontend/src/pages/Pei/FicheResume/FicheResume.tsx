@@ -38,7 +38,7 @@ const FicheResume = ({
 
   const mapColonneRow = Object.groupBy(
     elementFicheResumeState?.data,
-    ({ colonne }) => colonne,
+    (item: { colonne: number }) => item.colonne,
   );
 
   return (
@@ -48,7 +48,7 @@ const FicheResume = ({
         <Row>
           {Object.entries(mapColonneRow).map(([key, values]) => (
             <Col key={key} className={"mx-0 px-0"}>
-              {Array.from(values).map((e, key) => {
+              {Array.from(values ?? []).map((e: any, key) => {
                 return (
                   <Row className="mx-0 my-3" key={key}>
                     <ElementResume
@@ -97,18 +97,29 @@ const ElementResume = ({
   );
 };
 
-const ElementResumeDisponibilite = ({ value }: { value: string }) => {
-  return DISPONIBILITE_PEI[value] === DISPONIBILITE_PEI.DISPONIBLE ? (
+const ElementResumeDisponibilite = ({
+  value,
+}: {
+  value: {
+    disponibilite: keyof typeof DISPONIBILITE_PEI;
+    hasIndispoTemp: boolean;
+  };
+}) => {
+  return DISPONIBILITE_PEI[value.disponibilite] ===
+    DISPONIBILITE_PEI.DISPONIBLE ? (
     <p>
       <span className="text-white bg-success rounded p-2"> OUI </span>
     </p>
-  ) : DISPONIBILITE_PEI[value] === DISPONIBILITE_PEI.NON_CONFORME ? (
+  ) : DISPONIBILITE_PEI[value.disponibilite] ===
+    DISPONIBILITE_PEI.NON_CONFORME ? (
     <p>
       <span className="text-white bg-warning rounded p-2">NON CONFORME</span>
     </p>
   ) : (
     <p>
-      <span className="text-white bg-danger rounded p-2">NON</span>
+      <span className="text-white bg-danger rounded p-2">
+        NON {value.hasIndispoTemp ? "- Indisponibilité temporaire " : ""}
+      </span>
     </p>
   );
 };
@@ -198,7 +209,7 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
                 </tr>
               </thead>
               <tbody>
-                {data.data.map((e, index) => {
+                {data.data.map((e: any, index: number) => {
                   return (
                     <tr key={index}>
                       <td>{formatDateTime(e.visiteDate)}</td>

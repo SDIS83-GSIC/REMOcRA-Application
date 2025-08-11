@@ -2,6 +2,7 @@ package remocra.db
 
 import com.google.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.GlobalConstants
@@ -13,6 +14,8 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.FICHE_RESUME_BLOC
+import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
+import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
@@ -86,6 +89,14 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
             DIAMETRE.LIBELLE,
+            DSL.exists(
+                DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                    .join(INDISPONIBILITE_TEMPORAIRE)
+                    .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
+                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull.or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()))),
+            ).`as`("hasIndispoTemp"),
         ).from(PEI)
             .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
@@ -134,6 +145,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val diametreLibelle: String?,
         val pibiDiametreCanalisation: Int?,
         val penaCapacite: Int?,
+        val hasIndispoTemp: Boolean = false,
     )
 
     fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(
