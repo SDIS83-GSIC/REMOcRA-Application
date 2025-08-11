@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class SiteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(): Collection<SiteWithGestionnaireId> =
@@ -88,12 +89,22 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         val siteActif: Int?,
         val gestionnaireLibelle: Int?,
     ) {
-
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            SITE.CODE.getSortField(siteCode),
-            SITE.LIBELLE.getSortField(siteLibelle),
-            GESTIONNAIRE.LIBELLE.getSortField(gestionnaireLibelle),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            siteCode?.let { "siteCode" to it },
+            siteLibelle?.let { "siteLibelle" to it },
+            siteActif?.let { "siteActif" to it },
+            gestionnaireLibelle?.let { "gestionnaireLibelle" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "siteCode" -> SITE.CODE.getSortField(pair.second)
+                "siteLibelle" -> SITE.LIBELLE.getSortField(pair.second)
+                "siteActif" -> SITE.ACTIF.getSortField(pair.second)
+                "gestionnaireLibelle" -> GESTIONNAIRE.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     data class SiteWithGestionnaire(

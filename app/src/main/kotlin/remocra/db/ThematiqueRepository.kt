@@ -21,6 +21,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(actif: Boolean? = null): List<GlobalData.IdCodeLibelleData> =
@@ -161,10 +162,18 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
         val libelle: Int?,
         val date: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            DOCUMENT_HABILITABLE.LIBELLE.getSortField(libelle),
-            DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(date),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            libelle?.let { "libelle" to it },
+            date?.let { "date" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "libelle" -> DOCUMENT_HABILITABLE.LIBELLE.getSortField(pair.second)
+                "date" -> DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun insertLThematiqueCourrier(

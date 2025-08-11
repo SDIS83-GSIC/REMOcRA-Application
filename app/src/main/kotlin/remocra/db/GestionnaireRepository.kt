@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
 import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.tasks.Destinataire
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -93,11 +94,20 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         val gestionnaireActif: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            GESTIONNAIRE.CODE.getSortField(gestionnaireCode),
-            GESTIONNAIRE.LIBELLE.getSortField(gestionnaireLibelle),
-            GESTIONNAIRE.ACTIF.getSortField(gestionnaireActif),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            gestionnaireCode?.let { "gestionnaireCode" to it },
+            gestionnaireLibelle?.let { "gestionnaireLibelle" to it },
+            gestionnaireActif?.let { "gestionnaireActif" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "gestionnaireCode" -> GESTIONNAIRE.CODE.getSortField(pair.second)
+                "gestionnaireLibelle" -> GESTIONNAIRE.LIBELLE.getSortField(pair.second)
+                "gestionnaireActif" -> GESTIONNAIRE.ACTIF.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun upsertGestionnaire(gestionnaire: Gestionnaire) = with(dsl.newRecord(GESTIONNAIRE, gestionnaire)) {

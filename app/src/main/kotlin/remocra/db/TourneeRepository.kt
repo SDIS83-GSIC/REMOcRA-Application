@@ -48,6 +48,7 @@ import remocra.utils.ST_Within
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class TourneeRepository
 @Inject constructor(
@@ -271,68 +272,107 @@ class TourneeRepository
         val tourneeActif: Int?,
         val tourneeNextRopDate: Int?,
     ) {
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            tourneeLibelle?.let { "tourneeLibelle" to it },
+            tourneeNbPei?.let { "tourneeNbPei" to it },
+            organismeLibelle?.let { "organismeLibelle" to it },
+            tourneePourcentageAvancement?.let { "tourneePourcentageAvancement" to it },
+            tourneeUtilisateurReservationLibelle?.let { "tourneeUtilisateurReservationLibelle" to it },
+            tourneeActif?.let { "tourneeActif" to it },
+            tourneeNextRopDate?.let { "tourneeNextRopDate" to it },
+        )
+
         fun toCondition(list: Collection<TourneeComplete>): Collection<TourneeComplete> {
-            return when {
-                tourneeLibelle == 1 -> {
-                    list.sortedBy { it.tourneeLibelle.uppercase().unaccent() }
-                }
-
-                tourneeLibelle == -1 -> {
-                    list.sortedByDescending { it.tourneeLibelle.uppercase().unaccent() }
-                }
-
-                tourneeNbPei == 1 -> {
-                    list.sortedBy { it.tourneeNbPei }
-                }
-
-                tourneeNbPei == -1 -> {
-                    list.sortedByDescending { it.tourneeNbPei }
-                }
-
-                organismeLibelle == 1 -> {
-                    list.sortedBy { it.organismeLibelle.unaccent() }
-                }
-
-                organismeLibelle == -1 -> {
-                    list.sortedByDescending { it.organismeLibelle.unaccent() }
-                }
-
-                tourneePourcentageAvancement == 1 -> {
-                    list.sortedBy { it.tourneePourcentageAvancement }
-                }
-
-                tourneePourcentageAvancement == -1 -> {
-                    list.sortedByDescending { it.tourneePourcentageAvancement }
-                }
-
-                tourneeUtilisateurReservationLibelle == 1 -> {
-                    list.sortedBy { it.tourneeUtilisateurReservationLibelle?.unaccent() }
-                }
-
-                tourneeUtilisateurReservationLibelle == -1 -> {
-                    list.sortedByDescending { it.tourneeUtilisateurReservationLibelle?.unaccent() }
-                }
-
-                tourneeActif == 1 -> {
-                    list.sortedBy { it.tourneeActif }
-                }
-
-                tourneeActif == -1 -> {
-                    list.sortedByDescending { it.tourneeActif }
-                }
-
-                tourneeNextRopDate == 1 -> {
-                    list.sortedBy { it.tourneeNextRopDate }
-                }
-
-                tourneeNextRopDate == -1 -> {
-                    list.sortedByDescending { it.tourneeNextRopDate }
-                }
-
-                else -> {
-                    list.sortedBy { it.tourneeLibelle.unaccent() }
+            var comparator: Comparator<TourneeComplete> = Comparator { _, _ -> 0 }
+            for (pair in getPairsToSort().sortedBy { it.second.absoluteValue }) {
+                comparator = when (pair.first) {
+                    "tourneeLibelle" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparing { it.tourneeLibelle.uppercase().unaccent() },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparing<TourneeComplete, String> { it.tourneeLibelle.uppercase().unaccent() }.reversed(),
+                            )
+                        }
+                    }
+                    "tourneeNbPei" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparingInt { it.tourneeNbPei },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparingInt<TourneeComplete> { it.tourneeNbPei }.reversed(),
+                            )
+                        }
+                    }
+                    "organismeLibelle" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparing { it.organismeLibelle.unaccent() },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparing<TourneeComplete, String> { it.organismeLibelle.unaccent() }.reversed(),
+                            )
+                        }
+                    }
+                    "tourneePourcentageAvancement" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparingInt { it.tourneePourcentageAvancement ?: 0 },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparingInt<TourneeComplete> {
+                                    it.tourneePourcentageAvancement ?: 0
+                                }.reversed(),
+                            )
+                        }
+                    }
+                    "tourneeUtilisateurReservationLibelle" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparing { it.tourneeUtilisateurReservationLibelle?.unaccent() ?: "" },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparing<TourneeComplete, String> {
+                                    it.tourneeUtilisateurReservationLibelle?.unaccent() ?: ""
+                                }.reversed(),
+                            )
+                        }
+                    }
+                    "tourneeActif" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparing { it.tourneeActif },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparing<TourneeComplete, Boolean> { it.tourneeActif }.reversed(),
+                            )
+                        }
+                    }
+                    "tourneeNextRopDate" -> {
+                        if (pair.second >= 1) {
+                            comparator.thenComparing(
+                                Comparator.comparing { it.tourneeNextRopDate ?: ZonedDateTime.now() },
+                            )
+                        } else {
+                            comparator.thenComparing(
+                                Comparator.comparing<TourneeComplete, ZonedDateTime> {
+                                    it.tourneeNextRopDate ?: ZonedDateTime.now()
+                                }.reversed(),
+                            )
+                        }
+                    }
+                    else -> comparator
                 }
             }
+            return list.sortedWith(comparator)
         }
     }
 

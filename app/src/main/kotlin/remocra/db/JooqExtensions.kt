@@ -131,17 +131,20 @@ fun escape(value: String): String =
 
 fun Field<*>.getSortField(value: Any?): SortField<out Any>? =
     value?.let {
-        when (it) {
-            1 -> {
-                this.asc().nullsLast()
-            }
-            -1 -> {
-                this.desc().nullsLast()
-            }
-            else -> {
-                null
-            }
+        try {
+            // On essaye de convertir la valeur en Int
+            it.toString().toInt()
+        } catch (e: NumberFormatException) {
+            // Si ça échoue, on retourne null
+            return@let null
         }
+        if (it.toString().toInt() > 0) {
+            return@let this.asc().nullsLast()
+        } else if (it.toString().toInt() < 0) {
+            return@let this.desc().nullsLast()
+        }
+
+        return@let null
     }
 
 fun eqOrIsNullString(field: Field<String>, value: String?): Condition {

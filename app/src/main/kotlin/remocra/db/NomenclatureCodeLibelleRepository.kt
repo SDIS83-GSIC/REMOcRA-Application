@@ -56,6 +56,7 @@ import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 /**
  * Repository "générique" des nomenclatures code-libellé-actif(-protected?).
@@ -322,13 +323,24 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
         val libelleFk: Int?,
         var type: TypeNomenclatureCodeLibelle?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            getCodeField(type!!).getSortField(code),
-            getLibelleField(type!!).getSortField(libelle),
-            getActifField(type!!).getSortField(actif),
-            getProtectedField(type!!)?.getSortField(protected),
-            getInfosFk(type!!)?.libelleCible?.getSortField(libelleFk),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            code?.let { "code" to it },
+            libelle?.let { "libelle" to it },
+            actif?.let { "actif" to it },
+            protected?.let { "protected" to it },
+            libelleFk?.let { "libelleFk" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "code" -> getCodeField(type!!).getSortField(pair.second)
+                "libelle" -> getLibelleField(type!!).getSortField(pair.second)
+                "actif" -> getActifField(type!!).getSortField(pair.second)
+                "protected" -> getProtectedField(type!!)?.getSortField(pair.second)
+                "libelleFk" -> getInfosFk(type!!)?.libelleCible?.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getAllForAdmin(type: TypeNomenclatureCodeLibelle, params: Params<Filter, Sort>): Collection<NomenclatureCodeLibelleData> =

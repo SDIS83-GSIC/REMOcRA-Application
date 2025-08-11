@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class ContactRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun insertContact(contact: Contact) =
@@ -193,16 +194,30 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) : Abstr
         val siteLibelle: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            CONTACT.CIVILITE.getSortField(contactCivilite),
-            CONTACT.ACTIF.getSortField(contactActif),
-            CONTACT.NOM.getSortField(contactNom),
-            CONTACT.PRENOM.getSortField(contactPrenom),
-            FONCTION_CONTACT.LIBELLE.getSortField(contactFonctionLibelle),
-            CONTACT.TELEPHONE.getSortField(contactTelephone),
-            CONTACT.EMAIL.getSortField(contactEmail),
-            SITE.LIBELLE.getSortField(siteLibelle),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            contactCivilite?.let { "contactCivilite" to it },
+            contactActif?.let { "contactActif" to it },
+            contactNom?.let { "contactNom" to it },
+            contactPrenom?.let { "contactPrenom" to it },
+            contactFonctionLibelle?.let { "contactFonctionLibelle" to it },
+            contactTelephone?.let { "contactTelephone" to it },
+            contactEmail?.let { "contactEmail" to it },
+            siteLibelle?.let { "siteLibelle" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "contactCivilite" -> CONTACT.CIVILITE.getSortField(pair.second)
+                "contactActif" -> CONTACT.ACTIF.getSortField(pair.second)
+                "contactNom" -> CONTACT.NOM.getSortField(pair.second)
+                "contactPrenom" -> CONTACT.PRENOM.getSortField(pair.second)
+                "contactFonctionLibelle" -> FONCTION_CONTACT.LIBELLE.getSortField(pair.second)
+                "contactTelephone" -> CONTACT.TELEPHONE.getSortField(pair.second)
+                "contactEmail" -> CONTACT.EMAIL.getSortField(pair.second)
+                "siteLibelle" -> SITE.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getById(contactId: UUID, isGestionnaire: Boolean): ContactData =

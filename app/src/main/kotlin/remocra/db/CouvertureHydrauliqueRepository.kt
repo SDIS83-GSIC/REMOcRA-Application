@@ -29,6 +29,7 @@ import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.utils.ST_Multi
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class CouvertureHydrauliqueRepository @Inject constructor(
     private val dsl: DSLContext,
@@ -122,14 +123,26 @@ class CouvertureHydrauliqueRepository @Inject constructor(
         val etudeDateMaj: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            TYPE_ETUDE.LIBELLE.getSortField(typeEtudeLibelle),
-            ETUDE.NUMERO.getSortField(etudeNumero),
-            ETUDE.LIBELLE.getSortField(etudeLibelle),
-            ETUDE.DESCRIPTION.getSortField(etudeDescription),
-            ETUDE.STATUT.getSortField(etudeStatut),
-            ETUDE.DATE_MAJ.getSortField(etudeDateMaj),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            typeEtudeLibelle?.let { "typeEtudeLibelle" to it },
+            etudeNumero?.let { "etudeNumero" to it },
+            etudeLibelle?.let { "etudeLibelle" to it },
+            etudeDescription?.let { "etudeDescription" to it },
+            etudeStatut?.let { "etudeStatut" to it },
+            etudeDateMaj?.let { "etudeDateMaj" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "typeEtudeLibelle" -> TYPE_ETUDE.LIBELLE.getSortField(pair.second)
+                "etudeNumero" -> ETUDE.NUMERO.getSortField(pair.second)
+                "etudeLibelle" -> ETUDE.LIBELLE.getSortField(pair.second)
+                "etudeDescription" -> ETUDE.DESCRIPTION.getSortField(pair.second)
+                "etudeStatut" -> ETUDE.STATUT.getSortField(pair.second)
+                "etudeDateMaj" -> ETUDE.DATE_MAJ.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getTypeEtudes(): Collection<GlobalData.IdCodeLibelleData> =

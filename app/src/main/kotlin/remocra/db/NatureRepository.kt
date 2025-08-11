@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.pojos.Nature
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 @Produces("application/json; charset=UTF-8")
 class NatureRepository @Inject constructor(private val dsl: DSLContext) : NomenclatureRepository<Nature>, AbstractRepository() {
@@ -63,13 +64,25 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         val natureTypePei: Int?,
         val natureProtected: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            NATURE.ACTIF.getSortField(natureActif),
-            NATURE.CODE.getSortField(natureCode),
-            NATURE.LIBELLE.getSortField(natureLibelle),
-            NATURE.TYPE_PEI.getSortField(natureTypePei),
-            NATURE.PROTECTED.getSortField(natureProtected),
+
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            natureActif?.let { "natureActif" to it },
+            natureCode?.let { "natureCode" to it },
+            natureLibelle?.let { "natureLibelle" to it },
+            natureTypePei?.let { "natureTypePei" to it },
+            natureProtected?.let { "natureProtected" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "natureActif" -> NATURE.ACTIF.getSortField(pair.second)
+                "natureCode" -> NATURE.CODE.getSortField(pair.second)
+                "natureLibelle" -> NATURE.LIBELLE.getSortField(pair.second)
+                "natureTypePei" -> NATURE.TYPE_PEI.getSortField(pair.second)
+                "natureProtected" -> NATURE.PROTECTED.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getTable(params: Params<Filter, Sort>): Collection<NatureWithDiametres> =

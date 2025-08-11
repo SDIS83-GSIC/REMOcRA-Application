@@ -36,6 +36,7 @@ import remocra.tasks.Destinataire
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_Within
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -173,18 +174,30 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         val zoneIntegrationLibelle: Int?,
         val parentLibelle: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> {
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            organismeActif?.let { "organismeActif" to it },
+            organismeCode?.let { "organismeCode" to it },
+            organismeLibelle?.let { "organismeLibelle" to it },
+            organismeEmailContact?.let { "organismeEmailContact" to it },
+            typeOrganismeLibelle?.let { "typeOrganismeLibelle" to it },
+            profilOrganismeLibelle?.let { "profilOrganismeLibelle" to it },
+            zoneIntegrationLibelle?.let { "zoneIntegrationLibelle" to it },
+            parentLibelle?.let { "parentLibelle" to it },
+        )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
             val parent = ORGANISME.`as`("parent")
-            return listOfNotNull(
-                ORGANISME.ACTIF.getSortField(organismeActif),
-                ORGANISME.CODE.getSortField(organismeCode),
-                ORGANISME.LIBELLE.getSortField(organismeLibelle),
-                ORGANISME.EMAIL_CONTACT.getSortField(organismeEmailContact),
-                TYPE_ORGANISME.LIBELLE.getSortField(typeOrganismeLibelle),
-                PROFIL_ORGANISME.LIBELLE.getSortField(profilOrganismeLibelle),
-                ZONE_INTEGRATION.LIBELLE.getSortField(zoneIntegrationLibelle),
-                parent.LIBELLE.getSortField(parentLibelle),
-            )
+            when (pair.first) {
+                "organismeActif" -> ORGANISME.ACTIF.getSortField(pair.second)
+                "organismeCode" -> ORGANISME.CODE.getSortField(pair.second)
+                "organismeLibelle" -> ORGANISME.LIBELLE.getSortField(pair.second)
+                "organismeEmailContact" -> ORGANISME.EMAIL_CONTACT.getSortField(pair.second)
+                "typeOrganismeLibelle" -> TYPE_ORGANISME.LIBELLE.getSortField(pair.second)
+                "profilOrganismeLibelle" -> PROFIL_ORGANISME.LIBELLE.getSortField(pair.second)
+                "zoneIntegrationLibelle" -> ZONE_INTEGRATION.LIBELLE.getSortField(pair.second)
+                "parentLibelle" -> parent.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -127,11 +128,20 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
         val zoneIntegrationActif: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            ZONE_INTEGRATION.CODE.getSortField(zoneIntegrationCode),
-            ZONE_INTEGRATION.LIBELLE.getSortField(zoneIntegrationLibelle),
-            ZONE_INTEGRATION.ACTIF.getSortField(zoneIntegrationActif),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            zoneIntegrationCode?.let { "zoneIntegrationCode" to it },
+            zoneIntegrationLibelle?.let { "zoneIntegrationLibelle" to it },
+            zoneIntegrationActif?.let { "zoneIntegrationActif" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "zoneIntegrationCode" -> ZONE_INTEGRATION.CODE.getSortField(pair.second)
+                "zoneIntegrationLibelle" -> ZONE_INTEGRATION.LIBELLE.getSortField(pair.second)
+                "zoneIntegrationActif" -> ZONE_INTEGRATION.ACTIF.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getForList(): Collection<GlobalData.IdCodeLibelleData> = dsl.select(

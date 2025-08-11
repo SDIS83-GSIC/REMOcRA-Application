@@ -40,6 +40,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class CourrierRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -202,10 +203,18 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val objet: Int?,
         val date: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            COURRIER.OBJET.getSortField(objet),
-            DOCUMENT.DATE.getSortField(date),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            objet?.let { "objet" to it },
+            date?.let { "date" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "objet" -> COURRIER.OBJET.getSortField(pair.second)
+                "date" -> DOCUMENT.DATE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     data class CourrierComplet(

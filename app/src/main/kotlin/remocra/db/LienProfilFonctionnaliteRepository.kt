@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(params: Params<Filter, Sort>): Collection<LienProfilFonctionnaliteData> =
@@ -88,10 +89,19 @@ class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DS
         val utilisateur: Int?,
         val fonctionnalite: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            PROFIL_ORGANISME.LIBELLE.getSortField(organisme),
-            PROFIL_UTILISATEUR.LIBELLE.getSortField(utilisateur),
-            PROFIL_DROIT.LIBELLE.getSortField(fonctionnalite),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            organisme?.let { "organisme" to it },
+            utilisateur?.let { "utilisateur" to it },
+            fonctionnalite?.let { "fonctionnalite" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "organisme" -> PROFIL_ORGANISME.LIBELLE.getSortField(pair.second)
+                "utilisateur" -> PROFIL_UTILISATEUR.LIBELLE.getSortField(pair.second)
+                "fonctionnalite" -> PROFIL_DROIT.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 }

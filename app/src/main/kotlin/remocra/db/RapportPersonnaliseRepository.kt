@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE_PARAMETRE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -106,20 +107,24 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val rapportPersonnaliseChampGeometrie: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            RAPPORT_PERSONNALISE.CODE.getSortField(rapportPersonnaliseCode),
-            RAPPORT_PERSONNALISE.LIBELLE.getSortField(rapportPersonnaliseLibelle),
-            RAPPORT_PERSONNALISE.ACTIF.getSortField(rapportPersonnaliseActif),
-            RAPPORT_PERSONNALISE.PROTECTED.getSortField(rapportPersonnaliseProtected),
-            RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.let {
-                // C'est un champ booléen qu'on affiche, si le champ est null, on le considère comme faux
-                when (rapportPersonnaliseChampGeometrie) {
-                    1 -> it.asc()
-                    -1 -> it.desc()
-                    else -> null
-                }
-            },
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            rapportPersonnaliseCode?.let { "rapportPersonnaliseCode" to it },
+            rapportPersonnaliseLibelle?.let { "rapportPersonnaliseLibelle" to it },
+            rapportPersonnaliseActif?.let { "rapportPersonnaliseActif" to it },
+            rapportPersonnaliseProtected?.let { "rapportPersonnaliseProtected" to it },
+            rapportPersonnaliseChampGeometrie?.let { "rapportPersonnaliseChampGeometrie" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "rapportPersonnaliseCode" -> RAPPORT_PERSONNALISE.CODE.getSortField(pair.second)
+                "rapportPersonnaliseLibelle" -> RAPPORT_PERSONNALISE.LIBELLE.getSortField(pair.second)
+                "rapportPersonnaliseActif" -> RAPPORT_PERSONNALISE.ACTIF.getSortField(pair.second)
+                "rapportPersonnaliseProtected" -> RAPPORT_PERSONNALISE.PROTECTED.getSortField(pair.second)
+                "rapportPersonnaliseChampGeometrie" -> RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     data class RapportPersonnaliseComplet(

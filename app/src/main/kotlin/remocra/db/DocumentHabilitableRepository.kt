@@ -21,6 +21,7 @@ import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -100,10 +101,18 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
         val documentHabilitableLibelle: Int?,
         val documentHabilitableDateMaj: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            DOCUMENT_HABILITABLE.LIBELLE.getSortField(documentHabilitableLibelle),
-            DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(documentHabilitableDateMaj),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            documentHabilitableLibelle?.let { "documentHabilitableLibelle" to it },
+            documentHabilitableDateMaj?.let { "documentHabilitableDateMaj" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "documentHabilitableLibelle" -> DOCUMENT_HABILITABLE.LIBELLE.getSortField(pair.second)
+                "documentHabilitableDateMaj" -> DOCUMENT_HABILITABLE.DATE_MAJ.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     data class DocumentHabilitableThematiqueProfilDroit(

@@ -23,6 +23,7 @@ import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.tasks.Destinataire
 import remocra.utils.ST_Within
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getUtilisateurById(idUtilisateur: UUID): Utilisateur? =
@@ -265,18 +266,34 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val profilDroitLibelle: Int?,
     ) {
 
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            UTILISATEUR.ACTIF.getSortField(utilisateurActif),
-            UTILISATEUR.EMAIL.getSortField(utilisateurEmail),
-            UTILISATEUR.NOM.getSortField(utilisateurNom),
-            UTILISATEUR.PRENOM.getSortField(utilisateurPrenom),
-            UTILISATEUR.USERNAME.getSortField(utilisateurUsername),
-            UTILISATEUR.TELEPHONE.getSortField(utilisateurTelephone),
-            UTILISATEUR.CAN_BE_NOTIFIED.getSortField(utilisateurCanBeNotified),
-            PROFIL_UTILISATEUR.LIBELLE.getSortField(profilUtilisateurLibelle),
-            ORGANISME.LIBELLE.getSortField(organismeLibelle),
-            PROFIL_DROIT.LIBELLE.getSortField(profilDroitLibelle),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            utilisateurActif?.let { "utilisateurActif" to it },
+            utilisateurEmail?.let { "utilisateurEmail" to it },
+            utilisateurNom?.let { "utilisateurNom" to it },
+            utilisateurPrenom?.let { "utilisateurPrenom" to it },
+            utilisateurUsername?.let { "utilisateurUsername" to it },
+            utilisateurTelephone?.let { "utilisateurTelephone" to it },
+            utilisateurCanBeNotified?.let { "utilisateurCanBeNotified" to it },
+            profilUtilisateurLibelle?.let { "profilUtilisateurLibelle" to it },
+            organismeLibelle?.let { "organismeLibelle" to it },
+            profilDroitLibelle?.let { "profilDroitLibelle" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "utilisateurActif" -> UTILISATEUR.ACTIF.getSortField(pair.second)
+                "utilisateurEmail" -> UTILISATEUR.EMAIL.getSortField(pair.second)
+                "utilisateurNom" -> UTILISATEUR.NOM.getSortField(pair.second)
+                "utilisateurPrenom" -> UTILISATEUR.PRENOM.getSortField(pair.second)
+                "utilisateurUsername" -> UTILISATEUR.USERNAME.getSortField(pair.second)
+                "utilisateurTelephone" -> UTILISATEUR.TELEPHONE.getSortField(pair.second)
+                "utilisateurCanBeNotified" -> UTILISATEUR.CAN_BE_NOTIFIED.getSortField(pair.second)
+                "profilUtilisateurLibelle" -> PROFIL_UTILISATEUR.LIBELLE.getSortField(pair.second)
+                "organismeLibelle" -> ORGANISME.LIBELLE.getSortField(pair.second)
+                "profilDroitLibelle" -> PROFIL_DROIT.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun checkExistsUsername(username: String, id: UUID?) =

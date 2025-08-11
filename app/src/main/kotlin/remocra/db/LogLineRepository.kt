@@ -3,12 +3,14 @@ package remocra.db
 import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.LogLineGravity
 import remocra.db.jooq.remocra.tables.pojos.LogLine
 import remocra.db.jooq.remocra.tables.references.LOG_LINE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class LogLineRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -50,9 +52,17 @@ class LogLineRepository @Inject constructor(private val dsl: DSLContext) : Abstr
     }
 
     data class Sort(val logLineGravity: Int?, val logLineDate: Int?) {
-        fun toCondition() = listOfNotNull(
-            LOG_LINE.GRAVITY.getSortField(logLineGravity),
-            LOG_LINE.DATE.getSortField(logLineDate),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            logLineGravity?.let { "logLineGravity" to it },
+            logLineDate?.let { "logLineDate" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "logLineGravity" -> LOG_LINE.GRAVITY.getSortField(pair.second)
+                "logLineDate" -> LOG_LINE.DATE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 }

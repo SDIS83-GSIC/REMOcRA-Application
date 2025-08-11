@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.tables.pojos.OldebProprietaire
 import remocra.db.jooq.remocra.tables.references.OLDEB_PROPRIETAIRE
 import remocra.db.jooq.remocra.tables.references.OLDEB_PROPRIETE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class ProprietaireRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -75,10 +76,19 @@ class ProprietaireRepository @Inject constructor(private val dsl: DSLContext) : 
         val oldebProprietairePrenom: Int?,
         val oldebProprietaireVille: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            OLDEB_PROPRIETAIRE.NOM.getSortField(oldebProprietaireNom),
-            OLDEB_PROPRIETAIRE.PRENOM.getSortField(oldebProprietairePrenom),
-            OLDEB_PROPRIETAIRE.VILLE.getSortField(oldebProprietaireVille),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            oldebProprietaireNom?.let { "oldebProprietaireNom" to it },
+            oldebProprietairePrenom?.let { "oldebProprietairePrenom" to it },
+            oldebProprietaireVille?.let { "oldebProprietaireVille" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "oldebProprietaireNom" -> OLDEB_PROPRIETAIRE.NOM.getSortField(pair.second)
+                "oldebProprietairePrenom" -> OLDEB_PROPRIETAIRE.PRENOM.getSortField(pair.second)
+                "oldebProprietaireVille" -> OLDEB_PROPRIETAIRE.VILLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 }

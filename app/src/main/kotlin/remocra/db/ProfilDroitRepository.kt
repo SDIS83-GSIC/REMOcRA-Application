@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     fun getAll(): List<GlobalData.IdCodeLibelleData> =
@@ -122,11 +123,20 @@ class ProfilDroitRepository @Inject constructor(private val dsl: DSLContext) : A
         val profilDroitCode: Int?,
         val profilDroitActif: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            PROFIL_DROIT.LIBELLE.getSortField(profilDroitLibelle),
-            PROFIL_DROIT.CODE.getSortField(profilDroitCode),
-            PROFIL_DROIT.ACTIF.getSortField(profilDroitActif),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            profilDroitLibelle?.let { "profilDroitLibelle" to it },
+            profilDroitCode?.let { "profilDroitCode" to it },
+            profilDroitActif?.let { "profilDroitActif" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "profilDroitLibelle" -> PROFIL_DROIT.LIBELLE.getSortField(pair.second)
+                "profilDroitCode" -> PROFIL_DROIT.CODE.getSortField(pair.second)
+                "profilDroitActif" -> PROFIL_DROIT.ACTIF.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun insert(profilDroit: ProfilDroit): Int =

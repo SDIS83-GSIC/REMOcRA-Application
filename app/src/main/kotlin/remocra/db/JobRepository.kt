@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.JSONB
+import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
 import remocra.data.JobData
@@ -20,6 +21,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -153,12 +155,22 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
         val jobDateFin: Int?,
         val jobEtatJob: Int?,
     ) {
-        fun toCondition() = listOfNotNull(
-            TASK.TYPE.getSortField(typeTask),
-            JOB.DATE_DEBUT.getSortField(jobDateDebut),
-            JOB.DATE_FIN.getSortField(jobDateFin),
-            JOB.ETAT_JOB.getSortField(jobEtatJob),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            typeTask?.let { "typeTask" to it },
+            jobDateDebut?.let { "jobDateDebut" to it },
+            jobDateFin?.let { "jobDateFin" to it },
+            jobEtatJob?.let { "jobEtatJob" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "typeTask" -> TASK.TYPE.getSortField(pair.second)
+                "jobDateDebut" -> JOB.DATE_DEBUT.getSortField(pair.second)
+                "jobDateFin" -> JOB.DATE_FIN.getSortField(pair.second)
+                "jobEtatJob" -> JOB.ETAT_JOB.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun getIdJobsOlderThanDays(nbDays: Long): List<UUID> =

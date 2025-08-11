@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -64,12 +65,22 @@ class TypeCriseCatagorieRepository @Inject constructor(private val dsl: DSLConte
         val typeCriseCategorieTypeGeometrie: Int?,
         val criseCategorieLibelle: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            TYPE_CRISE_CATEGORIE.CODE.getSortField(typeCriseCategorieCode),
-            TYPE_CRISE_CATEGORIE.LIBELLE.getSortField(typeCriseCategorieLibelle),
-            TYPE_CRISE_CATEGORIE.TYPE_GEOMETRIE.getSortField(typeCriseCategorieTypeGeometrie),
-            CRISE_CATEGORIE.LIBELLE.getSortField(criseCategorieLibelle),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            typeCriseCategorieCode?.let { "typeCriseCategorieCode" to it },
+            typeCriseCategorieLibelle?.let { "typeCriseCategorieLibelle" to it },
+            typeCriseCategorieTypeGeometrie?.let { "typeCriseCategorieTypeGeometrie" to it },
+            criseCategorieLibelle?.let { "criseCategorieLibelle" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "typeCriseCategorieCode" -> TYPE_CRISE_CATEGORIE.CODE.getSortField(pair.second)
+                "typeCriseCategorieLibelle" -> TYPE_CRISE_CATEGORIE.LIBELLE.getSortField(pair.second)
+                "typeCriseCategorieTypeGeometrie" -> TYPE_CRISE_CATEGORIE.TYPE_GEOMETRIE.getSortField(pair.second)
+                "criseCategorieLibelle" -> CRISE_CATEGORIE.LIBELLE.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun insert(typeCriseCategorie: TypeCriseCategorie) =
