@@ -2298,7 +2298,10 @@ export default [
   {
     path: "/dashboard/",
     element: (
-      <Authorization Component={Dashboard} droits={[TYPE_DROIT.DASHBOARD_R, TYPE_DROIT.DASHBOARD_A]} />
+      <Authorization
+        Component={Dashboard}
+        droits={[TYPE_DROIT.DASHBOARD_R, TYPE_DROIT.DASHBOARD_A]}
+      />
     ),
     children: [
       {
