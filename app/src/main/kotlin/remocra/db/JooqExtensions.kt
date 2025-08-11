@@ -139,9 +139,9 @@ fun Field<*>.getSortField(value: Any?): SortField<out Any>? =
             return@let null
         }
         if (it.toString().toInt() > 0) {
-            return@let this.asc().nullsLast()
+            return@let this.asc()
         } else if (it.toString().toInt() < 0) {
-            return@let this.desc().nullsLast()
+            return@let this.desc()
         }
 
         return@let null
