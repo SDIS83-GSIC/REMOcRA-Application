@@ -218,6 +218,7 @@ const ExecuteRapportPersonnalise = () => {
             initialValues={getInitialValues()}
             validationSchema={validationSchema}
             isPost={false}
+            successToastMessage="La requête a bien été exécutée"
             submitUrl={`/api/rapport-personnalise/generer`}
             prepareVariables={(values) => {
               const value = prepareVariables(
