@@ -413,7 +413,7 @@ function QueryTable({
               <td>Aucune donnée</td>
             </tr>
           ) : (
-            <>{getList(data)?.map(makeRow)}</>
+            <>{getList?.(data)?.map(makeRow)}</>
           )}
         </tbody>
       </Table>

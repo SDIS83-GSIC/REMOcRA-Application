@@ -117,8 +117,6 @@ const ListEtude = () => {
         />
         <QueryTable
           query={url`/api/couverture-hydraulique`}
-          getList={(data: any) => data}
-          getCount={(data: any) => data}
           columns={[
             {
               Header: "Type d'étude",
