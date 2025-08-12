@@ -177,6 +177,21 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                         ),
                     )
                 }
+                TypeResumeElement.GESTIONNAIRE -> {
+                    listeResumeElement.add(
+                        ResumeElement(
+                            type = it.ficheResumeBlocTypeResumeData,
+                            titre = it.ficheResumeBlocTitre,
+                            data = GestionnaireInfo(
+                                gestionnaireId = peiData.gestionnaireId,
+                                gestionnaireLibelle = peiData.gestionnaireLibelle,
+                                siteLibelle = peiData.siteLibelle,
+                            ),
+                            colonne = it.ficheResumeBlocColonne,
+                            ligne = it.ficheResumeBlocLigne,
+                        ),
+                    )
+                }
             }
         }
 
@@ -193,6 +208,12 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
     data class DisponibiliteWithIndispoTemp(
         val disponibilite: Disponibilite,
         val hasIndispoTemp: Boolean,
+    )
+
+    data class GestionnaireInfo(
+        val gestionnaireId: UUID?,
+        val gestionnaireLibelle: String?,
+        val siteLibelle: String?,
     )
 
     private fun String?.takeIfNotNullElseNonRenseigne() =

@@ -14,8 +14,9 @@ import {
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
+import { IconSee, IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../../droits.tsx";
+import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import DISPONIBILITE_PEI from "../../../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
@@ -31,6 +32,7 @@ const FicheResume = ({
   titre?: string;
 }) => {
   const elementFicheResumeState = useGet(url`/api/fiche-resume/${peiId}`);
+  const { user } = useAppContext();
 
   if (!elementFicheResumeState.isResolved) {
     return;
@@ -50,13 +52,17 @@ const FicheResume = ({
             <Col key={key} className={"mx-0 px-0"}>
               {Array.from(values ?? []).map((e: any, key) => {
                 return (
-                  <Row className="mx-0 my-3" key={key}>
-                    <ElementResume
-                      titre={e.titre}
-                      value={e.data}
-                      typeResumeElement={e.type}
-                    />
-                  </Row>
+                  (e.type !== TYPE_RESUME_ELEMENT.GESTIONNAIRE ||
+                    e.data.gestionnaireId) && (
+                    <Row className="mx-0 my-3" key={key}>
+                      <ElementResume
+                        titre={e.titre}
+                        value={e.data}
+                        typeResumeElement={e.type}
+                        user={user!}
+                      />
+                    </Row>
+                  )
                 );
               })}
             </Col>
@@ -65,8 +71,7 @@ const FicheResume = ({
         <Row>
           <HistoriqueDebitPression pibiId={peiId} />
         </Row>
-
-        <VoirHistoriquePei peiId={peiId} />
+        <VoirHistoriquePei peiId={peiId} user={user!} />
       </Container>
     </>
   );
@@ -76,6 +81,7 @@ const ElementResume = ({
   titre,
   value,
   typeResumeElement,
+  user,
 }: ElementResumeType) => {
   return (
     <div className={"mx-0 px-0"}>
@@ -86,6 +92,10 @@ const ElementResume = ({
             <ElementResumeDisponibilite value={value} />
           ) : typeResumeElement === TYPE_RESUME_ELEMENT.ANOMALIES ? (
             <ElementResumeAnomalie value={value} />
+          ) : typeResumeElement === TYPE_RESUME_ELEMENT.GESTIONNAIRE ? (
+            value.gestionnaireId != null && (
+              <ElementResumeGestionnaire value={value} user={user!} />
+            )
           ) : (
             value?.split("\n").map((ligne: string, key: number) => {
               return <div key={key}>{ligne}</div>;
@@ -152,10 +162,38 @@ const ElementResumeAnomalie = ({
   );
 };
 
+const ElementResumeGestionnaire = ({
+  value,
+  user,
+}: {
+  value: {
+    gestionnaireId: string;
+    gestionnaireLibelle: string;
+    siteLibelle: string;
+  };
+  user: UtilisateurEntity;
+}) => (
+  <>
+    <div>Gestionnaire : {value.gestionnaireLibelle}</div>
+    {value.siteLibelle && <div>Site : {value.siteLibelle}</div>}
+    {(hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
+      hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) && (
+      <CustomLinkButton
+        pathname={URLS.LIST_CONTACT(value.gestionnaireId, "gestionnaire")}
+        variant="link"
+      >
+        <IconSee />{" "}
+        <span style={{ fontSize: ".85rem" }}>Voir les contacts</span>
+      </CustomLinkButton>
+    )}
+  </>
+);
+
 type ElementResumeType = {
   titre: string;
   value: any;
   typeResumeElement: TYPE_RESUME_ELEMENT;
+  user: UtilisateurEntity;
 };
 
 export default FicheResume;
@@ -236,8 +274,13 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
   );
 };
 
-const VoirHistoriquePei = ({ peiId }: { peiId: string }) => {
-  const { user } = useAppContext();
+const VoirHistoriquePei = ({
+  peiId,
+  user,
+}: {
+  peiId: string;
+  user: UtilisateurEntity;
+}) => {
   const searchParams = new URLSearchParams({
     typeObjet: "PEI",
     objetId: peiId,

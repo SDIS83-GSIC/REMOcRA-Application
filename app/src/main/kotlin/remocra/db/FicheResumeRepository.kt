@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.FICHE_RESUME_BLOC
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
@@ -23,6 +24,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.VISITE
@@ -97,6 +99,9 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
                     .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
                     .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull.or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()))),
             ).`as`("hasIndispoTemp"),
+            GESTIONNAIRE.ID,
+            GESTIONNAIRE.LIBELLE,
+            SITE.LIBELLE,
         ).from(PEI)
             .leftJoin(VOIE)
             .on(VOIE.ID.eq(PEI.VOIE_ID))
@@ -114,6 +119,8 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             .on(PENA.ID.eq(PEI.ID))
             .leftJoin(V_PEI_VISITE_DATE)
             .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+            .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+            .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
     }
@@ -146,6 +153,9 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val pibiDiametreCanalisation: Int?,
         val penaCapacite: Int?,
         val hasIndispoTemp: Boolean = false,
+        val gestionnaireId: UUID?,
+        val gestionnaireLibelle: String?,
+        val siteLibelle: String?,
     )
 
     fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(

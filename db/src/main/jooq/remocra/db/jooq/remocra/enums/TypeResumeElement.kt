@@ -29,6 +29,7 @@ enum class TypeResumeElement(@get:JvmName("literal") public val literal: String)
     CIS("CIS"),
     CASERNE("CASERNE"),
     OBSERVATION("OBSERVATION"),
+    GESTIONNAIRE("GESTIONNAIRE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
