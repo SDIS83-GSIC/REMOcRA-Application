@@ -59,11 +59,7 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
                       localStorage.clear();
                     }}
                   >
-                    <Button
-                      type="submit"
-                      variant="link"
-                      className={"text-decoration-none text-light"}
-                    >
+                    <Button type="submit" className={"btn-light"}>
                       Déconnexion
                     </Button>
                   </form>
@@ -77,11 +73,7 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
                       localStorage.clear();
                     }}
                   >
-                    <Button
-                      type="submit"
-                      variant="link"
-                      className={"text-decoration-none text-light"}
-                    >
+                    <Button type="submit" className={"btn-light"}>
                       Connexion
                     </Button>
                   </form>
