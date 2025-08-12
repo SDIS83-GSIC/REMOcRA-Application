@@ -3,7 +3,7 @@ package remocra.usecase.zoneintegration
 import com.google.inject.Inject
 import org.geotools.api.data.FileDataStoreFinder
 import org.geotools.data.simple.SimpleFeatureCollection
-import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.MultiPolygon
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
@@ -77,8 +77,8 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
             while (iterator.hasNext()) {
                 val next = iterator.next()
 
-                val geometrie: Geometry =
-                    (next.properties.find { it.name.localPart == "the_geom" }?.value as Geometry?)?.getGeometryN(0)
+                val geometrie: MultiPolygon =
+                    (next.properties.find { it.name.localPart == "the_geom" }?.value as MultiPolygon?)
                         ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE)
 
                 geometrie.srid = appSettings.srid
