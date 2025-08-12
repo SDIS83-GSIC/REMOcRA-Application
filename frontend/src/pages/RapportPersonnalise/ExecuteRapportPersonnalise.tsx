@@ -298,7 +298,6 @@ const ExecuteRapportPersonnalise = () => {
                   {tableau?.values && (
                     <PaginationFront
                       values={tableau?.values}
-                      offset={offset}
                       setOffset={setOffset}
                     />
                   )}
