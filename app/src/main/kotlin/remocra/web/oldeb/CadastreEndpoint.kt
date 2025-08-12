@@ -29,10 +29,16 @@ class CadastreEndpoint : AbstractEndpoint() {
     @Path("/commune/{communeId}/section")
     @RequireDroits([Droit.OLDEB_R])
     fun section(@PathParam("communeId") communeId: UUID): Response =
-        if (securityContext.userInfo!!.zoneCompetence == null && !securityContext.userInfo!!.isSuperAdmin) {
+        if (securityContext.userInfo.zoneCompetence == null && !securityContext.userInfo.isSuperAdmin) {
             forbidden().build()
         } else {
-            Response.ok(cadastreRepository.getSectionByCommuneId(communeId, securityContext.userInfo!!.zoneCompetence!!.zoneIntegrationId)).build()
+            Response.ok(
+                cadastreRepository.getSectionByCommuneId(
+                    communeId,
+                    securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
+                    securityContext.userInfo.isSuperAdmin,
+                ),
+            ).build()
         }
 
     @GET

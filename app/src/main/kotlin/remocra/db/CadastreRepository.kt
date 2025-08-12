@@ -19,11 +19,25 @@ import java.util.UUID
 
 class CadastreRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
-    fun getSectionByCommuneId(communeId: UUID, zoneIntegrationId: UUID): List<CadastreSection> =
+    fun getSectionByCommuneId(communeId: UUID, zoneIntegrationId: UUID?, isSuperAdmin: Boolean): List<CadastreSection> =
         dsl.select(*CADASTRE_SECTION.fields())
             .from(CADASTRE_SECTION)
-            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
-            .join(COMMUNE).on(COMMUNE.ID.eq(CADASTRE_SECTION.COMMUNE_ID).and(COMMUNE.ID.eq(communeId)).and(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)))
+            .let {
+                if (zoneIntegrationId != null) {
+                    it.join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneIntegrationId))
+                } else {
+                    it
+                }
+            }
+            .join(COMMUNE).on(
+                COMMUNE.ID.eq(CADASTRE_SECTION.COMMUNE_ID)
+                    .and(COMMUNE.ID.eq(communeId)).and(
+                        repositoryUtils.checkIsSuperAdminOrCondition(
+                            ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
+                            isSuperAdmin,
+                        ),
+                    ),
+            )
             .fetchInto()
 
     fun getParcelleBySectionId(sectionId: UUID): List<CadastreParcelle> =

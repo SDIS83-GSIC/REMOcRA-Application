@@ -53,7 +53,7 @@ type FormType = {
   propriete: OldebProprieteType;
   locataire: OldebLocataireFormType;
   visiteList: OldebVisiteFormType[];
-  documentList: object;
+  documentList: { [key: string]: File[] };
   isRent: boolean;
 };
 
@@ -103,7 +103,7 @@ type OldebVisiteFormType = {
   oldebVisiteDebroussaillementAccesId: string;
   oldebVisiteOldebTypeAvisId: string;
   oldebVisiteOldebTypeActionId: string;
-  anomalieList: [];
+  anomalieList: number[];
   suiteList: OldebVisiteSuiteType[];
   documentList: OldebVisiteDocumentType[];
 };
@@ -126,7 +126,7 @@ export const getInitialValues = (data?: {
   propriete: OldebProprieteType;
   locataire?: OldebLocataireFormType;
   visiteList?: OldebVisiteFormType[];
-  documentList?: object;
+  documentList?: { [key: string]: File[] };
 }) => ({
   oldeb: data?.oldeb || {
     caracteristiqueList: [],
@@ -146,7 +146,7 @@ export const prepareValues = (values: {
   propriete: OldebProprieteType;
   locataire?: OldebLocataireFormType;
   visiteList?: OldebVisiteFormType[];
-  documentList?: object;
+  documentList?: { [key: string]: File[] };
   isRent?: boolean;
 }) => {
   const formData = new FormData();
@@ -233,7 +233,7 @@ export const validationSchema = object({
 
 const OldebForm = () => {
   const [currentTab, setCurrentTab] = useState("parcelle");
-  const [currentVisite, setCurrentVisite] = useState<number>(null);
+  const [currentVisite, setCurrentVisite] = useState<number | null>(null);
   const { values, setFieldValue } = useFormikContext<FormType>();
   // const [isRent, setIsRent] = useState<boolean>(values.isRent ?? false);
 
@@ -314,10 +314,10 @@ const OldebForm = () => {
               listIdCodeLibelle={communeState.data}
               label="Commune"
               defaultValue={communeState?.data?.find(
-                (v) => v.id === values.oldeb.oldebCommuneId,
+                (v: IdCodeLibelleType) => v.id === values.oldeb.oldebCommuneId,
               )}
               required={true}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setFieldValue("oldeb.oldebVoieId", undefined);
                 setFieldValue("oldeb.oldebLieuDitId", undefined);
                 setFieldValue("oldeb.oldebCadastreSectionId", undefined);
@@ -330,19 +330,35 @@ const OldebForm = () => {
               name={"oldeb.oldebCadastreSectionId"}
               listIdCodeLibelle={
                 cadastreSectionList &&
-                cadastreSectionList.map((v) => {
-                  return {
-                    id: v.cadastreSectionId,
-                    libelle: v.cadastreSectionNumero,
-                  };
-                })
+                cadastreSectionList.map(
+                  (v: {
+                    cadastreSectionId: string;
+                    cadastreSectionNumero: string;
+                  }) => {
+                    return {
+                      id: v.cadastreSectionId,
+                      libelle: v.cadastreSectionNumero,
+                    };
+                  },
+                )
               }
               label="Section"
-              defaultValue={cadastreSectionList?.find(
-                (v) => v.id === values.oldeb.oldebCadastreSectionId,
-              )}
+              defaultValue={cadastreSectionList
+                ?.map(
+                  (v: {
+                    cadastreSectionId: string;
+                    cadastreSectionNumero: string;
+                  }) => ({
+                    id: v.cadastreSectionId,
+                    libelle: v.cadastreSectionNumero,
+                  }),
+                )
+                .find(
+                  (v: IdCodeLibelleType) =>
+                    v.id === values.oldeb.oldebCadastreSectionId,
+                )}
               required={true}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setFieldValue("oldeb.oldebCadastreParcelleId", undefined);
                 setFieldValue("oldeb.oldebCadastreSectionId", e.target.value);
               }}
@@ -353,20 +369,36 @@ const OldebForm = () => {
               name={"oldeb.oldebCadastreParcelleId"}
               listIdCodeLibelle={
                 values.oldeb.oldebCadastreSectionId
-                  ? cadastreParcelleList.map((v) => {
-                      return {
-                        id: v.cadastreParcelleId,
-                        libelle: v.cadastreParcelleNumero,
-                      };
-                    })
+                  ? cadastreParcelleList?.map(
+                      (v: {
+                        cadastreParcelleId: string;
+                        cadastreParcelleNumero: string;
+                      }) => {
+                        return {
+                          id: v.cadastreParcelleId,
+                          libelle: v.cadastreParcelleNumero,
+                        };
+                      },
+                    )
                   : []
               }
               label="Parcelle"
               defaultValue={
                 values.oldeb.oldebCadastreSectionId &&
-                cadastreSectionList?.find(
-                  (v) => v.id === values.oldeb.oldebCadastreParcelleId,
-                )
+                cadastreParcelleList
+                  ?.map(
+                    (v: {
+                      cadastreParcelleId: string;
+                      cadastreParcelleNumero: string;
+                    }) => ({
+                      id: v.cadastreParcelleId,
+                      libelle: v.cadastreParcelleNumero,
+                    }),
+                  )
+                  .find(
+                    (v: IdCodeLibelleType) =>
+                      v.id === values.oldeb.oldebCadastreParcelleId,
+                  )
               }
               required={true}
               setFieldValue={setFieldValue}
@@ -378,7 +410,8 @@ const OldebForm = () => {
               listIdCodeLibelle={typeCategorieZoneUrbanismeState?.data}
               label="Zone"
               defaultValue={typeCategorieZoneUrbanismeState?.data?.find(
-                (v) => v.id === values.oldeb.oldebOldebTypeZoneUrbanismeId,
+                (v: IdCodeLibelleType) =>
+                  v.id === values.oldeb.oldebOldebTypeZoneUrbanismeId,
               )}
               required={true}
               setFieldValue={setFieldValue}
@@ -389,7 +422,7 @@ const OldebForm = () => {
       <Tabs
         id="tabs"
         activeKey={currentTab}
-        onSelect={(key) => setCurrentTab(key)}
+        onSelect={(key) => key && setCurrentTab(key)}
       >
         <Tab eventKey="parcelle" title="Parcelle">
           <FieldSet title={"Localisation et accès"}>
@@ -408,7 +441,7 @@ const OldebForm = () => {
                   required={false}
                   listIdCodeLibelle={voieList}
                   defaultValue={voieList?.find(
-                    (e) => e.id === values.oldeb.oldebVoieId,
+                    (e: IdCodeLibelleType) => e.id === values.oldeb.oldebVoieId,
                   )}
                   setFieldValue={setFieldValue}
                 />
@@ -420,7 +453,8 @@ const OldebForm = () => {
                   required={false}
                   listIdCodeLibelle={lieuDitList}
                   defaultValue={lieuDitList?.find(
-                    (e) => e.id === values.oldeb.oldebLieuDitId,
+                    (e: IdCodeLibelleType) =>
+                      e.id === values.oldeb.oldebLieuDitId,
                   )}
                   setFieldValue={setFieldValue}
                 />
@@ -433,7 +467,8 @@ const OldebForm = () => {
                   listIdCodeLibelle={typeAccesState?.data}
                   label="Type d'accès"
                   defaultValue={typeAccesState?.data?.find(
-                    (v) => v.id === values.oldeb.oldebOldebTypeAccesId,
+                    (v: IdCodeLibelleType) =>
+                      v.id === values.oldeb.oldebOldebTypeAccesId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -473,7 +508,7 @@ const OldebForm = () => {
                   listIdCodeLibelle={proprietaireState.data}
                   label="Propriétaire"
                   defaultValue={proprietaireState?.data?.find(
-                    (v) =>
+                    (v: IdCodeLibelleType) =>
                       v.id ===
                       values.propriete.oldebProprieteOldebProprietaireId,
                   )}
@@ -487,7 +522,7 @@ const OldebForm = () => {
                   listIdCodeLibelle={typeResidenceState.data}
                   label="Type de propriété"
                   defaultValue={typeResidenceState?.data?.find(
-                    (v) =>
+                    (v: IdCodeLibelleType) =>
                       v.id ===
                       values.propriete.oldebProprieteOldebTypeResidenceId,
                   )}
@@ -596,37 +631,43 @@ const OldebForm = () => {
               <Col xs={6}>
                 <Form.Label>Élements à vérifier</Form.Label>
                 {typeCategorieCaracteristiqueState.data?.map(
-                  (categorie, categorieIdx) => (
+                  (categorie: IdCodeLibelleType, categorieIdx: number) => (
                     <Card key={categorieIdx}>
                       <Card.Header>{categorie.libelle}</Card.Header>
                       <ListGroup>
                         {typeCaracteristiqueState.data
                           ?.filter(
-                            (caracteristique) =>
+                            (caracteristique: { lienId: string; id: string }) =>
                               caracteristique.lienId === categorie.id &&
                               values.oldeb.caracteristiqueList.indexOf(
                                 caracteristique.id,
                               ) === -1,
                           )
-                          .map((caracteristique) => (
-                            <ListGroup.Item
-                              key={caracteristique.id}
-                              onClick={() => {
-                                if (
-                                  values.oldeb.caracteristiqueList?.indexOf(
-                                    caracteristique.id,
-                                  ) === -1
-                                ) {
-                                  setFieldValue("oldeb.caracteristiqueList", [
-                                    ...values.oldeb.caracteristiqueList,
-                                    caracteristique.id,
-                                  ]);
-                                }
-                              }}
-                            >
-                              (+) {caracteristique.libelle}
-                            </ListGroup.Item>
-                          ))}
+                          .map(
+                            (caracteristique: {
+                              lienId: string;
+                              id: string;
+                              libelle: string;
+                            }) => (
+                              <ListGroup.Item
+                                key={caracteristique.id}
+                                onClick={() => {
+                                  if (
+                                    values.oldeb.caracteristiqueList?.indexOf(
+                                      caracteristique.id,
+                                    ) === -1
+                                  ) {
+                                    setFieldValue("oldeb.caracteristiqueList", [
+                                      ...values.oldeb.caracteristiqueList,
+                                      caracteristique.id,
+                                    ]);
+                                  }
+                                }}
+                              >
+                                (+) {caracteristique.libelle}
+                              </ListGroup.Item>
+                            ),
+                          )}
                       </ListGroup>
                     </Card>
                   ),
@@ -635,33 +676,39 @@ const OldebForm = () => {
               <Col xs={6}>
                 <Form.Label>Élements présents</Form.Label>
                 {typeCategorieCaracteristiqueState.data?.map(
-                  (categorie, categorieIdx) => (
+                  (categorie: IdCodeLibelleType, categorieIdx: number) => (
                     <Card key={categorieIdx}>
                       <Card.Header>{categorie.libelle}</Card.Header>
                       <ListGroup className="list-group-flush">
                         {typeCaracteristiqueState.data
                           ?.filter(
-                            (caracteristique) =>
+                            (caracteristique: { lienId: string; id: string }) =>
                               caracteristique.lienId === categorie.id &&
                               values.oldeb.caracteristiqueList.indexOf(
                                 caracteristique.id,
                               ) !== -1,
                           )
-                          .map((caracteristique) => (
-                            <ListGroup.Item
-                              key={caracteristique.id}
-                              onClick={() => {
-                                setFieldValue(
-                                  "oldeb.caracteristiqueList",
-                                  values.oldeb.caracteristiqueList.filter(
-                                    (c) => c !== caracteristique.id,
-                                  ),
-                                );
-                              }}
-                            >
-                              (-) {caracteristique.libelle}
-                            </ListGroup.Item>
-                          ))}
+                          .map(
+                            (caracteristique: {
+                              lienId: string;
+                              id: string;
+                              libelle: string;
+                            }) => (
+                              <ListGroup.Item
+                                key={caracteristique.id}
+                                onClick={() => {
+                                  setFieldValue(
+                                    "oldeb.caracteristiqueList",
+                                    values.oldeb.caracteristiqueList.filter(
+                                      (c) => c !== caracteristique.id,
+                                    ),
+                                  );
+                                }}
+                              >
+                                (-) {caracteristique.libelle}
+                              </ListGroup.Item>
+                            ),
+                          )}
                       </ListGroup>
                     </Card>
                   ),
@@ -732,7 +779,7 @@ const OldebForm = () => {
                       <td>
                         {
                           typeOldebTypeDebrousaillementState?.data?.find(
-                            (v) =>
+                            (v: IdCodeLibelleType) =>
                               v.id ===
                               visite.oldebVisiteDebroussaillementParcelleId,
                           )?.libelle
@@ -741,7 +788,7 @@ const OldebForm = () => {
                       <td>
                         {
                           typeOldebTypeDebrousaillementState?.data?.find(
-                            (v) =>
+                            (v: IdCodeLibelleType) =>
                               v.id ===
                               visite.oldebVisiteDebroussaillementAccesId,
                           )?.libelle
@@ -751,14 +798,16 @@ const OldebForm = () => {
                       <td>
                         {
                           typeOldebTypeAvisState?.data?.find(
-                            (v) => v.id === visite.oldebVisiteOldebTypeAvisId,
+                            (v: IdCodeLibelleType) =>
+                              v.id === visite.oldebVisiteOldebTypeAvisId,
                           )?.libelle
                         }
                       </td>
                       <td>
                         {
                           typeOldebTypeActionState?.data?.find(
-                            (v) => v.id === visite.oldebVisiteOldebTypeActionId,
+                            (v: IdCodeLibelleType) =>
+                              v.id === visite.oldebVisiteOldebTypeActionId,
                           )?.libelle
                         }
                       </td>
@@ -800,15 +849,17 @@ const VisiteForm = ({
   typeOldebTypeAction,
 }: {
   visiteList: OldebVisiteFormType[];
-  documentList: object;
+  documentList: { [key: string]: File[] };
   currentVisite: number;
-  setFieldValue: (...object) => object;
+  setFieldValue: (field: string, value: any) => any;
   typeOldebTypeDebrousaillement: IdCodeLibelleType[];
   typeOldebTypeAvis: IdCodeLibelleType[];
   typeOldebTypeAction: IdCodeLibelleType[];
 }) => {
   const [currentTab, setCurrentTab] = useState("anomalieList");
-  const [currentVisiteSuite, setCurrentVisiteSuite] = useState<number>(null);
+  const [currentVisiteSuite, setCurrentVisiteSuite] = useState<number | null>(
+    null,
+  );
 
   const typeOldebTypeSuiteState = useGet(
     url`/api/nomenclatures/list/${nomenclaturesEnum.OLDEB_TYPE_SUITE}`,
@@ -909,54 +960,79 @@ const VisiteForm = ({
       <Tabs
         id="tabs"
         activeKey={currentTab}
-        onSelect={(key) => setCurrentTab(key)}
+        onSelect={(key) => key && setCurrentTab(key)}
       >
         <Tab eventKey={"anomalieList"} title={"Anomalies"}>
           <Accordion>
-            {typeCategorieAnomalieState.data?.map((categorie, categorieIdx) => (
-              <Accordion.Item key={categorieIdx} eventKey={categorieIdx}>
-                <Accordion.Header>{categorie.libelle}</Accordion.Header>
-                <Accordion.Body>
-                  {typeAnomalieState?.data
-                    ?.filter((anomalie) => anomalie.lienId === categorie.id)
-                    .map((anomalie, anomalieIdx) => (
-                      <div key={anomalieIdx}>
-                        <CheckBoxInput
-                          label={anomalie.libelle}
-                          name={`visiteList.${currentVisite}.anomalieList[]`}
-                          checked={
-                            visiteList[currentVisite].anomalieList.indexOf(
-                              anomalie.id,
-                            ) !== -1
-                          }
-                          onChange={() => {
-                            if (
-                              visiteList[currentVisite].anomalieList.indexOf(
-                                anomalie.id,
-                              ) === -1
-                            ) {
-                              setFieldValue(
-                                `visiteList.${currentVisite}.anomalieList`,
-                                [
-                                  ...visiteList[currentVisite].anomalieList,
+            {typeCategorieAnomalieState.data?.map(
+              (
+                categorie: { id: string; libelle: string },
+                categorieIdx: number,
+              ) => (
+                <Accordion.Item
+                  key={categorieIdx}
+                  eventKey={categorieIdx.toString()}
+                >
+                  <Accordion.Header>{categorie.libelle}</Accordion.Header>
+                  <Accordion.Body>
+                    {typeAnomalieState?.data
+                      ?.filter(
+                        (anomalie: {
+                          lienId: string;
+                          id: string;
+                          libelle: string;
+                        }) => anomalie.lienId === categorie.id,
+                      )
+                      .map(
+                        (
+                          anomalie: {
+                            lienId: string;
+                            id: number;
+                            libelle: string;
+                          },
+                          anomalieIdx: number,
+                        ) => (
+                          <div key={anomalieIdx}>
+                            <CheckBoxInput
+                              label={anomalie.libelle}
+                              name={`visiteList.${currentVisite}.anomalieList[]`}
+                              checked={
+                                visiteList[currentVisite].anomalieList.indexOf(
                                   anomalie.id,
-                                ],
-                              );
-                            } else {
-                              setFieldValue(
-                                `visiteList.${currentVisite}.anomalieList`,
-                                visiteList[currentVisite].anomalieList.filter(
-                                  (a) => a !== anomalie.id,
-                                ),
-                              );
-                            }
-                          }}
-                        />
-                      </div>
-                    ))}
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
+                                ) !== -1
+                              }
+                              onChange={() => {
+                                if (
+                                  visiteList[
+                                    currentVisite
+                                  ].anomalieList.indexOf(anomalie.id) === -1
+                                ) {
+                                  setFieldValue(
+                                    `visiteList.${currentVisite}.anomalieList`,
+                                    [
+                                      ...visiteList[currentVisite].anomalieList,
+                                      anomalie.id,
+                                    ],
+                                  );
+                                } else {
+                                  setFieldValue(
+                                    `visiteList.${currentVisite}.anomalieList`,
+                                    visiteList[
+                                      currentVisite
+                                    ].anomalieList.filter(
+                                      (a: number) => a !== anomalie.id,
+                                    ),
+                                  );
+                                }
+                              }}
+                            />
+                          </div>
+                        ),
+                      )}
+                  </Accordion.Body>
+                </Accordion.Item>
+              ),
+            )}
           </Accordion>
         </Tab>
         <Tab eventKey={"suiteList"} title={"Suites"}>
@@ -1002,7 +1078,7 @@ const VisiteForm = ({
                         <td>
                           {
                             typeOldebTypeSuiteState?.data?.find(
-                              (v) =>
+                              (v: IdCodeLibelleType) =>
                                 v.id ===
                                 visiteSuite.oldebVisiteSuiteOldebTypeSuiteId,
                             )?.libelle
@@ -1056,17 +1132,17 @@ const VisiteForm = ({
                   {file.documentNom}
                   <Badge
                     pill
-                    variant={"info"}
+                    bg={"info"}
                     onClick={() => {
                       const win = window.open(file.documentUrl, "_blank");
-                      win.focus();
+                      win?.focus();
                     }}
                   >
                     <IconExport />
                   </Badge>
                   <Badge
                     pill
-                    variant={"danger"}
+                    bg={"danger"}
                     onClick={() => {
                       setFieldValue(
                         `visiteList.${currentVisite}.documentList`,
@@ -1090,7 +1166,7 @@ const VisiteForm = ({
                     {file.name}
                     <Badge
                       pill
-                      variant={"danger"}
+                      bg={"danger"}
                       onClick={() => {
                         setFieldValue(
                           `documentList.${visiteList[currentVisite].oldebVisiteCode}`,
@@ -1127,7 +1203,7 @@ const VisiteSuiteForm = ({
   typeOldebTypeSuite,
 }: {
   fieldName: string;
-  setFieldValue: (...object) => object;
+  setFieldValue: (field: string, value: any) => any;
   currentVisiteSuiteList: OldebVisiteSuiteType[];
   currentVisiteSuiteIdx: number;
   typeOldebTypeSuite: IdCodeLibelleType[];
