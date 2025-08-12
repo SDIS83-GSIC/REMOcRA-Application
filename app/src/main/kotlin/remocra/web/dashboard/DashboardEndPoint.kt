@@ -102,7 +102,7 @@ class DashboardEndPoint : AbstractEndpoint() {
 
     @POST
     @Path("/get-list-data-query")
-    @RequireDroits([Droit.DASHBOARD_A])
+    @RequireDroits([Droit.DASHBOARD_A, Droit.DASHBOARD_R])
     fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds, securityContext.userInfo)).build()
 
     @GET
