@@ -73,7 +73,7 @@ const MapAdresse = () => {
 
   return (
     <>
-      <PageTitle title="Adresse" icon={<IconAdresse />} />
+      <PageTitle title="Carte des adresses" icon={<IconAdresse />} />
       <MapComponent
         map={map}
         availableLayers={availableLayers}

@@ -200,6 +200,8 @@ import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
 import ListFonctionContact from "./pages/Admin/fonctionContact/ListFonctionContact.tsx";
 import UpdateFonctionContact from "./pages/Admin/fonctionContact/UpdateFonctionContact.tsx";
 import CreateFonctionContact from "./pages/Admin/fonctionContact/CreateFonctionContact.tsx";
+import MapAdresse from "./components/Map/MapAdresses/MapAdresse.tsx";
+import DepotDeliberation from "./pages/Adresse/DepotDeliberation.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -522,7 +524,8 @@ export const URLS = {
   CARTE_DFCI: url`/dfci`,
 
   // Module Adresses
-  ADRESSE: url`/adresses`,
+  ADRESSE: url`/adresses/carte`,
+  ADRESSE_DELIBERATION: url`/adresses/deliberation`,
 
   // Module dashboard
   DASHBOARD_ADMIN_QUERY: url`/admin/dashboard/query`,
@@ -2358,6 +2361,26 @@ export default [
         droits={[TYPE_DROIT.ADRESSES_C]}
       />
     ),
+    children: [
+      {
+        path: "carte",
+        element: (
+          <Authorization
+            Component={MapAdresse}
+            droits={[TYPE_DROIT.ADRESSES_C]}
+          />
+        ),
+      },
+      {
+        path: "deliberation",
+        element: (
+          <Authorization
+            Component={DepotDeliberation}
+            droits={[TYPE_DROIT.DEPOT_DELIB_C]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "*",

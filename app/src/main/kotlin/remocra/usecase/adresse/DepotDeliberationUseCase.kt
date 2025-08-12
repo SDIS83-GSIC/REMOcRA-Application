@@ -1,4 +1,4 @@
-package remocra.usecase.pei
+package remocra.usecase.adresse
 
 import jakarta.inject.Inject
 import jakarta.inject.Provider
@@ -23,40 +23,24 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class InsertDocumentUseCase : AbstractUseCase() {
-
-    @Inject lateinit var documentUtils: DocumentUtils
-
-    @Inject lateinit var documentRepository: DocumentRepository
-
-    @Inject lateinit var organismeRepository: OrganismeRepository
-
-    @Inject lateinit var eventBus: EventBus
-
-    @Inject lateinit var parametresProvider: Provider<ParametresProvider>
-
-    fun execute(userInfo: WrappedUserInfo, element: Part): Result? {
-        checkDroits(userInfo)
-
-        var result: Result? = null
-        try {
-            postEvents(document = enregistrementDocument(element), userInfo = userInfo)
-        } catch (e: Exception) {
-            result = Result.Error(e.message)
-        }
-        return result
-    }
+class DepotDeliberationUseCase @Inject constructor(
+    private val documentUtils: DocumentUtils,
+    private val documentRepository: DocumentRepository,
+    private val eventBus: EventBus,
+    private val parametresProvider: Provider<ParametresProvider>,
+    private val organismeRepository: OrganismeRepository,
+) : AbstractUseCase() {
 
     private fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.DECLARATION_PEI)) {
-            throw RemocraResponseException(ErrorType.DOCUMENT_FORBIDDEN_INSERT)
+        if (!userInfo.hasDroit(droitWeb = Droit.DEPOT_DELIB_C)) {
+            throw RemocraResponseException(ErrorType.ADRESSE_FORBIDDEN_DELIBERATION)
         }
     }
 
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_ADRESSE_DELIBERATION + "$documentId"
 
         /** Enregistrement sur le disque */
         documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
@@ -91,14 +75,26 @@ class InsertDocumentUseCase : AbstractUseCase() {
             NotificationEvent(
                 notificationData =
                 NotificationMailData(
-                    destinataires = setOf(parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL.name)!!),
-                    objet = parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name)!!,
-                    corps = parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL.name)!!
+                    destinataires = setOf(parametresProvider.get().getParametreString(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL.name)!!),
+                    objet = parametresProvider.get().getParametreString(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL.name)!!,
+                    corps = parametresProvider.get().getParametreString(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL.name)!!
                         .replace("#[ORGANISME_UTILISATEUR]#", organismeRepository.getLibelleById(userInfo.organismeId!!)),
                     documentId = document.documentId,
                 ),
                 idJob = null,
             ),
         )
+    }
+
+    fun execute(userInfo: WrappedUserInfo, element: Part): Result? {
+        checkDroits(userInfo)
+
+        var result: Result? = null
+        try {
+            postEvents(document = enregistrementDocument(element), userInfo = userInfo)
+        } catch (e: Exception) {
+            result = Result.Error(e.message)
+        }
+        return result
     }
 }

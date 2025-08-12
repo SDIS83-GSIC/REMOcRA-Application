@@ -1,8 +1,11 @@
 package remocra.web.adresses
 
 import com.google.inject.Inject
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
@@ -17,6 +20,7 @@ import remocra.data.enums.TypeElementCarte
 import remocra.db.AdresseRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.adresse.CreateAdresseUsecase
+import remocra.usecase.adresse.DepotDeliberationUseCase
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.web.AbstractEndpoint
 
@@ -32,6 +36,9 @@ class AdresseEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createAdresseUsecase: CreateAdresseUsecase
+
+    @Inject
+    lateinit var depotDeliberationUseCase: DepotDeliberationUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -84,5 +91,21 @@ class AdresseEndpoint : AbstractEndpoint() {
             userInfo = securityContext.userInfo,
             element = adresseData,
         ).wrap()
+    }
+
+    @PUT
+    @Path("/deliberation/")
+    @RequireDroits([Droit.DEPOT_DELIB_C])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun depotDeliberationAdresse(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            depotDeliberationUseCase.execute(
+                securityContext.userInfo,
+                httpRequest.getPart("document"),
+            ),
+        ).build()
     }
 }

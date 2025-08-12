@@ -200,6 +200,11 @@ function getLinks(
           label: "Carte des adresses",
           link: URLS.ADRESSE,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DEPOT_DELIB_C),
+          label: "Déposer une délibération",
+          link: URLS.ADRESSE_DELIBERATION,
+        },
       ];
     case TypeModuleRemocra.RISQUES:
       return [
