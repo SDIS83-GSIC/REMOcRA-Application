@@ -358,9 +358,9 @@ const OldebForm = () => {
                     v.id === values.oldeb.oldebCadastreSectionId,
                 )}
               required={true}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              onChange={(e: IdCodeLibelleType) => {
                 setFieldValue("oldeb.oldebCadastreParcelleId", undefined);
-                setFieldValue("oldeb.oldebCadastreSectionId", e.target.value);
+                setFieldValue("oldeb.oldebCadastreSectionId", e.id);
               }}
             />
           </Col>

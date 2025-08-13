@@ -577,7 +577,7 @@ const RcciForm = () => {
                   )}
                   onChange={(e) => {
                     const prevSrid = values.rcci.rcciSrid;
-                    const nextSrid = e.target.value;
+                    const nextSrid = e.id;
                     if (prevSrid !== nextSrid) {
                       setFieldValue(e.target.name, nextSrid);
                       if (values.rcci.rcciX && values.rcci.rcciY) {

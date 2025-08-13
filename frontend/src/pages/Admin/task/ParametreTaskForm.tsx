@@ -506,7 +506,7 @@ const ParametreSynchroSIGIterableForm = ({
           onChange={(e) => {
             setFieldValue(
               `taskParametres[listeTableASynchroniser][${index}].typeSynchronisation`,
-              e.target.value,
+              e.id,
             );
           }}
           required={true}

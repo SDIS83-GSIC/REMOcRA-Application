@@ -169,12 +169,13 @@ const ComposantToRepeat = ({
 }) => {
   const { setValues, values, setFieldValue } = useFormikContext();
 
-  const selectDebitRetenu = [];
+  const selectDebitRetenu: IdCodeLibelleType[] = [];
 
   for (let i = 60; i <= 2400; i += 60) {
     selectDebitRetenu.push({
-      id: i,
-      libelle: i,
+      id: i.toString(),
+      code: i.toString(),
+      libelle: i.toString(),
     });
   }
 
@@ -220,12 +221,15 @@ const ComposantToRepeat = ({
               listIdCodeLibelle={selectDebitRetenu}
               defaultValue={selectDebitRetenu?.find(
                 (e) =>
-                  e.id === listeElements[index].debitSimultaneMesureDebitRetenu,
+                  e.id ===
+                  listeElements[
+                    index
+                  ].debitSimultaneMesureDebitRetenu.toString(),
               )}
               onChange={(e) => {
                 setFieldValue(
                   `listeDebitSimultaneMesure[${index}].debitSimultaneMesureDebitRetenu`,
-                  e.target.value,
+                  e.id,
                 );
               }}
               required={true}
