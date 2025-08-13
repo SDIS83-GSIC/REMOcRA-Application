@@ -3,6 +3,7 @@ package remocra.usecase.admin
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.data.ParametresAdminData
+import remocra.data.ParametresSectionAdresse
 import remocra.data.ParametresSectionCartographie
 import remocra.data.ParametresSectionCouvertureHydraulique
 import remocra.data.ParametresSectionGeneral
@@ -43,6 +44,12 @@ class ParametresUseCase : AbstractUseCase() {
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
             accueilPublic = mapParametres.getStringOrNull(ParametreEnum.ACCUEIL_PUBLIC.name),
+        )
+
+        val adresse = ParametresSectionAdresse(
+            adresseDeliberationDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL.name),
+            adresseDeliberationCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL.name),
+            adresseDeliberationObjetEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL.name),
         )
 
         val mobile = ParametresSectionMobile(
@@ -91,11 +98,20 @@ class ParametresUseCase : AbstractUseCase() {
             peiHighlightDuree = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_DUREE.name),
             peiRenumerotationInterneAuto = mapParametres.getBooleanOrNull(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO.name),
             voieSaisieLibre = mapParametres.getBooleanOrNull(ParametreEnum.VOIE_SAISIE_LIBRE.name),
-            caracteristiquesPenaTooltipWeb = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB.name, objectMapper),
-            caracteristiquesPibiTooltipWeb = mapParametres.getListOfPeiCaracteristique(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name, objectMapper),
+            caracteristiquesPenaTooltipWeb = mapParametres.getListOfPeiCaracteristique(
+                ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB.name,
+                objectMapper,
+            ),
+            caracteristiquesPibiTooltipWeb = mapParametres.getListOfPeiCaracteristique(
+                ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name,
+                objectMapper,
+            ),
             peiNombreHistorique = mapParametres.getIntOrNull(ParametreEnum.PEI_NOMBRE_HISTORIQUE.name),
             peiFicheResumeStandalone = mapParametres.getBooleanOrNull(ParametreEnum.PEI_FICHE_RESUME_STANDALONE.name),
             peiDisplayTypeEngin = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DISPLAY_TYPE_ENGIN.name),
+            declarationPeiDestinataireEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL.name),
+            declarationPeiObjetEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name),
+            declarationPeiCorpsEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL.name),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(
@@ -106,6 +122,7 @@ class ParametresUseCase : AbstractUseCase() {
 
         return ParametresAdminData(
             general = general,
+            adresse = adresse,
             mobile = mobile,
             cartographie = cartographie,
             couvertureHydraulique = couvertureHydraulique,

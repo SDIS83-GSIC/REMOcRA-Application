@@ -38,6 +38,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
     override fun execute(userInfo: WrappedUserInfo, element: ParametresAdminDataInput): ParametresAdminDataInput {
         val parametresAdminData = ParametresAdminData(
             pei = element.pei,
+            adresse = element.adresse,
             general = element.general,
             mobile = element.mobile,
             cartographie = element.cartographie,
@@ -59,6 +60,11 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.ACCUEIL_PUBLIC,
                 parametresAdminData.general.accueilPublic,
             )
+
+            // Adresse
+            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL, parametresAdminData.adresse.adresseDeliberationDestinataireEmail)
+            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL, parametresAdminData.adresse.adresseDeliberationObjetEmail)
+            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL, parametresAdminData.adresse.adresseDeliberationCorpsEmail)
 
             // Cartographie
             updateParametre(
@@ -159,6 +165,9 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.PEI_DISPLAY_TYPE_ENGIN,
                 parametresAdminData.pei.peiDisplayTypeEngin?.toString(),
             )
+            updateParametre(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL, parametresAdminData.pei.declarationPeiDestinataireEmail)
+            updateParametre(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL, parametresAdminData.pei.declarationPeiObjetEmail)
+            updateParametre(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL, parametresAdminData.pei.declarationPeiCorpsEmail)
 
             // ALERTE
             updateParametre(

@@ -40,6 +40,12 @@ type ParametresSectionGeneral = {
   accueilPublic: string | undefined;
 };
 
+type ParametresSectionAdresse = {
+  adresseDeliberationDestinataireEmail: string;
+  adresseDeliberationCorpsEmail: string;
+  adresseDeliberationObjetEmail: string;
+};
+
 type ParametresSectionMobile = {
   affichageIndispo: boolean;
   modeDeconnecte: boolean;
@@ -84,6 +90,9 @@ type ParametresSectionPei = {
   peiMethodeTriAlphanumerique: boolean;
   peiRenumerotationInterneAuto: boolean;
   voieSaisieLibre: boolean;
+  declarationPeiDestinataireEmail: string;
+  declarationPeiObjetEmail: string;
+  declarationPeiCorpsEmail: string;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -94,6 +103,7 @@ type ParametresSectionPeiLongueIndispo = {
 
 type AdminParametresValue = {
   general: ParametresSectionGeneral;
+  adresse: ParametresSectionAdresse;
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
@@ -106,6 +116,7 @@ export const getInitialValues = (
   data: AdminParametresValue,
 ): {
   general: ParametresSectionGeneral;
+  adresse: ParametresSectionAdresse;
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
@@ -114,6 +125,7 @@ export const getInitialValues = (
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
 } => ({
   general: data?.general,
+  adresse: data?.adresse,
   mobile: {
     ...data?.mobile,
     caracteristiquesPibiIds:
@@ -148,6 +160,7 @@ export const validationSchema = object({});
 export const prepareVariables = (values: AdminParametresValue) => {
   return {
     general: values?.general,
+    adresse: values?.adresse,
     mobile: {
       ...values?.mobile,
       caracteristiquesPena:
@@ -196,7 +209,7 @@ export const AdminParametresInterne = () => {
   const { values, setFieldValue } = useFormikContext<AdminParametresValue>();
   const allCaracteristiques = useGet(url`/api/admin/pei-caracteristique`)?.data;
   const { activesKeys, handleShowClose } = useAccordionState(
-    Array(6).fill(false),
+    Array(7).fill(false),
   );
   const { user } = useAppContext();
 
@@ -214,6 +227,10 @@ export const AdminParametresInterne = () => {
                     {
                       header: "Général",
                       content: <AdminGeneral values={values.general} />,
+                    },
+                    {
+                      header: "Adresse",
+                      content: <AdminAdresse values={values.adresse} />,
                     },
                     {
                       header: "Cartographie",
@@ -269,7 +286,6 @@ export const AdminParametresInterne = () => {
             ]}
             handleShowClose={handleShowClose}
           />
-
           <br />
           <SubmitFormButtons returnLink={true} />
         </Container>
@@ -643,6 +659,34 @@ const AdminApplicationMobile = ({
             tooltipText={
               "Les photos prises par l'application mobile peut être de taille importante, et en fonction de la volumétrie des PEI des tournées, on peut avoir des problèmes de synchronisation. Réduire à environ 1920*1080px les photos limite drastiquement le poids de celles-ci, donc les problèmes liés lors de la synchronisation."
             }
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminAdresse = ({ values }: { values: ParametresSectionAdresse }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="adresse.adresseDeliberationDestinataireEmail"
+            label="Adresse email qui recevra une notification lors du dépôt d'une délibération"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="adresse.adresseDeliberationObjetEmail"
+            label="Objet du mail de notification lors du dépôt d'une délibération"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="adresse.adresseDeliberationCorpsEmail"
+            label="Contenu du mail de notification lors du dépôt d'une délibération"
+            tooltipText="Vous pouvez utilise #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
       </>
@@ -1082,6 +1126,25 @@ const AdminPei = ({
             name="pei.peiNombreHistorique"
             label="Nombre de données à afficher sur le graphique de la fiche résumée"
             required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="pei.declarationPeiDestinataireEmail"
+            label="Adresse email qui recevra une notification lors de la déclaration d'un PEI"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="pei.declarationPeiObjetEmail"
+            label="Objet du mail de notification lors de la déclaration d'un PEI"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="pei.declarationPeiCorpsEmail"
+            label="Contenu du mail de notification lors de la déclaration d'un PEI"
+            tooltipText="Vous pouvez utilise #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
       </>

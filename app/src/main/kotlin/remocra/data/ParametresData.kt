@@ -12,6 +12,7 @@ data class ParametresData(
 
 data class ParametresAdminData(
     val general: ParametresSectionGeneral,
+    val adresse: ParametresSectionAdresse,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
     val couvertureHydraulique: ParametresSectionCouvertureHydraulique,
@@ -23,6 +24,7 @@ data class ParametresAdminData(
 
 data class ParametresAdminDataInput(
     val general: ParametresSectionGeneral,
+    val adresse: ParametresSectionAdresse,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
     val couvertureHydraulique: ParametresSectionCouvertureHydrauliqueInput,
@@ -47,6 +49,12 @@ data class ParametresSectionGeneral(
     val titrePage: String?,
     val toleranceVoiesMetres: Int?,
     val accueilPublic: String?,
+)
+
+data class ParametresSectionAdresse(
+    val adresseDeliberationDestinataireEmail: String?,
+    val adresseDeliberationCorpsEmail: String?,
+    val adresseDeliberationObjetEmail: String?,
 )
 
 data class ParametresSectionMobile(
@@ -112,4 +120,7 @@ data class ParametresSectionPei(
     val peiNombreHistorique: Int?,
     val peiFicheResumeStandalone: Boolean?,
     val peiDisplayTypeEngin: Boolean?,
+    val declarationPeiDestinataireEmail: String?,
+    val declarationPeiObjetEmail: String?,
+    val declarationPeiCorpsEmail: String?,
 )
