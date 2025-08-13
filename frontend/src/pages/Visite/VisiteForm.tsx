@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useFormikContext } from "formik";
 import { ReactNode } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
@@ -18,6 +18,7 @@ import PositiveNumberInput, {
   TextInput,
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
@@ -127,7 +128,7 @@ const VisiteForm = ({
                 : true),
           );
 
-  let filteredListAnomalie = [];
+  let filteredListAnomalie: any[] = [];
   let enableCDP = false;
   if (values.visiteTypeVisite) {
     if (
@@ -178,9 +179,8 @@ const VisiteForm = ({
   }
   const groupedListeAnomalies = Object.groupBy(
     filteredListAnomalie,
-    (item: { anomalieCategorieLibelle: string }) =>
-      item.anomalieCategorieLibelle,
-  );
+    (item: AnomalieCompleteEntity) => item.anomalieCategorieLibelle!,
+  ) as Record<string, AnomalieCompleteEntity[]>;
 
   const listeVoletsAccordion: { header: string; content: ReactNode }[] = [];
   Object.entries(groupedListeAnomalies).map(([categorie, listAno]) =>
@@ -273,7 +273,7 @@ const VisiteForm = ({
                     <div>
                       <div>
                         <PositiveNumberInput
-                          name="ctrlDebitPression.ctrlPression"
+                          name="ctrlDebitPression.visiteCtrlDebitPressionPression"
                           label="Pression statique (bar) : "
                           min={0}
                           step={0.01}
@@ -282,7 +282,7 @@ const VisiteForm = ({
                       </div>
                       <div>
                         <PositiveNumberInput
-                          name="ctrlDebitPression.ctrlPressionDyn"
+                          name="ctrlDebitPression.visiteCtrlDebitPressionPressionDyn"
                           label="Pression dynamique au débit nominal (bar) : "
                           min={0}
                           step={0.01}
@@ -291,7 +291,7 @@ const VisiteForm = ({
                       </div>
                       <div>
                         <PositiveNumberInput
-                          name="ctrlDebitPression.ctrlDebit"
+                          name="ctrlDebitPression.visiteCtrlDebitPressionDebit"
                           label="Débit à 1 bar (m³/h) : "
                           min={0}
                           required={false}
@@ -329,13 +329,10 @@ const VisiteForm = ({
           },
         ]}
       />
-      <Button
-        type="submit"
-        variant="primary"
+      <SubmitFormButtons
         onClick={() => checkValidity(values, show)}
-      >
-        Valider
-      </Button>
+        returnLink={false}
+      />
     </FormContainer>
   );
 };

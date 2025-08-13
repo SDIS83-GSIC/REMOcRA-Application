@@ -38,7 +38,7 @@ class DeleteVisiteUseCase @Inject constructor(
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
-                pojoId = element.visitePeiId,
+                pojoId = element.visiteId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.VISITE,
                 auteurTracabilite = userInfo.getInfosTracabilite(),

@@ -109,9 +109,10 @@ const SaisieVisiteTournee = ({
         visiteObservation: "",
         listeAnomalie: listeAnomaliesAssignable.data[cdp.peiId],
         ctrlDebitPression: {
-          ctrlDebit: cdp.visiteCtrlDebitPressionDebit,
-          ctrlPression: cdp.visiteCtrlDebitPressionPression,
-          ctrlPressionDyn: cdp.visiteCtrlDebitPressionPressionDyn,
+          visiteCtrlDebitPressionDebit: cdp.visiteCtrlDebitPressionDebit,
+          visiteCtrlDebitPressionPression: cdp.visiteCtrlDebitPressionPression,
+          visiteCtrlDebitPressionPressionDyn:
+            cdp.visiteCtrlDebitPressionPressionDyn,
         },
         isNoAnomalieChecked: false,
         isSameAnomalieChecked: false,

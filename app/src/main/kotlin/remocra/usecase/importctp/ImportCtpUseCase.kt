@@ -497,9 +497,9 @@ class ImportCtpUseCase : AbstractUseCase() {
                     isCtrlDebitPression = visitesData.importDebit != null || visitesData.importPression != null,
                     ctrlDebitPression =
                     CreationVisiteCtrl(
-                        ctrlDebit = visitesData.importDebit,
-                        ctrlPression = visitesData.importPression?.toBigDecimal(),
-                        ctrlPressionDyn = null,
+                        visiteCtrlDebitPressionDebit = visitesData.importDebit,
+                        visiteCtrlDebitPressionPression = visitesData.importPression?.toBigDecimal(),
+                        visiteCtrlDebitPressionPressionDyn = null,
                     ),
                     isFromImportCtp = true,
                 ),

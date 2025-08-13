@@ -275,9 +275,9 @@ class VisiteRepository
                 listeAnomalie = record.listeAnomalie?.map { it.anomalieId } ?: emptyList(),
                 isCtrlDebitPression = record.ctrlDebitPression != null,
                 ctrlDebitPression = CreationVisiteCtrl(
-                    ctrlDebit = record.ctrlDebitPression?.visiteCtrlDebitPressionDebit,
-                    ctrlPression = record.ctrlDebitPression?.visiteCtrlDebitPressionPression,
-                    ctrlPressionDyn = record.ctrlDebitPression?.visiteCtrlDebitPressionPressionDyn,
+                    visiteCtrlDebitPressionDebit = record.ctrlDebitPression?.visiteCtrlDebitPressionDebit,
+                    visiteCtrlDebitPressionPression = record.ctrlDebitPression?.visiteCtrlDebitPressionPression,
+                    visiteCtrlDebitPressionPressionDyn = record.ctrlDebitPression?.visiteCtrlDebitPressionPressionDyn,
                 ),
             )
         }

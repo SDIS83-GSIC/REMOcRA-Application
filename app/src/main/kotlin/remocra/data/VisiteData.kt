@@ -24,7 +24,7 @@ data class VisiteData(
  * en faisant abstraction de visiteId, non défini lors de la création d'un visite
  */
 data class CreationVisiteCtrl(
-    val ctrlDebit: Int?,
-    val ctrlPression: BigDecimal?,
-    val ctrlPressionDyn: BigDecimal?,
+    val visiteCtrlDebitPressionDebit: Int?,
+    val visiteCtrlDebitPressionPression: BigDecimal?,
+    val visiteCtrlDebitPressionPressionDyn: BigDecimal?,
 )

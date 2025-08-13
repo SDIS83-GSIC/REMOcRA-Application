@@ -126,9 +126,9 @@ class CreateVisiteUseCase @Inject constructor(
                 (
                     (element.ctrlDebitPression == null) || // Et que l'objet est null
                         (
-                            element.ctrlDebitPression?.ctrlDebit == null && // Ou ne contient que des valeurs null
-                                element.ctrlDebitPression?.ctrlPression == null &&
-                                element.ctrlDebitPression?.ctrlPressionDyn == null
+                            element.ctrlDebitPression?.visiteCtrlDebitPressionDebit == null && // Ou ne contient que des valeurs null
+                                element.ctrlDebitPression?.visiteCtrlDebitPressionPression == null &&
+                                element.ctrlDebitPression?.visiteCtrlDebitPressionPressionDyn == null
                             )
                     )
             ) {
@@ -137,9 +137,9 @@ class CreateVisiteUseCase @Inject constructor(
                 (
                     (element.ctrlDebitPression != null) && // Et que l'objet n'est pas null
                         (
-                            element.ctrlDebitPression?.ctrlDebit != null || // Ou contient des valeurs non-nulle
-                                element.ctrlDebitPression?.ctrlPression != null ||
-                                element.ctrlDebitPression?.ctrlPressionDyn != null
+                            element.ctrlDebitPression?.visiteCtrlDebitPressionDebit != null || // Ou contient des valeurs non-nulle
+                                element.ctrlDebitPression?.visiteCtrlDebitPressionPression != null ||
+                                element.ctrlDebitPression?.visiteCtrlDebitPressionPressionDyn != null
                             )
                     )
             ) {
@@ -166,9 +166,9 @@ class CreateVisiteUseCase @Inject constructor(
             visiteRepository.insertCDP(
                 VisiteCtrlDebitPression(
                     visiteCtrlDebitPressionVisiteId = element.visiteId,
-                    visiteCtrlDebitPressionDebit = element.ctrlDebitPression!!.ctrlDebit,
-                    visiteCtrlDebitPressionPression = element.ctrlDebitPression!!.ctrlPression,
-                    visiteCtrlDebitPressionPressionDyn = element.ctrlDebitPression!!.ctrlPressionDyn,
+                    visiteCtrlDebitPressionDebit = element.ctrlDebitPression!!.visiteCtrlDebitPressionDebit,
+                    visiteCtrlDebitPressionPression = element.ctrlDebitPression!!.visiteCtrlDebitPressionPression,
+                    visiteCtrlDebitPressionPressionDyn = element.ctrlDebitPression!!.visiteCtrlDebitPressionPressionDyn,
                 ),
             )
         }

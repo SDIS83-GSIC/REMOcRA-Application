@@ -7,6 +7,7 @@ import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import CreatePei from "../../../pages/Pei/CreatePei.tsx";
 import UpdatePei from "../../../pages/Pei/UpdatePei.tsx";
+import Visite from "../../../pages/Visite/Visite.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { IconPei } from "../../Icon/Icon.tsx";
@@ -21,6 +22,10 @@ const MapPei = () => {
   const mapElement = useRef<HTMLDivElement>();
 
   const [showFormPei, setShowFormPei] = useState(false);
+  const [showFormVisite, setShowFormVisite] = useState({
+    peiId: null,
+    show: false,
+  });
   const [coordonneesPeiCreate, setCoordonneesPeiCreate] = useState(null);
 
   const [peiIdUpdate, setPeiIdUpdate] = useState(null);
@@ -175,7 +180,6 @@ const MapPei = () => {
         <Col>
           <MapComponent
             map={map}
-            workingLayer={workingLayer}
             availableLayers={availableLayers}
             addOrRemoveLayer={addOrRemoveLayer}
             layerListRef={layerListRef}
@@ -218,6 +222,8 @@ const MapPei = () => {
                   visibleMove={visibleMove}
                   peiIdMove={peiIdMove}
                   geometrieMove={geometrieMove}
+                  setShowFormVisite={setShowFormVisite}
+                  showFormVisite={showFormVisite}
                 />
               )
             }
@@ -248,6 +254,18 @@ const MapPei = () => {
                   />
                 )
               )}
+            </div>
+          </Col>
+        )}
+        {showFormVisite.show && showFormVisite.peiId && (
+          <Col xs={5} className="border-primary border-start border-3">
+            <div className="bg-light p-2 ">
+              <Visite
+                peiIdCarte={showFormVisite.peiId}
+                closeForm={() =>
+                  setShowFormVisite({ show: false, peiId: null })
+                }
+              />
             </div>
           </Col>
         )}

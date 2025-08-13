@@ -1,10 +1,10 @@
 export type AnomalieCompleteEntity = {
   anomalieId: string;
   anomalieCode: string;
-  anomalieLibelle: string;
+  anomalieLibelle?: string;
   anomalieCommentaire?: string;
   anomalieAnomalieCategorieId?: string;
-  anomalieCategorieLibelle?: string;
+  anomalieCategorieLibelle: string;
   poidsAnomalieValIndispoTerrestre?: number;
   poidsAnomalieValIndispoHbe?: number;
   isReceptionAssignable: boolean;

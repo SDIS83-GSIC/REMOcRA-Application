@@ -53,6 +53,8 @@ const TooltipMapPei = ({
   setPeiIdUpdate,
   showFormPei,
   disabledCreateButton,
+  setShowFormVisite,
+  showFormVisite,
 }: {
   map: Map;
   displayButtonEdit: boolean;
@@ -66,6 +68,8 @@ const TooltipMapPei = ({
   setShowFormPei: (v: boolean) => void;
   showFormPei: boolean;
   disabledCreateButton: () => void;
+  setShowFormVisite: (v: { peiId: string | null; show: boolean }) => void;
+  showFormVisite: { peiId: string | null; show: boolean };
 }) => {
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -124,9 +128,11 @@ const TooltipMapPei = ({
             setPeiIdUpdate(elementId);
             disabledCreateButton();
           }}
-          labelEdit={showFormPei ? textDisable : "Modifier le PEI"}
+          labelEdit={
+            showFormPei || showFormVisite.show ? textDisable : "Modifier le PEI"
+          }
           displayButtonDelete={displayButtonDelete}
-          disabledEdit={showFormPei}
+          disabledEdit={showFormPei || showFormVisite.show}
           deletePath={`/api/pei/delete/` + elementId}
           onClickDelete={() => {
             dataPeiLayer.getSource().refresh();
@@ -136,11 +142,11 @@ const TooltipMapPei = ({
           labelDelete={
             featureSelect?.getProperties().hasTourneeReservee
               ? "Impossible de supprimer un PEI affecté à une tournée réservée"
-              : showFormPei
+              : showFormPei || showFormVisite.show
                 ? textDisable
                 : "Supprimer le PEI"
           }
-          disabledDelete={showFormPei}
+          disabledDelete={showFormPei || showFormVisite.show}
           displayButtonSee={isFicheResumeStandalone}
           onClickSee={() => setShowFichePei(true)}
           labelSee={"Voir la fiche Résumé du PEI"}
@@ -165,17 +171,21 @@ const TooltipMapPei = ({
                 <Col className="p-1" xs={"auto"}>
                   <TooltipCustom
                     tooltipText={
-                      showFormPei ? textDisable : "Voir les visites du PEI"
+                      showFormPei || showFormVisite.show
+                        ? textDisable
+                        : "Voir les visites du PEI"
                     }
                     tooltipId={"visite"}
                   >
-                    <CustomLinkButton
-                      pathname={URLS.VISITE(elementId)}
+                    <Button
                       variant="warning"
-                      disabled={showFormPei}
+                      onClick={() => {
+                        setShowFormVisite({ peiId: elementId, show: true });
+                      }}
+                      disabled={showFormPei || showFormVisite.show}
                     >
                       <IconVisite />
-                    </CustomLinkButton>
+                    </Button>
                   </TooltipCustom>
                 </Col>
               )}
@@ -183,7 +193,7 @@ const TooltipMapPei = ({
                 <Col className="p-1" xs={"auto"}>
                   <TooltipCustom
                     tooltipText={
-                      showFormPei
+                      showFormPei || showFormVisite.show
                         ? textDisable
                         : "Voir les indisponibilités temporaires du PEI"
                     }
@@ -195,7 +205,7 @@ const TooltipMapPei = ({
                         setShowIndispoTemp(true);
                         overlay?.setPosition(undefined);
                       }}
-                      disabled={showFormPei}
+                      disabled={showFormPei || showFormVisite.show}
                     >
                       <IconIndisponibiliteTemporaire />
                     </Button>
@@ -207,7 +217,7 @@ const TooltipMapPei = ({
                   <Col className="p-1" xs={"auto"}>
                     <TooltipCustom
                       tooltipText={
-                        showFormPei
+                        showFormPei || showFormVisite.show
                           ? textDisable
                           : "Voir les tournées associées"
                       }
@@ -219,7 +229,7 @@ const TooltipMapPei = ({
                           setShowTournee(true);
                           overlay?.setPosition(undefined);
                         }}
-                        disabled={showFormPei}
+                        disabled={showFormPei || showFormVisite.show}
                       >
                         <IconTournee />
                       </Button>

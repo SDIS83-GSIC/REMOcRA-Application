@@ -142,9 +142,9 @@ constructor(
                 listeAnomalie = listAnomalies.toList(),
                 isCtrlDebitPression = ctrl != null,
                 ctrlDebitPression = CreationVisiteCtrl(
-                    ctrlDebit = ctrl?.visiteCtrlDebitPressionDebit,
-                    ctrlPression = ctrl?.visiteCtrlDebitPressionPression,
-                    ctrlPressionDyn = ctrl?.visiteCtrlDebitPressionPressionDyn,
+                    visiteCtrlDebitPressionDebit = ctrl?.visiteCtrlDebitPressionDebit,
+                    visiteCtrlDebitPressionPression = ctrl?.visiteCtrlDebitPressionPression,
+                    visiteCtrlDebitPressionPressionDyn = ctrl?.visiteCtrlDebitPressionPressionDyn,
                 ),
             )
             // TODO vérifier 2201, 2110 au moins
