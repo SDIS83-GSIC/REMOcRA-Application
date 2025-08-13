@@ -507,6 +507,7 @@ type MultiselectType = InputType & {
   defaultValue?: any;
   onChange: (e: any) => any;
   tooltipText?: string;
+  noOptionsMessage?: string;
 };
 
 export const Multiselect = ({
@@ -563,6 +564,8 @@ export const SelectInput = ({
   defaultValue,
   tooltipText,
   onChange,
+  disabled = false,
+  noOptionsMessage = "Aucune donnée trouvée",
 }: MultiselectType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -586,9 +589,9 @@ export const SelectInput = ({
         value={defaultValue}
         onChange={onChange}
         required={required}
-        isDisabled={readOnly}
+        isDisabled={readOnly || disabled}
         name={name}
-        noOptionsMessage={() => "Aucune donnée trouvée"}
+        noOptionsMessage={() => noOptionsMessage}
       />
     </DivWithError>
   );

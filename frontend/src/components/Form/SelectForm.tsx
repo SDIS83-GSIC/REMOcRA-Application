@@ -1,7 +1,5 @@
-import { Form } from "react-bootstrap";
-import { useField } from "formik";
 import { SelectFormType } from "../../utils/typeUtils.tsx";
-import { DivWithError, FormLabel } from "./Form.tsx";
+import { SelectInput } from "./Form.tsx";
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
  *     pour faire un select dans les formulaires
@@ -29,8 +27,6 @@ const SelectForm = ({
   setFieldValue,
   setOtherValues,
 }: SelectFormType) => {
-  const [, meta] = useField(name);
-  const error = meta.touched ? meta.error : null;
   const onChange = ({ name, value }: { name: string; value: string }) => {
     setValues != null &&
       setValues((prevValues: any) => ({
@@ -42,28 +38,22 @@ const SelectForm = ({
   };
   const list = listIdCodeLibelle ?? [];
   return (
-    <DivWithError name={name} error={error}>
-      {label && <FormLabel name={name} label={label} required={required} />}
-      <Form.Select
-        name={name}
-        disabled={disabled}
-        required={required}
-        onChange={(e) => {
-          onChangeCustom
-            ? onChangeCustom(e)
-            : onChange({ name: name, value: e.target.value });
-        }}
-      >
-        <option value={""}>
-          {disabled ? optionDisabled : "Aucune valeur saisie"}
-        </option>
-        {list.map((e, key) => (
-          <option key={key} value={e.id} selected={defaultValue?.id === e.id}>
-            {e.libelle}
-          </option>
-        ))}
-      </Form.Select>
-    </DivWithError>
+    <SelectInput
+      name={name}
+      label={label}
+      required={required}
+      disabled={disabled}
+      options={list}
+      getOptionLabel={(option) => option.libelle}
+      getOptionValue={(option) => option.id ?? ""}
+      defaultValue={defaultValue}
+      onChange={(e) => {
+        onChangeCustom
+          ? onChangeCustom(e)
+          : onChange({ name: name, value: e.id });
+      }}
+      noOptionsMessage={optionDisabled}
+    />
   );
 };
 export default SelectForm;

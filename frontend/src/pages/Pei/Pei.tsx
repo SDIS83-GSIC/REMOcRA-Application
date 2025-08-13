@@ -362,8 +362,14 @@ const Pei = ({
       setFieldValue("coordonneeY", coordonnees?.coordonneeY);
     }
 
-    if (selectDataState?.data?.listCommune?.length !== 0) {
-      setFieldValue("peiCommuneId", selectDataState?.data?.listCommune[0].id);
+    if (
+      selectDataState?.data?.listCommune != null &&
+      selectDataState?.data?.listCommune?.length !== 0
+    ) {
+      setFieldValue(
+        "peiCommuneId",
+        selectDataState?.data?.listCommune[0].id ?? values.peiCommuneId,
+      );
     }
   }, [
     setFieldValue,
@@ -372,6 +378,7 @@ const Pei = ({
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
     values.typeSystemeSrid,
+    values.peiCommuneId,
     values.peiId,
     geometrieState,
     selectDataState,
@@ -390,34 +397,35 @@ const Pei = ({
 
   // Correspond à la liste des champs obligatoires avec leur index dans l'accordion
   // Cela nous permettra d'ouvrir une section si un champ obligatoire n'est pas saisi
+  const index = isNew ? 0 : 1;
   const listValuesRequired: ValuesRequired[] = [
     {
       name: "peiAutoriteDeciId",
-      accordionIndex: 0,
+      accordionIndex: index,
     },
     {
       name: "peiServicePublicDeciId",
-      accordionIndex: 0,
+      accordionIndex: index,
     },
     {
       name: "peiNatureId",
-      accordionIndex: 0,
+      accordionIndex: index,
     },
     {
       name: "peiNatureDeciId",
-      accordionIndex: 0,
+      accordionIndex: index,
     },
     {
       name: "peiCommuneId",
-      accordionIndex: 1,
+      accordionIndex: index + 1,
     },
     {
       name: "peiVoieId",
-      accordionIndex: 1,
+      accordionIndex: index + 1,
     },
     {
       name: "peiDomaineId",
-      accordionIndex: 1,
+      accordionIndex: index + 1,
     },
   ];
 
@@ -930,6 +938,7 @@ const FormLocalisationPei = ({
       }
     }
   }
+
   return (
     <>
       <Row>
