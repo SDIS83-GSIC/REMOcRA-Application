@@ -50,9 +50,10 @@ const SelectForm = ({
       onChange={(e) => {
         onChangeCustom
           ? onChangeCustom(e)
-          : onChange({ name: name, value: e.id });
+          : onChange({ name: name, value: e?.id });
       }}
       noOptionsMessage={optionDisabled}
+      isClearable={true}
     />
   );
 };
