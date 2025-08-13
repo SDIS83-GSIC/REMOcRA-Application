@@ -598,7 +598,7 @@ const MapToolbarPei = ({
               typeReseauId={typeReseauId!}
               onSubmit={() => {
                 dataDebitSimultaneLayer.getSource().refresh();
-
+                dataPeiLayer.getSource().refresh();
                 refreshLayerGeoserver(map);
                 handleCloseDebitSimultane();
               }}

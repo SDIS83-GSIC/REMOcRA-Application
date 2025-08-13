@@ -311,6 +311,7 @@ const TooltipMapPei = ({
               debitSimultaneId={elementId}
               onSubmit={() => {
                 dataDebitSimultaneLayer.getSource().refresh();
+                dataPeiLayer.getSource().refresh();
                 refreshLayerGeoserver(map);
                 handleCloseUpdateDebitSimultane();
               }}
