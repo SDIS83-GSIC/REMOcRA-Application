@@ -360,71 +360,68 @@ function QueryTable({
     );
   };
   return (
-    <div>
-      <div className="d-flex justify-content-end mb-2">
-        <Button
-          variant="danger"
-          className="text-light"
-          onClick={() => {
-            const searchParams = new URLSearchParams(location?.search);
-            searchParams.delete("filterBy");
+    !displayNone && (
+      <div>
+        <div className="d-flex justify-content-end mb-2">
+          <Button
+            variant="danger"
+            className="text-light"
+            onClick={() => {
+              const searchParams = new URLSearchParams(location?.search);
+              searchParams.delete("filterBy");
 
-            // Réinitialiser tous les filtres
-            setFilterBy({});
-            setValues({});
-            formik.setValues({});
-            formik.resetForm({ values: emptyFilter });
+              // Réinitialiser tous les filtres
+              setFilterBy({});
+              setValues({});
+              formik.setValues({});
+              formik.resetForm({ values: emptyFilter });
 
-            // On remet la pagination à zéro
-            setPagination({ offset: 0, limit: pagination.limit });
+              // On remet la pagination à zéro
+              setPagination({ offset: 0, limit: pagination.limit });
 
-            // On met à jour l'URL
-            navigate(
-              {
-                search: decodeURIComponent(searchParams.toString()),
-              },
-              {
-                state: location.state,
-              },
-            );
-          }}
-        >
-          Effacer les filtres
-        </Button>
+              // On met à jour l'URL
+              navigate(
+                {
+                  search: decodeURIComponent(searchParams.toString()),
+                },
+                {
+                  state: location.state,
+                },
+              );
+            }}
+          >
+            Effacer les filtres
+          </Button>
+        </div>
+        <Table striped bordered hover className={className}>
+          <thead>
+            <tr>
+              {columns.map((column, i) => makeHeader(column, i.toString()))}
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td>Chargement en cours</td>
+              </tr>
+            ) : getList(data)?.length === 0 ? (
+              <tr>
+                <td>Aucune donnée</td>
+              </tr>
+            ) : (
+              <>{getList?.(data)?.map(makeRow)}</>
+            )}
+          </tbody>
+        </Table>
+        <Pagination
+          isLoading={isLoading}
+          count={getCount(data)}
+          paginationState={[pagination, setPagination]}
+          dataLength={getList(data)?.length}
+          className={classNames({ "d-none": displayNone })}
+        />
       </div>
-      <Table
-        striped
-        bordered
-        hover
-        className={classNames({ "d-none": displayNone }, className)}
-      >
-        <thead>
-          <tr>
-            {columns.map((column, i) => makeHeader(column, i.toString()))}
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
-            <tr>
-              <td>Chargement en cours</td>
-            </tr>
-          ) : getList(data)?.length === 0 ? (
-            <tr>
-              <td>Aucune donnée</td>
-            </tr>
-          ) : (
-            <>{getList?.(data)?.map(makeRow)}</>
-          )}
-        </tbody>
-      </Table>
-      <Pagination
-        isLoading={isLoading}
-        count={getCount(data)}
-        paginationState={[pagination, setPagination]}
-        dataLength={getList(data)?.length}
-        className={classNames({ "d-none": displayNone })}
-      />
-    </div>
+    )
   );
 }
 

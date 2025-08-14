@@ -9,6 +9,7 @@ import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
 import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
+  IconList,
   IconLocation,
   IconOeil,
   IconSee,
@@ -20,11 +21,8 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../components/Table/TableActionColumn.tsx";
-import {
-  ActionColumn,
-  BooleanColumn,
-  ListePeiColumn,
-} from "../components/Table/columns.tsx";
+import { ActionColumn, BooleanColumn } from "../components/Table/columns.tsx";
+import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit, isAuthorized } from "../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
@@ -40,7 +38,6 @@ import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
 import url from "../module/fetch.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
-import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime, { formatDate } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
@@ -455,14 +452,6 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
 }): Array<columnType> {
   const listePeiState = useGet(url`/api/pei/get-id-numero`);
   const column: Array<columnType> = [];
-  {
-    column.push(
-      ListePeiColumn({
-        handleButtonClick: handleButtonClick,
-        accessor: "indisponibiliteTemporaireId",
-      }),
-    );
-  }
   parametres.forEach((_parametre: COLUMN_INDISPONIBILITE_TEMPORAIRE) => {
     switch (_parametre) {
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF:
@@ -587,6 +576,15 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
   });
   {
     const listeButton: ButtonType[] = [];
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      type: TYPE_BUTTON.BUTTON,
+      onClick: (row) => handleButtonClick(row),
+      textEnable: "Lister les points d'eau",
+      icon: <IconList />,
+    });
     if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
       listeButton.push({
         row: (row) => {

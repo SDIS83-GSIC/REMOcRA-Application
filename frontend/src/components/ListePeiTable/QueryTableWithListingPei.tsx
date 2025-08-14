@@ -58,7 +58,7 @@ const QueryTableWithListingPei = ({
             "d-none": showTable,
           })}
         >
-          Retour
+          Retour à la liste précédente
         </Button>
       </Row>
 

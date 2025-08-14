@@ -1,13 +1,7 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import {
-  IconDelete,
-  IconEdit,
-  IconList,
-  IconLock,
-  IconUnlock,
-} from "../Icon/Icon.tsx";
+import { IconDelete, IconEdit, IconLock, IconUnlock } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
@@ -103,32 +97,6 @@ type LinkColumnType = {
   disabled: boolean;
   disable: (t?: any) => boolean;
   tooltipText?: string;
-};
-
-export const ListePeiColumn = ({
-  handleButtonClick,
-  accessor,
-}: ListePeiColumnType) => ({
-  Header: "",
-  accessor: accessor,
-  Cell: (value) => {
-    return (
-      <TooltipCustom tooltipText={"Lister les points d'eau"} tooltipId={value}>
-        <Button
-          variant={"link"}
-          onClick={() => {
-            handleButtonClick(value.value);
-          }}
-        >
-          <IconList />
-        </Button>
-      </TooltipCustom>
-    );
-  },
-});
-type ListePeiColumnType = {
-  handleButtonClick: (value: string) => any;
-  accessor: string;
 };
 
 type DeleteColumnType = {

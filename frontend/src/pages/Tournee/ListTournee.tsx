@@ -9,6 +9,7 @@ import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
   IconCentPourcent,
   IconDesaffecter,
+  IconList,
   IconLocation,
   IconSortList,
   IconTournee,
@@ -18,10 +19,7 @@ import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableW
 import useLocalisation, {
   GET_TYPE_GEOMETRY,
 } from "../../components/Localisation/useLocalisation.tsx";
-import {
-  ActionColumn,
-  ListePeiColumn,
-} from "../../components/Table/columns.tsx";
+import { ActionColumn } from "../../components/Table/columns.tsx";
 import {
   columnType,
   useFilterContext,
@@ -113,16 +111,17 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     setShowTable(false); // Cache le tableau actuel
   };
 
-  {
-    column.unshift(
-      ListePeiColumn({
-        handleButtonClick: handleButtonClick,
-        accessor: "tourneeId",
-      }),
-    );
-  }
-
   const listeButton: ButtonType[] = [];
+
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    type: TYPE_BUTTON.BUTTON,
+    onClick: (row) => handleButtonClick(row),
+    textEnable: "Lister les points d'eau",
+    icon: <IconList />,
+  });
 
   const textDisable =
     "La tournée est réservée ou contient des PEI qui sont en dehors de votre zone de compétence";
