@@ -56,6 +56,7 @@ const AdresseTypeahead = ({ map }: { map: Map }) => {
           .getView()
           .setZoom(map.getView().getZoomForResolution(0.29858214173896974));
       }}
+      style={{ width: 400 }}
     />
   );
 };
