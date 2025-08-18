@@ -170,3 +170,13 @@ h3 {
   text-align: center;
   width: 97vw; /* fixe la largeur ici */
 }
+
+.bg-hachure {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 212, 21, 0.5) 0px,
+    rgba(255, 212, 21, 0.5) 6px,
+    transparent 6px,
+    transparent 24px
+  );
+}

@@ -85,17 +85,30 @@ function getColumnPeiByStringArray(
       case COLUMN_PEI.DISPONIBILITE_TERRESTRE:
         column.push({
           Header: "Disponibilité",
-          accessor: "peiDisponibiliteTerrestre",
+          accessor: ({ peiDisponibiliteTerrestre, hasIndispoTemp }) => ({
+            peiDisponibiliteTerrestre,
+            hasIndispoTemp,
+          }),
           sortField: "peiDisponibiliteTerrestre",
           Cell: (value) => {
             const dispo =
-              DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
+              DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
+              DISPONIBILITE_PEI.NON_CONFORME
                 ? { bg: "bg-warning", value: "Non conforme" }
-                : DISPONIBILITE_PEI[value.value] ===
-                    DISPONIBILITE_PEI.INDISPONIBLE
-                  ? { bg: "bg-danger", value: "Indisponible" }
-                  : { bg: "", value: "Disponible" };
-            return <div className={dispo.bg}>{dispo.value}</div>;
+                : DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
+                    DISPONIBILITE_PEI.DISPONIBLE
+                  ? { bg: "", value: "Disponible" }
+                  : value.value.hasIndispoTemp
+                    ? {
+                        bg: "bg-danger bg-hachure",
+                        value: "Indisponible temporairement",
+                      }
+                    : { bg: "bg-danger", value: "Indisponible" };
+            return (
+              <div className={classnames(dispo.bg, "p-1", "rounded")}>
+                {dispo.value}
+              </div>
+            );
           },
           Filter: (
             <SelectEnumOption
