@@ -22,7 +22,7 @@ data class Pibi(
     val pibiId: UUID,
     val pibiDiametreId: UUID?,
     val pibiServiceEauId: UUID?,
-    val pibiNumeroScp: String?,
+    val pibiIdentifiantGestionnaire: String?,
     val pibiRenversable: Boolean?,
     val pibiDispositifInviolabilite: Boolean?,
     val pibiModelePibiId: UUID?,
@@ -66,11 +66,11 @@ data class Pibi(
         } else if (this.pibiServiceEauId != o.pibiServiceEauId) {
             return false
         }
-        if (this.pibiNumeroScp == null) {
-            if (o.pibiNumeroScp != null) {
+        if (this.pibiIdentifiantGestionnaire == null) {
+            if (o.pibiIdentifiantGestionnaire != null) {
                 return false
             }
-        } else if (this.pibiNumeroScp != o.pibiNumeroScp) {
+        } else if (this.pibiIdentifiantGestionnaire != o.pibiIdentifiantGestionnaire) {
             return false
         }
         if (this.pibiRenversable == null) {
@@ -173,7 +173,7 @@ data class Pibi(
         result = prime * result + this.pibiId.hashCode()
         result = prime * result + (if (this.pibiDiametreId == null) 0 else this.pibiDiametreId.hashCode())
         result = prime * result + (if (this.pibiServiceEauId == null) 0 else this.pibiServiceEauId.hashCode())
-        result = prime * result + (if (this.pibiNumeroScp == null) 0 else this.pibiNumeroScp.hashCode())
+        result = prime * result + (if (this.pibiIdentifiantGestionnaire == null) 0 else this.pibiIdentifiantGestionnaire.hashCode())
         result = prime * result + (if (this.pibiRenversable == null) 0 else this.pibiRenversable.hashCode())
         result = prime * result + (if (this.pibiDispositifInviolabilite == null) 0 else this.pibiDispositifInviolabilite.hashCode())
         result = prime * result + (if (this.pibiModelePibiId == null) 0 else this.pibiModelePibiId.hashCode())
@@ -196,7 +196,7 @@ data class Pibi(
         sb.append(pibiId)
         sb.append(", ").append(pibiDiametreId)
         sb.append(", ").append(pibiServiceEauId)
-        sb.append(", ").append(pibiNumeroScp)
+        sb.append(", ").append(pibiIdentifiantGestionnaire)
         sb.append(", ").append(pibiRenversable)
         sb.append(", ").append(pibiDispositifInviolabilite)
         sb.append(", ").append(pibiModelePibiId)

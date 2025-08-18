@@ -112,9 +112,11 @@ open class Pibi(
     val SERVICE_EAU_ID: TableField<Record, UUID?> = createField(DSL.name("pibi_service_eau_id"), SQLDataType.UUID, this, "Des organismes qui ont le type \"SERVICE_EAU\" uniquement")
 
     /**
-     * The column <code>remocra.pibi.pibi_numero_scp</code>.
+     * The column <code>remocra.pibi.pibi_identifiant_gestionnaire</code>.
+     * Numéro utilisé par le gestionnaire pour identifier un PIBI dans son
+     * système d'information.
      */
-    val NUMERO_SCP: TableField<Record, String?> = createField(DSL.name("pibi_numero_scp"), SQLDataType.CLOB, this, "")
+    val IDENTIFIANT_GESTIONNAIRE: TableField<Record, String?> = createField(DSL.name("pibi_identifiant_gestionnaire"), SQLDataType.CLOB, this, "Numéro utilisé par le gestionnaire pour identifier un PIBI dans son système d'information.")
 
     /**
      * The column <code>remocra.pibi.pibi_renversable</code>.

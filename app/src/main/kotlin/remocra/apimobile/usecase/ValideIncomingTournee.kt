@@ -210,7 +210,7 @@ class ValideIncomingTournee : AbstractUseCase() {
                         peiDomaineIdInitial = null,
                         pibiDiametreId = null,
                         pibiServiceEauId = null,
-                        pibiNumeroScp = null,
+                        pibiIdentifiantGestionnaire = null,
                         pibiRenversable = false,
                         pibiDispositifInviolabilite = false,
                         pibiModeleId = null,

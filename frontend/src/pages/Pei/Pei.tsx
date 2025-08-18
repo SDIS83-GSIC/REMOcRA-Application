@@ -85,7 +85,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   // DONNEES PIBI
   pibiDiametreId: data?.pibiDiametreId ?? null,
   pibiServiceEauId: data?.pibiServiceEauId ?? null,
-  pibiNumeroScp: data?.pibiNumeroScp ?? null,
+  pibiIdentifiantGestionnaire: data?.pibiIdentifiantGestionnaire ?? null,
   pibiRenversable: data?.pibiRenversable ?? null,
   pibiDispositifInviolabilite: data?.pibiDispositifInviolabilite ?? null,
   pibiModeleId: data?.pibiModeleId ?? null,
@@ -199,7 +199,8 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
             // DONNEES PIBI
             pibiDiametreId: values.pibiDiametreId ?? null,
             pibiServiceEauId: values.pibiServiceEauId ?? null,
-            pibiNumeroScp: values.pibiNumeroScp ?? null,
+            pibiIdentifiantGestionnaire:
+              values.pibiIdentifiantGestionnaire ?? null,
             pibiRenversable: values.pibiRenversable ?? null,
             pibiDispositifInviolabilite:
               values.pibiDispositifInviolabilite ?? null,
@@ -822,6 +823,19 @@ const FormEntetePei = ({
             </>
           )}
         </Row>
+        {values.peiTypePei === TYPE_PEI.PIBI && (
+          <Row>
+            <Col>
+              <TextInput
+                name="pibiIdentifiantGestionnaire"
+                label="Identifiant gestionnaire"
+                required={false}
+                disabled={disablePeiUpdate}
+                tooltipText="Numéro utilisé par le gestionnaire pour identifier un PIBI dans son système d'information."
+              />
+            </Col>
+          </Row>
+        )}
         <Row className="mt-3">
           <Col>
             <TextAreaInput
@@ -1246,14 +1260,6 @@ const FormPibi = ({
         </Col>
       </Row>
       <Row className="mt-3 d-flex align-items-end mb-2">
-        <Col>
-          <TextInput
-            name="pibiNumeroScp"
-            label="Numéro SCP"
-            required={false}
-            disabled={!hasDroitCaracteristique}
-          />
-        </Col>
         <Col>
           <SelectForm
             name={"pibiJumeleId"}

@@ -40,7 +40,7 @@ export type PeiEntity = {
   // DONNEES PIBI
   pibiDiametreId?: string;
   pibiServiceEauId?: string;
-  pibiNumeroScp?: string;
+  pibiIdentifiantGestionnaire?: string;
   pibiRenversable?: boolean;
   pibiDispositifInviolabilite?: boolean;
   pibiModeleId?: string;

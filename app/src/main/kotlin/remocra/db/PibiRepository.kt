@@ -34,7 +34,7 @@ class PibiRepository @Inject constructor(
             // DONNEE PIBI
             PIBI.DIAMETRE_ID,
             PIBI.SERVICE_EAU_ID,
-            PIBI.NUMERO_SCP,
+            PIBI.IDENTIFIANT_GESTIONNAIRE,
             PIBI.RENVERSABLE,
             PIBI.DISPOSITIF_INVIOLABILITE,
             PIBI.MODELE_PIBI_ID.`as`("pibiModeleId"),
@@ -73,7 +73,7 @@ class PibiRepository @Inject constructor(
                 pibiSurpresse = pibi.pibiSurpresse,
                 pibiAdditive = pibi.pibiAdditive,
                 pibiDiametreId = pibi.pibiDiametreId,
-                pibiNumeroScp = pibi.pibiNumeroScp,
+                pibiIdentifiantGestionnaire = pibi.pibiIdentifiantGestionnaire,
                 pibiReservoirId = pibi.pibiReservoirId,
                 pibiRenversable = pibi.pibiRenversable,
                 pibiTypeReseauId = pibi.pibiTypeReseauId,

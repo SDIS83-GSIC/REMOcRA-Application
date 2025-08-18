@@ -97,7 +97,7 @@ data class PibiData(
 
     var pibiDiametreId: UUID?,
     val pibiServiceEauId: UUID?,
-    val pibiNumeroScp: String?,
+    val pibiIdentifiantGestionnaire: String?,
     var pibiRenversable: Boolean = false,
     var pibiDispositifInviolabilite: Boolean = false,
     var pibiModeleId: UUID?,

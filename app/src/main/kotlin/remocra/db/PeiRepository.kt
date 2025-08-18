@@ -693,7 +693,7 @@ class PeiRepository
         )
             .select(
                 PIBI.DIAMETRE_CANALISATION.`as`("diametreCanalisation"),
-                PIBI.NUMERO_SCP.`as`("numeroScp"),
+                PIBI.IDENTIFIANT_GESTIONNAIRE.`as`("identifiantGestionnaire"),
                 PIBI.RENVERSABLE.`as`("renversable"),
                 PIBI.DISPOSITIF_INVIOLABILITE.`as`("dispositifInviolabilite"),
                 PIBI.DEBIT_RENFORCE.`as`("debitRenforce"),
@@ -1106,7 +1106,7 @@ open class ApiPeiData {
 class ApiPibiData : ApiPeiData() {
     var diametreCode: String? = null
     var serviceEauCode: String? = null
-    var numeroScp: String? = null
+    var identifiantGestionnaire: String? = null
     var renversable: Boolean? = false
     var dispositifInviolabilite: Boolean = false
     var modelePibiCode: String? = null
