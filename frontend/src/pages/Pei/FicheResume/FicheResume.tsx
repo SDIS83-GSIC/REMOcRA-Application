@@ -118,16 +118,21 @@ const ElementResumeDisponibilite = ({
   return DISPONIBILITE_PEI[value.disponibilite] ===
     DISPONIBILITE_PEI.DISPONIBLE ? (
     <p>
-      <span className="text-white bg-success rounded p-2"> OUI </span>
+      <span className="text-white bg-success rounded p-2 text-nowrap">
+        {" "}
+        OUI{" "}
+      </span>
     </p>
   ) : DISPONIBILITE_PEI[value.disponibilite] ===
     DISPONIBILITE_PEI.NON_CONFORME ? (
     <p>
-      <span className="text-white bg-warning rounded p-2">NON CONFORME</span>
+      <span className="text-white bg-warning rounded p-2 text-nowrap">
+        NON CONFORME
+      </span>
     </p>
   ) : (
     <p>
-      <span className="text-white bg-danger rounded p-2">
+      <span className="text-white bg-danger rounded p-2 text-nowrap">
         NON {value.hasIndispoTemp ? "- Indisponibilité temporaire " : ""}
       </span>
     </p>
