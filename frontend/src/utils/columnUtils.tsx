@@ -740,7 +740,15 @@ const DateHighlightCell = ({
         isUrgent ? "text-danger" : isWarning ? "text-warning" : "",
       )}
     >
-      {date ? formatDate(date) : ""}
+      {date ? (
+        isUrgent || isWarning ? (
+          <b>{formatDate(date)}</b>
+        ) : (
+          formatDate(date)
+        )
+      ) : (
+        ""
+      )}
     </div>
   );
 };
