@@ -303,6 +303,8 @@ const Pei = ({
   );
 
   const parametreVoieSaisieLibre = PARAMETRE.VOIE_SAISIE_LIBRE;
+  const parametrePeiDisplayIdentifiantGestionnaire =
+    PARAMETRE.PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE;
   const parametrePeiDisplayTypeEngin = PARAMETRE.PEI_DISPLAY_TYPE_ENGIN;
 
   const listeParametre = useGet(
@@ -310,6 +312,7 @@ const Pei = ({
       listeParametreCode: JSON.stringify([
         parametreVoieSaisieLibre,
         parametrePeiDisplayTypeEngin,
+        parametrePeiDisplayIdentifiantGestionnaire,
       ]),
     }}`,
   );
@@ -332,6 +335,17 @@ const Pei = ({
       listeParametre?.data[parametrePeiDisplayTypeEngin].parametreValeur,
     );
   }, [listeParametre, parametrePeiDisplayTypeEngin]);
+
+  const displayIdentifiantGestionnaire = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
+      listeParametre?.data[parametrePeiDisplayIdentifiantGestionnaire]
+        .parametreValeur,
+    );
+  }, [listeParametre, parametrePeiDisplayIdentifiantGestionnaire]);
 
   useEffect(() => {
     if (
@@ -454,6 +468,7 @@ const Pei = ({
           setValues={setValues}
           setFieldValue={setFieldValue}
           isNew={isNew}
+          displayIdentifiantGestionnaire={displayIdentifiantGestionnaire}
           user={user}
         />
       ),
@@ -644,6 +659,7 @@ const FormEntetePei = ({
   setValues,
   setFieldValue,
   isNew,
+  displayIdentifiantGestionnaire = false,
   user,
 }: {
   values: PeiEntity;
@@ -651,6 +667,7 @@ const FormEntetePei = ({
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   isNew: boolean;
+  displayIdentifiantGestionnaire: boolean;
   user: UtilisateurEntity;
 }) => {
   const { data: listNatureDeci }: { data: IdCodeLibelleType[] } = useGet(
@@ -823,19 +840,20 @@ const FormEntetePei = ({
             </>
           )}
         </Row>
-        {values.peiTypePei === TYPE_PEI.PIBI && (
-          <Row>
-            <Col>
-              <TextInput
-                name="pibiIdentifiantGestionnaire"
-                label="Identifiant gestionnaire"
-                required={false}
-                disabled={disablePeiUpdate}
-                tooltipText="Numéro utilisé par le gestionnaire pour identifier un PIBI dans son système d'information."
-              />
-            </Col>
-          </Row>
-        )}
+        {values.peiTypePei === TYPE_PEI.PIBI &&
+          displayIdentifiantGestionnaire && (
+            <Row>
+              <Col>
+                <TextInput
+                  name="pibiIdentifiantGestionnaire"
+                  label="Identifiant gestionnaire"
+                  required={false}
+                  disabled={disablePeiUpdate}
+                  tooltipText="Numéro utilisé par le gestionnaire pour identifier un PIBI dans son système d'information."
+                />
+              </Col>
+            </Row>
+          )}
         <Row className="mt-3">
           <Col>
             <TextAreaInput

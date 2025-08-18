@@ -91,6 +91,7 @@ type ParametresSectionPei = {
   caracteristiquesPenaTooltipWebIds: { id: string }[];
   caracteristiquesPibiTooltipWebIds: { id: string }[];
   peiFicheResumeStandalone: boolean;
+  peiDisplayIdentifiantGestionnaire: boolean;
   peiDisplayTypeEngin: boolean;
   peiGenerationCarteTournee: boolean;
   peiMethodeTriAlphanumerique: boolean;
@@ -961,6 +962,15 @@ const AdminPei = ({
             label="Activer la fiche Résumé en affichage autonome"
             tooltipText={
               "La fiche Résumé permet d'afficher de l'information condensée sur le PEI ; outre son accessibilité en 1er accordéon de la fiche PEI, vous pouvez, en activant cette option, la voir apparaître comme action spécifique dans la liste des PEI et l'infobulle du PEI dans la carto. Attention, elle est forcément utilisée pour le module de risque en mode grand public"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiDisplayIdentifiantGestionnaire"
+            label="Permettre la saisie du numéro utilisé par le gestionnaire pour identifier le PIBI."
+            tooltipText={
+              "Permet d'afficher le composant de saisie de l'identifiant gestionnaire dans la fiche PEI, sinon il sera masqué"
             }
           />
         </AdminParametre>

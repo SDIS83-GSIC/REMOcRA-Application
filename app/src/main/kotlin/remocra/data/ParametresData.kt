@@ -127,6 +127,7 @@ data class ParametresSectionPei(
     val caracteristiquesPibiTooltipWeb: List<PeiCaracteristique>?,
     val peiNombreHistorique: Int?,
     val peiFicheResumeStandalone: Boolean?,
+    val peiDisplayIdentifiantGestionnaire: Boolean?,
     val peiDisplayTypeEngin: Boolean?,
     val declarationPeiDestinataireEmail: String?,
     val declarationPeiObjetEmail: String?,

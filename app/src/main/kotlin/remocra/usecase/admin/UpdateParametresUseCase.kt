@@ -168,6 +168,10 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 parametresAdminData.pei.peiFicheResumeStandalone?.toString(),
             )
             updateParametre(
+                ParametreEnum.PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE,
+                parametresAdminData.pei.peiDisplayIdentifiantGestionnaire?.toString(),
+            )
+            updateParametre(
                 ParametreEnum.PEI_DISPLAY_TYPE_ENGIN,
                 parametresAdminData.pei.peiDisplayTypeEngin?.toString(),
             )

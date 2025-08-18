@@ -115,6 +115,7 @@ class ParametresUseCase : AbstractUseCase() {
             ),
             peiNombreHistorique = mapParametres.getIntOrNull(ParametreEnum.PEI_NOMBRE_HISTORIQUE.name),
             peiFicheResumeStandalone = mapParametres.getBooleanOrNull(ParametreEnum.PEI_FICHE_RESUME_STANDALONE.name),
+            peiDisplayIdentifiantGestionnaire = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE.name),
             peiDisplayTypeEngin = mapParametres.getBooleanOrNull(ParametreEnum.PEI_DISPLAY_TYPE_ENGIN.name),
             declarationPeiDestinataireEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL.name),
             declarationPeiObjetEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name),
