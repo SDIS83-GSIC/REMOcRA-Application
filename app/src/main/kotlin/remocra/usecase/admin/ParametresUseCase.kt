@@ -6,6 +6,7 @@ import remocra.data.ParametresAdminData
 import remocra.data.ParametresSectionAdresse
 import remocra.data.ParametresSectionCartographie
 import remocra.data.ParametresSectionCouvertureHydraulique
+import remocra.data.ParametresSectionDfci
 import remocra.data.ParametresSectionGeneral
 import remocra.data.ParametresSectionMobile
 import remocra.data.ParametresSectionPei
@@ -50,6 +51,12 @@ class ParametresUseCase : AbstractUseCase() {
             adresseDeliberationDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL.name),
             adresseDeliberationCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL.name),
             adresseDeliberationObjetEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL.name),
+        )
+
+        val dfci = ParametresSectionDfci(
+            dfciTravauxDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_DESTINATAIRE_EMAIL.name),
+            dfciTravauxObjetEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_OBJET_EMAIL.name),
+            dfciTravauxCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_CORPS_EMAIL.name),
         )
 
         val mobile = ParametresSectionMobile(
@@ -123,13 +130,13 @@ class ParametresUseCase : AbstractUseCase() {
         return ParametresAdminData(
             general = general,
             adresse = adresse,
+            dfci = dfci,
             mobile = mobile,
             cartographie = cartographie,
             couvertureHydraulique = couvertureHydraulique,
             permis = permis,
             pei = pei,
             peiLongueIndispo = peiLongueIndispo,
-
         )
     }
 }

@@ -39,6 +39,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
         val parametresAdminData = ParametresAdminData(
             pei = element.pei,
             adresse = element.adresse,
+            dfci = element.dfci,
             general = element.general,
             mobile = element.mobile,
             cartographie = element.cartographie,
@@ -89,6 +90,11 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 ParametreEnum.PROFONDEUR_COUVERTURE,
                 parametresAdminData.couvertureHydraulique.profondeurCouverture?.toString(),
             )
+
+            // DFCI
+            updateParametre(ParametreEnum.DFCI_TRAVAUX_DESTINATAIRE_EMAIL, parametresAdminData.dfci.dfciTravauxDestinataireEmail)
+            updateParametre(ParametreEnum.DFCI_TRAVAUX_OBJET_EMAIL, parametresAdminData.dfci.dfciTravauxObjetEmail)
+            updateParametre(ParametreEnum.DFCI_TRAVAUX_CORPS_EMAIL, parametresAdminData.dfci.dfciTravauxCorpsEmail)
 
             // Permis
             updateParametre(

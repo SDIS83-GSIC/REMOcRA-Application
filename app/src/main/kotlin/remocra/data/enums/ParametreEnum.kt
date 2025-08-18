@@ -1,6 +1,30 @@
 package remocra.data.enums
 
 enum class ParametreEnum(val section: ParametreSection) {
+    // ADRESSE
+    ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL(ParametreSection.ADRESSE),
+    ADRESSE_DELIBERATION_OBJET_EMAIL(ParametreSection.ADRESSE),
+    ADRESSE_DELIBERATION_CORPS_EMAIL(ParametreSection.ADRESSE),
+
+    // ALERTE
+    PEI_LONGUE_INDISPONIBILITE_MESSAGE(ParametreSection.ALERTE),
+    PEI_LONGUE_INDISPONIBILITE_JOURS(ParametreSection.ALERTE),
+    PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME(ParametreSection.ALERTE),
+
+    // Cartographie
+    COORDONNEES_FORMAT_AFFICHAGE(ParametreSection.CARTOGRAPHIE),
+    EMPRISE_NATIVE(ParametreSection.CARTOGRAPHIE),
+
+    // Couverture hydraulique
+    DECI_DISTANCE_MAX_PARCOURS(ParametreSection.COUVERTURE_HYDRAULIQUE),
+    DECI_ISODISTANCES(ParametreSection.COUVERTURE_HYDRAULIQUE),
+    PROFONDEUR_COUVERTURE(ParametreSection.COUVERTURE_HYDRAULIQUE),
+
+    // DFCI
+    DFCI_TRAVAUX_DESTINATAIRE_EMAIL(ParametreSection.DFCI),
+    DFCI_TRAVAUX_OBJET_EMAIL(ParametreSection.DFCI),
+    DFCI_TRAVAUX_CORPS_EMAIL(ParametreSection.DFCI),
+
     // Général
     MENTION_CNIL(ParametreSection.GENERAL),
     MESSAGE_ENTETE(ParametreSection.GENERAL),
@@ -21,19 +45,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     CREATION_PEI_MOBILE(ParametreSection.MOBILE),
     BRIDAGE_PHOTO(ParametreSection.MOBILE),
 
-    // Cartographie
-    COORDONNEES_FORMAT_AFFICHAGE(ParametreSection.CARTOGRAPHIE),
-    EMPRISE_NATIVE(ParametreSection.CARTOGRAPHIE),
-
-    // Couverture hydraulique
-    DECI_DISTANCE_MAX_PARCOURS(ParametreSection.COUVERTURE_HYDRAULIQUE),
-    DECI_ISODISTANCES(ParametreSection.COUVERTURE_HYDRAULIQUE),
-    PROFONDEUR_COUVERTURE(ParametreSection.COUVERTURE_HYDRAULIQUE),
-
-    // Permis
-    PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),
-
-    // Module Points d'eau
+    // PEI
     BUFFER_CARTE(ParametreSection.GENERAL),
     PEI_COLONNES(ParametreSection.PEI),
     PEI_DELAI_CTRL_URGENT(ParametreSection.PEI),
@@ -61,18 +73,12 @@ enum class ParametreEnum(val section: ParametreSection) {
     CARACTERISTIQUES_PENA_TOOLTIP_WEB(ParametreSection.PEI),
     CARACTERISTIQUES_PIBI_TOOLTIP_WEB(ParametreSection.PEI),
 
-    // ALERTE
-    PEI_LONGUE_INDISPONIBILITE_MESSAGE(ParametreSection.ALERTE),
-    PEI_LONGUE_INDISPONIBILITE_JOURS(ParametreSection.ALERTE),
-    PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME(ParametreSection.ALERTE),
+    // Permis
+    PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),
 
-    // ADRESSE
-    ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL(ParametreSection.ADRESSE),
-    ADRESSE_DELIBERATION_OBJET_EMAIL(ParametreSection.ADRESSE),
-    ADRESSE_DELIBERATION_CORPS_EMAIL(ParametreSection.ADRESSE),
     ;
 
     enum class ParametreSection {
-        ADRESSE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, GENERAL, MOBILE, PERMIS, PEI, ALERTE
+        ADRESSE, ALERTE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, DFCI, GENERAL, MOBILE, PEI, PERMIS
     }
 }

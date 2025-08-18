@@ -46,6 +46,12 @@ type ParametresSectionAdresse = {
   adresseDeliberationObjetEmail: string;
 };
 
+type ParametresSectionDfci = {
+  dfciTravauxDestinataireEmail: string;
+  dfciTravauxObjetEmail: string;
+  dfciTravauxCorpsEmail: string;
+};
+
 type ParametresSectionMobile = {
   affichageIndispo: boolean;
   modeDeconnecte: boolean;
@@ -107,6 +113,7 @@ type AdminParametresValue = {
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
+  dfci: ParametresSectionDfci;
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
@@ -120,6 +127,7 @@ export const getInitialValues = (
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
+  dfci: ParametresSectionDfci;
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
@@ -139,6 +147,7 @@ export const getInitialValues = (
   },
   cartographie: data?.cartographie,
   couvertureHydraulique: data?.couvertureHydraulique,
+  dfci: data?.dfci,
   permis: data?.permis,
   pei: {
     ...data?.pei,
@@ -174,6 +183,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
       deciIsodistances:
         values?.couvertureHydraulique?.deciIsodistances?.toString(),
     },
+    dfci: values?.dfci,
     permis: values?.permis,
     pei: {
       ...values?.pei,
@@ -245,6 +255,10 @@ export const AdminParametresInterne = () => {
                           values={values.couvertureHydraulique}
                         />
                       ),
+                    },
+                    {
+                      header: "DFCI",
+                      content: <AdminDfci values={values.dfci} />,
                     },
                     {
                       header: "Permis",
@@ -686,7 +700,7 @@ const AdminAdresse = ({ values }: { values: ParametresSectionAdresse }) => {
           <TextAreaInput
             name="adresse.adresseDeliberationCorpsEmail"
             label="Contenu du mail de notification lors du dépôt d'une délibération"
-            tooltipText="Vous pouvez utilise #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+            tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
       </>
@@ -780,6 +794,34 @@ const AdminCouvertureHydraulique = ({
           <PositiveNumberInput
             name="couvertureHydraulique.profondeurCouverture"
             label="Profondeur de couverture (en m)"
+          />
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="dfci.dfciTravauxDestinataireEmail"
+            label="Adresse email qui recevra une notification lors d'une réception de travaux"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="dfci.dfciTravauxObjetEmail"
+            label="Objet du mail de notification lors d'une réception de travaux"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextAreaInput
+            name="dfci.dfciTravauxCorpsEmail"
+            label="Contenu du mail de notification lors d'une réception de travaux"
+            tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
       </>
@@ -1144,7 +1186,7 @@ const AdminPei = ({
           <TextAreaInput
             name="pei.declarationPeiCorpsEmail"
             label="Contenu du mail de notification lors de la déclaration d'un PEI"
-            tooltipText="Vous pouvez utilise #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+            tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
       </>
@@ -1168,7 +1210,7 @@ const AdminPeiLongueIndispo = ({
             name="peiLongueIndispo.peiLongueIndisponibiliteMessage"
             label="Message à afficher en cas de PEI indisponible depuis trop longtemps"
             tooltipText={
-              "Vous pouvez utilise #MOIS# et #JOURS# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+              "Vous pouvez utiliser #MOIS# et #JOURS# dans votre message. Ces deux valeurs seront remplacées automatiquement."
             }
           />
         </AdminParametre>

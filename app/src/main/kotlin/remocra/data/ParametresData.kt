@@ -13,6 +13,7 @@ data class ParametresData(
 data class ParametresAdminData(
     val general: ParametresSectionGeneral,
     val adresse: ParametresSectionAdresse,
+    val dfci: ParametresSectionDfci,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
     val couvertureHydraulique: ParametresSectionCouvertureHydraulique,
@@ -25,6 +26,7 @@ data class ParametresAdminData(
 data class ParametresAdminDataInput(
     val general: ParametresSectionGeneral,
     val adresse: ParametresSectionAdresse,
+    val dfci: ParametresSectionDfci,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
     val couvertureHydraulique: ParametresSectionCouvertureHydrauliqueInput,
@@ -55,6 +57,12 @@ data class ParametresSectionAdresse(
     val adresseDeliberationDestinataireEmail: String?,
     val adresseDeliberationCorpsEmail: String?,
     val adresseDeliberationObjetEmail: String?,
+)
+
+data class ParametresSectionDfci(
+    val dfciTravauxDestinataireEmail: String?,
+    val dfciTravauxObjetEmail: String?,
+    val dfciTravauxCorpsEmail: String?,
 )
 
 data class ParametresSectionMobile(
