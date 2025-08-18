@@ -24,6 +24,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
+import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
@@ -46,6 +47,7 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.SITE
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
+import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
@@ -267,6 +269,38 @@ class PeiRepository
                 .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)),
         ).`as`("hasIndispoTemp")
 
+        // Champ libellé autorité DECI avec la règle métier appliquée via la jointure sur TYPE_ORGANISME
+        val autoriteDeciLibelleField = DSL
+            .`when`(
+                TYPE_ORGANISME.CODE
+                    .eq(TypeAutoriteDeci.COMMUNE.name.uppercase()),
+                DSL.concat(
+                    DSL.value("Maire ("),
+                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                    DSL.value(")"),
+                ),
+            )
+            .`when`(
+                TYPE_ORGANISME.CODE
+                    .eq(TypeAutoriteDeci.PREFECTURE.name.uppercase()),
+                DSL.concat(
+                    DSL.value("Préfet ("),
+                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                    DSL.value(")"),
+                ),
+            )
+            .`when`(
+                TYPE_ORGANISME.CODE
+                    .eq(TypeAutoriteDeci.EPCI.name.uppercase()),
+                DSL.concat(
+                    DSL.value("Président ("),
+                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                    DSL.value(")"),
+                ),
+            )
+            .otherwise(autoriteDeciAlias.field(ORGANISME.LIBELLE))
+            .`as`("AUTORITE_DECI")
+
         return dsl.with(concatTourneeLibelle).select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
@@ -278,7 +312,7 @@ class PeiRepository
             adresseField.`as`("adresse"),
             COMMUNE.LIBELLE,
             NATURE_DECI.LIBELLE,
-            autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
+            autoriteDeciLibelleField,
             servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 /*
                  * le multiset permet de renvoyer une liste dans une liste
@@ -313,6 +347,9 @@ class PeiRepository
             .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
             .leftJoin(servicePublicDeciAlias)
             .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+            // Jointure supplémentaire sur TYPE_ORGANISME pour l'autorité DECI
+            .leftJoin(TYPE_ORGANISME)
+            .on(autoriteDeciAlias.field(ORGANISME.TYPE_ORGANISME_ID)?.eq(TYPE_ORGANISME.ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .leftJoin(table(concatTourneeLibelleNomCte)).on(peiIdCte.eq(PEI.ID))
                 /*
@@ -361,13 +398,15 @@ class PeiRepository
                 adresseField.`as`("adresse"),
                 COMMUNE.LIBELLE,
                 NATURE_DECI.LIBELLE,
-                autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("AUTORITE_DECI"),
+                autoriteDeciLibelleField,
                 servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
                 V_PEI_VISITE_DATE.PEI_NEXT_ROP,
                 V_PEI_VISITE_DATE.PEI_NEXT_CTP,
                 tourneeLibelleField,
                 hasTourneeReservee,
                 hasIndispoTemp,
+                TYPE_ORGANISME.CODE,
+                autoriteDeciAlias.field(ORGANISME.LIBELLE),
             )
             .orderBy(
                 param.sortBy?.toCondition(tourneeLibelleField).takeIf { !it.isNullOrEmpty() } ?: listOf(
