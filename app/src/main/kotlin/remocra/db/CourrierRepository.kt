@@ -11,7 +11,6 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.name
-import org.jooq.impl.DSL.selectDistinct
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.auth.WrappedUserInfo
@@ -40,6 +39,7 @@ import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
+import remocra.utils.DateUtils
 import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.math.absoluteValue
@@ -154,7 +154,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     userInfo.isSuperAdmin,
                 ),
             )
-            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte) ?: DSL.noCondition())
+            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte, dateUtils) ?: DSL.noCondition())
             .orderBy(
                 params?.sortBy?.toCondition()
                     .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE.desc()),
@@ -185,7 +185,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     userInfo.isSuperAdmin,
                 ),
             )
-            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte) ?: DSL.noCondition())
+            .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte, dateUtils) ?: DSL.noCondition())
             .count()
 
     data class Filter(
@@ -194,8 +194,17 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val courrierExpediteur: String?,
         val emailDestinataire: String?,
         val accuse: Boolean?,
+        val documentDate: IntervalleDateProche?,
     ) {
-        fun toCondition(expediteurAlias: Table<*>, destinataireCte: CommonTableExpression<Record3<UUID?, String?, Boolean?>?>): Condition =
+        enum class IntervalleDateProche {
+            INFERIEUR_1_JOUR,
+            INFERIEUR_1_SEMAINE,
+            INFERIEUR_1_MOIS,
+            INFERIEUR_3_MOIS,
+            INFERIEUR_6_MOIS,
+        }
+
+        fun toCondition(expediteurAlias: Table<*>, destinataireCte: CommonTableExpression<Record3<UUID?, String?, Boolean?>?>, dateUtils: DateUtils): Condition =
             DSL.and(
                 listOfNotNull(
                     courrierObjet?.let { DSL.and(COURRIER.OBJET.containsIgnoreCaseUnaccent(it)) },
@@ -209,6 +218,15 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                             DSL.and(destinataireCte.field("accuse_reception", Boolean::class.java)?.isFalse)
                         }
                     },
+                    documentDate?.let {
+                        when (it) {
+                            IntervalleDateProche.INFERIEUR_1_JOUR -> DSL.and(DOCUMENT.DATE.ge(dateUtils.now().minusDays(1)))
+                            IntervalleDateProche.INFERIEUR_1_SEMAINE -> DSL.and(DOCUMENT.DATE.ge(dateUtils.now().minusWeeks(1)))
+                            IntervalleDateProche.INFERIEUR_1_MOIS -> DSL.and(DOCUMENT.DATE.ge(dateUtils.now().minusMonths(1)))
+                            IntervalleDateProche.INFERIEUR_3_MOIS -> DSL.and(DOCUMENT.DATE.ge(dateUtils.now().minusMonths(3)))
+                            IntervalleDateProche.INFERIEUR_6_MOIS -> DSL.and(DOCUMENT.DATE.ge(dateUtils.now().minusMonths(6)))
+                        }
+                    },
                 ),
             )
     }
@@ -217,17 +235,20 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val courrierObjet: Int?,
         val courrierReference: Int?,
         val courrierExpediteur: Int?,
+        val documentDate: Int?,
     ) {
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
             courrierObjet?.let { "courrierObjet" to it },
             courrierReference?.let { "courrierReference" to it },
             courrierExpediteur?.let { "courrierExpediteur" to it },
+            documentDate?.let { "documentDate" to it },
         )
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
             when (pair.first) {
                 "courrierObjet" -> COURRIER.OBJET.getSortField(pair.second)
                 "courrierReference" -> COURRIER.REFERENCE.getSortField(pair.second)
                 "courrierExpediteur" -> expediteurAlias.field(ORGANISME.LIBELLE)?.getSortField(pair.second)
+                "documentDate" -> DOCUMENT.DATE.getSortField(pair.second)
                 else -> null
             }
         }

@@ -9,3 +9,11 @@ enum PROCHAINE_DATE_ENUM {
 }
 
 export default PROCHAINE_DATE_ENUM;
+
+export enum INTERVALLE_DATE_PROCHE_ENUM {
+  INFERIEUR_1_JOUR = "< 1 jour",
+  INFERIEUR_1_SEMAINE = "< 1 semaine",
+  INFERIEUR_1_MOIS = "< 1 mois",
+  INFERIEUR_3_MOIS = "< 3 mois",
+  INFERIEUR_6_MOIS = "< 6 mois",
+}

@@ -15,8 +15,10 @@ import QueryTable, {
 } from "../../components/Table/QueryTable.tsx";
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import { INTERVALLE_DATE_PROCHE_ENUM } from "../../enums/ProchaineDateEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
+import formatDateTime from "../../utils/formatDateUtils.tsx";
 import SquelettePage from "../SquelettePage.tsx";
 import FilterValues from "./FilterModuleCourrier.tsx";
 
@@ -82,7 +84,22 @@ const ListModuleCourrier = () => {
                 });
               },
             },
-
+            {
+              Header: "Date d'envoi",
+              accessor: "documentDate",
+              sortField: "documentDate",
+              Filter: (
+                <SelectEnumOption
+                  options={INTERVALLE_DATE_PROCHE_ENUM}
+                  name={"documentDate"}
+                />
+              ),
+              Cell: (value) => {
+                return (
+                  <div>{value.value ? formatDateTime(value.value) : ""}</div>
+                );
+              },
+            },
             {
               Header: "Expéditeur",
               accessor: "courrierExpediteur",

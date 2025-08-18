@@ -4,6 +4,7 @@ type FilterModuleCourrierType = {
   courrierExpediteur?: string | undefined;
   emailDestinataire?: string | undefined;
   accuse?: string | undefined;
+  documentDate?: string | undefined;
 };
 
 const FilterValues = ({
@@ -12,6 +13,7 @@ const FilterValues = ({
   courrierExpediteur,
   emailDestinataire,
   accuse,
+  documentDate,
 }: FilterModuleCourrierType) => {
   const filter: FilterModuleCourrierType = {};
 
@@ -19,6 +21,7 @@ const FilterValues = ({
   filterProperty(filter, courrierReference, "courrierReference");
   filterProperty(filter, courrierExpediteur, "courrierExpediteur");
   filterProperty(filter, accuse, "accuse");
+  filterProperty(filter, documentDate, "documentDate");
 
   if (emailDestinataire && emailDestinataire?.length > 0) {
     filter.emailDestinataire = emailDestinataire;

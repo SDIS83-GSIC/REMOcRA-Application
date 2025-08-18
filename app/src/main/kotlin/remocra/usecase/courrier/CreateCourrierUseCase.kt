@@ -116,9 +116,6 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
                 )
             }
         }
-
-        // TODO alimenter la table thématiques !!
-
         return element
     }
 
