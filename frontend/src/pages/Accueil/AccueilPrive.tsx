@@ -172,6 +172,11 @@ function getLinks(
           label: "Carte DFCI",
           link: URLS.CARTE_DFCI,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_RECEPTRAVAUX_C),
+          label: "Recevoir des travaux",
+          link: URLS.DFCI_RECEPTION_TRAVAUX,
+        },
       ];
     case TypeModuleRemocra.OLDEBS:
       return [

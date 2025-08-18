@@ -406,6 +406,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DOCUMENT_HABILITABLE_FORBIDDEN_DELETE(10013, "Vous n'avez pas les droits de suppression des blocs documents.", Status.FORBIDDEN),
     DOCUMENT_HABILITABLE_DOCUMENT_NOT_FOUND(10014, "Impossible de trouver le document associé au bloc document."),
     DOCUMENT_FORBIDDEN_INSERT(10024, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
+    DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10025, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
 
     // Utilisateur
     UTILISATEUR_FORBIDDEN(10015, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),

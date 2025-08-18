@@ -152,7 +152,7 @@ import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAd
 import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
 import ComponentBoardList from "./pages/Dashboard/DashboardUser.tsx";
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
-import DFCI from "./pages/DFCI/DFCI.tsx";
+import ModuleDfci from "./pages/DFCI/ModuleDfci.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
@@ -202,6 +202,8 @@ import UpdateFonctionContact from "./pages/Admin/fonctionContact/UpdateFonctionC
 import CreateFonctionContact from "./pages/Admin/fonctionContact/CreateFonctionContact.tsx";
 import MapAdresse from "./components/Map/MapAdresses/MapAdresse.tsx";
 import DepotDeliberation from "./pages/Adresse/DepotDeliberation.tsx";
+import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
+import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -521,7 +523,8 @@ export const URLS = {
   EXECUTER_RAPPORT_PERSONNALISE: url`/rapport-personnalise/execute`,
 
   // Module DFCI
-  CARTE_DFCI: url`/dfci`,
+  CARTE_DFCI: url`/dfci/carte`,
+  DFCI_RECEPTION_TRAVAUX: url`/dfci/reception-travaux`,
 
   // Module Adresses
   ADRESSE: url`/adresses/carte`,
@@ -550,8 +553,27 @@ export default [
     element: <Authorization Component={Accueil} isPublic />,
   },
   {
-    path: "/dfci",
-    element: <Authorization Component={DFCI} droits={[TYPE_DROIT.DFCI_R]} />,
+    path: "/dfci/",
+    element: (
+      <Authorization Component={ModuleDfci} droits={[TYPE_DROIT.DFCI_R]} />
+    ),
+    children: [
+      {
+        path: "carte",
+        element: (
+          <Authorization Component={MapDFCI} droits={[TYPE_DROIT.DFCI_R]} />
+        ),
+      },
+      {
+        path: "reception-travaux",
+        element: (
+          <Authorization
+            Component={ReceptionTravaux}
+            droits={[TYPE_DROIT.DFCI_RECEPTRAVAUX_C]}
+          />
+        ),
+      },
+    ],
   },
   {
     path: "/deci/",
@@ -841,7 +863,6 @@ export default [
       },
     ],
   },
-
   {
     path: "/gestion-crise",
     element: <ModuleCrise />,
@@ -2240,7 +2261,6 @@ export default [
       },
     ],
   },
-
   {
     path: "/documents/:moduleType/thematiques/:moduleId",
     element: (
@@ -2289,7 +2309,6 @@ export default [
       },
     ],
   },
-
   {
     path: "/operations-diverses/",
     element: (
@@ -2332,7 +2351,6 @@ export default [
       },
     ],
   },
-
   {
     path: "/dashboard/",
     element: (

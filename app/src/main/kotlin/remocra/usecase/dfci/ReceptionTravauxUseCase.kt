@@ -1,4 +1,4 @@
-package remocra.usecase.pei
+package remocra.usecase.dfci
 
 import jakarta.inject.Inject
 import jakarta.inject.Provider
@@ -23,7 +23,7 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class InsertDocumentUseCase @Inject constructor(
+class ReceptionTravauxUseCase @Inject constructor(
     private val documentUtils: DocumentUtils,
     private val documentRepository: DocumentRepository,
     private val eventBus: EventBus,
@@ -31,28 +31,16 @@ class InsertDocumentUseCase @Inject constructor(
     private val organismeRepository: OrganismeRepository,
 ) : AbstractUseCase() {
 
-    fun execute(userInfo: WrappedUserInfo, element: Part): Result? {
-        checkDroits(userInfo)
-
-        var result: Result? = null
-        try {
-            postEvents(document = enregistrementDocument(element), userInfo = userInfo)
-        } catch (e: Exception) {
-            result = Result.Error(e.message)
-        }
-        return result
-    }
-
     private fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.DECLARATION_PEI)) {
-            throw RemocraResponseException(ErrorType.DOCUMENT_FORBIDDEN_INSERT)
+        if (!userInfo.hasDroit(droitWeb = Droit.DFCI_RECEPTRAVAUX_C)) {
+            throw RemocraResponseException(ErrorType.DFCI_FORBIDDEN_RECEPTION_TRAVAUX)
         }
     }
 
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DFCI_TRAVAUX + "$documentId"
 
         /** Enregistrement sur le disque */
         documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
@@ -87,14 +75,26 @@ class InsertDocumentUseCase @Inject constructor(
             NotificationEvent(
                 notificationData =
                 NotificationMailData(
-                    destinataires = setOf(parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL.name)!!),
-                    objet = parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name)!!,
-                    corps = parametresProvider.get().getParametreString(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL.name)!!
+                    destinataires = setOf(parametresProvider.get().getParametreString(ParametreEnum.DFCI_TRAVAUX_DESTINATAIRE_EMAIL.name)!!),
+                    objet = parametresProvider.get().getParametreString(ParametreEnum.DFCI_TRAVAUX_OBJET_EMAIL.name)!!,
+                    corps = parametresProvider.get().getParametreString(ParametreEnum.DFCI_TRAVAUX_CORPS_EMAIL.name)!!
                         .replace("#[ORGANISME_UTILISATEUR]#", organismeRepository.getLibelleById(userInfo.organismeId!!)),
                     documentId = document.documentId,
                 ),
                 idJob = null,
             ),
         )
+    }
+
+    fun execute(userInfo: WrappedUserInfo, element: Part): Result? {
+        checkDroits(userInfo)
+
+        var result: Result? = null
+        try {
+            postEvents(document = enregistrementDocument(element), userInfo = userInfo)
+        } catch (e: Exception) {
+            result = Result.Error(e.message)
+        }
+        return result
     }
 }
