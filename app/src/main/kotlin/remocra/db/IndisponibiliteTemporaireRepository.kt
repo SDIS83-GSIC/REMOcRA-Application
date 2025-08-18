@@ -20,6 +20,7 @@ import remocra.data.enums.ErrorType
 import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
+import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.PEI
@@ -28,6 +29,7 @@ import remocra.exception.RemocraResponseException
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.collections.joinToString
 
 class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -63,6 +65,14 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         return dsl.with(cte).select(
             *INDISPONIBILITE_TEMPORAIRE.fields(),
             listeNumeroPei,
+            // Ajout du multiset pour les communes distinctes
+            multiset(
+                DSL.selectDistinct(COMMUNE.LIBELLE)
+                    .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                    .join(PEI).on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
+                    .join(COMMUNE).on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID)),
+            ).`as`("listeCommunes").convertFrom { it?.map { r -> r.value1() }?.joinToString() },
         )
             .from(INDISPONIBILITE_TEMPORAIRE)
             .join(table(nomCte))
@@ -76,6 +86,9 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+            // Pour les filtres, on join sur la commune
+            .join(COMMUNE)
+            .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .groupBy(
@@ -201,6 +214,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean,
         val indisponibiliteTemporaireMailApresIndisponibilite: Boolean,
         val listeNumeroPei: String?,
+        val listeCommunes: String,
         var isModifiable: Boolean = false,
     ) {
         val indisponibiliteTemporaireStatut: StatutIndisponibiliteTemporaireEnum
@@ -272,12 +286,12 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean?,
         val indisponibiliteTemporaireMailApresIndisponibilite: Boolean?,
         val listePeiId: List<UUID>?,
+        val communeLibelle: String?,
     ) {
 
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
-                    // TODO voir pour les unaccents
                     indisponibiliteTemporaireMotif?.let { DSL.and(INDISPONIBILITE_TEMPORAIRE.MOTIF.containsIgnoreCaseUnaccent(it)) },
                     indisponibiliteTemporaireObservation?.let {
                         DSL.and(
@@ -289,6 +303,11 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE) },
                     indisponibiliteTemporaireMailAvantIndisponibilite
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE) },
+                    communeLibelle?.let {
+                        DSL.and(
+                            COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(it),
+                        )
+                    },
                 ),
             )
     }

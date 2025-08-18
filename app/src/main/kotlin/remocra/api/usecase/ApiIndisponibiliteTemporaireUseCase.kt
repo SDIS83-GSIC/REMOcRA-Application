@@ -53,6 +53,7 @@ class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
                 listePeiId = numeroComplet?.let {
                     listOf(peiRepository.getIdByNumeroComplet(it) ?: throw RemocraResponseException(ErrorType.PEI_INEXISTANT))
                 },
+                communeLibelle = null,
             ),
             sortBy = null,
             limit = limit,

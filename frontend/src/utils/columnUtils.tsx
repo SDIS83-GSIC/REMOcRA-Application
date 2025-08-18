@@ -584,6 +584,14 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         });
         break;
 
+      case COLUMN_INDISPONIBILITE_TEMPORAIRE.COMMUNE:
+        column.push({
+          Header: "Communes",
+          accessor: "listeCommunes",
+          Filter: <FilterInput type="text" name={"communeLibelle"} />,
+        });
+        break;
+
       default:
     }
   });
