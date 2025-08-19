@@ -671,12 +671,18 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_59 -> false // TODO
             CodeSdis.SDIS_61 -> {
                 if (isDiametre100(pei) &&
-                    isPressionsBetween1And8(pei) &&
+                    (
+                        pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
+                            (pei.pressionDynamique == null || pei.pressionDynamique < 1)
+                        ) &&
                     pei.debit != null && pei.debit >= 30 && pei.debit < 60
                 ) {
                     return true
                 } else if (isDiametre150(pei) &&
-                    isPressionsBetween1And8(pei) &&
+                    (
+                        pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
+                            (pei.pressionDynamique == null || pei.pressionDynamique < 1)
+                        ) &&
                     pei.debit != null && pei.debit >= 30 && pei.debit < 120
                 ) {
                     return true
