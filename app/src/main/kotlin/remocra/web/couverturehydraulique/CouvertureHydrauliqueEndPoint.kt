@@ -296,9 +296,9 @@ class CouvertureHydrauliqueEndPoint : AbstractEndpoint() {
             securityContext.userInfo,
             ReseauBatimentPeiProjet(
                 etudeId,
-                if (httpRequest.getPart("fileReseau").contentType != null) httpRequest.getPart("fileReseau").inputStream else null,
-                if (httpRequest.getPart("fileBatiment").contentType != null) httpRequest.getPart("fileBatiment").inputStream else null,
-                if (httpRequest.getPart("filePeiProjet").contentType != null) httpRequest.getPart("filePeiProjet").inputStream else null,
+                if (httpRequest.getPart("fileReseau")?.contentType != null) httpRequest.getPart("fileReseau").inputStream else null,
+                if (httpRequest.getPart("fileBatiment")?.contentType != null) httpRequest.getPart("fileBatiment").inputStream else null,
+                if (httpRequest.getPart("filePeiProjet")?.contentType != null) httpRequest.getPart("filePeiProjet").inputStream else null,
             ),
         ).wrap()
 

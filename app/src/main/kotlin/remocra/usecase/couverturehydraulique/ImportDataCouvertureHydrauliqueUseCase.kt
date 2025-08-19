@@ -61,7 +61,7 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
             importPeiProjet(element.filePeiProjet, element.etudeId)
         }
 
-        return element
+        return element.copy(fileBatiment = null, filePeiProjet = null, fileReseau = null)
     }
 
     private fun importReseau(inputStream: InputStream, etudeId: UUID) {
