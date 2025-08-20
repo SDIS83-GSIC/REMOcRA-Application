@@ -12,4 +12,157 @@
 <<<
 == Introduction générale
 
-TODO
+Ce document d’architecture technique (DAT) a pour but de décrire l’architecture et les  principes de fonctionnement de l’outil REMOcRA. La lecture de ce document doit permettre à l’équipe en charge du déploiement de l’outil de :
+
+* comprendre le fonctionnement global de l'outil
+* connaître les pré-requis et estimer les ressources nécessaires à la mise en place de l'outil
+* connaître les modalités d’intégration de l'outil dans un SI existant
+
+
+== Présentation générale de l'outil REMOcRA
+
+REMOcRA est une application développée pour les SIS, afin de leur permettre d’assurer toute la logique métier autour des PEI, ainsi que de faciliter le reporting dans certaines situations. REMOcRA utilise beaucoup de cartographie pour contextualiser les données.
+
+=== Différentes briques de l'outil REMOcRA
+
+L'outil REMOcRA se compose des éléments suivants :
+
+* un serveur d’application
+** propose une interface web et une API REST
+** centralise les échanges entre les différentes briques logicielles
+* une brique d’authentification des utilisateurs avec Keycloak
+** gère la plupart des protocoles d’authentification
+** centralise les différentes sources de données des utilisateurs
+* une instance GeoServer pour projeter / reprojeter les données cartographiques de la BDD REMOcRA
+* en option, une brique Apache Hop permettant d’exécuter des traitements personnalisés dans REMOcRA
+
+=== Services partagés
+
+D’autres éléments doivent être mis en place pour assurer le bon fonctionnement de l'outil REMOcRA. Ces éléments sont standards et peuvent être mutualisés au niveau du SI global :
+
+* Un frontal HTTP
+** terminaison TLS
+** reverse-proxy vers le serveur d’application
+* Une base de données PostgreSQL
+** stockage des données liées à l’outil REMOcRA
+* Un relais SMTP
+** permet de relayer les mails de notification envoyés par l’application (y compris par la brique d’authentification pour la gestion des comptes)
+
+== Schéma d'architecture
+
+Ci-dessous un schéma de principe des briques logicielles permet d’avoir une vision macro des interactions nécessaires au fonctionnement de l'outil REMOcRA.
+
+image:schema_archi.png[Schéma de principe des briques logicielles]
+
+== Serveur d'application
+
+=== Introduction
+
+Le serveur d’application héberge l’application web REMOcRA.
+
+
+=== Pré-requis applicatifs
+
+[%autowidth.stretch]
+|===
+|Pré-requis | Remarques
+
+| Base de données PostgreSQL
+a|
+* version 16 minimum
+* extension obligatoire : unaccent
+* création d’un utilisateur et d’une base de données pour l’application :
+
++
+[source]
+----
+# exemple de commandes à exécuter avec le compte `postgres`
+createuser --no-createdb   \
+           --no-createrole \
+           --no-superuser  \
+           --pwprompt      \
+           remocra          # <1>
+createdb --owner=remocra \  # <1>
+         remocra            # <2>
+----
+avec
++
+<1> login de l'utilisateur PostgreSQL pour remocra
+<2> nom de la base de données pour remocra
+
+| Relais SMTP
+a|
+* accessible via le protocole SMTP (non chiffré)
+* doit permettre de relayer les emails envoyés par le serveur d'application
+
+|===
+
+IMPORTANT: Ces pré-requis doivent être présents avant l'installation du serveur
+applicatif. La mise en place de ces éléments n'est pas décrite dans le document
+d'installation (DIT).
+
+=== Pré-requis serveur
+
+Le serveur d’application nécessite un serveur sous debian / ubuntu 23.10 avec :
+
+* CPU 4 coeurs
+* 8 Go de RAM
+* suffisamment d'espace disque (30 Go de libre une fois le système installé,
+avec supervision)
+
+Les pré-requis suivants sont obligatoires pour réaliser l’installation de l’application sur le serveur d’application (ces pré-requis ne sont plus nécessaires lorsque l’application est en ordre de marche, après l’installation):
+
+* un accès internet pour l’installation des packages
+* les droits root accessibles
+
+=== Flux réseaux
+
+|===
+|Source | Destination | Protocole / port | Remarques
+
+| Utilisateurs
+| Frontal HTTP
+| HTTPS (tcp/443)
+|
+
+| Utilisateur Administrateur
+| Module d’authentification
+| HTTPS (tcp/8080)
+| Keycloak
+
+| Frontal HTTP
+| Serveur d'application
+| HTTP (tcp/8881)
+|
+
+| Serveur d'application
+| PostgreSQL
+| postgresql (tcp/5432)
+|
+
+| Serveur d'application
+| Relais SMTP
+| SMTP (tcp/25)
+|
+
+| Serveur d'application
+| Apache HOP
+| HTTP (tcp/8060)
+| Facultatif (en fonction des besoins clients)
+
+| Serveur d'application
+| GeoServer
+| HTTP (tcp/8090)
+|
+
+|===
+
+=== Gestion des utilisateurs / Authentification
+
+L’application gère ses utilisateurs au moyen d’une brique d’authentification unifiée, Keycloak. Cela permet de greffer les méthodes d’identification / authentification les plus courantes (LDAP, AD, SAML, OIDC, …​). L’attribution des rôles est faite par l’application. Une synchronisation est faite afin de mettre à jour la base de données de Keycloak.
+
+
+=== Données
+
+Toutes les données liées à l’outil REMOcRA sont stockées dans la base de données PostgreSQL. Les documents, vidéos et images sont stockés sur le serveur. Aucune donnée métier n’est stockée en local sur le serveur d’application (hormis les logs applicatifs).
+

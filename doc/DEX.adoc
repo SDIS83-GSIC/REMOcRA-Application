@@ -1,7 +1,7 @@
-= Foodintech - Document d’exploitation (DEX)
+= REMOcRA - Document d’exploitation (DEX)
 :Author:    Atol C&D
-:Email:     foodintech@atolcd.com
-:Date:      10/05/2021
+:Email:     remocra-projet@atolcd.com
+:Date:      01/09/2025
 :Revision:  1.0.0
 :imagesdir: images/
 :experimental:
@@ -12,4 +12,107 @@
 <<<
 == Introduction générale
 
-TODO
+Ce document d’exploitation (DEX) est à destination des administrateurs système en charge de l’exploitation quotidienne de l'outil REMOcRA. De ce fait, un niveau minimum de connaissances  sur les technologies est requis, faute de quoi les informations contenues dans ce document ne pourront pas suffire.
+
+== Présentation générale de l'outil REMOcRA
+
+L’outil REMOcRA est détaillé dans le document d’architecture technique (DAT). Veuillez vous reporter à ce document pour obtenir plus d’informations sur le fonctionnement général de l'outil.
+
+== Serveur d’application
+
+=== Démarrage et arrêt
+
+Le démarrage et l’arrêt de l’application sont gérés par docker compose tout comme l’application des patchs de données.
+Attention, toutes les commandes doivent être lancées dans le répertoire `/opt/remocra` :
+
+[source,console]
+----
+# Tout redémarrer
+docker compose up -d
+
+# Tout stopper
+docker stop $(docker ps -aq)
+
+# Passer les patchs de base de données
+docker compose run --rm remocra migrate-db
+
+# Liste les conteneurs actifs
+docker compose ps remocra-remocra-1
+
+# Keycloak
+docker compose ps remocra-keycloak-1
+docker compose stop remocra-keycloak-1
+docker compose up -d remocra-keycloak-1
+
+----
+
+=== Gestion des journaux
+
+Les journaux (logs) du serveur d’application sont disponibles :
+* dans le dossier /var/log/remocra
+* à l'intérieur des conteneurs via la commande suivante :
+
+[source,console]
+----
+# Suivre les journaux des services
+cd /opt/remocra/ && docker compose logs -f
+
+# Afficher le journal du service d'un service
+cd /opt/remocra/ && docker compose logs -f remocra-remocra-1
+cd /opt/remocra/ && docker compose logs -f remocra-keycloak-1
+
+----
+
+=== Supervision
+==== Checks HTTP
+
+Le serveur d’application étant une application web, il est possible de vérifier son fonctionnement via des simples vérifications web/HTTP :
+
+* vérifier que l’application est démarrée et répond en HTTP sur l’URL http://<hostname_app_server>:8881
+* Si l’application est bien accessible, accéder à l’URL https://<URL REMOcRA>/health. Ici, vous pourrez vérifier si les éléments suivants fonctionnent :
+** "keycloak” : affiche true si le service fonctionne, false sinon
+** "geoserver": affiche true si le service fonctionne, false sinon,
+** "database": affiche true si le service fonctionne, false sinon
+
+Voici un exemple type :
+
+[source,json]
+----
+{
+  "version": "1.0-a36",
+  "environment": "PRODUCTION",
+  "mail": "true",
+  "keycloak": true,
+  "geoserver": true,
+  "database": true
+}
+----
+* dérouler un scénario complet afin de vérifier un maximum de composants internes de l’application (authentification, recherche, etc.) Voici une liste de fonctionnalités que vous pouvez tester :
+** L’authentification à l’application
+** L’affichage des PEI (/deci/pei)
+** L’affichage des cartes sur tous les modules avec les différentes couches (/deci/carte, /adresses, /permis, /pei-prescrit, /oldeb/localisation, /rcci)
+** Effectuer un rapport personnalisé (/rapport-personnalise/execute)
+
+==== Service docker
+
+Il est possible de vérifier si les conteneurs sont bien actifs via la commande suivante :
+[source,console]
+----
+# En listant les conteneurs (colonne STATUS)
+docker ps -a
+----
+
+Tous les conteneurs doivent être _healthy_.
+
+=== Sauvegarde / Restauration
+
+Les éléments à sauvegarder sont :
+
+* les fichiers présents sur le serveur (dans /var/lib/remocra)
+* les données de l’application dans la base de données
+* les fichiers de configuration dans le répertoire /opt/remocra/
+
+Tous les autres fichiers sont sauvegardés dans github (https://github.com/SDIS83-GSIC/REMOcRA-Application/tree/master).
+
+Les données de l’application sont stockées dans la base de données PostgreSQL et les documents sont sauvegardés sur le serveur d’application. Pour la sauvegarde de la base de données PostgreSQL, veuillez vous référer à la documentation PostgreSQL.
+
