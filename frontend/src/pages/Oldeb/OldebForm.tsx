@@ -321,7 +321,7 @@ const OldebForm = () => {
                 setFieldValue("oldeb.oldebVoieId", undefined);
                 setFieldValue("oldeb.oldebLieuDitId", undefined);
                 setFieldValue("oldeb.oldebCadastreSectionId", undefined);
-                setFieldValue("oldeb.oldebCommuneId", e.target.value);
+                setFieldValue("oldeb.oldebCommuneId", e?.id);
               }}
             />
           </Col>
@@ -360,7 +360,7 @@ const OldebForm = () => {
               required={true}
               onChange={(e: IdCodeLibelleType) => {
                 setFieldValue("oldeb.oldebCadastreParcelleId", undefined);
-                setFieldValue("oldeb.oldebCadastreSectionId", e.id);
+                setFieldValue("oldeb.oldebCadastreSectionId", e?.id);
               }}
             />
           </Col>
