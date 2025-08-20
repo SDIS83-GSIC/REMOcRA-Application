@@ -12,6 +12,7 @@ const SubmitFormButtons = ({
   onClick,
   disabledValide = false,
   submitTitle = "Enregistrer",
+  beforeReturn,
 }: SubmitButtonType) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +32,7 @@ const SubmitFormButtons = ({
             variant={"light"}
             className="btn-light"
             onClick={() => {
+              beforeReturn && beforeReturn();
               navigateGoBack(location, navigate);
             }}
           >

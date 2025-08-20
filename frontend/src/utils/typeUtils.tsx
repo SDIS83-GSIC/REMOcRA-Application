@@ -55,5 +55,6 @@ export type SubmitButtonType = {
   onClick?: (...args: any[]) => void;
   disabledValide?: boolean;
   onSecondaryActionClick?: () => void | undefined;
+  beforeReturn?: () => void;
   submitTitle?: string;
 };

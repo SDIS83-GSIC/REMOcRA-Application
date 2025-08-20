@@ -66,11 +66,16 @@ export const useToolbarOldebContext = ({
         .text()
         .then((text) => {
           if (text === "true") {
+            localStorage.setItem(
+              "mapContent",
+              JSON.stringify({
+                wkt: new WKT().writeFeature(event.feature),
+                epsg: map.getView().getProjection().getCode(),
+              }),
+            );
             navigate(URLS.OLDEB_CREATE, {
               state: {
                 ...location.state,
-                wkt: new WKT().writeFeature(event.feature),
-                epsg: map.getView().getProjection().getCode(),
               },
             });
           } else {

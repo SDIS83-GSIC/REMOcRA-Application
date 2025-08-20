@@ -1,4 +1,3 @@
-import { useLocation } from "react-router-dom";
 import { WKT } from "ol/format";
 import Container from "react-bootstrap/Container";
 import { URLS } from "../../routes.tsx";
@@ -13,8 +12,8 @@ import OldebForm, {
 } from "./OldebForm.tsx";
 
 const OldebCreate = () => {
-  // En cas de création via la carte, on récupère les coordonnées passées dans le state
-  const { state = {} } = useLocation();
+  // En cas de création via la carte, on récupère les coordonnées via localStorage
+  const state = JSON.parse(localStorage.getItem("mapContent") || "{}");
   const { epsg: contextEpsg, srid: contextSrid } = useAppContext();
   const initialValues = getInitialValues();
 

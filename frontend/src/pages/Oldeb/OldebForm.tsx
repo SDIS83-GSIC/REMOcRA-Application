@@ -231,6 +231,10 @@ export const validationSchema = object({
   isRent: boolean(),
 });
 
+const removeFromLocalStorage = () => {
+  localStorage.removeItem("mapContent");
+};
+
 const OldebForm = () => {
   const [currentTab, setCurrentTab] = useState("parcelle");
   const [currentVisite, setCurrentVisite] = useState<number | null>(null);
@@ -834,7 +838,11 @@ const OldebForm = () => {
           )}
         </Tab>
       </Tabs>
-      <SubmitFormButtons returnLink={true} />
+      <SubmitFormButtons
+        returnLink={true}
+        onClick={removeFromLocalStorage}
+        beforeReturn={removeFromLocalStorage}
+      />
     </FormContainer>
   );
 };
