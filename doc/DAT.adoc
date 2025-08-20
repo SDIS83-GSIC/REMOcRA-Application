@@ -1,0 +1,15 @@
+= REMOcRA - Document d’Architecture Technique (DAT)
+:Author:    Atol C&D
+:Email:     remocra-projet@atolcd.com
+:Date:      01/09/2025
+:Revision:  1.0.0
+:imagesdir: images/
+:experimental:
+:icons: font
+:toc:
+:numbered:
+
+<<<
+== Introduction générale
+
+TODO

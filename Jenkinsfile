@@ -46,6 +46,20 @@ pipeline {
         }
       }
     }
+    stage('Build AsciiDoc documentation') {
+        steps {
+            insideDocker(imageName: 'docker-registry.priv.atolcd.com/asciidoctor') {
+                sh '/entrypoint.sh pdf atolcd --destination-dir doc/build/ doc/*.adoc'
+                sh '/entrypoint.sh html --destination-dir doc/build/ --attribute data-uri doc/*.adoc'
+            }
+            publishDoc dirs: 'doc/build', remoteDir: 'docs'
+        }
+        post {
+            cleanup {
+                sh 'rm doc/build/*'
+            }
+        }
+    }
     stage('Build Gradle') {
       steps {
         withSidecarContainers(

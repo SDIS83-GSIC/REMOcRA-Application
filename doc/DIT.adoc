@@ -1,0 +1,15 @@
+= Foodintech - Document d’installation (DIT)
+:Author:    Atol C&D
+:Email:     foodintech@atolcd.com
+:Date:      10/05/2021
+:Revision:  1.0.0
+:imagesdir: images/
+:experimental:
+:icons: font
+:toc:
+:numbered:
+
+<<<
+== Introduction générale
+
+TODO
