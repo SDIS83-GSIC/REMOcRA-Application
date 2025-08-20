@@ -86,7 +86,7 @@ const OldebSearch = () => {
               labelKey={"cadastreParcelleNumero"}
               url={
                 section
-                  ? url`/api/cadastre/section/${section.cadastreSection}/parcelle${radioValue === "oldeb" ? "-old" : ""}`
+                  ? url`/api/cadastre/section/${section.cadastreSectionId}/parcelle${radioValue === "oldeb" ? "-old" : ""}`
                   : ""
               }
               onChange={(e) => {
