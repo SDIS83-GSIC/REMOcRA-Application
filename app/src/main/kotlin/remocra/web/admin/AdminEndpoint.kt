@@ -22,6 +22,7 @@ import remocra.usecase.admin.ImportRessourcesUseCase
 import remocra.usecase.admin.ParametresUseCase
 import remocra.usecase.admin.UpdateParametresUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
+import remocra.usecase.admin.relancercalcul.RelancerCalculNumerotationUseCase
 import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 
@@ -43,6 +44,9 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var relancerCalculDispoUseCase: RelancerCalculDispoUseCase
+
+    @Inject
+    private lateinit var relancerNumerotationUseCase: RelancerCalculNumerotationUseCase
 
     @GET
     @Path("/parametres")
@@ -149,6 +153,22 @@ class AdminEndpoint : AbstractEndpoint() {
             return forbidden().build()
         }
         relancerCalculDispoUseCase.execute(
+            securityContext.userInfo,
+            eventTracabilite = parametres.eventTracabilite,
+            eventNexSis = parametres.eventNexSis,
+        )
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/relancer-calcul-numerotation")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun relancerCalculNumerotation(parametres: ParametreTaskInput): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        relancerNumerotationUseCase.execute(
             securityContext.userInfo,
             eventTracabilite = parametres.eventTracabilite,
             eventNexSis = parametres.eventNexSis,

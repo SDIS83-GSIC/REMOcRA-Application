@@ -1077,6 +1077,21 @@ class PeiRepository
             .set(PEI.DISPONIBILITE_TERRESTRE, disponibilite)
             .where(PEI.ID.eq(peiId))
             .execute()
+
+    /**
+     * Met à jour les champs NUMERO_INTERNE et NUMERO_COMPLET d'un PEI.
+     * Utile lors d'un recalcul en masse suite à modification d'une règle de gestion.
+     */
+    fun updateNumeros(
+        peiId: UUID,
+        numeroInterne: Int,
+        numeroComplet: String,
+    ) =
+        dsl.update(PEI)
+            .set(PEI.NUMERO_INTERNE, numeroInterne)
+            .set(PEI.NUMERO_COMPLET, numeroComplet)
+            .where(PEI.ID.eq(peiId))
+            .execute()
 }
 
 data class IdNumeroComplet(

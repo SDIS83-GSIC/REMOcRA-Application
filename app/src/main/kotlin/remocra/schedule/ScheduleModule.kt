@@ -11,6 +11,7 @@ import remocra.tasks.NotifAvantFinIndispoTempTask
 import remocra.tasks.NotifResteIndispoIndispoTempTask
 import remocra.tasks.PurgerTask
 import remocra.tasks.RelanceCalculDispoTask
+import remocra.tasks.RelanceNumerotationTask
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
@@ -23,6 +24,7 @@ object ScheduleModule : RemocraModule() {
     override fun configure() {
         KotlinMultibinder.newSetBinder<SimpleTask<out TaskParameters, out JobResults>>(kotlinBinder).apply {
             addBinding().to<RelanceCalculDispoTask>().asEagerSingleton()
+            addBinding().to<RelanceNumerotationTask>().asEagerSingleton()
         }
 
         // Binder spécifique pour se faire injecter une liste de [SchedulableTask]

@@ -8,7 +8,6 @@ import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.PeiData
-import remocra.data.PeiForNumerotationData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.enums.ErrorType
@@ -37,6 +36,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject
     lateinit var getDisponibilitePeiUseCase: GetDisponibilitePeiUseCase
+
+    @Inject
+    lateinit var getNumerotationPeiUseCase: GetNumerotationPeiUseCase
 
     @Inject
     lateinit var computeZoneSpecialeUseCase: ComputeZoneSpecialeUseCase
@@ -108,26 +110,10 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                 parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
                 needComputeNumeroInterne(element)
             ) {
-                // Création de l'objet data pour le calcul
-                val peiForNumerotationData = PeiForNumerotationData(
-                    peiNumeroInterne = element.peiNumeroInterne,
-                    peiId = element.peiId,
-                    peiCommuneId = element.peiCommuneId,
-                    peiZoneSpecialeId = element.peiZoneSpecialeId,
-                    domaine = dataCacheProvider.getDomaines().values.firstOrNull { it.domaineId == element.peiDomaineId },
-                    nature = dataCacheProvider.getNatures().values.firstOrNull { it.natureId == element.peiNatureId },
-                    natureDeci = dataCacheProvider.getNaturesDeci().values.firstOrNull { it.natureDeciId == element.peiNatureDeciId },
-                )
+                val pair = getNumerotationPeiUseCase.execute(element)
 
-                // Calcul du numéro *interne*
-                val numeroInterne = calculNumerotationUseCase.computeNumeroInterne(peiForNumerotationData)
-                peiForNumerotationData.peiNumeroInterne = numeroInterne
-
-                // Calcul du numéro *complet*, avec un numéro interne mis à jour
-                val numeroComplet = calculNumerotationUseCase.computeNumero(peiForNumerotationData)
-
-                element.peiNumeroInterne = numeroInterne
-                element.peiNumeroComplet = numeroComplet
+                element.peiNumeroInterne = pair.second
+                element.peiNumeroComplet = pair.first
             }
 
             // Si c'est une insertion, on met directement le PEI indisponible

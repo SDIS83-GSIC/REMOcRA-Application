@@ -163,6 +163,15 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: false,
   },
+  RELANCER_CALCUL_NUMEROTATION: {
+    id: "RELANCER_CALCUL_NUMEROTATION",
+    code: "RELANCER_CALCUL_NUMEROTATION",
+    label: "Relancer le calcul de la numérotation",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
 };
 
 export default TaskType;

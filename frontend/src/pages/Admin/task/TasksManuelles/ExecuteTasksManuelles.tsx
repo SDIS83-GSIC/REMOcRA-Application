@@ -6,6 +6,7 @@ import MyFormik from "../../../../components/Form/MyFormik.tsx";
 import { IconInfo } from "../../../../components/Icon/Icon.tsx";
 import url from "../../../../module/fetch.tsx";
 import RelancerCalculDispo from "./RelancerCalculDispo.tsx";
+import RelancerCalculNumerotation from "./RelancerCalculNumerotation.tsx";
 
 const ExecuteTasksManuelles = () => {
   return (
@@ -23,7 +24,14 @@ const ExecuteTasksManuelles = () => {
             <RelancerCalculDispo />
           </CardTask>
         </Col>
-        {/** TODO recalcul numérotation */}
+        <Col>
+          <CardTask
+            title="Relancer le calcul de la numérotation"
+            apiUrl={url`/api/admin/relancer-calcul-numerotation`}
+          >
+            <RelancerCalculNumerotation />
+          </CardTask>
+        </Col>
       </Row>
     </Container>
   );
