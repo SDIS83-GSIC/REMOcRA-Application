@@ -178,6 +178,7 @@ export const TextAreaInput = ({
 };
 
 type CheckBoxInputType = {
+  id?: string;
   name: string;
   label: string | ReactNode;
   required?: boolean;
@@ -188,6 +189,7 @@ type CheckBoxInputType = {
 };
 
 export const CheckBoxInput = ({
+  id,
   name,
   label,
   disabled = false,
@@ -200,7 +202,7 @@ export const CheckBoxInput = ({
   return (
     <DivWithError name={name} error={error}>
       <Field
-        id={name}
+        id={id ?? name }
         name={name}
         type="checkbox"
         disabled={disabled}
@@ -208,7 +210,7 @@ export const CheckBoxInput = ({
         checked={field.value ?? checked}
       />
       <label
-        htmlFor={name}
+        htmlFor={id ?? name}
         className={classNames("mx-2 mt-2", disabled ? "text-muted" : "")}
       >
         {label}
