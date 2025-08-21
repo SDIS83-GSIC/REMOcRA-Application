@@ -17,6 +17,7 @@ import NOMENCLATURES from "../../enums/NomenclaturesEnum.tsx";
 import { ActionColumn } from "../../components/Table/columns.tsx";
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
 import SelectFilterFromUrl from "../../components/Filter/SelectFilterFromUrl.tsx";
+import { formatDate } from "../../utils/formatDateUtils.tsx";
 import filterValuesToVariable from "./OldebFilter.tsx";
 
 const OldebList = () => {
@@ -71,6 +72,11 @@ const OldebList = () => {
             Header: "Dernière visite",
             accessor: "oldebDateDerniereVisite",
             sortField: "oldebDateDerniereVisite",
+            Cell: (value) => {
+              return (
+                <div>{value?.value != null && formatDate(value.value)}</div>
+              );
+            },
           },
           {
             Header: "Débroussaillement",
