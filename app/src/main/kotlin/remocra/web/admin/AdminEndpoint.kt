@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -20,6 +21,8 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.ImportRessourcesUseCase
 import remocra.usecase.admin.ParametresUseCase
 import remocra.usecase.admin.UpdateParametresUseCase
+import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
+import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 
 @Path("/admin")
@@ -37,6 +40,9 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var importRessourcesUseCase: ImportRessourcesUseCase
+
+    @Inject
+    private lateinit var relancerCalculDispoUseCase: RelancerCalculDispoUseCase
 
     @GET
     @Path("/parametres")
@@ -132,6 +138,27 @@ class AdminEndpoint : AbstractEndpoint() {
                 httpRequest.getPart("templateExportCtp"),
             ),
         ).build()
+    }
+
+    @POST
+    @Path("/relancer-calcul-dispo")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun relancerCalculDispo(parametres: ParametreTaskInput): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        relancerCalculDispoUseCase.execute(
+            securityContext.userInfo,
+            eventTracabilite = parametres.eventTracabilite,
+            eventNexSis = parametres.eventNexSis,
+        )
+        return Response.ok().build()
+    }
+
+    class ParametreTaskInput {
+        var eventTracabilite: Boolean = true
+        var eventNexSis: Boolean = true
     }
 }
 private data class PeiCaracteristique(

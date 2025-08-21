@@ -34,9 +34,9 @@ const ListeTask = () => {
     //everyMinute: null,
   }));
 
-  const typeTaskKey = Object.keys(TaskType).filter(
-    (e) => e !== "PERSONNALISEE",
-  );
+  const typeTaskKey = Object.values(TaskType)
+    .filter((e) => e.isConfigurable)
+    .map((e) => e.id);
 
   return (
     <Container>

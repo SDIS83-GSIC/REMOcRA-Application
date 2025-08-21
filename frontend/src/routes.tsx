@@ -204,6 +204,7 @@ import MapAdresse from "./components/Map/MapAdresses/MapAdresse.tsx";
 import DepotDeliberation from "./pages/Adresse/DepotDeliberation.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
+import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -492,6 +493,7 @@ export const URLS = {
 
   CREATE_TACHE_SPECIFIQUE: url`/admin/tache-specifique/create`,
   LIST_TASK_SPECIFIQUE: url`/admin/tache-specifique`,
+  ADMIN_EXECUTE_TASK_MANUELLE: url`/admin/tasks-manuelles/`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
@@ -2256,6 +2258,15 @@ export default [
           <Authorization
             Component={ComponentBoardDashboardAdmin}
             droits={[TYPE_DROIT.DASHBOARD_A]}
+          />
+        ),
+      },
+      {
+        path: "tasks-manuelles",
+        element: (
+          <Authorization
+            Component={ExecuteTasksManuelles}
+            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },

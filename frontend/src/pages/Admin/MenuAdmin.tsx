@@ -129,6 +129,16 @@ const MenuAdmin = () => {
                     </Nav.Item>
                   </>
                 )}
+                {user?.isSuperAdmin && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
+                      pathname={URLS.ADMIN_EXECUTE_TASK_MANUELLE}
+                    >
+                      Exécuter des traitements manuellement
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) && (
                   <Nav.Item>
                     <CustomLinkButton

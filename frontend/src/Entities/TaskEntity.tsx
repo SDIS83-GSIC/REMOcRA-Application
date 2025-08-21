@@ -27,6 +27,7 @@ export type SqueletteTaskEntity = {
   commentaire: string;
   parametre: Record<string, TaskParametreEntity> | null;
   notification: boolean;
+  isConfigurable: boolean;
 };
 
 export type TaskParametreEntity = {

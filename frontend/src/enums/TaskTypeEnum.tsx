@@ -18,6 +18,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: false,
+    isConfigurable: true,
   },
   NOTIFIER_CHANGEMENTS_ETAT: {
     id: "NOTIFIER_CHANGEMENTS_ETAT",
@@ -26,6 +27,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     commentaire: "",
     parametre: {},
     notification: true,
+    isConfigurable: true,
   },
   IT_NOTIF_AVANT_DEBUT: {
     id: "IT_NOTIF_AVANT_DEBUT",
@@ -42,6 +44,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: true,
+    isConfigurable: true,
   },
   IT_NOTIF_AVANT_FIN: {
     id: "IT_NOTIF_AVANT_FIN",
@@ -58,6 +61,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: true,
+    isConfigurable: true,
   },
   IT_NOTIF_RESTE_INDISPO: {
     id: "IT_NOTIF_RESTE_INDISPO",
@@ -66,6 +70,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     commentaire: "",
     parametre: {},
     notification: true,
+    isConfigurable: true,
   },
   BASCULE_AUTO_INDISPO_TEMP: {
     id: "BASCULE_AUTO_INDISPO_TEMP",
@@ -75,6 +80,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       "Cette tâche est nécessaire au bon fonctionnement des indisponibilités temporaires.\nSi celle-ci n'est pas active, le statut de disponibilité des PEI ne sera pas mis à jour automatiquement au départ ou à la levée d'une indisponibilité temporaire.",
     parametre: {},
     notification: false,
+    isConfigurable: true,
   },
   SYNCHRONISATION_SIG: {
     id: "SYNCHRONISATION_SIG",
@@ -90,6 +96,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: false,
+    isConfigurable: true,
   },
   PURGER: {
     id: "PURGER",
@@ -123,6 +130,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: false,
+    isConfigurable: true,
   },
   PERSONNALISEE: {
     id: "PERSONNALISEE",
@@ -144,6 +152,16 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       },
     },
     notification: false,
+    isConfigurable: false,
+  },
+  RELANCER_CALCUL_DISPONIBILITE: {
+    id: "RELANCER_CALCUL_DISPONIBILITE",
+    code: "RELANCER_CALCUL_DISPONIBILITE",
+    label: "Relancer le calcul de disponibilité",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
   },
 };
 
