@@ -20,7 +20,7 @@ const filterValuesToVariable = ({
   pushFilterItem(filter, oldebCommune, "oldebCommune");
   pushFilterItem(filter, oldebSection, "oldebSection");
   pushFilterItem(filter, oldebParcelle, "oldebParcelle");
-  pushFilterItem(filter, oldebTypeZoneUrbanisme, "oldebTypeZoneUrbanismeId");
+  pushFilterItem(filter, oldebTypeZoneUrbanisme, "oldebTypeZoneUrbanisme");
   pushFilterItem(
     filter,
     oldebTypeDebroussaillement,
