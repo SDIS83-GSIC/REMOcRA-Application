@@ -374,7 +374,7 @@ function QueryTable({
               setFilterBy({});
               setValues({});
               formik.setValues({});
-              formik.resetForm({ values: emptyFilter });
+              formik.resetForm({ values: {} });
 
               // On remet la pagination à zéro
               setPagination({ offset: 0, limit: pagination.limit });
