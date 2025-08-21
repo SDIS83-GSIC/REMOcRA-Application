@@ -21,6 +21,7 @@ import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
 import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
+import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 
 export const useToolbarOldebContext = ({
   map,
@@ -148,6 +149,7 @@ export const useToolbarOldebContext = ({
               ).then((res) => {
                 if (res.status === 200) {
                   successToast("Géométrie modifiée");
+                  refreshLayerGeoserver(map);
                 }
               });
             } else {
