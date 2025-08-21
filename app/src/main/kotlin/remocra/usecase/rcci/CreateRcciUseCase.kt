@@ -122,6 +122,8 @@ class CreateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: RcciFormInput) {
-        // no-op
+        if (element.rcci.rcciDateIncendie > dateUtils.now()) {
+            throw RemocraResponseException(ErrorType.RCCI_CREATE_DATE_INCENDIE_FUTURE)
+        }
     }
 }

@@ -589,6 +589,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RCCI_UPDATE_FORBIDDEN(28002, "Vous n'avez pas les droits de modification des RCCI", Status.FORBIDDEN),
     RCCI_DELETE_FORBIDDEN(28003, "Vous n'avez pas les droits de suppression des RCCI", Status.FORBIDDEN),
     RCCI_GEOMETRY_UPDATE_FORBIDDEN(28004, "Vous n'avez pas les droits de modification de la géométrie des RCCI", Status.FORBIDDEN),
+    RCCI_CREATE_DATE_INCENDIE_FUTURE(28005, "La date de l'incendie ne peut pas être dans le futur", Status.BAD_REQUEST),
 
     //
     // ********************************************************************************
