@@ -1071,6 +1071,12 @@ class PeiRepository
         val peiId: UUID,
         val peiNumeroComplet: String,
     )
+
+    fun updateDisponibilite(peiId: UUID, disponibilite: Disponibilite) =
+        dsl.update(PEI)
+            .set(PEI.DISPONIBILITE_TERRESTRE, disponibilite)
+            .where(PEI.ID.eq(peiId))
+            .execute()
 }
 
 data class IdNumeroComplet(

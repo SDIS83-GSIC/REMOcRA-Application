@@ -90,4 +90,26 @@ class PenaRepository @Inject constructor(
                 .set(dsl.newRecord(L_PENA_TYPE_ENGIN, LPenaTypeEngin(penaId = penaId, typeEnginId = it)))
         },
     ).execute()
+
+    fun getListPenaData(): List<PenaData> =
+        dsl.select(peiData).select(
+            PENA.CAPACITE,
+            PENA.DISPONIBILITE_HBE,
+            PENA.QUANTITE_APPOINT,
+            PENA.CAPACITE_ILLIMITEE,
+            PENA.CAPACITE_INCERTAINE,
+            PENA.MATERIAU_ID,
+            PENA.EQUIPE_HBE,
+        ).select(
+            DSL.multiset(dsl.select(L_PENA_TYPE_ENGIN.TYPE_ENGIN_ID).from(L_PENA_TYPE_ENGIN).where(L_PENA_TYPE_ENGIN.PENA_ID.eq(PENA.ID)))
+                .convertFrom { record ->
+                    record?.map { r ->
+                        r.value1().let { it as UUID }
+                    }
+                }.`as`("typeEnginIds"),
+        )
+            .from(PEI)
+            .join(PENA)
+            .on(PENA.ID.eq(PEI.ID))
+            .fetchInto()
 }

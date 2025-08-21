@@ -164,4 +164,33 @@ class PibiRepository @Inject constructor(
         val pression: Double?,
         val pressionDyn: Double?,
     )
+
+    fun getListPibiData(): List<PibiData> =
+        dsl.select(peiData)
+            .select(
+                // DONNEE PIBI
+                PIBI.DIAMETRE_ID,
+                PIBI.SERVICE_EAU_ID,
+                PIBI.IDENTIFIANT_GESTIONNAIRE,
+                PIBI.RENVERSABLE,
+                PIBI.DISPOSITIF_INVIOLABILITE,
+                PIBI.MODELE_PIBI_ID.`as`("pibiModeleId"),
+                PIBI.MARQUE_PIBI_ID.`as`("pibiMarqueId"),
+                PIBI.RESERVOIR_ID,
+                PIBI.DEBIT_RENFORCE,
+                PIBI.TYPE_CANALISATION_ID,
+                PIBI.TYPE_RESEAU_ID,
+                PIBI.DIAMETRE_CANALISATION,
+                PIBI.SURPRESSE,
+                PIBI.ADDITIVE,
+                PIBI.JUMELE_ID,
+            )
+            .from(PEI)
+            .join(PIBI)
+            .on(PIBI.ID.eq(PEI.ID))
+            .leftJoin(MODELE_PIBI)
+            .on(MODELE_PIBI.ID.eq(PIBI.MODELE_PIBI_ID))
+            .leftJoin(MARQUE_PIBI)
+            .on(MARQUE_PIBI.ID.eq(MODELE_PIBI.MARQUE_ID))
+            .fetchInto()
 }
