@@ -133,6 +133,7 @@ export const useToolbarRcciContext = ({
                 rcciGeometrie: geometry,
               },
             });
+            refreshLayerGeoserver(map);
             workingLayer.getSource().removeFeature(event.feature);
           } else {
             workingLayer.getSource().removeFeature(event.feature);
@@ -184,6 +185,7 @@ export const useToolbarRcciContext = ({
                 }),
               ).then((res) => {
                 if (res.status === 200) {
+                  refreshLayerGeoserver(map);
                   successToast("Géométrie modifiée");
                 }
               });
@@ -325,6 +327,7 @@ export const useToolbarRcciContext = ({
 };
 
 const MapToolbarRcci = ({
+  map,
   toggleTool: toggleToolCallback,
   activeTool,
   dataRcciLayerRef,
@@ -334,6 +337,7 @@ const MapToolbarRcci = ({
   anneeCivileRef,
 }: {
   toggleTool: (toolId: string) => void;
+  map: Map;
   activeTool: string;
   dataRcciLayerRef: MutableRefObject<VectorLayer | undefined>;
   rcciIdRef: MutableRefObject<string | undefined>;
@@ -445,10 +449,7 @@ const MapToolbarRcci = ({
         <EditModal
           visible={editModalRefs.visible}
           closeModal={editModalRefs.close}
-          query={
-            url`/api/rcci/` +
-            (!rcciIdRef.current ? "create" : rcciIdRef.current)
-          }
+          query={url`/api/rcci` + (!rcciIdRef.current ? "/create" : "")}
           ref={editModalRefs.ref}
           validationSchema={validationSchema}
           getInitialValues={(values) =>
@@ -462,7 +463,6 @@ const MapToolbarRcci = ({
           isMultipartFormData={true}
           onSubmit={() => {
             dataRcciLayerRef.current?.getSource().refresh();
-
             refreshLayerGeoserver(map);
           }}
         >
@@ -478,7 +478,6 @@ const MapToolbarRcci = ({
           id={deleteModalRefs.value}
           onDelete={() => {
             dataRcciLayerRef.current?.getSource().refresh();
-
             refreshLayerGeoserver(map);
           }}
         />

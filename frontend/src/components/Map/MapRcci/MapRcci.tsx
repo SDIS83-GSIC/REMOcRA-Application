@@ -83,6 +83,7 @@ const MapRcci = () => {
         toolbarElement={
           mapToolbarRef.current && (
             <MapToolbarRcci
+              map={map}
               toggleTool={toggleTool}
               activeTool={activeTool}
               dataRcciLayerRef={dataRcciLayerRef}
