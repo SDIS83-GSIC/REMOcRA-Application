@@ -9,7 +9,7 @@ type FilterNomenclatureType = {
 const FilterValues = ({
   code,
   libelle,
-  protected,
+  protected: isProtected,
   actif,
   idFk,
 }: FilterNomenclatureType) => {
@@ -18,7 +18,7 @@ const FilterValues = ({
   filterProperty(filter, code, "code");
   filterProperty(filter, libelle, "libelle");
   filterProperty(filter, actif, "actif");
-  filterProperty(filter, protected, "protected");
+  filterProperty(filter, isProtected, "protected");
   filterProperty(filter, idFk, "idFk");
 
   return filter;
