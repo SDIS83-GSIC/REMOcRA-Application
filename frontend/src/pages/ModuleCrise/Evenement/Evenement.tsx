@@ -100,7 +100,13 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
         label="Type"
         required={true}
         setValues={setValues}
-        defaultValue={values.geometrieEvenement ? listeType?.[0] : null}
+        defaultValue={
+          values.evenementTypeId
+            ? listeType?.find((e) => e.id === values.evenementTypeId)
+            : values.geometrieEvenement
+              ? listeType?.[0]
+              : null
+        }
       />
 
       <TextInput
