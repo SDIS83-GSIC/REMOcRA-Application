@@ -1,11 +1,15 @@
 import React, { useMemo, useRef } from "react";
 import VectorLayer from "ol/layer/Vector";
+import { Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { formatDate } from "../../../utils/formatDateUtils.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconRCCI } from "../../../components/Icon/Icon.tsx";
+import rcciIcon from "../../../img/rci.png";
+import rcciBeforeIcon from "../../../img/rci-before.png";
 import MapToolbarRcci, { useToolbarRcciContext } from "./MapToolbarRcci.tsx";
 
 const MapRcci = () => {
@@ -32,6 +36,30 @@ const MapRcci = () => {
     displayPei: false,
   });
 
+  const rcciStyle = (feature): Style => {
+    const date = feature.get("rcciDateIncendie");
+    const year = date ? new Date(date).getFullYear() : null;
+    const currentYear = new Date().getFullYear();
+
+    const iconSrc = year === currentYear ? rcciIcon : rcciBeforeIcon;
+    const textColor = year === currentYear ? "red" : "orange";
+
+    return new Style({
+      image: new Icon({
+        src: iconSrc,
+        scale: 1,
+        anchor: [0.5, 1],
+      }),
+      text: new Text({
+        text: formatDate(date),
+        font: "12px Calibri,sans-serif",
+        offsetY: 5,
+        fill: new Fill({ color: textColor }),
+        stroke: new Stroke({ color: "#ffffff", width: 4 }),
+      }),
+    });
+  };
+
   useMemo(() => {
     if (!map) {
       return;
@@ -44,6 +72,7 @@ const MapRcci = () => {
         "&srid=" +
         projection.getCode(),
       projection,
+      rcciStyle as unknown as Style,
     );
   }, [map, projection]);
 
