@@ -1,7 +1,7 @@
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import { MutableRefObject, useMemo, useRef } from "react";
+import { MutableRefObject, useMemo, useReducer, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { Map } from "ol";
 import { hasDroit } from "../../../droits.tsx";
@@ -305,6 +305,7 @@ const MapToolbarRcci = ({
   };
 }) => {
   const { user } = useAppContext();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   return (
     <>
@@ -368,9 +369,9 @@ const MapToolbarRcci = ({
         >
           <Button
             name={"tool"}
-            onClick={(e) => {
+            onClick={() => {
               anneeCivileRef.displayAnneCivile();
-              e.target.active = anneeCivileRef.anneeCivileRef.current;
+              forceUpdate(); // forcer rerender pour relire le ref
             }}
             toolName={"edit-rcci"}
             value={"hide-rcci"}

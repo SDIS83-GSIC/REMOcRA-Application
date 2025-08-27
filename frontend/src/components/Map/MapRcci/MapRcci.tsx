@@ -36,10 +36,14 @@ const MapRcci = () => {
     displayPei: false,
   });
 
-  const rcciStyle = (feature): Style => {
+  const rcciStyle = (feature): Style | undefined => {
     const date = feature.get("rcciDateIncendie");
     const year = date ? new Date(date).getFullYear() : null;
     const currentYear = new Date().getFullYear();
+
+    if (anneeCivileRef.current && year !== currentYear) {
+      return undefined;
+    }
 
     const iconSrc = year === currentYear ? rcciIcon : rcciBeforeIcon;
     const textColor = year === currentYear ? "red" : "orange";
