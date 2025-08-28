@@ -67,7 +67,13 @@ const MapPermis = () => {
     dataPermisLayer,
   });
 
-  const { toggleTool, activeTool } = useToolbarContext({
+  const {
+    toggleTool,
+    activeTool,
+    showVoletOutilI,
+    generalInfo,
+    handleCloseInfoI,
+  } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
     extraTools: extraTools,
@@ -96,6 +102,9 @@ const MapPermis = () => {
       <PageTitle title="Carte des Permis" icon={<IconPermis />} />
       <MapComponent
         map={map}
+        showGeneralInfo={showVoletOutilI}
+        generalInfo={generalInfo}
+        handleCloseInfoI={handleCloseInfoI}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}

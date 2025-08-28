@@ -65,7 +65,13 @@ const MapSignalement = () => {
     dataSignalementLayer,
   });
 
-  const { toggleTool, activeTool } = useToolbarContext({
+  const {
+    toggleTool,
+    activeTool,
+    showVoletOutilI,
+    generalInfo,
+    handleCloseInfoI,
+  } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
     extraTools: extraTools,
@@ -80,6 +86,9 @@ const MapSignalement = () => {
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
         mapToolbarRef={mapToolbarRef}
+        showGeneralInfo={showVoletOutilI}
+        generalInfo={generalInfo}
+        handleCloseInfoI={handleCloseInfoI}
         toolbarElement={
           <MapToolbarSignalement
             geometrySignalement={geometrySignalement}

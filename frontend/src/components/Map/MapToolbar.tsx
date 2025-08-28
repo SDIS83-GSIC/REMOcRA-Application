@@ -17,12 +17,15 @@ import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import {
   IconDistance,
+  IconInfo,
   IconSurface,
   IconZoomIn,
   IconZoomOut,
 } from "../Icon/Icon.tsx";
+import Volet from "../Volet/Volet.tsx";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
+import ShowInfoVolet from "./MapOutilI/ShowInfoVolet.tsx";
 
 const measureStyle = new Style({
   fill: new Fill({
@@ -77,9 +80,16 @@ export const useToolbarContext = ({
   extraTools?: any;
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>("");
+  const [showVoletOutilI, setShowVoletOutilI] = useState(false);
+  const [generalInfo] = useState<string>();
 
   const measureOverlayArray: Overlay[] = [];
   const geometryOverlayArray: Overlay[] = [];
+
+  const handleCloseInfoI = () => {
+    workingLayer.getSource().clear();
+    setShowVoletOutilI(false);
+  };
 
   let measureTooltipElement: HTMLDivElement | null,
     measureTooltip: Overlay | undefined;
@@ -278,6 +288,9 @@ export const useToolbarContext = ({
     activeTool,
     toggleTool,
     disabledTool,
+    showVoletOutilI,
+    generalInfo,
+    handleCloseInfoI,
   };
 };
 
@@ -288,11 +301,17 @@ const MapToolbar = forwardRef(
       toggleTool,
       activeTool,
       variant = "primary",
+      showGeneralInfo = false,
+      generalInfo,
+      handleCloseInfoI,
     }: {
       map: Map;
       toggleTool: (toolId: string) => void;
       activeTool: string;
       variant: string;
+      showGeneralInfo: boolean;
+      generalInfo: string;
+      handleCloseInfoI: () => void;
     },
     ref,
   ) => {
@@ -365,8 +384,26 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
+            <ToolbarButton
+              toolName={"info-area"}
+              toolIcon={<IconInfo />}
+              toolLabelTooltip={
+                "Obtenir des informations sur un point de la carte"
+              }
+              toggleTool={toggleTool}
+              activeTool={activeTool}
+              variant={variant}
+            />
           </ButtonGroup>
         </ButtonToolbar>
+
+        <Volet
+          handleClose={handleCloseInfoI}
+          show={showGeneralInfo}
+          className="w-auto"
+        >
+          <ShowInfoVolet generalsInfos={generalInfo} />
+        </Volet>
       </Row>
     );
   },

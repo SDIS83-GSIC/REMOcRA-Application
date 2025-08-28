@@ -135,7 +135,13 @@ const MapCrise = ({
     dataEvenementLayer,
   });
 
-  const { toggleTool, activeTool } = useToolbarContext({
+  const {
+    toggleTool,
+    activeTool,
+    showVoletOutilI,
+    generalInfo,
+    handleCloseInfoI,
+  } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
     extraTools: extraTools,
@@ -179,6 +185,9 @@ const MapCrise = ({
       layerListRef={layerListRef} // les éléments de fonds IGN
       mapToolbarRef={mapToolbarRef} // les boutons à modifier / rajouter
       toggleTool={toggleTool}
+      showGeneralInfo={showVoletOutilI}
+      generalInfo={generalInfo}
+      handleCloseInfoI={handleCloseInfoI}
       activeTool={activeTool}
       toolbarElement={
         mapToolbarRef.current &&

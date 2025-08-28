@@ -152,7 +152,7 @@ const ExecuteRapportPersonnalise = () => {
   };
 
   return (
-    <Container fluid style={{ maxWidth: '95vw' }}>
+    <Container fluid style={{ maxWidth: "95vw" }}>
       <PageTitle
         icon={<IconList />}
         title={"Exécuter des rapports personnalisés"}

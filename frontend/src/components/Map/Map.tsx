@@ -173,6 +173,9 @@ const MapComponent = ({
   toggleTool,
   activeTool,
   variant = "primary",
+  showGeneralInfo,
+  generalInfo,
+  handleCloseInfoI,
 }: {
   map?: Map;
   availableLayers: any[];
@@ -184,6 +187,9 @@ const MapComponent = ({
   toggleTool: any;
   activeTool: any;
   variant?: string;
+  showGeneralInfo: boolean;
+  generalInfo: string;
+  handleCloseInfoI: () => void;
 }) => {
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
@@ -221,6 +227,9 @@ const MapComponent = ({
               toggleTool={toggleTool}
               activeTool={activeTool}
               variant={variant}
+              showGeneralInfo={showGeneralInfo}
+              generalInfo={generalInfo}
+              handleCloseInfoI={handleCloseInfoI}
             />
           </Col>
           <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>

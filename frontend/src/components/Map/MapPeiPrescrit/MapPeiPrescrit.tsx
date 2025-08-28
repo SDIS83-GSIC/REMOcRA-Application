@@ -55,7 +55,13 @@ const MapPeiPrescrit = () => {
     dataPeiPrescritLayer,
   });
 
-  const { toggleTool, activeTool } = useToolbarContext({
+  const {
+    toggleTool,
+    activeTool,
+    showVoletOutilI,
+    generalInfo,
+    handleCloseInfoI,
+  } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
     extraTools: extraTools,
@@ -70,6 +76,9 @@ const MapPeiPrescrit = () => {
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
+        showGeneralInfo={showVoletOutilI}
+        generalInfo={generalInfo}
+        handleCloseInfoI={handleCloseInfoI}
         mapToolbarRef={mapToolbarRef}
         mapElement={mapElement}
         toggleTool={toggleTool}
