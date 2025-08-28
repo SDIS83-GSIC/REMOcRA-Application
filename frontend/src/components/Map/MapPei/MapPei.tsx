@@ -117,8 +117,8 @@ const MapPei = () => {
   const { toggleTool, activeTool, disabledTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 

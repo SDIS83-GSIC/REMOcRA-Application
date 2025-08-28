@@ -82,8 +82,8 @@ const MapCouvertureHydraulique = ({
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
-      availableLayers: availableLayers,
       map: map,
+      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: extraTools,
     });

@@ -186,7 +186,8 @@ const MapComponent = ({
   toggleTool: any;
   activeTool: any;
   variant?: string;
-  generalInfo: any;
+  showVoletOutilI: boolean;
+  generalInfo: string;
   handleCloseInfoI: () => void;
 }) => {
   useEffect(() => {

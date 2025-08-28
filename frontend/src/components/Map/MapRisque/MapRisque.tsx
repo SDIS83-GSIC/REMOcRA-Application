@@ -54,9 +54,9 @@ const MapRisque = () => {
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
-      availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: {},
     });
 
