@@ -379,11 +379,12 @@ const Pei = ({
 
     if (
       selectDataState?.data?.listCommune != null &&
-      selectDataState?.data?.listCommune?.length !== 0
+      selectDataState?.data?.listCommune?.length !== 0 &&
+      values.peiCommuneId == null
     ) {
       setFieldValue(
         "peiCommuneId",
-        selectDataState?.data?.listCommune[0].id ?? values.peiCommuneId,
+        values.peiCommuneId ?? selectDataState?.data?.listCommune[0].id,
       );
     }
   }, [
