@@ -147,6 +147,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             .leftJoin(COMMUNE).on(CONTACT.COMMUNE_ID.eq(COMMUNE.ID))
             .join(GESTIONNAIRE)
             .on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
+            .where(GESTIONNAIRE.ACTIF.isTrue)
             .fetchInto()
     }
 
