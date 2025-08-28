@@ -80,17 +80,12 @@ const MapCouvertureHydraulique = ({
     reseauImporte,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   return (
     <MapComponent
@@ -102,7 +97,6 @@ const MapCouvertureHydraulique = ({
       mapToolbarRef={mapToolbarRef}
       toggleTool={toggleTool}
       activeTool={activeTool}
-      showGeneralInfo={showVoletOutilI}
       generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       toolbarElement={

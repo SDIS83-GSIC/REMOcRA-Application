@@ -135,17 +135,12 @@ const MapCrise = ({
     dataEvenementLayer,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   /**
    * Met à jour la liste des couches actives sur la carte en fonction des couches WMS sélectionnées.
@@ -185,7 +180,6 @@ const MapCrise = ({
       layerListRef={layerListRef} // les éléments de fonds IGN
       mapToolbarRef={mapToolbarRef} // les boutons à modifier / rajouter
       toggleTool={toggleTool}
-      showGeneralInfo={showVoletOutilI}
       generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       activeTool={activeTool}

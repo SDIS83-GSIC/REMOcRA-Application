@@ -55,17 +55,12 @@ const MapPeiPrescrit = () => {
     dataPeiPrescritLayer,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   return (
     <SquelettePage navbar={<Header />}>
@@ -76,7 +71,6 @@ const MapPeiPrescrit = () => {
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
-        showGeneralInfo={showVoletOutilI}
         generalInfo={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         mapToolbarRef={mapToolbarRef}

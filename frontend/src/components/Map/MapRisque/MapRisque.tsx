@@ -52,17 +52,12 @@ const MapRisque = () => {
     displayPei: true,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: {},
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: {},
+    });
 
   return (
     <SquelettePage navbar={<Header />}>
@@ -79,7 +74,6 @@ const MapRisque = () => {
         }
       />
       <MapComponent
-        showGeneralInfo={showVoletOutilI}
         generalInfo={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         map={map}

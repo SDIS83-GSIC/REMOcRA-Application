@@ -114,18 +114,12 @@ const MapPei = () => {
     return layer;
   }, [map, projection]);
 
-  const {
-    toggleTool,
-    activeTool,
-    disabledTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, disabledTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   const stateListePeiId = location.state?.listePeiId;
 
@@ -195,7 +189,6 @@ const MapPei = () => {
             mapElement={mapElement}
             toggleTool={toggleTool}
             activeTool={activeTool}
-            showGeneralInfo={showVoletOutilI}
             generalInfo={infoOutilI}
             handleCloseInfoI={handleCloseInfoI}
             toolbarElement={

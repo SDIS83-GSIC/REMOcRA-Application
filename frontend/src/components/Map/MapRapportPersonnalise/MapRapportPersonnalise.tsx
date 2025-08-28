@@ -21,17 +21,12 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     displayPei: false,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: {},
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: {},
+    });
 
   useMemo(() => {
     if (!map || !projection || !wkt || wkt.length === 0) {
@@ -47,7 +42,6 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     <MapComponent
       map={map}
       workingLayer={workingLayer}
-      showGeneralInfo={showVoletOutilI}
       generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}

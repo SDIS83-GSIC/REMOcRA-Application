@@ -50,17 +50,12 @@ const OldebMap = () => {
     dataOldebLayerRef,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    handleCloseInfoI,
-    infoOutilI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, handleCloseInfoI, infoOutilI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   useEffect(() => {
     if (state?.target && map) {
@@ -80,7 +75,6 @@ const OldebMap = () => {
 
   return (
     <MapComponent
-      showGeneralInfo={showVoletOutilI}
       generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       map={map}

@@ -27,7 +27,7 @@ import {
 import Volet from "../Volet/Volet.tsx";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
-import ShowInfoVolet from "./MapOutilI/ShowInfoVolet.tsx";
+import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
 
 const measureStyle = new Style({
   fill: new Fill({
@@ -82,15 +82,18 @@ export const useToolbarContext = ({
   extraTools?: any;
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>("");
-  const [showVoletOutilI, setShowVoletOutilI] = useState(false);
-  const [infoOutilI, setInfoOutilI] = useState<string>();
+  // const [showVoletOutilI, setShowVoletOutilI] = useState(false);
+  const [infoOutilI, setInfoOutilI] = useState<{
+    show: boolean;
+    data: any[];
+  }>({ show: false, data: [] });
 
   const measureOverlayArray: Overlay[] = [];
   const geometryOverlayArray: Overlay[] = [];
 
   const handleCloseInfoI = () => {
     workingLayer.getSource().clear();
-    setShowVoletOutilI(false);
+    setInfoOutilI({ show: false, data: [] });
   };
 
   let measureTooltipElement: HTMLDivElement | null,
@@ -140,66 +143,15 @@ export const useToolbarContext = ({
       toggleMeasure(active, "Polygon");
     }
 
-    function createPointInteraction() {
-      const drawCtrl = new Draw({
-        source: workingLayer.getSource(),
-        type: "Point",
-      });
-
-      drawCtrl.on("drawend", async (event: { feature: any }) => {
-        const feature = event.feature;
-        const coords = feature.getGeometry().getCoordinates();
-
-        map!
-          .getLayers()
-          .getArray()
-          .filter(
-            (l) => l instanceof TileLayer && l.getSource() instanceof TileWMS,
-          )
-          .forEach((wmsLayer) => {
-            const view = map!.getView();
-            const url = wmsLayer
-              .getSource()
-              ?.getFeatureInfoUrl(
-                coords,
-                view.getResolution()!,
-                view.getProjection(),
-                {
-                  INFO_FORMAT: "application/json",
-                  FEATURE_COUNT: 5,
-                },
-              );
-
-            if (url) {
-              fetch(url)
-                .then((r) => {
-                  if (!r.ok) {
-                    throw new Error("Mauvaise réponse internet");
-                  }
-                  return r.json();
-                })
-                .then((data) => {
-                  setInfoOutilI(data.type);
-                  setShowVoletOutilI(true);
-                })
-                .catch(() => {
-                  setShowVoletOutilI(false);
-                });
-            }
-          });
-      });
-
-      drawCtrl.on("drawstart", async () => {
-        workingLayer.getSource().clear();
-      });
-
-      return drawCtrl;
-    }
-
     function toggleInfoArea(active = false) {
-      const draw = createPointInteraction();
-      if (active && map?.getInteractions().getArray().indexOf(draw) === -1) {
-        map?.addInteraction(draw);
+      const draw = drawCtrlInfo;
+      if (active) {
+        if (map?.getInteractions().getArray().indexOf(draw) === -1) {
+          map?.addInteraction(draw);
+        }
+      } else {
+        map?.removeInteraction(draw);
+        handleCloseInfoI();
       }
     }
 
@@ -249,6 +201,62 @@ export const useToolbarContext = ({
         unByKey(listener);
       }
     };
+
+    // draw pour l'élément "boutonI"
+    const drawCtrlInfo = new Draw({
+      source: workingLayer.getSource(),
+      type: "Point",
+    });
+
+    drawCtrlInfo.on("drawend", async (event: { feature: any }) => {
+      const feature = event.feature;
+      const coords = feature.getGeometry().getCoordinates();
+      setInfoOutilI({ show: false, data: [] });
+
+      map!
+        .getLayers()
+        .getArray()
+        .filter(
+          (l) => l instanceof TileLayer && l.getSource() instanceof TileWMS,
+        )
+        .forEach((wmsLayer) => {
+          const view = map!.getView();
+          const url = wmsLayer
+            .getSource()
+            ?.getFeatureInfoUrl(
+              coords,
+              view.getResolution()!,
+              view.getProjection(),
+              {
+                INFO_FORMAT: "application/json",
+                FEATURE_COUNT: 5,
+              },
+            );
+
+          if (url) {
+            fetch(url)
+              .then((r) => {
+                if (!r.ok) {
+                  throw new Error("Mauvaise réponse internet");
+                }
+                return r.json();
+              })
+              .then((data) => {
+                setInfoOutilI((e) => ({
+                  show: true,
+                  data: [...e.data, { ...data }],
+                }));
+              })
+              .catch(() => {
+                // plan sans documentation => ne rien faire
+              });
+          }
+        });
+    });
+
+    drawCtrlInfo.on("drawstart", async () => {
+      workingLayer.getSource().clear();
+    });
 
     const measureLengthCtrl = new Draw({
       source: workingLayer.getSource(),
@@ -357,7 +365,6 @@ export const useToolbarContext = ({
     activeTool,
     toggleTool,
     disabledTool,
-    showVoletOutilI,
     infoOutilI,
     handleCloseInfoI,
   };
@@ -370,7 +377,6 @@ const MapToolbar = forwardRef(
       toggleTool,
       activeTool,
       variant = "primary",
-      showGeneralInfo = false,
       generalInfo,
       handleCloseInfoI,
     }: {
@@ -378,8 +384,7 @@ const MapToolbar = forwardRef(
       toggleTool: (toolId: string) => void;
       activeTool: string;
       variant: string;
-      showGeneralInfo: boolean;
-      generalInfo: string;
+      generalInfo: any;
       handleCloseInfoI: () => void;
     },
     ref,
@@ -468,10 +473,10 @@ const MapToolbar = forwardRef(
 
         <Volet
           handleClose={handleCloseInfoI}
-          show={showGeneralInfo}
+          show={generalInfo.show}
           className="w-auto"
         >
-          <ShowInfoVolet generalsInfos={generalInfo} />
+          <OutilIVolet generalsInfos={generalInfo.data} />
         </Volet>
       </Row>
     );

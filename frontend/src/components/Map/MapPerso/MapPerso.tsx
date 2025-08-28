@@ -39,17 +39,12 @@ const MapPerso = () => {
     workingLayer,
   });
 
-  const {
-    toggleTool,
-    activeTool,
-    showVoletOutilI,
-    infoOutilI,
-    handleCloseInfoI,
-  } = useToolbarContext({
-    map: map,
-    workingLayer: workingLayer,
-    extraTools: extraTools,
-  });
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   return (
     <SquelettePage navbar={<Header />}>
@@ -71,7 +66,6 @@ const MapPerso = () => {
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
           map={map}
-          showGeneralInfo={showVoletOutilI}
           generalInfo={infoOutilI}
           handleCloseInfoI={handleCloseInfoI}
           availableLayers={availableLayers}
