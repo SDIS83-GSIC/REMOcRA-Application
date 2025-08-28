@@ -64,6 +64,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 coucheLegendeUrl = null,
                 profilDroitList = getProfilDroitList(couche.coucheId).map { profilDroit -> profilDroit.profilDroitId },
                 moduleList = getModuleList(couche.coucheId),
+                coucheProtected = couche.coucheProtected ?: false,
             )
         }.associateBy { it.coucheId }
 

@@ -22,4 +22,5 @@ data class CoucheData(
     val coucheLegendeUrl: String?,
     val profilDroitList: Collection<UUID> = listOf(),
     val moduleList: Collection<TypeModule> = listOf(),
+    val coucheProtected: Boolean,
 )

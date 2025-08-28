@@ -45,7 +45,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                     groupeCoucheCode = groupeCouche.groupeCoucheCode,
                     groupeCoucheLibelle = groupeCouche.groupeCoucheLibelle,
                     groupeCoucheOrdre = groupeCouche.groupeCoucheOrdre,
-                    groupeCoucheProtected = TODO(),
+                    groupeCoucheProtected = groupeCouche.groupeCoucheProtected ?: false,
                 ),
             )
             groupeCouche.coucheList.forEach {
@@ -68,7 +68,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                         coucheLegende = null,
                         coucheProxy = couche.coucheProxy,
                         coucheCrossOrigin = couche.coucheCrossOrigin,
-                        coucheProtected = TODO(),
+                        coucheProtected = couche.coucheProtected ?: false,
                     ),
                 )
 

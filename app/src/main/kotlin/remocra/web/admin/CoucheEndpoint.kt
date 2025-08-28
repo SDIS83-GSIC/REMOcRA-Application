@@ -54,8 +54,7 @@ class CoucheEndpoint : AbstractEndpoint() {
                             groupeCoucheCode = groupeCouche.groupeCoucheCode,
                             groupeCoucheLibelle = groupeCouche.groupeCoucheLibelle,
                             groupeCoucheOrdre = groupeCouche.groupeCoucheOrdre,
-                            coucheList = coucheRepository.getCoucheList(groupeCouche.groupeCoucheId).map {
-                                    couche ->
+                            coucheList = coucheRepository.getCoucheList(groupeCouche.groupeCoucheId).map { couche ->
                                 CoucheData(
                                     coucheId = couche.coucheId,
                                     coucheCode = couche.coucheCode,
@@ -84,10 +83,13 @@ class CoucheEndpoint : AbstractEndpoint() {
                                             .build(couche.coucheId)
                                             .toString()
                                     },
-                                    profilDroitList = coucheRepository.getProfilDroitList(couche.coucheId).map { profilDroit -> profilDroit.profilDroitId },
+                                    profilDroitList = coucheRepository.getProfilDroitList(couche.coucheId)
+                                        .map { profilDroit -> profilDroit.profilDroitId },
                                     moduleList = coucheRepository.getModuleList(couche.coucheId),
+                                    coucheProtected = couche.coucheProtected ?: false,
                                 )
                             },
+                            groupeCoucheProtected = groupeCouche.groupeCoucheProtected ?: false,
                         )
                     }
             },
