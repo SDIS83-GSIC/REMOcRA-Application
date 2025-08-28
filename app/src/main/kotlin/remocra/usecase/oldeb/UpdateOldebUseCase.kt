@@ -277,5 +277,9 @@ class UpdateOldebUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {
+        if (oldebRepository.checkSectionAndParcelleIsUsed(element.oldeb.oldebId, element.oldeb.oldebCommuneId, element.oldeb.oldebCadastreSectionId, element.oldeb.oldebCadastreParcelleId)) {
+            throw RemocraResponseException(ErrorType.OLDEB_PARCELLE_ALREADY_USED)
+        }
+    }
 }

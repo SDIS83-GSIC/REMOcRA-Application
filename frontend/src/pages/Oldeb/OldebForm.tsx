@@ -262,7 +262,7 @@ const OldebForm = () => {
     {},
   );
   const { run: fetchCadastreParcelle, data: cadastreParcelleList } = useGetRun(
-    url`/api/cadastre/section/${values.oldeb.oldebCadastreSectionId}/parcelle`,
+    url`/api/cadastre/section/${values.oldeb.oldebCadastreSectionId}/available-parcelle${values.oldeb.oldebId ? "?oldebId=" + values.oldeb.oldebId : ""}`,
     {},
   );
   const proprietaireState = useGet(url`/api/proprietaire/options`);

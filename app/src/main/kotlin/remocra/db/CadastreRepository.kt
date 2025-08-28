@@ -51,8 +51,36 @@ class CadastreRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .and(CADASTRE_PARCELLE.ID.`in`(dsl.select(OLDEB.CADASTRE_PARCELLE_ID).from(OLDEB)))
             .fetchInto()
 
-    fun getParcelleFromCoordsForCombo(geometry: Field<Geometry?>, limit: Int? = null): Collection<GlobalData.IdCodeLibelleData> =
-        dsl.select(CADASTRE_PARCELLE.ID.`as`("id"), CADASTRE_SECTION.NUMERO.`as`("code"), CADASTRE_PARCELLE.NUMERO.`as`("libelle"))
+    /**
+     * Récupère les parcelles disponibles à la sélection.
+     * On inclut aussi `oldebId` pour récupérer sa parcelle lors de la modification.
+     */
+    fun getAvailableParcelleBySectionId(sectionId: UUID, oldebId: UUID?): List<CadastreParcelle> {
+        return dsl.selectFrom(CADASTRE_PARCELLE)
+            .where(
+                CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(sectionId).and(
+                    CADASTRE_PARCELLE.ID.notIn(
+                        dsl.select(OLDEB.CADASTRE_PARCELLE_ID)
+                            .from(OLDEB),
+                    ).or(
+                        CADASTRE_PARCELLE.ID.eq(
+                            dsl.select(OLDEB.CADASTRE_PARCELLE_ID)
+                                .from(OLDEB).where(OLDEB.ID.eq(oldebId)),
+                        ),
+                    ),
+                ),
+            ).fetchInto()
+    }
+
+    fun getParcelleFromCoordsForCombo(
+        geometry: Field<Geometry?>,
+        limit: Int? = null,
+    ): Collection<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            CADASTRE_PARCELLE.ID.`as`("id"),
+            CADASTRE_SECTION.NUMERO.`as`("code"),
+            CADASTRE_PARCELLE.NUMERO.`as`("libelle"),
+        )
             .from(CADASTRE_PARCELLE)
             .join(CADASTRE_SECTION).on(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(CADASTRE_SECTION.ID))
             .orderBy(

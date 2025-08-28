@@ -5,6 +5,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -12,6 +13,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.db.CadastreRepository
+import remocra.db.OldebRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
@@ -24,6 +26,8 @@ class CadastreEndpoint : AbstractEndpoint() {
     @Context lateinit var securityContext: SecurityContext
 
     @Inject lateinit var cadastreRepository: CadastreRepository
+
+    @Inject lateinit var oldebRepository: OldebRepository
 
     @GET
     @Path("/commune/{communeId}/section")
@@ -45,6 +49,11 @@ class CadastreEndpoint : AbstractEndpoint() {
     @Path("/section/{sectionId}/parcelle")
     @RequireDroits([Droit.OLDEB_R])
     fun parcelle(@PathParam("sectionId") sectionId: UUID): Response = Response.ok(cadastreRepository.getParcelleBySectionId(sectionId)).build()
+
+    @GET
+    @Path("/section/{sectionId}/available-parcelle/")
+    @RequireDroits([Droit.OLDEB_R])
+    fun availableParcelle(@PathParam("sectionId") sectionId: UUID, @QueryParam("oldebId") oldebId: UUID?): Response = Response.ok(cadastreRepository.getAvailableParcelleBySectionId(sectionId, oldebId)).build()
 
     @GET
     @Path("/section/{sectionId}/parcelle-old/")

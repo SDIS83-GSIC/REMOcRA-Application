@@ -573,11 +573,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     OLDEB_PROPRIETAIRE_FORBIDDEN_UPDATE(27002, "Vous n'avez pas les droits de modification des propriétaires", Status.FORBIDDEN),
     OLDEB_PROPRIETAIRE_FORBIDDEN_DELETE(27003, "Vous n'avez pas les droits de suppression des propriétaires", Status.FORBIDDEN),
     OLDEB_PROPRIETAIRE_IN_USE(27004, "Le propriétaire est associé à une ou plusieurs obligations légales de débroussaillement", Status.CONFLICT),
-    OLDEB_FORBIDDEN(27005, "Vous n'avez pas les droits de gestion des obligations légales de débrousaillement", Status.FORBIDDEN),
-    OLDEB_FORBIDDEN_INSERT(27006, "Vous n'avez pas les droits de création des obligations légales de débrousaillement", Status.FORBIDDEN),
-    OLDEB_FORBIDDEN_UPDATE(27007, "Vous n'avez pas les droits de modification des obligations légales de débrousaillement", Status.FORBIDDEN),
-    OLDEB_FORBIDDEN_DELETE(27008, "Vous n'avez pas les droits de suppression des obligations légales de débrousaillement", Status.FORBIDDEN),
-    OLDEB_GEOMETRY_FORBIDDEN_UPDATE(27009, "Vous n'avez pas les droits de modification de la géométrie des obligations légales de débrousaillement", Status.FORBIDDEN),
+    OLDEB_FORBIDDEN(27005, "Vous n'avez pas les droits de gestion des obligations légales de débroussaillement", Status.FORBIDDEN),
+    OLDEB_FORBIDDEN_INSERT(27006, "Vous n'avez pas les droits de création des obligations légales de débroussaillement", Status.FORBIDDEN),
+    OLDEB_FORBIDDEN_UPDATE(27007, "Vous n'avez pas les droits de modification des obligations légales de débroussaillement", Status.FORBIDDEN),
+    OLDEB_FORBIDDEN_DELETE(27008, "Vous n'avez pas les droits de suppression des obligations légales de débroussaillement", Status.FORBIDDEN),
+    OLDEB_GEOMETRY_FORBIDDEN_UPDATE(27009, "Vous n'avez pas les droits de modification de la géométrie des obligations légales de débroussaillement", Status.FORBIDDEN),
+    OLDEB_PARCELLE_ALREADY_USED(27010, "Une obligation de débroussaillement existe déjà pour cette commune, cette section et cette parcelle", Status.BAD_REQUEST),
 
     //
     // ********************************************************************************
