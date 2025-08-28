@@ -87,7 +87,6 @@ export const useToolbarContext = ({
   extraTools?: any;
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>("");
-  // const [showVoletOutilI, setShowVoletOutilI] = useState(false);
   const [infoOutilI, setInfoOutilI] = useState<{
     show: boolean;
     data: any[];

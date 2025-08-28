@@ -39,11 +39,10 @@ const MapPerso = () => {
     workingLayer,
   });
 
-  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, outilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 
@@ -67,7 +66,7 @@ const MapPerso = () => {
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
           map={map}
-          generalInfo={infoOutilI}
+          outilI={outilI}
           handleCloseInfoI={handleCloseInfoI}
           availableLayers={availableLayers}
           addOrRemoveLayer={addOrRemoveLayer}

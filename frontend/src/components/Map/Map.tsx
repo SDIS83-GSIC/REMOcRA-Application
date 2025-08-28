@@ -173,7 +173,7 @@ const MapComponent = ({
   toggleTool,
   activeTool,
   variant = "primary",
-  generalInfo,
+  outilI,
   handleCloseInfoI,
 }: {
   map?: Map;
@@ -186,8 +186,7 @@ const MapComponent = ({
   toggleTool: any;
   activeTool: any;
   variant?: string;
-  showVoletOutilI: boolean;
-  generalInfo: string;
+  outilI: any;
   handleCloseInfoI: () => void;
 }) => {
   useEffect(() => {
@@ -226,7 +225,7 @@ const MapComponent = ({
               toggleTool={toggleTool}
               activeTool={activeTool}
               variant={variant}
-              generalInfo={generalInfo}
+              outilI={outilI}
               handleCloseInfoI={handleCloseInfoI}
             />
           </Col>

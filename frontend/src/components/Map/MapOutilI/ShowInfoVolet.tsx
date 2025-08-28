@@ -1,17 +1,20 @@
 import { Container } from "react-bootstrap";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconInfo } from "../../Icon/Icon.tsx";
+import ListInfos from "./ListInfos.tsx";
 
-const ShowInfoVolet = ({ generalsInfos }: { generalsInfos: string }) => {
+const OutilIVolet = ({ generalsInfos }: { generalsInfos: any[] }) => {
   return (
     <Container>
       <PageTitle
         icon={<IconInfo />}
-        title={generalsInfos}
+        title={"Informations"}
         displayReturnButton={false}
       />
+
+      <ListInfos data={generalsInfos} />
     </Container>
   );
 };
 
-export default ShowInfoVolet;
+export default OutilIVolet;
