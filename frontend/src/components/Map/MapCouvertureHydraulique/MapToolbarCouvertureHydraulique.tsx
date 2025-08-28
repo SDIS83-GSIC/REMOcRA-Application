@@ -601,6 +601,7 @@ const MapToolbarCouvertureHydraulique = ({
         <EditModal
           closeModal={() => {
             dataPeiProjetLayer.getSource().refresh();
+            toggleToolCallback("deplacer-pei-projet");
             closeMove();
           }}
           query={url`/api/couverture-hydraulique/pei-projet/move/${peiProjetIdMove}`}

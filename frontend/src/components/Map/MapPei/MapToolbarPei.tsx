@@ -643,6 +643,7 @@ const MapToolbarPei = ({
         <EditModal
           closeModal={() => {
             dataPeiLayer.getSource().refresh();
+            toggleToolCallback("deplacer-pei");
             closeMove();
           }}
           canModify={canEditPei}
