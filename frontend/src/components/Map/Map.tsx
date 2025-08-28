@@ -38,7 +38,7 @@ import {
   throttle,
 } from "./MapPerformanceUtils.tsx";
 import MapToolbar from "./MapToolbar.tsx";
-import { createPointLayer } from "./MapUtils.tsx";
+import { createPointLayer, createVectorLayer } from "./MapUtils.tsx";
 import "./map.css";
 
 const resolutions = [];
@@ -347,12 +347,13 @@ export const useMapComponent = ({
 
   // Ajout des couches disponibles depuis le serveur
   const availableLayers = useMemo(() => {
-    if (!layersState.data) {
+    if (!layersState.data || !map) {
       return [];
     }
     return layersState.data.map((group: any) => {
       return {
         libelle: group.libelle,
+        code: group.code,
         ordre: group.ordre,
         layers: group.layers.map((layer: any) => {
           let openlayer;
@@ -367,6 +368,17 @@ export const useMapComponent = ({
               renderBuffer: 100,
             });
             optimizeVectorLayer(openlayer);
+          } else if (layer.source === SOURCE_CARTO.GEOJSON) {
+            openlayer = createVectorLayer(
+              map,
+              (extent, projection) =>
+                layer.url +
+                `?bbox=` +
+                extent.join(",") +
+                "&srid=" +
+                projection.getCode(),
+              projection,
+            );
           } else {
             // Couche de tuiles (WMS, WMTS, OSM)
             openlayer = new TileLayer({
@@ -382,7 +394,6 @@ export const useMapComponent = ({
             map?.addLayer(openlayer);
             layerListRef.current?.addActiveLayer(getUid(openlayer));
           }
-
           return {
             ...layer,
             openlayer: openlayer,
@@ -390,7 +401,7 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, etudeId]);
+  }, [layersState.data, map, projection, etudeId]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {

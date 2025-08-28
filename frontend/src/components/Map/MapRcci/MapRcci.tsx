@@ -4,10 +4,10 @@ import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import { formatDate } from "../../../utils/formatDateUtils.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { createPointLayer } from "../MapUtils.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconRCCI } from "../../../components/Icon/Icon.tsx";
+import { CODE_COUCHE_RCCI } from "../../../utils/constantsUtils.tsx";
 import rcciIcon from "../../../img/rci.png";
 import rcciBeforeIcon from "../../../img/rci-before.png";
 import MapToolbarRcci, { useToolbarRcciContext } from "./MapToolbarRcci.tsx";
@@ -29,7 +29,6 @@ const MapRcci = () => {
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
-    projection,
   } = useMapComponent({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.RCI,
@@ -64,21 +63,16 @@ const MapRcci = () => {
     });
   };
 
-  useMemo(() => {
-    if (!map) {
+  dataRcciLayerRef.current = useMemo(() => {
+    if (!map || availableLayers.length === 0) {
       return;
     }
-    dataRcciLayerRef.current = createPointLayer(
-      map,
-      (extent, projection) =>
-        `/api/rcci/layer?bbox=` +
-        extent.join(",") +
-        "&srid=" +
-        projection.getCode(),
-      projection,
-      rcciStyle as unknown as Style,
-    );
-  }, [map, projection]);
+    const layer = availableLayers
+      .find((e) => e.code === CODE_COUCHE_RCCI)
+      .layers.find((e) => e.code === CODE_COUCHE_RCCI).openlayer;
+    layer.setStyle(rcciStyle);
+    return layer;
+  }, [map, availableLayers]);
 
   const {
     tools: extraTools,
@@ -114,7 +108,8 @@ const MapRcci = () => {
         toggleTool={toggleTool}
         activeTool={activeTool}
         toolbarElement={
-          mapToolbarRef.current && (
+          mapToolbarRef.current &&
+          dataRcciLayerRef.current && (
             <MapToolbarRcci
               map={map}
               toggleTool={toggleTool}

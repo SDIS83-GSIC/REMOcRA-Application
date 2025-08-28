@@ -105,13 +105,14 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     fun getLegende(idCouche: UUID): ByteArray? =
         dsl.select(COUCHE.LEGENDE).from(COUCHE).where(COUCHE.ID.eq(idCouche)).fetchOne(COUCHE.LEGENDE)
 
-    fun upsertGroupeCouche(couche: GroupeCouche): Int = with(dsl.newRecord(GROUPE_COUCHE, couche)) {
+    fun upsertGroupeCouche(groupeCouche: GroupeCouche): Int = with(dsl.newRecord(GROUPE_COUCHE, groupeCouche)) {
         return dsl
             .insertInto(GROUPE_COUCHE)
             .set(this)
             .onConflict()
             .doUpdate()
-            .set(this)
+            .set(GROUPE_COUCHE.ORDRE, groupeCouche.groupeCoucheOrdre)
+            .set(GROUPE_COUCHE.LIBELLE, groupeCouche.groupeCoucheLibelle)
             .execute()
     }
 

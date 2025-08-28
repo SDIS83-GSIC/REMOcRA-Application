@@ -8,5 +8,5 @@ data class GroupeCoucheData(
     val groupeCoucheLibelle: String,
     val groupeCoucheOrdre: Int,
     val coucheList: Collection<CoucheData> = listOf(),
-    val groupeCoucheProtected: Boolean,
+    val groupeCoucheProtected: Boolean = false,
 )

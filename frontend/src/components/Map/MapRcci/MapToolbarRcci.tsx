@@ -108,60 +108,11 @@ export const useToolbarRcciContext = ({
         });
     });
 
-    const moveCtrl = new Modify({
-      source: dataRcciLayerRef.current?.getSource(),
-    });
-    moveCtrl.on("modifyend", (event) => {
-      if (!event.features || event.features.getLength() !== 1) {
-        return;
-      }
-      event.features.forEach(async (feature) => {
-        (
-          await fetch(
-            url`/api/zone-integration/check`,
-            getFetchOptions({
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                geometry:
-                  "SRID=" +
-                  map.getView().getProjection().getCode().split(":").pop() +
-                  ";" +
-                  new WKT().writeFeature(feature),
-              }),
-            }),
-          )
-        )
-          .text()
-          .then((text) => {
-            if (text === "true") {
-              fetch(
-                url`/api/rcci/${feature.getProperties().elementId}/geometry`,
-                getFetchOptions({
-                  method: "PATCH",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    rcciId: feature.getProperties().elementId,
-                    rcciGeometrie: `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(feature)}`,
-                  }),
-                }),
-              ).then((res) => {
-                if (res.status === 200) {
-                  refreshLayerGeoserver(map);
-                  successToast("Géométrie modifiée");
-                }
-              });
-            } else {
-              workingLayer.getSource().removeFeature(event.feature);
-              errorToast(text);
-            }
-          })
-          .catch((reason) => {
-            workingLayer.getSource().removeFeature(event.feature);
-            errorToast(reason);
-          });
-      });
-    });
+    let moveCtrl = dataRcciLayerRef.current
+      ? new Modify({
+          source: dataRcciLayerRef.current.getSource(),
+        })
+      : undefined;
 
     function toggleCreate(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(createCtrl);
@@ -174,32 +125,46 @@ export const useToolbarRcciContext = ({
       }
     }
 
-    const deleteCtrl = new Select({
-      layers: [dataRcciLayerRef.current],
-    });
-    deleteCtrl.on("select", function (evt) {
-      if (!evt.selected || evt.selected.length !== 1) {
-        return;
-      }
-      evt.selected.forEach(async function (feature) {
-        deleteShow(feature.getProperties().elementId);
-      });
-    });
+    let deleteCtrl = dataRcciLayerRef.current
+      ? new Select({
+          layers: [dataRcciLayerRef.current],
+        })
+      : undefined;
 
-    const editCtrl = new Select({
-      layers: [dataRcciLayerRef.current],
-    });
-    editCtrl.on("select", function (evt) {
-      if (!evt.selected || evt.selected.length !== 1) {
-        return;
-      }
-      evt.selected.forEach(async function (feature) {
-        rcciIdRef.current = feature.getProperties().elementId;
-        editShow();
-      });
-    });
+    let editCtrl = dataRcciLayerRef.current
+      ? new Select({
+          layers: [dataRcciLayerRef.current],
+        })
+      : undefined;
 
     function toggleEdit(active = false) {
+      if (!editCtrl) {
+        editCtrl = dataRcciLayerRef.current
+          ? new Select({
+              layers: [dataRcciLayerRef.current],
+            })
+          : undefined;
+      }
+
+      if (!editCtrl || !map) {
+        return;
+      }
+
+      const hasSelectListener =
+        (editCtrl?.getListeners("select")?.length ?? 0) > 0;
+
+      if (!hasSelectListener) {
+        editCtrl?.on("select", function (evt) {
+          if (!evt.selected || evt.selected.length !== 1) {
+            return;
+          }
+          evt.selected.forEach(async function (feature) {
+            rcciIdRef.current = feature.getProperties().elementId;
+            editShow();
+          });
+        });
+      }
+
       const idx = map?.getInteractions().getArray().indexOf(editCtrl);
       if (active) {
         if (idx === -1) {
@@ -209,7 +174,33 @@ export const useToolbarRcciContext = ({
         map.removeInteraction(editCtrl);
       }
     }
+
     function toggleDelete(active = false) {
+      if (!deleteCtrl) {
+        deleteCtrl = dataRcciLayerRef.current
+          ? new Select({
+              layers: [dataRcciLayerRef.current],
+            })
+          : undefined;
+      }
+      if (!deleteCtrl || !map) {
+        return;
+      }
+
+      const hasSelectListener =
+        (deleteCtrl?.getListeners("select")?.length ?? 0) > 0;
+
+      if (!hasSelectListener) {
+        deleteCtrl?.on("select", function (evt) {
+          if (!evt.selected || evt.selected.length !== 1) {
+            return;
+          }
+          evt.selected.forEach(async function (feature) {
+            deleteShow(feature.getProperties().elementId);
+          });
+        });
+      }
+
       const idx = map?.getInteractions().getArray().indexOf(deleteCtrl);
       if (active) {
         if (idx === -1) {
@@ -220,7 +211,75 @@ export const useToolbarRcciContext = ({
       }
     }
     function toggleMove(active = false) {
-      const idx = map?.getInteractions().getArray().indexOf(moveCtrl);
+      if (!moveCtrl) {
+        moveCtrl = dataRcciLayerRef.current
+          ? new Modify({
+              source: dataRcciLayerRef.current.getSource(),
+            })
+          : undefined;
+      }
+
+      if (!moveCtrl || !map) {
+        return;
+      }
+
+      const hasModifyEndListener =
+        (moveCtrl?.getListeners("modifyend")?.length ?? 0) > 0;
+
+      if (!hasModifyEndListener) {
+        moveCtrl?.on("modifyend", (event) => {
+          if (!event.features || event.features.getLength() !== 1) {
+            return;
+          }
+          event.features.forEach(async (feature) => {
+            (
+              await fetch(
+                url`/api/zone-integration/check`,
+                getFetchOptions({
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    geometry:
+                      "SRID=" +
+                      map.getView().getProjection().getCode().split(":").pop() +
+                      ";" +
+                      new WKT().writeFeature(feature),
+                  }),
+                }),
+              )
+            )
+              .text()
+              .then((text) => {
+                if (text === "true") {
+                  fetch(
+                    url`/api/rcci/${feature.getProperties().elementId}/geometry`,
+                    getFetchOptions({
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        rcciId: feature.getProperties().elementId,
+                        rcciGeometrie: `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(feature)}`,
+                      }),
+                    }),
+                  ).then((res) => {
+                    if (res.status === 200) {
+                      refreshLayerGeoserver(map);
+                      successToast("Géométrie modifiée");
+                    }
+                  });
+                } else {
+                  workingLayer.getSource().removeFeature(event.feature);
+                  errorToast(text);
+                }
+              })
+              .catch((reason) => {
+                workingLayer.getSource().removeFeature(event.feature);
+                errorToast(reason);
+              });
+          });
+        });
+      }
+      const idx = map.getInteractions().getArray().indexOf(moveCtrl);
       if (active) {
         desactiveMoveMap(map);
         if (idx === -1) {
@@ -248,7 +307,7 @@ export const useToolbarRcciContext = ({
     };
 
     return tools;
-  }, [map]);
+  }, [map, dataRcciLayerRef.current, workingLayer]);
 
   return {
     tools,

@@ -72,6 +72,19 @@ export function createPointLayer(
   projection: { name: string },
   style?: Style,
 ) {
+  const dl = createVectorLayer(map, urlApi, projection, style);
+
+  map.addLayer(dl);
+
+  return dl;
+}
+
+export function createVectorLayer(
+  map: Map,
+  urlApi: (extent, projection) => string,
+  projection: { name: string },
+  style?: Style,
+) {
   const vectorSource = toOpenLayer({
     source: SOURCE_CARTO.GEOJSON,
     loader: async (
@@ -86,7 +99,6 @@ export function createPointLayer(
           url`${urlApi(extent, projection)}`,
           getFetchOptions({ method: "GET" }),
         );
-
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
         }
@@ -144,11 +156,7 @@ export function createPointLayer(
     updateWhileInteracting: false,
     renderBuffer: 100,
   });
-
   optimizeVectorLayer(dl);
-
-  map.addLayer(dl);
-
   return dl;
 }
 
