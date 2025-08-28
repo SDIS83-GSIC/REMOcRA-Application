@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import { Map } from "ol";
 import { ReactNode, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -17,6 +18,7 @@ import {
   IconOverview,
   IconVisite,
 } from "../../components/Icon/Icon.tsx";
+import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import DeleteModal from "../../components/Modal/DeleteModal.tsx";
 import useModal from "../../components/Modal/ModalUtils.tsx";
 import { hasDroit } from "../../droits.tsx";
@@ -38,9 +40,11 @@ import VisiteForm, {
 const Visite = ({
   peiIdCarte,
   closeForm,
+  map,
 }: {
   peiIdCarte?: string;
   closeForm: () => void;
+  map?: Map;
 }) => {
   const { peiId: paramPeiId } = useParams();
   const peiId = peiIdCarte ?? paramPeiId;
@@ -218,6 +222,11 @@ const Visite = ({
             listeVisite={listeVisite}
             typePei={typePei}
             user={user!}
+            onSubmit={() => {
+              refreshLayerGeoserver(map);
+              setNewVisite(false);
+              visiteInformations.reload();
+            }}
           />
         )}
         <Col xs={peiIdCarte ? "12" : "5"} className="mt-3">
@@ -308,6 +317,10 @@ const Visite = ({
             listeVisite={listeVisite}
             typePei={typePei}
             user={user!}
+            onSubmit={() => {
+              setNewVisite(false);
+              visiteInformations.reload();
+            }}
           />
         )}
         {/* Visualisation d'une visite déja existante */}
@@ -336,6 +349,7 @@ const CreateVisite = ({
   listeVisite,
   typePei,
   user,
+  onSubmit,
 }: {
   peiIdCarte: string | undefined;
   listeAnomaliesAssignable: any;
@@ -344,6 +358,7 @@ const CreateVisite = ({
   listeVisite: any;
   typePei: any;
   user: UtilisateurEntity;
+  onSubmit: () => void;
 }) => {
   return (
     <Col xs={peiIdCarte ? "12" : "7"}>
@@ -359,7 +374,7 @@ const CreateVisite = ({
           isPost={false}
           submitUrl={`/api/visite/createVisite`}
           prepareVariables={(values) => prepareVariables(values)}
-          onSubmit={() => window.location.reload()}
+          onSubmit={() => onSubmit()}
         >
           <VisiteForm
             nbVisite={listeVisite.length}

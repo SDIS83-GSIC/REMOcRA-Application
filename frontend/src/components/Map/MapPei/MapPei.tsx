@@ -265,6 +265,7 @@ const MapPei = () => {
                 closeForm={() =>
                   setShowFormVisite({ show: false, peiId: null })
                 }
+                map={map}
               />
             </div>
           </Col>
