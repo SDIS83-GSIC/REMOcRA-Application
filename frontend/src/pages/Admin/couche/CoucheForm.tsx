@@ -25,6 +25,7 @@ import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
 import url from "../../../module/fetch.tsx";
 
 type CoucheType = {
+  coucheProtected: boolean;
   coucheId?: string;
   coucheCode: string;
   coucheLibelle: string;
@@ -52,6 +53,7 @@ type GroupeCoucheType = {
   groupeCoucheLibelle: string;
   groupeCoucheOrdre: number;
   coucheList: CoucheType[];
+  groupeCoucheProtected: boolean;
 };
 
 type CoucheFormType = {
@@ -172,6 +174,7 @@ const CoucheForm = () => {
           <Col xs={4}>
             <TextInput
               name={`groupeCoucheList.${index}.groupeCoucheCode`}
+              disabled={group.groupeCoucheProtected}
               value={group.groupeCoucheCode}
               label={"Code"}
               placeholder={"Code"}
@@ -236,6 +239,7 @@ const CoucheForm = () => {
                         <Col xs={12} lg={6} xxl={4}>
                           <TextInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheCode`}
+                            disabled={couche.coucheProtected}
                             value={couche.coucheCode}
                             label={"Code"}
                             placeholder={"Code"}
@@ -268,6 +272,7 @@ const CoucheForm = () => {
                         <Col xs={12} lg={6} xxl={4}>
                           <SelectInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheSource`}
+                            disabled={couche.coucheProtected}
                             label="Source"
                             options={typeSourceCarto}
                             getOptionValue={(t) => t.id}
@@ -288,6 +293,7 @@ const CoucheForm = () => {
                         <Col xs={12} lg={6} xxl={4}>
                           <TextInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheUrl`}
+                            disabled={couche.coucheProtected}
                             value={couche.coucheUrl}
                             label={"URL"}
                             placeholder={"URL"}
@@ -295,37 +301,38 @@ const CoucheForm = () => {
                           />
                         </Col>
 
-                        {couche.coucheSource !== SOURCE_CARTO.OSM && (
-                          <>
-                            <Col xs={12} lg={6} xxl={4}>
-                              <TextInput
-                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheNom`}
-                                value={couche.coucheNom}
-                                label={"Nom"}
-                                placeholder={"Nom"}
-                                required={true}
-                              />
-                            </Col>
-                            <Col xs={12} lg={6} xxl={4}>
-                              <TextInput
-                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProjection`}
-                                value={couche.coucheProjection}
-                                label={"Projection"}
-                                placeholder={"Projection"}
-                                required={true}
-                              />
-                            </Col>
-                            <Col xs={12} lg={6} xxl={4}>
-                              <TextInput
-                                name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheFormat`}
-                                value={couche.coucheFormat}
-                                label={"Format"}
-                                placeholder={"Format"}
-                                required={true}
-                              />
-                            </Col>
-                          </>
-                        )}
+                        {couche.coucheSource !== SOURCE_CARTO.OSM &&
+                          couche.coucheProtected === false && (
+                            <>
+                              <Col xs={12} lg={6} xxl={4}>
+                                <TextInput
+                                  name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheNom`}
+                                  value={couche.coucheNom}
+                                  label={"Nom"}
+                                  placeholder={"Nom"}
+                                  required={true}
+                                />
+                              </Col>
+                              <Col xs={12} lg={6} xxl={4}>
+                                <TextInput
+                                  name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProjection`}
+                                  value={couche.coucheProjection}
+                                  label={"Projection"}
+                                  placeholder={"Projection"}
+                                  required={true}
+                                />
+                              </Col>
+                              <Col xs={12} lg={6} xxl={4}>
+                                <TextInput
+                                  name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheFormat`}
+                                  value={couche.coucheFormat}
+                                  label={"Format"}
+                                  placeholder={"Format"}
+                                  required={true}
+                                />
+                              </Col>
+                            </>
+                          )}
                         {(couche.coucheSource === SOURCE_CARTO.WMTS ||
                           couche.coucheSource === SOURCE_CARTO.OSM) && (
                           <Col xs={12} lg={6} xxl={4}>
@@ -535,10 +542,12 @@ const CoucheForm = () => {
                             </Col>
                           </Row>
                         </Col>
+
                         <Row className="m-3">
                           <Col className="text-center">
                             <DeleteButton
                               onClick={() => arrayHelpers2.remove(groupIndex)}
+                              disabled={couche.coucheProtected}
                               title={"Supprimer la couche"}
                             />
                           </Col>
@@ -575,6 +584,7 @@ const CoucheForm = () => {
                   >
                     <Button
                       variant="link"
+                      disabled={group.groupeCoucheProtected}
                       className={"text-danger"}
                       onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
                     >
@@ -583,6 +593,7 @@ const CoucheForm = () => {
                   </ListGroup.Item>
                 </ListGroup>
               </Col>
+
               <Col xs={"auto"}>
                 <FieldArray
                   name={`groupeCoucheList.${index}.coucheList`}
