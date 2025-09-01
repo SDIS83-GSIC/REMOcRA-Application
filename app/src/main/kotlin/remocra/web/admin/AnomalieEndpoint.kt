@@ -46,7 +46,12 @@ class AnomalieEndpoint : AbstractEndpoint() {
     @Path("/list")
     @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun list(): Response {
-        val anomaliePoidsList = anomalieRepository.getAllAnomaliePoidsForAdmin().groupBy { it.poidsAnomalieAnomalieId }
+        // Liste des types visite trié dans l'ordre du workflow REMOcRA
+        val ordreTypeVisite = listOf(TypeVisite.RECEPTION, TypeVisite.RECO_INIT, TypeVisite.CTP, TypeVisite.ROP, TypeVisite.NP)
+        val anomaliePoidsList = anomalieRepository.getAllAnomaliePoidsForAdmin().map { poidsAnomalie ->
+            val sortedTypes = poidsAnomalie.poidsAnomalieTypeVisite?.sortedBy { ordreTypeVisite.indexOf(it) }?.toTypedArray()
+            poidsAnomalie.copy(poidsAnomalieTypeVisite = sortedTypes)
+        }.groupBy { it.poidsAnomalieAnomalieId }
         return Response.ok(
             object {
                 val anomalieList = anomalieRepository.getAllForAdmin()
