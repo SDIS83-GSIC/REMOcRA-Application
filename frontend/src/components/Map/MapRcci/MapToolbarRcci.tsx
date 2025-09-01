@@ -1,11 +1,9 @@
-import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
-import { DragBox, Draw, Modify, Select } from "ol/interaction";
+import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import { Stroke, Style } from "ol/style";
-import CircleStyle from "ol/style/Circle";
 import { MutableRefObject, useMemo, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
+import { Map } from "ol";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
@@ -23,7 +21,6 @@ import {
   IconEdit,
   IconHide,
   IconMoveObjet,
-  IconSelect,
 } from "../../Icon/Icon.tsx";
 import DeleteModal from "../../Modal/DeleteModal.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
@@ -60,41 +57,6 @@ export const useToolbarRcciContext = ({
     if (!map) {
       return {};
     }
-
-    const selectCtrl = new Select({
-      style: new Style({
-        image: new CircleStyle({
-          radius: 16,
-          stroke: new Stroke({
-            color: "rgba(255, 0, 0, 0.7)",
-            width: 4,
-          }),
-        }),
-      }),
-      toggleCondition: platformModifierKeyOnly,
-      hitTolerance: 4,
-    });
-    const dragBoxCtrl = new DragBox({
-      style: new Style({
-        stroke: new Stroke({
-          color: [0, 0, 255, 1],
-        }),
-      }),
-      minArea: 25,
-    });
-
-    dragBoxCtrl.on("boxend", (e) => {
-      if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
-        selectCtrl.getFeatures().clear();
-      }
-      const boxExtent = dragBoxCtrl.getGeometry().getExtent();
-
-      const boxFeatures = dataRcciLayerRef.current
-        ?.getSource()
-        .getFeaturesInExtent(boxExtent);
-
-      selectCtrl.getFeatures().extend(boxFeatures);
-    });
 
     const createCtrl = new Draw({
       source: workingLayer.getSource(),
@@ -201,20 +163,6 @@ export const useToolbarRcciContext = ({
       });
     });
 
-    function toggleSelect(active = false) {
-      const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
-      const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
-      if (active) {
-        if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(selectCtrl);
-          map.addInteraction(dragBoxCtrl);
-        }
-      } else {
-        map.removeInteraction(selectCtrl);
-        map.removeInteraction(dragBoxCtrl);
-      }
-    }
-
     function toggleCreate(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(createCtrl);
       if (active) {
@@ -284,10 +232,6 @@ export const useToolbarRcciContext = ({
     }
 
     const tools = {
-      "select-rcci": {
-        action: toggleSelect,
-        actionPossibleEnDeplacement: false,
-      },
       "create-rcci": {
         action: toggleCreate,
       },
@@ -368,13 +312,6 @@ const MapToolbarRcci = ({
         <VoletButtonListeDocumentThematique
           codeThematique={THEMATIQUE.RCI}
           titreVolet="Liste des documents liés aux RCCI"
-        />
-        <ToolbarButton
-          toolName={"select-rcci"}
-          toolIcon={<IconSelect />}
-          toolLabelTooltip={"Sélectionner"}
-          toggleTool={toggleToolCallback}
-          activeTool={activeTool}
         />
       </ButtonGroup>
       {hasDroit(user, TYPE_DROIT.RCCI_A) && (
