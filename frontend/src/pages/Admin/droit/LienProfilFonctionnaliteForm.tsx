@@ -45,24 +45,50 @@ const LienProfilFonctionnaliteForm = () => {
   const { profilOrganismeList, profilUtilisateurList, profilDroitList } =
     lienProfilFonctionnaliteReferentielState.data;
 
+  const profilOrganismeCodeLibelleList = profilOrganismeList.map((o) => {
+    return {
+      id: o.profilOrganismeId,
+      libelle: o.profilOrganismeLibelle,
+    };
+  });
+
+  const profilUtilisateCodeLibelleList = profilUtilisateurList
+    .filter(
+      (u) =>
+        u.profilUtilisateurTypeOrganismeId ===
+        profilOrganismeList.find(
+          (p) => p.profilOrganismeId === values.profilOrganismeId,
+        )?.profilOrganismeTypeOrganismeId,
+    )
+    .map((u) => {
+      return {
+        id: u.profilUtilisateurId,
+        libelle: u.profilUtilisateurLibelle,
+      };
+    });
+
+  const profilDroitCodeLibelleList = profilDroitList.map((d) => {
+    return {
+      id: d.profilDroitId,
+      libelle: d.profilDroitLibelle,
+    };
+  });
+
   return (
     <FormContainer>
       <SelectForm
         name={"profilOrganismeId"}
-        listIdCodeLibelle={profilOrganismeList.map((o) => {
-          return {
-            id: o.profilOrganismeId,
-            libelle: o.profilOrganismeLibelle,
-          };
-        })}
-        defaultValue={{ id: values.profilOrganismeId }}
+        listIdCodeLibelle={profilOrganismeCodeLibelleList}
+        defaultValue={profilOrganismeCodeLibelleList.find(
+          (e) => e.id === values.profilOrganismeId,
+        )}
         label={"Profil organisme"}
         setValues={setValues}
         required={true}
         onChange={(e) => {
-          setFieldValue("profilOrganismeId", e.target.value);
+          setFieldValue("profilOrganismeId", e?.id);
           const newValue = profilOrganismeList.find(
-            (p) => p.profilOrganismeId === e.target.value,
+            (p) => p.profilOrganismeId === e?.id,
           );
           const currentUtilisateur = profilUtilisateurList.find(
             (u) => u.profilUtilisateurId === values.profilUtilisateurId,
@@ -79,34 +105,20 @@ const LienProfilFonctionnaliteForm = () => {
       />
       <SelectForm
         name={"profilUtilisateurId"}
-        listIdCodeLibelle={profilUtilisateurList
-          .filter(
-            (u) =>
-              u.profilUtilisateurTypeOrganismeId ===
-              profilOrganismeList.find(
-                (p) => p.profilOrganismeId === values.profilOrganismeId,
-              )?.profilOrganismeTypeOrganismeId,
-          )
-          .map((u) => {
-            return {
-              id: u.profilUtilisateurId,
-              libelle: u.profilUtilisateurLibelle,
-            };
-          })}
-        defaultValue={{ id: values.profilUtilisateurId }}
+        listIdCodeLibelle={profilUtilisateCodeLibelleList}
+        defaultValue={profilUtilisateCodeLibelleList.find(
+          (e) => e.id === values.profilUtilisateurId,
+        )}
         label={"Profil utilisateur"}
         setValues={setValues}
         required={true}
       />
       <SelectForm
         name={"profilDroitId"}
-        listIdCodeLibelle={profilDroitList.map((d) => {
-          return {
-            id: d.profilDroitId,
-            libelle: d.profilDroitLibelle,
-          };
-        })}
-        defaultValue={{ id: values.profilDroitId }}
+        listIdCodeLibelle={profilDroitCodeLibelleList}
+        defaultValue={profilDroitCodeLibelleList.find(
+          (e) => e.id === values.profilDroitId,
+        )}
         label={"Profil droit"}
         setValues={setValues}
         required={true}
