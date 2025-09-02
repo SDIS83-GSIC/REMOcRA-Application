@@ -149,9 +149,9 @@ const ElementResumeAnomalie = ({
   }[];
 }) => {
   return value.length > 0 ? (
-    <Row>
+    <>
       {value.map((e, key) => (
-        <Col
+        <Row
           key={key}
           className={classNames(
             e.valIndispoTerrestre === 5 && "fw-bold",
@@ -159,9 +159,9 @@ const ElementResumeAnomalie = ({
           )}
         >
           {e.anomalieLibelle}
-        </Col>
+        </Row>
       ))}{" "}
-    </Row>
+    </>
   ) : (
     "Aucune anomalie pour ce PEI."
   );
