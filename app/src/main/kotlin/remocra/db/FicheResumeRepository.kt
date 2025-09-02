@@ -87,6 +87,18 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             PIBI.DIAMETRE_CANALISATION,
             PIBI.DEBIT_RENFORCE,
             pibiJumeleTable.NUMERO_COMPLET.`as`("pibiJumele"),
+            DSL.case_()
+                .`when`(
+                    (
+                        NATURE.CODE.eq(GlobalConstants.NATURE_PI)
+                            .and(DIAMETRE.CODE.eq(GlobalConstants.DIAMETRE_150))
+                        )
+                        .or(
+                            NATURE.CODE.eq(GlobalConstants.NATURE_BI).and(PIBI.JUMELE_ID.isNotNull),
+                        ),
+                    DSL.`val`(true),
+                )
+                .otherwise(false).`as`("grosDebit"),
             PENA.CAPACITE,
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
@@ -156,6 +168,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val gestionnaireId: UUID?,
         val gestionnaireLibelle: String?,
         val siteLibelle: String?,
+        val grosDebit: Boolean,
     )
 
     fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(

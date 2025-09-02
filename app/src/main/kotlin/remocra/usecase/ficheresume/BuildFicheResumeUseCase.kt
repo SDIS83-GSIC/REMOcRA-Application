@@ -108,6 +108,14 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                             peiData.pibiJumele?.let { jumele ->
                                 "$it\n Jumelé avec : $jumele"
                             }
+                            it
+                        }.let {
+                            peiData.grosDebit.let { grosDebit ->
+                                if (grosDebit) {
+                                    "$it\n Gros débit"
+                                }
+                                it
+                            }
                         }
                     } else {
                         """

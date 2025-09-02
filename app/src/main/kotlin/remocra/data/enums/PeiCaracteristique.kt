@@ -20,6 +20,7 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCar
     DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracterique.PIBI),
     DEBIT("Débit", TypeCaracterique.PIBI),
     JUMELE("Jumelé", TypeCaracterique.PIBI),
+    GROS_DEBIT("Gros débit", TypeCaracterique.PIBI),
 
     // PENA
     CAPACITE("Capacité", TypeCaracterique.PENA),

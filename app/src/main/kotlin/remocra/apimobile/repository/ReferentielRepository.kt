@@ -291,6 +291,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     ): SelectOnConditionStep<Record?> {
         var onClause = onClause
         var jointureNature = false
+        var jointureDiametre = false
         for (caracteristique in selectedFields) {
             when (caracteristique) {
                 PeiCaracteristique.NATURE_PEI -> if (!jointureNature) {
@@ -323,11 +324,13 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                         onClause.leftJoin(maintenanceCtp).on(PEI.MAINTENANCE_DECI_ID.eq(maintenanceCtp.ID))
                 }
 
-                PeiCaracteristique.DIAMETRE_NOMINAL ->
+                PeiCaracteristique.DIAMETRE_NOMINAL -> if (!jointureDiametre) {
                     onClause =
                         onClause
                             .innerJoin(DIAMETRE)
                             .on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
+                    jointureDiametre = true
+                }
 
                 PeiCaracteristique.TYPE_PEI -> if (!jointureNature) {
                     onClause =
@@ -336,6 +339,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                             .on(PEI.NATURE_ID.eq(NATURE.ID))
                     jointureNature = true
                 }
+
                 PeiCaracteristique.COMPLEMENT -> Unit
                 PeiCaracteristique.DATE_RECEPTION -> {
                     onClause =
@@ -343,12 +347,14 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                             .leftJoin(V_PEI_VISITE_DATE)
                             .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
                 }
+
                 PeiCaracteristique.DEBIT -> {
                     onClause =
                         onClause
                             .leftJoin(V_PEI_LAST_MESURES)
                             .on(V_PEI_LAST_MESURES.PEI_ID.eq(PEI.ID))
                 }
+
                 PeiCaracteristique.CAPACITE -> Unit
                 PeiCaracteristique.NUMERO_COMPLET -> Unit
                 PeiCaracteristique.JUMELE -> {
@@ -356,6 +362,23 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                         onClause
                             .leftJoin(pibiJumeleTable)
                             .on(pibiJumeleTable.ID.eq(PIBI.JUMELE_ID))
+                }
+                PeiCaracteristique.GROS_DEBIT -> {
+                    if (!jointureNature) {
+                        onClause =
+                            onClause
+                                .innerJoin(NATURE)
+                                .on(PEI.NATURE_ID.eq(NATURE.ID))
+                        jointureNature = true
+                    }
+
+                    if (!jointureDiametre) {
+                        onClause =
+                            onClause
+                                .innerJoin(DIAMETRE)
+                                .on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
+                        jointureDiametre = true
+                    }
                 }
             }
         }
@@ -386,6 +409,21 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             PeiCaracteristique.DEBIT -> return V_PEI_LAST_MESURES.DEBIT
             PeiCaracteristique.NUMERO_COMPLET -> return PEI.NUMERO_COMPLET
             PeiCaracteristique.JUMELE -> return pibiJumeleTable.NUMERO_COMPLET
+            PeiCaracteristique.GROS_DEBIT -> {
+                val caseExpression = DSL.case_()
+                    .`when`(
+                        (
+                            NATURE.CODE.eq(GlobalConstants.NATURE_PI)
+                                .and(DIAMETRE.CODE.eq(GlobalConstants.DIAMETRE_150))
+                            )
+                            .or(
+                                NATURE.CODE.eq(GlobalConstants.NATURE_BI).and(PIBI.JUMELE_ID.isNotNull),
+                            ),
+                        DSL.`val`("Oui"),
+                    )
+                    .otherwise(DSL.`val`("Non"))
+                return caseExpression
+            }
         }
     }
 }
