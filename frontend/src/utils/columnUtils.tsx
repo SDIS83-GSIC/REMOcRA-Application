@@ -545,7 +545,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
 
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.LIST_PEI:
         column.push({
-          Header: "PEI concerné",
+          Header: "PEI concernés",
           accessor: "listeNumeroPei",
           sortField: "listeNumeroPei",
           Filter: (
