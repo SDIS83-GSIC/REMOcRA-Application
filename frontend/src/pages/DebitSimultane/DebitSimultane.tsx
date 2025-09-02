@@ -224,7 +224,7 @@ const ComposantToRepeat = ({
                   e.id ===
                   listeElements[
                     index
-                  ].debitSimultaneMesureDebitRetenu.toString(),
+                  ].debitSimultaneMesureDebitRetenu?.toString(),
               )}
               onChange={(e) => {
                 setFieldValue(
