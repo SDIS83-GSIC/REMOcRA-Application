@@ -339,7 +339,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                     .sub(field("INTERVAL '$delta minute'", String::class.java))
                     .lessThan(dateUtils.now()),
             )
-            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()))
+            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull))
             .fetchInto()
 
     fun setNotificationDebut(dateNotification: ZonedDateTime) =
