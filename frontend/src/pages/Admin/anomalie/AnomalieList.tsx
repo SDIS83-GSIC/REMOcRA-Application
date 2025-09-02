@@ -154,16 +154,16 @@ const AnomalieList = () => {
                           .map((ap) =>
                             ap.poidsAnomalieTypeVisite?.length > 0 ? (
                               <TooltipCustom
-                                key={ap.anomaliePoidsId}
-                                tooltipId={ap.anomaliePoidsId}
+                                key={ap.poidsAnomalieId}
+                                tooltipId={ap.poidsAnomalieId}
                                 tooltipHeader={"Types de visite"}
                                 tooltipText={ap.poidsAnomalieTypeVisite.join(
                                   ", ",
                                 )}
                               >
-                                {ap.poidsAnomalieValIndispoTerrestre || "-"}
+                                {ap.poidsAnomalieValIndispoTerrestre ?? "-"}
                                 &nbsp;/&nbsp;
-                                {ap.poidsAnomalieValIndispoHbe || "-"}
+                                {ap.poidsAnomalieValIndispoHbe ?? "-"}
                                 &nbsp;
                                 <Badge bg="primary" pill={true}>
                                   {ap.poidsAnomalieTypeVisite.length}
@@ -171,9 +171,9 @@ const AnomalieList = () => {
                               </TooltipCustom>
                             ) : (
                               <>
-                                {ap.poidsAnomalieValIndispoTerrestre || "-"}
+                                {ap.poidsAnomalieValIndispoTerrestre ?? "-"}
                                 &nbsp;/&nbsp;
-                                {ap.poidsAnomalieValIndispoHbe || "-"}
+                                {ap.poidsAnomalieValIndispoHbe ?? "-"}
                               </>
                             ),
                           )}
