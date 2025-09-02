@@ -85,6 +85,10 @@ const ListEtude = () => {
       pathname: url`/api/couverture-hydraulique/etude/clore/`,
       icon: <IconClose />,
       classEnable: "danger",
+      confirmModal: {
+        header: "Clore l'étude",
+        content: "Voulez-vous continuer ? ",
+      },
     });
   }
   if (hasDroit(user, TYPE_DROIT.ETUDE_U)) {
