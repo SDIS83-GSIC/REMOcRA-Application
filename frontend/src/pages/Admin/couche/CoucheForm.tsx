@@ -538,9 +538,7 @@ const CoucheForm = () => {
                         <Row className="m-3">
                           <Col className="text-center">
                             <DeleteButton
-                              onClick={() => {
-                                arrayHelpers2.remove(index);
-                              }}
+                              onClick={() => arrayHelpers2.remove(groupIndex)}
                               title={"Supprimer la couche"}
                             />
                           </Col>
