@@ -202,7 +202,7 @@ export const CheckBoxInput = ({
   return (
     <DivWithError name={name} error={error}>
       <Field
-        id={id ?? name }
+        id={id ?? name}
         name={name}
         type="checkbox"
         disabled={disabled}
