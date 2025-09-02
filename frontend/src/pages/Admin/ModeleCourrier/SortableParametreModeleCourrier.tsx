@@ -123,8 +123,7 @@ const SortableParametreModeleCourrier: FC<SortableParametre> = ({
             onChange={(e) => {
               setFieldValue(
                 `listeModeleCourrierParametre[${index}].modeleCourrierParametreType`,
-                listeTypeParametre.find((type) => type.id === e.target.value)
-                  ?.id,
+                listeTypeParametre.find((type) => type.id === e?.id)?.id,
               );
 
               setFieldValue(
@@ -134,7 +133,7 @@ const SortableParametreModeleCourrier: FC<SortableParametre> = ({
 
               // Si c'est un select input et que les champs début de requête et fin ne sont pas initialisés, on les initialise
               if (
-                TYPE_PARAMETRE_RAPPORT_COURRIER[e.target.value] ===
+                TYPE_PARAMETRE_RAPPORT_COURRIER[e?.id] ===
                   TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT &&
                 (listeElements[index].modeleCourrierParametreSourceSqlDebut ==
                   null ||
