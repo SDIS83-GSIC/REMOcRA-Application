@@ -376,8 +376,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
             }
             .where(params.filterBy?.takeIf { it.type != null }?.toCondition() ?: DSL.trueCondition())
             .orderBy(
-                params.sortBy?.takeIf { it.type != null }?.toCondition()
-                    ?: listOf(getCodeField(type)),
+                params.sortBy?.takeIf { it.type != null }?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(getCodeField(type)),
             ).limit(params.limit).offset(params.offset)
             .fetchInto<NomenclatureCodeLibelleData>().map { nomenc ->
                 nomenc.copy(tablesDependantes = canDelete(type, nomenc.id))
