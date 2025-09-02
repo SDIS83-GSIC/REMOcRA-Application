@@ -72,37 +72,40 @@ const ListSite = () => {
     <>
       <Container>
         <PageTitle icon={<IconList />} title={"Sites"} />
-
-        <AccordionCustom
-          activesKeys={activesKeys}
-          handleShowClose={handleShowClose}
-          list={[
-            {
-              header: "Importer des sites ",
-              content: (
-                <>
-                  <p>
-                    Permet d&apos;importer un fichier SHAPE contenant des sites
-                    ; l&apos;identification se fait sur le code, avec un
-                    mécanisme d&apos;insertion / mise à jour.
-                  </p>
-                  <MyFormik
-                    initialValues={getInitialValues()}
-                    validationSchema={validationSchema}
-                    isPost={false}
-                    isMultipartFormData={true}
-                    submitUrl={`/api/site/import/`}
-                    prepareVariables={(values) => prepareVariables(values)}
-                    redirectUrl={URLS.LIST_SITE}
-                  >
-                    <FormImportShape />
-                  </MyFormik>
-                </>
-              ),
-            },
-          ]}
-        />
-        <br />
+        {hasDroit(user, TYPE_DROIT.GEST_SITE_A) && (
+          <>
+            <AccordionCustom
+              activesKeys={activesKeys}
+              handleShowClose={handleShowClose}
+              list={[
+                {
+                  header: "Importer des sites ",
+                  content: (
+                    <>
+                      <p>
+                        Permet d&apos;importer un fichier SHAPE contenant des
+                        sites ; l&apos;identification se fait sur le code, avec
+                        un mécanisme d&apos;insertion / mise à jour.
+                      </p>
+                      <MyFormik
+                        initialValues={getInitialValues()}
+                        validationSchema={validationSchema}
+                        isPost={false}
+                        isMultipartFormData={true}
+                        submitUrl={`/api/site/import/`}
+                        prepareVariables={(values) => prepareVariables(values)}
+                        redirectUrl={URLS.LIST_SITE}
+                      >
+                        <FormImportShape />
+                      </MyFormik>
+                    </>
+                  ),
+                },
+              ]}
+            />
+            <br />
+          </>
+        )}
 
         <QueryTable
           query={url`/api/site`}
