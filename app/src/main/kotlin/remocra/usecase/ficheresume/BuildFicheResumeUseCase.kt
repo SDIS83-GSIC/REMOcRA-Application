@@ -104,9 +104,9 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                                Diamètre : ${peiData.diametreLibelle.takeIfNotNullElseNonRenseigne()}
                                Diamètre de canalisation : ${peiData.pibiDiametreCanalisation?.toString()?.takeIfNotNullElseNonRenseigne()}
                                Débit renforcé : ${if (peiData.pibiDebitRenforce == true) "Oui" else "Non"}
-                        """.trimIndent().apply {
+                        """.trimIndent().let {
                             peiData.pibiJumele?.let { jumele ->
-                                this.plus("\n Jumelé avec : $jumele")
+                                "$it\n Jumelé avec : $jumele"
                             }
                         }
                     } else {

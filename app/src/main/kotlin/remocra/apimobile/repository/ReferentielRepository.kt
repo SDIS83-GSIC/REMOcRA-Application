@@ -42,6 +42,11 @@ import java.util.UUID
 import java.util.stream.Collectors
 
 class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+
+    companion object {
+        val pibiJumeleTable = PEI.`as`("PIBI_JUMELE")
+    }
+
     fun getPeiList(): List<PeiForApiMobileData> {
         val X = DSL.field("round(st_x({0})::numeric, 2)", PEI.GEOMETRIE).`as`("x")
         val Y = DSL.field("round(st_y({0})::numeric, 2)", PEI.GEOMETRIE).`as`("y")
@@ -346,6 +351,12 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 }
                 PeiCaracteristique.CAPACITE -> Unit
                 PeiCaracteristique.NUMERO_COMPLET -> Unit
+                PeiCaracteristique.JUMELE -> {
+                    onClause =
+                        onClause
+                            .leftJoin(pibiJumeleTable)
+                            .on(pibiJumeleTable.ID.eq(PIBI.JUMELE_ID))
+                }
             }
         }
         return onClause
@@ -374,6 +385,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             PeiCaracteristique.DATE_RECEPTION -> return V_PEI_VISITE_DATE.LAST_RECEPTION
             PeiCaracteristique.DEBIT -> return V_PEI_LAST_MESURES.DEBIT
             PeiCaracteristique.NUMERO_COMPLET -> return PEI.NUMERO_COMPLET
+            PeiCaracteristique.JUMELE -> return pibiJumeleTable.NUMERO_COMPLET
         }
     }
 }
