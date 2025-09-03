@@ -120,6 +120,7 @@ class ParametresUseCase : AbstractUseCase() {
             declarationPeiDestinataireEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL.name),
             declarationPeiObjetEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name),
             declarationPeiCorpsEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL.name),
+            peiLibelleNonConforme = mapParametres.getString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(

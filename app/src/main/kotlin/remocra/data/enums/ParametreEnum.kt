@@ -73,6 +73,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     DECLARATION_PEI_CORPS_EMAIL(ParametreSection.PEI),
     CARACTERISTIQUES_PENA_TOOLTIP_WEB(ParametreSection.PEI),
     CARACTERISTIQUES_PIBI_TOOLTIP_WEB(ParametreSection.PEI),
+    PEI_LIBELLE_NON_CONFORME(ParametreSection.PEI),
 
     // Permis
     PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),

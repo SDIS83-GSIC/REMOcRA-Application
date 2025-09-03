@@ -178,6 +178,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             updateParametre(ParametreEnum.DECLARATION_PEI_DESTINATAIRE_EMAIL, parametresAdminData.pei.declarationPeiDestinataireEmail)
             updateParametre(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL, parametresAdminData.pei.declarationPeiObjetEmail)
             updateParametre(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL, parametresAdminData.pei.declarationPeiCorpsEmail)
+            updateParametre(ParametreEnum.PEI_LIBELLE_NON_CONFORME, parametresAdminData.pei.peiLibelleNonConforme)
 
             // ALERTE
             updateParametre(

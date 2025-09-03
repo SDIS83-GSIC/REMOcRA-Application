@@ -1199,6 +1199,16 @@ const AdminPei = ({
             tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />
         </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="pei.peiLibelleNonConforme"
+            label='Libellé du statut "non conforme" d&apos;un PEI'
+            tooltipText={
+              'Libellé qui sera affiché pour le statut "Non conforme" d\'un PEI ; par défaut, la valeur est "Non conforme". Attention, une valeur trop longue pourrait dégrader certains affichages.'
+            }
+            required={false}
+          />
+        </AdminParametre>
       </>
     )
   );

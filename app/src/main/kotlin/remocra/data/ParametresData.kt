@@ -132,4 +132,5 @@ data class ParametresSectionPei(
     val declarationPeiDestinataireEmail: String?,
     val declarationPeiObjetEmail: String?,
     val declarationPeiCorpsEmail: String?,
+    val peiLibelleNonConforme: String?,
 )
