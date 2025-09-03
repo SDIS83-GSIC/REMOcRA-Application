@@ -51,7 +51,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
     lateinit var parametresProvider: ParametresProvider
 
     @Inject
-    lateinit var buildAdresseCompleteUseCase: BuildAdresseCompleteUseCase
+    lateinit var decorateListPeiForApi: DecorateListPeiForApi
 
     @Inject
     lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
@@ -84,7 +84,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
         }
 
         return ReferentielResponse(
-            listPei = buildAdresseCompleteUseCase.execute(referentielRepository.getPeiList()),
+            listPei = decorateListPeiForApi.execute(referentielRepository.getPeiList()),
             listPeiAnomalies = referentielRepository.getPeiAnomalieList(),
             listGestionnaire = gestionnaireRepository.getAllForMobile(),
             listContact = referentielRepository.getContactList(),

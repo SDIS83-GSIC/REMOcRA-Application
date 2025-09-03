@@ -33,4 +33,7 @@ data class PeiForApiMobileData(
 
     var adresseComplete: String?,
 
+    var dispoTerrestreString: String?,
+    var dispoHbeString: String?,
+
 )

@@ -16,13 +16,12 @@ class DisponibiliteDecorator {
     @Inject
     lateinit var parametresProvider: ParametresProvider
 
-    fun decorateDisponibilite(disponibilite: Disponibilite): String? {
+    fun decorateDisponibilite(disponibilite: Disponibilite): String {
         val libelleNonConforme = parametresProvider.getParametreString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name)?.takeUnless { it.isBlank() } ?: "Non conforme"
         return when (disponibilite) {
             Disponibilite.DISPONIBLE -> "Disponible"
             Disponibilite.INDISPONIBLE -> "Indisponible"
             Disponibilite.NON_CONFORME -> libelleNonConforme
-            else -> null
         }
     }
 }
