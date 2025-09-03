@@ -107,6 +107,26 @@ const AnomalieForm = () => {
       return c.anomalieCategorieCode === "SYSTEME";
     })[0].anomalieCategorieId === values.anomalieAnomalieCategorieId;
 
+  const listCategorie = categorieList
+    .filter((c) => {
+      // On prend les anomalies non système...
+      if (c.anomalieCategorieCode !== "SYSTEME") {
+        return true;
+      } else if (
+        // ... sauf si elle l'est déjà
+        c.anomalieCategorieId === values.anomalieAnomalieCategorieId
+      ) {
+        return true;
+      }
+      return false;
+    })
+    .map((c) => {
+      return {
+        id: c.anomalieCategorieId,
+        libelle: c.anomalieCategorieLibelle,
+      };
+    });
+
   return (
     <FormContainer>
       <TextInput label="Libellé" name="anomalieLibelle" required={true} />
@@ -123,29 +143,13 @@ const AnomalieForm = () => {
       />
       <SelectForm
         name="anomalieAnomalieCategorieId"
-        listIdCodeLibelle={categorieList
-          .filter((c) => {
-            // On prend les anomalies non système...
-            if (c.anomalieCategorieCode !== "SYSTEME") {
-              return true;
-            } else if (
-              // ... sauf si elle l'est déjà
-              c.anomalieCategorieId === values.anomalieAnomalieCategorieId
-            ) {
-              return true;
-            }
-            return false;
-          })
-          .map((c) => {
-            return {
-              id: c.anomalieCategorieId,
-              libelle: c.anomalieCategorieLibelle,
-            };
-          })}
+        listIdCodeLibelle={listCategorie}
         label={"Catégorie"}
         setValues={setValues}
         required={true}
-        defaultValue={{ id: values.anomalieAnomalieCategorieId }}
+        defaultValue={listCategorie.find(
+          (e) => e.id === values.anomalieAnomalieCategorieId,
+        )}
         disabled={values.anomalieProtected}
       />
       {!values.anomalieProtected && (
