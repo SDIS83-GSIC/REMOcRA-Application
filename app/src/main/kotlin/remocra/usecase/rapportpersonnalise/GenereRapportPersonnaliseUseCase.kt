@@ -1,5 +1,6 @@
 package remocra.usecase.rapportpersonnalise
 
+import RapportPersonnaliseUtils
 import jakarta.inject.Inject
 import org.jooq.Record
 import remocra.auth.WrappedUserInfo
@@ -8,7 +9,6 @@ import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.utils.RequestUtils
 import java.util.UUID
 
 class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
@@ -17,7 +17,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
-    lateinit var requestUtils: RequestUtils
+    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
 
     companion object {
         private const val FIELD_GEOMETRIE = "geometrie"
@@ -36,21 +36,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): RapportPersonnaliseTableau? {
         checkProfilDroit(userInfo, genererRapportPersonnaliseData.rapportPersonnaliseId)
 
-        // On va chercher la requête du rapport
-        var requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
-
-        // On remplace avec les données paramètres fournies
-        genererRapportPersonnaliseData.listeParametre.forEach {
-            requete = requete.replace(
-                it.rapportPersonnaliseParametreCode,
-                it.value?.takeIf { it.isNotBlank() } ?: "null",
-            )
-        }
-
-        // On remplace les variables utilisateur de la requête par les données userinfo
-        requete = requestUtils.replaceGlobalParameters(userInfo, requete)
-        // Puis on l'exécute et on renvoie ensuite la liste
-        return infosForTableRapportPerso(rapportPersonnaliseRepository.executeSqlRapport(requete))
+        return infosForTableRapportPerso(rapportPersonnaliseUtils.buildRapportPersonnaliseData(genererRapportPersonnaliseData, userInfo))
     }
 
     private fun infosForTableRapportPerso(data: org.jooq.Result<Record>?): RapportPersonnaliseTableau? {

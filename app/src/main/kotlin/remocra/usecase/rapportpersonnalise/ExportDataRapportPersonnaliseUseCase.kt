@@ -1,5 +1,6 @@
 package remocra.usecase.rapportpersonnalise
 
+import RapportPersonnaliseUtils
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.csv.CsvWriter
@@ -18,23 +19,16 @@ class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     @Inject
+    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+
+    @Inject
     lateinit var requestUtils: RequestUtils
 
     @Inject
     private lateinit var csvWriter: CsvWriter
 
     fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): ByteArrayOutputStream {
-        var requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
-
-        // On remplace avec les données paramètres fournies
-        genererRapportPersonnaliseData.listeParametre.forEach {
-            requete = requete.replace(it.rapportPersonnaliseParametreCode, it.value.toString())
-        }
-
-        // On remplace les variables utilisateur de la requête par les données userinfo
-        requete = requestUtils.replaceGlobalParameters(userInfo, requete)
-
-        val result = rapportPersonnaliseRepository.executeSqlRapport(requete)
+        val result = rapportPersonnaliseUtils.buildRapportPersonnaliseData(genererRapportPersonnaliseData, userInfo)
 
         // On construit l'objet qui contient une liste de clé valeur
         val data: MutableList<Map<String, Any?>> = mutableListOf()
