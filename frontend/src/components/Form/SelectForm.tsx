@@ -46,7 +46,7 @@ const SelectForm = ({
       options={list}
       getOptionLabel={(option) => option.libelle}
       getOptionValue={(option) => option.id ?? ""}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? null}
       onChange={(e) => {
         onChangeCustom
           ? onChangeCustom(e)
