@@ -1,18 +1,28 @@
 package remocra.db
 
 import com.google.inject.Inject
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
 import remocra.data.CoucheData
+import remocra.data.CoucheStyle
+import remocra.data.CoucheStyleInput
+import remocra.data.GroupeFonctionnaliteList
+import remocra.data.Params
+import remocra.data.ResponseCouche
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.Couche
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
 import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.references.COUCHE
+import remocra.db.jooq.remocra.tables.references.COUCHE_STYLE
 import remocra.db.jooq.remocra.tables.references.GROUPE_COUCHE
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
+import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE
 import java.util.UUID
 
 class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -39,6 +49,149 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 ),
             )
             .fetchOneInto<Couche>()
+
+    data class FilterLayerStyle(
+        val groupeCoucheLibelle: String?,
+        val coucheLibelle: String?,
+        val coucheStyleFlag: Boolean?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    groupeCoucheLibelle?.let { DSL.and(GROUPE_COUCHE.LIBELLE.contains(it)) },
+                    coucheLibelle?.let { DSL.and(COUCHE.LIBELLE.contains(it)) },
+                    coucheStyleFlag?.let { DSL.and(COUCHE_STYLE.ACTIF.eq(it)) },
+                ),
+            )
+    }
+
+    data class SortLayer(
+        val groupeCoucheLibelle: Int?,
+        val coucheLibelle: Int?,
+        val coucheStyleFlag: Int?,
+    ) {
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            GROUPE_COUCHE.LIBELLE.getSortField(groupeCoucheLibelle),
+            COUCHE.LIBELLE.getSortField(coucheLibelle),
+            COUCHE_STYLE.ACTIF.getSortField(coucheStyleFlag),
+        )
+    }
+
+    fun getAllStylesByUserId(groupeFonctionnaliteId: UUID): List<CoucheStyle> =
+        dsl.select(
+            COUCHE_STYLE.ACTIF.`as`("layerStyleFlag"),
+            COUCHE_STYLE.STYLE.`as`("layerStyle"),
+            COUCHE_STYLE.COUCHE_ID.`as`("layerId"),
+            COUCHE.GROUPE_COUCHE_ID.`as`("groupLayerId"),
+            multiset(
+                DSL.select(
+                    GROUPE_FONCTIONNALITES.ID.`as`("profilId"),
+                    GROUPE_FONCTIONNALITES.LIBELLE.`as`("profilLibelle"),
+                )
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE)
+                    .join(GROUPE_FONCTIONNALITES)
+                    .on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.GROUPE_FONCTIONNALITES_ID))
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.COUCHE_STYLE_ID.eq(COUCHE_STYLE.ID))
+                    .and(GROUPE_FONCTIONNALITES.ID.eq(groupeFonctionnaliteId)),
+            ).convertFrom { records ->
+                records.map { (id) -> id as UUID }
+            }.`as`("layerProfilId"),
+        )
+            .from(COUCHE_STYLE)
+            .join(COUCHE).on(COUCHE.ID.eq(COUCHE_STYLE.COUCHE_ID))
+            .fetchInto<CoucheStyle>()
+
+    fun getCountStyles(filterBy: FilterLayerStyle?): Int =
+        dsl.selectCount()
+            .from(COUCHE_STYLE)
+            .join(COUCHE).on(COUCHE_STYLE.COUCHE_ID.eq(COUCHE.ID))
+            .join(GROUPE_COUCHE).on(COUCHE.GROUPE_COUCHE_ID.eq(GROUPE_COUCHE.ID))
+            .whereExists(
+                DSL.selectOne()
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE)
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.COUCHE_STYLE_ID.eq(COUCHE_STYLE.ID)),
+            )
+            .and(filterBy?.toCondition() ?: DSL.trueCondition())
+            .fetchSingleInto()
+
+    fun getStyleById(styleId: UUID): CoucheStyle? =
+        dsl.select(
+            COUCHE_STYLE.ACTIF.`as`("layerStyleFlag"),
+            COUCHE_STYLE.STYLE.`as`("layerStyle"),
+            COUCHE_STYLE.COUCHE_ID.`as`("layerId"),
+            COUCHE.GROUPE_COUCHE_ID.`as`("groupLayerId"),
+            multiset(
+                DSL.select(
+                    GROUPE_FONCTIONNALITES.ID.`as`("profilId"),
+                    GROUPE_FONCTIONNALITES.LIBELLE.`as`("profilLibelle"),
+                )
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE)
+                    .join(GROUPE_FONCTIONNALITES).on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.GROUPE_FONCTIONNALITES_ID))
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.COUCHE_STYLE_ID.eq(styleId)),
+            ).convertFrom { records ->
+                records.map { (id) -> id as UUID }
+            }.`as`("layerProfilId"),
+        )
+            .from(COUCHE_STYLE)
+            .join(COUCHE).on(COUCHE.ID.eq(COUCHE_STYLE.COUCHE_ID))
+            .where(COUCHE_STYLE.ID.eq(styleId))
+            .fetchOneInto<CoucheStyle>()
+
+    fun getCouchesParams(params: Params<FilterLayerStyle, SortLayer>): List<ResponseCouche> =
+        dsl.select(
+            GROUPE_COUCHE.ID.`as`("groupeCoucheId"),
+            GROUPE_COUCHE.LIBELLE.`as`("groupeCoucheLibelle"),
+            COUCHE.ID.`as`("coucheId"),
+            COUCHE.LIBELLE.`as`("coucheLibelle"),
+            COUCHE_STYLE.ACTIF.`as`("coucheStyleFlag"),
+            COUCHE_STYLE.ID.`as`("styleId"),
+            multiset(
+                DSL.select(
+                    GROUPE_FONCTIONNALITES.ID.`as`("profilId"),
+                    GROUPE_FONCTIONNALITES.LIBELLE.`as`("profilLibelle"),
+                )
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE)
+                    .join(GROUPE_FONCTIONNALITES).on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.GROUPE_FONCTIONNALITES_ID))
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.COUCHE_STYLE_ID.eq(COUCHE_STYLE.ID)),
+            ).convertFrom { records ->
+                records.map { (id, libelle) ->
+                    GroupeFonctionnaliteList(
+                        profilId = id as UUID,
+                        profilLibelle = libelle,
+                    )
+                }
+            }.`as`("groupeFonctionnaliteList"),
+        )
+            .from(COUCHE_STYLE)
+            .join(COUCHE).on(COUCHE_STYLE.COUCHE_ID.eq(COUCHE.ID))
+            .join(GROUPE_COUCHE).on(COUCHE.GROUPE_COUCHE_ID.eq(GROUPE_COUCHE.ID))
+            .whereExists(
+                DSL.selectOne()
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE)
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.COUCHE_STYLE_ID.eq(COUCHE_STYLE.ID)),
+            )
+            .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .orderBy(params.sortBy?.toCondition())
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto(ResponseCouche::class.java)
+
+    fun upsertCoucheStyle(couche: CoucheStyleInput) {
+        dsl.insertInto(COUCHE_STYLE)
+            .set(COUCHE_STYLE.ID, couche.layerStyleId)
+            .set(COUCHE_STYLE.COUCHE_ID, couche.layerId)
+            .set(COUCHE_STYLE.STYLE, couche.layerStyle)
+            .set(COUCHE_STYLE.ACTIF, couche.layerStyleFlag)
+            .onConflict(COUCHE_STYLE.ID)
+            .doUpdate()
+            .set(COUCHE_STYLE.COUCHE_ID, couche.layerId)
+            .set(COUCHE_STYLE.STYLE, couche.layerStyle)
+            .set(COUCHE_STYLE.ACTIF, couche.layerStyleFlag)
+            .execute()
+    }
+
+    fun deleteCoucheStyleByStyleId(styleId: UUID) =
+        dsl.deleteFrom(COUCHE_STYLE).where(COUCHE_STYLE.ID.eq(styleId)).execute()
 
     /**
      * Retourne une Map<coucheId, CoucheData> pour stockage dans le dataCache
@@ -89,6 +242,20 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
             .fetchInto<GroupeFonctionnalites>()
 
+    fun getAvailableGroupeFonctionnaliteList(coucheId: UUID, excludeExisting: Boolean = false): List<GroupeFonctionnalites> {
+        var query = dsl.select(*GROUPE_FONCTIONNALITES.fields())
+            .from(GROUPE_FONCTIONNALITES)
+            .join(L_COUCHE_GROUPE_FONCTIONNALITES).on(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+            .leftJoin(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE).on(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+            .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
+
+        if (excludeExisting) {
+            query = query.and(L_GROUPE_FONCTIONNALITES_COUCHE_STYLE.GROUPE_FONCTIONNALITES_ID.isNull)
+        }
+
+        return query.fetchInto<GroupeFonctionnalites>()
+    }
+
     fun getModuleList(coucheId: UUID): List<TypeModule> =
         dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
             .from(L_COUCHE_MODULE)
@@ -96,6 +263,8 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .fetchInto<TypeModule>()
 
     fun getCoucheList(groupeCoucheId: UUID): List<Couche> = dsl.selectFrom(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchInto<Couche>()
+
+    fun getCoucheById(coucheId: UUID): Couche = dsl.selectFrom(COUCHE).where(COUCHE.ID.eq(coucheId)).fetchSingleInto<Couche>()
 
     fun getGroupeCoucheList(): List<GroupeCouche> = dsl.selectFrom(GROUPE_COUCHE).orderBy(GROUPE_COUCHE.ORDRE.desc()).fetchInto<GroupeCouche>()
 

@@ -30,13 +30,13 @@ data class SimplifiedCoucheData(
     val coucheLibelle: String?,
     val coucheCode: String?,
     val coucheNom: String?,
-    val profilDroitList: Collection<ProfilDroit> = listOf(),
+    val groupeFonctionnaliteList: Collection<GroupeFonctionnalite> = listOf(),
 )
 
-data class ProfilDroit(
-    val profilDroitId: UUID,
-    val profilDroitCode: String,
-    val profilDroitLibelle: String,
+data class GroupeFonctionnalite(
+    val groupeFonctionnaliteId: UUID,
+    val groupeFonctionnaliteCode: String,
+    val groupeFonctionnaliteLibelle: String,
 )
 
 data class CoucheStyleInput(
@@ -47,7 +47,7 @@ data class CoucheStyleInput(
     val layerProfilId: Collection<UUID>? = null,
 )
 
-data class ProfilDroitList(
+data class GroupeFonctionnaliteList(
     val profilId: UUID,
     val profilLibelle: String? = null,
 )
@@ -59,7 +59,7 @@ data class ResponseCouche(
     val coucheStyleActif: Boolean = false,
     val styleId: UUID,
     val coucheId: UUID? = null,
-    val profilDroitList: Collection<ProfilDroitList>? = emptyList(),
+    val groupeFonctionnaliteList: Collection<GroupeFonctionnaliteList>? = emptyList(),
 )
 
 data class CoucheStyle(
