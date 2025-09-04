@@ -20,17 +20,18 @@ const MapDFCI = () => {
     displayPei: false,
   });
 
-  const { toggleTool, activeTool, outilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: {},
     });
 
   return (
     <MapComponent
       map={map}
-      outilI={outilI}
+      outilI={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}

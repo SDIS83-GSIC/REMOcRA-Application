@@ -85,10 +85,11 @@ const MapRcci = () => {
     dataRcciLayerRef,
   });
 
-  const { toggleTool, activeTool, outilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 
@@ -100,7 +101,7 @@ const MapRcci = () => {
       />
       <MapComponent
         map={map}
-        outilI={outilI}
+        outilI={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         workingLayer={workingLayer}
         availableLayers={availableLayers}

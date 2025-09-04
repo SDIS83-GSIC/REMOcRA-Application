@@ -50,9 +50,10 @@ const OldebMap = () => {
     dataOldebLayerRef,
   });
 
-  const { toggleTool, activeTool, handleCloseInfoI, outilI } =
+  const { toggleTool, activeTool, handleCloseInfoI, infoOutilI } =
     useToolbarContext({
       map: map,
+      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: extraTools,
     });
@@ -75,7 +76,7 @@ const OldebMap = () => {
 
   return (
     <MapComponent
-      outilI={outilI}
+      outilI={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       map={map}
       workingLayer={workingLayer}

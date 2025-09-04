@@ -80,10 +80,11 @@ const MapCouvertureHydraulique = ({
     reseauImporte,
   });
 
-  const { toggleTool, activeTool, outilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 
@@ -97,7 +98,7 @@ const MapCouvertureHydraulique = ({
       mapToolbarRef={mapToolbarRef}
       toggleTool={toggleTool}
       activeTool={activeTool}
-      outilI={outilI}
+      outilI={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       toolbarElement={
         mapToolbarRef.current &&

@@ -21,8 +21,8 @@ const UpdateLayerStyle = () => {
       <Container>
         <PageTitle title="Modification du style" icon={<IconEdit />} />
         <MyFormik
-          initialValues={getInitialValues(styleState)}
-          prepareVariables={(values) => prepareValues(values)}
+          initialValues={getInitialValues(styleId, styleState)}
+          prepareVariables={(values) => prepareValues(values, styleId)}
           validationSchema={validationSchema}
           submitUrl={`/api/admin/couche/${styleId}/update`}
           isPost={true}

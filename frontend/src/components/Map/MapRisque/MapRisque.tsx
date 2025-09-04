@@ -52,9 +52,10 @@ const MapRisque = () => {
     displayPei: true,
   });
 
-  const { toggleTool, activeTool, outilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
+      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: {},
     });
@@ -74,7 +75,7 @@ const MapRisque = () => {
         }
       />
       <MapComponent
-        outilI={outilI}
+        outilI={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         map={map}
         availableLayers={availableLayers}

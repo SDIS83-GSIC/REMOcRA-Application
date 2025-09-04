@@ -225,7 +225,7 @@ const MapComponent = ({
               toggleTool={toggleTool}
               activeTool={activeTool}
               variant={variant}
-              outilI={outilI}
+              generalInfo={outilI}
               handleCloseInfoI={handleCloseInfoI}
             />
           </Col>

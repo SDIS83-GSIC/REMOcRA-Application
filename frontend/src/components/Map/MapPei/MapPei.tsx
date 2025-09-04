@@ -114,10 +114,11 @@ const MapPei = () => {
     return layer;
   }, [map, projection]);
 
-  const { toggleTool, activeTool, disabledTool, outilI, handleCloseInfoI } =
+  const { toggleTool, activeTool, disabledTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       map: map,
       workingLayer: workingLayer,
+      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 
@@ -189,7 +190,7 @@ const MapPei = () => {
             mapElement={mapElement}
             toggleTool={toggleTool}
             activeTool={activeTool}
-            outilI={outilI}
+            outilI={infoOutilI}
             handleCloseInfoI={handleCloseInfoI}
             toolbarElement={
               mapToolbarRef.current && (
