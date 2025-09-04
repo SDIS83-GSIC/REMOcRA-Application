@@ -35,6 +35,7 @@ class AireAspirationRepository @Inject constructor(private val dsl: DSLContext) 
             TYPE_PENA_ASPIRATION.LIBELLE.`as`("libelle"),
         )
             .from(TYPE_PENA_ASPIRATION)
+            .orderBy(TYPE_PENA_ASPIRATION.LIBELLE)
             .fetchInto()
 
     fun deleteAireAspiration(penaId: UUID) =
