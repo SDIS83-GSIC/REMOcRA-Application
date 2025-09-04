@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -32,6 +33,7 @@ import remocra.data.SimplifiedCoucheData
 import remocra.data.StyleGroupeCoucheData
 import remocra.db.CoucheRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.admin.couches.DeleteCoucheStyleUseCase
 import remocra.usecase.admin.couches.GetCoucheStyleUseCase
 import remocra.usecase.admin.couches.StyleCoucheUseCase
 import remocra.usecase.admin.couches.UpsertCoucheUseCase
@@ -55,6 +57,8 @@ class CoucheEndpoint : AbstractEndpoint() {
     @Inject lateinit var styleCoucheUseCase: StyleCoucheUseCase
 
     @Inject lateinit var getCoucheStyleUseCase: GetCoucheStyleUseCase
+
+    @Inject lateinit var deleteStyleCoucheUseCase: DeleteCoucheStyleUseCase
 
     @Path("/get-all-styles")
     @GET
@@ -128,6 +132,19 @@ class CoucheEndpoint : AbstractEndpoint() {
                 }
             },
         ).build()
+
+    @Path("/delete/{styleId}")
+    @DELETE
+    @RequireDroits([Droit.CARTO_METADATA_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun deleteStyle(
+        @PathParam("styleId")
+        styleId: UUID,
+    ): Response =
+        deleteStyleCoucheUseCase.execute(
+            securityContext.userInfo,
+            styleId,
+        ).wrap()
 
     @Path("/")
     @GET
