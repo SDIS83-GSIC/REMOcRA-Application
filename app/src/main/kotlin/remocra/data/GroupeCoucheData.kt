@@ -10,3 +10,10 @@ data class GroupeCoucheData(
     val coucheList: Collection<CoucheData> = listOf(),
     val groupeCoucheProtected: Boolean = false,
 )
+
+data class StyleGroupeCoucheData(
+    val groupeCoucheId: UUID = UUID.randomUUID(),
+    val groupeCoucheLibelle: String,
+    val groupeCoucheCode: String,
+    val coucheList: Collection<SimplifiedCoucheData> = listOf(),
+)
