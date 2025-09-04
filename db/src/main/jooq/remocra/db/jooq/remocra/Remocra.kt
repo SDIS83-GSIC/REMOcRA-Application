@@ -16,6 +16,7 @@ import remocra.db.jooq.remocra.tables.CarroyageDfci
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.CoucheStyle
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseCategorie
@@ -55,6 +56,7 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LEvenementDocument
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheStyle
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites
@@ -224,6 +226,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.couche</code>.
      */
     val COUCHE: Couche get() = Couche.COUCHE
+
+    /**
+     * The table <code>remocra.couche_style</code>.
+     */
+    val COUCHE_STYLE: CoucheStyle get() = CoucheStyle.COUCHE_STYLE
 
     /**
      * The table <code>remocra.courrier</code>.
@@ -419,6 +426,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_evenement_document</code>.
      */
     val L_EVENEMENT_DOCUMENT: LEvenementDocument get() = LEvenementDocument.L_EVENEMENT_DOCUMENT
+
+    /**
+     * The table <code>remocra.l_groupe_fonctionnalites_couche_style</code>.
+     */
+    val L_GROUPE_FONCTIONNALITES_COUCHE_STYLE: LGroupeFonctionnalitesCoucheStyle get() = LGroupeFonctionnalitesCoucheStyle.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE
 
     /**
      * The table
@@ -946,6 +958,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Commune.COMMUNE,
         Contact.CONTACT,
         Couche.COUCHE,
+        CoucheStyle.COUCHE_STYLE,
         Courrier.COURRIER,
         Crise.CRISE,
         CriseCategorie.CRISE_CATEGORIE,
@@ -985,6 +998,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LEvenementDocument.L_EVENEMENT_DOCUMENT,
+        LGroupeFonctionnalitesCoucheStyle.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE,
         LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
         LModeleCourrierGroupeFonctionnalites.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES,

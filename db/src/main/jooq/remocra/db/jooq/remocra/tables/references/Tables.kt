@@ -12,6 +12,7 @@ import remocra.db.jooq.remocra.tables.CarroyageDfci
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
+import remocra.db.jooq.remocra.tables.CoucheStyle
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseCategorie
@@ -51,6 +52,7 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LEvenementDocument
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheStyle
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites
@@ -198,6 +200,11 @@ val CONTACT: Contact = Contact.CONTACT
  * The table <code>remocra.couche</code>.
  */
 val COUCHE: Couche = Couche.COUCHE
+
+/**
+ * The table <code>remocra.couche_style</code>.
+ */
+val COUCHE_STYLE: CoucheStyle = CoucheStyle.COUCHE_STYLE
 
 /**
  * The table <code>remocra.courrier</code>.
@@ -393,6 +400,11 @@ val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
  * The table <code>remocra.l_evenement_document</code>.
  */
 val L_EVENEMENT_DOCUMENT: LEvenementDocument = LEvenementDocument.L_EVENEMENT_DOCUMENT
+
+/**
+ * The table <code>remocra.l_groupe_fonctionnalites_couche_style</code>.
+ */
+val L_GROUPE_FONCTIONNALITES_COUCHE_STYLE: LGroupeFonctionnalitesCoucheStyle = LGroupeFonctionnalitesCoucheStyle.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE
 
 /**
  * The table <code>remocra.l_groupe_fonctionnalites_document_habilitable</code>.
