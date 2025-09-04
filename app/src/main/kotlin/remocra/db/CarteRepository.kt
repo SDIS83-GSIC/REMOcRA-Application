@@ -105,10 +105,10 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                                     .where(ZONE_INTEGRATION.ID.eq(zoneId)),
                             ),
                         ).isTrue
-                            .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
                     } ?: DSL.noCondition(),
                     isSuperAdmin,
-                ),
+                )
+                    .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) }),
             )
             .fetchInto()
     }
@@ -165,11 +165,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) }),
+                    ST_Within(PEI_PRESCRIT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
@@ -181,11 +181,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(PERMIS.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(PERMIS.GEOMETRIE, srid), bbox) }),
+                    ST_Within(PERMIS.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(PERMIS.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
@@ -271,11 +271,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(ADRESSE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox) }),
+                    ST_Within(ADRESSE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
@@ -314,11 +314,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                             DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
                                 .where(ZONE_INTEGRATION.ID.eq(zoneId)),
                         ),
-                    ).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid), bbox) }),
+                    ).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(DEBIT_SIMULTANE.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
@@ -335,11 +335,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(OLDEB.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(OLDEB.GEOMETRIE, srid), bbox) }),
+                    ST_Within(OLDEB.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(OLDEB.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
     /**
@@ -355,11 +355,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(RCCI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue
-                        .and(bbox?.let { ST_Within(ST_Transform(RCCI.GEOMETRIE, srid), bbox) }),
+                    ST_Within(RCCI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
+            .and(bbox?.let { ST_Within(ST_Transform(RCCI.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
     abstract class ElementCarte {
