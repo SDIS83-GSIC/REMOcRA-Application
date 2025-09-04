@@ -23,8 +23,8 @@ import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import filterValuesToVariable from "./FilterStyle.tsx";
 
-type ProfilDroit = {
-  profilDroitId: string;
+type GroupeFonctionnalite = {
+  groupeFonctionnaliteId: string;
   profilLibelle: string;
 };
 
@@ -85,7 +85,7 @@ const ListLayersGroup = () => {
           },
           {
             Header: "Groupes affiliés",
-            accessor: "profilDroitList",
+            accessor: "groupeFonctionnaliteList",
             Cell: (value) => {
               return (
                 <div
@@ -98,7 +98,7 @@ const ListLayersGroup = () => {
                   }}
                 >
                   {value?.value
-                    .map((item: ProfilDroit) => item.profilLibelle)
+                    .map((item: GroupeFonctionnalite) => item.profilLibelle)
                     .join(", ")}
                 </div>
               );
@@ -123,7 +123,7 @@ const ListLayersGroup = () => {
         filterContext={useFilterContext({
           groupeCoucheLibelle: undefined,
           coucheLibelle: undefined,
-          profilDroitList: undefined,
+          groupeFonctionnaliteList: undefined,
           coucheStyleActif: undefined,
         })}
       />

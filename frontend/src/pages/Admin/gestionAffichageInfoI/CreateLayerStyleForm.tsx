@@ -1,5 +1,7 @@
 import { object } from "yup";
 import { useFormikContext } from "formik";
+import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
   FormContainer,
@@ -8,10 +10,11 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../../module/validators.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 
 export const getInitialValues = (styleId?: string, data?: any) => ({
   groupLayerId: data?.groupLayerId ?? null,
@@ -49,8 +52,13 @@ export const validationSchema = object({
   layerProfilId: requiredArray,
 });
 
-const CreateLayerStyleForm = () => {
-  const layerData = useGet(url`/api/admin/couche/get-couches`)?.data?.list;
+const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
+  const [coucheId, setCoucheId] = useState<string | null>(initalLayer);
+
+  const queryParam = initalLayer !== undefined ? "" : "?excludeExisting=true";
+  const layerData = useGet(url`/api/admin/couche/get-couches${queryParam}`)
+    ?.data?.list;
+
   const { setValues, setFieldValue, values } = useFormikContext<{
     groupLayerId: any;
     layerId: any;
@@ -58,6 +66,16 @@ const CreateLayerStyleForm = () => {
     layerStyle: any;
     layerStyleFlag: boolean;
   }>();
+  const { run: fetchOption, data: describeFeatureType } = useGetRun(
+    url`/api/geoserver/describe-feature-type/${coucheId!}`,
+    {},
+  );
+
+  useEffect(() => {
+    if (coucheId) {
+      fetchOption();
+    }
+  }, [coucheId, fetchOption]);
 
   if (!layerData) {
     return <Loading />;
@@ -91,12 +109,12 @@ const CreateLayerStyleForm = () => {
         coucheId: any;
         coucheCode: any;
         coucheLibelle: any;
-        profilDroitList: any;
+        groupeFonctionnaliteList: any;
       }) => ({
         id: layer.coucheId,
         code: layer.coucheCode,
         libelle: layer.coucheLibelle,
-        profilDroitList: layer.profilDroitList,
+        groupeFonctionnaliteList: layer.groupeFonctionnaliteList,
       }),
     );
   }
@@ -109,15 +127,15 @@ const CreateLayerStyleForm = () => {
   // Liste des profils de droits en fonction de la couche sélectionnée
   let listProfilsDroits = [];
   if (selectedLayer) {
-    listProfilsDroits = selectedLayer.profilDroitList.map(
+    listProfilsDroits = selectedLayer.groupeFonctionnaliteList.map(
       (profil: {
-        profilDroitId: any;
-        profilDroitCode: any;
-        profilDroitLibelle: any;
+        groupeFonctionnaliteId: any;
+        groupeFonctionnaliteCode: any;
+        groupeFonctionnaliteLibelle: any;
       }) => ({
-        id: profil.profilDroitId,
-        code: profil.profilDroitCode,
-        libelle: profil.profilDroitLibelle,
+        id: profil.groupeFonctionnaliteId,
+        code: profil.groupeFonctionnaliteCode,
+        libelle: profil.groupeFonctionnaliteLibelle,
       }),
     );
 
@@ -127,6 +145,17 @@ const CreateLayerStyleForm = () => {
         a.libelle.localeCompare(b.libelle),
     );
   }
+
+  const paramNotFound = "Aucun paramètre trouvé";
+  const properties = describeFeatureType?.featureTypes?.[0].properties ?? [];
+  const params = properties.length
+    ? properties.map((p: { name: any }, idx: number) => (
+        <span key={idx}>
+          - {p.name}
+          <br />
+        </span>
+      ))
+    : null;
 
   return (
     <FormContainer>
@@ -159,6 +188,7 @@ const CreateLayerStyleForm = () => {
         onChange={(value: any) => {
           setFieldValue("layerId", value.id);
           setFieldValue("layerProfilId", undefined);
+          setCoucheId(value.id);
         }}
       />
 
@@ -187,9 +217,31 @@ const CreateLayerStyleForm = () => {
 
       <CheckBoxInput name={"layerStyleFlag"} label={"Activer le style"} />
 
+      <Row className="mt-3">
+        <Col className="bg-light border p-2 rounded">
+          <IconInfo /> Liste des paramètres : <br /> {params ?? paramNotFound}
+        </Col>
+      </Row>
+
+      <Row className="mt-3">
+        <Col className="bg-light border p-2 rounded">
+          Styles utilisables : <br />
+          <b>[i]...[/i]</b> : texte en italique
+          <br />
+          <b>[b]...[/b]</b> : texte en gras
+          <br />
+          <b>[u]...[/u]</b> : texte souligné
+          <br />
+          <b>[br]</b> : saut de ligne
+          <br />
+          <b>#...#</b> : paramètre à insérer
+        </Col>
+      </Row>
+
       <TextAreaInput
         rows={10}
         name="layerStyle"
+        readOnly={params === null}
         label="Entrez un nouveau style"
         value={values.layerStyle}
       />

@@ -1,21 +1,25 @@
 type FilterStyleType = {
   groupeCoucheLibelle?: string;
   coucheLibelle?: string;
-  profilDroitList?: string;
+  groupeFonctionnaliteList?: string;
   coucheStyleActif?: string;
 };
 
 const filterValuesToVariable = ({
   groupeCoucheLibelle,
   coucheLibelle,
-  profilDroitList,
+  groupeFonctionnaliteList,
   coucheStyleActif,
 }: FilterStyleType) => {
   const filter: FilterStyleType = {};
 
   filterPropertyStyle(filter, groupeCoucheLibelle, "groupeCoucheLibelle");
   filterPropertyStyle(filter, coucheLibelle, "coucheLibelle");
-  filterPropertyStyle(filter, profilDroitList, "profilDroitList");
+  filterPropertyStyle(
+    filter,
+    groupeFonctionnaliteList,
+    "groupeFonctionnaliteList",
+  );
   filterPropertyStyle(filter, coucheStyleActif, "coucheStyleActif");
 
   return filter;
