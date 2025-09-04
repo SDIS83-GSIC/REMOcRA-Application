@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.DeleteCoucheStyleUseCase
 import remocra.usecase.admin.couches.GetCoucheStyleUseCase
 import remocra.usecase.admin.couches.StyleCoucheUseCase
+import remocra.usecase.admin.couches.UpdateCoucheStyleUseCase
 import remocra.usecase.admin.couches.UpsertCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -57,6 +58,8 @@ class CoucheEndpoint : AbstractEndpoint() {
     @Inject lateinit var styleCoucheUseCase: StyleCoucheUseCase
 
     @Inject lateinit var getCoucheStyleUseCase: GetCoucheStyleUseCase
+
+    @Inject lateinit var updateStyleCoucheUseCase: UpdateCoucheStyleUseCase
 
     @Inject lateinit var deleteStyleCoucheUseCase: DeleteCoucheStyleUseCase
 
@@ -132,6 +135,19 @@ class CoucheEndpoint : AbstractEndpoint() {
                 }
             },
         ).build()
+
+    @POST
+    @Path("/{styleId}/update")
+    @RequireDroits([Droit.CARTO_METADATA_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun updateStyle(
+        coucheStyleInput: CoucheStyleInput,
+    ): Response {
+        return updateStyleCoucheUseCase.execute(
+            userInfo = securityContext.userInfo,
+            element = coucheStyleInput,
+        ).wrap()
+    }
 
     @Path("/delete/{styleId}")
     @DELETE
