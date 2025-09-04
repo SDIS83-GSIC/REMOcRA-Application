@@ -15,7 +15,7 @@ class StyleCoucheUseCase : AbstractCUDUseCase<CoucheStyleInput>(TypeOperation.IN
 
     @Inject lateinit var coucheRepository: CoucheRepository
 
-    @Inject lateinit var groupeFonctionnaliteRepository: GroupeFonctionnalitesRepository
+    @Inject lateinit var groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CARTO_METADATA_A)) {
@@ -23,8 +23,7 @@ class StyleCoucheUseCase : AbstractCUDUseCase<CoucheStyleInput>(TypeOperation.IN
         }
     }
 
-    override fun postEvent(element: CoucheStyleInput, userInfo: WrappedUserInfo) {
-    }
+    override fun postEvent(element: CoucheStyleInput, userInfo: WrappedUserInfo) {}
 
     override fun execute(userInfo: WrappedUserInfo, element: CoucheStyleInput): CoucheStyleInput {
         // insertion
@@ -32,7 +31,7 @@ class StyleCoucheUseCase : AbstractCUDUseCase<CoucheStyleInput>(TypeOperation.IN
         if (element.layerProfilId != null) {
             for (id in element.layerProfilId) {
                 if (element.layerStyleId != null) {
-                    groupeFonctionnaliteRepository.addGroupeFonctionnalitesCoucheStyle(element.layerStyleId, id)
+                    groupeFonctionnalitesRepository.addGroupeFonctionnalitesCoucheStyle(element.layerStyleId, id)
                 }
             }
         }
@@ -43,7 +42,7 @@ class StyleCoucheUseCase : AbstractCUDUseCase<CoucheStyleInput>(TypeOperation.IN
         if (element.layerProfilId != null) {
             for (id in element.layerProfilId) {
                 if (element.layerStyleId != null) {
-                    if (groupeFonctionnaliteRepository.checkGroupeFonctionnaliteCoucheExist(element.layerStyleId, id)) {
+                    if (groupeFonctionnalitesRepository.checkGroupeFonctionnaliteCoucheExist(element.layerStyleId, id)) {
                         throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_COUCHE_UNIQUE)
                     }
                 }

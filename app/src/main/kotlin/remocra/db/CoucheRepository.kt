@@ -53,14 +53,14 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     data class FilterLayerStyle(
         val groupeCoucheLibelle: String?,
         val coucheLibelle: String?,
-        val coucheStyleFlag: Boolean?,
+        val coucheStyleActif: Boolean?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
                     groupeCoucheLibelle?.let { DSL.and(GROUPE_COUCHE.LIBELLE.contains(it)) },
                     coucheLibelle?.let { DSL.and(COUCHE.LIBELLE.contains(it)) },
-                    coucheStyleFlag?.let { DSL.and(COUCHE_STYLE.ACTIF.eq(it)) },
+                    coucheStyleActif?.let { DSL.and(COUCHE_STYLE.ACTIF.eq(it)) },
                 ),
             )
     }
@@ -68,12 +68,12 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     data class SortLayer(
         val groupeCoucheLibelle: Int?,
         val coucheLibelle: Int?,
-        val coucheStyleFlag: Int?,
+        val coucheStyleActif: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             GROUPE_COUCHE.LIBELLE.getSortField(groupeCoucheLibelle),
             COUCHE.LIBELLE.getSortField(coucheLibelle),
-            COUCHE_STYLE.ACTIF.getSortField(coucheStyleFlag),
+            COUCHE_STYLE.ACTIF.getSortField(coucheStyleActif),
         )
     }
 
@@ -143,7 +143,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             GROUPE_COUCHE.LIBELLE.`as`("groupeCoucheLibelle"),
             COUCHE.ID.`as`("coucheId"),
             COUCHE.LIBELLE.`as`("coucheLibelle"),
-            COUCHE_STYLE.ACTIF.`as`("coucheStyleFlag"),
+            COUCHE_STYLE.ACTIF.`as`("coucheStyleActif"),
             COUCHE_STYLE.ID.`as`("styleId"),
             multiset(
                 DSL.select(
