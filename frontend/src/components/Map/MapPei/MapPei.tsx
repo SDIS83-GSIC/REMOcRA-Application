@@ -236,11 +236,12 @@ const MapPei = () => {
                 <CreatePei
                   coordonneesPeiCreate={coordonneesPeiCreate}
                   close={() => {
-                    workingLayer.getSource().clear();
+                    dataPeiLayer?.getSource()?.refresh();
+                    workingLayer?.getSource()?.clear();
                     setCoordonneesPeiCreate(null);
                     setShowFormPei(false);
                   }}
-                  map={map}
+                  map={map!}
                 />
               ) : (
                 peiIdUpdate && (
