@@ -147,6 +147,7 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .join(THEMATIQUE)
             .on(THEMATIQUE.ID.eq(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID))
             .where(THEMATIQUE.CODE.eq(codeThematique))
+            .and(THEMATIQUE.ACTIF.isTrue)
             .orderBy(DOCUMENT_HABILITABLE.DATE_MAJ)
             .fetchInto()
 
