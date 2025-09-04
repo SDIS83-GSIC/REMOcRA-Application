@@ -205,7 +205,9 @@ import MapSignalement from "./components/Map/MapSignalements/MapSignalement.tsx"
 import DepotDeliberation from "./pages/Signalement/DepotDeliberation.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
-import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
+import ListLayersGroup from "./pages/Admin/gestionAffichageInfoI/ListLayersGroup.tsx";
+import CreateLayerStyle from "./pages/Admin/gestionAffichageInfoI/CreateLayerStyle.tsx";
+import UpdateLayerStyle from "./pages/Admin/gestionAffichageInfoI/UpdateLayerStyle.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -457,6 +459,11 @@ export const URLS = {
   ADD_GESTIONNAIRE: url`/admin/gestionnaire/create`,
   UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
     url`/admin/gestionnaire/update/` + gestionnaireId,
+
+  ADD_LAYER_STYLE: url`/admin/layers-group/create-style/`,
+  UPDATE_LAYER_STYLE: (styleId: string) =>
+    url`/admin/layers-group/update-style/` + styleId,
+  URL_LIST_LAYER_STYLE: url`/admin/layers-group`,
 
   ADD_CONTACT: (appartenanceId: string, appartenance: string) =>
     url`/admin/` + appartenance + `/` + appartenanceId + `/contact/create/`,
@@ -1112,6 +1119,33 @@ export default [
               TYPE_DROIT.GEST_SITE_A,
               TYPE_DROIT.GEST_SITE_R,
             ]}
+          />
+        ),
+      },
+      {
+        path: "/admin/layers-group",
+        element: (
+          <Authorization
+            Component={ListLayersGroup}
+            droits={[TYPE_DROIT.CARTO_METADATA_A]}
+          />
+        ),
+      },
+      {
+        path: "/admin/layers-group/update-style/:styleId",
+        element: (
+          <Authorization
+            Component={UpdateLayerStyle}
+            droits={[TYPE_DROIT.CARTO_METADATA_A]}
+          />
+        ),
+      },
+      {
+        path: "/admin/layers-group/create-style",
+        element: (
+          <Authorization
+            Component={CreateLayerStyle}
+            droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),
       },
@@ -2268,15 +2302,6 @@ export default [
           <Authorization
             Component={ComponentBoardDashboardAdmin}
             droits={[TYPE_DROIT.DASHBOARD_A]}
-          />
-        ),
-      },
-      {
-        path: "tasks-manuelles",
-        element: (
-          <Authorization
-            Component={ExecuteTasksManuelles}
-            droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
           />
         ),
       },
