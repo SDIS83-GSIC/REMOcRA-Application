@@ -31,7 +31,8 @@ const ListPei = ({
   let delaisWarnCTP: number,
     delaisUrgentCTP: number,
     delaisWarnRECO: number,
-    delaisUrgentRECO: number;
+    delaisUrgentRECO: number,
+    libelleNonConforme: string;
   const parametrePeiColonnes = PARAMETRE.PEI_COLONNES;
   const paramPeiFicheResumeStandalone = PARAMETRE.PEI_FICHE_RESUME_STANDALONE;
 
@@ -44,6 +45,7 @@ const ListPei = ({
         PARAMETRE.PEI_DELAI_CTRL_WARN,
         PARAMETRE.PEI_DELAI_RECO_URGENT,
         PARAMETRE.PEI_DELAI_RECO_WARN,
+        PARAMETRE.PEI_LIBELLE_NON_CONFORME,
       ]),
     }}`,
   );
@@ -65,6 +67,9 @@ const ListPei = ({
       listeParametre?.data?.[PARAMETRE.PEI_DELAI_RECO_WARN].parametreValeur;
     delaisUrgentRECO =
       listeParametre?.data?.[PARAMETRE.PEI_DELAI_RECO_URGENT].parametreValeur;
+    libelleNonConforme =
+      listeParametre?.data?.[PARAMETRE.PEI_LIBELLE_NON_CONFORME]
+        .parametreValeur;
   }
 
   const filter = {
@@ -129,6 +134,7 @@ const ListPei = ({
           delaisUrgentCTP,
           delaisWarnRECO,
           delaisUrgentRECO,
+          libelleNonConforme,
         )}
         idName={"PeiTable"}
         filterValuesToVariable={filterValuesToVariable}

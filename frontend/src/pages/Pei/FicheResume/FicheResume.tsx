@@ -23,6 +23,7 @@ import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 
 const FicheResume = ({
   peiId,
@@ -115,6 +116,20 @@ const ElementResumeDisponibilite = ({
     hasIndispoTemp: boolean;
   };
 }) => {
+  let libelleNonConforme: string = "";
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.PEI_LIBELLE_NON_CONFORME]),
+    }}`,
+  );
+  if (listeParametre.isResolved) {
+    libelleNonConforme =
+      listeParametre?.data?.[
+        PARAMETRE.PEI_LIBELLE_NON_CONFORME
+      ].parametreValeur.toUpperCase();
+  }
+
   return DISPONIBILITE_PEI[value.disponibilite] ===
     DISPONIBILITE_PEI.DISPONIBLE ? (
     <p>
@@ -127,7 +142,7 @@ const ElementResumeDisponibilite = ({
     DISPONIBILITE_PEI.NON_CONFORME ? (
     <p>
       <span className="text-white bg-warning rounded p-2 text-nowrap">
-        NON CONFORME
+        {libelleNonConforme}
       </span>
     </p>
   ) : (

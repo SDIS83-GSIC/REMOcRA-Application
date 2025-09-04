@@ -6,6 +6,7 @@ import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFro
 import SelectFilterFromUrl from "../components/Filter/SelectFilterFromUrl.tsx";
 import SelectNomenclaturesFilter from "../components/Filter/SelectNomenclaturesFilter.tsx";
 import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
+import SelectIdLibelleDataFromList from "../components/Form/SelectIdLibelleFromList.tsx";
 import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
@@ -26,7 +27,9 @@ import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit, isAuthorized } from "../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
-import DISPONIBILITE_PEI from "../enums/DisponibiliteEnum.tsx";
+import DISPONIBILITE_PEI, {
+  getLibelleDisponibilite,
+} from "../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../enums/DroitEnum.tsx";
 import NOMENCLATURES, {
   NOMENCLATURE_ORGANISME,
@@ -52,6 +55,7 @@ function getColumnPeiByStringArray(
   delaisUrgentCTP: number,
   delaisWarnRECO: number,
   delaisUrgentRECO: number,
+  libelleNonConforme: string,
 ): Array<columnType> {
   const column: Array<columnType> = [];
 
@@ -94,7 +98,7 @@ function getColumnPeiByStringArray(
             const dispo =
               DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
               DISPONIBILITE_PEI.NON_CONFORME
-                ? { bg: "bg-warning", value: "Non conforme" }
+                ? { bg: "bg-warning", value: libelleNonConforme }
                 : DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
                     DISPONIBILITE_PEI.DISPONIBLE
                   ? { bg: "", value: "Disponible" }
@@ -111,8 +115,8 @@ function getColumnPeiByStringArray(
             );
           },
           Filter: (
-            <SelectEnumOption
-              options={DISPONIBILITE_PEI}
+            <SelectIdLibelleDataFromList
+              listIdLibelle={getLibelleDisponibilite(libelleNonConforme)}
               name={"peiDisponibiliteTerrestre"}
             />
           ),
@@ -126,7 +130,7 @@ function getColumnPeiByStringArray(
           Cell: (value) => {
             const dispo =
               DISPONIBILITE_PEI[value.value] === DISPONIBILITE_PEI.NON_CONFORME
-                ? { bg: "bg-warning", value: "Non conforme" }
+                ? { bg: "bg-warning", value: libelleNonConforme }
                 : DISPONIBILITE_PEI[value.value] ===
                     DISPONIBILITE_PEI.INDISPONIBLE
                   ? { bg: "bg-danger", value: "Indispo" }
@@ -134,8 +138,8 @@ function getColumnPeiByStringArray(
             return <div className={dispo.bg}>{dispo.value}</div>;
           },
           Filter: (
-            <SelectEnumOption
-              options={DISPONIBILITE_PEI}
+            <SelectIdLibelleDataFromList
+              listIdLibelle={getLibelleDisponibilite(libelleNonConforme)}
               name={"penaDisponibiliteHbe"}
             />
           ),
