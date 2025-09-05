@@ -225,7 +225,7 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                 .where(OLDEB_VISITE_SUITE.ID.eq(visiteSuiteId)),
         )
 
-    fun checkSectionAndParcelleIsUsed(oldebId: UUID?, communeId: UUID, sectionId: UUID, parcelleId: UUID): Boolean =
+    fun checkSectionAndParcelleIsUsed(oldebId: UUID?, communeId: UUID, sectionId: UUID, parcelleId: UUID?): Boolean =
         dsl.fetchExists(
             DSL.selectFrom(OLDEB)
                 .where(
