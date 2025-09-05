@@ -98,6 +98,11 @@ open class GroupeCouche(
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("groupe_couche_libelle"), SQLDataType.CLOB.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.groupe_couche.groupe_couche_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("groupe_couche_protected"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

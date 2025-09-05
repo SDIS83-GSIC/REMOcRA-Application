@@ -23,6 +23,7 @@ data class GroupeCouche(
     val groupeCoucheCode: String,
     val groupeCoucheOrdre: Int,
     val groupeCoucheLibelle: String,
+    val groupeCoucheProtected: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -48,6 +49,9 @@ data class GroupeCouche(
         if (this.groupeCoucheLibelle != o.groupeCoucheLibelle) {
             return false
         }
+        if (this.groupeCoucheProtected != o.groupeCoucheProtected) {
+            return false
+        }
         return true
     }
 
@@ -58,6 +62,7 @@ data class GroupeCouche(
         result = prime * result + this.groupeCoucheCode.hashCode()
         result = prime * result + this.groupeCoucheOrdre.hashCode()
         result = prime * result + this.groupeCoucheLibelle.hashCode()
+        result = prime * result + this.groupeCoucheProtected.hashCode()
         return result
     }
 
@@ -68,6 +73,7 @@ data class GroupeCouche(
         sb.append(", ").append(groupeCoucheCode)
         sb.append(", ").append(groupeCoucheOrdre)
         sb.append(", ").append(groupeCoucheLibelle)
+        sb.append(", ").append(groupeCoucheProtected)
 
         sb.append(")")
         return sb.toString()

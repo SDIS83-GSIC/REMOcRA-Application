@@ -174,6 +174,11 @@ open class Couche(
      */
     val CROSS_ORIGIN: TableField<Record, String?> = createField(DSL.name("couche_cross_origin"), SQLDataType.CLOB, this, "")
 
+    /**
+     * The column <code>remocra.couche.couche_protected</code>.
+     */
+    val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("couche_protected"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
