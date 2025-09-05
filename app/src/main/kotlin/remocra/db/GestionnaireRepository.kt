@@ -47,6 +47,18 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
                         .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
                 ),
             ).`as`("hasContact"),
+            DSL.field(
+                DSL.exists(
+                    dsl.select(PEI.GESTIONNAIRE_ID)
+                        .from(
+                            PEI,
+                        )
+                        .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+                        .where(
+                            PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
+                        ),
+                ),
+            ).`as`("hasPei"),
         )
             .from(GESTIONNAIRE)
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
@@ -61,6 +73,7 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         val gestionnaireCode: String,
         val gestionnaireLibelle: String,
         val hasContact: Boolean,
+        val hasPei: Boolean,
     )
 
     fun countAllForAdmin(filterBy: Filter?) =

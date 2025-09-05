@@ -44,8 +44,9 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      textDisable: "Ce gestionnaire a des contacts.",
-      disable: (row) => row.original.hasContact,
+      textDisable:
+        "Ce gestionnaire a des contacts ou est rattaché à un ou plusieurs PEI.",
+      disable: (row) => row.original.hasContact || row.original.hasPei,
       type: TYPE_BUTTON.DELETE,
       pathname: url`/api/gestionnaire/delete/`,
     });
