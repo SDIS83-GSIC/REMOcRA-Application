@@ -167,7 +167,7 @@ open class Rcci(
     /**
      * The column <code>remocra.rcci.rcci_point_eclosion</code>.
      */
-    val POINT_ECLOSION: TableField<Record, String?> = createField(DSL.name("rcci_point_eclosion"), SQLDataType.CLOB.nullable(false), this, "")
+    val POINT_ECLOSION: TableField<Record, String?> = createField(DSL.name("rcci_point_eclosion"), SQLDataType.CLOB, this, "")
 
     /**
      * The column <code>remocra.rcci.rcci_premier_cos</code>.

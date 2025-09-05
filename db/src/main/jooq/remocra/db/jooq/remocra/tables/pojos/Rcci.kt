@@ -36,7 +36,7 @@ data class Rcci(
     val rcciGdh: ZonedDateTime?,
     val rcciGeometrie: Geometry,
     val rcciHygrometrie: Int?,
-    val rcciPointEclosion: String,
+    val rcciPointEclosion: String?,
     val rcciPremierCos: String?,
     val rcciPremierEngin: String?,
     val rcciSuperficieFinale: Double?,
@@ -139,7 +139,11 @@ data class Rcci(
         } else if (this.rcciHygrometrie != o.rcciHygrometrie) {
             return false
         }
-        if (this.rcciPointEclosion != o.rcciPointEclosion) {
+        if (this.rcciPointEclosion == null) {
+            if (o.rcciPointEclosion != null) {
+                return false
+            }
+        } else if (this.rcciPointEclosion != o.rcciPointEclosion) {
             return false
         }
         if (this.rcciPremierCos == null) {
@@ -299,7 +303,7 @@ data class Rcci(
         result = prime * result + (if (this.rcciGdh == null) 0 else this.rcciGdh.hashCode())
         result = prime * result + this.rcciGeometrie.hashCode()
         result = prime * result + (if (this.rcciHygrometrie == null) 0 else this.rcciHygrometrie.hashCode())
-        result = prime * result + this.rcciPointEclosion.hashCode()
+        result = prime * result + (if (this.rcciPointEclosion == null) 0 else this.rcciPointEclosion.hashCode())
         result = prime * result + (if (this.rcciPremierCos == null) 0 else this.rcciPremierCos.hashCode())
         result = prime * result + (if (this.rcciPremierEngin == null) 0 else this.rcciPremierEngin.hashCode())
         result = prime * result + (if (this.rcciSuperficieFinale == null) 0 else this.rcciSuperficieFinale.hashCode())

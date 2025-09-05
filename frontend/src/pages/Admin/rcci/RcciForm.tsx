@@ -141,7 +141,7 @@ export const getInitialValues = (
       rcciHygrometrie: data.rcci?.rcciHygrometrie ?? undefined,
       rcciRcciIndiceRothermelId:
         data.rcci?.rcciRcciIndiceRothermelId ?? undefined,
-      rcciPointEclosion: data.rcci?.rcciPointEclosion ?? null,
+      rcciPointEclosion: data.rcci?.rcciPointEclosion ?? undefined,
       rcciPremierCos: data.rcci?.rcciPremierCos ?? undefined,
       rcciPremierEngin: data.rcci?.rcciPremierEngin ?? undefined,
       rcciSuperficieFinale: data.rcci?.rcciSuperficieFinale ?? undefined,
@@ -269,7 +269,7 @@ export const validationSchema = object({
     rcciSrid: requiredString,
     rcciHygrometrie: percentage,
     rcciIndiceRothermelId: string(),
-    rcciPointEclosion: requiredString,
+    rcciPointEclosion: string(),
     rcciPremierCos: string(),
     rcciPremierEngin: string(),
     rcciSuperficieFinale: numberPositif,
@@ -375,10 +375,7 @@ const RcciForm = () => {
           errors.rcci.rcciDateIncendie ||
           errors.rcci.rcciRcciTypeOrigineAlerteId,
         constatations:
-          errors.rcci.rcciSrid ||
-          errors.rcci.rcciX ||
-          errors.rcci.rcciY ||
-          errors.rcci.rcciPointEclosion,
+          errors.rcci.rcciSrid || errors.rcci.rcciX || errors.rcci.rcciY,
       });
       errorToast("Champs obligatoires non renseignés");
     }
@@ -619,7 +616,7 @@ const RcciForm = () => {
                 <TextInput
                   label="Point d'éclosion"
                   name={"rcci.rcciPointEclosion"}
-                  required={true}
+                  required={false}
                 />
               </Col>
             </Row>

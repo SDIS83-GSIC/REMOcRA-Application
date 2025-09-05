@@ -27,7 +27,7 @@ data class RcciForm(
     val rcciGelLieux: OuiNonNa?,
     val rcciGeometrie: Geometry,
     val rcciHygrometrie: Int?,
-    val rcciPointEclosion: String,
+    val rcciPointEclosion: String?,
     val rcciPremierCos: String?,
     val rcciPremierEngin: String?,
     val rcciSuperficieFinale: Double?,
