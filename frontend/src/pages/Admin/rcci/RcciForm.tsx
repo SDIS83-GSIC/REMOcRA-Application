@@ -41,6 +41,9 @@ import {
   requiredString,
 } from "../../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 
 type FormType = {
   rcci: RcciFormType;
@@ -397,6 +400,11 @@ const RcciForm = () => {
     };
   });
 
+  const { activesKeys, handleShowClose } = useAccordionState([
+    true,
+    ...Array(3 - 1).fill(false),
+  ]);
+
   return (
     <>
       <Row>
@@ -560,234 +568,264 @@ const RcciForm = () => {
             </span>
           }
         >
-          <FieldSet title={"Coordonnées"}>
-            <Row>
-              <Col />
-              <Col>
-                <SelectForm
-                  label="Système"
-                  name={"rcci.rcciSrid"}
-                  required={true}
-                  listIdCodeLibelle={sridList}
-                  defaultValue={sridList.find(
-                    (v) => v.id === values.rcci.rcciSrid,
-                  )}
-                  onChange={(e) => {
-                    const prevSrid = values.rcci.rcciSrid;
-                    const nextSrid = e.id;
-                    if (prevSrid !== nextSrid) {
-                      setFieldValue(e.target.name, nextSrid);
-                      if (values.rcci.rcciX && values.rcci.rcciY) {
-                        const [x, y] = transform(
-                          [
-                            parseFloat(values.rcci.rcciX),
-                            parseFloat(values.rcci.rcciY),
-                          ],
-                          `EPSG:${prevSrid}`,
-                          `EPSG:${nextSrid}`,
-                        );
-                        setFieldValue("rcci.rcciX", x);
-                        setFieldValue("rcci.rcciY", y);
-                      }
-                    }
-                  }}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <TextInput label="X" name={"rcci.rcciX"} required={true} />
-              </Col>
-              <Col>
-                <TextInput label="Y" name={"rcci.rcciY"} required={true} />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <TextInput
-                  label="Carroyage DFCI"
-                  name={"rcci.rcciCarroyageDfci"}
-                  required={false}
-                  readOnly={true}
-                  disabled={true}
-                />
-              </Col>
-              <Col>
-                <TextInput
-                  label="Point d'éclosion"
-                  name={"rcci.rcciPointEclosion"}
-                  required={false}
-                />
-              </Col>
-            </Row>
-          </FieldSet>
-          <FieldSet title={"Météo"}>
-            <Row>
-              <Col>
-                <DateTimeInput
-                  label="GDH"
-                  name={"rcci.rcciGdh"}
-                  required={false}
-                  value={
-                    values.rcci.rcciGdh &&
-                    formatDateTimeForDateTimeInput(values.rcci.rcciGdh)
-                  }
-                />
-              </Col>
-              <Col>
-                <SelectForm
-                  name={"rcci.rcciVentLocal"}
-                  listIdCodeLibelle={listOuiNonNA}
-                  label="Vent local"
-                  defaultValue={listOuiNonNA?.find(
-                    (v) => v.id === values?.rcci.rcciVentLocal,
-                  )}
-                  required={false}
-                  setFieldValue={setFieldValue}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <NumberInput
-                  label={"Hygrométrie (%)"}
-                  name={"rcci.rcciHygrometrie"}
-                  required={false}
-                  min={0}
-                  max={100}
-                  step={1}
-                />
-              </Col>
-              <Col>
-                <SelectForm
-                  name={"rcci.rcciDirectionVent"}
-                  listIdCodeLibelle={directionList}
-                  label="Direction"
-                  defaultValue={directionList?.find(
-                    (v) => v.id === values?.rcci.rcciDirectionVent,
-                  )}
-                  required={false}
-                  setFieldValue={setFieldValue}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <NumberInput
-                  label={"Température (°C)"}
-                  name={"rcci.rcciTemperature"}
-                  required={false}
-                  step={1}
-                />
-              </Col>
-              <Col>
-                <NumberInput
-                  label={"Force (km/h)"}
-                  name={"rcci.rcciForceVent"}
-                  required={false}
-                  min={0}
-                  step={1}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <SelectForm
-                  name={"rcci.rcciRcciIndiceRothermelId"}
-                  label="Indice ROTHERMEL"
-                  listIdCodeLibelle={rcciIndiceRothermelState.data}
-                  defaultValue={rcciIndiceRothermelState.data?.find(
-                    (v) => v.id === values.rcci.rcciRcciIndiceRothermelId,
-                  )}
-                  required={false}
-                  setFieldValue={setFieldValue}
-                />
-              </Col>
-              <Col>
-                <SelectForm
-                  name={"rcci.rcciRisqueMeteo"}
-                  listIdCodeLibelle={listRisqueMeteo}
-                  label="Risque météo"
-                  defaultValue={listRisqueMeteo?.find(
-                    (v) => v.id === values?.rcci.rcciRisqueMeteo,
-                  )}
-                  required={false}
-                  setFieldValue={setFieldValue}
-                />
-              </Col>
-            </Row>
-          </FieldSet>
-          <FieldSet title={"Feu"}>
-            <Row>
-              <Col>
-                <NumberInput
-                  label={"Superficie arrivée secours (m²)"}
-                  name={"rcci.recciSuperficieSecours"}
-                  required={false}
-                  step={0.01}
-                  min={0}
-                />
-              </Col>
-              <Col>
-                <TextInput
-                  label={"Premier engin sur les lieux"}
-                  name={"rcci.rcciPremierEngin"}
-                  required={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <NumberInput
-                  label={"Superficie arrivée référent (m²)"}
-                  name={"rcci.recciSuperficieReferent"}
-                  required={false}
-                  step={0.01}
-                  min={0}
-                />
-              </Col>
-              <Col>
-                <TextInput
-                  label={"Premier COS"}
-                  name={"rcci.rcciPremierEngin"}
-                  required={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <NumberInput
-                  label={"Superficie finale (m²)"}
-                  name={"rcci.recciSuperficieFinale"}
-                  required={false}
-                  step={0.01}
-                  min={0}
-                />
-              </Col>
-              <Col>
-                <TextInput
-                  label={"Forces de l'ordre présentes"}
-                  name={"rcci.rcciForcesOrddre"}
-                  required={false}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <SelectForm
-                  name={"rcci.rcciGelLieux"}
-                  listIdCodeLibelle={listOuiNonNA}
-                  label="Gel des lieux"
-                  defaultValue={listOuiNonNA?.find(
-                    (v) => v.id === values?.rcci.rcciGelLieux,
-                  )}
-                  required={false}
-                  setFieldValue={setFieldValue}
-                />
-              </Col>
-              <Col />
-            </Row>
-          </FieldSet>
+          <AccordionCustom
+            activesKeys={activesKeys}
+            list={[
+              {
+                header: "Coordonnées",
+                content: (
+                  <FieldSet>
+                    <Row>
+                      <Col />
+                      <Col>
+                        <SelectForm
+                          label="Système"
+                          name={"rcci.rcciSrid"}
+                          required={true}
+                          listIdCodeLibelle={sridList}
+                          defaultValue={sridList.find(
+                            (v) => v.id === values.rcci.rcciSrid,
+                          )}
+                          onChange={(e) => {
+                            const prevSrid = values.rcci.rcciSrid;
+                            const nextSrid = e.id;
+                            if (prevSrid !== nextSrid) {
+                              setFieldValue(e.target.name, nextSrid);
+                              if (values.rcci.rcciX && values.rcci.rcciY) {
+                                const [x, y] = transform(
+                                  [
+                                    parseFloat(values.rcci.rcciX),
+                                    parseFloat(values.rcci.rcciY),
+                                  ],
+                                  `EPSG:${prevSrid}`,
+                                  `EPSG:${nextSrid}`,
+                                );
+                                setFieldValue("rcci.rcciX", x);
+                                setFieldValue("rcci.rcciY", y);
+                              }
+                            }
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <TextInput
+                          label="X"
+                          name={"rcci.rcciX"}
+                          required={true}
+                        />
+                      </Col>
+                      <Col>
+                        <TextInput
+                          label="Y"
+                          name={"rcci.rcciY"}
+                          required={true}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <TextInput
+                          label="Carroyage DFCI"
+                          name={"rcci.rcciCarroyageDfci"}
+                          required={false}
+                          readOnly={true}
+                          disabled={true}
+                        />
+                      </Col>
+                      <Col>
+                        <TextInput
+                          label="Point d'éclosion"
+                          name={"rcci.rcciPointEclosion"}
+                          required={false}
+                        />
+                      </Col>
+                    </Row>
+                  </FieldSet>
+                ),
+              },
+              {
+                header: "Météo",
+                content: (
+                  <FieldSet>
+                    <Row>
+                      <Col>
+                        <DateTimeInput
+                          label="GDH"
+                          name={"rcci.rcciGdh"}
+                          required={false}
+                          value={
+                            values.rcci.rcciGdh &&
+                            formatDateTimeForDateTimeInput(values.rcci.rcciGdh)
+                          }
+                        />
+                      </Col>
+                      <Col>
+                        <SelectForm
+                          name={"rcci.rcciVentLocal"}
+                          listIdCodeLibelle={listOuiNonNA}
+                          label="Vent local"
+                          defaultValue={listOuiNonNA?.find(
+                            (v) => v.id === values?.rcci.rcciVentLocal,
+                          )}
+                          required={false}
+                          setFieldValue={setFieldValue}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <NumberInput
+                          label={"Hygrométrie (%)"}
+                          name={"rcci.rcciHygrometrie"}
+                          required={false}
+                          min={0}
+                          max={100}
+                          step={1}
+                        />
+                      </Col>
+                      <Col>
+                        <SelectForm
+                          name={"rcci.rcciDirectionVent"}
+                          listIdCodeLibelle={directionList}
+                          label="Direction"
+                          defaultValue={directionList?.find(
+                            (v) => v.id === values?.rcci.rcciDirectionVent,
+                          )}
+                          required={false}
+                          setFieldValue={setFieldValue}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <NumberInput
+                          label={"Température (°C)"}
+                          name={"rcci.rcciTemperature"}
+                          required={false}
+                          step={1}
+                        />
+                      </Col>
+                      <Col>
+                        <NumberInput
+                          label={"Force (km/h)"}
+                          name={"rcci.rcciForceVent"}
+                          required={false}
+                          min={0}
+                          step={1}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <SelectForm
+                          name={"rcci.rcciRcciIndiceRothermelId"}
+                          label="Indice ROTHERMEL"
+                          listIdCodeLibelle={rcciIndiceRothermelState.data}
+                          defaultValue={rcciIndiceRothermelState.data?.find(
+                            (v) =>
+                              v.id === values.rcci.rcciRcciIndiceRothermelId,
+                          )}
+                          required={false}
+                          setFieldValue={setFieldValue}
+                        />
+                      </Col>
+                      <Col>
+                        <SelectForm
+                          name={"rcci.rcciRisqueMeteo"}
+                          listIdCodeLibelle={listRisqueMeteo}
+                          label="Risque météo"
+                          defaultValue={listRisqueMeteo?.find(
+                            (v) => v.id === values?.rcci.rcciRisqueMeteo,
+                          )}
+                          required={false}
+                          setFieldValue={setFieldValue}
+                        />
+                      </Col>
+                    </Row>
+                  </FieldSet>
+                ),
+              },
+              {
+                header: "Feu",
+                content: (
+                  <FieldSet>
+                    <Row>
+                      <Col>
+                        <NumberInput
+                          label={"Superficie arrivée secours (m²)"}
+                          name={"rcci.recciSuperficieSecours"}
+                          required={false}
+                          step={0.01}
+                          min={0}
+                        />
+                      </Col>
+                      <Col>
+                        <TextInput
+                          label={"Premier engin sur les lieux"}
+                          name={"rcci.rcciPremierEngin"}
+                          required={false}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <NumberInput
+                          label={"Superficie arrivée référent (m²)"}
+                          name={"rcci.recciSuperficieReferent"}
+                          required={false}
+                          step={0.01}
+                          min={0}
+                        />
+                      </Col>
+                      <Col>
+                        <TextInput
+                          label={"Premier COS"}
+                          name={"rcci.rcciPremierEngin"}
+                          required={false}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <NumberInput
+                          label={"Superficie finale (m²)"}
+                          name={"rcci.recciSuperficieFinale"}
+                          required={false}
+                          step={0.01}
+                          min={0}
+                        />
+                      </Col>
+                      <Col>
+                        <TextInput
+                          label={"Forces de l'ordre présentes"}
+                          name={"rcci.rcciForcesOrddre"}
+                          required={false}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <SelectForm
+                          name={"rcci.rcciGelLieux"}
+                          listIdCodeLibelle={listOuiNonNA}
+                          label="Gel des lieux"
+                          defaultValue={listOuiNonNA?.find(
+                            (v) => v.id === values?.rcci.rcciGelLieux,
+                          )}
+                          required={false}
+                          setFieldValue={setFieldValue}
+                        />
+                      </Col>
+                      <Col />
+                    </Row>
+                  </FieldSet>
+                ),
+              },
+            ]}
+            handleShowClose={handleShowClose}
+          />
         </Tab>
         <Tab eventKey="causes" title="Causes et résultats des investigations">
           <FieldSet title={"Localisation et accès"}>
