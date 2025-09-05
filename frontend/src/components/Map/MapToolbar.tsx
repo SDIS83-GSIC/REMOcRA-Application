@@ -25,6 +25,9 @@ import {
   IconZoomOut,
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { hasDroit } from "../../droits.tsx";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
 import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
@@ -75,9 +78,11 @@ const formatArea = function (polygon: Polygon): string {
 export const useToolbarContext = ({
   map,
   workingLayer,
+  availableLayers,
   extraTools = {},
 }: {
   map?: Map;
+  availableLayers: any;
   workingLayer: any;
   extraTools?: any;
 }) => {
@@ -153,6 +158,20 @@ export const useToolbarContext = ({
         map?.removeInteraction(draw);
         handleCloseInfoI();
       }
+    }
+
+    function findIdByLayerCode(
+      availableLayers: any[],
+      code: string,
+    ): string | null {
+      for (const group of availableLayers) {
+        for (const subLayer of group.layers) {
+          if (subLayer.layer === code) {
+            return subLayer.id;
+          }
+        }
+      }
+      return null; // Si aucun match trouvé
     }
 
     let listener: ReturnType<typeof unByKey> | undefined;
@@ -242,6 +261,12 @@ export const useToolbarContext = ({
                 return r.json();
               })
               .then((data) => {
+                if (data.features.length > 0) {
+                  data.id = findIdByLayerCode(
+                    availableLayers,
+                    wmsLayer.getSource().params_.LAYERS,
+                  );
+                }
                 setInfoOutilI((e) => ({
                   show: true,
                   data: [...e.data, { ...data }],
@@ -327,7 +352,7 @@ export const useToolbarContext = ({
       },
       ...extraTools,
     };
-  }, [map]);
+  }, [map, availableLayers]);
 
   function disabledTool(toolId: string) {
     if (activeTool === toolId) {
@@ -392,6 +417,7 @@ const MapToolbar = forwardRef(
     const [zoom, setZoom] = useState<number>(
       Math.floor(map.getView().getZoom() ?? 0),
     );
+    const { user } = useAppContext();
 
     useEffect(() => {
       // setActiveTool("move");
@@ -458,26 +484,30 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
-            <ToolbarButton
-              toolName={"info-outil-i"}
-              toolIcon={<IconInfo />}
-              toolLabelTooltip={
-                "Obtenir des informations sur un point de la carte"
-              }
-              toggleTool={toggleTool}
-              activeTool={activeTool}
-              variant={variant}
-            />
+            {hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) && (
+              <ToolbarButton
+                toolName={"info-outil-i"}
+                toolIcon={<IconInfo />}
+                toolLabelTooltip={
+                  "Obtenir des informations sur un point de la carte"
+                }
+                toggleTool={toggleTool}
+                activeTool={activeTool}
+                variant={variant}
+              />
+            )}
           </ButtonGroup>
         </ButtonToolbar>
 
-        <Volet
-          handleClose={handleCloseInfoI}
-          show={generalInfo.show}
-          className="w-auto"
-        >
-          <OutilIVolet generalsInfos={generalInfo.data} />
-        </Volet>
+        {generalInfo.show && (
+          <Volet
+            handleClose={handleCloseInfoI}
+            show={generalInfo.show}
+            className="w-auto"
+          >
+            <OutilIVolet generalsInfos={generalInfo.data} />
+          </Volet>
+        )}
       </Row>
     );
   },

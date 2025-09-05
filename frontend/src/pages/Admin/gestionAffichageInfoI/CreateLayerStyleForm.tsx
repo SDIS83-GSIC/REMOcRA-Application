@@ -1,5 +1,7 @@
 import { object } from "yup";
 import { useFormikContext } from "formik";
+import { useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
   FormContainer,
@@ -8,10 +10,11 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../../module/validators.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 
 export const getInitialValues = (data?: any) => ({
   groupLayerId: data?.groupLayerId ?? null,
@@ -20,7 +23,7 @@ export const getInitialValues = (data?: any) => ({
   layerStyleFlag: data?.layerStyleFlag ?? false,
   layerStyle:
     data?.layerStyle ??
-    "[i]Les adresses sont mise à jour tous les jours à 01h00 [/i]\n[b]Description : [/b] #adresse_description#\n[br]\n[b]adresse_date_modification : [/b] [u]#adresse_date_modification#[/u]",
+    "[i]Titre principal[/i]\n[br]\n[br]\n[b]Description : [/b] #parametre_description#\n[br]\n[b]Date : [/b] [u]#parametre_date#[/u]",
 });
 
 export const prepareValues = (values: {
@@ -44,9 +47,24 @@ export const validationSchema = object({
   layerProfilId: requiredArray,
 });
 
-const CreateLayerStyleForm = () => {
-  const layerData = useGet(url`/api/admin/couche/get-couches`)?.data?.list;
+const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
+  const [coucheId, setCoucheId] = useState<string | null>(initalLayer);
+
+  const queryParam = initalLayer !== undefined ? "" : "?excludeExisting=true";
+  const layerData = useGet(url`/api/admin/couche/get-couches${queryParam}`)
+    ?.data?.list;
+
   const { setValues, setFieldValue, values } = useFormikContext<any>();
+  const { run: fetchOption, data: describeFeatureType } = useGetRun(
+    url`/api/geoserver/describe-feature-type/${coucheId!}`,
+    {},
+  );
+
+  useEffect(() => {
+    if (coucheId) {
+      fetchOption();
+    }
+  }, [coucheId, fetchOption]);
 
   if (!layerData) {
     return <Loading />;
@@ -117,6 +135,18 @@ const CreateLayerStyleForm = () => {
     );
   }
 
+  const paramNotFound = "Aucun paramètre trouvé";
+
+  const properties = describeFeatureType?.featureTypes?.[0].properties ?? [];
+  const params = properties.length
+    ? properties.map((p: { name: any }, idx: number) => (
+        <span key={idx}>
+          - {p.name}
+          <br />
+        </span>
+      ))
+    : null;
+
   return (
     <FormContainer>
       <h3 className="mt-1">Informations générales</h3>
@@ -150,6 +180,7 @@ const CreateLayerStyleForm = () => {
         onChange={(value: any) => {
           setFieldValue("layerId", value.id);
           setFieldValue("layerProfilId", undefined);
+          setCoucheId(value.id);
         }}
       />
 
@@ -178,9 +209,31 @@ const CreateLayerStyleForm = () => {
 
       <CheckBoxInput name={"layerStyleFlag"} label={"Activer le style"} />
 
+      <Row className="mt-3">
+        <Col className="bg-light border p-2 rounded">
+          <IconInfo /> Liste des paramètres : <br /> {params ?? paramNotFound}
+        </Col>
+      </Row>
+
+      <Row className="mt-3">
+        <Col className="bg-light border p-2 rounded">
+          Styles utilisables : <br />
+          <b>[i]...[/i]</b> : texte en italique
+          <br />
+          <b>[b]...[/b]</b> : texte en gras
+          <br />
+          <b>[u]...[/u]</b> : texte souligné
+          <br />
+          <b>[br]</b> : saut de ligne
+          <br />
+          <b>#...#</b> : paramètre à insérer
+        </Col>
+      </Row>
+
       <TextAreaInput
         rows={10}
         name="layerStyle"
+        readOnly={params === null}
         label="Entrez un nouveau style"
         value={values.layerStyle}
       />

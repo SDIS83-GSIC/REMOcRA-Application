@@ -52,6 +52,7 @@ const OldebMap = () => {
 
   const { toggleTool, activeTool, handleCloseInfoI, infoOutilI } =
     useToolbarContext({
+      availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
       extraTools: extraTools,
