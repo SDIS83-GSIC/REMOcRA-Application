@@ -19,7 +19,7 @@ data class OldebForm(
     val oldebGeometrie: Geometry,
     val oldebCommuneId: UUID,
     val oldebCadastreSectionId: UUID,
-    val oldebCadastreParcelleId: UUID,
+    val oldebCadastreParcelleId: UUID?,
     val oldebOldebTypeAccesId: UUID?,
     val oldebOldebTypeZoneUrbanismeId: UUID?,
     val oldebNumVoie: String?,

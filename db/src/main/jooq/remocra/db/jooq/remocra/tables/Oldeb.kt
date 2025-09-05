@@ -125,7 +125,7 @@ open class Oldeb(
     /**
      * The column <code>remocra.oldeb.oldeb_cadastre_parcelle_id</code>.
      */
-    val CADASTRE_PARCELLE_ID: TableField<Record, UUID?> = createField(DSL.name("oldeb_cadastre_parcelle_id"), SQLDataType.UUID.nullable(false), this, "")
+    val CADASTRE_PARCELLE_ID: TableField<Record, UUID?> = createField(DSL.name("oldeb_cadastre_parcelle_id"), SQLDataType.UUID, this, "")
 
     /**
      * The column <code>remocra.oldeb.oldeb_oldeb_type_acces_id</code>.

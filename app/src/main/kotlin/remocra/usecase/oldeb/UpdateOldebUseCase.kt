@@ -278,7 +278,9 @@ class UpdateOldebUseCase @Inject constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {
-        if (oldebRepository.checkSectionAndParcelleIsUsed(element.oldeb.oldebId, element.oldeb.oldebCommuneId, element.oldeb.oldebCadastreSectionId, element.oldeb.oldebCadastreParcelleId)) {
+        // On fait la vérif de contraintes d'uniticé uniquement si la parcelle est renseignée
+        if (element.oldeb.oldebCadastreParcelleId != null && oldebRepository.checkSectionAndParcelleIsUsed(element.oldeb.oldebId, element.oldeb.oldebCommuneId, element.oldeb.oldebCadastreSectionId, element.oldeb.oldebCadastreParcelleId)
+        ) {
             throw RemocraResponseException(ErrorType.OLDEB_PARCELLE_ALREADY_USED)
         }
     }

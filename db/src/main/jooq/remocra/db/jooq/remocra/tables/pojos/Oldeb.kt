@@ -24,7 +24,7 @@ data class Oldeb(
     val oldebGeometrie: Geometry,
     val oldebCommuneId: UUID,
     val oldebCadastreSectionId: UUID,
-    val oldebCadastreParcelleId: UUID,
+    val oldebCadastreParcelleId: UUID?,
     val oldebOldebTypeAccesId: UUID?,
     val oldebOldebTypeZoneUrbanismeId: UUID?,
     val oldebNumVoie: String?,
@@ -60,7 +60,11 @@ data class Oldeb(
         if (this.oldebCadastreSectionId != o.oldebCadastreSectionId) {
             return false
         }
-        if (this.oldebCadastreParcelleId != o.oldebCadastreParcelleId) {
+        if (this.oldebCadastreParcelleId == null) {
+            if (o.oldebCadastreParcelleId != null) {
+                return false
+            }
+        } else if (this.oldebCadastreParcelleId != o.oldebCadastreParcelleId) {
             return false
         }
         if (this.oldebOldebTypeAccesId == null) {
@@ -135,7 +139,7 @@ data class Oldeb(
         result = prime * result + this.oldebGeometrie.hashCode()
         result = prime * result + this.oldebCommuneId.hashCode()
         result = prime * result + this.oldebCadastreSectionId.hashCode()
-        result = prime * result + this.oldebCadastreParcelleId.hashCode()
+        result = prime * result + (if (this.oldebCadastreParcelleId == null) 0 else this.oldebCadastreParcelleId.hashCode())
         result = prime * result + (if (this.oldebOldebTypeAccesId == null) 0 else this.oldebOldebTypeAccesId.hashCode())
         result = prime * result + (if (this.oldebOldebTypeZoneUrbanismeId == null) 0 else this.oldebOldebTypeZoneUrbanismeId.hashCode())
         result = prime * result + (if (this.oldebNumVoie == null) 0 else this.oldebNumVoie.hashCode())
