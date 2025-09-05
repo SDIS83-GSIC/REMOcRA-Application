@@ -202,6 +202,7 @@ class TourneeRepository
                     it
                 }
             }
+            .orderBy(TOURNEE.LIBELLE)
             .fetchInto()
 
     fun getTourneeByPei(peiId: UUID): List<Tournee> =
