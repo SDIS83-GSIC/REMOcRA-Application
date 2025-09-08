@@ -29,6 +29,7 @@ import remocra.db.jooq.incoming.Incoming
 import remocra.db.jooq.incoming.keys.TOURNEE_PKEY
 import remocra.db.jooq.incoming.keys.VISITE__VISITE_VISITE_TOURNEE_ID_FKEY
 import remocra.db.jooq.incoming.tables.Visite.VisitePath
+import remocra.db.jooq.remocra.enums.StatutSynchronisation
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -97,6 +98,11 @@ open class Tournee(
      * The column <code>incoming.tournee.tournee_date_fin_synchro</code>.
      */
     val DATE_FIN_SYNCHRO: TableField<Record, ZonedDateTime?> = createField(DSL.name("tournee_date_fin_synchro"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
+
+    /**
+     * The column <code>incoming.tournee.tournee_statut_synchronisaiton</code>.
+     */
+    val STATUT_SYNCHRONISAITON: TableField<Record, StatutSynchronisation?> = createField(DSL.name("tournee_statut_synchronisaiton"), SQLDataType.VARCHAR.asEnumDataType(StatutSynchronisation::class.java), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

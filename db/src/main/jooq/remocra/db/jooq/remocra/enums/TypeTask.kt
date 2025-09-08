@@ -64,6 +64,7 @@ enum class TypeTask(@get:JvmName("literal") public val literal: String) : EnumTy
     PERSONNALISE("PERSONNALISE"),
     RELANCER_CALCUL_DISPONIBILITE("RELANCER_CALCUL_DISPONIBILITE"),
     RELANCER_CALCUL_NUMEROTATION("RELANCER_CALCUL_NUMEROTATION"),
+    INTERGRER_INCOMING_REMOCRA("INTERGRER_INCOMING_REMOCRA"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

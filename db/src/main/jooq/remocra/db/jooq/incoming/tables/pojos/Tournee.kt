@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.incoming.tables.pojos
 
+import remocra.db.jooq.remocra.enums.StatutSynchronisation
 import java.io.Serializable
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -24,6 +25,7 @@ data class Tournee(
     val tourneeLibelle: String?,
     val tourneeDateDebutSynchro: ZonedDateTime?,
     val tourneeDateFinSynchro: ZonedDateTime?,
+    val tourneeStatutSynchronisaiton: StatutSynchronisation?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -61,6 +63,13 @@ data class Tournee(
         } else if (this.tourneeDateFinSynchro != o.tourneeDateFinSynchro) {
             return false
         }
+        if (this.tourneeStatutSynchronisaiton == null) {
+            if (o.tourneeStatutSynchronisaiton != null) {
+                return false
+            }
+        } else if (this.tourneeStatutSynchronisaiton != o.tourneeStatutSynchronisaiton) {
+            return false
+        }
         return true
     }
 
@@ -71,6 +80,7 @@ data class Tournee(
         result = prime * result + (if (this.tourneeLibelle == null) 0 else this.tourneeLibelle.hashCode())
         result = prime * result + (if (this.tourneeDateDebutSynchro == null) 0 else this.tourneeDateDebutSynchro.hashCode())
         result = prime * result + (if (this.tourneeDateFinSynchro == null) 0 else this.tourneeDateFinSynchro.hashCode())
+        result = prime * result + (if (this.tourneeStatutSynchronisaiton == null) 0 else this.tourneeStatutSynchronisaiton.hashCode())
         return result
     }
 
@@ -81,6 +91,7 @@ data class Tournee(
         sb.append(", ").append(tourneeLibelle)
         sb.append(", ").append(tourneeDateDebutSynchro)
         sb.append(", ").append(tourneeDateFinSynchro)
+        sb.append(", ").append(tourneeStatutSynchronisaiton)
 
         sb.append(")")
         return sb.toString()
