@@ -96,15 +96,19 @@ class ValideIncomingTournee : AbstractUseCase() {
         gestionnaires.forEach {
             logger.info("UPSERT du gestionnaire ${it.gestionnaireId} (${it.gestionnaireCode} - ${it.gestionnaireLibelle})")
 
+            val gestionnaire = Gestionnaire(
+                gestionnaireId = it.gestionnaireId,
+                gestionnaireActif = true,
+                gestionnaireCode = it.gestionnaireCode,
+                gestionnaireLibelle = it.gestionnaireLibelle,
+            )
+
             // on doit faire l'insert ou on update
             gestionnaireRepository.upsertGestionnaire(
-                Gestionnaire(
-                    gestionnaireId = it.gestionnaireId,
-                    gestionnaireActif = true,
-                    gestionnaireCode = it.gestionnaireCode,
-                    gestionnaireLibelle = it.gestionnaireLibelle,
-                ),
+                gestionnaire,
             )
+
+            logger.info("POJO - mise à jour / création d'un gestionnaire : {}", gestionnaire)
         }
     }
 
@@ -141,14 +145,14 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             // Si c'est un update
             if (contactsInRemocra.contains(it.contactId)) {
-                logger.info("Mise à jour du contact ${it.contactId}")
+                logger.info("Mise à jour du contact ${it.contactId} : $contact")
 
                 contactRepository.updateContact(contact)
 
                 // On supprime les rôles et on les remets
                 contactRepository.deleteLContactRole(it.contactId)
             } else {
-                logger.info("CREATION du contact ${it.contactId}")
+                logger.info("CREATION du contact ${it.contactId} : $contact")
                 contactRepository.insertContact(contact)
             }
 
@@ -274,6 +278,7 @@ class ValideIncomingTournee : AbstractUseCase() {
                     )
                 }
 
+            logger.info("POJO - création d'un PEI : {}", peiData)
             // On délègue la création à notre superbe usecase
             val result = createPeiUseCase.execute(
                 userInfo,
@@ -348,7 +353,7 @@ class ValideIncomingTournee : AbstractUseCase() {
         val listePhotoPei = incomingRepository.getPhotoPei(tourneeId)
 
         listePhotoPei.forEach {
-            logger.info("CREATION document ${it.photoId}")
+            logger.info("CREATION document ${it.photoId} pour le PEI ${it.peiId}")
             documentRepository.insertDocument(
                 Document(
                     documentId = it.photoId,
