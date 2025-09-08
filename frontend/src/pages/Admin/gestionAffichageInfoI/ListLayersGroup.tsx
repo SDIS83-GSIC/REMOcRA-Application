@@ -38,7 +38,7 @@ const ListLayersGroup = () => {
         row: (row: any) => {
           return row;
         },
-        classEnable: "danger",
+        classEnable: "info",
         route: (styleId) => URLS.UPDATE_LAYER_STYLE(styleId),
         type: TYPE_BUTTON.UPDATE,
       },
