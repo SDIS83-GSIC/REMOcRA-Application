@@ -1,0 +1,458 @@
+= Documentation des points d'entrée de l'API REMOcRA
+:Author:    Atol C&D
+:Email:     remocra-projet@atolcd.com
+:Date:      01/09/2025
+:Revision:  1.0.0
+:imagesdir: images/
+:experimental:
+:icons: font
+:toc:
+:toclevels: 1
+:numbered:
+
+<<<
+== Introduction générale
+
+Cette documentation décrit tous les points d'entrée disponibles dans l'API REMOcRA v3.
+
+La plupart des endpoints supportent la pagination via les paramètres :
+
+*  `limit` correspond au nombre (maximum) d'éléments à retourner
+*  `offset` correspond au nombre d'éléments à ignorer depuis le début, *à partir de 0*
+
+== Authentification
+
+L'API utilise l'authentification Bearer JWT. Tous les endpoints (sauf OpenAPI) nécessitent une authentification.
+
+*Format d'en-tête :*
+[source]
+----
+Authorization: Bearer <token>
+----
+
+*Droits requis :*
+
+* `RECEVOIR` : Pour les opérations de lecture
+* `TRANSMETTRE` : Pour les opérations d'écriture (création, modification, suppression)
+
+== Référentiels Communs
+
+*Base URL :* `/api/referentiel`
+
+=== Types d'Organismes
+
+==== `GET /typesOrganismes`
+Retourne les types d'organismes susceptibles d'exploiter REMOcRA.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+=== Communes
+
+==== `GET /communes`
+Retourne la liste des communes.
+
+*Paramètres de requête :*
+
+- `codeInsee` (optionnel) : Code INSEE de la commune
+- `libelle` (optionnel) : Tout ou partie du nom de la commune
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+=== Voies
+
+==== `GET /voies/{codeInsee}`
+Retourne les voies d'une commune donnée.
+
+*Paramètres de chemin :*
+
+- `codeInsee` (requis) : Code INSEE de la commune
+
+*Paramètres de requête :*
+
+- `libelle` (optionnel) : Tout ou partie du nom de la voie
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+=== Organismes
+
+==== `GET /organismes`
+Retourne les organismes susceptibles d'exploiter REMOcRA (utilisateurs nommés avec accès à l'interface applicative ou exploitation de l'API).
+
+*Paramètres de requête :*
+
+- `codeTypeOrganisme` (optionnel) : Code du type de l'organisme
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+== DECI - Points d'Eau Incendie
+
+*Base URL :* `/api/deci/pei`
+
+=== Liste des PEI
+
+==== `GET /`
+Retourne la liste des PEI en lien avec l'organisme courant. La structure de donnée retournée est conforme au modèle de donnée minimal défini par l'AFIGEO.
+
+*Paramètres de requête :*
+
+- `insee` (optionnel) : Numéro INSEE de la commune où se trouve le PEI
+- `type` (optionnel) : Type du PEI ('PIBI' ou 'PENA')
+- `codeNature` (optionnel) : Nature du PEI
+- `codeNatureDECI` (optionnel) : Nature DECI ('PRIVE', 'PUBLIC', 'CONVENTIONNE')
+- `limit` (optionnel, max 200, défaut 200) : Nombre maximum de résultats à retourner
+- `start` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+==== `GET /{numeroComplet}`
+Retourne les informations communes à tout type de PEI d'un PEI spécifique.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro du PEI
+
+*Droit requis :* `RECEVOIR`
+
+=== Caractéristiques du PEI
+
+==== `GET /{numeroComplet}/caracteristiques`
+Retourne les caractéristiques techniques propres au PEI et à son type (PIBI ou PENA).
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro du PEI
+
+*Droit requis :* `RECEVOIR`
+
+==== `PUT /{numeroComplet}/pibi-caracteristiques`
+Modifie les caractéristiques techniques propres au PIBI.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro du PEI
+
+*Corps de la requête :* Objet `ApiPibiFormData`
+
+*Droit requis :* `TRANSMETTRE`
+
+==== `PUT /{numeroComplet}/pena-caracteristiques`
+Modifie les caractéristiques techniques propres au PENA.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro du PEI
+
+*Corps de la requête :* Objet `ApiPenaFormData`
+
+*Droit requis :* `TRANSMETTRE`
+
+== DECI - Référentiels
+
+=== Référentiels Communs DECI
+
+*Base URL :* `/api/deci/referentiel`
+
+==== `GET /naturesDECI`
+Retourne les types de DECI applicables sur les PEI (publique, privée, privée sous convention).
+
+==== `GET /niveaux`
+Retourne les valeurs de positionnement par rapport au sol possibles pour un PEI.
+
+==== `GET /domaines`
+Retourne les natures domaniales des terrains sur lesquels les PEI sont localisés.
+
+==== `GET /typesVisites`
+Retourne les types de visites possibles sur les PEI.
+
+*Paramètres communs :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+=== Référentiels PIBI
+
+*Base URL :* `/api/deci/referentiel/pibi`
+
+==== `GET /naturesPEI`
+Retourne les natures de PEI possibles pour les PEI de type PIBI.
+
+==== `GET /diametres/{natureCode}`
+Retourne les diamètres de demi-raccord possibles pour une nature de PIBI.
+
+*Paramètres de chemin :*
+
+- `natureCode` (requis) : Code de nature PIBI
+
+==== `GET /{natureCode}/naturesAnomalies`
+Retourne les types d'anomalies pouvant être constatées pour une nature de PIBI et un type de visite spécifiques.
+
+*Paramètres de chemin :*
+
+- `natureCode` (requis) : Nature du PIBI
+
+*Paramètres de requête :*
+
+- `typeVisite` (optionnel) : Type de la visite
+
+==== `GET /marques`
+Retourne les marques susceptibles d'équiper le parc de PIBI.
+
+==== `GET /modeles`
+Retourne les modèles susceptibles d'équiper le parc de PIBI.
+
+*Paramètres de requête :*
+
+- `codeMarque` (optionnel) : Code de la marque
+
+==== `GET /typeReseau`
+Retourne les types de réseau.
+
+==== `GET /typeCanalisation`
+Retourne les types de canalisation.
+
+*Droit requis :* `RECEVOIR`
+
+=== Référentiels PENA
+
+*Base URL :* `/api/deci/referentiel/pena`
+
+==== `GET /naturesPEI`
+Retourne les natures de PEI possibles pour les PEI de type PENA.
+
+==== `GET /materiaux`
+Retourne les matériaux possibles pour les PEI de type PENA.
+
+==== `GET /{natureCode}/naturesAnomalies`
+Retourne les types d'anomalies pouvant être constatées pour une nature de PENA et un type de visite spécifiques.
+
+*Paramètres de chemin :*
+
+- `natureCode` (requis) : Nature du PENA
+
+*Paramètres de requête :*
+
+- `typeVisite` (optionnel) : Type de la visite
+
+*Droit requis :* `RECEVOIR`
+
+== Documentation OpenAPI
+
+*Base URL :* `/api/openapi`
+
+=== Spécification OpenAPI
+
+==== `GET /openapi.{type}`
+Retourne la spécification OpenAPI de l'API.
+
+*Paramètres de chemin :*
+
+- `type` : Format de la spécification ('json' ou 'yaml')
+
+*Accès :* Public (pas d'authentification requise)
+
+=== Interface Swagger UI
+
+==== `GET /`
+Affiche l'interface Swagger UI pour explorer l'API.
+
+*Accès :* Public (pas d'authentification requise)
+
+== Formats de Réponse
+
+Toutes les réponses sont au format JSON avec l'encodage UTF-8, sauf indication contraire.
+
+*En-tête de réponse :*
+[source]
+----
+Content-Type: application/json; charset=UTF-8
+----
+
+== Codes de Statut HTTP
+
+- `200` : Succès
+- `201` : Créé avec succès
+- `400` : Erreur dans la requête
+- `401` : Non authentifié
+- `403` : Accès refusé (droits insuffisants)
+- `404` : Ressource non trouvée
+- `500` : Erreur serveur
+
+== Notes Importantes
+
+1. *Modèle AFIGEO* : Les données PEI sont conformes au modèle de donnée minimal défini par l'AFIGEO.
+2. *Limite de résultats* : Certains endpoints ont une limite maximale (ex: 200 pour la liste des PEI).
+3. *Formats de date* : Les dates sont au format `YYYY-MM-DD hh:mm`.
+4. *Types de PEI* :
+- **PIBI** : Points d'Eau Incendie sous pression (Poteaux et Bornes Incendie)
+- **PENA** : Points d'Eau Naturels et Artificiels
+5. *Natures DECI* :
+- `PUBLIC` : DECI publique
+- `PRIVE` : DECI privée
+- `CONVENTIONNE` : DECI privée sous convention
+
+== Structures de Données (Objets JSON)
+
+Cette section décrit les structures de données attendues dans le corps des requêtes POST et PUT.
+
+=== ApiPibiFormData
+
+Objet utilisé pour la modification des caractéristiques techniques des PIBI (`PUT /api/deci/pei/{numeroComplet}/pibi-caracteristiques`).
+
+[source,json]
+----
+{
+  "codeDiametre": "string (optionnel)",
+  "diametreCanalisation": "number (optionnel)",
+  "peiJumele": "string (optionnel)",
+  "inviolabilite": "boolean (optionnel)",
+  "renversable": "boolean (optionnel)",
+  "codeMarque": "string (optionnel)",
+  "codeModele": "string (optionnel)",
+  "anneeFabrication": "number (optionnel)",
+  "codeTypeReseau": "string (optionnel)",
+  "codeTypeCanalisation": "string (optionnel)",
+  "reseauSurpresse": "boolean (optionnel)",
+  "reseauAdditive": "boolean (optionnel)"
+}
+----
+
+**Propriétés :**
+
+* `codeDiametre` : Code du diamètre de demi-raccord
+* `diametreCanalisation` : Diamètre de la canalisation en millimètres
+* `peiJumele` : Numéro du PEI jumelé
+* `inviolabilite` : Indique si le PEI est équipé d'un système d'inviolabilité
+* `renversable` : Indique si le PEI est renversable
+* `codeMarque` : Code de la marque du PIBI
+* `codeModele` : Code du modèle du PIBI
+* `anneeFabrication` : Année de fabrication
+* `codeTypeReseau` : Code du type de réseau
+* `codeTypeCanalisation` : Code du type de canalisation
+* `reseauSurpresse` : Indique si le réseau est surpressé
+* `reseauAdditive` : Indique si le réseau utilise des additifs
+
+=== ApiPenaFormData
+
+Objet utilisé pour la modification des caractéristiques techniques des PENA (`PUT /api/deci/pei/{numeroComplet}/pena-caracteristiques`).
+
+[source,json]
+----
+{
+  "capaciteIllimitee": "boolean (optionnel)",
+  "capaciteIncertaine": "boolean (optionnel)",
+  "capacite": "number (optionnel)",
+  "quantiteAppoint": "number (optionnel)",
+  "codeMateriau": "string (optionnel)",
+  "equipeHBE": "boolean (optionnel)"
+}
+----
+
+**Propriétés :**
+
+* `capaciteIllimitee` : Indique si la capacité est illimitée
+* `capaciteIncertaine` : Indique si la capacité est incertaine
+* `capacite` : Capacité en litres
+* `quantiteAppoint` : Quantité d'appoint en litres
+* `codeMateriau` : Code du matériau du PENA
+* `equipeHBE` : Indique si équipé d'un système HBE (Hauteur de Bon Eclairage)
+
+=== ApiVisiteFormData
+
+Objet utilisé pour l'ajout et la modification de visites (`POST` et `PUT /api/deci/pei/{numeroComplet}/visites`).
+
+[source,json]
+----
+{
+  "date": "string (requis)",
+  "typeVisite": "string (requis)",
+  "agent1": "string (optionnel)",
+  "agent2": "string (optionnel)",
+  "anomaliesControlees": ["string", "string"],
+  "anomaliesConstatees": ["string", "string"],
+  "debit": "number (optionnel)",
+  "debitMax": "number (optionnel)",
+  "pression": "number (optionnel)",
+  "pressionDynamique": "number (optionnel)",
+  "pressionDynamiqueDebitMax": "number (optionnel)",
+  "observations": "string (optionnel)"
+}
+----
+
+**Propriétés :**
+
+* `date` : Date de la visite au format ISO (YYYY-MM-DD)
+* `typeVisite` : Code du type de visite
+* `agent1` : Nom du premier agent
+* `agent2` : Nom du second agent (optionnel)
+* `anomaliesControlees` : Liste des codes d'anomalies contrôlées
+* `anomaliesConstatees` : Liste des codes d'anomalies constatées
+* `debit` : Débit mesuré en litres/minute
+* `debitMax` : Débit maximal mesuré en litres/minute
+* `pression` : Pression statique en bars
+* `pressionDynamique` : Pression dynamique en bars
+* `pressionDynamiqueDebitMax` : Pression dynamique au débit maximal en bars
+* `observations` : Observations textuelles
+
+=== ApiIndispoTempFormData
+
+Objet utilisé pour l'ajout et la modification d'indisponibilités temporaires (`POST` et `PUT /api/deci/indispoTemporaire`).
+
+[source,json]
+----
+{
+  "motif": "string (requis)",
+  "observation": "string (optionnel)",
+  "dateDebut": "string (requis, format ISO 8601)",
+  "mailAvantIndisponibilite": "boolean (défaut: true)",
+  "mailApresIndisponibilite": "boolean (défaut: true)",
+  "basculeAutoDisponible": "boolean (défaut: true)",
+  "basculeAutoIndisponible": "boolean (défaut: true)",
+  "notificationDebut": "string (optionnel, format ISO 8601)",
+  "notificationFin": "string (optionnel, format ISO 8601)",
+  "notificationResteIndispo": "string (optionnel, format ISO 8601)",
+  "dateFin": "string (optionnel, format ISO 8601)",
+  "listeNumeroPei": ["string", "string"]
+}
+----
+
+**Propriétés :**
+
+* `motif` : Motif de l'indisponibilité
+* `observation` : Observations complémentaires
+* `dateDebut` : Date et heure de début d'indisponibilité
+* `mailAvantIndisponibilite` : Envoi d'un mail avant l'indisponibilité
+* `mailApresIndisponibilite` : Envoi d'un mail après l'indisponibilité
+* `basculeAutoDisponible` : Basculement automatique en disponible
+* `basculeAutoIndisponible` : Basculement automatique en indisponible
+* `notificationDebut` : Date/heure de notification de début
+* `notificationFin` : Date/heure de notification de fin
+* `notificationResteIndispo` : Date/heure de notification si reste indisponible
+* `dateFin` : Date et heure de fin d'indisponibilité
+* `listeNumeroPei` : Liste des numéros complets des PEI concernés
+
+=== Formats de Date
+
+Les dates doivent être au format ISO 8601 :
+
+* **Date simple** : `YYYY-MM-DD` (ex: `2024-12-25`)
+* **Date et heure avec fuseau** : `YYYY-MM-DDTHH:mm:ss.sssZ` (ex: `2024-12-25T14:30:00.000Z`)
+
+=== Validation
+
+* Les champs marqués comme **requis** doivent obligatoirement être fournis
+* Les valeurs numériques doivent respecter les contraintes métier (ex: débits positifs)
+* Les codes de référentiel doivent exister dans la base de données
+* Les dates de fin doivent être postérieures aux dates de début
