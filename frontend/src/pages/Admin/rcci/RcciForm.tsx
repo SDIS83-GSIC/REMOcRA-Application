@@ -368,6 +368,27 @@ const RcciForm = () => {
   ]);
 
   useEffect(() => {
+    if (!values.rcci.rcciX || !values.rcci.rcciY) {
+      return;
+    }
+
+    if (
+      referentielState.data?.listCommune != null &&
+      referentielState.data?.listCommune?.length !== 0
+    ) {
+      setFieldValue(
+        "rcci.rcciCommuneId",
+        referentielState.data?.listCommune[0].id,
+      );
+    }
+  }, [
+    values.rcci.rcciX,
+    values.rcci.rcciY,
+    referentielState.data?.listCommune,
+    setFieldValue,
+  ]);
+
+  useEffect(() => {
     setFieldValue("rcci.rcciCarroyageDfci", data?.carroyageDfciCoordonneee);
   }, [isLoading, data, setFieldValue]);
 
@@ -456,8 +477,12 @@ const RcciForm = () => {
                   defaultValue={referentielState.data?.listCommune?.find(
                     (v) => v.id === values.rcci.rcciCommuneId,
                   )}
+                  onChange={(e) =>{
+                    setFieldValue("rcci.rcciCommuneId", e?.id)
+                    setFieldValue("rcci.rcciVoieId", null)
+                  }}
                   setFieldValue={setFieldValue}
-                  required={false}
+                  required={true}
                 />
               </Col>
 
