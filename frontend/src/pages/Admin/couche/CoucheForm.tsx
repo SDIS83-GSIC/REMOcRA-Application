@@ -23,6 +23,8 @@ import { IconDelete } from "../../../components/Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
 import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
+import { URLS } from "../../../routes.tsx";
 
 type CoucheType = {
   coucheProtected: boolean;
@@ -265,6 +267,19 @@ const CoucheForm = () => {
                             placeholder={"Ordre"}
                             required={true}
                           />
+                        </Col>
+                        <Col xs={12} lg={6} xxl={4}>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.URL_LIST_LAYER_STYLE}
+                            search={new URLSearchParams({
+                              filterBy: JSON.stringify({
+                                coucheLibelle: couche.coucheLibelle,
+                              }),
+                            }).toString()}
+                          >
+                            Gestion du style
+                          </CustomLinkButton>
                         </Col>
                         <Col xs={12} className="p-2 bg-secondary mt-2">
                           <h4 className={"m-0 p-0 text-center h6"}>Flux</h4>

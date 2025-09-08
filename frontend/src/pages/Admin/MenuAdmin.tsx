@@ -261,6 +261,18 @@ const MenuAdmin = () => {
                         Couches cartographiques
                       </CustomLinkButton>
                     </Nav.Item>
+                  </>
+                )}
+                {hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) && (
+                  <>
+                    <Nav.Item>
+                      <CustomLinkButton
+                        className="text-underline text-start"
+                        pathname={URLS.URL_LIST_LAYER_STYLE}
+                      >
+                        Gestion du style des couches
+                      </CustomLinkButton>
+                    </Nav.Item>
                     <br />
                   </>
                 )}
