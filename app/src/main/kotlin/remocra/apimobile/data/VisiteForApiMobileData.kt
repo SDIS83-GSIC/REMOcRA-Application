@@ -12,9 +12,9 @@ class VisiteForApiMobileData(
     val ctrDebitPression: Boolean,
     val visiteAgent1: String?,
     val visiteAgent2: String?,
-    val visiteCtrlDebitPressionDebit: Int,
-    val visiteCtrlDebitPressionPression: Double,
-    val visiteCtrlDebitPressionPressionDyn: Double,
+    val visiteCtrlDebitPressionDebit: Int?,
+    val visiteCtrlDebitPressionPression: Double?,
+    val visiteCtrlDebitPressionPressionDyn: Double?,
     val visiteObservations: String?,
     val hasAnomalieChanges: Boolean,
 )

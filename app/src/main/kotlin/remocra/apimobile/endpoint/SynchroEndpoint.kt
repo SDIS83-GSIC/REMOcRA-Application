@@ -250,9 +250,9 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("ctrDebitPression") ctrDebitPression: Boolean,
         @FormParam("visiteAgent1") visiteAgent1: String?,
         @FormParam("visiteAgent2") visiteAgent2: String?,
-        @FormParam("visiteCtrlDebitPressionDebit") visiteCtrlDebitPressionDebit: Int,
-        @FormParam("visiteCtrlDebitPressionPression") visiteCtrlDebitPressionPression: Double,
-        @FormParam("visiteCtrlDebitPressionPressionDyn") visiteCtrlDebitPressionPressionDyn: Double,
+        @FormParam("visiteCtrlDebitPressionDebit") visiteCtrlDebitPressionDebit: Int?,
+        @FormParam("visiteCtrlDebitPressionPression") visiteCtrlDebitPressionPression: Double?,
+        @FormParam("visiteCtrlDebitPressionPressionDyn") visiteCtrlDebitPressionPressionDyn: Double?,
         @FormParam("visiteObservations") visiteObservations: String?,
         @FormParam("hasAnomalieChanges") hasAnomalieChanges: Boolean,
     ) = synchroVisiteUseCase.execute(
@@ -317,7 +317,7 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Path("/incoming-to-remocra/{tourneeId}")
     @POST
-    @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
+    @RequireDroits([]) // N'importe quel droit pour synchroniser les tournées
     fun endSynchroTournee(
         @PathParam("tourneeId")
         tourneeId: UUID,

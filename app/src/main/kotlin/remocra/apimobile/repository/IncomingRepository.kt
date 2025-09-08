@@ -203,8 +203,8 @@ class IncomingRepository @Inject constructor(
             .insertInto(VISITE_CTRL_DEBIT_PRESSION)
             .set(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID, visiteData.visiteId)
             .set(VISITE_CTRL_DEBIT_PRESSION.DEBIT, visiteData.visiteCtrlDebitPressionDebit)
-            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION, visiteData.visiteCtrlDebitPressionPression.toBigDecimal())
-            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN, visiteData.visiteCtrlDebitPressionPressionDyn.toBigDecimal())
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION, visiteData.visiteCtrlDebitPressionPression?.toBigDecimal())
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN, visiteData.visiteCtrlDebitPressionPressionDyn?.toBigDecimal())
             .onConflictDoNothing()
             .execute()
 

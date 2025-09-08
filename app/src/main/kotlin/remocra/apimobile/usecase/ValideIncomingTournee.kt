@@ -171,6 +171,8 @@ class ValideIncomingTournee : AbstractUseCase() {
         // TODO prendre en compte le domaine proprement
         val domaineId = domaineRepository.getFistDomaineId()
 
+        val peiIdInseres = mutableListOf<UUID>()
+
         listeNewPei.forEach {
             logger.info("CREATION d'un PEI ${it.newPeiId}")
             val peiData: PeiData =
@@ -268,11 +270,19 @@ class ValideIncomingTournee : AbstractUseCase() {
                 }
 
             // On délègue la création à notre superbe usecase
-            createPeiUseCase.execute(
+            val result = createPeiUseCase.execute(
                 userInfo,
                 peiData,
                 transactionManager,
             )
+
+            if (result !is Result.Success && result !is Result.Created) {
+                if (result is Result.Error) {
+                    logger.error("Erreur lors de l'insertion du PEI ${it.newPeiId} : ${result.message}")
+                }
+            } else {
+                peiIdInseres.add(it.newPeiId)
+            }
         }
 
         // Suppression des newPei
@@ -285,11 +295,13 @@ class ValideIncomingTournee : AbstractUseCase() {
         val visitesCtrlDebitPression = incomingRepository.getVisitesCtrlDebitPression(tourneeId)
         val visiteAnomalie = incomingRepository.getVisitesAnomalie(tourneeId)
 
+        val visiteIdInseres = mutableListOf<UUID>()
+
         visites.forEach {
             val ctrl = visitesCtrlDebitPression
                 .firstOrNull { v -> v.visiteCtrlDebitPressionVisiteId == it.visiteId }
 
-            createVisiteUseCase.execute(
+            val result = createVisiteUseCase.execute(
                 userInfo,
                 VisiteData(
                     visiteId = it.visiteId,
@@ -309,14 +321,22 @@ class ValideIncomingTournee : AbstractUseCase() {
                 ),
                 transactionManager,
             )
+
+            if (result !is Result.Success && result !is Result.Created) {
+                if (result is Result.Error) {
+                    logger.error("Erreur lors de l'insertion de la visite ${it.visiteId} : ${result.message}")
+                }
+                logger.error("Erreur lors de l'insertion de la visite ${it.visiteId}")
+            } else {
+                visiteIdInseres.add(it.visiteId)
+            }
         }
 
         // Suppression des visites
         logger.info("Suppression des visites")
-        val visitesId = visites.map { it.visiteId }
-        incomingRepository.deleteVisiteAnomalie(visitesId)
-        incomingRepository.deleteVisiteCtrlDebitPression(visitesId)
-        incomingRepository.deleteVisite(visitesId)
+        incomingRepository.deleteVisiteAnomalie(visiteIdInseres)
+        incomingRepository.deleteVisiteCtrlDebitPression(visiteIdInseres)
+        incomingRepository.deleteVisite(visiteIdInseres)
     }
 
     private fun gestionPhoto(tourneeId: UUID) {
