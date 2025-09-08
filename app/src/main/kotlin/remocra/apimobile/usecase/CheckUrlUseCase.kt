@@ -8,7 +8,7 @@ import remocra.keycloak.KeycloakApi
 import remocra.keycloak.KeycloakToken
 import remocra.keycloak.KeycloakUri
 import remocra.usecase.AbstractUseCase
-import java.time.ZonedDateTime
+import remocra.utils.DateUtils
 
 class CheckUrlUseCase @Inject constructor(
     private val parametresProvider: ParametresProvider,
@@ -51,7 +51,10 @@ class CheckUrlUseCase @Inject constructor(
 
             mobileData = MobileData(
                 dateProchaineConnexion = dureeSession.takeIf { accepteModeDeconnecte == true }?.let {
-                    ZonedDateTime.from(dateUtils.now().plusHours(it.toLong()))
+                    dateUtils.format(
+                        dateUtils.now().plusHours(it.toLong()),
+                        DateUtils.Companion.PATTERN_MINUTE,
+                    ) // Format attendu par l'appli mobile
                 }?.toString(),
                 mdpAdmin = mdpAdmin,
                 keycloakConfig = KeycloakConfig(
