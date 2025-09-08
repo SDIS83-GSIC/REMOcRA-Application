@@ -21,6 +21,7 @@ class SynchroFinTourneeUseCase : AbstractUseCase() {
     fun execute(tourneeId: UUID, userInfo: WrappedUserInfo) {
         // On met à jour la date de synchronisation de la tournée dans incoming
         incomingRepository.updateDateSynchroFin(dateUtils.now(), tourneeId)
+        incomingRepository.setTermineeStatutSynchronisationTournee(tourneeId)
 
         logger.info("Fin de la synchronisation de la tournée $tourneeId")
 

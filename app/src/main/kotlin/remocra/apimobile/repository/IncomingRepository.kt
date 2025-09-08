@@ -28,6 +28,7 @@ import remocra.db.jooq.incoming.tables.references.PHOTO_PEI
 import remocra.db.jooq.incoming.tables.references.TOURNEE
 import remocra.db.jooq.incoming.tables.references.VISITE
 import remocra.db.jooq.incoming.tables.references.VISITE_CTRL_DEBIT_PRESSION
+import remocra.db.jooq.remocra.enums.StatutSynchronisation
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
@@ -180,6 +181,7 @@ class IncomingRepository @Inject constructor(
             .set(TOURNEE.ID, tourneeData.tourneeId)
             .set(TOURNEE.LIBELLE, tourneeData.tourneeLibelle)
             .set(TOURNEE.DATE_DEBUT_SYNCHRO, dateUtils.now())
+            .set(TOURNEE.STATUT_SYNCHRONISAITON, StatutSynchronisation.EN_COURS)
             .onConflictDoNothing()
             .execute()
 
@@ -320,5 +322,11 @@ class IncomingRepository @Inject constructor(
     fun deleteTournee(listeTourneeId: Collection<UUID>) =
         dsl.deleteFrom(TOURNEE)
             .where(TOURNEE.ID.`in`(listeTourneeId))
+            .execute()
+
+    fun setTermineeStatutSynchronisationTournee(tourneeId: UUID) =
+        dsl.update(TOURNEE)
+            .set(TOURNEE.STATUT_SYNCHRONISAITON, StatutSynchronisation.TERMINEE)
+            .where(TOURNEE.ID.eq(tourneeId))
             .execute()
 }
