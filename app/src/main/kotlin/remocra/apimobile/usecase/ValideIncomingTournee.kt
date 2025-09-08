@@ -84,6 +84,11 @@ class ValideIncomingTournee : AbstractUseCase() {
             tourneeRepository.desaffectationTournee(tourneeId)
 
             tourneeRepository.updateDateSynchronisation(dateUtils.now(), tourneeId)
+
+            // On supprime les tournées qui n'ont plus de visites associées
+            val listeIdTournee = incomingRepository.getTourneeSansVisite()
+            logger.info("Suppression des tournées dont toutes les visites ont été intégrées : ${listeIdTournee.joinToString(", ")}")
+            incomingRepository.deleteTournee(listeIdTournee)
         }
     }
 

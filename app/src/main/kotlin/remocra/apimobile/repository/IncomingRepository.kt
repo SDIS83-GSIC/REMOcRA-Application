@@ -308,4 +308,17 @@ class IncomingRepository @Inject constructor(
             .set(TOURNEE.DATE_FIN_SYNCHRO, date)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
+
+    fun getTourneeSansVisite(): Collection<UUID> =
+        dsl
+            .select(TOURNEE.ID)
+            .from(TOURNEE)
+            .leftJoin(VISITE).on(TOURNEE.ID.eq(VISITE.TOURNEE_ID))
+            .where(VISITE.ID.isNull)
+            .fetchInto()
+
+    fun deleteTournee(listeTourneeId: Collection<UUID>) =
+        dsl.deleteFrom(TOURNEE)
+            .where(TOURNEE.ID.`in`(listeTourneeId))
+            .execute()
 }
