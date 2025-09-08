@@ -1,6 +1,7 @@
 package remocra.usecase.tournee
 
 import com.google.inject.Inject
+import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.WrappedUserInfo
 import remocra.data.DataTableau
 import remocra.data.Params
@@ -10,8 +11,10 @@ import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
 import remocra.usecase.AbstractUseCase
 
-class FetchTourneeDataUseCase : AbstractUseCase() {
-    @Inject lateinit var tourneeRepository: TourneeRepository
+class FetchTourneeDataUseCase @Inject constructor(
+    private val tourneeRepository: TourneeRepository,
+    private val incomingRepository: IncomingRepository,
+) : AbstractUseCase() {
 
     fun fetchTourneeData(
         params: Params<Filter, Sort>,
@@ -52,14 +55,18 @@ class FetchTourneeDataUseCase : AbstractUseCase() {
         // Application de limit et offset à notre liste
         val filteredShortedList = filteredSortedList?.drop(params.offset ?: 0)?.take(params.limit ?: count)
 
+        val listeTourneeId = filteredShortedList?.map { it.tourneeId }
         val tourneeNonModifiable = tourneeRepository.getTourneeHorsZc(
             userInfo.isSuperAdmin,
             userInfo.zoneCompetence?.zoneIntegrationId,
-            filteredShortedList?.map { it.tourneeId } ?: listOf(),
+            listeTourneeId ?: listOf(),
         )
+
+        val tourneeIncomingTerminee = incomingRepository.getTourneeTerminee(listeTourneeId ?: listOf())
 
         filteredShortedList?.forEach {
             it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
+            it.estDansIncoming = tourneeIncomingTerminee.contains(it.tourneeId)
         }
         return filteredShortedList?.let { DataTableau(it, count) }
     }

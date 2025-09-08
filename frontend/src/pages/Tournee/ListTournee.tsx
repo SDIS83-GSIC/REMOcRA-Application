@@ -11,6 +11,7 @@ import {
   IconCentPourcent,
   IconDesaffecter,
   IconeGenereCarteTournee,
+  IconImport,
   IconList,
   IconLocation,
   IconSortList,
@@ -46,6 +47,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
   const { error: errorToast } = useToastContext();
+  const { data: incomingTournee } = useGet(url`/api/tournee/incoming/`, {});
 
   const parametreGenerationCarteTournee = useGet(
     url`/api/parametres?${{
@@ -286,16 +288,19 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     });
   }
 
-  listeButton.push({
-    row: (row) => {
-      return row;
-    },
-    onClick: (tourneeId) => fetchGeometry(GET_TYPE_GEOMETRY.TOURNEE, tourneeId),
-    type: TYPE_BUTTON.LINK,
-    icon: <IconLocation />,
-    textEnable: "Localiser",
-    classEnable: "primary",
-  });
+  if (incomingTournee && incomingTournee.length > 0) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      onClick: (tourneeId) =>
+        fetchGeometry(GET_TYPE_GEOMETRY.TOURNEE, tourneeId),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconLocation />,
+      textEnable: "Localiser",
+      classEnable: "primary",
+    });
+  }
 
   if (parametreGenerationCarteTournee) {
     listeButton.push({
@@ -352,6 +357,23 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       classEnable: "success",
     });
   }
+
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    type: TYPE_BUTTON.CONFIRM,
+    hide: (row) => !row?.estDansIncoming,
+    icon: <IconImport />,
+    textEnable: "Réintégrer la tournée de incoming à REMOcRA",
+    classEnable: "info",
+    pathname: url`/api/tournee/incoming/`,
+    confirmModal: {
+      header: "Relancer l'intégration de incoming à REMOcRA ?",
+      content:
+        "Vous allez relancer l'intégration de incoming à REMOcRA.\nVoulez-vous continuer ? ",
+    },
+  });
 
   column.push(
     ActionColumn({

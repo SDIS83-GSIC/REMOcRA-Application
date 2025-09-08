@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.Params
@@ -32,6 +33,7 @@ import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.GenereCarteTourneeUseCase
+import remocra.usecase.tournee.RelancerIntegrationTourneeIncomingUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
 import remocra.usecase.visites.FetchTourneeVisiteUseCase
@@ -72,6 +74,12 @@ class TourneeEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var genereCarteTourneeUseCase: GenereCarteTourneeUseCase
+
+    @Inject
+    lateinit var incomingRepository: IncomingRepository
+
+    @Inject
+    lateinit var relancerIntegrationTourneeIncomingUseCase: RelancerIntegrationTourneeIncomingUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -275,5 +283,23 @@ class TourneeEndPoint : AbstractEndpoint() {
             tourneeRepository.getTourneeForSelect(),
         )
             .build()
+    }
+
+    @GET
+    @Path("/incoming")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
+    fun getIncomingTourneeTerminee(): Response {
+        return Response.ok().entity(incomingRepository.getTourneeTerminee()).build()
+    }
+
+    @POST
+    @Path("/incoming/{tourneeId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
+    fun relancerIntegrationTournee(
+        @PathParam("tourneeId") tourneeId: UUID,
+    ): Response {
+        return Response.ok().entity(relancerIntegrationTourneeIncomingUseCase.execute(tourneeId, securityContext.userInfo)).build()
     }
 }

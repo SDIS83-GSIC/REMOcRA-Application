@@ -3,6 +3,7 @@ package remocra.apimobile.repository
 import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.apimobile.data.ContactForApiMobileData
@@ -329,4 +330,12 @@ class IncomingRepository @Inject constructor(
             .set(TOURNEE.STATUT_SYNCHRONISAITON, StatutSynchronisation.TERMINEE)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
+
+    fun getTourneeTerminee(listeTourneeId: List<UUID>? = null): Collection<UUID> =
+        dsl.select(TOURNEE.ID).from(TOURNEE)
+            .where(
+                listeTourneeId?.let { TOURNEE.ID.`in`(listeTourneeId) } ?: DSL.noCondition()
+                    .and(TOURNEE.STATUT_SYNCHRONISAITON.eq(StatutSynchronisation.TERMINEE)),
+            )
+            .fetchInto()
 }

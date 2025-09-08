@@ -233,6 +233,7 @@ class TourneeRepository
         val tourneeNbPei: Int,
         var tourneeNextRopDate: ZonedDateTime?,
         var isModifiable: Boolean = true,
+        var estDansIncoming: Boolean = false,
     )
 
     data class Filter(
