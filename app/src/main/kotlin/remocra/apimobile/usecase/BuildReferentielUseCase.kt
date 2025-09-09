@@ -13,6 +13,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.FonctionContactRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.RoleRepository
+import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypeVisite
@@ -27,6 +28,7 @@ import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.db.jooq.remocra.tables.pojos.PoidsAnomalie
 import remocra.db.jooq.remocra.tables.pojos.RoleContact
 import remocra.usecase.AbstractUseCase
+import remocra.utils.DisponibiliteDecorator
 import remocra.utils.getLibelleTypeVisite
 import java.util.UUID
 
@@ -55,6 +57,9 @@ class BuildReferentielUseCase : AbstractUseCase() {
 
     @Inject
     lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
+
+    @Inject
+    lateinit var dispoDecorator: DisponibiliteDecorator
 
     fun execute(userInfo: WrappedUserInfo): ReferentielResponse {
         val nomPrenom = userInfo.nom + " " + userInfo.prenom
@@ -108,6 +113,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
             listFonctionContact = fonctionContactRepository.getAllForMobile(),
             listDomaine = dataCacheProvider.getDomaines().values,
+            mapDisponibiliteByLibelle = Disponibilite.entries.associateWith { dispoDecorator.decorateDisponibilite(it) },
         )
     }
 
@@ -132,6 +138,7 @@ class BuildReferentielUseCase : AbstractUseCase() {
 
         val utilisateurConnecte: String,
         val peiCaracteristiques: Map<UUID, String>,
+        val mapDisponibiliteByLibelle: Map<Disponibilite, String>,
     )
 
     data class CodeLibelleTypeVisite(
