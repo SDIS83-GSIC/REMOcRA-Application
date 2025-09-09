@@ -295,9 +295,6 @@ class SynchroEndpoint : AbstractEndpoint() {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
     fun synchroPhotoPei(
-        @FormParam("photoId") photoId: UUID,
-        @FormParam("peiId") peiId: UUID,
-        @FormParam("photoDate") photoDate: String,
         @Context httpServletRequest: HttpServletRequest,
     ): Response {
         val partPhoto: Part = httpServletRequest.getPart("photo")
@@ -306,9 +303,9 @@ class SynchroEndpoint : AbstractEndpoint() {
         return synchroPhotoPeiUseCase.execute(
             securityContext.userInfo,
             PhotoPeiForApiMobileData(
-                photoId = photoId,
-                peiId = peiId,
-                photoDate = photoDate,
+                photoId = UUID.fromString(httpServletRequest.getPart("photoId").inputStream.reader().readText()),
+                peiId = UUID.fromString(httpServletRequest.getPart("peiId").inputStream.reader().readText()),
+                photoDate = httpServletRequest.getPart("photoDate").inputStream.reader().readText(),
                 photoInputStream = photoBytes,
                 photoLibelle = partPhoto.submittedFileName,
             ),
@@ -317,7 +314,7 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Path("/incoming-to-remocra/{tourneeId}")
     @POST
-    @RequireDroits([]) // N'importe quel droit pour synchroniser les tournées
+    @RequireDroits([Droit.PEI_R])
     fun endSynchroTournee(
         @PathParam("tourneeId")
         tourneeId: UUID,
