@@ -14,6 +14,8 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.apimobile.CompatibleVersions
 import remocra.apimobile.usecase.CheckUrlUseCase
 import remocra.auth.Public
+import remocra.auth.RequireDroits
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.web.AbstractEndpoint
 
 @Path("/mobile/check")
@@ -34,6 +36,13 @@ class MobileCheckEndpoint : AbstractEndpoint() {
     @Public("Point d'entrée pour tester l'accessibilité du serveur")
     @PUT
     fun check(): Response {
+        return Response.ok().build()
+    }
+
+    @Path("/test-connexion")
+    @RequireDroits([Droit.PEI_R])
+    @GET
+    fun checkConnexion(): Response {
         return Response.ok(checkUrlUseCase.execute()).build()
     }
 
