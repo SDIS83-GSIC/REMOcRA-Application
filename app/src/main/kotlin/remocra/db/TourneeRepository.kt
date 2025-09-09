@@ -197,7 +197,7 @@ class TourneeRepository
             }
             .let {
                 if (onlyNonTerminees == true) {
-                    it.and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100))
+                    it.and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100).or(TOURNEE.POURCENTAGE_AVANCEMENT.isNull))
                 } else {
                     it
                 }
