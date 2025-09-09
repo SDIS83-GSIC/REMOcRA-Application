@@ -2,20 +2,23 @@ package remocra.eventbus.mobile
 
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
-import org.slf4j.LoggerFactory
-import remocra.apimobile.usecase.ValideIncomingTournee
 import remocra.eventbus.EventListener
+import remocra.log.LogManagerFactory
+import remocra.tasks.RelanceIntegrationTourneeParameters
+import remocra.tasks.RelanceIntegrationTourneeTask
 
-class IntegrationTourneeEventListener : EventListener<IntegrationTourneeEvent> {
-    @Inject
-    private lateinit var valideIncomingTournee: ValideIncomingTournee
-
-    private val logger = LoggerFactory.getLogger(javaClass)
-
+class IntegrationTourneeEventListener @Inject constructor(
+    private val logManagerFactory: LogManagerFactory,
+    private val task: RelanceIntegrationTourneeTask,
+) : EventListener<IntegrationTourneeEvent> {
     @Subscribe
     override fun onEvent(event: IntegrationTourneeEvent) {
-        logger.info("Traitement de la tournée ${event.tourneeId}")
-        valideIncomingTournee.execute(event.tourneeId, event.userInfo)
-        logger.info("Fin de traitement de la tournée ${event.tourneeId}")
+        task.start(
+            logManager = logManagerFactory.create(),
+            event.userInfo,
+            RelanceIntegrationTourneeParameters().apply {
+                this.tourneeId = event.tourneeId
+            },
+        )
     }
 }

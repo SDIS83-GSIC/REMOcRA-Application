@@ -172,6 +172,15 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: false,
   },
+  INTEGRER_INCOMING_REMOCRA: {
+    id: "INTEGRER_INCOMING_REMOCRA",
+    code: "INTEGRER_INCOMING_REMOCRA",
+    label: "Relancer l'intégration d'une tournée (incoming vers remocra)",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
 };
 
 export default TaskType;

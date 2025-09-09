@@ -1,7 +1,6 @@
 package remocra.apimobile.usecase
 
 import jakarta.inject.Inject
-import org.slf4j.LoggerFactory
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.WrappedUserInfo
 import remocra.data.CreationVisiteCtrl
@@ -21,6 +20,7 @@ import remocra.db.jooq.remocra.tables.pojos.Contact
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.Gestionnaire
 import remocra.db.jooq.remocra.tables.pojos.LContactRole
+import remocra.log.LogManager
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.visites.CreateVisiteUseCase
@@ -55,31 +55,29 @@ class ValideIncomingTournee : AbstractUseCase() {
     @Inject
     private lateinit var createVisiteUseCase: CreateVisiteUseCase
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
-    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo) {
+    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
         transactionManager.transactionResult {
             val gestionnaires = incomingRepository.getGestionnaires()
 
-            logger.info("Gestion des gestionnaires")
-            gestionGestionnaire(gestionnaires)
+            logManager.info("Gestion des gestionnaires")
+            gestionGestionnaire(gestionnaires, logManager)
 
-            logger.info("Gestion des contacts")
-            gestionContact(gestionnaires)
+            logManager.info("Gestion des contacts")
+            gestionContact(gestionnaires, logManager)
 
-            logger.info("Suppression des gestionnaires")
+            logManager.info("Suppression des gestionnaires")
             incomingRepository.deleteGestionnaire(gestionnaires.map { it.gestionnaireId })
 
-            logger.info("Gestion des nouveaux PEI")
-            gestionNewPei(userInfo)
+            logManager.info("Gestion des nouveaux PEI")
+            gestionNewPei(userInfo, logManager)
 
-            logger.info("Gestion des photos")
-            gestionPhoto(tourneeId)
+            logManager.info("Gestion des photos")
+            gestionPhoto(tourneeId, logManager)
 
-            logger.info("Gestion des visites")
-            gestionVisites(tourneeId, userInfo)
+            logManager.info("Gestion des visites")
+            gestionVisites(tourneeId, userInfo, logManager)
 
-            logger.info("Mise à jour de la tournée $tourneeId")
+            logManager.info("Mise à jour de la tournée $tourneeId")
             tourneeRepository.setAvancementTournee(tourneeId, 100)
             tourneeRepository.desaffectationTournee(tourneeId)
 
@@ -87,14 +85,14 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             // On supprime les tournées qui n'ont plus de visites associées
             val listeIdTournee = incomingRepository.getTourneeSansVisite()
-            logger.info("Suppression des tournées dont toutes les visites ont été intégrées : ${listeIdTournee.joinToString(", ")}")
+            logManager.info("Suppression des tournées dont toutes les visites ont été intégrées : ${listeIdTournee.joinToString(", ")}")
             incomingRepository.deleteTournee(listeIdTournee)
         }
     }
 
-    private fun gestionGestionnaire(gestionnaires: Collection<remocra.db.jooq.incoming.tables.pojos.Gestionnaire>) {
+    private fun gestionGestionnaire(gestionnaires: Collection<remocra.db.jooq.incoming.tables.pojos.Gestionnaire>, logManager: LogManager) {
         gestionnaires.forEach {
-            logger.info("UPSERT du gestionnaire ${it.gestionnaireId} (${it.gestionnaireCode} - ${it.gestionnaireLibelle})")
+            logManager.info("UPSERT du gestionnaire ${it.gestionnaireId} (${it.gestionnaireCode} - ${it.gestionnaireLibelle})")
 
             val gestionnaire = Gestionnaire(
                 gestionnaireId = it.gestionnaireId,
@@ -108,11 +106,11 @@ class ValideIncomingTournee : AbstractUseCase() {
                 gestionnaire,
             )
 
-            logger.info("POJO - mise à jour / création d'un gestionnaire : {}", gestionnaire)
+            logManager.info("POJO - mise à jour / création d'un gestionnaire : $gestionnaire")
         }
     }
 
-    private fun gestionContact(gestionnaires: Collection<remocra.db.jooq.incoming.tables.pojos.Gestionnaire>) {
+    private fun gestionContact(gestionnaires: Collection<remocra.db.jooq.incoming.tables.pojos.Gestionnaire>, logManager: LogManager) {
         // TODO voir pour gérer les communeId, voieId et lieuDitId
 
         val contacts = incomingRepository.getContacts()
@@ -145,14 +143,14 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             // Si c'est un update
             if (contactsInRemocra.contains(it.contactId)) {
-                logger.info("Mise à jour du contact ${it.contactId} : $contact")
+                logManager.info("Mise à jour du contact ${it.contactId} : $contact")
 
                 contactRepository.updateContact(contact)
 
                 // On supprime les rôles et on les remets
                 contactRepository.deleteLContactRole(it.contactId)
             } else {
-                logger.info("CREATION du contact ${it.contactId} : $contact")
+                logManager.info("CREATION du contact ${it.contactId} : $contact")
                 contactRepository.insertContact(contact)
             }
 
@@ -168,13 +166,13 @@ class ValideIncomingTournee : AbstractUseCase() {
         }
 
         // Suppression des contacts
-        logger.info("Suppression des contacts")
+        logManager.info("Suppression des contacts")
         val listeContactId = contacts.map { it.contactId }
         incomingRepository.deleteContactRole(listeContactId)
         incomingRepository.deleteContact(listeContactId)
     }
 
-    private fun gestionNewPei(userInfo: WrappedUserInfo) {
+    private fun gestionNewPei(userInfo: WrappedUserInfo, logManager: LogManager) {
         val listeNewPei = incomingRepository.getNewPei()
 
         // TODO prendre en compte le domaine proprement
@@ -183,7 +181,7 @@ class ValideIncomingTournee : AbstractUseCase() {
         val peiIdInseres = mutableListOf<UUID>()
 
         listeNewPei.forEach {
-            logger.info("CREATION d'un PEI ${it.newPeiId}")
+            logManager.info("CREATION d'un PEI ${it.newPeiId}")
             val peiData: PeiData =
                 if (it.newPeiTypePei == TypePei.PIBI) {
                     PibiData(
@@ -278,7 +276,7 @@ class ValideIncomingTournee : AbstractUseCase() {
                     )
                 }
 
-            logger.info("POJO - création d'un PEI : {}", peiData)
+            logManager.info("POJO - création d'un PEI : {}" + peiData)
             // On délègue la création à notre superbe usecase
             val result = createPeiUseCase.execute(
                 userInfo,
@@ -288,7 +286,7 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             if (result !is Result.Success && result !is Result.Created) {
                 if (result is Result.Error) {
-                    logger.error("Erreur lors de l'insertion du PEI ${it.newPeiId} : ${result.message}")
+                    logManager.error("Erreur lors de l'insertion du PEI ${it.newPeiId} : ${result.message}")
                 }
             } else {
                 peiIdInseres.add(it.newPeiId)
@@ -296,11 +294,11 @@ class ValideIncomingTournee : AbstractUseCase() {
         }
 
         // Suppression des newPei
-        logger.info("Suppression des nouveaux PEI")
+        logManager.info("Suppression des nouveaux PEI")
         incomingRepository.deleteNewPei(listeNewPei.map { it.newPeiId })
     }
 
-    private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo) {
+    private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
         val visites = incomingRepository.getVisites(tourneeId)
         val visitesCtrlDebitPression = incomingRepository.getVisitesCtrlDebitPression(tourneeId)
         val visiteAnomalie = incomingRepository.getVisitesAnomalie(tourneeId)
@@ -334,26 +332,26 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             if (result !is Result.Success && result !is Result.Created) {
                 if (result is Result.Error) {
-                    logger.error("Erreur lors de l'insertion de la visite ${it.visiteId} : ${result.message}")
+                    logManager.error("Erreur lors de l'insertion de la visite ${it.visiteId} : ${result.message}")
                 }
-                logger.error("Erreur lors de l'insertion de la visite ${it.visiteId}")
+                logManager.error("Erreur lors de l'insertion de la visite ${it.visiteId}")
             } else {
                 visiteIdInseres.add(it.visiteId)
             }
         }
 
         // Suppression des visites
-        logger.info("Suppression des visites")
+        logManager.info("Suppression des visites")
         incomingRepository.deleteVisiteAnomalie(visiteIdInseres)
         incomingRepository.deleteVisiteCtrlDebitPression(visiteIdInseres)
         incomingRepository.deleteVisite(visiteIdInseres)
     }
 
-    private fun gestionPhoto(tourneeId: UUID) {
+    private fun gestionPhoto(tourneeId: UUID, logManager: LogManager) {
         val listePhotoPei = incomingRepository.getPhotoPei(tourneeId)
 
         listePhotoPei.forEach {
-            logger.info("CREATION document ${it.photoId} pour le PEI ${it.peiId}")
+            logManager.info("CREATION document ${it.photoId} pour le PEI ${it.peiId}")
             documentRepository.insertDocument(
                 Document(
                     documentId = it.photoId,
@@ -371,7 +369,7 @@ class ValideIncomingTournee : AbstractUseCase() {
             )
         }
 
-        logger.info("Suppression des photos")
+        logManager.info("Suppression des photos")
         incomingRepository.deletePhotoPei(listePhotoPei.map { it.photoId })
     }
 }
