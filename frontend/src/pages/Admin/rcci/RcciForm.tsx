@@ -1,6 +1,5 @@
 import { useFormikContext } from "formik";
 import { WKT } from "ol/format";
-import { transform } from "ol/proj";
 import { useEffect, useState } from "react";
 import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
 import { array, number, object, string } from "yup";
@@ -141,6 +140,7 @@ export const getInitialValues = (
       rcciX: x,
       rcciY: y,
       rcciSrid: srid ?? null,
+
       rcciHygrometrie: data.rcci?.rcciHygrometrie ?? undefined,
       rcciRcciIndiceRothermelId:
         data.rcci?.rcciRcciIndiceRothermelId ?? undefined,
@@ -180,6 +180,12 @@ export const getInitialValues = (
       ...data.rcci,
     },
     documentList: data?.documentList || [],
+    typeSystemeSrid:
+      TypeSystemeSrid.find((e) => e.srid === Number(data?.rcci.rcciSrid))
+        ?.srid ?? TypeSystemeSrid[0].srid.toString(),
+
+    coordonneeXToDisplay: x,
+    coordonneeYToDisplay: y,
   };
 };
 
@@ -300,18 +306,37 @@ const RcciForm = () => {
   const { user, srid } = useAppContext();
   const [currentTab, setCurrentTab] = useState("renseignements");
   const [sectionWarning, setSectionWarning] = useState<SectionWarning>();
-  const { values, setFieldValue, errors, isSubmitting } =
-    useFormikContext<FormType>();
+  const {
+    values,
+    setFieldValue,
+    setValues,
+    errors,
+    isSubmitting,
+  }: {
+    values: FormType & {
+      typeSystemeSrid: string;
+      coordonneeXToDisplay: string;
+      coordonneeYToDisplay: string;
+    };
+  } = useFormikContext();
 
   const { error: errorToast } = useToastContext();
 
   const sridList = TypeSystemeSrid.filter(
-    (v) => v.actif || v.srid === srid,
+    (v) => v.actif || v.srid === Number(srid),
   ).map((v) => ({
     id: `${v.srid}`,
     code: `${v.srid}`,
     libelle: v.nomSystem,
   }));
+
+  const geometrieState = useGet(
+    url`/api/rcci/get-geometrie-by-srid?${{
+      coordonneeX: values.coordonneeXToDisplay,
+      coordonneeY: values.coordonneeYToDisplay,
+      srid: values.typeSystemeSrid,
+    }}`,
+  );
 
   const rcciTypePrometheeFamilleState = useGet(
     url`/api/nomenclatures/list/${nomenclaturesEnum.RCCI_TYPE_PROMETHEE_FAMILLE}`,
@@ -352,29 +377,53 @@ const RcciForm = () => {
     if (!values.rcci.rcciX || !values.rcci.rcciY) {
       return;
     }
-    run({
-      geometry: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
-    });
+    if (
+      values.coordonneeXToDisplay != null &&
+      values.coordonneeYToDisplay != null
+    ) {
+      geometrieState?.run({
+        coordonneeX: values.coordonneeXToDisplay,
+        coordonneeY: values.coordonneeYToDisplay,
+        srid: values.typeSystemeSrid,
+      });
+      run({
+        geometry: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
+      });
 
-    runReferentielState({
-      geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
-    });
+      runReferentielState({
+        geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
+      });
+    }
+
+    const coordonnees = geometrieState?.data?.find((e) => e.srid === srid);
+
+    if (coordonnees != null) {
+      setFieldValue("rcci.rcciX", coordonnees?.coordonneeX);
+      setFieldValue("rcci.rcciY", coordonnees?.coordonneeY);
+    }
   }, [
     run,
     values.rcci.rcciSrid,
     values.rcci.rcciX,
     values.rcci.rcciY,
+    values.coordonneeXToDisplay,
+    values.coordonneeYToDisplay,
+    values.typeSystemeSrid,
+    values.rcci.rcciCommuneId,
+    geometrieState,
     runReferentielState,
+    setFieldValue,
+    srid,
   ]);
 
   useEffect(() => {
     if (!values.rcci.rcciX || !values.rcci.rcciY) {
       return;
     }
-
     if (
       referentielState.data?.listCommune != null &&
-      referentielState.data?.listCommune?.length !== 0
+      referentielState.data?.listCommune?.length !== 0 &&
+      !values.rcci.rcciCommuneId
     ) {
       setFieldValue(
         "rcci.rcciCommuneId",
@@ -385,12 +434,34 @@ const RcciForm = () => {
     values.rcci.rcciX,
     values.rcci.rcciY,
     referentielState.data?.listCommune,
+    values.rcci.rcciCommuneId,
     setFieldValue,
   ]);
 
   useEffect(() => {
     setFieldValue("rcci.rcciCarroyageDfci", data?.carroyageDfciCoordonneee);
   }, [isLoading, data, setFieldValue]);
+
+  useEffect(() => {
+    if (
+      values.coordonneeXToDisplay !== undefined &&
+      values.coordonneeYToDisplay !== undefined
+    ) {
+      const projection = geometrieState?.data?.find(
+        (e) => Number(e.srid) === Number(srid),
+      );
+      if (projection) {
+        setFieldValue("rcci.rcciX", projection.coordonneeX);
+        setFieldValue("rcci.rcciY", projection.coordonneeY);
+      }
+    }
+  }, [
+    values.coordonneeXToDisplay,
+    values.coordonneeYToDisplay,
+    srid,
+    setFieldValue,
+    geometrieState?.data,
+  ]);
 
   useEffect(() => {
     if (isSubmitting && errors.rcci) {
@@ -605,31 +676,43 @@ const RcciForm = () => {
                       <Col>
                         <SelectForm
                           label="Système"
-                          name={"rcci.rcciSrid"}
+                          name={"typeSystemeSrid"}
                           required={true}
                           listIdCodeLibelle={sridList}
                           defaultValue={sridList.find(
-                            (v) => v.id === values.rcci.rcciSrid,
+                            (v) => v.id === values.typeSystemeSrid,
                           )}
                           onChange={(e) => {
-                            const prevSrid = values.rcci.rcciSrid;
-                            const nextSrid = e.id;
-                            if (prevSrid !== nextSrid) {
-                              setFieldValue(e.target.name, nextSrid);
-                              if (values.rcci.rcciX && values.rcci.rcciY) {
-                                const [x, y] = transform(
-                                  [
-                                    parseFloat(values.rcci.rcciX),
-                                    parseFloat(values.rcci.rcciY),
-                                  ],
-                                  `EPSG:${prevSrid}`,
-                                  `EPSG:${nextSrid}`,
-                                );
-                                setFieldValue("rcci.rcciX", x);
-                                setFieldValue("rcci.rcciY", y);
-                              }
-                            }
+                            setValues((prevValues) => ({
+                              ...prevValues,
+                              typeSystemeSrid: e.code,
+                            }));
+                            const sridActif = e.code;
+                            const projectionValeur = geometrieState.data?.find(
+                              (e) => e.srid === parseInt(sridActif),
+                            );
+                            setFieldValue(
+                              "coordonneeXToDisplay",
+                              projectionValeur?.coordonneeX,
+                            );
+                            setFieldValue(
+                              "coordonneeYToDisplay",
+                              projectionValeur?.coordonneeY,
+                            );
+                            // Coordonnées en 2154 ou autres
+                            const coordonneesToSave = geometrieState.data?.find(
+                              (e) => e.srid === srid,
+                            );
+                            setFieldValue(
+                              "coordonneeX",
+                              coordonneesToSave?.coordonneeX,
+                            );
+                            setFieldValue(
+                              "coordonneeY",
+                              coordonneesToSave?.coordonneeY,
+                            );
                           }}
+                          setFieldValue={setFieldValue}
                         />
                       </Col>
                     </Row>
@@ -637,15 +720,27 @@ const RcciForm = () => {
                       <Col>
                         <TextInput
                           label="X"
-                          name={"rcci.rcciX"}
+                          name="coordonneeXToDisplay"
                           required={true}
+                          onChange={(v) => {
+                            setFieldValue(
+                              "coordonneeXToDisplay",
+                              v.target.value,
+                            );
+                          }}
                         />
                       </Col>
                       <Col>
                         <TextInput
                           label="Y"
-                          name={"rcci.rcciY"}
+                          name="coordonneeYToDisplay"
                           required={true}
+                          onChange={(v) => {
+                            setFieldValue(
+                              "coordonneeYToDisplay",
+                              v.target.value,
+                            );
+                          }}
                         />
                       </Col>
                     </Row>

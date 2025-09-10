@@ -35,9 +35,9 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.document.UpsertDocumentPeiUseCase
+import remocra.usecase.geometrie.GetCoordonneesBySrid
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.pei.DeletePeiUseCase
-import remocra.usecase.pei.GetCoordonneesBySrid
 import remocra.usecase.pei.MovePeiUseCase
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase

@@ -29,6 +29,7 @@ import remocra.db.RcciRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.carte.GetPointCarteUseCase
+import remocra.usecase.geometrie.GetCoordonneesBySrid
 import remocra.usecase.rcci.CreateRcciUseCase
 import remocra.usecase.rcci.DeleteRcciUseCase
 import remocra.usecase.rcci.GetReferentielRcciUseCase
@@ -67,6 +68,8 @@ class RcciEndpoint : AbstractEndpoint() {
     @Inject lateinit var deleteRcciUseCase: DeleteRcciUseCase
 
     @Inject lateinit var getReferentielRcciUseCase: GetReferentielRcciUseCase
+
+    @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
 
     @GET
     @Path("/layer")
@@ -140,4 +143,25 @@ class RcciEndpoint : AbstractEndpoint() {
         Response.ok(
             getReferentielRcciUseCase.get(geometrie),
         ).build()
+
+    /**
+     * Permet de renvoyer les différentes coordonnées en fonction du système de projection
+     * On passe les coordonnées en String, puisque en fonction du système de projection, ce n'est pas forcément un double
+     */
+    @GET
+    @Path("/get-geometrie-by-srid")
+    @RequireDroits([Droit.RCCI_A])
+    fun getGeometrieByTypeSrid(
+        @QueryParam("coordonneeX")
+        coordonneeX: String?,
+        @QueryParam("coordonneeY")
+        coordonneeY: String?,
+        @QueryParam("srid")
+        srid: Int?,
+    ): Response {
+        if (coordonneeX.isNullOrEmpty() || coordonneeY.isNullOrEmpty() || srid == null) {
+            return Response.ok(emptyList<GetCoordonneesBySrid.CoordonneesBySysteme>()).build()
+        }
+        return Response.ok(getCoordonneesBySrid.execute(coordonneeX, coordonneeY, srid)).build()
+    }
 }

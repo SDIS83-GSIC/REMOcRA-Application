@@ -1,4 +1,4 @@
-package remocra.usecase.pei
+package remocra.usecase.geometrie
 
 import com.google.inject.Inject
 import org.geotools.geometry.jts.JTS
@@ -7,8 +7,7 @@ import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
-import remocra.GlobalConstants.SRID_3857
-import remocra.GlobalConstants.SRID_4326
+import remocra.GlobalConstants
 import remocra.app.AppSettings
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -48,12 +47,12 @@ class GetCoordonneesBySrid {
             coordonneeY4326 = convertDegresSexagesimauxToDecimaux(coordonneeY)
 
             listeCoordonneesBySystem.add(
-                CoordonneesBySysteme(coordonneeX4326, coordonneeY4326, SRID_4326),
+                CoordonneesBySysteme(coordonneeX4326, coordonneeY4326, GlobalConstants.SRID_4326),
             )
         }
 
         // Si on a les coordonnées en 4326
-        if (srid == SRID_4326) {
+        if (srid == GlobalConstants.SRID_4326) {
             coordonneeX4326 = coordonneeX
             coordonneeY4326 = coordonneeY
         }
@@ -65,7 +64,7 @@ class GetCoordonneesBySrid {
                     coordonneeX.toDouble(),
                     coordonneeY.toDouble(),
                 ),
-            ).transformProjection(SRID_4326)
+            ).transformProjection(GlobalConstants.SRID_4326)
             listeCoordonneesBySystem.add(
                 coordonnees4326,
             )
@@ -77,7 +76,7 @@ class GetCoordonneesBySrid {
         // Maintenant on transforme les coordonnées 4326 par le SRID fourni dans le reference.conf
         if (srid != settings.srid) {
             listeCoordonneesBySystem.add(
-                GeometryFactory(PrecisionModel(), SRID_4326).createPoint(
+                GeometryFactory(PrecisionModel(), GlobalConstants.SRID_4326).createPoint(
                     Coordinate(
                         coordonneeX4326.toDouble(),
                         coordonneeY4326.toDouble(),
@@ -86,14 +85,14 @@ class GetCoordonneesBySrid {
             )
         }
 
-        if (srid != SRID_3857) {
+        if (srid != GlobalConstants.SRID_3857) {
             listeCoordonneesBySystem.add(
-                GeometryFactory(PrecisionModel(), SRID_4326).createPoint(
+                GeometryFactory(PrecisionModel(), GlobalConstants.SRID_4326).createPoint(
                     Coordinate(
                         coordonneeX4326.toDouble(),
                         coordonneeY4326.toDouble(),
                     ),
-                ).transformProjection(SRID_3857),
+                ).transformProjection(GlobalConstants.SRID_3857),
             )
         }
 
