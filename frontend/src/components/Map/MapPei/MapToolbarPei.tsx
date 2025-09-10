@@ -633,6 +633,7 @@ const MapToolbarPei = ({
         )}
         setShowFormPei={setShowFormPei}
         setPeiIdUpdate={setPeiIdUpdate}
+        peiIdUpdate={peiIdUpdate}
         setShowFormVisite={setShowFormVisite}
         showFormVisite={showFormVisite}
         dataDebitSimultaneLayer={dataDebitSimultaneLayer}

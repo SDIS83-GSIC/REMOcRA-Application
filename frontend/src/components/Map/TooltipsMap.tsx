@@ -50,6 +50,7 @@ const TooltipMapPei = ({
   displayButtonEditDebitSimultane,
   dataDebitSimultaneLayer,
   setShowFormPei,
+  peiIdUpdate,
   setPeiIdUpdate,
   showFormPei,
   disabledCreateButton,
@@ -64,6 +65,7 @@ const TooltipMapPei = ({
   disabledTooltip: boolean;
   displayButtonEditDebitSimultane: boolean;
   dataDebitSimultaneLayer: any;
+  peiIdUpdate: string | undefined;
   setPeiIdUpdate: (v: string) => void;
   setShowFormPei: (v: boolean) => void;
   showFormPei: boolean;
@@ -113,6 +115,13 @@ const TooltipMapPei = ({
       parametresState?.data[paramPeiFicheResumeStandalone].parametreValeur,
     );
   }, [parametresState, paramPeiFicheResumeStandalone]);
+
+  useEffect(() => {
+    if (peiIdUpdate === null && showFormPei) {
+      overlay?.setPosition(undefined);
+      setShowFormPei(false);
+    }
+  }, [peiIdUpdate, setShowFormPei, showFormPei, overlay]);
 
   return (
     <div ref={ref}>

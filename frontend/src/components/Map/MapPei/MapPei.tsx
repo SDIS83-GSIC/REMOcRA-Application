@@ -248,8 +248,9 @@ const MapPei = () => {
                   <UpdatePei
                     peiIdUpdate={peiIdUpdate}
                     close={() => {
+                      dataPeiLayer?.getSource()?.refresh();
                       setPeiIdUpdate(null);
-                      setShowFormPei(false);
+                      // Le setShowFormPei(false) est géré par la tooltip
                     }}
                     map={map}
                   />
