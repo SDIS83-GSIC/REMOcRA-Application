@@ -27,9 +27,6 @@ class CheckUrlUseCase @Inject constructor(
             parametresProvider.getParametreBoolean(GlobalConstants.PARAMETRE_MODE_DECONNECTE)
         val dureeSession = parametresProvider.getParametreInt(GlobalConstants.PARAMETRE_DUREE_VALIDITE_TOKEN)
 
-        // On envoie le mot de passe Admin s'il existe
-        val mdpAdmin = parametresProvider.getParametreString(GlobalConstants.PARAMETRE_MDP_ADMINISTRATEUR)
-
         // Puis les informations de keycloak
         // Note : le client ne devrait pas changer mais on ne peut pas le garantir
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
@@ -56,7 +53,6 @@ class CheckUrlUseCase @Inject constructor(
                         DateUtils.Companion.PATTERN_MINUTE,
                     ) // Format attendu par l'appli mobile
                 }?.toString(),
-                mdpAdmin = mdpAdmin,
                 keycloakConfig = KeycloakConfig(
                     url = keycloakUri.baseUri,
                     clientId = client.clientId,
@@ -73,7 +69,6 @@ class CheckUrlUseCase @Inject constructor(
 
     data class MobileData(
         val dateProchaineConnexion: String?,
-        val mdpAdmin: String?,
         val keycloakConfig: KeycloakConfig,
     )
 

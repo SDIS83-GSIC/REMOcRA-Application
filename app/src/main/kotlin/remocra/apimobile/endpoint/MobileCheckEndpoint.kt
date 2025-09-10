@@ -36,14 +36,14 @@ class MobileCheckEndpoint : AbstractEndpoint() {
     @Public("Point d'entrée pour tester l'accessibilité du serveur")
     @PUT
     fun check(): Response {
-        return Response.ok().build()
+        return Response.ok(checkUrlUseCase.execute()).build()
     }
 
     @Path("/test-connexion")
     @RequireDroits([Droit.PEI_R])
     @GET
     fun checkConnexion(): Response {
-        return Response.ok(checkUrlUseCase.execute()).build()
+        return Response.ok().build()
     }
 
     @Path("/version")
