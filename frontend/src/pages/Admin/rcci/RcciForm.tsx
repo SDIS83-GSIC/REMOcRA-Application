@@ -548,9 +548,9 @@ const RcciForm = () => {
                   defaultValue={referentielState.data?.listCommune?.find(
                     (v) => v.id === values.rcci.rcciCommuneId,
                   )}
-                  onChange={(e) =>{
-                    setFieldValue("rcci.rcciCommuneId", e?.id)
-                    setFieldValue("rcci.rcciVoieId", null)
+                  onChange={(e) => {
+                    setFieldValue("rcci.rcciCommuneId", e?.id);
+                    setFieldValue("rcci.rcciVoieId", null);
                   }}
                   setFieldValue={setFieldValue}
                   required={true}
