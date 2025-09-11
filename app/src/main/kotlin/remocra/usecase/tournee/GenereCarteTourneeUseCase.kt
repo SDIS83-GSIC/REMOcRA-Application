@@ -8,7 +8,6 @@ import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry
 import fr.opensagres.xdocreport.template.TemplateEngineKind
 import jakarta.ws.rs.core.MultivaluedHashMap
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import remocra.GlobalConstants
@@ -92,8 +91,9 @@ class GenereCarteTourneeUseCase @Inject constructor(
 
         // Construction de l'URL + appel HTTP vers GeoServer
         val queryParameters = MultivaluedHashMap(map)
-        val url = HttpUrl.get(geoserverSettings.url.toString() + "wms")
+        val url = geoserverSettings.url
             .newBuilder()
+            .addPathSegment("wms")
             .addQueryParameters(queryParameters)
             .build()
 
