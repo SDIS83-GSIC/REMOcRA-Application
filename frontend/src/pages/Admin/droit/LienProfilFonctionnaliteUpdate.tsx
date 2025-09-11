@@ -13,7 +13,7 @@ import LienProfilFonctionnaliteForm, {
   validationSchema,
 } from "./LienProfilFonctionnaliteForm.tsx";
 
-const ProfilDroitUpdate = () => {
+const GroupeFonctionnalitesUpdate = () => {
   const { profilOrganismeId, profilUtilisateurId } = useParams();
 
   const lienProfilFonctionnaliteState = useGet(
@@ -45,4 +45,4 @@ const ProfilDroitUpdate = () => {
   );
 };
 
-export default ProfilDroitUpdate;
+export default GroupeFonctionnalitesUpdate;

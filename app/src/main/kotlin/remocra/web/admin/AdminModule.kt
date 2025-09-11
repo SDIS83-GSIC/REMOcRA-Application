@@ -12,8 +12,8 @@ object AdminModule : Module {
             NatureEndpoint::class,
             OrganismeEndpoint::class,
             AnomalieEndpoint::class,
-            ProfilDroitEndpoint::class,
-            LienProfilDroitEndpoint::class,
+            GroupeFonctionnalitesEndpoint::class,
+            LienGroupeFonctionnalitesEndpoint::class,
             LienProfilFonctionnaliteEndpoint::class,
             CoucheEndpoint::class,
         )

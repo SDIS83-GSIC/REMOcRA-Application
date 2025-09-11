@@ -51,7 +51,7 @@ const LienProfilFonctionnaliteList = () => {
           },
           {
             Header: "Groupe de fonctionnalités",
-            accessor: "profilDroitLibelle",
+            accessor: "groupeFonctionnalitesLibelle",
             sortField: "fonctionnalite",
             Filter: <FilterInput name="fonctionnalite" type="text" />,
           },
@@ -78,7 +78,7 @@ const LienProfilFonctionnaliteList = () => {
             ],
           }),
         ]}
-        idName={"lien-profil-droit"}
+        idName={"lien-groupe-fonctionnalites"}
       />
     </Container>
   );

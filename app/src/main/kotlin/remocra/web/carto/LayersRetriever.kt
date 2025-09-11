@@ -24,7 +24,7 @@ class LayersRetriever {
 
     fun getData(module: TypeModule, userInfo: WrappedUserInfo): List<LayerGroupData> {
         val profil = userInfo.utilisateurId?.let {
-            droitsRepository.getProfilDroitFromUser(it)
+            droitsRepository.getGroupeFonctionnalitesFromUser(it)
         }
 
         val coucheMap = coucheRepository.getCoucheMap(module, profil, userInfo.isSuperAdmin)

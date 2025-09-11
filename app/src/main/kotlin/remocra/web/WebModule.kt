@@ -26,6 +26,7 @@ import remocra.web.dfci.DfciModule
 import remocra.web.documents.DocumentModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
+import remocra.web.groupefonctionnalites.GroupeFonctionnalitesModule
 import remocra.web.importctp.ImportCtpModule
 import remocra.web.indisponibilitetemporaire.IndisponibiliteTemporaireModule
 import remocra.web.job.JobModule
@@ -43,7 +44,6 @@ import remocra.web.parametres.TaskModule
 import remocra.web.pei.PeiModule
 import remocra.web.peiprescrits.PeiPrescritModule
 import remocra.web.permis.PermisModule
-import remocra.web.profildroit.ProfilDroitModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
@@ -88,7 +88,7 @@ object WebModule : RemocraModule() {
         install(ModuleModule)
         install(ParametreModule)
         install(FicheResumeModule)
-        install(ProfilDroitModule)
+        install(GroupeFonctionnalitesModule)
         install(ProfilUtilisateurModule)
         install(ProfilOrganismeModule)
         install(TypeOrganismeModule)

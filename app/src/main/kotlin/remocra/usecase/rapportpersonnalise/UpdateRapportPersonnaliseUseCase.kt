@@ -10,7 +10,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
-import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
@@ -72,14 +72,14 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
         // On met à jour le rapport personnalisé
         rapportPersonnaliseRepository.updateRapportPersonnalise(elementToUpdate)
 
-        // On delete les profils droit
-        rapportPersonnaliseRepository.deleteLRapportPersonnaliseProfilDroit(element.rapportPersonnaliseId)
+        // On delete les groupes de fonctionnalités
+        rapportPersonnaliseRepository.deleteLRapportPersonnaliseGroupeFonctionnalites(element.rapportPersonnaliseId)
 
         // Puis on les remet
-        element.listeProfilDroitId.forEach {
-            rapportPersonnaliseRepository.insertLRapportPersonnaliseProfilDroit(
-                LRapportPersonnaliseProfilDroit(
-                    profilDroitId = it,
+        element.listeGroupeFonctionnalitesId.forEach {
+            rapportPersonnaliseRepository.insertLRapportPersonnaliseGroupeFonctionnalites(
+                LRapportPersonnaliseGroupeFonctionnalites(
+                    groupeFonctionnalitesId = it,
                     rapportPersonnaliseId = element.rapportPersonnaliseId,
                 ),
             )

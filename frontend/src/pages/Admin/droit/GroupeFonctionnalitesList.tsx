@@ -11,7 +11,7 @@ import { URLS } from "../../../routes.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 
-const ProfilDroitList = () => {
+const GroupeFonctionnalitesList = () => {
   return (
     <Container>
       <PageTitle
@@ -19,28 +19,28 @@ const ProfilDroitList = () => {
         title={"Groupes de fonctionnalités"}
         right={
           <CreateButton
-            href={URLS.PROFIL_DROIT_CREATE}
+            href={URLS.GROUPE_FONCTIONNALITES_CREATE}
             title={"Ajouter un groupe"}
           />
         }
       />
       <QueryTable
-        query={url`/api/profil-droit`}
+        query={url`/api/groupe-fonctionnalites`}
         filterContext={useFilterContext({})}
         columns={[
           {
             Header: "Nom",
-            accessor: "profilDroitLibelle",
-            sortField: "profilDroitLibelle",
+            accessor: "groupeFonctionnalitesLibelle",
+            sortField: "groupeFonctionnalitesLibelle",
           },
           {
             Header: "Code",
-            accessor: "profilDroitCode",
-            sortField: "profilDroitCode",
+            accessor: "groupeFonctionnalitesCode",
+            sortField: "groupeFonctionnalitesCode",
           },
           {
             Header: "Actif",
-            accessor: "profilDroitActif",
+            accessor: "groupeFonctionnalitesActif",
             Cell: (value) => {
               return (
                 <Form.Check
@@ -50,27 +50,27 @@ const ProfilDroitList = () => {
                 />
               );
             },
-            sortField: "profilDroitActif",
+            sortField: "groupeFonctionnalitesActif",
           },
           ActionColumn({
             Header: "Actions",
-            accessor: "profilDroitId",
+            accessor: "groupeFonctionnalitesId",
             buttons: [
               {
                 row: (row) => {
                   return row;
                 },
-                route: (profilDroitId) =>
-                  URLS.PROFIL_DROIT_UPDATE(profilDroitId),
+                route: (groupeFonctionnalitesId) =>
+                  URLS.GROUPE_FONCTIONNALITES_UPDATE(groupeFonctionnalitesId),
                 type: TYPE_BUTTON.UPDATE,
               },
             ],
           }),
         ]}
-        idName={"profil-droit"}
+        idName={"groupe-fonctionnalites"}
       />
     </Container>
   );
 };
 
-export default ProfilDroitList;
+export default GroupeFonctionnalitesList;

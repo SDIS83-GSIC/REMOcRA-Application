@@ -29,7 +29,7 @@ import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterRapportPersonnalise.tsx";
 
 const ListRapportPersonnalise = () => {
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
   const rapportPersonnaliseTypeModule = useGet(
     url`/api/modules/get-type-module`,
   );
@@ -116,12 +116,12 @@ const ListRapportPersonnalise = () => {
               ),
             },
             {
-              Header: "Profils droits",
-              accessor: "listeProfilDroit",
+              Header: "Groupes de fonctionnalités",
+              accessor: "listeGroupeFonctionnalites",
               Filter: (
                 <MultiSelectFilterFromList
-                  name={"listeProfilDroitId"}
-                  listIdCodeLibelle={profilDroitState.data}
+                  name={"listeGroupeFonctionnalitesId"}
+                  listIdCodeLibelle={groupeFonctionnalitesState.data}
                 />
               ),
             },

@@ -20,7 +20,7 @@ data class CoucheData(
     val coucheProxy: Boolean,
     val coucheIconeUrl: String?,
     val coucheLegendeUrl: String?,
-    val profilDroitList: Collection<UUID> = listOf(),
+    val groupeFonctionnalitesList: Collection<UUID> = listOf(),
     val moduleList: Collection<TypeModule> = listOf(),
     val coucheProtected: Boolean = false,
 )

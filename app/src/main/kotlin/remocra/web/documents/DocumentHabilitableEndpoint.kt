@@ -118,7 +118,7 @@ class DocumentHabilitableEndpoint : AbstractEndpoint() {
             documentHabilitableLibelle = httpRequest.getTextPartOrNull("documentHabilitableLibelle"),
             documentHabilitableDescription = httpRequest.getTextPartOrNull("documentHabilitableDescription"),
             listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
-            listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
+            listeGroupeFonctionnalitesId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeGroupeFonctionnalitesId")),
             document = httpRequest.getPart("document"),
         )
 
@@ -167,7 +167,7 @@ class DocumentHabilitableEndpoint : AbstractEndpoint() {
                 documentHabilitableLibelle = httpRequest.getTextPartOrNull("documentHabilitableLibelle"),
                 documentHabilitableDescription = httpRequest.getTextPartOrNull("documentHabilitableDescription"),
                 listeThematiqueId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeThematiqueId")),
-                listeProfilDroitId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeProfilDroitId")),
+                listeGroupeFonctionnalitesId = objectMapper.readValue<List<UUID>>(httpRequest.getTextPart("listeGroupeFonctionnalitesId")),
                 document = if (httpRequest.getPart("document").submittedFileName != null) httpRequest.getPart("document") else null,
             ),
         ).wrap()

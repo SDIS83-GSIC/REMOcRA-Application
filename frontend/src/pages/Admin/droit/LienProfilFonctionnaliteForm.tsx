@@ -11,24 +11,24 @@ import Loading from "../../../components/Elements/Loading/Loading.tsx";
 type LienType = {
   profilOrganismeId: string;
   profilUtilisateurId: string;
-  profilDroitId: string;
+  groupeFonctionnalitesId: string;
 };
 export const getInitialValues = (data?: any) => ({
   profilOrganismeId: data?.profilOrganismeId ?? null,
   profilUtilisateurId: data?.profilUtilisateurId ?? null,
-  profilDroitId: data?.profilDroitId ?? null,
+  groupeFonctionnalitesId: data?.groupeFonctionnalitesId ?? null,
 });
 
 export const prepareValues = (values: any) => ({
   profilOrganismeId: values.profilOrganismeId,
   profilUtilisateurId: values.profilUtilisateurId,
-  profilDroitId: values.profilDroitId,
+  groupeFonctionnalitesId: values.groupeFonctionnalitesId,
 });
 
 export const validationSchema = object({
   profilOrganismeId: requiredString,
   profilUtilisateurId: requiredString,
-  profilDroitId: requiredString,
+  groupeFonctionnalitesId: requiredString,
 });
 
 const LienProfilFonctionnaliteForm = () => {
@@ -42,8 +42,11 @@ const LienProfilFonctionnaliteForm = () => {
     return <Loading />;
   }
 
-  const { profilOrganismeList, profilUtilisateurList, profilDroitList } =
-    lienProfilFonctionnaliteReferentielState.data;
+  const {
+    profilOrganismeList,
+    profilUtilisateurList,
+    groupeFonctionnalitesList,
+  } = lienProfilFonctionnaliteReferentielState.data;
 
   const profilOrganismeCodeLibelleList = profilOrganismeList.map((o) => {
     return {
@@ -67,12 +70,14 @@ const LienProfilFonctionnaliteForm = () => {
       };
     });
 
-  const profilDroitCodeLibelleList = profilDroitList.map((d) => {
-    return {
-      id: d.profilDroitId,
-      libelle: d.profilDroitLibelle,
-    };
-  });
+  const groupeFonctionnalitesCodeLibelleList = groupeFonctionnalitesList.map(
+    (d) => {
+      return {
+        id: d.groupeFonctionnalitesId,
+        libelle: d.groupeFonctionnalitesLibelle,
+      };
+    },
+  );
 
   return (
     <FormContainer>
@@ -114,12 +119,12 @@ const LienProfilFonctionnaliteForm = () => {
         required={true}
       />
       <SelectForm
-        name={"profilDroitId"}
-        listIdCodeLibelle={profilDroitCodeLibelleList}
-        defaultValue={profilDroitCodeLibelleList.find(
-          (e) => e.id === values.profilDroitId,
+        name={"groupeFonctionnalitesId"}
+        listIdCodeLibelle={groupeFonctionnalitesCodeLibelleList}
+        defaultValue={groupeFonctionnalitesCodeLibelleList.find(
+          (e) => e.id === values.groupeFonctionnalitesId,
         )}
-        label={"Profil droit"}
+        label={"Groupe de fonctionnalités"}
         setValues={setValues}
         required={true}
       />

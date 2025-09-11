@@ -438,9 +438,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // Gestion des droits
     // ********************************************************************************
     //
-    PROFIL_DROIT_FORBIDDEN_UPDATE(13001, "Vous n'avez pas les droits de modification de profil de droit", Status.FORBIDDEN),
-    PROFIL_DROIT_FORBIDDEN_INSERT(13002, "Vous n'avez pas les droits de création de profil de droit", Status.FORBIDDEN),
-    PROFIL_DROIT_FORBIDDEN_DELETE(13003, "Vous n'avez pas les droits de suppression de profil de droit", Status.FORBIDDEN),
+    GROUPE_FONCTIONNALITES_FORBIDDEN_UPDATE(13001, "Vous n'avez pas les droits de modification de groupe de fonctionnalités", Status.FORBIDDEN),
+    GROUPE_FONCTIONNALITES_FORBIDDEN_INSERT(13002, "Vous n'avez pas les droits de création de groupe de fonctionnalités", Status.FORBIDDEN),
+    GROUPE_FONCTIONNALITES_FORBIDDEN_DELETE(13003, "Vous n'avez pas les droits de suppression de groupe de fonctionnalités", Status.FORBIDDEN),
 
     LIEN_PROFIL_FONCTIONNALITE_EXISTS(13011, "La combinaison profil organisme / utilisateur existe déjà", Status.BAD_REQUEST),
     LIEN_PROFIL_FONCTIONNALITE_WRONG_TYPE(13012, "La combinaison profil organisme / utilisateur doit avoir le même type d'organisme", Status.BAD_REQUEST),

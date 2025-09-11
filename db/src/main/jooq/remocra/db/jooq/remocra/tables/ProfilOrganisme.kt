@@ -25,12 +25,12 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_ORGANISME_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES__L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES_PROFIL_OR
 import remocra.db.jooq.remocra.keys.ORGANISME__ORGANISME_ORGANISME_PROFIL_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME_PKEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME_PROFIL_ORGANISME_CODE_KEY
 import remocra.db.jooq.remocra.keys.PROFIL_ORGANISME__PROFIL_ORGANISME_PROFIL_ORGANISME_TYPE_ORGANISME_ID_FKEY
-import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit.LProfilUtilisateurOrganismeDroitPath
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeGroupeFonctionnalites.LProfilUtilisateurOrganismeGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.TypeOrganisme.TypeOrganismePath
@@ -163,22 +163,23 @@ open class ProfilOrganisme(
     val typeOrganisme: TypeOrganismePath
         get(): TypeOrganismePath = typeOrganisme()
 
-    private lateinit var _lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
+    private lateinit var _lProfilUtilisateurOrganismeGroupeFonctionnalites: LProfilUtilisateurOrganismeGroupeFonctionnalitesPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_profil_utilisateur_organisme_droit</code> table
+     * <code>remocra.l_profil_utilisateur_organisme_groupe_fonctionnalites</code>
+     * table
      */
-    fun lProfilUtilisateurOrganismeDroit(): LProfilUtilisateurOrganismeDroitPath {
-        if (!this::_lProfilUtilisateurOrganismeDroit.isInitialized) {
-            _lProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroitPath(this, null, L_PROFIL_UTILISATEUR_ORGANISME_DROIT__L_PROFIL_UTILISATEUR_ORGANISME_DROIT_PROFIL_ORGANISME_ID_FKEY.inverseKey)
+    fun lProfilUtilisateurOrganismeGroupeFonctionnalites(): LProfilUtilisateurOrganismeGroupeFonctionnalitesPath {
+        if (!this::_lProfilUtilisateurOrganismeGroupeFonctionnalites.isInitialized) {
+            _lProfilUtilisateurOrganismeGroupeFonctionnalites = LProfilUtilisateurOrganismeGroupeFonctionnalitesPath(this, null, L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES__L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES_PROFIL_OR.inverseKey)
         }
 
-        return _lProfilUtilisateurOrganismeDroit
+        return _lProfilUtilisateurOrganismeGroupeFonctionnalites
     }
 
-    val lProfilUtilisateurOrganismeDroit: LProfilUtilisateurOrganismeDroitPath
-        get(): LProfilUtilisateurOrganismeDroitPath = lProfilUtilisateurOrganismeDroit()
+    val lProfilUtilisateurOrganismeGroupeFonctionnalites: LProfilUtilisateurOrganismeGroupeFonctionnalitesPath
+        get(): LProfilUtilisateurOrganismeGroupeFonctionnalitesPath = lProfilUtilisateurOrganismeGroupeFonctionnalites()
 
     private lateinit var _organisme: OrganismePath
 
@@ -202,7 +203,7 @@ open class ProfilOrganisme(
      * <code>remocra.profil_utilisateur</code> table
      */
     val profilUtilisateur: ProfilUtilisateurPath
-        get(): ProfilUtilisateurPath = lProfilUtilisateurOrganismeDroit().profilUtilisateur()
+        get(): ProfilUtilisateurPath = lProfilUtilisateurOrganismeGroupeFonctionnalites().profilUtilisateur()
     override fun `as`(alias: String): ProfilOrganisme = ProfilOrganisme(DSL.name(alias), this)
     override fun `as`(alias: Name): ProfilOrganisme = ProfilOrganisme(alias, this)
     override fun `as`(alias: Table<*>): ProfilOrganisme = ProfilOrganisme(alias.qualifiedName, this)

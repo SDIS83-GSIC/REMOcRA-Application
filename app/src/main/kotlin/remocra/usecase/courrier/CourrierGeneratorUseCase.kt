@@ -48,14 +48,14 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
     /**
      * Vérifie les droits de l'utilisateur, et déclenche une [ForbiddenException] si l'utilisateur
-     * n'est pas dans le bon profil droit ou n'est pas superadmin
+     * n'est pas dans le bon groupe de fonctionnalites ou n'est pas superadmin
      */
-    fun checkProfilDroit(userInfo: WrappedUserInfo, modeleCourrierId: UUID) {
+    fun checkGroupeFonctionnalites(userInfo: WrappedUserInfo, modeleCourrierId: UUID) {
         if (userInfo.isSuperAdmin) {
             return
         }
 
-        modeleCourrierRepository.checkProfilDroit(modeleCourrierId, userInfo.utilisateurId!!)
+        modeleCourrierRepository.checkGroupeFonctionnalites(modeleCourrierId, userInfo.utilisateurId!!)
     }
 
     /** Fonction commune pour la génération de tous les courriers */
@@ -64,7 +64,7 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         userInfo: WrappedUserInfo,
         uriBuilder: UriBuilder,
     ): UrlCourrier? {
-        checkProfilDroit(userInfo, parametreCourrierInput.modeleCourrierId)
+        checkGroupeFonctionnalites(userInfo, parametreCourrierInput.modeleCourrierId)
 
         var mapParameters: MutableMap<String, Any?>? = mutableMapOf()
 

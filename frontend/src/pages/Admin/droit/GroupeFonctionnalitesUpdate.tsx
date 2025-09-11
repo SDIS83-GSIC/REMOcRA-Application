@@ -7,18 +7,20 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
-import ProfilDroitForm, {
+import GroupeFonctionnalitesForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./ProfilDroitForm.tsx";
+} from "./GroupeFonctionnalitesForm.tsx";
 
-const ProfilDroitUpdate = () => {
-  const { profilDroitId } = useParams();
+const GroupeFonctionnalitesUpdate = () => {
+  const { groupeFonctionnalitesId } = useParams();
 
-  const profilDroitState = useGet(url`/api/profil-droit/${profilDroitId}`);
+  const groupeFonctionnalitesState = useGet(
+    url`/api/groupe-fonctionnalites/${groupeFonctionnalitesId}`,
+  );
 
-  if (!profilDroitState.isResolved) {
+  if (!groupeFonctionnalitesState.isResolved) {
     return <Loading />;
   }
 
@@ -29,18 +31,18 @@ const ProfilDroitUpdate = () => {
         icon={<IconEdit />}
       />
       <MyFormik
-        initialValues={getInitialValues(profilDroitState.data)}
+        initialValues={getInitialValues(groupeFonctionnalitesState.data)}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/profil-droit/update/${profilDroitId}`}
+        submitUrl={`/api/groupe-fonctionnalites/update/${groupeFonctionnalitesId}`}
         isPost={false}
-        redirectUrl={URLS.PROFIL_DROIT_LIST}
+        redirectUrl={URLS.GROUPE_FONCTIONNALITES_LIST}
         onSubmit={() => true}
       >
-        <ProfilDroitForm />
+        <GroupeFonctionnalitesForm />
       </MyFormik>
     </Container>
   );
 };
 
-export default ProfilDroitUpdate;
+export default GroupeFonctionnalitesUpdate;

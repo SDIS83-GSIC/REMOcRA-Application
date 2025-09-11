@@ -43,6 +43,6 @@ class UpdateTypeOrganismeDroitApiUseCase : AbstractCUDUseCase<Collection<TypeOrg
         element: Collection<TypeOrganisme>,
         userInfo: WrappedUserInfo,
     ) {
-        // On ne trace pas comme pour les liens profil droit
+        // On ne trace pas comme pour les liens groupe fonctionnalites
     }
 }

@@ -16,12 +16,12 @@ import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.LienProfilFonctionnaliteUpdateData
 import remocra.data.Params
+import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.LienProfilFonctionnaliteRepository
-import remocra.db.ProfilDroitRepository
 import remocra.db.ProfilOrganismeRepository
 import remocra.db.ProfilUtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.LProfilUtilisateurOrganismeDroit
+import remocra.db.jooq.remocra.tables.pojos.LProfilUtilisateurOrganismeGroupeFonctionnalites
 import remocra.usecase.admin.lienprofilfonctionnalite.CreateLienProfilFonctionnaliteUseCase
 import remocra.usecase.admin.lienprofilfonctionnalite.DeleteLienProfilFonctionnaliteUseCase
 import remocra.usecase.admin.lienprofilfonctionnalite.UpdateLienProfilFonctionnaliteUseCase
@@ -39,7 +39,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var profilUtilisateurRepository: ProfilUtilisateurRepository
 
-    @Inject lateinit var profilDroitRepository: ProfilDroitRepository
+    @Inject lateinit var groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository
 
     @Inject lateinit var createLienProfilFonctionnaliteUseCase: CreateLienProfilFonctionnaliteUseCase
 
@@ -75,7 +75,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
             object {
                 val profilOrganismeList = profilOrganismeRepository.getActive()
                 val profilUtilisateurList = profilUtilisateurRepository.getAllActive()
-                val profilDroitList = profilDroitRepository.getAllActive()
+                val groupeFonctionnalitesList = groupeFonctionnalitesRepository.getAllActive()
             },
         ).build()
     }
@@ -83,7 +83,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
     @Path("/create")
     @POST
     @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
-    fun post(element: LProfilUtilisateurOrganismeDroit): Response =
+    fun post(element: LProfilUtilisateurOrganismeGroupeFonctionnalites): Response =
         createLienProfilFonctionnaliteUseCase.execute(securityContext.userInfo, element).wrap()
 
     @Path("/update/{profilOrganismeId}/{profilUtilisateurId}")
@@ -92,7 +92,7 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
     fun put(
         @PathParam("profilOrganismeId") profilOrganismeId: UUID,
         @PathParam("profilUtilisateurId") profilUtilisateurId: UUID,
-        element: LProfilUtilisateurOrganismeDroit,
+        element: LProfilUtilisateurOrganismeGroupeFonctionnalites,
     ): Response =
         updateLienProfilFonctionnaliteUseCase.execute(
             securityContext.userInfo,
@@ -106,6 +106,6 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
     @Path("/delete")
     @DELETE
     @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
-    fun delete(element: LProfilUtilisateurOrganismeDroit): Response =
+    fun delete(element: LProfilUtilisateurOrganismeGroupeFonctionnalites): Response =
         deleteLienProfilFonctionnaliteUseCase.execute(securityContext.userInfo, element).wrap()
 }

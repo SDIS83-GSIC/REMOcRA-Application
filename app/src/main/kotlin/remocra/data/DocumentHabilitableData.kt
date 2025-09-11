@@ -8,6 +8,6 @@ data class DocumentHabilitableData(
     val documentHabilitableLibelle: String?,
     val documentHabilitableDescription: String?,
     val listeThematiqueId: Collection<UUID>?,
-    val listeProfilDroitId: Collection<UUID>?,
+    val listeGroupeFonctionnalitesId: Collection<UUID>?,
     val document: Part? = null,
 )

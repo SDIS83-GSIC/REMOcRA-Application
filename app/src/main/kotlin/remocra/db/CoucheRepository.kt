@@ -7,17 +7,17 @@ import remocra.data.CoucheData
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.Couche
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
-import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.references.COUCHE
 import remocra.db.jooq.remocra.tables.references.GROUPE_COUCHE
-import remocra.db.jooq.remocra.tables.references.L_COUCHE_DROIT
+import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_COUCHE_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
-import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import java.util.UUID
 
 class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     // XXX: Retourner un type plus spécifique, avec uniquement les champs utiles
-    fun getCouche(code: String, module: TypeModule, profilDroit: ProfilDroit?, isSuperAdmin: Boolean? = false): Couche? =
+    fun getCouche(code: String, module: TypeModule, groupeFonctionnalites: GroupeFonctionnalites?, isSuperAdmin: Boolean? = false): Couche? =
         dsl.select(*COUCHE.fields())
             .from(COUCHE)
             .join(L_COUCHE_MODULE).on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
@@ -26,12 +26,12 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     COUCHE.PUBLIC.isTrue.or(
-                        profilDroit?.let {
+                        groupeFonctionnalites?.let {
                             DSL.exists(
-                                DSL.select(L_COUCHE_DROIT.COUCHE_ID)
-                                    .from(L_COUCHE_DROIT)
-                                    .where(L_COUCHE_DROIT.COUCHE_ID.eq(COUCHE.ID))
-                                    .and(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(it.profilDroitId)),
+                                DSL.select(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID)
+                                    .from(L_COUCHE_GROUPE_FONCTIONNALITES)
+                                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
+                                    .and(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(it.groupeFonctionnalitesId)),
                             )
                         },
                     ),
@@ -62,32 +62,32 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 coucheCrossOrigin = couche.coucheCrossOrigin,
                 coucheIconeUrl = null,
                 coucheLegendeUrl = null,
-                profilDroitList = getProfilDroitList(couche.coucheId).map { profilDroit -> profilDroit.profilDroitId },
+                groupeFonctionnalitesList = getGroupeFonctionnalitesList(couche.coucheId).map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
                 moduleList = getModuleList(couche.coucheId),
                 coucheProtected = couche.coucheProtected ?: false,
             )
         }.associateBy { it.coucheId }
 
-    fun getCoucheMap(module: TypeModule, profilDroit: ProfilDroit?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
+    fun getCoucheMap(module: TypeModule, groupeFonctionnalites: GroupeFonctionnalites?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
         dsl.selectDistinct(*COUCHE.fields())
             .from(COUCHE)
-            .leftJoin(L_COUCHE_DROIT).on(L_COUCHE_DROIT.COUCHE_ID.eq(COUCHE.ID))
+            .leftJoin(L_COUCHE_GROUPE_FONCTIONNALITES).on(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
             .join(L_COUCHE_MODULE).on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID).and(L_COUCHE_MODULE.MODULE_TYPE.eq(module)))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    COUCHE.PUBLIC.isTrue.or(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(profilDroit?.profilDroitId)),
+                    COUCHE.PUBLIC.isTrue.or(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(groupeFonctionnalites?.groupeFonctionnalitesId)),
                     isSuperAdmin,
                 ),
             )
             .orderBy(COUCHE.ORDRE.desc())
             .fetchInto<Couche>().groupBy { it.coucheGroupeCoucheId }
 
-    fun getProfilDroitList(coucheId: UUID): List<ProfilDroit> =
-        dsl.select(*PROFIL_DROIT.fields())
-            .from(PROFIL_DROIT)
-            .join(L_COUCHE_DROIT).on(L_COUCHE_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-            .where(L_COUCHE_DROIT.COUCHE_ID.eq(coucheId))
-            .fetchInto<ProfilDroit>()
+    fun getGroupeFonctionnalitesList(coucheId: UUID): List<GroupeFonctionnalites> =
+        dsl.select(*GROUPE_FONCTIONNALITES.fields())
+            .from(GROUPE_FONCTIONNALITES)
+            .join(L_COUCHE_GROUPE_FONCTIONNALITES).on(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+            .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
+            .fetchInto<GroupeFonctionnalites>()
 
     fun getModuleList(coucheId: UUID): List<TypeModule> =
         dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
@@ -155,14 +155,14 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     fun removeOldGroupeCouche(toKeep: Collection<UUID>): Int =
         dsl.deleteFrom(GROUPE_COUCHE).where(GROUPE_COUCHE.ID.notIn(toKeep)).execute()
 
-    fun clearProfilDroit(): Int = dsl.deleteFrom(L_COUCHE_DROIT).execute()
+    fun clearGroupeFonctionnalites(): Int = dsl.deleteFrom(L_COUCHE_GROUPE_FONCTIONNALITES).execute()
 
     fun clearModule(): Int = dsl.deleteFrom(L_COUCHE_MODULE).execute()
 
-    fun insertProfilDroit(coucheId: UUID, profilDroitId: UUID): Int =
-        dsl.insertInto(L_COUCHE_DROIT)
-            .set(L_COUCHE_DROIT.COUCHE_ID, coucheId)
-            .set(L_COUCHE_DROIT.PROFIL_DROIT_ID, profilDroitId)
+    fun insertGroupeFonctionnalites(coucheId: UUID, groupeFonctionnalitesId: UUID): Int =
+        dsl.insertInto(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .set(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID, coucheId)
+            .set(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID, groupeFonctionnalitesId)
             .execute()
 
     fun insertModule(coucheId: UUID, moduleType: TypeModule): Int =

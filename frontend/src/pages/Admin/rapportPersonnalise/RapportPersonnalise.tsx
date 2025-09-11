@@ -37,7 +37,7 @@ type RapportPersonnaliseType = {
   rapportPersonnaliseSourceSql: string;
   rapportPersonnaliseDescription: string;
   rapportPersonnaliseChampGeometrie: string;
-  listeProfilDroitId: string[];
+  listeGroupeFonctionnalitesId: string[];
   rapportPersonnaliseModule: string;
   listeRapportPersonnaliseParametre: {
     rapportPersonnaliseParametreLibelle: string;
@@ -65,7 +65,7 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   rapportPersonnaliseDescription: data?.rapportPersonnaliseDescription ?? null,
   rapportPersonnaliseChampGeometrie:
     data?.rapportPersonnaliseChampGeometrie ?? null,
-  listeProfilDroitId: data?.listeProfilDroitId ?? [],
+  listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? [],
   listeRapportPersonnaliseParametre:
     data?.listeRapportPersonnaliseParametre.map((e) => ({
       rapportPersonnaliseParametreSourceSqlDebut:
@@ -122,7 +122,7 @@ export const prepareVariables = (values: RapportPersonnaliseType) => ({
       values.rapportPersonnaliseSourceSqlFin
     : values.rapportPersonnaliseSourceSql,
   rapportPersonnaliseModule: values.rapportPersonnaliseModule,
-  listeProfilDroitId: values.listeProfilDroitId,
+  listeGroupeFonctionnalitesId: values.listeGroupeFonctionnalitesId,
   listeRapportPersonnaliseParametre:
     values.listeRapportPersonnaliseParametre.map((e, index) => {
       return {
@@ -146,7 +146,7 @@ const RapportPersonnalise = () => {
     url`/api/modules/get-type-module`,
   );
 
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
 
   const listeModule = rapportPersonnaliseTypeModule.data?.map((e) => ({
     id: e,
@@ -207,25 +207,28 @@ const RapportPersonnalise = () => {
           <Row className="mt-3">
             <Col>
               <Multiselect
-                name={"listeProfilDroitId"}
-                label="Profils droit ayant le droit d'exécuter la requête"
-                options={profilDroitState?.data}
+                name={"listeGroupeFonctionnalitesId"}
+                label="Groupes de fonctionnalités ayant le droit d'exécuter la requête"
+                options={groupeFonctionnalitesState?.data}
                 getOptionValue={(t) => t.id}
                 getOptionLabel={(t) => t.libelle}
                 value={
-                  values?.listeProfilDroitId?.map((e) =>
-                    profilDroitState?.data?.find(
+                  values?.listeGroupeFonctionnalitesId?.map((e) =>
+                    groupeFonctionnalitesState?.data?.find(
                       (r: IdCodeLibelleType) => r.id === e,
                     ),
                   ) ?? undefined
                 }
-                onChange={(profilDroit) => {
-                  const profilDroitId = profilDroit.map(
+                onChange={(groupeFonctionnalites) => {
+                  const groupeFonctionnalitesId = groupeFonctionnalites.map(
                     (e: IdCodeLibelleType) => e.id,
                   );
-                  profilDroitId.length > 0
-                    ? setFieldValue("listeProfilDroitId", profilDroitId)
-                    : setFieldValue("listeProfilDroitId", undefined);
+                  groupeFonctionnalitesId.length > 0
+                    ? setFieldValue(
+                        "listeGroupeFonctionnalitesId",
+                        groupeFonctionnalitesId,
+                      )
+                    : setFieldValue("listeGroupeFonctionnalitesId", undefined);
                 }}
                 isClearable={true}
                 required={false}

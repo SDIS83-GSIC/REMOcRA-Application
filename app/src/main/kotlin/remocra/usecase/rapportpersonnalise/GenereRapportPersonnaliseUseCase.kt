@@ -23,7 +23,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
         private const val FIELD_GEOMETRIE = "geometrie"
     }
 
-    private fun checkProfilDroit(userInfo: WrappedUserInfo, rapportPersonnaliseId: UUID) {
+    private fun checkGroupeFonctionnalites(userInfo: WrappedUserInfo, rapportPersonnaliseId: UUID) {
         if (userInfo.isSuperAdmin) {
             return
         }
@@ -34,7 +34,7 @@ class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
     }
 
     fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): RapportPersonnaliseTableau? {
-        checkProfilDroit(userInfo, genererRapportPersonnaliseData.rapportPersonnaliseId)
+        checkGroupeFonctionnalites(userInfo, genererRapportPersonnaliseData.rapportPersonnaliseId)
 
         return infosForTableRapportPerso(rapportPersonnaliseUtils.buildRapportPersonnaliseData(genererRapportPersonnaliseData, userInfo))
     }

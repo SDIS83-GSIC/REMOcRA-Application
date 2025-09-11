@@ -13,7 +13,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.tables.pojos.Document
-import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
@@ -91,11 +91,11 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
             )
         }
 
-        // Puis les profils droit
-        element.listeProfilDroitId.forEach {
-            modeleCourrierRepository.insertLModeleCourrierProfilDroit(
-                LModeleCourrierProfilDroit(
-                    profilDroitId = it,
+        // Puis les groupes de fonctionnalités
+        element.listeGroupeFonctionnalitesId.forEach {
+            modeleCourrierRepository.insertLModeleCourrierGroupeFonctionnalites(
+                LModeleCourrierGroupeFonctionnalites(
+                    groupeFonctionnalitesId = it,
                     modeleCourrierId = element.modeleCourrierId!!,
                 ),
             )

@@ -30,14 +30,14 @@ import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_CODE_KEY
 import remocra.db.jooq.remocra.keys.COUCHE_PKEY
 import remocra.db.jooq.remocra.keys.COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_CRISE__L_COUCHE_CRISE_COUCHE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_COUCHE_GROUPE_FONCTIONNALITES__L_COUCHE_DROIT_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_MODULE__L_COUCHE_MODULE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.GroupeCouche.GroupeCouchePath
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.LCoucheCrise.LCoucheCrisePath
-import remocra.db.jooq.remocra.tables.LCoucheDroit.LCoucheDroitPath
+import remocra.db.jooq.remocra.tables.LCoucheGroupeFonctionnalites.LCoucheGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.LCoucheModule.LCoucheModulePath
-import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -249,22 +249,22 @@ open class Couche(
     val lCoucheCrise: LCoucheCrisePath
         get(): LCoucheCrisePath = lCoucheCrise()
 
-    private lateinit var _lCoucheDroit: LCoucheDroitPath
+    private lateinit var _lCoucheGroupeFonctionnalites: LCoucheGroupeFonctionnalitesPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_couche_droit</code> table
+     * <code>remocra.l_couche_groupe_fonctionnalites</code> table
      */
-    fun lCoucheDroit(): LCoucheDroitPath {
-        if (!this::_lCoucheDroit.isInitialized) {
-            _lCoucheDroit = LCoucheDroitPath(this, null, L_COUCHE_DROIT__L_COUCHE_DROIT_COUCHE_ID_FKEY.inverseKey)
+    fun lCoucheGroupeFonctionnalites(): LCoucheGroupeFonctionnalitesPath {
+        if (!this::_lCoucheGroupeFonctionnalites.isInitialized) {
+            _lCoucheGroupeFonctionnalites = LCoucheGroupeFonctionnalitesPath(this, null, L_COUCHE_GROUPE_FONCTIONNALITES__L_COUCHE_DROIT_COUCHE_ID_FKEY.inverseKey)
         }
 
-        return _lCoucheDroit
+        return _lCoucheGroupeFonctionnalites
     }
 
-    val lCoucheDroit: LCoucheDroitPath
-        get(): LCoucheDroitPath = lCoucheDroit()
+    val lCoucheGroupeFonctionnalites: LCoucheGroupeFonctionnalitesPath
+        get(): LCoucheGroupeFonctionnalitesPath = lCoucheGroupeFonctionnalites()
 
     private lateinit var _lCoucheModule: LCoucheModulePath
 
@@ -292,10 +292,10 @@ open class Couche(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.profil_droit</code> table
+     * <code>remocra.groupe_fonctionnalites</code> table
      */
-    val profilDroit: ProfilDroitPath
-        get(): ProfilDroitPath = lCoucheDroit().profilDroit()
+    val groupeFonctionnalites: GroupeFonctionnalitesPath
+        get(): GroupeFonctionnalitesPath = lCoucheGroupeFonctionnalites().groupeFonctionnalites()
     override fun `as`(alias: String): Couche = Couche(DSL.name(alias), this)
     override fun `as`(alias: Name): Couche = Couche(alias, this)
     override fun `as`(alias: Table<*>): Couche = Couche(alias.qualifiedName, this)

@@ -14,7 +14,7 @@ import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
+import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
@@ -38,7 +38,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
     fun getDocumentHabilitableWithThematique(
         listeThematiqueId: Collection<UUID>,
         limit: Int?,
-        profilDroitId: UUID?,
+        groupeFonctionnalitesId: UUID?,
         isSuperAdmin: Boolean = false,
         params: Params<Filter, Sort>?,
     ): Collection<DocumentHabilitable> =
@@ -55,14 +55,14 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .on(DOCUMENT_HABILITABLE.DOCUMENT_ID.eq(DOCUMENT.ID))
             .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
             .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
-            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
             .leftJoin(THEMATIQUE).on(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.eq(THEMATIQUE.ID))
             .where(THEMATIQUE.ACTIF.isTrue)
             .and(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(profilDroitId),
+                    L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.GROUPE_FONCTIONNALITES_ID.eq(groupeFonctionnalitesId),
                     isSuperAdmin,
                 ),
             )
@@ -76,7 +76,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
 
     fun countDocumentHabilitableWithThematique(
         listeThematiqueId: Collection<UUID>,
-        profilDroitId: UUID?,
+        groupeFonctionnalitesId: UUID?,
         isSuperAdmin: Boolean = false,
         params: Params<Filter, Sort>?,
     ): Int =
@@ -89,12 +89,12 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .on(DOCUMENT_HABILITABLE.DOCUMENT_ID.eq(DOCUMENT.ID))
             .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
             .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
-            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
             .where(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(profilDroitId),
+                    L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.GROUPE_FONCTIONNALITES_ID.eq(groupeFonctionnalitesId),
                     isSuperAdmin,
                 ),
             )

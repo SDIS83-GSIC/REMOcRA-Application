@@ -43,7 +43,7 @@ type CoucheType = {
   coucheLegendeUrl?: string;
   coucheIcone?: File;
   coucheLegende?: File;
-  profilDroitList?: string[];
+  groupeFonctionnalitesList?: string[];
   moduleList?: string[];
 };
 
@@ -113,7 +113,7 @@ export const prepareValues = (values: CoucheFormType) => {
               coucheLegende: couche.coucheLegende,
               coucheIconeUrl: couche.coucheIconeUrl,
               coucheLegendeUrl: couche.coucheLegendeUrl,
-              profilDroitList: couche.profilDroitList,
+              groupeFonctionnalitesList: couche.groupeFonctionnalitesList,
               moduleList: couche.moduleList,
             };
           }),
@@ -137,7 +137,7 @@ export const validationSchema = object({
 });
 
 const CoucheForm = () => {
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
   const moduleList = Object.entries(TypeModuleRemocra).map(([key, value]) => {
     return {
       id: key,
@@ -147,7 +147,7 @@ const CoucheForm = () => {
   const { values, setFieldValue } = useFormikContext<CoucheFormType>();
   const [fileInputKeys, setFileInputKeys] = useState({});
 
-  if (!profilDroitState.isResolved) {
+  if (!groupeFonctionnalitesState.isResolved) {
     return;
   }
 
@@ -372,19 +372,20 @@ const CoucheForm = () => {
                         </Col>
                         <Col xs={12} xxl={6}>
                           <Multiselect
-                            name={"profilDroitList"}
+                            name={"groupeFonctionnalitesList"}
                             label="Profils autorisés"
-                            options={profilDroitState.data}
+                            options={groupeFonctionnalitesState.data}
                             getOptionValue={(t) => t.id}
                             getOptionLabel={(t) => t.libelle}
-                            value={profilDroitState.data.filter((el) =>
-                              couche.profilDroitList?.some(
-                                (value) => value === el.id,
-                              ),
+                            value={groupeFonctionnalitesState.data.filter(
+                              (el) =>
+                                couche.groupeFonctionnalitesList?.some(
+                                  (value) => value === el.id,
+                                ),
                             )}
                             onChange={(value) => {
                               setFieldValue(
-                                `groupeCoucheList.${index}.coucheList.${groupIndex}.profilDroitList`,
+                                `groupeCoucheList.${index}.coucheList.${groupIndex}.groupeFonctionnalitesList`,
                                 value.map((el) => el.id),
                               );
                             }}
@@ -619,7 +620,7 @@ const CoucheForm = () => {
                               coucheLegendeUrl: undefined,
                               coucheIcone: undefined,
                               coucheLegende: undefined,
-                              profilDroitList: undefined,
+                              groupeFonctionnalitesList: undefined,
                               moduleList: undefined,
                             })
                           }

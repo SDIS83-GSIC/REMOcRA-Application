@@ -11,13 +11,13 @@ import remocra.data.DocumentHabilitableData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.DocumentHabilitable
-import remocra.db.jooq.remocra.tables.pojos.LProfilDroitDocumentHabilitable
+import remocra.db.jooq.remocra.tables.pojos.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.pojos.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT_HABILITABLE
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
+import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
-import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
 
 class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
-    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<DocumentHabilitableThematiqueProfilDroit> =
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<DocumentHabilitableThematiqueGroupeFonctionnalites> =
         dsl
             .selectDistinct(
                 DOCUMENT_HABILITABLE.ID,
@@ -45,24 +45,24 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
                     }?.joinToString()
                 }.`as`("listeThematique"),
                 multiset(
-                    selectDistinct(PROFIL_DROIT.LIBELLE)
-                        .from(PROFIL_DROIT)
-                        .join(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-                        .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                        .where(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID)),
+                    selectDistinct(GROUPE_FONCTIONNALITES.LIBELLE)
+                        .from(GROUPE_FONCTIONNALITES)
+                        .join(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+                        .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                        .where(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID)),
                 ).convertFrom { record ->
                     record?.map { r ->
                         r.value1()
                     }?.joinToString()
-                }.`as`("listeProfilDroit"),
+                }.`as`("listeGroupeFonctionnalites"),
             )
             .from(DOCUMENT)
             .join(DOCUMENT_HABILITABLE)
             .on(DOCUMENT_HABILITABLE.DOCUMENT_ID.eq(DOCUMENT.ID))
             .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
             .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
-            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(
                 params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() }
@@ -77,22 +77,22 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .from(DOCUMENT_HABILITABLE)
             .leftJoin(L_THEMATIQUE_DOCUMENT_HABILITABLE)
             .on(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
-            .leftJoin(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
+            .leftJoin(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID))
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .count()
 
     data class Filter(
         val documentHabilitableLibelle: String?,
         val listThematiqueId: List<UUID>?,
-        val listProfilDroitId: List<UUID>?,
+        val listGroupeFonctionnalitesId: List<UUID>?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
                     documentHabilitableLibelle?.let { DSL.and(DOCUMENT_HABILITABLE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     listThematiqueId?.let { DSL.and(L_THEMATIQUE_DOCUMENT_HABILITABLE.THEMATIQUE_ID.`in`(listThematiqueId)) },
-                    listProfilDroitId?.let { DSL.and(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.`in`(listProfilDroitId)) },
+                    listGroupeFonctionnalitesId?.let { DSL.and(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.GROUPE_FONCTIONNALITES_ID.`in`(listGroupeFonctionnalitesId)) },
                 ),
             )
     }
@@ -115,14 +115,14 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
         }
     }
 
-    data class DocumentHabilitableThematiqueProfilDroit(
+    data class DocumentHabilitableThematiqueGroupeFonctionnalites(
         val documentHabilitableId: UUID,
         val documentId: UUID,
         val documentHabilitableDateMaj: ZonedDateTime?,
         val documentHabilitableLibelle: String?,
         val documentHabilitableDescription: String?,
         val listeThematique: String?,
-        val listeProfilDroit: String?,
+        val listeGroupeFonctionnalites: String?,
     )
 
     fun getDocumentByDocumentHabilitable(documentHabilitableId: UUID): Document? =
@@ -169,9 +169,9 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .set(dsl.newRecord(L_THEMATIQUE_DOCUMENT_HABILITABLE, lThematiqueDocumentHabilitable))
             .execute()
 
-    fun insertProfilDroitDocumentHabilitable(LProfilDroitDocumentHabilitable: LProfilDroitDocumentHabilitable) =
-        dsl.insertInto(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .set(dsl.newRecord(L_PROFIL_DROIT_DOCUMENT_HABILITABLE, LProfilDroitDocumentHabilitable))
+    fun insertGroupeFonctionnalitesDocumentHabilitable(LGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitable) =
+        dsl.insertInto(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .set(dsl.newRecord(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE, LGroupeFonctionnalitesDocumentHabilitable))
             .execute()
 
     fun deleteDocumentHabilitable(documentHabilitableId: UUID) =
@@ -184,9 +184,9 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .where(L_THEMATIQUE_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(documentHabilitableId))
             .execute()
 
-    fun deleteProfilDroitDocumentHabilitable(documentHabilitableId: UUID) =
-        dsl.deleteFrom(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-            .where(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(documentHabilitableId))
+    fun deleteGroupeFonctionnalitesDocumentHabilitable(documentHabilitableId: UUID) =
+        dsl.deleteFrom(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+            .where(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(documentHabilitableId))
             .execute()
 
     fun getById(documentHabilitableId: UUID): DocumentHabilitableData =
@@ -207,16 +207,16 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
                     }
                 }.`as`("listeThematiqueId"),
                 multiset(
-                    selectDistinct(PROFIL_DROIT.ID)
-                        .from(PROFIL_DROIT)
-                        .join(L_PROFIL_DROIT_DOCUMENT_HABILITABLE)
-                        .on(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                        .where(L_PROFIL_DROIT_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID)),
+                    selectDistinct(GROUPE_FONCTIONNALITES.ID)
+                        .from(GROUPE_FONCTIONNALITES)
+                        .join(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
+                        .on(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                        .where(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE.DOCUMENT_HABILITABLE_ID.eq(DOCUMENT_HABILITABLE.ID)),
                 ).convertFrom { record ->
                     record?.map { r ->
                         r.value1() as UUID
                     }
-                }.`as`("listeProfilDroitId"),
+                }.`as`("listeGroupeFonctionnalitesId"),
             )
             .from(DOCUMENT)
             .join(DOCUMENT_HABILITABLE)

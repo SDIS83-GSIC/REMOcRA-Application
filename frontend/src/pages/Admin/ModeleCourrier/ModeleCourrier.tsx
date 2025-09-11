@@ -39,7 +39,7 @@ type ModeleCourrierType = {
   modeleCourrierDescription: string;
   modeleCourrierObjetEmail: string;
   modeleCourrierCorpsEmail: string;
-  listeProfilDroitId: string[];
+  listeGroupeFonctionnalitesId: string[];
   modeleCourrierModule: string;
   listeModeleCourrierParametre: {
     modeleCourrierParametreLibelle: string;
@@ -71,7 +71,7 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
   modeleCourrierDescription: data?.modeleCourrierDescription ?? null,
   modeleCourrierObjetEmail: data?.modeleCourrierObjetEmail ?? null,
   modeleCourrierCorpsEmail: data?.modeleCourrierCorpsEmail ?? null,
-  listeProfilDroitId: data?.listeProfilDroitId ?? [],
+  listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? [],
   listeModeleCourrierParametre:
     data?.listeModeleCourrierParametre.map((e) => ({
       ...e,
@@ -120,7 +120,7 @@ export const prepareVariables = (values: ModeleCourrierType) => {
       modeleCourrierModule: values.modeleCourrierModule,
       modeleCourrierObjetEmail: values.modeleCourrierObjetEmail,
       modeleCourrierCorpsEmail: values.modeleCourrierCorpsEmail,
-      listeProfilDroitId: values.listeProfilDroitId,
+      listeGroupeFonctionnalitesId: values.listeGroupeFonctionnalitesId,
       documentId: values.documentId,
       documentNomFichier: values.documentNomFichier,
       documentRepertoire: values.documentRepertoire,
@@ -150,7 +150,7 @@ const ModeleCourrier = () => {
   const { setFieldValue, values } = useFormikContext<ModeleCourrierType>();
   const modeleCourrierTypeModule = useGet(url`/api/modules/get-type-module`);
 
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
 
   const listeModule = modeleCourrierTypeModule.data?.map((e: string) => ({
     id: e,
@@ -210,25 +210,28 @@ const ModeleCourrier = () => {
           <Row className="mt-3">
             <Col>
               <Multiselect
-                name={"listeProfilDroitId"}
-                label="Profils droit ayant le droit d'exécuter la requête"
-                options={profilDroitState?.data}
+                name={"listeGroupeFonctionnalitesId"}
+                label="Groupes de fonctionnalités ayant le droit d'exécuter la requête"
+                options={groupeFonctionnalitesState?.data}
                 getOptionValue={(t) => t.id}
                 getOptionLabel={(t) => t.libelle}
                 value={
-                  values?.listeProfilDroitId?.map((e) =>
-                    profilDroitState?.data?.find(
+                  values?.listeGroupeFonctionnalitesId?.map((e) =>
+                    groupeFonctionnalitesState?.data?.find(
                       (r: IdCodeLibelleType) => r.id === e,
                     ),
                   ) ?? undefined
                 }
-                onChange={(profilDroit) => {
-                  const profilDroitId = profilDroit.map(
+                onChange={(groupeFonctionnalites) => {
+                  const groupeFonctionnalitesId = groupeFonctionnalites.map(
                     (e: IdCodeLibelleType) => e.id,
                   );
-                  profilDroitId.length > 0
-                    ? setFieldValue("listeProfilDroitId", profilDroitId)
-                    : setFieldValue("listeProfilDroitId", undefined);
+                  groupeFonctionnalitesId.length > 0
+                    ? setFieldValue(
+                        "listeGroupeFonctionnalitesId",
+                        groupeFonctionnalitesId,
+                      )
+                    : setFieldValue("listeGroupeFonctionnalitesId", undefined);
                 }}
                 isClearable={true}
                 required={false}

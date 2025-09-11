@@ -37,8 +37,8 @@ class DeleteRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: RapportPersonnaliseData): RapportPersonnaliseData {
-        // On supprime les profils droit
-        rapportPersonnaliseRepository.deleteLRapportPersonnaliseProfilDroit(element.rapportPersonnaliseId)
+        // On supprime les groupes de fonctionnalités
+        rapportPersonnaliseRepository.deleteLRapportPersonnaliseGroupeFonctionnalites(element.rapportPersonnaliseId)
 
         rapportPersonnaliseRepository.deleteRapportPersonnaliseParametre(element.rapportPersonnaliseId)
 

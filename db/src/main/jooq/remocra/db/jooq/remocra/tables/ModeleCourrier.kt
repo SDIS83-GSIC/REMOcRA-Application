@@ -26,15 +26,15 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_MODELE_COURRIER_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES__L_MODELE_COURRIER_GROUPE_FONCTIONNALITES_MODELE_COURRIER_ID_FKE
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_MODELE_COURRIER_CODE_KEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PARAMETRE__MODELE_COURRIER_PARAMETRE_MODELE_COURRIER_PARAMETRE_MODELE_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_PKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
-import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit.LModeleCourrierProfilDroitPath
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalitesPath
+import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites.LModeleCourrierGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.ModeleCourrierParametre.ModeleCourrierParametrePath
-import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -197,22 +197,22 @@ open class ModeleCourrier(
     val document: DocumentPath
         get(): DocumentPath = document()
 
-    private lateinit var _lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
+    private lateinit var _lModeleCourrierGroupeFonctionnalites: LModeleCourrierGroupeFonctionnalitesPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_modele_courrier_profil_droit</code> table
+     * <code>remocra.l_modele_courrier_groupe_fonctionnalites</code> table
      */
-    fun lModeleCourrierProfilDroit(): LModeleCourrierProfilDroitPath {
-        if (!this::_lModeleCourrierProfilDroit.isInitialized) {
-            _lModeleCourrierProfilDroit = LModeleCourrierProfilDroitPath(this, null, L_MODELE_COURRIER_PROFIL_DROIT__L_MODELE_COURRIER_PROFIL_DROIT_MODELE_COURRIER_ID_FKEY.inverseKey)
+    fun lModeleCourrierGroupeFonctionnalites(): LModeleCourrierGroupeFonctionnalitesPath {
+        if (!this::_lModeleCourrierGroupeFonctionnalites.isInitialized) {
+            _lModeleCourrierGroupeFonctionnalites = LModeleCourrierGroupeFonctionnalitesPath(this, null, L_MODELE_COURRIER_GROUPE_FONCTIONNALITES__L_MODELE_COURRIER_GROUPE_FONCTIONNALITES_MODELE_COURRIER_ID_FKE.inverseKey)
         }
 
-        return _lModeleCourrierProfilDroit
+        return _lModeleCourrierGroupeFonctionnalites
     }
 
-    val lModeleCourrierProfilDroit: LModeleCourrierProfilDroitPath
-        get(): LModeleCourrierProfilDroitPath = lModeleCourrierProfilDroit()
+    val lModeleCourrierGroupeFonctionnalites: LModeleCourrierGroupeFonctionnalitesPath
+        get(): LModeleCourrierGroupeFonctionnalitesPath = lModeleCourrierGroupeFonctionnalites()
 
     private lateinit var _modeleCourrierParametre: ModeleCourrierParametrePath
 
@@ -233,10 +233,10 @@ open class ModeleCourrier(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.profil_droit</code> table
+     * <code>remocra.groupe_fonctionnalites</code> table
      */
-    val profilDroit: ProfilDroitPath
-        get(): ProfilDroitPath = lModeleCourrierProfilDroit().profilDroit()
+    val groupeFonctionnalites: GroupeFonctionnalitesPath
+        get(): GroupeFonctionnalitesPath = lModeleCourrierGroupeFonctionnalites().groupeFonctionnalites()
     override fun `as`(alias: String): ModeleCourrier = ModeleCourrier(DSL.name(alias), this)
     override fun `as`(alias: Name): ModeleCourrier = ModeleCourrier(alias, this)
     override fun `as`(alias: Table<*>): ModeleCourrier = ModeleCourrier(alias.qualifiedName, this)

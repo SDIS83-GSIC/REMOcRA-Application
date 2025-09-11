@@ -1,13 +1,13 @@
 type FilterDocumentHabilitableType = {
   documentHabilitableLibelle?: string | undefined;
   listThematiqueId?: string[] | undefined;
-  listProfilDroitId?: string[] | undefined;
+  listGroupeFonctionnalitesId?: string[] | undefined;
 };
 
 const FilterValues = ({
   documentHabilitableLibelle,
   listThematiqueId,
-  listProfilDroitId,
+  listGroupeFonctionnalitesId,
 }: FilterDocumentHabilitableType) => {
   const filter: FilterDocumentHabilitableType = {};
 
@@ -20,8 +20,11 @@ const FilterValues = ({
   if (listThematiqueId !== null && listThematiqueId?.length > 0) {
     filter.listThematiqueId = listThematiqueId;
   }
-  if (listProfilDroitId !== null && listProfilDroitId?.length > 0) {
-    filter.listProfilDroitId = listProfilDroitId;
+  if (
+    listGroupeFonctionnalitesId !== null &&
+    listGroupeFonctionnalitesId?.length > 0
+  ) {
+    filter.listGroupeFonctionnalitesId = listGroupeFonctionnalitesId;
   }
 
   return filter;

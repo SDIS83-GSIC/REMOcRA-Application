@@ -8,8 +8,8 @@ import net.ltgt.oidc.servlet.UserPrincipal
 import net.ltgt.oidc.servlet.UserPrincipalFactory
 import remocra.data.enums.TypeSourceModification
 import remocra.db.DroitsRepository
+import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.OrganismeRepository
-import remocra.db.ProfilDroitRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import java.util.UUID
@@ -18,7 +18,7 @@ class RemocraUserPrincipalFactory @Inject constructor(
     private val utilisateurRepository: UtilisateurRepository,
     private val droitsRepository: DroitsRepository,
     private val organismeRepository: OrganismeRepository,
-    private val profilDroitRepository: ProfilDroitRepository,
+    private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository,
 ) : UserPrincipalFactory {
 
     companion object {
@@ -62,11 +62,11 @@ class RemocraUserPrincipalFactory @Inject constructor(
             organismeRepository.getOrganismeAndChildren(it).toSet()
         } ?: organismeRepository.getAll().map { it.id }.toSet()
 
-        val profilDroit = profilDroitRepository.getProfilDroitByUtilisateurId(utilisateur.utilisateurId)
+        val groupeFonctionnalites = groupeFonctionnalitesRepository.getGroupeFonctionnalitesByUtilisateurId(utilisateur.utilisateurId)
 
         session.setAttribute(
             USER_INFO_SESSION_ATTRIBUTE_NAME,
-            UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit, TypeSourceModification.REMOCRA_WEB),
+            UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, groupeFonctionnalites, TypeSourceModification.REMOCRA_WEB),
         )
     }
 }

@@ -40,6 +40,7 @@ import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LAdresseDocument
@@ -49,7 +50,7 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheCrise
-import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LCoucheGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LCoucheModule
 import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
 import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
@@ -61,16 +62,16 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LEvenementDocument
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
-import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
+import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
-import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
-import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
-import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeGroupeFonctionnalites
+import remocra.db.jooq.remocra.tables.LRapportPersonnaliseGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
@@ -119,7 +120,6 @@ import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Permis
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
-import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.RapportPersonnalise
@@ -345,6 +345,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val GROUPE_COUCHE: GroupeCouche get() = GroupeCouche.GROUPE_COUCHE
 
     /**
+     * The table <code>remocra.groupe_fonctionnalites</code>.
+     */
+    val GROUPE_FONCTIONNALITES: GroupeFonctionnalites get() = GroupeFonctionnalites.GROUPE_FONCTIONNALITES
+
+    /**
      * The table <code>remocra.indisponibilite_temporaire</code>.
      */
     val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire get() = IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE
@@ -390,9 +395,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_COUCHE_CRISE: LCoucheCrise get() = LCoucheCrise.L_COUCHE_CRISE
 
     /**
-     * The table <code>remocra.l_couche_droit</code>.
+     * The table <code>remocra.l_couche_groupe_fonctionnalites</code>.
      */
-    val L_COUCHE_DROIT: LCoucheDroit get() = LCoucheDroit.L_COUCHE_DROIT
+    val L_COUCHE_GROUPE_FONCTIONNALITES: LCoucheGroupeFonctionnalites get() = LCoucheGroupeFonctionnalites.L_COUCHE_GROUPE_FONCTIONNALITES
 
     /**
      * The table <code>remocra.l_couche_module</code>.
@@ -450,14 +455,20 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_EVENEMENT_DOCUMENT: LEvenementDocument get() = LEvenementDocument.L_EVENEMENT_DOCUMENT
 
     /**
+     * The table
+     * <code>remocra.l_groupe_fonctionnalites_document_habilitable</code>.
+     */
+    val L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE: LGroupeFonctionnalitesDocumentHabilitable get() = LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE
+
+    /**
      * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
      */
     val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei get() = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
 
     /**
-     * The table <code>remocra.l_modele_courrier_profil_droit</code>.
+     * The table <code>remocra.l_modele_courrier_groupe_fonctionnalites</code>.
      */
-    val L_MODELE_COURRIER_PROFIL_DROIT: LModeleCourrierProfilDroit get() = LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT
+    val L_MODELE_COURRIER_GROUPE_FONCTIONNALITES: LModeleCourrierGroupeFonctionnalites get() = LModeleCourrierGroupeFonctionnalites.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES
 
     /**
      * The table <code>remocra.l_pei_anomalie</code>.
@@ -485,19 +496,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_PERMIS_DOCUMENT: LPermisDocument get() = LPermisDocument.L_PERMIS_DOCUMENT
 
     /**
-     * The table <code>remocra.l_profil_droit_document_habilitable</code>.
+     * The table
+     * <code>remocra.l_profil_utilisateur_organisme_groupe_fonctionnalites</code>.
      */
-    val L_PROFIL_DROIT_DOCUMENT_HABILITABLE: LProfilDroitDocumentHabilitable get() = LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
+    val L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES: LProfilUtilisateurOrganismeGroupeFonctionnalites get() = LProfilUtilisateurOrganismeGroupeFonctionnalites.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 
     /**
-     * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
+     * The table
+     * <code>remocra.l_rapport_personnalise_groupe_fonctionnalites</code>.
      */
-    val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit get() = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
-
-    /**
-     * The table <code>remocra.l_rapport_personnalise_profil_droit</code>.
-     */
-    val L_RAPPORT_PERSONNALISE_PROFIL_DROIT: LRapportPersonnaliseProfilDroit get() = LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
+    val L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES: LRapportPersonnaliseGroupeFonctionnalites get() = LRapportPersonnaliseGroupeFonctionnalites.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES
 
     /**
      * The table <code>remocra.l_thematique_courrier</code>.
@@ -740,11 +748,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val POIDS_ANOMALIE: PoidsAnomalie get() = PoidsAnomalie.POIDS_ANOMALIE
 
     /**
-     * The table <code>remocra.profil_droit</code>.
-     */
-    val PROFIL_DROIT: ProfilDroit get() = ProfilDroit.PROFIL_DROIT
-
-    /**
      * The table <code>remocra.profil_organisme</code>.
      */
     val PROFIL_ORGANISME: ProfilOrganisme get() = ProfilOrganisme.PROFIL_ORGANISME
@@ -960,6 +963,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         FonctionContact.FONCTION_CONTACT,
         Gestionnaire.GESTIONNAIRE,
         GroupeCouche.GROUPE_COUCHE,
+        GroupeFonctionnalites.GROUPE_FONCTIONNALITES,
         IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,
         Job.JOB,
         LAdresseDocument.L_ADRESSE_DOCUMENT,
@@ -969,7 +973,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,
         LCoucheCrise.L_COUCHE_CRISE,
-        LCoucheDroit.L_COUCHE_DROIT,
+        LCoucheGroupeFonctionnalites.L_COUCHE_GROUPE_FONCTIONNALITES,
         LCoucheModule.L_COUCHE_MODULE,
         LCourrierContactGestionnaire.L_COURRIER_CONTACT_GESTIONNAIRE,
         LCourrierContactOrganisme.L_COURRIER_CONTACT_ORGANISME,
@@ -981,16 +985,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LEvenementDocument.L_EVENEMENT_DOCUMENT,
+        LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
-        LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT,
+        LModeleCourrierGroupeFonctionnalites.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES,
         LPeiAnomalie.L_PEI_ANOMALIE,
         LPeiDocument.L_PEI_DOCUMENT,
         LPenaTypeEngin.L_PENA_TYPE_ENGIN,
         LPermisCadastreParcelle.L_PERMIS_CADASTRE_PARCELLE,
         LPermisDocument.L_PERMIS_DOCUMENT,
-        LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE,
-        LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT,
-        LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT,
+        LProfilUtilisateurOrganismeGroupeFonctionnalites.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES,
+        LRapportPersonnaliseGroupeFonctionnalites.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES,
         LThematiqueCourrier.L_THEMATIQUE_COURRIER,
         LThematiqueDocumentHabilitable.L_THEMATIQUE_DOCUMENT_HABILITABLE,
         LThematiqueModule.L_THEMATIQUE_MODULE,
@@ -1039,7 +1043,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Permis.PERMIS,
         Pibi.PIBI,
         PoidsAnomalie.POIDS_ANOMALIE,
-        ProfilDroit.PROFIL_DROIT,
         ProfilOrganisme.PROFIL_ORGANISME,
         ProfilUtilisateur.PROFIL_UTILISATEUR,
         RapportPersonnalise.RAPPORT_PERSONNALISE,

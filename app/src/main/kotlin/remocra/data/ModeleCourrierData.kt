@@ -15,7 +15,7 @@ data class ModeleCourrierData(
     val modeleCourrierModule: TypeModuleRapportCourrier,
     val modeleCourrierCorpsEmail: String,
     val modeleCourrierObjetEmail: String,
-    val listeProfilDroitId: Collection<UUID>,
+    val listeGroupeFonctionnalitesId: Collection<UUID>,
     val listeModeleCourrierParametre: Collection<ModeleCourrierParametreData>,
     val documentId: UUID?,
     val documentNomFichier: String?,

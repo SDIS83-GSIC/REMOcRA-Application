@@ -3,13 +3,13 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
-import ProfilDroitForm, {
+import GroupeFonctionnalitesForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./ProfilDroitForm.tsx";
+} from "./GroupeFonctionnalitesForm.tsx";
 
-const ProfilDroitCreate = () => {
+const GroupeFonctionnalitesCreate = () => {
   return (
     <Container>
       <PageTitle
@@ -20,15 +20,15 @@ const ProfilDroitCreate = () => {
         initialValues={getInitialValues()}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/profil-droit/create`}
+        submitUrl={`/api/groupe-fonctionnalites/create`}
         isPost={true}
-        redirectUrl={URLS.PROFIL_DROIT_LIST}
+        redirectUrl={URLS.GROUPE_FONCTIONNALITES_LIST}
         onSubmit={() => true}
       >
-        <ProfilDroitForm />
+        <GroupeFonctionnalitesForm />
       </MyFormik>
     </Container>
   );
 };
 
-export default ProfilDroitCreate;
+export default GroupeFonctionnalitesCreate;

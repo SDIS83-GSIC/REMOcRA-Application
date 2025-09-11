@@ -14,7 +14,7 @@ data class RapportPersonnaliseData(
     val rapportPersonnaliseSourceSql: String,
     val rapportPersonnaliseModule: TypeModuleRapportCourrier,
     val rapportPersonnaliseProtected: Boolean,
-    val listeProfilDroitId: Collection<UUID>,
+    val listeGroupeFonctionnalitesId: Collection<UUID>,
     val listeRapportPersonnaliseParametre: Collection<RapportPersonnaliseParametreData>,
 )
 

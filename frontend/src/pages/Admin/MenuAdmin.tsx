@@ -172,7 +172,7 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
-                      pathname={URLS.PROFIL_DROIT_LIST}
+                      pathname={URLS.GROUPE_FONCTIONNALITES_LIST}
                     >
                       Groupes de fonctionnalités
                     </CustomLinkButton>

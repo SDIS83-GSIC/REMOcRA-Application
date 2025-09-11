@@ -3,7 +3,7 @@ package remocra.auth
 import org.locationtech.jts.geom.Geometry
 import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.io.Serializable
@@ -14,7 +14,7 @@ class UserInfo(
     val droits: Set<Droit>,
     val zoneCompetence: ZoneIntegration?,
     val affiliatedOrganismeIds: Set<UUID>,
-    val profilDroits: ProfilDroit?,
+    val groupeFonctionnalites: GroupeFonctionnalites?,
     var typeSourceModification: TypeSourceModification,
 ) : Serializable {
     val username: String

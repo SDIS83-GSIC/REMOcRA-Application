@@ -10,7 +10,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
-import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.eventbus.tracabilite.TracabiliteEvent
@@ -61,11 +61,11 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
             ),
         )
 
-        // Puis les profils droit
-        element.listeProfilDroitId.forEach {
-            rapportPersonnaliseRepository.insertLRapportPersonnaliseProfilDroit(
-                LRapportPersonnaliseProfilDroit(
-                    profilDroitId = it,
+        // Puis les groupes de fonctionnalités
+        element.listeGroupeFonctionnalitesId.forEach {
+            rapportPersonnaliseRepository.insertLRapportPersonnaliseGroupeFonctionnalites(
+                LRapportPersonnaliseGroupeFonctionnalites(
+                    groupeFonctionnalitesId = it,
                     rapportPersonnaliseId = element.rapportPersonnaliseId,
                 ),
             )

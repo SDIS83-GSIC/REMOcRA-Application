@@ -53,7 +53,7 @@ class DeleteModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         userInfo: WrappedUserInfo,
         element: ModeleCourrierData,
     ): ModeleCourrierData {
-        modeleCourrierRepository.deleteLProfilDroit(element.modeleCourrierId!!)
+        modeleCourrierRepository.deleteLGroupeFonctionnalites(element.modeleCourrierId!!)
 
         val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS + "${element.modeleCourrierId}"
         documentUtils.deleteDirectory(repertoire)

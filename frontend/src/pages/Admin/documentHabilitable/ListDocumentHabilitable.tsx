@@ -27,7 +27,7 @@ import FilterValues from "./FilterDocumentHabilitable.tsx";
 const ListDocumentHabilitable = () => {
   const { user } = useAppContext();
   const thematiqueState = useGet(url`/api/thematique/`);
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
   const listeButton: ButtonType[] = [];
   const { handleShowClose, activesKeys } = useAccordionState([false]);
 
@@ -93,7 +93,8 @@ const ListDocumentHabilitable = () => {
                       rattachables à zéro ou plusieurs <b>thématiques</b>
                     </li>
                     <li>
-                      accessibles à zéro ou plusieurs <b>profils droit</b>
+                      accessibles à zéro ou plusieurs{" "}
+                      <b>groupe de fonctionnalités</b>
                     </li>
                   </ul>
                   Ils remontent sur la page d&apos;accueil dans le bloc de type{" "}
@@ -101,9 +102,9 @@ const ListDocumentHabilitable = () => {
                   paramétrage des thématiques de celui-ci, ainsi que les droits
                   de l&apos;utilisateur connecté).
                   <br />
-                  Attention, aucune thématique ou aucun profil droit
-                  sélectionnés --&gt; le document ne pourra pas remonter sur la
-                  page d&apos;accueil
+                  Attention, aucune thématique ou aucun groupe de
+                  fonctionnalités sélectionnés --&gt; le document ne pourra pas
+                  remonter sur la page d&apos;accueil
                 </p>
               ),
             },
@@ -132,12 +133,12 @@ const ListDocumentHabilitable = () => {
               ),
             },
             {
-              Header: "Profils droits",
-              accessor: "listeProfilDroit",
+              Header: "Groupe de fonctionnalités",
+              accessor: "listeGroupeFonctionnalites",
               Filter: (
                 <MultiSelectFilterFromList
-                  name={"listProfilDroitId"}
-                  listIdCodeLibelle={profilDroitState.data}
+                  name={"listGroupeFonctionnalitesId"}
+                  listIdCodeLibelle={groupeFonctionnalitesState.data}
                 />
               ),
             },

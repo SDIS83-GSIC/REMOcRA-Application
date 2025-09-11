@@ -26,12 +26,12 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.db.jooq.remocra.keys.L_RAPPORT_PERSONNALISE_PROFIL_DROIT__L_RAPPORT_PERSONNALISE_PROFIL_DROI_RAPPORT_PERSONNALISE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES__L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES_RAPPORT_PERSONNAL
 import remocra.db.jooq.remocra.keys.RAPPORT_PERSONNALISE_PARAMETRE__RAPPORT_PERSONNALISE_PARAMETR_RAPPORT_PERSONNALISE_PARAMET_FKEY
 import remocra.db.jooq.remocra.keys.RAPPORT_PERSONNALISE_PKEY
 import remocra.db.jooq.remocra.keys.RAPPORT_PERSONNALISE_RAPPORT_PERSONNALISE_CODE_KEY
-import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit.LRapportPersonnaliseProfilDroitPath
-import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalitesPath
+import remocra.db.jooq.remocra.tables.LRapportPersonnaliseGroupeFonctionnalites.LRapportPersonnaliseGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.RapportPersonnaliseParametre.RapportPersonnaliseParametrePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -173,22 +173,22 @@ open class RapportPersonnalise(
     override fun getPrimaryKey(): UniqueKey<Record> = RAPPORT_PERSONNALISE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(RAPPORT_PERSONNALISE_RAPPORT_PERSONNALISE_CODE_KEY)
 
-    private lateinit var _lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroitPath
+    private lateinit var _lRapportPersonnaliseGroupeFonctionnalites: LRapportPersonnaliseGroupeFonctionnalitesPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_rapport_personnalise_profil_droit</code> table
+     * <code>remocra.l_rapport_personnalise_groupe_fonctionnalites</code> table
      */
-    fun lRapportPersonnaliseProfilDroit(): LRapportPersonnaliseProfilDroitPath {
-        if (!this::_lRapportPersonnaliseProfilDroit.isInitialized) {
-            _lRapportPersonnaliseProfilDroit = LRapportPersonnaliseProfilDroitPath(this, null, L_RAPPORT_PERSONNALISE_PROFIL_DROIT__L_RAPPORT_PERSONNALISE_PROFIL_DROI_RAPPORT_PERSONNALISE_ID_FKEY.inverseKey)
+    fun lRapportPersonnaliseGroupeFonctionnalites(): LRapportPersonnaliseGroupeFonctionnalitesPath {
+        if (!this::_lRapportPersonnaliseGroupeFonctionnalites.isInitialized) {
+            _lRapportPersonnaliseGroupeFonctionnalites = LRapportPersonnaliseGroupeFonctionnalitesPath(this, null, L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES__L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES_RAPPORT_PERSONNAL.inverseKey)
         }
 
-        return _lRapportPersonnaliseProfilDroit
+        return _lRapportPersonnaliseGroupeFonctionnalites
     }
 
-    val lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroitPath
-        get(): LRapportPersonnaliseProfilDroitPath = lRapportPersonnaliseProfilDroit()
+    val lRapportPersonnaliseGroupeFonctionnalites: LRapportPersonnaliseGroupeFonctionnalitesPath
+        get(): LRapportPersonnaliseGroupeFonctionnalitesPath = lRapportPersonnaliseGroupeFonctionnalites()
 
     private lateinit var _rapportPersonnaliseParametre: RapportPersonnaliseParametrePath
 
@@ -209,10 +209,10 @@ open class RapportPersonnalise(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.profil_droit</code> table
+     * <code>remocra.groupe_fonctionnalites</code> table
      */
-    val profilDroit: ProfilDroitPath
-        get(): ProfilDroitPath = lRapportPersonnaliseProfilDroit().profilDroit()
+    val groupeFonctionnalites: GroupeFonctionnalitesPath
+        get(): GroupeFonctionnalitesPath = lRapportPersonnaliseGroupeFonctionnalites().groupeFonctionnalites()
     override fun `as`(alias: String): RapportPersonnalise = RapportPersonnalise(DSL.name(alias), this)
     override fun `as`(alias: Name): RapportPersonnalise = RapportPersonnalise(alias, this)
     override fun `as`(alias: Table<*>): RapportPersonnalise = RapportPersonnalise(alias.qualifiedName, this)

@@ -9,8 +9,8 @@ import net.ltgt.oauth.common.KeycloakTokenPrincipal
 import net.ltgt.oauth.common.TokenPrincipal
 import remocra.data.enums.TypeSourceModification
 import remocra.db.DroitsRepository
+import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.OrganismeRepository
-import remocra.db.ProfilDroitRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 
@@ -18,7 +18,7 @@ class MobileUserPrincipalProvider @Inject constructor(
     private val utilisateurRepository: Provider<UtilisateurRepository>,
     private val droitsRepository: Provider<DroitsRepository>,
     private val organismeRepository: Provider<OrganismeRepository>,
-    private val profilDroitRepository: ProfilDroitRepository,
+    private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository,
     authnSettings: AuthModule.AuthnSettings,
 ) : CachedTokenPrincipalProvider(Caffeine.from(authnSettings.tokenIntrospectionCacheSpec)) {
     override fun load(introspectionResponse: TokenIntrospectionSuccessResponse): TokenPrincipal? {
@@ -45,11 +45,11 @@ class MobileUserPrincipalProvider @Inject constructor(
             organismeRepository.get().getOrganismeAndChildren(it).toSet()
         } ?: organismeRepository.get().getAll().map { it.id }.toSet()
 
-        val profilDroit = profilDroitRepository.getProfilDroitByUtilisateurId(utilisateur.utilisateurId)
+        val groupeFonctionnalites = groupeFonctionnalitesRepository.getGroupeFonctionnalitesByUtilisateurId(utilisateur.utilisateurId)
 
         return object : KeycloakTokenPrincipal(introspectionResponse), RemocraUserPrincipal {
             override fun getName() = super<RemocraUserPrincipal>.getName()
-            override val userInfo = UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, profilDroit, TypeSourceModification.MOBILE)
+            override val userInfo = UserInfo(utilisateur, droits, zoneCompetence, affiliatedOrganismeIds, groupeFonctionnalites, TypeSourceModification.MOBILE)
         }
     }
 }

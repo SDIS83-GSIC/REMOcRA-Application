@@ -3,7 +3,7 @@ type FilterModeleCourrierType = {
   modeleCourrierCode?: string | undefined;
   modeleCourrierLibelle?: string | undefined;
   modeleCourrierProtected?: string | undefined;
-  listeProfilDroitId?: string[] | undefined;
+  listeGroupeFonctionnalitesId?: string[] | undefined;
   modeleCourrierModule?: string | undefined;
 };
 
@@ -12,7 +12,7 @@ const filterValuesToVariable = ({
   modeleCourrierCode,
   modeleCourrierLibelle,
   modeleCourrierProtected,
-  listeProfilDroitId,
+  listeGroupeFonctionnalitesId,
   modeleCourrierModule,
 }: FilterModeleCourrierType) => {
   const filter: FilterModeleCourrierType = {};
@@ -23,8 +23,8 @@ const filterValuesToVariable = ({
   filterProperty(filter, modeleCourrierProtected, "modeleCourrierProtected");
   filterProperty(filter, modeleCourrierModule, "modeleCourrierModule");
 
-  if (listeProfilDroitId?.length > 0) {
-    filter.listeProfilDroitId = listeProfilDroitId;
+  if (listeGroupeFonctionnalitesId?.length > 0) {
+    filter.listeGroupeFonctionnalitesId = listeGroupeFonctionnalitesId;
   }
 
   return filter;

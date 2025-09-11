@@ -62,7 +62,7 @@ constructor(
                 droits = Droit.entries.toSet(),
                 zoneCompetence = null,
                 affiliatedOrganismeIds = emptySet(),
-                profilDroits = null,
+                groupeFonctionnalites = null,
                 typeSourceModification = TypeSourceModification.REMOCRA_WEB,
             )
             // On wrappe dans l'objet qui va bien

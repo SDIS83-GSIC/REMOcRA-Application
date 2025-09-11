@@ -16,7 +16,7 @@ type DocumentHabilitableType = {
   documentHabilitableLibelle: string;
   documentHabilitableDescription: string;
   listeThematiqueId: string[];
-  listeProfilDroitId: string[];
+  listeGroupeFonctionnalitesId: string[];
   document: any;
 };
 
@@ -24,7 +24,7 @@ export const getInitialValues = (data?: DocumentHabilitableType) => ({
   documentHabilitableLibelle: data?.documentHabilitableLibelle ?? null,
   documentHabilitableDescription: data?.documentHabilitableDescription ?? null,
   listeThematiqueId: data?.listeThematiqueId ?? null,
-  listeProfilDroitId: data?.listeProfilDroitId ?? null,
+  listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? null,
   document: null,
 });
 
@@ -47,8 +47,8 @@ export const prepareVariables = (values: DocumentHabilitableType) => {
     JSON.stringify(values.listeThematiqueId),
   );
   formData.append(
-    "listeProfilDroitId",
-    JSON.stringify(values.listeProfilDroitId),
+    "listeGroupeFonctionnalitesId",
+    JSON.stringify(values.listeGroupeFonctionnalitesId),
   );
 
   return formData;
@@ -57,7 +57,7 @@ export const prepareVariables = (values: DocumentHabilitableType) => {
 const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
   const { values, setFieldValue } = useFormikContext<DocumentHabilitableType>();
   const thematiqueState = useGet(url`/api/thematique/actif`);
-  const profilDroitState = useGet(url`/api/profil-droit`);
+  const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
 
   return (
     <FormContainer>
@@ -102,21 +102,28 @@ const DocumentHabilitable = ({ isNew = false }: { isNew?: boolean }) => {
       />
 
       <Multiselect
-        name={"listeProfilDroitId"}
-        label="Profils droit concernés par le document"
-        options={profilDroitState?.data}
+        name={"listeGroupeFonctionnalitesId"}
+        label="Groupes de fonctionnalités concernés par le document"
+        options={groupeFonctionnalitesState?.data}
         getOptionValue={(t) => t.id}
         getOptionLabel={(t) => t.libelle}
         value={
-          values?.listeProfilDroitId?.map((e) =>
-            profilDroitState?.data?.find((r: IdCodeLibelleType) => r.id === e),
+          values?.listeGroupeFonctionnalitesId?.map((e) =>
+            groupeFonctionnalitesState?.data?.find(
+              (r: IdCodeLibelleType) => r.id === e,
+            ),
           ) ?? []
         }
-        onChange={(profilDroit) => {
-          const profilDroitId = profilDroit.map((e) => e.id);
-          profilDroitId.length > 0
-            ? setFieldValue("listeProfilDroitId", profilDroitId)
-            : setFieldValue("listeProfilDroitId", []);
+        onChange={(groupeFonctionnalites) => {
+          const groupeFonctionnalitesId = groupeFonctionnalites.map(
+            (e) => e.id,
+          );
+          groupeFonctionnalitesId.length > 0
+            ? setFieldValue(
+                "listeGroupeFonctionnalitesId",
+                groupeFonctionnalitesId,
+              )
+            : setFieldValue("listeGroupeFonctionnalitesId", []);
         }}
         isClearable={true}
         required={false}

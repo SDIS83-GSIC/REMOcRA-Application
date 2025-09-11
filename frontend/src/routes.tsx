@@ -55,13 +55,13 @@ import UpdateDocumentHabilitable from "./pages/Admin/documentHabilitable/UpdateD
 import CreateDomaine from "./pages/Admin/domaine/CreateDomaine.tsx";
 import ListDomaine from "./pages/Admin/domaine/ListDomaine.tsx";
 import UpdateDomaine from "./pages/Admin/domaine/UpdateDomaine.tsx";
-import LienProfilDroitList from "./pages/Admin/droit/LienProfilDroitList.tsx";
+import LienGroupeFonctionnalitesList from "./pages/Admin/droit/LienProfilGroupeFonctionnalitesList.tsx";
 import LienProfilFonctionnaliteCreate from "./pages/Admin/droit/LienProfilFonctionnaliteCreate.tsx";
 import LienProfilFonctionnaliteList from "./pages/Admin/droit/LienProfilFonctionnaliteList.tsx";
 import LienProfilFonctionnaliteUpdate from "./pages/Admin/droit/LienProfilFonctionnaliteUpdate.tsx";
-import ProfilDroitCreate from "./pages/Admin/droit/ProfilDroitCreate.tsx";
-import ProfilDroitList from "./pages/Admin/droit/ProfilDroitList.tsx";
-import ProfilDroitUpdate from "./pages/Admin/droit/ProfilDroitUpdate.tsx";
+import GroupeFonctionnalitesCreate from "./pages/Admin/droit/GroupeFonctionnalitesCreate.tsx";
+import GroupeFonctionnalitesList from "./pages/Admin/droit/GroupeFonctionnalitesList.tsx";
+import GroupeFonctionnalitesUpdate from "./pages/Admin/droit/GroupeFonctionnalitesUpdate.tsx";
 import CreateGestionnaire from "./pages/Admin/Gestionnaire/CreateGestionnaire.tsx";
 import ListGestionnaire from "./pages/Admin/Gestionnaire/ListGestionnaire.tsx";
 import UpdateGestionnaire from "./pages/Admin/Gestionnaire/UpdateGestionnaire.tsx";
@@ -314,12 +314,12 @@ export const URLS = {
   UPDATE_ADRESSE_SOUS_TYPE_ELEMENT: (adresseSousTypeElementId: string) =>
     url`/admin/adresse-sous-type-element/${adresseSousTypeElementId}`,
 
-  PROFIL_DROIT_LIST: url`/admin/profil-droit`,
-  PROFIL_DROIT_CREATE: url`/admin/profil-droit/create`,
-  PROFIL_DROIT_UPDATE: (profilDroitId) =>
-    url`/admin/profil-droit/${profilDroitId}`,
+  GROUPE_FONCTIONNALITES_LIST: url`/admin/groupe-fonctionnalites`,
+  GROUPE_FONCTIONNALITES_CREATE: url`/admin/groupe-fonctionnalites/create`,
+  GROUPE_FONCTIONNALITES_UPDATE: (groupeFonctionnalitesId) =>
+    url`/admin/groupe-fonctionnalites/${groupeFonctionnalitesId}`,
 
-  LIEN_DROIT_LIST: url`/admin/lien-profil-droit`,
+  LIEN_DROIT_LIST: url`/admin/lien-groupe-fonctionnalites`,
 
   LIEN_PROFIL_FONCTIONNALITE_LIST: url`/admin/lien-profil-fonctionnalite`,
   LIEN_PROFIL_FONCTIONNALITE_CREATE: url`/admin/lien-profil-fonctionnalite/create`,
@@ -1622,37 +1622,37 @@ export default [
         ),
       },
       {
-        path: "profil-droit",
+        path: "groupe-fonctionnalites",
         element: (
           <Authorization
-            Component={ProfilDroitList}
+            Component={GroupeFonctionnalitesList}
             droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
       {
-        path: "profil-droit/create",
+        path: "groupe-fonctionnalites/create",
         element: (
           <Authorization
-            Component={ProfilDroitCreate}
+            Component={GroupeFonctionnalitesCreate}
             droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
       {
-        path: "profil-droit/:profilDroitId",
+        path: "groupe-fonctionnalites/:groupeFonctionnalitesId",
         element: (
           <Authorization
-            Component={ProfilDroitUpdate}
+            Component={GroupeFonctionnalitesUpdate}
             droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
           />
         ),
       },
       {
-        path: "lien-profil-droit",
+        path: "lien-groupe-fonctionnalites",
         element: (
           <Authorization
-            Component={LienProfilDroitList}
+            Component={LienGroupeFonctionnalitesList}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

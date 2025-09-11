@@ -13,16 +13,16 @@ import remocra.data.Params
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
-import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrierParametre
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
-import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_PROFIL_DROIT
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER
 import remocra.db.jooq.remocra.tables.references.MODELE_COURRIER_PARAMETRE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
-import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 
@@ -41,12 +41,12 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
     fun getAll(utilisateurId: UUID): Collection<ModeleCourrier> =
         dsl.select(*MODELE_COURRIER.fields())
             .from(MODELE_COURRIER)
-            .join(L_MODELE_COURRIER_PROFIL_DROIT)
-            .on(MODELE_COURRIER.ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID))
-            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-            .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID))
+            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .on(MODELE_COURRIER.ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID))
+            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
             .join(UTILISATEUR)
-            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .fetchInto()
 
@@ -73,20 +73,20 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.DESCRIPTION,
             MODELE_COURRIER.MODULE,
             multiset(
-                selectDistinct(PROFIL_DROIT.LIBELLE)
-                    .from(PROFIL_DROIT)
-                    .join(L_MODELE_COURRIER_PROFIL_DROIT)
-                    .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                    .where(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID)),
+                selectDistinct(GROUPE_FONCTIONNALITES.LIBELLE)
+                    .from(GROUPE_FONCTIONNALITES)
+                    .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+                    .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                    .where(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID)),
             ).convertFrom { record ->
                 record?.map { r ->
                     r.value1()
                 }?.joinToString()
-            }.`as`("listeProfilDroit"),
+            }.`as`("listeGroupeFonctionnalites"),
         )
             .from(MODELE_COURRIER)
-            .leftJoin(L_MODELE_COURRIER_PROFIL_DROIT)
-            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+            .leftJoin(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(MODELE_COURRIER.MODULE, MODELE_COURRIER.LIBELLE))
             .limit(params.limit)
@@ -98,8 +98,8 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.ID,
         )
             .from(MODELE_COURRIER)
-            .leftJoin(L_MODELE_COURRIER_PROFIL_DROIT)
-            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+            .leftJoin(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .count()
 
@@ -109,7 +109,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         val modeleCourrierActif: Boolean?,
         val modeleCourrierProtected: Boolean?,
         val modeleCourrierModule: TypeModuleRapportCourrier?,
-        val listeProfilDroitId: Collection<UUID>?,
+        val listeGroupeFonctionnalitesId: Collection<UUID>?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -119,7 +119,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                     modeleCourrierActif?.let { DSL.and(MODELE_COURRIER.ACTIF.eq(it)) },
                     modeleCourrierProtected?.let { DSL.and(MODELE_COURRIER.PROTECTED.eq(it)) },
                     modeleCourrierModule?.let { DSL.and(MODELE_COURRIER.MODULE.eq(TypeModule.entries.find { t -> t.name == it.name })) },
-                    listeProfilDroitId?.let { DSL.and(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.`in`(it)) },
+                    listeGroupeFonctionnalitesId?.let { DSL.and(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it)) },
                 ),
             )
     }
@@ -147,7 +147,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         val modeleCourrierProtected: Boolean,
         val modeleCourrierDescription: String?,
         val modeleCourrierModule: TypeModuleRapportCourrier,
-        val listeProfilDroit: String?,
+        val listeGroupeFonctionnalites: String?,
     )
 
     fun insertModeleCourrier(modeleCourrier: ModeleCourrier) {
@@ -163,9 +163,9 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .execute()
     }
 
-    fun insertLModeleCourrierProfilDroit(lModeleCourrierProfilDroit: LModeleCourrierProfilDroit) =
-        dsl.insertInto(L_MODELE_COURRIER_PROFIL_DROIT)
-            .set(dsl.newRecord(L_MODELE_COURRIER_PROFIL_DROIT, lModeleCourrierProfilDroit))
+    fun insertLModeleCourrierGroupeFonctionnalites(lModeleCourrierGroupeFonctionnalites: LModeleCourrierGroupeFonctionnalites) =
+        dsl.insertInto(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .set(dsl.newRecord(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES, lModeleCourrierGroupeFonctionnalites))
             .execute()
 
     fun upsertModeleCourrierParametre(modeleCourrierParametre: ModeleCourrierParametre) =
@@ -198,16 +198,16 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.CORPS_EMAIL,
             MODELE_COURRIER.OBJET_EMAIL,
             multiset(
-                selectDistinct(PROFIL_DROIT.ID)
-                    .from(PROFIL_DROIT)
-                    .join(L_MODELE_COURRIER_PROFIL_DROIT)
-                    .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                    .where(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID)),
+                selectDistinct(GROUPE_FONCTIONNALITES.ID)
+                    .from(GROUPE_FONCTIONNALITES)
+                    .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+                    .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                    .where(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID)),
             ).convertFrom { record ->
                 record?.map { r ->
                     r.value1()
                 }
-            }.`as`("listeProfilDroitId"),
+            }.`as`("listeGroupeFonctionnalitesId"),
             DOCUMENT.ID,
             DOCUMENT.NOM_FICHIER,
             DOCUMENT.REPERTOIRE,
@@ -252,9 +252,9 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .fetchSingleInto()
 
-    fun deleteLProfilDroit(modeleCourrierId: UUID) =
-        dsl.deleteFrom(L_MODELE_COURRIER_PROFIL_DROIT)
-            .where(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(modeleCourrierId))
+    fun deleteLGroupeFonctionnalites(modeleCourrierId: UUID) =
+        dsl.deleteFrom(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+            .where(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(modeleCourrierId))
             .execute()
 
     fun deleteModeleCourrierParametre(modeleCourrierId: UUID) =
@@ -316,16 +316,16 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                     if (it) {
                         MODELE_COURRIER
                     } else {
-                        MODELE_COURRIER.join(L_MODELE_COURRIER_PROFIL_DROIT)
-                            .on(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
-                            .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-                            .on(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+                        MODELE_COURRIER.join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+                            .join(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
                             .join(UTILISATEUR)
-                            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
                             .join(ORGANISME)
                             .on(
                                 ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
-                                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+                                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
                             )
                     }
                 },
@@ -350,17 +350,17 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
     fun executeRequeteSql(requete: String): MutableMap<String, Any?>? =
         dsl.fetchOne(requete)?.intoMap()
 
-    fun checkProfilDroit(modeleCourrierId: UUID, utilisateurId: UUID) =
+    fun checkGroupeFonctionnalites(modeleCourrierId: UUID, utilisateurId: UUID) =
         dsl.fetchExists(
-            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID)
-                .from(L_MODELE_COURRIER_PROFIL_DROIT)
-                .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-                .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(L_MODELE_COURRIER_PROFIL_DROIT.PROFIL_DROIT_ID))
+            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                .from(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+                .join(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+                .on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
                 .join(ORGANISME)
-                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID))
                 .join(UTILISATEUR)
-                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
                 .where(UTILISATEUR.ID.eq(utilisateurId))
-                .and(L_MODELE_COURRIER_PROFIL_DROIT.MODELE_COURRIER_ID.eq(modeleCourrierId)),
+                .and(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(modeleCourrierId)),
         )
 }

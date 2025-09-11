@@ -14,13 +14,13 @@ import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
-import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.LRapportPersonnaliseGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnalise
 import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
-import remocra.db.jooq.remocra.tables.references.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
+import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.ORGANISME
-import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE_PARAMETRE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -40,20 +40,20 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             RAPPORT_PERSONNALISE.DESCRIPTION,
             RAPPORT_PERSONNALISE.MODULE,
             multiset(
-                selectDistinct(PROFIL_DROIT.LIBELLE)
-                    .from(PROFIL_DROIT)
-                    .join(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-                    .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                    .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID)),
+                selectDistinct(GROUPE_FONCTIONNALITES.LIBELLE)
+                    .from(GROUPE_FONCTIONNALITES)
+                    .join(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+                    .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                    .where(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID)),
             ).convertFrom { record ->
                 record?.map { r ->
                     r.value1()
                 }?.joinToString()
-            }.`as`("listeProfilDroit"),
+            }.`as`("listeGroupeFonctionnalites"),
         )
             .from(RAPPORT_PERSONNALISE)
-            .leftJoin(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .leftJoin(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.noCondition())
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(RAPPORT_PERSONNALISE.MODULE, RAPPORT_PERSONNALISE.LIBELLE))
             .limit(params.limit)
@@ -65,8 +65,8 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             RAPPORT_PERSONNALISE.ID,
         )
             .from(RAPPORT_PERSONNALISE)
-            .leftJoin(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .leftJoin(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .count()
 
@@ -77,7 +77,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val rapportPersonnaliseProtected: Boolean?,
         val rapportPersonnaliseChampGeometrie: Boolean?,
         val rapportPersonnaliseModule: TypeModuleRapportCourrier?,
-        val listeProfilDroitId: Collection<UUID>?,
+        val listeGroupeFonctionnalitesId: Collection<UUID>?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -94,7 +94,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                             DSL.and(RAPPORT_PERSONNALISE.CHAMP_GEOMETRIE.isNull)
                         }
                     },
-                    listeProfilDroitId?.let { DSL.and(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.`in`(it)) },
+                    listeGroupeFonctionnalitesId?.let { DSL.and(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it)) },
                 ),
             )
     }
@@ -136,7 +136,7 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         val rapportPersonnaliseChampGeometrie: String?,
         val rapportPersonnaliseDescription: String?,
         val rapportPersonnaliseModule: TypeModuleRapportCourrier,
-        val listeProfilDroit: String?,
+        val listeGroupeFonctionnalites: String?,
     )
 
     fun getRapportPersonnalise(rapportPersonnaliseId: UUID): RapportPersonnaliseData =
@@ -151,16 +151,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             RAPPORT_PERSONNALISE.MODULE,
             RAPPORT_PERSONNALISE.PROTECTED,
             multiset(
-                selectDistinct(PROFIL_DROIT.ID)
-                    .from(PROFIL_DROIT)
-                    .join(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-                    .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.eq(PROFIL_DROIT.ID))
-                    .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID)),
+                selectDistinct(GROUPE_FONCTIONNALITES.ID)
+                    .from(GROUPE_FONCTIONNALITES)
+                    .join(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+                    .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+                    .where(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID)),
             ).convertFrom { record ->
                 record?.map { r ->
                     r.value1()
                 }
-            }.`as`("listeProfilDroitId"),
+            }.`as`("listeGroupeFonctionnalitesId"),
             multiset(
                 selectDistinct(
                     RAPPORT_PERSONNALISE_PARAMETRE.CODE,
@@ -217,9 +217,9 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnalise.rapportPersonnaliseId))
             .execute()
 
-    fun deleteLRapportPersonnaliseProfilDroit(rapportPersonnaliseId: UUID) =
-        dsl.deleteFrom(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .where(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
+    fun deleteLRapportPersonnaliseGroupeFonctionnalites(rapportPersonnaliseId: UUID) =
+        dsl.deleteFrom(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .where(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
             .execute()
 
     fun deleteRapportPersonnaliseParametre(rapportPersonnaliseId: UUID) =
@@ -232,9 +232,9 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
             .execute()
 
-    fun insertLRapportPersonnaliseProfilDroit(lRapportPersonnaliseProfilDroit: LRapportPersonnaliseProfilDroit) =
-        dsl.insertInto(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .set(dsl.newRecord(L_RAPPORT_PERSONNALISE_PROFIL_DROIT, lRapportPersonnaliseProfilDroit))
+    fun insertLRapportPersonnaliseGroupeFonctionnalites(lRapportPersonnaliseGroupeFonctionnalites: LRapportPersonnaliseGroupeFonctionnalites) =
+        dsl.insertInto(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .set(dsl.newRecord(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES, lRapportPersonnaliseGroupeFonctionnalites))
             .execute()
 
     fun upsertRapportPersonnaliseParametre(rapportPersonnaliseParametre: RapportPersonnaliseParametre) =
@@ -309,16 +309,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             },
         )
             .from(RAPPORT_PERSONNALISE)
-            .leftJoin(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
-            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-            .on(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+            .leftJoin(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
             .leftJoin(UTILISATEUR)
-            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
             .leftJoin(ORGANISME)
             .on(
                 ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
-                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID)),
+                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
             )
             .where(RAPPORT_PERSONNALISE.ACTIF.isTrue)
             .and(
@@ -338,16 +338,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
 
     fun checkDroitRapportPersonnalise(utilisateurId: UUID, rapportPersonnaliseId: UUID) =
         dsl.fetchExists(
-            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID)
-                .from(L_RAPPORT_PERSONNALISE_PROFIL_DROIT)
-                .join(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
-                .on(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.PROFIL_DROIT_ID))
+            dsl.select(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                .from(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+                .join(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+                .on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
                 .join(ORGANISME)
-                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                .on(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID))
                 .join(UTILISATEUR)
-                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID))
+                .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
                 .where(UTILISATEUR.ID.eq(utilisateurId))
-                .and(L_RAPPORT_PERSONNALISE_PROFIL_DROIT.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId)),
+                .and(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId)),
         )
 
     fun getSqlRequete(rapportPersonnaliseId: UUID): String =

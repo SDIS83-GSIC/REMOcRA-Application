@@ -10,21 +10,21 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.ProfilDroitData
-import remocra.db.ProfilDroitRepository
+import remocra.data.GroupeFonctionnalitesData
+import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
-import remocra.usecase.admin.lienprofildroit.UpdateLienProfilDroitUseCase
+import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
+import remocra.usecase.admin.liengroupefonctionnalites.UpdateLienGroupeFonctionnalitesUseCase
 import remocra.web.AbstractEndpoint
 
 @Produces("application/json; charset=UTF-8")
-@Path("/lien-profil-droit")
-class LienProfilDroitEndpoint : AbstractEndpoint() {
+@Path("/lien-groupe-fonctionnalites")
+class LienGroupeFonctionnalitesEndpoint : AbstractEndpoint() {
     @Context lateinit var securityContext: SecurityContext
 
-    @Inject lateinit var profilDroitRepository: ProfilDroitRepository
+    @Inject lateinit var groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository
 
-    @Inject lateinit var updateLienDroitUseCase: UpdateLienProfilDroitUseCase
+    @Inject lateinit var updateLienDroitUseCase: UpdateLienGroupeFonctionnalitesUseCase
 
     @Path("/")
     @GET
@@ -32,7 +32,7 @@ class LienProfilDroitEndpoint : AbstractEndpoint() {
     fun list(): Response =
         Response.ok(
             object {
-                val profilDroitList: Collection<ProfilDroit> = profilDroitRepository.getAllForAdmin().sortedBy { it.profilDroitLibelle }
+                val groupeFonctionnalitesList: Collection<GroupeFonctionnalites> = groupeFonctionnalitesRepository.getAllForAdmin().sortedBy { it.groupeFonctionnalitesLibelle }
                 val typeDroitList: Collection<Droit> = Droit.entries.sortedBy { it }
             },
         ).build()
@@ -40,6 +40,6 @@ class LienProfilDroitEndpoint : AbstractEndpoint() {
     @Path("/update")
     @PUT
     @RequireDroits([Droit.ADMIN_DROITS])
-    fun put(element: Collection<ProfilDroitData>): Response =
+    fun put(element: Collection<GroupeFonctionnalitesData>): Response =
         updateLienDroitUseCase.execute(securityContext.userInfo, element).wrap()
 }

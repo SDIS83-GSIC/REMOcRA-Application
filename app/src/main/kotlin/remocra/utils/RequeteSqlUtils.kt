@@ -47,7 +47,7 @@ class RequeteSqlUtils {
                 rapportCourrierDescription = element.rapportPersonnaliseDescription,
                 rapportCourrierSourceSql = element.rapportPersonnaliseSourceSql,
                 rapportCourrierModule = element.rapportPersonnaliseModule,
-                listeProfilDroitId = element.listeProfilDroitId,
+                listeGroupeFonctionnalitesId = element.listeGroupeFonctionnalitesId,
                 listeRapportCourrierParametre = element.listeRapportPersonnaliseParametre.map {
                     RapportCourrierParametreData(
                         rapportCourrierParametreId = it.rapportPersonnaliseParametreId,
@@ -79,7 +79,7 @@ class RequeteSqlUtils {
                 rapportCourrierDescription = element.modeleCourrierDescription,
                 rapportCourrierSourceSql = element.modeleCourrierSourceSql,
                 rapportCourrierModule = element.modeleCourrierModule,
-                listeProfilDroitId = element.listeProfilDroitId,
+                listeGroupeFonctionnalitesId = element.listeGroupeFonctionnalitesId,
                 listeRapportCourrierParametre = element.listeModeleCourrierParametre.map {
                     RapportCourrierParametreData(
                         rapportCourrierParametreId = it.modeleCourrierParametreId,
@@ -163,7 +163,7 @@ class RequeteSqlUtils {
         val rapportCourrierDescription: String?,
         val rapportCourrierSourceSql: String,
         val rapportCourrierModule: TypeModuleRapportCourrier,
-        val listeProfilDroitId: Collection<UUID>,
+        val listeGroupeFonctionnalitesId: Collection<UUID>,
         val listeRapportCourrierParametre: Collection<RapportCourrierParametreData>,
     )
 

@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
 import remocra.db.jooq.remocra.tables.GroupeCouche
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
 import remocra.db.jooq.remocra.tables.LAdresseDocument
@@ -45,7 +46,7 @@ import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
 import remocra.db.jooq.remocra.tables.LCoucheCrise
-import remocra.db.jooq.remocra.tables.LCoucheDroit
+import remocra.db.jooq.remocra.tables.LCoucheGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LCoucheModule
 import remocra.db.jooq.remocra.tables.LCourrierContactGestionnaire
 import remocra.db.jooq.remocra.tables.LCourrierContactOrganisme
@@ -57,16 +58,16 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LEvenementDocument
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
-import remocra.db.jooq.remocra.tables.LModeleCourrierProfilDroit
+import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LPeiAnomalie
 import remocra.db.jooq.remocra.tables.LPeiDocument
 import remocra.db.jooq.remocra.tables.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
-import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable
-import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeDroit
-import remocra.db.jooq.remocra.tables.LRapportPersonnaliseProfilDroit
+import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeGroupeFonctionnalites
+import remocra.db.jooq.remocra.tables.LRapportPersonnaliseGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
@@ -115,7 +116,6 @@ import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Permis
 import remocra.db.jooq.remocra.tables.Pibi
 import remocra.db.jooq.remocra.tables.PoidsAnomalie
-import remocra.db.jooq.remocra.tables.ProfilDroit
 import remocra.db.jooq.remocra.tables.ProfilOrganisme
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur
 import remocra.db.jooq.remocra.tables.RapportPersonnalise
@@ -319,6 +319,11 @@ val GESTIONNAIRE: Gestionnaire = Gestionnaire.GESTIONNAIRE
 val GROUPE_COUCHE: GroupeCouche = GroupeCouche.GROUPE_COUCHE
 
 /**
+ * The table <code>remocra.groupe_fonctionnalites</code>.
+ */
+val GROUPE_FONCTIONNALITES: GroupeFonctionnalites = GroupeFonctionnalites.GROUPE_FONCTIONNALITES
+
+/**
  * The table <code>remocra.indisponibilite_temporaire</code>.
  */
 val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire = IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE
@@ -364,9 +369,9 @@ val L_CONTACT_ROLE: LContactRole = LContactRole.L_CONTACT_ROLE
 val L_COUCHE_CRISE: LCoucheCrise = LCoucheCrise.L_COUCHE_CRISE
 
 /**
- * The table <code>remocra.l_couche_droit</code>.
+ * The table <code>remocra.l_couche_groupe_fonctionnalites</code>.
  */
-val L_COUCHE_DROIT: LCoucheDroit = LCoucheDroit.L_COUCHE_DROIT
+val L_COUCHE_GROUPE_FONCTIONNALITES: LCoucheGroupeFonctionnalites = LCoucheGroupeFonctionnalites.L_COUCHE_GROUPE_FONCTIONNALITES
 
 /**
  * The table <code>remocra.l_couche_module</code>.
@@ -424,14 +429,19 @@ val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
 val L_EVENEMENT_DOCUMENT: LEvenementDocument = LEvenementDocument.L_EVENEMENT_DOCUMENT
 
 /**
+ * The table <code>remocra.l_groupe_fonctionnalites_document_habilitable</code>.
+ */
+val L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE: LGroupeFonctionnalitesDocumentHabilitable = LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE
+
+/**
  * The table <code>remocra.l_indisponibilite_temporaire_pei</code>.
  */
 val L_INDISPONIBILITE_TEMPORAIRE_PEI: LIndisponibiliteTemporairePei = LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI
 
 /**
- * The table <code>remocra.l_modele_courrier_profil_droit</code>.
+ * The table <code>remocra.l_modele_courrier_groupe_fonctionnalites</code>.
  */
-val L_MODELE_COURRIER_PROFIL_DROIT: LModeleCourrierProfilDroit = LModeleCourrierProfilDroit.L_MODELE_COURRIER_PROFIL_DROIT
+val L_MODELE_COURRIER_GROUPE_FONCTIONNALITES: LModeleCourrierGroupeFonctionnalites = LModeleCourrierGroupeFonctionnalites.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES
 
 /**
  * The table <code>remocra.l_pei_anomalie</code>.
@@ -459,19 +469,15 @@ val L_PERMIS_CADASTRE_PARCELLE: LPermisCadastreParcelle = LPermisCadastreParcell
 val L_PERMIS_DOCUMENT: LPermisDocument = LPermisDocument.L_PERMIS_DOCUMENT
 
 /**
- * The table <code>remocra.l_profil_droit_document_habilitable</code>.
+ * The table
+ * <code>remocra.l_profil_utilisateur_organisme_groupe_fonctionnalites</code>.
  */
-val L_PROFIL_DROIT_DOCUMENT_HABILITABLE: LProfilDroitDocumentHabilitable = LProfilDroitDocumentHabilitable.L_PROFIL_DROIT_DOCUMENT_HABILITABLE
+val L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES: LProfilUtilisateurOrganismeGroupeFonctionnalites = LProfilUtilisateurOrganismeGroupeFonctionnalites.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 
 /**
- * The table <code>remocra.l_profil_utilisateur_organisme_droit</code>.
+ * The table <code>remocra.l_rapport_personnalise_groupe_fonctionnalites</code>.
  */
-val L_PROFIL_UTILISATEUR_ORGANISME_DROIT: LProfilUtilisateurOrganismeDroit = LProfilUtilisateurOrganismeDroit.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
-
-/**
- * The table <code>remocra.l_rapport_personnalise_profil_droit</code>.
- */
-val L_RAPPORT_PERSONNALISE_PROFIL_DROIT: LRapportPersonnaliseProfilDroit = LRapportPersonnaliseProfilDroit.L_RAPPORT_PERSONNALISE_PROFIL_DROIT
+val L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES: LRapportPersonnaliseGroupeFonctionnalites = LRapportPersonnaliseGroupeFonctionnalites.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES
 
 /**
  * The table <code>remocra.l_thematique_courrier</code>.
@@ -712,11 +718,6 @@ val PIBI: Pibi = Pibi.PIBI
  * The table <code>remocra.poids_anomalie</code>.
  */
 val POIDS_ANOMALIE: PoidsAnomalie = PoidsAnomalie.POIDS_ANOMALIE
-
-/**
- * The table <code>remocra.profil_droit</code>.
- */
-val PROFIL_DROIT: ProfilDroit = ProfilDroit.PROFIL_DROIT
 
 /**
  * The table <code>remocra.profil_organisme</code>.

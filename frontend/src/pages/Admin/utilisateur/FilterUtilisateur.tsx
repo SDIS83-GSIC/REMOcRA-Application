@@ -7,7 +7,7 @@ type FilterUtilisateurType = {
   utilisateurCanBeNotified?: boolean | undefined;
   utilisateurOrganismeId?: string | undefined;
   utilisateurProfilUtilisateurId?: string | undefined;
-  profilDroitId?: string | undefined;
+  groupeFonctionnalitesId?: string | undefined;
   utilisateurActif?: boolean | undefined;
 };
 
@@ -20,7 +20,7 @@ const FilterValues = ({
   utilisateurCanBeNotified,
   utilisateurOrganismeId,
   utilisateurProfilUtilisateurId,
-  profilDroitId,
+  groupeFonctionnalitesId,
   utilisateurActif,
 }: FilterUtilisateurType) => {
   const filter: FilterUtilisateurType = {};
@@ -37,7 +37,7 @@ const FilterValues = ({
     utilisateurProfilUtilisateurId,
     "utilisateurProfilUtilisateurId",
   );
-  filterProperty(filter, profilDroitId, "profilDroitId");
+  filterProperty(filter, groupeFonctionnalitesId, "groupeFonctionnalitesId");
   filterProperty(filter, utilisateurActif, "utilisateurActif");
 
   return filter;

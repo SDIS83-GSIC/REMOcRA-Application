@@ -83,8 +83,8 @@ class CoucheEndpoint : AbstractEndpoint() {
                                             .build(couche.coucheId)
                                             .toString()
                                     },
-                                    profilDroitList = coucheRepository.getProfilDroitList(couche.coucheId)
-                                        .map { profilDroit -> profilDroit.profilDroitId },
+                                    groupeFonctionnalitesList = coucheRepository.getGroupeFonctionnalitesList(couche.coucheId)
+                                        .map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
                                     moduleList = coucheRepository.getModuleList(couche.coucheId),
                                     coucheProtected = couche.coucheProtected ?: false,
                                 )

@@ -28,12 +28,12 @@ import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE_PKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_PROFIL_DROIT_DOCUMENT_HABILITABLE__L_PROFIL_DROIT_DOCUMENT_HABILITABL_DOCUMENT_HABILITABLE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE__L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE_DOCUMENT_HABILITA
 import remocra.db.jooq.remocra.keys.L_THEMATIQUE_DOCUMENT_HABILITABLE__L_THEMATIQUE_DOCUMENT_HABILITABLE_DOCUMENT_HABILITABLE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
-import remocra.db.jooq.remocra.tables.LProfilDroitDocumentHabilitable.LProfilDroitDocumentHabilitablePath
+import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalitesPath
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable.LGroupeFonctionnalitesDocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable.LThematiqueDocumentHabilitablePath
-import remocra.db.jooq.remocra.tables.ProfilDroit.ProfilDroitPath
 import remocra.db.jooq.remocra.tables.Thematique.ThematiquePath
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -167,22 +167,22 @@ open class DocumentHabilitable(
     val document: DocumentPath
         get(): DocumentPath = document()
 
-    private lateinit var _lProfilDroitDocumentHabilitable: LProfilDroitDocumentHabilitablePath
+    private lateinit var _lGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitablePath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_profil_droit_document_habilitable</code> table
+     * <code>remocra.l_groupe_fonctionnalites_document_habilitable</code> table
      */
-    fun lProfilDroitDocumentHabilitable(): LProfilDroitDocumentHabilitablePath {
-        if (!this::_lProfilDroitDocumentHabilitable.isInitialized) {
-            _lProfilDroitDocumentHabilitable = LProfilDroitDocumentHabilitablePath(this, null, L_PROFIL_DROIT_DOCUMENT_HABILITABLE__L_PROFIL_DROIT_DOCUMENT_HABILITABL_DOCUMENT_HABILITABLE_ID_FKEY.inverseKey)
+    fun lGroupeFonctionnalitesDocumentHabilitable(): LGroupeFonctionnalitesDocumentHabilitablePath {
+        if (!this::_lGroupeFonctionnalitesDocumentHabilitable.isInitialized) {
+            _lGroupeFonctionnalitesDocumentHabilitable = LGroupeFonctionnalitesDocumentHabilitablePath(this, null, L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE__L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE_DOCUMENT_HABILITA.inverseKey)
         }
 
-        return _lProfilDroitDocumentHabilitable
+        return _lGroupeFonctionnalitesDocumentHabilitable
     }
 
-    val lProfilDroitDocumentHabilitable: LProfilDroitDocumentHabilitablePath
-        get(): LProfilDroitDocumentHabilitablePath = lProfilDroitDocumentHabilitable()
+    val lGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitablePath
+        get(): LGroupeFonctionnalitesDocumentHabilitablePath = lGroupeFonctionnalitesDocumentHabilitable()
 
     private lateinit var _lThematiqueDocumentHabilitable: LThematiqueDocumentHabilitablePath
 
@@ -203,10 +203,10 @@ open class DocumentHabilitable(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.profil_droit</code> table
+     * <code>remocra.groupe_fonctionnalites</code> table
      */
-    val profilDroit: ProfilDroitPath
-        get(): ProfilDroitPath = lProfilDroitDocumentHabilitable().profilDroit()
+    val groupeFonctionnalites: GroupeFonctionnalitesPath
+        get(): GroupeFonctionnalitesPath = lGroupeFonctionnalitesDocumentHabilitable().groupeFonctionnalites()
 
     /**
      * Get the implicit many-to-many join path to the

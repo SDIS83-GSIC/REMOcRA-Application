@@ -32,7 +32,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: CoucheFormData): CoucheFormData {
-        coucheRepository.clearProfilDroit()
+        coucheRepository.clearGroupeFonctionnalites()
         coucheRepository.clearModule()
         coucheRepository.removeOldCouche(element.data.map { groupe -> groupe.coucheList.map { couche -> couche.coucheId } }.flatten())
         coucheRepository.removeOldGroupeCouche(element.data.map { groupe -> groupe.groupeCoucheId })
@@ -79,9 +79,9 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                     coucheRepository.updateLegende(couche.coucheId, element.legendeList.find { legende -> legende.code == couche.coucheCode }?.data?.inputStream?.readAllBytes())
                 }
 
-                couche.profilDroitList.forEach {
-                        profilDroitId ->
-                    coucheRepository.insertProfilDroit(couche.coucheId, profilDroitId)
+                couche.groupeFonctionnalitesList.forEach {
+                        groupeFonctionnalitesId ->
+                    coucheRepository.insertGroupeFonctionnalites(couche.coucheId, groupeFonctionnalitesId)
                 }
 
                 couche.moduleList.forEach {

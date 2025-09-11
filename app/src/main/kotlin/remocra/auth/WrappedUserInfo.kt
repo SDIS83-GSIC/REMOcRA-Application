@@ -4,7 +4,7 @@ import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.TypeSourceModification
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.DroitApi
-import remocra.db.jooq.remocra.tables.pojos.ProfilDroit
+import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import java.util.UUID
@@ -23,8 +23,8 @@ class WrappedUserInfo {
 
     val droits: Collection<Droit>?
         get() = userInfo?.droits
-    val profilDroits: ProfilDroit?
-        get() = userInfo?.profilDroits
+    val groupeFonctionnalites: GroupeFonctionnalites?
+        get() = userInfo?.groupeFonctionnalites
 
     val zoneCompetence: ZoneIntegration?
         get() = userInfo?.zoneCompetence

@@ -11,10 +11,10 @@ import remocra.data.Params
 import remocra.data.UtilisateurData
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
-import remocra.db.jooq.remocra.tables.references.PROFIL_DROIT
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
@@ -171,20 +171,20 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             *UTILISATEUR.fields(),
             ORGANISME.LIBELLE,
             PROFIL_UTILISATEUR.LIBELLE,
-            PROFIL_DROIT.LIBELLE,
+            GROUPE_FONCTIONNALITES.LIBELLE,
         )
             .from(UTILISATEUR)
             .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
             .leftJoin(PROFIL_UTILISATEUR)
             .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
-            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
             .on(
-                L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
-                    .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
+                L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
+                    .and(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
             )
-            .leftJoin(PROFIL_DROIT)
-            .on(PROFIL_DROIT.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID))
+            .leftJoin(GROUPE_FONCTIONNALITES)
+            .on(GROUPE_FONCTIONNALITES.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
             .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(UTILISATEUR.USERNAME))
@@ -205,7 +205,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurOrganismeId: UUID?,
         val organismeLibelle: String?,
         val profilUtilisateurLibelle: String?,
-        val profilDroitLibelle: String?,
+        val groupeFonctionnalitesLibelle: String?,
     )
 
     fun countAllForAdmin(filterBy: Filter?) =
@@ -215,10 +215,10 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
             .leftJoin(PROFIL_UTILISATEUR)
             .on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
-            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_DROIT)
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
             .on(
-                L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
-                    .and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
+                L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
+                    .and(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
             )
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
@@ -234,7 +234,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurCanBeNotified: Boolean?,
         val utilisateurProfilUtilisateurId: UUID?,
         val utilisateurOrganismeId: UUID?,
-        val profilDroitId: UUID?,
+        val groupeFonctionnalitesId: UUID?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -248,7 +248,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                     utilisateurCanBeNotified?.let { DSL.and(UTILISATEUR.CAN_BE_NOTIFIED.eq(it)) },
                     utilisateurProfilUtilisateurId?.let { DSL.and(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(it)) },
                     utilisateurOrganismeId?.let { DSL.and(UTILISATEUR.ORGANISME_ID.eq(it)) },
-                    profilDroitId?.let { DSL.and(L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_DROIT_ID.eq(it)) },
+                    groupeFonctionnalitesId?.let { DSL.and(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(it)) },
                 ),
             )
     }
@@ -263,7 +263,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurCanBeNotified: Int?,
         val profilUtilisateurLibelle: Int?,
         val organismeLibelle: Int?,
-        val profilDroitLibelle: Int?,
+        val groupeFonctionnalitesLibelle: Int?,
     ) {
 
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
@@ -276,7 +276,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             utilisateurCanBeNotified?.let { "utilisateurCanBeNotified" to it },
             profilUtilisateurLibelle?.let { "profilUtilisateurLibelle" to it },
             organismeLibelle?.let { "organismeLibelle" to it },
-            profilDroitLibelle?.let { "profilDroitLibelle" to it },
+            groupeFonctionnalitesLibelle?.let { "groupeFonctionnalitesLibelle" to it },
         )
 
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
@@ -290,7 +290,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 "utilisateurCanBeNotified" -> UTILISATEUR.CAN_BE_NOTIFIED.getSortField(pair.second)
                 "profilUtilisateurLibelle" -> PROFIL_UTILISATEUR.LIBELLE.getSortField(pair.second)
                 "organismeLibelle" -> ORGANISME.LIBELLE.getSortField(pair.second)
-                "profilDroitLibelle" -> PROFIL_DROIT.LIBELLE.getSortField(pair.second)
+                "groupeFonctionnalitesLibelle" -> GROUPE_FONCTIONNALITES.LIBELLE.getSortField(pair.second)
                 else -> null
             }
         }

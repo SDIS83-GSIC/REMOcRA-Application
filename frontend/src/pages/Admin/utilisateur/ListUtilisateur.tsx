@@ -28,7 +28,9 @@ import FilterValues from "./FilterUtilisateur.tsx";
 const ListUtilisateur = () => {
   const { user } = useAppContext();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
-  const { data: profilDroitList } = useGet(url`/api/profil-droit`);
+  const { data: groupeFonctionnalitesList } = useGet(
+    url`/api/groupe-fonctionnalites`,
+  );
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
 
   const listeButton: ButtonType[] = [];
@@ -138,13 +140,13 @@ const ListUtilisateur = () => {
               ),
             },
             {
-              Header: "Profil droit",
-              accessor: "profilDroitLibelle",
-              sortField: "profilDroitLibelle",
+              Header: "Groupe de fonctionnalités",
+              accessor: "groupeFonctionnalitesLibelle",
+              sortField: "groupeFonctionnalitesLibelle",
               Filter: (
                 <SelectFilterFromList
-                  name={"profilDroitId"}
-                  listIdCodeLibelle={profilDroitList}
+                  name={"groupeFonctionnalitesId"}
+                  listIdCodeLibelle={groupeFonctionnalitesList}
                 />
               ),
             },

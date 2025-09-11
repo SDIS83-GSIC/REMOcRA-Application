@@ -51,7 +51,7 @@ class DeleteDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
 
         // Puis on supprime les données en base
         documentHabilitableRepository.deleteThematiqueDocumentHabilitable(element.documentHabilitableId)
-        documentHabilitableRepository.deleteProfilDroitDocumentHabilitable(element.documentHabilitableId)
+        documentHabilitableRepository.deleteGroupeFonctionnalitesDocumentHabilitable(element.documentHabilitableId)
 
         documentHabilitableRepository.deleteDocumentHabilitable(element.documentHabilitableId)
 

@@ -22,7 +22,7 @@ class UpdateLienProfilFonctionnaliteUseCase @Inject constructor(
     ) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_GROUPE_UTILISATEUR)) {
-            throw RemocraResponseException(ErrorType.PROFIL_DROIT_FORBIDDEN_UPDATE)
+            throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_FORBIDDEN_UPDATE)
         }
     }
 

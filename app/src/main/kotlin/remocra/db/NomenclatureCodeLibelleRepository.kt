@@ -30,7 +30,7 @@ import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_
 import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import remocra.db.jooq.remocra.tables.references.L_PENA_TYPE_ENGIN
-import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_DROIT
+import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
@@ -265,10 +265,10 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.NIVEAU -> setOf(InfosFkCible(PEI, PEI.NIVEAU_ID))
                 TypeNomenclatureCodeLibelle.TYPE_CANALISATION -> setOf(InfosFkCible(PIBI, PIBI.TYPE_CANALISATION_ID))
                 TypeNomenclatureCodeLibelle.TYPE_RESEAU -> setOf(InfosFkCible(PIBI, PIBI.TYPE_RESEAU_ID))
-                TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> setOf(InfosFkCible(ORGANISME, ORGANISME.PROFIL_ORGANISME_ID), InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_DROIT, L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_ORGANISME_ID))
+                TypeNomenclatureCodeLibelle.PROFIL_ORGANISME -> setOf(InfosFkCible(ORGANISME, ORGANISME.PROFIL_ORGANISME_ID), InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES, L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID))
                 TypeNomenclatureCodeLibelle.PROFIL_UTILISATEUR -> setOf(
                     InfosFkCible(L_DASHBOARD_PROFIL, L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID),
-                    InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_DROIT, L_PROFIL_UTILISATEUR_ORGANISME_DROIT.PROFIL_UTILISATEUR_ID),
+                    InfosFkCible(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES, L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID),
                     InfosFkCible(UTILISATEUR, UTILISATEUR.PROFIL_UTILISATEUR_ID),
                 )
                 TypeNomenclatureCodeLibelle.ROLE_CONTACT -> setOf()

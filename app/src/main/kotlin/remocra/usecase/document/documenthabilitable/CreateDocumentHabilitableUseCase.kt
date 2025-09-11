@@ -12,7 +12,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.DocumentHabilitable
-import remocra.db.jooq.remocra.tables.pojos.LProfilDroitDocumentHabilitable
+import remocra.db.jooq.remocra.tables.pojos.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.pojos.LThematiqueDocumentHabilitable
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
@@ -85,11 +85,11 @@ class CreateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
             )
         }
 
-        element.listeProfilDroitId?.forEach {
-            documentHabilitableRepository.insertProfilDroitDocumentHabilitable(
-                LProfilDroitDocumentHabilitable(
+        element.listeGroupeFonctionnalitesId?.forEach {
+            documentHabilitableRepository.insertGroupeFonctionnalitesDocumentHabilitable(
+                LGroupeFonctionnalitesDocumentHabilitable(
                     documentHabilitableId = element.documentHabilitableId,
-                    profilDroitId = it,
+                    groupeFonctionnalitesId = it,
                 ),
             )
         }

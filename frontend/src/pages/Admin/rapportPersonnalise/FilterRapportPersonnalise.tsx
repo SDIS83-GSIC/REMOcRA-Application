@@ -4,7 +4,7 @@ type FilterRapportPersonnaliseType = {
   rapportPersonnaliseLibelle?: string | undefined;
   rapportPersonnaliseProtected?: string | undefined;
   rapportPersonnaliseChampGeometrie?: string | undefined;
-  listeProfilDroitId?: string[] | undefined;
+  listeGroupeFonctionnalitesId?: string[] | undefined;
   rapportPersonnaliseModule?: string | undefined;
 };
 
@@ -14,7 +14,7 @@ const filterValuesToVariable = ({
   rapportPersonnaliseLibelle,
   rapportPersonnaliseProtected,
   rapportPersonnaliseChampGeometrie,
-  listeProfilDroitId,
+  listeGroupeFonctionnalitesId,
   rapportPersonnaliseModule,
 }: FilterRapportPersonnaliseType) => {
   const filter: FilterRapportPersonnaliseType = {};
@@ -42,8 +42,8 @@ const filterValuesToVariable = ({
     "rapportPersonnaliseModule",
   );
 
-  if (listeProfilDroitId?.length > 0) {
-    filter.listeProfilDroitId = listeProfilDroitId;
+  if (listeGroupeFonctionnalitesId?.length > 0) {
+    filter.listeGroupeFonctionnalitesId = listeGroupeFonctionnalitesId;
   }
 
   return filter;

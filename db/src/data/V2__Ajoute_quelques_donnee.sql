@@ -16,9 +16,9 @@ VALUES(gen_random_uuid(),
        true,
        true);
 
-UPDATE remocra.profil_droit
-SET profil_droit_droits=(SELECT enum_range(NULL::remocra."DROIT"))
-WHERE profil_droit_code='REMOCRA';
+UPDATE remocra.groupe_fonctionnalites
+SET groupe_fonctionnalites_droits=(SELECT enum_range(NULL::remocra."DROIT"))
+WHERE groupe_fonctionnalites_code='REMOCRA';
 
 INSERT INTO remocra."module" (module_id, module_type, module_titre, module_image, module_contenu_html, module_colonne, module_ligne) VALUES(gen_random_uuid(), 'DECI'::remocra."type_module", 'Gestion des PEI', NULL, NULL, 1, 1);
 INSERT INTO remocra."module" (module_id, module_type, module_titre, module_image, module_contenu_html, module_colonne, module_ligne) VALUES(gen_random_uuid(), 'COUVERTURE_HYDRAULIQUE'::remocra."type_module", 'Couverture hydraulique', NULL, NULL, 2, 2);
@@ -60,8 +60,8 @@ VALUES(gen_random_uuid(),
        true,
        true);
 
-INSERT INTO remocra.l_profil_utilisateur_organisme_droit
-(profil_utilisateur_id, profil_organisme_id, profil_droit_id)
+INSERT INTO remocra.l_profil_utilisateur_organisme_groupe_fonctionnalites
+(profil_utilisateur_id, profil_organisme_id, groupe_fonctionnalites_id)
 VALUES(
 
           (SELECT profil_utilisateur_id FROM profil_utilisateur WHERE profil_utilisateur_code = 'REMOCRA'),
@@ -69,9 +69,9 @@ VALUES(
           (SELECT profil_organisme_id FROM remocra.profil_organisme
            WHERE profil_organisme_code='REMOCRA'),
 
-          (SELECT profil_droit_id
-           FROM remocra.profil_droit
-           WHERE profil_droit_code='REMOCRA'));
+          (SELECT groupe_fonctionnalites_id
+           FROM remocra.groupe_fonctionnalites
+           WHERE groupe_fonctionnalites_code='REMOCRA'));
 
 UPDATE remocra.utilisateur
 SET utilisateur_actif=true, utilisateur_email='remocra@atolcd.com', utilisateur_nom='REMOcRA', utilisateur_prenom='REMOcRA', utilisateur_username='remocra',

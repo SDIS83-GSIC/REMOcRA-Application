@@ -9,7 +9,7 @@ import LienProfilFonctionnaliteForm, {
   validationSchema,
 } from "./LienProfilFonctionnaliteForm.tsx";
 
-const ProfilDroitCreate = () => {
+const GroupeFonctionnalitesCreate = () => {
   return (
     <Container>
       <PageTitle
@@ -31,4 +31,4 @@ const ProfilDroitCreate = () => {
   );
 };
 
-export default ProfilDroitCreate;
+export default GroupeFonctionnalitesCreate;

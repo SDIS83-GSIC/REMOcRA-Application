@@ -67,18 +67,19 @@ export const prepareVariables = (values: UtilisateurType) => ({
 const Utilisateur = () => {
   const { user } = useAppContext();
 
-  const [profilDroitDeduit, setProfilDroitDeduit] = useState<string>();
+  const [groupeFonctionnalitesDeduit, setGroupeFonctionnalitesDeduit] =
+    useState<string>();
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
-  const { data: profilDroitWithProfilsList } = useGet(
-    url`/api/profil-droit/profils`,
+  const { data: groupeFonctionnalitesWithProfilsList } = useGet(
+    url`/api/groupe-fonctionnalites/profils`,
   );
 
   const { values, setValues } = useFormikContext<UtilisateurType>();
 
   useEffect(() => {
-    setProfilDroitDeduit(
-      profilDroitWithProfilsList?.find(
+    setGroupeFonctionnalitesDeduit(
+      groupeFonctionnalitesWithProfilsList?.find(
         (e: {
           profilUtilisateurId: string;
           profilOrganismeId: string;
@@ -92,7 +93,7 @@ const Utilisateur = () => {
       )?.libelle,
     );
   }, [
-    profilDroitWithProfilsList,
+    groupeFonctionnalitesWithProfilsList,
     organismeList,
     profilUtilisateurList,
     values.utilisateurProfilUtilisateurId,
@@ -195,13 +196,14 @@ const Utilisateur = () => {
           </Col>
           <Col className="bg-light p-3 border rounded">
             <div className="fw-bold p-2 text-center">
-              <IconInfo /> Profil droit <span className="text-danger">*</span>
+              <IconInfo /> Groupe de fonctionnalités{" "}
+              <span className="text-danger">*</span>
             </div>
             <div className="text-center">
-              {profilDroitDeduit != null ? (
+              {groupeFonctionnalitesDeduit != null ? (
                 <>
                   Le groupe de fonctionnalités qui sera utilisé pour cet
-                  utilisateur sera : <b>{profilDroitDeduit}</b>
+                  utilisateur sera : <b>{groupeFonctionnalitesDeduit}</b>
                 </>
               ) : (
                 "Aucun groupe de fonctionnalités trouvé."
@@ -212,7 +214,9 @@ const Utilisateur = () => {
       )}
       <SubmitFormButtons
         returnLink={true}
-        disabledValide={!profilDroitDeduit && !values.utilisateurIsSuperAdmin}
+        disabledValide={
+          !groupeFonctionnalitesDeduit && !values.utilisateurIsSuperAdmin
+        }
       />
     </FormContainer>
   );

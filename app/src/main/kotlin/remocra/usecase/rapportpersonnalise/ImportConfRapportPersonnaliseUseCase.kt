@@ -88,7 +88,7 @@ class ImportConfRapportPersonnaliseUseCase : AbstractUseCase() {
                             rapportPersonnaliseSourceSql = rapportPersonnalise.rapportPersonnaliseSourceSql,
                             rapportPersonnaliseModule = TypeModuleRapportCourrier.valueOf(rapportPersonnalise.rapportPersonnaliseModule.name),
                             rapportPersonnaliseProtected = false, // S'il s'agit d'un import, il n'y a aucune raison que ce soit protected
-                            listeProfilDroitId = listOf(),
+                            listeGroupeFonctionnalitesId = listOf(),
                             listeRapportPersonnaliseParametre = listeRapportPersonnaliseParametre
                                 ?.map {
                                     RapportPersonnaliseParametreData(
