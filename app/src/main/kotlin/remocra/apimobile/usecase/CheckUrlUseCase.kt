@@ -56,8 +56,6 @@ class CheckUrlUseCase @Inject constructor(
                 keycloakConfig = KeycloakConfig(
                     url = keycloakUri.baseUri,
                     clientId = client.clientId,
-                    login = LOGIN,
-                    logout = LOGOUT,
                 ),
             )
         } finally {
@@ -75,7 +73,5 @@ class CheckUrlUseCase @Inject constructor(
     data class KeycloakConfig(
         val url: String,
         val clientId: String,
-        val login: String,
-        val logout: String,
     )
 }
