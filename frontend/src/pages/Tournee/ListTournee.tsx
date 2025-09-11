@@ -298,7 +298,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     textEnable: "Localiser",
     classEnable: "primary",
   });
-  if (parametreGenerationCarteTournee) {
+  if (parametreGenerationCarteTournee === "true") {
     listeButton.push({
       row: (row) => {
         return row;
