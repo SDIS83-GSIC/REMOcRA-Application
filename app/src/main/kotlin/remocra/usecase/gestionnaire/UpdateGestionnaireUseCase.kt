@@ -36,8 +36,12 @@ class UpdateGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: Gestionnaire): Gestionnaire {
+        val gestionnairePreviousActif = gestionnaireRepository.getGestionnairePreviousActif(element.gestionnaireId)
         gestionnaireRepository.upsertGestionnaire(element)
-
+        val contactsIdList = gestionnaireRepository.getContactsIdForGestionnaire(element.gestionnaireId)
+        if (gestionnairePreviousActif != element.gestionnaireActif && contactsIdList.isNotEmpty()) {
+            gestionnaireRepository.deactivateContacts(contactsIdList, element.gestionnaireActif)
+        }
         return element
     }
 

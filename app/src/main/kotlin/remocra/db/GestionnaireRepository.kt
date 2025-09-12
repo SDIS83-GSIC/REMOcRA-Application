@@ -123,12 +123,33 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         }
     }
 
+    fun getGestionnairePreviousActif(gestionnaireId: UUID): Boolean? {
+        return dsl.select(GESTIONNAIRE.ACTIF)
+            .from(GESTIONNAIRE)
+            .where(GESTIONNAIRE.ID.eq(gestionnaireId))
+            .fetchSingleInto()
+    }
+
     fun upsertGestionnaire(gestionnaire: Gestionnaire) = with(dsl.newRecord(GESTIONNAIRE, gestionnaire)) {
         dsl.insertInto(GESTIONNAIRE)
             .set(this)
             .onConflict()
             .doUpdate()
             .set(this)
+            .execute()
+    }
+
+    fun getContactsIdForGestionnaire(gestionnaireId: UUID): List<UUID> {
+        return dsl.select(L_CONTACT_GESTIONNAIRE.CONTACT_ID)
+            .from(L_CONTACT_GESTIONNAIRE)
+            .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .fetchInto()
+    }
+
+    fun deactivateContacts(contactIds: List<UUID>, value: Boolean) {
+        dsl.update(CONTACT)
+            .set(CONTACT.ACTIF, value)
+            .where(CONTACT.ID.`in`(contactIds))
             .execute()
     }
 
