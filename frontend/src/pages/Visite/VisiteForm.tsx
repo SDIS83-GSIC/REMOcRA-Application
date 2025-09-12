@@ -232,6 +232,9 @@ const VisiteForm = ({
                   <SelectForm
                     name={"visiteTypeVisite"}
                     listIdCodeLibelle={dynamicListTypeVisite}
+                    defaultValue={dynamicListTypeVisite.find(
+                      (e) => e.id === values.visiteTypeVisite,
+                    )}
                     label="Type de visite : "
                     required={true}
                     setValues={setValues}
