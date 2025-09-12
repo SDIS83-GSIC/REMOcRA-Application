@@ -25,7 +25,7 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -48,7 +48,7 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
       map={map}
       workingLayer={workingLayer}
       showGeneralInfo={showVoletOutilI}
-      generalInfo={generalInfo}
+      generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}

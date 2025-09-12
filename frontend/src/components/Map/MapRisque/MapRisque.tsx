@@ -56,7 +56,7 @@ const MapRisque = () => {
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -80,7 +80,7 @@ const MapRisque = () => {
       />
       <MapComponent
         showGeneralInfo={showVoletOutilI}
-        generalInfo={generalInfo}
+        generalInfo={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         map={map}
         availableLayers={availableLayers}

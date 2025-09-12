@@ -89,7 +89,7 @@ const MapRcci = () => {
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -106,7 +106,7 @@ const MapRcci = () => {
       <MapComponent
         map={map}
         showGeneralInfo={showVoletOutilI}
-        generalInfo={generalInfo}
+        generalInfo={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         workingLayer={workingLayer}
         availableLayers={availableLayers}

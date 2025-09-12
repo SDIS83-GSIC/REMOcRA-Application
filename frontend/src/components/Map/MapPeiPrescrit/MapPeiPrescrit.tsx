@@ -59,7 +59,7 @@ const MapPeiPrescrit = () => {
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -77,7 +77,7 @@ const MapPeiPrescrit = () => {
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
         showGeneralInfo={showVoletOutilI}
-        generalInfo={generalInfo}
+        generalInfo={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
         mapToolbarRef={mapToolbarRef}
         mapElement={mapElement}

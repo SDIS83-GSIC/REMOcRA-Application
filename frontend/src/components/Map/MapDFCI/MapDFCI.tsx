@@ -24,7 +24,7 @@ const MapDFCI = () => {
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -36,7 +36,7 @@ const MapDFCI = () => {
     <MapComponent
       map={map}
       showGeneralInfo={showVoletOutilI}
-      generalInfo={generalInfo}
+      generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}

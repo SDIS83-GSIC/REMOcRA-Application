@@ -84,7 +84,7 @@ const MapCouvertureHydraulique = ({
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -103,7 +103,7 @@ const MapCouvertureHydraulique = ({
       toggleTool={toggleTool}
       activeTool={activeTool}
       showGeneralInfo={showVoletOutilI}
-      generalInfo={generalInfo}
+      generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       toolbarElement={
         mapToolbarRef.current &&

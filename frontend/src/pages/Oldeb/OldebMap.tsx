@@ -55,7 +55,7 @@ const OldebMap = () => {
     activeTool,
     showVoletOutilI,
     handleCloseInfoI,
-    generalInfo,
+    infoOutilI,
   } = useToolbarContext({
     map: map,
     workingLayer: workingLayer,
@@ -81,7 +81,7 @@ const OldebMap = () => {
   return (
     <MapComponent
       showGeneralInfo={showVoletOutilI}
-      generalInfo={generalInfo}
+      generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       map={map}
       workingLayer={workingLayer}

@@ -139,7 +139,7 @@ const MapCrise = ({
     toggleTool,
     activeTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -186,7 +186,7 @@ const MapCrise = ({
       mapToolbarRef={mapToolbarRef} // les boutons à modifier / rajouter
       toggleTool={toggleTool}
       showGeneralInfo={showVoletOutilI}
-      generalInfo={generalInfo}
+      generalInfo={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       activeTool={activeTool}
       toolbarElement={

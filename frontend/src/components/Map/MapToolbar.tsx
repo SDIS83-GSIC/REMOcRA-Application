@@ -6,6 +6,8 @@ import { DragPan, Draw, Interaction } from "ol/interaction";
 import { getArea, getLength } from "ol/sphere";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import TileLayer from "ol/layer/Tile";
+import { TileWMS } from "ol/source";
 import {
   forwardRef,
   useEffect,
@@ -81,7 +83,7 @@ export const useToolbarContext = ({
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>("");
   const [showVoletOutilI, setShowVoletOutilI] = useState(false);
-  const [generalInfo] = useState<string>();
+  const [infoOutilI, setInfoOutilI] = useState<string>();
 
   const measureOverlayArray: Overlay[] = [];
   const geometryOverlayArray: Overlay[] = [];
@@ -136,6 +138,69 @@ export const useToolbarContext = ({
 
     function toggleMeasureArea(active = false) {
       toggleMeasure(active, "Polygon");
+    }
+
+    function createPointInteraction() {
+      const drawCtrl = new Draw({
+        source: workingLayer.getSource(),
+        type: "Point",
+      });
+
+      drawCtrl.on("drawend", async (event: { feature: any }) => {
+        const feature = event.feature;
+        const coords = feature.getGeometry().getCoordinates();
+
+        map!
+          .getLayers()
+          .getArray()
+          .filter(
+            (l) => l instanceof TileLayer && l.getSource() instanceof TileWMS,
+          )
+          .forEach((wmsLayer) => {
+            const view = map!.getView();
+            const url = wmsLayer
+              .getSource()
+              ?.getFeatureInfoUrl(
+                coords,
+                view.getResolution()!,
+                view.getProjection(),
+                {
+                  INFO_FORMAT: "application/json",
+                  FEATURE_COUNT: 5,
+                },
+              );
+
+            if (url) {
+              fetch(url)
+                .then((r) => {
+                  if (!r.ok) {
+                    throw new Error("Mauvaise réponse internet");
+                  }
+                  return r.json();
+                })
+                .then((data) => {
+                  setInfoOutilI(data.type);
+                  setShowVoletOutilI(true);
+                })
+                .catch(() => {
+                  setShowVoletOutilI(false);
+                });
+            }
+          });
+      });
+
+      drawCtrl.on("drawstart", async () => {
+        workingLayer.getSource().clear();
+      });
+
+      return drawCtrl;
+    }
+
+    function toggleInfoArea(active = false) {
+      const draw = createPointInteraction();
+      if (active && map?.getInteractions().getArray().indexOf(draw) === -1) {
+        map?.addInteraction(draw);
+      }
     }
 
     let listener: ReturnType<typeof unByKey> | undefined;
@@ -248,6 +313,10 @@ export const useToolbarContext = ({
         action: toggleMeasureArea,
         actionPossibleEnDeplacement: true,
       },
+      "info-outil-i": {
+        action: toggleInfoArea,
+        actionPossibleEnDeplacement: true,
+      },
       ...extraTools,
     };
   }, [map]);
@@ -289,7 +358,7 @@ export const useToolbarContext = ({
     toggleTool,
     disabledTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   };
 };
@@ -385,7 +454,7 @@ const MapToolbar = forwardRef(
               variant={variant}
             />
             <ToolbarButton
-              toolName={"info-area"}
+              toolName={"info-outil-i"}
               toolIcon={<IconInfo />}
               toolLabelTooltip={
                 "Obtenir des informations sur un point de la carte"

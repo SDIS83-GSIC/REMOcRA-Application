@@ -119,7 +119,7 @@ const MapPei = () => {
     activeTool,
     disabledTool,
     showVoletOutilI,
-    generalInfo,
+    infoOutilI,
     handleCloseInfoI,
   } = useToolbarContext({
     map: map,
@@ -196,7 +196,7 @@ const MapPei = () => {
             toggleTool={toggleTool}
             activeTool={activeTool}
             showGeneralInfo={showVoletOutilI}
-            generalInfo={generalInfo}
+            generalInfo={infoOutilI}
             handleCloseInfoI={handleCloseInfoI}
             toolbarElement={
               mapToolbarRef.current && (
