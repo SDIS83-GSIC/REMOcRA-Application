@@ -57,7 +57,8 @@ fun HttpServletRequest.getTextPart(part: String) =
     this.getPart(part).inputStream.reader().readText()
 
 fun HttpServletRequest.getTextPartOrNull(part: String): String? {
-    val partText = this.getPart(part).inputStream.reader().readText()
+    val partObj = this.getPart(part) ?: return null
+    val partText = partObj.inputStream.reader().readText()
     if (partText == "null" || partText.trim().isBlank()) {
         return null
     }
