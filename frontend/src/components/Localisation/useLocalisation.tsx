@@ -114,6 +114,8 @@ const useLocalisation = () => {
               },
             },
           });
+          //Pour recharger la carte au cas ou on vient juste de faire une modification sur la carte pas encore prise en compte
+          window.location.reload();
         });
     },
     [navigate, currentState, currentPathname, search],
