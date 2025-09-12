@@ -119,7 +119,7 @@ class PeiModifiedEventListener @Inject constructor() :
         val request =
             HttpRequest.newBuilder(URI(appSettings.nexsis.url.plus(endpoint)))
                 .let {
-                    val ofString = HttpRequest.BodyPublishers.ofString(objectAsString)
+                    val ofString = objectAsString?.let { HttpRequest.BodyPublishers.ofString(objectAsString) }
                     when (typeOperation) {
                         TypeOperation.INSERT -> it.POST(ofString)
                         TypeOperation.UPDATE -> it.PUT(ofString)
