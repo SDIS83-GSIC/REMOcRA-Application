@@ -56,6 +56,7 @@ const TooltipMapPei = ({
   disabledCreateButton,
   setShowFormVisite,
   showFormVisite,
+  coordonneesPeiCreate,
 }: {
   map: Map;
   displayButtonEdit: boolean;
@@ -72,6 +73,11 @@ const TooltipMapPei = ({
   disabledCreateButton: () => void;
   setShowFormVisite: (v: { peiId: string | null; show: boolean }) => void;
   showFormVisite: { peiId: string | null; show: boolean };
+  coordonneesPeiCreate: {
+    coordonneeX: number;
+    coordonneeY: number;
+    srid: number;
+  } | null;
 }) => {
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -117,11 +123,11 @@ const TooltipMapPei = ({
   }, [parametresState, paramPeiFicheResumeStandalone]);
 
   useEffect(() => {
-    if (peiIdUpdate === null && showFormPei) {
+    if (peiIdUpdate === null && showFormPei && !coordonneesPeiCreate) {
       overlay?.setPosition(undefined);
       setShowFormPei(false);
     }
-  }, [peiIdUpdate, setShowFormPei, showFormPei, overlay]);
+  }, [peiIdUpdate, setShowFormPei, showFormPei, overlay, coordonneesPeiCreate]);
 
   return (
     <div ref={ref}>

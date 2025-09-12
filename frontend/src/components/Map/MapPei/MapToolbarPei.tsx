@@ -409,6 +409,7 @@ const MapToolbarPei = ({
   visibleMove,
   setShowFormVisite,
   showFormVisite,
+  coordonneesPeiCreate,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -443,6 +444,11 @@ const MapToolbarPei = ({
   visibleMove: boolean;
   setShowFormVisite: (v: { peiId: string | null; show: boolean }) => void;
   showFormVisite: { peiId: string | null; show: boolean };
+  coordonneesPeiCreate: {
+    coordonneeX: number;
+    coordonneeY: number;
+    srid: number;
+  } | null;
 }) => {
   const { user } = useAppContext();
 
@@ -639,6 +645,7 @@ const MapToolbarPei = ({
         dataDebitSimultaneLayer={dataDebitSimultaneLayer}
         showFormPei={showFormPei}
         disabledCreateButton={() => disabledTool("create-pei")}
+        coordonneesPeiCreate={coordonneesPeiCreate}
       />
       {peiIdMove && geometrieMove && (
         <EditModal

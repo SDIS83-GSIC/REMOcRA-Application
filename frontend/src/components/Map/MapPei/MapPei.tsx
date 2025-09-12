@@ -86,6 +86,7 @@ const MapPei = () => {
     dataPeiLayer,
     setShowFormPei,
     setCoordonneesPeiCreate,
+    coordonneesPeiCreate,
   });
 
   /**
@@ -224,6 +225,7 @@ const MapPei = () => {
                   geometrieMove={geometrieMove}
                   setShowFormVisite={setShowFormVisite}
                   showFormVisite={showFormVisite}
+                  coordonneesPeiCreate={coordonneesPeiCreate}
                 />
               )
             }
