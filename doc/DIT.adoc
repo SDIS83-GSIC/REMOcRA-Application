@@ -1,7 +1,7 @@
 = REMOcRA - Document d’installation (DIT)
 :Author:    Atol C&D
 :Email:     remocra-projet@atolcd.com
-:Date:      01/09/2025
+:Date:      15/09/2025
 :Revision:  1.0.0
 :imagesdir: images/
 :experimental:
@@ -19,113 +19,23 @@ Ce document d’installation (DIT) est à destination des administrateurs systè
 L’outil REMOcRA est détaillé dans le document d’architecture technique (DAT). Veuillez vous reporter à ce document pour obtenir plus d’informations sur le fonctionnement général de l'outil REMOcRA.
 
 == Serveur d’application
+
+WARNING: L'utilisation d'Apache HOP est par défaut désactivé dans l'application. Il n'est donc pas nécessaire de le mettre en place pour le bon fonctionnement de l'application et est totalement *facultatif*.
+
 === Prérequis
 
-Pour l’installation de l’application, il a été choisi d’utiliser docker et compose pour tous les services. Il faut donc au préalable vous assurer que docker est bien présent et installer le plugins docker compose si nécessaire :
-[source,console]
-----
-sudo apt-get update
-sudo apt-get install docker-compose-plugin
-----
+Pour l’installation de l’application, il a été choisi d’utiliser docker et compose pour tous les services. Il faut donc au préalable vous assurer que docker est bien présent et installer le plugins docker compose si nécessaire (voir https://docs.docker.com/engine/install/).
+
 
 === Dépôt du fichier compose.yaml
 
-Créer un dossier `/opt/remocra`. Lui attribuer les droits “remocra”, à l’aide de la commande suivante :
-
-[source,console]
-----
-chown -R remocra: /opt/remocra
-----
+Créer un dossier `/opt/remocra`.
 
 Dans ce dossier, ajouter un fichier nommé `compose.yaml`. Renseigner le contenu suivant :
+
 [source,yaml]
 ----
-services:
-  remocra:
-    image: client-docker-registry.atolcd.com/atolcd/remocra-v3:${REMOCRA_VERSION}
-    user: "${REMOCRA_UID:-2000}:${REMOCRA_GID:-2000}"
-    volumes:
-      - /var/log/remocra:/var/log/remocra
-      - /var/lib/remocra:/var/lib/remocra
-    environment:
-      #JAVA_OPTS: "-XX:MaxRAMPercentage=75 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:5005"
-      GLOWROOT_ENABLED: "true"
-      GLOWROOT_PORT: "4000"
-      LANG: "fr_FR.UTF-8"
-      REMOCRA_PORT: ${REMOCRA_PORT}
-      # Accès à la base de données remocra
-      POSTGRES_DB_HOSTNAME: ${POSTGRES_DB_HOSTNAME}
-      POSTGRES_DB_USERNAME: ${POSTGRES_DB_USERNAME}
-      POSTGRES_DB_PASSWORD: ${POSTGRES_DB_PASSWORD}
-      CODE_SDIS: ${CODE_SDIS}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_URL: ${SMTP_URL}
-      SMTP_PORT: ${SMTP_PORT}
-      URL_SITE: ${URL_SITE}
-      CLIENT_SECRET: ${CLIENT_SECRET}
-      BASE_URI: ${BASE_URI}
-      EPSG_NAME: ${EPSG_NAME}
-      EPSG_PROJECTION: ${EPSG_PROJECTION}
-      REMOCRA_VERSION: ${REMOCRA_VERSION}
-      GEOSERVER_URL: ${GEOSERVER_URL}
-      NEXSIS_TEST_TOKEN: ${NEXSIS_TEST_TOKEN}
-    healthcheck:
-      test: curl --fail -s http://localhost:8881/ || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    network_mode: host
-    restart: always
-
-  keycloak:
-    image: client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}
-    environment:
-      - KC_HOSTNAME=${BASE_URI}
-      - KEYCLOAK_ADMIN
-      - KEYCLOAK_ADMIN_PASSWORD
-      - KC_DB_SCHEMA=keycloak
-      - KC_HTTP_ENABLED=true
-      - KC_PROXY_HEADERS=xforwarded
-      - KC_DB_URL=jdbc:postgresql://localhost/keycloak
-      - KC_DB_USERNAME=${DB_USER_KEYCLOAK}
-      - KC_DB_PASSWORD=${DB_PASSWORD_KEYCLOAK}
-      # configuration du realm "remocra"
-      - CLIENT_SECRET
-      - REMOCRA_URL
-    healthcheck:
-      test: curl --fail -s http://localhost:8080/ || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    network_mode: host
-    volumes:
-      - /var/lib/remocra/images/ressources:/opt/keycloak/themes/remocra/login/resources/img:ro
-    restart: always
-
-  geoserver:
-    image: client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${REMOCRA_VERSION}
-    user: "${REMOCRA_UID:-2000}:${REMOCRA_GID:-2000}"
-    healthcheck:
-      test: curl --fail -s http://localhost:8090/geoserver || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    volumes:
-      - /var/opt/geoserver:/var/opt/geoserver
-      - /var/lib/remocra/images/symbologie:/var/opt/geoserver/workspaces/remocra/styles/symbologie:ro
-    environment:
-      GLOWROOT_ENABLED: "true"
-      GLOWROOT_PORT: "4001"
-      GEOSERVER_URL: ${GEOSERVER_URL}
-      GEOSERVER_USER: ${GEOSERVER_USER}
-      GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD}
-      POSTGIS_HOSTNAME: ${POSTGRES_DB_HOSTNAME}
-      POSTGIS_USER: ${POSTGRES_DB_USERNAME}
-      POSTGIS_PASSWORD: ${POSTGRES_DB_PASSWORD}
-    network_mode: host
-    restart: always
+include::compose-example.yaml[]
 ----
 
 === Mise en place des variables d’environnement
@@ -133,7 +43,10 @@ Pour que le fichier compose.yaml ait tous les paramètres, il faut créer dans l
 
 [source,properties]
 ----
-REMOCRA_VERSION=1.0-a9
+DOCKER_REMOCRA_VERSION=1.0-a9
+
+GLOWROOT_ENABLED=false
+GLOWROOT_PORT=4000
 
 # Postgres
 POSTGRES_DB_HOSTNAME=localhost
@@ -141,24 +54,19 @@ POSTGRES_DB_NAME=remocra
 POSTGRES_DB_USERNAME=remocra
 POSTGRES_DB_PASSWORD=xxxxxxxxxxxxxxxxxx
 
-REMOCRA_PORT=8881
-
-KEYCLOAK_ADMIN=kcadmin
-KEYCLOAK_ADMIN_PASSWORD=xxxxxxxxxxxxxx
+KC_BOOTSTRAP_ADMIN_USERNAME=kcadmin
+KC_BOOTSTRAP_ADMIN_PASSWORD=xxxxxxxxxxxxxx
 DB_PASSWORD_KEYCLOAK=xxxxxxxxxxxxxxx
-DB_USER_KEYCLOAK=keycloak
-CLIENT_SECRET=remocra
-
-# URL de l’application remocra
-REMOCRA_URL=https://xxxxxxxxxxxxxxxxxxx
-
-CLIENT_ID=remocra
 
 # URL public de Keycloak
 BASE_URI=https://xxxxxxxxxxxxxx-auth.com
-
-REALM=remocra
+DB_USER_KEYCLOAK=keycloak
+CLIENT_ID=remocra
 CLIENT_SECRET=remocra
+REALM=remocra
+
+# URL de l’application remocra
+REMOCRA_URL=https://xxxxxxxxxxxxxxxxxxx
 
 # Code de votre SDIS (par exemple SDIS_01)
 CODE_SDIS=XXX
@@ -177,9 +85,6 @@ APACHE_HOP_ENABLE=true
 APACHE_HOP_URL=http://localhost:8060/hop
 APACHE_HOP_USERNAME=admin
 APACHE_HOP_PASSWORD=xxxxxxxxxxxxxxxxx
-
-# NexSIS
-NEXSIS_TEST_TOKEN=xxxxxxxxxxxxxxxxx
 ----
 
 === Explication des variables d’environnement
@@ -189,23 +94,21 @@ NEXSIS_TEST_TOKEN=xxxxxxxxxxxxxxxxx
 
 .4+| *Base de données*
 | POSTGRES_DB_HOSTNAME | Nom d’hôte de la base de données PostgreSQL |
-| POSTGRES_DB_NAME | Nom de la base de données PostgreSQL (par défaut _remocra_) |
-| POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)  |
+| POSTGRES_DB_NAME | Nom de la base de données PostgreSQL (par défaut _remocra_) | remocra
+| POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)  | remocra
 | POSTGRES_DB_PASSWORD | Mot de passe de l’utilisateur PostgreSQL  |
-.7+| *Informations pour l’application REMOcRA*
-| REMOCRA_VERSION | Version de REMOcRA à installer  |
-| REMOCRA_PORT | Port utilisé pour l’application serveur REMOCRA (par défaut 8881) |
+.5+| *Informations pour l’application REMOcRA*
 | REMOCRA_URL | L’adresse https permettant à accéder à l’interface REMOcRA sans “/” à la fin.  |
 | CODE_SDIS | Code du SDIS, doit correspondre à une valeur de l’énumération présente dans le fichier : https://github.com/SDIS83-GSIC/REMOcRA-Application/blob/master/app/src/main/kotlin/remocra/data/enums/CodeSdis.kt[] |
 | EPSG_NAME | Nom de la projection (par exemple _EPSG:2154_) |
 | EPSG_PROJECTION | La projection |
-| ENVIRONNEMENT a| Peut avoir les valeurs suivantes :
+| REMOCRA_ENVIRONMENT a| Permet d'afficher l'information de l'environnement dans le header de l'application. Peut avoir les valeurs suivantes :
 
 * DEVELOPPEMENT
 * FORMATION
 * RECETTE
 * PREPRODUCTION
-* PRODUCTION  |
+* PRODUCTION  | PRODUCTION
 
 .5+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
@@ -216,20 +119,41 @@ NEXSIS_TEST_TOKEN=xxxxxxxxxxxxxxxxx
 | SIG_PASSWORD | |
 
 .6+| *Keycloak*
-| KEYCLOAK_ADMIN | Nom de l’utilisateur pour se connecter à Keycloak |
-| KEYCLOAK_ADMIN_PASSWORD | Mot de passe de l’utilisateur pour se connecter à Keycloak |
+| KC_BOOTSTRAP_ADMIN_USERNAME | Nom de l’utilisateur super-admin pour se connecter à Keycloak |
+| KC_BOOTSTRAP_ADMIN_PASSWORD | Mot de passe de l’utilisateur super-admin pour se connecter à Keycloak |
 | CLIENT_SECRET | |
-| CLIENT_ID | est initialisé par défaut |
-| REALM | Valeur pour le realm utilisé dans keycloak. Par défaut remocra |
+| CLIENT_ID | | remocra
+| REALM | Valeur pour le realm utilisé dans keycloak. | remocra
 | BASE_URI | L’adresse https permettant à accéder à l’interface keycloak |
 
-.7+| *Apache Hop*
-|APACHE_HOP_ENABLE | Activation d'Apache Hop dans l'application | `false`
+.4+| *Apache Hop*
+| APACHE_HOP_ENABLE | Activation d'Apache Hop dans l'application | `false`
 | APACHE_HOP_URL | URL d'Apache Hop (facultatif si APACHE_HOP_ENABLE est à `false`) |
 | APACHE_HOP_USERNAME | Login pour la connexion à Apache HOP (facultatif si APACHE_HOP_ENABLE est à `false`) |
 | APACHE_HOP_PASSWORD | Mot de passe pour la connexion à Apache HOP (facultatif si APACHE_HOP_ENABLE est à `false`) |
+
+.4+| *Glowroot*
+| GLOWROOT_ENABLED | Activation de glowroot pour REMOcRA |
+| GLOWROOT_PORT | Port de glowroot pour REMOcRA | 4000
+| GEOSERVER_GLOWROOT_ENABLED | Activation de glowroot pour geoserver |
+| GEOSERVER_GLOWROOT_PORT | Port de glowroot pour geoserver | 4001
+
+.5+| *Nexsis*
+| NEXSIS_ENABLED | Activation de nexsis | false
+| CODE_STRUCTURE | Code fourni par NexSIS pour la structure, à recopier exactement comme fourni. Exemple : "083-sis" pour le SDIS 83 |
+| NEXSIS_URL | Url de nexsis | http://nexsis.gouv.fr
+| NEXSIS_USER | Utilisateur de connexion à nexsis |
+| NEXSIS_PASSWORD | Mot de passe de l'utilisateur |
+
+.1+| *Autre*
+| DOCKER_REMOCRA_VERSION | Numéro de version de REMOcRA à installer |
 |===
 
+=== Modification de la bannière keycloak pour le logo du SDIS
+
+La personalisation de la bannière pour la mire de connexion sous keycloak se fait via le volume docker `/var/lib/remocra/images/ressources:/opt/keycloak/themes/remocra/login/resources/img:ro`.
+
+L'image est donc à déposer sur le serveur dans le dossier `/var/lib/remocra/images/ressources` et doit obligatoirement s'appeler `banniere`
 
 === Création d’un utilisateur REMOcRA
 
@@ -248,52 +172,118 @@ Créer les dossiers suivants et leur affecter tous deux les droits _remocra_ :
 ----
 mkdir /var/log/remocra
 mkdir /var/lib/remocra
+mkdir /var/opt/geoserver
+# mdkir /var/opt/apache-hop # si Apache Hop est installé
 
 chown -R remocra: /var/lib/remocra
 chown -R remocra: /var/log/remocra
+chown -R remocra: /var/opt/geoserver
+# chown -R remocra: /var/opt/apache-hop # si Apache Hop est installé
 ----
 
 === Démarrer les images
+
+Il faut préalablement s'authentifier auprès du registry docker pour pouvoir télécharger les images :
+
+[source, console]
+----
+docker login client-docker-registry.atolcd.com
+----
 
 Lancer les commandes suivantes. Elles permettront de télécharger les images et de démarrer les différents conteneurs nécessaires au projet.
 
 [source,console]
 ----
 cd /opt/remocra/
-docker compose up -d
 
 # Passage des patchs de base de données
 docker compose run --rm remocra migrate-db
 
+docker compose up -d
 ----
 
-=== Création et configuration du realm remocra
+NOTE: Sans application des patchs de base de données l'application ne peut pas démarrer.
 
-Pour finir la configuration du serveur, exécutez la commande suivante :
+=== Configuration de keycloak
+
+==== Création de l'utilisateur super-admin
+
+On va déjà créer un utilisateur super-admin temporaire via la commande suivante :
 [source,console]
 ----
-docker compose run --rm -e KEYCLOAK_URL=http://localhost:8080 keycloak keycloak-config-cli
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e USERNAME=<tmp_username> \
+    -e PASSWORD=<tmp_password> \
+    keycloak bootstrap-admin user --username:env USERNAME --password:env PASSWORD --no-prompt
 ----
 
+Puis créer l'utilisateur super-admin définitif :
+[source,console]
+----
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<tmp_username> \
+    -e KEYCLOAK_PASSWORD=<tmp_password> \
+    keycloak kcadm.sh create users -r master -s username=<super_username> -s enabled=true
+----
 
-=== Première connexion à l’application
+Initialise son mot de passe:
+[source,console]
+----
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<tmp_username> \
+    -e KEYCLOAK_PASSWORD=<tmp_password> \
+    keycloak kcadm.sh set-password -r master --username <super_username> --new-password <super_password>
+----
 
-Pour pouvoir se connecter à l’application REMOcRA, il faut dans un premier temps créer un utilisateur administrateur. Voici les étapes à suivre :
+Puis lui affecter le rôle pour qu'il soit super-admin :
+[source,console]
+----
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<tmp_username> \
+    -e KEYCLOAK_PASSWORD=<tmp_password> \
+    keycloak kcadm.sh add-roles -r master --uusername super_username --rolename admin
+----
 
-* se connecter à Keycloak et sélectionner le realm remocra
+On peut maintenant se connecter avec l'utilisateur nouvellement créer.
 
-image:realm_remocra.png[Schéma de principe des briques logicielles]
+WARNING: Vérifié que le compte créé fonctionne correctement en se connectant à l'admin keycloak.
 
-* cliquer sur “User”
+Derniére étape : supprimer le compte temporaire :
+[source,console]
+----
+USER_ID=$(docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<super_username> \
+    -e KEYCLOAK_PASSWORD=<super_password> \
+    keycloak kcadm.sh get users -r master -q username=<tmp_username> --fields id --format csv --noquotes) && \
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<super_username> \
+    -e KEYCLOAK_PASSWORD=<super_password> \
+    keycloak kcadm.sh delete users/$USER_ID -r master
+----
 
-image:users.png[Liste des utilisateurs]
+===== Script de création du super utilisateur
 
-* en ajouter un nouveau
+[source,bash]
+----
+include::keycloak_create_super_admin.sh[]
+----
 
-image:add_user.png[Ajouter un utilisateur]
+==== Création et configuration du realm remocra
 
-* remplir le formulaire avec le nom, l’email et  identifiant :
+Pour finir la configuration de keycloak, exécutez la commande suivante :
+[source,console]
+----
+docker compose run --rm \
+    -e KEYCLOAK_URL=http://localhost:8080 \
+    -e KEYCLOAK_USER=<super_username> \
+    -e KEYCLOAK_PASSWORD=<super_password> \
+    keycloak keycloak-config-cli
+----
 
-image:add_user_form.png[Formulaire d'ajout d'un utilisateur]
-
-* se connecter à l'interface de l'application
+NOTE: Le couple super_username/super_password est celui créer à l'étape précédente.

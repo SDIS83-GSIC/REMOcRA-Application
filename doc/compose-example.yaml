@@ -1,0 +1,100 @@
+services:
+  remocra:
+    image: client-docker-registry.atolcd.com/atolcd/remocra-v3:${DOCKER_REMOCRA_VERSION}
+    user: "${REMOCRA_UID}:${REMOCRA_GID}"
+    volumes:
+      - /var/log/remocra:/var/log/remocra
+      - /var/lib/remocra:/var/lib/remocra
+    environment:
+      #JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:5005"
+      #JAVA_MEM_OPTS: "-XX:MaxRAMPercentage=75"
+      - GLOWROOT_ENABLED
+      - GLOWROOT_PORT
+      - POSTGRES_DB_HOSTNAME
+      - POSTGRES_DB_USERNAME
+      - POSTGRES_DB_PASSWORD
+      - CODE_SDIS
+      - SMTP_PASSWORD
+      - SMTP_USER
+      - SMTP_FROM
+      - SMTP_URL
+      - SMTP_PORT
+      - URL_SITE
+      - CLIENT_SECRET
+      - BASE_URI
+      - EPSG_NAME
+      - EPSG_PROJECTION
+      - GEOSERVER_URL
+    healthcheck:
+      test: curl --fail -s http://localhost:8881/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    network_mode: host
+    restart: always
+
+  keycloak:
+    image: client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${DOCKER_REMOCRA_VERSION}
+    volumes:
+      - /var/lib/remocra/images/ressources:/opt/keycloak/themes/remocra/login/resources/img:ro
+    environment:
+      - KC_HOSTNAME=${BASE_URI}
+      - KC_DB_SCHEMA=keycloak
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY_HEADERS=xforwarded
+      - KC_DB_URL=jdbc:postgresql://localhost/keycloak
+      - KC_DB_USERNAME=${DB_USER_KEYCLOAK}
+      - KC_DB_PASSWORD=${DB_PASSWORD_KEYCLOAK}
+      # configuration du realm "remocra"
+      - CLIENT_SECRET
+      - REMOCRA_URL
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    network_mode: host
+    restart: always
+
+  geoserver:
+    image: client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${DOCKER_REMOCRA_VERSION}
+    user: "${REMOCRA_UID}:${REMOCRA_GID}"
+    volumes:
+      - /var/opt/geoserver:/var/opt/geoserver
+      - /var/lib/remocra/images/symbologie:/var/opt/geoserver/workspaces/remocra/styles/symbologie:ro
+    environment:
+      - GEOSERVER_GLOWROOT_ENABLED
+      - GEOSERVER_GLOWROOT_PORT
+      - GEOSERVER_URL
+      - GEOSERVER_USER
+      - GEOSERVER_PASSWORD
+      - POSTGRES_DB_HOSTNAME
+      - POSTGRES_DB_USERNAME
+      - POSTGRES_DB_PASSWORD
+    healthcheck:
+      test: curl --fail -s http://localhost:8090/geoserver || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    network_mode: host
+    restart: always
+
+# facultatif
+  apache-hop:
+    image: client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${DOCKER_REMOCRA_VERSION}
+    user: "${REMOCRA_UID}:${REMOCRA_GID}"
+    volumes:
+      - /var/opt/apache-hop:/files/tasks/
+      - /var/opt/apache-hop:/files/metadata/async-web-service/
+    environment:
+      - HOP_SERVER_USER
+      - HOP_SERVER_PASS
+      - POSTGRES_DB_NAME
+      - POSTGRES_DB_USERNAME
+      - POSTGRES_DB_PASSWORD
+      - POSTGRES_DB_HOSTNAME
+      - POSTGRES_DB_PORT
+    ports:
+      - '8060:8060'
+    network_mode: host
+    restart: always

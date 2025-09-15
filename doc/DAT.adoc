@@ -1,7 +1,7 @@
 = REMOcRA - Document d’Architecture Technique (DAT)
 :Author:    Atol C&D
 :Email:     remocra-projet@atolcd.com
-:Date:      01/09/2025
+:Date:      15/09/2025
 :Revision:  1.0.0
 :imagesdir: images/
 :experimental:
@@ -21,7 +21,7 @@ Ce document d’architecture technique (DAT) a pour but de décrire l’architec
 
 == Présentation générale de l'outil REMOcRA
 
-REMOcRA est une application développée pour les SIS, afin de leur permettre d’assurer toute la logique métier autour des PEI, ainsi que de faciliter le reporting dans certaines situations. REMOcRA utilise beaucoup de cartographie pour contextualiser les données.
+REMOcRA est une application développée pour les SDIS, afin de leur permettre d’assurer toute la logique métier autour des PEI, ainsi que de faciliter le reporting dans certaines situations. REMOcRA utilise beaucoup de cartographie pour contextualiser les données.
 
 === Différentes briques de l'outil REMOcRA
 
@@ -103,12 +103,11 @@ d'installation (DIT).
 
 === Pré-requis serveur
 
-Le serveur d’application nécessite un serveur sous debian / ubuntu 23.10 avec :
+Le déploiement de l’application requiert un serveur prenant en charge Docker. Il est fortement préconisé d’utiliser la dernière version LTS d’Ubuntu. La configuration recommandée est la suivante :
 
 * CPU 4 coeurs
 * 8 Go de RAM
-* suffisamment d'espace disque (30 Go de libre une fois le système installé,
-avec supervision)
+* suffisamment d'espace disque (30 Go de libre une fois le système installé)
 
 Les pré-requis suivants sont obligatoires pour réaliser l’installation de l’application sur le serveur d’application (ces pré-requis ne sont plus nécessaires lorsque l’application est en ordre de marche, après l’installation):
 
@@ -159,7 +158,7 @@ Les pré-requis suivants sont obligatoires pour réaliser l’installation de l�
 
 === Gestion des utilisateurs / Authentification
 
-L’application gère ses utilisateurs au moyen d’une brique d’authentification unifiée, Keycloak. Cela permet de greffer les méthodes d’identification / authentification les plus courantes (LDAP, AD, SAML, OIDC, …​). L’attribution des rôles est faite par l’application. Une synchronisation est faite afin de mettre à jour la base de données de Keycloak.
+L’application gère ses utilisateurs au moyen d’une brique d’authentification unifiée, Keycloak. Cela permet de greffer les méthodes d’identification / authentification les plus courantes (LDAP, AD, SAML, OIDC, …​). L’attribution des rôles est faite par l’application. L'application se met à jour via l'API de keycloak pour actualiser les différents utilisateurs.
 
 
 === Données

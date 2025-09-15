@@ -1,7 +1,7 @@
 = REMOcRA - Document d’exploitation (DEX)
 :Author:    Atol C&D
 :Email:     remocra-projet@atolcd.com
-:Date:      01/09/2025
+:Date:      15/09/2025
 :Revision:  1.0.0
 :imagesdir: images/
 :experimental:
@@ -49,17 +49,18 @@ docker compose up -d remocra-keycloak-1
 === Gestion des journaux
 
 Les journaux (logs) du serveur d’application sont disponibles :
+
 * dans le dossier /var/log/remocra
 * à l'intérieur des conteneurs via la commande suivante :
 
 [source,console]
 ----
 # Suivre les journaux des services
-cd /opt/remocra/ && docker compose logs -f
+docker compose -p remocra logs -f
 
-# Afficher le journal du service d'un service
-cd /opt/remocra/ && docker compose logs -f remocra-remocra-1
-cd /opt/remocra/ && docker compose logs -f remocra-keycloak-1
+# Afficher le journal d'un service
+docker compose -p remocra logs -f remocra
+docker compose -p remocra logs -f keycloak
 
 ----
 
@@ -111,6 +112,7 @@ Les éléments à sauvegarder sont :
 * les fichiers présents sur le serveur (dans /var/lib/remocra)
 * les données de l’application dans la base de données
 * les fichiers de configuration dans le répertoire /opt/remocra/
+* les fichiers de geoserver dans le répertoire /var/opt/geoserver
 
 Tous les autres fichiers sont sauvegardés dans github (https://github.com/SDIS83-GSIC/REMOcRA-Application/tree/master).
 
