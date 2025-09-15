@@ -77,13 +77,10 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
             val iterator = features.features()
             while (iterator.hasNext()) {
                 val next = iterator.next()
-
                 val geometrie: Geometry =
                     (next.properties.find { it.name.localPart == "the_geom" }?.value as Geometry?)?.getGeometryN(0)
                         ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_GEOMETRIE_NULLE)
-
                 geometrie.srid = appSettings.srid
-
                 val reseauTraversable: Boolean =
                     next.properties.find { it.name.localPart == "traversabl" }?.value?.toString()?.toBooleanStrictOrNull() ?: false
                 val reseauSensUnique: Boolean =
@@ -99,7 +96,9 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
                     ),
                 )
             }
+            iterator.close()
         }
+        store.dispose()
 
         // On supprime les fichiers du disque
         documentUtils.deleteDirectory(GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)

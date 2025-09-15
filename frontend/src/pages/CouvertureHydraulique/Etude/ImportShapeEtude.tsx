@@ -79,7 +79,10 @@ const FormImportShape = () => {
                     <strong>
                       the_geom <span className="text-danger">*</span>
                     </strong>
-                    <div className="ms-2">La géométrie en LineString</div>
+                    <div className="ms-2">
+                      La géométrie en LineString en projection EPSG:2154 (RGF93
+                      / Lambert-93)
+                    </div>
                   </Row>
                   <Row>
                     <strong>
@@ -133,7 +136,10 @@ const FormImportShape = () => {
                     <strong>
                       the_geom <span className="text-danger">*</span>
                     </strong>
-                    <div className="ms-2">La géométrie du bâtiment</div>
+                    <div className="ms-2">
+                      La géométrie du bâtiment en projection EPSG:2154 (RGF93 /
+                      Lambert-93)
+                    </div>
                   </Row>
                   <br />
                   <Row>
@@ -169,7 +175,10 @@ const FormImportShape = () => {
                     <strong>
                       the_geom <span className="text-danger">*</span>
                     </strong>
-                    <div className="ms-2">La géométrie en Point</div>
+                    <div className="ms-2">
+                      La géométrie en Point en projection EPSG:2154 (RGF93 /
+                      Lambert-93)
+                    </div>
                   </Row>
                   <Row>
                     <strong>
