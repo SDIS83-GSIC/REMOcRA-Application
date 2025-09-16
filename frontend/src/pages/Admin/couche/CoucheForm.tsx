@@ -300,9 +300,7 @@ const CoucheForm = () => {
                             required={true}
                           />
                         </Col>
-
-                        {couche.coucheSource !== SOURCE_CARTO.OSM &&
-                          couche.coucheProtected === false && (
+                        {couche.coucheSource !== SOURCE_CARTO.OSM && !couche.coucheProtected && (
                             <>
                               <Col xs={12} lg={6} xxl={4}>
                                 <TextInput
