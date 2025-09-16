@@ -296,7 +296,7 @@ Content-Type: application/json; charset=UTF-8
 2. *Limite de résultats* : Certains endpoints ont une limite maximale (ex: 200 pour la liste des PEI).
 3. *Formats de date* : Les dates sont au format `YYYY-MM-DD hh:mm`.
 4. *Types de PEI* :
-- **PIBI** : Points d'Eau Incendie sous pression (Poteaux et Bornes Incendie)
+- **PIBI** : Points d'Eau Incendie sous pression (Poteaux et Bouches Incendie)
 - **PENA** : Points d'Eau Naturels et Artificiels
 5. *Natures DECI* :
 - `PUBLIC` : DECI publique
@@ -367,7 +367,7 @@ Objet utilisé pour la modification des caractéristiques techniques des PENA (`
 * `capacite` : Capacité en litres
 * `quantiteAppoint` : Quantité d'appoint en litres
 * `codeMateriau` : Code du matériau du PENA
-* `equipeHBE` : Indique si équipé d'un système HBE (Hauteur de Bon Eclairage)
+* `equipeHBE` : Indique si équipé d'un système HBE (Hélicoptère Bombardier d'Eau)
 
 === ApiVisiteFormData
 
