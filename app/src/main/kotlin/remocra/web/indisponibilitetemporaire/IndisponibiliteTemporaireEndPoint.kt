@@ -24,9 +24,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.indisponibilitetemporaire.CloreIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.DeleteIndisponibiliteTemporaireUseCase
-import remocra.usecase.indisponibilitetemporaire.IndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
-import remocra.utils.limitOffset
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -34,9 +32,6 @@ import java.util.UUID
 @Path("/indisponibilite-temporaire")
 @Produces(MediaType.APPLICATION_JSON)
 class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
-
-    @Inject
-    lateinit var indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireUseCase
 
     @Inject
     lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
@@ -68,11 +63,13 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
     fun getAllIndisponibiliteTemporaire(params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort>): Response {
         val user = securityContext.userInfo
 
-        val listIT = indisponibiliteTemporaireUseCase.getAllWithListPei(params, user)
+        val listIT = indisponibiliteTemporaireRepository.getAllWithListPei(params, user)
+        // Pour garder l'ordre on n'utilise pas la fonction limitOffset
+        val limitedList = listIT.drop(params.offset ?: 0).take(params.limit ?: listIT.size)
 
         return Response.ok(
             DataTableau(
-                list = listIT.limitOffset(params.limit?.toLong(), params.offset?.toLong())?.toList() ?: emptyList(),
+                list = limitedList,
                 count = listIT.size,
             ),
         )
@@ -125,7 +122,7 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
         @PathParam("indisponibiliteTemporaireId") indisponibiliteTemporaireId: UUID,
     ): Response = cloreIndisponibiliteTemporaireUseCase.execute(
         userInfo = securityContext.userInfo,
-        indisponibiliteTemporaireUseCase.getDataFromId(indisponibiliteTemporaireId),
+        indisponibiliteTemporaireRepository.getWithListPeiById(indisponibiliteTemporaireId),
     ).wrap()
 
     @DELETE
@@ -137,7 +134,7 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
         @PathParam("indisponibiliteTemporaireId") indisponibiliteTemporaireId: UUID,
     ): Response = deleteIndisponibiliteTemporaireUseCase.execute(
         userInfo = securityContext.userInfo,
-        indisponibiliteTemporaireUseCase.getDataFromId(indisponibiliteTemporaireId),
+        indisponibiliteTemporaireRepository.getWithListPeiById(indisponibiliteTemporaireId),
     ).wrap()
     private fun inputToData(id: UUID, indisponibiliteTemporaireInput: IndisponibiliteTemporaireInput): IndisponibiliteTemporaireData {
         return IndisponibiliteTemporaireData(

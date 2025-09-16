@@ -497,14 +497,33 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.STATUT:
         column.push({
           Header: "Statut",
-          accessor: "indisponibiliteTemporaireStatut",
+          accessor: ({
+            indisponibiliteTemporaireDateDebut,
+            indisponibiliteTemporaireDateFin,
+          }: {
+            indisponibiliteTemporaireDateDebut: Date;
+            indisponibiliteTemporaireDateFin: Date;
+          }) => ({
+            indisponibiliteTemporaireDateDebut,
+            indisponibiliteTemporaireDateFin,
+          }),
           Cell: (value) => {
-            return (
-              <div>
-                {value?.value != null &&
-                  STATUT_INDISPONIBILITE_TEMPORAIRE[value.value]}
-              </div>
+            const dateDebut = new Date(
+              value.value.indisponibiliteTemporaireDateDebut,
             );
+            const dateFin = new Date(
+              value.value.indisponibiliteTemporaireDateFin,
+            );
+            const date = new Date();
+            let statut = "";
+            if (dateDebut < date && dateFin > date) {
+              statut = "En cours";
+            } else if (dateDebut > date) {
+              statut = "Planifiée";
+            } else if (dateFin < date) {
+              statut = "Terminée";
+            }
+            return <div>{statut}</div>;
           },
           Filter: (
             <SelectEnumOption

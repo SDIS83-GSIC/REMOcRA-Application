@@ -13,6 +13,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
+import remocra.auth.WrappedUserInfo
 import remocra.data.GeometrieWithPeiId
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
@@ -26,6 +27,7 @@ import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.exception.RemocraResponseException
+import remocra.utils.DateUtils
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -89,7 +91,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             // Pour les filtres, on join sur la commune
             .join(COMMUNE)
             .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
-            .where(params.filterBy?.toCondition() ?: DSL.noCondition())
+            .where(params.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .groupBy(
                 INDISPONIBILITE_TEMPORAIRE.ID,
@@ -102,6 +104,20 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 ),
             )
             .fetchInto()
+    }
+
+    fun getAllWithListPei(params: Params<Filter, Sort>, userInfo: WrappedUserInfo): Collection<IndisponibiliteTemporaireWithPei> {
+        val listeIndisponibiliteTemporaire = getAllWithListPei(params, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)
+        val listeIndispoTempNonModifiable = getIndispoTemporaireHorsZC(
+            userInfo.isSuperAdmin,
+            userInfo.zoneCompetence?.zoneIntegrationId,
+            listeIndisponibiliteTemporaire.map { it.indisponibiliteTemporaireId },
+        )
+
+        listeIndisponibiliteTemporaire.forEach {
+            it.isModifiable = !listeIndispoTempNonModifiable.contains(it.indisponibiliteTemporaireId)
+        }
+        return listeIndisponibiliteTemporaire
     }
 
     fun getIndispoTemporaireHorsZC(isSuperAdmin: Boolean, zoneCompetenceId: UUID?, listItId: List<UUID>): List<UUID> =
@@ -161,10 +177,11 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         .set(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID, peiId)
         .execute()
 
-    fun getWithListPeiById(indisponibiliteTemporaireId: UUID): IndisponibiliteTemporaireData? {
+    fun getWithListPeiById(indisponibiliteTemporaireId: UUID): IndisponibiliteTemporaireData {
         return getWithListPeiByIdOrPei()
             .where(INDISPONIBILITE_TEMPORAIRE.ID.eq(indisponibiliteTemporaireId))
             .fetchOneInto<IndisponibiliteTemporaireData>()
+            ?: throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_INEXISTANTE)
     }
 
     fun deleteLiaisonByIndisponibiliteTemporaire(indisponibiliteTemporaireId: UUID) {
@@ -216,34 +233,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val listeNumeroPei: String?,
         val listeCommunes: String,
         var isModifiable: Boolean = false,
-    ) {
-        val indisponibiliteTemporaireStatut: StatutIndisponibiliteTemporaireEnum
-            get() {
-                val now = ZonedDateTime.now()
-                return when {
-                    // Indisponibilité en cours
-                    this.indisponibiliteTemporaireDateDebut.isBefore(now) &&
-                        (this.indisponibiliteTemporaireDateFin?.isAfter(now) != false) -> {
-                        StatutIndisponibiliteTemporaireEnum.EN_COURS
-                    }
-
-                    // Indisponibilité planifiée (début dans le futur)
-                    this.indisponibiliteTemporaireDateDebut.isAfter(now) -> {
-                        StatutIndisponibiliteTemporaireEnum.PLANIFIEE
-                    }
-
-                    // Indisponibilité terminée (fin dans le passé)
-                    this.indisponibiliteTemporaireDateFin?.isBefore(now) == true -> {
-                        StatutIndisponibiliteTemporaireEnum.TERMINEE
-                    }
-
-                    // Exception pour les statuts non trouvés
-                    else -> {
-                        throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_STATUT_INTROUVABLE)
-                    }
-                }
-            }
-    }
+    )
 
     data class Sort(
 
@@ -289,7 +279,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val communeLibelle: String?,
     ) {
 
-        fun toCondition(): Condition =
+        fun toCondition(dateUtils: DateUtils): Condition =
             DSL.and(
                 listOfNotNull(
                     indisponibiliteTemporaireMotif?.let { DSL.and(INDISPONIBILITE_TEMPORAIRE.MOTIF.containsIgnoreCaseUnaccent(it)) },
@@ -297,6 +287,26 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                         DSL.and(
                             INDISPONIBILITE_TEMPORAIRE.OBSERVATION.containsIgnoreCaseUnaccent(it),
                         )
+                    },
+                    indisponibiliteTemporaireStatut?.let { statut ->
+                        val now = dateUtils.now()
+                        when (statut) {
+                            StatutIndisponibiliteTemporaireEnum.PLANIFIEE ->
+                                INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
+                            StatutIndisponibiliteTemporaireEnum.EN_COURS ->
+                                INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
+                                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now))
+
+                            StatutIndisponibiliteTemporaireEnum.TERMINEE ->
+                                INDISPONIBILITE_TEMPORAIRE.DATE_FIN.lt(now)
+
+                            StatutIndisponibiliteTemporaireEnum.EN_COURS_PLANIFIEE ->
+                                INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
+                                    .or(
+                                        INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
+                                            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now)),
+                                    )
+                        }
                     },
                     listePeiId?.let { DSL.and(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.`in`(it)) },
                     indisponibiliteTemporaireMailApresIndisponibilite

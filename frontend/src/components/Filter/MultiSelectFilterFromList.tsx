@@ -18,11 +18,11 @@ const MultiSelectFilterFromList = ({
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      width: "100%"
+      width: "100%",
     }),
     menu: (provided) => ({
       ...provided,
-      width: "100%"
+      width: "100%",
     }),
   };
 
