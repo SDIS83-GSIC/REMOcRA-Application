@@ -5,7 +5,7 @@ import { navigateGoBack } from "../../../utils/fonctionsUtils.tsx";
 import { IconPreviousPage } from "../../Icon/Icon.tsx";
 
 type TitlePageModel = {
-  title: string;
+  title: ReactNode;
   icon: ReactNode;
   right?: ReactNode;
   displayReturnButton?: boolean;

@@ -7,13 +7,14 @@ import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import { FormContainer } from "../../../components/Form/Form.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
+import { IconInfo, IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import {
   SECTION_DROIT,
   TypeDroitLabel,
   TypeDroitSection,
 } from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 const LienProfilGroupeFonctionnalitesList = () => {
   const lienGroupeFonctionnalitesListState = useGet(
@@ -46,7 +47,19 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
   return (
     <>
       <PageTitle
-        title="Attribution des fonctionnalités"
+        title={
+          <>
+            Attribution des fonctionnalités
+            <TooltipCustom
+              tooltipText={
+                "Cet écran permet d'attribuer ou non les différents droits ci-dessous aux groupes de fonctionnalités définis en amont. Pour chaque groupe, cochez les droits que vous voulez lui attribuer. Certains droits sont liés entre eux, par exemple si vous cochez le droit d'administration, les droit d'accès CRUD associés seront automatiquement cochés."
+              }
+              tooltipId={"tooltip-groupe-fonctionnalites"}
+            >
+              <IconInfo />
+            </TooltipCustom>
+          </>
+        }
         icon={<IconUtilisateurs />}
       />
       <FormContainer>

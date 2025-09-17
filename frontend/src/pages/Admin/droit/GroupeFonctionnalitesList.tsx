@@ -1,22 +1,35 @@
 import { Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
-import { IconList } from "../../../components/Icon/Icon.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import { ActionColumn } from "../../../components/Table/columns.tsx";
-import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 const GroupeFonctionnalitesList = () => {
   return (
     <Container>
       <PageTitle
         icon={<IconList />}
-        title={"Groupes de fonctionnalités"}
+        title={
+          <>
+            Groupes de fonctionnalités
+            <TooltipCustom
+              tooltipText={
+                "Un groupe de fonctionnalités permet de regrouper des droits d'accès afin de les attribuer à une catégorie d'utilisateurs"
+              }
+              tooltipId={"tooltip-groupe-fonctionnalites"}
+            >
+              <IconInfo />
+            </TooltipCustom>
+          </>
+        }
         right={
           <CreateButton
             href={URLS.GROUPE_FONCTIONNALITES_CREATE}

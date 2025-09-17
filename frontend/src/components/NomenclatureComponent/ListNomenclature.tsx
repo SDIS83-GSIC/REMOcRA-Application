@@ -34,7 +34,7 @@ const ListNomenclature = ({
   addButtonTitle,
   additionalButton,
 }: {
-  pageTitle: string;
+  pageTitle: ReactNode;
   pageIcon: ReactNode;
   typeNomenclature: NOMENCLATURE;
   hasProtectedValue?: boolean;
