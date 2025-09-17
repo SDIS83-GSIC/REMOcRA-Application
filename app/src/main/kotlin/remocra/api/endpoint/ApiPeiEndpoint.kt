@@ -70,7 +70,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Nombre maximum de résultats à retourner (maximum fixé à 200 résultats)") @QueryParam("limit") @Max(value = 200) @DefaultValue("200") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("start") offset: Int?,
     ): Response {
-        return Response.ok().entity(getModeleMinimalPeiUseCase.execute(codeInsee, type, codeNature, codeNatureDECI, limit, offset)).build()
+        return Response.ok().entity(getModeleMinimalPeiUseCase.execute(codeInsee, type, codeNature, codeNatureDECI, limit, offset, securityContext.userInfo)).build()
     }
 
     @GET
@@ -80,7 +80,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     fun getPeiSpecifique(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
-        return peiUseCase.getPeiSpecifiqueAsResult(numeroComplet, securityContext.userInfo!!).wrap()
+        return peiUseCase.getPeiSpecifiqueAsResult(numeroComplet, securityContext.userInfo).wrap()
     }
 
     @GET
@@ -90,7 +90,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
     fun getPeiCaracteristiques(
         @Parameter(description = "Numéro du PEI") @PathParam("numeroComplet") numeroComplet: String,
     ): Response {
-        return peiUseCase.getPeiCaracteristiques(numeroComplet, securityContext.userInfo!!).wrap()
+        return peiUseCase.getPeiCaracteristiques(numeroComplet, securityContext.userInfo).wrap()
     }
 
     @PUT
@@ -123,7 +123,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm", required = true) @QueryParam("moment") moment: String?,
     ): Response {
         // Quand tout s'est bien passé, on sérialise, sinon on wrap comme d'habitude
-        val result = peiUseCase.diff(moment, securityContext.userInfo!!)
+        val result = peiUseCase.diff(moment, securityContext.userInfo)
         if (result is AbstractUseCase.Result.Success) {
             return Response.ok(objectMapper.writeValueAsString(result.entity), MediaType.APPLICATION_JSON).build()
         }

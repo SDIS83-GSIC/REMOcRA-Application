@@ -1102,8 +1102,8 @@ data class IdNumeroComplet(
 data class ApiPeiAccessibility(
     val id: UUID,
     val numeroComplet: String,
-    val maintenanceDeciId: UUID,
-    val servicePublicDeciId: UUID,
+    val maintenanceDeciId: UUID?,
+    val servicePublicDeciId: UUID?,
     val serviceEauxId: UUID?,
 )
 

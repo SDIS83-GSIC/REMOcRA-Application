@@ -2,7 +2,9 @@ package remocra.usecase.modeleminimalpei
 
 import jakarta.inject.Inject
 import org.locationtech.jts.io.geojson.GeoJsonWriter
+import remocra.api.usecase.AbstractApiPeiUseCase
 import remocra.app.AppSettings
+import remocra.auth.WrappedUserInfo
 import remocra.data.ModeleMinimalPeiData
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
@@ -10,17 +12,16 @@ import remocra.db.VisiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
-import remocra.usecase.AbstractUseCase
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
 import remocra.utils.DiametreDecorator
 import java.util.Collections
 import java.util.UUID
 
-class GetModeleMinimalPeiUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
+class GetModeleMinimalPeiUseCase @Inject
+constructor(
+    override val peiRepository: PeiRepository,
+) : AbstractApiPeiUseCase(peiRepository) {
 
     @Inject
     lateinit var voieRepository: VoieRepository
@@ -47,10 +48,14 @@ class GetModeleMinimalPeiUseCase : AbstractUseCase() {
         codeNatureDECI: String?,
         limit: Int?,
         offset: Int?,
+        wrappedUserInfo: WrappedUserInfo,
     ): Collection<ModeleMinimalPeiData> {
-        // TODO Accessibilité de chaque PEI ; soit dans la requête, soit en post-traitement avec le getPeiAccessibilite
         val listePei = peiRepository.getListPeiForApi(codeInsee, type, codeNature, codeNatureDECI, limit, offset)
-        return getModeleMinimalPei(listePei)
+
+        // Une seule requête pour calculer leur accessibilité, on se servira de la map<id, POJO> par la suite
+        val mapAccessibilite = listPeiAccessibilite(listePei.map { it.peiId }.toSet(), wrappedUserInfo).associateBy { it.id }
+
+        return getModeleMinimalPei(listePei.filter { p -> mapAccessibilite[p.peiId] != null && mapAccessibilite[p.peiId]!!.isAccessible })
     }
 
     fun execute(peiId: UUID): ModeleMinimalPeiData {
