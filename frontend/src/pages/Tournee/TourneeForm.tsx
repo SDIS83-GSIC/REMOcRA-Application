@@ -28,7 +28,7 @@ const TourneeForm = ({
   isCreation?: boolean;
   tourneeLibelle?: string;
 }) => {
-  const { setValues }: { values: TourneeFormEntity } = useFormikContext();
+  const { values, setValues } = useFormikContext<TourneeFormEntity>();
 
   const organismeState = useGet(url`/api/organisme/get-libelle-organisme`); // TODO : ne remonter que l'organisme et les enfants de l'utilisateur courant
   if (!organismeState.isResolved) {
@@ -55,6 +55,9 @@ const TourneeForm = ({
               label="Organisme :"
               required={true}
               setValues={setValues}
+              defaultValue={organismeState.data?.find(
+                (value: any) => value.id === values.tourneeOrganismeId,
+              )}
             />
           )}
         </Col>
