@@ -372,6 +372,7 @@ function QueryTable({
 
               // Réinitialiser tous les filtres
               setFilterBy({});
+              setSortBy({});
               setValues({});
               formik.setValues({});
               formik.resetForm({ values: {} });
