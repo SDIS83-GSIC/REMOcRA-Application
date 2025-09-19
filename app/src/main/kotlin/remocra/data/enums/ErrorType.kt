@@ -230,6 +230,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
      * ***********************************************************************
      */
     COURRIER_DROIT_FORBIDDEN(5000, "Vous n'avez pas les droits pour générer des courriers", Status.FORBIDDEN),
+    COURRIER_GENERATE_NO_DATA_FOUND(5001, "Aucune donnée n'a été trouvée pour remplir le document"),
 
     //
     // ********************************************************************************

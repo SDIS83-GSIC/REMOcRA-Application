@@ -14,8 +14,10 @@ import org.jooq.JSON
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.courrier.form.ParametreCourrierInput
+import remocra.data.enums.ErrorType
 import remocra.db.ModeleCourrierRepository
 import remocra.db.TransactionManager
+import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.DateUtils
@@ -87,6 +89,10 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
             // on exécute la requête et on sauvegarde
             mapParameters = modeleCourrierRepository.executeRequeteSql(requeteModifiee)
+
+            if (mapParameters == null) {
+                throw RemocraResponseException(ErrorType.COURRIER_GENERATE_NO_DATA_FOUND)
+            }
         }
 
         // on ajoute la date
