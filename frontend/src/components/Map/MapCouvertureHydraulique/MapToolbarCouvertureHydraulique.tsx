@@ -509,7 +509,7 @@ const MapToolbarCouvertureHydraulique = ({
   visibleMove: boolean;
 }) => {
   return (
-    <>
+    <div className="d-flex align-items-center">
       {/**Pour la couverture hydraulique */}
       <ToolbarButton
         toolName={"select-etude"}
@@ -543,7 +543,7 @@ const MapToolbarCouvertureHydraulique = ({
         disabled={disabledEditPeiProjet}
       />
       <Button
-        className="me-1"
+        className="ms-4 me-3"
         variant="outline-primary"
         onClick={calculCouverture}
         disabled={disabledEditPeiProjet}
@@ -624,7 +624,7 @@ const MapToolbarCouvertureHydraulique = ({
           <p>Voulez-vous déplacer le PEI ?</p>
         </EditModal>
       )}
-    </>
+      </div>
   );
 };
 
