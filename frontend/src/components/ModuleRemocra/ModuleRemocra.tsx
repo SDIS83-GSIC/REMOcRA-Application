@@ -22,7 +22,7 @@ const ModuleRemocra = ({
 }: ModuleRemocra) => {
   return (
     <Col className="bg-light border rounded">
-      <div className="fw-bold text-center p-2">{titre}</div>
+      <div className="fw-bold text-center p-2 fs-5">{titre}</div>
       <Row>
         {image && (
           <Col md="3">
