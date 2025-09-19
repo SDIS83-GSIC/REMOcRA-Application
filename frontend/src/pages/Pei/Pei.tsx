@@ -1114,6 +1114,7 @@ const FormLocalisationPei = ({
             setValues={setValues}
             disabled={
               !canEdit ||
+              values.voieSaisieLibre ||
               (values.peiVoieTexte != null &&
                 values.peiVoieTexte?.trim() !== "")
             }
@@ -1124,12 +1125,20 @@ const FormLocalisationPei = ({
                 name="voieSaisieLibre"
                 label="Voie non trouvée"
                 disabled={!canEdit}
+                onChange={() => {
+                  setFieldValue("voieSaisieLibre", !values.voieSaisieLibre);
+                  if (!values.voieSaisieLibre) {
+                    setFieldValue("peiVoieId", null);
+                  } else {
+                    setFieldValue("peiVoieTexte", null);
+                  }
+                }}
               />
               {values.voieSaisieLibre && (
                 <TextInput
                   name="peiVoieTexte"
                   label="Voie (saisie libre)"
-                  required={false} // TODO XOR entre voieId et voieText
+                  required={values.voieSaisieLibre}
                   disabled={
                     !canEdit ||
                     (values.peiVoieId != null &&
