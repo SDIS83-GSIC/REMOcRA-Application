@@ -25,7 +25,6 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
-import remocra.db.jooq.remocra.keys.ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COURRIER_UTILISATEUR__L_COURRIER_UTILISATEUR_UTILISATEUR_ID_FKEY
@@ -36,13 +35,13 @@ import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.SIGNALEMENT__SIGNALEMENT_SIGNALEMENT_UTILISATEUR_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
-import remocra.db.jooq.remocra.tables.Adresse.AdressePath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.Job.JobPath
@@ -52,6 +51,7 @@ import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Rcci.RcciPath
+import remocra.db.jooq.remocra.tables.Signalement.SignalementPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -227,23 +227,6 @@ open class Utilisateur(
     val profilUtilisateur: ProfilUtilisateurPath
         get(): ProfilUtilisateurPath = profilUtilisateur()
 
-    private lateinit var _adresse: AdressePath
-
-    /**
-     * Get the implicit to-many join path to the <code>remocra.adresse</code>
-     * table
-     */
-    fun adresse(): AdressePath {
-        if (!this::_adresse.isInitialized) {
-            _adresse = AdressePath(this, null, ADRESSE__ADRESSE_ADRESSE_UTILISATEUR_FKEY.inverseKey)
-        }
-
-        return _adresse
-    }
-
-    val adresse: AdressePath
-        get(): AdressePath = adresse()
-
     private lateinit var _evenement: EvenementPath
 
     /**
@@ -413,6 +396,23 @@ open class Utilisateur(
 
     val rcciRcciUtilisateurIdFkey: RcciPath
         get(): RcciPath = rcciRcciUtilisateurIdFkey()
+
+    private lateinit var _signalement: SignalementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.signalement</code> table
+     */
+    fun signalement(): SignalementPath {
+        if (!this::_signalement.isInitialized) {
+            _signalement = SignalementPath(this, null, SIGNALEMENT__SIGNALEMENT_SIGNALEMENT_UTILISATEUR_FKEY.inverseKey)
+        }
+
+        return _signalement
+    }
+
+    val signalement: SignalementPath
+        get(): SignalementPath = signalement()
 
     private lateinit var _tournee: TourneePath
 

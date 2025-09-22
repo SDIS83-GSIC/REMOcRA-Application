@@ -28,7 +28,7 @@ enum class TypeModule(@get:JvmName("literal") public val literal: String) : Enum
     PERMIS("PERMIS"),
     RCI("RCI"),
     DFCI("DFCI"),
-    ADRESSES("ADRESSES"),
+    SIGNALEMENTS("SIGNALEMENTS"),
     RISQUES("RISQUES"),
     ADMIN("ADMIN"),
     COURRIER("COURRIER"),

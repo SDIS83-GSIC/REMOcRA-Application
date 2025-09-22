@@ -158,7 +158,7 @@ export enum TypeModuleRemocra {
   PERMIS = "PERMIS",
   RCI = "RCI",
   DFCI = "DFCI",
-  ADRESSES = "ADRESSES",
+  SIGNALEMENTS = "SIGNALEMENTS",
   RISQUES = "RISQUES",
   ADMIN = "ADMIN",
   COURRIER = "COURRIER",

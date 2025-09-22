@@ -595,12 +595,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     //
     // ********************************************************************************
-    // Adresse
+    // Signalement
     // ********************************************************************************
     //
-    ADRESSE_FORBIDDEN_INSERT(29000, "Vous n'avez pas les droits de création d'une adresse", Status.FORBIDDEN),
-    ADRESSE_ELEMENT_ADRESSE_NULL(29001, "Il manque l'id de l'adresse pour l'insertion de l'élément"),
-    ADRESSE_FORBIDDEN_DELIBERATION(29002, "Vous n'avez pas les droits pour déposer une délibération.", Status.FORBIDDEN),
+    SIGNALEMENT_FORBIDDEN_INSERT(29000, "Vous n'avez pas les droits de création d'un signalement", Status.FORBIDDEN),
+    SIGNALEMENT_ELEMENT_SIGNALEMENT_NULL(29001, "Il manque l'id du signalement pour l'insertion de l'élément"),
+    SIGNALEMENT_FORBIDDEN_DELIBERATION(29002, "Vous n'avez pas les droits pour déposer une délibération.", Status.FORBIDDEN),
 
     //
     // ********************************************************************************

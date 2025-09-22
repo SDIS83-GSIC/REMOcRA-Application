@@ -7,7 +7,7 @@ import CircleStyle from "ol/style/Circle";
 import { forwardRef, Key, useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
-import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Adresse/SousTypeTypeGeometrie.tsx";
+import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";

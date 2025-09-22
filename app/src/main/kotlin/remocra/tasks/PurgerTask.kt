@@ -42,7 +42,7 @@ class PurgerTask : SchedulableTask<PurgerTaskParameter, SchedulableTaskResults>(
             jobRepository.purgeJobFromSetJobId(setJobIdToDelete)
             logManager.info("[Purge Logs Jobs] Suppression terminée avec succès")
         }
-        // TODO : Ajouter la purge des informations concernant le module Adresse/Alerte
+        // TODO : Ajouter la purge des informations concernant le module Signalement/Alerte
         return null
     }
 

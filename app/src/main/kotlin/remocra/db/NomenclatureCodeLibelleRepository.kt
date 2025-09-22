@@ -15,9 +15,6 @@ import remocra.db.jooq.couverturehydraulique.tables.references.ETUDE
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.couverturehydraulique.tables.references.TYPE_ETUDE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
-import remocra.db.jooq.remocra.tables.references.ADRESSE_SOUS_TYPE_ELEMENT
-import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
-import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.CONTACT
@@ -26,11 +23,11 @@ import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
-import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
 import remocra.db.jooq.remocra.tables.references.L_PENA_TYPE_ENGIN
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
@@ -48,6 +45,9 @@ import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_SOUS_TYPE_ELEMENT
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_TYPE_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
@@ -72,8 +72,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
     companion object {
         private fun getTableFromType(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
@@ -99,8 +99,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getIdField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ID
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ID
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.ID
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.ID
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
@@ -126,8 +126,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getCodeField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.CODE
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.CODE
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.CODE
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.CODE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
@@ -153,8 +153,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getLibelleField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.LIBELLE
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.LIBELLE
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.LIBELLE
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.LIBELLE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
@@ -180,8 +180,8 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
 
         private fun getActifField(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> ADRESSE_TYPE_ANOMALIE.ACTIF
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> ADRESSE_TYPE_ELEMENT.ACTIF
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.ACTIF
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.ACTIF
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
@@ -245,8 +245,13 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
          */
         private fun getInfosFkCible(type: TypeNomenclatureCodeLibelle) =
             when (type) {
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ANOMALIE -> setOf(InfosFkCible(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE, L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID))
-                TypeNomenclatureCodeLibelle.ADRESSE_TYPE_ELEMENT -> setOf(InfosFkCible(ADRESSE_SOUS_TYPE_ELEMENT, ADRESSE_SOUS_TYPE_ELEMENT.TYPE_ELEMENT))
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> setOf(
+                    InfosFkCible(
+                        L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE,
+                        L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE.SIGNALEMENT_TYPE_ANOMALIE_ID,
+                    ),
+                )
+                TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> setOf(InfosFkCible(SIGNALEMENT_SOUS_TYPE_ELEMENT, SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT))
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> setOf(InfosFkCible(ANOMALIE, ANOMALIE.ANOMALIE_CATEGORIE_ID))
                 TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> setOf(
                     InfosFkCible(L_TYPE_CRISE_CATEGORIE, L_TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID),

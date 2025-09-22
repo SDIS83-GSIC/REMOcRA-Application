@@ -815,7 +815,7 @@ export const TooltipMapEditPermis = ({
   );
 };
 
-export const TooltipMapAdresse = ({ map }: { map: Map }) => {
+export const TooltipMapSignalement = ({ map }: { map: Map }) => {
   const ref = useRef(null);
 
   const { featureSelect, overlay } = useTooltipMap({

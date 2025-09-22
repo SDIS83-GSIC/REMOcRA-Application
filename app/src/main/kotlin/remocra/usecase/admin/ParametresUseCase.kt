@@ -3,7 +3,6 @@ package remocra.usecase.admin
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.data.ParametresAdminData
-import remocra.data.ParametresSectionAdresse
 import remocra.data.ParametresSectionCartographie
 import remocra.data.ParametresSectionCouvertureHydraulique
 import remocra.data.ParametresSectionDfci
@@ -12,6 +11,7 @@ import remocra.data.ParametresSectionMobile
 import remocra.data.ParametresSectionPei
 import remocra.data.ParametresSectionPeiLongueIndispo
 import remocra.data.ParametresSectionPermis
+import remocra.data.ParametresSectionSignalement
 import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
 import remocra.usecase.AbstractUseCase
@@ -47,10 +47,10 @@ class ParametresUseCase : AbstractUseCase() {
             accueilPublic = mapParametres.getStringOrNull(ParametreEnum.ACCUEIL_PUBLIC.name),
         )
 
-        val adresse = ParametresSectionAdresse(
-            adresseDeliberationDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL.name),
-            adresseDeliberationCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL.name),
-            adresseDeliberationObjetEmail = mapParametres.getStringOrNull(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL.name),
+        val signalement = ParametresSectionSignalement(
+            signalementDeliberationDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.SIGNALEMENT_DELIBERATION_DESTINATAIRE_EMAIL.name),
+            signalementDeliberationCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.SIGNALEMENT_DELIBERATION_CORPS_EMAIL.name),
+            signalementDeliberationObjetEmail = mapParametres.getStringOrNull(ParametreEnum.SIGNALEMENT_DELIBERATION_OBJET_EMAIL.name),
         )
 
         val dfci = ParametresSectionDfci(
@@ -131,7 +131,7 @@ class ParametresUseCase : AbstractUseCase() {
 
         return ParametresAdminData(
             general = general,
-            adresse = adresse,
+            signalement = signalement,
             dfci = dfci,
             mobile = mobile,
             cartographie = cartographie,

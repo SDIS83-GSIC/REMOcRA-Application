@@ -289,9 +289,9 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
-                      pathname={URLS.LIST_ADRESSE_TYPE_ANOMALIE}
+                      pathname={URLS.LIST_SIGNALEMENT_TYPE_ANOMALIE}
                     >
-                      Adresse - Type d&apos;anomalie
+                      Signalement - Type d&apos;anomalie
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
@@ -299,9 +299,9 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
-                      pathname={URLS.LIST_ADRESSE_TYPE_ELEMENT}
+                      pathname={URLS.LIST_SIGNALEMENT_TYPE_ELEMENT}
                     >
-                      Adresse - Type d&apos;élément
+                      Signalement - Type d&apos;élément
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
@@ -309,9 +309,9 @@ const MenuAdmin = () => {
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
-                      pathname={URLS.LIST_ADRESSE_SOUS_TYPE_ELEMENT}
+                      pathname={URLS.LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT}
                     >
-                      Adresse - Sous type d&apos;élément
+                      Signalement - Sous type d&apos;élément
                     </CustomLinkButton>
                   </Nav.Item>
                 )}

@@ -132,7 +132,7 @@ export const IconArrowUp = () => (
   <i className="fi fi-ss-arrow-circle-up fs-1" />
 );
 
-export const IconAdresse = () => <i className="fi fi-br-postal-address" />;
+export const IconSignalement = () => <i className="fi fi-br-postal-address" />;
 
 export const IconRCCI = () => <i className="fi fi-ss-match-fire" />;
 

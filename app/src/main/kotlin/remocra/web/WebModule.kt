@@ -12,7 +12,6 @@ import remocra.resteasy.UUIDMessageBodyReader
 import remocra.resteasy.UnhandledExceptionMapper
 import remocra.security.CsrfFeature
 import remocra.web.admin.AdminModule
-import remocra.web.adresses.AdresseModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
 import remocra.web.carto.CartoModule
@@ -48,6 +47,7 @@ import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
 import remocra.web.rcci.RcciModule
+import remocra.web.signalements.SignalementModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.toponymie.ToponymieModule
 import remocra.web.tracabilite.TracabiliteModule
@@ -103,7 +103,7 @@ object WebModule : RemocraModule() {
         install(DebitSimultaneModule)
         install(RapportPersonnaliseModule)
         install(ImportCtpModule)
-        install(AdresseModule)
+        install(SignalementModule)
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
         install(CartoModule)

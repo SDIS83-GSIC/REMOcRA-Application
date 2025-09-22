@@ -114,13 +114,13 @@ class GetPointCarteUseCase : AbstractUseCase() {
                 }
             }
 
-            TypeElementCarte.ADRESSE -> bbox.let {
+            TypeElementCarte.SIGNALEMENT -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getAdresse(null, srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
+                    carteRepository.getSignalement(null, srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
                 } else {
                     val geom =
                         geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getAdresse(geom.toGeomFromText(), srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
+                    carteRepository.getSignalement(geom.toGeomFromText(), srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
                 }
             }
             TypeElementCarte.OLDEB -> bbox.let {

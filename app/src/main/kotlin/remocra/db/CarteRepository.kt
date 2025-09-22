@@ -11,20 +11,16 @@ import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.Polygon
 import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
-import remocra.db.jooq.remocra.enums.EtatAdresse
+import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
-import remocra.db.jooq.remocra.tables.references.ADRESSE
-import remocra.db.jooq.remocra.tables.references.ADRESSE_ELEMENT
-import remocra.db.jooq.remocra.tables.references.ADRESSE_SOUS_TYPE_ELEMENT
-import remocra.db.jooq.remocra.tables.references.ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
-import remocra.db.jooq.remocra.tables.references.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
+import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
@@ -34,6 +30,10 @@ import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.RCCI
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_ELEMENT
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_SOUS_TYPE_ELEMENT
+import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.DateUtils
@@ -231,32 +231,32 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             .fetchInto()
     }
 
-    fun getAdresse(bbox: Field<Geometry?>?, srid: Int, zoneId: UUID?, isSuperAdmin: Boolean): Collection<AdresseCarte> {
+    fun getSignalement(bbox: Field<Geometry?>?, srid: Int, zoneId: UUID?, isSuperAdmin: Boolean): Collection<SignalementCarte> {
         return dsl.select(
-            ST_Transform(ADRESSE.GEOMETRIE, srid).`as`("elementGeometrie"),
-            ADRESSE.ID.`as`("elementId"),
-            ADRESSE.TYPE,
-            ADRESSE.DESCRIPTION,
-            ADRESSE.DATE_CONSTAT,
+            ST_Transform(SIGNALEMENT.GEOMETRIE, srid).`as`("elementGeometrie"),
+            SIGNALEMENT.ID.`as`("elementId"),
+            SIGNALEMENT.TYPE,
+            SIGNALEMENT.DESCRIPTION,
+            SIGNALEMENT.DATE_CONSTAT,
             multiset(
                 dsl.select(
-                    ADRESSE_SOUS_TYPE_ELEMENT.LIBELLE,
+                    SIGNALEMENT_SOUS_TYPE_ELEMENT.LIBELLE,
                     multiset(
-                        selectDistinct(ADRESSE_TYPE_ANOMALIE.LIBELLE)
-                            .from(ADRESSE_TYPE_ANOMALIE)
-                            .join(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE)
-                            .on(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ADRESSE_TYPE_ANOMALIE_ID.eq(ADRESSE_TYPE_ANOMALIE.ID))
-                            .where(ADRESSE_ELEMENT.ID.eq(L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE.ELEMENT_ID)),
+                        selectDistinct(SIGNALEMENT_TYPE_ANOMALIE.LIBELLE)
+                            .from(SIGNALEMENT_TYPE_ANOMALIE)
+                            .join(L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE)
+                            .on(L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE.SIGNALEMENT_TYPE_ANOMALIE_ID.eq(SIGNALEMENT_TYPE_ANOMALIE.ID))
+                            .where(SIGNALEMENT_ELEMENT.ID.eq(L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE.ELEMENT_ID)),
                     ).convertFrom { record ->
                         record?.map { r ->
                             r.value1()
                         }?.joinToString()
                     },
                 )
-                    .from(ADRESSE_SOUS_TYPE_ELEMENT)
-                    .join(ADRESSE_ELEMENT)
-                    .on(ADRESSE.ID.eq(ADRESSE_ELEMENT.ADRESSE_ID))
-                    .where(ADRESSE_SOUS_TYPE_ELEMENT.ID.eq(ADRESSE_ELEMENT.SOUS_TYPE)),
+                    .from(SIGNALEMENT_SOUS_TYPE_ELEMENT)
+                    .join(SIGNALEMENT_ELEMENT)
+                    .on(SIGNALEMENT.ID.eq(SIGNALEMENT_ELEMENT.SIGNALEMENT_ID))
+                    .where(SIGNALEMENT_SOUS_TYPE_ELEMENT.ID.eq(SIGNALEMENT_ELEMENT.SOUS_TYPE)),
             ).convertFrom { record ->
                 record?.map { r ->
                     SousElementAvecAnomalie(
@@ -266,16 +266,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                 }
             }.`as`("listSousElementAvecAnomalie"),
         )
-            .from(ADRESSE)
+            .from(SIGNALEMENT)
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(ADRESSE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
+                    ST_Within(SIGNALEMENT.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
                     isSuperAdmin,
                 ),
             )
-            .and(bbox?.let { ST_Within(ST_Transform(ADRESSE.GEOMETRIE, srid), bbox) })
+            .and(bbox?.let { ST_Within(ST_Transform(SIGNALEMENT.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
@@ -467,21 +467,21 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             "Numéro du dossier : $debitSimultaneNumeroDossier <br />Liste des PEI concernés : $listeNumeroPei"
     }
 
-    data class AdresseCarte(
+    data class SignalementCarte(
         override val elementGeometrie: Point,
         override val elementId: UUID,
-        val adresseType: EtatAdresse,
-        val adresseDescription: String?,
-        val adresseDateConstat: ZonedDateTime?,
+        val signalementType: EtatSignalement,
+        val signalementDescription: String?,
+        val signalementDateConstat: ZonedDateTime?,
         val listSousElementAvecAnomalie: List<SousElementAvecAnomalie> = listOf(),
 
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
-            get() = TypeElementCarte.ADRESSE
+            get() = TypeElementCarte.SIGNALEMENT
 
-        override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatAdresseLibelle(adresseType)} <br/>" +
-            "<b>Description :</b> ${adresseDescription.orEmpty()} " +
-            "<br /><b>Date constat :</b> ${adresseDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
+        override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatSignalementLibelle(signalementType)} <br/>" +
+            "<b>Description :</b> ${signalementDescription.orEmpty()} " +
+            "<br /><b>Date constat :</b> ${signalementDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
             "<br/><b>Liste des élements :</b> ${
                 listSousElementAvecAnomalie.joinToString {
                     "${it.sousElement} (anomalies constatées : ${
@@ -490,11 +490,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                 }
             }"
 
-        fun getEtatAdresseLibelle(etatAdresse: EtatAdresse) =
-            when (etatAdresse) {
-                EtatAdresse.EN_COURS -> "En cours"
-                EtatAdresse.ACCEPTEE -> "Acceptée"
-                EtatAdresse.REFUSEE -> "Refusée"
+        fun getEtatSignalementLibelle(etatSignalement: EtatSignalement) =
+            when (etatSignalement) {
+                EtatSignalement.EN_COURS -> "En cours"
+                EtatSignalement.ACCEPTEE -> "Acceptée"
+                EtatSignalement.REFUSEE -> "Refusée"
             }
     }
 

@@ -55,7 +55,7 @@ class DfciEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.DFCI_RECEPTRAVAUX_C])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    fun depotDeliberationAdresse(
+    fun depotDeliberationSignalement(
         @Context httpRequest: HttpServletRequest,
     ): Response {
         return Response.ok(

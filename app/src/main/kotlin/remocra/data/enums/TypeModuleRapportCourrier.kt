@@ -9,6 +9,6 @@ enum class TypeModuleRapportCourrier {
     PERMIS,
     RCI,
     DFCI,
-    ADRESSES,
+    SIGNALEMENTS,
     RISQUES,
 }

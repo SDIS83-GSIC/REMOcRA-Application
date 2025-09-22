@@ -38,7 +38,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
     override fun execute(userInfo: WrappedUserInfo, element: ParametresAdminDataInput): ParametresAdminDataInput {
         val parametresAdminData = ParametresAdminData(
             pei = element.pei,
-            adresse = element.adresse,
+            signalement = element.signalement,
             dfci = element.dfci,
             general = element.general,
             mobile = element.mobile,
@@ -62,10 +62,10 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
                 parametresAdminData.general.accueilPublic,
             )
 
-            // Adresse
-            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL, parametresAdminData.adresse.adresseDeliberationDestinataireEmail)
-            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_OBJET_EMAIL, parametresAdminData.adresse.adresseDeliberationObjetEmail)
-            updateParametre(ParametreEnum.ADRESSE_DELIBERATION_CORPS_EMAIL, parametresAdminData.adresse.adresseDeliberationCorpsEmail)
+            // Signalement
+            updateParametre(ParametreEnum.SIGNALEMENT_DELIBERATION_DESTINATAIRE_EMAIL, parametresAdminData.signalement.signalementDeliberationDestinataireEmail)
+            updateParametre(ParametreEnum.SIGNALEMENT_DELIBERATION_OBJET_EMAIL, parametresAdminData.signalement.signalementDeliberationObjetEmail)
+            updateParametre(ParametreEnum.SIGNALEMENT_DELIBERATION_CORPS_EMAIL, parametresAdminData.signalement.signalementDeliberationCorpsEmail)
 
             // Cartographie
             updateParametre(

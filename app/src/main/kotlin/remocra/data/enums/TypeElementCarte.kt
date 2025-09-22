@@ -8,7 +8,7 @@ enum class TypeElementCarte {
     DEBIT_SIMULTANE,
     OLDEB,
     RCCI,
-    ADRESSE,
+    SIGNALEMENT,
     CRISE,
     PEI_HIGHLIGHT,
 }

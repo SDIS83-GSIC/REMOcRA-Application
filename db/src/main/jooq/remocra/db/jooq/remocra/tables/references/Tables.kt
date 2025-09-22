@@ -3,11 +3,6 @@
  */
 package remocra.db.jooq.remocra.tables.references
 
-import remocra.db.jooq.remocra.tables.Adresse
-import remocra.db.jooq.remocra.tables.AdresseElement
-import remocra.db.jooq.remocra.tables.AdresseSousTypeElement
-import remocra.db.jooq.remocra.tables.AdresseTypeAnomalie
-import remocra.db.jooq.remocra.tables.AdresseTypeElement
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
@@ -39,8 +34,6 @@ import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
-import remocra.db.jooq.remocra.tables.LAdresseDocument
-import remocra.db.jooq.remocra.tables.LAdresseElementAdresseTypeAnomalie
 import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
@@ -68,6 +61,8 @@ import remocra.db.jooq.remocra.tables.LPermisCadastreParcelle
 import remocra.db.jooq.remocra.tables.LPermisDocument
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.LRapportPersonnaliseGroupeFonctionnalites
+import remocra.db.jooq.remocra.tables.LSignalementDocument
+import remocra.db.jooq.remocra.tables.LSignalementElementSignalementTypeAnomalie
 import remocra.db.jooq.remocra.tables.LThematiqueCourrier
 import remocra.db.jooq.remocra.tables.LThematiqueDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LThematiqueModule
@@ -130,6 +125,11 @@ import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.Reservoir
 import remocra.db.jooq.remocra.tables.RoleContact
+import remocra.db.jooq.remocra.tables.Signalement
+import remocra.db.jooq.remocra.tables.SignalementElement
+import remocra.db.jooq.remocra.tables.SignalementSousTypeElement
+import remocra.db.jooq.remocra.tables.SignalementTypeAnomalie
+import remocra.db.jooq.remocra.tables.SignalementTypeElement
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Task
 import remocra.db.jooq.remocra.tables.Thematique
@@ -152,31 +152,6 @@ import remocra.db.jooq.remocra.tables.Visite
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.Voie
 import remocra.db.jooq.remocra.tables.ZoneIntegration
-
-/**
- * The table <code>remocra.adresse</code>.
- */
-val ADRESSE: Adresse = Adresse.ADRESSE
-
-/**
- * The table <code>remocra.adresse_element</code>.
- */
-val ADRESSE_ELEMENT: AdresseElement = AdresseElement.ADRESSE_ELEMENT
-
-/**
- * The table <code>remocra.adresse_sous_type_element</code>.
- */
-val ADRESSE_SOUS_TYPE_ELEMENT: AdresseSousTypeElement = AdresseSousTypeElement.ADRESSE_SOUS_TYPE_ELEMENT
-
-/**
- * The table <code>remocra.adresse_type_anomalie</code>.
- */
-val ADRESSE_TYPE_ANOMALIE: AdresseTypeAnomalie = AdresseTypeAnomalie.ADRESSE_TYPE_ANOMALIE
-
-/**
- * The table <code>remocra.adresse_type_element</code>.
- */
-val ADRESSE_TYPE_ELEMENT: AdresseTypeElement = AdresseTypeElement.ADRESSE_TYPE_ELEMENT
 
 /**
  * The table <code>remocra.anomalie</code>.
@@ -334,16 +309,6 @@ val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire = IndisponibiliteTempo
 val JOB: Job = Job.JOB
 
 /**
- * The table <code>remocra.l_adresse_document</code>.
- */
-val L_ADRESSE_DOCUMENT: LAdresseDocument = LAdresseDocument.L_ADRESSE_DOCUMENT
-
-/**
- * The table <code>remocra.l_adresse_element_adresse_type_anomalie</code>.
- */
-val L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE: LAdresseElementAdresseTypeAnomalie = LAdresseElementAdresseTypeAnomalie.L_ADRESSE_ELEMENT_ADRESSE_TYPE_ANOMALIE
-
-/**
  * The table <code>remocra.l_commune_cis</code>.
  */
 val L_COMMUNE_CIS: LCommuneCis = LCommuneCis.L_COMMUNE_CIS
@@ -478,6 +443,17 @@ val L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES: LProfilUtilisateurOrg
  * The table <code>remocra.l_rapport_personnalise_groupe_fonctionnalites</code>.
  */
 val L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES: LRapportPersonnaliseGroupeFonctionnalites = LRapportPersonnaliseGroupeFonctionnalites.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES
+
+/**
+ * The table <code>remocra.l_signalement_document</code>.
+ */
+val L_SIGNALEMENT_DOCUMENT: LSignalementDocument = LSignalementDocument.L_SIGNALEMENT_DOCUMENT
+
+/**
+ * The table
+ * <code>remocra.l_signalement_element_signalement_type_anomalie</code>.
+ */
+val L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE: LSignalementElementSignalementTypeAnomalie = LSignalementElementSignalementTypeAnomalie.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
 
 /**
  * The table <code>remocra.l_thematique_courrier</code>.
@@ -788,6 +764,31 @@ val RESERVOIR: Reservoir = Reservoir.RESERVOIR
  * The table <code>remocra.role_contact</code>.
  */
 val ROLE_CONTACT: RoleContact = RoleContact.ROLE_CONTACT
+
+/**
+ * The table <code>remocra.signalement</code>.
+ */
+val SIGNALEMENT: Signalement = Signalement.SIGNALEMENT
+
+/**
+ * The table <code>remocra.signalement_element</code>.
+ */
+val SIGNALEMENT_ELEMENT: SignalementElement = SignalementElement.SIGNALEMENT_ELEMENT
+
+/**
+ * The table <code>remocra.signalement_sous_type_element</code>.
+ */
+val SIGNALEMENT_SOUS_TYPE_ELEMENT: SignalementSousTypeElement = SignalementSousTypeElement.SIGNALEMENT_SOUS_TYPE_ELEMENT
+
+/**
+ * The table <code>remocra.signalement_type_anomalie</code>.
+ */
+val SIGNALEMENT_TYPE_ANOMALIE: SignalementTypeAnomalie = SignalementTypeAnomalie.SIGNALEMENT_TYPE_ANOMALIE
+
+/**
+ * The table <code>remocra.signalement_type_element</code>.
+ */
+val SIGNALEMENT_TYPE_ELEMENT: SignalementTypeElement = SignalementTypeElement.SIGNALEMENT_TYPE_ELEMENT
 
 /**
  * The table <code>remocra.site</code>.

@@ -198,17 +198,17 @@ function getLinks(
           link: URLS.CARTE_PERMIS,
         },
       ];
-    case TypeModuleRemocra.ADRESSES:
+    case TypeModuleRemocra.SIGNALEMENTS:
       return [
         {
-          aLeDroit: hasDroit(user, TYPE_DROIT.ADRESSES_C),
-          label: "Carte des adresses",
-          link: URLS.ADRESSE,
+          aLeDroit: hasDroit(user, TYPE_DROIT.SIGNALEMENTS_C),
+          label: "Carte des signalements",
+          link: URLS.SIGNALEMENTS,
         },
         {
           aLeDroit: hasDroit(user, TYPE_DROIT.DEPOT_DELIB_C),
           label: "Déposer une délibération",
-          link: URLS.ADRESSE_DELIBERATION,
+          link: URLS.SIGNALEMENTS_DELIBERATION,
         },
       ];
     case TypeModuleRemocra.RISQUES:

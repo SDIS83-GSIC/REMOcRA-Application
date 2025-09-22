@@ -112,7 +112,7 @@ export function getThematiqueFromTypeModule(
     case TypeModuleRemocra.DFCI:
     case TypeModuleRemocra.OLDEBS:
     case TypeModuleRemocra.PERMIS:
-    case TypeModuleRemocra.ADRESSES:
+    case TypeModuleRemocra.SIGNALEMENTS:
     case TypeModuleRemocra.RISQUES:
     case TypeModuleRemocra.CRISE:
     case TypeModuleRemocra.ADMIN:

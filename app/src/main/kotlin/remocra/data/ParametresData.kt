@@ -12,7 +12,7 @@ data class ParametresData(
 
 data class ParametresAdminData(
     val general: ParametresSectionGeneral,
-    val adresse: ParametresSectionAdresse,
+    val signalement: ParametresSectionSignalement,
     val dfci: ParametresSectionDfci,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
@@ -25,7 +25,7 @@ data class ParametresAdminData(
 
 data class ParametresAdminDataInput(
     val general: ParametresSectionGeneral,
-    val adresse: ParametresSectionAdresse,
+    val signalement: ParametresSectionSignalement,
     val dfci: ParametresSectionDfci,
     val mobile: ParametresSectionMobile,
     val cartographie: ParametresSectionCartographie,
@@ -53,10 +53,10 @@ data class ParametresSectionGeneral(
     val accueilPublic: String?,
 )
 
-data class ParametresSectionAdresse(
-    val adresseDeliberationDestinataireEmail: String?,
-    val adresseDeliberationCorpsEmail: String?,
-    val adresseDeliberationObjetEmail: String?,
+data class ParametresSectionSignalement(
+    val signalementDeliberationDestinataireEmail: String?,
+    val signalementDeliberationCorpsEmail: String?,
+    val signalementDeliberationObjetEmail: String?,
 )
 
 data class ParametresSectionDfci(

@@ -6,8 +6,6 @@ package remocra.db.jooq.remocra.indexes
 import org.jooq.Index
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
-import remocra.db.jooq.remocra.tables.Adresse
-import remocra.db.jooq.remocra.tables.AdresseElement
 import remocra.db.jooq.remocra.tables.CadastreParcelle
 import remocra.db.jooq.remocra.tables.CadastreSection
 import remocra.db.jooq.remocra.tables.CarroyageDfci
@@ -20,6 +18,8 @@ import remocra.db.jooq.remocra.tables.PeiPrescrit
 import remocra.db.jooq.remocra.tables.PenaAspiration
 import remocra.db.jooq.remocra.tables.Permis
 import remocra.db.jooq.remocra.tables.Rcci
+import remocra.db.jooq.remocra.tables.Signalement
+import remocra.db.jooq.remocra.tables.SignalementElement
 import remocra.db.jooq.remocra.tables.Site
 import remocra.db.jooq.remocra.tables.Voie
 import remocra.db.jooq.remocra.tables.ZoneIntegration
@@ -28,8 +28,6 @@ import remocra.db.jooq.remocra.tables.ZoneIntegration
 // INDEX definitions
 // -------------------------------------------------------------------------
 
-val ADRESSE_ELEMENT_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("adresse_element_geometrie_idx"), AdresseElement.ADRESSE_ELEMENT, arrayOf(AdresseElement.ADRESSE_ELEMENT.GEOMETRIE), false)
-val ADRESSE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("adresse_geometrie_idx"), Adresse.ADRESSE, arrayOf(Adresse.ADRESSE.GEOMETRIE), false)
 val CADASTRE_PARCELLE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("cadastre_parcelle_geometrie_idx"), CadastreParcelle.CADASTRE_PARCELLE, arrayOf(CadastreParcelle.CADASTRE_PARCELLE.GEOMETRIE), false)
 val CADASTRE_SECTION_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("cadastre_section_geometrie_idx"), CadastreSection.CADASTRE_SECTION, arrayOf(CadastreSection.CADASTRE_SECTION.GEOMETRIE), false)
 val CARROYAGE_DFCI_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("carroyage_dfci_geometrie_idx"), CarroyageDfci.CARROYAGE_DFCI, arrayOf(CarroyageDfci.CARROYAGE_DFCI.GEOMETRIE), false)
@@ -42,6 +40,8 @@ val PEI_PRESCRIT_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("pei_presc
 val PENA_ASPIRATION_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("pena_aspiration_geometrie_idx"), PenaAspiration.PENA_ASPIRATION, arrayOf(PenaAspiration.PENA_ASPIRATION.GEOMETRIE), false)
 val PERMIS_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("permis_geometrie_idx"), Permis.PERMIS, arrayOf(Permis.PERMIS.GEOMETRIE), false)
 val RCCI_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("rcci_geometrie_idx"), Rcci.RCCI, arrayOf(Rcci.RCCI.GEOMETRIE), false)
+val SIGNALEMENT_ELEMENT_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("signalement_element_geometrie_idx"), SignalementElement.SIGNALEMENT_ELEMENT, arrayOf(SignalementElement.SIGNALEMENT_ELEMENT.GEOMETRIE), false)
+val SIGNALEMENT_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("signalement_geometrie_idx"), Signalement.SIGNALEMENT, arrayOf(Signalement.SIGNALEMENT.GEOMETRIE), false)
 val SITE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("site_geometrie_idx"), Site.SITE, arrayOf(Site.SITE.GEOMETRIE), false)
 val VOIE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("voie_geometrie_idx"), Voie.VOIE, arrayOf(Voie.VOIE.GEOMETRIE), false)
 val ZONE_INTEGRATION_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("zone_integration_geometrie_idx"), ZoneIntegration.ZONE_INTEGRATION, arrayOf(ZoneIntegration.ZONE_INTEGRATION.GEOMETRIE), false)

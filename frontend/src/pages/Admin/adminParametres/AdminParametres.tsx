@@ -40,10 +40,10 @@ type ParametresSectionGeneral = {
   accueilPublic: string | undefined;
 };
 
-type ParametresSectionAdresse = {
-  adresseDeliberationDestinataireEmail: string;
-  adresseDeliberationCorpsEmail: string;
-  adresseDeliberationObjetEmail: string;
+type ParametresSectionSignalement = {
+  signalementDeliberationDestinataireEmail: string;
+  signalementDeliberationCorpsEmail: string;
+  signalementDeliberationObjetEmail: string;
 };
 
 type ParametresSectionDfci = {
@@ -110,7 +110,7 @@ type ParametresSectionPeiLongueIndispo = {
 
 type AdminParametresValue = {
   general: ParametresSectionGeneral;
-  adresse: ParametresSectionAdresse;
+  signalement: ParametresSectionSignalement;
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
@@ -124,7 +124,7 @@ export const getInitialValues = (
   data: AdminParametresValue,
 ): {
   general: ParametresSectionGeneral;
-  adresse: ParametresSectionAdresse;
+  signalement: ParametresSectionSignalement;
   mobile: ParametresSectionMobile;
   cartographie: ParametresSectionCartographie;
   couvertureHydraulique: ParametresSectionCouvertureHydraulique;
@@ -134,7 +134,7 @@ export const getInitialValues = (
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
 } => ({
   general: data?.general,
-  adresse: data?.adresse,
+  signalement: data?.signalement,
   mobile: {
     ...data?.mobile,
     caracteristiquesPibiIds:
@@ -170,7 +170,7 @@ export const validationSchema = object({});
 export const prepareVariables = (values: AdminParametresValue) => {
   return {
     general: values?.general,
-    adresse: values?.adresse,
+    signalement: values?.signalement,
     mobile: {
       ...values?.mobile,
       caracteristiquesPena:
@@ -240,8 +240,8 @@ export const AdminParametresInterne = () => {
                       content: <AdminGeneral values={values.general} />,
                     },
                     {
-                      header: "Adresse",
-                      content: <AdminAdresse values={values.adresse} />,
+                      header: "Signalement",
+                      content: <AdminSignalement values={values.signalement} />,
                     },
                     {
                       header: "Cartographie",
@@ -681,25 +681,25 @@ const AdminApplicationMobile = ({
   );
 };
 
-const AdminAdresse = ({ values }: { values: ParametresSectionAdresse }) => {
+const AdminSignalement = ({ values }: { values: ParametresSectionSignalement }) => {
   return (
     values && (
       <>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextAreaInput
-            name="adresse.adresseDeliberationDestinataireEmail"
+            name="signalement.signalementDeliberationDestinataireEmail"
             label="Adresse email qui recevra une notification lors du dépôt d'une délibération"
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextAreaInput
-            name="adresse.adresseDeliberationObjetEmail"
+            name="signalement.signalementDeliberationObjetEmail"
             label="Objet du mail de notification lors du dépôt d'une délibération"
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextAreaInput
-            name="adresse.adresseDeliberationCorpsEmail"
+            name="signalement.signalementDeliberationCorpsEmail"
             label="Contenu du mail de notification lors du dépôt d'une délibération"
             tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
           />

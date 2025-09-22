@@ -19,15 +19,15 @@ import AccesRapidePei from "./pages/AccesRapide/AccesRapidePei.tsx";
 import Accueil from "./pages/Accueil/Accueil.tsx";
 import AdminAccueil from "./pages/Admin/accueil/AdminAccueil.tsx";
 import AdminParametres from "./pages/Admin/adminParametres/AdminParametres.tsx";
-import CreateAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/CreateAdresseSousTypeElement.tsx";
-import ListAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/ListAdresseSousTypeElement.tsx";
-import UpdateAdresseSousTypeElement from "./pages/Admin/adresseSousTypeElement/UpdateAdresseSousTypeElement.tsx";
-import CreateAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/CreateAdresseTypeAnomalie.tsx";
-import ListAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/ListAdresseTypeAnomalie.tsx";
-import UpdateAdresseTypeAnomalie from "./pages/Admin/adresseTypeAnomalie/UpdateAdresseTypeAnomalie.tsx";
-import CreateAdresseTypeElement from "./pages/Admin/adresseTypeElement/CreateAdresseTypeElement.tsx";
-import ListAdresseTypeElement from "./pages/Admin/adresseTypeElement/ListAdresseTypeElement.tsx";
-import UpdateAdresseTypeElement from "./pages/Admin/adresseTypeElement/UpdateAdresseTypeElement.tsx";
+import CreateSignalementSousTypeElement from "./pages/Admin/signalementSousTypeElement/CreateSignalementSousTypeElement.tsx";
+import ListSignalementSousTypeElement from "./pages/Admin/signalementSousTypeElement/ListSignalementSousTypeElement.tsx";
+import UpdateSignalementSousTypeElement from "./pages/Admin/signalementSousTypeElement/UpdateSignalementSousTypeElement.tsx";
+import CreateSignalementTypeAnomalie from "./pages/Admin/signalementTypeAnomalie/CreateSignalementTypeAnomalie.tsx";
+import ListSignalementTypeAnomalie from "./pages/Admin/signalementTypeAnomalie/ListSignalementTypeAnomalie.tsx";
+import UpdateSignalementTypeAnomalie from "./pages/Admin/signalementTypeAnomalie/UpdateSignalementTypeAnomalie.tsx";
+import CreateSignalementTypeElement from "./pages/Admin/signalementTypeElement/CreateSignalementTypeElement.tsx";
+import ListSignalementTypeElement from "./pages/Admin/signalementTypeElement/ListSignalementTypeElement.tsx";
+import UpdateSignalementTypeElement from "./pages/Admin/signalementTypeElement/UpdateSignalementTypeElement.tsx";
 import AnomalieCreate from "./pages/Admin/anomalie/AnomalieCreate.tsx";
 import AnomalieList from "./pages/Admin/anomalie/AnomalieList.tsx";
 import AnomalieSort from "./pages/Admin/anomalie/AnomalieSort.tsx";
@@ -138,7 +138,7 @@ import ListUtilisateur from "./pages/Admin/utilisateur/ListUtilisateur.tsx";
 import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
-import ModuleAdresse from "./pages/Adresse/ModuleAdresse.tsx";
+import ModuleSignalement from "./pages/Signalement/ModuleSignalement.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
@@ -200,8 +200,8 @@ import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
 import ListFonctionContact from "./pages/Admin/fonctionContact/ListFonctionContact.tsx";
 import UpdateFonctionContact from "./pages/Admin/fonctionContact/UpdateFonctionContact.tsx";
 import CreateFonctionContact from "./pages/Admin/fonctionContact/CreateFonctionContact.tsx";
-import MapAdresse from "./components/Map/MapAdresses/MapAdresse.tsx";
-import DepotDeliberation from "./pages/Adresse/DepotDeliberation.tsx";
+import MapSignalement from "./components/Map/MapSignalements/MapSignalement.tsx";
+import DepotDeliberation from "./pages/Signalement/DepotDeliberation.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
@@ -299,20 +299,20 @@ export const URLS = {
   UPDATE_NATURE: (natureId: string) => url`/admin/nature/update/` + natureId,
   LIST_NATURE: url`/admin/nature`,
 
-  LIST_ADRESSE_TYPE_ANOMALIE: url`/admin/adresse-type-anomalie/`,
-  ADD_ADRESSE_TYPE_ANOMALIE: url`/admin/adresse-type-anomalie/create/`,
-  UPDATE_ADRESSE_TYPE_ANOMALIE: (adresseTypeAnomalieId: string) =>
-    url`/admin/adresse-type-anomalie/` + adresseTypeAnomalieId,
+  LIST_SIGNALEMENT_TYPE_ANOMALIE: url`/admin/signalement-type-anomalie/`,
+  ADD_SIGNALEMENT_TYPE_ANOMALIE: url`/admin/signalement-type-anomalie/create/`,
+  UPDATE_SIGNALEMENT_TYPE_ANOMALIE: (signalementTypeAnomalieId: string) =>
+    url`/admin/signalement-type-anomalie/` + signalementTypeAnomalieId,
 
-  LIST_ADRESSE_TYPE_ELEMENT: url`/admin/adresse-type-element/`,
-  ADD_ADRESSE_TYPE_ELEMENT: url`/admin/adresse-type-element/create/`,
-  UPDATE_ADRESSE_TYPE_ELEMENT: (adresseTypeElementId: string) =>
-    url`/admin/adresse-type-element/` + adresseTypeElementId,
+  LIST_SIGNALEMENT_TYPE_ELEMENT: url`/admin/signalement-type-element/`,
+  ADD_SIGNALEMENT_TYPE_ELEMENT: url`/admin/signalement-type-element/create/`,
+  UPDATE_SIGNALEMENT_TYPE_ELEMENT: (signalementTypeElementId: string) =>
+    url`/admin/signalement-type-element/` + signalementTypeElementId,
 
-  LIST_ADRESSE_SOUS_TYPE_ELEMENT: url`/admin/adresse-sous-type-element`,
-  ADD_ADRESSE_SOUS_TYPE_ELEMENT: url`/admin/adresse-sous-type-element/create`,
-  UPDATE_ADRESSE_SOUS_TYPE_ELEMENT: (adresseSousTypeElementId: string) =>
-    url`/admin/adresse-sous-type-element/${adresseSousTypeElementId}`,
+  LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT: url`/admin/signalement-sous-type-element`,
+  ADD_SIGNALEMENT_SOUS_TYPE_ELEMENT: url`/admin/signalement-sous-type-element/create`,
+  UPDATE_SIGNALEMENT_SOUS_TYPE_ELEMENT: (signalementSousTypeElementId: string) =>
+    url`/admin/signalement-sous-type-element/${signalementSousTypeElementId}`,
 
   GROUPE_FONCTIONNALITES_LIST: url`/admin/groupe-fonctionnalites`,
   GROUPE_FONCTIONNALITES_CREATE: url`/admin/groupe-fonctionnalites/create`,
@@ -528,9 +528,9 @@ export const URLS = {
   CARTE_DFCI: url`/dfci/carte`,
   DFCI_RECEPTION_TRAVAUX: url`/dfci/reception-travaux`,
 
-  // Module Adresses
-  ADRESSE: url`/adresses/carte`,
-  ADRESSE_DELIBERATION: url`/adresses/deliberation`,
+  // Module Signalements
+  SIGNALEMENTS: url`/signalements/carte`,
+  SIGNALEMENTS_DELIBERATION: url`/signalements/deliberation`,
 
   // Module dashboard
   DASHBOARD_ADMIN_QUERY: url`/admin/dashboard/query`,
@@ -1127,82 +1127,82 @@ export default [
         ),
       },
       {
-        path: "adresse-type-anomalie",
+        path: "signalement-type-anomalie",
         element: (
           <Authorization
-            Component={ListAdresseTypeAnomalie}
+            Component={ListSignalementTypeAnomalie}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-type-anomalie/create",
+        path: "signalement-type-anomalie/create",
         element: (
           <Authorization
-            Component={CreateAdresseTypeAnomalie}
+            Component={CreateSignalementTypeAnomalie}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-type-anomalie/:adresseTypeAnomalieId",
+        path: "signalement-type-anomalie/:signalementTypeAnomalieId",
         element: (
           <Authorization
-            Component={UpdateAdresseTypeAnomalie}
+            Component={UpdateSignalementTypeAnomalie}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-type-element",
+        path: "signalement-type-element",
         element: (
           <Authorization
-            Component={ListAdresseTypeElement}
+            Component={ListSignalementTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-type-element/create",
+        path: "signalement-type-element/create",
         element: (
           <Authorization
-            Component={CreateAdresseTypeElement}
+            Component={CreateSignalementTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-type-element/:adresseTypeElementId",
+        path: "signalement-type-element/:signalementTypeElementId",
         element: (
           <Authorization
-            Component={UpdateAdresseTypeElement}
+            Component={UpdateSignalementTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-sous-type-element",
+        path: "signalement-sous-type-element",
         element: (
           <Authorization
-            Component={ListAdresseSousTypeElement}
+            Component={ListSignalementSousTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-sous-type-element/create",
+        path: "signalement-sous-type-element/create",
         element: (
           <Authorization
-            Component={CreateAdresseSousTypeElement}
+            Component={CreateSignalementSousTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
       {
-        path: "adresse-sous-type-element/:adresseSousTypeElementId",
+        path: "signalement-sous-type-element/:signalementSousTypeElementId",
         element: (
           <Authorization
-            Component={UpdateAdresseSousTypeElement}
+            Component={UpdateSignalementSousTypeElement}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
@@ -2383,11 +2383,11 @@ export default [
     ],
   },
   {
-    path: "/adresses/",
+    path: "/signalements/",
     element: (
       <Authorization
-        Component={ModuleAdresse}
-        droits={[TYPE_DROIT.ADRESSES_C]}
+        Component={ModuleSignalement}
+        droits={[TYPE_DROIT.SIGNALEMENTS_C]}
       />
     ),
     children: [
@@ -2395,8 +2395,8 @@ export default [
         path: "carte",
         element: (
           <Authorization
-            Component={MapAdresse}
-            droits={[TYPE_DROIT.ADRESSES_C]}
+            Component={MapSignalement}
+            droits={[TYPE_DROIT.SIGNALEMENTS_C]}
           />
         ),
       },

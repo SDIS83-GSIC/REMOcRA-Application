@@ -1,0 +1,126 @@
+-- Retirer les Foreign keys avant de modifier
+AlTER TABLE remocra.adresse_element DROP CONSTRAINT adresse_element_adresse_element_adresse_id_fkey;
+AlTER TABLE remocra.l_adresse_document DROP CONSTRAINT l_adresse_document_adresse_id_fkey;
+ALTER TABLE remocra.l_adresse_element_adresse_type_anomalie DROP CONSTRAINT l_adresse_element_adresse_type_anomalie_element_id_fkey;
+ALTER TABLE remocra.adresse_element DROP CONSTRAINT adresse_element_adresse_element_sous_type_fkey;
+ALTER TABLE remocra.adresse_sous_type_element DROP CONSTRAINT adresse_sous_type_element_adresse_sous_type_element_type_e_fkey;
+ALTER TABLE remocra.l_adresse_element_adresse_type_anomalie DROP CONSTRAINT l_adresse_element_adresse_type_an_adresse_type_anomalie_id_fkey;
+
+--Modification de adresse
+ALTER TABLE remocra.adresse RENAME TO signalement;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_id TO signalement_id;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_description TO signalement_description;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_utilisateur TO signalement_utilisateur;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_date_constat TO signalement_date_constat;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_date_modification TO signalement_date_modification;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_type TO signalement_type;
+ALTER TABLE remocra.signalement RENAME COLUMN adresse_geometrie TO signalement_geometrie;
+COMMENT ON COLUMN remocra.signalement.signalement_geometrie IS
+  'Centroïde de toutes les géométries des signalements';
+
+ALTER TABLE remocra.signalement RENAME CONSTRAINT adresse_pkey TO signalement_pkey;
+ALTER TABLE remocra.signalement RENAME CONSTRAINT geometrie_adresse TO geometrie_signalement;
+ALTER TABLE remocra.signalement RENAME CONSTRAINT adresse_adresse_utilisateur_fkey TO signalement_signalement_utilisateur_fkey;
+
+--Modification de adresse_element
+ALTER TABLE remocra.adresse_element RENAME TO signalement_element;
+ALTER TABLE remocra.signalement_element RENAME COLUMN adresse_element_id TO signalement_element_id;
+ALTER TABLE remocra.signalement_element RENAME COLUMN adresse_element_description TO signalement_element_description;
+ALTER TABLE remocra.signalement_element RENAME COLUMN adresse_element_geometrie TO signalement_element_geometrie;
+ALTER TABLE remocra.signalement_element RENAME COLUMN adresse_element_sous_type TO signalement_element_sous_type;
+ALTER TABLE remocra.signalement_element RENAME COLUMN adresse_element_adresse_id TO signalement_element_signalement_id;
+
+ALTER TABLE remocra.signalement_element RENAME CONSTRAINT adresse_element_pkey TO signalement_element_pkey;
+
+--Modification de l_adresse_document
+ALTER TABLE remocra.l_adresse_document RENAME TO l_signalement_document;
+ALTER TABLE remocra.l_signalement_document RENAME COLUMN adresse_id TO signalement_id;
+
+ALTER TABLE remocra.l_signalement_document RENAME CONSTRAINT l_adresse_document_pkey TO l_signalement_document_pkey;
+ALTER TABLE remocra.l_signalement_document RENAME CONSTRAINT l_adresse_document_document_id_fkey TO l_signalement_document_document_id_fkey;
+
+--Modification de adresse_sous_type_element
+ALTER TABLE remocra.adresse_sous_type_element RENAME TO signalement_sous_type_element;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_id TO signalement_sous_type_element_id;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_actif TO signalement_sous_type_element_actif;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_code TO signalement_sous_type_element_code;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_libelle TO signalement_sous_type_element_libelle;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_type_geometrie TO signalement_sous_type_element_type_geometrie;
+ALTER TABLE remocra.signalement_sous_type_element RENAME COLUMN adresse_sous_type_element_type_element TO signalement_sous_type_element_type_element;
+
+ALTER TABLE remocra.signalement_sous_type_element RENAME CONSTRAINT adresse_sous_type_element_adresse_sous_type_element_code_key TO signalement_sous_type_element_signalement_sous_type_element_code_key;
+ALTER TABLE remocra.signalement_sous_type_element RENAME CONSTRAINT adresse_sous_type_element_pkey TO signalement_sous_type_element_pkey;
+
+--Modification de adresse_type_element
+ALTER TABLE remocra.adresse_type_element RENAME TO signalement_type_element;
+ALTER TABLE remocra.signalement_type_element RENAME COLUMN adresse_type_element_id TO signalement_type_element_id;
+ALTER TABLE remocra.signalement_type_element RENAME COLUMN adresse_type_element_actif TO signalement_type_element_actif;
+ALTER TABLE remocra.signalement_type_element RENAME COLUMN adresse_type_element_code TO signalement_type_element_code;
+ALTER TABLE remocra.signalement_type_element RENAME COLUMN adresse_type_element_libelle TO signalement_type_element_libelle;
+
+ALTER TABLE remocra.signalement_type_element RENAME CONSTRAINT adresse_type_element_pkey TO signalement_type_element_pkey;
+ALTER TABLE remocra.signalement_type_element RENAME CONSTRAINT adresse_type_element_adresse_type_element_code_key TO signalement_type_element_signalement_type_element_code_key;
+
+--Modification de l_adresse_element_adresse_type_anomalie
+ALTER TABLE remocra.l_adresse_element_adresse_type_anomalie RENAME TO l_signalement_element_signalement_type_anomalie;
+ALTER TABLE remocra.l_signalement_element_signalement_type_anomalie RENAME COLUMN adresse_type_anomalie_id TO signalement_type_anomalie_id;
+
+ALTER TABLE remocra.l_signalement_element_signalement_type_anomalie RENAME CONSTRAINT l_adresse_element_adresse_type_anomalie_pkey TO l_signalement_element_signalement_type_anomalie_pkey;
+
+--Modification de adresse-type-anomalie
+ALTER TABLE remocra.adresse_type_anomalie RENAME TO signalement_type_anomalie;
+ALTER TABLE remocra.signalement_type_anomalie RENAME COLUMN adresse_type_anomalie_id TO signalement_type_anomalie_id;
+ALTER TABLE remocra.signalement_type_anomalie RENAME COLUMN adresse_type_anomalie_actif TO signalement_type_anomalie_actif;
+ALTER TABLE remocra.signalement_type_anomalie RENAME COLUMN adresse_type_anomalie_code TO signalement_type_anomalie_code;
+ALTER TABLE remocra.signalement_type_anomalie RENAME COLUMN adresse_type_anomalie_libelle TO signalement_type_anomalie_libelle;
+
+ALTER TABLE remocra.signalement_type_anomalie RENAME CONSTRAINT adresse_type_anomalie_pkey TO signalement_type_anomalie_pkey;
+ALTER TABLE remocra.signalement_type_anomalie RENAME CONSTRAINT adresse_type_anomalie_adresse_type_anomalie_code_key TO signalement_type_anomalie_signalement_type_anomalie_code_key;
+
+
+--Ajout des FKS
+ALTER TABLE remocra.signalement_element
+ADD CONSTRAINT signalement_element_signalement_element_signalement_id_fkey
+FOREIGN KEY (signalement_element_signalement_id) REFERENCES remocra.signalement(signalement_id);
+
+AlTER TABLE remocra.l_signalement_document
+ADD CONSTRAINT l_signalement_document_signalement_id_fkey
+FOREIGN KEY (signalement_id) REFERENCES remocra.signalement(signalement_id);
+
+ALTER TABLE remocra.l_signalement_element_signalement_type_anomalie
+ADD CONSTRAINT l_signalement_element_signalement_type_anomalie_element_id_fkey
+FOREIGN KEY (element_id) REFERENCES remocra.signalement_element(signalement_element_id);
+
+ALTER TABLE remocra.signalement_element
+ADD CONSTRAINT signalement_element_signalement_element_sous_type_fkey
+FOREIGN KEY (signalement_element_sous_type) REFERENCES remocra.signalement_sous_type_element(signalement_sous_type_element_id);
+
+ALTER TABLE remocra.signalement_sous_type_element
+ADD CONSTRAINT signalement_sous_type_element_signalement_sous_type_element_type_e_fkey
+FOREIGN KEY (signalement_sous_type_element_type_element) REFERENCES remocra.signalement_type_element(signalement_type_element_id);
+
+ALTER TABLE remocra.l_signalement_element_signalement_type_anomalie
+ADD CONSTRAINT l_signalement_element_signalement_type_anomalie_signalement_type_anomalie_id_fkey
+FOREIGN KEY (signalement_type_anomalie_id) REFERENCES remocra.signalement_type_anomalie(signalement_type_anomalie_id);
+
+--Modifier les ENUMS
+ALTER TYPE historique.type_objet RENAME VALUE 'ADRESSE' TO 'SIGNALEMENT';
+ALTER TYPE historique.type_objet RENAME VALUE 'ADRESSE_ELEMENT' TO 'SIGNALEMENT_ELEMENT';
+ALTER TYPE historique.type_objet RENAME VALUE 'ADRESSE_TYPE_ANOMALIE' TO 'SIGNALEMENT_TYPE_ANOMALIE';
+ALTER TYPE historique.type_objet RENAME VALUE 'ADRESSE_TYPE_ELEMENT' TO 'SIGNALEMENT_TYPE_ELEMENT';
+ALTER TYPE historique.type_objet RENAME VALUE 'ADRESSE_SOUS_TYPE_ELEMENT' TO 'SIGNALEMENT_SOUS_TYPE_ELEMENT';
+ALTER TYPE remocra."ETAT_ADRESSE" RENAME TO "ETAT_SIGNALEMENT";
+ALTER TYPE remocra."DROIT" RENAME VALUE 'ADRESSES_C' TO 'SIGNALEMENTS_C';
+ALTER TYPE remocra."type_module" RENAME VALUE 'ADRESSES' TO 'SIGNALEMENTS';
+--Modifier les indexs
+ALTER INDEX adresse_element_geometrie_idx RENAME TO signalement_element_geometrie_idx;
+ALTER INDEX adresse_geometrie_idx RENAME TO signalement_geometrie_idx;
+
+UPDATE remocra.parametre SET parametre_code='SIGNALEMENT_DELIBERATION_OBJET_EMAIL'
+WHERE parametre.parametre_code = 'ADRESSE_DELIBERATION_OBJET_EMAIL';
+
+UPDATE remocra.parametre SET parametre_code='SIGNALEMENT_DELIBERATION_DESTINATAIRE_EMAIL'
+WHERE parametre.parametre_code = 'ADRESSE_DELIBERATION_DESTINATAIRE_EMAIL';
+
+UPDATE remocra.parametre SET parametre_code='SIGNALEMENT_DELIBERATION_CORPS_EMAIL'
+WHERE parametre.parametre_code = 'ADRESSE_DELIBERATION_CORPS_EMAIL';

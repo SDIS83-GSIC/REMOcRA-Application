@@ -4,8 +4,8 @@ package remocra.data.enums
  * Enumération de tous les tables de type "nomenclature code-libellé-actif(-protected?)"
  */
 enum class TypeNomenclatureCodeLibelle {
-    ADRESSE_TYPE_ANOMALIE,
-    ADRESSE_TYPE_ELEMENT,
+    SIGNALEMENT_TYPE_ANOMALIE,
+    SIGNALEMENT_TYPE_ELEMENT,
     ANOMALIE_CATEGORIE,
     CRISE_CATEGORIE,
     DIAMETRE,
