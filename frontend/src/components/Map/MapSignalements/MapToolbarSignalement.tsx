@@ -296,6 +296,7 @@ const MapToolbarSignalement = ({
   geometryElement,
   setSousTypeElement,
   sousTypeElement,
+  close,
 }: {
   map?: Map;
   dataSignalementLayer: any;
@@ -315,6 +316,7 @@ const MapToolbarSignalement = ({
   geometryElement: string;
   setSousTypeElement: () => void;
   sousTypeElement: string;
+  close: () =>void;
 }) => {
   const typeWithSousType = useGet(url`/api/signalements/type-sous-type`)?.data;
 
@@ -444,11 +446,7 @@ const MapToolbarSignalement = ({
             prepareVariables={(values) => prepareVariables(values)}
             redirectUrl={URLS.SIGNALEMENTS}
             onSubmit={() => {
-              dataSignalementLayer.getSource().refresh();
-              refreshLayerGeoserver(map);
-              setListSignalementElement([]);
-              workingLayer.getSource().clear();
-              setShowCreateSignalement(false);
+              close();
             }}
           >
             {/* j'envoie la liste d'élément juste pour les afficher */}

@@ -2,7 +2,7 @@ import { useMemo, useRef } from "react";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { createPointLayer } from "../MapUtils.tsx";
+import { createPointLayer, refreshLayerGeoserver } from "../MapUtils.tsx";
 import url from "../../../module/fetch.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconSignalement } from "../../Icon/Icon.tsx";
@@ -86,6 +86,13 @@ const MapSignalement = () => {
             toggleTool={toggleTool}
             activeTool={activeTool}
             map={map}
+            close={() => {
+              dataSignalementLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
+              setListSignalementElement([]);
+              workingLayer.getSource().clear();
+              setShowCreateSignalement(false);
+            }}
             showCreateElement={showCreateElement}
             setShowCreateElement={setShowCreateElement}
             handleCloseElement={handleCloseElement}
