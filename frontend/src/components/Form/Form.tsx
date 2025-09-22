@@ -494,7 +494,7 @@ export const DateTimeInput = ({
           {...rest}
           disabled={readOnly}
           value={value}
-          max="9999-12-31T23:59"
+          max={dateType === "date" ? "9999-12-31" : "9999-12-31T23:59"}
         />
       </Row>
     </DivWithError>
