@@ -1,7 +1,10 @@
 package remocra.usecase.modeleminimalpei
 
 import jakarta.inject.Inject
-import org.locationtech.jts.io.geojson.GeoJsonWriter
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
+import remocra.GlobalConstants
 import remocra.api.usecase.AbstractApiPeiUseCase
 import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
@@ -12,6 +15,7 @@ import remocra.db.VisiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.usecase.geometrie.GetCoordonneesBySrid
 import remocra.utils.AdresseDecorator
 import remocra.utils.AdresseForDecorator
 import remocra.utils.DiametreDecorator
@@ -40,6 +44,9 @@ constructor(
 
     @Inject
     lateinit var appSettings: AppSettings
+
+    @Inject
+    lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
 
     fun execute(
         codeInsee: String?,
@@ -71,6 +78,19 @@ constructor(
         val mapDateDerniereModif = tracabiliteRepository.getLastDateByPei(listePeiId)
 
         return listePei.map {
+            // On recalcule la géométrie en 4326 (attendu NexSIS)
+            val geom = getCoordonneesBySrid.execute(it.peiGeometrie.x.toString(), it.peiGeometrie.y.toString(), appSettings.srid)
+                .find { it.srid == GlobalConstants.SRID_4326 }
+
+            // Et on écrit un Point qui sera sérialisé proprement par la suite
+            val peiGeometrie =
+                GeometryFactory(PrecisionModel(), GlobalConstants.SRID_4326).createPoint(
+                    Coordinate(
+                        geom!!.coordonneeX.toDouble(),
+                        geom.coordonneeY.toDouble(),
+                    ),
+                )
+
             val lastCtrl = listeCtrlDebitPression.filter { v -> v.visitePeiId == it.peiId && v.isCtrlDebitPression }
                 .maxByOrNull { it.visiteDate }
 
@@ -80,7 +100,7 @@ constructor(
                 peiNumeroComplet = it.peiNumeroComplet,
                 natureCode = it.natureCode,
                 isDisponible = it.peiDisponibiliteTerrestre == Disponibilite.DISPONIBLE || it.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME,
-                geometrie = GeoJsonWriter().write(it.peiGeometrie),
+                geometrie = peiGeometrie,
                 codeInsee = it.communeCodeInsee,
                 communeLibelle = it.communeLibelle,
                 idGestion = null,

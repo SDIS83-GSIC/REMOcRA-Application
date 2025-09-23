@@ -1,6 +1,9 @@
 package remocra.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import org.locationtech.jts.geom.Point
+import remocra.geometrie.GeometryToGeoJsonSerializer
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -15,8 +18,8 @@ data class ModeleMinimalPeiData(
     val natureCode: String,
     @JsonProperty("disponible")
     val isDisponible: Boolean,
-    @JsonProperty("geometrie")
-    val geometrie: String,
+    @JsonSerialize(using = GeometryToGeoJsonSerializer::class)
+    val geometrie: Point,
     val codeInsee: String,
     @JsonProperty("commune")
     val communeLibelle: String,
