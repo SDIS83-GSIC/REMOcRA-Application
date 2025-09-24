@@ -9,39 +9,59 @@ import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import remocra.RemocraModule
+import remocra.apachehop.data.ApacheHopWorflow
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
-class ApacheHopModule(
-    private val apiBaseUrl: HttpUrl,
-    private val username: String,
-    private val password: String,
+class ApacheHopModule private constructor(
+    private val apacheHopSettings: ApacheHopSettings? = null,
 ) : RemocraModule() {
+
+    private data class ApacheHopSettings(
+        val apiBaseUrl: HttpUrl,
+        val username: String,
+        val password: String,
+    )
 
     @Provides
     @Singleton
     fun provideApacheHopApi(retrofit: Retrofit.Builder, mapper: ObjectMapper): ApacheHopApi {
+        if (apacheHopSettings == null) {
+            return object : ApacheHopApi {
+                override fun run(task: String): Call<ApacheHopWorflow?> {
+                    throw RuntimeException("Impossible d'utiliser Apache Hop: il n'est pas activé.")
+                }
+            }
+        }
+
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         val client = OkHttpClient.Builder()
-            .authenticator({ route, response ->
-                val credential: String = Credentials.basic(username, password)
+            .authenticator { route, response ->
+                val credential: String = Credentials.basic(apacheHopSettings.username, apacheHopSettings.password)
                 response.request().newBuilder()
                     .header("Authorization", credential)
                     .build()
-            })
+            }
             .build()
-        return retrofit.baseUrl(apiBaseUrl).client(client)
+        return retrofit.baseUrl(apacheHopSettings.apiBaseUrl).client(client)
             .addConverterFactory(JacksonConverterFactory.create(mapper)).build()
             .create(ApacheHopApi::class.java)
     }
 
     companion object {
         fun create(config: Config): ApacheHopModule {
-            return ApacheHopModule(
-                HttpUrl.get(config.getString("url")),
-                config.getString("password"),
-                config.getString("username"),
-            )
+            return if (config.getBoolean("enable")) {
+                ApacheHopModule(
+                    ApacheHopSettings(
+                        HttpUrl.get(config.getString("url")),
+                        config.getString("password"),
+                        config.getString("username"),
+                    ),
+                )
+            } else {
+                ApacheHopModule()
+            }
         }
     }
 }

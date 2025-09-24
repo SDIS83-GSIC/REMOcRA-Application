@@ -70,9 +70,6 @@ services:
       EPSG_PROJECTION: ${EPSG_PROJECTION}
       REMOCRA_VERSION: ${REMOCRA_VERSION}
       GEOSERVER_URL: ${GEOSERVER_URL}
-      APACHE_HOP_URL: ${APACHE_HOP_URL}
-      APACHE_HOP_USERNAME: ${APACHE_HOP_USERNAME}
-      APACHE_HOP_PASSWORD: ${APACHE_HOP_PASSWORD}
       NEXSIS_TEST_TOKEN: ${NEXSIS_TEST_TOKEN}
     healthcheck:
       test: curl --fail -s http://localhost:8881/ || exit 1
@@ -122,9 +119,6 @@ services:
       GLOWROOT_ENABLED: "true"
       GLOWROOT_PORT: "4001"
       GEOSERVER_URL: ${GEOSERVER_URL}
-      APACHE_HOP_URL: ${APACHE_HOP_URL}
-      APACHE_HOP_USERNAME: ${APACHE_HOP_USERNAME}
-      APACHE_HOP_PASSWORD: ${APACHE_HOP_PASSWORD}
       GEOSERVER_USER: ${GEOSERVER_USER}
       GEOSERVER_PASSWORD: ${GEOSERVER_PASSWORD}
       POSTGIS_HOSTNAME: ${POSTGRES_DB_HOSTNAME}
@@ -179,6 +173,7 @@ EPSG_NAME="EPSG:2154"
 EPSG_PROJECTION="+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 # APACHE HOP
+APACHE_HOP_ENABLE=true
 APACHE_HOP_URL=http://localhost:8060/hop
 APACHE_HOP_USERNAME=admin
 APACHE_HOP_PASSWORD=xxxxxxxxxxxxxxxxx
@@ -190,45 +185,51 @@ NEXSIS_TEST_TOKEN=xxxxxxxxxxxxxxxxx
 === Explication des variables d’environnement
 
 |===
-| | Description | Variable
+| | Description | Variable | Valeur par défaut
 
 .4+| *Base de données*
-| POSTGRES_DB_HOSTNAME | Nom d’hôte de la base de données PostgreSQL
-| POSTGRES_DB_NAME | Nom de la base de données PostgreSQL (par défaut _remocra_)
-| POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)
-| POSTGRES_DB_PASSWORD | Mot de passe de l’utilisateur PostgreSQL
+| POSTGRES_DB_HOSTNAME | Nom d’hôte de la base de données PostgreSQL |
+| POSTGRES_DB_NAME | Nom de la base de données PostgreSQL (par défaut _remocra_) |
+| POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)  |
+| POSTGRES_DB_PASSWORD | Mot de passe de l’utilisateur PostgreSQL  |
 .7+| *Informations pour l’application REMOcRA*
-| REMOCRA_VERSION | Version de REMOcRA à installer
-| REMOCRA_PORT |
-Port utilisé pour l’application serveur REMOCRA (par défaut 8881)
-| REMOCRA_URL | L’adresse https permettant à accéder à l’interface REMOcRA sans “/” à la fin.
-| CODE_SDIS | Code du SDIS, doit correspondre à une valeur de l’énumération présente dans le fichier : https://github.com/SDIS83-GSIC/REMOcRA-Application/blob/master/app/src/main/kotlin/remocra/data/enums/CodeSdis.kt[]
-| EPSG_NAME | Nom de la projection (par exemple _EPSG:2154_)
-| EPSG_PROJECTION | La projection
+| REMOCRA_VERSION | Version de REMOcRA à installer  |
+| REMOCRA_PORT | Port utilisé pour l’application serveur REMOCRA (par défaut 8881) |
+| REMOCRA_URL | L’adresse https permettant à accéder à l’interface REMOcRA sans “/” à la fin.  |
+| CODE_SDIS | Code du SDIS, doit correspondre à une valeur de l’énumération présente dans le fichier : https://github.com/SDIS83-GSIC/REMOcRA-Application/blob/master/app/src/main/kotlin/remocra/data/enums/CodeSdis.kt[] |
+| EPSG_NAME | Nom de la projection (par exemple _EPSG:2154_) |
+| EPSG_PROJECTION | La projection |
 | ENVIRONNEMENT a| Peut avoir les valeurs suivantes :
 
 * DEVELOPPEMENT
 * FORMATION
 * RECETTE
 * PREPRODUCTION
-* PRODUCTION
+* PRODUCTION  |
 
 .5+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
-| SIG_HOSTNAME |
-| SIG_SQL_DIALECT |
-| SIG_DBNAME |
-| SIG_USERNAME |
-| SIG_PASSWORD |
+| SIG_HOSTNAME | |
+| SIG_SQL_DIALECT | |
+| SIG_DBNAME | |
+| SIG_USERNAME | |
+| SIG_PASSWORD | |
 
 .6+| *Keycloak*
-| KEYCLOAK_ADMIN | Nom de l’utilisateur pour se connecter à Keycloak
-| KEYCLOAK_ADMIN_PASSWORD | Mot de passe de l’utilisateur pour se connecter à Keycloak
-| CLIENT_SECRET |
-| CLIENT_ID | est initialisé par défaut
-| REALM | Valeur pour le realm utilisé dans keycloak. Par défaut remocra
-| BASE_URI | L’adresse https permettant à accéder à l’interface keycloak
+| KEYCLOAK_ADMIN | Nom de l’utilisateur pour se connecter à Keycloak |
+| KEYCLOAK_ADMIN_PASSWORD | Mot de passe de l’utilisateur pour se connecter à Keycloak |
+| CLIENT_SECRET | |
+| CLIENT_ID | est initialisé par défaut |
+| REALM | Valeur pour le realm utilisé dans keycloak. Par défaut remocra |
+| BASE_URI | L’adresse https permettant à accéder à l’interface keycloak |
+
+.7+| *Apache Hop*
+|APACHE_HOP_ENABLE | Activation d'Apache Hop dans l'application | `false`
+| APACHE_HOP_URL | URL d'Apache Hop (facultatif si APACHE_HOP_ENABLE est à `false`) |
+| APACHE_HOP_USERNAME | Login pour la connexion à Apache HOP (facultatif si APACHE_HOP_ENABLE est à `false`) |
+| APACHE_HOP_PASSWORD | Mot de passe pour la connexion à Apache HOP (facultatif si APACHE_HOP_ENABLE est à `false`) |
 |===
+
 
 === Création d’un utilisateur REMOcRA
 
