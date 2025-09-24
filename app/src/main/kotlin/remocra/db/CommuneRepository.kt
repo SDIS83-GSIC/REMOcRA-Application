@@ -4,6 +4,8 @@ import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.Field
+import org.jooq.Record3
+import org.jooq.SelectConnectByStep
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.WrappedUserInfo
@@ -42,8 +44,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
 
     fun getCommuneForSelect(): List<GlobalData.IdCodeLibelleData> =
         dsl.select(COMMUNE.ID.`as`("id"), COMMUNE.CODE_INSEE.`as`("code"), COMMUNE.LIBELLE.`as`("libelle"))
-            .from(COMMUNE)
-            .orderBy(DSL.field("SUBSTRING(${COMMUNE.LIBELLE}, '([0-9]+)')::integer", Int::class.java), COMMUNE.LIBELLE)
+            .from(COMMUNE).applyCommuneOrderBy()
             .fetchInto()
 
     fun getCommuneForSelectWithZone(zoneId: UUID): List<GlobalData.IdCodeLibelleData> =
@@ -52,7 +53,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .join(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneId))
             .where(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
-            .orderBy(DSL.field("SUBSTRING(${COMMUNE.LIBELLE}, '([0-9]+)')::integer", Int::class.java), COMMUNE.LIBELLE)
+            .applyCommuneOrderBy()
             .fetchInto()
 
     /**
@@ -182,3 +183,15 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
         val communeGeometry: Geometry,
     )
 }
+
+/**
+ * Applique un orderBy pertinent pour les communes, en mettant les communes commençant par un chiffre en début de liste (triées par ordre naturel, 2ème arrondissement avant 10ème), puis les autres
+ */
+private fun SelectConnectByStep<Record3<UUID?, String?, String?>>.applyCommuneOrderBy() =
+    this.orderBy(
+        // Mettre les communes commençant par un chiffre en début de liste, sinon ils seront à la fin
+        DSL.field("CASE WHEN ${COMMUNE.LIBELLE} ~ '^[0-9]+' THEN 0 ELSE 1 END"),
+        // Si ça *commence* par un chiffre, trier sur ce chiffre (converti en integer pour que 2 vienne avant 10)
+        DSL.field("COALESCE(NULLIF(SUBSTRING(${COMMUNE.LIBELLE}, '^(\\d+)'), ''), '0')::integer", Int::class.java),
+        COMMUNE.LIBELLE,
+    )
