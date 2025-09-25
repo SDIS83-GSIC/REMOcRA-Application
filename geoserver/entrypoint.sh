@@ -4,10 +4,10 @@ case "$1" in
   -* | "" | start | startup )
     cp -R --update=none /opt/geoserver/data_tmpl/* "${GEOSERVER_DATA_DIR}"
 
-    if [ -n "$GLOWROOT_ENABLED" ] && [ "$GLOWROOT_ENABLED" != "false" ] && [ "$GLOWROOT_ENABLED" != "0" ]; then
+    if [ -n "$GEOSERVER_GLOWROOT_ENABLED" ] && [ "$GEOSERVER_GLOWROOT_ENABLED" != "false" ] && [ "$GEOSERVER_GLOWROOT_ENABLED" != "0" ]; then
       JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/glowroot/glowroot.jar"
       if [ -n "$GLOWROOT_PORT" ]; then
-        JAVA_OPTS="$JAVA_OPTS -Dglowroot.agent.port=$GLOWROOT_PORT"
+        JAVA_OPTS="$JAVA_OPTS -Dglowroot.agent.port=$GEOSERVER_GLOWROOT_PORT"
       fi
     fi
 
