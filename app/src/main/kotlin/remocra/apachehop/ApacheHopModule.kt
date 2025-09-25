@@ -10,6 +10,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import remocra.RemocraModule
 import remocra.apachehop.data.ApacheHopWorflow
+import remocra.healthcheck.HealthModule
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -24,6 +25,10 @@ class ApacheHopModule private constructor(
         val password: String,
     )
 
+    override fun configure() {
+        HealthModule.addHealthCheck(binder(), "apache-hop").to(ApacheHopHealthChecker::class.java)
+    }
+
     @Provides
     @Singleton
     fun provideApacheHopApi(retrofit: Retrofit.Builder, mapper: ObjectMapper): ApacheHopApi {
@@ -31,6 +36,10 @@ class ApacheHopModule private constructor(
             return object : ApacheHopApi {
                 override fun run(task: String): Call<ApacheHopWorflow?> {
                     throw RuntimeException("Impossible d'utiliser Apache Hop: il n'est pas activé.")
+                }
+
+                override fun ping(): Call<Void>? {
+                    return null
                 }
             }
         }

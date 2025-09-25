@@ -8,9 +8,12 @@ import retrofit2.http.Query
 
 interface ApacheHopApi {
 
-    @GET("asyncRun")
+    @GET("/hop/asyncRun")
     @Headers("Content-Type: application/json")
     fun run(
         @Query("service") task: String,
     ): Call<ApacheHopWorflow?>
+
+    @GET("/")
+    fun ping(): Call<Void>?
 }

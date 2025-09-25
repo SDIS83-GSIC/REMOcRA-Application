@@ -10,5 +10,6 @@ abstract class HealthChecker protected constructor(
         class Success(data: Any?) : Health(true, data)
         class Failure(data: Any?) : Health(false, data)
         object Timeout : Health(false, null)
+        object Disabled : Health(true, "Service désactivé")
     }
 }
