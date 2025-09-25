@@ -152,7 +152,7 @@ const ExecuteRapportPersonnalise = () => {
   };
 
   return (
-    <Container fluid>
+    <Container fluid style={{ maxWidth: '95vw' }}>
       <PageTitle
         icon={<IconList />}
         title={"Exécuter des rapports personnalisés"}
@@ -253,7 +253,7 @@ const ExecuteRapportPersonnalise = () => {
                   <Col className="text-center">Aucune donnée à afficher</Col>
                 </Row>
               ) : (
-                <div style={{ overflowX: "auto" }}>
+                <div>
                   <Table
                     bordered
                     striped
