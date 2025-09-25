@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+POSTGIS_HOSTNAME=${POSTGIS_HOSTNAME:-${POSTGRES_DB_HOSTNAME}}
+POSTGIS_USER=${POSTGIS_USER:-${POSTGRES_DB_USERNAME}}
+POSTGIS_PASSWORD=${POSTGIS_PASSWORD:-${POSTGRES_DB_PASSWORD}}
+
 case "$1" in
   -* | "" | start | startup )
     cp -R --update=none /opt/geoserver/data_tmpl/* "${GEOSERVER_DATA_DIR}"
