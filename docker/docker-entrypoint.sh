@@ -10,8 +10,8 @@ case "$1" in
       fi
     fi
 
-    # shellcheck disable=SC2206 # pour GC_OPTS et JAVA_OPTS
-    commande=( java $GC_OPTS $JAVA_OPTS -cp "/opt/remocra/classes:/opt/remocra/libs/*" remocra.cli.Main )
+     # shellcheck disable=SC2206 # pour GC_OPTS, GC_LOG_OPTS, JAVA_OPTS et JAVA_MEM_OPTS
+    commande=( java $GC_OPTS $GC_LOG_OPTS $JAVA_OPTS $JAVA_MEM_OPTS -cp "/opt/remocra/classes:/opt/remocra/libs/*" remocra.cli.Main )
     if [[ "$(id -u)" == "0" ]]; then
       commande=( setpriv --reuid=remocra --regid=remocra --init-groups "${commande[@]}" )
     fi

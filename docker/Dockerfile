@@ -46,7 +46,9 @@ EXPOSE 8881
 
 # Quelques variables d'environnement pour permettre une certaine configurabilité au runtime
 ENV GC_OPTS="-XX:+DisableExplicitGC"
-ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
+ENV GC_LOG_OPTS=""
+ENV JAVA_OPTS=""
+ENV JAVA_MEM_OPTS="-XX:MaxRAMPercentage=75"
 # Entrypoint
 USER remocra
 ENTRYPOINT [ "/opt/remocra/docker-entrypoint.sh" ]
