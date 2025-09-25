@@ -472,12 +472,7 @@ const MapToolbarPerso = ({
   function updateFeatureStyle() {
     if (selectedFeatures.length) {
       selectedFeatures.forEach((f) => {
-        // On retire l'élément sinon il conservera le style de la couche
-        const copy = f.clone();
-        workingLayer.getSource().removeFeature(f);
-        // On copie le style pour empêcher l'accès à la référence
-        copy.setStyle(previewStyle.clone());
-        workingLayer.getSource().addFeature(copy);
+        f.setStyle(previewStyle.clone());
       });
     } else {
       setFeatureStyle(previewStyle);
