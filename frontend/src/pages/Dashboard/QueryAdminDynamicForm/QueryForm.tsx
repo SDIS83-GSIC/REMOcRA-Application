@@ -63,7 +63,7 @@ const QueryForm = (props: QueryFormProps) => {
 };
 
 const InnerQueryForm = () => {
-  const { setValues } = useFormikContext();
+  const { values, setValues } = useFormikContext();
   const { data: zoneCompetenceList } = useGet(url`/api/zone-integration/list`);
   const { data: utilisateurList } = useGet(url`/api/utilisateur/list`);
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
@@ -121,6 +121,9 @@ const InnerQueryForm = () => {
                   label="Zone de compétence"
                   required={false}
                   setValues={setValues}
+                  defaultValue={zoneCompetenceList?.find(
+                    (e) => e.id === values.zoneCompetenceId,
+                  )}
                 />
                 <SelectForm
                   name={"utilisateurId"}
@@ -128,6 +131,9 @@ const InnerQueryForm = () => {
                   label="Utilisateur"
                   required={false}
                   setValues={setValues}
+                  defaultValue={utilisateurList?.find(
+                    (e) => e.id === values.utilisateurId,
+                  )}
                 />
                 <SelectForm
                   name={"organismeId"}
@@ -135,6 +141,9 @@ const InnerQueryForm = () => {
                   label="Organisme"
                   required={false}
                   setValues={setValues}
+                  defaultValue={organismeList?.find(
+                    (e) => e.id === values.organismeId,
+                  )}
                 />
               </>
             ),
