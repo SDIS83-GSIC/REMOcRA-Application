@@ -87,7 +87,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     RCCI_A("RCCI_A"),
     RCCI_R("RCCI_R"),
     RISQUE_R("RISQUE_R"),
-    RISQUES_KML_R("RISQUES_KML_R"),
+    RISQUE_KML_R("RISQUE_KML_R"),
     TOURNEE_A("TOURNEE_A"),
     TOURNEE_FORCER_POURCENTAGE_E("TOURNEE_FORCER_POURCENTAGE_E"),
     TOURNEE_R("TOURNEE_R"),
@@ -120,6 +120,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     ADMIN_ROLE_CONTACT("ADMIN_ROLE_CONTACT"),
     ADMIN_TYPE_ETUDE("ADMIN_TYPE_ETUDE"),
     ADMIN_COURRIER("ADMIN_COURRIER"),
+    RISQUE_KML_A("RISQUE_KML_A"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
