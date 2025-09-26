@@ -18,6 +18,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
+import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
@@ -48,9 +49,11 @@ import java.util.UUID
 class CarteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     companion object {
-        val hasIndispoTemp = DSL.exists(
-            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)),
+        fun hasIndispoTemp(dateUtils: DateUtils) = DSL.exists(
+            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI).join(
+                INDISPONIBILITE_TEMPORAIRE,
+            ).on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)).and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)).and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())),
         ).`as`("hasIndispoTemp")
 
         val hasTournee = DSL.exists(
@@ -81,7 +84,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         return dsl.select(
             ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
-            hasIndispoTemp,
+            hasIndispoTemp(dateUtils),
             hasTournee,
             hasTourneeReservee,
             hasDebitSimultane,

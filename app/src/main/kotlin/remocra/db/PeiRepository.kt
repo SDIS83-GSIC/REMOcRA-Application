@@ -33,6 +33,7 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
@@ -254,8 +255,10 @@ class PeiRepository
             .`as`("hasTourneeReservee")
 
         val hasIndispoTemp = DSL.exists(
-            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)),
+            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI).join(
+                INDISPONIBILITE_TEMPORAIRE,
+            ).on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)).and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)).and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())),
         ).`as`("hasIndispoTemp")
 
         // Champ libellé autorité DECI avec la règle métier appliquée via la jointure sur TYPE_ORGANISME
