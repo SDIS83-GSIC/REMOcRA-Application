@@ -99,6 +99,11 @@ class RequeteSqlUtils {
         )
     }
 
+    fun containsWordNotInSingleQuote(text: String, word: String): Boolean {
+        val regex = """(?<!')\b$word\b(?!')""".toRegex(RegexOption.IGNORE_CASE)
+        return regex.containsMatchIn(text)
+    }
+
     private fun checkContraintes(userInfo: WrappedUserInfo, element: RapportCourrierData) {
         // Aucun paramètre ne doivent avoir le même code
         if (element.listeRapportCourrierParametre.map { it.rapportCourrierParametreCode }.distinct().size != element.listeRapportCourrierParametre.size) {
@@ -107,9 +112,9 @@ class RequeteSqlUtils {
 
         // TODO vérifier qu'on n'est pas injection ?
         if (element.rapportCourrierSourceSql.contains("CREATE", true) ||
-            element.rapportCourrierSourceSql.contains("UPDATE", true) ||
+            containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "UPDATE") ||
             element.rapportCourrierSourceSql.contains("DROP", true) ||
-            element.rapportCourrierSourceSql.contains("DELETE", true) ||
+            containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "DELETE") ||
             element.rapportCourrierSourceSql.contains("TRUNCATE", true)
         ) {
             throw RemocraResponseException(
