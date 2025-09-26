@@ -1,16 +1,20 @@
 import { useMemo, useRef } from "react";
+import { hasDroit } from "../../../droits.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
+import url from "../../../module/fetch.tsx";
 import SquelettePage from "../../../pages/SquelettePage.tsx";
+import { URLS } from "../../../routes.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
+import CreateButton from "../../Button/CreateButton.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 import Header from "../../Header/Header.tsx";
 import { IconRisque } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { TooltipMapRisque } from "../TooltipsMap.tsx";
-import PARAMETRE from "../../../enums/ParametreEnum.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
-import { useAppContext } from "../../App/AppProvider.tsx";
-import url from "../../../module/fetch.tsx";
 
 const MapRisque = () => {
   const { user } = useAppContext();
@@ -56,7 +60,18 @@ const MapRisque = () => {
 
   return (
     <SquelettePage navbar={<Header />}>
-      <PageTitle title="Carte des Risques" icon={<IconRisque />} />
+      <PageTitle
+        title="Carte des Risques"
+        icon={<IconRisque />}
+        right={
+          hasDroit(user, TYPE_DROIT.RISQUE_KML_A) && (
+            <CreateButton
+              href={URLS.IMPORT_KML_RISQUE}
+              title={"Importer un fichier KML"}
+            />
+          )
+        }
+      />
       <MapComponent
         map={map}
         availableLayers={availableLayers}

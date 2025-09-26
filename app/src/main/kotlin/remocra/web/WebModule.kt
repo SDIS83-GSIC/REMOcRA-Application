@@ -47,6 +47,7 @@ import remocra.web.profilorganisme.ProfilOrganismeModule
 import remocra.web.profilutilisateur.ProfilUtilisateurModule
 import remocra.web.rapportpersonnalise.RapportPersonnaliseModule
 import remocra.web.rcci.RcciModule
+import remocra.web.risque.RisqueModule
 import remocra.web.signalements.SignalementModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.toponymie.ToponymieModule
@@ -109,6 +110,7 @@ object WebModule : RemocraModule() {
         install(CartoModule)
         install(TypeCriseCategorieModule)
         install(DfciModule)
+        install(RisqueModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)
 
         registerResource<CsrfFeature>()

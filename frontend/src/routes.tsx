@@ -3,6 +3,8 @@ import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
 import MapPerso from "./components/Map/MapPerso/MapPerso.tsx";
+import ImportKml from "./components/Map/MapRisque/ImportKml.tsx";
+import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
 import ModuleCrise from "./components/ModuleRemocra/ModuleCrise.tsx";
@@ -193,7 +195,6 @@ import Visite from "./pages/Visite/Visite.tsx";
 import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListTypeCriseCategorie.tsx";
 import CreateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateTypeCriseCategorie.tsx";
 import UpdateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateTypeCriseCategorie.tsx";
-import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
 import UpdateTypeEngin from "./pages/Admin/typeEngin/UpdateTypeEngin.tsx";
 import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
@@ -289,6 +290,7 @@ export const URLS = {
 
   // Module Carte des risques
   RISQUE: url`/risque`,
+  IMPORT_KML_RISQUE: url`/risque/import-kml`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -1065,6 +1067,12 @@ export default [
   {
     path: "/risque",
     element: <Authorization Component={MapRisque} isPublic={true} />,
+  },
+  {
+    path: "/risque/import-kml",
+    element: (
+      <Authorization Component={ImportKml} droits={[TYPE_DROIT.RISQUE_KML_A]} />
+    ),
   },
   {
     path: "/admin/",
