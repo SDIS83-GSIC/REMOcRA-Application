@@ -516,7 +516,10 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
             );
             const date = new Date();
             let statut = "";
-            if (dateDebut < date && dateFin > date) {
+            if (
+              dateDebut < date &&
+              (!value.value.indisponibiliteTemporaireDateFin || dateFin > date)
+            ) {
               statut = "En cours";
             } else if (dateDebut > date) {
               statut = "Planifiée";

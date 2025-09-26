@@ -295,7 +295,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                                 INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
                             StatutIndisponibiliteTemporaireEnum.EN_COURS ->
                                 INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
-                                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now))
+                                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull))
 
                             StatutIndisponibiliteTemporaireEnum.TERMINEE ->
                                 INDISPONIBILITE_TEMPORAIRE.DATE_FIN.lt(now)
@@ -304,7 +304,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                                 INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
                                     .or(
                                         INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
-                                            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now)),
+                                            .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)),
                                     )
                         }
                     },
