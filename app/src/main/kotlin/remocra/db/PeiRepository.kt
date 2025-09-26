@@ -136,7 +136,28 @@ class PeiRepository
     }
 
     fun getPeiWithFilterByTournee(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
-        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.TOURNEE, isSuperAdmin).fetchInto()
+        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.TOURNEE, isSuperAdmin).fetch().map { record ->
+            PeiForTableau(
+                peiId = record.component1()!!,
+                peiNumeroComplet = record.component2()!!,
+                peiNumeroInterne = record.component3()!!,
+                peiTypePei = record.component4()!!,
+                peiDisponibiliteTerrestre = record.component5(),
+                penaDisponibiliteHbe = record.component6(),
+                natureLibelle = record.component7()!!,
+                adresse = record.component8(),
+                communeLibelle = record.component9()!!,
+                natureDeciLibelle = record.component10()!!,
+                autoriteDeci = record.component11(),
+                servicePublicDeci = record.component12(),
+                listeAnomalie = record.component13(),
+                tourneeLibelle = record.component14(),
+                hasTourneeReservee = record.component15(),
+                peiNextRop = record.component16(),
+                peiNextCtp = record.component17(),
+                hasIndispoTemp = record.component18(),
+            )
+        }
     }
 
     // Très peu de données donc peu d'impact d'utiliser le count jooq plutôt que la primitive SQL
