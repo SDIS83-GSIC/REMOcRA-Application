@@ -24,23 +24,46 @@ class MessageRepository @Inject constructor(
         val messageUtilisateur: String?,
     )
 
-    fun getAllMessages(): Collection<Message> =
-        dsl.select(
-            MESSAGE_EVENEMENT.MESSAGE_ID,
-            MESSAGE_EVENEMENT.MESSAGE_DATE_CONSTAT,
-            MESSAGE_EVENEMENT.MESSAGE_OBJET,
-            MESSAGE_EVENEMENT.MESSAGE_DESCRIPTION,
-            MESSAGE_EVENEMENT.MESSAGE_TAG.`as`("messageTags"),
-            MESSAGE_EVENEMENT.MESSAGE_ORIGINE,
-            MESSAGE_EVENEMENT.MESSAGE_IMPORTANCE,
-            UTILISATEUR.NOM.`as`("messageUtilisateur"),
-            MESSAGE_EVENEMENT.EVENEMENT_ID.`as`("messageEvenementId"),
-        )
-            .from(MESSAGE_EVENEMENT)
-            .join(UTILISATEUR)
-            .on(UTILISATEUR.ID.eq(MESSAGE_EVENEMENT.UTILISATEUR_ID))
-            .orderBy(MESSAGE_EVENEMENT.MESSAGE_DATE_CONSTAT.desc())
-            .fetchInto()
+    fun getAllMessages(): Collection<Message> {
+        // On récupère la condition pour savoir si on doit faire un join ou pas
+        val query = if (dsl.select(MESSAGE_EVENEMENT.UTILISATEUR_ID)
+                .from(MESSAGE_EVENEMENT)
+                .where(MESSAGE_EVENEMENT.UTILISATEUR_ID.isNotNull)
+                .fetchOne() != null
+        ) {
+            // Si UTILISATEUR_ID n'est pas null, on fait le join
+            dsl.select(
+                MESSAGE_EVENEMENT.MESSAGE_ID,
+                MESSAGE_EVENEMENT.MESSAGE_DATE_CONSTAT,
+                MESSAGE_EVENEMENT.MESSAGE_OBJET,
+                MESSAGE_EVENEMENT.MESSAGE_DESCRIPTION,
+                MESSAGE_EVENEMENT.MESSAGE_TAG.`as`("messageTags"),
+                MESSAGE_EVENEMENT.MESSAGE_ORIGINE,
+                MESSAGE_EVENEMENT.MESSAGE_IMPORTANCE,
+                UTILISATEUR.NOM.`as`("messageUtilisateur"),
+                MESSAGE_EVENEMENT.EVENEMENT_ID.`as`("messageEvenementId"),
+            )
+                .from(MESSAGE_EVENEMENT)
+                .join(UTILISATEUR)
+                .on(UTILISATEUR.ID.eq(MESSAGE_EVENEMENT.UTILISATEUR_ID))
+        } else {
+            // Sinon, on ne fait pas de join et on ne récupère pas l'utilisateur
+            dsl.select(
+                MESSAGE_EVENEMENT.MESSAGE_ID,
+                MESSAGE_EVENEMENT.MESSAGE_DATE_CONSTAT,
+                MESSAGE_EVENEMENT.MESSAGE_OBJET,
+                MESSAGE_EVENEMENT.MESSAGE_DESCRIPTION,
+                MESSAGE_EVENEMENT.MESSAGE_TAG.`as`("messageTags"),
+                MESSAGE_EVENEMENT.MESSAGE_ORIGINE,
+                MESSAGE_EVENEMENT.MESSAGE_IMPORTANCE,
+                MESSAGE_EVENEMENT.EVENEMENT_ID.`as`("messageEvenementId"),
+            )
+                .from(MESSAGE_EVENEMENT)
+        }
+
+        // On retourne les résultats triés par date
+        return query.orderBy(MESSAGE_EVENEMENT.MESSAGE_DATE_CONSTAT.desc()).fetchInto()
+    }
 
     fun checkNumeroExists(messageNumero: UUID): Boolean =
         dsl.fetchExists(dsl.select(MESSAGE_EVENEMENT.MESSAGE_ID).from(MESSAGE_EVENEMENT).where(MESSAGE_EVENEMENT.MESSAGE_ID.eq(messageNumero)))
