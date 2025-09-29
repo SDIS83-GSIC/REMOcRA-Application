@@ -46,6 +46,7 @@ import formatDateTime, { formatDate } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
 
 function getColumnPeiByStringArray(
+  handleTourneeButtonClick: (value: any) => void,
   user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
   listeAnomaliePossible: Array<IdCodeLibelleType>,
@@ -416,6 +417,17 @@ function getColumnPeiByStringArray(
         icon: <IconVisite />,
         textEnable: "Gérer les visites",
         classEnable: "warning",
+      });
+    }
+    if (hasDroit(user, TYPE_DROIT.TOURNEE_R)) {
+      listeButton.push({
+        row: (row: any) => {
+          return row;
+        },
+        type: TYPE_BUTTON.BUTTON,
+        onClick: (row) => handleTourneeButtonClick(row),
+        textEnable: "Voir les tournées associées",
+        icon: <IconList />,
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {

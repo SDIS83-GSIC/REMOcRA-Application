@@ -1,3 +1,4 @@
+import { useState } from "react";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
@@ -11,6 +12,7 @@ import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import useLocalisation from "../Localisation/useLocalisation.tsx";
+import QueryTableTournee from "../ListeTourneeTable/QueryTableTournee.tsx";
 
 const ListPei = ({
   filterPage,
@@ -117,29 +119,49 @@ const ListPei = ({
     default:
       urlTable = url`/api/pei`;
   }
+  const [idPei, setIdPei] = useState(null);
+
+  const queryTableFilterContext = useFilterContext({ filter });
+  const queryTableTourneeContext = useFilterContext({
+    tourneeLibelle: undefined,
+    tourneeOrganismeLibelle: undefined,
+    tourneeUtilisateurReservationLibelle: undefined,
+    peiId: null,
+  });
 
   return (
     <>
-      <QueryTable
-        displayNone={displayNone}
-        className={className}
-        query={urlTable}
-        columns={getColumnPeiByStringArray(
-          user,
-          peiColonnes,
-          listeAnomaliePossible,
-          fetchGeometry,
-          isFicheResumeStandalone,
-          delaisWarnCTP,
-          delaisUrgentCTP,
-          delaisWarnRECO,
-          delaisUrgentRECO,
-          libelleNonConforme,
-        )}
-        idName={"PeiTable"}
-        filterValuesToVariable={filterValuesToVariable}
-        filterContext={useFilterContext({ filter })}
-      />
+      {!idPei ? (
+        <QueryTable
+          displayNone={displayNone}
+          className={className}
+          query={urlTable}
+          columns={getColumnPeiByStringArray(
+            (value: any) => {
+              setIdPei(value);
+            },
+            user,
+            peiColonnes,
+            listeAnomaliePossible,
+            fetchGeometry,
+            isFicheResumeStandalone,
+            delaisWarnCTP,
+            delaisUrgentCTP,
+            delaisWarnRECO,
+            delaisUrgentRECO,
+            libelleNonConforme,
+          )}
+          idName={"PeiTable"}
+          filterValuesToVariable={filterValuesToVariable}
+          filterContext={queryTableFilterContext}
+        />
+      ) : (
+        <QueryTableTournee
+          filterId={idPei}
+          setFilterId={setIdPei}
+          useFilterContext={queryTableTourneeContext}
+        />
+      )}
     </>
   );
 };
