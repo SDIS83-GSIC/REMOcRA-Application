@@ -88,6 +88,13 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
         // Les paramètres UPSERT
         // Si l'élément est protégé, on ne touche a rien d'autre que ce qui a déja été mis à jour pour le moment
         if (!reference.rapportPersonnaliseProtected) {
+            val existingIds = element.listeRapportPersonnaliseParametre
+                .map { it.rapportPersonnaliseParametreId }
+
+            val listeParam = rapportPersonnaliseRepository
+                .getRapportPersonnaliseParametreId(element.rapportPersonnaliseId)
+                .filterNot { it in existingIds }
+
             element.listeRapportPersonnaliseParametre.forEach { param ->
                 rapportPersonnaliseRepository.upsertRapportPersonnaliseParametre(
                     RapportPersonnaliseParametre(
@@ -105,6 +112,9 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
                         rapportPersonnaliseParametreOrdre = param.rapportPersonnaliseParametreOrdre,
                     ),
                 )
+            }
+            listeParam.forEach { param ->
+                rapportPersonnaliseRepository.deleteFromRapportPersonnaliseParametre(param)
             }
         }
 

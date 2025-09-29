@@ -86,6 +86,13 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         }
 
         // Les paramètres
+        val existingIds = element.listeModeleCourrierParametre
+            .map { it.modeleCourrierParametreId }
+
+        val listeParam = modeleCourrierRepository
+            .getModeleCourrierParametreIds(element.modeleCourrierId)
+            .filterNot { it in existingIds }
+
         element.listeModeleCourrierParametre.forEach { param ->
             modeleCourrierRepository.upsertModeleCourrierParametre(
                 ModeleCourrierParametre(
@@ -103,6 +110,10 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     modeleCourrierParametreOrdre = param.modeleCourrierParametreOrdre,
                 ),
             )
+        }
+
+        listeParam.forEach { param ->
+            modeleCourrierRepository.deleteFromModeleCourrierParametre(param)
         }
 
         if (element.part != null) {

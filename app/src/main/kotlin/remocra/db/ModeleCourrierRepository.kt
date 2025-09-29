@@ -176,6 +176,18 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .set(dsl.newRecord(MODELE_COURRIER_PARAMETRE, modeleCourrierParametre))
             .execute()
 
+    fun getModeleCourrierParametreIds(modeleCourrierId: UUID): Collection<UUID> =
+        dsl.select(MODELE_COURRIER_PARAMETRE.ID)
+            .from(MODELE_COURRIER_PARAMETRE)
+            .where(MODELE_COURRIER_PARAMETRE.MODELE_COURRIER_ID.eq(modeleCourrierId))
+            .fetchInto(UUID::class.java)
+
+    fun deleteFromModeleCourrierParametre(parametreId: UUID) {
+        dsl.deleteFrom(MODELE_COURRIER_PARAMETRE)
+            .where(MODELE_COURRIER_PARAMETRE.ID.eq(parametreId))
+            .execute()
+    }
+
     /**
      * Vérifie s'il existe déjà un élément avec ce *code*. En modification, on regarde si le code existe pour un autre élément que lui-même
      */

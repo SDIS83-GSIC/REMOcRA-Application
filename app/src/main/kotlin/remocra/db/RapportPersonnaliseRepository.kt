@@ -227,6 +227,11 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
             .execute()
 
+    fun deleteFromRapportPersonnaliseParametre(rapportPersonnaliseParametreId: UUID) =
+        dsl.deleteFrom(RAPPORT_PERSONNALISE_PARAMETRE)
+            .where(RAPPORT_PERSONNALISE_PARAMETRE.ID.eq(rapportPersonnaliseParametreId))
+            .execute()
+
     fun deleteRapportPersonnalise(rapportPersonnaliseId: UUID) =
         dsl.deleteFrom(RAPPORT_PERSONNALISE)
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
@@ -259,6 +264,12 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         dsl.selectFrom(RAPPORT_PERSONNALISE)
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
             .fetchSingleInto()
+
+    fun getRapportPersonnaliseParametreId(rapportPersonnaliseId: UUID): Collection<UUID> =
+        dsl.select(RAPPORT_PERSONNALISE_PARAMETRE.ID)
+            .from(RAPPORT_PERSONNALISE_PARAMETRE)
+            .where(RAPPORT_PERSONNALISE_PARAMETRE.RAPPORT_PERSONNALISE_ID.eq(rapportPersonnaliseId))
+            .fetchInto(UUID::class.java)
 
     fun getRapportPersonnaliseParametrePojo(rapportPersonnaliseId: UUID): Collection<RapportPersonnaliseParametre> =
         dsl.selectFrom(RAPPORT_PERSONNALISE_PARAMETRE)
