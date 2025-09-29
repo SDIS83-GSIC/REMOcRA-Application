@@ -15,6 +15,7 @@ import remocra.auth.userInfo
 import remocra.data.risque.ImportRisqueKmlData
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.risque.ImportRisqueKmlUseCase
+import remocra.utils.getTextPartOrNull
 import remocra.web.AbstractEndpoint
 
 @Path("/risque")
@@ -38,7 +39,9 @@ class RisqueEndPoint : AbstractEndpoint() {
         importRisqueKmlUseCase.execute(
             securityContext.userInfo,
             ImportRisqueKmlData(
-                if (httpRequest.getPart("fileKml")?.contentType != null) httpRequest.getPart("fileKml").inputStream else null,
+                risqueId = null,
+                risqueLibelle = httpRequest.getTextPartOrNull("risqueLibelle"),
+                fileKml = if (httpRequest.getPart("fileKml")?.contentType != null) httpRequest.getPart("fileKml").inputStream else null,
             ),
         ).wrap()
 }

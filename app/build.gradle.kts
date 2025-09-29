@@ -89,6 +89,10 @@ licensee {
     ignoreDependencies("com.lowagie") {
         because("MPL-1.1 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
     }
+
+    allowDependency("org.json", "json", "20250517") {
+        because("Public Domain")
+    }
 }
 
 dependencies {
@@ -97,6 +101,7 @@ dependencies {
     implementation(libs.log4j.jul)
     implementation(libs.log4j.core)
     implementation(platform(libs.log4j.bom))
+    implementation(libs.json)
     runtimeOnly(libs.log4j.slf4j2Impl)
     runtimeOnly(libs.disruptor)
     api(libs.sentry)

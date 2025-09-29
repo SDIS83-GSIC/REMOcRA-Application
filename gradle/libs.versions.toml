@@ -59,6 +59,7 @@ jackson-datatype-guava = "com.fasterxml.jackson.datatype:jackson-datatype-guava:
 jackson-datatype-jdk8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2"
 jackson-datatype-jsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2"
 jackson-dataformat-csv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2"
+json = "org.json:json:20250517"
 
 commons-email = "org.apache.commons:commons-email2-jakarta:2.0.0-M1"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
