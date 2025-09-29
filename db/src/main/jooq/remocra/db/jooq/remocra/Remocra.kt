@@ -128,6 +128,7 @@ import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.Reservoir
+import remocra.db.jooq.remocra.tables.RisqueExpress
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Signalement
 import remocra.db.jooq.remocra.tables.SignalementElement
@@ -789,6 +790,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val RESERVOIR: Reservoir get() = Reservoir.RESERVOIR
 
     /**
+     * The table <code>remocra.risque_express</code>.
+     */
+    val RISQUE_EXPRESS: RisqueExpress get() = RisqueExpress.RISQUE_EXPRESS
+
+    /**
      * The table <code>remocra.role_contact</code>.
      */
     val ROLE_CONTACT: RoleContact get() = RoleContact.ROLE_CONTACT
@@ -1052,6 +1058,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         RcciTypePrometheeFamille.RCCI_TYPE_PROMETHEE_FAMILLE,
         RcciTypePrometheePartition.RCCI_TYPE_PROMETHEE_PARTITION,
         Reservoir.RESERVOIR,
+        RisqueExpress.RISQUE_EXPRESS,
         RoleContact.ROLE_CONTACT,
         Signalement.SIGNALEMENT,
         SignalementElement.SIGNALEMENT_ELEMENT,

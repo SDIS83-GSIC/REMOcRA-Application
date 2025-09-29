@@ -124,6 +124,7 @@ import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.Reservoir
+import remocra.db.jooq.remocra.tables.RisqueExpress
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Signalement
 import remocra.db.jooq.remocra.tables.SignalementElement
@@ -759,6 +760,11 @@ val RCCI_TYPE_PROMETHEE_PARTITION: RcciTypePrometheePartition = RcciTypePromethe
  * The table <code>remocra.reservoir</code>.
  */
 val RESERVOIR: Reservoir = Reservoir.RESERVOIR
+
+/**
+ * The table <code>remocra.risque_express</code>.
+ */
+val RISQUE_EXPRESS: RisqueExpress = RisqueExpress.RISQUE_EXPRESS
 
 /**
  * The table <code>remocra.role_contact</code>.

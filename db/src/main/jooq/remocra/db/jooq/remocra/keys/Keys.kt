@@ -129,6 +129,7 @@ import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille
 import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition
 import remocra.db.jooq.remocra.tables.Reservoir
+import remocra.db.jooq.remocra.tables.RisqueExpress
 import remocra.db.jooq.remocra.tables.RoleContact
 import remocra.db.jooq.remocra.tables.Signalement
 import remocra.db.jooq.remocra.tables.SignalementElement
@@ -328,6 +329,7 @@ val RCCI_TYPE_PROMETHEE_PARTITION_PKEY: UniqueKey<Record> = Internal.createUniqu
 val RCCI_TYPE_PROMETHEE_PARTITION_RCCI_TYPE_PROMETHEE_PARTITION_KEY: UniqueKey<Record> = Internal.createUniqueKey(RcciTypePrometheePartition.RCCI_TYPE_PROMETHEE_PARTITION, DSL.name("rcci_type_promethee_partition_rcci_type_promethee_partition_key"), arrayOf(RcciTypePrometheePartition.RCCI_TYPE_PROMETHEE_PARTITION.CODE), true)
 val RESERVOIR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_pkey"), arrayOf(Reservoir.RESERVOIR.ID), true)
 val RESERVOIR_RESERVOIR_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Reservoir.RESERVOIR, DSL.name("reservoir_reservoir_code_key"), arrayOf(Reservoir.RESERVOIR.CODE), true)
+val RISQUE_EXPRESS_PKEY: UniqueKey<Record> = Internal.createUniqueKey(RisqueExpress.RISQUE_EXPRESS, DSL.name("risque_express_pkey"), arrayOf(RisqueExpress.RISQUE_EXPRESS.ID), true)
 val ROLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(RoleContact.ROLE_CONTACT, DSL.name("role_pkey"), arrayOf(RoleContact.ROLE_CONTACT.ID), true)
 val ROLE_ROLE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(RoleContact.ROLE_CONTACT, DSL.name("role_role_code_key"), arrayOf(RoleContact.ROLE_CONTACT.CODE), true)
 val SIGNALEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Signalement.SIGNALEMENT, DSL.name("signalement_pkey"), arrayOf(Signalement.SIGNALEMENT.ID), true)
