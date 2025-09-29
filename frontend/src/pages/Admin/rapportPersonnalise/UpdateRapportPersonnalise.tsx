@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
@@ -17,6 +18,7 @@ const UpdateRapportPersonnalise = () => {
   const { data } = useGet(
     url`/api/rapport-personnalise/get/` + rapportPersonnaliseId,
   );
+  const initialValues = useMemo(() => getInitialValues(data), [data]);
   return (
     <Container>
       <PageTitle
@@ -24,7 +26,7 @@ const UpdateRapportPersonnalise = () => {
         icon={<IconEdit />}
       />
       <MyFormik
-        initialValues={getInitialValues(data)}
+        initialValues={initialValues}
         prepareVariables={(values) => prepareVariables(values)}
         validationSchema={validationSchema}
         submitUrl={`/api/rapport-personnalise/update/` + rapportPersonnaliseId}
