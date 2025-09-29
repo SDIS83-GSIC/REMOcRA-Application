@@ -681,7 +681,11 @@ const AdminApplicationMobile = ({
   );
 };
 
-const AdminSignalement = ({ values }: { values: ParametresSectionSignalement }) => {
+const AdminSignalement = ({
+  values,
+}: {
+  values: ParametresSectionSignalement;
+}) => {
   return (
     values && (
       <>

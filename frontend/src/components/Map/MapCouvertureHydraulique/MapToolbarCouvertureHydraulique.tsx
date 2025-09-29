@@ -624,7 +624,7 @@ const MapToolbarCouvertureHydraulique = ({
           <p>Voulez-vous déplacer le PEI ?</p>
         </EditModal>
       )}
-      </div>
+    </div>
   );
 };
 

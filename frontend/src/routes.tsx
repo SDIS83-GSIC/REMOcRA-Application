@@ -311,7 +311,9 @@ export const URLS = {
 
   LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT: url`/admin/signalement-sous-type-element`,
   ADD_SIGNALEMENT_SOUS_TYPE_ELEMENT: url`/admin/signalement-sous-type-element/create`,
-  UPDATE_SIGNALEMENT_SOUS_TYPE_ELEMENT: (signalementSousTypeElementId: string) =>
+  UPDATE_SIGNALEMENT_SOUS_TYPE_ELEMENT: (
+    signalementSousTypeElementId: string,
+  ) =>
     url`/admin/signalement-sous-type-element/${signalementSousTypeElementId}`,
 
   GROUPE_FONCTIONNALITES_LIST: url`/admin/groupe-fonctionnalites`,

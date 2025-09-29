@@ -8,7 +8,10 @@ import QueryTable, {
 import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import { ActionColumn, BooleanColumn } from "../../../components/Table/columns.tsx";
+import {
+  ActionColumn,
+  BooleanColumn,
+} from "../../../components/Table/columns.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 const GroupeFonctionnalitesList = () => {

@@ -45,7 +45,8 @@ const Signalement = ({
                               {
                                 listeAnomalie?.find(
                                   (ano) =>
-                                    anomalie === ano.signalementTypeAnomalieCode,
+                                    anomalie ===
+                                    ano.signalementTypeAnomalieCode,
                                 ).signalementTypeAnomalieLibelle
                               }
                             </li>

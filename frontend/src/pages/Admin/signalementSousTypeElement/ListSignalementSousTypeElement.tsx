@@ -46,7 +46,9 @@ const ListSignalementSousTypeElement = () => {
       Header: "Libellé",
       accessor: "signalementSousTypeElementLibelle",
       sortField: "signalementSousTypeElementLibelle",
-      Filter: <FilterInput type="text" name="signalementSousTypeElementLibelle" />,
+      Filter: (
+        <FilterInput type="text" name="signalementSousTypeElementLibelle" />
+      ),
     },
     BooleanColumn({
       Header: "Actif",
@@ -177,7 +179,8 @@ const filterValuesToVariable = ({
     signalementSousTypeElementLibelle != null &&
     signalementSousTypeElementLibelle.trim() !== ""
   ) {
-    filter.signalementSousTypeElementLibelle = signalementSousTypeElementLibelle;
+    filter.signalementSousTypeElementLibelle =
+      signalementSousTypeElementLibelle;
   }
   if (
     signalementSousTypeElementActif != null &&
@@ -185,7 +188,10 @@ const filterValuesToVariable = ({
   ) {
     filter.signalementSousTypeElementActif = signalementSousTypeElementActif;
   }
-  if (signalementTypeElementId != null && signalementTypeElementId.trim() !== "") {
+  if (
+    signalementTypeElementId != null &&
+    signalementTypeElementId.trim() !== ""
+  ) {
     filter.signalementTypeElementId = signalementTypeElementId;
   }
   if (

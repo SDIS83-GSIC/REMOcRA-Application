@@ -17,13 +17,14 @@ const CreateElementSignalement = ({
   sousTypeElement: string;
 }) => {
   const anomalies = useGet(url`/api/signalements/type-anomalie`)?.data;
-  const [signalementElement, setSignalementElement] = useState<SignalementElementEntity>({
-    geometryString: geometryString,
-    anomalies: [],
-    description: null,
-    srid: srid,
-    sousType: sousTypeElement,
-  });
+  const [signalementElement, setSignalementElement] =
+    useState<SignalementElementEntity>({
+      geometryString: geometryString,
+      anomalies: [],
+      description: null,
+      srid: srid,
+      sousType: sousTypeElement,
+    });
   return (
     anomalies && (
       <Form>

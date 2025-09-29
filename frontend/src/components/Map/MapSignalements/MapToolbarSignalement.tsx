@@ -316,7 +316,7 @@ const MapToolbarSignalement = ({
   geometryElement: string;
   setSousTypeElement: () => void;
   sousTypeElement: string;
-  close: () =>void;
+  close: () => void;
 }) => {
   const typeWithSousType = useGet(url`/api/signalements/type-sous-type`)?.data;
 
@@ -361,7 +361,9 @@ const MapToolbarSignalement = ({
           return (
             <Col xs={"auto"} className={"py-2"} key={key}>
               <Dropdown>
-                <Dropdown.Toggle id={"dropdown-" + e.signalementTypeElementCode}>
+                <Dropdown.Toggle
+                  id={"dropdown-" + e.signalementTypeElementCode}
+                >
                   {e.signalementTypeElementLibelle?.toString()}
                 </Dropdown.Toggle>
 
@@ -387,7 +389,9 @@ const MapToolbarSignalement = ({
                             "create-" +
                               soustype.signalementSousTypeElementTypeGeom.toLowerCase(),
                           );
-                          setSousTypeElement(soustype.signalementSousTypeElementId);
+                          setSousTypeElement(
+                            soustype.signalementSousTypeElementId,
+                          );
                         }}
                         key={key}
                       >

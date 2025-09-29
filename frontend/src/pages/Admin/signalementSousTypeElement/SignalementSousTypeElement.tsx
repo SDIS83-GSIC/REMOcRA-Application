@@ -17,7 +17,8 @@ import {
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 const SignalementSousTypeElement = () => {
-  const { values, setValues } = useFormikContext<SignalementSousTypeElementType>();
+  const { values, setValues } =
+    useFormikContext<SignalementSousTypeElementType>();
   const listeTypeElement: IdCodeLibelleType[] = useGet(
     url`/api/signalement-sous-type-element/ref`,
   ).data;
@@ -72,8 +73,10 @@ type SignalementSousTypeElementType = {
 
 export const getInitialValue = (data?: SignalementSousTypeElementType) => ({
   signalementSousTypeElementCode: data?.signalementSousTypeElementCode ?? null,
-  signalementSousTypeElementLibelle: data?.signalementSousTypeElementLibelle ?? null,
-  signalementSousTypeElementActif: data?.signalementSousTypeElementActif ?? false,
+  signalementSousTypeElementLibelle:
+    data?.signalementSousTypeElementLibelle ?? null,
+  signalementSousTypeElementActif:
+    data?.signalementSousTypeElementActif ?? false,
   signalementSousTypeElementTypeElement:
     data?.signalementSousTypeElementTypeElement ?? null,
   signalementSousTypeElementTypeGeometrie:
@@ -84,7 +87,8 @@ export const prepareValues = (values: SignalementSousTypeElementType) => ({
   signalementSousTypeElementCode: values.signalementSousTypeElementCode,
   signalementSousTypeElementLibelle: values.signalementSousTypeElementLibelle,
   signalementSousTypeElementActif: values.signalementSousTypeElementActif,
-  signalementSousTypeElementTypeElement: values.signalementSousTypeElementTypeElement,
+  signalementSousTypeElementTypeElement:
+    values.signalementSousTypeElementTypeElement,
   signalementSousTypeElementTypeGeometrie:
     values.signalementSousTypeElementTypeGeometrie,
 });
