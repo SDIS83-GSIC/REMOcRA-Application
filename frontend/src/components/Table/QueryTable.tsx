@@ -182,7 +182,7 @@ function QueryTable({
       const sort = Object.values(sortBy).filter(Boolean).length
         ? JSON.stringify(sortBy)
         : null;
-      if (sort !== sortByParams) {
+      if (sort != null && sort !== sortByParams) {
         setSortBy(JSON.parse(sortByParams) ?? {});
       }
     }
