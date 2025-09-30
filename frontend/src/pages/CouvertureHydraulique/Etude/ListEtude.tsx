@@ -42,9 +42,6 @@ const ListEtude = () => {
       row: (row: any) => {
         return row;
       },
-      type: TYPE_BUTTON.LINK,
-      icon: <IconSee />,
-      textEnable: "Ouvrir l'étude",
       onClick: (etudeId, row) => {
         if (row.listeCommune.length > 0) {
           fetchGeometry(
@@ -54,6 +51,10 @@ const ListEtude = () => {
           );
         }
       },
+      type: TYPE_BUTTON.LINK,
+      icon: <IconSee />,
+      textEnable: "Ouvrir l'étude",
+      classEnable: "primary",
       route: (etudeId) => URLS.OUVRIR_ETUDE(etudeId),
     });
   }

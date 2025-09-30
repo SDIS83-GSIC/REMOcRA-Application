@@ -50,14 +50,6 @@ const ListCrise = () => {
         return row;
       },
       type: TYPE_BUTTON.LINK,
-      icon: <IconSee />,
-      disable: (v) =>
-        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
-          CriseStatutEnum[v.original.criseStatutType],
-        ),
-      textDisable: "Impossible d'ouvrir une crise qui n'est plus en cours",
-      classEnable: "primary",
-      textEnable: "Ouvrir la crise",
       onClick: (criseId, row) => {
         if (row.listeCommune.length > 0) {
           fetchGeometry(
@@ -67,7 +59,14 @@ const ListCrise = () => {
           );
         }
       },
-      route: (criseId) => URLS.OUVRIR_CRISE(criseId),
+      icon: <IconSee />,
+      textEnable: "Ouvrir la crise",
+      classEnable: "primary",
+      disable: (v) =>
+        [CriseStatutEnum.TERMINEE, CriseStatutEnum.FUSIONNEE].includes(
+          CriseStatutEnum[v.original.criseStatutType],
+        ),
+      textDisable: "Impossible d'ouvrir une crise clôturée",
     });
   }
 

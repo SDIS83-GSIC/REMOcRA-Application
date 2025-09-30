@@ -704,6 +704,7 @@ const MapToolbarPei = ({
           onSubmit={() => {
             dataPeiLayer.getSource().refresh();
             refreshLayerGeoserver(map);
+            window.location.reload();
           }}
           prepareVariables={(values) => ({
             geometry: values.geometrie,
