@@ -45,8 +45,7 @@ class TracabiliteEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("search")
-    // TODO: trouver le bon droit !
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.OPERATIONS_DIVERSES_E])
     fun search(@BeanParam searchParams: SearchParams): Response {
         val debut = searchParams.debut?.let {
             try {
