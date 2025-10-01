@@ -8,6 +8,9 @@ import Row from "react-bootstrap/Row";
 import { URLS } from "../../routes.tsx";
 import LinkButton from "../Button/LinkButton.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import url from "../../module/fetch.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 
 export interface NavToProps {
   path: string;
@@ -29,6 +32,12 @@ const NavTo = ({ path, label, aLeDroit }: NavToProps) => {
 const Header = ({ links }: { links?: NavToProps[] }) => {
   const { user } = useAppContext();
 
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.MESSAGE_ENTETE]),
+    }}`,
+  );
+
   return (
     <Row>
       <Navbar className="mb-3" expand="lg" bg={"primary"} data-bs-theme="dark">
@@ -36,6 +45,15 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
           <Navbar.Brand href={URLS.ACCUEIL}>REMOcRA</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            {!links && (
+              <p className={"h3 text-light mx-auto text-center"}>
+                {
+                  listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE]
+                    .parametreValeur
+                }
+              </p>
+            )}
+
             <Nav className="me-auto">
               {links?.map((item, index) => (
                 <NavTo

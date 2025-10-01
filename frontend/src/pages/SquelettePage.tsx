@@ -30,8 +30,7 @@ const SquelettePage = ({
   );
   const mentionCnil =
     listeParametre.data?.[PARAMETRE.MENTION_CNIL].parametreValeur;
-  const messageEntete =
-    listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE].parametreValeur;
+
   const titrePage = listeParametre.data?.[PARAMETRE.TITRE_PAGE].parametreValeur;
   useEffect(() => {
     if (titrePage) {
@@ -42,7 +41,7 @@ const SquelettePage = ({
     <div id={"page"}>
       {banner && (
         <Container fluid id={"banner"}>
-          <BanniereHeader messageEntete={messageEntete} />
+          <BanniereHeader />
         </Container>
       )}
       <Container fluid id={"navbar"}>
