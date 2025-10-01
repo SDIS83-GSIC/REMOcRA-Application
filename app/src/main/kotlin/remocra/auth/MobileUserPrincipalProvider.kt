@@ -13,6 +13,7 @@ import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
+import java.util.UUID
 
 class MobileUserPrincipalProvider @Inject constructor(
     private val utilisateurRepository: Provider<UtilisateurRepository>,
@@ -23,7 +24,7 @@ class MobileUserPrincipalProvider @Inject constructor(
 ) : CachedTokenPrincipalProvider(Caffeine.from(authnSettings.tokenIntrospectionCacheSpec)) {
     override fun load(introspectionResponse: TokenIntrospectionSuccessResponse): TokenPrincipal? {
         // XXX: utiliser syncUtilisateur ?
-        val utilisateur = utilisateurRepository.get().getUtilisateurByUsername(introspectionResponse.username)
+        val utilisateur = utilisateurRepository.get().getUtilisateurById(UUID.fromString(introspectionResponse.subject.value))
             ?: return null
 
         // XXX: factoriser avec RemocraUserPrincipalFactory
