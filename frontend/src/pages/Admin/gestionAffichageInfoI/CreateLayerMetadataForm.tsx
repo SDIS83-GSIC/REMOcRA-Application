@@ -31,7 +31,7 @@ export const getInitialValues = (styleId?: string, data?: any) => ({
   groupLayerId: data?.groupLayerId ?? null,
   layerId: data?.layerId ?? null,
   layerProfilId: data?.layerProfilId ?? null,
-  layerStyleFlag: data?.layerStyleFlag ?? false,
+  layerStyleFlag: data?.layerStyleFlag ?? true,
   layerStylePublicAccess: data?.layerStylePublicAccess ?? false,
   layerStyleId: styleId ?? "",
   layerStyle: data?.layerStyle ?? null,
@@ -73,11 +73,6 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
     return await errorPending?.text();
   }
 
-  const queryParam = initalLayer !== undefined ? "" : "?excludeExisting=true";
-  const layerData = useGet(
-    url`/api/admin/couche/get-available-layers${queryParam}`,
-  )?.data?.list;
-
   const { setValues, setFieldValue, values } = useFormikContext<{
     groupLayerId: any;
     layerId: any;
@@ -85,12 +80,21 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
     layerStyle: any;
     layerStyleFlag: boolean;
     layerStylePublicAccess: boolean;
+    layerStyleId: string | null;
   }>();
   const {
     run: fetchOption,
     data: describeFeatureType,
     ...dataLayer
   } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
+
+  const queryParam =
+    values.layerStyleId !== null && values.layerStyleId !== ""
+      ? { coucheStyleId: values.layerStyleId }
+      : "";
+  const layerData = useGet(
+    url`/api/admin/couche/get-available-layers?${queryParam}`,
+  )?.data?.list;
 
   const properties = useMemo(() => {
     return describeFeatureType?.featureTypes?.[0]?.properties ?? [];

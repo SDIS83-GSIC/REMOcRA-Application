@@ -106,7 +106,7 @@ class CoucheEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.CARTO_METADATA_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun getAvailableLayers(
-        @QueryParam("excludeExisting") excludeExisting: Boolean?,
+        @QueryParam("coucheStyleId") coucheStyleId: UUID?,
     ): Response =
         Response.ok(
             object {
@@ -121,7 +121,7 @@ class CoucheEndpoint : AbstractEndpoint() {
                                 coucheLibelle = couche.coucheLibelle,
                                 coucheCode = couche.coucheCode,
                                 coucheNom = couche.coucheNom,
-                                groupeFonctionnaliteList = coucheRepository.getAvailableGroupeFonctionnaliteList(couche.coucheId, excludeExisting ?: false)
+                                groupeFonctionnaliteList = coucheRepository.getAvailableGroupeFonctionnaliteList(couche.coucheId, coucheStyleId)
                                     .map { groupeFonctionnalite ->
                                         GroupeFonctionnalite(
                                             groupeFonctionnaliteId = groupeFonctionnalite.groupeFonctionnalitesId,

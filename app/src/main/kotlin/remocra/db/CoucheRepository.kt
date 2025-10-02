@@ -274,19 +274,15 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
             .fetchInto<GroupeFonctionnalites>()
 
-    fun getAvailableGroupeFonctionnaliteList(coucheId: UUID, excludeExisting: Boolean = false): List<GroupeFonctionnalites> {
-        var query = dsl.select(*GROUPE_FONCTIONNALITES.fields())
+    fun getAvailableGroupeFonctionnaliteList(coucheId: UUID, coucheStyleId: UUID?): List<GroupeFonctionnalites> =
+        dsl.select(*GROUPE_FONCTIONNALITES.fields())
             .from(GROUPE_FONCTIONNALITES)
             .join(L_COUCHE_GROUPE_FONCTIONNALITES).on(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+            .and(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
             .leftJoin(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA).on(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
-            .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
-
-        if (excludeExisting) {
-            query = query.and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.isNull)
-        }
-
-        return query.fetchInto<GroupeFonctionnalites>()
-    }
+            .leftJoin(COUCHE_METADATA).on(COUCHE_METADATA.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID))
+            .where(GROUPE_FONCTIONNALITES.ACTIF.isTrue)
+            .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.isNull.or(coucheStyleId?.let { COUCHE_METADATA.ID.eq(it) })).fetchInto()
 
     fun getModuleList(coucheId: UUID): List<TypeModule> =
         dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
