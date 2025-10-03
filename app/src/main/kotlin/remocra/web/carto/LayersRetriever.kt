@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
 import remocra.auth.WrappedUserInfo
+import remocra.db.CoucheMetadataRepository
 import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.SourceCarto
@@ -18,6 +19,9 @@ class LayersRetriever {
 
     @Inject
     lateinit var coucheRepository: CoucheRepository
+
+    @Inject
+    lateinit var coucheMetadataRepository: CoucheMetadataRepository
 
     @Inject
     lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
@@ -79,7 +83,7 @@ class LayersRetriever {
                                 .build(couche.coucheId)
                                 .toString()
                         },
-                        hasStyle = coucheRepository.checkIfLayerHasStyle(couche.coucheId),
+                        hasStyle = coucheMetadataRepository.checkCoucheMetadata(couche.coucheId),
                     )
                 },
             )

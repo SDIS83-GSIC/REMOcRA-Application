@@ -16,6 +16,7 @@ object AdminModule : Module {
             LienGroupeFonctionnalitesEndpoint::class,
             LienProfilFonctionnaliteEndpoint::class,
             CoucheEndpoint::class,
+            CoucheMetadataEndpoint::class,
         )
     }
 }

@@ -281,7 +281,7 @@ const MenuAdmin = () => {
                     <Nav.Item>
                       <CustomLinkButton
                         className="text-underline text-start"
-                        pathname={URLS.URL_LIST_LAYER_STYLE}
+                        pathname={URLS.LIST_COUCHE_METADATA}
                       >
                         Gestion des métadonnées des couches
                       </CustomLinkButton>

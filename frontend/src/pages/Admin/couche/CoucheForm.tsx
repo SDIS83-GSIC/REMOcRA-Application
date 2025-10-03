@@ -271,7 +271,7 @@ const CoucheForm = () => {
                         <Col xs={12} lg={6} xxl={4}>
                           <CustomLinkButton
                             className="text-underline text-start"
-                            pathname={URLS.URL_LIST_LAYER_STYLE}
+                            pathname={URLS.LIST_COUCHE_METADATA}
                             search={new URLSearchParams({
                               filterBy: JSON.stringify({
                                 coucheLibelle: couche.coucheLibelle,

@@ -39,36 +39,29 @@ data class GroupeFonctionnalite(
     val groupeFonctionnaliteLibelle: String,
 )
 
-data class CoucheStyleInput(
-    val layerStyleId: UUID? = UUID.randomUUID(),
-    val layerId: UUID,
-    val layerStyle: String? = null,
-    val layerStyleFlag: Boolean = false,
-    val layerProfilId: Collection<UUID>? = null,
-    val layerStylePublicAccess: Boolean = false,
-)
-
-data class GroupeFonctionnaliteList(
-    val profilId: UUID,
-    val profilLibelle: String? = null,
-)
-
 data class ResponseCouche(
     val groupeCoucheId: UUID,
-    val groupeCoucheLibelle: String? = null,
-    val coucheLibelle: String? = null,
+    val groupeCoucheLibelle: String,
+
+    val coucheId: UUID,
+    val coucheLibelle: String,
+
+    val coucheMetadataId: UUID,
     val coucheMetadataActif: Boolean = false,
     val coucheMetadataPublic: Boolean = false,
-    val styleId: UUID,
-    val coucheId: UUID? = null,
-    val groupeFonctionnaliteList: Collection<GroupeFonctionnaliteList>? = emptyList(),
+
+    val groupeFonctionnaliteList: Collection<GroupeFonctionnalite>? = emptyList(),
 )
 
-data class CoucheStyle(
-    val layerId: UUID,
-    val layerStyleFlag: Boolean = false,
-    val layerStyle: String? = null,
-    val layerStylePublicAccess: Boolean = false,
-    val groupLayerId: UUID,
-    val layerProfilId: Collection<UUID>? = emptyList(),
+data class CoucheMetadata(
+    val groupeCoucheId: UUID,
+
+    val coucheId: UUID,
+
+    val coucheMetadataId: UUID? = UUID.randomUUID(),
+    val coucheMetadataActif: Boolean = false,
+    val coucheMetadataPublic: Boolean = false,
+    val coucheMetadataStyle: String? = null,
+
+    val groupeFonctionnaliteIds: Collection<UUID>? = emptyList(),
 )

@@ -7,13 +7,14 @@ data class GroupeCoucheData(
     val groupeCoucheCode: String,
     val groupeCoucheLibelle: String,
     val groupeCoucheOrdre: Int,
-    val coucheList: Collection<CoucheData> = listOf(),
     val groupeCoucheProtected: Boolean = false,
+
+    val coucheList: Collection<CoucheData> = listOf(),
 )
 
 data class StyleGroupeCoucheData(
     val groupeCoucheId: UUID = UUID.randomUUID(),
-    val groupeCoucheLibelle: String,
     val groupeCoucheCode: String,
+    val groupeCoucheLibelle: String,
     val coucheList: Collection<SimplifiedCoucheData> = listOf(),
 )

@@ -25,10 +25,10 @@ import filterValuesToVariable from "./FilterMetadata.tsx";
 
 type GroupeFonctionnalite = {
   groupeFonctionnaliteId: string;
-  profilLibelle: string;
+  groupeFonctionnaliteLibelle: string;
 };
 
-const ListLayersGroup = () => {
+const ListCoucheMetadata = () => {
   const { user } = useAppContext();
   const listeButton: ButtonType[] = [];
 
@@ -39,7 +39,7 @@ const ListLayersGroup = () => {
           return row;
         },
         classEnable: "info",
-        route: (styleId) => URLS.UPDATE_LAYER_STYLE(styleId),
+        route: (styleId) => URLS.UPDATE_COUCHE_METADATA(styleId),
         type: TYPE_BUTTON.UPDATE,
       },
       {
@@ -47,7 +47,7 @@ const ListLayersGroup = () => {
           return row;
         },
         type: TYPE_BUTTON.DELETE,
-        pathname: url`/api/admin/couche/delete/`,
+        pathname: url`/api/admin/couche-metadata/delete/`,
         textDisable: "Impossible de supprimer le style",
       },
     );
@@ -61,7 +61,7 @@ const ListLayersGroup = () => {
         right={
           hasDroit(user, TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE) && (
             <CreateButton
-              href={URLS.ADD_LAYER_STYLE}
+              href={URLS.ADD_COUCHE_METADATA}
               title={"Ajouter des métadonnées"}
             />
           )
@@ -69,7 +69,7 @@ const ListLayersGroup = () => {
       />
 
       <QueryTable
-        query={url`/api/admin/couche/get-couches-params`}
+        query={url`/api/admin/couche-metadata/get-couches-metadata-table/`}
         columns={[
           {
             Header: "Groupe de couche",
@@ -98,7 +98,10 @@ const ListLayersGroup = () => {
                   }}
                 >
                   {value?.value
-                    .map((item: GroupeFonctionnalite) => item.profilLibelle)
+                    .map(
+                      (item: GroupeFonctionnalite) =>
+                        item.groupeFonctionnaliteLibelle,
+                    )
                     .join(", ")}
                 </div>
               );
@@ -128,11 +131,11 @@ const ListLayersGroup = () => {
           }),
           ActionColumn({
             Header: "Actions",
-            accessor: "styleId",
+            accessor: "coucheMetadataId",
             buttons: listeButton,
           }),
         ]}
-        idName={"tableCoucheId"}
+        idName={"tableCoucheMetadataId"}
         filterValuesToVariable={filterValuesToVariable}
         filterContext={useFilterContext({
           groupeCoucheLibelle: undefined,
@@ -146,4 +149,4 @@ const ListLayersGroup = () => {
   );
 };
 
-export default ListLayersGroup;
+export default ListCoucheMetadata;

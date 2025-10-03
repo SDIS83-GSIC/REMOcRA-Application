@@ -6,34 +6,39 @@ import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
-import CreateLayerMetadataForm, {
+import CoucheMetadataForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./CreateLayerMetadataForm.tsx";
+} from "./CoucheMetadataForm.tsx";
 
-const UpdateLayerMetadata = () => {
-  const { styleId } = useParams();
-  const styleState = useGet(url`/api/admin/couche/get-style/${styleId!}`)?.data;
+const UpdateCoucheMetadata = () => {
+  const { coucheMetadataId: coucheMetadataId } = useParams();
+  const coucheMetadataState = useGet(
+    url`/api/admin/couche-metadata/get-couche-metadata/${coucheMetadataId!}`,
+  )?.data;
 
   return (
-    styleState && (
+    coucheMetadataState && (
       <Container>
         <PageTitle title="Modification des métadonnées" icon={<IconEdit />} />
         <MyFormik
-          initialValues={getInitialValues(styleId, styleState)}
-          prepareVariables={(values) => prepareValues(values, styleId)}
+          initialValues={getInitialValues(
+            coucheMetadataId,
+            coucheMetadataState,
+          )}
+          prepareVariables={(values) => prepareValues(values, coucheMetadataId)}
           validationSchema={validationSchema}
-          submitUrl={`/api/admin/couche/${styleId}/update`}
+          submitUrl={`/api/admin/couche-metadata/${coucheMetadataId}/update`}
           isPost={true}
-          redirectUrl={URLS.URL_LIST_LAYER_STYLE}
+          redirectUrl={URLS.LIST_COUCHE_METADATA}
           onSubmit={() => true}
         >
-          <CreateLayerMetadataForm initalLayer={styleState.layerId} />
+          <CoucheMetadataForm coucheInitiale={coucheMetadataState.coucheId} />
         </MyFormik>
       </Container>
     )
   );
 };
 
-export default UpdateLayerMetadata;
+export default UpdateCoucheMetadata;

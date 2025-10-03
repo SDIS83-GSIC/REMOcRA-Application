@@ -9,7 +9,6 @@ import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
-import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -26,26 +25,6 @@ class GroupeFonctionnalitesRepository @Inject constructor(private val dsl: DSLCo
             .from(GROUPE_FONCTIONNALITES)
             .orderBy(GROUPE_FONCTIONNALITES.LIBELLE)
             .fetchInto()
-
-    fun addGroupeFonctionnalitesCoucheStyle(layerId: UUID, profilId: UUID): Int =
-        dsl.insertInto(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-            .set(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID, profilId)
-            .set(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID, layerId)
-            .execute()
-
-    fun checkGroupeFonctionnaliteCoucheExist(layerId: UUID, profilId: UUID) = dsl.fetchExists(
-        dsl.selectOne() // on s'interesse pas aux données, juste à savoir s'il y a un élément
-            .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-            .where(
-                L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(profilId)
-                    .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(layerId)),
-            ),
-    )
-
-    fun deleteLGroupeFonctionnalitesCouche(layerStyleId: UUID) =
-        dsl.deleteFrom(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-            .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(layerStyleId))
-            .execute()
 
     fun getGroupeFonctionnalitesWithProfils(): List<GroupeFonctionnalitesWithProfils> =
         dsl.select(

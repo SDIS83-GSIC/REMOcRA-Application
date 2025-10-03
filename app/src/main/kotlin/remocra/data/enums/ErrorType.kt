@@ -551,7 +551,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_COUCHES_ORDRE_UNIQUE(25001, "L'ordre des couches et des groupes de couche doit être unique"),
     ADMIN_COUCHES_CODE_UNIQUE(25002, "Le code de la couche et des groupes de couche doit être unique"),
     GROUPE_FONCTIONNALITES_COUCHE_UNIQUE(25003, "Le profil droit est déjà associé à une couche"),
-    GROUPE_FONCTIONNALITES_COUCHE_DELETE(25004, "Vous n'avez pas les droits de suppression des styles de couche", Status.FORBIDDEN),
+    GROUPE_FONCTIONNALITES_COUCHE_DELETE(25004, "Vous n'avez pas les droits de suppression des métadonnées de couche", Status.FORBIDDEN),
     ADMIN_COUCHES_NAME_NULL(25005, "Le nom de la couche doit être défini."),
 
     // Paramètres API

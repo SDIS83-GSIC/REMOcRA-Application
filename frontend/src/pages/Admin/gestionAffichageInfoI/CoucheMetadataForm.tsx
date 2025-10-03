@@ -19,7 +19,7 @@ import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 
-function generateLayerStyle(properties: any) {
+function generateMetadataProperties(properties: any) {
   return properties
     .map((property: { name: string }) => {
       return `[b]${property.name} : [/b] #${property.name}#\n[br]`;
@@ -27,45 +27,54 @@ function generateLayerStyle(properties: any) {
     .join("");
 }
 
-export const getInitialValues = (styleId?: string, data?: any) => ({
-  groupLayerId: data?.groupLayerId ?? null,
-  layerId: data?.layerId ?? null,
-  layerProfilId: data?.layerProfilId ?? null,
-  layerStyleFlag: data?.layerStyleFlag ?? true,
-  layerStylePublicAccess: data?.layerStylePublicAccess ?? false,
-  layerStyleId: styleId ?? "",
-  layerStyle: data?.layerStyle ?? null,
+export const getInitialValues = (coucheMetadataId?: string, data?: any) => ({
+  groupeCoucheId: data?.groupeCoucheId ?? null,
+  coucheId: data?.coucheId ?? null,
+  coucheMetadataId: coucheMetadataId ?? "",
+  coucheMetadataActif: data?.coucheMetadataActif ?? true,
+  coucheMetadataPublic: data?.coucheMetadataPublic ?? false,
+  coucheMetadataStyle: data?.coucheMetadataStyle ?? null,
+
+  groupeFonctionnaliteIds: data?.groupeFonctionnaliteIds ?? null,
 });
 
 export const prepareValues = (
   values: {
-    groupLayerId: any;
-    layerId: any;
-    layerProfilId: any;
-    layerStyle: any;
-    layerStyleFlag: boolean;
-    layerStylePublicAccess: boolean;
+    groupeCoucheId: any;
+    coucheId: any;
+
+    coucheMetadataActif: boolean;
+    coucheMetadataPublic: boolean;
+    coucheMetadataStyle: any;
+
+    groupeFonctionnaliteIds: any;
   },
-  styleId?: string,
+  coucheMetadataId?: string,
 ) => ({
-  layerStyleId: styleId,
-  groupLayerId: values.groupLayerId,
-  layerId: values.layerId,
-  layerProfilId: values.layerProfilId,
-  layerStyle: values.layerStyle,
-  layerStyleFlag: values.layerStyleFlag,
-  layerStylePublicAccess: values.layerStylePublicAccess,
+  coucheMetadataId: coucheMetadataId,
+  groupeCoucheId: values.groupeCoucheId,
+  coucheId: values.coucheId,
+  groupeFonctionnaliteIds: values.groupeFonctionnaliteIds,
+  coucheMetadataStyle: values.coucheMetadataStyle,
+  coucheMetadataActif: values.coucheMetadataActif,
+  coucheMetadataPublic: values.coucheMetadataPublic,
 });
 
 export const validationSchema = object({
-  groupLayerId: requiredString,
-  layerId: requiredString,
-  layerStyle: requiredString,
-  layerProfilId: requiredArray,
+  groupeCoucheId: requiredString,
+  coucheId: requiredString,
+
+  coucheMetadataStyle: requiredString,
+
+  groupeFonctionnaliteIds: requiredArray,
 });
 
-const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
-  const [coucheId, setCoucheId] = useState<string | null>(initalLayer);
+const CoucheMetadataForm = ({
+  coucheInitiale,
+}: {
+  coucheInitiale?: string;
+}) => {
+  const [coucheId, setCoucheId] = useState<string | null>(coucheInitiale);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { handleShowClose, activesKeys } = useAccordionState([false, false]);
 
@@ -74,13 +83,13 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   }
 
   const { setValues, setFieldValue, values } = useFormikContext<{
-    groupLayerId: any;
-    layerId: any;
-    layerProfilId: any;
-    layerStyle: any;
-    layerStyleFlag: boolean;
-    layerStylePublicAccess: boolean;
-    layerStyleId: string | null;
+    groupeCoucheId: any;
+    coucheId: any;
+    groupeFonctionnaliteIds: any;
+    coucheMetadata: any;
+    coucheMetadataFlag: boolean;
+    coucheMetadataPublicAccess: boolean;
+    coucheMetadataId: string | null;
   }>();
   const {
     run: fetchOption,
@@ -89,28 +98,34 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
 
   const queryParam =
-    values.layerStyleId !== null && values.layerStyleId !== ""
-      ? { coucheStyleId: values.layerStyleId }
+    values.coucheMetadataId !== null && values.coucheMetadataId !== ""
+      ? { coucheMetadataId: values.coucheMetadataId }
       : "";
-  const layerData = useGet(
-    url`/api/admin/couche/get-available-layers?${queryParam}`,
-  )?.data?.list;
+  const coucheData = useGet(
+    url`/api/admin/couche-metadata/get-available-layers?${queryParam}`,
+  )?.data;
 
   const properties = useMemo(() => {
     return describeFeatureType?.featureTypes?.[0]?.properties ?? [];
   }, [describeFeatureType]);
 
   useEffect(() => {
-    if (!initalLayer) {
-      setFieldValue("layerStyle", generateLayerStyle(properties));
+    if (!coucheInitiale) {
+      setFieldValue(
+        "coucheMetadataStyle",
+        generateMetadataProperties(properties),
+      );
     }
-  }, [setFieldValue, describeFeatureType, initalLayer, properties]);
+  }, [setFieldValue, describeFeatureType, coucheInitiale, properties]);
 
   const handleLayerStyleChange = (event: any) => {
     if (event.target.value === "") {
-      setFieldValue("layerStyle", generateLayerStyle(properties));
+      setFieldValue(
+        "coucheMetadataStyle",
+        generateMetadataProperties(properties),
+      );
     } else {
-      setFieldValue("layerStyle", event.target.value);
+      setFieldValue("coucheMetadataStyle", event.target.value);
     }
   };
 
@@ -130,34 +145,34 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
     }
   }, [coucheId, fetchOption]);
 
-  if (!layerData) {
+  if (!coucheData) {
     return <Loading />;
   }
 
   // Liste des groupes de couches
-  const listGroupLayers = layerData.map(
-    (groupLayer: {
+  const listGroupeCouche = coucheData.map(
+    (groupeCouche: {
       groupeCoucheId: any;
       groupeCoucheCode: any;
       groupeCoucheLibelle: any;
       coucheList: any;
     }) => ({
-      id: groupLayer.groupeCoucheId,
-      code: groupLayer.groupeCoucheCode,
-      libelle: groupLayer.groupeCoucheLibelle,
-      listeCouches: groupLayer.coucheList,
+      id: groupeCouche.groupeCoucheId,
+      code: groupeCouche.groupeCoucheCode,
+      libelle: groupeCouche.groupeCoucheLibelle,
+      listeCouches: groupeCouche.coucheList,
     }),
   );
 
   // On récupère le groupe de couche sélectionné directement depuis values (FormData)
-  const selectedGroupLayer = listGroupLayers.find(
-    (groupLayer: { id: any }) => groupLayer.id === values.groupLayerId,
+  const selectedGroupeCouche = listGroupeCouche.find(
+    (groupeCouche: { id: any }) => groupeCouche.id === values.groupeCoucheId,
   );
 
   // Liste des couches en fonction du groupe sélectionné
-  let listLayers = [];
-  if (selectedGroupLayer) {
-    listLayers = selectedGroupLayer.listeCouches.map(
+  let listCouches = [];
+  if (selectedGroupeCouche) {
+    listCouches = selectedGroupeCouche.listeCouches.map(
       (layer: {
         coucheId: any;
         coucheCode: any;
@@ -173,27 +188,27 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   }
 
   // On récupère la couche sélectionnée (valeurs du formulaire)
-  const selectedLayer = selectedGroupLayer?.listeCouches.find(
-    (layer: { coucheId: any }) => layer.coucheId === values.layerId,
+  const selectedCouche = selectedGroupeCouche?.listeCouches.find(
+    (couche: { coucheId: any }) => couche.coucheId === values.coucheId,
   );
 
-  // Liste des profils de droits en fonction de la couche sélectionnée
-  let listProfilsDroits = [];
-  if (selectedLayer) {
-    listProfilsDroits = selectedLayer.groupeFonctionnaliteList.map(
-      (profil: {
+  // Liste des groupes de fonctionnalités en fonction de la couche sélectionnée
+  let listGroupeFonctionnalites = [];
+  if (selectedCouche) {
+    listGroupeFonctionnalites = selectedCouche.groupeFonctionnaliteList.map(
+      (groupeFonctionnalite: {
         groupeFonctionnaliteId: any;
         groupeFonctionnaliteCode: any;
         groupeFonctionnaliteLibelle: any;
       }) => ({
-        id: profil.groupeFonctionnaliteId,
-        code: profil.groupeFonctionnaliteCode,
-        libelle: profil.groupeFonctionnaliteLibelle,
+        id: groupeFonctionnalite.groupeFonctionnaliteId,
+        code: groupeFonctionnalite.groupeFonctionnaliteCode,
+        libelle: groupeFonctionnalite.groupeFonctionnaliteLibelle,
       }),
     );
 
     // Tri de la liste des profils droits par libelle
-    listProfilsDroits = listProfilsDroits.sort(
+    listGroupeFonctionnalites = listGroupeFonctionnalites.sort(
       (a: { libelle: string }, b: { libelle: string }) =>
         a.libelle.localeCompare(b.libelle),
     );
@@ -264,19 +279,18 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
         ]}
       />
 
-      {/* group layer */}
       <SelectForm
-        name={"groupLayerId"}
-        listIdCodeLibelle={listGroupLayers}
+        name={"groupeCoucheId"}
+        listIdCodeLibelle={listGroupeCouche}
         label="Groupe de couche"
         required={true}
         setValues={setValues}
-        defaultValue={listGroupLayers.find(
-          (e: any) => e.id === values?.groupLayerId,
+        defaultValue={listGroupeCouche.find(
+          (e: any) => e.id === values?.groupeCoucheId,
         )}
         onChange={(value: any) => {
-          setFieldValue("groupLayerId", value.id);
-          setFieldValue("layerId", undefined);
+          setFieldValue("groupeCoucheId", value.id);
+          setFieldValue("coucheId", undefined);
         }}
       />
 
@@ -284,47 +298,46 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
         {errorMessage && <div className="text-danger">{errorMessage}</div>}
       </Container>
 
-      {/* layer */}
       <SelectForm
-        name={"layerId"}
-        listIdCodeLibelle={listLayers}
+        name={"coucheId"}
+        listIdCodeLibelle={listCouches}
         label="Couche"
         required={true}
         setValues={setValues}
-        defaultValue={listLayers.find((e: any) => e.id === values?.layerId)}
+        defaultValue={listCouches.find((e: any) => e.id === values?.coucheId)}
         onChange={(value: any) => {
-          setFieldValue("layerId", value.id);
-          setFieldValue("layerProfilId", undefined);
+          setFieldValue("coucheId", value.id);
+          setFieldValue("groupeFonctionnaliteIds", undefined);
           setCoucheId(value.id);
         }}
       />
 
       <Multiselect
-        name={"layerProfilId"}
+        name={"listGroupeFonctionnalites"}
         label="Groupes de fonctionnalités"
-        options={listProfilsDroits}
+        options={listGroupeFonctionnalites}
         getOptionValue={(t) => t.id}
         value={
-          values.layerProfilId?.map((e: any) =>
-            listProfilsDroits.find((p: any) => p.id === e),
+          values.groupeFonctionnaliteIds?.map((e: any) =>
+            listGroupeFonctionnalites.find((p: any) => p.id === e),
           ) ??
-          listProfilsDroits.filter((e: { id: any }) =>
-            values.layerProfilId?.includes(e.id),
+          listGroupeFonctionnalites.filter((e: { id: any }) =>
+            values.groupeFonctionnaliteIds?.includes(e.id),
           )
         }
         getOptionLabel={(t) => t.libelle}
         isClearable={true}
-        onChange={(profilGroup) => {
+        onChange={(groupesFonctionnalites) => {
           setFieldValue(
-            "layerProfilId",
-            profilGroup.map((e: any) => e.id),
+            "groupeFonctionnaliteIds",
+            groupesFonctionnalites.map((e: any) => e.id),
           );
         }}
       />
 
-      <CheckBoxInput name={"layerStyleFlag"} label={"Actif"} />
+      <CheckBoxInput name={"coucheMetadataActif"} label={"Actif"} />
       <CheckBoxInput
-        name={"layerStylePublicAccess"}
+        name={"coucheMetadataPublic"}
         label={"Autoriser l'accès public"}
         tooltipText="Si la case est cochée, les métadonnées seront accessibles publiquement, y compris par un utilisateur déconnecté."
       />
@@ -346,7 +359,7 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
           <Col md={8}>
             <TextAreaInput
               rows={10}
-              name="layerStyle"
+              name="coucheMetadataStyle"
               readOnly={params === null}
               label="Métadonnées à afficher"
               onChange={handleLayerStyleChange}
@@ -367,4 +380,4 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   );
 };
 
-export default CreateLayerMetadataForm;
+export default CoucheMetadataForm;

@@ -7,10 +7,10 @@ import { useGet } from "../../Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 
-function findStyleById(coucheStyle: any[], typeId: string): string | null {
-  for (const style of coucheStyle) {
-    if (style.layerId === typeId) {
-      return style.layerStyle;
+function findStyleById(coucheMetadata: any[], typeId: string): string | null {
+  for (const metadata of coucheMetadata) {
+    if (metadata.coucheId === typeId) {
+      return metadata.coucheMetadataStyle;
     }
   }
   return null; // Si aucun match trouvé
@@ -18,7 +18,9 @@ function findStyleById(coucheStyle: any[], typeId: string): string | null {
 
 const ListInfos = ({ data }: { data: any[] }) => {
   const { user } = useAppContext();
-  const coucheStyle = useGet(url`/api/admin/couche/get-all-styles`)?.data;
+  const coucheMetadata = useGet(
+    url`/api/admin/couche-metadata/get-all-metadata`,
+  )?.data;
   const [tableau, setTableau] = useState<
     { header: string; content: JSX.Element }[]
   >([]);
@@ -104,7 +106,8 @@ const ListInfos = ({ data }: { data: any[] }) => {
         ];
       }
 
-      const style = coucheStyle && id ? findStyleById(coucheStyle, id) : null;
+      const style =
+        coucheMetadata && id ? findStyleById(coucheMetadata, id) : null;
 
       return features.map((feature: any) => {
         const properties = feature?.properties ?? {};
@@ -148,7 +151,7 @@ const ListInfos = ({ data }: { data: any[] }) => {
     }
 
     setTableau(generatedTableau);
-  }, [data, coucheStyle, user?.isSuperAdmin]);
+  }, [data, coucheMetadata, user?.isSuperAdmin]);
 
   return (
     <Container>

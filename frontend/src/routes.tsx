@@ -205,9 +205,9 @@ import MapSignalement from "./components/Map/MapSignalements/MapSignalement.tsx"
 import DepotDeliberation from "./pages/Signalement/DepotDeliberation.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
-import ListLayersGroup from "./pages/Admin/gestionAffichageInfoI/ListLayersGroup.tsx";
-import CreateLayerMetadata from "./pages/Admin/gestionAffichageInfoI/CreateLayerMetadata.tsx";
-import UpdateLayerMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateLayerMetadata.tsx";
+import ListCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/ListCoucheMetadata.tsx";
+import CreateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/CreateCoucheMetadata.tsx";
+import UpdateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateCoucheMetadata.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
 
 export const URLS = {
@@ -461,10 +461,10 @@ export const URLS = {
   UPDATE_GESTIONNAIRE: (gestionnaireId: string) =>
     url`/admin/gestionnaire/update/` + gestionnaireId,
 
-  ADD_LAYER_STYLE: url`/admin/layers-group/create-style/`,
-  UPDATE_LAYER_STYLE: (styleId: string) =>
-    url`/admin/layers-group/update-style/` + styleId,
-  URL_LIST_LAYER_STYLE: url`/admin/layers-group`,
+  LIST_COUCHE_METADATA: url`/admin/couche-metadata`,
+  ADD_COUCHE_METADATA: url`/admin/couche-metadata/create-couche-metadata/`,
+  UPDATE_COUCHE_METADATA: (coucheMetadataId: string) =>
+    url`/admin/couche-metadata/update-couche-metadata/` + coucheMetadataId,
 
   ADD_CONTACT: (appartenanceId: string, appartenance: string) =>
     url`/admin/` + appartenance + `/` + appartenanceId + `/contact/create/`,
@@ -1124,28 +1124,28 @@ export default [
         ),
       },
       {
-        path: "/admin/layers-group",
+        path: "/admin/couche-metadata",
         element: (
           <Authorization
-            Component={ListLayersGroup}
+            Component={ListCoucheMetadata}
             droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),
       },
       {
-        path: "/admin/layers-group/update-style/:styleId",
+        path: "/admin/couche-metadata/update-couche-metadata/:coucheMetadataId",
         element: (
           <Authorization
-            Component={UpdateLayerMetadata}
+            Component={UpdateCoucheMetadata}
             droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),
       },
       {
-        path: "/admin/layers-group/create-style",
+        path: "/admin/couche-metadata/create-couche-metadata",
         element: (
           <Authorization
-            Component={CreateLayerMetadata}
+            Component={CreateCoucheMetadata}
             droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),

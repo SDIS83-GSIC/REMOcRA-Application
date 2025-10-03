@@ -3,13 +3,13 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
-import CreateLayerMetadataForm, {
+import CoucheMetadataForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./CreateLayerMetadataForm.tsx";
+} from "./CoucheMetadataForm.tsx";
 
-const CreateLayerMetadata = () => {
+const CreateCoucheMetadata = () => {
   return (
     <Container>
       <PageTitle title="Ajout des métadonnées" icon={<IconEdit />} />
@@ -17,15 +17,15 @@ const CreateLayerMetadata = () => {
         initialValues={getInitialValues()}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
-        submitUrl={`/api/admin/couche/add-style`}
+        submitUrl={`/api/admin/couche-metadata/add-couche-metadata`}
         isPost={true}
-        redirectUrl={URLS.URL_LIST_LAYER_STYLE}
+        redirectUrl={URLS.LIST_COUCHE_METADATA}
         onSubmit={() => true}
       >
-        <CreateLayerMetadataForm />
+        <CoucheMetadataForm />
       </MyFormik>
     </Container>
   );
 };
 
-export default CreateLayerMetadata;
+export default CreateCoucheMetadata;
