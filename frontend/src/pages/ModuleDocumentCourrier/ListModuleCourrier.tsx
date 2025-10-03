@@ -34,6 +34,22 @@ const ListModuleCourrier = () => {
           }}`}
           columns={[
             {
+              Header: "Date d'envoi",
+              accessor: "documentDate",
+              sortField: "documentDate",
+              Filter: (
+                <SelectEnumOption
+                  options={INTERVALLE_DATE_PROCHE_ENUM}
+                  name={"documentDate"}
+                />
+              ),
+              Cell: (value) => {
+                return (
+                  <div>{value.value ? formatDateTime(value.value) : ""}</div>
+                );
+              },
+            },
+            {
               Header: "Objet",
               accessor: "courrierObjet",
               sortField: "courrierObjet",
@@ -44,6 +60,12 @@ const ListModuleCourrier = () => {
               accessor: "courrierReference",
               sortField: "courrierReference",
               Filter: <FilterInput type="text" name="courrierReference" />,
+            },
+            {
+              Header: "Expéditeur",
+              accessor: "courrierExpediteur",
+              sortField: "courrierExpediteur",
+              Filter: <FilterInput type="text" name="courrierExpediteur" />,
             },
             {
               Header: "Destinataires",
@@ -83,28 +105,6 @@ const ListModuleCourrier = () => {
                   );
                 });
               },
-            },
-            {
-              Header: "Date d'envoi",
-              accessor: "documentDate",
-              sortField: "documentDate",
-              Filter: (
-                <SelectEnumOption
-                  options={INTERVALLE_DATE_PROCHE_ENUM}
-                  name={"documentDate"}
-                />
-              ),
-              Cell: (value) => {
-                return (
-                  <div>{value.value ? formatDateTime(value.value) : ""}</div>
-                );
-              },
-            },
-            {
-              Header: "Expéditeur",
-              accessor: "courrierExpediteur",
-              sortField: "courrierExpediteur",
-              Filter: <FilterInput type="text" name="courrierExpediteur" />,
             },
             ActionColumn({
               Header: "Actions",
