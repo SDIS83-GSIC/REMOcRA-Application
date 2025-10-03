@@ -32,10 +32,7 @@ const Signalement = ({
                   }
                 </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                    <Col>Anomalies</Col>
-                    <Col>Description</Col>
-                  </Row>
+                  <Row className="fw-bold">Anomalies</Row>
                   <Row>
                     <Col>
                       <ul>
@@ -54,6 +51,9 @@ const Signalement = ({
                         })}
                       </ul>
                     </Col>
+                  </Row>
+                  <Row className="fw-bold">Description</Row>
+                  <Row>
                     <Col>{e.description}</Col>
                   </Row>
                 </Accordion.Body>
