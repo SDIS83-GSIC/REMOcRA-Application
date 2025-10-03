@@ -1,10 +1,10 @@
 import { FieldArray, useFormikContext } from "formik";
 import { ReactNode } from "react";
-import { Col } from "react-bootstrap";
+import { Button, Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import CreateButton from "../Button/CreateButton.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
 import { FormLabel } from "../Form/Form.tsx";
+import { IconAdd } from "../Icon/Icon.tsx";
 
 /**
  * ATTENTION : doit être utiliser dans un <MyFormik>
@@ -58,13 +58,14 @@ const AddRemoveComponent = ({
                   </Col>
                 )}
                 <Col xs={"auto"} className={"ms-auto"}>
-                  <CreateButton
-                    title={"Ajouter"}
+                  <Button
                     onClick={() => {
                       elements.push(defaultElement);
                       scrollToBottom();
                     }}
-                  />
+                  >
+                    <IconAdd /> Ajouter
+                  </Button>
                 </Col>
               </Row>
             )}

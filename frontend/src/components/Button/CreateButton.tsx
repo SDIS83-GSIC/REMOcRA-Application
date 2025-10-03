@@ -1,6 +1,10 @@
 import { IconCreate } from "../Icon/Icon.tsx";
 import LinkButton from "./LinkButton.tsx";
 
+/**
+ * CreateButton ne doit être utilisé que dans le cadre d'une redirection vers une page de création
+ * Il permet de gérer le bouton retour
+ */
 const CreateButton = ({
   title,
   href,
