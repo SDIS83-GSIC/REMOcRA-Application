@@ -18,7 +18,7 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class ImportRisqueKmlUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeOperation.INSERT) {
+class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeOperation.INSERT) {
 
     @Inject
     lateinit var documentUtils: DocumentUtils
@@ -36,7 +36,7 @@ class ImportRisqueKmlUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeOpera
     lateinit var risqueExpressRepository: RisqueExpressRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.RISQUE_KML_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.RISQUE_EXPRESS_A)) {
             throw RemocraResponseException(ErrorType.RISQUE_FORBIDDEN_A)
         }
     }

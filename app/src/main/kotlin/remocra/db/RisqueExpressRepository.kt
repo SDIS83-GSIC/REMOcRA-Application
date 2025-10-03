@@ -22,4 +22,13 @@ class RisqueExpressRepository @Inject constructor(private val dsl: DSLContext) :
             .where(RISQUE_EXPRESS.ID.eq(id))
             .fetchSingleInto()
     }
+
+    fun deleteRisquesExpress() {
+        dsl.deleteFrom(RISQUE_EXPRESS)
+            .execute()
+    }
+
+    fun getRisquesExpress(): Collection<RisqueExpress> {
+        return dsl.selectFrom(RISQUE_EXPRESS).fetchInto()
+    }
 }

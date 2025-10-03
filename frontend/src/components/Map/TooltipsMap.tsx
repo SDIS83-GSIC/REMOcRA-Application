@@ -33,6 +33,9 @@ import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import useModal from "../Modal/ModalUtils.tsx";
+import DeleteModal from "../Modal/DeleteModal.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
 import { refreshLayerGeoserver } from "./MapUtils.tsx";
 
 /**
@@ -845,7 +848,7 @@ const useTooltipMap = ({
   disabled = false,
 }: {
   ref: Ref<HTMLDivElement>;
-  map: Map;
+  map: Map | undefined;
 }) => {
   const [featureSelect, setFeatureSelect] = useState<Feature | null>(null);
   const [overlay, setOverlay] = useState<Overlay | undefined>(
@@ -894,16 +897,22 @@ export const TooltipMapRisque = ({
   map,
   displayButtonSeeFichePei,
 }: {
-  map: Map;
+  map: Map | undefined;
   displayButtonSeeFichePei: boolean;
 }) => {
   const ref = useRef(null);
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+  const { visible, show, close } = useModal();
 
   const [showFichePei, setShowFichePei] = useState(false);
   const handleCloseFichePei = () => setShowFichePei(false);
 
   const elementId = featureSelect?.getProperties().elementId;
+  const RisquesExpressData = useGet(url`/api/risque/get`)?.data;
+
+  if (!RisquesExpressData) {
+    return <Loading />;
+  }
 
   return (
     <div ref={ref}>
@@ -919,6 +928,22 @@ export const TooltipMapRisque = ({
         onClickSee={() => setShowFichePei(true)}
         labelSee={"Voir la fiche Résumé du PEI"}
       />
+
+      <TooltipCustom
+        tooltipId="risques-express-purge"
+        tooltipText="Purger la couche des risques express"
+      >
+        <Button
+          variant={"primary"}
+          className="m-2"
+          onClick={() => {
+            show();
+          }}
+        >
+          <IconClose />
+        </Button>
+      </TooltipCustom>
+
       <Volet
         handleClose={handleCloseFichePei}
         show={showFichePei}
@@ -932,6 +957,22 @@ export const TooltipMapRisque = ({
           }
         />
       </Volet>
+
+      <DeleteModal
+        visible={visible}
+        closeModal={close}
+        query={url`/api/risque/delete/`}
+        ref={ref}
+        header={"Risque"}
+        content={`Confirmez-vous la purge des risques express ? Liste des risques express enregistrés : ${
+          RisquesExpressData?.map(
+            (item: { risqueExpressLibelle: string }) =>
+              item.risqueExpressLibelle,
+          ).join(", ") || "(aucun risque express trouvé)"
+        }`}
+        onDelete={() => {}}
+        successLibelle={"Tous les risques express ont été supprimés."}
+      />
     </div>
   );
 };

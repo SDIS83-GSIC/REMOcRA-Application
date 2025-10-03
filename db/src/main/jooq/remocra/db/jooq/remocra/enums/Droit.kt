@@ -120,7 +120,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     ADMIN_ROLE_CONTACT("ADMIN_ROLE_CONTACT"),
     ADMIN_TYPE_ETUDE("ADMIN_TYPE_ETUDE"),
     ADMIN_COURRIER("ADMIN_COURRIER"),
-    RISQUE_KML_A("RISQUE_KML_A"),
+    RISQUE_EXPRESS_A("RISQUE_EXPRESS_A"),
     CARTO_METADATA_A("CARTO_METADATA_A"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog

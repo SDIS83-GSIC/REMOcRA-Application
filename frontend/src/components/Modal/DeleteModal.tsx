@@ -11,12 +11,13 @@ const DeleteModalBody = ({
   closeModal,
   onDelete,
   content,
+  successLibelle,
 }: DeleteModalBodyType) => {
   const { success: successToast, error: errorToast } = useToastContext();
   const del = useDelete(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onDelete && onDelete(res);
-      successToast("L'élément a bien été supprimé");
+      successToast(successLibelle ?? "L'élément a bien été supprimé");
       closeModal();
     },
     onReject: async (error: any) => {
@@ -63,6 +64,7 @@ const DeleteModal = ({
   id,
   onDelete,
   content = "Voulez-vous supprimer cet élément ?",
+  successLibelle,
 }: DeleteModalBodyType & { visible: boolean }) => {
   return (
     <Modal show={visible} onHide={closeModal} ref={ref}>
@@ -75,6 +77,7 @@ const DeleteModal = ({
         closeModal={closeModal}
         onDelete={onDelete}
         content={content}
+        successLibelle={successLibelle}
       />
     </Modal>
   );
@@ -88,6 +91,7 @@ type DeleteModalBodyType = {
   content?: ReactNode;
   ref?: any;
   onDelete: (values: any) => void;
+  successLibelle?: string;
 };
 
 export default DeleteModal;
