@@ -7,62 +7,61 @@ import remocra.geometrie.GeometryToGeoJsonSerializer
 import java.time.ZonedDateTime
 import java.util.UUID
 
-data class ModeleMinimalPeiData(
-    val codeStructure: String,
+open class ModeleMinimalPeiData(
 
     @JsonProperty("id")
-    val peiId: UUID,
+    open val peiId: UUID,
     @JsonProperty("idSdis")
-    val peiNumeroComplet: String,
+    open val peiNumeroComplet: String,
     @JsonProperty("typePei")
-    val natureCode: String,
+    open val natureCode: String,
     @JsonProperty("disponible")
-    val isDisponible: Boolean,
+    open val isDisponible: Boolean,
     @JsonSerialize(using = GeometryToGeoJsonSerializer::class)
-    val geometrie: Point,
-    val codeInsee: String,
+    open val geometrie: Point,
+    open val codeInsee: String,
     @JsonProperty("commune")
-    val communeLibelle: String,
-    val idGestion: String?,
-    val nomGest: String?,
+    open val communeLibelle: String,
+    open val idGestion: String?,
+    open val nomGest: String?,
     @JsonProperty("refTerr")
-    val peiNumeroInterne: String,
+    open val peiNumeroInterne: String,
     @JsonProperty("typeRd")
-    val typeRD: String?,
+    open val typeRD: String?,
     @JsonProperty("diamPei")
-    val diametre: Int?,
+    open val diametre: Int?,
     @JsonProperty("diamCana")
-    val pibiDiametreCanalisation: Int?,
+    open val pibiDiametreCanalisation: Int?,
     @JsonProperty("sourcePei")
-    val natureLibelle: String?,
+    open val natureLibelle: String?,
     @JsonProperty("statut")
-    val natureDeci: String,
+    open val natureDeci: String,
     @JsonProperty("nomEtab")
-    val site: String?,
+    open val site: String?,
     @JsonProperty("situation")
-    val adresse: String,
+    open val adresse: String,
     @JsonProperty("pressDyn")
-    val pibiPressionDynamique: Double?,
+    open val pibiPressionDynamique: Double?,
     @JsonProperty("pressStat")
-    val pibiPression: Double?,
+    open val pibiPression: Double?,
     @JsonProperty("debit")
-    val pibiDebit: Int?,
+    open val pibiDebit: Int?,
     @JsonProperty("volume")
-    val penaVolumeConstate: Int?,
+    open val penaVolumeConstate: Int?,
     @JsonProperty("dateDispo")
-    val instantChangementDispo: ZonedDateTime?,
+    open val instantChangementDispo: ZonedDateTime?,
     @JsonProperty("dateMes")
-    val dateMiseEnService: String?,
+    open val dateMiseEnService: ZonedDateTime?,
     @JsonProperty("dateMaj")
-    val dateMiseAJour: String?,
+    open val dateMiseAJour: ZonedDateTime?,
     @JsonProperty("dateCt")
-    val dateDernierControleTechnique: String?,
+    open val dateDernierControleTechnique: ZonedDateTime?,
     @JsonProperty("dateRo")
-    val dateDerniereRop: String?,
+    open val dateDerniereRop: ZonedDateTime?,
     @JsonProperty("prec")
-    val precision: String?,
+    open val precision: String?,
     @JsonProperty("nonConforme")
-    val isNonConforme: Boolean?,
+    open val isNonConforme: Boolean?,
     @JsonProperty("accessibleHbe")
-    val isAccessibleHbe: Boolean?,
+    open val isAccessibleHbe: Boolean?,
 )

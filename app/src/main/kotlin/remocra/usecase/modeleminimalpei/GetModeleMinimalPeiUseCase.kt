@@ -9,6 +9,7 @@ import remocra.api.usecase.AbstractApiPeiUseCase
 import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.ModeleMinimalPeiData
+import remocra.data.ModeleMinimalPeiForNexsisData
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.db.VisiteRepository
@@ -94,7 +95,7 @@ constructor(
             val lastCtrl = listeCtrlDebitPression.filter { v -> v.visitePeiId == it.peiId && v.isCtrlDebitPression }
                 .maxByOrNull { it.visiteDate }
 
-            ModeleMinimalPeiData(
+            ModeleMinimalPeiForNexsisData(
                 codeStructure = appSettings.nexsis.codeStructure!!,
                 peiId = it.peiId,
                 peiNumeroComplet = it.peiNumeroComplet,
@@ -126,10 +127,10 @@ constructor(
                 pibiDebit = lastCtrl?.ctrlDebitPression?.visiteCtrlDebitPressionDebit,
                 penaVolumeConstate = it.penaCapacite,
                 instantChangementDispo = null,
-                dateMiseEnService = dateUtils.formatDateOnly(it.lastRecoInit),
-                dateMiseAJour = dateUtils.formatDateOnly(mapDateDerniereModif[it.peiId]),
-                dateDernierControleTechnique = dateUtils.formatDateOnly(it.lastCtp),
-                dateDerniereRop = dateUtils.formatDateOnly(it.lastRop),
+                dateMiseEnService = it.lastRecoInit,
+                dateMiseAJour = mapDateDerniereModif[it.peiId],
+                dateDernierControleTechnique = it.lastCtp,
+                dateDerniereRop = it.lastRop,
                 precision = null,
                 isNonConforme = it.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME,
                 isAccessibleHbe = it.penaDisponibiliteHbe == Disponibilite.DISPONIBLE,
