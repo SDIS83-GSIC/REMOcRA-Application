@@ -3,12 +3,14 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import remocra.data.EvenementData
+import remocra.data.Params
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.enums.TypeGeometry
@@ -23,6 +25,7 @@ import remocra.db.jooq.remocra.tables.references.L_TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.collections.isNullOrEmpty
 
 class EvenementRepository @Inject constructor(
     private val dsl: DSLContext,
@@ -108,6 +111,14 @@ class EvenementRepository @Inject constructor(
         val typeEvenement: Collection<TypeEvenementFilter>?,
         val evenement: Collection<EvenementFilter>?, // select all
         val utilisateur: Collection<UtilisateurFilter>?,
+    )
+
+    data class TypeSousType(
+        val evenementSousCategorieId: UUID?,
+        val evenementSousCategorieCode: String?,
+        val evenementSousCategorieLibelle: String?,
+        val evenementSousCategorieTypeGeometrie: TypeGeometry?,
+        val evenementCategorieLibelle: String?,
     )
 
     fun getTypeEventFromCrise(criseId: UUID, statut: EvenementStatutMode): Collection<FilterEvent> =
@@ -410,4 +421,54 @@ class EvenementRepository @Inject constructor(
             .set(EVENEMENT.STATUT_MODE, element.evenementStatutMode)
             .where(EVENEMENT.ID.eq(element.evenementId))
             .execute()
+
+    data class FilterEvenementSousCategorie(
+        val evenementSousCategorieLibelle: String?,
+        val evenementSousCategorieCode: String?,
+        val evenementSousCategorieTypeGeometrie: TypeGeometry?,
+    ) {
+        fun toCondition(): Condition =
+            DSL.and(
+                listOfNotNull(
+                    evenementSousCategorieLibelle?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.LIBELLE.contains(it)) },
+                    evenementSousCategorieCode?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.CODE.contains(it)) },
+                    evenementSousCategorieTypeGeometrie?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE.eq(it)) },
+                ),
+            )
+    }
+
+    data class SortEvenementSousCategorie(
+        val evenementSousCategorieLibelle: Int?,
+        val evenementSousCategorieCode: Int?,
+        val evenementSousCategorieTypeGeometrie: Int?,
+    ) {
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
+            EVENEMENT_SOUS_CATEGORIE.LIBELLE.getSortField(evenementSousCategorieLibelle),
+            EVENEMENT_SOUS_CATEGORIE.CODE.getSortField(evenementSousCategorieCode),
+            EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE.getSortField(evenementSousCategorieTypeGeometrie),
+        )
+    }
+
+    fun getAllEvenementSousCategorie(params: Params<FilterEvenementSousCategorie, SortEvenementSousCategorie>): Collection<TypeSousType> =
+        dsl.select(
+            EVENEMENT_SOUS_CATEGORIE.ID,
+            EVENEMENT_SOUS_CATEGORIE.CODE,
+            EVENEMENT_SOUS_CATEGORIE.LIBELLE,
+            EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE,
+            EVENEMENT_SOUS_CATEGORIE.LIBELLE.`as`("evenementCategorieLibelle"),
+        )
+            .from(EVENEMENT_SOUS_CATEGORIE)
+            .leftJoin(EVENEMENT_CATEGORIE)
+            .on(EVENEMENT_SOUS_CATEGORIE.EVENEMENT_CATEGORIE_ID.eq(EVENEMENT_CATEGORIE.ID))
+            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(EVENEMENT_SOUS_CATEGORIE.CODE))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto<TypeSousType>()
+
+    fun getCountAllEvenementSousCategorie(filterBy: FilterEvenementSousCategorie?): Int =
+        dsl.selectCount()
+            .from(EVENEMENT_SOUS_CATEGORIE)
+            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .fetchSingleInto()
 }

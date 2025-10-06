@@ -209,6 +209,7 @@ import ListCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/ListCoucheMe
 import CreateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/CreateCoucheMetadata.tsx";
 import UpdateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateCoucheMetadata.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
+import EvenementSousCategorieList from "./pages/Admin/crise/typeEvenement/ListSousTypeEvenement.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -438,6 +439,7 @@ export const URLS = {
   UPDATE_EVENEMENT_CATEGORIE: (evenementCategorieId: string) =>
     url`/admin/evenement-categorie/update/` + evenementCategorieId,
   LIST_EVENEMENT_CATEGORIE: url`/admin/evenement-categorie`,
+  EVENEMENT_SOUS_CATEGORIE_LIST: url`/admin/evenement-sous-categorie-list`,
 
   ADD_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie/create`,
   LIST_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie`,
@@ -2009,6 +2011,15 @@ export default [
         ),
       },
       {
+        path: "evenement-sous-categorie-list",
+        element: (
+          <Authorization
+            Component={EvenementSousCategorieList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
         path: "evenement-categorie",
         element: (
           <Authorization
@@ -2031,7 +2042,7 @@ export default [
         element: (
           <Authorization
             Component={ListEvenementSousCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2040,7 +2051,7 @@ export default [
         element: (
           <Authorization
             Component={CreateEvenementSousCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2049,7 +2060,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateEvenementSousCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },

@@ -652,4 +652,16 @@ class CriseEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.CRISE_R, Droit.CRISE_U, Droit.CRISE_C, Droit.CRISE_D])
     @Produces(MediaType.APPLICATION_JSON)
     fun getGeometrieById(@PathParam("criseId") criseId: UUID): Response = Response.ok(criseRepository.getCriseCommuneGeometrie(criseId)).build()
+
+    @POST
+    @Path("/evenement/all-sous-categories")
+    @RequireDroits([Droit.CRISE_R])
+    fun getAllEvenementSousCategorie(params: Params<EvenementRepository.FilterEvenementSousCategorie, EvenementRepository.SortEvenementSousCategorie>): Response {
+        return Response.ok(
+            DataTableau(
+                evenementRepository.getAllEvenementSousCategorie(params),
+                evenementRepository.getCountAllEvenementSousCategorie(params.filterBy),
+            ),
+        ).build()
+    }
 }
