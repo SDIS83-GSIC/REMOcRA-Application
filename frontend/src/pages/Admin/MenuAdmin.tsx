@@ -486,9 +486,9 @@ const MenuAdmin = () => {
                   <br />
                   <CustomLinkButton
                     className="text-underline text-start"
-                    pathname={URLS.LIST_EVENEMENT_CATEGORIE}
+                    pathname={URLS.LIST_TYPE_CRISE}
                   >
-                    Crise - Catégories d&apos;évènement
+                    Crise - Types de crise
                   </CustomLinkButton>
                 </Nav.Item>
               )}
@@ -496,9 +496,9 @@ const MenuAdmin = () => {
                 <Nav.Item>
                   <CustomLinkButton
                     className="text-underline text-start"
-                    pathname={URLS.LIST_TYPE_CRISE}
+                    pathname={URLS.LIST_EVENEMENT_CATEGORIE}
                   >
-                    Crise - Types de crise
+                    Crise - Catégories d&apos;évènement
                   </CustomLinkButton>
                 </Nav.Item>
               )}

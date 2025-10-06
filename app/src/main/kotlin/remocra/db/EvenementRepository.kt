@@ -193,7 +193,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.IS_CLOSED,
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementSousCategorieId"),
+            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID,
             EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,

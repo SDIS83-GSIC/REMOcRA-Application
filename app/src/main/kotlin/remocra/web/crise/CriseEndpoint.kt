@@ -664,4 +664,13 @@ class CriseEndpoint : AbstractEndpoint() {
             ),
         ).build()
     }
+
+    @GET
+    @Path("/evenement-sous-categorie")
+    @Public("Les sous catégories d'évènements ne sont pas liées à un droit.")
+    fun getEvenementSousCategories(): Response {
+        return Response.ok(
+            criseRepository.getEvenementSousCategories(),
+        ).build()
+    }
 }

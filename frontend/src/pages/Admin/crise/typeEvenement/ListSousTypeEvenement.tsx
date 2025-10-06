@@ -11,10 +11,14 @@ import {
 import QueryTable, {
   useFilterContext,
 } from "../../../../components/Table/QueryTable.tsx";
-import { ButtonType } from "../../../../components/Table/TableActionColumn.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../../droits.tsx";
 import TYPE_DROIT from "../../../../enums/DroitEnum.tsx";
 import url from "../../../../module/fetch.tsx";
+import { URLS } from "../../../../routes.tsx";
 import filterValuesToVariable from "../../jobs/FilterLogLines.tsx";
 import SelectEnumOption from "../../../../components/Form/SelectEnumOption.tsx";
 import VRAI_FAUX from "../../../../enums/VraiFauxEnum.tsx";
@@ -22,6 +26,17 @@ import VRAI_FAUX from "../../../../enums/VraiFauxEnum.tsx";
 const EvenementSousCategorieList = () => {
   const { user } = useAppContext();
   const listeButton: ButtonType[] = [];
+
+  if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
+    listeButton.push({
+      row: (row: any) => {
+        return row;
+      },
+      textEnable: "Modifier",
+      route: (sousTypeId) => URLS.UPDATE_EVENEMENT_SOUS_CATEGORIE(sousTypeId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+  }
 
   return (
     <Container>

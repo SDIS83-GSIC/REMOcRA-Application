@@ -17,12 +17,14 @@ import remocra.data.Params
 import remocra.data.TypeToponymies
 import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.COUCHE
 import remocra.db.jooq.remocra.tables.references.CRISE
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
+import remocra.db.jooq.remocra.tables.references.EVENEMENT_SOUS_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_CRISE
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
@@ -524,4 +526,7 @@ class CriseRepository @Inject constructor(
             .join(COMMUNE).on(L_CRISE_COMMUNE.COMMUNE_ID.eq(COMMUNE.ID))
             .where(L_CRISE_COMMUNE.CRISE_ID.eq(criseId))
             .fetchInto()
+
+    fun getEvenementSousCategories(): Collection<EvenementSousCategorie> =
+        dsl.selectFrom(EVENEMENT_SOUS_CATEGORIE).fetchInto()
 }

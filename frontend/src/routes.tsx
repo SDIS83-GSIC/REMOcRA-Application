@@ -268,6 +268,8 @@ export const URLS = {
   MERGE_CRISE: (criseId: string) => url`/gestion-crise/crise/merge/` + criseId,
   EXPORT_CRISE: (criseId: string) =>
     url`/gestion-crise/crise/export/` + criseId,
+  UPDATE_EVENEMENT_SOUS_CATEGORIE: (evenementSousCategorieId: string) =>
+    url`/admin/evenement-sous-categorie/update/` + evenementSousCategorieId,
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,
@@ -2015,6 +2017,15 @@ export default [
         element: (
           <Authorization
             Component={EvenementSousCategorieList}
+            droits={[TYPE_DROIT.ADMIN_DROITS]}
+          />
+        ),
+      },
+      {
+        path: "evenement-sous-categorie/update/:evenementSousCategorieId",
+        element: (
+          <Authorization
+            Component={UpdateEvenementSousCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

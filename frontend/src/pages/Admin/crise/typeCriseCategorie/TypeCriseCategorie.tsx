@@ -2,6 +2,7 @@ import { useFormikContext } from "formik";
 import { object } from "yup";
 import { useGet } from "../../../../components/Fetch/useFetch.tsx";
 import {
+  CheckBoxInput,
   FormContainer,
   SelectInput,
   TextInput,
@@ -12,40 +13,44 @@ import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
 import { requiredString } from "../../../../module/validators.tsx";
 
-type TypeEvenementSousCategorieType = {
-  typeEvenementCategorieId: string;
-  typeEvenementCategorieCode: string;
-  typeEvenementCategorieLibelle: string;
-  typeEvenementCategorieGeometrie: TYPE_GEOMETRIE;
-  typeEvenementCategorieEvenementCategorieId: string;
+type EvenementSousCategorieType = {
+  evenementSousCategorieId: string;
+  evenementSousCategorieCode: string;
+  evenementSousCategorieLibelle: string;
+  evenementSousCategorieTypeGeometrie: TYPE_GEOMETRIE;
+  evenementSousCategorieEvenementCategorieId: string;
+  evenementSousCategorieActif: boolean;
 };
 
-export const prepareValues = (values: TypeEvenementSousCategorieType) => ({
-  evenementSousCategorieId: values.typeEvenementCategorieId,
-  evenementSousCategorieCode: values.typeEvenementCategorieCode,
-  evenementSousCategorieLibelle: values.typeEvenementCategorieLibelle,
-  evenementSousCategorieGeometrie: values.typeEvenementCategorieGeometrie,
-  typeEvenementSousCategorieId:
-    values.typeEvenementCategorieEvenementCategorieId,
+export const prepareValues = (values: EvenementSousCategorieType) => ({
+  evenementSousCategorieId: values.evenementSousCategorieId,
+  evenementSousCategorieCode: values.evenementSousCategorieCode,
+  evenementSousCategorieLibelle: values.evenementSousCategorieLibelle,
+  evenementSousCategorieActif: values.evenementSousCategorieActif,
+  evenementSousCategorieTypeGeometrie:
+    values.evenementSousCategorieTypeGeometrie,
+  evenementSousCategorieEvenementCategorieId:
+    values.evenementSousCategorieEvenementCategorieId,
 });
 
-export const typeEvenementCategorieValidationSchema = object({
+export const evenementSousCategorieValidationSchema = object({
   evenementSousCategorieCode: requiredString,
   evenementSousCategorieLibelle: requiredString,
   evenementSousCategorieTypeGeometrie: requiredString,
-  evenementSousCategorieEvenementId: requiredString,
+  evenementSousCategorieEvenementCategorieId: requiredString,
 });
 
 export const getInitialEvenementSousCategorieValue = (
-  data: TypeEvenementSousCategorieType,
+  data: EvenementSousCategorieType,
 ) => ({
-  evenementSousCategorieId: data.typeEvenementCategorieId ?? null,
-  evenementSousCategorieCode: data.typeEvenementCategorieCode ?? null,
-  evenementSousCategorieLibelle: data.typeEvenementCategorieLibelle ?? null,
+  evenementSousCategorieId: data.evenementSousCategorieId ?? null,
+  evenementSousCategorieCode: data.evenementSousCategorieCode ?? null,
+  evenementSousCategorieActif: data.evenementSousCategorieActif ?? true,
+  evenementSousCategorieLibelle: data.evenementSousCategorieLibelle ?? null,
   evenementSousCategorieTypeGeometrie:
-    data.typeEvenementCategorieGeometrie ?? null,
+    data.evenementSousCategorieTypeGeometrie ?? null,
   evenementSousCategorieEvenementCategorieId:
-    data.typeEvenementCategorieEvenementCategorieId ?? null,
+    data.evenementSousCategorieEvenementCategorieId ?? null,
 });
 
 export const EvenementSousCategorie = () => {
@@ -53,7 +58,6 @@ export const EvenementSousCategorie = () => {
     return { id: e.toString(), code: e.toString(), libelle: e.toString() };
   });
   const { values, setValues, setFieldValue }: any = useFormikContext();
-
   const evenementCategorieState = useGet(
     url`/api/nomenclatures/evenement_categorie`,
   );
@@ -61,13 +65,15 @@ export const EvenementSousCategorie = () => {
   return (
     evenementCategorieState?.data && (
       <FormContainer>
+        <CheckBoxInput name={"evenementSousCategorieActif"} label={"Actif"} />
+
         <TextInput
-          name="typeEvenementCategorieCode"
+          name="evenementSousCategorieCode"
           label="Code"
           required={true}
         />
         <TextInput
-          name="typeEvenementCategorieLibelle"
+          name="evenementSousCategorieLibelle"
           label="Libellé"
           required={true}
         />
@@ -83,7 +89,7 @@ export const EvenementSousCategorie = () => {
         />
 
         <SelectInput
-          name={"evenementSousCategorieEvenementCategorie"}
+          name={"evenementSousCategorieEvenementCategorieId"}
           label="Catégorie de l'évènement"
           required={false}
           options={

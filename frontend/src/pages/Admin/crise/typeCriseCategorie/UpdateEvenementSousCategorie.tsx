@@ -10,34 +10,30 @@ import {
   getInitialEvenementSousCategorieValue,
   prepareValues,
   EvenementSousCategorie,
-  typeEvenementCategorieValidationSchema,
+  evenementSousCategorieValidationSchema,
 } from "./TypeCriseCategorie.tsx";
 
 const UpdateEvenementSousCategorie = () => {
-  const { typeEvenementCategorieId: evenementSousCategorieId } = useParams();
-
-  const evenementSousCategorieState = useGet(
-    url`/api/evenement_sous_categorie/get/` + evenementSousCategorieId,
+  const { evenementSousCategorieId: evenementSousCategorieId } = useParams();
+  const evenementSousCategorie = useGet(
+    url`/api/evenement-sous-categorie/get/` + evenementSousCategorieId,
   );
   return (
-    evenementSousCategorieState.data && (
+    evenementSousCategorie.data && (
       <Container>
         <PageTitle
-          title="Mise à jour d'un type de catégorie d'évènement"
+          title="Mise à jour d'une sous catégorie d'évènement"
           icon={<IconEdit />}
         />
         <MyFormik
           initialValues={getInitialEvenementSousCategorieValue(
-            evenementSousCategorieState.data,
+            evenementSousCategorie.data,
           )}
           prepareVariables={(values) => prepareValues(values)}
-          validationSchema={typeEvenementCategorieValidationSchema}
-          submitUrl={
-            `/api/evenement_sous_categorie/update/` + evenementSousCategorieId
-          }
+          validationSchema={evenementSousCategorieValidationSchema}
+          submitUrl={`/api/evenement-sous-categorie/update/${evenementSousCategorieId}`}
           isPost={false}
           redirectUrl={URLS.LIST_EVENEMENT_SOUS_CATEGORIE}
-          onSubmit={() => true}
         >
           <EvenementSousCategorie />
         </MyFormik>

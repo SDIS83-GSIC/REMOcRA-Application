@@ -5,7 +5,7 @@ import { IconCreate } from "../../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../../routes.tsx";
 import {
   prepareValues,
-  typeEvenementCategorieValidationSchema,
+  evenementSousCategorieValidationSchema,
   EvenementSousCategorie,
 } from "./TypeCriseCategorie.tsx";
 
@@ -19,7 +19,7 @@ const CreateEvenementSousCategorie = () => {
       <MyFormik
         initialValues={{}}
         prepareVariables={(values) => prepareValues(values)}
-        validationSchema={typeEvenementCategorieValidationSchema}
+        validationSchema={evenementSousCategorieValidationSchema}
         submitUrl={`/api/evenement-sous-categorie/create/`}
         isPost={true}
         redirectUrl={URLS.LIST_EVENEMENT_SOUS_CATEGORIE}

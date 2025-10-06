@@ -535,7 +535,7 @@ const DropdownTypeSousType = ({
   criseId: string;
   variant: string;
   setTypeEvenement: (evenementSousCategorieId: string) => void;
-  toggleToolCallback: (typeCriseCategorieGeometrie: string) => void;
+  toggleToolCallback: (evenementSousCategorieGeometrie: string) => void;
   setSousTypeElement: (evenementSousCategorieId: object) => void;
 }) => {
   const typeWithSousType = useGet(
