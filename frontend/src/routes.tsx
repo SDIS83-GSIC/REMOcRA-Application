@@ -270,6 +270,7 @@ export const URLS = {
     url`/gestion-crise/crise/export/` + criseId,
   UPDATE_EVENEMENT_SOUS_CATEGORIE: (evenementSousCategorieId: string) =>
     url`/admin/evenement-sous-categorie/update/` + evenementSousCategorieId,
+  CREATE_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie/create`,
 
   // Module carto perso
   CARTOGRAPHIE_PERSONNALISEE: url`/cartographie-personnalisee`,

@@ -45,7 +45,10 @@ const EvenementSousCategorieList = () => {
         title={"Liste des sous catégories d'évènements"}
         right={
           hasDroit(user, TYPE_DROIT.CRISE_C) && (
-            <CreateButton title={"Ajouter une sous catégorie"} />
+            <CreateButton
+              href={URLS.CREATE_EVENEMENT_SOUS_CATEGORIE}
+              title={"Ajouter une sous catégorie"}
+            />
           )
         }
       />
