@@ -65,6 +65,7 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
                 evenementSousCategorieLibelle = element.evenementSousCategorieLibelle,
                 evenementSousCategorieTypeGeometrie = element.evenementSousCategorieTypeGeometrie,
                 evenementSousCategorieEvenementCategorieId = element.evenementSousCategorieCriseCategorieId,
+                evenementSousCategorieActif = element.evenementSousCategorieActif,
             ),
         ).wrap()
     }
@@ -80,6 +81,9 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
 
         @FormParam("evenementSousCategorieTypeGeometrie")
         lateinit var evenementSousCategorieCriseCategorieId: UUID
+
+        @FormParam("evenementSousCategorieActif")
+        val evenementSousCategorieActif: Boolean = false
     }
 
     @PUT
@@ -98,6 +102,7 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
                 evenementSousCategorieLibelle = element.evenementSousCategorieLibelle,
                 evenementSousCategorieTypeGeometrie = element.evenementSousCategorieTypeGeometrie,
                 evenementSousCategorieEvenementCategorieId = element.evenementSousCategorieCriseCategorieId,
+                evenementSousCategorieActif = element.evenementSousCategorieActif,
             ),
         ).wrap()
     }

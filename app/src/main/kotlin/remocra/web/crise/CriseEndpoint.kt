@@ -466,7 +466,7 @@ class CriseEndpoint : AbstractEndpoint() {
             securityContext.userInfo,
             EvenementData(
                 evenementId = evenementId,
-                evenementCategorieId = UUID.fromString(httpRequest.getTextPart("evenementSousCategorieId")),
+                evenementSousCategorieId = UUID.fromString(httpRequest.getTextPart("evenementSousCategorieId")),
                 evenementLibelle = httpRequest.getTextPart("evenementLibelle"),
                 evenementDescription = httpRequest.getTextPart("evenementDescription"),
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),
@@ -530,7 +530,7 @@ class CriseEndpoint : AbstractEndpoint() {
         val evenementData =
             EvenementData(
                 evenementId = evenementId,
-                evenementCategorieId = UUID.fromString(httpRequest.getTextPart("evenementSousCategorieId")),
+                evenementSousCategorieId = UUID.fromString(httpRequest.getTextPart("evenementSousCategorieId")),
                 evenementLibelle = httpRequest.getTextPart("evenementLibelle"),
                 evenementDescription = httpRequest.getTextPart("evenementDescription"),
                 evenementOrigine = httpRequest.getTextPart("evenementOrigine"),

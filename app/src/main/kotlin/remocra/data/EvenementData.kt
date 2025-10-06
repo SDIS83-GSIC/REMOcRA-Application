@@ -10,7 +10,7 @@ import java.util.UUID
 data class EvenementData(
     val evenementId: UUID,
     val evenementCriseId: UUID,
-    val evenementCategorieId: UUID,
+    val evenementSousCategorieId: UUID,
     val evenementLibelle: String?,
     val evenementDescription: String?,
     val evenementOrigine: String?,

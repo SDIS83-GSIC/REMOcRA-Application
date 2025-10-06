@@ -119,6 +119,7 @@ class EvenementRepository @Inject constructor(
         val evenementSousCategorieLibelle: String?,
         val evenementSousCategorieTypeGeometrie: TypeGeometry?,
         val evenementCategorieLibelle: String?,
+        val evenementSousCategorieActif: Boolean,
     )
 
     fun getTypeEventFromCrise(criseId: UUID, statut: EvenementStatutMode): Collection<FilterEvent> =
@@ -192,7 +193,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.IS_CLOSED,
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementCategorieId"),
+            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementSousCategorieId"),
             EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
@@ -327,7 +328,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.IS_CLOSED.`as`("evenementEstFerme"),
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementCategorieId"),
+            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementSousCategorieId"),
             EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
@@ -376,7 +377,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT.STATUT_MODE,
         ).values(
             evenementData.evenementId,
-            evenementData.evenementCategorieId,
+            evenementData.evenementSousCategorieId,
             evenementData.evenementLibelle,
             evenementData.evenementDescription,
             evenementData.evenementOrigine,
@@ -405,7 +406,7 @@ class EvenementRepository @Inject constructor(
         element: EvenementData,
     ) =
         dsl.update(EVENEMENT)
-            .set(EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID, element.evenementCategorieId)
+            .set(EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID, element.evenementSousCategorieId)
             .set(EVENEMENT.LIBELLE, element.evenementLibelle)
             .set(EVENEMENT.DESCRIPTION, element.evenementDescription)
             .set(EVENEMENT.ORIGINE, element.evenementOrigine)
@@ -454,6 +455,7 @@ class EvenementRepository @Inject constructor(
             EVENEMENT_SOUS_CATEGORIE.ID,
             EVENEMENT_SOUS_CATEGORIE.CODE,
             EVENEMENT_SOUS_CATEGORIE.LIBELLE,
+            EVENEMENT_SOUS_CATEGORIE.ACTIF.`as`("evenementSousCategorieActif"),
             EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE,
             EVENEMENT_SOUS_CATEGORIE.LIBELLE.`as`("evenementCategorieLibelle"),
         )

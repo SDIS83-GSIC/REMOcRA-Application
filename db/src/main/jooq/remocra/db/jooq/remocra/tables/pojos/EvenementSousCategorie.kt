@@ -25,6 +25,7 @@ data class EvenementSousCategorie(
     val evenementSousCategorieLibelle: String,
     val evenementSousCategorieTypeGeometrie: TypeGeometry?,
     val evenementSousCategorieEvenementCategorieId: UUID?,
+    val evenementSousCategorieActif: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -61,6 +62,13 @@ data class EvenementSousCategorie(
         } else if (this.evenementSousCategorieEvenementCategorieId != o.evenementSousCategorieEvenementCategorieId) {
             return false
         }
+        if (this.evenementSousCategorieActif == null) {
+            if (o.evenementSousCategorieActif != null) {
+                return false
+            }
+        } else if (this.evenementSousCategorieActif != o.evenementSousCategorieActif) {
+            return false
+        }
         return true
     }
 
@@ -72,6 +80,7 @@ data class EvenementSousCategorie(
         result = prime * result + this.evenementSousCategorieLibelle.hashCode()
         result = prime * result + (if (this.evenementSousCategorieTypeGeometrie == null) 0 else this.evenementSousCategorieTypeGeometrie.hashCode())
         result = prime * result + (if (this.evenementSousCategorieEvenementCategorieId == null) 0 else this.evenementSousCategorieEvenementCategorieId.hashCode())
+        result = prime * result + (if (this.evenementSousCategorieActif == null) 0 else this.evenementSousCategorieActif.hashCode())
         return result
     }
 
@@ -83,6 +92,7 @@ data class EvenementSousCategorie(
         sb.append(", ").append(evenementSousCategorieLibelle)
         sb.append(", ").append(evenementSousCategorieTypeGeometrie)
         sb.append(", ").append(evenementSousCategorieEvenementCategorieId)
+        sb.append(", ").append(evenementSousCategorieActif)
 
         sb.append(")")
         return sb.toString()
