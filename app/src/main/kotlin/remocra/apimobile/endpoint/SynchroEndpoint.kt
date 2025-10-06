@@ -215,7 +215,7 @@ class SynchroEndpoint : AbstractEndpoint() {
         securityContext.userInfo,
         ContactRoleForApiMobileData(
             contactId = contactId,
-            roleId = roleId,
+            roleContactId = roleId,
         ),
     ).wrap()
 

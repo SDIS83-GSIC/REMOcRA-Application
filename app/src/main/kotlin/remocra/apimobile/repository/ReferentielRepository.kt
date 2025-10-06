@@ -160,7 +160,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         return dsl
             .selectDistinct(
                 L_CONTACT_ROLE.CONTACT_ID,
-                L_CONTACT_ROLE.ROLE_ID,
+                L_CONTACT_ROLE.ROLE_ID.`as`("roleContactId"),
             )
             .from(L_CONTACT_ROLE)
             .innerJoin(L_CONTACT_GESTIONNAIRE)

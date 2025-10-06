@@ -32,15 +32,15 @@ class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: ContactRoleForApiMobileData): ContactRoleForApiMobileData {
-        val result = incomingRepository.insertContactRole(element.contactId, element.roleId)
+        val result = incomingRepository.insertContactRole(element.contactId, element.roleContactId)
 
         when (result) {
             0 -> {
-                logger.warn("Le lien entre le rôle ${element.roleId} et le contact ${element.contactId} est déjà dans le schéma incoming")
+                logger.warn("Le lien entre le rôle ${element.roleContactId} et le contact ${element.contactId} est déjà dans le schéma incoming")
             }
             1 -> Unit // OK
             else -> {
-                logger.error("Impossible d'insérer le lien entre le rôle ${element.roleId} et le contact ${element.contactId} dans le schéma incoming")
+                logger.error("Impossible d'insérer le lien entre le rôle ${element.roleContactId} et le contact ${element.contactId} dans le schéma incoming")
                 throw RemocraResponseException(ErrorType.API_SYNCHRO_CONTACT_ROLE_ERROR)
             }
         }
@@ -50,7 +50,7 @@ class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData
     override fun checkContraintes(userInfo: WrappedUserInfo, element: ContactRoleForApiMobileData) {
         // On vérifie que le contact existe bien avant d'ajouter le role / contact
         if (!incomingRepository.checkContactExist(element.contactId)) {
-            throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE, "contactId = ${element.contactId}, roleId = ${element.roleId}")
+            throw RemocraResponseException(ErrorType.API_SYNCHRO_GESTIONNAIRE_CONTACT_NO_EXISTE, "contactId = ${element.contactId}, roleId = ${element.roleContactId}")
         }
     }
 }
