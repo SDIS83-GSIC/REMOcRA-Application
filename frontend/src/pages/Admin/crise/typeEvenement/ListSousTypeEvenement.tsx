@@ -26,16 +26,35 @@ import VRAI_FAUX from "../../../../enums/VraiFauxEnum.tsx";
 const EvenementSousCategorieList = () => {
   const { user } = useAppContext();
   const listeButton: ButtonType[] = [];
+  const categorieCode = "MESSAGE";
 
   if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
-    listeButton.push({
-      row: (row: any) => {
-        return row;
+    listeButton.push(
+      {
+        row: (row: any) => {
+          return row;
+        },
+        textEnable: "Modifier",
+        route: (sousTypeId) => URLS.UPDATE_EVENEMENT_SOUS_CATEGORIE(sousTypeId),
+        type: TYPE_BUTTON.UPDATE,
       },
-      textEnable: "Modifier",
-      route: (sousTypeId) => URLS.UPDATE_EVENEMENT_SOUS_CATEGORIE(sousTypeId),
-      type: TYPE_BUTTON.UPDATE,
-    });
+
+      {
+        disable: (v) => {
+          return (
+            v.original.evenementsDependants ||
+            v.original.typeCriseCategorieCode === categorieCode
+          );
+        },
+        textDisableFunction: () =>
+          "Impossible de supprimer l'élément car il est utilisé",
+        row: (row: any) => {
+          return row;
+        },
+        type: TYPE_BUTTON.DELETE,
+        pathname: url`/api/evenement-sous-categorie/delete/`,
+      },
+    );
   }
 
   return (

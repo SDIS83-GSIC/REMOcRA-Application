@@ -120,6 +120,7 @@ class EvenementRepository @Inject constructor(
         val evenementSousCategorieTypeGeometrie: TypeGeometry?,
         val evenementCategorieLibelle: String?,
         val evenementSousCategorieActif: Boolean,
+        val evenementsDependants: Boolean,
     )
 
     fun getTypeEventFromCrise(criseId: UUID, statut: EvenementStatutMode): Collection<FilterEvent> =
@@ -458,6 +459,15 @@ class EvenementRepository @Inject constructor(
             EVENEMENT_SOUS_CATEGORIE.ACTIF.`as`("evenementSousCategorieActif"),
             EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE,
             EVENEMENT_SOUS_CATEGORIE.LIBELLE.`as`("evenementCategorieLibelle"),
+
+            DSL.`when`(
+                DSL.exists(
+                    dsl.selectOne()
+                        .from(EVENEMENT)
+                        .where(EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.eq(EVENEMENT_SOUS_CATEGORIE.ID)),
+                ),
+                true,
+            ).otherwise(false).`as`("evenementsDependants"),
         )
             .from(EVENEMENT_SOUS_CATEGORIE)
             .leftJoin(EVENEMENT_CATEGORIE)
