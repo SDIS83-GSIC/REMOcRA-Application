@@ -19,9 +19,11 @@ import { hasDroit } from "../../../../droits.tsx";
 import TYPE_DROIT from "../../../../enums/DroitEnum.tsx";
 import url from "../../../../module/fetch.tsx";
 import { URLS } from "../../../../routes.tsx";
-import filterValuesToVariable from "../../jobs/FilterLogLines.tsx";
 import SelectEnumOption from "../../../../components/Form/SelectEnumOption.tsx";
 import VRAI_FAUX from "../../../../enums/VraiFauxEnum.tsx";
+import SelectFilterFromUrl from "../../../../components/Filter/SelectFilterFromUrl.tsx";
+import SOUS_TYPE_TYPE_GEOMETRIE from "../../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
+import filterValuesToVariable from "./filterSousTypesEvenement.tsx";
 
 const EvenementSousCategorieList = () => {
   const { user } = useAppContext();
@@ -95,9 +97,9 @@ const EvenementSousCategorieList = () => {
             accessor: "evenementSousCategorieTypeGeometrie",
             sortField: "evenementSousCategorieTypeGeometrie",
             Filter: (
-              <FilterInput
-                type="text"
-                name="evenementSousCategorieTypeGeometrie"
+              <SelectEnumOption
+                options={SOUS_TYPE_TYPE_GEOMETRIE}
+                name={"evenementSousCategorieTypeGeometrie"}
               />
             ),
           },
@@ -113,8 +115,14 @@ const EvenementSousCategorieList = () => {
             ),
           }),
           {
-            Header: "catégorie d'évènemenet",
+            Header: "catégorie d'évènement",
             accessor: "evenementCategorieLibelle",
+            Filter: (
+              <SelectFilterFromUrl
+                url={url`/api/crise/get-evenement-category-libelle`}
+                name="evenementCategorieId"
+              />
+            ),
           },
           ActionColumn({
             Header: "Actions",
@@ -129,6 +137,7 @@ const EvenementSousCategorieList = () => {
           evenementSousCategorieTypeGeometrie: undefined,
           evenementSousCategorieLibelle: undefined,
           evenementSousCategorieActif: undefined,
+          evenementCategorieId: undefined,
         })}
       />
     </Container>

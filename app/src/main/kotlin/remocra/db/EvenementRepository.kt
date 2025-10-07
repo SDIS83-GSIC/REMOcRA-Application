@@ -428,6 +428,8 @@ class EvenementRepository @Inject constructor(
         val evenementSousCategorieLibelle: String?,
         val evenementSousCategorieCode: String?,
         val evenementSousCategorieTypeGeometrie: TypeGeometry?,
+        val evenementSousCategorieActif: Boolean?,
+        val evenementCategorieId: UUID?,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -435,6 +437,8 @@ class EvenementRepository @Inject constructor(
                     evenementSousCategorieLibelle?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.LIBELLE.contains(it)) },
                     evenementSousCategorieCode?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.CODE.contains(it)) },
                     evenementSousCategorieTypeGeometrie?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE.eq(it)) },
+                    evenementSousCategorieActif?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.ACTIF.eq(it)) },
+                    evenementCategorieId?.let { DSL.and(EVENEMENT_SOUS_CATEGORIE.EVENEMENT_CATEGORIE_ID.eq(it)) },
                 ),
             )
     }
