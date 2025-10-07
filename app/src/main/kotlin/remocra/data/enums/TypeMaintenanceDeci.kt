@@ -1,6 +1,6 @@
 package remocra.data.enums
 
 enum class TypeMaintenanceDeci {
-    SERVICEEAUX,
+    SERVICE_EAUX,
     PRESTATAIRE_TECHNIQUE,
 }
