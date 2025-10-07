@@ -41,6 +41,9 @@ class UserInfo(
     val isSuperAdmin: Boolean
         get() = utilisateur.utilisateurIsSuperAdmin ?: false
 
+    val keyclaokId: String
+        get() = utilisateur.utilisateurKeycloakId
+
     fun asJavascriptUserProfile(): JavascriptUserProfile {
         return JavascriptUserProfile(
             utilisateurId = utilisateurId,
@@ -51,6 +54,7 @@ class UserInfo(
             zoneIntegrationExtent = zoneCompetence?.zoneIntegrationGeometrie,
             droits = this.droits,
             isSuperAdmin = isSuperAdmin,
+            keyclaokId = keyclaokId,
         )
     }
 
@@ -67,5 +71,6 @@ class UserInfo(
         val zoneIntegrationExtent: Geometry?,
         val droits: Collection<Droit>,
         val isSuperAdmin: Boolean = false,
+        val keyclaokId: String?,
     )
 }

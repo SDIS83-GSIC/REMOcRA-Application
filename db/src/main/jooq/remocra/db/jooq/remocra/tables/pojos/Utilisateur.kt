@@ -32,6 +32,7 @@ data class Utilisateur(
     val utilisateurOrganismeId: UUID?,
     val utilisateurIsSuperAdmin: Boolean?,
     val utilisateurDerniereConnexion: ZonedDateTime?,
+    val utilisateurKeycloakId: String,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -105,6 +106,9 @@ data class Utilisateur(
         } else if (this.utilisateurDerniereConnexion != o.utilisateurDerniereConnexion) {
             return false
         }
+        if (this.utilisateurKeycloakId != o.utilisateurKeycloakId) {
+            return false
+        }
         return true
     }
 
@@ -123,6 +127,7 @@ data class Utilisateur(
         result = prime * result + (if (this.utilisateurOrganismeId == null) 0 else this.utilisateurOrganismeId.hashCode())
         result = prime * result + (if (this.utilisateurIsSuperAdmin == null) 0 else this.utilisateurIsSuperAdmin.hashCode())
         result = prime * result + (if (this.utilisateurDerniereConnexion == null) 0 else this.utilisateurDerniereConnexion.hashCode())
+        result = prime * result + this.utilisateurKeycloakId.hashCode()
         return result
     }
 
@@ -141,6 +146,7 @@ data class Utilisateur(
         sb.append(", ").append(utilisateurOrganismeId)
         sb.append(", ").append(utilisateurIsSuperAdmin)
         sb.append(", ").append(utilisateurDerniereConnexion)
+        sb.append(", ").append(utilisateurKeycloakId)
 
         sb.append(")")
         return sb.toString()

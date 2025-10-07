@@ -50,8 +50,10 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         try {
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
 
+            val keycloakId = utilisateurRepository.getKeycloakId(element.utilisateurId)
+
             // On supprime dans keycloak
-            val deleteResponse = keycloakApi.deleteUser(token, element.utilisateurId.toString())
+            val deleteResponse = keycloakApi.deleteUser(token, keycloakId)
                 .execute()
 
             if (!deleteResponse.isSuccessful) {

@@ -76,6 +76,7 @@ class AbstractCUDUseCaseTest {
                     .set(UTILISATEUR.PRENOM, element.toString())
                     .set(UTILISATEUR.EMAIL, element.toString())
                     .set(UTILISATEUR.ACTIF, true)
+                    .set(UTILISATEUR.KEYCLOAK_ID, "test")
                     .execute()
                 doThrow()
             }
@@ -99,6 +100,7 @@ class AbstractCUDUseCaseTest {
                         null,
                         true,
                         null,
+                        utilisateurKeycloakId = "admin",
                     ),
                     Droit.entries.toSet(),
                     null,

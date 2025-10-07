@@ -31,6 +31,11 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .fetchOneInto()
 
+    fun getUtilisateurByKeycloakId(keycloakId: String): Utilisateur? =
+        dsl.selectFrom(UTILISATEUR)
+            .where(UTILISATEUR.KEYCLOAK_ID.eq(keycloakId))
+            .fetchOneInto()
+
     fun setActif(actif: Boolean, idUtilisateur: UUID) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
@@ -76,6 +81,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         email: String,
         username: String,
         actif: Boolean = true,
+        keycloakId: String,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
@@ -84,6 +90,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
             .set(UTILISATEUR.USERNAME, username)
+            .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
             .onConflict(UTILISATEUR.USERNAME)
             .doNothing()
             .returning()
@@ -99,6 +106,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         email: String,
         username: String,
         actif: Boolean,
+        keycloakId: String,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
@@ -107,15 +115,15 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
             .set(UTILISATEUR.USERNAME, username)
+            .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
-            .onConflict(UTILISATEUR.ID)
+            .onConflict(UTILISATEUR.KEYCLOAK_ID)
             .doUpdate()
             .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
-            // USERNAME exclu explicitement
             .returning()
             .fetchSingleInto()
 
@@ -316,10 +324,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 ),
         )
 
-    /**
-     * Insère un nouvel utilisateur (sans DERNIERE_CONNEXION)
-     */
-    fun insertUtilisateur(utilisateur: UtilisateurData) =
+    fun insertUtilisateur(utilisateur: UtilisateurData, utilisateurKeycloakId: String) =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, utilisateur.utilisateurId)
             .set(UTILISATEUR.ACTIF, utilisateur.utilisateurActif)
@@ -332,6 +337,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, utilisateur.utilisateurProfilUtilisateurId)
             .set(UTILISATEUR.ORGANISME_ID, utilisateur.utilisateurOrganismeId)
             .set(UTILISATEUR.IS_SUPER_ADMIN, utilisateur.utilisateurIsSuperAdmin)
+            .set(UTILISATEUR.KEYCLOAK_ID, utilisateurKeycloakId)
             // Pas de mise à jour de DERNIERE_CONNEXION, puisque l'utilisateur ne s'est encore jamais connecté
             .execute()
 
@@ -368,6 +374,12 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     fun getById(utilisateurId: UUID): UtilisateurData =
         dsl.select(*UTILISATEUR.fields())
+            .from(UTILISATEUR)
+            .where(UTILISATEUR.ID.eq(utilisateurId))
+            .fetchSingleInto()
+
+    fun getKeycloakId(utilisateurId: UUID): String =
+        dsl.select(UTILISATEUR.KEYCLOAK_ID)
             .from(UTILISATEUR)
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .fetchSingleInto()

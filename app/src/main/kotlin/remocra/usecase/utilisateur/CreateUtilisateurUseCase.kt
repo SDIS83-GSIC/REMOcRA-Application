@@ -83,15 +83,13 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                 logger.info("Utilisateur ${element.utilisateurUsername} inséré dans keycloak")
             }
 
-            val utilisateurId = UUID.fromString(
-                keycloakApi.getUsers(token, username = element.utilisateurUsername)
-                    .execute().body()!!.first().id,
-            )
+            val keycloakId = keycloakApi.getUsers(token, username = element.utilisateurUsername, max = 1)
+                .execute().body()!!.first().id
 
             val responseMailKeycloak = keycloakApi.executeActionsEmail(
                 token,
                 actions = setOf(RequiredAction.VERIFY_EMAIL.name, RequiredAction.UPDATE_PASSWORD.name),
-                userId = utilisateurId.toString(),
+                userId = keycloakId,
                 clientId = keycloakClient.clientId,
             ).execute()
 
@@ -99,7 +97,10 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                 throw RemocraResponseException(ErrorType.UTILISATEUR_ACTION_EMAIL)
             }
 
-            utilisateurRepository.insertUtilisateur(element.copy(utilisateurId = utilisateurId))
+            utilisateurRepository.insertUtilisateur(
+                element.copy(utilisateurId = UUID.randomUUID()),
+                keycloakId,
+            )
 
             return element
         } finally {

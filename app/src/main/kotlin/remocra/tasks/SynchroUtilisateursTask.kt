@@ -59,13 +59,13 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                     return null
                 }
 
-                if (usersKeycloak.body()?.size == 0 || usersKeycloak.body() == null) {
+                if (usersKeycloak.body().isNullOrEmpty()) {
                     fini = true
                 }
 
                 for (userRepresentation: UserRepresentation in usersKeycloak.body()!!) {
                     // Si l'utilisateur est déjà en base
-                    val utilisateurExistant = utilisateursRemocra.firstOrNull { it.utilisateurId == UUID.fromString(userRepresentation.id) }
+                    val utilisateurExistant = utilisateursRemocra.firstOrNull { it.utilisateurKeycloakId == userRepresentation.id }
                     if (utilisateurExistant != null) {
                         // On met à jour les propriétés si besoin
                         val inactif = utilisateursInactifs?.map { it.username }?.contains(utilisateurExistant.utilisateurUsername) ?: false
@@ -94,13 +94,14 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                         }
                     } else {
                         val utilisateur = utilisateurRepository.insertUtilisateur(
-                            id = UUID.fromString(userRepresentation.id),
+                            id = UUID.randomUUID(),
                             email = userRepresentation.email,
                             prenom = userRepresentation.firstName,
                             nom = userRepresentation.lastName,
                             username = userRepresentation.username,
                             actif = utilisateursInactifs?.map { it.username }
                                 ?.contains(userRepresentation.username) == false,
+                            keycloakId = userRepresentation.id,
                         )
                         nbUtilisateurAdd++
                         logManager.info(

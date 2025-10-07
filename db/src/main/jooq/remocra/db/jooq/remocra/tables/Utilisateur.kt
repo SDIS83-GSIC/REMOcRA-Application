@@ -40,6 +40,7 @@ import remocra.db.jooq.remocra.keys.SIGNALEMENT__SIGNALEMENT_SIGNALEMENT_UTILISA
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
+import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY
@@ -166,6 +167,11 @@ open class Utilisateur(
      */
     val DERNIERE_CONNEXION: TableField<Record, ZonedDateTime?> = createField(DSL.name("utilisateur_derniere_connexion"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
+    /**
+     * The column <code>remocra.utilisateur.utilisateur_keycloak_id</code>.
+     */
+    val KEYCLOAK_ID: TableField<Record, String?> = createField(DSL.name("utilisateur_keycloak_id"), SQLDataType.CLOB.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -199,7 +205,7 @@ open class Utilisateur(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = UTILISATEUR_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_EMAIL_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_EMAIL_KEY, UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY, UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY)
 
     private lateinit var _organisme: OrganismePath

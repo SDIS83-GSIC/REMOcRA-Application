@@ -48,13 +48,14 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
 
         try {
+            val keycloakId = utilisateurRepository.getKeycloakId(element.utilisateurId)
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
 
             // Mise à jour l'utilisateur côté Keycloak
             val updateResponse = keycloakApi.updateUser(
                 token,
                 user = UserRepresentation(
-                    id = element.utilisateurId.toString(),
+                    id = keycloakId,
                     username = element.utilisateurUsername,
                     firstName = element.utilisateurPrenom,
                     lastName = element.utilisateurNom,
@@ -62,7 +63,7 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                     enabled = element.utilisateurActif,
                     requiredActions = listOf(),
                 ),
-                userId = element.utilisateurId.toString(),
+                userId = keycloakId,
             ).execute()
 
             if (!updateResponse.isSuccessful) {
@@ -71,7 +72,6 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
 
             // Mise à jour côté REMOcRA
             utilisateurRepository.updateUtilisateur(element)
-
             return element
         } finally {
             keycloakToken.revokeToken(tokenResponse.accessToken, keycloakClient.clientId, keycloakClient.clientSecret).execute()

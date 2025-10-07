@@ -34,13 +34,14 @@ class RemocraUserPrincipalFactory @Inject constructor(
 
     override fun userAuthenticated(sessionInfo: SessionInfo, session: HttpSession) {
         val utilisateur = utilisateurRepository.syncUtilisateur(
-            id = UUID.fromString(sessionInfo.userInfo.subject.value),
+            id = UUID.randomUUID(),
             nom = sessionInfo.userInfo.familyName,
             prenom = sessionInfo.userInfo.givenName,
             email = sessionInfo.userInfo.emailAddress,
             username = sessionInfo.userInfo.preferredUsername,
             // utilise KeycloakUserPrincipal pour simplifier le calcul des rôles
             actif = !KeycloakUserPrincipal(sessionInfo).hasRole("inactif"),
+            keycloakId = sessionInfo.userInfo.subject.value,
         )
 
         // XXX: factoriser avec MobileUserPrincipalProvider
