@@ -25,6 +25,12 @@ services:
       - EPSG_NAME
       - EPSG_PROJECTION
       - GEOSERVER_URL
+      - NEXSIS_ENABLED
+      - CODE_STRUCTURE
+      - NEXSIS_URL
+      - NEXSIS_USER
+      - NEXSIS_PASSWORD
+      - REMOCRA_ENVIRONMENT
     healthcheck:
       test: curl --fail -s http://localhost:8881/ || exit 1
       interval: 1m30s
