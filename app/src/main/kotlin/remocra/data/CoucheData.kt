@@ -45,6 +45,7 @@ data class CoucheStyleInput(
     val layerStyle: String? = null,
     val layerStyleFlag: Boolean = false,
     val layerProfilId: Collection<UUID>? = null,
+    val layerStylePublicAccess: Boolean = false,
 )
 
 data class GroupeFonctionnaliteList(
@@ -56,7 +57,8 @@ data class ResponseCouche(
     val groupeCoucheId: UUID,
     val groupeCoucheLibelle: String? = null,
     val coucheLibelle: String? = null,
-    val coucheStyleActif: Boolean = false,
+    val coucheMetadataActif: Boolean = false,
+    val coucheMetadataPublic: Boolean = false,
     val styleId: UUID,
     val coucheId: UUID? = null,
     val groupeFonctionnaliteList: Collection<GroupeFonctionnaliteList>? = emptyList(),
@@ -66,6 +68,7 @@ data class CoucheStyle(
     val layerId: UUID,
     val layerStyleFlag: Boolean = false,
     val layerStyle: String? = null,
+    val layerStylePublicAccess: Boolean = false,
     val groupLayerId: UUID,
     val layerProfilId: Collection<UUID>? = emptyList(),
 )

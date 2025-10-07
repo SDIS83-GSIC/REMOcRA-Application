@@ -21,7 +21,7 @@ import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
-import filterValuesToVariable from "./FilterStyle.tsx";
+import filterValuesToVariable from "./FilterMetadata.tsx";
 
 type GroupeFonctionnalite = {
   groupeFonctionnaliteId: string;
@@ -57,12 +57,12 @@ const ListLayersGroup = () => {
     <Container>
       <PageTitle
         icon={<IconLayers />}
-        title={"Gestion du style des couches"}
+        title={"Gestion des métadonnées des couches"}
         right={
           hasDroit(user, TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE) && (
             <CreateButton
               href={URLS.ADD_LAYER_STYLE}
-              title={"Ajouter un style"}
+              title={"Ajouter des métadonnées"}
             />
           )
         }
@@ -106,10 +106,24 @@ const ListLayersGroup = () => {
           },
           BooleanColumn({
             Header: "Actif",
-            accessor: "coucheStyleActif",
-            sortField: "coucheStyleActif",
+            accessor: "coucheMetadataActif",
+            sortField: "coucheMetadataActif",
             Filter: (
-              <SelectEnumOption options={VRAI_FAUX} name={"coucheStyleActif"} />
+              <SelectEnumOption
+                options={VRAI_FAUX}
+                name={"coucheMetadataActif"}
+              />
+            ),
+          }),
+          BooleanColumn({
+            Header: "Public",
+            accessor: "coucheMetadataPublic",
+            sortField: "coucheMetadataPublic",
+            Filter: (
+              <SelectEnumOption
+                options={VRAI_FAUX}
+                name={"coucheMetadataPublic"}
+              />
             ),
           }),
           ActionColumn({
@@ -124,7 +138,8 @@ const ListLayersGroup = () => {
           groupeCoucheLibelle: undefined,
           coucheLibelle: undefined,
           groupeFonctionnaliteList: undefined,
-          coucheStyleActif: undefined,
+          coucheMetadataActif: undefined,
+          coucheMetadataPublic: undefined,
         })}
       />
     </Container>

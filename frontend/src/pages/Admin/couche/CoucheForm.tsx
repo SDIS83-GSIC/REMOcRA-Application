@@ -278,7 +278,7 @@ const CoucheForm = () => {
                               }),
                             }).toString()}
                           >
-                            Gestion du style
+                            Modification des métadonnées
                           </CustomLinkButton>
                         </Col>
                         <Col xs={12} className="p-2 bg-secondary mt-2">

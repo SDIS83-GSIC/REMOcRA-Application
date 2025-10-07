@@ -6,20 +6,20 @@ import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
-import CreateLayerStyleForm, {
+import CreateLayerMetadataForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./CreateLayerStyleForm.tsx";
+} from "./CreateLayerMetadataForm.tsx";
 
-const UpdateLayerStyle = () => {
+const UpdateLayerMetadata = () => {
   const { styleId } = useParams();
   const styleState = useGet(url`/api/admin/couche/get-style/${styleId!}`)?.data;
 
   return (
     styleState && (
       <Container>
-        <PageTitle title="Modification du style" icon={<IconEdit />} />
+        <PageTitle title="Modification des métadonnées" icon={<IconEdit />} />
         <MyFormik
           initialValues={getInitialValues(styleId, styleState)}
           prepareVariables={(values) => prepareValues(values, styleId)}
@@ -29,11 +29,11 @@ const UpdateLayerStyle = () => {
           redirectUrl={URLS.URL_LIST_LAYER_STYLE}
           onSubmit={() => true}
         >
-          <CreateLayerStyleForm initalLayer={styleState.layerId} />
+          <CreateLayerMetadataForm initalLayer={styleState.layerId} />
         </MyFormik>
       </Container>
     )
   );
 };
 
-export default UpdateLayerStyle;
+export default UpdateLayerMetadata;

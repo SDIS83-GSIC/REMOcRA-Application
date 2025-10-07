@@ -5,6 +5,7 @@ import AccordionCustom, {
 } from "../../../components/Accordion/Accordion.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 
 function findStyleById(coucheStyle: any[], typeId: string): string | null {
   for (const style of coucheStyle) {
@@ -16,6 +17,7 @@ function findStyleById(coucheStyle: any[], typeId: string): string | null {
 }
 
 const ListInfos = ({ data }: { data: any[] }) => {
+  const { user } = useAppContext();
   const coucheStyle = useGet(url`/api/admin/couche/get-all-styles`)?.data;
   const [tableau, setTableau] = useState<
     { header: string; content: JSX.Element }[]
@@ -115,15 +117,25 @@ const ListInfos = ({ data }: { data: any[] }) => {
           };
         }
 
-        // affichage brut
+        if (user?.isSuperAdmin) {
+          // si on est super admin, on affiche tout
+          return {
+            header,
+            content: Object.keys(properties).map((key, idx) => (
+              <div key={idx}>
+                <strong>{key.replace(/_/g, " ")}</strong>:{" "}
+                {JSON.stringify(properties[key] ?? "Non renseigné").replace(
+                  /"/g,
+                  "",
+                )}
+              </div>
+            )),
+          };
+        }
+
         return {
           header,
-          content: Object.keys(properties).map((key, idx) => (
-            <div key={idx}>
-              <strong>{key.replace(/_/g, " ")}</strong>:{" "}
-              {JSON.stringify(properties[key]).replace(/"/g, "")}
-            </div>
-          )),
+          content: "Aucune donnée",
         };
       });
     });
@@ -136,7 +148,7 @@ const ListInfos = ({ data }: { data: any[] }) => {
     }
 
     setTableau(generatedTableau);
-  }, [data, coucheStyle]);
+  }, [data, coucheStyle, user?.isSuperAdmin]);
 
   return (
     <Container>

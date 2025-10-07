@@ -19,6 +19,7 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
+import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.CoucheData
@@ -65,7 +66,7 @@ class CoucheEndpoint : AbstractEndpoint() {
 
     @Path("/get-all-styles")
     @GET
-    @RequireDroits([Droit.CARTO_METADATA_A])
+    @Public("Les styles peuvent être accessiblent ")
     @Produces(MediaType.APPLICATION_JSON)
     fun getAllStyles(): Response = Response.ok(getCoucheStyleUseCase.getAllStyles(securityContext.userInfo)).build()
 
@@ -100,12 +101,11 @@ class CoucheEndpoint : AbstractEndpoint() {
         return Response.ok(getCoucheStyleUseCase.getStyleById(styleId)).build()
     }
 
-    // utilisée pour la page d'ajout de style
-    @Path("/get-couches")
+    @Path("/get-available-layers")
     @GET
     @RequireDroits([Droit.CARTO_METADATA_A])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getCouches(
+    fun getAvailableLayers(
         @QueryParam("excludeExisting") excludeExisting: Boolean?,
     ): Response =
         Response.ok(
@@ -115,7 +115,7 @@ class CoucheEndpoint : AbstractEndpoint() {
                         groupeCoucheId = groupeCouche.groupeCoucheId,
                         groupeCoucheLibelle = groupeCouche.groupeCoucheLibelle,
                         groupeCoucheCode = groupeCouche.groupeCoucheCode,
-                        coucheList = coucheRepository.getCoucheList(groupeCouche.groupeCoucheId).map { couche ->
+                        coucheList = coucheRepository.getAvailableLayers(groupeCouche.groupeCoucheId).map { couche ->
                             SimplifiedCoucheData(
                                 coucheId = couche.coucheId,
                                 coucheLibelle = couche.coucheLibelle,

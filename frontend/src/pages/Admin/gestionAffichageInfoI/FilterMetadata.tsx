@@ -1,17 +1,19 @@
-type FilterStyleType = {
+type FilterMetadataType = {
   groupeCoucheLibelle?: string;
   coucheLibelle?: string;
   groupeFonctionnaliteList?: string;
-  coucheStyleActif?: string;
+  coucheMetadataActif?: string;
+  coucheMetadataPublic?: string;
 };
 
 const filterValuesToVariable = ({
   groupeCoucheLibelle,
   coucheLibelle,
   groupeFonctionnaliteList,
-  coucheStyleActif,
-}: FilterStyleType) => {
-  const filter: FilterStyleType = {};
+  coucheMetadataActif: coucheMetadataActif,
+  coucheMetadataPublic: coucheMetadataPublic,
+}: FilterMetadataType) => {
+  const filter: FilterMetadataType = {};
 
   filterPropertyStyle(filter, groupeCoucheLibelle, "groupeCoucheLibelle");
   filterPropertyStyle(filter, coucheLibelle, "coucheLibelle");
@@ -20,7 +22,8 @@ const filterValuesToVariable = ({
     groupeFonctionnaliteList,
     "groupeFonctionnaliteList",
   );
-  filterPropertyStyle(filter, coucheStyleActif, "coucheStyleActif");
+  filterPropertyStyle(filter, coucheMetadataActif, "coucheMetadataActif");
+  filterPropertyStyle(filter, coucheMetadataPublic, "coucheMetadataPublic");
 
   return filter;
 };
@@ -28,7 +31,7 @@ const filterValuesToVariable = ({
 export default filterValuesToVariable;
 
 function filterPropertyStyle(
-  filter: FilterStyleType,
+  filter: FilterMetadataType,
   value: string | undefined,
   name: string,
 ) {

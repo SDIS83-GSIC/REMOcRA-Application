@@ -483,7 +483,7 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
-            {hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) && (
+            {(hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) || user == null) && (
               <ToolbarButton
                 toolName={"info-outil-i"}
                 toolIcon={<IconInfo />}

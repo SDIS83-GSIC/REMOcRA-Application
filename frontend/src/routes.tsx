@@ -206,8 +206,8 @@ import DepotDeliberation from "./pages/Signalement/DepotDeliberation.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
 import ListLayersGroup from "./pages/Admin/gestionAffichageInfoI/ListLayersGroup.tsx";
-import CreateLayerStyle from "./pages/Admin/gestionAffichageInfoI/CreateLayerStyle.tsx";
-import UpdateLayerStyle from "./pages/Admin/gestionAffichageInfoI/UpdateLayerStyle.tsx";
+import CreateLayerMetadata from "./pages/Admin/gestionAffichageInfoI/CreateLayerMetadata.tsx";
+import UpdateLayerMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateLayerMetadata.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
 
 export const URLS = {
@@ -1136,7 +1136,7 @@ export default [
         path: "/admin/layers-group/update-style/:styleId",
         element: (
           <Authorization
-            Component={UpdateLayerStyle}
+            Component={UpdateLayerMetadata}
             droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),
@@ -1145,7 +1145,7 @@ export default [
         path: "/admin/layers-group/create-style",
         element: (
           <Authorization
-            Component={CreateLayerStyle}
+            Component={CreateLayerMetadata}
             droits={[TYPE_DROIT.CARTO_METADATA_A]}
           />
         ),

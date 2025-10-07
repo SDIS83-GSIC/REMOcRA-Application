@@ -27,13 +27,13 @@ import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.keys.COUCHE_COUCHE_CODE_KEY
+import remocra.db.jooq.remocra.keys.COUCHE_METADATA__COUCHE_STYLE_COUCHE_STYLE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.COUCHE_PKEY
-import remocra.db.jooq.remocra.keys.COUCHE_STYLE__COUCHE_STYLE_COUCHE_STYLE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.COUCHE__COUCHE_COUCHE_GROUPE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_CRISE__L_COUCHE_CRISE_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_GROUPE_FONCTIONNALITES__L_COUCHE_DROIT_COUCHE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_MODULE__L_COUCHE_MODULE_COUCHE_ID_FKEY
-import remocra.db.jooq.remocra.tables.CoucheStyle.CoucheStylePath
+import remocra.db.jooq.remocra.tables.CoucheMetadata.CoucheMetadataPath
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.GroupeCouche.GroupeCouchePath
 import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalitesPath
@@ -234,22 +234,22 @@ open class Couche(
     val groupeCouche: GroupeCouchePath
         get(): GroupeCouchePath = groupeCouche()
 
-    private lateinit var _coucheStyle: CoucheStylePath
+    private lateinit var _coucheMetadata: CoucheMetadataPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.couche_style</code> table
+     * <code>remocra.couche_metadata</code> table
      */
-    fun coucheStyle(): CoucheStylePath {
-        if (!this::_coucheStyle.isInitialized) {
-            _coucheStyle = CoucheStylePath(this, null, COUCHE_STYLE__COUCHE_STYLE_COUCHE_STYLE_COUCHE_ID_FKEY.inverseKey)
+    fun coucheMetadata(): CoucheMetadataPath {
+        if (!this::_coucheMetadata.isInitialized) {
+            _coucheMetadata = CoucheMetadataPath(this, null, COUCHE_METADATA__COUCHE_STYLE_COUCHE_STYLE_COUCHE_ID_FKEY.inverseKey)
         }
 
-        return _coucheStyle
+        return _coucheMetadata
     }
 
-    val coucheStyle: CoucheStylePath
-        get(): CoucheStylePath = coucheStyle()
+    val coucheMetadata: CoucheMetadataPath
+        get(): CoucheMetadataPath = coucheMetadata()
 
     private lateinit var _lCoucheCrise: LCoucheCrisePath
 

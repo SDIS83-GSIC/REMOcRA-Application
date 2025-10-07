@@ -1,7 +1,7 @@
 import { object } from "yup";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
   FormContainer,
@@ -15,16 +15,20 @@ import url from "../../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../../module/validators.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 
 export const getInitialValues = (styleId?: string, data?: any) => ({
   groupLayerId: data?.groupLayerId ?? null,
   layerId: data?.layerId ?? null,
   layerProfilId: data?.layerProfilId ?? null,
   layerStyleFlag: data?.layerStyleFlag ?? false,
+  layerStylePublicAccess: data?.layerStylePublicAccess ?? false,
   layerStyleId: styleId ?? "",
   layerStyle:
     data?.layerStyle ??
-    "[i]Les adresses sont mises à jour tous les jours à 01h00 [/i]\n[b]Description : [/b] #adresse_description#\n[br]\n[b]adresse_date_modification : [/b] [u]#adresse_date_modification#[/u]",
+    "[i]Les adresses sont mises à jour tous les jours à 01h00 [/i]\n[br]\n[b]Description : [/b] #adresse_description#\n[br]\n[b]adresse_date_modification : [/b] [u]#adresse_date_modification#[/u]",
 });
 
 export const prepareValues = (
@@ -34,6 +38,7 @@ export const prepareValues = (
     layerProfilId: any;
     layerStyle: any;
     layerStyleFlag: boolean;
+    layerStylePublicAccess: boolean;
   },
   styleId?: string,
 ) => ({
@@ -43,6 +48,7 @@ export const prepareValues = (
   layerProfilId: values.layerProfilId,
   layerStyle: values.layerStyle,
   layerStyleFlag: values.layerStyleFlag,
+  layerStylePublicAccess: values.layerStylePublicAccess,
 });
 
 export const validationSchema = object({
@@ -52,12 +58,19 @@ export const validationSchema = object({
   layerProfilId: requiredArray,
 });
 
-const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
+const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   const [coucheId, setCoucheId] = useState<string | null>(initalLayer);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { handleShowClose, activesKeys } = useAccordionState([false, false]);
+
+  async function getError(errorPending: any) {
+    return await errorPending?.text();
+  }
 
   const queryParam = initalLayer !== undefined ? "" : "?excludeExisting=true";
-  const layerData = useGet(url`/api/admin/couche/get-couches${queryParam}`)
-    ?.data?.list;
+  const layerData = useGet(
+    url`/api/admin/couche/get-available-layers${queryParam}`,
+  )?.data?.list;
 
   const { setValues, setFieldValue, values } = useFormikContext<{
     groupLayerId: any;
@@ -65,11 +78,23 @@ const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
     layerProfilId: any;
     layerStyle: any;
     layerStyleFlag: boolean;
+    layerStylePublicAccess: boolean;
   }>();
-  const { run: fetchOption, data: describeFeatureType } = useGetRun(
-    url`/api/geoserver/describe-feature-type/${coucheId!}`,
-    {},
-  );
+  const {
+    run: fetchOption,
+    data: describeFeatureType,
+    ...dataLayer
+  } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
+
+  useEffect(() => {
+    if (dataLayer?.error) {
+      getError(dataLayer?.error).then((error) => {
+        setErrorMessage(error);
+      });
+    } else {
+      setErrorMessage(null);
+    }
+  }, [dataLayer?.error]);
 
   useEffect(() => {
     if (coucheId) {
@@ -159,13 +184,64 @@ const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
 
   return (
     <FormContainer>
-      <h3 className="mt-1">Informations générales</h3>
+      <AccordionCustom
+        activesKeys={activesKeys}
+        handleShowClose={handleShowClose}
+        list={[
+          {
+            header: "Informations générales",
+            content:
+              "Seules les couches requêtant Geoserver sont accessibles dans la liste déroulante ci-dessous, donc sont exclus les types GeoJSON et OSM",
+          },
+          {
+            header: "Balises disponibles pour la mise en forme",
+            content: (
+              <>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <b>[b]...[/b]</b>
+                      </td>
+                      <td>Texte en gras</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>[i]...[/i]</b>
+                      </td>
+                      <td>Texte en italique</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>[u]...[/u]</b>
+                      </td>
+                      <td>Texte souligné</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>[br]</b>
+                      </td>
+                      <td>Saut de ligne</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <b>#...#</b>
+                      </td>
+                      <td>Paramètre à insérer</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            ),
+          },
+        ]}
+      />
 
       {/* group layer */}
       <SelectForm
         name={"groupLayerId"}
         listIdCodeLibelle={listGroupLayers}
-        label="Selectionnez le groupe de couche"
+        label="Groupe de couche"
         required={true}
         setValues={setValues}
         defaultValue={listGroupLayers.find(
@@ -177,11 +253,15 @@ const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
         }}
       />
 
+      <Container>
+        {errorMessage && <div className="text-danger">{errorMessage}</div>}
+      </Container>
+
       {/* layer */}
       <SelectForm
         name={"layerId"}
         listIdCodeLibelle={listLayers}
-        label="Selectionnez le nom de la couche"
+        label="Couche"
         required={true}
         setValues={setValues}
         defaultValue={listLayers.find((e: any) => e.id === values?.layerId)}
@@ -194,7 +274,7 @@ const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
 
       <Multiselect
         name={"layerProfilId"}
-        label="Ajoutez des groupes de fonctionnalité"
+        label="Groupes de fonctionnalités"
         options={listProfilsDroits}
         getOptionValue={(t) => t.id}
         value={
@@ -215,40 +295,49 @@ const CreateLayerStyleForm = ({ initalLayer }: { initalLayer?: string }) => {
         }}
       />
 
-      <CheckBoxInput name={"layerStyleFlag"} label={"Activer le style"} />
-
-      <Row className="mt-3">
-        <Col className="bg-light border p-2 rounded">
-          <IconInfo /> Liste des paramètres : <br /> {params ?? paramNotFound}
-        </Col>
-      </Row>
-
-      <Row className="mt-3">
-        <Col className="bg-light border p-2 rounded">
-          Styles utilisables : <br />
-          <b>[i]...[/i]</b> : texte en italique
-          <br />
-          <b>[b]...[/b]</b> : texte en gras
-          <br />
-          <b>[u]...[/u]</b> : texte souligné
-          <br />
-          <b>[br]</b> : saut de ligne
-          <br />
-          <b>#...#</b> : paramètre à insérer
-        </Col>
-      </Row>
-
-      <TextAreaInput
-        rows={10}
-        name="layerStyle"
-        readOnly={params === null}
-        label="Entrez un nouveau style"
-        value={values.layerStyle}
+      <CheckBoxInput name={"layerStyleFlag"} label={"Actif"} />
+      <CheckBoxInput
+        name={"layerStylePublicAccess"}
+        label={"Autoriser l'accès public"}
+        tooltipText="Si la case est cochée, les métadonnées seront accessibles publiquement, y compris par un utilisateur déconnecté."
       />
 
-      <SubmitFormButtons returnLink={true} />
+      <Row className="mt-3">
+        <Col md={4} className="bg-light border p-2 rounded">
+          <IconInfo /> Attributs affichables : (
+          <i>
+            ce sont les attributs fournis par Geoserver lors de
+            l&apos;interrogation de la vue. Assurez-vous qu&apos;ils soient au
+            plus proche de ce que vous voulez afficher en créant une vue
+            Geoserver adaptée à vos besoins
+          </i>
+          )
+          <br /> {params ?? paramNotFound}
+        </Col>
+
+        {params !== null && errorMessage === null && (
+          <Col md={8}>
+            <TextAreaInput
+              rows={10}
+              name="layerStyle"
+              readOnly={params === null}
+              label="Métadonnées à afficher"
+              value={values.layerStyle}
+            />
+          </Col>
+        )}
+      </Row>
+
+      <Row className="mt-3">
+        <Col>
+          <SubmitFormButtons
+            disabledValide={params === null || errorMessage !== null}
+            returnLink={true}
+          />
+        </Col>
+      </Row>
     </FormContainer>
   );
 };
 
-export default CreateLayerStyleForm;
+export default CreateLayerMetadataForm;

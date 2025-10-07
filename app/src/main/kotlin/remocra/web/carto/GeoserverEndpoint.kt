@@ -16,7 +16,9 @@ import remocra.app.DataCacheProvider
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.db.jooq.remocra.enums.TypeModule
+import remocra.exception.RemocraResponseException
 import remocra.security.NoCsrf
+import remocra.usecase.AbstractUseCase
 import remocra.usecase.carto.GetFeaturesTypeUseCase
 import remocra.utils.addQueryParameters
 import remocra.utils.forbidden
@@ -38,11 +40,16 @@ class GeoserverEndpoint : AbstractEndpoint() {
     @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entête CSRF")
     @Path("/describe-feature-type/{coucheId}")
     @GET
+    @Throws(RemocraResponseException::class)
     fun describeFeatureType(
         @PathParam("coucheId") coucheId: UUID,
         @Context uriInfo: UriInfo,
     ): Response {
-        return doProxyRequest(httpClient, getFeaturesTypeUseCase.execute(coucheId, uriInfo))
+        return try {
+            doProxyRequest(httpClient, getFeaturesTypeUseCase.execute(coucheId, uriInfo))
+        } catch (e: RemocraResponseException) {
+            AbstractUseCase.Result.BadRequest(e.message).wrap()
+        }
     }
 
     @Public("Les couches peuvent être accessibles publiquement")

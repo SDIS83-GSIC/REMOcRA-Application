@@ -3,16 +3,16 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
-import CreateLayerStyleForm, {
+import CreateLayerMetadataForm, {
   getInitialValues,
   prepareValues,
   validationSchema,
-} from "./CreateLayerStyleForm.tsx";
+} from "./CreateLayerMetadataForm.tsx";
 
-const CreateLayerStyle = () => {
+const CreateLayerMetadata = () => {
   return (
     <Container>
-      <PageTitle title="Création d'un style" icon={<IconEdit />} />
+      <PageTitle title="Ajout des métadonnées" icon={<IconEdit />} />
       <MyFormik
         initialValues={getInitialValues()}
         prepareVariables={(values) => prepareValues(values)}
@@ -22,10 +22,10 @@ const CreateLayerStyle = () => {
         redirectUrl={URLS.URL_LIST_LAYER_STYLE}
         onSubmit={() => true}
       >
-        <CreateLayerStyleForm />
+        <CreateLayerMetadataForm />
       </MyFormik>
     </Container>
   );
 };
 
-export default CreateLayerStyle;
+export default CreateLayerMetadata;

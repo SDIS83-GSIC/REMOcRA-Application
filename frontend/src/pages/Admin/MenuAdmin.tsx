@@ -283,7 +283,7 @@ const MenuAdmin = () => {
                         className="text-underline text-start"
                         pathname={URLS.URL_LIST_LAYER_STYLE}
                       >
-                        Gestion du style des couches
+                        Gestion des métadonnées des couches
                       </CustomLinkButton>
                     </Nav.Item>
                     <br />

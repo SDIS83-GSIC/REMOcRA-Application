@@ -16,7 +16,7 @@ import remocra.db.jooq.remocra.tables.CarroyageDfci
 import remocra.db.jooq.remocra.tables.Commune
 import remocra.db.jooq.remocra.tables.Contact
 import remocra.db.jooq.remocra.tables.Couche
-import remocra.db.jooq.remocra.tables.CoucheStyle
+import remocra.db.jooq.remocra.tables.CoucheMetadata
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
 import remocra.db.jooq.remocra.tables.CriseIndicateur
@@ -57,7 +57,7 @@ import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
 import remocra.db.jooq.remocra.tables.LEvenementDocument
-import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheStyle
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheMetadata
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
 import remocra.db.jooq.remocra.tables.LIndisponibiliteTemporairePei
 import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites
@@ -228,9 +228,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val COUCHE: Couche get() = Couche.COUCHE
 
     /**
-     * The table <code>remocra.couche_style</code>.
+     * The table <code>remocra.couche_metadata</code>.
      */
-    val COUCHE_STYLE: CoucheStyle get() = CoucheStyle.COUCHE_STYLE
+    val COUCHE_METADATA: CoucheMetadata get() = CoucheMetadata.COUCHE_METADATA
 
     /**
      * The table <code>remocra.courrier</code>.
@@ -433,9 +433,9 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val L_EVENEMENT_DOCUMENT: LEvenementDocument get() = LEvenementDocument.L_EVENEMENT_DOCUMENT
 
     /**
-     * The table <code>remocra.l_groupe_fonctionnalites_couche_style</code>.
+     * The table <code>remocra.l_groupe_fonctionnalites_couche_metadata</code>.
      */
-    val L_GROUPE_FONCTIONNALITES_COUCHE_STYLE: LGroupeFonctionnalitesCoucheStyle get() = LGroupeFonctionnalitesCoucheStyle.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE
+    val L_GROUPE_FONCTIONNALITES_COUCHE_METADATA: LGroupeFonctionnalitesCoucheMetadata get() = LGroupeFonctionnalitesCoucheMetadata.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA
 
     /**
      * The table
@@ -958,7 +958,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Commune.COMMUNE,
         Contact.CONTACT,
         Couche.COUCHE,
-        CoucheStyle.COUCHE_STYLE,
+        CoucheMetadata.COUCHE_METADATA,
         Courrier.COURRIER,
         Crise.CRISE,
         CriseIndicateur.CRISE_INDICATEUR,
@@ -999,7 +999,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
         LEvenementDocument.L_EVENEMENT_DOCUMENT,
-        LGroupeFonctionnalitesCoucheStyle.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE,
+        LGroupeFonctionnalitesCoucheMetadata.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA,
         LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE,
         LIndisponibiliteTemporairePei.L_INDISPONIBILITE_TEMPORAIRE_PEI,
         LModeleCourrierGroupeFonctionnalites.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES,

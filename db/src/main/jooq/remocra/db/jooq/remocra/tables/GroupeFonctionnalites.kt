@@ -29,16 +29,16 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.keys.GROUPE_FONCTIONNALITES_GROUPE_FONCTIONNALITES_CODE_KEY
 import remocra.db.jooq.remocra.keys.GROUPE_FONCTIONNALITES_PKEY
 import remocra.db.jooq.remocra.keys.L_COUCHE_GROUPE_FONCTIONNALITES__L_COUCHE_GROUPE_FONCTIONNALITES_GROUPE_FONCTIONNALITES_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_GROUPE_FONCTIONNALITES_COUCHE_STYLE__L_GROUPE_FONCTIONNALITES_COUCHE__GROUPE_FONCTIONNALITES_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA__L_GROUPE_FONCTIONNALITES_COUCHE__GROUPE_FONCTIONNALITES_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE__L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE_GROUPE_FONCTIONNA
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES__L_MODELE_COURRIER_GROUPE_FONCTIONNALITES_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.keys.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES__L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES_GROUPE_FO
 import remocra.db.jooq.remocra.keys.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES__L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES_GROUPE_FONCTIONNA
 import remocra.db.jooq.remocra.tables.Couche.CouchePath
-import remocra.db.jooq.remocra.tables.CoucheStyle.CoucheStylePath
+import remocra.db.jooq.remocra.tables.CoucheMetadata.CoucheMetadataPath
 import remocra.db.jooq.remocra.tables.DocumentHabilitable.DocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LCoucheGroupeFonctionnalites.LCoucheGroupeFonctionnalitesPath
-import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheStyle.LGroupeFonctionnalitesCoucheStylePath
+import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheMetadata.LGroupeFonctionnalitesCoucheMetadataPath
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable.LGroupeFonctionnalitesDocumentHabilitablePath
 import remocra.db.jooq.remocra.tables.LModeleCourrierGroupeFonctionnalites.LModeleCourrierGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.LProfilUtilisateurOrganismeGroupeFonctionnalites.LProfilUtilisateurOrganismeGroupeFonctionnalitesPath
@@ -178,22 +178,22 @@ open class GroupeFonctionnalites(
     val lCoucheGroupeFonctionnalites: LCoucheGroupeFonctionnalitesPath
         get(): LCoucheGroupeFonctionnalitesPath = lCoucheGroupeFonctionnalites()
 
-    private lateinit var _lGroupeFonctionnalitesCoucheStyle: LGroupeFonctionnalitesCoucheStylePath
+    private lateinit var _lGroupeFonctionnalitesCoucheMetadata: LGroupeFonctionnalitesCoucheMetadataPath
 
     /**
      * Get the implicit to-many join path to the
-     * <code>remocra.l_groupe_fonctionnalites_couche_style</code> table
+     * <code>remocra.l_groupe_fonctionnalites_couche_metadata</code> table
      */
-    fun lGroupeFonctionnalitesCoucheStyle(): LGroupeFonctionnalitesCoucheStylePath {
-        if (!this::_lGroupeFonctionnalitesCoucheStyle.isInitialized) {
-            _lGroupeFonctionnalitesCoucheStyle = LGroupeFonctionnalitesCoucheStylePath(this, null, L_GROUPE_FONCTIONNALITES_COUCHE_STYLE__L_GROUPE_FONCTIONNALITES_COUCHE__GROUPE_FONCTIONNALITES_ID_FKEY.inverseKey)
+    fun lGroupeFonctionnalitesCoucheMetadata(): LGroupeFonctionnalitesCoucheMetadataPath {
+        if (!this::_lGroupeFonctionnalitesCoucheMetadata.isInitialized) {
+            _lGroupeFonctionnalitesCoucheMetadata = LGroupeFonctionnalitesCoucheMetadataPath(this, null, L_GROUPE_FONCTIONNALITES_COUCHE_METADATA__L_GROUPE_FONCTIONNALITES_COUCHE__GROUPE_FONCTIONNALITES_ID_FKEY.inverseKey)
         }
 
-        return _lGroupeFonctionnalitesCoucheStyle
+        return _lGroupeFonctionnalitesCoucheMetadata
     }
 
-    val lGroupeFonctionnalitesCoucheStyle: LGroupeFonctionnalitesCoucheStylePath
-        get(): LGroupeFonctionnalitesCoucheStylePath = lGroupeFonctionnalitesCoucheStyle()
+    val lGroupeFonctionnalitesCoucheMetadata: LGroupeFonctionnalitesCoucheMetadataPath
+        get(): LGroupeFonctionnalitesCoucheMetadataPath = lGroupeFonctionnalitesCoucheMetadata()
 
     private lateinit var _lGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitablePath
 
@@ -273,10 +273,10 @@ open class GroupeFonctionnalites(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.couche_style</code> table
+     * <code>remocra.couche_metadata</code> table
      */
-    val coucheStyle: CoucheStylePath
-        get(): CoucheStylePath = lGroupeFonctionnalitesCoucheStyle().coucheStyle()
+    val coucheMetadata: CoucheMetadataPath
+        get(): CoucheMetadataPath = lGroupeFonctionnalitesCoucheMetadata().coucheMetadata()
 
     /**
      * Get the implicit many-to-many join path to the

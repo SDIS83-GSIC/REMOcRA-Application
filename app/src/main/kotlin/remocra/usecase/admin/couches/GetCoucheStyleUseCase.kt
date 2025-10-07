@@ -17,6 +17,11 @@ class GetCoucheStyleUseCase : AbstractUseCase() {
     }
 
     fun getAllStyles(userInfo: WrappedUserInfo): List<CoucheStyle> {
+        if (userInfo.userInfo == null) {
+            // non connecté
+            return coucheRepository.getAllPublicStyles()
+        }
+
         return userInfo.userInfo
             ?.groupeFonctionnalites
             ?.groupeFonctionnalitesId
