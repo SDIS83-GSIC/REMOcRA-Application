@@ -3,7 +3,6 @@ package remocra.usecase.carto
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.MultivaluedHashMap
 import jakarta.ws.rs.core.UriInfo
-import okhttp3.HttpUrl
 import okhttp3.Request
 import remocra.db.CoucheRepository
 import remocra.geoserver.GeoserverModule
@@ -29,8 +28,9 @@ class GetFeaturesTypeUseCase : AbstractUseCase() {
         queryParameters.add("exceptions", "application/json")
         queryParameters.add("service", "WFS")
 
-        val url = HttpUrl.get("${geoserverSettings.url}ows")
+        val url = geoserverSettings.url
             .newBuilder()
+            .addPathSegment("ows")
             .addQueryParameters(queryParameters)
             .build()
         return Request.Builder()
