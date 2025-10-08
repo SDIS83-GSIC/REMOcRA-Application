@@ -290,6 +290,9 @@ export const VisiteTourneeForm = ({
               label="Type de visite : "
               required={true}
               setValues={setValues}
+              defaultValue={dynamicListTypeVisite.find(
+                (e) => e.id === values.visiteTypeVisite,
+              )}
             />
           </Col>
         </Row>
