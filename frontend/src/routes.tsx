@@ -192,7 +192,6 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
-import ListEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/ListEvenementSousCategorie.tsx";
 import CreateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateEvenementSousCategorie.tsx";
 import UpdateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateEvenementSousCategorie.tsx";
 import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
@@ -2053,7 +2052,7 @@ export default [
         path: "evenement-sous-categorie",
         element: (
           <Authorization
-            Component={ListEvenementSousCategorie}
+            Component={EvenementSousCategorieList}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),

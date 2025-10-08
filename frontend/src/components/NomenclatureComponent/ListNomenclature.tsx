@@ -33,6 +33,7 @@ const ListNomenclature = ({
   lienPageUpdate,
   addButtonTitle,
   additionalButton,
+  additionalActionButton,
 }: {
   pageTitle: ReactNode;
   pageIcon: ReactNode;
@@ -44,12 +45,17 @@ const ListNomenclature = ({
   lienPageUpdate: (...args: string[]) => string;
   addButtonTitle: string;
   additionalButton?: ReactNode;
+  additionalActionButton?: ButtonType;
 }) => {
   const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
 
   if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
+    if (additionalActionButton) {
+      listeButton.push(additionalActionButton);
+    }
+
     listeButton.push({
       row: (row) => {
         return row;

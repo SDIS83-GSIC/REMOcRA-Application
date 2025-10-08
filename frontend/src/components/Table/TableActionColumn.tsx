@@ -29,6 +29,7 @@ const TableActionColumn = ({
   onClick,
   isLink = true,
   state,
+  search,
 }: TableActionButtonType) => {
   return (
     !hide ||
@@ -129,6 +130,7 @@ const TableActionColumn = ({
             >
               <Col>
                 <CustomLinkButton
+                  search={search}
                   variant={"link"}
                   className={classnames(
                     "p-0 m-0",
@@ -187,7 +189,7 @@ type TableActionButtonType = {
   editModal?: EditModalType | null;
   simpleModal?: SimpleModalType | null;
   state?: any | undefined;
-
+  search?: (param: any) => string | null;
   hide?: (param: any) => boolean;
   onClick?: (param?: any, row?: any) => any;
   isPost?: boolean;
@@ -272,6 +274,7 @@ export const ActionButton = ({
                 confirmModal={_button.confirmModal}
                 reload={_button.reload}
                 textDisable={_button.textDisable}
+                search={_button.search?.(row.value)}
               />
             );
           case TYPE_BUTTON.BUTTON:
