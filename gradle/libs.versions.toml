@@ -85,6 +85,8 @@ sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 
 archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.3.0"
 
+owasp = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
+
 # xDocReport
 xdocreport = { module = "fr.opensagres.xdocreport:xdocreport", version.ref = "xdocreport" }
 xdocreport-odt = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.odt", version.ref = "xdocreport" }

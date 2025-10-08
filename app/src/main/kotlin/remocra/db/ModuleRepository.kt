@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.owasp.html.PolicyFactory
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.LThematiqueModule
 import remocra.db.jooq.remocra.tables.pojos.Module
@@ -9,7 +10,7 @@ import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_MODULE
 import remocra.db.jooq.remocra.tables.references.MODULE
 import java.util.UUID
 
-class ModuleRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class ModuleRepository @Inject constructor(private val dsl: DSLContext, private val policyFactory: PolicyFactory) : AbstractRepository() {
     fun getModules(): Collection<Module> =
         dsl.selectFrom(MODULE)
             .orderBy(MODULE.COLONNE, MODULE.LIGNE).fetchInto()
@@ -40,7 +41,7 @@ class ModuleRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(MODULE.LIGNE, moduleLigne)
             .set(MODULE.TYPE, moduleType)
             .set(MODULE.TITRE, moduleTitre)
-            .set(MODULE.CONTENU_HTML, moduleContenuHtml)
+            .set(MODULE.CONTENU_HTML, policyFactory.sanitize(moduleContenuHtml))
             .set(MODULE.IMAGE, moduleImage)
             .set(MODULE.NB_DOCUMENT, moduleNbDocument)
             .where(MODULE.ID.eq(moduleId))

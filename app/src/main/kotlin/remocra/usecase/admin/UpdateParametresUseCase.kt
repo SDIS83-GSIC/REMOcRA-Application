@@ -3,6 +3,7 @@ package remocra.usecase.admin
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import org.owasp.html.PolicyFactory
 import remocra.auth.WrappedUserInfo
 import remocra.data.ParametresAdminData
 import remocra.data.ParametresAdminDataInput
@@ -16,13 +17,13 @@ import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(TypeOperation.UPDATE) {
-
-    @Inject
-    private lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    private lateinit var parametreRepository: ParametreRepository
+class UpdateParametresUseCase
+@Inject constructor(
+    private var objectMapper: ObjectMapper,
+    private var parametreRepository: ParametreRepository,
+    private var policyFactory: PolicyFactory,
+) :
+    AbstractCUDUseCase<ParametresAdminDataInput>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroits(droitsWeb = setOf(Droit.ADMIN_PARAM_APPLI, Droit.ADMIN_PARAM_APPLI_MOBILE))) {
@@ -59,7 +60,7 @@ class UpdateParametresUseCase : AbstractCUDUseCase<ParametresAdminDataInput>(Typ
             )
             updateParametre(
                 ParametreEnum.ACCUEIL_PUBLIC,
-                parametresAdminData.general.accueilPublic,
+                policyFactory.sanitize(parametresAdminData.general.accueilPublic),
             )
 
             // Signalement

@@ -170,6 +170,8 @@ dependencies {
 
     api(libs.apache.poi)
 
+    api(libs.owasp)
+
     api(libs.xdocreport)
     api(libs.xdocreport.odt)
     api(libs.xdocreport.freemarker)

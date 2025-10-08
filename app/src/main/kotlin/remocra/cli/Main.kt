@@ -16,6 +16,7 @@ import remocra.db.SigDatabaseModule
 import remocra.eventbus.EventBusModule
 import remocra.geoserver.GeoserverModule
 import remocra.healthcheck.HealthModule
+import remocra.htmlsanitizer.HtmlSanitizerModule
 import remocra.http.HttpServerModule
 import remocra.json.JsonModule
 import remocra.keycloak.KeycloakModule
@@ -112,6 +113,7 @@ class Main : Runnable {
                 DatabaseModule.create(config.getConfig("remocra.database")),
                 SigDatabaseModule.create(config.getConfig("remocra.database-sig")),
                 ScheduleModule,
+                HtmlSanitizerModule,
             )
                 .getInstance(Serve::class.java)
         serve.start()
