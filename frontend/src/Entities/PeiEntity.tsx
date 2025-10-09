@@ -32,6 +32,7 @@ export type PeiEntity = {
   peiAnneeFabrication: number;
   peiNiveauId: string;
   peiZoneSpecialeId: string;
+  peiDateChangementDispo: Date;
 
   coordonneeX: number;
   coordonneeY: number;

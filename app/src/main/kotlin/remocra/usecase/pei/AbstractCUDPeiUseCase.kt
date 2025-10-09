@@ -126,6 +126,10 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             }
         }
 
+        if (element.peiDisponibiliteTerrestre != element.peiDisponibiliteTerrestreInitiale) {
+            element.peiDateChangementDispo = dateUtils.now()
+        }
+
         // Tout est à jour, on peut enregistrer l'élément :
         executeSpecific(userInfo, element)
 
@@ -154,7 +158,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             penaRepository.upsertPena(peiData)
 
             penaRepository.deleteLienPenaTypeEngin(peiData.peiId)
-            peiData.typeEnginIds?.let { typeEnginIds -> penaRepository.addLienPenaTypeEngin(peiData.peiId, typeEnginIds) }
+            peiData.typeEnginIds.let { typeEnginIds -> penaRepository.addLienPenaTypeEngin(peiData.peiId, typeEnginIds) }
         }
     }
 

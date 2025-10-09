@@ -81,6 +81,7 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiNatureDeciId: data?.peiNatureDeciId ?? null,
   peiNiveauId: data?.peiNiveauId ?? null,
   peiZoneSpecialeId: data?.peiZoneSpecialeId ?? null,
+  peiDateChangementDispo: data?.peiDateChangementDispo ?? null,
 
   // DONNEES PIBI
   pibiDiametreId: data?.pibiDiametreId ?? null,
@@ -178,6 +179,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiSiteId: values.peiSiteId ?? null,
     peiGestionnaireId: values.peiGestionnaireId ?? null,
     peiNiveauId: values.peiNiveauId ?? null,
+    peiDateChangementDispo: values?.peiDateChangementDispo ?? null,
 
     coordonneeX: values?.coordonneeX ?? null,
     coordonneeY: values?.coordonneeY ?? null,
@@ -189,6 +191,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
     peiDomaineIdInitial: data?.peiDomaineId ?? null,
     peiGestionnaireIdInitial: data?.peiGestionnaireId ?? null,
+    peiDisponibiliteTerrestreInitiale: data?.peiDisponibiliteTerrestre ?? null,
   };
 
   formData.append(

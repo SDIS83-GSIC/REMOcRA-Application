@@ -3,6 +3,7 @@ package remocra.data
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import java.time.ZonedDateTime
 import java.util.UUID
 
 /**
@@ -41,6 +42,7 @@ open class PeiData(
     open val peiAnneeFabrication: Int?,
     open val peiNiveauId: UUID?,
     open val peiObservation: String?,
+    open var peiDateChangementDispo: ZonedDateTime?,
 
     // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
     open val peiNumeroInterneInitial: Int? = peiNumeroInterne,
@@ -49,6 +51,8 @@ open class PeiData(
     open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
     open val peiGestionnaireIdInitial: UUID? = peiGestionnaireId,
+    open val peiDisponibiliteTerrestreInitiale: Disponibilite? = peiDisponibiliteTerrestre,
+
 ) {
     val coordonneeX: Double
         get() = peiGeometrie.coordinate.x
@@ -95,6 +99,7 @@ data class PibiData(
     override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     override val peiDomaineIdInitial: UUID? = peiDomaineId,
+    override var peiDateChangementDispo: ZonedDateTime?,
 
     var pibiDiametreId: UUID?,
     val pibiServiceEauId: UUID?,
@@ -139,6 +144,7 @@ data class PibiData(
     peiAnneeFabrication,
     peiNiveauId,
     peiObservation,
+    peiDateChangementDispo,
     peiNumeroInterneInitial,
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
@@ -183,6 +189,7 @@ data class PenaData(
     override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
     override val peiDomaineIdInitial: UUID? = peiDomaineId,
+    override var peiDateChangementDispo: ZonedDateTime?,
 
     val penaDisponibiliteHbe: Disponibilite,
     var penaCapacite: Int? = null,
@@ -220,6 +227,7 @@ data class PenaData(
     peiAnneeFabrication,
     peiNiveauId,
     peiObservation,
+    peiDateChangementDispo,
     peiNumeroInterneInitial,
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,

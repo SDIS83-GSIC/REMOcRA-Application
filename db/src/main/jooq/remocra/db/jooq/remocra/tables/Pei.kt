@@ -28,6 +28,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
+import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.incoming.keys.PHOTO_PEI__PHOTO_PEI_PEI_ID_FKEY
 import remocra.db.jooq.incoming.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.incoming.tables.PhotoPei.PhotoPeiPath
@@ -82,6 +83,7 @@ import remocra.db.jooq.remocra.tables.Site.SitePath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -269,6 +271,11 @@ open class Pei(
      * The column <code>remocra.pei.pei_voie_texte</code>.
      */
     val VOIE_TEXTE: TableField<Record, String?> = createField(DSL.name("pei_voie_texte"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column <code>remocra.pei.pei_date_changement_dispo</code>.
+     */
+    val DATE_CHANGEMENT_DISPO: TableField<Record, ZonedDateTime?> = createField(DSL.name("pei_date_changement_dispo"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import java.io.Serializable
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -49,6 +50,7 @@ data class Pei(
     val peiMaintenanceDeciId: UUID?,
     val peiEnFace: Boolean?,
     val peiVoieTexte: String?,
+    val peiDateChangementDispo: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -211,6 +213,13 @@ data class Pei(
         } else if (this.peiVoieTexte != o.peiVoieTexte) {
             return false
         }
+        if (this.peiDateChangementDispo == null) {
+            if (o.peiDateChangementDispo != null) {
+                return false
+            }
+        } else if (this.peiDateChangementDispo != o.peiDateChangementDispo) {
+            return false
+        }
         return true
     }
 
@@ -244,6 +253,7 @@ data class Pei(
         result = prime * result + (if (this.peiMaintenanceDeciId == null) 0 else this.peiMaintenanceDeciId.hashCode())
         result = prime * result + (if (this.peiEnFace == null) 0 else this.peiEnFace.hashCode())
         result = prime * result + (if (this.peiVoieTexte == null) 0 else this.peiVoieTexte.hashCode())
+        result = prime * result + (if (this.peiDateChangementDispo == null) 0 else this.peiDateChangementDispo.hashCode())
         return result
     }
 
@@ -277,6 +287,7 @@ data class Pei(
         sb.append(", ").append(peiMaintenanceDeciId)
         sb.append(", ").append(peiEnFace)
         sb.append(", ").append(peiVoieTexte)
+        sb.append(", ").append(peiDateChangementDispo)
 
         sb.append(")")
         return sb.toString()

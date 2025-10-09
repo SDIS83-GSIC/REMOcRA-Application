@@ -232,6 +232,7 @@ class ValideIncomingTournee : AbstractUseCase() {
                         pibiSurpresse = false,
                         pibiAdditive = false,
                         pibiJumeleId = null,
+                        peiDateChangementDispo = null,
                     )
                 } else {
                     PenaData(
@@ -273,6 +274,7 @@ class ValideIncomingTournee : AbstractUseCase() {
                         penaCapaciteIncertaine = false,
                         penaQuantiteAppoint = null,
                         penaMateriauId = null,
+                        peiDateChangementDispo = null,
                     )
                 }
 

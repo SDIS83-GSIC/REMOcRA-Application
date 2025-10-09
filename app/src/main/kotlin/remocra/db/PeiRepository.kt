@@ -99,6 +99,7 @@ class PeiRepository
             PEI.MAINTENANCE_DECI_ID,
             PEI.NIVEAU_ID,
             PEI.OBSERVATION,
+            PEI.DATE_CHANGEMENT_DISPO,
         )
     }
 
@@ -663,6 +664,7 @@ class PeiRepository
                 peiNatureDeciId = pei.peiNatureDeciId,
                 peiDisponibiliteTerrestre = pei.peiDisponibiliteTerrestre,
                 peiServicePublicDeciId = pei.peiServicePublicDeciId,
+                peiDateChangementDispo = pei.peiDateChangementDispo,
             ),
         )
 
