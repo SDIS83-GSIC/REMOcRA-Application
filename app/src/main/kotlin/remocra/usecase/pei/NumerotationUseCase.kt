@@ -997,13 +997,13 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID?, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_22 -> TODO("Définir la règle de numérotation du SDIS 22")
             CodeSdis.SDIS_01,
+            CodeSdis.SDIS_22,
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_53,
             CodeSdis.SDIS_58,
-            CodeSdis.SDIS_59, // TODO
+            CodeSdis.SDIS_59,
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
