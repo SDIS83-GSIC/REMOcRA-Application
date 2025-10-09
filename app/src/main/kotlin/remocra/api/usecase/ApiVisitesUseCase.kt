@@ -13,7 +13,6 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
 import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
-import java.time.ZonedDateTime
 import java.util.UUID
 
 class ApiVisitesUseCase @Inject
@@ -24,25 +23,17 @@ constructor(
     private val deleteVisiteUseCase: DeleteVisiteUseCase,
 ) : AbstractApiPeiUseCase(peiRepository) {
 
-    fun getAll(numeroComplet: String, typeVisiteString: String?, momentString: String?, derniereOnly: Boolean?, limit: Int?, offset: Int?): Result.Success {
-        var moment: ZonedDateTime? = null
-        if (momentString != null) {
-            moment = dateUtils.getMomentForResponse(momentString)
-        }
-
-        // TODO tester l'accessibilité, pas fait en V2 mais serait un plus.
-        return Result.Success(
+    fun getAll(numeroComplet: String, typeVisiteString: String?, momentString: String?, derniereOnly: Boolean?, limit: Int?, offset: Int?): Result.Success =
+        Result.Success(
             visiteRepository.getAllForApi(
-                numeroComplet,
-                getTypeVisiteFromString(typeVisiteString),
-                moment,
-                derniereOnly
-                    ?: false,
-                limit,
-                offset,
+                numeroComplet = numeroComplet,
+                typeVisite = typeVisiteString?.let { getTypeVisiteFromString(it) },
+                moment = momentString?.let { dateUtils.getMomentForResponse(it) },
+                derniereOnly = derniereOnly ?: false,
+                limit = limit,
+                offset = offset,
             ),
         )
-    }
 
     /**
      * Retourne le [TypeVisite] associé à la chaîne passée en paramètre, ou déclenche une [RemocraResponseException] si la conversion n'est pas possible

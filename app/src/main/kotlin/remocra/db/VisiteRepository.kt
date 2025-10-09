@@ -218,25 +218,34 @@ class VisiteRepository
             .where(VISITE.ID.eq(visiteId))
             .execute()
 
-    fun getAllForApi(numeroComplet: String, typeVisite: TypeVisite?, moment: ZonedDateTime?, derniereOnly: Boolean, limit: Int?, offset: Int?): Collection<ApiVisiteData> {
-        return dsl.select(VISITE.ID, VISITE.DATE.`as`("moment"), VISITE.TYPE_VISITE)
+    fun getAllForApi(numeroComplet: String, typeVisite: TypeVisite?, moment: ZonedDateTime?, derniereOnly: Boolean, limit: Int?, offset: Int?): Collection<ApiVisiteData> =
+        dsl.select(
+            VISITE.ID,
+            VISITE.DATE.`as`("moment"),
+            VISITE.TYPE_VISITE,
+        )
             .select(
                 DSL.multiset(
                     DSL.selectDistinct(ANOMALIE.CODE)
                         .from(L_VISITE_ANOMALIE)
                         .innerJoin(ANOMALIE).on(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
-                        .where(L_PEI_ANOMALIE.PEI_ID.eq(Pei.PEI.ID)),
-                ).`as`("anomalies"),
+                        .where(
+                            VISITE.PEI_ID.eq(PEI.ID)
+                                .and(L_VISITE_ANOMALIE.VISITE_ID.eq(VISITE.ID)),
+                        ),
+                ).convertFrom { record ->
+                    record.map { it.get(ANOMALIE.CODE) }
+                }.`as`("anomalies"),
             )
             .from(VISITE)
             .innerJoin(PEI).on(VISITE.PEI_ID.eq(PEI.ID))
             .where(PEI.NUMERO_COMPLET.eq(numeroComplet))
             .and(typeVisite?.let { VISITE.TYPE_VISITE.eq(typeVisite) })
             .and(moment?.let { VISITE.DATE.ge(moment) })
+            .orderBy(VISITE.DATE.desc())
             .limit(if (derniereOnly) 1 else (if (limit == null || limit < 0) null else limit))
             .offset(if (derniereOnly || offset == null || offset < 0) 0 else offset)
             .fetchInto()
-    }
 
     fun getVisiteForApi(visiteId: UUID): ApiVisiteSpecifiqueData {
         return dsl.select(VISITE.ID, VISITE.DATE.`as`("moment"), VISITE.TYPE_VISITE, VISITE.AGENT1, VISITE.AGENT2, VISITE.OBSERVATION.`as`("observations"))
