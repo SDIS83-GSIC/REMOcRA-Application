@@ -192,8 +192,8 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
-import CreateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateEvenementSousCategorie.tsx";
-import UpdateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateEvenementSousCategorie.tsx";
+import CreateEvenementSousCategorie from "./pages/Admin/crise/EvenementSousCategorie/CreateEvenementSousCategorie.tsx";
+import UpdateEvenementSousCategorie from "./pages/Admin/crise/EvenementSousCategorie/UpdateEvenementSousCategorie.tsx";
 import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
 import UpdateTypeEngin from "./pages/Admin/typeEngin/UpdateTypeEngin.tsx";
 import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
@@ -208,7 +208,7 @@ import ListCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/ListCoucheMe
 import CreateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/CreateCoucheMetadata.tsx";
 import UpdateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateCoucheMetadata.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
-import EvenementSousCategorieList from "./pages/Admin/crise/typeEvenement/ListSousTypeEvenement.tsx";
+import EvenementSousCategorieList from "./pages/Admin/crise/EvenementSousCategorie/ListEvementSousCategorie.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,

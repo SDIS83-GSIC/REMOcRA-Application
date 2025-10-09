@@ -17,7 +17,7 @@ import AddTitleForm, {
   ValidationSchema,
 } from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
-import CreateEvenement from "../../../pages/ModuleCrise/Evenement/createEvenement.tsx";
+import CreateEvenement from "../../../pages/ModuleCrise/Evenement/CreateEvenement.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
@@ -83,6 +83,7 @@ export const useToolbarCriseContext = ({
     setShowCreateEvent(false);
     setShowPersonalReports(false);
     workingLayer.getSource().clear();
+    workingLayer.getSource().refresh();
     setGeometryElement(null);
   };
 
@@ -380,7 +381,7 @@ const MapToolbarCrise = forwardRef(
     reportGeometryElement: any;
     toggleTool: (toolId: string) => void;
     dataCriseLayer: any;
-    setSousTypeElement: (object: object) => void;
+    setSousTypeElement: (object: object | undefined) => void;
     variant: string;
   }) => {
     const { user } = useAppContext();
@@ -454,6 +455,7 @@ const MapToolbarCrise = forwardRef(
                 <Button
                   className="m-2"
                   onClick={() => {
+                    setEvenementSousCategorieId(undefined);
                     setShowCreateEvent(!showCreateEvent);
                   }}
                   variant={variant}
@@ -587,7 +589,7 @@ const MapToolbarCrise = forwardRef(
         >
           <CreateEvenement
             geometrieEvenement={geometryElement}
-            EvenementSousCategorieId={evenementSousCategorieId}
+            evenementSousCategorieId={evenementSousCategorieId}
             criseId={criseId}
             state={state}
             onSubmit={() => {

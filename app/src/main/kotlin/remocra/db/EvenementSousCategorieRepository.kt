@@ -126,15 +126,15 @@ class EvenementSousCategorieRepository @Inject constructor(private val dsl: DSLC
         ).convertFrom { record ->
             record?.map { r ->
                 SousCategorieComplement(
-                    sousCategorieComplementId = r.value1() as UUID,
-                    evenementSousCategorieId = r.value2() as UUID,
-                    sousCategorieComplementLibelle = r.value3().toString(),
-                    sousCategorieComplementSql = r.value4().toString(),
-                    sousCategorieComplementSqlId = r.value5().toString(),
-                    sousCategorieComplementSqlLibelle = r.value6().toString(),
-                    sousCategorieComplementValeurDefaut = r.value7().toString(),
-                    sousCategorieComplementEstRequis = r.value8() as Boolean,
-                    sousCategorieComplementType = r.value9() as TypeParametreEvenementComplement,
+                    sousCategorieComplementId = r.get<UUID>(CRISE_EVENEMENT_COMPLEMENT.ID),
+                    evenementSousCategorieId = r.get<UUID>(CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_SOUS_CATEGORIE_ID),
+                    sousCategorieComplementLibelle = r.get<String?>(CRISE_EVENEMENT_COMPLEMENT.LIBELLE),
+                    sousCategorieComplementSql = r.get<String?>(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL),
+                    sousCategorieComplementSqlId = r.get<String?>(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_ID),
+                    sousCategorieComplementSqlLibelle = r.get<String?>(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_LIBELLE),
+                    sousCategorieComplementValeurDefaut = r.get<String?>(CRISE_EVENEMENT_COMPLEMENT.VALEUR_DEFAUT),
+                    sousCategorieComplementEstRequis = r.get<Boolean>(CRISE_EVENEMENT_COMPLEMENT.EST_REQUIS),
+                    sousCategorieComplementType = r.get<TypeParametreEvenementComplement>(CRISE_EVENEMENT_COMPLEMENT.TYPE),
                 )
             }
         }

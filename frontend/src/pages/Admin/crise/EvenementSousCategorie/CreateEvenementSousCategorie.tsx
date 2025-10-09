@@ -7,7 +7,8 @@ import {
   prepareValues,
   evenementSousCategorieValidationSchema,
   EvenementSousCategorie,
-} from "./TypeCriseCategorie.tsx";
+  getInitialEvenementSousCategorieValue,
+} from "./EvenementSousCategorie.tsx";
 
 const CreateEvenementSousCategorie = () => {
   return (
@@ -17,7 +18,8 @@ const CreateEvenementSousCategorie = () => {
         icon={<IconCreate />}
       />
       <MyFormik
-        initialValues={{}}
+        onSubmit={() => true}
+        initialValues={getInitialEvenementSousCategorieValue()}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={evenementSousCategorieValidationSchema}
         submitUrl={`/api/evenement-sous-categorie/create/`}

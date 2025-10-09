@@ -327,7 +327,6 @@ export const useToolbarContext = ({
         map!.removeInteraction(ctrl);
         measureOverlayArray.forEach((o) => map!.removeOverlay(o));
         measureOverlayArray.splice(0, measureOverlayArray.length);
-        workingLayer.getSource().removeFeatures(geometryOverlayArray);
         geometryOverlayArray.splice(0, geometryOverlayArray.length);
       }
     }

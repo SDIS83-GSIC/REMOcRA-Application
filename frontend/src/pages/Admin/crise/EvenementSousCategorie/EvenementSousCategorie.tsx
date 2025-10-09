@@ -12,17 +12,11 @@ import SubmitFormButtons from "../../../../components/Form/SubmitFormButtons.tsx
 import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
 import { requiredString } from "../../../../module/validators.tsx";
+import SortableAddRemoveComponent from "../../../../components/DragNDrop/SortableAddRemoveComponent.tsx";
+import SousTypeEvenementType from "../../../../Entities/SousTypesEvenementsEntity.tsx";
+import { createComponentSousTypeEvenementToRepeat } from "./SortableComplementSousCategorie.tsx";
 
-type EvenementSousCategorieType = {
-  evenementSousCategorieId: string;
-  evenementSousCategorieCode: string;
-  evenementSousCategorieLibelle: string;
-  evenementSousCategorieTypeGeometrie: TYPE_GEOMETRIE;
-  evenementSousCategorieEvenementCategorieId: string;
-  evenementSousCategorieActif: boolean;
-};
-
-export const prepareValues = (values: EvenementSousCategorieType) => ({
+export const prepareValues = (values: SousTypeEvenementType) => ({
   evenementSousCategorieId: values.evenementSousCategorieId,
   evenementSousCategorieCode: values.evenementSousCategorieCode,
   evenementSousCategorieLibelle: values.evenementSousCategorieLibelle,
@@ -31,6 +25,22 @@ export const prepareValues = (values: EvenementSousCategorieType) => ({
     values.evenementSousCategorieTypeGeometrie,
   evenementSousCategorieEvenementCategorieId:
     values.evenementSousCategorieEvenementCategorieId,
+  evenementSousCategorieComplement: values.evenementSousCategorieComplement.map(
+    (e, index) => {
+      return {
+        ...e,
+        evenementSousCategorieComplementOrdre: index,
+        sousCategorieComplementSql:
+          e.sousCategorieComplementSqlDebut +
+          " " +
+          e.sousCategorieComplementSqlId +
+          " as id, " +
+          e.sousCategorieComplementSqlLibelle +
+          " as libelle " +
+          e.sousCategorieComplementSqlFin,
+      };
+    },
+  ),
 });
 
 export const evenementSousCategorieValidationSchema = object({
@@ -41,17 +51,36 @@ export const evenementSousCategorieValidationSchema = object({
 });
 
 export const getInitialEvenementSousCategorieValue = (
-  data: EvenementSousCategorieType,
-) => ({
-  evenementSousCategorieId: data.evenementSousCategorieId ?? null,
-  evenementSousCategorieCode: data.evenementSousCategorieCode ?? null,
-  evenementSousCategorieActif: data.evenementSousCategorieActif ?? true,
-  evenementSousCategorieLibelle: data.evenementSousCategorieLibelle ?? null,
-  evenementSousCategorieTypeGeometrie:
-    data.evenementSousCategorieTypeGeometrie ?? null,
-  evenementSousCategorieEvenementCategorieId:
-    data.evenementSousCategorieEvenementCategorieId ?? null,
-});
+  data?: SousTypeEvenementType,
+) => {
+  return {
+    evenementSousCategorieId: data?.evenementSousCategorieId ?? null,
+    evenementSousCategorieCode: data?.evenementSousCategorieCode ?? null,
+    evenementSousCategorieActif: data?.evenementSousCategorieActif ?? true,
+    evenementSousCategorieLibelle: data?.evenementSousCategorieLibelle ?? null,
+    evenementSousCategorieTypeGeometrie:
+      data?.evenementSousCategorieTypeGeometrie ?? null,
+    evenementSousCategorieEvenementCategorieId:
+      data?.evenementSousCategorieEvenementCategorieId ?? null,
+    evenementSousCategorieComplement:
+      data?.evenementSousCategorieComplement.map((e) => ({
+        ...e,
+        sousCategorieComplementSqlDebut:
+          e.sousCategorieComplementSql && e.sousCategorieComplementSqlId
+            ? e.sousCategorieComplementSql.split(
+                e.sousCategorieComplementSqlId,
+              )[0]
+            : null,
+        sousCategorieComplementSqlFin:
+          e.sousCategorieComplementSql && e.sousCategorieComplementSqlLibelle
+            ? e.sousCategorieComplementSql
+                .split(e.sousCategorieComplementSqlLibelle + " as libelle")
+                .slice(-1)[0]
+            : null,
+        id: Math.random(),
+      })) ?? [],
+  };
+};
 
 export const EvenementSousCategorie = () => {
   const listTypeGeometrie = Object.values(TYPE_GEOMETRIE).map((e) => {
@@ -61,6 +90,10 @@ export const EvenementSousCategorie = () => {
   const evenementCategorieState = useGet(
     url`/api/nomenclatures/evenement_categorie`,
   );
+
+  function setListeComplementetres(value: any) {
+    setFieldValue("evenementSousCategorieComplement", value);
+  }
 
   return (
     evenementCategorieState?.data && (
@@ -116,6 +149,23 @@ export const EvenementSousCategorie = () => {
             );
           }}
         />
+
+        <div className="mt-4">
+          <SortableAddRemoveComponent
+            buttonLibelle={"Ajouter des paramètres"}
+            createComponentToRepeat={createComponentSousTypeEvenementToRepeat}
+            nomListe={"evenementSousCategorieComplement"}
+            setData={setListeComplementetres}
+            defaultElement={{
+              sousCategorieComplementLibelle: "",
+              sousCategorieComplementCode: "",
+              sousCategorieComplementEstRequis: false,
+              sousCategorieComplementDescription: "",
+              sousCategorieComplementType: null,
+              sousCategorieComplementValeurDefaut: "",
+            }}
+          />
+        </div>
 
         <SubmitFormButtons returnLink={true} />
       </FormContainer>

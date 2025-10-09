@@ -244,7 +244,7 @@ class CriseEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/evenement/get-type-evenement")
+    @Path("/evenement/get-evenement-sous-categorie")
     @Public("Les sous categories d'évènements ne sont pas liées à un droit.")
     fun getTypeEventForSelect(
         @QueryParam("evenementSousCategorieId") evenementSousCategorieId: UUID?,

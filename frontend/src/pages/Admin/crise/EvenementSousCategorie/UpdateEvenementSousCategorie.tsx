@@ -11,15 +11,15 @@ import {
   prepareValues,
   EvenementSousCategorie,
   evenementSousCategorieValidationSchema,
-} from "./TypeCriseCategorie.tsx";
+} from "./EvenementSousCategorie.tsx";
 
 const UpdateEvenementSousCategorie = () => {
   const { evenementSousCategorieId: evenementSousCategorieId } = useParams();
   const evenementSousCategorie = useGet(
     url`/api/evenement-sous-categorie/get/` + evenementSousCategorieId,
-  );
+  )?.data;
   return (
-    evenementSousCategorie.data && (
+    evenementSousCategorie && (
       <Container>
         <PageTitle
           title="Mise à jour d'une sous catégorie d'évènement"
@@ -27,12 +27,13 @@ const UpdateEvenementSousCategorie = () => {
         />
         <MyFormik
           initialValues={getInitialEvenementSousCategorieValue(
-            evenementSousCategorie.data,
+            evenementSousCategorie,
           )}
           prepareVariables={(values) => prepareValues(values)}
           validationSchema={evenementSousCategorieValidationSchema}
           submitUrl={`/api/evenement-sous-categorie/update/${evenementSousCategorieId}`}
           isPost={false}
+          onSubmit={() => true}
           redirectUrl={URLS.LIST_EVENEMENT_SOUS_CATEGORIE}
         >
           <EvenementSousCategorie />

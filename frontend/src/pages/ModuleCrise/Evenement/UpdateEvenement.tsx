@@ -27,21 +27,25 @@ const UpdateEvenement = ({
   onSubmit: () => void;
 }) => {
   const selectDataState = useGet(url`/api/crise/evenement/${evenementId}`);
+  const sousCategorieList = useGet(
+    url`/api/crise/evenement/get-evenement-sous-categorie${selectDataState.data?.evenementSousCategorieId ? `?evenementSousCategorieId=${selectDataState.data?.evenementSousCategorieId}` : ""}`,
+  )?.data;
   const { user } = useAppContext();
-  const title = readOnly ? "Informations" : "Modifier l'événement";
 
   return (
     selectDataState.data && (
       <Container>
         <PageTitle
           icon={<IconEvent />}
-          title={title}
+          title={readOnly ? "Informations" : "Modifier l'événement"}
           displayReturnButton={false}
         />
         <MyFormik
           initialValues={getInitialValues(
             selectDataState.data,
             geometrieEvenement,
+            selectDataState.data?.evenementSousCategorieId,
+            sousCategorieList,
           )}
           validationSchema={validationSchema}
           isPost={false}
@@ -52,7 +56,10 @@ const UpdateEvenement = ({
           onSubmit={onSubmit}
           submitUrl={`/api/crise/${criseId}/evenement/${state}/${evenementId}/update`}
         >
-          <Evenement isReadOnly={readOnly} />
+          <Evenement
+            isReadOnly={readOnly}
+            sousCategoriesEvenement={sousCategorieList}
+          />
         </MyFormik>
       </Container>
     )

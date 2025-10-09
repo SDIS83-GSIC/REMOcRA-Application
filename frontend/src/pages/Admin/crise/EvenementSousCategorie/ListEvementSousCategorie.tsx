@@ -23,7 +23,7 @@ import SelectEnumOption from "../../../../components/Form/SelectEnumOption.tsx";
 import VRAI_FAUX from "../../../../enums/VraiFauxEnum.tsx";
 import SelectFilterFromUrl from "../../../../components/Filter/SelectFilterFromUrl.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
-import filterValuesToVariable from "./filterSousTypesEvenement.tsx";
+import filterValuesToVariable from "./filterEvenementSousCategorie.tsx";
 
 const EvenementSousCategorieList = () => {
   const { user } = useAppContext();

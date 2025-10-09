@@ -1,8 +1,10 @@
 import { Container } from "react-bootstrap";
+import url from "../../../module/fetch.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { IconEvent } from "../../../components/Icon/Icon.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import Evenement, {
   getInitialValues,
   prepareVariables,
@@ -12,11 +14,15 @@ import Evenement, {
 const CreateEvenement = ({
   criseId,
   state,
-  EvenementSousCategorieId,
+  evenementSousCategorieId,
   geometrieEvenement,
   onSubmit,
 }: CreateEvenementType) => {
   const { user } = useAppContext();
+  const sousCategoriesEvenement = useGet(
+    url`/api/crise/evenement/get-evenement-sous-categorie${evenementSousCategorieId ? `?evenementSousCategorieId=${evenementSousCategorieId}` : ""}`,
+  )?.data;
+
   return (
     <Container>
       <PageTitle
@@ -28,18 +34,22 @@ const CreateEvenement = ({
         initialValues={getInitialValues(
           null,
           geometrieEvenement,
-          EvenementSousCategorieId,
+          evenementSousCategorieId,
+          sousCategoriesEvenement,
         )}
         validationSchema={validationSchema}
         isPost={true}
         isMultipartFormData={true} // contient un document
         submitUrl={`/api/crise/${criseId}/evenement/${state}/create`}
         prepareVariables={(values) =>
-          prepareVariables(values, null, user.utilisateurId)
+          prepareVariables(values, null, user!.utilisateurId)
         }
         onSubmit={onSubmit}
       >
-        <Evenement isReadOnly={false} />
+        <Evenement
+          isReadOnly={false}
+          sousCategoriesEvenement={sousCategoriesEvenement}
+        />
       </MyFormik>
     </Container>
   );
@@ -47,7 +57,7 @@ const CreateEvenement = ({
 
 type CreateEvenementType = {
   criseId: string;
-  EvenementSousCategorieId: string | undefined;
+  evenementSousCategorieId: string | undefined;
   geometrieEvenement: string | undefined;
   state: string;
 

@@ -14,12 +14,14 @@ type SortableAddRemoveComponentType = {
     listeElements: any[],
     typeModule: string | null,
   ) => ReactNode;
+  buttonLibelle?: string;
 };
 
 const SortableAddRemoveComponent = ({
   nomListe,
   setData,
   defaultElement,
+  buttonLibelle,
   createComponentToRepeat,
   typeModule,
 }: SortableAddRemoveComponentType) => {
@@ -42,6 +44,7 @@ const SortableAddRemoveComponent = ({
       <DndContext onDragEnd={dragEndEvent}>
         <SortableContext items={values[nomListe]}>
           <AddRemoveComponent
+            buttonLibelle={buttonLibelle}
             name={nomListe}
             typeModule={typeModule}
             createComponentToRepeat={createComponentToRepeat}

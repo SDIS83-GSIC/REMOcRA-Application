@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
 import { object } from "yup";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { useMemo } from "react";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -16,26 +16,47 @@ import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import TagInput from "../../../components/InputTag/InputTag.tsx";
 import EvenementType from "../../../Entities/EvenementEntity.tsx";
-import url from "../../../module/fetch.tsx";
 import { requiredDate, requiredString } from "../../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
+import { GenererComplementForm } from "../../../utils/buildDynamicForm.tsx";
 
 export const getInitialValues = (
   data: EvenementType | null,
   geometrie: string | undefined,
-  typeEvent?: string | undefined,
-) => ({
-  evenementLibelle: data?.evenementLibelle ?? null,
-  evenementOrigine: data?.evenementOrigine ?? "",
-  evenementDescription: data?.evenementDescription ?? "",
-  evenementDateConstat: data?.evenementDateConstat ?? new Date(),
-  evenementImportance: data?.evenementImportance ?? 1,
-  evenementEstFerme: data?.evenementEstFerme ?? false,
-  documents: data?.documents ?? [],
-  evenementTags: data?.evenementTags ?? [],
-  geometrieEvenement: geometrie ?? null,
-  evenementSousCategorieId: data?.evenementSousCategorieId ?? typeEvent,
-});
+  sousCategorieEvenement?: string | undefined,
+  parameters?: any[] | null,
+) => {
+  const sousCategorieEvenementId =
+    data?.evenementSousCategorieId ?? sousCategorieEvenement;
+  return {
+    evenementLibelle: data?.evenementLibelle ?? null,
+    evenementOrigine: data?.evenementOrigine ?? "",
+    evenementDescription: data?.evenementDescription ?? "",
+    evenementDateConstat: data?.evenementDateConstat ?? new Date(),
+    evenementImportance: data?.evenementImportance ?? 1,
+    evenementEstFerme: data?.evenementEstFerme ?? false,
+    documents: data?.documents ?? [],
+    evenementTags: data?.evenementTags ?? [],
+    geometrieEvenement: geometrie ?? null,
+    evenementSousCategorieId: sousCategorieEvenementId,
+    evenementSousCategorieComplement:
+      data?.evenementParametre ??
+      parameters
+        ?.find(
+          (param) =>
+            param.evenementSousCategorieId === sousCategorieEvenementId,
+        )
+        ?.evenementSousCategorieComplement.map(
+          (param: {
+            dynamicFormParametreId: any;
+            dynamicFormParametreValeurDefaut: any;
+          }) => ({
+            idParam: param.dynamicFormParametreId,
+            valueParam: param.dynamicFormParametreValeurDefaut ?? "",
+          }),
+        ),
+  };
+};
 
 export const validationSchema = object({
   evenementLibelle: requiredString,
@@ -69,25 +90,48 @@ export const prepareVariables = (
   );
   formData.append("evenementUtilisateurId", userId);
   formData.append("evenementTags", values.evenementTags.join());
-
+  formData.append(
+    "evenementParametre",
+    JSON.stringify(values.evenementSousCategorieComplement),
+  );
   return formData;
 };
 
-const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
+const Evenement = ({
+  isReadOnly,
+  sousCategoriesEvenement,
+}: {
+  isReadOnly: any;
+  sousCategoriesEvenement: any;
+}) => {
   const { setValues, setFieldValue, values } =
     useFormikContext<EvenementType>();
 
-  const typeCriseState = useGet(url`/api/crise/evenement/get-type-evenement`);
-
   const filtre = values.geometrieEvenement
-    ? (e) => e.evenementSousCategorieId === values.evenementSousCategorieId
-    : (e) => e.evenementSousCategorieGeometrie == null;
+    ? (e: { evenementSousCategorieId: string }) =>
+        e.evenementSousCategorieId === values.evenementSousCategorieId
+    : (e: { typeEvenementGeometrie: null }) => e.typeEvenementGeometrie == null;
 
-  const listeType = typeCriseState?.data?.filter(filtre)?.map((e) => ({
-    id: e.evenementSousCategorieId,
-    code: e.evenementSousCategorieCode,
-    libelle: e.evenementSousCategorieLibelle,
-  }));
+  const listeSousCategories = sousCategoriesEvenement
+    ?.filter(filtre)
+    ?.map((e: any) => ({
+      id: e.evenementSousCategorieId,
+      code: e.evenementSousCategorieCode,
+      libelle: e.evenementSousCategorieLibelle,
+      parameters: e.evenementSousCategorieComplement,
+    }));
+
+  const sousCategorie = useMemo(() => {
+    return values.evenementSousCategorieId
+      ? (listeSousCategories?.find(
+          (e: { id: string }) => e.id === values.evenementSousCategorieId,
+        ) ?? null)
+      : null;
+  }, [values.evenementSousCategorieId, listeSousCategories]);
+
+  const paramChange = (name: string, value: string) => {
+    setFieldValue(name, value);
+  };
 
   return (
     <FormContainer>
@@ -96,17 +140,11 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
       <SelectForm
         disabled={values.geometrieEvenement ? true : isReadOnly}
         name="evenementSousCategorieId"
-        listIdCodeLibelle={listeType}
+        listIdCodeLibelle={listeSousCategories}
         label="Type"
         required={true}
         setValues={setValues}
-        defaultValue={
-          values.evenementSousCategorieId
-            ? listeType?.find((e) => e.id === values.evenementSousCategorieId)
-            : values.geometrieEvenement
-              ? listeType?.[0]
-              : null
-        }
+        defaultValue={sousCategorie}
       />
 
       <TextInput
@@ -169,7 +207,7 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
         disabled={isReadOnly}
         documents={values.documents}
         setFieldValue={setFieldValue}
-        autreFormParam={(index: number) => (
+        otherFormParam={(index: number) => (
           <>
             <TextInput
               label="Nom"
@@ -182,6 +220,20 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
           levenementDocumentLibelle: null,
         }}
       />
+
+      {sousCategorie?.parameters?.length > 0 && (
+        <>
+          <h3 className="mt-5">Complément</h3>
+          <GenererComplementForm
+            listeWithParametre={sousCategorie.parameters}
+            setFieldValue={setFieldValue}
+            isReadOnly={isReadOnly}
+            onParamChange={paramChange}
+            values={values}
+          />
+        </>
+      )}
+
       <SubmitFormButtons disabledValide={isReadOnly} />
     </FormContainer>
   );

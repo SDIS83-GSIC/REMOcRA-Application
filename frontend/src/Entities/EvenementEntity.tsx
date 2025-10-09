@@ -13,6 +13,11 @@ export type EvenementType = {
   documents: Document & {
     evenementDocumentLibelle: string;
   };
+  evenementParametre: {
+    idParam: string;
+    valueParam: string;
+  };
+  evenementSousCategorieComplement: any;
 };
 
 export default EvenementType;

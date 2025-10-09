@@ -32,6 +32,17 @@ export type DynamicFormParametreFront = {
   dynamicFormParametreType: TYPE_PARAMETRE_RAPPORT_COURRIER;
 };
 
+export type DynamicFormComplementParametreFront = {
+  dynamicFormParametreId: string;
+  dynamicFormParametreLibelle: string;
+  dynamicFormParametreCode: string;
+  listeSelectInput: { id: string; libelle: string }[];
+  dynamicFormParametreDescription: string | undefined;
+  dynamicFormParametreIsRequired: boolean;
+  dynamicFormParametreType: string;
+  dynamicFormParametreValeurDefaut: string | undefined;
+};
+
 function buildDynamicForm(
   element: DynamicFormParametreFront,
   values: any,
@@ -274,5 +285,135 @@ const GenererForm = ({
     </FormContainer>
   );
 };
+
+export const GenererComplementForm = ({
+  listeWithParametre,
+  setFieldValue,
+  isReadOnly,
+  onParamChange,
+  values,
+}: {
+  listeWithParametre: any;
+  setFieldValue: any;
+  isReadOnly: boolean;
+  onParamChange: any;
+  values: any;
+}) => {
+  return (
+    <Row className="mt-3">
+      {listeWithParametre?.map((element: any, index: number) => {
+        return buildDynamicComplement(
+          element,
+          setFieldValue,
+          index,
+          isReadOnly,
+          onParamChange,
+          values,
+        );
+      })}
+    </Row>
+  );
+};
+
+function buildDynamicComplement(
+  element: DynamicFormComplementParametreFront,
+  setFieldValue: any,
+  index: number,
+  isReadOnly: boolean,
+  onParamChange: any,
+  values: any,
+) {
+  const updateParams = (valueParam: string) => {
+    const baseName = `evenementSousCategorieComplement[${index}]`;
+    Object.entries({
+      [`${baseName}.valueParam`]: valueParam,
+      [`${baseName}.idParam`]: element.dynamicFormParametreId,
+    }).forEach(([name, value]) => {
+      onParamChange(name, value);
+    });
+  };
+
+  switch (element.dynamicFormParametreType) {
+    case "DATE_INPUT":
+      return (
+        <Row>
+          <DateTimeInput
+            readOnly={isReadOnly}
+            name={`evenementSousCategorieComplement[${index}].valueParam`}
+            label={element.dynamicFormParametreLibelle}
+            required={element.dynamicFormParametreIsRequired}
+            defaultValue={
+              values?.evenementSousCategorieComplement?.[index]?.valueParam
+            }
+            onChange={(e) => {
+              updateParams(e.target.value);
+            }}
+          />
+        </Row>
+      );
+
+    case "TEXT_INPUT":
+      return (
+        <Row>
+          <TextInput
+            readOnly={isReadOnly}
+            name={`evenementSousCategorieComplement[${index}].valueParam`}
+            required={element.dynamicFormParametreIsRequired}
+            label={element.dynamicFormParametreLibelle}
+            onChange={(e) => {
+              updateParams(e.target.value);
+            }}
+          />
+        </Row>
+      );
+
+    case "NUMBER_INPUT":
+      return (
+        <Row>
+          <NumberInput
+            readOnly={isReadOnly}
+            name={`evenementSousCategorieComplement[${index}].valueParam`}
+            label={element.dynamicFormParametreLibelle}
+            required={element.dynamicFormParametreIsRequired}
+            onChange={(e) => {
+              updateParams(e.target.value);
+            }}
+          />
+        </Row>
+      );
+
+    case "SELECT_INPUT":
+      return (
+        <Row>
+          <SelectInput
+            name={`evenementSousCategorieComplement[${index}].valueParam`}
+            readOnly={isReadOnly}
+            label={element.dynamicFormParametreLibelle}
+            required={element.dynamicFormParametreIsRequired}
+            options={element.listeSelectInput}
+            getOptionValue={(t) => t.id}
+            getOptionLabel={(t) => t.libelle}
+            onChange={(e) => {
+              setFieldValue(
+                element.dynamicFormParametreId,
+                element.listeSelectInput?.find(
+                  (r: { id: any }) => r.id === e.id,
+                )?.id,
+              );
+
+              updateParams(e.id);
+            }}
+            defaultValue={element.listeSelectInput?.find(
+              (r: { id: string }) =>
+                r.id ===
+                values?.evenementSousCategorieComplement?.[index]?.valueParam,
+            )}
+          />
+        </Row>
+      );
+    default:
+      return;
+  }
+}
 
 export default GenererForm;
