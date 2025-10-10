@@ -23,10 +23,42 @@ import {
 } from "../../Icon/Icon.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
+
+const ButtonWithTooltipIfDisabled = ({
+  tooltipId,
+  tooltipText,
+  children,
+  disabled,
+  ...buttonProps
+}: {
+  tooltipId: string;
+  tooltipText?: string;
+  children: React.ReactNode;
+  disabled: boolean;
+  [key: string]: any;
+}) => {
+  if (disabled) {
+    return (
+      <TooltipCustom tooltipText={tooltipText} tooltipId={tooltipId}>
+        <span className="d-inline-block">
+          <Button disabled style={{ pointerEvents: "none" }} {...buttonProps}>
+            {children}
+          </Button>
+        </span>
+      </TooltipCustom>
+    );
+  }
+  return (
+    <Button disabled={disabled} {...buttonProps}>
+      {children}
+    </Button>
+  );
+};
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -521,7 +553,11 @@ const MapToolbarCouvertureHydraulique = ({
       <ToolbarButton
         toolName={"create-pei-projet"}
         toolIcon={<IconCreate />}
-        toolLabelTooltip={"Créer un PEI en projet"}
+        toolLabelTooltip={
+          disabledEditPeiProjet
+            ? "L'étude est terminée, vous ne pouvez plus créer un PEI en projet"
+            : "Créer un PEI en projet"
+        }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
         disabled={disabledEditPeiProjet}
@@ -529,7 +565,11 @@ const MapToolbarCouvertureHydraulique = ({
       <ToolbarButton
         toolName={"deplacer-pei-projet"}
         toolIcon={<IconMoveObjet />}
-        toolLabelTooltip={"Déplacer un PEI en projet"}
+        toolLabelTooltip={
+          disabledEditPeiProjet
+            ? "L'étude est terminée, vous ne pouvez plus déplacer un PEI en projet"
+            : "Déplacer un PEI en projet"
+        }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
         disabled={disabledEditPeiProjet}
@@ -537,26 +577,34 @@ const MapToolbarCouvertureHydraulique = ({
       <ToolbarButton
         toolName={"pei-plus-proche"}
         toolIcon={<IconPeiPlusProche />}
-        toolLabelTooltip={"Trouver le PEI le plus proche"}
+        toolLabelTooltip={
+          disabledEditPeiProjet
+            ? "L'étude est terminée, vous ne pouvez plus trouver le PEI le plus proche"
+            : "Trouver le PEI le plus proche"
+        }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
         disabled={disabledEditPeiProjet}
       />
-      <Button
+      <ButtonWithTooltipIfDisabled
+        tooltipId="lancer-simulation-disabled"
+        tooltipText="L'étude est terminée, vous ne pouvez plus lancer de simulation"
         className="ms-4 me-3"
         variant="outline-primary"
         onClick={calculCouverture}
         disabled={disabledEditPeiProjet}
       >
         Lancer une simulation
-      </Button>
-      <Button
+      </ButtonWithTooltipIfDisabled>
+      <ButtonWithTooltipIfDisabled
+        tooltipId="effacer-couverture-disabled"
+        tooltipText="L'étude est terminée, vous ne pouvez plus effacer la couverture"
         variant="outline-primary"
         onClick={clearCouverture}
         disabled={disabledEditPeiProjet}
       >
         Effacer la couverture tracée
-      </Button>
+      </ButtonWithTooltipIfDisabled>
       <Volet
         handleClose={handleClosePeiProjet}
         show={showCreatePeiProjet}
