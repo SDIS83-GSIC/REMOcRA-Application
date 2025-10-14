@@ -168,7 +168,7 @@ const ExecuteRapportPersonnalise = () => {
                   listeParametre: valuesFormik?.listeParametre,
                 }),
                 "rapport-personnalise.csv",
-                "Import terminé",
+                "Export terminé",
                 successToast,
                 errorToast,
               )
@@ -192,7 +192,7 @@ const ExecuteRapportPersonnalise = () => {
                 "",
                 () => {
                   setIsDownload(false);
-                  successToast("Import terminé");
+                  successToast("Export terminé");
                 },
                 () => {
                   setIsDownload(false);
