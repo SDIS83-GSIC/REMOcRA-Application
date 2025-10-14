@@ -1,6 +1,6 @@
 package remocra.eventbus.tracabilite
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.data.AuteurTracabiliteData
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation

@@ -1,9 +1,9 @@
 package remocra.sentry
 
-import com.google.inject.Inject
 import io.sentry.Sentry
 import io.sentry.SentryOptions
 import io.sentry.log4j2.SentryAppender
+import jakarta.inject.Inject
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.LoggerContext
 import java.util.Optional

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.WebApplicationException
 import jakarta.ws.rs.core.MediaType

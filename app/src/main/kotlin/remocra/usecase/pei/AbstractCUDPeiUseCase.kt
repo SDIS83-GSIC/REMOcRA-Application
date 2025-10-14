@@ -1,7 +1,7 @@
 package remocra.usecase.pei
 
-import com.google.inject.Inject
-import com.google.inject.Provider
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.DataCacheProvider

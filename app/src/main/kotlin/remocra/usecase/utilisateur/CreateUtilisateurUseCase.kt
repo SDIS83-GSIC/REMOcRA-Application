@@ -1,6 +1,6 @@
 package remocra.usecase.utilisateur
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo

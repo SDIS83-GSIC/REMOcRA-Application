@@ -1,6 +1,6 @@
 package remocra.web.documents
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.ForbiddenException

@@ -1,6 +1,6 @@
 package remocra.usecase.pei
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.data.PeiForNumerotationData

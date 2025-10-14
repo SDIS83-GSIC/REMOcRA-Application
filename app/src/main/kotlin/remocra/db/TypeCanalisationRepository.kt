@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.TypeCanalisation
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION

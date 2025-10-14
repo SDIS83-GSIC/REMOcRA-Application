@@ -2,7 +2,7 @@ package remocra.usecase.ficheresume
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.app.ParametresProvider
 import remocra.data.enums.ParametreEnum
 import remocra.db.PibiRepository

@@ -1,8 +1,8 @@
 package remocra.app
 
 import com.google.common.eventbus.Subscribe
-import com.google.inject.Provider
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import jakarta.inject.Singleton
 import remocra.data.CoucheData
 import remocra.data.DataCache

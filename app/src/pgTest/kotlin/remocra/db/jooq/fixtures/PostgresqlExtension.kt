@@ -4,9 +4,9 @@ import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import com.google.inject.util.Modules
 import com.typesafe.config.ConfigFactory
+import jakarta.inject.Singleton
 import org.flywaydb.core.Flyway
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext

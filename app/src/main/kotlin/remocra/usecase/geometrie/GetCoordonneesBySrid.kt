@@ -1,6 +1,6 @@
 package remocra.usecase.geometrie
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Coordinate

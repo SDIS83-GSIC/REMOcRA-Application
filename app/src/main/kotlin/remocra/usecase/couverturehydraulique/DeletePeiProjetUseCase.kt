@@ -1,6 +1,6 @@
 package remocra.usecase.couverturehydraulique
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.PeiProjetData
 import remocra.data.enums.ErrorType

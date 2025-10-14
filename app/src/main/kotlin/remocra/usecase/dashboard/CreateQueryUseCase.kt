@@ -1,6 +1,6 @@
 package remocra.usecase.dashboard
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.DashboardQueryData
 import remocra.data.enums.ErrorType

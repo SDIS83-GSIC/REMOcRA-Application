@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.remocra.tables.pojos.Document

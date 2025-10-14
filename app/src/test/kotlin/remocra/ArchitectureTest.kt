@@ -1,5 +1,10 @@
 package remocra
 
+import com.google.inject.Inject
+import com.google.inject.Module
+import com.google.inject.Provider
+import com.google.inject.Singleton
+import com.google.inject.name.Named
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
@@ -90,6 +95,20 @@ class ArchitectureTest {
         .doNotHaveSimpleName("NomenclatureRepository")
         .should()
         .beAssignableTo(AbstractRepository::class.java)
+
+    // On n'utilise pas les annotations de Google Inject (Inject, Singleton, Provider, Named) mais celles de Jakarta Inject
+    @ArchTest
+    val `utiliser JakartaInject plutot que GoogleInject`: ArchRule? = classes()
+        .that()
+        .areNotAssignableTo(Module::class.java)
+        .should()
+        .onlyDependOnClassesThat()
+        .doNotBelongToAnyOf(
+            Inject::class.java,
+            Singleton::class.java,
+            Provider::class.java,
+            Named::class.java,
+        )
 }
 
 /**

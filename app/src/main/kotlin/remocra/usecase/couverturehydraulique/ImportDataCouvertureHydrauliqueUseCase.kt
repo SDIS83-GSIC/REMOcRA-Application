@@ -1,6 +1,6 @@
 package remocra.usecase.couverturehydraulique
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.geotools.api.data.FileDataStoreFinder
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.locationtech.jts.geom.Geometry

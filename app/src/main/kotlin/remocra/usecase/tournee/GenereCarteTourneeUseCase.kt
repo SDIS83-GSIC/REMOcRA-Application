@@ -1,12 +1,12 @@
 package remocra.usecase.tournee
 
-import com.google.inject.Inject
 import fr.opensagres.xdocreport.converter.ConverterTypeTo
 import fr.opensagres.xdocreport.converter.ConverterTypeVia
 import fr.opensagres.xdocreport.converter.Options
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry
 import fr.opensagres.xdocreport.template.TemplateEngineKind
+import jakarta.inject.Inject
 import jakarta.ws.rs.core.MultivaluedHashMap
 import okhttp3.OkHttpClient
 import okhttp3.Request

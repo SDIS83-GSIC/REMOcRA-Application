@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.inject.Binder
 import com.google.inject.Module
 import com.google.inject.Provides
-import com.google.inject.Singleton
+import jakarta.inject.Singleton
 import remocra.json.JacksonJsonProvider
 import remocra.web.registerResource
 

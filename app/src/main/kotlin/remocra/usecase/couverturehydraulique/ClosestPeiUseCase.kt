@@ -1,6 +1,6 @@
 package remocra.usecase.couverturehydraulique
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel

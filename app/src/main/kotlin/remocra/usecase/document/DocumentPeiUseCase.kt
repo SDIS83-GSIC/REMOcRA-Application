@@ -1,6 +1,6 @@
 package remocra.usecase.document
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.data.DocumentsData.DocumentData
 import remocra.db.DocumentRepository
 import remocra.usecase.AbstractUseCase

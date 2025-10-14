@@ -1,6 +1,6 @@
 package remocra.web.ficheresume
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT

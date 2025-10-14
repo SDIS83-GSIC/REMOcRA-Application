@@ -2,7 +2,6 @@ package remocra.auth
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import com.nimbusds.oauth2.sdk.GeneralException
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
@@ -11,6 +10,7 @@ import com.nimbusds.oauth2.sdk.id.Issuer
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata
 import com.nimbusds.openid.connect.sdk.op.ReadOnlyOIDCProviderMetadata
 import com.typesafe.config.Config
+import jakarta.inject.Singleton
 import net.ltgt.oauth.common.TokenIntrospector
 import net.ltgt.oidc.servlet.Configuration
 import okhttp3.HttpUrl

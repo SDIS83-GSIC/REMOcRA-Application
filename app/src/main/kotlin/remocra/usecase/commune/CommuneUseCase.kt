@@ -1,6 +1,6 @@
 package remocra.usecase.commune
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.db.CommuneRepository

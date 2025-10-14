@@ -2,7 +2,7 @@ package remocra.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.net.HttpHeaders
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletOutputStream
 import jakarta.servlet.WriteListener

@@ -1,7 +1,7 @@
 package remocra.log
 
-import com.google.inject.Inject
-import com.google.inject.Provider
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import remocra.db.LogLineRepository
 import remocra.utils.DateUtils
 import java.util.UUID

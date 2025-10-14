@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.Materiau
 import remocra.db.jooq.remocra.tables.references.MATERIAU

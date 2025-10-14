@@ -2,7 +2,7 @@ package remocra.web.documents
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET

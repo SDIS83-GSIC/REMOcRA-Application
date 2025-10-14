@@ -1,7 +1,7 @@
 package remocra.usecase.pei
 
-import com.google.inject.Provider
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.data.PeiData

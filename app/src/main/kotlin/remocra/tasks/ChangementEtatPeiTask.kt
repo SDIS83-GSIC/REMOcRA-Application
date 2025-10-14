@@ -1,7 +1,7 @@
 package remocra.tasks
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.AuteurTracabiliteData

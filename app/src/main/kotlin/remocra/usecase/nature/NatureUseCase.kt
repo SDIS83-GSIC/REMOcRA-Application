@@ -1,6 +1,6 @@
 package remocra.usecase.nature
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.db.NatureRepository
 import remocra.usecase.AbstractUseCase
 

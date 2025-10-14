@@ -1,8 +1,8 @@
 package remocra.resteasy
 
 import com.google.common.base.Preconditions
-import com.google.inject.Inject
 import com.google.inject.Injector
+import jakarta.inject.Inject
 import org.jboss.resteasy.core.InjectorFactoryImpl
 import org.jboss.resteasy.spi.ConstructorInjector
 import org.jboss.resteasy.spi.HttpRequest

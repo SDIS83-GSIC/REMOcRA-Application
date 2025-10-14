@@ -1,6 +1,6 @@
 package remocra.usecase.visites
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.db.TourneeRepository
 import remocra.usecase.AbstractUseCase
 import java.util.UUID

@@ -1,6 +1,6 @@
 package remocra.usecase.debitsimultane
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.locationtech.jts.algorithm.Centroid
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory

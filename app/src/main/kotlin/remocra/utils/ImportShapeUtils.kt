@@ -1,6 +1,6 @@
 package remocra.utils
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.usecase.document.DocumentUtils
 import java.io.File
 import java.io.InputStream

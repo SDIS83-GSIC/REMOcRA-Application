@@ -1,6 +1,6 @@
 package remocra.web.tracabilite
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.BeanParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path

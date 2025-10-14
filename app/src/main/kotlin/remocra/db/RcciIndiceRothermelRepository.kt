@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import remocra.db.jooq.remocra.tables.pojos.RcciIndiceRothermel
 import remocra.db.jooq.remocra.tables.references.RCCI_INDICE_ROTHERMEL

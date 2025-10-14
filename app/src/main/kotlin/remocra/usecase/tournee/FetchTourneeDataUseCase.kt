@@ -1,6 +1,6 @@
 package remocra.usecase.tournee
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.WrappedUserInfo
 import remocra.data.DataTableau

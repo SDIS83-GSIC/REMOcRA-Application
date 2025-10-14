@@ -2,7 +2,7 @@ package remocra.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter

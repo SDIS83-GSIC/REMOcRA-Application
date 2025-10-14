@@ -1,6 +1,6 @@
 package remocra.apimobile.usecase
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.core.Response
 import remocra.apimobile.data.TourneeForApiMobileData
 import remocra.auth.WrappedUserInfo

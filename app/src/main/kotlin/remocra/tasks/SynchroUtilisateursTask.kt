@@ -1,6 +1,6 @@
 package remocra.tasks
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.exception.IOException
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo

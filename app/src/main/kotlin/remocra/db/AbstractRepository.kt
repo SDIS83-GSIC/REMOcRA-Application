@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.app.AppSettings
 import remocra.utils.DateUtils
 import java.text.Normalizer

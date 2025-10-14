@@ -2,8 +2,8 @@ package remocra.eventbus
 
 import com.google.common.eventbus.AsyncEventBus
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import dev.misfitlabs.kotlinguice4.multibindings.KotlinMultibinder
+import jakarta.inject.Singleton
 import remocra.RemocraModule
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider

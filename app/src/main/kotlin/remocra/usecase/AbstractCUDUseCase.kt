@@ -1,5 +1,5 @@
 package remocra.usecase
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.Response
 import org.jooq.exception.NoDataFoundException

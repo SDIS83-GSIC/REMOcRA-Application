@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.DSLContext
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.references.L_COMMUNE_CIS

@@ -2,7 +2,7 @@ package remocra.eventbus.tracabilite
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.eventbus.Subscribe
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.jooq.JSONB
 import org.slf4j.LoggerFactory
 import remocra.db.TracabiliteRepository

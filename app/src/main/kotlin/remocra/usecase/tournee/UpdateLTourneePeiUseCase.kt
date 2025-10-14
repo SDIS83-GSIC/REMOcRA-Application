@@ -1,6 +1,6 @@
 package remocra.usecase.tournee
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType

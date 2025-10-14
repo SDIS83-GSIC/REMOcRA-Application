@@ -3,8 +3,8 @@ package remocra.apachehop
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import com.typesafe.config.Config
+import jakarta.inject.Singleton
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient

@@ -1,6 +1,6 @@
 package remocra.usecase.tasks
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.db.GestionnaireRepository
 import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository

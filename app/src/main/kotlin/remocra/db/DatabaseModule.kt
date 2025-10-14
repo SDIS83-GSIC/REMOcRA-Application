@@ -2,10 +2,10 @@ package remocra.db
 
 import com.google.common.io.Resources
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import com.typesafe.config.Config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import jakarta.inject.Singleton
 import org.flywaydb.core.Flyway
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext

@@ -1,6 +1,6 @@
 package remocra.eventbus.anomalie
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.eventbus.Event
 import java.util.UUID

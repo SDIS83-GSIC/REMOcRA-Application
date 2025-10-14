@@ -1,7 +1,7 @@
 package remocra.usecase.risque
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.json.XML
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider

@@ -1,6 +1,6 @@
 package remocra.db
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import kotlinx.coroutines.selects.select
 import org.jooq.Condition
 import org.jooq.DSLContext

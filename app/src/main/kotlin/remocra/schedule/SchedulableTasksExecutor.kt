@@ -1,7 +1,7 @@
 package remocra.schedule
 
-import com.google.inject.Inject
-import com.google.inject.Provider
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.apache.logging.log4j.core.util.CronExpression

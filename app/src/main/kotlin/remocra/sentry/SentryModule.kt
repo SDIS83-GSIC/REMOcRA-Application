@@ -2,7 +2,6 @@ package remocra.sentry
 
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
-import com.google.inject.Singleton
 import com.google.inject.multibindings.ProvidesIntoOptional
 import com.google.inject.multibindings.ProvidesIntoOptional.Type.ACTUAL
 import com.typesafe.config.Config
@@ -10,6 +9,7 @@ import io.sentry.ExternalOptions
 import io.sentry.SentryOptions
 import io.sentry.SystemOutLogger
 import io.sentry.config.PropertiesProvider
+import jakarta.inject.Singleton
 import org.apache.logging.log4j.Level
 
 class SentryModule

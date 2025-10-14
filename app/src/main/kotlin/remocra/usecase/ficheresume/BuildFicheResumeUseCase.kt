@@ -1,6 +1,6 @@
 package remocra.usecase.ficheresume
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.db.FicheResumeRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei

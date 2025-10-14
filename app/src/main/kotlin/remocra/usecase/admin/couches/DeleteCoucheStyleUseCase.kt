@@ -1,6 +1,6 @@
 package remocra.usecase.admin.couches
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.CoucheRepository

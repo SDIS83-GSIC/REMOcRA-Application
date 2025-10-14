@@ -1,7 +1,7 @@
 package remocra.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import org.jooq.JSONB

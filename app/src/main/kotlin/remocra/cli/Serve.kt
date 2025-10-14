@@ -1,6 +1,6 @@
 package remocra.cli
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import remocra.http.HttpServer

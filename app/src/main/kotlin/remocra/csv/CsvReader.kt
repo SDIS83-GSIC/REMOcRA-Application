@@ -1,7 +1,7 @@
 package remocra.csv
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import java.io.File
 import java.io.InputStream

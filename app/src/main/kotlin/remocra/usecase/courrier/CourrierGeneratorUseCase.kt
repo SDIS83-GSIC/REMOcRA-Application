@@ -2,12 +2,12 @@ package remocra.usecase.courrier
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.inject.Inject
 import fr.opensagres.xdocreport.converter.ConverterTypeTo
 import fr.opensagres.xdocreport.converter.ConverterTypeVia
 import fr.opensagres.xdocreport.converter.Options
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry
 import fr.opensagres.xdocreport.template.TemplateEngineKind
+import jakarta.inject.Inject
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.core.UriBuilder
 import org.jooq.JSON

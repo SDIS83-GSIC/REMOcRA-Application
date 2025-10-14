@@ -1,6 +1,6 @@
 package remocra.usecase.naturedeci
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.db.NatureDeciRepository
 import remocra.usecase.AbstractUseCase
 

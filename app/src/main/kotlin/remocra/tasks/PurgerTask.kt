@@ -1,6 +1,6 @@
 package remocra.tasks
 
-import com.google.inject.Inject
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
