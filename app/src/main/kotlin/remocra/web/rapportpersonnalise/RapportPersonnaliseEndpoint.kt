@@ -36,6 +36,7 @@ import remocra.usecase.rapportpersonnalise.ImportConfRapportPersonnaliseUseCase
 import remocra.usecase.rapportpersonnalise.UpdateRapportPersonnaliseUseCase
 import remocra.utils.DateUtils
 import remocra.web.AbstractEndpoint
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 @Path("/rapport-personnalise")
@@ -191,11 +192,11 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     @POST
     @Path("/export-data")
     @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN + "; charset=ISO-8859-1")
     fun exportData(
         element: GenererRapportPersonnaliseData,
     ): Response =
-        Response.ok(exportDataRapportPersonnaliseUseCase.execute(securityContext.userInfo, element))
+        Response.ok(exportDataRapportPersonnaliseUseCase.execute(securityContext.userInfo, element).toString(StandardCharsets.ISO_8859_1))
             .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
             .build()
 

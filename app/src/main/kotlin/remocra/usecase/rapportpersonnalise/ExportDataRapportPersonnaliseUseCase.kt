@@ -5,9 +5,7 @@ import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.csv.CsvWriter
 import remocra.data.GenererRapportPersonnaliseData
-import remocra.db.RapportPersonnaliseRepository
 import remocra.usecase.AbstractUseCase
-import remocra.utils.RequestUtils
 import java.io.ByteArrayOutputStream
 
 /**
@@ -16,13 +14,7 @@ import java.io.ByteArrayOutputStream
 class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
 
     @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
     private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
-
-    @Inject
-    lateinit var requestUtils: RequestUtils
 
     @Inject
     private lateinit var csvWriter: CsvWriter

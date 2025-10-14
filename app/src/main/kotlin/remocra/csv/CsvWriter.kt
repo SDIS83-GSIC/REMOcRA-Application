@@ -34,11 +34,15 @@ class CsvWriter {
         return os
     }
 
+    /**
+     * Ecrit un flux CSV à partir d'une liste de map clé-valeur
+     * Encodage ISO-8859-1 et séparateur ";" pour compatibilité Excel, à la demande des utilisateurs
+     */
     fun writeCsvStream(
         data: MutableList<Map<String, Any?>>,
     ): ByteArrayOutputStream {
         val os = ByteArrayOutputStream()
-        OutputStreamWriter(os, StandardCharsets.UTF_8).use { writer ->
+        OutputStreamWriter(os, StandardCharsets.ISO_8859_1).use { writer ->
             csvMapper
                 .writer(
                     CsvSchema.builder()
