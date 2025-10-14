@@ -44,9 +44,10 @@ class CsvWriter {
                     CsvSchema.builder()
                         .setUseHeader(true)
                         .addColumns(data[0].keys, CsvSchema.ColumnType.STRING)
+                        .setColumnSeparator(GlobalConstants.DELIMITER_CSV)
                         .build(),
                 )
-                .writeValue(writer, data)
+                .writeValues(writer).writeAll(data).close()
         }
         return os
     }

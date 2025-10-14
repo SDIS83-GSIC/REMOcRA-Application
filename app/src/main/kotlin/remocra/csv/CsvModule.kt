@@ -8,6 +8,8 @@ import com.google.inject.Binder
 import com.google.inject.Module
 import com.google.inject.Provides
 import jakarta.inject.Singleton
+import remocra.geometrie.GeometrieModule
+import remocra.json.CustomTypeJsonModule
 import remocra.json.JacksonJsonProvider
 import remocra.web.registerResource
 
@@ -22,6 +24,8 @@ object CsvModule : Module {
         CsvMapper.builder()
             .addModule(KotlinModule.Builder().build())
             .addModule(JavaTimeModule())
+            .addModule(CustomTypeJsonModule())
+            .addModule(GeometrieModule())
             .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
             .build()
 }
