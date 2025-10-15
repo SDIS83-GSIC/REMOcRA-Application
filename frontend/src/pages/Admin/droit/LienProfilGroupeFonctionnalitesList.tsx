@@ -67,8 +67,15 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Clé</th>
-                <th className={"sticky-col-1"}>Libellé</th>
+                <th
+                  className={"sticky-col-1"}
+                  style={{
+                    "min-width": "300px",
+                    "border-right": "1px solid #dee2e6",
+                  }}
+                >
+                  Libellé
+                </th>
                 {values.map((groupeFonctionnalites, idxPD) => (
                   <th key={idxPD}>
                     {TypeDroitLabel.get(
@@ -87,12 +94,14 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                 return (
                   <>
                     <tr>
-                      {/*2 + values.length car on colspan "clé" + " libellé" + le nombre de values*/}
                       <td
-                        colSpan={2 + values.length}
+                        colSpan={1 + values.length}
                         className={
                           "bg-primary text-light text-center fw-bolder"
                         }
+                        style={{
+                          "border-right": "1px solid #dee2e6",
+                        }}
                       >
                         <div className="section-header-cell">
                           {currentSection}
@@ -109,11 +118,17 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                               .map((typeDroit, idxTD) => {
                                 return (
                                   <tr key={idxTD}>
-                                    <th>{typeDroit}</th>
                                     <td className={"sticky-col-1"}>
-                                      {TypeDroitLabel.get(typeDroit)
-                                        ? TypeDroitLabel.get(typeDroit)
-                                        : ""}{" "}
+                                      <TooltipCustom
+                                        maxWidth={300}
+                                        tooltipId={`tooltip-${idxTD}`}
+                                        tooltipText={typeDroit}
+                                        nowrap={false}
+                                      >
+                                        {TypeDroitLabel.get(typeDroit)
+                                          ? TypeDroitLabel.get(typeDroit)
+                                          : ""}{" "}
+                                      </TooltipCustom>
                                     </td>
                                     {values.map(
                                       (groupeFonctionnalites, idxPD) => (

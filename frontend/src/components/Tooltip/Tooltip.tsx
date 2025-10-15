@@ -9,6 +9,7 @@ const TooltipCustom = ({
   placement = "bottom",
   maxWidth,
   children,
+  nowrap = true,
 }: TooltipType) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -44,7 +45,7 @@ const TooltipCustom = ({
             maxWidth: maxWidth,
             overflowX: "hidden",
             textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            whiteSpace: nowrap ? "nowrap" : "normal",
           }}
         >
           {children}
@@ -61,6 +62,7 @@ type TooltipType = {
   placement?: Placement;
   children: React.ReactElement | ((props: any) => React.ReactNode);
   maxWidth?: number;
+  nowrap: boolean;
 };
 
 export default TooltipCustom;
