@@ -44,7 +44,7 @@ const MenuAdmin = () => {
         <Row>
           {hasDroitAdministrationGenerale && (
             <Col className="bg-light p-2 border rounded mx-2">
-              <div className="fw-bold text-center p-2">
+              <div className="fw-bold text-center p-2 fs-5">
                 Administration générale
               </div>
               <Nav className="flex-column">
@@ -165,7 +165,9 @@ const MenuAdmin = () => {
 
           {hasDroitGererLesDroits && (
             <Col className="bg-light p-2 border rounded mx-2">
-              <div className="fw-bold text-center p-2">Gérer les droits</div>
+              <div className="fw-bold text-center p-2 fs-5">
+                Gérer les droits
+              </div>
 
               <Nav className="flex-column">
                 {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
@@ -292,41 +294,11 @@ const MenuAdmin = () => {
 
           {hasDroitGererLesNomenclatures && (
             <Col className="bg-light p-2 border rounded mx-2">
-              <div className="fw-bold text-center p-2">
+              <div className="fw-bold text-center p-2 fs-5">
                 Gérer les nomenclatures
               </div>
 
               <Nav className="flex-column">
-                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.LIST_SIGNALEMENT_TYPE_ANOMALIE}
-                    >
-                      Signalement - Type d&apos;anomalie
-                    </CustomLinkButton>
-                  </Nav.Item>
-                )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.LIST_SIGNALEMENT_TYPE_ELEMENT}
-                    >
-                      Signalement - Type d&apos;élément
-                    </CustomLinkButton>
-                  </Nav.Item>
-                )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT}
-                    >
-                      Signalement - Sous type d&apos;élément
-                    </CustomLinkButton>
-                  </Nav.Item>
-                )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
                   <Nav.Item>
                     <CustomLinkButton
@@ -500,11 +472,12 @@ const MenuAdmin = () => {
               </Nav>
               {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
                 <Nav.Item>
+                  <br />
                   <CustomLinkButton
                     className="text-underline text-start"
-                    pathname={URLS.LIST_TYPE_CRISE}
+                    pathname={URLS.LIST_CRISE_CATEGORIE}
                   >
-                    Types de crise
+                    Crise - Catégories de crise
                   </CustomLinkButton>
                 </Nav.Item>
               )}
@@ -512,9 +485,41 @@ const MenuAdmin = () => {
                 <Nav.Item>
                   <CustomLinkButton
                     className="text-underline text-start"
-                    pathname={URLS.LIST_CRISE_CATEGORIE}
+                    pathname={URLS.LIST_TYPE_CRISE}
                   >
-                    Catégories de crise
+                    Crise - Types de crise
+                  </CustomLinkButton>
+                </Nav.Item>
+              )}
+
+              {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                <Nav.Item>
+                  <br />
+                  <CustomLinkButton
+                    className="text-underline text-start"
+                    pathname={URLS.LIST_SIGNALEMENT_TYPE_ANOMALIE}
+                  >
+                    Signalement - Type d&apos;anomalie
+                  </CustomLinkButton>
+                </Nav.Item>
+              )}
+              {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                <Nav.Item>
+                  <CustomLinkButton
+                    className="text-underline text-start"
+                    pathname={URLS.LIST_SIGNALEMENT_TYPE_ELEMENT}
+                  >
+                    Signalement - Type d&apos;élément
+                  </CustomLinkButton>
+                </Nav.Item>
+              )}
+              {hasDroit(user, TYPE_DROIT.ADMIN_NOMENCLATURE) && (
+                <Nav.Item>
+                  <CustomLinkButton
+                    className="text-underline text-start"
+                    pathname={URLS.LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT}
+                  >
+                    Signalement - Sous type d&apos;élément
                   </CustomLinkButton>
                 </Nav.Item>
               )}
@@ -527,7 +532,7 @@ const MenuAdmin = () => {
         <Row className="mt-2">
           {hasDroitGestionnairesEtSites && (
             <Col className="bg-light p-2 border rounded mx-2">
-              <div className="fw-bold text-center p-2">
+              <div className="fw-bold text-center p-2 fs-5">
                 Gestionnaires &amp; sites
               </div>
 
@@ -553,7 +558,9 @@ const MenuAdmin = () => {
           )}
           {hasDroitTableauxDeBord && (
             <Col className="bg-light p-2 border rounded mx-2">
-              <div className="fw-bold text-center p-2">Tableaux de bord</div>
+              <div className="fw-bold text-center p-2 fs-5">
+                Tableaux de bord
+              </div>
 
               <Nav className="flex-column">
                 <Nav.Item>
