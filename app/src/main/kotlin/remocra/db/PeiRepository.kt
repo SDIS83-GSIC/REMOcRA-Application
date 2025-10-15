@@ -52,7 +52,7 @@ import remocra.db.jooq.remocra.tables.references.TYPE_RESEAU
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
-import remocra.utils.AdresseDecorator
+import remocra.utils.AdresseUtils
 import remocra.utils.DateUtils
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
@@ -68,17 +68,6 @@ class PeiRepository
         // Alias de table
         val autoriteDeciAlias: Table<*> = ORGANISME.`as`("AUTORITE_DECI")
         val servicePublicDeciAlias: Table<*> = ORGANISME.`as`("SP_DECI")
-
-        /**
-         * L'utilisation du [AdresseDecorator] est impossible avec le filter + count, on redécoupe donc, mais ça doit rester en phase !
-         * @see AdresseDecorator.decorateAdresse
-         */
-        val adresseField = DSL.concat(
-            DSL.`when`(PEI.EN_FACE.isTrue, AdresseDecorator.FACE_A + " ").otherwise(""),
-            DSL.`when`(PEI.NUMERO_VOIE.isNotNull, DSL.concat(PEI.NUMERO_VOIE, " ")).otherwise(""),
-            DSL.`when`(PEI.SUFFIXE_VOIE.isNotNull, DSL.concat(PEI.SUFFIXE_VOIE, " ")).otherwise(""),
-            DSL.`when`(PEI.VOIE_ID.isNotNull, DSL.concat(VOIE.LIBELLE, " ")).otherwise(PEI.VOIE_TEXTE),
-        )
 
         val peiData = listOf(
             PEI.ID,
@@ -242,7 +231,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record18<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?, Boolean>> {
+    ): SelectForUpdateStep<Record18<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?, Boolean>> {
         val concatTourneeLibelleNomCte = name("tournees_libelle")
         val concatTourneeLibelle =
             concatTourneeLibelleNomCte.fields("tournee_id", "concat_tournee_libelle").`as`(
@@ -309,7 +298,7 @@ class PeiRepository
             PEI.DISPONIBILITE_TERRESTRE,
             PENA.DISPONIBILITE_HBE,
             NATURE.LIBELLE,
-            adresseField.`as`("adresse"),
+            AdresseUtils.getDslConcatForAdresse().`as`("adresse"),
             COMMUNE.LIBELLE,
             NATURE_DECI.LIBELLE,
             autoriteDeciLibelleField,
@@ -395,7 +384,7 @@ class PeiRepository
                 PEI.DISPONIBILITE_TERRESTRE,
                 PENA.DISPONIBILITE_HBE,
                 NATURE.LIBELLE,
-                adresseField.`as`("adresse"),
+                AdresseUtils.getDslConcatForAdresse().`as`("adresse"),
                 COMMUNE.LIBELLE,
                 NATURE_DECI.LIBELLE,
                 autoriteDeciLibelleField,
@@ -528,7 +517,7 @@ class PeiRepository
                         }
                     },
                     adresse?.let {
-                        DSL.and(adresseField.containsIgnoreCaseUnaccent(it))
+                        DSL.and(AdresseUtils.getDslConcatForAdresse().containsIgnoreCaseUnaccent(it))
                     },
                     tourneeId?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                 ),

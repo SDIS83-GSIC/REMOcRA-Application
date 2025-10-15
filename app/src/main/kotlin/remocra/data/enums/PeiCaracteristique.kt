@@ -15,6 +15,7 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCar
     MAINTENANCE_CTP("Maintenance et CTP", TypeCaracterique.GENERAL), // Localisation
     COMPLEMENT("Complément d'adresse", TypeCaracterique.GENERAL),
     DATE_RECEPTION("Date de réception", TypeCaracterique.GENERAL),
+    ADRESSE("Adresse", TypeCaracterique.GENERAL),
 
     // PIBI
     DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracterique.PIBI),

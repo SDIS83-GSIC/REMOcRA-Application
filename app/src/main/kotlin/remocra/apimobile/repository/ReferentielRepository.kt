@@ -38,6 +38,7 @@ import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_LAST_MESURES
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
+import remocra.utils.AdresseUtils
 import java.util.UUID
 import java.util.stream.Collectors
 
@@ -380,6 +381,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                         jointureDiametre = true
                     }
                 }
+                PeiCaracteristique.ADRESSE -> onClause = onClause.leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             }
         }
         return onClause
@@ -424,6 +426,8 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     .otherwise(DSL.`val`("Non"))
                 return caseExpression
             }
+
+            PeiCaracteristique.ADRESSE -> return AdresseUtils.getDslConcatForAdresse()
         }
     }
 }
