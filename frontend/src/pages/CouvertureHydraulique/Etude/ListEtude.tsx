@@ -134,13 +134,13 @@ const ListEtude = () => {
               ),
             },
             {
-              Header: "Numéro",
+              Header: "Référence",
               accessor: "etudeNumero",
               sortField: "etudeNumero",
               Filter: <FilterInput type="text" name="etudeNumero" />,
             },
             {
-              Header: "Nom",
+              Header: "Libellé",
               accessor: "etudeLibelle",
               sortField: "etudeLibelle",
               Filter: <FilterInput type="text" name="etudeLibelle" />,

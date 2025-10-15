@@ -66,8 +66,8 @@ const Etude = () => {
           required={true}
           setValues={setValues}
         />
-        <TextInput label="Numéro" name="etudeNumero" required={true} />
-        <TextInput label="Nom" name="etudeLibelle" required={true} />
+        <TextInput label="Référence" name="etudeNumero" required={true} />
+        <TextInput label="Libellé" name="etudeLibelle" required={true} />
         <TextAreaInput
           name="etudeDescription"
           label="Description"
