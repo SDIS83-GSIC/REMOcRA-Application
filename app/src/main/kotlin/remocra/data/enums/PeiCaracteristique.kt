@@ -4,27 +4,27 @@ package remocra.data.enums
  * Cette énumération définit les différentes caractéristiques d'un PEI. Bien faire attention à
  * utiliser des codes UNIQUE
  */
-enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCaracterique) {
+enum class PeiCaracteristique(val libelle: String, val typeCaracteristique: TypeCaracteristique) {
     // Général
-    NUMERO_COMPLET("Numéro complet", TypeCaracterique.GENERAL),
-    TYPE_PEI("Type du PEI", TypeCaracterique.GENERAL),
-    NATURE_PEI("Nature du PEI", TypeCaracterique.GENERAL),
-    AUTORITE_POLICE("Autorité de police DECI", TypeCaracterique.GENERAL),
-    TYPE_DECI("Type de DECI", TypeCaracterique.GENERAL),
-    SERVICE_PUBLIC("Service public DECI", TypeCaracterique.GENERAL),
-    MAINTENANCE_CTP("Maintenance et CTP", TypeCaracterique.GENERAL), // Localisation
-    COMPLEMENT("Complément d'adresse", TypeCaracterique.GENERAL),
-    DATE_RECEPTION("Date de réception", TypeCaracterique.GENERAL),
-    ADRESSE("Adresse", TypeCaracterique.GENERAL),
+    NUMERO_COMPLET("Numéro complet", TypeCaracteristique.GENERAL),
+    TYPE_PEI("Type du PEI", TypeCaracteristique.GENERAL),
+    NATURE_PEI("Nature du PEI", TypeCaracteristique.GENERAL),
+    AUTORITE_POLICE("Autorité de police DECI", TypeCaracteristique.GENERAL),
+    TYPE_DECI("Type de DECI", TypeCaracteristique.GENERAL),
+    SERVICE_PUBLIC("Service public DECI", TypeCaracteristique.GENERAL),
+    MAINTENANCE_CTP("Maintenance et CTP", TypeCaracteristique.GENERAL), // Localisation
+    COMPLEMENT("Complément d'adresse", TypeCaracteristique.GENERAL),
+    DATE_RECEPTION("Date de réception", TypeCaracteristique.GENERAL),
+    ADRESSE("Adresse", TypeCaracteristique.GENERAL),
 
     // PIBI
-    DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracterique.PIBI),
-    DEBIT("Débit", TypeCaracterique.PIBI),
-    JUMELE("Jumelé", TypeCaracterique.PIBI),
-    GROS_DEBIT("Gros débit", TypeCaracterique.PIBI),
+    DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracteristique.PIBI),
+    DEBIT("Débit", TypeCaracteristique.PIBI),
+    JUMELE("Jumelé", TypeCaracteristique.PIBI),
+    GROS_DEBIT("Gros débit", TypeCaracteristique.PIBI),
 
     // PENA
-    CAPACITE("Capacité", TypeCaracterique.PENA),
+    CAPACITE("Capacité", TypeCaracteristique.PENA),
 
     ;
 
@@ -43,7 +43,7 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracterique: TypeCar
     }
 }
 
-enum class TypeCaracterique {
+enum class TypeCaracteristique {
     GENERAL,
     PENA,
     PIBI,
