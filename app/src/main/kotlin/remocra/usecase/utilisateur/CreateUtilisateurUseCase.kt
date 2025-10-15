@@ -10,7 +10,6 @@ import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
@@ -100,21 +99,7 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                 throw RemocraResponseException(ErrorType.UTILISATEUR_ACTION_EMAIL)
             }
 
-            utilisateurRepository.insertUtilisateur(
-                Utilisateur(
-                    utilisateurId = utilisateurId,
-                    utilisateurActif = element.utilisateurActif,
-                    utilisateurEmail = element.utilisateurEmail,
-                    utilisateurNom = element.utilisateurNom,
-                    utilisateurPrenom = element.utilisateurPrenom,
-                    utilisateurUsername = element.utilisateurUsername,
-                    utilisateurTelephone = element.utilisateurTelephone,
-                    utilisateurCanBeNotified = element.utilisateurCanBeNotified,
-                    utilisateurProfilUtilisateurId = element.utilisateurProfilUtilisateurId,
-                    utilisateurOrganismeId = element.utilisateurOrganismeId,
-                    utilisateurIsSuperAdmin = element.utilisateurIsSuperAdmin,
-                ),
-            )
+            utilisateurRepository.insertUtilisateur(element.copy(utilisateurId = utilisateurId))
 
             return element
         } finally {

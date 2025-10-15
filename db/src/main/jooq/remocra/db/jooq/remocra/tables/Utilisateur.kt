@@ -24,6 +24,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.JOB__JOB_JOB_UTILISATEUR_ID_FKEY
@@ -53,6 +54,7 @@ import remocra.db.jooq.remocra.tables.ProfilUtilisateur.ProfilUtilisateurPath
 import remocra.db.jooq.remocra.tables.Rcci.RcciPath
 import remocra.db.jooq.remocra.tables.Signalement.SignalementPath
 import remocra.db.jooq.remocra.tables.Tournee.TourneePath
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -157,6 +159,12 @@ open class Utilisateur(
      * The column <code>remocra.utilisateur.utilisateur_is_super_admin</code>.
      */
     val IS_SUPER_ADMIN: TableField<Record, Boolean?> = createField(DSL.name("utilisateur_is_super_admin"), SQLDataType.BOOLEAN, this, "")
+
+    /**
+     * The column
+     * <code>remocra.utilisateur.utilisateur_derniere_connexion</code>.
+     */
+    val DERNIERE_CONNEXION: TableField<Record, ZonedDateTime?> = createField(DSL.name("utilisateur_derniere_connexion"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

@@ -4,6 +4,7 @@
 package remocra.db.jooq.remocra.tables.pojos
 
 import java.io.Serializable
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
 
@@ -30,6 +31,7 @@ data class Utilisateur(
     val utilisateurProfilUtilisateurId: UUID?,
     val utilisateurOrganismeId: UUID?,
     val utilisateurIsSuperAdmin: Boolean?,
+    val utilisateurDerniereConnexion: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -96,6 +98,13 @@ data class Utilisateur(
         } else if (this.utilisateurIsSuperAdmin != o.utilisateurIsSuperAdmin) {
             return false
         }
+        if (this.utilisateurDerniereConnexion == null) {
+            if (o.utilisateurDerniereConnexion != null) {
+                return false
+            }
+        } else if (this.utilisateurDerniereConnexion != o.utilisateurDerniereConnexion) {
+            return false
+        }
         return true
     }
 
@@ -113,6 +122,7 @@ data class Utilisateur(
         result = prime * result + (if (this.utilisateurProfilUtilisateurId == null) 0 else this.utilisateurProfilUtilisateurId.hashCode())
         result = prime * result + (if (this.utilisateurOrganismeId == null) 0 else this.utilisateurOrganismeId.hashCode())
         result = prime * result + (if (this.utilisateurIsSuperAdmin == null) 0 else this.utilisateurIsSuperAdmin.hashCode())
+        result = prime * result + (if (this.utilisateurDerniereConnexion == null) 0 else this.utilisateurDerniereConnexion.hashCode())
         return result
     }
 
@@ -130,6 +140,7 @@ data class Utilisateur(
         sb.append(", ").append(utilisateurProfilUtilisateurId)
         sb.append(", ").append(utilisateurOrganismeId)
         sb.append(", ").append(utilisateurIsSuperAdmin)
+        sb.append(", ").append(utilisateurDerniereConnexion)
 
         sb.append(")")
         return sb.toString()

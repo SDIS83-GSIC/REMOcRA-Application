@@ -89,6 +89,9 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .returning()
             .fetchSingleInto()
 
+    /**
+     * Insère ou met à jour un utilisateur, et met à jour la date de dernière connexion
+     */
     fun syncUtilisateur(
         id: UUID,
         nom: String,
@@ -104,12 +107,14 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
             .set(UTILISATEUR.USERNAME, username)
+            .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             .onConflict(UTILISATEUR.ID)
             .doUpdate()
             .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
+            .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             // USERNAME exclu explicitement
             .returning()
             .fetchSingleInto()
@@ -311,9 +316,23 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 ),
         )
 
-    fun insertUtilisateur(utilisateur: Utilisateur) =
+    /**
+     * Insère un nouvel utilisateur (sans DERNIERE_CONNEXION)
+     */
+    fun insertUtilisateur(utilisateur: UtilisateurData) =
         dsl.insertInto(UTILISATEUR)
-            .set(dsl.newRecord(UTILISATEUR, utilisateur))
+            .set(UTILISATEUR.ID, utilisateur.utilisateurId)
+            .set(UTILISATEUR.ACTIF, utilisateur.utilisateurActif)
+            .set(UTILISATEUR.EMAIL, utilisateur.utilisateurEmail)
+            .set(UTILISATEUR.NOM, utilisateur.utilisateurNom)
+            .set(UTILISATEUR.PRENOM, utilisateur.utilisateurPrenom)
+            .set(UTILISATEUR.USERNAME, utilisateur.utilisateurUsername)
+            .set(UTILISATEUR.TELEPHONE, utilisateur.utilisateurTelephone)
+            .set(UTILISATEUR.CAN_BE_NOTIFIED, utilisateur.utilisateurCanBeNotified)
+            .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, utilisateur.utilisateurProfilUtilisateurId)
+            .set(UTILISATEUR.ORGANISME_ID, utilisateur.utilisateurOrganismeId)
+            .set(UTILISATEUR.IS_SUPER_ADMIN, utilisateur.utilisateurIsSuperAdmin)
+            // Pas de mise à jour de DERNIERE_CONNEXION, puisque l'utilisateur ne s'est encore jamais connecté
             .execute()
 
     fun checkExistsInTournee(utilisateurId: UUID) =
@@ -328,9 +347,22 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.ID.eq(utilisateurId))
             .execute()
 
-    fun updateUtilisateur(utilisateur: Utilisateur) =
+    /**
+     * Met à jour un utilisateur (sauf DERNIERE_CONNEXION)
+     */
+    fun updateUtilisateur(utilisateur: UtilisateurData) =
         dsl.update(UTILISATEUR)
-            .set(dsl.newRecord(UTILISATEUR, utilisateur))
+            .set(UTILISATEUR.ACTIF, utilisateur.utilisateurActif)
+            .set(UTILISATEUR.EMAIL, utilisateur.utilisateurEmail)
+            .set(UTILISATEUR.NOM, utilisateur.utilisateurNom)
+            .set(UTILISATEUR.PRENOM, utilisateur.utilisateurPrenom)
+            .set(UTILISATEUR.USERNAME, utilisateur.utilisateurUsername)
+            .set(UTILISATEUR.TELEPHONE, utilisateur.utilisateurTelephone)
+            .set(UTILISATEUR.CAN_BE_NOTIFIED, utilisateur.utilisateurCanBeNotified)
+            .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, utilisateur.utilisateurProfilUtilisateurId)
+            .set(UTILISATEUR.ORGANISME_ID, utilisateur.utilisateurOrganismeId)
+            .set(UTILISATEUR.IS_SUPER_ADMIN, utilisateur.utilisateurIsSuperAdmin)
+            // Pas de mise à jour de DERNIERE_CONNEXION, puisque c'est l'admin qui fait la modification
             .where(UTILISATEUR.ID.eq(utilisateur.utilisateurId))
             .execute()
 
@@ -345,17 +377,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.USERNAME.eq(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .fetchSingleInto()
     }
-
-    fun getIdMailForFilter(): Collection<IdMailData> =
-        dsl.select(UTILISATEUR.ID, UTILISATEUR.EMAIL)
-            .from(UTILISATEUR)
-            .where(UTILISATEUR.USERNAME.notEqualIgnoreCase(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
-            .fetchInto()
-
-    data class IdMailData(
-        val utilisateurId: UUID,
-        val utilisateurEmail: String,
-    )
 
     private fun getUtilisteurListByTypeOrganisme(vararg typeOrganismeList: String): List<GlobalData.IdCodeLibelleData> =
         dsl

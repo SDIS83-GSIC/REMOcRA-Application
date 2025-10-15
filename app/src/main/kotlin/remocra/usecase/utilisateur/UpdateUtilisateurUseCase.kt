@@ -9,7 +9,6 @@ import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
@@ -71,21 +70,7 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             }
 
             // Mise à jour côté REMOcRA
-            utilisateurRepository.updateUtilisateur(
-                Utilisateur(
-                    utilisateurId = element.utilisateurId,
-                    utilisateurActif = element.utilisateurActif,
-                    utilisateurEmail = element.utilisateurEmail,
-                    utilisateurNom = element.utilisateurNom,
-                    utilisateurPrenom = element.utilisateurPrenom,
-                    utilisateurUsername = element.utilisateurUsername,
-                    utilisateurTelephone = element.utilisateurTelephone,
-                    utilisateurCanBeNotified = element.utilisateurCanBeNotified,
-                    utilisateurProfilUtilisateurId = element.utilisateurProfilUtilisateurId,
-                    utilisateurOrganismeId = element.utilisateurOrganismeId,
-                    utilisateurIsSuperAdmin = element.utilisateurIsSuperAdmin,
-                ),
-            )
+            utilisateurRepository.updateUtilisateur(element)
 
             return element
         } finally {

@@ -98,6 +98,7 @@ class AbstractCUDUseCaseTest {
                         null,
                         null,
                         true,
+                        null,
                     ),
                     Droit.entries.toSet(),
                     null,
