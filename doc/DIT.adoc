@@ -25,7 +25,7 @@ WARNING: L'utilisation d'Apache HOP est par défaut désactivé dans l'applicati
 === Prérequis
 
 Pour l’installation de l’application, il a été choisi d’utiliser docker et compose pour tous les services. Il faut donc au préalable vous assurer que docker est bien présent et installer le plugins docker compose si nécessaire (voir https://docs.docker.com/engine/install/).
-
+Il est également nécessaire de disposer d’une base de données PostgreSQL (version 16) nommée `remocra`, avec un utilisateur `remocra` et le mot de passe associé (à renseigner dans le fichier `.env`). Cette base devra avoir l’extension POSTGIS installée (version 3.6). Une seconde base PostgreSQL (version 16) doit être créée pour Keycloak, nommée `keycloak`, avec un utilisateur `keycloak` et son mot de passe (également à renseigner dans le fichier `.env`). Cette base devra contenir un schéma `keycloak`.
 
 === Dépôt du fichier compose.yaml
 
