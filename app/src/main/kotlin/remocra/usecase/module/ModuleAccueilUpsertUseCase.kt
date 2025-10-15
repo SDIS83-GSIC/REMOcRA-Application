@@ -1,6 +1,7 @@
 package remocra.usecase.module
 
 import jakarta.inject.Inject
+import org.owasp.html.PolicyFactory
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.ListModuleWithImage
@@ -21,6 +22,7 @@ import java.util.UUID
 class ModuleAccueilUpsertUseCase @Inject constructor(
     private val moduleRepository: ModuleRepository,
     private val documentUtils: DocumentUtils,
+    private var policyFactory: PolicyFactory,
 ) :
     AbstractCUDUseCase<ListModuleWithImage>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -90,7 +92,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                         moduleType = it.moduleType,
                         moduleTitre = it.moduleTitre,
                         moduleImage = if (it.imageName != null) Paths.get(moduleId.toString(), it.imageName).toString() else null,
-                        moduleContenuHtml = if (it.moduleType == TypeModule.PERSONNALISE) it.moduleContenuHtml else null,
+                        moduleContenuHtml = if (it.moduleType == TypeModule.PERSONNALISE) policyFactory.sanitize(it.moduleContenuHtml) else null,
                         moduleColonne = it.moduleColonne,
                         moduleLigne = it.moduleLigne,
                         moduleNbDocument = if (it.moduleType == TypeModule.DOCUMENT || it.moduleType == TypeModule.COURRIER) {

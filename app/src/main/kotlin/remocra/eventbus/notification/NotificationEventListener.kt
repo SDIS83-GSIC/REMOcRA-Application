@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import org.apache.commons.mail2.core.EmailException
+import org.owasp.html.PolicyFactory
 import org.slf4j.LoggerFactory
 import remocra.auth.AuthnConstants
 import remocra.db.JobRepository
@@ -19,6 +20,7 @@ class NotificationEventListener @Inject constructor(
     private val jobRepository: JobRepository,
     private val settings: MailSettings,
     private val mailService: MailService,
+    private val policyFactory: PolicyFactory,
 ) :
     EventListener<NotificationEvent> {
 
@@ -30,20 +32,22 @@ class NotificationEventListener @Inject constructor(
         try {
             mailService.send(
                 subject = event.notificationData.objet,
-                body = if (event.notificationData.documentId != null) {
-                    event.notificationData.corps.replace(
-                        "#[LIEN_TELECHARGEMENT]#",
-                        UriBuilder
-                            .fromUri(settings.urlSite)
-                            .path(AuthnConstants.API_PATH)
-                            .path(DocumentEndPoint::class.java)
-                            .path(DocumentEndPoint::telechargerRessource.javaMethod)
-                            .build(event.notificationData.documentId)
-                            .toString(),
-                    )
-                } else {
-                    event.notificationData.corps
-                },
+                body = policyFactory.sanitize(
+                    if (event.notificationData.documentId != null) {
+                        event.notificationData.corps.replace(
+                            "#[LIEN_TELECHARGEMENT]#",
+                            UriBuilder
+                                .fromUri(settings.urlSite)
+                                .path(AuthnConstants.API_PATH)
+                                .path(DocumentEndPoint::class.java)
+                                .path(DocumentEndPoint::telechargerRessource.javaMethod)
+                                .build(event.notificationData.documentId)
+                                .toString(),
+                        )
+                    } else {
+                        event.notificationData.corps
+                    },
+                ),
                 bcc = event.notificationData.destinataires,
             )
 
