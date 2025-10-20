@@ -5,6 +5,7 @@ import { object } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
@@ -22,14 +23,13 @@ import TransferList, {
   useTransferList,
 } from "../../../components/Form/TransferList.tsx";
 import { IconParametre } from "../../../components/Icon/Icon.tsx";
+import { hasDroit } from "../../../droits.tsx";
 import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
-import COLUMN_PEI from "../../../enums/ColumnPeiEnum.tsx";
+import { referenceColumnPei } from "../../../enums/ColumnPeiEnum.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
-import { hasDroit } from "../../../droits.tsx";
-import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type ParametresSectionGeneral = {
@@ -841,13 +841,6 @@ const AdminPei = ({
   values: ParametresSectionPei;
   allCaracteristiques: any[];
 }) => {
-  //Pour les colonnes PEI
-
-  const listPossible = Object.values(COLUMN_PEI).map((option: any) => ({
-    id: option,
-    libelle: option,
-  }));
-
   const {
     availableOptions,
     setAvailableOptions,
@@ -865,11 +858,15 @@ const AdminPei = ({
     }
     if (availableOptions == null) {
       setAvailableOptions(
-        listPossible.filter((e) => !values.peiColonnesIds?.includes(e)),
+        referenceColumnPei.filter((e) => !values.peiColonnesIds?.includes(e)),
       );
     }
     if (selectedOptions == null) {
-      setSelectedOptions(values?.peiColonnesIds);
+      setSelectedOptions(
+        referenceColumnPei.filter(({ id }) =>
+          values.peiColonnesIds?.map((e) => e.id).includes(id),
+        ),
+      );
     }
   }, [
     values,
@@ -877,7 +874,6 @@ const AdminPei = ({
     selectedOptions,
     availableOptions,
     setAvailableOptions,
-    listPossible,
   ]);
 
   const {
