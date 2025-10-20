@@ -59,7 +59,6 @@ function getColumnPeiByStringArray(
   libelleNonConforme: string,
 ): Array<columnType> {
   const column: Array<columnType> = [];
-
   parametres.forEach((_parametre: COLUMN_PEI) => {
     switch (_parametre) {
       case COLUMN_PEI.NUMERO_COMPLET:
@@ -334,6 +333,32 @@ function getColumnPeiByStringArray(
           width: 250,
         });
         break;
+      case COLUMN_PEI.GESTIONNAIRE:
+        column.push({
+          Header: "Gestionnaire",
+          accessor: "gestionnaireLibelle",
+          sortField: "gestionnaireLibelle",
+          Filter: (
+            <SelectFilterFromUrl
+              url={url`/api/gestionnaire/get-libelle`}
+              name="gestionnaireId"
+            />
+          ),
+          width: 250,
+          Cell: (value) => {
+            return (
+              <TooltipCustom
+                tooltipText={value.value}
+                tooltipId={value}
+                maxWidth={247}
+              >
+                {value.value}
+              </TooltipCustom>
+            );
+          },
+        });
+        break;
+
       default:
         column.push({
           Header: "Erreur",

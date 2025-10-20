@@ -18,6 +18,7 @@ type filterPei = {
   prochaineDateRop?: PROCHAINE_DATE_ENUM;
   prochaineDateCtp?: PROCHAINE_DATE_ENUM;
   tourneeId?: string;
+  gestionnaireId?: string;
 };
 
 export const filterValuesToVariable = ({
@@ -37,6 +38,7 @@ export const filterValuesToVariable = ({
   prochaineDateRop,
   prochaineDateCtp,
   tourneeId,
+  gestionnaireId,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -92,6 +94,9 @@ export const filterValuesToVariable = ({
   }
   if (tourneeId != null && tourneeId.trim() !== "") {
     filter.tourneeId = tourneeId;
+  }
+  if (gestionnaireId != null && gestionnaireId.trim() !== "") {
+    filter.gestionnaireId = gestionnaireId;
   }
   return filter;
 };

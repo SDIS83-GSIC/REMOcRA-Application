@@ -17,6 +17,7 @@ enum COLUMN_PEI {
   PEI_NEXT_CTP = "PEI_NEXT_CTP",
   TOURNEE_LIBELLE = "TOURNEE_LIBELLE",
   PEI_ADRESSE = "ADRESSE",
+  GESTIONNAIRE = "GESTIONNAIRE",
 }
 export default COLUMN_PEI;
 
@@ -39,6 +40,7 @@ export const referenceColumnPei: ColumnPeiType[] = [
   { id: COLUMN_PEI.PEI_NEXT_CTP, libelle: "Date du prochain CTP" },
   { id: COLUMN_PEI.TOURNEE_LIBELLE, libelle: "Libellé de la tournée" },
   { id: COLUMN_PEI.PEI_ADRESSE, libelle: "Adresse" },
+  { id: COLUMN_PEI.GESTIONNAIRE, libelle: "Gestionnaire" },
 ] as const;
 export type ColumnPeiType = {
   id: COLUMN_PEI;

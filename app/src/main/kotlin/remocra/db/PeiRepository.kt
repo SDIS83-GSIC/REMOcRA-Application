@@ -6,7 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record18
+import org.jooq.Record19
 import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
@@ -33,6 +33,7 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
@@ -156,6 +157,7 @@ class PeiRepository
                 peiNextRop = record.component16(),
                 peiNextCtp = record.component17(),
                 hasIndispoTemp = record.component18(),
+                gestionnaireLibelle = record.component19(),
             )
         }
     }
@@ -188,6 +190,7 @@ class PeiRepository
                     peiNextRop = record.component16(),
                     peiNextCtp = record.component17(),
                     hasIndispoTemp = record.component18(),
+                    gestionnaireLibelle = record.component19(),
                 )
             }
 
@@ -253,7 +256,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record18<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?, Boolean>> {
+    ): SelectForUpdateStep<Record19<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?, Boolean, String?>> {
         val concatTourneeLibelleNomCte = name("tournees_libelle")
         val concatTourneeLibelle =
             concatTourneeLibelleNomCte.fields("tournee_id", "concat_tournee_libelle").`as`(
@@ -344,6 +347,7 @@ class PeiRepository
             V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
             hasIndispoTemp,
+            GESTIONNAIRE.LIBELLE.`as`("gestionnaireLibelle"),
         )
             .from(PEI)
             .join(COMMUNE)
@@ -365,10 +369,12 @@ class PeiRepository
             .on(autoriteDeciAlias.field(ORGANISME.TYPE_ORGANISME_ID)?.eq(TYPE_ORGANISME.ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .leftJoin(table(concatTourneeLibelleNomCte)).on(peiIdCte.eq(PEI.ID))
-                /*
-            Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
-            de cette jointure
-                 */
+            .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+            .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
+            /*
+        Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
+        de cette jointure
+             */
             .leftJoin(L_PEI_ANOMALIE)
             .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
             .leftJoin(ANOMALIE)
@@ -420,6 +426,7 @@ class PeiRepository
                 hasIndispoTemp,
                 TYPE_ORGANISME.CODE,
                 autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                GESTIONNAIRE.LIBELLE,
             )
             .orderBy(
                 param.sortBy?.toCondition(tourneeLibelleField).takeIf { !it.isNullOrEmpty() } ?: listOf(
@@ -450,6 +457,7 @@ class PeiRepository
         val tourneeLibelle: String?,
         val hasTourneeReservee: Boolean,
         val hasIndispoTemp: Boolean,
+        val gestionnaireLibelle: String?,
     )
 
     data class Filter(
@@ -471,6 +479,7 @@ class PeiRepository
         val prochaineDateRop: ProchaineDate?,
         val prochaineDateCtp: ProchaineDate?,
         val tourneeId: UUID?,
+        val gestionnaireId: UUID?,
     ) {
 
         enum class ProchaineDate {
@@ -544,6 +553,7 @@ class PeiRepository
                         DSL.and(AdresseUtils.getDslConcatForAdresse().containsIgnoreCaseUnaccent(it))
                     },
                     tourneeId?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
+                    gestionnaireId?.let { DSL.and(PEI.GESTIONNAIRE_ID.eq(it)) },
                 ),
             )
     }

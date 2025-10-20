@@ -120,4 +120,15 @@ class GestionnaireEndpoint : AbstractEndpoint() {
             gestionnaire,
         ).wrap()
     }
+
+    @GET
+    @Path("/get-libelle")
+    @RequireDroits([Droit.GEST_SITE_R, Droit.PEI_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getGestionnaireForSelect(): Response {
+        return Response.ok(
+            gestionnaireRepository.getAll(),
+        )
+            .build()
+    }
 }
