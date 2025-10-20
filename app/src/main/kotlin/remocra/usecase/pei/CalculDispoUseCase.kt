@@ -518,7 +518,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 } else if (isDiametre80(pei)) {
                     pei.debit == null || pei.debit < 27
                 } else if (isDiametre100(pei)) {
-                    pei.debit == null || pei.debit < 54
+                    pei.debit == null || pei.debit < 30
                 } else if (isDiametre150(pei)) {
                     pei.debit == null || pei.debit < 60
                 } else {
@@ -658,7 +658,7 @@ class CalculDispoUseCase : AbstractUseCase() {
                 } else if (isDiametre80(pei)) {
                     pei.debit != null && pei.debit in 27..<30
                 } else if (isDiametre100(pei)) {
-                    pei.debit != null && pei.debit in 54..<60
+                    pei.debit != null && pei.debit in 30..<54
                 } else if (isDiametre150(pei)) {
                     pei.debit != null && pei.debit in 60..<105
                 } else {
