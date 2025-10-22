@@ -140,5 +140,5 @@ class WrappedUserInfo {
      * Permet de récupérer la source de la modification : REMOcRA Web, API ou Mobile
      */
     val typeSourceModification: TypeSourceModification
-        get() = (userInfo?.typeSourceModification ?: organismeInfo ?: typeSourceModification) as TypeSourceModification
+        get() = (userInfo?.typeSourceModification ?: organismeInfo?.typeSourceModification) as TypeSourceModification
 }
