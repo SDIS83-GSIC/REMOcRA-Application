@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.inject.Inject
 import jakarta.validation.constraints.NotNull
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -24,7 +25,8 @@ import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/deci/indispoTemporaire")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces("application/json; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON)
 class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
 
     @Inject
