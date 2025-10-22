@@ -283,6 +283,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         Status.FORBIDDEN,
     ),
     INDISPONIBILITE_TEMPORAIRE_STATUT(6007, "Le statut renseigné n'est pas valide. Il doit correspondre à une de ces valeurs : EN_COURS, PLANIFIEE ou TERMINEE"),
+    INDISPONIBILITE_TEMPORAIRE_PAS_DE_PEI(6008, "Impossible de créer une indisponibilité temporaire de PEI sans fournir de PEI valide."),
 
     /*************************************************************************************
      * Carte

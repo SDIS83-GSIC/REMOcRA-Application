@@ -74,6 +74,9 @@ class CreateIndisponibiliteTemporaireUseCase
                 throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_FIN_AVANT_DEBUT)
             }
         }
+        if (element.indisponibiliteTemporaireListePeiId.isEmpty()) {
+            throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_PAS_DE_PEI)
+        }
     }
 
     override fun getListGeometrie(element: IndisponibiliteTemporaireData): Collection<Geometry> {
