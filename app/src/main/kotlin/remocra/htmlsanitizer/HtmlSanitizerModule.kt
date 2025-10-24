@@ -18,6 +18,22 @@ object HtmlSanitizerModule : RemocraModule() {
             .allowElements("a")
             .allowAttributes("href", "target")
             .onElements("a")
+            .allowElements("img")
+            .allowAttributes("src", "alt", "title", "width", "height").onElements("img")
+            .allowElements("iframe")
+            .allowAttributes("src", "width", "height", "title", "frameborder", "allow", "allowfullscreen")
+            .onElements("iframe")
+            .allowAttributes("src").matching { url, _, _ ->
+                if (url != null && (
+                        url.startsWith("https://www.youtube.com/")
+                        )
+                ) {
+                    url
+                } else {
+                    null
+                }
+            }.onElements("iframe")
+            .allowAttributes("style").onElements("div", "section", "a", "span", "p", "img", "h1", "h2", "h3", "h4")
             .requireRelNofollowOnLinks()
             .toFactory()
     }
