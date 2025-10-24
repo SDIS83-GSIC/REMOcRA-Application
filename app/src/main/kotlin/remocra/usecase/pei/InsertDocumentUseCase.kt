@@ -52,7 +52,7 @@ class InsertDocumentUseCase @Inject constructor(
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DECLARATION + "$documentId"
 
         /** Enregistrement sur le disque */
         documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
