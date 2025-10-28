@@ -172,7 +172,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                     isSuperAdmin,
                 ),
             )
-            .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) })
+            .and(bbox?.let { ST_Within(ST_Transform(PEI_PRESCRIT.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 
