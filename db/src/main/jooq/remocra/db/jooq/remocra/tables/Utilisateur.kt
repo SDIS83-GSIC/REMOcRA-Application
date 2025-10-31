@@ -123,12 +123,12 @@ open class Utilisateur(
     /**
      * The column <code>remocra.utilisateur.utilisateur_nom</code>.
      */
-    val NOM: TableField<Record, String?> = createField(DSL.name("utilisateur_nom"), SQLDataType.CLOB.nullable(false), this, "")
+    val NOM: TableField<Record, String?> = createField(DSL.name("utilisateur_nom"), SQLDataType.CLOB, this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_prenom</code>.
      */
-    val PRENOM: TableField<Record, String?> = createField(DSL.name("utilisateur_prenom"), SQLDataType.CLOB.nullable(false), this, "")
+    val PRENOM: TableField<Record, String?> = createField(DSL.name("utilisateur_prenom"), SQLDataType.CLOB, this, "")
 
     /**
      * The column <code>remocra.utilisateur.utilisateur_username</code>.

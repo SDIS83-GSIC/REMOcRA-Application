@@ -23,8 +23,8 @@ data class Utilisateur(
     val utilisateurId: UUID,
     val utilisateurActif: Boolean,
     val utilisateurEmail: String,
-    val utilisateurNom: String,
-    val utilisateurPrenom: String,
+    val utilisateurNom: String?,
+    val utilisateurPrenom: String?,
     val utilisateurUsername: String,
     val utilisateurTelephone: String?,
     val utilisateurCanBeNotified: Boolean?,
@@ -55,10 +55,18 @@ data class Utilisateur(
         if (this.utilisateurEmail != o.utilisateurEmail) {
             return false
         }
-        if (this.utilisateurNom != o.utilisateurNom) {
+        if (this.utilisateurNom == null) {
+            if (o.utilisateurNom != null) {
+                return false
+            }
+        } else if (this.utilisateurNom != o.utilisateurNom) {
             return false
         }
-        if (this.utilisateurPrenom != o.utilisateurPrenom) {
+        if (this.utilisateurPrenom == null) {
+            if (o.utilisateurPrenom != null) {
+                return false
+            }
+        } else if (this.utilisateurPrenom != o.utilisateurPrenom) {
             return false
         }
         if (this.utilisateurUsername != o.utilisateurUsername) {
@@ -118,8 +126,8 @@ data class Utilisateur(
         result = prime * result + this.utilisateurId.hashCode()
         result = prime * result + this.utilisateurActif.hashCode()
         result = prime * result + this.utilisateurEmail.hashCode()
-        result = prime * result + this.utilisateurNom.hashCode()
-        result = prime * result + this.utilisateurPrenom.hashCode()
+        result = prime * result + (if (this.utilisateurNom == null) 0 else this.utilisateurNom.hashCode())
+        result = prime * result + (if (this.utilisateurPrenom == null) 0 else this.utilisateurPrenom.hashCode())
         result = prime * result + this.utilisateurUsername.hashCode()
         result = prime * result + (if (this.utilisateurTelephone == null) 0 else this.utilisateurTelephone.hashCode())
         result = prime * result + (if (this.utilisateurCanBeNotified == null) 0 else this.utilisateurCanBeNotified.hashCode())

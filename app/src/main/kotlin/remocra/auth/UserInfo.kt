@@ -23,10 +23,10 @@ class UserInfo(
     val utilisateurId: UUID
         get() = utilisateur.utilisateurId
 
-    val prenom: String
+    val prenom: String?
         get() = utilisateur.utilisateurPrenom
 
-    val nom: String
+    val nom: String?
         get() = utilisateur.utilisateurNom
 
     val email: String
@@ -64,8 +64,8 @@ class UserInfo(
      */
     class JavascriptUserProfile(
         val utilisateurId: UUID,
-        val nom: String,
-        val prenom: String,
+        val nom: String?,
+        val prenom: String?,
         val username: String,
         val organismeId: UUID?,
         val zoneIntegrationExtent: Geometry?,

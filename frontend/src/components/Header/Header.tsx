@@ -50,7 +50,20 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
               {user != null ? (
                 <>
                   <p className="d-flex m-0 align-items-center text-light pe-3">
-                    {`${user.prenom} ${user.nom} (${user.username})`}
+                    {(() => {
+                      const hasName = user.prenom || user.nom;
+                      const namePart = [user.prenom, user.nom]
+                        .filter(Boolean)
+                        .join(" ");
+                      if (user.username) {
+                        if (hasName) {
+                          return `${namePart} (${user.username})`;
+                        } else {
+                          return user.username;
+                        }
+                      }
+                      return namePart;
+                    })()}
                   </p>
                   <form
                     method="post"

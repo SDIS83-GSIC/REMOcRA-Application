@@ -44,7 +44,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .execute()
     }
 
-    fun updateUtilisateur(idUtilisateur: UUID, nom: String, prenom: String, email: String, actif: Boolean) {
+    fun updateUtilisateur(idUtilisateur: UUID, nom: String?, prenom: String?, email: String, actif: Boolean) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
@@ -76,8 +76,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     fun insertUtilisateur(
         id: UUID,
-        nom: String,
-        prenom: String,
+        nom: String?,
+        prenom: String?,
         email: String,
         username: String,
         actif: Boolean = true,
@@ -101,8 +101,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
      */
     fun syncUtilisateur(
         id: UUID,
-        nom: String,
-        prenom: String,
+        nom: String?,
+        prenom: String?,
         email: String,
         username: String,
         actif: Boolean,
@@ -204,8 +204,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val utilisateurId: UUID,
         val utilisateurActif: Boolean,
         val utilisateurEmail: String,
-        val utilisateurNom: String,
-        val utilisateurPrenom: String,
+        val utilisateurNom: String?,
+        val utilisateurPrenom: String?,
         val utilisateurUsername: String,
         val utilisateurTelephone: String?,
         val utilisateurCanBeNotified: Boolean?,

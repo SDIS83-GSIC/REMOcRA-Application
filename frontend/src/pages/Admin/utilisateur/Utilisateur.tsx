@@ -134,10 +134,10 @@ const Utilisateur = () => {
       </Row>
       <Row className="mt-3">
         <Col>
-          <TextInput label="Nom" name="utilisateurNom" required={true} />
+          <TextInput label="Nom" name="utilisateurNom" required={false} />
         </Col>
         <Col>
-          <TextInput label="Prénom" name="utilisateurPrenom" required={true} />
+          <TextInput label="Prénom" name="utilisateurPrenom" required={false} />
         </Col>
       </Row>
       {user?.isSuperAdmin && (

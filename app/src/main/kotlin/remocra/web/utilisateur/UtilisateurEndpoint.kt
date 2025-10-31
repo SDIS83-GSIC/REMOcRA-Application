@@ -87,10 +87,10 @@ class UtilisateurEndpoint : AbstractEndpoint() {
         lateinit var utilisateurEmail: String
 
         @FormParam("utilisateurNom")
-        lateinit var utilisateurNom: String
+        val utilisateurNom: String? = null
 
         @FormParam("utilisateurPrenom")
-        lateinit var utilisateurPrenom: String
+        val utilisateurPrenom: String? = null
 
         @FormParam("utilisateurUsername")
         lateinit var utilisateurUsername: String

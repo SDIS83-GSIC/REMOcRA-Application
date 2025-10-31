@@ -5,7 +5,7 @@ import java.util.UUID
 
 data class AuteurTracabiliteData(
     val idAuteur: UUID,
-    val nom: String,
+    val nom: String?,
     val prenom: String?,
     val email: String,
     val typeSourceModification: TypeSourceModification,

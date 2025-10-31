@@ -10,7 +10,7 @@ data class PeiDiffData(
     val numeroComplet: String,
     val momentModification: ZonedDateTime,
     // Organisme ou utilisateur, formaté en adéquation
-    val auteurModification: String,
+    val auteurModification: String?,
     val auteur: AuteurTracabiliteData,
     val typeOperation: TypeOperation,
     val typeObjet: TypeObjet,
