@@ -618,7 +618,9 @@ const MapToolbarPei = ({
                 <Row className="p-2">
                   Les PIBI sélectionnés doivent :
                   <ul>
-                    <li>avoir la nature DECI privé </li>
+                    <li>
+                      avoir la nature DECI privé, ICPE ou ICPE conventionné
+                    </li>
                     <li>avoir le même type de réseau</li>
                     <li>n&apos;avoir aucun débit simultané associé</li>
                     <li>être à moins de 500m</li>

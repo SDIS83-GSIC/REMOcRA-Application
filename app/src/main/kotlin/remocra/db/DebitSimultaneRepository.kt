@@ -198,7 +198,9 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .join(NATURE_DECI)
             .on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
             .where(PIBI.TYPE_RESEAU_ID.eq(typeReseauId))
-            .and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE))
+            .and(
+                NATURE_DECI.CODE.`in`(listOf(GlobalConstants.NATURE_DECI_PRIVE, GlobalConstants.NATURE_DECI_ICPE, GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)),
+            )
             .and(
                 ST_DWithin(
                     PEI.GEOMETRIE,
