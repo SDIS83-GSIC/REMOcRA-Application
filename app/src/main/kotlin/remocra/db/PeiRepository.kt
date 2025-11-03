@@ -895,9 +895,11 @@ class PeiRepository
         val diametreLibelle: String?,
     )
 
-    fun getNatureDeciId(listePeiId: Set<UUID>): List<UUID> =
-        dsl.selectDistinct(PEI.NATURE_DECI_ID)
+    fun getNatureDeci(listePeiId: Set<UUID>): List<String> =
+        dsl.selectDistinct(NATURE_DECI.CODE)
             .from(PEI)
+            .leftJoin(NATURE_DECI)
+            .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
             .where(PEI.ID.`in`(listePeiId))
             .fetchInto()
 

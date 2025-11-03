@@ -162,7 +162,7 @@ class TourneeRepository
         .where(TOURNEE.ID.`in`(idsTournees))
         .execute()
 
-    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, onlyAvailable: Boolean?, onlyNonTerminees: Boolean?): List<Tournee> =
+    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, onlyAvailable: Boolean?, onlyNonTerminees: Boolean?): List<Tournee> =
         getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
@@ -178,14 +178,19 @@ class TourneeRepository
                 ),
             )
             .let {
-                if (isPrive != null) {
-                    if (isPrive) {
-                        it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
-                    } else {
-                        it.and(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE)).or(NATURE_DECI.CODE.isNull)
-                    }
+                if (isPrive == true) {
+                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE).or(NATURE_DECI.CODE.isNull))
+                } else if (isIcpe == true) {
+                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE).or(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)).or(NATURE_DECI.CODE.isNull))
                 } else {
-                    it
+                    it.and(
+                        NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE).or(
+                            NATURE_DECI.CODE.ne(
+                                GlobalConstants.NATURE_DECI_ICPE,
+                            ).or(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)),
+
+                        ).or(NATURE_DECI.CODE.isNull),
+                    )
                 }
             }
             .let {

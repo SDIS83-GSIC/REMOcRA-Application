@@ -108,9 +108,20 @@ const TourneePei = ({
   const filterOptions = () => {
     let filteredList: PeiInfoEntity[] = allPeiInfoSource.data;
     if (data.length > 0) {
-      filteredList = filteredList.filter(
-        (e) => e.natureDeciCode === data[0].natureDeciCode,
-      );
+      if (
+        data[0].natureDeciCode === "ICPE" ||
+        data[0].natureDeciCode === "ICPE_CONVENTIONNE"
+      ) {
+        filteredList = filteredList.filter(
+          (e) =>
+            e.natureDeciCode === "ICPE" ||
+            e.natureDeciCode === "ICPE_CONVENTIONNE",
+        );
+      } else {
+        filteredList = filteredList.filter(
+          (e) => e.natureDeciCode === data[0].natureDeciCode,
+        );
+      }
       filteredList = filteredList.filter(
         (v) => !data.map((e) => e.id).includes(v.peiId),
       );

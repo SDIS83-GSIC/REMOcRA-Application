@@ -118,12 +118,15 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun getTournees(
         @QueryParam("isPrive")
         isPrive: Boolean,
+        @QueryParam("isIcpe")
+        isIcpe: Boolean,
     ): Response {
         return Response.ok().entity(
             tourneeRepository.getTourneesActives(
                 securityContext.userInfo.isSuperAdmin,
                 securityContext.userInfo.affiliatedOrganismeIds!!,
                 isPrive,
+                isIcpe,
                 null,
                 null,
             ),

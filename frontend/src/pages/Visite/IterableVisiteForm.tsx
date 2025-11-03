@@ -34,7 +34,10 @@ const IterableVisiteForm = ({
             const canHaveGestionnaire: boolean =
               currentInformation.natureDeciCode === TYPE_NATURE_DECI.PRIVE ||
               currentInformation.natureDeciCode ===
-                TYPE_NATURE_DECI.CONVENTIONNE;
+                TYPE_NATURE_DECI.CONVENTIONNE ||
+              currentInformation.natureDeciCode === TYPE_NATURE_DECI.ICPE ||
+              currentInformation.natureDeciCode ===
+                TYPE_NATURE_DECI.ICPE_CONVENTIONNE;
 
             return (
               <>

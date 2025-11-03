@@ -142,6 +142,8 @@ object GlobalConstants {
     }
 
     const val NATURE_DECI_PRIVE = "PRIVE"
+    const val NATURE_DECI_ICPE = "ICPE"
+    const val NATURE_DECI_ICPE_CONVENTIONNE = "ICPE_CONVENTIONNE"
 
     /** Constante utilisée dans PurgerTask indiquant l'ancienneté min des documents_tmp à purger (en heure) */
     const val DELAI_PURGE_FICHIER_TEMPORAIRE: Long = 24

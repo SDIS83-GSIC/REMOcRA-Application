@@ -63,6 +63,7 @@ const MapPei = () => {
     listePeiId,
     showCreateIndispoTemp,
     listePeiTourneePrive,
+    listePeiTourneeIcpe,
     listePeiTourneePublic,
     createUpdateTournee,
     handleCloseTournee,
@@ -205,6 +206,7 @@ const MapPei = () => {
                   listePeiId={listePeiId}
                   createIndispoTemp={createIndispoTemp}
                   listePeiTourneePrive={listePeiTourneePrive}
+                  listePeiTourneeIcpe={listePeiTourneeIcpe}
                   listePeiTourneePublic={listePeiTourneePublic}
                   createUpdateTournee={createUpdateTournee}
                   handleCloseTournee={handleCloseTournee}

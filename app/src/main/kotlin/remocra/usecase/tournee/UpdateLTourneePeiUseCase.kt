@@ -2,6 +2,7 @@ package remocra.usecase.tournee
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
+import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.PeiRepository
@@ -38,9 +39,11 @@ class UpdateLTourneePeiUseCase @Inject constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: LTourneePeiToInsert) {
         // On vérifie que tous les pei ont bien la même nature deci
-        val codesNatureDeci = peiRepository.getNatureDeciId(element.listLTourneePei?.map { it.peiId }?.toSet() ?: setOf())
-        if (codesNatureDeci.distinct().size > 1) {
-            throw RemocraResponseException(ErrorType.TOURNEE_NATURE_DECI)
+        val codesNatureDeci = peiRepository.getNatureDeci(element.listLTourneePei?.map { it.peiId }?.toSet() ?: setOf())
+        if (codesNatureDeci.size > 1) {
+            if (codesNatureDeci.toSet() != setOf(GlobalConstants.NATURE_DECI_ICPE, GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)) {
+                throw RemocraResponseException(ErrorType.TOURNEE_NATURE_DECI)
+            }
         }
     }
 

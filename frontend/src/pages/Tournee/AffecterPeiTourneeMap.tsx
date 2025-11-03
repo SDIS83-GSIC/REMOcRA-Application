@@ -17,11 +17,13 @@ import TourneePei from "./TourneePei.tsx";
 const AffecterPeiTourneeMap = ({
   listePei,
   isPrive,
+  isIcpe,
   closeVolet,
 }: {
   listePei: { peiId: string; numeroComplet: string }[];
   listePeiNumeroComplet: string[];
   isPrive: boolean;
+  isIcpe: boolean;
   closeVolet: () => void;
 }) => {
   const [create, setCreate] = useState(false);
@@ -81,7 +83,11 @@ const AffecterPeiTourneeMap = ({
       ) : (
         update && (
           <>
-            <Update isPrive={isPrive} setTourneeId={setTourneeId} />
+            <Update
+              isPrive={isPrive}
+              isIcpe={isIcpe}
+              setTourneeId={setTourneeId}
+            />
           </>
         )
       )}
@@ -121,12 +127,16 @@ const AffecterPeiTourneeMap = ({
 
 const Update = ({
   isPrive,
+  isIcpe,
   setTourneeId,
 }: {
   isPrive: boolean;
+  isIcpe: boolean;
   setTourneeId: (id: string) => void;
 }) => {
-  const tournees = useGet(url`/api/tournee/actives?${{ isPrive: isPrive }}`);
+  const tournees = useGet(
+    url`/api/tournee/actives?${{ isPrive: isPrive, isIcpe: isIcpe }}`,
+  );
 
   return (
     <>
