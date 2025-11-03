@@ -36,12 +36,17 @@ class ModuleUseCase : AbstractUseCase() {
                 moduleColonne = it.moduleColonne,
                 moduleLigne = it.moduleLigne,
                 moduleNbDocument = it.moduleNbDocument,
-                listeDocument = moduleDocumentCourrierUseCase.execute(
-                    moduleId = it.moduleId,
-                    params = null,
-                    moduleType = it.moduleType.toString(),
-                    userInfo = userInfo,
-                ),
+                listeDocument =
+                if (listOf(TypeModule.DOCUMENT, TypeModule.COURRIER).contains(it.moduleType)) {
+                    moduleDocumentCourrierUseCase.execute(
+                        moduleId = it.moduleId,
+                        params = null,
+                        moduleType = it.moduleType.toString(),
+                        userInfo = userInfo,
+                    )
+                } else {
+                    listOf()
+                },
                 listeThematiqueId = listeLThematiqueModule.filter { l -> l.moduleId == it.moduleId }.map { it.thematiqueId },
 
             )

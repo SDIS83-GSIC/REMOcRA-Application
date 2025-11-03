@@ -22,6 +22,8 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
     @Inject
     lateinit var thematiqueRepository: ThematiqueRepository
 
+    val defaultNbDocument = 5
+
     fun execute(
         moduleId: UUID,
         moduleType: String,
@@ -34,11 +36,9 @@ class ModuleDocumentCourrierUseCase : AbstractUseCase() {
         val listeThematiqueId = moduleRepository.getModuleThematiqueByModuleId(moduleId).map { it.thematiqueId }
 
         // Puis on va chercher le nombre d'élément à afficher
-        val nbDocument = if (params != null) {
-            moduleRepository.getById(moduleId).moduleNbDocument ?: 5
-        } else {
-            null
-        }
+        // - Si params est null, c'est que l'on provient de l'intégration Module Page d'accueil, donc on prend la valeur indiqué au paramétrage du module
+        // - Sinon, c'est que l'on est dans la page Liste des documents/courriers, donc on prend le limit indiqué dans le params
+        val nbDocument = params?.limit ?: moduleRepository.getById(moduleId).moduleNbDocument ?: defaultNbDocument
 
         // Puis on retourne la liste des documents / courrier
         if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
