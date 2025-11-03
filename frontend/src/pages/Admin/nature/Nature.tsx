@@ -54,7 +54,12 @@ export const NatureForm = () => {
 
   return (
     <FormContainer>
-      <TextInput name="natureCode" label="Code" required={true} />
+      <TextInput
+        name="natureCode"
+        label="Code"
+        required={true}
+        disabled={values.natureProtected}
+      />
       <TextInput name="natureLibelle" label="Libellé" required={true} />
       <SelectForm
         name={"natureTypePei"}
@@ -62,6 +67,7 @@ export const NatureForm = () => {
         label="Type de PEI"
         defaultValue={listTypePei?.find((e) => e.code === values.natureTypePei)}
         required={true}
+        disabled={values.natureProtected}
         setValues={setValues}
       />
       <CheckBoxInput name="natureActif" label="Actif" />

@@ -47,7 +47,8 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: NatureWithDiametres) {
-        if (element.natureProtected!!) {
+        val existingNature = natureRepository.getById(element.natureId)
+        if (existingNature!!.natureCode != element.natureCode && element.natureProtected!!) {
             throw RemocraResponseException(ErrorType.ADMIN_DIAMETRE_IS_PROTECTED)
         }
     }
