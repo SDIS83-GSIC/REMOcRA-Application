@@ -208,6 +208,7 @@ import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
 import ListLayersGroup from "./pages/Admin/gestionAffichageInfoI/ListLayersGroup.tsx";
 import CreateLayerStyle from "./pages/Admin/gestionAffichageInfoI/CreateLayerStyle.tsx";
 import UpdateLayerStyle from "./pages/Admin/gestionAffichageInfoI/UpdateLayerStyle.tsx";
+import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -2265,6 +2266,15 @@ export default [
         element: (
           <Authorization
             Component={ListeTaskPersonnalisee}
+            droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
+          />
+        ),
+      },
+      {
+        path: "tasks-manuelles",
+        element: (
+          <Authorization
+            Component={ExecuteTasksManuelles}
             droits={[TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS]}
           />
         ),
