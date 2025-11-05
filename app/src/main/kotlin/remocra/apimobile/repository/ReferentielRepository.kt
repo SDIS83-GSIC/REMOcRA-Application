@@ -328,7 +328,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 PeiCaracteristique.DIAMETRE_NOMINAL -> if (!jointureDiametre) {
                     onClause =
                         onClause
-                            .innerJoin(DIAMETRE)
+                            .leftJoin(DIAMETRE)
                             .on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
                     jointureDiametre = true
                 }
@@ -376,7 +376,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     if (!jointureDiametre) {
                         onClause =
                             onClause
-                                .innerJoin(DIAMETRE)
+                                .leftJoin(DIAMETRE)
                                 .on(PIBI.DIAMETRE_ID.eq(DIAMETRE.ID))
                         jointureDiametre = true
                     }
