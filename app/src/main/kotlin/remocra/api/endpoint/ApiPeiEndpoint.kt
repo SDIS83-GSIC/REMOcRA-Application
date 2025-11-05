@@ -66,7 +66,7 @@ class ApiPeiEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro INSEE de la commune où se trouve le PEI") @QueryParam("insee") codeInsee: String?,
         @Parameter(description = "Type du PEI : 'PIBI' ou 'PENA'") @QueryParam("type") type: TypePei?,
         @Parameter(description = "Nature du PEI") @QueryParam("codeNature") codeNature: String?,
-        @Parameter(description = "Nature DECI : 'PRIVE', 'PUBLIC', 'CONVENTIONNE'") @QueryParam("codeNatureDECI") codeNatureDECI: String?,
+        @Parameter(description = "Nature DECI : 'PRIVE', 'PUBLIC', 'CONVENTIONNE', 'ICPE', 'ICPE CONVENTIONNE'") @QueryParam("codeNatureDECI") codeNatureDECI: String?,
         @Parameter(description = "Nombre maximum de résultats à retourner (maximum fixé à 200 résultats)") @QueryParam("limit") @Max(value = 200) @DefaultValue("200") limit: Int?,
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("start") offset: Int?,
     ): Response {

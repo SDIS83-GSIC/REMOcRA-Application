@@ -109,7 +109,7 @@ Retourne la liste des PEI en lien avec l'organisme courant. La structure de donn
 - `insee` (optionnel) : Numéro INSEE de la commune où se trouve le PEI
 - `type` (optionnel) : Type du PEI ('PIBI' ou 'PENA')
 - `codeNature` (optionnel) : Nature du PEI
-- `codeNatureDECI` (optionnel) : Nature DECI ('PRIVE', 'PUBLIC', 'CONVENTIONNE')
+- `codeNatureDECI` (optionnel) : Nature DECI ('PRIVE', 'PUBLIC', 'CONVENTIONNE', 'ICPE', 'ICPE_CONVENTIONNE')
 - `limit` (optionnel, max 200, défaut 200) : Nombre maximum de résultats à retourner
 - `start` (optionnel) : Retourne les informations à partir de la n-ième ligne
 
@@ -164,7 +164,7 @@ Modifie les caractéristiques techniques propres au PENA.
 *Base URL :* `/api/deci/referentiel`
 
 ==== `GET /naturesDECI`
-Retourne les types de DECI applicables sur les PEI (publique, privée, privée sous convention).
+Retourne les types de DECI applicables sur les PEI (publique, privée, privée sous convention, ICPE, ICPE conventionnée).
 
 ==== `GET /niveaux`
 Retourne les valeurs de positionnement par rapport au sol possibles pour un PEI.
@@ -302,6 +302,8 @@ Content-Type: application/json; charset=UTF-8
 - `PUBLIC` : DECI publique
 - `PRIVE` : DECI privée
 - `CONVENTIONNE` : DECI privée sous convention
+- `ICPE` : DECI des Installations Classées pour la Protection de l’Environnement
+- `ICPE_CONVENTIONNE` : DECI des Installations Classées pour la Protection de l’Environnement sous convention
 
 == Structures de Données (Objets JSON)
 

@@ -186,8 +186,8 @@ const FormImportShape = () => {
                     </strong>
                     <div className="ms-2">
                       Le code de la nature DECI présent en base dans la table
-                      remocra.nature_deci (PUBLIC, PRIVE, PRIVE_SOUS_CONVENTION
-                      ...)
+                      remocra.nature_deci (PUBLIC, PRIVE, CONVENTIONNE, ICPE,
+                      ICPE_CONVENTIONNE ...)
                     </div>
                   </Row>
                   <Row>
