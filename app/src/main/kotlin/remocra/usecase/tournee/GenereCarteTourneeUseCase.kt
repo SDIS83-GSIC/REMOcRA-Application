@@ -192,8 +192,14 @@ fun addBuffer(
     // Forçage du ratio A4 (paysage ou portrait)
     if (isPaysage) {
         Y = X * RATIO_XY_PAYSAGE
+        if (Y < coordinates.maxY - coordinates.minY) {
+            X = Y * RATIO_XY_PORTRAIT
+        }
     } else {
-        X = Y * RATIO_XY_PORTRAIT
+        X = Y * RATIO_XY_PAYSAGE
+        if (X < coordinates.maxX - coordinates.minX) {
+            Y = X * RATIO_XY_PORTRAIT
+        }
     }
 
     // Respect des dimensions minimales (A4)
