@@ -452,7 +452,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
-            CodeSdis.SDIS_61 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
+            CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique >= 1 && pei.pressionDynamique < 2
             CodeSdis.SDIS_77 -> false
@@ -562,7 +562,7 @@ class CalculDispoUseCase : AbstractUseCase() {
             CodeSdis.SDIS_61 -> {
                 if (pei.pressionDynamique == null || pei.pressionDynamique <= 8) {
                     if (pei.pression != null && pei.pression >= 1 && pei.pression <= 8) {
-                        return pei.debit == null || pei.debit < 30
+                        return pei.debit != null && pei.debit < 30
                     }
                 }
                 if (pei.debit == null) {
@@ -797,11 +797,11 @@ class CalculDispoUseCase : AbstractUseCase() {
                 ) {
                     return true
                 } else if (isDiametre100(pei) && isPressionsBetween1And8(pei) &&
-                    (pei.debit != null && pei.debit > 150)
+                    (pei.debit != null && pei.debit >= 150)
                 ) {
                     return true
                 } else if (isDiametre150(pei) && isPressionsBetween1And8(pei) &&
-                    (pei.debit != null && pei.debit > 270)
+                    (pei.debit != null && pei.debit >= 270)
                 ) {
                     return true
                 }
