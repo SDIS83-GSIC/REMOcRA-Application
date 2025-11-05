@@ -467,6 +467,27 @@ function getColumnPeiByStringArray(
   return column;
 }
 
+function getStatutIndispo(
+  indisponibiliteTemporaireDateDebut: string,
+  indisponibiliteTemporaireDateFin: string,
+) {
+  const dateDebut = new Date(indisponibiliteTemporaireDateDebut);
+  const dateFin = new Date(indisponibiliteTemporaireDateFin);
+  const date = new Date();
+  let statut = "";
+  if (
+    dateDebut < date &&
+    (!indisponibiliteTemporaireDateFin || dateFin > date)
+  ) {
+    statut = "En cours";
+  } else if (dateDebut > date) {
+    statut = "Planifiée";
+  } else if (dateFin < date) {
+    statut = "Terminée";
+  }
+  return statut;
+}
+
 /***********************INDISPO_TEMPORARIE******************/
 export function GetColumnIndisponibiliteTemporaireByStringArray({
   user,
@@ -520,25 +541,14 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
             indisponibiliteTemporaireDateFin,
           }),
           Cell: (value) => {
-            const dateDebut = new Date(
-              value.value.indisponibiliteTemporaireDateDebut,
+            return (
+              <div>
+                {getStatutIndispo(
+                  value.value.indisponibiliteTemporaireDateDebut,
+                  value.value.indisponibiliteTemporaireDateFin,
+                )}
+              </div>
             );
-            const dateFin = new Date(
-              value.value.indisponibiliteTemporaireDateFin,
-            );
-            const date = new Date();
-            let statut = "";
-            if (
-              dateDebut < date &&
-              (!value.value.indisponibiliteTemporaireDateFin || dateFin > date)
-            ) {
-              statut = "En cours";
-            } else if (dateDebut > date) {
-              statut = "Planifiée";
-            } else if (dateFin < date) {
-              statut = "Terminée";
-            }
-            return <div>{statut}</div>;
           },
           Filter: (
             <SelectEnumOption
@@ -652,9 +662,10 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         type: TYPE_BUTTON.UPDATE,
         disable: (v) => {
           return (
-            STATUT_INDISPONIBILITE_TEMPORAIRE[
-              v.original.indisponibiliteTemporaireStatut
-            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE ||
+            getStatutIndispo(
+              v.original.indisponibiliteTemporaireDateDebut,
+              v.original.indisponibiliteTemporaireDateFin,
+            ) === STATUT_INDISPONIBILITE_TEMPORAIRE.TERMINEE ||
             !v.original.isModifiable
           );
         },
@@ -672,9 +683,10 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         type: TYPE_BUTTON.DELETE,
         disable: (v) => {
           return (
-            STATUT_INDISPONIBILITE_TEMPORAIRE[
-              v.original.indisponibiliteTemporaireStatut
-            ] === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS ||
+            getStatutIndispo(
+              v.original.indisponibiliteTemporaireDateDebut,
+              v.original.indisponibiliteTemporaireDateFin,
+            ) === STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS ||
             !v.original.isModifiable
           );
         },
@@ -692,9 +704,10 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           type: TYPE_BUTTON.CONFIRM,
           disable: (v) => {
             return (
-              STATUT_INDISPONIBILITE_TEMPORAIRE[
-                v.original.indisponibiliteTemporaireStatut
-              ] !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
+              getStatutIndispo(
+                v.original.indisponibiliteTemporaireDateDebut,
+                v.original.indisponibiliteTemporaireDateFin,
+              ) !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
             );
           },
           confirmModal: {
