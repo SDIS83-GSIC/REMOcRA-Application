@@ -1,6 +1,12 @@
 package remocra.eventbus.pei
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.guava.GuavaModule
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
@@ -12,6 +18,7 @@ import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventListener
+import remocra.json.NexSisJsonModule
 import remocra.usecase.modeleminimalpei.GetModeleMinimalPeiUseCase
 import remocra.utils.DateUtils
 import java.net.HttpURLConnection
@@ -27,6 +34,17 @@ import java.util.UUID
  */
 class PeiModifiedEventListener @Inject constructor() :
     EventListener<PeiModifiedEvent> {
+    companion object {
+        val nexSisObjectMapper: ObjectMapper = jacksonObjectMapper().apply {
+            // Conf reprise de l'objectMapper "classique", avec un peu de ménage
+            registerModule(Jdk8Module())
+            registerModule(JavaTimeModule())
+            registerModule(GuavaModule())
+            registerModule(NexSisJsonModule())
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            setSerializationInclusion(JsonInclude.Include.ALWAYS)
+        }
+    }
 
     @Inject
     lateinit var visiteRepository: VisiteRepository
@@ -39,9 +57,6 @@ class PeiModifiedEventListener @Inject constructor() :
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
 
     @Inject
     lateinit var dateUtils: DateUtils
@@ -57,8 +72,7 @@ class PeiModifiedEventListener @Inject constructor() :
     }
 
     /**
-     * Notifie NexSIS d'un changement effectué sur un PEI.
-     * Il est possible, presque certain, que seul un changement de dispo nécessite une notification, à voir / affiner
+     * Notifie NexSIS d'un changement effectué sur un PEI (C, U, D).
      */
     private fun notifyNexSIS(event: PeiModifiedEvent) {
         if (appSettings.nexsis.enabled) {
@@ -70,6 +84,9 @@ class PeiModifiedEventListener @Inject constructor() :
         }
     }
 
+    /**
+     * Notifie NexSIS d'une suppression de PEI dans REMOcRA.
+     */
     private fun deletePei(event: PeiModifiedEvent) {
         executeRequest(
             objectAsString = null,
@@ -82,22 +99,29 @@ class PeiModifiedEventListener @Inject constructor() :
      * Crée l'objet data identique commun à la création et la modification.
      */
     private fun createData(peiId: UUID): ModeleMinimalPeiData {
-        return getModeleMinimalPeiUseCase.execute(peiId)
+        return getModeleMinimalPeiUseCase.execute(peiId = peiId)
     }
 
+    /**
+     * Notifie NexSIS de la création d'un PEI dans REMOcRA.
+     */
     private fun createPei(event: PeiModifiedEvent) {
         val data = createData(event.peiId)
         executeRequest(
-            objectAsString = objectMapper.writeValueAsString(data),
+            objectAsString = nexSisObjectMapper.writeValueAsString(data),
             endpoint = "/sig/point-eau-incendie",
             typeOperation = event.typeOperation,
         )
     }
 
+    /**
+     * Notifie NexSIS de la modification d'un PEI dans REMOcRA.
+     */
     private fun updatePei(event: PeiModifiedEvent) {
         val data = createData(event.peiId)
+
         executeRequest(
-            objectAsString = objectMapper.writeValueAsString(data),
+            objectAsString = nexSisObjectMapper.writeValueAsString(data),
             endpoint = "/sig/point-eau-incendie/${event.peiId}",
             typeOperation = event.typeOperation,
         )
@@ -151,7 +175,7 @@ class PeiModifiedEventListener @Inject constructor() :
             HttpURLConnection.HTTP_NO_CONTENT,
             -> logger.info("Notification NexSIS ok !")
 
-            HttpURLConnection.HTTP_BAD_REQUEST -> logger.error("400 : Bad request")
+            HttpURLConnection.HTTP_BAD_REQUEST -> logger.error("400 : Bad request - ${response.body()}")
             HttpURLConnection.HTTP_UNAUTHORIZED -> logger.error("401 : Unauthorized")
             HttpURLConnection.HTTP_FORBIDDEN -> logger.error("403 : Forbidden")
             else -> logger.error("Erreur inconnue : ${response.statusCode()}")

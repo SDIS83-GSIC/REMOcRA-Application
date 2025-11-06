@@ -20,6 +20,10 @@ object JsonModule : Module {
         binder.registerResource<JacksonJsonProvider>()
     }
 
+    /**
+     * Fournit un [ObjectMapper] configuré pour l'application.
+     * En cas de modification, penser à mettre à jour aussi [remocra.eventbus.pei.PeiModifiedEventListener.nexSisObjectMapper].
+     */
     @Provides
     @Singleton
     fun provideObjectMapper(): ObjectMapper =
