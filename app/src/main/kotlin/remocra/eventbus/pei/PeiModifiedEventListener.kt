@@ -12,7 +12,8 @@ import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
-import remocra.data.ModeleMinimalPeiData
+import remocra.data.ModeleMinimalPeiForNexsisData
+import remocra.data.ModeleMinimalPeiForNexsisJsonData
 import remocra.data.enums.Environment
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
@@ -98,8 +99,8 @@ class PeiModifiedEventListener @Inject constructor() :
     /**
      * Crée l'objet data identique commun à la création et la modification.
      */
-    private fun createData(peiId: UUID): ModeleMinimalPeiData {
-        return getModeleMinimalPeiUseCase.execute(peiId = peiId, forNexsis = true)
+    private fun createData(peiId: UUID): ModeleMinimalPeiForNexsisJsonData {
+        return (getModeleMinimalPeiUseCase.execute(peiId = peiId, forNexsis = true) as ModeleMinimalPeiForNexsisData).convertFormatNexsis()
     }
 
     /**
