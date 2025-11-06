@@ -16,6 +16,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_Distance
+import remocra.utils.ST_Intersects
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -52,7 +53,12 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .from(COMMUNE)
             .join(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneId))
-            .where(ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+            .where(
+                DSL.or(
+                    ST_Within(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
+                    ST_Intersects(COMMUNE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
+                ),
+            )
             .applyCommuneOrderBy()
             .fetchInto()
 

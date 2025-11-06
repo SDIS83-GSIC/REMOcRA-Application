@@ -59,6 +59,18 @@ fun ST_Within(
     DSL.field("ST_Within({0}, {1})", Boolean::class.java, geometryField, geometryField2)
 
 /**
+ * Retourne true si geometryField et geometryField2 s'intersectent, se croisent
+ * @param geometryField champ de type Geometry
+ * @param geometryField2 champ de type Geometry
+ * @return Champ de type Boolean
+ */
+fun ST_Intersects(
+    geometryField: Field<Geometry?>,
+    geometryField2: Field<Geometry?>,
+): Field<Boolean?> =
+    DSL.field("ST_Intersects({0}, {1})", Boolean::class.java, geometryField, geometryField2)
+
+/**
  * Transforme une géométrie en fonction d'un SRID
  * @param geometryField champ de type Geometry
  * @param srid SRID cible
