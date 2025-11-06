@@ -16,7 +16,6 @@ import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.exception.RemocraResponseException
-import remocra.usecase.AbstractUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import remocra.utils.limitOffset
@@ -25,11 +24,11 @@ import java.util.UUID
 class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val tracabiliteRepository: TracabiliteRepository,
-    private val peiRepository: PeiRepository,
+    override val peiRepository: PeiRepository,
     private val createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase,
     private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
     private val objectMapper: ObjectMapper,
-) : AbstractUseCase() {
+) : AbstractApiPeiUseCase(peiRepository) {
 
     fun getAll(codeOrganisme: String?, numeroComplet: String?, statut: String?, limit: Int?, offset: Int?): Collection<ApiIndispoTemporaireData> {
         // On vérifie que le statut de l'indisponibilité est conforme
@@ -103,19 +102,27 @@ class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
     fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, userInfo: WrappedUserInfo): Result {
         return createIndisponibiliteTemporaireUseCase.execute(
             userInfo,
-            getIndisponibiliteTemporaiteData(apiIndispoTempFormData),
+            getIndisponibiliteTemporaiteData(apiIndispoTempFormData, userInfo),
         )
     }
 
     fun updateIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID, userInfo: WrappedUserInfo): Result {
         return updateIndisponibiliteTemporaireUseCase.execute(
             userInfo,
-            getIndisponibiliteTemporaiteData(apiIndispoTempFormData, indispoTemporaireId),
+            getIndisponibiliteTemporaiteData(apiIndispoTempFormData, userInfo, indispoTemporaireId),
         )
     }
 
-    private fun getIndisponibiliteTemporaiteData(apiIndispoTempFormData: ApiIndispoTempFormData, indispoTemporaireId: UUID? = null): IndisponibiliteTemporaireData {
+    private fun getIndisponibiliteTemporaiteData(apiIndispoTempFormData: ApiIndispoTempFormData, userInfo: WrappedUserInfo, indispoTemporaireId: UUID? = null): IndisponibiliteTemporaireData {
         val listePeiId = peiRepository.getIdByNumeroComplet(apiIndispoTempFormData.listeNumeroPei)
+        listePeiId.forEach {
+            if (!isPeiAccessible(it, userInfo)) {
+                throw RemocraResponseException(
+                    ErrorType.FORBIDDEN,
+                )
+            }
+        }
+
         return IndisponibiliteTemporaireData(
             indisponibiliteTemporaireId = indispoTemporaireId ?: UUID.randomUUID(),
             indisponibiliteTemporaireMotif = apiIndispoTempFormData.motif,

@@ -24,6 +24,13 @@ class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
             return
         }
 
+        /** Si vient de l'API, l'accessibilité aux PEI est gérée différemment :
+         * @see getPeiAccessibilite dans AbstractApiPeiUseCase
+         * */
+        if (userInfo.organismeInfo != null) {
+            return
+        }
+
         if (userInfo.nom != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
             if (userInfo.zoneCompetence == null) {
                 throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
