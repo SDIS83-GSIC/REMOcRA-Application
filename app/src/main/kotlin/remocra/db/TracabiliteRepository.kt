@@ -55,6 +55,13 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
             .orderBy(TRACABILITE.OBJET_ID, TRACABILITE.DATE.desc())
             .fetchInto()
 
+    fun getTracabilitePei(peiId: UUID): Collection<Tracabilite> =
+        dsl.selectFrom(TRACABILITE)
+            .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))
+            .and(TRACABILITE.OBJET_ID.eq(peiId))
+            .orderBy(TRACABILITE.DATE.desc())
+            .fetchInto()
+
     fun getPreviousPeiTracaEvent(peiId: UUID, maxDate: ZonedDateTime): Tracabilite? =
         dsl.selectFrom(TRACABILITE)
             .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))

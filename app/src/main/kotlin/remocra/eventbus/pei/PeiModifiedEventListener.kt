@@ -99,7 +99,7 @@ class PeiModifiedEventListener @Inject constructor() :
      * Crée l'objet data identique commun à la création et la modification.
      */
     private fun createData(peiId: UUID): ModeleMinimalPeiData {
-        return getModeleMinimalPeiUseCase.execute(peiId = peiId)
+        return getModeleMinimalPeiUseCase.execute(peiId = peiId, forNexsis = true)
     }
 
     /**

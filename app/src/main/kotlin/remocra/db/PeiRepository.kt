@@ -910,6 +910,8 @@ class PeiRepository
             PEI.DISPONIBILITE_TERRESTRE,
             PEI.NUMERO_VOIE,
             PEI.VOIE_TEXTE,
+            PEI.VOIE_ID,
+            VOIE.LIBELLE,
             PEI.SUFFIXE_VOIE,
             PEI.EN_FACE,
             PEI.COMPLEMENT_ADRESSE,
