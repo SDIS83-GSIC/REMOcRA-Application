@@ -1118,6 +1118,24 @@ const AdminPei = ({
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
+            name="pei.peiRenouvellementCtrlIcpe"
+            label="Nombre de jours pour le renouvellement des contrôles ICPE"
+            tooltipText={
+              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementCtrlIcpeConventionne"
+            label="Nombre de jours pour le renouvellement des contrôles ICPE conventionnés"
+            tooltipText={
+              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
             name="pei.peiRenouvellementRecoPrive"
             label="Nombre de jours pour le renouvellement des reconnaissances privées"
             tooltipText={
@@ -1129,6 +1147,24 @@ const AdminPei = ({
           <PositiveNumberInput
             name="pei.peiRenouvellementRecoPublic"
             label="Nombre de jours pour le renouvellement des reconnaissances publiques"
+            tooltipText={
+              "Permet de calculer la prochaine date de la ROP par rapport à la dernière saisie"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementRecoIcpe"
+            label="Nombre de jours pour le renouvellement des reconnaissances ICPE"
+            tooltipText={
+              "Permet de calculer la prochaine date de la ROP par rapport à la dernière saisie"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiRenouvellementRecoIcpeConventionne"
+            label="Nombre de jours pour le renouvellement des reconnaissances ICPE conventionnés"
             tooltipText={
               "Permet de calculer la prochaine date de la ROP par rapport à la dernière saisie"
             }
