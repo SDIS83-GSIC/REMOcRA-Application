@@ -96,6 +96,12 @@ open class VPeiVisiteDate(
                        WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_PUBLIC'::text))
+                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                          FROM parametre
+                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_ICPE'::text))
+                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE_CONVENTIONNE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                          FROM parametre
+                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_ICPE_CONVENTIONNE'::text))
                        ELSE NULL::integer
                    END AS delta_days_reco,
                    CASE
@@ -105,6 +111,12 @@ open class VPeiVisiteDate(
                        WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
                           FROM parametre
                          WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_PUBLIC'::text))
+                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                          FROM parametre
+                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_ICPE'::text))
+                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE_CONVENTIONNE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
+                          FROM parametre
+                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_ICPE_CONVENTIONNE'::text))
                        ELSE NULL::integer
                    END AS delta_days_ctp
               FROM nature_deci nd_1
