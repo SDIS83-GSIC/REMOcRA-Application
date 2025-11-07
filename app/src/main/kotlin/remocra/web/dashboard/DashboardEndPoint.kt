@@ -106,6 +106,16 @@ class DashboardEndPoint : AbstractEndpoint() {
     fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds, securityContext.userInfo)).build()
 
     @GET
+    @Path("/get-list-data-query/{queryId}")
+    @RequireDroits([Droit.DASHBOARD_A, Droit.DASHBOARD_R])
+    fun getDataQueryList(@PathParam("queryId") queryId: UUID): Response = Response.ok(
+        getDashboardQueryUseCase.getDataQuerys(
+            QueryIds(listOf(queryId)),
+            securityContext.userInfo,
+        ),
+    ).build()
+
+    @GET
     @Path("/get-query-list-all")
     @RequireDroits([Droit.DASHBOARD_R])
     fun getQueryListAllComponents(): Response = Response.ok(dashboardRepository.getQueryListAllComponents()).build()

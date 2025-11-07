@@ -1,85 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { IconGaugeComponent } from "../../components/Icon/Icon.tsx";
-import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
+import url from "../../module/fetch.tsx";
 import {
   ComponentDashboard,
   DashboardComponentConfig,
   DashboardItemParam,
-  formatData,
-  QueryDataFormated,
 } from "./Constants.tsx";
 import DashboardItem from "./DashboardAdminDynamicConfig/DashboardItem.tsx";
 
 const ComponentBoardList = () => {
-  const { error: errorToast } = useToastContext();
-
   const [dashboardUser, setDashoardUser] =
     useState<DashboardItemParam | null>(); // Liste des onglets dashboard
-  const [listQuerysData, setListQuerysData] = useState<
-    QueryDataFormated[] | null
-  >(); // Liste des datas des requêtes
   const [componentsListDashboard, setComponentsListDashboard] =
     useState<ComponentDashboard[]>(); // Composant sélectionner dans la grid
 
   const [numberRowGrid, setNumberRowGrid] = useState<number>(0);
   const heightRow = 200;
 
-  const urlApiDataQuerys = url`/api/dashboard/get-list-data-query/`;
-
   // Récupère tous les composants en base liés au profil utilisateur
   const fetchDataDashboard = useGet(
     url`/api/dashboard/get-dashboard-user/`,
     {},
-  );
-
-  // Récupère en base les données liées à une requête et les set sur les composants
-  const fetchDataQuery = useCallback(
-    async (queryIds?: string[] | undefined) => {
-      (
-        await fetch(
-          urlApiDataQuerys,
-          getFetchOptions({
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dashboardQueryIds: queryIds }),
-          }),
-        )
-      )
-        .json()
-        .then((resData) => {
-          const newActiveQuerysData: QueryDataFormated[] = [];
-          // Formatte et stocke les datas des requêtes SQL pour usage des composants
-          resData.forEach((dataQuery: any) => {
-            const dataFormatted = formatData(dataQuery);
-            newActiveQuerysData.push({
-              ...dataQuery,
-              id: dataQuery.queryId,
-              data: dataFormatted,
-            });
-          });
-          setListQuerysData(newActiveQuerysData);
-
-          // Set les datas dans chaque composant
-          const newComponentList = componentsListDashboard?.map(
-            (component) => ({
-              ...component,
-              data: newActiveQuerysData.find(
-                (query) => query.id === component.queryId,
-              )?.data,
-            }),
-          );
-
-          setComponentsListDashboard(newComponentList);
-        })
-        .catch((reason: string) => {
-          errorToast(reason);
-        });
-    },
-    [componentsListDashboard, errorToast, urlApiDataQuerys],
   );
 
   useEffect(() => {
@@ -145,19 +89,6 @@ const ComponentBoardList = () => {
       fetchDataDashboard.run();
     }
   }, [dashboardUser, fetchDataDashboard]);
-
-  // Récupère les datas des requêtes et les set sur les composants
-  useEffect(() => {
-    if (!listQuerysData && componentsListDashboard) {
-      const queryIds: string[] = [];
-      componentsListDashboard.map((component) => {
-        if (!queryIds.includes(component.queryId)) {
-          queryIds.push(component.queryId);
-        }
-      });
-      fetchDataQuery(queryIds);
-    }
-  }, [componentsListDashboard, fetchDataQuery, listQuerysData]);
 
   return (
     <>
