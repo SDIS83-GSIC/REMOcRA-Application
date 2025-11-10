@@ -8,7 +8,12 @@ type SortableAddRemoveComponentType = {
   setData: React.Dispatch<React.SetStateAction<any[]>>;
   nomListe: string;
   defaultElement: any;
-  createComponentToRepeat: (index: number, listeElements: any[]) => ReactNode;
+  typeModule: string | null;
+  createComponentToRepeat: (
+    index: number,
+    listeElements: any[],
+    typeModule: string | null,
+  ) => ReactNode;
 };
 
 const SortableAddRemoveComponent = ({
@@ -16,6 +21,7 @@ const SortableAddRemoveComponent = ({
   setData,
   defaultElement,
   createComponentToRepeat,
+  typeModule,
 }: SortableAddRemoveComponentType) => {
   const { values } = useFormikContext();
 
@@ -37,6 +43,7 @@ const SortableAddRemoveComponent = ({
         <SortableContext items={values[nomListe]}>
           <AddRemoveComponent
             name={nomListe}
+            typeModule={typeModule}
             createComponentToRepeat={createComponentToRepeat}
             listeElements={values[nomListe]}
             defaultElement={{

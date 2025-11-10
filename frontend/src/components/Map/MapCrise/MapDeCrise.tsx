@@ -123,12 +123,16 @@ const MapCrise = ({
     showCreateEvent,
     showListEvent,
     showListDocument,
+    showPersonalReports,
+    setShowPersonalReports,
     setShowListEvent,
     setShowCreateEvent,
     setShowListDocument,
     listeEventId,
     setSousTypeElement,
     geometryElement,
+    setGeometryReportCode,
+    reportGeometryElement,
     sousTypeElement,
   } = useToolbarCriseContext({
     map,
@@ -191,6 +195,7 @@ const MapCrise = ({
         mapToolbarRef.current &&
         dataEvenementLayer && (
           <MapToolbarCrise
+            setGeometryReportCode={setGeometryReportCode}
             state={state}
             map={map}
             criseId={criseId}
@@ -198,6 +203,7 @@ const MapCrise = ({
             listeEventId={listeEventId}
             toggleTool={toggleTool}
             activeTool={activeTool}
+            reportGeometryElement={reportGeometryElement}
             geometryElement={geometryElement}
             workingLayer={workingLayer}
             setSousTypeElement={setSousTypeElement}
@@ -209,6 +215,8 @@ const MapCrise = ({
             setShowListEvent={setShowListEvent}
             setShowCreateEvent={setShowCreateEvent}
             setShowListDocument={setShowListDocument}
+            setShowPersonalReports={setShowPersonalReports}
+            showPersonalReports={showPersonalReports}
             variant={variant}
           />
         )

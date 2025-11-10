@@ -26,6 +26,9 @@ enum class TypeParametreRapportCourrier(@get:JvmName("literal") public val liter
     NUMBER_INPUT("NUMBER_INPUT"),
     SELECT_INPUT("SELECT_INPUT"),
     TEXT_INPUT("TEXT_INPUT"),
+    POINT("POINT"),
+    POLYGON("POLYGON"),
+    LINESTRING("LINESTRING"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

@@ -21,12 +21,14 @@ type SortableParametre = {
   id: string;
   index: number;
   listeElements: any[];
+  typeModule?: string | null;
 };
 
 const SortableParametre: FC<SortableParametre> = ({
   id, // La propriété id doit impérativement s'appeler id
   listeElements,
   index,
+  typeModule,
 }) => {
   const { setNodeRef, listeners, transform, transition } = useSortable({ id });
 
@@ -34,17 +36,20 @@ const SortableParametre: FC<SortableParametre> = ({
     transform: CSS.Transform.toString(transform),
     transition,
   };
-  // Faire une card avec les différents champs de formulaire
 
-  const listeTypeParametre = Object.entries(
-    TYPE_PARAMETRE_RAPPORT_COURRIER,
-  ).map(([key, value]) => {
-    return {
-      id: key,
-      code: value,
-      libelle: value,
-    };
-  });
+  let entries = Object.entries(TYPE_PARAMETRE_RAPPORT_COURRIER);
+
+  if (typeModule !== "CRISE") {
+    entries = entries.filter(
+      ([key]) => !["POINT", "POLYGON", "LINESTRING"].includes(key),
+    );
+  }
+
+  const listeTypeParametre = entries.map(([key, value]) => ({
+    id: key,
+    code: value,
+    libelle: value,
+  }));
 
   const listParamUnavailable = userParamRapportCourrier;
   const { values, setValues, setFieldValue } = useFormikContext();
@@ -217,9 +222,11 @@ const SortableParametre: FC<SortableParametre> = ({
 export function createComponentRapportPersoToRepeat(
   index: number,
   listeElements: any[],
+  typeModule?: string | null,
 ) {
   return (
     <SortableParametre
+      typeModule={typeModule}
       index={index}
       listeElements={listeElements}
       id={listeElements[index].id}

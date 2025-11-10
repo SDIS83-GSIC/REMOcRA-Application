@@ -267,6 +267,7 @@ const RapportPersonnalise = () => {
           <Row className="mt-3">
             <Col>
               <SortableAddRemoveComponent
+                typeModule={values.rapportPersonnaliseModule}
                 createComponentToRepeat={createComponentRapportPersoToRepeat}
                 nomListe={"listeRapportPersonnaliseParametre"}
                 setData={setListeParametres}

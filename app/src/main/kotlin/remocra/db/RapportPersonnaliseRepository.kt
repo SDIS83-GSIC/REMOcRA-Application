@@ -21,6 +21,7 @@ import remocra.db.jooq.remocra.tables.pojos.RapportPersonnaliseParametre
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.MODULE
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE
 import remocra.db.jooq.remocra.tables.references.RAPPORT_PERSONNALISE_PARAMETRE
@@ -280,8 +281,16 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
     fun getListeRapportPersonnalise(
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
-    ): Collection<RapportPersonnaliseLightData> =
-        dsl.selectDistinct(
+        isCriseOnly: Boolean = false,
+    ): Collection<RapportPersonnaliseLightData> {
+        val moduleCondition =
+            if (isCriseOnly) {
+                RAPPORT_PERSONNALISE.MODULE.eq(TypeModule.CRISE)
+            } else {
+                RAPPORT_PERSONNALISE.MODULE.notEqual(TypeModule.CRISE)
+            }
+
+        return dsl.selectDistinct(
             RAPPORT_PERSONNALISE.ID.`as`("id"),
             RAPPORT_PERSONNALISE.LIBELLE.`as`("libelle"),
             RAPPORT_PERSONNALISE.DESCRIPTION.`as`("description"),
@@ -290,7 +299,11 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .leftJoin(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
             .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
             .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
-            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
+            .on(
+                L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(
+                    L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID,
+                ),
+            )
             .leftJoin(UTILISATEUR)
             .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
             .leftJoin(ORGANISME)
@@ -304,8 +317,11 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                     UTILISATEUR.ID.eq(utilisateurId),
                     isSuperAdmin = isSuperAdmin,
                 ),
-            ).orderBy(RAPPORT_PERSONNALISE.LIBELLE)
+            )
+            .and(moduleCondition)
+            .orderBy(RAPPORT_PERSONNALISE.LIBELLE)
             .fetchInto()
+    }
 
     fun getRapportPersonnaliseForm(
         rapportPersonnaliseId: UUID,

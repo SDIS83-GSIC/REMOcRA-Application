@@ -27,6 +27,7 @@ const AddRemoveComponent = ({
   label,
   disabled,
   readOnly,
+  typeModule,
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
@@ -75,7 +76,7 @@ const AddRemoveComponent = ({
                   key={index}
                   className="d-flex bg-light m-4 p-3 border rounded-3 align-items-center"
                 >
-                  {createComponentToRepeat(index, listeElements)}
+                  {createComponentToRepeat(index, listeElements, typeModule)}
                   {
                     // On n'affiche le bouton supprimer que si la propriété "protected" ne vaut pas TRUE
                     !readOnly &&
@@ -113,7 +114,11 @@ const AddRemoveComponent = ({
 
 type AddRemoveComponentType = {
   name: string;
-  createComponentToRepeat: (index: number, listeElements: any[]) => ReactNode;
+  createComponentToRepeat: (
+    index: number,
+    listeElements: any[],
+    typeModule: string | null,
+  ) => ReactNode;
   protectedProperty?: string;
   defaultElement?: any;
   listeElements: any[];
@@ -121,6 +126,7 @@ type AddRemoveComponentType = {
   label?: string;
   disabled?: boolean;
   readOnly?: boolean;
+  typeModule?: string | null;
 };
 
 export default AddRemoveComponent;

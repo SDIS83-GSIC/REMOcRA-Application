@@ -147,6 +147,12 @@ class RequeteSqlUtils {
                     requete = requete.replace(it.rapportCourrierParametreCode, testParametreRequeteSql(userInfo, it).firstOrNull()?.id ?: "null")
                 TypeParametreRapportCourrier.TEXT_INPUT ->
                     requete = requete.replace(it.rapportCourrierParametreCode, it.rapportCourrierParametreValeurDefaut ?: "")
+                TypeParametreRapportCourrier.POINT ->
+                    requete = requete.replace(it.rapportCourrierParametreCode, "POINT EMPTY")
+                TypeParametreRapportCourrier.POLYGON ->
+                    requete = requete.replace(it.rapportCourrierParametreCode, "POLYGON EMPTY")
+                TypeParametreRapportCourrier.LINESTRING ->
+                    requete = requete.replace(it.rapportCourrierParametreCode, "LINESTRING EMPTY")
             }
         }
 

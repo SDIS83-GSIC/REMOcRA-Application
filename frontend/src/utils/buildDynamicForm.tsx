@@ -12,6 +12,7 @@ import {
   TextInput,
 } from "../components/Form/Form.tsx";
 import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../Entities/RapportCourrierEntity.tsx";
+import { IconLine, IconPoint, IconPolygon } from "../components/Icon/Icon.tsx";
 
 export type DynamicFormWithParametre = {
   dynamicFormId: string;
@@ -35,6 +36,7 @@ function buildDynamicForm(
   element: DynamicFormParametreFront,
   values: any,
   setFieldValue: (name: string, e: any) => void,
+  onGeometrySelect?: (geometryType: string, geometryCode: string) => void,
 ) {
   switch (TYPE_PARAMETRE_RAPPORT_COURRIER[element.dynamicFormParametreType]) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.CHECKBOX_INPUT:
@@ -103,6 +105,60 @@ function buildDynamicForm(
           tooltipText={element.dynamicFormParametreDescription}
         />
       );
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.POLYGON:
+      return (
+        <Button
+          className={"mt-2"}
+          key={`polygon`}
+          onClick={() => {
+            if (onGeometrySelect) {
+              onGeometrySelect(
+                element.dynamicFormParametreType,
+                element.dynamicFormParametreCode,
+              );
+            }
+          }}
+        >
+          <IconPolygon />
+          Dessiner un polygone
+        </Button>
+      );
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.LINESTRING:
+      return (
+        <Button
+          className={"mt-2"}
+          key={`linestring`}
+          onClick={() => {
+            if (onGeometrySelect) {
+              onGeometrySelect(
+                element.dynamicFormParametreType,
+                element.dynamicFormParametreCode,
+              );
+            }
+          }}
+        >
+          <IconLine />
+          Dessiner une ligne
+        </Button>
+      );
+    case TYPE_PARAMETRE_RAPPORT_COURRIER.POINT:
+      return (
+        <Button
+          className={"mt-2"}
+          key={`point`}
+          onClick={() => {
+            if (onGeometrySelect) {
+              onGeometrySelect(
+                element.dynamicFormParametreType,
+                element.dynamicFormParametreCode,
+              );
+            }
+          }}
+        >
+          <IconPoint />
+          Dessiner un point
+        </Button>
+      );
     default:
       return;
   }
@@ -120,6 +176,7 @@ const GenererForm = ({
   contexteLibelle,
   reference = false,
   url,
+  onGeometrySelect,
 }: {
   listeIdLibelleDescription: {
     id: string;
@@ -129,6 +186,7 @@ const GenererForm = ({
   contexteLibelle: string;
   reference?: boolean;
   url: string;
+  onGeometrySelect?: (geometryType: string, geometryCode: string) => void;
 }) => {
   const { setFieldValue, values } = useFormikContext();
   const [objetId, setObjetId] = useState(values.dynamicFormId);
@@ -196,7 +254,12 @@ const GenererForm = ({
         ) : (
           listeWithParametres?.listeParametre?.map(
             (element: DynamicFormParametreFront) => {
-              return buildDynamicForm(element, values, setFieldValue);
+              return buildDynamicForm(
+                element,
+                values,
+                setFieldValue,
+                onGeometrySelect,
+              );
             },
           )
         )}

@@ -4,6 +4,9 @@ export enum TYPE_PARAMETRE_RAPPORT_COURRIER {
   NUMBER_INPUT = "Champ nombre",
   SELECT_INPUT = "Liste déroulante",
   TEXT_INPUT = "Champ texte",
+  POINT = "Point",
+  POLYGON = "Polygone",
+  LINESTRING = "Ligne",
 }
 
 export const userParamRapportCourrier = [

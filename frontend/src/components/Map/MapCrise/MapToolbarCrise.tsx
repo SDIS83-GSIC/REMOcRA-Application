@@ -4,7 +4,7 @@ import { Draw, Modify } from "ol/interaction";
 import Map from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { forwardRef, Key, useMemo, useState } from "react";
+import { forwardRef, Key, useEffect, useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
@@ -28,6 +28,7 @@ import {
   IconLine,
   IconList,
   IconMoveObjet,
+  IconCriseRapportPersonnalise,
   IconPoint,
   IconPolygon,
 } from "../../Icon/Icon.tsx";
@@ -39,6 +40,7 @@ import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
 import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
+import ExecuteCriseRapportPersonnalise from "../../../pages/ModuleCrise/Document/ExecuteCriseRapportPersonnalise.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -72,11 +74,14 @@ export const useToolbarCriseContext = ({
   const [showListEvent, setShowListEvent] = useState(false);
   const [showListDocument, setShowListDocument] = useState(false);
   const { success: successToast, error: errorToast } = useToastContext();
+  const [showPersonalReports, setShowPersonalReports] = useState(false);
+  const [geometryReportCode, setGeometryReportCode] = useState<string>("");
 
   const handleCloseEvent = () => {
     setShowListDocument(false);
     setShowListEvent(false);
     setShowCreateEvent(false);
+    setShowPersonalReports(false);
     workingLayer.getSource().clear();
     setGeometryElement(null);
   };
@@ -86,6 +91,18 @@ export const useToolbarCriseContext = ({
   const [listeEventId] = useState<string[]>([]);
   const [sousTypeElement, setSousTypeElement] = useState<string | null>(null);
   const [geometryElement, setGeometryElement] = useState<string | null>(null);
+  const [reportGeometryElement, setReportGeometryElement] = useState<
+    Record<string, string>
+  >({});
+  const [wkt, setWkt] = useState<string | null>(null); // état pour le wkt
+
+  useEffect(() => {
+    if (geometryReportCode && wkt) {
+      setReportGeometryElement((prev) => {
+        return { ...(prev ?? {}), [geometryReportCode]: wkt };
+      });
+    }
+  }, [geometryReportCode, wkt]);
 
   const tools = useMemo(() => {
     if (!map) {
@@ -158,7 +175,10 @@ export const useToolbarCriseContext = ({
     /**
      * Fonction pour dessiner des types de géométries
      */
-    function createDrawInteraction(geometryType: string) {
+    function createDrawInteraction(
+      geometryType: string,
+      isReport: boolean = false,
+    ) {
       const drawCtrl = new Draw({
         source: workingLayer.getSource(),
         type: geometryType,
@@ -170,14 +190,20 @@ export const useToolbarCriseContext = ({
         },
       });
       drawCtrl.on("drawend", async (event) => {
-        setGeometryElement(
-          `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(event.feature)}`,
-        );
-        setShowCreateEvent(true);
+        const wkt = `SRID=${map.getView().getProjection().getCode().split(":").pop()};${new WKT().writeFeature(event.feature)}`;
+
+        setGeometryElement(wkt);
+        setWkt(wkt);
+
+        if (!isReport) {
+          setShowCreateEvent(true);
+        }
       });
       drawCtrl.on("drawstart", async () => {
         // Avant de redessiner un point, on supprime les autres points
-        workingLayer.getSource().clear();
+        if (!isReport) {
+          workingLayer.getSource().clear();
+        }
       });
       return drawCtrl;
     }
@@ -199,9 +225,38 @@ export const useToolbarCriseContext = ({
       }
     }
 
+    function toggleReportInteraction(
+      active: boolean = false,
+      draw: Draw | Modify,
+    ) {
+      const idx = map?.getInteractions().getArray().indexOf(draw);
+      if (active) {
+        if (idx === -1) {
+          map.addInteraction(draw);
+        }
+        if (draw instanceof Modify) {
+          desactiveMoveMap(map);
+        }
+      }
+    }
+
     const drawPoint = createDrawInteraction("Point");
     const drawPolygon = createDrawInteraction("Polygon"); // remplit
     const drawLineString = createDrawInteraction("LineString");
+
+    const drawReportPoint = createDrawInteraction("Point", true);
+    const drawReportPolygon = createDrawInteraction("Polygon", true);
+    const drawReportLineString = createDrawInteraction("LineString", true);
+
+    function toggleCreateReportPoint(active = false) {
+      toggleReportInteraction(active, drawReportPoint);
+    }
+    function toggleCreateReportPolygon(active = false) {
+      toggleReportInteraction(active, drawReportPolygon);
+    }
+    function toggleCreateReportLinestring(active = false) {
+      toggleReportInteraction(active, drawReportLineString);
+    }
 
     /**
      * Permet de dessiner un point pour la création des évènements
@@ -232,6 +287,16 @@ export const useToolbarCriseContext = ({
     }
 
     const tools = {
+      "create-report-point": {
+        action: toggleCreateReportPoint,
+      },
+      "create-report-polygon": {
+        action: toggleCreateReportPolygon,
+      },
+      "create-report-linestring": {
+        action: toggleCreateReportLinestring,
+      },
+
       "create-point": {
         action: toggleCreatePointEvenement,
       },
@@ -260,9 +325,13 @@ export const useToolbarCriseContext = ({
     handleCloseTracee,
     showTracee,
     geometryElement,
+    reportGeometryElement,
     listeEventId,
     setSousTypeElement,
     sousTypeElement,
+    showPersonalReports,
+    setShowPersonalReports,
+    setGeometryReportCode,
   };
 };
 
@@ -272,6 +341,7 @@ const MapToolbarCrise = forwardRef(
     state,
     criseId,
     geometryElement,
+    reportGeometryElement,
     handleCloseEvent,
     showCreateEvent,
     showListEvent,
@@ -283,6 +353,9 @@ const MapToolbarCrise = forwardRef(
     setShowListDocument,
     setShowListEvent,
     setShowCreateEvent,
+    setShowPersonalReports,
+    setGeometryReportCode,
+    showPersonalReports,
     variant = "primary",
   }: {
     map?: Map;
@@ -295,11 +368,16 @@ const MapToolbarCrise = forwardRef(
     showCreateEvent: boolean;
     showListEvent: boolean;
     showListDocument: boolean;
+    showPersonalReports: boolean;
     setGeometryElement: (object: object) => void;
+    setReportGeometryElement: (object: object) => void;
     setShowListDocument: (b: boolean) => void;
     setShowListEvent: (b: boolean) => void;
     setShowCreateEvent: (b: boolean) => void;
+    setGeometryReportCode: (code: string) => void;
+    setShowPersonalReports: (b: boolean) => void;
     geometryElement: string | null;
+    reportGeometryElement: any;
     toggleTool: (toolId: string) => void;
     dataCriseLayer: any;
     setSousTypeElement: (object: object) => void;
@@ -417,6 +495,21 @@ const MapToolbarCrise = forwardRef(
             </Button>
           </TooltipCustom>
 
+          <TooltipCustom
+            tooltipId="crise-custom-report"
+            tooltipText="Exectuer des rapports personnalisés"
+          >
+            <Button
+              className="m-2"
+              onClick={() => {
+                setShowPersonalReports(!showPersonalReports);
+              }}
+              variant={variant}
+            >
+              <IconCriseRapportPersonnalise />
+            </Button>
+          </TooltipCustom>
+
           {isAuthorized(user, [TYPE_DROIT.CRISE_C, TYPE_DROIT.CRISE_U]) && (
             <TooltipCustom
               tooltipId="crise-capture"
@@ -470,6 +563,20 @@ const MapToolbarCrise = forwardRef(
             map={map}
             criseIdentifiant={criseId}
             onSubmit={handleCloseEvent}
+          />
+        </Volet>
+
+        <Volet
+          handleClose={handleCloseEvent}
+          show={showPersonalReports}
+          className="w-auto"
+        >
+          <ExecuteCriseRapportPersonnalise
+            geometry={reportGeometryElement}
+            onGeometrySelect={(geometryType: string, geometryCode: string) => {
+              setGeometryReportCode(geometryCode);
+              toggleToolCallback("create-report-" + geometryType.toLowerCase());
+            }}
           />
         </Volet>
 

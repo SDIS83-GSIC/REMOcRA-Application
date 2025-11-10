@@ -88,6 +88,9 @@ export const IconRotate = () => <i className="fi fi-br-group-arrows-rotate" />;
 export const IconCloseIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-hourglass-end" />
 );
+export const IconCriseRapportPersonnalise = () => (
+  <i className="fi fi-rs-member-list" />
+);
 export const IconList = () => <i className="fi fi-br-list" />;
 export const IconDuplicate = () => <i className="fi fi-br-duplicate" />;
 

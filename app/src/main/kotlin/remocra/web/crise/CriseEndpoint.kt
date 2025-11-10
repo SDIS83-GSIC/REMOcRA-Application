@@ -36,6 +36,7 @@ import remocra.data.enums.TypeElementCarte
 import remocra.db.CriseRepository
 import remocra.db.EvenementRepository
 import remocra.db.MessageRepository
+import remocra.db.RapportPersonnaliseRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
@@ -103,6 +104,8 @@ class CriseEndpoint : AbstractEndpoint() {
     @Inject lateinit var createEventMessageUseCase: CreateEventMessageUseCase
 
     @Inject lateinit var messageRepository: MessageRepository
+
+    @Inject private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
 
     data class CriseInput(
         val criseLibelle: String? = null,
@@ -682,4 +685,16 @@ class CriseEndpoint : AbstractEndpoint() {
             criseRepository.getEvenementCategorieLibelle(),
         ).build()
     }
+
+    @GET
+    @Path("/rapports-personnalises")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    fun getRapportPersonnalise() =
+        Response.ok(
+            rapportPersonnaliseRepository.getListeRapportPersonnalise(
+                securityContext.userInfo.utilisateurId!!,
+                securityContext.userInfo.isSuperAdmin,
+                true,
+            ),
+        ).build()
 }
