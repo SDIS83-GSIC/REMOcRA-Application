@@ -28,6 +28,7 @@ const MapRcci = () => {
     availableLayers,
     addOrRemoveLayer,
     layerListRef,
+    showOutilI,
     mapToolbarRef,
   } = useMapComponent({
     mapElement: mapElement,
@@ -103,6 +104,7 @@ const MapRcci = () => {
       <MapComponent
         map={map}
         outilI={infoOutilI}
+        showOutilI={showOutilI}
         handleCloseInfoI={handleCloseInfoI}
         workingLayer={workingLayer}
         availableLayers={availableLayers}

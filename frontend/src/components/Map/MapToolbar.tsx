@@ -403,6 +403,7 @@ const MapToolbar = forwardRef(
       variant = "primary",
       generalInfo,
       handleCloseInfoI,
+      showOutilI,
     }: {
       map: Map;
       toggleTool: (toolId: string) => void;
@@ -410,6 +411,7 @@ const MapToolbar = forwardRef(
       variant: string;
       generalInfo: any;
       handleCloseInfoI: () => void;
+      showOutilI: boolean;
     },
     ref,
   ) => {
@@ -483,18 +485,19 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
-            {(hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) || user == null) && (
-              <ToolbarButton
-                toolName={"info-outil-i"}
-                toolIcon={<IconInfo />}
-                toolLabelTooltip={
-                  "Obtenir des informations sur un point de la carte"
-                }
-                toggleTool={toggleTool}
-                activeTool={activeTool}
-                variant={variant}
-              />
-            )}
+            {showOutilI &&
+              (hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) || user == null) && (
+                <ToolbarButton
+                  toolName={"info-outil-i"}
+                  toolIcon={<IconInfo />}
+                  toolLabelTooltip={
+                    "Obtenir des informations sur un point de la carte"
+                  }
+                  toggleTool={toggleTool}
+                  activeTool={activeTool}
+                  variant={variant}
+                />
+              )}
           </ButtonGroup>
         </ButtonToolbar>
 

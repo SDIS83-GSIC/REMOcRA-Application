@@ -12,6 +12,7 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     workingLayer,
     availableLayers,
     addOrRemoveLayer,
+    showOutilI,
     layerListRef,
     mapToolbarRef,
     projection,
@@ -44,6 +45,7 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     <MapComponent
       map={map}
       workingLayer={workingLayer}
+      showOutilI={showOutilI}
       outilI={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}

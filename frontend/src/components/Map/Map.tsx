@@ -18,7 +18,14 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { MutableRefObject, ReactNode, useEffect, useMemo, useRef } from "react";
+import {
+  MutableRefObject,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Col, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
@@ -175,6 +182,7 @@ const MapComponent = ({
   variant = "primary",
   outilI,
   handleCloseInfoI,
+  showOutilI,
 }: {
   map?: Map;
   availableLayers: any[];
@@ -187,6 +195,7 @@ const MapComponent = ({
   activeTool: any;
   variant?: string;
   outilI: any;
+  showOutilI: boolean;
   handleCloseInfoI: () => void;
 }) => {
   useEffect(() => {
@@ -227,6 +236,7 @@ const MapComponent = ({
               variant={variant}
               generalInfo={outilI}
               handleCloseInfoI={handleCloseInfoI}
+              showOutilI={showOutilI}
             />
           </Col>
           <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
@@ -350,12 +360,20 @@ export const useMapComponent = ({
       optimizeMap(map);
     }
   }, [map]);
+  const [showOutilI, setHasStyleLayer] = useState(false);
 
   // Ajout des couches disponibles depuis le serveur
   const availableLayers = useMemo(() => {
     if (!layersState.data || !map) {
       return [];
     }
+
+    setHasStyleLayer(
+      layersState.data.some((group: any) =>
+        group.layers.some((layer: any) => layer.hasStyle),
+      ),
+    );
+
     return layersState.data.map((group: any) => {
       return {
         libelle: group.libelle,
@@ -386,7 +404,6 @@ export const useMapComponent = ({
               projection,
             );
           } else {
-            // Couche de tuiles (WMS, WMTS, OSM)
             openlayer = new TileLayer({
               source: toOpenLayer(layer, etudeId) as TileSource,
               zIndex: layer.ordre,
@@ -557,6 +574,7 @@ export const useMapComponent = ({
     layerListRef,
     mapToolbarRef,
     projection,
+    showOutilI,
   };
 };
 

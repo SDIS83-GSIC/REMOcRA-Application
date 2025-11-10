@@ -28,6 +28,7 @@ const MapPermis = () => {
     workingLayer,
     layerListRef,
     mapToolbarRef,
+    showOutilI,
     projection,
   } = useMapComponent({
     mapElement: mapElement,
@@ -100,6 +101,7 @@ const MapPermis = () => {
       <MapComponent
         map={map}
         outilI={infoOutilI}
+        showOutilI={showOutilI}
         handleCloseInfoI={handleCloseInfoI}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}

@@ -22,6 +22,7 @@ const MapPerso = () => {
     workingLayer,
     availableLayers,
     addOrRemoveLayer,
+    showOutilI,
     layerListRef,
     mapToolbarRef,
   } = useMapComponent({
@@ -69,6 +70,7 @@ const MapPerso = () => {
         <MapComponent
           map={map}
           outilI={infoOutilI}
+          showOutilI={showOutilI}
           handleCloseInfoI={handleCloseInfoI}
           availableLayers={availableLayers}
           addOrRemoveLayer={addOrRemoveLayer}

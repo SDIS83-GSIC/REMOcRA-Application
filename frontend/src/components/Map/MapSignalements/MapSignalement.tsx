@@ -19,6 +19,7 @@ const MapSignalement = () => {
     availableLayers,
     addOrRemoveLayer,
     layerListRef,
+    showOutilI,
     mapToolbarRef,
     projection,
   } = useMapComponent({
@@ -79,6 +80,7 @@ const MapSignalement = () => {
       <PageTitle title="Carte des signalements" icon={<IconSignalement />} />
       <MapComponent
         map={map}
+        showOutilI={showOutilI}
         availableLayers={availableLayers}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}

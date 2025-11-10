@@ -44,6 +44,7 @@ const MapRisque = () => {
     availableLayers,
     addOrRemoveLayer,
     workingLayer,
+    showOutilI,
     layerListRef,
     mapToolbarRef,
   } = useMapComponent({
@@ -77,6 +78,7 @@ const MapRisque = () => {
       />
       <MapComponent
         outilI={infoOutilI}
+        showOutilI={showOutilI}
         handleCloseInfoI={handleCloseInfoI}
         map={map}
         availableLayers={availableLayers}

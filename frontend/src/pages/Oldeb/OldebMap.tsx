@@ -19,6 +19,7 @@ const OldebMap = () => {
     workingLayer,
     availableLayers,
     addOrRemoveLayer,
+    showOutilI,
     layerListRef,
     mapToolbarRef,
     projection,
@@ -79,6 +80,7 @@ const OldebMap = () => {
     <MapComponent
       outilI={infoOutilI}
       handleCloseInfoI={handleCloseInfoI}
+      showOutilI={showOutilI}
       map={map}
       workingLayer={workingLayer}
       availableLayers={availableLayers}

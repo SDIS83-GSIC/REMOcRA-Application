@@ -28,6 +28,7 @@ const MapCouvertureHydraulique = ({
     layerListRef,
     mapToolbarRef,
     projection,
+    showOutilI,
   } = useMapComponent({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.COUVERTURE_HYDRAULIQUE,
@@ -100,6 +101,7 @@ const MapCouvertureHydraulique = ({
       toggleTool={toggleTool}
       activeTool={activeTool}
       outilI={infoOutilI}
+      showOutilI={showOutilI}
       handleCloseInfoI={handleCloseInfoI}
       toolbarElement={
         mapToolbarRef.current &&

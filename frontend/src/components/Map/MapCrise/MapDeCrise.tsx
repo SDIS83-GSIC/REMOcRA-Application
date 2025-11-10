@@ -41,6 +41,7 @@ const MapCrise = ({
     addOrRemoveLayer,
     layerListRef,
     projection,
+    showOutilI,
     mapToolbarRef,
   } = useMapComponent({
     mapElement: mapElement,
@@ -183,6 +184,7 @@ const MapCrise = ({
       mapToolbarRef={mapToolbarRef} // les boutons à modifier / rajouter
       toggleTool={toggleTool}
       outilI={infoOutilI}
+      showOutilI={showOutilI}
       handleCloseInfoI={handleCloseInfoI}
       activeTool={activeTool}
       toolbarElement={

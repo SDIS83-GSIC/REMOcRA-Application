@@ -50,6 +50,7 @@ const MapPei = () => {
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
+    showOutilI,
     projection,
   } = useMapComponent({
     mapElement: mapElement,
@@ -190,6 +191,7 @@ const MapPei = () => {
             layerListRef={layerListRef}
             mapToolbarRef={mapToolbarRef}
             mapElement={mapElement}
+            showOutilI={showOutilI}
             toggleTool={toggleTool}
             activeTool={activeTool}
             outilI={infoOutilI}

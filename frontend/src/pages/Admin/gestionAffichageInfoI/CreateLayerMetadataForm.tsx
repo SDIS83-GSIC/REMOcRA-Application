@@ -1,6 +1,6 @@
 import { object } from "yup";
 import { useFormikContext } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import {
   CheckBoxInput,
@@ -19,6 +19,14 @@ import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 
+function generateLayerStyle(properties: any) {
+  return properties
+    .map((property: { name: string }) => {
+      return `[b]${property.name} : [/b] #${property.name}#\n[br]`;
+    })
+    .join("");
+}
+
 export const getInitialValues = (styleId?: string, data?: any) => ({
   groupLayerId: data?.groupLayerId ?? null,
   layerId: data?.layerId ?? null,
@@ -26,9 +34,7 @@ export const getInitialValues = (styleId?: string, data?: any) => ({
   layerStyleFlag: data?.layerStyleFlag ?? false,
   layerStylePublicAccess: data?.layerStylePublicAccess ?? false,
   layerStyleId: styleId ?? "",
-  layerStyle:
-    data?.layerStyle ??
-    "[i]Les adresses sont mises à jour tous les jours à 01h00 [/i]\n[br]\n[b]Description : [/b] #adresse_description#\n[br]\n[b]adresse_date_modification : [/b] [u]#adresse_date_modification#[/u]",
+  layerStyle: data?.layerStyle ?? null,
 });
 
 export const prepareValues = (
@@ -85,6 +91,24 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
     data: describeFeatureType,
     ...dataLayer
   } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
+
+  const properties = useMemo(() => {
+    return describeFeatureType?.featureTypes?.[0]?.properties ?? [];
+  }, [describeFeatureType]);
+
+  useEffect(() => {
+    if (!initalLayer) {
+      setFieldValue("layerStyle", generateLayerStyle(properties));
+    }
+  }, [setFieldValue, describeFeatureType, initalLayer, properties]);
+
+  const handleLayerStyleChange = (event: any) => {
+    if (event.target.value === "") {
+      setFieldValue("layerStyle", generateLayerStyle(properties));
+    } else {
+      setFieldValue("layerStyle", event.target.value);
+    }
+  };
 
   useEffect(() => {
     if (dataLayer?.error) {
@@ -172,7 +196,6 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
   }
 
   const paramNotFound = "Aucun paramètre trouvé";
-  const properties = describeFeatureType?.featureTypes?.[0].properties ?? [];
   const params = properties.length
     ? properties.map((p: { name: any }, idx: number) => (
         <span key={idx}>
@@ -322,7 +345,7 @@ const CreateLayerMetadataForm = ({ initalLayer }: { initalLayer?: string }) => {
               name="layerStyle"
               readOnly={params === null}
               label="Métadonnées à afficher"
-              value={values.layerStyle}
+              onChange={handleLayerStyleChange}
             />
           </Col>
         )}

@@ -13,6 +13,7 @@ const MapDFCI = () => {
     availableLayers,
     addOrRemoveLayer,
     layerListRef,
+    showOutilI,
     mapToolbarRef,
   } = useMapComponent({
     mapElement: mapElement,
@@ -33,6 +34,7 @@ const MapDFCI = () => {
     <MapComponent
       map={map}
       outilI={infoOutilI}
+      showOutilI={showOutilI}
       handleCloseInfoI={handleCloseInfoI}
       availableLayers={availableLayers}
       addOrRemoveLayer={addOrRemoveLayer}

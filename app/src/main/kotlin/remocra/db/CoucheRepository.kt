@@ -244,6 +244,15 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             )
         }.associateBy { it.coucheId }
 
+    fun checkIfLayerHasStyle(coucheId: UUID): Boolean {
+        return dsl.fetchExists(
+            dsl.selectOne()
+                .from(COUCHE_METADATA)
+                .where(COUCHE_METADATA.COUCHE_ID.eq(coucheId))
+                .and(COUCHE_METADATA.ACTIF.eq(true)),
+        )
+    }
+
     fun getCoucheMap(module: TypeModule, groupeFonctionnalites: GroupeFonctionnalites?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
         dsl.selectDistinct(*COUCHE.fields())
             .from(COUCHE)

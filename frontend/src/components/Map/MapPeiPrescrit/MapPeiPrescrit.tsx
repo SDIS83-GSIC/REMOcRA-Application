@@ -18,6 +18,7 @@ const MapPeiPrescrit = () => {
     map,
     workingLayer,
     availableLayers,
+    showOutilI,
     addOrRemoveLayer,
     layerListRef,
     mapToolbarRef,
@@ -71,6 +72,7 @@ const MapPeiPrescrit = () => {
         map={map}
         workingLayer={workingLayer}
         availableLayers={availableLayers}
+        showOutilI={showOutilI}
         addOrRemoveLayer={addOrRemoveLayer}
         layerListRef={layerListRef}
         outilI={infoOutilI}

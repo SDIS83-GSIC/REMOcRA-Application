@@ -79,6 +79,7 @@ class LayersRetriever {
                                 .build(couche.coucheId)
                                 .toString()
                         },
+                        hasStyle = coucheRepository.checkIfLayerHasStyle(couche.coucheId),
                     )
                 },
             )
@@ -107,5 +108,6 @@ class LayersRetriever {
         val active: Boolean = false,
         val icone: String?,
         val legende: String?,
+        val hasStyle: Boolean,
     )
 }
