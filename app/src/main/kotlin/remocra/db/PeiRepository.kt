@@ -945,6 +945,7 @@ class PeiRepository
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_RECEPTION,
             V_PEI_VISITE_DATE.LAST_RECO_INIT,
+            PEI.DATE_CHANGEMENT_DISPO,
         )
             .from(PEI)
             .leftJoin(V_PEI_VISITE_DATE)
@@ -1056,6 +1057,7 @@ class PeiRepository
         val lastRecoInit: ZonedDateTime?,
         val lastCtp: ZonedDateTime?,
         val lastRop: ZonedDateTime?,
+        val peiDateChangementDispo: ZonedDateTime?,
     )
 
     fun getPeiByZoneIntegrationShortData(userInfo: WrappedUserInfo): Collection<PeiShortData> {

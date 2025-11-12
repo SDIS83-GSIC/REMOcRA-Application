@@ -1,7 +1,6 @@
 package remocra.usecase.modeleminimalpei
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -13,7 +12,6 @@ import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.ModeleMinimalPeiData
 import remocra.data.ModeleMinimalPeiForNexsisData
-import remocra.data.PeiData
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.db.VisiteRepository
@@ -100,17 +98,7 @@ constructor(
         return listePei.map {
             val lastCtrl = visiteRepository.getLastVisiteDebitPression(it.peiId)
 
-            val allTraca = tracabiliteRepository.getTracabilitePei(it.peiId)
-
-            // TODO vérifier que c'est bien le changement de dispo qui est voulu, et pas la date la plus ancienne de dispo DISPONIBLE
-            // En l'état, on va chercher les 2 derniers états de dispo différents, et on prend la date du plus récent (donc la date depuis laquelle il est dans l'état actuel)
-            val instantChangementDispo = allTraca.zipWithNext()
-                .firstOrNull { (current, next) ->
-                    objectMapper.readValue<PeiData>(current.tracabiliteObjetData.toString()).peiDisponibiliteTerrestre != objectMapper.readValue<PeiData>(next.tracabiliteObjetData.toString()).peiDisponibiliteTerrestre
-                }
-                ?.first?.tracabiliteDate
-
-            val dateMiseAjour = allTraca.firstOrNull()?.tracabiliteDate
+            val dateMiseAjour = tracabiliteRepository.getDateDernierChangementPei(it.peiId)
 
             // On recalcule la géométrie en 4326 (attendu NexSIS)
             val geom = getCoordonneesBySrid.execute(it.peiGeometrie.x.toString(), it.peiGeometrie.y.toString(), appSettings.srid)
@@ -140,7 +128,7 @@ constructor(
                     pibiPression = getPibiPression(lastCtrl),
                     pibiDebit = getPibiDebit(lastCtrl),
                     penaVolumeConstate = getPenaVolumeConstate(it),
-                    instantChangementDispo = instantChangementDispo,
+                    instantChangementDispo = it.peiDateChangementDispo,
                     dateMiseEnService = it.lastRecoInit,
                     dateMiseAJour = dateMiseAjour,
                     dateDernierControleTechnique = it.lastCtp,
@@ -172,7 +160,7 @@ constructor(
                     pibiPression = getPibiPression(lastCtrl),
                     pibiDebit = getPibiDebit(lastCtrl),
                     penaVolumeConstate = getPenaVolumeConstate(it),
-                    instantChangementDispo = instantChangementDispo,
+                    instantChangementDispo = it.peiDateChangementDispo,
                     dateMiseEnService = it.lastRecoInit,
                     dateMiseAJour = dateMiseAjour,
                     dateDernierControleTechnique = it.lastCtp,
