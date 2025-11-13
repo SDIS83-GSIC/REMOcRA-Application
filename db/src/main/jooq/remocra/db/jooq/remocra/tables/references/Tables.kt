@@ -15,7 +15,6 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.CoucheStyle
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
-import remocra.db.jooq.remocra.tables.CriseCategorie
 import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
@@ -28,6 +27,8 @@ import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Evenement
+import remocra.db.jooq.remocra.tables.EvenementCategorie
+import remocra.db.jooq.remocra.tables.EvenementSousCategorie
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
@@ -140,7 +141,6 @@ import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
-import remocra.db.jooq.remocra.tables.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
@@ -217,11 +217,6 @@ val COURRIER: Courrier = Courrier.COURRIER
 val CRISE: Crise = Crise.CRISE
 
 /**
- * The table <code>remocra.crise_categorie</code>.
- */
-val CRISE_CATEGORIE: CriseCategorie = CriseCategorie.CRISE_CATEGORIE
-
-/**
  * The table <code>remocra.crise_indicateur</code>.
  */
 val CRISE_INDICATEUR: CriseIndicateur = CriseIndicateur.CRISE_INDICATEUR
@@ -280,6 +275,16 @@ val DOMAINE: Domaine = Domaine.DOMAINE
  * The table <code>remocra.evenement</code>.
  */
 val EVENEMENT: Evenement = Evenement.EVENEMENT
+
+/**
+ * The table <code>remocra.evenement_categorie</code>.
+ */
+val EVENEMENT_CATEGORIE: EvenementCategorie = EvenementCategorie.EVENEMENT_CATEGORIE
+
+/**
+ * The table <code>remocra.evenement_sous_categorie</code>.
+ */
+val EVENEMENT_SOUS_CATEGORIE: EvenementSousCategorie = EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE
 
 /**
  * The table <code>remocra.fiche_resume_bloc</code>.
@@ -842,11 +847,6 @@ val TYPE_CANALISATION: TypeCanalisation = TypeCanalisation.TYPE_CANALISATION
  * The table <code>remocra.type_crise</code>.
  */
 val TYPE_CRISE: TypeCrise = TypeCrise.TYPE_CRISE
-
-/**
- * The table <code>remocra.type_crise_categorie</code>.
- */
-val TYPE_CRISE_CATEGORIE: TypeCriseCategorie = TypeCriseCategorie.TYPE_CRISE_CATEGORIE
 
 /**
  * The table <code>remocra.type_engin</code>.

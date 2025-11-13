@@ -23,6 +23,7 @@ import remocra.web.dashboard.DashboardModule
 import remocra.web.debitsimultane.DebitSimultaneModule
 import remocra.web.dfci.DfciModule
 import remocra.web.documents.DocumentModule
+import remocra.web.evenementsouscategorie.EvenementSousCategorieModule
 import remocra.web.ficheresume.FicheResumeModule
 import remocra.web.gestionnaire.GestionnaireModule
 import remocra.web.groupefonctionnalites.GroupeFonctionnalitesModule
@@ -52,7 +53,6 @@ import remocra.web.signalements.SignalementModule
 import remocra.web.thematique.ThematiqueModule
 import remocra.web.toponymie.ToponymieModule
 import remocra.web.tracabilite.TracabiliteModule
-import remocra.web.typecrisecategorie.TypeCriseCategorieModule
 import remocra.web.typeorganisme.TypeOrganismeModule
 import remocra.web.utilisateur.UtilisateurModule
 import remocra.web.visite.VisiteModule
@@ -108,7 +108,7 @@ object WebModule : RemocraModule() {
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
         install(CartoModule)
-        install(TypeCriseCategorieModule)
+        install(EvenementSousCategorieModule)
         install(DfciModule)
         install(RisqueModule)
         bind(LogManagerFactory::class.java).to(LogManagerFactoryImpl::class.java)

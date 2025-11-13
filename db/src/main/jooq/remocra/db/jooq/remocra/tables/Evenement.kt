@@ -39,9 +39,9 @@ import remocra.db.jooq.remocra.keys.L_EVENEMENT_DOCUMENT__L_EVENEMENT_DOCUMENT_E
 import remocra.db.jooq.remocra.keys.MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_EVENEMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
+import remocra.db.jooq.remocra.tables.EvenementSousCategorie.EvenementSousCategoriePath
 import remocra.db.jooq.remocra.tables.LEvenementDocument.LEvenementDocumentPath
 import remocra.db.jooq.remocra.tables.MessageEvenement.MessageEvenementPath
-import remocra.db.jooq.remocra.tables.TypeCriseCategorie.TypeCriseCategoriePath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -100,9 +100,9 @@ open class Evenement(
 
     /**
      * The column
-     * <code>remocra.evenement.evenement_type_crise_categorie_id</code>.
+     * <code>remocra.evenement.evenement_evenement_sous_categorie_id</code>.
      */
-    val TYPE_CRISE_CATEGORIE_ID: TableField<Record, UUID?> = createField(DSL.name("evenement_type_crise_categorie_id"), SQLDataType.UUID, this, "")
+    val EVENEMENT_SOUS_CATEGORIE_ID: TableField<Record, UUID?> = createField(DSL.name("evenement_evenement_sous_categorie_id"), SQLDataType.UUID, this, "")
 
     /**
      * The column <code>remocra.evenement.evenement_libelle</code>.
@@ -220,22 +220,22 @@ open class Evenement(
     val crise: CrisePath
         get(): CrisePath = crise()
 
-    private lateinit var _typeCriseCategorie: TypeCriseCategoriePath
+    private lateinit var _evenementSousCategorie: EvenementSousCategoriePath
 
     /**
      * Get the implicit join path to the
-     * <code>remocra.type_crise_categorie</code> table.
+     * <code>remocra.evenement_sous_categorie</code> table.
      */
-    fun typeCriseCategorie(): TypeCriseCategoriePath {
-        if (!this::_typeCriseCategorie.isInitialized) {
-            _typeCriseCategorie = TypeCriseCategoriePath(this, EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY, null)
+    fun evenementSousCategorie(): EvenementSousCategoriePath {
+        if (!this::_evenementSousCategorie.isInitialized) {
+            _evenementSousCategorie = EvenementSousCategoriePath(this, EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY, null)
         }
 
-        return _typeCriseCategorie
+        return _evenementSousCategorie
     }
 
-    val typeCriseCategorie: TypeCriseCategoriePath
-        get(): TypeCriseCategoriePath = typeCriseCategorie()
+    val evenementSousCategorie: EvenementSousCategoriePath
+        get(): EvenementSousCategoriePath = evenementSousCategorie()
 
     private lateinit var _utilisateur: UtilisateurPath
 

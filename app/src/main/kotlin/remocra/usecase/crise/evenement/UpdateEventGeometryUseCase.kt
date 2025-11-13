@@ -68,7 +68,7 @@ class UpdateEventGeometryUseCase : AbstractCUDGeometrieUseCase<EvenementGeometri
                 messageTags = "Modification géométrique",
                 messageId = UUID.randomUUID(),
                 messageEvenementId = element.eventId,
-                messageUtilisateurId = userInfo!!.utilisateurId,
+                messageUtilisateurId = userInfo.utilisateurId,
             ),
         )
 

@@ -28,7 +28,7 @@ import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.keys.L_TYPE_CRISE_CATEGORIE_PKEY
 import remocra.db.jooq.remocra.keys.L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_TYPE_CRISE_ID_FKEY
-import remocra.db.jooq.remocra.tables.CriseCategorie.CriseCategoriePath
+import remocra.db.jooq.remocra.tables.EvenementCategorie.EvenementCategoriePath
 import remocra.db.jooq.remocra.tables.TypeCrise.TypeCrisePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -127,22 +127,22 @@ open class LTypeCriseCategorie(
     override fun getPrimaryKey(): UniqueKey<Record> = L_TYPE_CRISE_CATEGORIE_PKEY
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY, L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_TYPE_CRISE_ID_FKEY)
 
-    private lateinit var _criseCategorie: CriseCategoriePath
+    private lateinit var _evenementCategorie: EvenementCategoriePath
 
     /**
-     * Get the implicit join path to the <code>remocra.crise_categorie</code>
-     * table.
+     * Get the implicit join path to the
+     * <code>remocra.evenement_categorie</code> table.
      */
-    fun criseCategorie(): CriseCategoriePath {
-        if (!this::_criseCategorie.isInitialized) {
-            _criseCategorie = CriseCategoriePath(this, L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY, null)
+    fun evenementCategorie(): EvenementCategoriePath {
+        if (!this::_evenementCategorie.isInitialized) {
+            _evenementCategorie = EvenementCategoriePath(this, L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY, null)
         }
 
-        return _criseCategorie
+        return _evenementCategorie
     }
 
-    val criseCategorie: CriseCategoriePath
-        get(): CriseCategoriePath = criseCategorie()
+    val evenementCategorie: EvenementCategoriePath
+        get(): EvenementCategoriePath = evenementCategorie()
 
     private lateinit var _typeCrise: TypeCrisePath
 

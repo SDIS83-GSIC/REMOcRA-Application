@@ -19,9 +19,10 @@ import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.CRISE
-import remocra.db.jooq.remocra.tables.references.CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
+import remocra.db.jooq.remocra.tables.references.EVENEMENT_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.EVENEMENT_SOUS_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.L_DASHBOARD_PROFIL
 import remocra.db.jooq.remocra.tables.references.L_DIAMETRE_NATURE
@@ -51,7 +52,6 @@ import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_TYPE_ELEMENT
 import remocra.db.jooq.remocra.tables.references.THEMATIQUE
 import remocra.db.jooq.remocra.tables.references.TYPE_CANALISATION
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
-import remocra.db.jooq.remocra.tables.references.TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.TYPE_ENGIN
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.TYPE_PENA_ASPIRATION
@@ -75,7 +75,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> EVENEMENT_CATEGORIE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE
                 TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT
@@ -102,7 +102,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.ID
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.ID
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ID
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ID
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> EVENEMENT_CATEGORIE.ID
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ID
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ID
                 TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.ID
@@ -129,7 +129,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.CODE
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.CODE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.CODE
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.CODE
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> EVENEMENT_CATEGORIE.CODE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.CODE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.CODE
                 TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.CODE
@@ -156,7 +156,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.LIBELLE
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.LIBELLE
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.LIBELLE
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.LIBELLE
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> EVENEMENT_CATEGORIE.LIBELLE
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.LIBELLE
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.LIBELLE
                 TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.LIBELLE
@@ -183,7 +183,7 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ANOMALIE -> SIGNALEMENT_TYPE_ANOMALIE.ACTIF
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> SIGNALEMENT_TYPE_ELEMENT.ACTIF
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> ANOMALIE_CATEGORIE.ACTIF
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> CRISE_CATEGORIE.ACTIF
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> EVENEMENT_CATEGORIE.ACTIF
                 TypeNomenclatureCodeLibelle.DIAMETRE -> DIAMETRE.ACTIF
                 TypeNomenclatureCodeLibelle.DOMAINE -> DOMAINE.ACTIF
                 TypeNomenclatureCodeLibelle.FONCTION_CONTACT -> FONCTION_CONTACT.ACTIF
@@ -253,9 +253,9 @@ class NomenclatureCodeLibelleRepository @Inject constructor(private val dsl: DSL
                 )
                 TypeNomenclatureCodeLibelle.SIGNALEMENT_TYPE_ELEMENT -> setOf(InfosFkCible(SIGNALEMENT_SOUS_TYPE_ELEMENT, SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT))
                 TypeNomenclatureCodeLibelle.ANOMALIE_CATEGORIE -> setOf(InfosFkCible(ANOMALIE, ANOMALIE.ANOMALIE_CATEGORIE_ID))
-                TypeNomenclatureCodeLibelle.CRISE_CATEGORIE -> setOf(
+                TypeNomenclatureCodeLibelle.EVENEMENT_CATEGORIE -> setOf(
                     InfosFkCible(L_TYPE_CRISE_CATEGORIE, L_TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID),
-                    InfosFkCible(TYPE_CRISE_CATEGORIE, TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID),
+                    InfosFkCible(EVENEMENT_SOUS_CATEGORIE, EVENEMENT_SOUS_CATEGORIE.EVENEMENT_CATEGORIE_ID),
                 )
                 TypeNomenclatureCodeLibelle.DIAMETRE -> setOf(InfosFkCible(PIBI, PIBI.DIAMETRE_ID), InfosFkCible(L_DIAMETRE_NATURE, L_DIAMETRE_NATURE.DIAMETRE_ID), InfosFkCible(PEI_PROJET, PEI_PROJET.DIAMETRE_ID))
                 TypeNomenclatureCodeLibelle.DOMAINE -> setOf(InfosFkCible(PEI, PEI.DOMAINE_ID), InfosFkCible(NEW_PEI, NEW_PEI.DOMAINE_ID))

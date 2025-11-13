@@ -20,7 +20,6 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.CoucheStyle
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
-import remocra.db.jooq.remocra.tables.CriseCategorie
 import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
@@ -33,6 +32,8 @@ import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Evenement
+import remocra.db.jooq.remocra.tables.EvenementCategorie
+import remocra.db.jooq.remocra.tables.EvenementSousCategorie
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
@@ -145,7 +146,6 @@ import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
-import remocra.db.jooq.remocra.tables.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
@@ -179,9 +179,6 @@ val COUCHE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Couche.COUCHE, DSL
 val COUCHE_STYLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CoucheStyle.COUCHE_STYLE, DSL.name("couche_style_pkey"), arrayOf(CoucheStyle.COUCHE_STYLE.ID), true)
 val COURRIER_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Courrier.COURRIER, DSL.name("courrier_pkey"), arrayOf(Courrier.COURRIER.ID), true)
 val CRISE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Crise.CRISE, DSL.name("crise_pkey"), arrayOf(Crise.CRISE.ID), true)
-val CRISE_CATEGORIE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_crise_categorie_code_key"), arrayOf(CriseCategorie.CRISE_CATEGORIE.CODE), true)
-val CRISE_CATEGORIE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_crise_categorie_libelle_key"), arrayOf(CriseCategorie.CRISE_CATEGORIE.LIBELLE), true)
-val CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CriseCategorie.CRISE_CATEGORIE, DSL.name("crise_categorie_pkey"), arrayOf(CriseCategorie.CRISE_CATEGORIE.ID), true)
 val CRISE_INDICATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CriseIndicateur.CRISE_INDICATEUR, DSL.name("crise_indicateur_pkey"), arrayOf(CriseIndicateur.CRISE_INDICATEUR.ID), true)
 val DASHBOARD_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Dashboard.DASHBOARD, DSL.name("dashboard_pkey"), arrayOf(Dashboard.DASHBOARD.ID), true)
 val DASHBOARD_COMPONENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DashboardComponent.DASHBOARD_COMPONENT, DSL.name("dashboard_component_pkey"), arrayOf(DashboardComponent.DASHBOARD_COMPONENT.ID), true)
@@ -195,6 +192,12 @@ val DOCUMENT_HABILITABLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Docu
 val DOMAINE_DOMAINE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_domaine_code_key"), arrayOf(Domaine.DOMAINE.CODE), true)
 val DOMAINE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Domaine.DOMAINE, DSL.name("domaine_pkey"), arrayOf(Domaine.DOMAINE.ID), true)
 val EVENEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Evenement.EVENEMENT, DSL.name("evenement_pkey"), arrayOf(Evenement.EVENEMENT.ID), true)
+val CRISE_CATEGORIE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementCategorie.EVENEMENT_CATEGORIE, DSL.name("crise_categorie_crise_categorie_code_key"), arrayOf(EvenementCategorie.EVENEMENT_CATEGORIE.CODE), true)
+val CRISE_CATEGORIE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementCategorie.EVENEMENT_CATEGORIE, DSL.name("crise_categorie_crise_categorie_libelle_key"), arrayOf(EvenementCategorie.EVENEMENT_CATEGORIE.LIBELLE), true)
+val CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementCategorie.EVENEMENT_CATEGORIE, DSL.name("crise_categorie_pkey"), arrayOf(EvenementCategorie.EVENEMENT_CATEGORIE.ID), true)
+val TYPE_CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE, DSL.name("type_crise_categorie_pkey"), arrayOf(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE.ID), true)
+val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_code_key"), arrayOf(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE.CODE), true)
+val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_libelle_key"), arrayOf(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE.LIBELLE), true)
 val FICHE_RESUME_BLOC_PKEY: UniqueKey<Record> = Internal.createUniqueKey(FicheResumeBloc.FICHE_RESUME_BLOC, DSL.name("fiche_resume_bloc_pkey"), arrayOf(FicheResumeBloc.FICHE_RESUME_BLOC.ID), true)
 val FONCTION_CONTACT_FONCTION_CONTACT_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(FonctionContact.FONCTION_CONTACT, DSL.name("fonction_contact_fonction_contact_code_key"), arrayOf(FonctionContact.FONCTION_CONTACT.CODE), true)
 val FONCTION_CONTACT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(FonctionContact.FONCTION_CONTACT, DSL.name("fonction_contact_pkey"), arrayOf(FonctionContact.FONCTION_CONTACT.ID), true)
@@ -357,9 +360,6 @@ val TYPE_CANALISATION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCan
 val TYPE_CANALISATION_TYPE_CANALISATION_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCanalisation.TYPE_CANALISATION, DSL.name("type_canalisation_type_canalisation_code_key"), arrayOf(TypeCanalisation.TYPE_CANALISATION.CODE), true)
 val TYPE_CRISE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCrise.TYPE_CRISE, DSL.name("type_crise_pkey"), arrayOf(TypeCrise.TYPE_CRISE.ID), true)
 val TYPE_CRISE_TYPE_CRISE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCrise.TYPE_CRISE, DSL.name("type_crise_type_crise_code_key"), arrayOf(TypeCrise.TYPE_CRISE.CODE), true)
-val TYPE_CRISE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_pkey"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.ID), true)
-val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_code_key"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.CODE), true)
-val TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_LIBELLE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_libelle_key"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.LIBELLE), true)
 val TYPE_ENGIN_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeEngin.TYPE_ENGIN, DSL.name("type_engin_pkey"), arrayOf(TypeEngin.TYPE_ENGIN.ID), true)
 val TYPE_ENGIN_TYPE_ENGIN_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeEngin.TYPE_ENGIN, DSL.name("type_engin_type_engin_code_key"), arrayOf(TypeEngin.TYPE_ENGIN.CODE), true)
 val TYPE_ORGANISME_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_pkey"), arrayOf(TypeOrganisme.TYPE_ORGANISME.ID), true)
@@ -413,8 +413,9 @@ val DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_ID_FKEY: Fore
 val DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE, DSL.name("debit_simultane_mesure_debit_simultane_mesure_document_id_fkey"), arrayOf(DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(DocumentHabilitable.DOCUMENT_HABILITABLE, DSL.name("document_habilitable_document_id_fkey"), arrayOf(DocumentHabilitable.DOCUMENT_HABILITABLE.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true)
 val EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Evenement.EVENEMENT, DSL.name("evenement_evenement_crise_id_fkey"), arrayOf(Evenement.EVENEMENT.CRISE_ID), remocra.db.jooq.remocra.keys.CRISE_PKEY, arrayOf(Crise.CRISE.ID), true)
-val EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Evenement.EVENEMENT, DSL.name("evenement_evenement_type_crise_categorie_id_fkey"), arrayOf(Evenement.EVENEMENT.TYPE_CRISE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.TYPE_CRISE_CATEGORIE_PKEY, arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.ID), true)
+val EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Evenement.EVENEMENT, DSL.name("evenement_evenement_type_crise_categorie_id_fkey"), arrayOf(Evenement.EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID), remocra.db.jooq.remocra.keys.TYPE_CRISE_CATEGORIE_PKEY, arrayOf(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE.ID), true)
 val EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Evenement.EVENEMENT, DSL.name("evenement_utilisateur_id_fkey"), arrayOf(Evenement.EVENEMENT.UTILISATEUR_ID), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
+val EVENEMENT_SOUS_CATEGORIE__TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE__FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_crise_categorie__fkey"), arrayOf(EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE.EVENEMENT_CATEGORIE_ID), remocra.db.jooq.remocra.keys.CRISE_CATEGORIE_PKEY, arrayOf(EvenementCategorie.EVENEMENT_CATEGORIE.ID), true)
 val JOB__JOB_JOB_TASK_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_task_id_fkey"), arrayOf(Job.JOB.TASK_ID), remocra.db.jooq.remocra.keys.TASK_PKEY, arrayOf(Task.TASK.ID), true)
 val JOB__JOB_JOB_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Job.JOB, DSL.name("job_job_utilisateur_id_fkey"), arrayOf(Job.JOB.UTILISATEUR_ID), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
 val L_COMMUNE_CIS__L_COMMUNE_CIS_CIS_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LCommuneCis.L_COMMUNE_CIS, DSL.name("l_commune_cis_cis_id_fkey"), arrayOf(LCommuneCis.L_COMMUNE_CIS.CIS_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
@@ -488,7 +489,7 @@ val L_TOPONYMIE_CRISE__L_TOPONYMIE_CRISE_CRISE_ID_FKEY: ForeignKey<Record, Recor
 val L_TOPONYMIE_CRISE__L_TOPONYMIE_CRISE_TYPE_TOPONYMIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LToponymieCrise.L_TOPONYMIE_CRISE, DSL.name("l_toponymie_crise_type_toponymie_id_fkey"), arrayOf(LToponymieCrise.L_TOPONYMIE_CRISE.TYPE_TOPONYMIE_ID), remocra.db.jooq.remocra.keys.TYPE_TOPONYMIE_PKEY, arrayOf(TypeToponymie.TYPE_TOPONYMIE.ID), true)
 val L_TOURNEE_PEI__L_TOURNEE_PEI_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_pei_id_fkey"), arrayOf(LTourneePei.L_TOURNEE_PEI.PEI_ID), remocra.db.jooq.remocra.keys.PEI_PKEY, arrayOf(Pei.PEI.ID), true)
 val L_TOURNEE_PEI__L_TOURNEE_PEI_TOURNEE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTourneePei.L_TOURNEE_PEI, DSL.name("l_tournee_pei_tournee_id_fkey"), arrayOf(LTourneePei.L_TOURNEE_PEI.TOURNEE_ID), remocra.db.jooq.remocra.keys.TOURNEE_PKEY, arrayOf(Tournee.TOURNEE.ID), true)
-val L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE, DSL.name("l_type_crise_categorie_crise_categorie_id_fkey"), arrayOf(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.CRISE_CATEGORIE_PKEY, arrayOf(CriseCategorie.CRISE_CATEGORIE.ID), true)
+val L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE, DSL.name("l_type_crise_categorie_crise_categorie_id_fkey"), arrayOf(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.CRISE_CATEGORIE_PKEY, arrayOf(EvenementCategorie.EVENEMENT_CATEGORIE.ID), true)
 val L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGORIE_TYPE_CRISE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE, DSL.name("l_type_crise_categorie_type_crise_id_fkey"), arrayOf(LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE.TYPE_CRISE_ID), remocra.db.jooq.remocra.keys.TYPE_CRISE_PKEY, arrayOf(TypeCrise.TYPE_CRISE.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_ANOMALIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_anomalie_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_PKEY, arrayOf(Anomalie.ANOMALIE.ID), true)
 val L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_VISITE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_visite_id_fkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID), remocra.db.jooq.remocra.keys.VISITE_PKEY, arrayOf(Visite.VISITE.ID), true)
@@ -592,7 +593,6 @@ val SITE__SITE_SITE_GESTIONNAIRE_ID_FKEY: ForeignKey<Record, Record> = Internal.
 val TOPONYMIE__TOPONYMIE_TYPE_TOPONYMIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Toponymie.TOPONYMIE, DSL.name("toponymie_type_toponymie_id_fkey"), arrayOf(Toponymie.TOPONYMIE.TYPE_TOPONYMIE_ID), remocra.db.jooq.remocra.keys.TYPE_TOPONYMIE_PKEY, arrayOf(TypeToponymie.TYPE_TOPONYMIE.ID), true)
 val TOURNEE__TOURNEE_TOURNEE_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Tournee.TOURNEE, DSL.name("tournee_tournee_organisme_id_fkey"), arrayOf(Tournee.TOURNEE.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Tournee.TOURNEE, DSL.name("tournee_tournee_reservation_utilisateur_id_fkey"), arrayOf(Tournee.TOURNEE.RESERVATION_UTILISATEUR_ID), remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY, arrayOf(Utilisateur.UTILISATEUR.ID), true)
-val TYPE_CRISE_CATEGORIE__TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE__FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(TypeCriseCategorie.TYPE_CRISE_CATEGORIE, DSL.name("type_crise_categorie_type_crise_categorie_crise_categorie__fkey"), arrayOf(TypeCriseCategorie.TYPE_CRISE_CATEGORIE.CRISE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.CRISE_CATEGORIE_PKEY, arrayOf(CriseCategorie.CRISE_CATEGORIE.ID), true)
 val TYPE_ORGANISME__TYPE_ORGANISME_TYPE_ORGANISME_PARENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(TypeOrganisme.TYPE_ORGANISME, DSL.name("type_organisme_type_organisme_parent_id_fkey"), arrayOf(TypeOrganisme.TYPE_ORGANISME.PARENT_ID), remocra.db.jooq.remocra.keys.TYPE_ORGANISME_PKEY, arrayOf(TypeOrganisme.TYPE_ORGANISME.ID), true)
 val UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_organisme_id_fkey"), arrayOf(Utilisateur.UTILISATEUR.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true)
 val UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_profil_utilisateur_id_fkey"), arrayOf(Utilisateur.UTILISATEUR.PROFIL_UTILISATEUR_ID), remocra.db.jooq.remocra.keys.PROFIL_UTILISATEUR_PKEY, arrayOf(ProfilUtilisateur.PROFIL_UTILISATEUR.ID), true)

@@ -30,7 +30,7 @@ import remocra.db.jooq.remocra.keys.L_TYPE_CRISE_CATEGORIE__L_TYPE_CRISE_CATEGOR
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_PKEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_TYPE_CRISE_CODE_KEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
-import remocra.db.jooq.remocra.tables.CriseCategorie.CriseCategoriePath
+import remocra.db.jooq.remocra.tables.EvenementCategorie.EvenementCategoriePath
 import remocra.db.jooq.remocra.tables.LTypeCriseCategorie.LTypeCriseCategoriePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -172,10 +172,10 @@ open class TypeCrise(
 
     /**
      * Get the implicit many-to-many join path to the
-     * <code>remocra.crise_categorie</code> table
+     * <code>remocra.evenement_categorie</code> table
      */
-    val criseCategorie: CriseCategoriePath
-        get(): CriseCategoriePath = lTypeCriseCategorie().criseCategorie()
+    val evenementCategorie: EvenementCategoriePath
+        get(): EvenementCategoriePath = lTypeCriseCategorie().evenementCategorie()
     override fun `as`(alias: String): TypeCrise = TypeCrise(DSL.name(alias), this)
     override fun `as`(alias: Name): TypeCrise = TypeCrise(alias, this)
     override fun `as`(alias: Table<*>): TypeCrise = TypeCrise(alias.qualifiedName, this)

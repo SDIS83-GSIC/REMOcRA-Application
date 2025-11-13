@@ -3,51 +3,49 @@ package remocra.usecase.crise.typecrisecategorie
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.db.TypeCriseCatagorieRepository
+import remocra.db.EvenementSousCategorieRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.TypeCriseCategorie
+import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteTypeCriseCategorieUseCase @Inject constructor(
-    private val typeCriseCatagorieRepository: TypeCriseCatagorieRepository,
-) : AbstractCUDUseCase<TypeCriseCategorie>(TypeOperation.UPDATE) {
+class CreateEvenementSousCategorieUseCase @Inject constructor(
+    private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
+) : AbstractCUDUseCase<EvenementSousCategorie>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {
-            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_FORBIDDEN_REMOVAL)
+            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_FORBIDDEN_INSERT)
         }
     }
 
     override fun checkContraintes(
         userInfo: WrappedUserInfo,
-        element: TypeCriseCategorie,
+        element: EvenementSousCategorie,
     ) {
-        if (typeCriseCatagorieRepository.fetchExistsInEvenement(element.typeCriseCategorieId)) {
-            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_IMPOSSIBLE_SUPPRIME)
-        }
+        // Pas de contraintes
     }
 
     override fun execute(
         userInfo: WrappedUserInfo,
-        element: TypeCriseCategorie,
-    ): TypeCriseCategorie {
-        typeCriseCatagorieRepository.delete(element.typeCriseCategorieId)
+        element: EvenementSousCategorie,
+    ): EvenementSousCategorie {
+        evenementSousCategorieRepository.insert(element)
         return element
     }
 
     override fun postEvent(
-        element: TypeCriseCategorie,
+        element: EvenementSousCategorie,
         userInfo: WrappedUserInfo,
     ) {
         eventBus.post(
             TracabiliteEvent(
                 pojo = element,
-                pojoId = element.typeCriseCategorieId,
+                pojoId = element.evenementSousCategorieId,
                 typeOperation = typeOperation,
-                typeObjet = TypeObjet.TYPE_CRISE_CATEGORIE,
+                typeObjet = TypeObjet.EVENEMENT_SOUS_CATEGORIE,
                 auteurTracabilite = userInfo.getInfosTracabilite(),
                 date = dateUtils.now(),
             ),

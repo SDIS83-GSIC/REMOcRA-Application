@@ -10,9 +10,9 @@ import remocra.data.NomenclatureCodeLibelleData
 import remocra.data.enums.TypeDataCache
 import remocra.db.AnomalieRepository
 import remocra.db.CoucheRepository
-import remocra.db.CriseCategorieRepository
 import remocra.db.DiametreRepository
 import remocra.db.DomaineRepository
+import remocra.db.EvenementCategorieRepository
 import remocra.db.MarquePibiRepository
 import remocra.db.MateriauRepository
 import remocra.db.ModelePibiRepository
@@ -31,9 +31,9 @@ import remocra.db.TypeReseauRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.pojos.Anomalie
-import remocra.db.jooq.remocra.tables.pojos.CriseCategorie
 import remocra.db.jooq.remocra.tables.pojos.Diametre
 import remocra.db.jooq.remocra.tables.pojos.Domaine
+import remocra.db.jooq.remocra.tables.pojos.EvenementCategorie
 import remocra.db.jooq.remocra.tables.pojos.MarquePibi
 import remocra.db.jooq.remocra.tables.pojos.Materiau
 import remocra.db.jooq.remocra.tables.pojos.ModelePibi
@@ -75,7 +75,7 @@ class DataCacheProvider
 constructor(
     private val anomalieRepository: AnomalieRepository,
     private val coucheRepository: CoucheRepository,
-    private val criseCategorieRepository: CriseCategorieRepository,
+    private val evenementCategorieRepository: EvenementCategorieRepository,
     private val diametreRepository: DiametreRepository,
     private val domaineRepository: DomaineRepository,
     private val marquePibiRepository: MarquePibiRepository,
@@ -118,7 +118,7 @@ constructor(
             TypeDataCache.ANOMALIE -> dataCache.mapAnomalie = anomalieRepository.getMapById()
             TypeDataCache.ANOMALIE_CATEGORIE -> dataCache.mapAnomalieCategorie = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
             TypeDataCache.COUCHE -> dataCache.mapCouches = coucheRepository.getMapById()
-            TypeDataCache.CRISE_CATEGORIE -> dataCache.mapCriseCategorie = criseCategorieRepository.getMapById()
+            TypeDataCache.EVENEMENT_CATEGORIE -> dataCache.mapEvenementCategorie = evenementCategorieRepository.getMapById()
             TypeDataCache.DIAMETRE -> dataCache.mapDiametre = diametreRepository.getMapById()
             TypeDataCache.DOMAINE -> dataCache.mapDomaine = domaineRepository.getMapById()
             TypeDataCache.MARQUE_PIBI -> dataCache.mapMarquePibi = marquePibiRepository.getMapById()
@@ -163,7 +163,7 @@ constructor(
         val anomalies = anomalieRepository.getMapById()
         val anomaliesCategories = anomalieRepository.getAnomalieCategorie().associateBy { it.anomalieCategorieId }
         val couches = coucheRepository.getMapById()
-        val criseCategorie = criseCategorieRepository.getMapById()
+        val criseCategorie = evenementCategorieRepository.getMapById()
         val diametres = diametreRepository.getMapById()
         val domaines = domaineRepository.getMapById()
         val marquesPibi = marquePibiRepository.getMapById()
@@ -201,7 +201,7 @@ constructor(
             mapAnomalie = anomalies,
             mapAnomalieCategorie = anomaliesCategories,
             mapCouches = couches,
-            mapCriseCategorie = criseCategorie,
+            mapEvenementCategorie = criseCategorie,
             mapDiametre = diametres,
             mapDomaine = domaines,
             mapMateriau = materiaux,
@@ -244,7 +244,7 @@ constructor(
         TypeDataCache.ANOMALIE -> getAnomalies()
         TypeDataCache.ANOMALIE_CATEGORIE -> getAnomaliesCategories()
         TypeDataCache.COUCHE -> get().mapCouches
-        TypeDataCache.CRISE_CATEGORIE -> get().mapCriseCategorie
+        TypeDataCache.EVENEMENT_CATEGORIE -> get().mapEvenementCategorie
         TypeDataCache.DIAMETRE -> getDiametres()
         TypeDataCache.DOMAINE -> get().mapDomaine
         TypeDataCache.MARQUE_PIBI -> get().mapMarquePibi
@@ -321,7 +321,7 @@ constructor(
         TypeDataCache.ANOMALIE -> Anomalie::class.java
         TypeDataCache.ANOMALIE_CATEGORIE -> NomenclatureCodeLibelleData::class.java
         TypeDataCache.COUCHE -> CoucheData::class.java
-        TypeDataCache.CRISE_CATEGORIE -> CriseCategorie::class.java
+        TypeDataCache.EVENEMENT_CATEGORIE -> EvenementCategorie::class.java
         TypeDataCache.DIAMETRE -> Diametre::class.java
         TypeDataCache.DOMAINE -> Domaine::class.java
         TypeDataCache.MARQUE_PIBI -> MarquePibi::class.java

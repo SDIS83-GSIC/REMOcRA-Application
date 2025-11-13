@@ -24,7 +24,7 @@ import javax.annotation.processing.Generated
 @Suppress("UNCHECKED_CAST")
 data class Evenement(
     val evenementId: UUID,
-    val evenementTypeCriseCategorieId: UUID?,
+    val evenementEvenementSousCategorieId: UUID?,
     val evenementLibelle: String,
     val evenementDescription: String?,
     val evenementOrigine: String?,
@@ -54,11 +54,11 @@ data class Evenement(
         if (this.evenementId != o.evenementId) {
             return false
         }
-        if (this.evenementTypeCriseCategorieId == null) {
-            if (o.evenementTypeCriseCategorieId != null) {
+        if (this.evenementEvenementSousCategorieId == null) {
+            if (o.evenementEvenementSousCategorieId != null) {
                 return false
             }
-        } else if (this.evenementTypeCriseCategorieId != o.evenementTypeCriseCategorieId) {
+        } else if (this.evenementEvenementSousCategorieId != o.evenementEvenementSousCategorieId) {
             return false
         }
         if (this.evenementLibelle != o.evenementLibelle) {
@@ -151,7 +151,7 @@ data class Evenement(
         val prime = 31
         var result = 1
         result = prime * result + this.evenementId.hashCode()
-        result = prime * result + (if (this.evenementTypeCriseCategorieId == null) 0 else this.evenementTypeCriseCategorieId.hashCode())
+        result = prime * result + (if (this.evenementEvenementSousCategorieId == null) 0 else this.evenementEvenementSousCategorieId.hashCode())
         result = prime * result + this.evenementLibelle.hashCode()
         result = prime * result + (if (this.evenementDescription == null) 0 else this.evenementDescription.hashCode())
         result = prime * result + (if (this.evenementOrigine == null) 0 else this.evenementOrigine.hashCode())
@@ -172,7 +172,7 @@ data class Evenement(
         val sb = StringBuilder("Evenement (")
 
         sb.append(evenementId)
-        sb.append(", ").append(evenementTypeCriseCategorieId)
+        sb.append(", ").append(evenementEvenementSousCategorieId)
         sb.append(", ").append(evenementLibelle)
         sb.append(", ").append(evenementDescription)
         sb.append(", ").append(evenementOrigine)

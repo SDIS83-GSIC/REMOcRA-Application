@@ -19,7 +19,6 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.CoucheStyle
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
-import remocra.db.jooq.remocra.tables.CriseCategorie
 import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
@@ -32,6 +31,8 @@ import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.Domaine
 import remocra.db.jooq.remocra.tables.Evenement
+import remocra.db.jooq.remocra.tables.EvenementCategorie
+import remocra.db.jooq.remocra.tables.EvenementSousCategorie
 import remocra.db.jooq.remocra.tables.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.FonctionContact
 import remocra.db.jooq.remocra.tables.Gestionnaire
@@ -144,7 +145,6 @@ import remocra.db.jooq.remocra.tables.Toponymie
 import remocra.db.jooq.remocra.tables.Tournee
 import remocra.db.jooq.remocra.tables.TypeCanalisation
 import remocra.db.jooq.remocra.tables.TypeCrise
-import remocra.db.jooq.remocra.tables.TypeCriseCategorie
 import remocra.db.jooq.remocra.tables.TypeEngin
 import remocra.db.jooq.remocra.tables.TypeOrganisme
 import remocra.db.jooq.remocra.tables.TypePenaAspiration
@@ -243,11 +243,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val CRISE: Crise get() = Crise.CRISE
 
     /**
-     * The table <code>remocra.crise_categorie</code>.
-     */
-    val CRISE_CATEGORIE: CriseCategorie get() = CriseCategorie.CRISE_CATEGORIE
-
-    /**
      * The table <code>remocra.crise_indicateur</code>.
      */
     val CRISE_INDICATEUR: CriseIndicateur get() = CriseIndicateur.CRISE_INDICATEUR
@@ -306,6 +301,16 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.evenement</code>.
      */
     val EVENEMENT: Evenement get() = Evenement.EVENEMENT
+
+    /**
+     * The table <code>remocra.evenement_categorie</code>.
+     */
+    val EVENEMENT_CATEGORIE: EvenementCategorie get() = EvenementCategorie.EVENEMENT_CATEGORIE
+
+    /**
+     * The table <code>remocra.evenement_sous_categorie</code>.
+     */
+    val EVENEMENT_SOUS_CATEGORIE: EvenementSousCategorie get() = EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE
 
     /**
      * The table <code>remocra.fiche_resume_bloc</code>.
@@ -872,11 +877,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val TYPE_CRISE: TypeCrise get() = TypeCrise.TYPE_CRISE
 
     /**
-     * The table <code>remocra.type_crise_categorie</code>.
-     */
-    val TYPE_CRISE_CATEGORIE: TypeCriseCategorie get() = TypeCriseCategorie.TYPE_CRISE_CATEGORIE
-
-    /**
      * The table <code>remocra.type_engin</code>.
      */
     val TYPE_ENGIN: TypeEngin get() = TypeEngin.TYPE_ENGIN
@@ -961,7 +961,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         CoucheStyle.COUCHE_STYLE,
         Courrier.COURRIER,
         Crise.CRISE,
-        CriseCategorie.CRISE_CATEGORIE,
         CriseIndicateur.CRISE_INDICATEUR,
         Dashboard.DASHBOARD,
         DashboardComponent.DASHBOARD_COMPONENT,
@@ -974,6 +973,8 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         DocumentHabilitable.DOCUMENT_HABILITABLE,
         Domaine.DOMAINE,
         Evenement.EVENEMENT,
+        EvenementCategorie.EVENEMENT_CATEGORIE,
+        EvenementSousCategorie.EVENEMENT_SOUS_CATEGORIE,
         FicheResumeBloc.FICHE_RESUME_BLOC,
         FonctionContact.FONCTION_CONTACT,
         Gestionnaire.GESTIONNAIRE,
@@ -1086,7 +1087,6 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         Tournee.TOURNEE,
         TypeCanalisation.TYPE_CANALISATION,
         TypeCrise.TYPE_CRISE,
-        TypeCriseCategorie.TYPE_CRISE_CATEGORIE,
         TypeEngin.TYPE_ENGIN,
         TypeOrganisme.TYPE_ORGANISME,
         TypePenaAspiration.TYPE_PENA_ASPIRATION,

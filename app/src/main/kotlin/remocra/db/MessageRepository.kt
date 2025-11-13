@@ -29,6 +29,7 @@ class MessageRepository @Inject constructor(
         val query = if (dsl.select(MESSAGE_EVENEMENT.UTILISATEUR_ID)
                 .from(MESSAGE_EVENEMENT)
                 .where(MESSAGE_EVENEMENT.UTILISATEUR_ID.isNotNull)
+                .limit(1)
                 .fetchOne() != null
         ) {
             // Si UTILISATEUR_ID n'est pas null, on fait le join

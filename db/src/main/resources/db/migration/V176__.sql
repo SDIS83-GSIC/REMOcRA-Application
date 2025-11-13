@@ -1,0 +1,18 @@
+ALTER TYPE historique.type_objet RENAME VALUE 'TYPE_CRISE_CATEGORIE' TO 'EVENEMENT_SOUS_CATEGORIE';
+ALTER TYPE historique.type_objet RENAME VALUE 'CRISE_CATEGORIE' TO 'EVENEMENT_CATEGORIE';
+
+ALTER TABLE crise_categorie RENAME TO evenement_categorie;
+ALTER TABLE evenement_categorie RENAME COLUMN crise_categorie_id TO evenement_categorie_id;
+ALTER TABLE evenement_categorie RENAME COLUMN crise_categorie_code TO evenement_categorie_code;
+ALTER TABLE evenement_categorie RENAME COLUMN crise_categorie_libelle TO evenement_categorie_libelle;
+ALTER TABLE evenement_categorie RENAME COLUMN crise_categorie_actif TO evenement_categorie_actif;
+
+
+ALTER TABLE type_crise_categorie RENAME TO evenement_sous_categorie;
+ALTER TABLE evenement_sous_categorie RENAME COLUMN type_crise_categorie_id TO evenement_sous_categorie_id;
+ALTER TABLE evenement_sous_categorie RENAME COLUMN type_crise_categorie_code TO evenement_sous_categorie_code;
+ALTER TABLE evenement_sous_categorie RENAME COLUMN type_crise_categorie_libelle TO evenement_sous_categorie_libelle;
+ALTER TABLE evenement_sous_categorie RENAME COLUMN type_crise_categorie_type_geometrie TO evenement_sous_categorie_type_geometrie;
+ALTER TABLE evenement_sous_categorie RENAME COLUMN type_crise_categorie_crise_categorie_id TO evenement_sous_categorie_evenement_categorie_id;
+
+ALTER TABLE evenement RENAME COLUMN evenement_type_crise_categorie_id TO evenement_evenement_sous_categorie_id;
