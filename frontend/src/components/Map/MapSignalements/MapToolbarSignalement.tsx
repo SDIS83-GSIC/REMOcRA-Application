@@ -325,7 +325,7 @@ const MapToolbarSignalement = ({
       <Row>
         <Col xs={"auto"}>
           <VoletButtonListeDocumentThematique
-            codeThematique={THEMATIQUE.SIGNALEMENTS}
+            codeThematique={THEMATIQUE.SIGNALEMENT}
             titreVolet="Liste des documents liés aux signalements"
           />
           <ToolbarButton

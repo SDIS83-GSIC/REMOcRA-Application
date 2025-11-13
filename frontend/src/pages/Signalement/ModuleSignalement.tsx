@@ -12,7 +12,7 @@ const ModuleSignalement = () => {
     {
       path: URLS.SIGNALEMENTS,
       label: "Carte des signalements",
-      aLeDroit: hasDroit(user, TYPE_DROIT.ADRESSES_C),
+      aLeDroit: hasDroit(user, TYPE_DROIT.SIGNALEMENT_C),
     },
     {
       path: URLS.SIGNALEMENTS_DELIBERATION,
