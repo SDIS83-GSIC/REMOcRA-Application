@@ -118,7 +118,6 @@ class PeiUseCase : AbstractUseCase() {
         return when (typePei) {
             TypePei.PIBI -> pibiRepository.getInfoPibi(idPei)
             TypePei.PENA -> penaRepository.getInfoPena(idPei)
-            else -> throw IllegalArgumentException("Le type du PEI $idPei est incorrect (Valeurs autorisées : PIBI, PENA)")
         }
     }
 

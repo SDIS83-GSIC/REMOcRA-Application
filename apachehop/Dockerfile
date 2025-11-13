@@ -1,4 +1,4 @@
-FROM apache/hop:2.14.0
+FROM apache/hop:2.15.0
 
 
 USER hop

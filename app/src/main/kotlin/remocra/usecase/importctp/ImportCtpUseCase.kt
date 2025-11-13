@@ -132,7 +132,7 @@ class ImportCtpUseCase : AbstractUseCase() {
     @Throws(JsonProcessingException::class)
     fun importCtpValidation(file: InputStream, userInfo: WrappedUserInfo): ImportCtpData {
         val mapper = ObjectMapper()
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY)
 
         val data = ImportCtpData()
         val resultatVerifications: MutableList<LigneImportCtpData> = mutableListOf()

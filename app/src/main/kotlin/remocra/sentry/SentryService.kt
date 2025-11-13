@@ -11,7 +11,7 @@ import java.util.Optional
 class SentryService
 @Inject
 constructor(
-    @SentryJava private val sentryOptions: Optional<SentryOptions>,
+    @param:SentryJava private val sentryOptions: Optional<SentryOptions>,
     private val sentryAppenderConfig: SentryAppenderConfig,
 ) {
     fun start() {

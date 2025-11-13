@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1-labs
-ARG GLOWROOT_VERSION=0.14.2
+ARG GLOWROOT_VERSION=0.14.4
 FROM docker-registry.priv.atolcd.com/glowroot:$GLOWROOT_VERSION AS glowroot
 
 FROM docker-registry.priv.atolcd.com/java:21-jre

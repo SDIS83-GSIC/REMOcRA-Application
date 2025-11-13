@@ -30,7 +30,7 @@ class TriAnomalieEndpoint : AbstractEndpoint() {
     lateinit var securityContext: SecurityContext
 
     data class ListeTriInput(
-        @FormParam("listeObjet")
+        @param:FormParam("listeObjet")
         val listeObjet: List<UUID>,
     )
 

@@ -5,6 +5,7 @@ import com.google.inject.Provides
 import com.typesafe.config.Config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import jakarta.annotation.Nullable
 import jakarta.inject.Singleton
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext
@@ -15,7 +16,6 @@ import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.ThreadLocalTransactionProvider
 import remocra.RemocraModule
 import java.util.Properties
-import javax.annotation.Nullable
 import javax.sql.DataSource
 
 /**
@@ -48,13 +48,13 @@ constructor(private val properties: Properties?) :
     @Singleton
     @Sig
     fun provideConnectionProviderSig(@Sig @Nullable dataSource: DataSource?): ConnectionProvider? =
-        properties?.let { DataSourceConnectionProvider(dataSource) }
+        dataSource?.let { DataSourceConnectionProvider(it) }
 
     @Provides
     @Singleton
     @Sig
     fun provideTransactionProviderSig(@Sig @Nullable connectionProvider: ConnectionProvider?): TransactionProvider? =
-        properties?.let { ThreadLocalTransactionProvider(connectionProvider) }
+        connectionProvider?.let { ThreadLocalTransactionProvider(it) }
 
     companion object {
         fun create(config: Config): SigDatabaseModule {

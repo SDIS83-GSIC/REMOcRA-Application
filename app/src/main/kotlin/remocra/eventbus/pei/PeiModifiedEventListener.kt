@@ -43,7 +43,7 @@ class PeiModifiedEventListener @Inject constructor() :
             registerModule(GuavaModule())
             registerModule(NexSisJsonModule())
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            setSerializationInclusion(JsonInclude.Include.ALWAYS)
+            setDefaultPropertyInclusion(JsonInclude.Include.ALWAYS)
         }
     }
 

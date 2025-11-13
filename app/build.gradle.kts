@@ -18,8 +18,11 @@ licensee {
     // allow("MPL-2.0")
     // allow("LGPL-2.1")
     allow("GPL-2.0-with-classpath-exception")
-    allowUrl("http://www.jooq.org/inc/LICENSE.txt") {
+    allowUrl("https://www.jooq.org/inc/LICENSE.txt") {
         because("Dual-licensed Apache-2.0 or jOOQ License")
+    }
+    allowUrl("https://opensource.org/license/mit") {
+        because("MIT")
     }
     allowUrl("https://golang.org/LICENSE") {
         because("BSD-3-Clause")
@@ -76,7 +79,6 @@ licensee {
     allowDependency("tech.uom.lib", "uom-lib-common", "2.1") {
         because("BSD-3-Clause")
     }
-
     allowDependency("oro", "oro", "2.0.8") {
         because("Apache-2.0")
     }

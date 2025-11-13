@@ -1,11 +1,11 @@
 package remocra.db
 
+import jakarta.annotation.Nullable
 import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
 import org.jooq.Result
-import javax.annotation.Nullable
 
 /**
  * Le contexte est nullable car, si la connexion à une base de données externe n'est pas configurée,
@@ -15,7 +15,7 @@ import javax.annotation.Nullable
  * Il est donc nécessaire, à chaque utilisation du contexte, de vérifier qu'il n'est pas nul (dsl!!.select[...]) ;
  * dans le cas contraire, une RuntimeException est justifiée.
 */
-class SigRepository @Inject constructor(@Sig @Nullable private val dsl: DSLContext?) {
+class SigRepository @Inject constructor(@param:Sig @param:Nullable private val dsl: DSLContext?) {
 
     fun getMetaStructureTable(schemaName: String, tableName: String): List<ColumnInfo> =
         dsl!!.meta().tables

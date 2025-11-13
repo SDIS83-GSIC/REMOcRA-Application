@@ -4,13 +4,13 @@ import jakarta.ws.rs.FormParam
 import java.util.UUID
 
 class ParametreCourrierInput(
-    @FormParam("modeleCourrierId")
+    @param:FormParam("modeleCourrierId")
     val modeleCourrierId: UUID,
 
-    @FormParam("courrierReference")
+    @param:FormParam("courrierReference")
     val courrierReference: String,
 
-    @FormParam("listParametres")
+    @param:FormParam("listParametres")
     val listParametres: List<NomValue>?,
 
 )

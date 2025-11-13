@@ -3,12 +3,12 @@ package remocra.data
 import jakarta.ws.rs.QueryParam
 
 data class Params<T, U>(
-    @QueryParam("limit")
+    @param:QueryParam("limit")
     val limit: Int? = 10,
-    @QueryParam("offset")
+    @param:QueryParam("offset")
     val offset: Int? = 0,
-    @QueryParam("filterBy")
+    @param:QueryParam("filterBy")
     val filterBy: T?,
-    @QueryParam("sortBy")
+    @param:QueryParam("sortBy")
     val sortBy: U?,
 )

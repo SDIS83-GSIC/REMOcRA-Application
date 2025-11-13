@@ -1,13 +1,14 @@
 [versions]
-flyway = "10.17.3"
-forbiddenapis = "3.7"
-jooq = "3.19.11"
-retrofit = "2.11.0"
-geotools = "31.3"
-jetty = "12.0.16"
-sentry= "7.14.0"
+flyway = "10.22.0"
+forbiddenapis = "3.10"
+jooq = "3.20.9"
+retrofit = "2.12.0"
+geotools = "31.7"
+jetty = "12.1.3"
+sentry= "7.22.6"
 jts = "1.20.0"
 xdocreport = "2.1.0"
+jackson = "2.20.1"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -15,7 +16,7 @@ junit = "5.11.0"
 ktlint = "0.49.0"
 
 [libraries]
-log4j-bom = "org.apache.logging.log4j:log4j-bom:2.24.3"
+log4j-bom = "org.apache.logging.log4j:log4j-bom:2.25.2"
 log4j-core = { module = "org.apache.logging.log4j:log4j-core"}
 log4j-jul = { module = "org.apache.logging.log4j:log4j-jul" }
 guice-bom = "com.google.inject:guice-bom:7.0.0"
@@ -24,48 +25,49 @@ jetty-ee10-bom = { module = "org.eclipse.jetty.ee10:jetty-ee10-bom", version.ref
 jetty-servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet" }
 jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets" }
 forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
-oidcServlets-bom = "net.ltgt.oidc:oidc-servlets-bom:1.0.0-rc-7"
+oidcServlets-bom = "net.ltgt.oidc:oidc-servlets-bom:1.0.0-rc-11"
 oidcServlets = { module = "net.ltgt.oidc:oidc-servlets" }
 oidcServlets-rs = { module = "net.ltgt.oidc:oidc-servlets-rs" }
-oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-3"
+oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-4"
 oauthServlets-rs = { module = "net.ltgt.oauth:oauth-rs" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
-kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
+kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 
 disruptor = "com.lmax:disruptor:4.0.0"
-slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "2.0.16" } }
+slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "2.0.17" } }
 log4j-slf4j2Impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl" }
-typesafe = "com.typesafe:config:1.4.3"
-postgresql = "org.postgresql:postgresql:42.7.4"
-hikaricp = "com.zaxxer:HikariCP:6.3.0"
-guava = "com.google.guava:guava:33.3.1-jre"
+typesafe = "com.typesafe:config:1.4.5"
+postgresql = "org.postgresql:postgresql:42.7.8"
+hikaricp = "com.zaxxer:HikariCP:6.3.3"
+guava = "com.google.guava:guava:33.5.0-jre"
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
-picocli = "info.picocli:picocli:4.7.6"
-caffeine = "com.github.ben-manes.caffeine:caffeine:3.1.8"
+picocli = "info.picocli:picocli:4.7.7"
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.2.3"
 
 resteasy-core = { module = "org.jboss.resteasy:resteasy-core"}
 resteasy-core-spi = { module =  "org.jboss.resteasy:resteasy-core-spi"}
-resteasy-bom = "org.jboss.resteasy:resteasy-bom:6.2.11.Final"
+resteasy-bom = "org.jboss.resteasy:resteasy-bom: 6.2.15.Final"
 
 jooq-kotlin = { module = "org.jooq:jooq-kotlin", version.ref = "jooq" }
 jooq-codegen = { module = "org.jooq:jooq-codegen", version.ref = "jooq" }
 
-jackson-jakarta-rs-json-provider = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider:2.9.6"
-jackson-module-kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2"
-jackson-datatype-guava = "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.17.2"
-jackson-datatype-jdk8 = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2"
-jackson-datatype-jsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2"
-jackson-dataformat-csv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.17.2"
+
+jackson-jakarta-rs-json-provider = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider", version.ref = "jackson"}
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref= "jackson" }
+jackson-datatype-guava = { module ="com.fasterxml.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
+jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-dataformat-csv = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv", version.ref = "jackson" }
 json = "org.json:json:20250517"
 
 commons-email = "org.apache.commons:commons-email2-jakarta:2.0.0-M1"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
-swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.27"
-swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.27"
-swagger-ui = "org.webjars.npm:swagger-ui-dist:5.21.0"
+swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.40"
+swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.40"
+swagger-ui = "org.webjars.npm:swagger-ui-dist:5.30.2"
 
 geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "geotools" }
 geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }
@@ -77,13 +79,13 @@ locationtech-jts-io = {module = "org.locationtech.jts.io:jts-io-common", version
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
 
-apache-poi = "org.apache.poi:poi-ooxml:5.3.0"
+apache-poi = "org.apache.poi:poi-ooxml:5.4.1"
 
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 sentry-servlet-jakarta = { module = "io.sentry:sentry-servlet-jakarta", version.ref = "sentry" }
 sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 
-archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.3.0"
+archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.4.1"
 
 owasp = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
 
@@ -98,12 +100,12 @@ xdocreport-odfdom = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocrepor
 
 
 [plugins]
-android-lint = "com.android.lint:8.7.3"
+android-lint = "com.android.lint:8.13.1"
 cyclonedx = "org.cyclonedx.bom:1.7.4"
 flyway = "net.ltgt.flyway:0.2.0"
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
 jooq = "net.ltgt.jooq-kotlin:0.1.0"
-jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.1.2"
-kotlin = "org.jetbrains.kotlin.jvm:2.0.20"
-licensee = "app.cash.licensee:1.11.0"
+jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.4"
+kotlin = "org.jetbrains.kotlin.jvm:2.2.21"
+licensee = "app.cash.licensee:1.14.1"
 spotless = "com.diffplug.spotless:6.25.0"

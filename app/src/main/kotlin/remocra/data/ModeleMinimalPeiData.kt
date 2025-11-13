@@ -11,7 +11,7 @@ open class ModeleMinimalPeiData(
     open val peiNumeroComplet: String,
     open val natureCode: String,
     open val isDisponible: Boolean,
-    @JsonSerialize(using = GeometryToGeoJsonSerializer::class)
+    @param:JsonSerialize(using = GeometryToGeoJsonSerializer::class)
     open val geometrie: Point,
     open val codeInsee: String,
     open val communeLibelle: String,
