@@ -18,6 +18,7 @@ class SecurityHeadersFilter : HttpFilter() {
         private val BASE_CSP = "base-uri 'self'; frame-ancestors 'none'; default-src 'self'; " +
             "connect-src 'self' https://data.geopf.fr ${if (RELAX_CSP_FOR_DEVELOPMENT) "ws://localhost:*" else ""}; " +
             "script-src 'self' ${if (RELAX_CSP_FOR_DEVELOPMENT) "'unsafe-eval' 'unsafe-inline'" else ""}; " +
+            "frame-src 'self' https://www.youtube.com; " +
             // FIXME: on inclut unsafe-inline dans style-src-elem à cause de react-select: https://github.com/JedWatson/react-select/issues/4631
             // Il existe un workaround en passant le nonce à l'appli React, en utilisant @emotion/cache et un CacheProvider
             "style-src-elem 'self' 'unsafe-inline'; " +
@@ -32,8 +33,11 @@ class SecurityHeadersFilter : HttpFilter() {
         res.setHeader("Referrer-Policy", "strict-origin")
         res.setHeader("Permissions-Policy", "accelerometer=(), camera=(), fullscreen=(self), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()")
         res.setHeader("Cross-Origin-Resource-Policy", "same-site")
-        // OSM memomaps n'autorise pas CORS et/ou n'utilise pas CORP, on passe donc par credentialless
-        res.setHeader("Cross-Origin-Embedder-Policy", "credentialless")
+        // Si on est sur la page d'accueil, on ne veut pas du filtre car sinon Youtube ne fonctionne pas
+        if (!req.requestURI.startsWith("/")) {
+            // OSM memomaps n'autorise pas CORS et/ou n'utilise pas CORP, on passe donc par credentialless
+            res.setHeader("Cross-Origin-Embedder-Policy", "credentialless")
+        }
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin")
 
         var csp = BASE_CSP

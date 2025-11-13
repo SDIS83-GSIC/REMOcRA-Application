@@ -23,7 +23,7 @@ object HtmlSanitizerModule : RemocraModule() {
             .allowElements("iframe")
             .allowAttributes("src", "width", "height", "title", "frameborder", "allow", "allowfullscreen")
             .onElements("iframe")
-            .allowAttributes("src").matching { url, _, _ ->
+            .allowAttributes("src").matching { _, _, url ->
                 if (url != null && (
                         url.startsWith("https://www.youtube.com/")
                         )
