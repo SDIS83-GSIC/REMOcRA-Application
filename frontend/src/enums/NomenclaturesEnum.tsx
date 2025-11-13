@@ -6,7 +6,7 @@ export enum NOMENCLATURE {
   SIGNALEMENT_TYPE_ELEMENT = "signalement_type_element",
   ANOMALIE = "anomalie",
   ANOMALIE_CATEGORIE = "anomalie_categorie",
-  CRISE_CATEGORIE = "crise_categorie",
+  EVENEMENT_CATEGORIE = "evenement_categorie",
   DIAMETRE = "diametre",
   DOMAINE = "domaine",
   FONCTION_CONTACT = "fonction_contact",

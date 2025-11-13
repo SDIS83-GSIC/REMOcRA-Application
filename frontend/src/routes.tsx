@@ -42,9 +42,9 @@ import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
 import CoucheList from "./pages/Admin/couche/CoucheList.tsx";
-import CreateCriseCategorie from "./pages/Admin/crise/criseCategorie/CreateCriseCategorie.tsx";
-import ListCriseCategorie from "./pages/Admin/crise/criseCategorie/ListCriseCategorie.tsx";
-import UpdateCriseCategorie from "./pages/Admin/crise/criseCategorie/UpdateCriseCategorie.tsx";
+import CreateEvenementCategorie from "./pages/Admin/crise/criseCategorie/CreateEvenementCategorie.tsx";
+import ListEvenementCategorie from "./pages/Admin/crise/criseCategorie/ListEvenementCategorie.tsx";
+import UpdateEvenementCategorie from "./pages/Admin/crise/criseCategorie/UpdateEvenementCategorie.tsx";
 import CreateTypeCrise from "./pages/Admin/crise/typeCrise/CreateTypeCrise.tsx";
 import ListTypeCrise from "./pages/Admin/crise/typeCrise/ListTypeCrise.tsx";
 import UpdateTypeCrise from "./pages/Admin/crise/typeCrise/UpdateTypeCrise.tsx";
@@ -192,9 +192,9 @@ import TourneePei from "./pages/Tournee/TourneePei.tsx";
 import UpdateTournee from "./pages/Tournee/UpdateTournee.tsx";
 import ValidateAccessSaisieVisiteTournee from "./pages/Visite/SaisieVisiteTournee.tsx";
 import Visite from "./pages/Visite/Visite.tsx";
-import ListTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/ListTypeCriseCategorie.tsx";
-import CreateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateTypeCriseCategorie.tsx";
-import UpdateTypeCriseCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateTypeCriseCategorie.tsx";
+import ListEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/ListEvenementSousCategorie.tsx";
+import CreateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/CreateEvenementSousCategorie.tsx";
+import UpdateEvenementSousCategorie from "./pages/Admin/crise/typeCriseCategorie/UpdateEvenementSousCategorie.tsx";
 import ListTypeEngin from "./pages/Admin/typeEngin/ListTypeEngin.tsx";
 import UpdateTypeEngin from "./pages/Admin/typeEngin/UpdateTypeEngin.tsx";
 import CreateTypeEngin from "./pages/Admin/typeEngin/CreateTypeEngin.tsx";
@@ -434,15 +434,15 @@ export const URLS = {
     url`/admin/type-crise/update/` + typeCriseId,
   LIST_TYPE_CRISE: url`/admin/type-crise`,
 
-  ADD_CRISE_CATEGORIE: url`/admin/crise-categorie/create`,
-  UPDATE_CRISE_CATEGORIE: (criseCategorieId: string) =>
-    url`/admin/crise-categorie/update/` + criseCategorieId,
-  LIST_CRISE_CATEGORIE: url`/admin/crise-categorie`,
+  ADD_EVENEMENT_CATEGORIE: url`/admin/evenement-categorie/create`,
+  UPDATE_EVENEMENT_CATEGORIE: (evenementCategorieId: string) =>
+    url`/admin/evenement-categorie/update/` + evenementCategorieId,
+  LIST_EVENEMENT_CATEGORIE: url`/admin/evenement-categorie`,
 
-  ADD_TYPE_CRISE_CATEGORIE: url`/admin/type-crise-categorie/create`,
-  LIST_TYPE_CRISE_CATEGORIE: url`/admin/type-crise-categorie`,
-  UPDATE_TYPE_CRISE_CATEGORIE: (typeCriseCategorieId: string) =>
-    url`/admin/type-crise-categorie/update/` + typeCriseCategorieId,
+  ADD_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie/create`,
+  LIST_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie`,
+  UPDATE_TYPE_CRISE_CATEGORIE: (evenementSousCategorieId: string) =>
+    url`/admin/evenement-sous-categorie/update/` + evenementSousCategorieId,
 
   ADD_ROLE_CONTACT: url`/admin/role-contact/create`,
   UPDATE_ROLE_CONTACT: (roleContactId: string) =>
@@ -2000,55 +2000,55 @@ export default [
         ),
       },
       {
-        path: "crise-categorie/update/:criseCategorieId",
+        path: "evenement-categorie/update/:evenementCategorieId",
         element: (
           <Authorization
-            Component={UpdateCriseCategorie}
+            Component={UpdateEvenementCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "crise-categorie",
+        path: "evenement-categorie",
         element: (
           <Authorization
-            Component={ListCriseCategorie}
+            Component={ListEvenementCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "crise-categorie/create",
+        path: "evenement-categorie/create",
         element: (
           <Authorization
-            Component={CreateCriseCategorie}
+            Component={CreateEvenementCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "type-crise-categorie",
+        path: "evenement-sous-categorie",
         element: (
           <Authorization
-            Component={ListTypeCriseCategorie}
+            Component={ListEvenementSousCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "type-crise-categorie/create",
+        path: "evenement-sous-categorie/create",
         element: (
           <Authorization
-            Component={CreateTypeCriseCategorie}
+            Component={CreateEvenementSousCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),
       },
       {
-        path: "type-crise-categorie/update/:typeCriseCategorieId",
+        path: "evenement-sous-categorie/update/:EvenementSousCategorieId",
         element: (
           <Authorization
-            Component={UpdateTypeCriseCategorie}
+            Component={UpdateEvenementSousCategorie}
             droits={[TYPE_DROIT.ADMIN_DROITS]}
           />
         ),

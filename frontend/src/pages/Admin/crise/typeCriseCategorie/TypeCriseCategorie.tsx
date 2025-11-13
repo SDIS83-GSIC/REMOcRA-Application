@@ -12,93 +12,101 @@ import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
 import { requiredString } from "../../../../module/validators.tsx";
 
-type TypeCriseCategorieType = {
-  typeCriseCategorieId: string;
-  typeCriseCategorieCode: string;
-  typeCriseCategorieLibelle: string;
-  typeCriseCategorieTypeGeometrie: TYPE_GEOMETRIE;
-  typeCriseCategorieCriseCategorieId: string;
+type TypeEvenementSousCategorieType = {
+  typeEvenementCategorieId: string;
+  typeEvenementCategorieCode: string;
+  typeEvenementCategorieLibelle: string;
+  typeEvenementCategorieGeometrie: TYPE_GEOMETRIE;
+  typeEvenementCategorieEvenementCategorieId: string;
 };
 
-export const prepareValues = (values: TypeCriseCategorieType) => ({
-  typeCriseCategorieId: values.typeCriseCategorieId,
-  typeCriseCategorieCode: values.typeCriseCategorieCode,
-  typeCriseCategorieLibelle: values.typeCriseCategorieLibelle,
-  typeCriseCategorieTypeGeometrie: values.typeCriseCategorieTypeGeometrie,
-  typeCriseCategorieCriseCategorieId: values.typeCriseCategorieCriseCategorieId,
+export const prepareValues = (values: TypeEvenementSousCategorieType) => ({
+  evenementSousCategorieId: values.typeEvenementCategorieId,
+  evenementSousCategorieCode: values.typeEvenementCategorieCode,
+  evenementSousCategorieLibelle: values.typeEvenementCategorieLibelle,
+  evenementSousCategorieGeometrie: values.typeEvenementCategorieGeometrie,
+  typeEvenementSousCategorieId:
+    values.typeEvenementCategorieEvenementCategorieId,
 });
 
-export const typeCriseCategorieValidationSchema = object({
-  typeCriseCategorieCode: requiredString,
-  typeCriseCategorieLibelle: requiredString,
-  typeCriseCategorieTypeGeometrie: requiredString,
-  typeCriseCategorieCriseCategorieId: requiredString,
+export const typeEvenementCategorieValidationSchema = object({
+  evenementSousCategorieCode: requiredString,
+  evenementSousCategorieLibelle: requiredString,
+  evenementSousCategorieTypeGeometrie: requiredString,
+  evenementSousCategorieEvenementId: requiredString,
 });
 
-export const getInitialTypeCriseCategorieValue = (
-  data: TypeCriseCategorieType,
+export const getInitialEvenementSousCategorieValue = (
+  data: TypeEvenementSousCategorieType,
 ) => ({
-  typeCriseCategorieId: data.typeCriseCategorieId ?? null,
-  typeCriseCategorieCode: data.typeCriseCategorieCode ?? null,
-  typeCriseCategorieLibelle: data.typeCriseCategorieLibelle ?? null,
-  typeCriseCategorieTypeGeometrie: data.typeCriseCategorieTypeGeometrie ?? null,
-  typeCriseCategorieCriseCategorieId:
-    data.typeCriseCategorieCriseCategorieId ?? null,
+  evenementSousCategorieId: data.typeEvenementCategorieId ?? null,
+  evenementSousCategorieCode: data.typeEvenementCategorieCode ?? null,
+  evenementSousCategorieLibelle: data.typeEvenementCategorieLibelle ?? null,
+  evenementSousCategorieTypeGeometrie:
+    data.typeEvenementCategorieGeometrie ?? null,
+  evenementSousCategorieEvenementCategorieId:
+    data.typeEvenementCategorieEvenementCategorieId ?? null,
 });
 
-export const TypeCriseCategorie = () => {
+export const EvenementSousCategorie = () => {
   const listTypeGeometrie = Object.values(TYPE_GEOMETRIE).map((e) => {
     return { id: e.toString(), code: e.toString(), libelle: e.toString() };
   });
   const { values, setValues, setFieldValue }: any = useFormikContext();
 
-  const criseCategorieState = useGet(url`/api/nomenclatures/crise_categorie`);
+  const evenementCategorieState = useGet(
+    url`/api/nomenclatures/evenement_categorie`,
+  );
 
   return (
-    criseCategorieState?.data && (
+    evenementCategorieState?.data && (
       <FormContainer>
-        <TextInput name="typeCriseCategorieCode" label="Code" required={true} />
         <TextInput
-          name="typeCriseCategorieLibelle"
+          name="typeEvenementCategorieCode"
+          label="Code"
+          required={true}
+        />
+        <TextInput
+          name="typeEvenementCategorieLibelle"
           label="Libellé"
           required={true}
         />
         <SelectForm
-          name={"typeCriseCategorieTypeGeometrie"}
+          name={"evenementSousCategorieTypeGeometrie"}
           listIdCodeLibelle={listTypeGeometrie}
           label="Type de géométrie"
           defaultValue={listTypeGeometrie?.find(
-            (e) => e.code === values.typeCriseCategorieTypeGeometrie,
+            (e) => e.code === values.evenementSousCategorieTypeGeometrie,
           )}
           required={true}
           setValues={setValues}
         />
 
         <SelectInput
-          name={"typeCriseCategorieCriseCategorie"}
-          label="Catégorie de la crise"
+          name={"evenementSousCategorieEvenementCategorie"}
+          label="Catégorie de l'évènement"
           required={false}
           options={
-            criseCategorieState?.data
-              ? Object.values(criseCategorieState?.data)
+            evenementCategorieState?.data
+              ? Object.values(evenementCategorieState?.data)
               : []
           }
-          getOptionValue={(t) => t.criseCategorieId}
-          getOptionLabel={(t) => t.criseCategorieLibelle}
+          getOptionValue={(t) => t.evenementCategorieId}
+          getOptionLabel={(t) => t.evenementCategorieLibelle}
           defaultValue={
-            Object.values(criseCategorieState.data)?.find(
+            Object.values(evenementCategorieState.data)?.find(
               (r) =>
-                r.criseCategorieId ===
-                values.typeCriseCategorieCriseCategorieId,
+                r.evenementCategorieId ===
+                values.evenementSousCategorieEvenementCategorieId,
             ) ?? null
           }
           onChange={(e) => {
             setFieldValue(
-              `typeCriseCategorieCriseCategorieId`,
-              Object.values(criseCategorieState?.data)?.find(
-                (categorie) =>
-                  categorie.criseCategorieId === e.criseCategorieId,
-              )?.criseCategorieId,
+              `evenementSousCategorieEvenementCategorieId`,
+              Object.values(evenementCategorieState?.data)?.find(
+                (categorie: any) =>
+                  categorie.evenementCategorieId === e.evenementCategorieId,
+              )?.evenementCategorieId,
             );
           }}
         />

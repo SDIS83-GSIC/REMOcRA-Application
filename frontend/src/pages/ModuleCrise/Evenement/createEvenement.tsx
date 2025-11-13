@@ -12,7 +12,7 @@ import Evenement, {
 const CreateEvenement = ({
   criseId,
   state,
-  typeEvenement,
+  EvenementSousCategorieId,
   geometrieEvenement,
   onSubmit,
 }: CreateEvenementType) => {
@@ -28,7 +28,7 @@ const CreateEvenement = ({
         initialValues={getInitialValues(
           null,
           geometrieEvenement,
-          typeEvenement,
+          EvenementSousCategorieId,
         )}
         validationSchema={validationSchema}
         isPost={true}
@@ -47,7 +47,7 @@ const CreateEvenement = ({
 
 type CreateEvenementType = {
   criseId: string;
-  typeEvenement: string | undefined;
+  EvenementSousCategorieId: string | undefined;
   geometrieEvenement: string | undefined;
   state: string;
 

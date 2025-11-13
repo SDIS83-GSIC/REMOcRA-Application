@@ -5,26 +5,29 @@ import { IconCreate } from "../../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../../routes.tsx";
 import {
   prepareValues,
-  TypeCriseCategorie,
-  typeCriseCategorieValidationSchema,
+  typeEvenementCategorieValidationSchema,
+  EvenementSousCategorie,
 } from "./TypeCriseCategorie.tsx";
 
-const CreateTypeCriseCategorie = () => {
+const CreateEvenementSousCategorie = () => {
   return (
     <Container>
-      <PageTitle title="Ajouter un type de catégorie" icon={<IconCreate />} />
+      <PageTitle
+        title="Ajouter une sous catégorie d'évènement"
+        icon={<IconCreate />}
+      />
       <MyFormik
         initialValues={{}}
         prepareVariables={(values) => prepareValues(values)}
-        validationSchema={typeCriseCategorieValidationSchema}
-        submitUrl={`/api/type-crise-categorie/create/`}
+        validationSchema={typeEvenementCategorieValidationSchema}
+        submitUrl={`/api/evenement-sous-categorie/create/`}
         isPost={true}
-        redirectUrl={URLS.LIST_TYPE_CRISE_CATEGORIE}
+        redirectUrl={URLS.LIST_EVENEMENT_SOUS_CATEGORIE}
       >
-        <TypeCriseCategorie />
+        <EvenementSousCategorie />
       </MyFormik>
     </Container>
   );
 };
 
-export default CreateTypeCriseCategorie;
+export default CreateEvenementSousCategorie;

@@ -18,39 +18,39 @@ import TYPE_DROIT from "../../../../enums/DroitEnum.tsx";
 import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
 import { URLS } from "../../../../routes.tsx";
-import filterValuesTypeCriseCategorie from "./FilterTypeCriseCategorie.tsx";
+import filterValuesEvenementSousCategorie from "./FilterTypeCriseCategorie.tsx";
 
-const ListTypeCriseCategorie = () => {
+const ListEvenementSousCategorie = () => {
   const { user } = useAppContext();
   const colonne = [
     {
       Header: "Code",
-      accessor: "typeCriseCategorieCode",
-      sortField: "typeCriseCategorieCode",
-      Filter: <FilterInput type="text" name="typeCriseCategorieCode" />,
+      accessor: "evenementSousCategorieCode",
+      sortField: "evenementSousCategorieCode",
+      Filter: <FilterInput type="text" name="evenementSousCategorieCode" />,
     },
     {
       Header: "Libellé",
-      accessor: "typeCriseCategorieLibelle",
-      sortField: "typeCriseCategorieLibelle",
-      Filter: <FilterInput type="text" name="typeCriseCategorieLibelle" />,
+      accessor: "evenementSousCategorieLibelle",
+      sortField: "evenementSousCategorieLibelle",
+      Filter: <FilterInput type="text" name="evenementSousCategorieLibelle" />,
     },
     {
       Header: "Type de géométrie",
-      accessor: "typeCriseCategorieTypeGeometrie",
-      sortField: "typeCriseCategorieTypeGeometrie",
+      accessor: "evenementSousCategorieTypeGeometrie",
+      sortField: "evenementSousCategorieTypeGeometrie",
       Filter: (
         <SelectEnumOption
           options={TYPE_GEOMETRIE}
-          name={"typeCriseCategorieTypeGeometrie"}
+          name={"evenementSousCategorieTypeGeometrie"}
         />
       ),
     },
     {
-      Header: "Catégorie de la crise",
-      accessor: "criseCategorieLibelle",
-      sortField: "criseCategorieLibelle",
-      Filter: <FilterInput type="text" name="criseCategorieLibelle" />,
+      Header: "Catégorie de l'évènement",
+      accessor: "evenementCategorieLibelle",
+      sortField: "evenementCategorieLibelle",
+      Filter: <FilterInput type="text" name="evenementCategorieLibelle" />,
     },
   ];
 
@@ -70,14 +70,14 @@ const ListTypeCriseCategorie = () => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
-      pathname: url`/api/type-crise-categorie/delete/`,
+      pathname: url`/api/evenement-sous-categorie/delete/`,
     });
   }
 
   colonne.push(
     ActionColumn({
       Header: "Actions",
-      accessor: "typeCriseCategorieId",
+      accessor: "evenementSousCategorieId",
       buttons: listeButton,
     }),
   );
@@ -86,24 +86,24 @@ const ListTypeCriseCategorie = () => {
     <>
       <Container>
         <PageTitle
-          title="Liste des types de catégories de crise"
+          title="Liste des types de catégories d'évènements"
           icon={<IconCrise />}
           right={
             <CreateButton
-              title="Ajouter un type de catégorie de crise"
-              href={URLS.ADD_TYPE_CRISE_CATEGORIE}
+              title="Ajouter un type de catégorie d'évènement"
+              href={URLS.ADD_EVENEMENT_SOUS_CATEGORIE}
             />
           }
         />
         <QueryTable
-          query={url`/api/type-crise-categorie`}
-          filterValuesToVariable={filterValuesTypeCriseCategorie}
+          query={url`/api/evenement-sous-categorie`}
+          filterValuesToVariable={filterValuesEvenementSousCategorie}
           filterContext={useFilterContext({})}
-          idName={"ListTypeCriseCategorie"}
+          idName={"ListTypeEvenementCategorie"}
           columns={colonne}
         />
       </Container>
     </>
   );
 };
-export default ListTypeCriseCategorie;
+export default ListEvenementSousCategorie;

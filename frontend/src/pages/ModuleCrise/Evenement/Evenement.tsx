@@ -34,7 +34,7 @@ export const getInitialValues = (
   documents: data?.documents ?? [],
   evenementTags: data?.evenementTags ?? [],
   geometrieEvenement: geometrie ?? null,
-  evenementTypeId: data?.evenementTypeId ?? typeEvent,
+  evenementSousCategorieId: data?.evenementSousCategorieId ?? typeEvent,
 });
 
 export const validationSchema = object({
@@ -50,7 +50,7 @@ export const prepareVariables = (
   const formData = new FormData();
   setDocumentInFormData(values?.documents, initialData?.documents, formData);
 
-  formData.append("evenementTypeId", values.evenementTypeId);
+  formData.append("evenementSousCategorieId", values.evenementSousCategorieId);
   formData.append("evenementLibelle", values.evenementLibelle);
   formData.append("evenementOrigine", values.evenementOrigine);
   formData.append("evenementDescription", values.evenementDescription);
@@ -80,13 +80,13 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
   const typeCriseState = useGet(url`/api/crise/evenement/get-type-evenement`);
 
   const filtre = values.geometrieEvenement
-    ? (e) => e.typeEvenementId === values.evenementTypeId
-    : (e) => e.typeEvenementGeometrie == null;
+    ? (e) => e.evenementSousCategorieId === values.evenementSousCategorieId
+    : (e) => e.evenementSousCategorieGeometrie == null;
 
   const listeType = typeCriseState?.data?.filter(filtre)?.map((e) => ({
-    id: e.typeEvenementId,
-    code: e.typeEvenementCode,
-    libelle: e.typeEvenementLibelle,
+    id: e.evenementSousCategorieId,
+    code: e.evenementSousCategorieCode,
+    libelle: e.evenementSousCategorieLibelle,
   }));
 
   return (
@@ -95,14 +95,14 @@ const Evenement = ({ isReadOnly }: { isReadOnly: any }) => {
 
       <SelectForm
         disabled={values.geometrieEvenement ? true : isReadOnly}
-        name="evenementTypeId"
+        name="evenementSousCategorieId"
         listIdCodeLibelle={listeType}
         label="Type"
         required={true}
         setValues={setValues}
         defaultValue={
-          values.evenementTypeId
-            ? listeType?.find((e) => e.id === values.evenementTypeId)
+          values.evenementSousCategorieId
+            ? listeType?.find((e) => e.id === values.evenementSousCategorieId)
             : values.geometrieEvenement
               ? listeType?.[0]
               : null

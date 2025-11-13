@@ -1,50 +1,50 @@
 import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 
-type FilterTypeCriseCategorieType = {
-  typeCriseCategorieCode?: string | undefined;
-  typeCriseCategorieLibelle?: string | undefined;
-  typeCriseCategorieTypeGeometrie?: TYPE_GEOMETRIE | undefined;
-  criseCategorieLibelle?: string | undefined;
+type FilterEvenementSousCategorieType = {
+  evenementSousCategorieCode?: string | undefined;
+  evenementSousCategorieLibelle?: string | undefined;
+  evenementSousCategorieTypeGeometrie?: TYPE_GEOMETRIE | undefined;
+  evenementCategorieLibelle?: string | undefined;
 };
 
-const filterValuesTypeCriseCategorie = ({
-  typeCriseCategorieCode,
-  typeCriseCategorieLibelle,
-  typeCriseCategorieTypeGeometrie,
-  criseCategorieLibelle,
-}: FilterTypeCriseCategorieType) => {
-  const filter: FilterTypeCriseCategorieType = {};
-  filterPropertyTypeCriseCategorie(
+const filterValuesEvenementSousCategorie = ({
+  evenementSousCategorieCode: evenementSousCategorieCode,
+  evenementSousCategorieLibelle: evenementSousCategorieLibelle,
+  evenementSousCategorieTypeGeometrie: evenementSousCategorieTypeGeomegtrie,
+  evenementCategorieLibelle: evenementCategorieLibelle,
+}: FilterEvenementSousCategorieType) => {
+  const filter: FilterEvenementSousCategorieType = {};
+  filterPropertyTypeEvenementCategorie(
     filter,
-    typeCriseCategorieCode,
-    "typeCriseCategorieCode",
+    evenementSousCategorieCode,
+    "evenementSousCategorieCode",
   );
-  filterPropertyTypeCriseCategorie(
+  filterPropertyTypeEvenementCategorie(
     filter,
-    typeCriseCategorieLibelle,
-    "typeCriseCategorieLibelle",
+    evenementSousCategorieLibelle,
+    "evenementSousCategorieLibelle",
   );
-  filterPropertyTypeCriseCategorie(
+  filterPropertyTypeEvenementCategorie(
     filter,
-    typeCriseCategorieTypeGeometrie,
-    "typeCriseCategorieTypeGeometrie",
+    evenementSousCategorieTypeGeomegtrie,
+    "evenementSousCategorieTypeGeometrie",
   );
-  filterPropertyTypeCriseCategorie(
+  filterPropertyTypeEvenementCategorie(
     filter,
-    criseCategorieLibelle,
-    "criseCategorieLibelle",
+    evenementCategorieLibelle,
+    "evenementCategorieLibelle",
   );
   return filter;
 };
 
-function filterPropertyTypeCriseCategorie(
-  filter: FilterTypeCriseCategorieType,
+function filterPropertyTypeEvenementCategorie(
+  filter: FilterEvenementSousCategorieType,
   value: string | undefined,
   name: string,
 ) {
   if (value != null && value.trim() !== "") {
-    filter[name as keyof FilterTypeCriseCategorieType] = value;
+    filter[name as keyof FilterEvenementSousCategorieType] = value;
   }
 }
 
-export default filterValuesTypeCriseCategorie;
+export default filterValuesEvenementSousCategorie;

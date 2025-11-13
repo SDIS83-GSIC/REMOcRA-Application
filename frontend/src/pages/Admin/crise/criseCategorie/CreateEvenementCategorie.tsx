@@ -2,14 +2,14 @@ import CreateNomenclature from "../../../../components/NomenclatureComponent/Cre
 import NOMENCLATURE from "../../../../enums/NomenclaturesEnum.tsx";
 import { URLS } from "../../../../routes.tsx";
 
-const CreateCriseCategorie = () => {
+const CreateEvenementCategorie = () => {
   return (
     <CreateNomenclature
-      typeNomenclature={NOMENCLATURE.CRISE_CATEGORIE}
-      redirectLink={URLS.LIST_CRISE_CATEGORIE}
-      titrePage="Création d'une catégorie de crise"
+      typeNomenclature={NOMENCLATURE.EVENEMENT_CATEGORIE}
+      redirectLink={URLS.LIST_EVENEMENT_CATEGORIE}
+      titrePage="Création d'une catégorie d'évènement"
     />
   );
 };
 
-export default CreateCriseCategorie;
+export default CreateEvenementCategorie;

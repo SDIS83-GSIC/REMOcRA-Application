@@ -350,9 +350,9 @@ const MapToolbarCrise = forwardRef(
       return new File([blob], "capture.png", { type: "image/png" });
     };
 
-    const [typeEvenement, setTypeEvenement] = useState<string | undefined>(
-      undefined,
-    );
+    const [evenementSousCategorieId, setEvenementSousCategorieId] = useState<
+      string | undefined
+    >(undefined);
 
     return (
       <Row>
@@ -443,7 +443,7 @@ const MapToolbarCrise = forwardRef(
             <DropdownTypeSousType
               criseId={criseId}
               variant={variant}
-              setTypeEvenement={setTypeEvenement}
+              setTypeEvenement={setEvenementSousCategorieId}
               toggleToolCallback={toggleToolCallback}
               setSousTypeElement={setSousTypeElement}
             />
@@ -480,7 +480,7 @@ const MapToolbarCrise = forwardRef(
         >
           <CreateEvenement
             geometrieEvenement={geometryElement}
-            typeEvenement={typeEvenement}
+            EvenementSousCategorieId={evenementSousCategorieId}
             criseId={criseId}
             state={state}
             onSubmit={() => {
@@ -534,9 +534,9 @@ const DropdownTypeSousType = ({
 }: {
   criseId: string;
   variant: string;
-  setTypeEvenement: (typeCriseCategorieId: string) => void;
+  setTypeEvenement: (evenementSousCategorieId: string) => void;
   toggleToolCallback: (typeCriseCategorieGeometrie: string) => void;
-  setSousTypeElement: (typeCriseCategorieId: object) => void;
+  setSousTypeElement: (evenementSousCategorieId: object) => void;
 }) => {
   const typeWithSousType = useGet(
     url`/api/crise/${criseId}/evenement/type-sous-type`,
@@ -551,7 +551,7 @@ const DropdownTypeSousType = ({
         {typeWithSousType?.map(
           (
             e: {
-              criseCategorieLibelle: {
+              evenementCategorieLibelle: {
                 toString: () => any;
               };
               listSousType: any[];
@@ -562,20 +562,20 @@ const DropdownTypeSousType = ({
               <Row xs={"auto"} className={"m-2"} key={key}>
                 <Dropdown>
                   <Dropdown.Toggle id={"dropdown-"} variant={variant}>
-                    {e.criseCategorieLibelle?.toString()}
+                    {e.evenementCategorieLibelle?.toString()}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {e.listSousType.map(
                       (
                         soustype: {
-                          typeCriseCategorieGeometrie: string;
-                          typeCriseCategorieId: any;
-                          typeCriseCategorieLibelle: any;
+                          evenementSousCategorieGeometrie: string;
+                          evenementSousCategorieId: any;
+                          evenementSousCategorieLibelle: any;
                         },
                         key: Key | null | undefined,
                       ) => {
                         let icon;
-                        switch (soustype.typeCriseCategorieGeometrie) {
+                        switch (soustype.evenementSousCategorieGeometrie) {
                           case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
                             icon = <IconPoint />;
                             break;
@@ -589,16 +589,20 @@ const DropdownTypeSousType = ({
                         return (
                           <Dropdown.Item
                             onClick={() => {
-                              setTypeEvenement(soustype.typeCriseCategorieId);
+                              setTypeEvenement(
+                                soustype.evenementSousCategorieId,
+                              );
                               toggleToolCallback(
                                 "create-" +
-                                  soustype.typeCriseCategorieGeometrie.toLowerCase(),
+                                  soustype.evenementSousCategorieGeometrie.toLowerCase(),
                               );
-                              setSousTypeElement(soustype.typeCriseCategorieId);
+                              setSousTypeElement(
+                                soustype.evenementSousCategorieId,
+                              );
                             }}
                             key={key}
                           >
-                            {icon} {soustype?.typeCriseCategorieLibelle}
+                            {icon} {soustype?.evenementSousCategorieLibelle}
                           </Dropdown.Item>
                         );
                       },

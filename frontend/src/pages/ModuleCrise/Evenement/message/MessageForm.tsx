@@ -86,7 +86,7 @@ const MessageForm = () => {
             <TextInput
               label="Origine"
               name={"messageOrigine"}
-              required={false}
+              required={true}
             />
           </Col>
           <Col>
