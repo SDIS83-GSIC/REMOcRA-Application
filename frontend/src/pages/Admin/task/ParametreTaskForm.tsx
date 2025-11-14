@@ -580,8 +580,9 @@ const ParametreSynchroSIGIterableForm = ({
           />
         </Row>
       )}
-      {listeElements[index]?.typeSynchronisation ===
-        TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE && (
+      {TYPE_SYNCHRONISATION_TABLE_SIG[
+        listeElements[index]?.typeSynchronisation
+      ] === TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE && (
         <Row>
           <TextAreaInput
             name={`taskParametres[listeTableASynchroniser][${index}].scriptPostRecuperation`}
