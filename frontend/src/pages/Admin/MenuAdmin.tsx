@@ -109,36 +109,6 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS) && (
-                  <>
-                    <Nav.Item>
-                      <CustomLinkButton
-                        className="text-underline text-start"
-                        pathname={URLS.TASK}
-                      >
-                        Paramétrage des traitements
-                      </CustomLinkButton>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <CustomLinkButton
-                        className="text-underline text-start"
-                        pathname={URLS.LIST_TASK_SPECIFIQUE}
-                      >
-                        Paramétrage des traitements spécifiques
-                      </CustomLinkButton>
-                    </Nav.Item>
-                  </>
-                )}
-                {user?.isSuperAdmin && (
-                  <Nav.Item>
-                    <CustomLinkButton
-                      className="text-underline text-start"
-                      pathname={URLS.ADMIN_EXECUTE_TASK_MANUELLE}
-                    >
-                      Exécuter des traitements manuellement
-                    </CustomLinkButton>
-                  </Nav.Item>
-                )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) && (
                   <Nav.Item>
                     <CustomLinkButton
@@ -160,6 +130,47 @@ const MenuAdmin = () => {
                   </Nav.Item>
                 )}
               </Nav>
+
+              {(hasDroit(user, TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS) ||
+                user?.isSuperAdmin) && (
+                <>
+                  <div className="fw-bold text-center p-2 fs-5">
+                    Traitements
+                  </div>
+                  <Nav className="flex-column">
+                    {hasDroit(user, TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS) && (
+                      <>
+                        <Nav.Item>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.TASK}
+                          >
+                            Paramétrage des traitements
+                          </CustomLinkButton>
+                        </Nav.Item>
+                        <Nav.Item>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.LIST_TASK_SPECIFIQUE}
+                          >
+                            Paramétrage des traitements spécifiques
+                          </CustomLinkButton>
+                        </Nav.Item>
+                      </>
+                    )}
+                    {user?.isSuperAdmin && (
+                      <Nav.Item>
+                        <CustomLinkButton
+                          className="text-underline text-start"
+                          pathname={URLS.ADMIN_EXECUTE_TASK_MANUELLE}
+                        >
+                          Exécuter des traitements manuellement
+                        </CustomLinkButton>
+                      </Nav.Item>
+                    )}
+                  </Nav>
+                </>
+              )}
             </Col>
           )}
 
