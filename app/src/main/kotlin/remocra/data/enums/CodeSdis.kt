@@ -6,7 +6,6 @@ package remocra.data.enums
 enum class CodeSdis {
     SDIS_01,
     SDIS_09,
-    SDIS_14,
     SDIS_21,
     SDIS_22,
     SDIS_38,
@@ -23,7 +22,6 @@ enum class CodeSdis {
     SDIS_78,
     SDIS_83,
     SDIS_89,
-    SDIS_91,
     SDIS_95,
     SDIS_971,
     SDIS_973,

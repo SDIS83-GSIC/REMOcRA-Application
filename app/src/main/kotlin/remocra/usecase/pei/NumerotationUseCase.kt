@@ -102,7 +102,6 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroMethodeA(pei)
 
             CodeSdis.SDIS_09 -> computeNumero09(pei)
-            CodeSdis.SDIS_14 -> computeNumero14(pei)
             CodeSdis.SDIS_21 -> computeNumero21(pei)
             CodeSdis.SDIS_22 -> computeNumero22(pei)
             CodeSdis.SDIS_38 -> computeNumero38(pei)
@@ -127,7 +126,6 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroMethodeD(pei)
 
             CodeSdis.SDIS_78 -> computeNumero78(pei)
-            CodeSdis.SDIS_91 -> computeNumero91(pei)
             CodeSdis.SDIS_95 -> computeNumero95(pei)
             CodeSdis.SDIS_971 -> computeNumero971(pei)
             CodeSdis.SDIS_973 -> computeNumero973(pei)
@@ -163,7 +161,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
             -> computeNumeroInterneMethodeB(pei)
-            CodeSdis.SDIS_14 -> computeNumeroInterne83(pei)
             CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
@@ -172,7 +169,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
-            CodeSdis.SDIS_91 -> computeNumeroInterne91(pei)
             CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
         }
     }
@@ -237,48 +233,6 @@ class NumerotationUseCase : AbstractUseCase() {
             maxValue = 999
         }
         return listPeiNumeroInterne.getNextNumeroInterneWhile(seed, maxValue)
-    }
-
-    /**
-     * Numérotation interne du 91
-     *
-     * <pre>
-     * PIBI public : le premier numéro disponible à partir de 1
-     * PIBI privés : le premier numéro disponible à partir de 500
-     * PENA publics ou privés : le premier numéro disponible à partir de 800</pre>
-     *
-     */
-    private fun computeNumeroInterne91(pei: PeiForNumerotationData): Int {
-        checkNature(pei)
-        checkCommuneId(pei)
-
-        val typePei = pei.nature!!.natureTypePei
-
-        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
-            typePei = typePei,
-            peiNatureId = null,
-            peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
-            peiZoneSpecialeId = pei.peiZoneSpecialeId,
-            peiNatureDeciId = pei.natureDeci?.natureDeciId,
-        )
-
-        val seed: Int
-        val stop: Int
-
-        if (TypePei.PIBI == typePei) {
-            if (isNatureDeciPublic(pei)) {
-                seed = 1
-                stop = 499
-            } else {
-                seed = 500
-                stop = 799
-            }
-        } else {
-            seed = 800
-            stop = MAX_PEI_NUMERO_INTERNE
-        }
-
-        return listPeiNumeroInterne.getNextNumeroInterneWhile(seed, stop)
     }
 
     /**
@@ -783,19 +737,6 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
-     * <code insee commune>-<numéro interne>
-     * avec un tiret (-) entre les deux
-     * Exemple : 91377-311
-     *
-     */
-    private fun computeNumero91(pei: PeiForNumerotationData): String {
-        checkCommuneId(pei)
-
-        val commune = ensureCommune(pei)
-        return commune.communeCodeInsee + "-" + pei.peiNumeroInterne
-    }
-
-    /**
      * <code insee commune> <numéro interne>
      * numéro interne sur 3 chiffres:
      * - 0 à 599 : PIBI
@@ -975,7 +916,6 @@ class NumerotationUseCase : AbstractUseCase() {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_53,
             CodeSdis.SDIS_66,
-            CodeSdis.SDIS_91,
             CodeSdis.SDIS_95,
             ->
                 natureDeciId != natureDeciIdInitial
@@ -1013,14 +953,12 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDMIS,
             -> return communeId != communeIdInitial
             CodeSdis.SDIS_09,
-            CodeSdis.SDIS_14,
             CodeSdis.SDIS_21,
             CodeSdis.SDIS_38,
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_77,
             CodeSdis.SDIS_83,
             CodeSdis.SDIS_89,
-            CodeSdis.SDIS_91,
             CodeSdis.SDIS_95,
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
