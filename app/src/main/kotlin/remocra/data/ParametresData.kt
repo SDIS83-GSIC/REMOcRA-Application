@@ -20,6 +20,7 @@ data class ParametresAdminData(
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
+    val utilisateur: ParametresSectionUtilisateur,
 
 )
 
@@ -33,6 +34,7 @@ data class ParametresAdminDataInput(
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
+    val utilisateur: ParametresSectionUtilisateur,
 )
 
 fun mapToParametresSectionCouvertureHydraulique(
@@ -137,4 +139,9 @@ data class ParametresSectionPei(
     val declarationPeiObjetEmail: String?,
     val declarationPeiCorpsEmail: String?,
     val peiLibelleNonConforme: String?,
+)
+
+data class ParametresSectionUtilisateur(
+    val organismeDefaut: String?,
+    val profilUtilisateurDefaut: String?,
 )

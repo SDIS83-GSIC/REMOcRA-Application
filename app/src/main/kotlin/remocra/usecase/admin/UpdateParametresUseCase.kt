@@ -47,6 +47,7 @@ class UpdateParametresUseCase
             couvertureHydraulique = mapToParametresSectionCouvertureHydraulique(element.couvertureHydraulique),
             permis = element.permis,
             peiLongueIndispo = element.peiLongueIndispo,
+            utilisateur = element.utilisateur,
         )
 
         if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
@@ -209,6 +210,16 @@ class UpdateParametresUseCase
             updateParametre(
                 ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME,
                 objectMapper.writeValueAsString(parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme),
+            )
+
+            // Utilisateur
+            updateParametre(
+                ParametreEnum.ORGANISME_DEFAUT,
+                parametresAdminData.utilisateur.organismeDefaut,
+            )
+            updateParametre(
+                ParametreEnum.PROFIL_UTILISATEUR_DEFAUT,
+                parametresAdminData.utilisateur.profilUtilisateurDefaut,
             )
         }
         // Mobile

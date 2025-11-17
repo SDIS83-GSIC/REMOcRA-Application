@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
 import AccordionCustom, {
@@ -108,6 +108,11 @@ type ParametresSectionPeiLongueIndispo = {
   peiLongueIndisponibiliteTypeOrganisme: [];
 };
 
+type ParametresSectionUtilisateur = {
+  organismeDefaut: string;
+  profilUtilisateurDefaut: string;
+};
+
 type AdminParametresValue = {
   general: ParametresSectionGeneral;
   signalement: ParametresSectionSignalement;
@@ -118,6 +123,7 @@ type AdminParametresValue = {
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
+  utilisateur: ParametresSectionUtilisateur;
 };
 
 export const getInitialValues = (
@@ -132,6 +138,7 @@ export const getInitialValues = (
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
+  utilisateur: ParametresSectionUtilisateur;
 } => ({
   general: data?.general,
   signalement: data?.signalement,
@@ -163,6 +170,7 @@ export const getInitialValues = (
       })) ?? [],
   },
   peiLongueIndispo: data?.peiLongueIndispo,
+  utilisateur: data?.utilisateur,
 });
 
 export const validationSchema = object({});
@@ -195,6 +203,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
         values?.pei?.caracteristiquesPibiTooltipWebIds?.map((e) => e.id) ?? [],
     },
     peiLongueIndispo: values?.peiLongueIndispo,
+    utilisateur: values?.utilisateur,
   };
 };
 
@@ -220,7 +229,7 @@ export const AdminParametresInterne = () => {
   const { values, setFieldValue } = useFormikContext<AdminParametresValue>();
   const allCaracteristiques = useGet(url`/api/admin/pei-caracteristique`)?.data;
   const { activesKeys, handleShowClose } = useAccordionState(
-    Array(7).fill(false),
+    Array(10).fill(false),
   );
   const { user } = useAppContext();
 
@@ -279,6 +288,15 @@ export const AdminParametresInterne = () => {
                       content: (
                         <AdminPeiLongueIndispo
                           values={values.peiLongueIndispo}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "Utilisateur",
+                      content: (
+                        <AdminUtilisateur
+                          values={values.utilisateur}
                           setFieldValue={setFieldValue}
                         />
                       ),
@@ -1323,6 +1341,121 @@ const AdminPermis = ({ values }: { values: ParametresSectionPermis }) => {
             tooltipText={"TODO"}
           />
         </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminUtilisateur = ({
+  values,
+  setFieldValue,
+}: {
+  values: ParametresSectionUtilisateur;
+  setFieldValue: (name: string, value: any) => void;
+}) => {
+  const { data: organismeList } = useGet(url`/api/organisme/get-all`);
+  const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur/`);
+
+  const [groupeFonctionnalitesDeduit, setGroupeFonctionnalitesDeduit] =
+    useState<string>();
+
+  const { data: groupeFonctionnalitesWithProfilsList } = useGet(
+    url`/api/groupe-fonctionnalites/profils`,
+  );
+
+  useEffect(() => {
+    setGroupeFonctionnalitesDeduit(
+      groupeFonctionnalitesWithProfilsList?.find(
+        (e: {
+          profilUtilisateurId: string;
+          profilOrganismeId: string;
+          libelle: string;
+        }) =>
+          e.profilUtilisateurId ===
+            profilUtilisateurList?.find(
+              (p: { code: string }) =>
+                p.code === values?.profilUtilisateurDefaut,
+            )?.id &&
+          e.profilOrganismeId ===
+            organismeList?.find(
+              (e: { code: string }) => e.code === values?.organismeDefaut,
+            )?.lienId,
+      )?.libelle,
+    );
+  }, [
+    groupeFonctionnalitesWithProfilsList,
+    organismeList,
+    profilUtilisateurList,
+    values?.profilUtilisateurDefaut,
+    values?.organismeDefaut,
+  ]);
+
+  return (
+    values && (
+      <>
+        <p>
+          Ces paramètres vont être appliqués à chaque nouvel utilisateur lors de
+          la synchro LDAP, afin qu&apos;il puisse directement se connecter à
+          l&apos;application. Attention, si vous saisissez une combinaison
+          invalide, la connexion de l&apos;utilisateur n&apos;aboutira pas.
+        </p>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="utilisateur.organismeDefaut"
+            label="Organisme par défaut à l'ajout d'un utilisateur"
+            options={organismeList}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            required={false}
+            isClearable={true}
+            defaultValue={
+              organismeList?.find(
+                (o: { code: string }) => o.code === values?.organismeDefaut,
+              ) ?? undefined
+            }
+            onChange={(organisme) => {
+              setFieldValue(
+                `utilisateur.organismeDefaut`,
+                organismeList?.find((o) => o.id === organisme?.id).code,
+              );
+            }}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="utilisateur.profilUtilisateurDefaut"
+            label="Profil utilisateur par défaut à l'ajout d'un utilisateur"
+            options={profilUtilisateurList}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            required={false}
+            isClearable={true}
+            defaultValue={
+              profilUtilisateurList?.find(
+                (p: { code: string }) =>
+                  p.code === values?.profilUtilisateurDefaut,
+              ) ?? undefined
+            }
+            onChange={(profilUtilisateur) => {
+              setFieldValue(
+                `utilisateur.profilUtilisateurDefaut`,
+                profilUtilisateurList?.find(
+                  (p) => p.id === profilUtilisateur?.id,
+                ).code,
+              );
+            }}
+          />
+        </AdminParametre>
+        <div className="text-center">
+          {groupeFonctionnalitesDeduit != null ? (
+            <>
+              Le groupe de fonctionnalités qui sera affecté sera :{" "}
+              <b>{groupeFonctionnalitesDeduit}</b>
+            </>
+          ) : (
+            "Aucun groupe de fonctionnalités trouvé."
+          )}
+        </div>
       </>
     )
   );

@@ -82,9 +82,13 @@ enum class ParametreEnum(val section: ParametreSection) {
     // Permis
     PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),
 
+    // Utilisateur
+    ORGANISME_DEFAUT(ParametreSection.UTILISATEUR),
+    PROFIL_UTILISATEUR_DEFAUT(ParametreSection.UTILISATEUR),
+
     ;
 
     enum class ParametreSection {
-        ALERTE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, DFCI, GENERAL, MOBILE, PEI, PERMIS, SIGNALEMENT
+        ALERTE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, DFCI, GENERAL, MOBILE, PEI, PERMIS, SIGNALEMENT, UTILISATEUR
     }
 }

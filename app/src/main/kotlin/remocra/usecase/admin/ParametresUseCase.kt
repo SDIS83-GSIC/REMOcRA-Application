@@ -12,6 +12,7 @@ import remocra.data.ParametresSectionPei
 import remocra.data.ParametresSectionPeiLongueIndispo
 import remocra.data.ParametresSectionPermis
 import remocra.data.ParametresSectionSignalement
+import remocra.data.ParametresSectionUtilisateur
 import remocra.data.enums.ParametreEnum
 import remocra.db.ParametreRepository
 import remocra.usecase.AbstractUseCase
@@ -35,7 +36,6 @@ class ParametresUseCase : AbstractUseCase() {
     @Inject
     private lateinit var objectMapper: ObjectMapper
 
-    // TODO la gestion des valeurs par défaut / NULL nécessitera certainement des ajustements
     fun getParametresData(): ParametresAdminData {
         val mapParametres = parametreRepository.getMapParametres()
 
@@ -133,6 +133,11 @@ class ParametresUseCase : AbstractUseCase() {
             peiLongueIndisponibiliteTypeOrganisme = mapParametres.getListOfString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME.name, objectMapper),
         )
 
+        val utilisateur = ParametresSectionUtilisateur(
+            organismeDefaut = mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name),
+            profilUtilisateurDefaut = mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name),
+        )
+
         return ParametresAdminData(
             general = general,
             signalement = signalement,
@@ -143,6 +148,7 @@ class ParametresUseCase : AbstractUseCase() {
             permis = permis,
             pei = pei,
             peiLongueIndispo = peiLongueIndispo,
+            utilisateur = utilisateur,
         )
     }
 }
