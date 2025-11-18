@@ -10,6 +10,7 @@ import org.jooq.impl.DSL.selectDistinct
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.Params
 import remocra.data.RapportPersonnaliseData
+import remocra.data.RapportPersonnaliseLightData
 import remocra.data.RapportPersonnaliseParametreData
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
@@ -279,7 +280,36 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
     fun getListeRapportPersonnalise(
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
-    ): Collection<RapportPersonnaliseGenere> =
+    ): Collection<RapportPersonnaliseLightData> =
+        dsl.selectDistinct(
+            RAPPORT_PERSONNALISE.ID.`as`("id"),
+            RAPPORT_PERSONNALISE.LIBELLE.`as`("libelle"),
+            RAPPORT_PERSONNALISE.DESCRIPTION.`as`("description"),
+        )
+            .from(RAPPORT_PERSONNALISE)
+            .leftJoin(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.RAPPORT_PERSONNALISE_ID.eq(RAPPORT_PERSONNALISE.ID))
+            .leftJoin(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+            .on(L_RAPPORT_PERSONNALISE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
+            .leftJoin(UTILISATEUR)
+            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
+            .leftJoin(ORGANISME)
+            .on(
+                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
+            )
+            .where(RAPPORT_PERSONNALISE.ACTIF.isTrue)
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    UTILISATEUR.ID.eq(utilisateurId),
+                    isSuperAdmin = isSuperAdmin,
+                ),
+            ).orderBy(RAPPORT_PERSONNALISE.LIBELLE)
+            .fetchInto()
+
+    fun getRapportPersonnaliseForm(
+        rapportPersonnaliseId: UUID,
+    ): RapportPersonnaliseGenere =
         dsl.selectDistinct(
             RAPPORT_PERSONNALISE.ID,
             RAPPORT_PERSONNALISE.LIBELLE,
@@ -331,14 +361,8 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
                 ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
                     .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
             )
-            .where(RAPPORT_PERSONNALISE.ACTIF.isTrue)
-            .and(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    UTILISATEUR.ID.eq(utilisateurId),
-                    isSuperAdmin = isSuperAdmin,
-                ),
-            ).orderBy(RAPPORT_PERSONNALISE.LIBELLE)
-            .fetchInto()
+            .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
+            .fetchSingleInto()
 
     data class RapportPersonnaliseGenere(
         val rapportPersonnaliseId: UUID,

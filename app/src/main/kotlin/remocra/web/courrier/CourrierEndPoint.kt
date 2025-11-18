@@ -189,14 +189,30 @@ class CourrierEndPoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/parametres")
+    @Path("/modeles-courriers/list")
     @RequireDroits([Droit.COURRIER_C])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getParametreByCourrier(
+    fun getCourrierInfo(
         @QueryParam("typeModule")
         typeModule: TypeModule,
     ): Response {
-        return Response.ok(buildFormCourrierUseCase.execute(securityContext.userInfo, typeModule)).build()
+        return Response.ok(
+            modeleCourrierRepository.getListeModeleCourrier(
+                securityContext.userInfo.utilisateurId!!,
+                securityContext.userInfo.isSuperAdmin,
+                typeModule,
+            ),
+        ).build()
+    }
+
+    @GET
+    @Path("/parametres/{modeleCourrierId}")
+    @RequireDroits([Droit.COURRIER_C])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getParametreByCourrier(
+        @PathParam("modeleCourrierId") modeleCourrierId: UUID,
+    ): Response {
+        return Response.ok(buildFormCourrierUseCase.execute(securityContext.userInfo, modeleCourrierId)).build()
     }
 
     @GET

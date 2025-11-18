@@ -3,9 +3,9 @@ package remocra.usecase.courrier
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.db.ModeleCourrierRepository
-import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
 import remocra.utils.BuildDynamicForm
+import java.util.UUID
 
 /**
  * Permet de récupérer tous les modèles de courrier et les paramètres de ces derniers
@@ -19,8 +19,8 @@ class BuildFormCourrierUseCase : AbstractUseCase() {
     @Inject
     private lateinit var buildDynamicForm: BuildDynamicForm
 
-    fun execute(userInfo: WrappedUserInfo, typeModule: TypeModule) = buildDynamicForm.executeForModeleCourrier(
+    fun execute(userInfo: WrappedUserInfo, modeleCourrierId: UUID) = buildDynamicForm.executeForModeleCourrier(
         userInfo,
-        modeleCourrierRepository.getListeModeleCourrier(userInfo.utilisateurId!!, userInfo.isSuperAdmin, typeModule),
+        modeleCourrierRepository.getModeleCourrierParametre(modeleCourrierId),
     )
 }

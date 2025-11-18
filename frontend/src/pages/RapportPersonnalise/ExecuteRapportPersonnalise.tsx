@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
@@ -12,17 +12,14 @@ import PaginationFront, {
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { requiredString } from "../../module/validators.tsx";
-import {
-  DynamicFormWithParametre,
-  default as GenererForm,
-} from "../../utils/buildDynamicForm.tsx";
+import { default as GenererForm } from "../../utils/buildDynamicForm.tsx";
 import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 import "./ExecuteRapportPersonnalise.css";
 
 const ExecuteRapportPersonnalise = () => {
   const { success: successToast, error: errorToast } = useToastContext();
-  const { data: listeRapportPersoWithParametre } = useGet(
-    url`/api/rapport-personnalise/parametres`,
+  const { data: listeRapportPerso } = useGet(
+    url`/api/rapport-personnalise/list`,
   );
 
   const [tableau, setTableau] = useState<{
@@ -221,10 +218,7 @@ const ExecuteRapportPersonnalise = () => {
             successToastMessage="La requête a bien été exécutée"
             submitUrl={`/api/rapport-personnalise/generer`}
             prepareVariables={(values) => {
-              const value = prepareVariables(
-                values,
-                listeRapportPersoWithParametre,
-              );
+              const value = prepareVariables(values);
               setValuesFormik(value);
               return value;
             }}
@@ -236,8 +230,9 @@ const ExecuteRapportPersonnalise = () => {
             }}
           >
             <GenererForm
-              listeWithParametre={listeRapportPersoWithParametre}
+              listeIdLibelleDescription={listeRapportPerso}
               contexteLibelle="Rapport personnalisé"
+              url="/api/rapport-personnalise/parametres/"
             />
           </MyFormik>
         </Col>
@@ -327,21 +322,12 @@ export const getInitialValues = () => ({
 export const validationSchema = object({
   dynamicFormId: requiredString,
 });
-export const prepareVariables = (
-  values: any,
-  listeRapportPersoWithParametre: DynamicFormWithParametre[],
-) => {
+export const prepareVariables = (values: any) => {
   // on va récupérer que les paramètres du rapport personnalisé
-  const listeParametre = listeRapportPersoWithParametre
-    .find((e) => values.dynamicFormId === e.dynamicFormId)
-    ?.listeParametre?.map((e) => {
-      return {
-        rapportPersonnaliseParametreCode: e.dynamicFormParametreCode,
-        value:
-          values[e.dynamicFormParametreCode]?.toString() ??
-          e.dynamicFormParametreValeurDefaut?.toString(),
-      };
-    });
+  const listeParametre = Object.entries(values).map(([key, value]) => ({
+    rapportPersonnaliseParametreCode: key,
+    value: value,
+  }));
 
   return {
     rapportPersonnaliseId: values.dynamicFormId,

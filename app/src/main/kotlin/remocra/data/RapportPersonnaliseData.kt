@@ -46,3 +46,9 @@ data class Parametre(
     val rapportPersonnaliseParametreCode: String,
     val value: String?,
 )
+
+data class RapportPersonnaliseLightData(
+    val id: UUID,
+    val libelle: String,
+    val description: String?,
+)

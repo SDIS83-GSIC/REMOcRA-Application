@@ -20,10 +20,10 @@ class BuildDynamicForm : AbstractUseCase() {
     @Inject
     private lateinit var requestUtils: RequestUtils
 
-    fun executeForModeleCourrier(userInfo: WrappedUserInfo, listModeleCourrier: Collection<ModeleCourrierRepository.ModeleCourrierGenere>) =
+    fun executeForModeleCourrier(userInfo: WrappedUserInfo, modeleCourrier: ModeleCourrierRepository.ModeleCourrierGenere) =
         execute(
             userInfo,
-            listeDynamicForm = listModeleCourrier.map {
+            dynamicForm = modeleCourrier.let {
                 DynamicFormGenere(
                     dynamicFormId = it.modeleCourrierId,
                     dynamicFormLibelle = it.modeleCourrierLibelle,
@@ -47,10 +47,10 @@ class BuildDynamicForm : AbstractUseCase() {
             },
         )
 
-    fun executeForRapportPerso(userInfo: WrappedUserInfo, listRapportPersonnalise: Collection<RapportPersonnaliseRepository.RapportPersonnaliseGenere>) =
+    fun executeForRapportPerso(userInfo: WrappedUserInfo, rapportPersonnalise: RapportPersonnaliseRepository.RapportPersonnaliseGenere) =
         execute(
             userInfo,
-            listeDynamicForm = listRapportPersonnalise.map {
+            dynamicForm = rapportPersonnalise.let {
                 DynamicFormGenere(
                     dynamicFormId = it.rapportPersonnaliseId,
                     dynamicFormLibelle = it.rapportPersonnaliseLibelle,
@@ -74,44 +74,38 @@ class BuildDynamicForm : AbstractUseCase() {
             },
         )
 
-    private fun execute(userInfo: WrappedUserInfo, listeDynamicForm: Collection<DynamicFormGenere>): Collection<DynamicFormWithParametre> {
+    private fun execute(userInfo: WrappedUserInfo, dynamicForm: DynamicFormGenere): DynamicFormWithParametre {
         // On s'occupe des paramètres
-        val listeDynamicFormWithParametres = mutableListOf<DynamicFormWithParametre>()
-        listeDynamicForm.forEach { rp ->
-            val listeParametre = mutableListOf<DynamicFormParametreFront>()
-            rp.listeDynamicFormParametre.map { parametre ->
-                // -> Si SELECT_INPUT alors on build la requête et on retourne une liste
-                var listeSelectInput: List<IdLibelleDynamicForm>? = null
-                if (parametre.dynamicFormParametreType == TypeParametreRapportCourrier.SELECT_INPUT) {
-                    val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametre.dynamicFormParametreSourceSql!!)
-                    listeSelectInput = requeteSqlRepository.executeSqlParametre(requeteModifiee)
-                }
-
-                listeParametre.add(
-                    DynamicFormParametreFront(
-                        dynamicFormParametreId = parametre.dynamicFormParametreId,
-                        dynamicFormParametreLibelle = parametre.dynamicFormParametreLibelle,
-                        dynamicFormParametreCode = parametre.dynamicFormParametreCode,
-                        listeSelectInput = listeSelectInput,
-                        dynamicFormParametreDescription = parametre.dynamicFormParametreDescription,
-                        dynamicFormParametreValeurDefaut = parametre.dynamicFormParametreValeurDefaut,
-                        dynamicFormParametreIsRequired = parametre.dynamicFormParametreIsRequired,
-                        dynamicFormParametreType = parametre.dynamicFormParametreType,
-                    ),
-                )
+        val listeParametre = mutableListOf<DynamicFormParametreFront>()
+        dynamicForm.listeDynamicFormParametre.map { parametre ->
+            // -> Si SELECT_INPUT alors on build la requête et on retourne une liste
+            var listeSelectInput: List<IdLibelleDynamicForm>? = null
+            if (parametre.dynamicFormParametreType == TypeParametreRapportCourrier.SELECT_INPUT) {
+                val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, parametre.dynamicFormParametreSourceSql!!)
+                listeSelectInput = requeteSqlRepository.executeSqlParametre(requeteModifiee)
             }
-            listeDynamicFormWithParametres.add(
-                DynamicFormWithParametre(
-                    dynamicFormId = rp.dynamicFormId,
-                    dynamicFormLibelle = rp.dynamicFormLibelle,
-                    dynamicFormDescription = rp.dynamicFormDescription,
-                    listeParametre = listeParametre,
+
+            listeParametre.add(
+                DynamicFormParametreFront(
+                    dynamicFormParametreId = parametre.dynamicFormParametreId,
+                    dynamicFormParametreLibelle = parametre.dynamicFormParametreLibelle,
+                    dynamicFormParametreCode = parametre.dynamicFormParametreCode,
+                    listeSelectInput = listeSelectInput,
+                    dynamicFormParametreDescription = parametre.dynamicFormParametreDescription,
+                    dynamicFormParametreValeurDefaut = parametre.dynamicFormParametreValeurDefaut,
+                    dynamicFormParametreIsRequired = parametre.dynamicFormParametreIsRequired,
+                    dynamicFormParametreType = parametre.dynamicFormParametreType,
                 ),
             )
         }
 
         // On retourne l'objet avec toutes les infos
-        return listeDynamicFormWithParametres
+        return DynamicFormWithParametre(
+            dynamicFormId = dynamicForm.dynamicFormId,
+            dynamicFormLibelle = dynamicForm.dynamicFormLibelle,
+            dynamicFormDescription = dynamicForm.dynamicFormDescription,
+            listeParametre = listeParametre,
+        )
     }
 
     data class DynamicFormWithParametre(

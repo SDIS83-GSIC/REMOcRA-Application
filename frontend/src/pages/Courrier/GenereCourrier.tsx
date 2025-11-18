@@ -23,9 +23,7 @@ import QueryTable, {
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import GenererForm, {
-  DynamicFormWithParametre,
-} from "../../utils/buildDynamicForm.tsx";
+import GenererForm from "../../utils/buildDynamicForm.tsx";
 import { getThematiqueFromTypeModule } from "../../utils/fonctionsUtils.tsx";
 import {
   getInitialValues,
@@ -54,14 +52,14 @@ const GenereCourrier = () => {
 
   // On récupère tous les courriers avec leurs paramètres
   const modeleCourrierState = useGet(
-    url`/api/courriers/parametres?${{ typeModule: typeModule }}`,
+    url`/api/courriers/modeles-courriers/list?${{ typeModule: typeModule }}`,
   );
 
   if (!modeleCourrierState.isResolved) {
     return <Loading />;
   }
 
-  const { data }: { data: DynamicFormWithParametre[] } = modeleCourrierState;
+  const { data } = modeleCourrierState;
 
   return (
     <Container fluid>
@@ -86,9 +84,10 @@ const GenereCourrier = () => {
                     }}
                   >
                     <GenererForm
-                      listeWithParametre={data}
+                      listeIdLibelleDescription={data}
                       contexteLibelle="Modèle de courrier"
                       reference={true}
+                      url="/api/courriers/parametres/"
                     />
                   </MyFormik>
                 </Col>

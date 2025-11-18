@@ -8,6 +8,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import remocra.data.ModeleCourrierData
+import remocra.data.ModeleCourrierLight
 import remocra.data.ModeleCourrierParametreData
 import remocra.data.Params
 import remocra.data.enums.TypeModuleRapportCourrier
@@ -283,7 +284,44 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
         utilisateurId: UUID,
         isSuperAdmin: Boolean,
         typeModule: TypeModule,
-    ): Collection<ModeleCourrierGenere> =
+    ): Collection<ModeleCourrierLight> =
+        dsl.selectDistinct(
+            MODELE_COURRIER.ID.`as`("id"),
+            MODELE_COURRIER.LIBELLE.`as`("libelle"),
+            MODELE_COURRIER.DESCRIPTION.`as`("description"),
+        )
+            .from(
+                isSuperAdmin.let {
+                    if (it) {
+                        MODELE_COURRIER
+                    } else {
+                        MODELE_COURRIER.join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
+                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
+                            .join(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
+                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
+                            .join(UTILISATEUR)
+                            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
+                            .join(ORGANISME)
+                            .on(
+                                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
+                                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
+                            )
+                    }
+                },
+            )
+            .where(MODELE_COURRIER.ACTIF.isTrue)
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    UTILISATEUR.ID.eq(utilisateurId),
+                    isSuperAdmin = isSuperAdmin,
+                ),
+            )
+            .and(MODELE_COURRIER.MODULE.eq(typeModule))
+            .fetchInto()
+
+    fun getModeleCourrierParametre(
+        modeleCourrierId: UUID,
+    ): ModeleCourrierGenere =
         dsl.selectDistinct(
             MODELE_COURRIER.ID,
             MODELE_COURRIER.LIBELLE,
@@ -324,33 +362,11 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             },
         )
             .from(
-                isSuperAdmin.let {
-                    if (it) {
-                        MODELE_COURRIER
-                    } else {
-                        MODELE_COURRIER.join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
-                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(MODELE_COURRIER.ID))
-                            .join(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
-                            .on(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
-                            .join(UTILISATEUR)
-                            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
-                            .join(ORGANISME)
-                            .on(
-                                ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID)
-                                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
-                            )
-                    }
-                },
+
+                MODELE_COURRIER,
             )
-            .where(MODELE_COURRIER.ACTIF.isTrue)
-            .and(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    UTILISATEUR.ID.eq(utilisateurId),
-                    isSuperAdmin = isSuperAdmin,
-                ),
-            )
-            .and(MODELE_COURRIER.MODULE.eq(typeModule))
-            .fetchInto()
+            .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
+            .fetchSingleInto()
 
     data class ModeleCourrierGenere(
         val modeleCourrierId: UUID,

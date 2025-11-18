@@ -5,6 +5,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.db.RapportPersonnaliseRepository
 import remocra.usecase.AbstractUseCase
 import remocra.utils.BuildDynamicForm
+import java.util.UUID
 
 /**
  * Permet de récupérer tous les rapports personnalisés et les paramètres de ces derniers
@@ -18,8 +19,8 @@ class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
     @Inject
     private lateinit var buildDynamicForm: BuildDynamicForm
 
-    fun execute(userInfo: WrappedUserInfo) = buildDynamicForm.executeForRapportPerso(
+    fun execute(userInfo: WrappedUserInfo, rapportPersonnaliseId: UUID) = buildDynamicForm.executeForRapportPerso(
         userInfo,
-        rapportPersonnaliseRepository.getListeRapportPersonnalise(userInfo.utilisateurId!!, userInfo.isSuperAdmin),
+        rapportPersonnaliseRepository.getRapportPersonnaliseForm(rapportPersonnaliseId),
     )
 }

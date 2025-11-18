@@ -176,11 +176,20 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         Response.ok(rapportPersonnaliseRepository.getRapportPersonnalise(rapportPersonnaliseId)).build()
 
     @GET
-    @Path("/parametres")
+    @Path("/parametres/{rapportPersonnaliseId}")
     @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
     @Produces(MediaType.APPLICATION_JSON)
-    fun getRapportPersonnaliseWithParametre() =
-        Response.ok(buildFormRapportPersonnaliseUseCase.execute(securityContext.userInfo)).build()
+    fun getRapportPersonnaliseWithParametre(
+        @PathParam("rapportPersonnaliseId") rapportPersonnaliseId: UUID,
+    ) =
+        Response.ok(buildFormRapportPersonnaliseUseCase.execute(securityContext.userInfo, rapportPersonnaliseId)).build()
+
+    @GET
+    @Path("/list")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getRapportPersonnalise() =
+        Response.ok(rapportPersonnaliseRepository.getListeRapportPersonnalise(securityContext.userInfo.utilisateurId!!, securityContext.userInfo.isSuperAdmin)).build()
 
     @PUT
     @Path("/generer")

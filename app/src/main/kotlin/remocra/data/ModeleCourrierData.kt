@@ -36,3 +36,9 @@ data class ModeleCourrierParametreData(
     val modeleCourrierParametreType: TypeParametreRapportCourrier,
     val modeleCourrierParametreOrdre: Int,
 )
+
+data class ModeleCourrierLight(
+    val id: UUID,
+    val libelle: String,
+    val description: String?,
+)

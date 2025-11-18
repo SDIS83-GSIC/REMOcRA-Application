@@ -1,5 +1,8 @@
 import { useFormikContext } from "formik";
+import { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
+import Loading from "../components/Elements/Loading/Loading.tsx";
+import { useGetRun } from "../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -107,29 +110,43 @@ function buildDynamicForm(
 
 /**
  * Permet d'afficher dynamiquement le formulaire qu'il s'agisse de rapports personnalisé ou de courrier
- * @param listeWithParametre : liste des rapports ou courriers avec leur paramètres
+ * @param listeIdLibelleDescription : liste des rapports ou courriers avec leur description
  * @param contexteLibelle : Rapport personnalisé ou Modèle de courrier par exemple
  * @param reference : afficher la référence ? (applicable que dans le cadre des courriers)
  * @returns
  */
 const GenererForm = ({
-  listeWithParametre,
+  listeIdLibelleDescription,
   contexteLibelle,
   reference = false,
+  url,
 }: {
-  listeWithParametre: DynamicFormWithParametre[];
+  listeIdLibelleDescription: {
+    id: string;
+    libelle: string;
+    description: string | undefined;
+  }[];
   contexteLibelle: string;
   reference?: boolean;
+  url: string;
 }) => {
   const { setFieldValue, values } = useFormikContext();
+  const [objetId, setObjetId] = useState(values.dynamicFormId);
 
-  const listeIdLibelle = listeWithParametre?.map((e) => ({
-    id: e.dynamicFormId,
-    libelle: e.dynamicFormLibelle,
-  }));
+  const {
+    data: listeWithParametres,
+    run,
+    isLoading,
+  } = useGetRun(`${url}${objetId}`, {});
 
-  const rapportPersonnaliseCourant = listeWithParametre?.find(
-    (e) => e.dynamicFormId === values.dynamicFormId,
+  useEffect(() => {
+    if (objetId) {
+      run();
+    }
+  }, [objetId, run]);
+
+  const rapportPersonnaliseCourrierCourant = listeIdLibelleDescription?.find(
+    (r) => r.id === objetId,
   );
 
   return (
@@ -138,16 +155,18 @@ const GenererForm = ({
         <SelectInput
           name={`dynamicFormId`}
           label={contexteLibelle}
-          options={listeIdLibelle}
+          options={listeIdLibelleDescription}
           getOptionValue={(t) => t.id}
           getOptionLabel={(t) => t.libelle}
           onChange={(e) => {
             setFieldValue(
               `dynamicFormId`,
-              listeIdLibelle?.find((r) => r.id === e.id).id,
+              listeIdLibelleDescription?.find((r) => r.id === e.id)?.id,
             );
+
+            setObjetId(e.id);
           }}
-          defaultValue={listeIdLibelle?.find(
+          defaultValue={listeIdLibelleDescription?.find(
             (r) => r.id === values.dynamicFormId,
           )}
           required={true}
@@ -162,19 +181,25 @@ const GenererForm = ({
           />
         </Row>
       )}
-      {rapportPersonnaliseCourant?.dynamicFormDescription && (
+      {rapportPersonnaliseCourrierCourant?.description && (
         <Row className="mt-3">
           <Col>
             <b>Description : </b>
-            {rapportPersonnaliseCourant.dynamicFormDescription}
+            {rapportPersonnaliseCourrierCourant.description}
           </Col>
         </Row>
       )}
       <Row className="mt-3">
-        {// Pour chacun des paramètres, on affiche le bon composant
-        rapportPersonnaliseCourant?.listeParametre?.map((element) => {
-          return buildDynamicForm(element, values, setFieldValue);
-        })}
+        {/* Pour chacun des paramètres, on affiche le bon composant */}
+        {isLoading ? (
+          <Loading />
+        ) : (
+          listeWithParametres?.listeParametre?.map(
+            (element: DynamicFormParametreFront) => {
+              return buildDynamicForm(element, values, setFieldValue);
+            },
+          )
+        )}
       </Row>
       <Row className={"my-3 d-flex justify-content-center"}>
         <Col sm={"auto"}>
