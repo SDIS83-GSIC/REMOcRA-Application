@@ -1,16 +1,20 @@
-import React, { useRef } from "react";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
+import { useMemo, useRef } from "react";
 import { Button } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import Row from "react-bootstrap/Row";
+import SquelettePage from "../../../pages/SquelettePage.tsx";
 import { formatDateHeure } from "../../../utils/formatDateUtils.tsx";
+import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import Header from "../../Header/Header.tsx";
 import { IconCarte, IconPrint } from "../../Icon/Icon.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import "./MapPerso.css";
-import SquelettePage from "../../../pages/SquelettePage.tsx";
-import Header from "../../Header/Header.tsx";
 import MapToolbarPerso, { useToolbarPersoContext } from "./MapToolbarPerso.tsx";
 
 const MapPerso = () => {
@@ -30,6 +34,37 @@ const MapPerso = () => {
     typeModule: TypeModuleRemocra.CARTOGRAPHIE_PERSONNALISEE,
   });
 
+  // Couche dédiée à la cartographie personnalisée. Toutes les formes seront ajoutées à cette couche.
+  const cartographiePersoLayer = useMemo(() => {
+    if (map) {
+      const wl = new VectorLayer({
+        source: new VectorSource(),
+        style: () => {
+          return new Style({
+            fill: new Fill({
+              color: "rgba(5, 176, 255, 1)",
+            }),
+            stroke: new Stroke({
+              color: "rgba(5, 176, 255, 1)",
+              width: 2,
+            }),
+            image: new CircleStyle({
+              radius: 7,
+              fill: new Fill({
+                color: "#00c3ffff",
+              }),
+            }),
+          });
+        },
+        opacity: 1,
+        zIndex: 9000,
+      });
+
+      map.addLayer(wl);
+      return wl;
+    }
+  }, [map]);
+
   const {
     tools: extraTools,
     featureStyle,
@@ -37,34 +72,35 @@ const MapPerso = () => {
     selectedFeatures,
   } = useToolbarPersoContext({
     map,
-    workingLayer,
+    cartographiePersoLayer,
   });
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       availableLayers: availableLayers,
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: extraTools,
     });
 
   return (
     <SquelettePage navbar={<Header />}>
-      <PageTitle
-        title="Cartographie personnalisée"
-        icon={<IconCarte />}
-        right={
-          <Button
-            variant="primary"
-            onClick={() => {
-              window.print();
-            }}
-          >
-            <IconPrint /> Imprimer
-          </Button>
-        }
-      />
+      <div className={"mb-5"}>
+        <PageTitle
+          title="Cartographie personnalisée"
+          icon={<IconCarte />}
+          right={
+            <Button
+              variant="primary"
+              onClick={() => {
+                window.print();
+              }}
+            >
+              <IconPrint /> Imprimer
+            </Button>
+          }
+        />
+      </div>
       <div id={"papersheet"} className={"printable-no-margin mx-auto"}>
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
@@ -87,7 +123,7 @@ const MapPerso = () => {
                 featureStyle={featureStyle}
                 setFeatureStyle={setFeatureStyle}
                 selectedFeatures={selectedFeatures}
-                workingLayer={workingLayer}
+                cartographiePersoLayer={cartographiePersoLayer}
               />
             )
           }

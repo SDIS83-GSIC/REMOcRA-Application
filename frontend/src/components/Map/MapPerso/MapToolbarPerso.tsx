@@ -88,7 +88,7 @@ const LINE_DASHES = [
   ["longdashdot", "Tirets longs / Pointillés"],
 ];
 
-export const useToolbarPersoContext = ({ map, workingLayer }) => {
+export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
   const [featureStyle, setFeatureStyle] = useState(defaultStyle);
   const [selectedFeatures, setSelectedFeatures] = useState([]);
 
@@ -98,17 +98,17 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
     }
 
     const drawPointCtrl = new Draw({
-      source: workingLayer.getSource(),
+      source: cartographiePersoLayer.getSource(),
       type: "Point",
     });
 
     const drawLineCtrl = new Draw({
-      source: workingLayer.getSource(),
+      source: cartographiePersoLayer.getSource(),
       type: "LineString",
     });
 
     const drawShapeCtrl = new Draw({
-      source: workingLayer.getSource(),
+      source: cartographiePersoLayer.getSource(),
       type: "Polygon",
     });
 
@@ -125,7 +125,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
     });
 
     const selectCtrl = new Select({
-      layers: [workingLayer],
+      layers: [cartographiePersoLayer],
       toggleCondition: platformModifierKeyOnly,
     });
     const dragBoxCtrl = new DragBox({
@@ -141,7 +141,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();
-      const boxFeatures = workingLayer
+      const boxFeatures = cartographiePersoLayer
         .getSource()
         .getFeaturesInExtent(boxExtent);
 
@@ -164,7 +164,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
       }
     }
 
-    function toggleCtrl(active = false, ctrl) {
+    function toggleCtrl(active, ctrl) {
       const idx = map?.getInteractions().getArray().indexOf(ctrl);
       if (active) {
         if (idx === -1) {
@@ -188,7 +188,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
     }
 
     const modifyShapeCtrl = new Modify({
-      source: workingLayer.getSource(),
+      source: cartographiePersoLayer.getSource(),
     });
 
     const calculateCenter = (geometry) => {
@@ -234,13 +234,15 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
       };
     };
 
-    const defaultStyle = new Modify({ source: workingLayer.getSource() })
+    const defaultStyle = new Modify({
+      source: cartographiePersoLayer.getSource(),
+    })
       .getOverlay()
       .getStyleFunction();
 
     // FIXME faire en sorte d'afficher une géométrie dédiée lors de la modification, actuellement seul le point sélectionné est visuellement déplacé
     const modifyScaleCtrl = new Modify({
-      source: workingLayer.getSource(),
+      source: cartographiePersoLayer.getSource(),
       deleteCondition: never,
       insertVertexCondition: never,
       style: function (feature) {
@@ -319,7 +321,7 @@ export const useToolbarPersoContext = ({ map, workingLayer }) => {
     }
 
     const translateSelectCtrl = new Select({
-      layers: [workingLayer],
+      layers: [cartographiePersoLayer],
     });
     const translateCtrl = new Translate({
       features: translateSelectCtrl.getFeatures(),
@@ -384,14 +386,14 @@ const MapToolbarPerso = ({
   featureStyle,
   setFeatureStyle,
   selectedFeatures,
-  workingLayer,
+  cartographiePersoLayer,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
   featureStyle: Style;
   setFeatureStyle: (style: Style) => void;
   selectedFeatures: Feature[];
-  workingLayer: VectorLayer;
+  cartographiePersoLayer: VectorLayer;
 }) => {
   const [previewRef, setPreviewRef] = useState<HTMLDivElement>(null);
   const [showPanel, setShowPanel] = useState(false);
@@ -481,7 +483,7 @@ const MapToolbarPerso = ({
 
   function deleteFeature() {
     selectedFeatures.forEach((f) => {
-      workingLayer.getSource().removeFeature(f);
+      cartographiePersoLayer.getSource().removeFeature(f);
     });
   }
 
