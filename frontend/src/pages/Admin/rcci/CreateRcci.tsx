@@ -19,7 +19,11 @@ const CreateRcci = ({
   const { user } = useAppContext();
   return (
     <Container>
-      <PageTitle icon={<IconRCCI />} title={"Création d'une RCCI"} />
+      <PageTitle
+        displayReturnButton={false}
+        icon={<IconRCCI />}
+        title={"Création d'une RCCI"}
+      />
       <MyFormik
         initialValues={getInitialValues(
           creationRcciGeometrie ?? { rcci: undefined },

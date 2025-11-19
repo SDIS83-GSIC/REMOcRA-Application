@@ -80,7 +80,8 @@ const MapRcci = () => {
     creationRcciGeometrie,
     handleCloseCreationRcci,
     deleteModalRefs,
-    rcciIdRef,
+    rcciModifieId,
+    setRcciModifieId,
   } = useToolbarRcciContext({
     map,
     workingLayer,
@@ -126,7 +127,8 @@ const MapRcci = () => {
               creationRcciGeometrie={creationRcciGeometrie}
               handleCloseCreationRcci={handleCloseCreationRcci}
               deleteModalRefs={deleteModalRefs}
-              rcciIdRef={rcciIdRef}
+              rcciModifieId={rcciModifieId}
+              setRcciModifieId={setRcciModifieId}
               anneeCivileRef={{ anneeCivileRef, displayAnneCivile }}
             />
           )

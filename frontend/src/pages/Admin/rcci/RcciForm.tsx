@@ -127,12 +127,8 @@ export const getInitialValues = (
         data.rcci?.rcciCommentaireConclusion ?? undefined,
       rcciComplement: data.rcci?.rcciComplement ?? undefined,
       rcciCarroyageDfci: data.rcci?.rcciCarroyageDfci ?? undefined,
-      rcciDateIncendie: formatDateTimeForDateTimeInput(
-        data.rcci?.rcciDateIncendie ?? new Date(),
-      ),
-      rcciDateModification: formatDateTimeForDateTimeInput(
-        data.rcci?.rcciDateModification ?? new Date(),
-      ),
+      rcciDateIncendie: data.rcci?.rcciDateIncendie ?? new Date(),
+      rcciDateModification: data.rcci?.rcciDateModification ?? new Date(),
       rcciDirectionVent: data.rcci?.rcciDirectionVent ?? undefined,
       rcciForceVent: data.rcci?.rcciForceVent ?? undefined,
       rcciForcesOrdre: data.rcci?.rcciForcesOrdre ?? undefined,
@@ -141,7 +137,7 @@ export const getInitialValues = (
       rcciGeometrie: data.rcci?.rcciGeometrie ?? undefined,
       rcciX: x,
       rcciY: y,
-      rcciSrid: srid ?? null,
+      rcciSrid: srid ?? undefined,
 
       rcciHygrometrie: data.rcci?.rcciHygrometrie ?? undefined,
       rcciRcciIndiceRothermelId:
@@ -525,7 +521,9 @@ const RcciForm = () => {
                   label="Date"
                   name={"rcci.rcciDateIncendie"}
                   required={true}
-                  value={values.rcci?.rcciDateIncendie}
+                  value={formatDateTimeForDateTimeInput(
+                    values.rcci?.rcciDateIncendie,
+                  )}
                 />
               </Col>
               <Col>
@@ -577,10 +575,10 @@ const RcciForm = () => {
                   }
                 />
                 <CheckBoxInput
-                  name="voieSaisieLibre"
+                  name="rcci.voieSaisieLibre"
                   label="Voie non trouvée"
                 />
-                {values.voieSaisieLibre && (
+                {values.rcci?.voieSaisieLibre && (
                   <TextInput
                     name="rcci.rcciVoieTexte"
                     label="Voie (saisie libre)"
@@ -633,7 +631,7 @@ const RcciForm = () => {
             <Row>
               <Col>
                 <SelectForm
-                  name={"rcci.rcciArriveeGendarmerieId"}
+                  name={"rcci.rcciRcciArriveeGendarmerieId"}
                   label="Gendarmerie"
                   listIdCodeLibelle={referentielState.data?.gendarmerie}
                   defaultValue={referentielState.data?.gendarmerie?.find(
@@ -1030,7 +1028,7 @@ const RcciForm = () => {
             <Row>
               <Col>
                 <TextAreaInput
-                  name={"rcci.rcci"}
+                  name={"rcci.rcciCommentaireConclusion"}
                   label={"Commentaires et conclusions"}
                   required={false}
                 />

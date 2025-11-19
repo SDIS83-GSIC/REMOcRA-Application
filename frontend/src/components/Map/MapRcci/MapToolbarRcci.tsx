@@ -2,7 +2,7 @@ import { Map } from "ol";
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import { MutableRefObject, useMemo, useReducer, useRef, useState } from "react";
+import { MutableRefObject, useMemo, useReducer, useState } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
@@ -10,6 +10,7 @@ import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import CreateRcci from "../../../pages/Admin/rcci/CreateRcci.tsx";
+import UpdateRcci from "../../../pages/Admin/rcci/UpdateRcci.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import {
   IconCreate,
@@ -46,7 +47,8 @@ export const useToolbarRcciContext = ({
     close: deleteClose,
     ref: deleteRef,
   } = useModal();
-  const rcciIdRef = useRef();
+
+  const [rcciModifieId, setRcciModifieId] = useState<string | null>(null);
 
   const tools = useMemo(() => {
     if (!map) {
@@ -156,8 +158,7 @@ export const useToolbarRcciContext = ({
             return;
           }
           evt.selected.forEach(async function (feature) {
-            rcciIdRef.current = feature.getProperties().elementId;
-            editShow();
+            setRcciModifieId(feature.getProperties().elementId);
           });
         });
       }
@@ -318,7 +319,8 @@ export const useToolbarRcciContext = ({
       close: deleteClose,
       ref: deleteRef,
     },
-    rcciIdRef,
+    rcciModifieId,
+    setRcciModifieId,
   };
 };
 
@@ -331,6 +333,8 @@ const MapToolbarRcci = ({
   handleCloseCreationRcci,
   deleteModalRefs,
   anneeCivileRef,
+  rcciModifieId,
+  setRcciModifieId,
 }: {
   toggleTool: (toolId: string) => void;
   map: Map;
@@ -349,11 +353,12 @@ const MapToolbarRcci = ({
     anneeCivileRef: MutableRefObject<boolean>;
     displayAnneCivile: () => void;
   };
+  rcciModifieId: string | undefined;
+  setRcciModifieId: (id: string | null) => void;
 }) => {
   const { user } = useAppContext();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [creationSansGeom, setCreationSansGeom] = useState(false);
-
   return (
     <>
       <ButtonGroup>
@@ -443,7 +448,26 @@ const MapToolbarRcci = ({
           creationRcciGeometrie={creationRcciGeometrie}
           onSubmit={() => {
             dataRcciLayerRef.current?.getSource().refresh();
+            refreshLayerGeoserver(map);
+            handleCloseCreationRcci();
+            setCreationSansGeom(false);
+          }}
+        />
+      </Volet>
+      <Volet
+        handleClose={() => {
+          setRcciModifieId(null);
+        }}
+        show={rcciModifieId !== null}
+        className="w-auto"
+        backdrop={true}
+      >
+        <UpdateRcci
+          rcciId={rcciModifieId!}
+          onSubmit={() => {
+            dataRcciLayerRef.current?.getSource().refresh();
             -refreshLayerGeoserver(map);
+            setRcciModifieId(null);
           }}
         />
       </Volet>
