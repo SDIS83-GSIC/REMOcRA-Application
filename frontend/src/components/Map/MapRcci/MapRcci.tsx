@@ -1,15 +1,15 @@
-import React, { useMemo, useRef } from "react";
 import VectorLayer from "ol/layer/Vector";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
-import { formatDate } from "../../../utils/formatDateUtils.tsx";
-import MapComponent, { useMapComponent } from "../Map.tsx";
-import { useToolbarContext } from "../MapToolbar.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import { useMemo, useRef } from "react";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconRCCI } from "../../../components/Icon/Icon.tsx";
-import { CODE_COUCHE_RCCI } from "../../../utils/constantsUtils.tsx";
-import rcciIcon from "../../../img/rci.png";
 import rcciBeforeIcon from "../../../img/rci-before.png";
+import rcciIcon from "../../../img/rci.png";
+import { CODE_COUCHE_RCCI } from "../../../utils/constantsUtils.tsx";
+import { formatDate } from "../../../utils/formatDateUtils.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import MapComponent, { useMapComponent } from "../Map.tsx";
+import { useToolbarContext } from "../MapToolbar.tsx";
 import MapToolbarRcci, { useToolbarRcciContext } from "./MapToolbarRcci.tsx";
 
 const MapRcci = () => {
@@ -77,7 +77,8 @@ const MapRcci = () => {
 
   const {
     tools: extraTools,
-    editModalRefs,
+    creationRcciGeometrie,
+    handleCloseCreationRcci,
     deleteModalRefs,
     rcciIdRef,
   } = useToolbarRcciContext({
@@ -122,7 +123,8 @@ const MapRcci = () => {
               toggleTool={toggleTool}
               activeTool={activeTool}
               dataRcciLayerRef={dataRcciLayerRef}
-              editModalRefs={editModalRefs}
+              creationRcciGeometrie={creationRcciGeometrie}
+              handleCloseCreationRcci={handleCloseCreationRcci}
               deleteModalRefs={deleteModalRefs}
               rcciIdRef={rcciIdRef}
               anneeCivileRef={{ anneeCivileRef, displayAnneCivile }}

@@ -2,18 +2,14 @@ import { Map } from "ol";
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import { MutableRefObject, useMemo, useReducer, useRef } from "react";
+import { MutableRefObject, useMemo, useReducer, useRef, useState } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import RcciForm, {
-  getInitialValues,
-  prepareValues,
-  validationSchema,
-} from "../../../pages/Admin/rcci/RcciForm.tsx";
+import CreateRcci from "../../../pages/Admin/rcci/CreateRcci.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import {
   IconCreate,
@@ -25,9 +21,9 @@ import {
 } from "../../Icon/Icon.tsx";
 import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import DeleteModal from "../../Modal/DeleteModal.tsx";
-import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
+import Volet from "../../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 
@@ -37,13 +33,12 @@ export const useToolbarRcciContext = ({
   dataRcciLayerRef,
 }) => {
   const { success: successToast, error: errorToast } = useToastContext();
-  const {
-    value: editValue,
-    visible: editVisible,
-    show: editShow,
-    close: editClose,
-    ref: editRef,
-  } = useModal();
+  const [creationRcciGeometrie, setCreationRcciGeometrie] = useState<{
+    rcci: { rcciGeometrie: string };
+  } | null>(null);
+
+  const handleCloseCreationRcci = () => setCreationRcciGeometrie(null);
+
   const {
     value: deleteValue,
     visible: deleteVisible,
@@ -90,11 +85,13 @@ export const useToolbarRcciContext = ({
               " " +
               event.feature.getGeometry().getCoordinates()[1] +
               ")";
-            editShow({
+
+            setCreationRcciGeometrie({
               rcci: {
                 rcciGeometrie: geometry,
               },
             });
+
             refreshLayerGeoserver(map);
             workingLayer.getSource().removeFeature(event.feature);
           } else {
@@ -312,13 +309,8 @@ export const useToolbarRcciContext = ({
 
   return {
     tools,
-    editModalRefs: {
-      visible: editVisible,
-      value: editValue,
-      show: editShow,
-      close: editClose,
-      ref: editRef,
-    },
+    creationRcciGeometrie,
+    handleCloseCreationRcci,
     deleteModalRefs: {
       visible: deleteVisible,
       value: deleteValue,
@@ -335,23 +327,17 @@ const MapToolbarRcci = ({
   toggleTool: toggleToolCallback,
   activeTool,
   dataRcciLayerRef,
-  editModalRefs,
+  creationRcciGeometrie,
+  handleCloseCreationRcci,
   deleteModalRefs,
-  rcciIdRef,
   anneeCivileRef,
 }: {
   toggleTool: (toolId: string) => void;
   map: Map;
   activeTool: string;
   dataRcciLayerRef: MutableRefObject<VectorLayer | undefined>;
-  rcciIdRef: MutableRefObject<string | undefined>;
-  editModalRefs: {
-    visible: boolean;
-    show: () => void;
-    close: () => void;
-    ref: MutableRefObject<HTMLDivElement>;
-    value: any;
-  };
+  creationRcciGeometrie: { rcci: { rcciGeometrie: string } } | null;
+  handleCloseCreationRcci: () => void;
   deleteModalRefs: {
     visible: boolean;
     show: () => void;
@@ -366,6 +352,7 @@ const MapToolbarRcci = ({
 }) => {
   const { user } = useAppContext();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [creationSansGeom, setCreationSansGeom] = useState(false);
 
   return (
     <>
@@ -390,7 +377,7 @@ const MapToolbarRcci = ({
           >
             <Button
               name={"tool"}
-              onClick={() => editModalRefs.show()}
+              onClick={() => setCreationSansGeom(true)}
               id={"create-rcci-xy"}
               value={"create-rcci-xy"}
               variant={"outline-primary"}
@@ -443,30 +430,24 @@ const MapToolbarRcci = ({
           </Button>
         </TooltipCustom>
       </ButtonGroup>
-      {editModalRefs.visible && (
-        <EditModal
-          visible={editModalRefs.visible}
-          closeModal={editModalRefs.close}
-          query={url`/api/rcci` + (!rcciIdRef.current ? "/create" : "")}
-          ref={editModalRefs.ref}
-          validationSchema={validationSchema}
-          getInitialValues={(values) =>
-            getInitialValues(values, user.utilisateurId)
-          }
-          prepareVariables={prepareValues}
-          canModify={true}
-          header={""}
-          value={editModalRefs.value}
-          id={rcciIdRef.current}
-          isMultipartFormData={true}
+
+      <Volet
+        handleClose={() => {
+          handleCloseCreationRcci();
+          setCreationSansGeom(false);
+        }}
+        show={creationRcciGeometrie !== null || creationSansGeom}
+        className="w-auto"
+      >
+        <CreateRcci
+          creationRcciGeometrie={creationRcciGeometrie}
           onSubmit={() => {
             dataRcciLayerRef.current?.getSource().refresh();
-            refreshLayerGeoserver(map);
+            -refreshLayerGeoserver(map);
           }}
-        >
-          <RcciForm />
-        </EditModal>
-      )}
+        />
+      </Volet>
+
       {deleteModalRefs.visible && (
         <DeleteModal
           visible={deleteModalRefs.visible}

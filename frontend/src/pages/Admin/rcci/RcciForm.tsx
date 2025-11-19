@@ -3,6 +3,9 @@ import { WKT } from "ol/format";
 import { useEffect, useState } from "react";
 import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
 import { array, number, object, string } from "yup";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import DeleteButton from "../../../components/Button/DeleteButton.tsx";
 import {
@@ -15,11 +18,13 @@ import {
   DateTimeInput,
   FieldSet,
   FileInput,
+  FormContainer,
   NumberInput,
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import {
   IconDelete,
   IconExport,
@@ -40,9 +45,6 @@ import {
   requiredString,
 } from "../../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
 
 type FormType = {
   rcci: RcciFormType;
@@ -106,10 +108,10 @@ type SectionWarning = {
 
 export const getInitialValues = (
   data: {
-    rcci: RcciFormType;
+    rcci: RcciFormType | undefined;
     documentList?: object;
   },
-  userId,
+  userId: string,
 ) => {
   const [srid, geom] = data.rcci?.rcciGeometrie
     ? data.rcci.rcciGeometrie.split(/SRID=|;/).filter(Boolean)
@@ -181,7 +183,7 @@ export const getInitialValues = (
     },
     documentList: data?.documentList || [],
     typeSystemeSrid:
-      TypeSystemeSrid.find((e) => e.srid === Number(data?.rcci.rcciSrid))
+      TypeSystemeSrid.find((e) => e.srid === Number(data?.rcci?.rcciSrid))
         ?.srid ?? TypeSystemeSrid[0].srid.toString(),
 
     coordonneeXToDisplay: x,
@@ -197,59 +199,59 @@ export const prepareValues = (values: {
   formData.append(
     "rcci",
     JSON.stringify({
-      rcciId: values.rcci.rcciId,
-      rcciCommentaireConclusion: values.rcci.rcciCommentaireConclusion,
-      rcciComplement: values.rcci.rcciComplement,
-      rcciCarroyageDfci: values.rcci.rcciCarroyageDfci,
-      rcciDateIncendie: values.rcci.rcciDateIncendie
-        ? new Date(values.rcci.rcciDateIncendie).toISOString()
+      rcciId: values.rcci?.rcciId,
+      rcciCommentaireConclusion: values.rcci?.rcciCommentaireConclusion,
+      rcciComplement: values.rcci?.rcciComplement,
+      rcciCarroyageDfci: values.rcci?.rcciCarroyageDfci,
+      rcciDateIncendie: values.rcci?.rcciDateIncendie
+        ? new Date(values.rcci?.rcciDateIncendie).toISOString()
         : null,
-      rcciDateModification: values.rcci.rcciDateModification
-        ? new Date(values.rcci.rcciDateModification).toISOString()
+      rcciDateModification: values.rcci?.rcciDateModification
+        ? new Date(values.rcci?.rcciDateModification).toISOString()
         : new Date(),
-      rcciDirectionVent: values.rcci.rcciDirectionVent,
-      rcciForceVent: values.rcci.rcciForceVent,
-      rcciForcesOrdre: values.rcci.rcciForcesOrdre,
-      rcciGdh: values.rcci.rcciGdh
-        ? new Date(values.rcci.rcciGdh).toISOString()
+      rcciDirectionVent: values.rcci?.rcciDirectionVent,
+      rcciForceVent: values.rcci?.rcciForceVent,
+      rcciForcesOrdre: values.rcci?.rcciForcesOrdre,
+      rcciGdh: values.rcci?.rcciGdh
+        ? new Date(values.rcci?.rcciGdh).toISOString()
         : null,
-      rcciGelLieux: values.rcci.rcciGelLieux,
+      rcciGelLieux: values.rcci?.rcciGelLieux,
       rcciGeometrie:
         "SRID=" +
-        values.rcci.rcciSrid +
+        values.rcci?.rcciSrid +
         ";POINT(" +
-        values.rcci.rcciX +
+        values.rcci?.rcciX +
         " " +
-        values.rcci.rcciY +
+        values.rcci?.rcciY +
         ")",
-      rcciHygrometrie: values.rcci.rcciHygrometrie,
-      rcciRcciIndiceRothermelId: values.rcci.rcciRcciIndiceRothermelId,
-      rcciPointEclosion: values.rcci.rcciPointEclosion,
-      rcciPremierCos: values.rcci.rcciPremierCos,
-      rcciPremierEngin: values.rcci.rcciPremierEngin,
-      rcciSuperficieFinale: values.rcci.rcciSuperficieFinale,
-      rcciSuperficieReferent: values.rcci.rcciSuperficieReferent,
-      rcciSuperficieSecours: values.rcci.rcciSuperficieSecours,
-      rcciTemperature: values.rcci.rcciTemperature,
-      rcciVentLocal: values.rcci.rcciVentLocal,
+      rcciHygrometrie: values.rcci?.rcciHygrometrie,
+      rcciRcciIndiceRothermelId: values.rcci?.rcciRcciIndiceRothermelId,
+      rcciPointEclosion: values.rcci?.rcciPointEclosion,
+      rcciPremierCos: values.rcci?.rcciPremierCos,
+      rcciPremierEngin: values.rcci?.rcciPremierEngin,
+      rcciSuperficieFinale: values.rcci?.rcciSuperficieFinale,
+      rcciSuperficieReferent: values.rcci?.rcciSuperficieReferent,
+      rcciSuperficieSecours: values.rcci?.rcciSuperficieSecours,
+      rcciTemperature: values.rcci?.rcciTemperature,
+      rcciVentLocal: values.rcci?.rcciVentLocal,
       rcciVoieTexte:
-        values.rcci.rcciVoieTexte != null &&
-        values.rcci.rcciVoieTexte?.trim() !== ""
-          ? values.rcci.rcciVoieTexte
+        values.rcci?.rcciVoieTexte != null &&
+        values.rcci?.rcciVoieTexte?.trim() !== ""
+          ? values.rcci?.rcciVoieTexte
           : null,
-      rcciVoieId: values.rcci.rcciVoieId,
-      rcciCommuneId: values.rcci.rcciCommuneId,
+      rcciVoieId: values.rcci?.rcciVoieId,
+      rcciCommuneId: values.rcci?.rcciCommuneId,
       rcciRcciTypePrometheeCategorieId:
-        values.rcci.rcciRcciTypePrometheeCategorieId,
-      rcciRcciTypeDegreCertitudeId: values.rcci.rcciRcciTypeDegreCertitudeId,
-      rcciRcciTypeOrigineAlerteId: values.rcci.rcciRcciTypeOrigineAlerteId,
-      rcciRcciArriveeDdtmOnfId: values.rcci.rcciRcciArriveeDdtmOnfId,
-      rcciRcciArriveeSdisId: values.rcci.rcciRcciArriveeSdisId,
-      rcciRcciArriveeGendarmerieId: values.rcci.rcciRcciArriveeGendarmerieId,
-      rcciRcciArriveePoliceId: values.rcci.rcciRcciArriveePoliceId,
-      rcciUtilisateurId: values.rcci.rcciUtilisateurId,
+        values.rcci?.rcciRcciTypePrometheeCategorieId,
+      rcciRcciTypeDegreCertitudeId: values.rcci?.rcciRcciTypeDegreCertitudeId,
+      rcciRcciTypeOrigineAlerteId: values.rcci?.rcciRcciTypeOrigineAlerteId,
+      rcciRcciArriveeDdtmOnfId: values.rcci?.rcciRcciArriveeDdtmOnfId,
+      rcciRcciArriveeSdisId: values.rcci?.rcciRcciArriveeSdisId,
+      rcciRcciArriveeGendarmerieId: values.rcci?.rcciRcciArriveeGendarmerieId,
+      rcciRcciArriveePoliceId: values.rcci?.rcciRcciArriveePoliceId,
+      rcciUtilisateurId: values.rcci?.rcciUtilisateurId,
       rcciRisqueMeteo: values.rcci?.rcciRisqueMeteo,
-      documentList: values.rcci.documentList,
+      documentList: values.rcci?.documentList,
     }),
   );
   if (values.documentList) {
@@ -366,7 +368,7 @@ const RcciForm = () => {
     };
   });
   const referentielState = useGetRun(
-    url`/api/rcci/refs?${{ geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})` }}`,
+    url`/api/rcci/refs?${{ geometrie: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})` }}`,
   );
 
   const { isLoading, data, run } = usePost(url`/api/dfci/check`);
@@ -374,7 +376,7 @@ const RcciForm = () => {
   const { run: runReferentielState } = referentielState;
 
   useEffect(() => {
-    if (!values.rcci.rcciX || !values.rcci.rcciY) {
+    if (!values.rcci?.rcciX || !values.rcci?.rcciY) {
       return;
     }
     if (
@@ -387,11 +389,11 @@ const RcciForm = () => {
         srid: values.typeSystemeSrid,
       });
       run({
-        geometry: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
+        geometry: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})`,
       });
 
       runReferentielState({
-        geometrie: `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`,
+        geometrie: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})`,
       });
     }
 
@@ -403,13 +405,13 @@ const RcciForm = () => {
     }
   }, [
     run,
-    values.rcci.rcciSrid,
-    values.rcci.rcciX,
-    values.rcci.rcciY,
+    values.rcci?.rcciSrid,
+    values.rcci?.rcciX,
+    values.rcci?.rcciY,
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
     values.typeSystemeSrid,
-    values.rcci.rcciCommuneId,
+    values.rcci?.rcciCommuneId,
     geometrieState,
     runReferentielState,
     setFieldValue,
@@ -417,13 +419,13 @@ const RcciForm = () => {
   ]);
 
   useEffect(() => {
-    if (!values.rcci.rcciX || !values.rcci.rcciY) {
+    if (!values.rcci?.rcciX || !values.rcci?.rcciY) {
       return;
     }
     if (
       referentielState.data?.listCommune != null &&
       referentielState.data?.listCommune?.length !== 0 &&
-      !values.rcci.rcciCommuneId
+      !values.rcci?.rcciCommuneId
     ) {
       setFieldValue(
         "rcci.rcciCommuneId",
@@ -431,10 +433,10 @@ const RcciForm = () => {
       );
     }
   }, [
-    values.rcci.rcciX,
-    values.rcci.rcciY,
+    values.rcci?.rcciX,
+    values.rcci?.rcciY,
     referentielState.data?.listCommune,
-    values.rcci.rcciCommuneId,
+    values.rcci?.rcciCommuneId,
     setFieldValue,
   ]);
 
@@ -498,7 +500,7 @@ const RcciForm = () => {
   ]);
 
   return (
-    <>
+    <FormContainer>
       <Row>
         <Col>Nouveau départ en cours de saisie par {user.username}</Col>
       </Row>
@@ -523,7 +525,7 @@ const RcciForm = () => {
                   label="Date"
                   name={"rcci.rcciDateIncendie"}
                   required={true}
-                  value={values.rcci.rcciDateIncendie}
+                  value={values.rcci?.rcciDateIncendie}
                 />
               </Col>
               <Col>
@@ -532,7 +534,7 @@ const RcciForm = () => {
                   label="Origine"
                   listIdCodeLibelle={rcciTypeOrigineAlerteState.data}
                   defaultValue={rcciTypeOrigineAlerteState.data?.find(
-                    (v) => v.id === values.rcci.rcciRcciTypeOrigineAlerteId,
+                    (v) => v.id === values.rcci?.rcciRcciTypeOrigineAlerteId,
                   )}
                   required={true}
                   setFieldValue={setFieldValue}
@@ -546,7 +548,7 @@ const RcciForm = () => {
                   name={"rcci.rcciCommuneId"}
                   listIdCodeLibelle={referentielState.data?.listCommune}
                   defaultValue={referentielState.data?.listCommune?.find(
-                    (v) => v.id === values.rcci.rcciCommuneId,
+                    (v) => v.id === values.rcci?.rcciCommuneId,
                   )}
                   onChange={(e) => {
                     setFieldValue("rcci.rcciCommuneId", e?.id);
@@ -561,17 +563,17 @@ const RcciForm = () => {
                 <SelectForm
                   name={"rcci.rcciVoieId"}
                   listIdCodeLibelle={referentielState.data?.listVoie?.filter(
-                    (e) => e.communeId === values.rcci.rcciCommuneId,
+                    (e) => e.communeId === values.rcci?.rcciCommuneId,
                   )}
                   label="Voie"
                   defaultValue={referentielState.data?.listVoie?.find(
-                    (e) => e.id === values.rcci.rcciVoieId,
+                    (e) => e.id === values.rcci?.rcciVoieId,
                   )}
                   required={!values.voieSaisieLibre} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
                   setFieldValue={setFieldValue}
                   disabled={
-                    values.rcci.rcciVoieTexte != null &&
-                    values.rcci.rcciVoieTexte?.trim() !== ""
+                    values.rcci?.rcciVoieTexte != null &&
+                    values.rcci?.rcciVoieTexte?.trim() !== ""
                   }
                 />
                 <CheckBoxInput
@@ -584,8 +586,8 @@ const RcciForm = () => {
                     label="Voie (saisie libre)"
                     required={false}
                     disabled={
-                      values.rcci.rcciVoieId != null &&
-                      values.rcci.rcciVoieId?.trim() !== ""
+                      values.rcci?.rcciVoieId != null &&
+                      values.rcci?.rcciVoieId?.trim() !== ""
                     }
                   />
                 )}
@@ -609,7 +611,7 @@ const RcciForm = () => {
                   label="DDTM - ONF"
                   listIdCodeLibelle={referentielState.data?.ddtmonf}
                   defaultValue={referentielState.data?.ddtmonf?.find(
-                    (v) => v.id === values.rcci.rcciRcciArriveeDdtmOnfId,
+                    (v) => v.id === values.rcci?.rcciRcciArriveeDdtmOnfId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -621,7 +623,7 @@ const RcciForm = () => {
                   label="SDIS"
                   listIdCodeLibelle={referentielState.data?.sdis}
                   defaultValue={referentielState.data?.sdis?.find(
-                    (v) => v.id === values.rcci.rcciRcciArriveeSdisId,
+                    (v) => v.id === values.rcci?.rcciRcciArriveeSdisId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -635,7 +637,7 @@ const RcciForm = () => {
                   label="Gendarmerie"
                   listIdCodeLibelle={referentielState.data?.gendarmerie}
                   defaultValue={referentielState.data?.gendarmerie?.find(
-                    (v) => v.id === values.rcci.rcciRcciArriveeGendarmerieId,
+                    (v) => v.id === values.rcci?.rcciRcciArriveeGendarmerieId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -647,7 +649,7 @@ const RcciForm = () => {
                   label="Police"
                   listIdCodeLibelle={referentielState.data?.police}
                   defaultValue={referentielState.data?.police?.find(
-                    (v) => v.id === values.rcci.rcciRcciArriveePoliceId,
+                    (v) => v.id === values.rcci?.rcciRcciArriveePoliceId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -776,8 +778,8 @@ const RcciForm = () => {
                           name={"rcci.rcciGdh"}
                           required={false}
                           value={
-                            values.rcci.rcciGdh &&
-                            formatDateTimeForDateTimeInput(values.rcci.rcciGdh)
+                            values.rcci?.rcciGdh &&
+                            formatDateTimeForDateTimeInput(values.rcci?.rcciGdh)
                           }
                         />
                       </Col>
@@ -845,7 +847,7 @@ const RcciForm = () => {
                           listIdCodeLibelle={rcciIndiceRothermelState.data}
                           defaultValue={rcciIndiceRothermelState.data?.find(
                             (v) =>
-                              v.id === values.rcci.rcciRcciIndiceRothermelId,
+                              v.id === values.rcci?.rcciRcciIndiceRothermelId,
                           )}
                           required={false}
                           setFieldValue={setFieldValue}
@@ -956,7 +958,7 @@ const RcciForm = () => {
                   label="Prométhée famille"
                   listIdCodeLibelle={rcciTypePrometheeFamilleState.data}
                   defaultValue={rcciTypePrometheeFamilleState.data?.find(
-                    (v) => v.id === values.rcci.rcciRcciTypePrometheeFamilleId,
+                    (v) => v.id === values.rcci?.rcciRcciTypePrometheeFamilleId,
                   )}
                   required={false}
                   setFieldValue={(name, value) => {
@@ -976,38 +978,39 @@ const RcciForm = () => {
                   label="Prométhée partition"
                   listIdCodeLibelle={rcciTypePrometheePartitionState.data?.filter(
                     (v) =>
-                      v.lienId === values.rcci.rcciRcciTypePrometheeFamilleId,
+                      v.lienId === values.rcci?.rcciRcciTypePrometheeFamilleId,
                   )}
                   defaultValue={rcciTypePrometheePartitionState.data?.find(
                     (v) =>
-                      v.id === values.rcci.rcciRcciTypePrometheePartitionId,
+                      v.id === values.rcci?.rcciRcciTypePrometheePartitionId,
                   )}
                   required={false}
                   setFieldValue={(name, value) => {
                     setFieldValue(
                       "rcci.rcciRcciTypePrometheeCategorieId",
-                      null,
+                      undefined,
                     );
                     setFieldValue(name, value);
                   }}
-                  disabled={values.rcci.rcciRcciTypePrometheeFamilleId == null}
+                  disabled={values.rcci?.rcciRcciTypePrometheeFamilleId == null}
                 />
                 <SelectForm
                   name={"rcci.rcciRcciTypePrometheeCategorieId"}
                   label="Prométhée catégorie"
                   listIdCodeLibelle={rcciTypePrometheeCategorieState.data?.filter(
                     (v) =>
-                      v.lienId === values.rcci.rcciRcciTypePrometheePartitionId,
+                      v.lienId ===
+                      values.rcci?.rcciRcciTypePrometheePartitionId,
                   )}
                   defaultValue={rcciTypePrometheeCategorieState.data?.find(
                     (v) =>
-                      v.id === values.rcci.rcciRcciTypePrometheeCategorieId,
+                      v.id === values.rcci?.rcciRcciTypePrometheeCategorieId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
                   disabled={
-                    values.rcci.rcciRcciTypePrometheeFamilleId == null ||
-                    values.rcci.rcciRcciTypePrometheePartitionId == null
+                    values.rcci?.rcciRcciTypePrometheeFamilleId == null ||
+                    values.rcci?.rcciRcciTypePrometheePartitionId == null
                   }
                 />
               </Col>
@@ -1017,7 +1020,7 @@ const RcciForm = () => {
                   label="Degré certitude"
                   listIdCodeLibelle={rcciTypeDegreCertitudeState.data}
                   defaultValue={rcciTypeDegreCertitudeState.data?.find(
-                    (v) => v.id === values.rcci.rcciRcciTypeDegreCertitudeId,
+                    (v) => v.id === values.rcci?.rcciRcciTypeDegreCertitudeId,
                   )}
                   required={false}
                   setFieldValue={setFieldValue}
@@ -1036,9 +1039,9 @@ const RcciForm = () => {
           </FieldSet>
         </Tab>
         <Tab eventKey="documents" title="Documents">
-          {values.rcci.documentList?.length > 0 && (
+          {values.rcci?.documentList?.length > 0 && (
             <FieldSet title={"Documents existants"}>
-              {values.rcci.documentList?.map((file, index) => (
+              {values.rcci?.documentList?.map((file, index) => (
                 <div key={index}>
                   {file.documentNom}
                   <Badge
@@ -1057,7 +1060,7 @@ const RcciForm = () => {
                     onClick={() => {
                       setFieldValue(
                         `rcci.documentList`,
-                        values.rcci.documentList.filter((v, i) => i !== index),
+                        values.rcci?.documentList.filter((v, i) => i !== index),
                       );
                     }}
                   >
@@ -1102,7 +1105,8 @@ const RcciForm = () => {
           </FieldSet>
         </Tab>
       </Tabs>
-    </>
+      <SubmitFormButtons />
+    </FormContainer>
   );
 };
 
