@@ -1,11 +1,12 @@
+import { Map } from "ol";
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { MutableRefObject, useMemo, useReducer, useRef } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
-import { Map } from "ol";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import RcciForm, {
@@ -22,14 +23,13 @@ import {
   IconHide,
   IconMoveObjet,
 } from "../../Icon/Icon.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import DeleteModal from "../../Modal/DeleteModal.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
-import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
-import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
-import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 export const useToolbarRcciContext = ({
   map,
@@ -281,11 +281,12 @@ export const useToolbarRcciContext = ({
       }
       const idx = map.getInteractions().getArray().indexOf(moveCtrl);
       if (active) {
-        desactiveMoveMap(map);
         if (idx === -1) {
+          moveCtrl.setActive(true);
           map.addInteraction(moveCtrl);
         }
       } else {
+        moveCtrl.setActive(false);
         map.removeInteraction(moveCtrl);
       }
     }
@@ -296,13 +297,13 @@ export const useToolbarRcciContext = ({
       },
       "edit-rcci": {
         action: toggleEdit,
-        actionPossibleEnDeplacement: false,
       },
       "delete-rcci": {
         action: toggleDelete,
       },
       "move-rcci": {
         action: toggleMove,
+        actionPossibleEnDeplacement: false,
       },
     };
 

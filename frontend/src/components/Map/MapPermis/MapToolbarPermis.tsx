@@ -6,18 +6,18 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { useMemo, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import CreatePermis from "../../../pages/Permis/CreatePermis.tsx";
 import SearchPermis from "../../../pages/Permis/SearchPermis.tsx";
 import UpdatePermis from "../../../pages/Permis/UpdatePermis.tsx";
 import { IconCreate, IconMoveObjet, IconSearch } from "../../Icon/Icon.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import Volet from "../../Volet/Volet.tsx";
-import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
-import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
-import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 const defaultStyle = new Style({
   image: new Circle({
     radius: 5,
@@ -158,11 +158,12 @@ export const useToolbarPermisContext = ({
     function toggleDeplacerPermis(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(movePermisCtrl);
       if (active) {
-        desactiveMoveMap(map);
+        movePermisCtrl.setActive(true);
         if (idx === -1) {
           map.addInteraction(movePermisCtrl);
         }
       } else {
+        movePermisCtrl.setActive(false);
         map.removeInteraction(movePermisCtrl);
       }
     }
@@ -182,6 +183,7 @@ export const useToolbarPermisContext = ({
       },
       "deplacer-permis": {
         action: toggleDeplacerPermis,
+        actionPossibleEnDeplacement: false,
       },
     };
     return tools;
