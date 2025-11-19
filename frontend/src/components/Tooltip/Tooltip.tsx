@@ -62,7 +62,7 @@ type TooltipType = {
   placement?: Placement;
   children: React.ReactElement | ((props: any) => React.ReactNode);
   maxWidth?: number;
-  nowrap: boolean;
+  nowrap?: boolean;
 };
 
 export default TooltipCustom;
