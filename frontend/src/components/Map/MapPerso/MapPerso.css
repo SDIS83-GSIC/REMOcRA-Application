@@ -1,9 +1,40 @@
 #papersheet {
+  position: relative;
   width: 297mm;
   height: 210mm;
+  border: 1px solid #cec9c9;
   background: white;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 3.5rem auto 1.5rem;
   padding: 15mm;
+}
+
+.isPrintable .map-toolbar {
+  position: absolute;
+  top: -120px;
+}
+
+@media print {
+  .isPrintable .accordion-button.collapsed {
+    display: none !important;
+  }
+  .isPrintable .map-map {
+    border: 0 !important;
+  }
+  #papersheet {
+    border: 0;
+  }
+  /*Relative seulement pour le print car la legend doit ce placé sur le parent hors du contexte print*/
+  .map-wrapper {
+    position: relative !important;
+  }
+
+  .isPrintable .map-layers {
+    position: absolute !important;
+    top: 0;
+    right: 20px;
+    opacity: 0.8;
+    z-index: 1000 !important;
+  }
 }

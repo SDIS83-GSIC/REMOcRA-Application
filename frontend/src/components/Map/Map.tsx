@@ -10,6 +10,7 @@ import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import { bbox } from "ol/loadingstrategy";
+import classNames from "classnames";
 import "ol/ol.css";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
 import { OSM, TileWMS, WMTS } from "ol/source";
@@ -183,6 +184,7 @@ const MapComponent = ({
   outilI,
   handleCloseInfoI,
   showOutilI,
+  printable = false,
 }: {
   map?: Map;
   availableLayers: any[];
@@ -197,6 +199,7 @@ const MapComponent = ({
   outilI: any;
   showOutilI: boolean;
   handleCloseInfoI: () => void;
+  printable?: boolean;
 }) => {
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
@@ -223,7 +226,10 @@ const MapComponent = ({
   }, [map]);
 
   return (
-    <div className={"map-wrapper"} id={"map-container"}>
+    <div
+      className={classNames("map-wrapper", printable ? "isPrintable" : "")}
+      id={"map-container"}
+    >
       {map && mapElement && (
         <Row className={"map-toolbar noprint"}>
           <Col xs={"auto"}>
@@ -243,7 +249,7 @@ const MapComponent = ({
         </Row>
       )}
       <div ref={mapElement} className={"map-map border border-" + variant} />
-      <div className={"map-layers noprint"}>
+      <div className={"map-layers printable-legend"}>
         <MapLegend
           ref={layerListRef}
           layers={availableLayers}

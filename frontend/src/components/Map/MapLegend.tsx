@@ -65,7 +65,7 @@ const MapLegend = forwardRef(
                       </Col>
                       <Col>
                         <Form.Group controlId={getUid(layer.openlayer)}>
-                          <Row>
+                          <Row className={!isChecked(layer) ? "noprint" : ""}>
                             <Col xs={10} className={"p-0 px-1"}>
                               <Form.Switch
                                 checked={isChecked(layer)}

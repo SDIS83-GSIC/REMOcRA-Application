@@ -85,7 +85,7 @@ const MapPerso = () => {
 
   return (
     <SquelettePage navbar={<Header />}>
-      <div className={"mb-5"}>
+      <div style={{ marginBottom: "100px" }} className="noprint">
         <PageTitle
           title="Cartographie personnalisée"
           icon={<IconCarte />}
@@ -105,6 +105,7 @@ const MapPerso = () => {
         <h1 contentEditable={"true"}>✎ Titre de la carte</h1>
         <MapComponent
           map={map}
+          printable={true}
           outilI={infoOutilI}
           showOutilI={showOutilI}
           handleCloseInfoI={handleCloseInfoI}

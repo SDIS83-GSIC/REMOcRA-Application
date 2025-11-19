@@ -73,22 +73,6 @@ h3 {
   font-size: 0.7rem;
 }
 
-@media print {
-  #navbar,
-  #footer,
-  .noprint,
-  .ol-full-screen,
-  .ol-zoom-in,
-  .ol-zoom-out,
-  .ol-mouse-position {
-    display: none !important;
-  }
-  .printable-no-margin {
-    margin: 0;
-    padding: 0;
-  }
-}
-
 .tooltip-wrapper {
   position: relative;
   display: inline-block;

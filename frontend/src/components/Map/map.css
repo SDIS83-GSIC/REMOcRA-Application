@@ -28,7 +28,6 @@
 
 /* Comportement normal */
 .map-wrapper {
-  position: relative;
   width: 100%;
   height: 100%;
   min-height: 600px;
@@ -46,11 +45,29 @@
     "toolbar"
     "map";
 }
+.isPrintable .accordion {
+  opacity: 0.8 !important;
+}
+
 @media print {
   .map-wrapper {
     grid-template-areas: "map layers";
     grid-template-rows: auto;
     grid-template-columns: auto min-content;
+  }
+
+  #navbar,
+  #footer,
+  .noprint,
+  .ol-full-screen,
+  .ol-zoom-in,
+  .ol-zoom-out,
+  .ol-mouse-position {
+    display: none !important;
+  }
+  .printable-no-margin {
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -79,9 +96,6 @@
 
 .map-layers::-webkit-scrollbar-track {
   background: transparent;
-}
-#map-container {
-  position: relative;
 }
 
 /* En fullscreen : devient flottant */
