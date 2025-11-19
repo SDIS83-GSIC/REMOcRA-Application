@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
-import MapPerso from "./components/Map/MapPerso/MapPerso.tsx";
+import MapCartographiePerso from "./components/Map/MapPerso/MapCartographiePerso.tsx";
 import ImportKml from "./components/Map/MapRisque/ImportKml.tsx";
 import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
@@ -1037,7 +1037,7 @@ export default [
     path: "/cartographie-personnalisee",
     element: (
       <Authorization
-        Component={MapPerso}
+        Component={MapCartographiePerso}
         droits={[TYPE_DROIT.CARTOGRAPHIES_E]}
       />
     ),

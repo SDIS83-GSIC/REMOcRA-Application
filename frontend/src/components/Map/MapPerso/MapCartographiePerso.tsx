@@ -14,10 +14,12 @@ import { IconCarte, IconPrint } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import "./MapPerso.css";
-import MapToolbarPerso, { useToolbarPersoContext } from "./MapToolbarPerso.tsx";
+import MapToolbarCartographiePerso, {
+  useToolbarPersoContext,
+} from "./MapToolbarCartographiePerso.tsx";
+import "./MapCartographiePerso.css";
 
-const MapPerso = () => {
+const MapCartographiePerso = () => {
   const now = new Date();
   const mapElement = useRef<HTMLDivElement>();
 
@@ -118,7 +120,7 @@ const MapPerso = () => {
           activeTool={activeTool}
           toolbarElement={
             mapToolbarRef.current && (
-              <MapToolbarPerso
+              <MapToolbarCartographiePerso
                 toggleTool={toggleTool}
                 activeTool={activeTool}
                 featureStyle={featureStyle}
@@ -144,4 +146,4 @@ const MapPerso = () => {
   );
 };
 
-export default MapPerso;
+export default MapCartographiePerso;

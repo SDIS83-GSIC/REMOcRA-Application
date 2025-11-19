@@ -380,7 +380,7 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
   };
 };
 
-const MapToolbarPerso = ({
+const MapToolbarCartographiePerso = ({
   toggleTool: toggleToolCallback,
   activeTool,
   featureStyle,
@@ -842,6 +842,6 @@ const MapToolbarPerso = ({
   );
 };
 
-MapToolbarPerso.displayName = "MapToolbarPerso";
+MapToolbarCartographiePerso.displayName = "MapToolbarPerso";
 
-export default MapToolbarPerso;
+export default MapToolbarCartographiePerso;
