@@ -1,11 +1,13 @@
 package remocra.web.organisme
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -40,6 +42,9 @@ class OrganismeEndPoint : AbstractEndpoint() {
     @Context
     lateinit var securityContext: SecurityContext
 
+    @Inject
+    lateinit var objectMapper: ObjectMapper
+
     @GET
     @Path("/get-libelle-organisme")
     @Public("Les organismes ne sont pas liés à un droit")
@@ -47,6 +52,19 @@ class OrganismeEndPoint : AbstractEndpoint() {
     fun getOrganismeForSelect(): Response {
         return Response.ok(
             organismeUseCase.getOrganismeForSelect(),
+        ).build()
+    }
+
+    @GET
+    @Path("/get-libelle-organisme-filter-with-pei")
+    @Public("Les organismes ne sont pas liés à un droit")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getFilteredOrganismeForSelect(
+        @QueryParam("listePei")
+        listePei: Set<UUID>,
+    ): Response {
+        return Response.ok().entity(
+            organismeUseCase.getOrganismeFilterWithPeiForSelect(listePei),
         )
             .build()
     }

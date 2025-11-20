@@ -16,7 +16,7 @@ class TourneeUseCase : AbstractUseCase() {
     lateinit var tourneeRepository: TourneeRepository
 
     fun getTourneesDisponibles(userInfo: WrappedUserInfo) =
-        tourneeRepository.getTourneesActives(userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!, null, null, true, true)
+        tourneeRepository.getTourneesActivesMobile(userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!)
 
     fun reserveTournees(listIdTournees: List<UUID>, idUser: UUID): ReservationTourneesResponse {
         val tournees: MutableList<Tournee> = tourneeRepository.getTourneesByIds(listIdTournees).toMutableList()

@@ -9,9 +9,11 @@ import TourneeForm, {
 const CreateTournee = ({
   isFromMap = false,
   setTourneeId,
+  listePei = [],
 }: {
   isFromMap?: boolean;
   setTourneeId: (e: string) => void;
+  listePei?: string[];
 }) => {
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ const CreateTournee = ({
           : setTourneeId && setTourneeId(e.tourneeId)
       }
     >
-      <TourneeForm isCreation={true} />
+      <TourneeForm isCreation={true} listePei={listePei} />
     </MyFormik>
   );
 };

@@ -21,7 +21,6 @@ const AffecterPeiTourneeMap = ({
   closeVolet,
 }: {
   listePei: { peiId: string; numeroComplet: string }[];
-  listePeiNumeroComplet: string[];
   isPrive: boolean;
   isIcpe: boolean;
   closeVolet: () => void;
@@ -79,13 +78,18 @@ const AffecterPeiTourneeMap = ({
           />
         </>
       ) : create ? (
-        <CreateTournee isFromMap={true} setTourneeId={setTourneeId} />
+        <CreateTournee
+          isFromMap={true}
+          setTourneeId={setTourneeId}
+          listePei={listePei.map((e) => e.peiId)}
+        />
       ) : (
         update && (
           <>
             <Update
               isPrive={isPrive}
               isIcpe={isIcpe}
+              listePei={listePei.map((e) => e.peiId)}
               setTourneeId={setTourneeId}
             />
           </>
@@ -128,14 +132,16 @@ const AffecterPeiTourneeMap = ({
 const Update = ({
   isPrive,
   isIcpe,
+  listePei,
   setTourneeId,
 }: {
   isPrive: boolean;
   isIcpe: boolean;
+  listePei: string[];
   setTourneeId: (id: string) => void;
 }) => {
   const tournees = useGet(
-    url`/api/tournee/actives?${{ isPrive: isPrive, isIcpe: isIcpe }}`,
+    url`/api/tournee/actives?${{ isPrive: isPrive, isIcpe: isIcpe, listePei: JSON.stringify(listePei) }}`,
   );
 
   return (

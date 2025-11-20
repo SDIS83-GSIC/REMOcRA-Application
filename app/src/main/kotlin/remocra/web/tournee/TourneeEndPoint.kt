@@ -120,6 +120,8 @@ class TourneeEndPoint : AbstractEndpoint() {
         isPrive: Boolean,
         @QueryParam("isIcpe")
         isIcpe: Boolean,
+        @QueryParam("listePei")
+        listePei: Set<UUID>,
     ): Response {
         return Response.ok().entity(
             tourneeRepository.getTourneesActives(
@@ -127,8 +129,7 @@ class TourneeEndPoint : AbstractEndpoint() {
                 securityContext.userInfo.affiliatedOrganismeIds!!,
                 isPrive,
                 isIcpe,
-                null,
-                null,
+                listePei,
             ),
         ).build()
     }

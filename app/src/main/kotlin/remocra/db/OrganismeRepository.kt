@@ -26,10 +26,12 @@ import remocra.db.jooq.remocra.tables.references.CONTACT
 import remocra.db.jooq.remocra.tables.references.FONCTION_CONTACT
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
+import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ROLE_CONTACT
+import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.tasks.Destinataire
@@ -72,6 +74,18 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         )
 
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
+
+    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>): List<IdCodeLibelleData> =
+        getIdLibelleByCondition(
+            DSL.condition(
+                ORGANISME.ID.`notIn`(
+                    dsl.select(TOURNEE.ORGANISME_ID)
+                        .from(L_TOURNEE_PEI)
+                        .leftJoin(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                        .where(L_TOURNEE_PEI.PEI_ID.`in`(listePei)),
+                ),
+            ),
+        )
 
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(conditionAutoriteDeci)
 

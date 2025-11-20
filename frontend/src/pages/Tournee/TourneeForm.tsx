@@ -24,16 +24,19 @@ export const prepareVariables = (values: TourneeFormEntity) => ({
 const TourneeForm = ({
   isCreation = false,
   tourneeLibelle = null,
+  listePei = [],
 }: {
   isCreation?: boolean;
   tourneeLibelle?: string;
+  listePei?: string[];
 }) => {
   const { values, setValues } = useFormikContext<TourneeFormEntity>();
 
-  const organismeState = useGet(url`/api/organisme/get-libelle-organisme`); // TODO : ne remonter que l'organisme et les enfants de l'utilisateur courant
-  if (!organismeState.isResolved) {
-    return;
-  }
+  const organismeState = useGet(
+    listePei
+      ? url`/api/organisme/get-libelle-organisme-filter-with-pei?${{ listePei: JSON.stringify(listePei) }}`
+      : url`/api/organisme/get-libelle-organisme`,
+  ); // TODO : ne remonter que l'organisme et les enfants de l'utilisateur courant
 
   return (
     <FormContainer>

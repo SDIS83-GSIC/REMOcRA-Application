@@ -162,8 +162,49 @@ class TourneeRepository
         .where(TOURNEE.ID.`in`(idsTournees))
         .execute()
 
-    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, onlyAvailable: Boolean?, onlyNonTerminees: Boolean?): List<Tournee> =
-        getTourneeByIdOrPei()
+    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, listePei: Set<UUID>): List<Tournee> {
+        val tourneesToExclude = getTourneeSameOrganisme(listePei)
+        return getTourneeByIdOrPei()
+            .leftJoin(L_TOURNEE_PEI)
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .leftJoin(PEI)
+            .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
+            .leftJoin(NATURE_DECI)
+            .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
+            .where(TOURNEE.ACTIF.isTrue)
+            .and(TOURNEE.ID.notIn(tourneesToExclude))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    isSuperAdmin = isSuperAdmin,
+                    condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
+                ),
+            )
+            .let {
+                if (isPrive == true) {
+                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE).or(NATURE_DECI.CODE.isNull))
+                } else if (isIcpe == true) {
+                    it.and(
+                        NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE)
+                            .or(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE))
+                            .or(NATURE_DECI.CODE.isNull),
+                    )
+                } else {
+                    it.and(
+                        NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE).or(
+                            NATURE_DECI.CODE.ne(
+                                GlobalConstants.NATURE_DECI_ICPE,
+                            ).or(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)),
+
+                        ).or(NATURE_DECI.CODE.isNull),
+                    )
+                }
+            }
+            .orderBy(TOURNEE.LIBELLE)
+            .fetchInto()
+    }
+
+    fun getTourneesActivesMobile(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>): List<Tournee> {
+        return getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
             .leftJoin(PEI)
@@ -176,38 +217,31 @@ class TourneeRepository
                     isSuperAdmin = isSuperAdmin,
                     condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
                 ),
-            )
-            .let {
-                if (isPrive == true) {
-                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_PRIVE).or(NATURE_DECI.CODE.isNull))
-                } else if (isIcpe == true) {
-                    it.and(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE).or(NATURE_DECI.CODE.eq(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)).or(NATURE_DECI.CODE.isNull))
-                } else {
-                    it.and(
-                        NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE).or(
-                            NATURE_DECI.CODE.ne(
-                                GlobalConstants.NATURE_DECI_ICPE,
-                            ).or(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)),
+            ).and(
+                NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_PRIVE).or(
+                    NATURE_DECI.CODE.ne(
+                        GlobalConstants.NATURE_DECI_ICPE,
+                    ).or(NATURE_DECI.CODE.ne(GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)),
 
-                        ).or(NATURE_DECI.CODE.isNull),
-                    )
-                }
-            }
-            .let {
-                if (onlyAvailable == true) {
-                    it.and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNull)
-                } else {
-                    it
-                }
-            }
-            .let {
-                if (onlyNonTerminees == true) {
-                    it.and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100).or(TOURNEE.POURCENTAGE_AVANCEMENT.isNull))
-                } else {
-                    it
-                }
-            }
+                ).or(NATURE_DECI.CODE.isNull),
+            )
+            .and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNull)
+            .and(TOURNEE.POURCENTAGE_AVANCEMENT.lt(100).or(TOURNEE.POURCENTAGE_AVANCEMENT.isNull))
             .orderBy(TOURNEE.LIBELLE)
+            .fetchInto()
+    }
+
+    fun getTourneeSameOrganisme(listePei: Set<UUID>): List<UUID> =
+        dsl.select(TOURNEE.ID)
+            .from(TOURNEE)
+            .where(
+                TOURNEE.ORGANISME_ID.`in`(
+                    dsl.select(TOURNEE.ORGANISME_ID)
+                        .from(L_TOURNEE_PEI)
+                        .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                        .where(L_TOURNEE_PEI.PEI_ID.`in`(listePei)),
+                ),
+            )
             .fetchInto()
 
     fun getTourneeByPei(peiId: UUID): List<Tournee> =
@@ -406,8 +440,9 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
 
-    fun getPeiForDnD(tourneeId: UUID): List<PeiTourneeForDnD> =
-        dsl.select(
+    fun getPeiForDnD(tourneeId: UUID): List<PeiTourneeForDnD> {
+        val peisToExclude = getPeisTourneeSameOrganisme(tourneeId)
+        return dsl.select(
             PEI.ID,
             PEI.NUMERO_COMPLET,
             NATURE_DECI.CODE,
@@ -424,7 +459,7 @@ class TourneeRepository
             .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
             .join(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
-            .where(TOURNEE.ID.eq(tourneeId))
+            .where(TOURNEE.ID.eq(tourneeId)).and(PEI.ID.notIn(peisToExclude))
             .orderBy(
                 COMMUNE.LIBELLE,
                 DSL.length(PEI.NUMERO_COMPLET).asc(),
@@ -450,6 +485,7 @@ class TourneeRepository
                     lTourneePeiOrdre = null,
                 )
             }
+    }
 
     fun getAllPeiByTourneeIdForDnD(tourneeId: UUID, listePeiId: Set<UUID>?): List<PeiTourneeForDnD> =
         dsl.select(
@@ -496,6 +532,13 @@ class TourneeRepository
                     lTourneePeiOrdre = record.component11(),
                 )
             }
+
+    fun getPeisTourneeSameOrganisme(tourneeId: UUID): List<UUID> =
+        dsl.select(L_TOURNEE_PEI.PEI_ID)
+            .from(L_TOURNEE_PEI)
+            .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .where(TOURNEE.ORGANISME_ID.eq(dsl.select(TOURNEE.ORGANISME_ID).from(TOURNEE).where(TOURNEE.ID.eq(tourneeId))))
+            .fetchInto()
 
     data class PeiTourneeForDnD(
         val peiId: UUID,
