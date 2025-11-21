@@ -160,6 +160,10 @@ export const useToolbarRcciContext = ({
           evt.selected.forEach(async function (feature) {
             setRcciModifieId(feature.getProperties().elementId);
           });
+          // Supprimer la sélection après avoir sélectionné l'élément
+          if (editCtrl) {
+            editCtrl.getFeatures().clear();
+          }
         });
       }
 
