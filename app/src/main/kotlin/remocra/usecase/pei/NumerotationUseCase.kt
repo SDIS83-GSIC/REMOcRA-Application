@@ -975,7 +975,7 @@ class NumerotationUseCase : AbstractUseCase() {
  */
 private fun Collection<Int>.getNextNumeroInterne(seed: Int, limit: Int): Int {
     return generateSequence(seed) { it + 1 }
-        .take(limit)
+        .take(limit + 1)
         .minus(this.toSet())
         .sorted()
         .first()
