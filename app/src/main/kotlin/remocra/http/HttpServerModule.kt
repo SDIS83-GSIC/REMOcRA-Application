@@ -32,6 +32,7 @@ class HttpServerModule(private val settings: HttpSettings) : RemocraModule() {
                     multipartMaxFileSize = config.getBytesOrNull("multipart.max-file-size") ?: -1,
                     multipartMaxRequestSize = config.getBytesOrNull("multipart.max-request-size") ?: -1,
                     multipartFileSizeThreshold = config.getBytes("multipart.file-size-threshold").toInt(),
+                    maxFormContentSize = config.getBytes("max-form-content-size").toInt(),
                 ),
             )
     }

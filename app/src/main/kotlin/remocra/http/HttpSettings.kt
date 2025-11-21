@@ -20,4 +20,5 @@ data class HttpSettings(
     val multipartMaxFileSize: Long,
     val multipartMaxRequestSize: Long,
     val multipartFileSizeThreshold: Int,
+    val maxFormContentSize: Int,
 )

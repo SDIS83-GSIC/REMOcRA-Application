@@ -163,6 +163,8 @@ constructor(
         )
         context.addServlet(resteasy, AuthnConstants.API_PATH + "*")
 
+        context.maxFormContentSize = settings.maxFormContentSize
+
         // Resteasy + Guice
         val providerFactory = ResteasyProviderFactory.getInstance()
         providerFactory.injectorFactory = guiceInjectorFactory
