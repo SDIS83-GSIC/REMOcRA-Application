@@ -13,12 +13,14 @@ import { bbox } from "ol/loadingstrategy";
 import classNames from "classnames";
 import "ol/ol.css";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
-import { OSM, TileWMS, WMTS } from "ol/source";
+import { OSM, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
+import ImageLayer from "ol/layer/Image";
+import ImageWMS from "ol/source/ImageWMS";
 import {
   MutableRefObject,
   ReactNode,
@@ -74,11 +76,10 @@ const tileGrid = new WMTSTileGrid({
   matrixIds: matrixIds,
 });
 
-// Déclaration OL depuis une définition de couche
 export function toOpenLayer(
   layer: any,
   etudeId?: string,
-): TileSource | WMTS | VectorSource | undefined {
+): TileSource | WMTS | VectorSource | ImageWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
       const wmsParams: any = {
@@ -96,17 +97,9 @@ export function toOpenLayer(
         wmsParams.viewParams = `idEtude:${encodeURIComponent(etudeId)}`;
       }
 
-      return new TileWMS({
+      return new ImageWMS({
         url: layer.url,
         params: wmsParams,
-        // Optimisations de performance
-        cacheSize: 512, // Cache plus important pour les tuiles
-        transition: 0, // Désactive les transitions pour un affichage plus rapide
-        tileLoadFunction: (tile: any, src: string) => {
-          const image = tile.getImage();
-          image.crossOrigin = layer.crossOrigin ?? "anonymous";
-          image.src = src;
-        },
       });
     }
     case SOURCE_CARTO.WMTS:
@@ -409,7 +402,14 @@ export const useMapComponent = ({
                 projection.getCode(),
               projection,
             );
+          } else if (layer.source === SOURCE_CARTO.WMS) {
+            // WMS: ImageLayer avec ImageWMS
+            openlayer = new ImageLayer({
+              source: toOpenLayer(layer, etudeId) as ImageWMS,
+              zIndex: layer.ordre,
+            });
           } else {
+            // Autres tuiles (WMTS, OSM...): TileLayer
             openlayer = new TileLayer({
               source: toOpenLayer(layer, etudeId) as TileSource,
               zIndex: layer.ordre,
