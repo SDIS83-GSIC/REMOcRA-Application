@@ -58,6 +58,8 @@ data class Rcci(
     val rcciVentLocal: OuiNonNa?,
     val rcciGelLieux: OuiNonNa?,
     val rcciVoieId: UUID?,
+    val rcciRcciTypePrometheePartitionId: UUID?,
+    val rcciRcciTypePrometheeFamilleId: UUID?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -285,6 +287,20 @@ data class Rcci(
         } else if (this.rcciVoieId != o.rcciVoieId) {
             return false
         }
+        if (this.rcciRcciTypePrometheePartitionId == null) {
+            if (o.rcciRcciTypePrometheePartitionId != null) {
+                return false
+            }
+        } else if (this.rcciRcciTypePrometheePartitionId != o.rcciRcciTypePrometheePartitionId) {
+            return false
+        }
+        if (this.rcciRcciTypePrometheeFamilleId == null) {
+            if (o.rcciRcciTypePrometheeFamilleId != null) {
+                return false
+            }
+        } else if (this.rcciRcciTypePrometheeFamilleId != o.rcciRcciTypePrometheeFamilleId) {
+            return false
+        }
         return true
     }
 
@@ -325,6 +341,8 @@ data class Rcci(
         result = prime * result + (if (this.rcciVentLocal == null) 0 else this.rcciVentLocal.hashCode())
         result = prime * result + (if (this.rcciGelLieux == null) 0 else this.rcciGelLieux.hashCode())
         result = prime * result + (if (this.rcciVoieId == null) 0 else this.rcciVoieId.hashCode())
+        result = prime * result + (if (this.rcciRcciTypePrometheePartitionId == null) 0 else this.rcciRcciTypePrometheePartitionId.hashCode())
+        result = prime * result + (if (this.rcciRcciTypePrometheeFamilleId == null) 0 else this.rcciRcciTypePrometheeFamilleId.hashCode())
         return result
     }
 
@@ -365,6 +383,8 @@ data class Rcci(
         sb.append(", ").append(rcciVentLocal)
         sb.append(", ").append(rcciGelLieux)
         sb.append(", ").append(rcciVoieId)
+        sb.append(", ").append(rcciRcciTypePrometheePartitionId)
+        sb.append(", ").append(rcciRcciTypePrometheeFamilleId)
 
         sb.append(")")
         return sb.toString()

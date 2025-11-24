@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
 import remocra.auth.WrappedUserInfo
+import remocra.data.DataCache
 import remocra.data.RcciDocument
 import remocra.data.RcciForm
 import remocra.data.RcciFormInput
@@ -16,13 +17,18 @@ import remocra.web.documents.DocumentEndPoint
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
-class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepository) : AbstractUseCase() {
+class SelectRcciUseCase @Inject constructor(
+    private val rcciRepository: RcciRepository,
+    private val dataCache: DataCache,
+) : AbstractUseCase() {
     fun execute(userInfo: WrappedUserInfo, rcciId: UUID): Result {
         if (!userInfo.hasDroit(droitWeb = Droit.RCCI_R) || !userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {
             throw RemocraResponseException(ErrorType.RCCI_FORBIDDEN)
         }
 
         val rcci = rcciRepository.selectRcci(rcciId).let {
+            val partitionId = it.rcciRcciTypePrometheePartitionId
+                ?: dataCache.mapRcciTypePrometheeCategorie[it.rcciRcciTypePrometheeCategorieId]?.rcciTypePrometheeCategorieRcciTypePrometheePartitionId
             RcciForm(
                 rcciId = it.rcciId,
                 rcciCommentaireConclusion = it.rcciCommentaireConclusion,
@@ -46,6 +52,8 @@ class SelectRcciUseCase @Inject constructor(private val rcciRepository: RcciRepo
                 rcciTemperature = it.rcciTemperature,
                 rcciVentLocal = it.rcciVentLocal,
                 rcciCommuneId = it.rcciCommuneId,
+                rcciRcciTypePrometheeFamilleId = it.rcciRcciTypePrometheeFamilleId ?: dataCache.mapRcciTypePrometheePartition[partitionId]?.rcciTypePrometheePartitionRcciTypePrometheeFamilleId,
+                rcciRcciTypePrometheePartitionId = partitionId,
                 rcciRcciTypePrometheeCategorieId = it.rcciRcciTypePrometheeCategorieId,
                 rcciRcciTypeDegreCertitudeId = it.rcciRcciTypeDegreCertitudeId,
                 rcciRcciTypeOrigineAlerteId = it.rcciRcciTypeOrigineAlerteId,

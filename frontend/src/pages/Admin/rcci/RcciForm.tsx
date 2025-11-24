@@ -239,6 +239,10 @@ export const prepareValues = (values: {
       rcciCommuneId: values.rcci?.rcciCommuneId,
       rcciRcciTypePrometheeCategorieId:
         values.rcci?.rcciRcciTypePrometheeCategorieId,
+      rcciRcciTypePrometheeFamilleId:
+        values.rcci.rcciRcciTypePrometheeFamilleId,
+      rcciRcciTypePrometheePartitionId:
+        values.rcci.rcciRcciTypePrometheePartitionId,
       rcciRcciTypeDegreCertitudeId: values.rcci?.rcciRcciTypeDegreCertitudeId,
       rcciRcciTypeOrigineAlerteId: values.rcci?.rcciRcciTypeOrigineAlerteId,
       rcciRcciArriveeDdtmOnfId: values.rcci?.rcciRcciArriveeDdtmOnfId,

@@ -44,6 +44,8 @@ import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKE
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_FAMILLE_ID_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_PARTITION_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_VOIE_ID_FKEY
 import remocra.db.jooq.remocra.tables.Commune.CommunePath
@@ -52,6 +54,8 @@ import remocra.db.jooq.remocra.tables.RcciIndiceRothermel.RcciIndiceRothermelPat
 import remocra.db.jooq.remocra.tables.RcciTypeDegreCertitude.RcciTypeDegreCertitudePath
 import remocra.db.jooq.remocra.tables.RcciTypeOrigineAlerte.RcciTypeOrigineAlertePath
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie.RcciTypePrometheeCategoriePath
+import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille.RcciTypePrometheeFamillePath
+import remocra.db.jooq.remocra.tables.RcciTypePrometheePartition.RcciTypePrometheePartitionPath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import java.time.ZonedDateTime
@@ -275,6 +279,17 @@ open class Rcci(
      */
     val VOIE_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_voie_id"), SQLDataType.UUID, this, "")
 
+    /**
+     * The column
+     * <code>remocra.rcci.rcci_rcci_type_promethee_partition_id</code>.
+     */
+    val RCCI_TYPE_PROMETHEE_PARTITION_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_rcci_type_promethee_partition_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.rcci.rcci_rcci_type_promethee_famille_id</code>.
+     */
+    val RCCI_TYPE_PROMETHEE_FAMILLE_ID: TableField<Record, UUID?> = createField(DSL.name("rcci_rcci_type_promethee_famille_id"), SQLDataType.UUID, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -309,7 +324,7 @@ open class Rcci(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getIndexes(): List<Index> = listOf(RCCI_GEOMETRIE_IDX)
     override fun getPrimaryKey(): UniqueKey<Record> = RCCI_PKEY
-    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(RCCI__RCCI_RCCI_COMMUNE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY, RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY, RCCI__RCCI_RCCI_VOIE_ID_FKEY)
+    override fun getReferences(): List<ForeignKey<Record, *>> = listOf(RCCI__RCCI_RCCI_COMMUNE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_DDTM_ONF_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_GENDARMERIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_POLICE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_ARRIVEE_SDIS_ID_FKEY, RCCI__RCCI_RCCI_RCCI_INDICE_ROTHERMEL_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_DEGRE_CERTITUDE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_ORIGINE_ALERTE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_CATEGORIE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_FAMILLE_ID_FKEY, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_PARTITION_ID_FKEY, RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY, RCCI__RCCI_RCCI_VOIE_ID_FKEY)
 
     private lateinit var _commune: CommunePath
 
@@ -462,6 +477,40 @@ open class Rcci(
 
     val rcciTypePrometheeCategorie: RcciTypePrometheeCategoriePath
         get(): RcciTypePrometheeCategoriePath = rcciTypePrometheeCategorie()
+
+    private lateinit var _rcciTypePrometheeFamille: RcciTypePrometheeFamillePath
+
+    /**
+     * Get the implicit join path to the
+     * <code>remocra.rcci_type_promethee_famille</code> table.
+     */
+    fun rcciTypePrometheeFamille(): RcciTypePrometheeFamillePath {
+        if (!this::_rcciTypePrometheeFamille.isInitialized) {
+            _rcciTypePrometheeFamille = RcciTypePrometheeFamillePath(this, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_FAMILLE_ID_FKEY, null)
+        }
+
+        return _rcciTypePrometheeFamille
+    }
+
+    val rcciTypePrometheeFamille: RcciTypePrometheeFamillePath
+        get(): RcciTypePrometheeFamillePath = rcciTypePrometheeFamille()
+
+    private lateinit var _rcciTypePrometheePartition: RcciTypePrometheePartitionPath
+
+    /**
+     * Get the implicit join path to the
+     * <code>remocra.rcci_type_promethee_partition</code> table.
+     */
+    fun rcciTypePrometheePartition(): RcciTypePrometheePartitionPath {
+        if (!this::_rcciTypePrometheePartition.isInitialized) {
+            _rcciTypePrometheePartition = RcciTypePrometheePartitionPath(this, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_PARTITION_ID_FKEY, null)
+        }
+
+        return _rcciTypePrometheePartition
+    }
+
+    val rcciTypePrometheePartition: RcciTypePrometheePartitionPath
+        get(): RcciTypePrometheePartitionPath = rcciTypePrometheePartition()
 
     private lateinit var _rcciRcciUtilisateurIdFkey: UtilisateurPath
 

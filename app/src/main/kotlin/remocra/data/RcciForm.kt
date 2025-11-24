@@ -49,6 +49,8 @@ data class RcciForm(
     val rcciRcciIndiceRothermelId: UUID?,
     val rcciRisqueMeteo: RisqueMeteo?,
     val documentList: List<RcciDocument>? = listOf(),
+    val rcciRcciTypePrometheeFamilleId: UUID?,
+    val rcciRcciTypePrometheePartitionId: UUID?,
 )
 
 data class RcciDocument(

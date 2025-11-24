@@ -29,6 +29,8 @@ import remocra.db.jooq.remocra.keys.RCCI_TYPE_PROMETHEE_CATEGORIE__RCCI_TYPE_PRO
 import remocra.db.jooq.remocra.keys.RCCI_TYPE_PROMETHEE_PARTITION_PKEY
 import remocra.db.jooq.remocra.keys.RCCI_TYPE_PROMETHEE_PARTITION_RCCI_TYPE_PROMETHEE_PARTITION_KEY
 import remocra.db.jooq.remocra.keys.RCCI_TYPE_PROMETHEE_PARTITION__RCCI_TYPE_PROMETHEE_PARTITION_RCCI_TYPE_PROMETHEE_PARTITIO_FKEY
+import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_PARTITION_ID_FKEY
+import remocra.db.jooq.remocra.tables.Rcci.RcciPath
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeCategorie.RcciTypePrometheeCategoriePath
 import remocra.db.jooq.remocra.tables.RcciTypePrometheeFamille.RcciTypePrometheeFamillePath
 import java.util.UUID
@@ -166,6 +168,22 @@ open class RcciTypePrometheePartition(
 
     val rcciTypePrometheeFamille: RcciTypePrometheeFamillePath
         get(): RcciTypePrometheeFamillePath = rcciTypePrometheeFamille()
+
+    private lateinit var _rcci: RcciPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.rcci</code> table
+     */
+    fun rcci(): RcciPath {
+        if (!this::_rcci.isInitialized) {
+            _rcci = RcciPath(this, null, RCCI__RCCI_RCCI_RCCI_TYPE_PROMETHEE_PARTITION_ID_FKEY.inverseKey)
+        }
+
+        return _rcci
+    }
+
+    val rcci: RcciPath
+        get(): RcciPath = rcci()
 
     private lateinit var _rcciTypePrometheeCategorie: RcciTypePrometheeCategoriePath
 

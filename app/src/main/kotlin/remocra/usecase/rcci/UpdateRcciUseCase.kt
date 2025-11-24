@@ -89,6 +89,12 @@ class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
                 rcciVoieTexte = element.rcci.rcciVoieTexte,
                 rcciVoieId = element.rcci.rcciVoieId,
                 rcciCommuneId = element.rcci.rcciCommuneId,
+                rcciRcciTypePrometheeFamilleId = element.rcci.rcciRcciTypePrometheeFamilleId.takeIf {
+                    element.rcci.rcciRcciTypePrometheePartitionId == null && element.rcci.rcciRcciTypePrometheeCategorieId == null
+                },
+                rcciRcciTypePrometheePartitionId = element.rcci.rcciRcciTypePrometheePartitionId.takeIf {
+                    element.rcci.rcciRcciTypePrometheeCategorieId == null
+                },
                 rcciRcciTypePrometheeCategorieId = element.rcci.rcciRcciTypePrometheeCategorieId,
                 rcciRcciTypeDegreCertitudeId = element.rcci.rcciRcciTypeDegreCertitudeId,
                 rcciRcciTypeOrigineAlerteId = element.rcci.rcciRcciTypeOrigineAlerteId,

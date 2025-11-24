@@ -1,0 +1,5 @@
+ALTER TABLE remocra.rcci
+ADD COLUMN rcci_rcci_type_promethee_partition_id UUID REFERENCES remocra.rcci_type_promethee_partition(rcci_type_promethee_partition_id);
+
+ALTER TABLE remocra.rcci
+ADD COLUMN rcci_rcci_type_promethee_famille_id UUID REFERENCES remocra.rcci_type_promethee_famille(rcci_type_promethee_famille_id);
