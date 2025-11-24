@@ -1,9 +1,34 @@
+import React, { useEffect, useState } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Badge, Image } from "react-bootstrap";
 import { useGet } from "../Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
 import TYPE_ENVIRONNEMENT from "../../enums/TypeEnvironnement.tsx";
+
+// Affiche les images seulement si elles existent
+const ImageIfExists = ({
+  imageSrc,
+  alt,
+}: {
+  imageSrc: string;
+  alt: string;
+}) => {
+  const [exists, setExists] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const img = new window.Image();
+    img.onload = () => setExists(true);
+    img.onerror = () => setExists(false);
+    img.src = imageSrc;
+  }, [imageSrc]);
+
+  if (!exists) {
+    return null;
+  }
+
+  return <Image fluid alt={alt} src={imageSrc} />;
+};
 
 const BanniereHeader = ({ messageEntete }: { messageEntete: string }) => {
   const typeEnvironment = useGet(url`/api/app-settings/environment`);
@@ -13,8 +38,9 @@ const BanniereHeader = ({ messageEntete }: { messageEntete: string }) => {
         xs={1}
         className={"d-flex justify-content-center align-items-center"}
       >
-        <Image fluid alt={"Logo"} src="/images/logo" />
+        <ImageIfExists imageSrc="images/logo" alt="Logo" />
       </Col>
+
       <Col className={"position-relative text-center"}>
         <p
           className={
@@ -32,7 +58,7 @@ const BanniereHeader = ({ messageEntete }: { messageEntete: string }) => {
               </Badge>
             </p>
           )}
-        <Image fluid alt={"Bandeau d'En-tête"} src="/images/banniere" />
+        <ImageIfExists imageSrc="/images/banniere" alt={"Bandeau d'En-tête"} />
       </Col>
       <Col xs={1} className={"mt-3 text-center"} />
     </Row>
