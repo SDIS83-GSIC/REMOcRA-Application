@@ -241,7 +241,11 @@ const MapPei = () => {
           />
         </Col>
         {showFormPei && (
-          <Col xs={5} className="border-primary border-start border-3">
+          <Col
+            xs={5}
+            className="border-primary border-start border-3 overflow-y-scroll"
+            style={{ maxHeight: "80vh" }}
+          >
             <div className="bg-light p-2 ">
               {coordonneesPeiCreate ? (
                 <CreatePei
@@ -271,7 +275,11 @@ const MapPei = () => {
           </Col>
         )}
         {showFormVisite.show && showFormVisite.peiId && (
-          <Col xs={5} className="border-primary border-start border-3">
+          <Col
+            xs={5}
+            className="border-primary border-start border-3 overflow-y-scroll"
+            style={{ maxHeight: "80vh" }}
+          >
             <div className="bg-light p-2 ">
               <Visite
                 peiIdCarte={showFormVisite.peiId}
