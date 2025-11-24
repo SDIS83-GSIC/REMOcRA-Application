@@ -2,6 +2,8 @@ package remocra.usecase.pei
 
 import jakarta.inject.Inject
 import remocra.GlobalConstants
+import remocra.GlobalConstants.NATURE_DECI_ICPE
+import remocra.GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE
 import remocra.app.AppSettings
 import remocra.data.PeiForNumerotationData
 import remocra.data.enums.CodeSdis
@@ -761,7 +763,7 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     private fun computeNumero59(pei: PeiForNumerotationData): String {
         checkNatureDeci(pei)
-        if (isNatureDeciPrive(pei) || isNatureDeciConventionne(pei)) {
+        if (isNatureDeciPrive(pei) || isNatureDeciConventionne(pei) || isNatureDeciICPE(pei) || isNatureDeciICPEConventionne(pei)) {
             checkGestionnaire(pei)
             val gestionnaire = ensureGestionnaire(pei)
             return gestionnaire.gestionnaireCode + "_" + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
@@ -835,6 +837,22 @@ class NumerotationUseCase : AbstractUseCase() {
      */
     private fun isNatureDeciConventionne(pei: PeiForNumerotationData): Boolean {
         return isNatureDeci(pei, NATURE_DECI_CONVENTIONNE)
+    }
+
+    /**
+     * Fonction retournant TRUE si le PEI est de nature DECI ICPE, FALSE sinon
+     *
+     */
+    private fun isNatureDeciICPE(pei: PeiForNumerotationData): Boolean {
+        return isNatureDeci(pei, NATURE_DECI_ICPE)
+    }
+
+    /**
+     * Fonction retournant TRUE si le PEI est de nature DECI ICPE Conventionné, FALSE sinon
+     *
+     */
+    private fun isNatureDeciICPEConventionne(pei: PeiForNumerotationData): Boolean {
+        return isNatureDeci(pei, NATURE_DECI_ICPE_CONVENTIONNE)
     }
 
     /**
