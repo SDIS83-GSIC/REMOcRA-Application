@@ -160,6 +160,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE.desc()),
             )
             .limit(params?.limit)
+            .offset(params?.offset)
             .fetchInto()
 
     fun countCourrierCompletWithThematique(
