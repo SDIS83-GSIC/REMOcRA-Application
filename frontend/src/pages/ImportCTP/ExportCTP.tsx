@@ -61,6 +61,7 @@ const FormExportCTP = () => {
         listIdCodeLibelle={listeCommune.data}
         required={false}
         setValues={setValues}
+        defaultValue={listeCommune.data.find((e) => e.id === values.communeId)}
       />
       <Row className="mt-3">
         <Col className="text-center">
