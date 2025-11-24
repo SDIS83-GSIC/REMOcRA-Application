@@ -39,7 +39,12 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: NatureWithDiametres): NatureWithDiametres {
-        natureRepository.edit(element)
+        if (element.natureProtected == true) {
+            // On update que les champs autorisés (pas le code)
+            natureRepository.editProtected(element)
+        } else {
+            natureRepository.editNonProtected(element)
+        }
 
         natureRepository.deleteLienDiametreNature(element.natureId)
         natureRepository.addLienDiametreNature(element)

@@ -145,8 +145,16 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 false,
             ).execute()
 
-    fun edit(natureData: NatureWithDiametres): Int =
-        dsl.update(NATURE).set(NATURE.ACTIF, natureData.natureActif).set(NATURE.CODE, natureData.natureCode)
+    fun editProtected(natureData: NatureWithDiametres): Int =
+        dsl.update(NATURE)
+            .set(NATURE.ACTIF, natureData.natureActif)
+            .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
+            .where(NATURE.ID.eq(natureData.natureId)).execute()
+
+    fun editNonProtected(natureData: NatureWithDiametres): Int =
+        dsl.update(NATURE)
+            .set(NATURE.ACTIF, natureData.natureActif)
+            .set(NATURE.CODE, natureData.natureCode)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
             .where(NATURE.ID.eq(natureData.natureId)).and(NATURE.PROTECTED.isFalse).execute()
 
