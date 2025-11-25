@@ -43,7 +43,11 @@ const OldebMap = () => {
     );
   }, [map, projection]);
 
-  const { tools: extraTools } = useToolbarOldebContext({
+  const {
+    tools: extraTools,
+    editOldebs,
+    closeEdit,
+  } = useToolbarOldebContext({
     map,
     workingLayer,
     dataOldebLayer,
@@ -90,7 +94,14 @@ const OldebMap = () => {
       activeTool={activeTool}
       toolbarElement={
         mapToolbarRef.current && (
-          <OldebMapToolbar toggleTool={toggleTool} activeTool={activeTool} />
+          <OldebMapToolbar
+            toggleTool={toggleTool}
+            activeTool={activeTool}
+            editOldebs={editOldebs}
+            closeEdit={closeEdit}
+            dataOldebLayer={dataOldebLayer}
+            map={map}
+          />
         )
       }
     />

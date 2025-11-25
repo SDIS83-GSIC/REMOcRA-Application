@@ -13,6 +13,8 @@ import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
+import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
+import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
@@ -25,7 +27,6 @@ import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.OLDEB
-import remocra.db.jooq.remocra.tables.references.OLDEB_TYPE_DEBROUSSAILLEMENT
 import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
 import remocra.db.jooq.remocra.tables.references.PERMIS
 import remocra.db.jooq.remocra.tables.references.PIBI
@@ -325,16 +326,23 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     }
 
     fun getOldebWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<OldebCarte> =
-        dsl.with(OldebRepository.lastOldebVisiteCte)
-            .select(
-                ST_Transform(OLDEB.GEOMETRIE, srid).`as`("elementGeometrie"),
-                OLDEB.ID.`as`("elementId"),
-                OLDEB_TYPE_DEBROUSSAILLEMENT.CODE.`as`("etatDebroussaillement"),
-            )
+        dsl.select(
+            ST_Transform(OLDEB.GEOMETRIE, srid).`as`("elementGeometrie"),
+            OLDEB.ID.`as`("elementId"),
+            CADASTRE_SECTION.NUMERO,
+            CADASTRE_PARCELLE.NUMERO,
+            COMMUNE.LIBELLE,
+        )
             .from(OLDEB)
-            .leftJoin(OldebRepository.lastOldebVisiteCte).on(OLDEB.ID.eq(OldebRepository.lastOldebVisiteCte.field("OLDEB_ID", UUID::class.java)))
-            .leftJoin(OLDEB_TYPE_DEBROUSSAILLEMENT).on(OLDEB_TYPE_DEBROUSSAILLEMENT.ID.eq(OldebRepository.lastOldebVisiteCte.field("OLDEB_TYPE_DEBROUSSAILLEMENT_ID", UUID::class.java)))
+            .join(CADASTRE_SECTION).on(
+                CADASTRE_SECTION.ID.eq(OLDEB.CADASTRE_SECTION_ID),
+            )
+            .join(CADASTRE_PARCELLE).on(
+                CADASTRE_PARCELLE.ID.eq(OLDEB.CADASTRE_PARCELLE_ID),
+            )
             .leftJoin(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneId))
+            .join(COMMUNE)
+            .on(COMMUNE.ID.eq(OLDEB.COMMUNE_ID))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     ST_Within(OLDEB.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
@@ -508,12 +516,16 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     data class OldebCarte(
         override val elementGeometrie: Geometry,
         override val elementId: UUID,
-        val etatDebroussaillement: String? = null,
+        val communeLibelle: String?,
+        val cadastreSectionNumero: String?,
+        val cadastreParcelleNumero: String?,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.OLDEB
 
-        override var propertiesToDisplay: String? = "$etatDebroussaillement"
+        override var propertiesToDisplay: String? = "<b>Commune :</b> ${communeLibelle.orEmpty()} <br/>" +
+            "<b>Section cadastrale :</b> ${cadastreSectionNumero.orEmpty()} <br/>" +
+            "<b>Parcelle cadastrale :</b> ${cadastreParcelleNumero.orEmpty()} <br/>"
     }
 
     data class RcciCarte(

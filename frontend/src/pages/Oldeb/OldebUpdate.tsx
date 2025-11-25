@@ -12,30 +12,41 @@ import OldebForm, {
   validationSchema,
 } from "./OldebForm.tsx";
 
-const OldebUpdate = () => {
+const OldebUpdate = ({
+  oldebIdCarte: oldebIdCarte,
+  onClose,
+}: {
+  oldebIdCarte: string | null;
+  onClose: () => void;
+}) => {
   const { oldebId } = useParams();
-  const oldebState = useGet(url`/api/oldeb/${oldebId}`);
+  const oldebIdFinal = oldebIdCarte ?? oldebId;
+  const oldebState = useGet(url`/api/oldeb/${oldebIdFinal!}`);
 
   return (
-    <Container>
-      <PageTitle
-        icon={<IconOldeb />}
-        title={"Mise à jour d'une Obligation Légale de Débroussaillement"}
-      />
-      {oldebState.data && (
-        <MyFormik
-          initialValues={getInitialValues(oldebState.data)}
-          validationSchema={validationSchema}
-          isPost={false}
-          isMultipartFormData={true}
-          submitUrl={`/api/oldeb/${oldebId}`}
-          prepareVariables={(values) => prepareValues(values)}
-          redirectUrl={URLS.OLDEB_LIST}
-        >
-          <OldebForm isNew={false} />
-        </MyFormik>
-      )}
-    </Container>
+    oldebIdFinal && (
+      <Container>
+        <PageTitle
+          icon={<IconOldeb />}
+          title={"Mise à jour d'une Obligation Légale de Débroussaillement"}
+          displayReturnButton={oldebIdCarte == null}
+        />
+        {oldebState.data && (
+          <MyFormik
+            initialValues={getInitialValues(oldebState.data)}
+            validationSchema={validationSchema}
+            isPost={false}
+            isMultipartFormData={true}
+            submitUrl={`/api/oldeb/${oldebIdFinal!}`}
+            prepareVariables={(values) => prepareValues(values)}
+            redirectUrl={!oldebIdCarte ? URLS.OLDEB_LIST : undefined}
+            onSubmit={() => onClose()}
+          >
+            <OldebForm returnButton={oldebIdCarte == null} />
+          </MyFormik>
+        )}
+      </Container>
+    )
   );
 };
 

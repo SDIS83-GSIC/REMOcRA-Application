@@ -235,7 +235,7 @@ const removeFromLocalStorage = () => {
   localStorage.removeItem("mapContent");
 };
 
-const OldebForm = () => {
+const OldebForm = ({ returnButton }: { returnButton: boolean }) => {
   const [currentTab, setCurrentTab] = useState("parcelle");
   const [currentVisite, setCurrentVisite] = useState<number | null>(null);
   const { values, setFieldValue } = useFormikContext<FormType>();
@@ -839,7 +839,7 @@ const OldebForm = () => {
         </Tab>
       </Tabs>
       <SubmitFormButtons
-        returnLink={true}
+        returnLink={returnButton}
         onClick={removeFromLocalStorage}
         beforeReturn={removeFromLocalStorage}
       />

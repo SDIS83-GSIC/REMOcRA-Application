@@ -4,12 +4,14 @@ import { WKT } from "ol/format";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { Stroke, Style } from "ol/style";
-import { useMemo } from "react";
-import { ButtonGroup } from "react-bootstrap";
+import { useMemo, useState } from "react";
+import { Button, ButtonGroup, Col, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import {
   IconCreate,
+  IconEdit,
+  IconOldeb,
   IconSelect,
   IconTransformGeometrie,
 } from "../../components/Icon/Icon.tsx";
@@ -22,6 +24,10 @@ import { URLS } from "../../routes.tsx";
 import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
 import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
+import Volet from "../../components/Volet/Volet.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import OldebUpdate from "./OldebUpdate.tsx";
 
 export const useToolbarOldebContext = ({
   map,
@@ -36,6 +42,12 @@ export const useToolbarOldebContext = ({
   const location = useLocation();
   const { success: successToast } = useToastContext();
   const { error: errorToast } = useToastContext();
+  const [editOldebs, setEditOldebs] = useState<string | null>(null);
+
+  function closeEdit() {
+    workingLayer.getSource().clear();
+    setEditOldebs(null);
+  }
 
   const tools = useMemo(() => {
     if (!map) {
@@ -169,6 +181,47 @@ export const useToolbarOldebContext = ({
       });
     });
 
+    const editSelectCtrl = new Draw({
+      source: workingLayer.getSource(),
+      type: "Point",
+    });
+    editSelectCtrl.on("drawstart", async () => {
+      // on clear le workingLayer avant de dessiner un nouveau point
+      workingLayer.getSource().clear();
+    });
+
+    editSelectCtrl.on("drawend", async (event) => {
+      const pointGeom = event.feature.getGeometry();
+
+      const workingSource = workingLayer.getSource();
+      if (workingSource) {
+        workingSource.removeFeature(event.feature);
+      }
+      const tolerance = 5;
+      const pixel = map.getPixelFromCoordinate(pointGeom.getCoordinates());
+      const featuresAtPixel: any[] = [];
+      map.forEachFeatureAtPixel(
+        pixel,
+        (feature, layer) => {
+          if (layer === dataOldebLayer) {
+            featuresAtPixel.push({
+              oldebId: feature.getProperties().elementId,
+              properties: feature.getProperties().propertiesToDisplay,
+            });
+          }
+        },
+        {
+          hitTolerance: tolerance,
+        },
+      );
+      if (featuresAtPixel.length > 0) {
+        setEditOldebs(JSON.stringify(featuresAtPixel));
+      } else {
+        workingLayer.getSource().clear();
+        errorToast("Aucune OLDEB trouvée");
+      }
+    });
+
     function toggleSelect(active = false) {
       const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
       const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
@@ -205,6 +258,17 @@ export const useToolbarOldebContext = ({
       }
     }
 
+    function toggleEdit(active = false) {
+      const idx = map?.getInteractions().getArray().indexOf(editSelectCtrl);
+      if (active) {
+        if (idx === -1) {
+          map.addInteraction(editSelectCtrl);
+        }
+      } else {
+        map.removeInteraction(editSelectCtrl);
+      }
+    }
+
     const tools = {
       "select-oldeb": {
         action: toggleSelect,
@@ -216,6 +280,9 @@ export const useToolbarOldebContext = ({
       "create-oldeb": {
         action: toggleCreate,
       },
+      "edit-oldeb": {
+        action: toggleEdit,
+      },
     };
 
     return tools;
@@ -223,17 +290,32 @@ export const useToolbarOldebContext = ({
 
   return {
     tools,
+    editOldebs,
+    closeEdit,
   };
 };
 
 const OldebMapToolbar = ({
   toggleTool: toggleToolCallback,
   activeTool,
+  editOldebs,
+  closeEdit,
+  dataOldebLayer,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
+  editOldebs: string | null;
+  closeEdit: () => void;
+  dataOldebLayer: VectorLayer;
 }) => {
   const { user } = useAppContext();
+
+  const [oldebIdModifie, setOldebIdModifie] = useState(null);
+
+  let oldebsArray: { oldebId: string; properties: string }[] = [];
+  if (editOldebs) {
+    oldebsArray = JSON.parse(editOldebs);
+  }
 
   return (
     <ButtonGroup>
@@ -266,6 +348,69 @@ const OldebMapToolbar = ({
           activeTool={activeTool}
         />
       )}
+      {hasDroit(user, TYPE_DROIT.OLDEB_U) && (
+        <ToolbarButton
+          toolName={"edit-oldeb"}
+          toolIcon={<IconEdit />}
+          toolLabelTooltip={"Modifier une OLDEB"}
+          toggleTool={toggleToolCallback}
+          activeTool={activeTool}
+        />
+      )}
+
+      <Volet
+        handleClose={() => closeEdit()}
+        show={oldebsArray.length > 0 && oldebIdModifie === null}
+        className="w-auto"
+      >
+        <PageTitle
+          icon={<IconOldeb />}
+          displayReturnButton={false}
+          title={"Modifier une OLDEB"}
+        />
+        {oldebsArray.map((oldebs) => (
+          <div key={oldebs.oldebId} className="card bg-secondary mb-3 rounded">
+            <div className="card-body">
+              <Row className="justify-content-center align-items-center">
+                <Col
+                  xs={8}
+                  className="card-text"
+                  dangerouslySetInnerHTML={{ __html: oldebs.properties }}
+                />
+                <Col className="d-flex justify-content-center align-items-center">
+                  <TooltipCustom
+                    tooltipText={"Modifier cette OLDEB"}
+                    tooltipId={oldebs.oldebId}
+                  >
+                    <Button
+                      variant={"link"}
+                      className={"p-0 m-0 text-decoration-none text-info"}
+                      onClick={() => setOldebIdModifie(oldebs.oldebId)}
+                    >
+                      <IconEdit />
+                    </Button>
+                  </TooltipCustom>
+                </Col>
+              </Row>
+            </div>
+          </div>
+        ))}
+      </Volet>
+
+      <Volet
+        handleClose={() => setOldebIdModifie(null)}
+        show={oldebIdModifie !== null}
+        className="w-auto"
+      >
+        <OldebUpdate
+          oldebIdCarte={oldebIdModifie}
+          onClose={() => {
+            closeEdit();
+            dataOldebLayer.getSource()?.refresh();
+            setOldebIdModifie(null);
+          }}
+        />
+      </Volet>
     </ButtonGroup>
   );
 };
