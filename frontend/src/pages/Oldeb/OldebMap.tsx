@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { useLocation } from "react-router-dom";
 import { transformExtent } from "ol/proj";
-import VectorLayer from "ol/layer/Vector";
-import { TypeModuleRemocra } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
+import { useEffect, useMemo, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import MapComponent, { useMapComponent } from "../../components/Map/Map.tsx";
-import { createPointLayer } from "../../components/Map/MapUtils.tsx";
 import { useToolbarContext } from "../../components/Map/MapToolbar.tsx";
+import { createPointLayer } from "../../components/Map/MapUtils.tsx";
+import { TypeModuleRemocra } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import OldebMapToolbar, { useToolbarOldebContext } from "./OldebMapToolbar.tsx";
 
 const OldebMap = () => {
   const { state } = useLocation();
-  const dataOldebLayerRef = useRef<VectorLayer>();
 
   const mapElement = useRef<HTMLDivElement>();
 
@@ -29,12 +27,12 @@ const OldebMap = () => {
     displayPei: false,
   });
 
-  useMemo(() => {
+  const dataOldebLayer = useMemo(() => {
     if (!map) {
       return;
     }
 
-    dataOldebLayerRef.current = createPointLayer(
+    return createPointLayer(
       map,
       (extent, projection) =>
         `/api/oldeb/layer?bbox=` +
@@ -48,7 +46,7 @@ const OldebMap = () => {
   const { tools: extraTools } = useToolbarOldebContext({
     map,
     workingLayer,
-    dataOldebLayerRef,
+    dataOldebLayer,
   });
 
   const { toggleTool, activeTool, handleCloseInfoI, infoOutilI } =

@@ -175,7 +175,19 @@ class GetPointCarteUseCase : AbstractUseCase() {
                     } else {
                         FeatureGeom(
                             type = it.elementGeometrie.geometryType,
-                            coordinates = arrayOf(it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.toTypedArray()),
+                            coordinates = if (it.elementGeometrie.geometryType.equals("MultiPolygon")) {
+                                arrayOf(
+                                    arrayOf(
+                                        it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
+                                            .toTypedArray(),
+                                    ),
+                                )
+                            } else {
+                                arrayOf(
+                                    it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
+                                        .toTypedArray(),
+                                )
+                            },
                             srid = "EPSG:${it.elementGeometrie.srid}",
                         )
                     },

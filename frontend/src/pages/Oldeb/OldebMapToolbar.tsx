@@ -4,7 +4,7 @@ import { WKT } from "ol/format";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import { Stroke, Style } from "ol/style";
-import { Ref, useMemo } from "react";
+import { useMemo } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
@@ -26,11 +26,11 @@ import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 export const useToolbarOldebContext = ({
   map,
   workingLayer,
-  dataOldebLayerRef,
+  dataOldebLayer,
 }: {
   map: Map;
   workingLayer: VectorLayer;
-  dataOldebLayerRef: Ref<VectorLayer>;
+  dataOldebLayer: VectorLayer;
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -107,7 +107,7 @@ export const useToolbarOldebContext = ({
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();
 
-      const boxFeatures = dataOldebLayerRef.current
+      const boxFeatures = dataOldebLayer
         ?.getSource()
         .getFeaturesInExtent(boxExtent);
 
@@ -115,7 +115,7 @@ export const useToolbarOldebContext = ({
     });
 
     const editCtrl = new Modify({
-      source: dataOldebLayerRef.current?.getSource(),
+      source: dataOldebLayer.getSource(),
     });
     editCtrl.on("modifyend", (event) => {
       if (!event.features || event.features.getLength() !== 1) {
@@ -219,7 +219,7 @@ export const useToolbarOldebContext = ({
     };
 
     return tools;
-  }, [map]);
+  }, [map, dataOldebLayer]);
 
   return {
     tools,
