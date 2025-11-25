@@ -317,6 +317,9 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getByEmail(email: String): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.EMAIL_CONTACT.eq(email)).fetchOneInto()
 
+    fun getByCode(organismeCode: String): OrganismeData? =
+        dsl.selectFrom(ORGANISME).where(ORGANISME.CODE.eq(organismeCode)).fetchOneInto()
+
     fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<UUID>, contactRole: String): Map<Destinataire, List<UUID?>> =
         dsl.select(
             PEI.ID,

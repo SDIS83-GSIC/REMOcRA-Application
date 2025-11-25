@@ -8,11 +8,11 @@ import remocra.data.ApiIndispoTempFormData
 import remocra.data.ApiIndispoTemporaireData
 import remocra.data.AuteurTracabiliteData
 import remocra.data.IndisponibiliteTemporaireData
-import remocra.data.Params
 import remocra.data.enums.ErrorType
 import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
 import remocra.data.enums.TypeSourceModification
 import remocra.db.IndisponibiliteTemporaireRepository
+import remocra.db.OrganismeRepository
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.exception.RemocraResponseException
@@ -25,78 +25,48 @@ class ApiIndisponibiliteTemporaireUseCase @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val tracabiliteRepository: TracabiliteRepository,
     override val peiRepository: PeiRepository,
+    private val organismeRepository: OrganismeRepository,
     private val createIndisponibiliteTemporaireUseCase: CreateIndisponibiliteTemporaireUseCase,
     private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
     private val objectMapper: ObjectMapper,
 ) : AbstractApiPeiUseCase(peiRepository) {
 
-    fun getAll(codeOrganisme: String?, numeroComplet: String?, statut: String?, limit: Int?, offset: Int?): Collection<ApiIndispoTemporaireData> {
+    fun getAll(codeOrganisme: String?, numeroComplet: String?, statut: String?, limit: Int?, offset: Int?, userInfo: WrappedUserInfo): Collection<ApiIndispoTemporaireData> {
         // On vérifie que le statut de l'indisponibilité est conforme
         val statutIndisponibiliteTemporaireEnum = statut?.let {
             try {
                 StatutIndisponibiliteTemporaireEnum.valueOf(it)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_STATUT)
             }
         }
+        // Vérification si le numéro fourni en paramètre existe
+        numeroComplet?.let { peiRepository.getIdByNumeroComplet(it) ?: throw RemocraResponseException(ErrorType.PEI_INEXISTANT) }
+        // Vérification si l'organisme fourni en paramètre existe
+        val organismeFiltre = codeOrganisme?.let { organismeRepository.getByCode(it) ?: throw RemocraResponseException(ErrorType.ORGANISME_INEXISTANT) }
 
-        val params: Params<IndisponibiliteTemporaireRepository.Filter, IndisponibiliteTemporaireRepository.Sort> = Params(
-            filterBy = IndisponibiliteTemporaireRepository.Filter(
-                indisponibiliteTemporaireMotif = null,
-                indisponibiliteTemporaireObservation = null,
-                indisponibiliteTemporaireStatut = statutIndisponibiliteTemporaireEnum,
-                indisponibiliteTemporaireBasculeAutoIndisponible = null,
-                indisponibiliteTemporaireBasculeAutoDisponible = null,
-                indisponibiliteTemporaireMailAvantIndisponibilite = null,
-                indisponibiliteTemporaireMailApresIndisponibilite = null,
-                listePeiId = numeroComplet?.let {
-                    listOf(peiRepository.getIdByNumeroComplet(it) ?: throw RemocraResponseException(ErrorType.PEI_INEXISTANT))
-                },
-                communeLibelle = null,
-            ),
-            sortBy = null,
-            limit = limit,
-            offset = offset,
-        )
-
-        // TODO envoyer la zone de compétence de l'organisme connecté quand on aura le userInfo
-        val listIndispoTemp = indisponibiliteTemporaireRepository.getAllWithListPei(params, isSuperAdmin = false, zoneCompetenceId = null).limitOffset(params.limit?.toLong(), params.offset?.toLong()) ?: emptyList() // TODO
+        // On remonte toutes les indispo dont au moins un PEI fait partie de la liste de gestion de l'organisme
+        val listeIndispoTemp = indisponibiliteTemporaireRepository.getAllForApi(userInfo.organismeId!!, numeroComplet, statutIndisponibiliteTemporaireEnum)
 
         // On va ensuite chercher toutes les infos de traçabilité sur ces indipos
-        val tracabilitesIndispoTemp = tracabiliteRepository.getIndispoTempTracabilite(listIndispoTemp.map { it.indisponibiliteTemporaireId })
-
-        val liste = listIndispoTemp.map {
+        val tracabilitesIndispoTemp = tracabiliteRepository.getIndispoTempTracabilite(listeIndispoTemp.map { it.indisponibiliteTemporaireId })
+        val liste = listeIndispoTemp.map { indispoTemporaire ->
             // On va chercher la dernière modification de l'indispo
             val derniereMiseAJour =
-                tracabilitesIndispoTemp.filter { t -> t.tracabiliteObjetId == it.indisponibiliteTemporaireId }
+                tracabilitesIndispoTemp.filter { t -> t.tracabiliteObjetId == indispoTemporaire.indisponibiliteTemporaireId }
                     .maxByOrNull { it.tracabiliteDate }
-
             var organismeMaj: String? = null
-
             if (derniereMiseAJour != null) {
-                val modificateur =
-                    objectMapper.readValue<AuteurTracabiliteData>(derniereMiseAJour.tracabiliteObjetData.toString())
+                val modificateur = objectMapper.readValue<AuteurTracabiliteData>(derniereMiseAJour.tracabiliteAuteurData.toString())
                 if (modificateur.typeSourceModification == TypeSourceModification.API) {
-                    organismeMaj = modificateur.nom
+                    organismeMaj = modificateur.idAuteur.toString()
                 }
             }
-
-            ApiIndispoTemporaireData(
-                indisponibiliteTemporaireId = it.indisponibiliteTemporaireId,
-                indisponibiliteTemporaireDateDebut = it.indisponibiliteTemporaireDateDebut,
-                indisponibiliteTemporaireDateFin = it.indisponibiliteTemporaireDateFin,
-                indisponibiliteTemporaireMotif = it.indisponibiliteTemporaireMotif,
-                indisponibiliteTemporaireObservation = it.indisponibiliteTemporaireObservation,
-                indisponibiliteTemporaireBasculeAutoIndisponible = it.indisponibiliteTemporaireBasculeAutoIndisponible,
-                indisponibiliteTemporaireBasculeAutoDisponible = it.indisponibiliteTemporaireBasculeAutoDisponible,
-                indisponibiliteTemporaireMailAvantIndisponibilite = it.indisponibiliteTemporaireMailAvantIndisponibilite,
-                indisponibiliteTemporaireMailApresIndisponibilite = it.indisponibiliteTemporaireMailApresIndisponibilite,
-                listeNumeroPei = it.listeNumeroPei,
-                organismeApiMaj = organismeMaj,
-            )
+            indispoTemporaire.copy(organismeApiMaj = organismeMaj)
         }
-
-        return codeOrganisme?.let { liste.filter { it.organismeApiMaj != null && it.organismeApiMaj.equals(it) } } ?: liste
+        // On filtre sur l'organisme
+        val filteredList = organismeFiltre?.let { liste.filter { it.organismeApiMaj != null && it.organismeApiMaj == organismeFiltre.organismeId.toString() } } ?: liste
+        return filteredList.limitOffset(limit?.toLong(), offset?.toLong()) ?: emptyList()
     }
 
     fun addIndispoTemp(apiIndispoTempFormData: ApiIndispoTempFormData, userInfo: WrappedUserInfo): Result {

@@ -14,17 +14,22 @@ import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import remocra.auth.WrappedUserInfo
+import remocra.data.ApiIndispoTemporaireData
 import remocra.data.GeometrieWithPeiId
 import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.data.enums.ErrorType
 import remocra.data.enums.StatutIndisponibiliteTemporaireEnum
 import remocra.db.jooq.remocra.enums.Disponibilite
+import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.PIBI
+import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.exception.RemocraResponseException
 import remocra.utils.DateUtils
@@ -456,4 +461,71 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
             .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(indisponibiliteTemporaireId))
             .fetchInto()
+
+    fun getAllForApi(organismeId: UUID, filterPeiNumeroComplet: String?, statutIndisponibiliteTemporaireEnum: StatutIndisponibiliteTemporaireEnum?): Collection<ApiIndispoTemporaireData> {
+        val nomCte = name("liste_pei")
+        val indisponibiliteTemporaireId = field(name("liste_pei", "id_it"), SQLDataType.UUID)
+        val listeNumeroPei = field(name("liste_pei", "liste_numero_pei"), SQLDataType.VARCHAR)
+        val cte = nomCte.fields("id_it", "liste_numero_pei").`as`(
+            DSL.select(
+                L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID,
+                DSL.listAgg(PEI.NUMERO_COMPLET, ", ")
+                    .withinGroupOrderBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID),
+            )
+                .from(PEI)
+                .join(L_INDISPONIBILITE_TEMPORAIRE_PEI).on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .groupBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID),
+        )
+
+        return dsl.with(cte).select(
+            INDISPONIBILITE_TEMPORAIRE.ID,
+            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT,
+            INDISPONIBILITE_TEMPORAIRE.DATE_FIN,
+            INDISPONIBILITE_TEMPORAIRE.MOTIF,
+            INDISPONIBILITE_TEMPORAIRE.OBSERVATION,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE,
+            INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE,
+            listeNumeroPei,
+        ).from(PEI)
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI).on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
+            .join(INDISPONIBILITE_TEMPORAIRE)
+            .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+            .join(ORGANISME).on(ORGANISME.ID.eq(organismeId))
+            .join(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .leftJoin(PIBI).on(PEI.ID.eq(PIBI.ID))
+            .join(table(nomCte)).on(indisponibiliteTemporaireId.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+            .where(
+                TYPE_ORGANISME.DROIT_API.contains(DroitApi.ADMINISTRER)
+                    .or(
+                        PEI.MAINTENANCE_DECI_ID.eq(organismeId)
+                            .or(PEI.SERVICE_PUBLIC_DECI_ID.eq(organismeId))
+                            .or(PIBI.SERVICE_EAU_ID.eq(organismeId)),
+                    ),
+            )
+            .and(filterPeiNumeroComplet?.let { listeNumeroPei.contains(filterPeiNumeroComplet) } ?: DSL.noCondition())
+            .and(
+                statutIndisponibiliteTemporaireEnum?.let { statut ->
+                    val now = dateUtils.now()
+                    when (statut) {
+                        StatutIndisponibiliteTemporaireEnum.PLANIFIEE ->
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
+                        StatutIndisponibiliteTemporaireEnum.EN_COURS ->
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
+                                .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull))
+
+                        StatutIndisponibiliteTemporaireEnum.TERMINEE ->
+                            INDISPONIBILITE_TEMPORAIRE.DATE_FIN.lt(now)
+
+                        StatutIndisponibiliteTemporaireEnum.EN_COURS_PLANIFIEE ->
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(now)
+                                .or(
+                                    INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(now)
+                                        .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(now).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)),
+                                )
+                    }
+                } ?: DSL.noCondition(),
+            )
+            .groupBy(INDISPONIBILITE_TEMPORAIRE.ID, listeNumeroPei)
+            .fetchInto()
+    }
 }

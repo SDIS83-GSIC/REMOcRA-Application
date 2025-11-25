@@ -51,7 +51,7 @@ class ApiIndispoTemporaireEndpoint : AbstractEndpoint() {
         @Parameter(description = "Retourne les informations à partir de la n-ième ligne") @QueryParam("offset") offset: Int?,
     ): Response {
         return Response.ok(
-            apiIndisponibiliteTemporaireUseCase.getAll(organismeAPI, numeroComplet, statut, limit, offset),
+            apiIndisponibiliteTemporaireUseCase.getAll(organismeAPI, numeroComplet, statut, limit, offset, securityContext.userInfo),
         )
             .build()
     }
