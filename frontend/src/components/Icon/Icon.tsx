@@ -63,6 +63,9 @@ export const IconUtilisateurs = () => <i className="fi fi-br-users" />;
 export const IconOldeb = () => <i className="fi fi-rr-bio-leaves" />;
 
 export const IconProprietaire = () => <i className="fi fi-br-house-building" />;
+export const IconTransformGeometrie = () => (
+  <i className="fi fi-br-transformation-design" />
+);
 
 export const IconIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-time-delete" />

@@ -10,8 +10,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import {
   IconCreate,
-  IconEdit,
   IconSelect,
+  IconTransformGeometrie,
 } from "../../components/Icon/Icon.tsx";
 import ToolbarButton from "../../components/Map/ToolbarButton.tsx";
 import { hasDroit } from "../../droits.tsx";
@@ -114,10 +114,10 @@ export const useToolbarOldebContext = ({
       selectCtrl.getFeatures().extend(boxFeatures);
     });
 
-    const editCtrl = new Modify({
+    const editGeometrieCtrl = new Modify({
       source: dataOldebLayer.getSource(),
     });
-    editCtrl.on("modifyend", (event) => {
+    editGeometrieCtrl.on("modifyend", (event) => {
       if (!event.features || event.features.getLength() !== 1) {
         return;
       }
@@ -194,14 +194,14 @@ export const useToolbarOldebContext = ({
       }
     }
 
-    function toggleEdit(active = false) {
-      const idx = map?.getInteractions().getArray().indexOf(editCtrl);
+    function toggleEditGeometrie(active = false) {
+      const idx = map?.getInteractions().getArray().indexOf(editGeometrieCtrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(editCtrl);
+          map.addInteraction(editGeometrieCtrl);
         }
       } else {
-        map.removeInteraction(editCtrl);
+        map.removeInteraction(editGeometrieCtrl);
       }
     }
 
@@ -210,8 +210,8 @@ export const useToolbarOldebContext = ({
         action: toggleSelect,
         actionPossibleEnDeplacement: false,
       },
-      "edit-oldeb": {
-        action: toggleEdit,
+      "edit-geometrie-oldeb": {
+        action: toggleEditGeometrie,
       },
       "create-oldeb": {
         action: toggleCreate,
@@ -259,9 +259,9 @@ const OldebMapToolbar = ({
       )}
       {hasDroit(user, TYPE_DROIT.OLDEB_U) && (
         <ToolbarButton
-          toolName={"edit-oldeb"}
-          toolIcon={<IconEdit />}
-          toolLabelTooltip={"Modifier une OLDEB"}
+          toolName={"edit-geometrie-oldeb"}
+          toolIcon={<IconTransformGeometrie />}
+          toolLabelTooltip={"Modifier la géométrie d'une OLDEB"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
         />
