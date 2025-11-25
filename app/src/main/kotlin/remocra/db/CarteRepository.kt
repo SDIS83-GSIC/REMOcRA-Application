@@ -8,7 +8,6 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
-import org.locationtech.jts.geom.Polygon
 import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
@@ -507,7 +506,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
     )
 
     data class OldebCarte(
-        override val elementGeometrie: Polygon,
+        override val elementGeometrie: Geometry,
         override val elementId: UUID,
         val etatDebroussaillement: String? = null,
     ) : ElementCarte() {
