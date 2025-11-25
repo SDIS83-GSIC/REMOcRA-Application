@@ -170,4 +170,10 @@ class OldebEndpoint : AbstractEndpoint() {
     @Path("/anomalie")
     @Public("Les nomenclatures ne sont pas liées à un droit")
     fun anomalieList(): Response = Response.ok(oldebRepository.getLinkedTypeAnomalieList()).build()
+
+    @GET
+    @Path("/{oldebId}/geometrie")
+    @RequireDroits([Droit.OLDEB_R])
+    fun getGeometrie(@PathParam("oldebId") oldebId: UUID): Response =
+        Response.ok(oldebRepository.getGeometrieOldeb(oldebId)).build()
 }

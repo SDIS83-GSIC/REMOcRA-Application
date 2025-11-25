@@ -6,11 +6,15 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import {
   IconDelete,
   IconEdit,
+  IconLocation,
   IconOldeb,
 } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
+import useLocalisation, {
+  GET_TYPE_GEOMETRY,
+} from "../../components/Localisation/useLocalisation.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";
 import SelectNomenclaturesFilter from "../../components/Filter/SelectNomenclaturesFilter.tsx";
 import NOMENCLATURES from "../../enums/NomenclaturesEnum.tsx";
@@ -21,6 +25,8 @@ import { formatDate } from "../../utils/formatDateUtils.tsx";
 import filterValuesToVariable from "./OldebFilter.tsx";
 
 const OldebList = () => {
+  const { fetchGeometry } = useLocalisation();
+
   return (
     <Container>
       <PageTitle
@@ -119,6 +125,22 @@ const OldebList = () => {
                 pathname: url`/api/oldeb/`,
                 type: TYPE_BUTTON.DELETE,
                 icon: <IconDelete />,
+              },
+              {
+                row: (row: any) => {
+                  return row;
+                },
+                onClick: (oldebId) => {
+                  fetchGeometry(
+                    GET_TYPE_GEOMETRY.OLDEB,
+                    oldebId,
+                    URLS.OLDEB_LOCALISATION,
+                  );
+                },
+                type: TYPE_BUTTON.LINK,
+                icon: <IconLocation />,
+                textEnable: "Localiser",
+                classEnable: "primary",
               },
             ],
           }),

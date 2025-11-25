@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.select
+import org.locationtech.jts.geom.MultiPolygon
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.oldeb.OldebData
@@ -366,4 +367,10 @@ class OldebRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
     fun deleteOldeb(oldebId: UUID): Int =
         dsl.deleteFrom(OLDEB).where(OLDEB.ID.eq(oldebId)).execute()
+
+    fun getGeometrieOldeb(oldebId: UUID): MultiPolygon =
+        dsl.select(OLDEB.GEOMETRIE)
+            .from(OLDEB)
+            .where(OLDEB.ID.eq(oldebId))
+            .fetchSingleInto()
 }

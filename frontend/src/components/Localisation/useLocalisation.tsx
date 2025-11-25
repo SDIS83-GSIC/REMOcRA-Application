@@ -13,6 +13,7 @@ export enum GET_TYPE_GEOMETRY {
   PEI = "/api/pei",
   VOIE = "/api/voie",
   INDISPONIBILITE_TEMP = "/api/indisponibilite-temporaire",
+  OLDEB = "/api/oldeb",
 }
 
 /**
@@ -91,6 +92,12 @@ const useLocalisation = () => {
               const { geometry, srid: parsedSrid } = parseGeometry(
                 resData.voieGeometry,
               );
+              extent = geometry.getExtent();
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.OLDEB: {
+              const { geometry, srid: parsedSrid } = parseGeometry(resData);
               extent = geometry.getExtent();
               srid = parsedSrid;
               break;
