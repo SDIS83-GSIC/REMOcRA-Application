@@ -157,7 +157,21 @@ export const prepareValues = (values: {
     formData.append("locataire", JSON.stringify(values.locataire));
   }
   values.visiteList &&
-    formData.append("visiteList", JSON.stringify(values.visiteList));
+    formData.append(
+      "visiteList",
+      JSON.stringify(
+        values.visiteList.map((v) => ({
+          ...v,
+          oldebVisiteDateVisite:
+            new Date(v.oldebVisiteDateVisite ?? "")?.toISOString() || null,
+          suiteList: v.suiteList.map((s) => ({
+            ...s,
+            oldebVisiteSuiteDate:
+              new Date(s.oldebVisiteSuiteDate ?? "")?.toISOString() || null,
+          })),
+        })),
+      ),
+    );
   if (values.documentList) {
     Object.keys(values.documentList).forEach((code) => {
       if (values.documentList) {
@@ -239,7 +253,6 @@ const OldebForm = ({ returnButton }: { returnButton: boolean }) => {
   const [currentTab, setCurrentTab] = useState("parcelle");
   const [currentVisite, setCurrentVisite] = useState<number | null>(null);
   const { values, setFieldValue } = useFormikContext<FormType>();
-  // const [isRent, setIsRent] = useState<boolean>(values.isRent ?? false);
 
   const civiliteList = Object.entries(TYPE_CIVILITE).map(([key, value]) => {
     return {

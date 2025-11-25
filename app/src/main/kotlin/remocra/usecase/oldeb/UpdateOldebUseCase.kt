@@ -55,7 +55,7 @@ class UpdateOldebUseCase @Inject constructor(
     override fun postEvent(element: OldebFormInput, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element.copy(documentList = null),
+                pojo = element,
                 pojoId = element.oldeb.oldebId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.OLDEB,
@@ -274,7 +274,7 @@ class UpdateOldebUseCase @Inject constructor(
                 oldebRepository.insertDocumentVisite(UUID.randomUUID(), visite.oldebVisiteId, documentId)
             }
         }
-        return element
+        return element.copy(documentList = null)
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {

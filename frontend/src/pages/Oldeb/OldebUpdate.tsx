@@ -21,7 +21,9 @@ const OldebUpdate = ({
 }) => {
   const { oldebId } = useParams();
   const oldebIdFinal = oldebIdCarte ?? oldebId;
-  const oldebState = useGet(url`/api/oldeb/${oldebIdFinal!}`);
+  const oldebState = useGet(
+    oldebIdFinal ? url`/api/oldeb/${oldebIdFinal}` : "",
+  );
 
   return (
     oldebIdFinal && (
