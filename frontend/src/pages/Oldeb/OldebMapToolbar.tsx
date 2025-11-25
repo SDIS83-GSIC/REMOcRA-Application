@@ -27,6 +27,7 @@ import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import Volet from "../../components/Volet/Volet.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import DeleteButtonWithModal from "../../components/Button/DeleteButtonWithModal.tsx";
 import OldebUpdate from "./OldebUpdate.tsx";
 
 export const useToolbarOldebContext = ({
@@ -301,12 +302,14 @@ const OldebMapToolbar = ({
   editOldebs,
   closeEdit,
   dataOldebLayer,
+  map,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
   editOldebs: string | null;
   closeEdit: () => void;
   dataOldebLayer: VectorLayer;
+  map: Map;
 }) => {
   const { user } = useAppContext();
 
@@ -348,7 +351,8 @@ const OldebMapToolbar = ({
           activeTool={activeTool}
         />
       )}
-      {hasDroit(user, TYPE_DROIT.OLDEB_U) && (
+      {(hasDroit(user, TYPE_DROIT.OLDEB_U) ||
+        hasDroit(user, TYPE_DROIT.OLDEB_D)) && (
         <ToolbarButton
           toolName={"edit-oldeb"}
           toolIcon={<IconEdit />}
@@ -377,7 +381,10 @@ const OldebMapToolbar = ({
                   className="card-text"
                   dangerouslySetInnerHTML={{ __html: oldebs.properties }}
                 />
-                <Col className="d-flex justify-content-center align-items-center">
+                <Col
+                  xs={1}
+                  className="d-flex justify-content-center align-items-center"
+                >
                   <TooltipCustom
                     tooltipText={"Modifier cette OLDEB"}
                     tooltipId={oldebs.oldebId}
@@ -389,6 +396,25 @@ const OldebMapToolbar = ({
                     >
                       <IconEdit />
                     </Button>
+                  </TooltipCustom>
+                </Col>
+                <Col className="d-flex justify-content-center align-items-center">
+                  <TooltipCustom
+                    tooltipText={"Supprimer cette OLDEB"}
+                    tooltipId={oldebs.oldebId}
+                  >
+                    <DeleteButtonWithModal
+                      path={`/api/oldeb/${oldebs.oldebId}`}
+                      disabled={!hasDroit(user, TYPE_DROIT.OLDEB_D)}
+                      title={false}
+                      variant="link"
+                      className="text-decoration-none text-danger"
+                      reload={() => {
+                        closeEdit();
+                        dataOldebLayer.getSource()?.refresh();
+                        refreshLayerGeoserver(map);
+                      }}
+                    />
                   </TooltipCustom>
                 </Col>
               </Row>
@@ -407,6 +433,7 @@ const OldebMapToolbar = ({
           onClose={() => {
             closeEdit();
             dataOldebLayer.getSource()?.refresh();
+            refreshLayerGeoserver(map);
             setOldebIdModifie(null);
           }}
         />
