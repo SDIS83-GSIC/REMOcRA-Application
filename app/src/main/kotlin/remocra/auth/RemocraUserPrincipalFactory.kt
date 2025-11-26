@@ -39,8 +39,6 @@ class RemocraUserPrincipalFactory @Inject constructor(
             prenom = sessionInfo.userInfo.givenName,
             email = sessionInfo.userInfo.emailAddress,
             username = sessionInfo.userInfo.preferredUsername,
-            // utilise KeycloakUserPrincipal pour simplifier le calcul des rôles
-            actif = !KeycloakUserPrincipal(sessionInfo).hasRole("inactif"),
             keycloakId = sessionInfo.userInfo.subject.value,
         )
 

@@ -32,12 +32,6 @@ interface KeycloakApi {
         @Query("username") username: String? = null,
     ): Call<List<UserRepresentation>>
 
-    @GET("roles/{role-name}/users")
-    fun getUsersInactif(
-        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
-        @Path("role-name") roleName: String = "inactif",
-    ): Call<List<UserRepresentation>>
-
     @PUT("users/{id}/execute-actions-email")
     fun executeActionsEmail(
         @Header(HttpHeaders.AUTHORIZATION) authorization: String,

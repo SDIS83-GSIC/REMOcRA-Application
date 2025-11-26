@@ -173,8 +173,10 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                     return
                 }
 
-                val notifications = objectMapper.readValue<NotificationRaw>(jsonNotif)
-                notifySpecific(executionResults, notifications)
+                val notifications = objectMapper.readValue<NotificationRaw?>(jsonNotif)
+                if (notifications != null) {
+                    notifySpecific(executionResults, notifications)
+                }
             } catch (jpe: JsonProcessingException) {
                 logManager.error("Erreur lors de l'interprétation des paramètres de notification : ${jpe.message}")
             } catch (jme: JsonMappingException) {

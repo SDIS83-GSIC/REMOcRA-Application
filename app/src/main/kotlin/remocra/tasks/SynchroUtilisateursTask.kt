@@ -46,8 +46,6 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
         var nbUtilisateurAdd = 0
         var nbUtilisateurSuppress = 0
 
-        val utilisateursInactifs = keycloakApi.getUsersInactif(token).execute().body()
-
         while (!fini) {
             try {
                 val usersKeycloak =
@@ -68,18 +66,17 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                     val utilisateurExistant = utilisateursRemocra.firstOrNull { it.utilisateurKeycloakId == userRepresentation.id }
                     if (utilisateurExistant != null) {
                         // On met à jour les propriétés si besoin
-                        val inactif = utilisateursInactifs?.map { it.username }?.contains(utilisateurExistant.utilisateurUsername) ?: false
                         if (utilisateurExistant.utilisateurEmail != userRepresentation.email ||
                             utilisateurExistant.utilisateurNom != userRepresentation.lastName ||
                             utilisateurExistant.utilisateurPrenom != userRepresentation.firstName ||
-                            (utilisateurExistant.utilisateurActif != !inactif)
+                            (utilisateurExistant.utilisateurActif != userRepresentation.enabled)
                         ) {
                             utilisateurRepository.updateUtilisateur(
                                 idUtilisateur = utilisateurExistant.utilisateurId,
                                 nom = userRepresentation.lastName,
                                 prenom = userRepresentation.firstName,
                                 email = userRepresentation.email,
-                                actif = !inactif,
+                                actif = userRepresentation.enabled,
                             )
                             nbUtilisateurUpdate++
                             logManager.info(
@@ -89,7 +86,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                         }
 
                         // Si aucune valeur n'a été modifié et que l'utilisateur était actif, on le remet
-                        if (!inactif) {
+                        if (userRepresentation.enabled) {
                             utilisateurRepository.setActif(true, utilisateurExistant.utilisateurId)
                         }
                     } else {
@@ -99,8 +96,7 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                             prenom = userRepresentation.firstName,
                             nom = userRepresentation.lastName,
                             username = userRepresentation.username,
-                            actif = utilisateursInactifs?.map { it.username }
-                                ?.contains(userRepresentation.username) == false,
+                            actif = userRepresentation.enabled,
                             keycloakId = userRepresentation.id,
                         )
                         nbUtilisateurAdd++

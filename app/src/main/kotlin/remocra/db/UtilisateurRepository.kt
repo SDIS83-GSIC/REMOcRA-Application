@@ -105,12 +105,10 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         prenom: String?,
         email: String,
         username: String,
-        actif: Boolean,
         keycloakId: String,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
-            .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
@@ -119,7 +117,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             .onConflict(UTILISATEUR.KEYCLOAK_ID)
             .doUpdate()
-            .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
