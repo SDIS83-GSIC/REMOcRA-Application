@@ -39,7 +39,6 @@ import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.SIGNALEMENT__SIGNALEMENT_SIGNALEMENT_UTILISATEUR_FKEY
 import remocra.db.jooq.remocra.keys.TOURNEE__TOURNEE_TOURNEE_RESERVATION_UTILISATEUR_ID_FKEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_PKEY
-import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_EMAIL_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR_UTILISATEUR_USERNAME_KEY
 import remocra.db.jooq.remocra.keys.UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY
@@ -205,7 +204,7 @@ open class Utilisateur(
     }
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = UTILISATEUR_PKEY
-    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_EMAIL_KEY, UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
+    override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY, UTILISATEUR_UTILISATEUR_USERNAME_KEY)
     override fun getReferences(): List<ForeignKey<Record, *>> = listOf(UTILISATEUR__UTILISATEUR_UTILISATEUR_ORGANISME_ID_FKEY, UTILISATEUR__UTILISATEUR_UTILISATEUR_PROFIL_UTILISATEUR_ID_FKEY)
 
     private lateinit var _organisme: OrganismePath

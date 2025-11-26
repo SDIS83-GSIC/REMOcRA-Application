@@ -377,7 +377,6 @@ val TYPE_RESEAU_TYPE_RESEAU_CODE_KEY: UniqueKey<Record> = Internal.createUniqueK
 val TYPE_TOPONYMIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(TypeToponymie.TYPE_TOPONYMIE, DSL.name("type_toponymie_pkey"), arrayOf(TypeToponymie.TYPE_TOPONYMIE.ID), true)
 val TYPE_TOPONYMIE_TYPE_TOPONYMIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(TypeToponymie.TYPE_TOPONYMIE, DSL.name("type_toponymie_type_toponymie_code_key"), arrayOf(TypeToponymie.TYPE_TOPONYMIE.CODE), true)
 val UTILISATEUR_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_pkey"), arrayOf(Utilisateur.UTILISATEUR.ID), true)
-val UTILISATEUR_UTILISATEUR_EMAIL_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_email_key"), arrayOf(Utilisateur.UTILISATEUR.EMAIL), true)
 val UTILISATEUR_UTILISATEUR_KEYCLOAK_ID_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_keycloak_id_key"), arrayOf(Utilisateur.UTILISATEUR.KEYCLOAK_ID), true)
 val UTILISATEUR_UTILISATEUR_USERNAME_KEY: UniqueKey<Record> = Internal.createUniqueKey(Utilisateur.UTILISATEUR, DSL.name("utilisateur_utilisateur_username_key"), arrayOf(Utilisateur.UTILISATEUR.USERNAME), true)
 val VISITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Visite.VISITE, DSL.name("visite_pkey"), arrayOf(Visite.VISITE.ID), true)

@@ -56,6 +56,8 @@
   "defaultLocale" : "fr",
   "editUsernameAllowed": true,
   "resetPasswordAllowed" : true,
+  "loginWithEmailAllowed": false,
+  "duplicateEmailsAllowed": true,
   "components": {
     "org.keycloak.userprofile.UserProfileProvider": [
       {

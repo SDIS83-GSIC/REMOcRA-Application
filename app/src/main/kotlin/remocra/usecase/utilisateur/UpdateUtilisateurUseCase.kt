@@ -86,9 +86,5 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername, element.utilisateurId)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }
-
-        if (utilisateurRepository.checkExistsEmail(element.utilisateurUsername, element.utilisateurId)) {
-            throw RemocraResponseException(ErrorType.UTILISATEUR_EMAIL_EXISTS)
-        }
     }
 }

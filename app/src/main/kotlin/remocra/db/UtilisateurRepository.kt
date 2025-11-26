@@ -314,16 +314,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 ),
         )
 
-    fun checkExistsEmail(email: String, id: UUID?) =
-        dsl.fetchExists(
-            dsl.select(UTILISATEUR.ID)
-                .from(UTILISATEUR)
-                .where(UTILISATEUR.EMAIL.eq(email))
-                .and(
-                    id?.let { UTILISATEUR.ID.ne(id) } ?: DSL.noCondition(),
-                ),
-        )
-
     fun insertUtilisateur(utilisateur: UtilisateurData, utilisateurKeycloakId: String) =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, utilisateur.utilisateurId)
