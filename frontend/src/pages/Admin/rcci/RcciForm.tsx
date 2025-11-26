@@ -368,7 +368,7 @@ const RcciForm = () => {
     };
   });
   const referentielState = useGetRun(
-    url`/api/rcci/refs?${{ geometrie: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})` }}`,
+    url`/api/rcci/refs?${{ geometrie: `SRID=${values.typeSystemeSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})` }}`,
   );
 
   const { isLoading, data, run } = usePost(url`/api/dfci/check`);
