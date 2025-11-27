@@ -97,7 +97,9 @@ const useLocalisation = () => {
               break;
             }
             case GET_TYPE_GEOMETRY.OLDEB: {
-              const { geometry, srid: parsedSrid } = parseGeometry(resData);
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.geometrie,
+              );
               extent = geometry.getExtent();
               srid = parsedSrid;
               break;
