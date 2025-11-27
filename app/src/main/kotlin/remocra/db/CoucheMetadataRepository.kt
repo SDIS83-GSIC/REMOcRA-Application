@@ -64,15 +64,40 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
         )
     }
 
-    fun getAvailableGroupeFonctionnaliteList(coucheId: UUID, coucheMetadataId: UUID?): List<GroupeFonctionnalites> =
-        dsl.select(*GROUPE_FONCTIONNALITES.fields())
+    fun getAvailableGroupeFonctionnaliteList(coucheId: UUID, coucheMetadataId: UUID?): List<GroupeFonctionnalites> {
+        val subquery = dsl.select(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID)
+            .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
+            .join(COUCHE_METADATA)
+            .on(COUCHE_METADATA.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID))
+            .where(COUCHE_METADATA.COUCHE_ID.eq(coucheId))
+            .let { sq ->
+                if (coucheMetadataId != null) {
+                    sq.and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.ne(coucheMetadataId))
+                } else {
+                    sq
+                }
+            }
+
+        return dsl.select(*GROUPE_FONCTIONNALITES.fields())
             .from(GROUPE_FONCTIONNALITES)
-            .join(L_COUCHE_GROUPE_FONCTIONNALITES).on(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
+            .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .on(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
             .and(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId))
-            .leftJoin(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA).on(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
-            .leftJoin(COUCHE_METADATA).on(COUCHE_METADATA.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID))
             .where(GROUPE_FONCTIONNALITES.ACTIF.isTrue)
-            .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.isNull.or(coucheMetadataId?.let { COUCHE_METADATA.ID.eq(it) })).fetchInto()
+            .and(
+                coucheMetadataId?.let {
+                    GROUPE_FONCTIONNALITES.ID.notIn(subquery)
+                        .or(
+                            GROUPE_FONCTIONNALITES.ID.`in`(
+                                DSL.select(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID)
+                                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
+                                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(it)),
+                            ),
+                        )
+                } ?: GROUPE_FONCTIONNALITES.ID.notIn(subquery),
+            )
+            .fetchInto()
+    }
 
     fun getCountCoucheMetadata(filterBy: FilterCoucheMetadata?): Int =
         dsl.selectCount()
