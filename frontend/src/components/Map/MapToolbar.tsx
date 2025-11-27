@@ -6,8 +6,8 @@ import { DragPan, Draw, Interaction } from "ol/interaction";
 import { getArea, getLength } from "ol/sphere";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import TileLayer from "ol/layer/Tile";
-import { TileWMS } from "ol/source";
+import { ImageWMS } from "ol/source";
+import ImageLayer from "ol/layer/Image";
 import {
   forwardRef,
   useEffect,
@@ -235,7 +235,7 @@ export const useToolbarContext = ({
         .getLayers()
         .getArray()
         .filter(
-          (l) => l instanceof TileLayer && l.getSource() instanceof TileWMS,
+          (l) => l instanceof ImageLayer && l.getSource() instanceof ImageWMS,
         )
         .forEach((wmsLayer) => {
           const view = map!.getView();

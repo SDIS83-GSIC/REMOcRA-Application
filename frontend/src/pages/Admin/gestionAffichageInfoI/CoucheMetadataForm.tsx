@@ -289,7 +289,7 @@ const CoucheMetadataForm = ({
           (e: any) => e.id === values?.groupeCoucheId,
         )}
         onChange={(value: any) => {
-          setFieldValue("groupeCoucheId", value.id);
+          setFieldValue("groupeCoucheId", value?.id);
           setFieldValue("coucheId", undefined);
         }}
       />
@@ -306,9 +306,9 @@ const CoucheMetadataForm = ({
         setValues={setValues}
         defaultValue={listCouches.find((e: any) => e.id === values?.coucheId)}
         onChange={(value: any) => {
-          setFieldValue("coucheId", value.id);
+          setFieldValue("coucheId", value?.id);
           setFieldValue("groupeFonctionnaliteIds", undefined);
-          setCoucheId(value.id);
+          setCoucheId(value?.id);
         }}
       />
 
@@ -330,7 +330,7 @@ const CoucheMetadataForm = ({
         onChange={(groupesFonctionnalites) => {
           setFieldValue(
             "groupeFonctionnaliteIds",
-            groupesFonctionnalites.map((e: any) => e.id),
+            groupesFonctionnalites.map((e: any) => e?.id),
           );
         }}
       />
