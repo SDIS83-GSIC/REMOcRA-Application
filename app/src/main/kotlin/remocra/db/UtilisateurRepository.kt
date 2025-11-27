@@ -115,6 +115,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.USERNAME, username)
             .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
+            .set(UTILISATEUR.ACTIF, true)
             .onConflict(UTILISATEUR.KEYCLOAK_ID)
             .doUpdate()
             .set(UTILISATEUR.NOM, nom)
