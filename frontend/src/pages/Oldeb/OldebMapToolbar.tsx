@@ -258,6 +258,7 @@ export const useToolbarOldebContext = ({
     const tools = {
       "edit-geometrie-oldeb": {
         action: toggleEditGeometrie,
+        actionPossibleEnDeplacement: false,
       },
       "create-oldeb": {
         action: toggleCreate,
