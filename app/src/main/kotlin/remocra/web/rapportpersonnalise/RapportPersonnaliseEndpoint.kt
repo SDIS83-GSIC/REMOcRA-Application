@@ -108,7 +108,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
                 rapportPersonnaliseModule = element.rapportPersonnaliseModule,
                 rapportPersonnaliseProtected = false,
                 listeGroupeFonctionnalitesId = element.listeGroupeFonctionnalitesId,
-                listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre,
+                listeRapportPersonnaliseParametre = element.listeRapportPersonnaliseParametre.map { it.copy(rapportPersonnaliseParametreId = UUID.randomUUID()) },
             ),
         ).wrap()
 
