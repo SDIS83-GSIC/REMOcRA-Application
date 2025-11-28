@@ -32,13 +32,30 @@ function toggleDeplacerPoint(
 ) {
   const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
 
+  // Helper to enable/disable DragPan
+  function setDragPanActive(active: boolean) {
+    map
+      .getInteractions()
+      .getArray()
+      .forEach((interaction) => {
+        if (interaction instanceof DragPan) {
+          interaction.setActive(active);
+        }
+      });
+  }
+
   if (active) {
     const idx2 = map?.getInteractions().getArray().indexOf(modifyCtrl);
     if (idx1 === -1 && idx2 === -1) {
       map.addInteraction(selectCtrl);
       map.addInteraction(modifyCtrl);
 
+      // Désactive le déplacement de la carte pendant le drag d'un objet, puis réactive après
+      modifyCtrl.on("modifystart", function () {
+        setDragPanActive(false);
+      });
       modifyCtrl.on("modifyend", function (evt) {
+        setDragPanActive(true);
         evt.features.forEach(async function (feature) {
           if (conditionObjetSelectionne(feature)) {
             onMoveEnd(
@@ -52,9 +69,12 @@ function toggleDeplacerPoint(
         });
       });
     }
+    // Toujours activer DragPan quand l'outil est activé (sauf pendant drag objet)
+    setDragPanActive(true);
   } else {
     map.removeInteraction(selectCtrl);
     map.removeInteraction(modifyCtrl);
+    setDragPanActive(true);
   }
 }
 
