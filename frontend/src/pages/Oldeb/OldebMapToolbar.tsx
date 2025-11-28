@@ -12,7 +12,6 @@ import {
   IconCreate,
   IconEdit,
   IconOldeb,
-  IconSelect,
   IconTransformGeometrie,
 } from "../../components/Icon/Icon.tsx";
 import ToolbarButton from "../../components/Map/ToolbarButton.tsx";
@@ -223,20 +222,6 @@ export const useToolbarOldebContext = ({
       }
     });
 
-    function toggleSelect(active = false) {
-      const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
-      const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
-      if (active) {
-        if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(selectCtrl);
-          map.addInteraction(dragBoxCtrl);
-        }
-      } else {
-        map.removeInteraction(selectCtrl);
-        map.removeInteraction(dragBoxCtrl);
-      }
-    }
-
     function toggleCreate(active = false) {
       const idx = map?.getInteractions().getArray().indexOf(createCtrl);
       if (active) {
@@ -271,10 +256,6 @@ export const useToolbarOldebContext = ({
     }
 
     const tools = {
-      "select-oldeb": {
-        action: toggleSelect,
-        actionPossibleEnDeplacement: false,
-      },
       "edit-geometrie-oldeb": {
         action: toggleEditGeometrie,
       },
@@ -325,13 +306,6 @@ const OldebMapToolbar = ({
       <VoletButtonListeDocumentThematique
         codeThematique={THEMATIQUE.OLDEBS}
         titreVolet="Liste des documents liés aux OLDEB"
-      />
-      <ToolbarButton
-        toolName={"select-oldeb"}
-        toolIcon={<IconSelect />}
-        toolLabelTooltip={"Sélectionner"}
-        toggleTool={toggleToolCallback}
-        activeTool={activeTool}
       />
       {hasDroit(user, TYPE_DROIT.OLDEB_C) && (
         <ToolbarButton
