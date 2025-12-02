@@ -210,6 +210,7 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
             .where(PEI.ID.`in`(listePeiId))
             .and(ROLE_CONTACT.CODE.eq(contactRole))
             .and(CONTACT.EMAIL.isNotNull)
+            .and(CONTACT.ACTIF)
             .fetchGroups(
                 { record ->
                     Destinataire(

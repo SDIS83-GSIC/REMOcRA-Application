@@ -155,6 +155,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(PEI.ID.`in`(listePeiId))
             .and(TYPE_ORGANISME.ID.`in`(typeOrganisme))
             .and(UTILISATEUR.CAN_BE_NOTIFIED)
+            .and(UTILISATEUR.ACTIF)
             .and(UTILISATEUR.EMAIL.isNotNull)
             .fetchGroups(
                 { record ->

@@ -357,6 +357,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .and(TYPE_ORGANISME.ID.`in`(typeOrganisme))
             .and(ROLE_CONTACT.CODE.eq(contactRole))
             .and(CONTACT.EMAIL.isNotNull)
+            .and(CONTACT.ACTIF)
             .fetchGroups(
                 {
                         record ->
