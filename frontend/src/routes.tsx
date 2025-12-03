@@ -1982,7 +1982,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -1991,7 +1991,7 @@ export default [
         element: (
           <Authorization
             Component={ListTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2000,7 +2000,7 @@ export default [
         element: (
           <Authorization
             Component={CreateTypeCrise}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2009,7 +2009,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateEvenementCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2018,7 +2018,7 @@ export default [
         element: (
           <Authorization
             Component={EvenementSousCategorieList}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2027,7 +2027,7 @@ export default [
         element: (
           <Authorization
             Component={UpdateEvenementSousCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2036,7 +2036,7 @@ export default [
         element: (
           <Authorization
             Component={ListEvenementCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
@@ -2045,7 +2045,7 @@ export default [
         element: (
           <Authorization
             Component={CreateEvenementCategorie}
-            droits={[TYPE_DROIT.ADMIN_DROITS]}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
       },
