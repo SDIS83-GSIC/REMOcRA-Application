@@ -93,6 +93,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
         val queryParameters = MultivaluedHashMap(map)
         val url = geoserverSettings.url
             .newBuilder()
+            .addPathSegment("remocra")
             .addPathSegment("wms")
             .addQueryParameters(queryParameters)
             .build()
