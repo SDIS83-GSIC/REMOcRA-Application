@@ -8,19 +8,19 @@ import MyFormik from "../../Form/MyFormik.tsx";
 import { IconImport } from "../../Icon/Icon.tsx";
 
 export const getInitialValues = () => ({
-  fileKml: null,
+  fileRisqueExpress: null,
   risqueLibelle: "",
 });
 
 export const validationSchema = object({});
 
 export const prepareVariables = (values: {
-  fileKml: Blob | null;
+  fileRisqueExpress: Blob | null;
   risqueLibelle: string;
 }) => {
   const formData = new FormData();
-  if (values.fileKml) {
-    formData.append("fileKml", values.fileKml);
+  if (values.fileRisqueExpress) {
+    formData.append("fileRisqueExpress", values.fileRisqueExpress);
   }
   if (values.risqueLibelle) {
     formData.append("risqueLibelle", values.risqueLibelle);
@@ -28,10 +28,10 @@ export const prepareVariables = (values: {
   return formData;
 };
 
-const ImportKml = () => {
+const ImportRisqueExpress = () => {
   return (
     <Container>
-      <PageTitle icon={<IconImport />} title={"Importer un fichier KML"} />
+      <PageTitle icon={<IconImport />} title={"Importer un risque express"} />
       <MyFormik
         initialValues={getInitialValues()}
         validationSchema={validationSchema}
@@ -42,13 +42,13 @@ const ImportKml = () => {
         redirectUrl={URLS.RISQUE}
         onSubmit={() => {}}
       >
-        <FormImportKml />
+        <FormImportRisqueExpress />
       </MyFormik>
     </Container>
   );
 };
 
-const FormImportKml = () => {
+const FormImportRisqueExpress = () => {
   const { setFieldValue } = useFormikContext();
 
   return (
@@ -59,11 +59,11 @@ const FormImportKml = () => {
         required={false}
       />
       <FileInput
-        name="fileKml"
+        name="fileRisqueExpress"
         accept=".kml"
         label={<>Fichier KML contenant les géométries à intégrer</>}
         required={false}
-        onChange={(e) => setFieldValue("fileKml", e.target.files[0])}
+        onChange={(e) => setFieldValue("fileRisqueExpress", e.target.files[0])}
       />
       <br />
 
@@ -78,4 +78,4 @@ const FormImportKml = () => {
   );
 };
 
-export default ImportKml;
+export default ImportRisqueExpress;

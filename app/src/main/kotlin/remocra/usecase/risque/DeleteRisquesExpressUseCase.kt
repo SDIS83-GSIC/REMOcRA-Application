@@ -5,7 +5,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeSourceModification
-import remocra.data.risque.ImportRisqueKmlData
+import remocra.data.risque.ImportRisqueExpressData
 import remocra.db.RisqueExpressRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -28,10 +28,10 @@ class DeleteRisquesExpressUseCase() : AbstractCUDUseCase<Collection<RisqueExpres
 
     override fun postEvent(element: Collection<RisqueExpress>, userInfo: WrappedUserInfo) {
         element.forEach {
-            val risque = ImportRisqueKmlData(
+            val risque = ImportRisqueExpressData(
                 risqueId = it.risqueExpressId,
                 risqueLibelle = it.risqueExpressLibelle,
-                fileKml = null,
+                fileRisqueExpress = null,
             )
             if (risque.risqueId != null) {
                 eventBus.post(

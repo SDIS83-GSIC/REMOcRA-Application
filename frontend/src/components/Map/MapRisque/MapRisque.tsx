@@ -68,10 +68,10 @@ const MapRisque = () => {
         title="Carte des Risques"
         icon={<IconRisque />}
         right={
-          hasDroit(user, TYPE_DROIT.RISQUE_KML_A) && (
+          hasDroit(user, TYPE_DROIT.RISQUE_EXPRESS_A) && (
             <CreateButton
-              href={URLS.IMPORT_KML_RISQUE}
-              title={"Importer un fichier KML"}
+              href={URLS.IMPORT_RISQUE_EXPRESS}
+              title={"Importer un risque express"}
             />
           )
         }

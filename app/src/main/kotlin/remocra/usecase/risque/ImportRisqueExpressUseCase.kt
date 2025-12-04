@@ -7,7 +7,7 @@ import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
-import remocra.data.risque.ImportRisqueKmlData
+import remocra.data.risque.ImportRisqueExpressData
 import remocra.db.RisqueExpressRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -18,7 +18,7 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeOperation.INSERT) {
+class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueExpressData>(TypeOperation.INSERT) {
 
     @Inject
     lateinit var documentUtils: DocumentUtils
@@ -41,7 +41,7 @@ class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeO
         }
     }
 
-    override fun postEvent(element: ImportRisqueKmlData, userInfo: WrappedUserInfo) {
+    override fun postEvent(element: ImportRisqueExpressData, userInfo: WrappedUserInfo) {
         if (element.risqueId != null) {
             val risque = risqueExpressRepository.getById(element.risqueId)
             eventBus.post(
@@ -57,10 +57,10 @@ class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeO
         }
     }
 
-    override fun execute(userInfo: WrappedUserInfo, element: ImportRisqueKmlData): ImportRisqueKmlData {
-        if (element.fileKml != null) {
+    override fun execute(userInfo: WrappedUserInfo, element: ImportRisqueExpressData): ImportRisqueExpressData {
+        if (element.fileRisqueExpress != null) {
             val uuid = UUID.randomUUID()
-            val xmlString = element.fileKml.bufferedReader().use { it.readText() }
+            val xmlString = element.fileRisqueExpress.bufferedReader().use { it.readText() }
             val jsonString = XML.toJSONObject(xmlString).toString()
 
             risqueExpressRepository.insert(
@@ -68,13 +68,13 @@ class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueKmlData>(TypeO
                 libelle = element.risqueLibelle ?: "Risque sans nom",
                 geometries = jsonString,
             )
-            return element.copy(risqueId = uuid, fileKml = null)
+            return element.copy(risqueId = uuid, fileRisqueExpress = null)
         }
 
-        return element.copy(fileKml = null)
+        return element.copy(fileRisqueExpress = null)
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: ImportRisqueKmlData) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: ImportRisqueExpressData) {
         // no-op
     }
 }

@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.risque.ImportRisqueKmlData
+import remocra.data.risque.ImportRisqueExpressData
 import remocra.db.RisqueExpressRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.risque.DeleteRisquesExpressUseCase
@@ -51,10 +51,10 @@ class RisqueEndPoint : AbstractEndpoint() {
     ) =
         importRisqueExpressUseCase.execute(
             securityContext.userInfo,
-            ImportRisqueKmlData(
+            ImportRisqueExpressData(
                 risqueId = null,
                 risqueLibelle = httpRequest.getTextPartOrNull("risqueLibelle"),
-                fileKml = if (httpRequest.getPart("fileKml")?.contentType != null) httpRequest.getPart("fileKml").inputStream else null,
+                fileRisqueExpress = if (httpRequest.getPart("fileRisqueExpress")?.contentType != null) httpRequest.getPart("fileRisqueExpress").inputStream else null,
             ),
         ).wrap()
 

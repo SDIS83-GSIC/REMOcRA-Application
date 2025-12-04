@@ -3,7 +3,7 @@ import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
 import MapPermis from "./components/Map/MapPermis/MapPermis.tsx";
 import MapCartographiePerso from "./components/Map/MapPerso/MapCartographiePerso.tsx";
-import ImportKml from "./components/Map/MapRisque/ImportKml.tsx";
+import ImportRisqueExpress from "./components/Map/MapRisque/ImportRisqueExpress.tsx";
 import MapRisque from "./components/Map/MapRisque/MapRisque.tsx";
 import ModuleAdmin from "./components/ModuleRemocra/ModuleAdmin.tsx";
 import ModuleCouvertureHydraulique from "./components/ModuleRemocra/ModuleCouvertureHydraulique.tsx";
@@ -296,7 +296,7 @@ export const URLS = {
 
   // Module Carte des risques
   RISQUE: url`/risque`,
-  IMPORT_KML_RISQUE: url`/risque/import-kml`,
+  IMPORT_RISQUE_EXPRESS: url`/risque/import-risque-express`,
 
   // MODULE ADMIN
   MODULE_ADMIN: url`/admin/menu`,
@@ -1081,9 +1081,12 @@ export default [
     element: <Authorization Component={MapRisque} isPublic={true} />,
   },
   {
-    path: "/risque/import-kml",
+    path: "/risque/import-risque-express",
     element: (
-      <Authorization Component={ImportKml} droits={[TYPE_DROIT.RISQUE_KML_A]} />
+      <Authorization
+        Component={ImportRisqueExpress}
+        droits={[TYPE_DROIT.RISQUE_EXPRESS_A]}
+      />
     ),
   },
   {
