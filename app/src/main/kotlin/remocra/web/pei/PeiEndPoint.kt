@@ -35,6 +35,7 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.document.UpsertDocumentPeiUseCase
+import remocra.usecase.geometrie.CalculGeometrieUseCase
 import remocra.usecase.geometrie.GetCoordonneesBySrid
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.pei.DeletePeiUseCase
@@ -66,6 +67,8 @@ class PeiEndPoint : AbstractEndpoint() {
     @Inject lateinit var upsertDocumentPeiUseCase: UpsertDocumentPeiUseCase
 
     @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
+
+    @Inject lateinit var calculGeometrieUseCase: CalculGeometrieUseCase
 
     @Inject lateinit var getElementCarteUseCase: GetPointCarteUseCase
 
@@ -171,10 +174,14 @@ class PeiEndPoint : AbstractEndpoint() {
     @Path("/referentiel-for-upsert-pei/")
     @RequireDroits([Droit.PEI_R, Droit.PEI_U, Droit.PEI_C, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_ADRESSE_C, Droit.PEI_DEPLACEMENT_U, Droit.PEI_NUMERO_INTERNE_U])
     fun getReferentielUpdateOrCreatePei(
-        @QueryParam("geometry") geometry: Geometry?,
+        @QueryParam("coordonneeX") coordonneeX: String?,
+        @QueryParam("coordonneeY") coordonneeY: String?,
+        @QueryParam("srid") srid: Int,
         @QueryParam("peiId") peiId: UUID?,
-    ) =
-        Response.ok(peiUseCase.getInfoForUpdateOrCreate(geometry, peiId)).build()
+    ): Response {
+        val geometry = calculGeometrieUseCase.createPointWithSridFromCoordinates(coordonneeX, coordonneeY, srid)
+        return Response.ok(peiUseCase.getInfoForUpdateOrCreate(geometry, peiId)).build()
+    }
 
     @PUT
     @Path("/update")

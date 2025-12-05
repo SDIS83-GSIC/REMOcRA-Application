@@ -285,14 +285,9 @@ const Pei = ({
   } = useFormikContext();
   const selectDataState = useGet(
     url`/api/pei/referentiel-for-upsert-pei?${{
-      geometry:
-        "SRID=" +
-        values.typeSystemeSrid +
-        ";POINT(" +
-        values.coordonneeXToDisplay +
-        " " +
-        values.coordonneeYToDisplay +
-        ")",
+      coordonneeX: values.coordonneeXToDisplay,
+      coordonneeY: values.coordonneeYToDisplay,
+      srid: values.typeSystemeSrid,
       peiId: values.peiId,
     }}`,
   );

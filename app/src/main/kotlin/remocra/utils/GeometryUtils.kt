@@ -75,7 +75,7 @@ fun calculerCentroide(geometries: Collection<Geometry>): Point? {
 }
 
 fun transform(input: Geometry, targetCRS: CoordinateReferenceSystem, srid: Int): Geometry {
-    val sourceCRS = CRS.decode("EPSG:${input.srid}")
+    val sourceCRS = CRS.decode("EPSG:${input.srid}", true)
     val geom = JTS.transform(input, CRS.findMathTransform(sourceCRS, targetCRS))
         ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
     geom.srid = srid
