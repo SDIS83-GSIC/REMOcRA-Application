@@ -100,8 +100,14 @@ class BuildReferentielUseCase : AbstractUseCase() {
             listNatureDeci = dataCacheProvider.getNaturesDeci().values,
             listAnomalie = dataCacheProvider.getAnomalies().values,
             listAnomalieCategorie = dataCacheProvider.getAnomaliesCategories().values,
-            listPoidsAnomalie = referentielRepository.getAnomaliePoidsList().filter { it.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.isNotEmpty() ?: false },
-            listTypeVisite = TypeVisite.entries.map {
+            listPoidsAnomalie = referentielRepository.getAnomaliePoidsList()
+                .filter { it.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.isNotEmpty() ?: false }
+                .map { poidsAnomalie ->
+                    poidsAnomalie.copy(
+                        poidsAnomalieTypeVisite = poidsAnomalie.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.toTypedArray(),
+                    )
+                },
+            listTypeVisite = setTypeVisiteAutorisees.map {
                 CodeLibelleTypeVisite(
                     codeTypeVisite = it,
                     libelleTypeVisite = getLibelleTypeVisite(it),
