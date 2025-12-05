@@ -16,6 +16,8 @@ export enum GET_TYPE_GEOMETRY {
   OLDEB = "/api/oldeb",
 }
 
+const BUFFER_LOCALISATION = 100;
+
 /**
  * Permet de localiser les PEI, les tournées ou les communes et voie
  */
@@ -51,6 +53,17 @@ const useLocalisation = () => {
             return { geometry, srid };
           };
 
+          // Fonction utilitaire pour buffer un extent
+          const bufferExtent = (extent: number[], buffer: number) => {
+            // extent: [minX, minY, maxX, maxY]
+            return [
+              extent[0] - buffer,
+              extent[1] - buffer,
+              extent[2] + buffer,
+              extent[3] + buffer,
+            ];
+          };
+
           let extent, srid;
 
           switch (typeGeometry) {
@@ -64,18 +77,22 @@ const useLocalisation = () => {
             case GET_TYPE_GEOMETRY.TOURNEE:
             case GET_TYPE_GEOMETRY.INDISPONIBILITE_TEMP: {
               const geometries = resData.map(
-                (pei) => parseGeometry(pei.peiGeometrie).geometry,
+                (pei: { peiGeometrie: string }) =>
+                  parseGeometry(pei.peiGeometrie).geometry,
               );
               srid = parseGeometry(resData[0].peiGeometrie).srid;
-              extent = new GeometryCollection(geometries).getExtent();
-              listePeiId = resData.map((e) => e.peiId);
+              extent = bufferExtent(
+                new GeometryCollection(geometries).getExtent(),
+                BUFFER_LOCALISATION,
+              );
+              listePeiId = resData.map((e: { peiId: string }) => e.peiId);
               break;
             }
             case GET_TYPE_GEOMETRY.COMMUNE: {
               const { geometry, srid: parsedSrid } = parseGeometry(
                 resData.communeGeometry,
               );
-              extent = geometry.getExtent();
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
               srid = parsedSrid;
               break;
             }
@@ -85,14 +102,17 @@ const useLocalisation = () => {
                 (commune: string) => parseGeometry(commune).geometry,
               );
               srid = parseGeometry(resData[0]).srid;
-              extent = new GeometryCollection(geometries).getExtent();
+              extent = bufferExtent(
+                new GeometryCollection(geometries).getExtent(),
+                BUFFER_LOCALISATION,
+              );
               break;
             }
             case GET_TYPE_GEOMETRY.VOIE: {
               const { geometry, srid: parsedSrid } = parseGeometry(
                 resData.voieGeometry,
               );
-              extent = geometry.getExtent();
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
               srid = parsedSrid;
               break;
             }
@@ -100,7 +120,7 @@ const useLocalisation = () => {
               const { geometry, srid: parsedSrid } = parseGeometry(
                 resData.geometrie,
               );
-              extent = geometry.getExtent();
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
               srid = parsedSrid;
               break;
             }
