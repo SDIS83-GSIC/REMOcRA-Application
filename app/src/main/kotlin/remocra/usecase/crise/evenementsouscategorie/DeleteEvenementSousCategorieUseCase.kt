@@ -1,43 +1,48 @@
-package remocra.usecase.crise.typecrisecategorie
+package remocra.usecase.crise.evenementsouscategorie
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.EvenementSousCategorieWithComplementData
 import remocra.data.enums.ErrorType
 import remocra.db.EvenementSousCategorieRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateEvenementSousCategorieUseCase @Inject constructor(
+class DeleteEvenementSousCategorieUseCase @Inject constructor(
     private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
-) : AbstractCUDUseCase<EvenementSousCategorie>(TypeOperation.UPDATE) {
+) : AbstractCUDUseCase<EvenementSousCategorieWithComplementData>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {
-            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_FORBIDDEN_UPDATE)
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {
+            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_FORBIDDEN_REMOVAL)
         }
     }
 
     override fun checkContraintes(
         userInfo: WrappedUserInfo,
-        element: EvenementSousCategorie,
+        element: EvenementSousCategorieWithComplementData,
     ) {
-        // Pas de contraintes
+        if (evenementSousCategorieRepository.fetchExistsInEvenement(element.evenementSousCategorieId)) {
+            throw RemocraResponseException(ErrorType.ADMIN_NOMENC_IMPOSSIBLE_SUPPRIME)
+        }
     }
 
     override fun execute(
         userInfo: WrappedUserInfo,
-        element: EvenementSousCategorie,
-    ): EvenementSousCategorie {
-        evenementSousCategorieRepository.update(element)
+        element: EvenementSousCategorieWithComplementData,
+    ): EvenementSousCategorieWithComplementData {
+        // Supprimer les paramètres associés au type
+        evenementSousCategorieRepository.deleteComplementByEvenementSousCategorieId(element.evenementSousCategorieId)
+        // supprimer la catégorie
+        evenementSousCategorieRepository.delete(element.evenementSousCategorieId)
         return element
     }
 
     override fun postEvent(
-        element: EvenementSousCategorie,
+        element: EvenementSousCategorieWithComplementData,
         userInfo: WrappedUserInfo,
     ) {
         eventBus.post(

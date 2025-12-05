@@ -2,9 +2,11 @@ package remocra.utils
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.TypeEvent
 import remocra.db.ModeleCourrierRepository
 import remocra.db.RapportPersonnaliseRepository
 import remocra.db.RequeteSqlRepository
+import remocra.db.jooq.remocra.enums.TypeParametreEvenementComplement
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
@@ -45,6 +47,31 @@ class BuildDynamicForm : AbstractUseCase() {
                     },
                 )
             },
+        )
+
+    fun executeForEvenementComplement(userInfo: WrappedUserInfo, eventComplement: TypeEvent) =
+        execute(
+            userInfo,
+            dynamicForm = DynamicFormGenere(
+                dynamicFormId = eventComplement.id,
+                dynamicFormLibelle = eventComplement.libelle,
+                dynamicFormDescription = null,
+                listeDynamicFormParametre = eventComplement.parameters.map {
+                    DynamicFormParametreData(
+                        dynamicFormParametreId = it.sousCategorieComplementId,
+                        dynamicFormParametreCode = "",
+                        dynamicFormParametreLibelle = it.sousCategorieComplementLibelle ?: "",
+                        dynamicFormParametreSourceSql = it.sousCategorieComplementSql,
+                        dynamicFormParametreDescription = "",
+                        dynamicFormParametreSourceSqlId = it.sousCategorieComplementSqlId,
+                        dynamicFormParametreSourceSqlLibelle = it.sousCategorieComplementSqlLibelle,
+                        dynamicFormParametreValeurDefaut = it.sousCategorieComplementValeurDefaut,
+                        dynamicFormParametreIsRequired = false,
+                        dynamicFormParametreType = mapToRapportCourrier(it.sousCategorieComplementType),
+                        dynamicFormParametreOrdre = 0,
+                    )
+                },
+            ),
         )
 
     fun executeForRapportPerso(userInfo: WrappedUserInfo, rapportPersonnalise: RapportPersonnaliseRepository.RapportPersonnaliseGenere) =
@@ -108,16 +135,27 @@ class BuildDynamicForm : AbstractUseCase() {
         )
     }
 
+    // Mapper de TypeParametreEvenementComplement vers TypeParametreRapportCourrier
+    fun mapToRapportCourrier(param: TypeParametreEvenementComplement): TypeParametreRapportCourrier {
+        return when (param) {
+            TypeParametreEvenementComplement.CHECKBOX_INPUT -> TypeParametreRapportCourrier.CHECKBOX_INPUT
+            TypeParametreEvenementComplement.DATE_INPUT -> TypeParametreRapportCourrier.DATE_INPUT
+            TypeParametreEvenementComplement.NUMBER_INPUT -> TypeParametreRapportCourrier.NUMBER_INPUT
+            TypeParametreEvenementComplement.SELECT_INPUT -> TypeParametreRapportCourrier.SELECT_INPUT
+            TypeParametreEvenementComplement.TEXT_INPUT -> TypeParametreRapportCourrier.TEXT_INPUT
+        }
+    }
+
     data class DynamicFormWithParametre(
         val dynamicFormId: UUID,
         val dynamicFormLibelle: String,
         val dynamicFormDescription: String?,
-        val listeParametre: Collection<DynamicFormParametreFront>,
+        val listeParametre: Collection<DynamicFormParametreFront>?,
     )
 
     data class DynamicFormParametreFront(
         val dynamicFormParametreId: UUID,
-        val dynamicFormParametreLibelle: String,
+        val dynamicFormParametreLibelle: String?,
         val dynamicFormParametreCode: String,
         val listeSelectInput: List<IdLibelleDynamicForm>?,
         val dynamicFormParametreDescription: String?,

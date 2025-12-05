@@ -25,4 +25,10 @@ data class EvenementData(
     val evenementUtilisateurId: UUID?,
     val documents: Collection<DocumentEvenementData>? = null,
     val evenementStatutMode: EvenementStatutMode,
+    val evenementParametre: List<EvenementParametres>?,
+)
+
+data class EvenementParametres(
+    val idParam: UUID?,
+    val valueParam: String?,
 )

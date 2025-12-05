@@ -11,5 +11,5 @@ enum class TypeModuleRapportCourrier {
     DFCI,
     SIGNALEMENTS,
     RISQUES,
-    CRISE,
+    CRISES,
 }

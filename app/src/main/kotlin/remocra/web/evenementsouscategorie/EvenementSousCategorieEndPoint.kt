@@ -16,14 +16,15 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.EvenementSousCategorieWithComplementData
 import remocra.data.Params
+import remocra.data.SousCategorieComplement
 import remocra.db.EvenementSousCategorieRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeGeometry
-import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
-import remocra.usecase.crise.typecrisecategorie.CreateEvenementSousCategorieUseCase
-import remocra.usecase.crise.typecrisecategorie.DeleteEvenementSousCategorieUseCase
-import remocra.usecase.crise.typecrisecategorie.UpdateEvenementSousCategorieUseCase
+import remocra.usecase.crise.evenementsouscategorie.CreateEvenementSousCategorieUseCase
+import remocra.usecase.crise.evenementsouscategorie.DeleteEvenementSousCategorieUseCase
+import remocra.usecase.crise.evenementsouscategorie.UpdateEvenementSousCategorieUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -59,13 +60,13 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
     fun post(element: EvenementSousCategorieInput): Response {
         return createEvenementSousCategorieUseCase.execute(
             securityContext.userInfo,
-            EvenementSousCategorie(
-                evenementSousCategorieId = UUID.randomUUID(),
+            EvenementSousCategorieWithComplementData(
                 evenementSousCategorieCode = element.evenementSousCategorieCode,
                 evenementSousCategorieLibelle = element.evenementSousCategorieLibelle,
                 evenementSousCategorieTypeGeometrie = element.evenementSousCategorieTypeGeometrie,
-                evenementSousCategorieActif = element.evenementSousCategorieActif,
                 evenementSousCategorieEvenementCategorieId = element.evenementSousCategorieEvenementCategorieId,
+                evenementSousCategorieActif = element.evenementSousCategorieActif,
+                evenementSousCategorieComplement = element.evenementSousCategorieComplement,
             ),
         ).wrap()
     }
@@ -84,6 +85,9 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
 
         @FormParam("evenementSousCategorieActif")
         val evenementSousCategorieActif: Boolean = false
+
+        @FormParam("evenementSousCategorieComplement")
+        val evenementSousCategorieComplement: Collection<SousCategorieComplement> = emptyList()
     }
 
     @PUT
@@ -96,13 +100,14 @@ class EvenementSousCategorieEndPoint : AbstractEndpoint() {
     ): Response {
         return updateEvenementSousCategorieUseCase.execute(
             securityContext.userInfo,
-            EvenementSousCategorie(
+            EvenementSousCategorieWithComplementData(
                 evenementSousCategorieId = evenementSousCategorieId,
                 evenementSousCategorieCode = element.evenementSousCategorieCode,
                 evenementSousCategorieLibelle = element.evenementSousCategorieLibelle,
                 evenementSousCategorieTypeGeometrie = element.evenementSousCategorieTypeGeometrie,
                 evenementSousCategorieEvenementCategorieId = element.evenementSousCategorieEvenementCategorieId,
                 evenementSousCategorieActif = element.evenementSousCategorieActif,
+                evenementSousCategorieComplement = element.evenementSousCategorieComplement,
             ),
         ).wrap()
     }

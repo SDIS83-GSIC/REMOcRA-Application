@@ -5,19 +5,28 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.multiset
+import org.jooq.impl.DSL.selectDistinct
+import remocra.data.EvenementSousCategorieWithComplementData
+import remocra.data.EvenementSousCategoryData
 import remocra.data.Params
-import remocra.data.TypeCriseCategorieData
+import remocra.data.SousCategorieComplement
 import remocra.db.jooq.remocra.enums.TypeGeometry
+import remocra.db.jooq.remocra.enums.TypeParametreEvenementComplement
+import remocra.db.jooq.remocra.tables.pojos.CriseEvenementComplement
 import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
+import remocra.db.jooq.remocra.tables.pojos.LEvenementCriseEvenementComplement
+import remocra.db.jooq.remocra.tables.references.CRISE_EVENEMENT_COMPLEMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_SOUS_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT
 import java.util.UUID
 import kotlin.math.absoluteValue
 
 class EvenementSousCategorieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
-    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<TypeCriseCategorieData> =
+    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<EvenementSousCategoryData> =
         dsl.select(
             EVENEMENT_SOUS_CATEGORIE.ID,
             EVENEMENT_SOUS_CATEGORIE.CODE,
@@ -93,10 +102,48 @@ class EvenementSousCategorieRepository @Inject constructor(private val dsl: DSLC
             .where(EVENEMENT_SOUS_CATEGORIE.ID.eq(evenementSousCategorie.evenementSousCategorieId))
             .execute()
 
-    fun getById(evenementSousCategorie: UUID): EvenementSousCategorie =
-        dsl.selectFrom(EVENEMENT_SOUS_CATEGORIE)
-            .where(EVENEMENT_SOUS_CATEGORIE.ID.eq(evenementSousCategorie))
-            .fetchSingleInto()
+    fun getById(evenementSousCategorieId: UUID): EvenementSousCategorieWithComplementData = dsl.select(
+        EVENEMENT_SOUS_CATEGORIE.ID,
+        EVENEMENT_SOUS_CATEGORIE.CODE,
+        EVENEMENT_SOUS_CATEGORIE.LIBELLE,
+        EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE,
+        EVENEMENT_SOUS_CATEGORIE.EVENEMENT_CATEGORIE_ID,
+        EVENEMENT_SOUS_CATEGORIE.ACTIF,
+        multiset(
+            selectDistinct(
+                CRISE_EVENEMENT_COMPLEMENT.ID,
+                CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_SOUS_CATEGORIE_ID,
+                CRISE_EVENEMENT_COMPLEMENT.LIBELLE,
+                CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL,
+                CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_ID,
+                CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_LIBELLE,
+                CRISE_EVENEMENT_COMPLEMENT.VALEUR_DEFAUT,
+                CRISE_EVENEMENT_COMPLEMENT.EST_REQUIS,
+                CRISE_EVENEMENT_COMPLEMENT.TYPE,
+            )
+                .from(CRISE_EVENEMENT_COMPLEMENT)
+                .where(CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_SOUS_CATEGORIE_ID.eq(EVENEMENT_SOUS_CATEGORIE.ID)),
+        ).convertFrom { record ->
+            record?.map { r ->
+                SousCategorieComplement(
+                    sousCategorieComplementId = r.value1() as UUID,
+                    evenementSousCategorieId = r.value2() as UUID,
+                    sousCategorieComplementLibelle = r.value3().toString(),
+                    sousCategorieComplementSql = r.value4().toString(),
+                    sousCategorieComplementSqlId = r.value5().toString(),
+                    sousCategorieComplementSqlLibelle = r.value6().toString(),
+                    sousCategorieComplementValeurDefaut = r.value7().toString(),
+                    sousCategorieComplementEstRequis = r.value8() as Boolean,
+                    sousCategorieComplementType = r.value9() as TypeParametreEvenementComplement,
+                )
+            }
+        }
+            .`as`("evenementSousCategorieComplement"),
+
+    )
+        .from(EVENEMENT_SOUS_CATEGORIE)
+        .where(EVENEMENT_SOUS_CATEGORIE.ID.eq(evenementSousCategorieId))
+        .fetchSingleInto()
 
     fun delete(evenementSousCategorieId: UUID) =
         dsl.deleteFrom(EVENEMENT_SOUS_CATEGORIE)
@@ -105,4 +152,49 @@ class EvenementSousCategorieRepository @Inject constructor(private val dsl: DSLC
 
     fun fetchExistsInEvenement(evenementSousCategorieId: UUID) =
         dsl.fetchExists(dsl.select(EVENEMENT.ID).from(EVENEMENT).where(EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.eq(evenementSousCategorieId)))
+
+    fun upsertSousTypeParametre(criseEvenementComplement: CriseEvenementComplement) {
+        val record = dsl.newRecord(CRISE_EVENEMENT_COMPLEMENT, criseEvenementComplement)
+        dsl.insertInto(CRISE_EVENEMENT_COMPLEMENT)
+            .set(record)
+            .onConflict(CRISE_EVENEMENT_COMPLEMENT.ID)
+            .doUpdate()
+            .set(CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_SOUS_CATEGORIE_ID, criseEvenementComplement.criseEvenementComplementEvenementSousCategorieId)
+            .set(CRISE_EVENEMENT_COMPLEMENT.LIBELLE, criseEvenementComplement.criseEvenementComplementLibelle)
+            .set(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL, criseEvenementComplement.criseEvenementComplementSourceSql)
+            .set(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_ID, criseEvenementComplement.criseEvenementComplementSourceSqlId)
+            .set(CRISE_EVENEMENT_COMPLEMENT.SOURCE_SQL_LIBELLE, criseEvenementComplement.criseEvenementComplementSourceSqlLibelle)
+            .set(CRISE_EVENEMENT_COMPLEMENT.VALEUR_DEFAUT, criseEvenementComplement.criseEvenementComplementValeurDefaut)
+            .set(CRISE_EVENEMENT_COMPLEMENT.EST_REQUIS, criseEvenementComplement.criseEvenementComplementEstRequis)
+            .set(CRISE_EVENEMENT_COMPLEMENT.TYPE, criseEvenementComplement.criseEvenementComplementType)
+            .execute()
+    }
+
+    fun deleteComplementByEvenementSousCategorieId(evenementSousCategorieId: UUID) {
+        dsl.deleteFrom(CRISE_EVENEMENT_COMPLEMENT)
+            .where(CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_SOUS_CATEGORIE_ID.eq(evenementSousCategorieId))
+            .execute()
+    }
+
+    fun upsertEvenementComplement(lEvenementCriseEvenementComplement: LEvenementCriseEvenementComplement) {
+        dsl.insertInto(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT)
+            .set(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_ID, lEvenementCriseEvenementComplement.evenementId)
+            .set(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.CRISE_EVENEMENT_COMPLEMENT_ID, lEvenementCriseEvenementComplement.criseEvenementComplementId)
+            .set(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.VALEUR, lEvenementCriseEvenementComplement.valeur)
+            .onDuplicateKeyUpdate() // correspond à la clé primaire
+            .set(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.VALEUR, lEvenementCriseEvenementComplement.valeur)
+            .execute()
+    }
+
+    fun deleteCriseEvenementComplementByComplementId(complementId: UUID) {
+        dsl.deleteFrom(CRISE_EVENEMENT_COMPLEMENT)
+            .where(CRISE_EVENEMENT_COMPLEMENT.ID.eq(complementId))
+            .execute()
+    }
+
+    fun deleteLEvenementCriseComplementByComplementId(complementId: UUID) {
+        dsl.deleteFrom(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT)
+            .where(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.CRISE_EVENEMENT_COMPLEMENT_ID.eq(complementId))
+            .execute()
+    }
 }

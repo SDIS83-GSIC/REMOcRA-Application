@@ -10,16 +10,20 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import remocra.data.EvenementData
+import remocra.data.EvenementParametres
 import remocra.data.Params
 import remocra.db.jooq.remocra.enums.EvenementStatut
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Document
+import remocra.db.jooq.remocra.tables.pojos.Evenement
 import remocra.db.jooq.remocra.tables.references.CRISE
+import remocra.db.jooq.remocra.tables.references.CRISE_EVENEMENT_COMPLEMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_SOUS_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT
 import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TYPE_CRISE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -183,18 +187,24 @@ class EvenementRepository @Inject constructor(
     fun updateGeometry(evenementId: UUID, evenementGeometrie: Geometry): Int =
         dsl.update(EVENEMENT).set(EVENEMENT.GEOMETRIE, evenementGeometrie).where(EVENEMENT.ID.eq(evenementId)).execute()
 
-    fun getAllEvents(criseId: UUID, params: Filter? = null, dateDebExtraction: ZonedDateTime? = null, dateFinExtraction: ZonedDateTime? = null, state: EvenementStatutMode? = null): Collection<EvenementData> =
+    fun getAllEvents(
+        criseId: UUID,
+        params: Filter? = null,
+        dateDebExtraction: ZonedDateTime? = null,
+        dateFinExtraction: ZonedDateTime? = null,
+        state: EvenementStatutMode? = null,
+    ): Collection<EvenementData> =
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS.convertFrom { it?.split(",")?.map { tag -> tag.trim() } ?: "" }.`as`("evenementTags"),
+            EVENEMENT.TAGS.convertFrom { tag -> tag?.split(",")?.map { tag -> tag.trim() }?.filter { it.isNotEmpty() } ?: emptyList() }.`as`("evenementTags"),
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
             EVENEMENT.IS_CLOSED,
             EVENEMENT.DESCRIPTION,
             EVENEMENT.DATE_CLOTURE,
-            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID,
+            EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.`as`("evenementSousCategorieId"),
             EVENEMENT.DATE_CONSTAT,
             EVENEMENT.STATUT,
             EVENEMENT.GEOMETRIE,
@@ -260,7 +270,7 @@ class EvenementRepository @Inject constructor(
                             dsl.select(EVENEMENT_CATEGORIE.ID)
                                 .from(criseCat)
                                 .where(criseCat.field(EVENEMENT_CATEGORIE.LIBELLE)?.eq(EVENEMENT_CATEGORIE.LIBELLE)),
-                        ),
+                        ).and(EVENEMENT_SOUS_CATEGORIE.ACTIF.eq(true)),
                     ),
 
             ).convertFrom { record ->
@@ -306,6 +316,22 @@ class EvenementRepository @Inject constructor(
             .from(EVENEMENT_SOUS_CATEGORIE)
             .fetchInto()
 
+    fun getTypeEventByGeometry(hasGeometry: Boolean): Collection<EvenementSousCategorie> =
+        dsl.select(
+            EVENEMENT_SOUS_CATEGORIE.ID,
+            EVENEMENT_SOUS_CATEGORIE.CODE,
+            EVENEMENT_SOUS_CATEGORIE.LIBELLE,
+            EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE,
+        )
+            .from(EVENEMENT_SOUS_CATEGORIE)
+            .where(
+                if (hasGeometry) {
+                    EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE.isNotNull
+                } else
+                    EVENEMENT_SOUS_CATEGORIE.TYPE_GEOMETRIE.isNull,
+            )
+            .fetchInto(EvenementSousCategorie::class.java)
+
     data class DocumentEvenementData(
         val documentId: UUID,
         val documentNomFichier: String,
@@ -322,7 +348,7 @@ class EvenementRepository @Inject constructor(
         dsl.select(
             EVENEMENT.ID,
             EVENEMENT.CRISE_ID,
-            EVENEMENT.TAGS.convertFrom { it?.split(",")?.map { tag -> tag.trim() } ?: "" }.`as`("evenementTags"),
+            EVENEMENT.TAGS.convertFrom { it?.takeIf { it.isNotEmpty() }?.split(",")?.map { tag -> tag.trim() } ?: emptyList() },
             EVENEMENT.ORIGINE,
             EVENEMENT.LIBELLE,
             EVENEMENT.IMPORTANCE,
@@ -352,6 +378,23 @@ class EvenementRepository @Inject constructor(
                     )
                 }
             }.`as`("documents"),
+            multiset(
+                selectDistinct(
+                    L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.CRISE_EVENEMENT_COMPLEMENT_ID,
+                    L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.VALEUR,
+                )
+                    .from(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT)
+                    .join(CRISE_EVENEMENT_COMPLEMENT)
+                    .on(CRISE_EVENEMENT_COMPLEMENT.ID.eq(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.CRISE_EVENEMENT_COMPLEMENT_ID))
+                    .where(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.EVENEMENT_ID.eq(EVENEMENT.ID)),
+            ).convertFrom { record ->
+                record?.map {
+                    EvenementParametres(
+                        idParam = it.get(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.CRISE_EVENEMENT_COMPLEMENT_ID, UUID::class.java),
+                        valueParam = it.get(L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT.VALEUR, String::class.java),
+                    )
+                }
+            }.`as`("evenementParametre"),
         )
             .from(EVENEMENT)
             .where(EVENEMENT.ID.eq(evenementId))
@@ -487,4 +530,10 @@ class EvenementRepository @Inject constructor(
             .from(EVENEMENT_SOUS_CATEGORIE)
             .where(filterBy?.toCondition() ?: DSL.noCondition())
             .fetchSingleInto()
+
+    fun getEventIdBySubType(typeCriseCategorieId: UUID): Collection<Evenement> =
+        dsl.select(*EVENEMENT.fields())
+            .from(EVENEMENT)
+            .where(EVENEMENT.EVENEMENT_SOUS_CATEGORIE_ID.eq(typeCriseCategorieId))
+            .fetchInto()
 }

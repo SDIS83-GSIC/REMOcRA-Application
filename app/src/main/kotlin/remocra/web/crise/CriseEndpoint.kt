@@ -30,6 +30,7 @@ import remocra.data.DataTableau
 import remocra.data.DocumentsData
 import remocra.data.EvenementData
 import remocra.data.EvenementGeometrieData
+import remocra.data.EvenementParametres
 import remocra.data.MessageData
 import remocra.data.Params
 import remocra.data.enums.TypeElementCarte
@@ -244,10 +245,12 @@ class CriseEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/evenement/get-type-evenement")
-    @Public("Les types d'évenements ne sont pas liées à un droit.")
-    fun getTypeEventForSelect(): Response {
+    @Public("Les sous categories d'évènements ne sont pas liées à un droit.")
+    fun getTypeEventForSelect(
+        @QueryParam("evenementSousCategorieId") evenementSousCategorieId: UUID?,
+    ): Response {
         return Response.ok(
-            evenementRepository.getTypeEventForSelect(),
+            criseUseCase.getSousCategorieEvenement(securityContext.userInfo, evenementSousCategorieId),
         ).build()
     }
 
@@ -457,14 +460,16 @@ class CriseEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.CRISE_U])
     @Produces(MediaType.APPLICATION_JSON)
     fun createEvent(
-        @PathParam("criseId")
-        criseId: UUID,
-        @PathParam("state")
-        state: EvenementStatutMode,
+        @PathParam("criseId") criseId: UUID,
+        @PathParam("state") state: EvenementStatutMode,
         @Context httpRequest: HttpServletRequest,
     ): Response {
         val evenementId = UUID.randomUUID()
         val docsEvenement = getDocumentCrise(evenementId, httpRequest)
+
+        val evenementParametreText = httpRequest.getTextPart("evenementParametre")
+        val evenementParametre = if (evenementParametreText == "undefined") { null } else { objectMapper.readValue<List<EvenementParametres>>(evenementParametreText) }
+
         return createEventUseCase.execute(
             securityContext.userInfo,
             EvenementData(
@@ -477,13 +482,14 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementImportance = httpRequest.getTextPart("evenementImportance").toInt(),
                 evenementTags = httpRequest.getTextPart("evenementTags").split(','),
                 evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
-                evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
+                evenementDateCloture = null, // un évènement n'a pas de date de cloture lorsqu'il est créé
                 evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
                 listeDocuments = docsEvenement,
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
                 evenementStatutMode = state,
+                evenementParametre = evenementParametre,
             ),
         ).wrap()
     }
@@ -548,6 +554,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
                 evenementUtilisateurId = UUID.fromString(httpRequest.getTextPart("evenementUtilisateurId")),
                 evenementStatutMode = state,
+                evenementParametre = objectMapper.readValue<List<EvenementParametres>>(httpRequest.getTextPart("evenementParametre")),
             )
         return updateEvenementUseCase.execute(
             userInfo = securityContext.userInfo,

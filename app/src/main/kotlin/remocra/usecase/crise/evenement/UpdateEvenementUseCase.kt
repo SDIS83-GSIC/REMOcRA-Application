@@ -7,11 +7,13 @@ import remocra.data.EvenementData
 import remocra.data.MessageData
 import remocra.data.enums.ErrorType
 import remocra.db.EvenementRepository
+import remocra.db.EvenementSousCategorieRepository
 import remocra.db.MessageRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.EvenementStatut
+import remocra.db.jooq.remocra.tables.pojos.LEvenementCriseEvenementComplement
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
@@ -23,6 +25,8 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
     @Inject lateinit var evenementRepository: EvenementRepository
 
     @Inject lateinit var messageRepository: MessageRepository
+
+    @Inject lateinit var typeCriseEvenementRepository: EvenementSousCategorieRepository
 
     @Inject private lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
 
@@ -58,7 +62,7 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: EvenementData): EvenementData {
-        // - evenement
+        // - évènement
         val newElement = if (element.evenementEstFerme == true) {
             element.copy(evenementStatut = EvenementStatut.CLOS, evenementDateCloture = dateUtils.now())
         } else {
@@ -66,6 +70,21 @@ class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOp
         }
 
         evenementRepository.updateEvenement(newElement)
+
+        // - complement sur évènement
+        element.evenementParametre?.forEach { param ->
+            // créer n blocs de sauvegarde des données des compléments
+            if (param.idParam != null) {
+                typeCriseEvenementRepository.upsertEvenementComplement(
+                    LEvenementCriseEvenementComplement(
+                        evenementId = element.evenementId,
+                        criseEvenementComplementId = param.idParam,
+                        valeur = param.valueParam,
+                    ),
+                )
+            }
+        }
+
         // - document
         if (element.listeDocuments != null) {
             upsertDocumentEvenementUseCase.execute(userInfo, element.listeDocuments, transactionManager)
