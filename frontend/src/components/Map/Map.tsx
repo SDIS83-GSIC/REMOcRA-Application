@@ -301,7 +301,7 @@ export const useMapComponent = ({
           coordinateFormat:
             afficheCoordonneesState.data?.[
               PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
-            ].parametreValeur === TYPE_AFFICHAGE_COORDONNEES.DEGRES_DECIMAUX
+            ].parametreValeur !== TYPE_AFFICHAGE_COORDONNEES.X_Y
               ? (coordinate) => {
                   if (!coordinate) {
                     return "";
@@ -311,11 +311,22 @@ export const useMapComponent = ({
                     projection.name,
                     EPSG_4326,
                   );
-                  return (
-                    degreesToStringHDMS("NS", coord[1], 4) +
-                    " " +
-                    degreesToStringHDMS("EO", coord[0], 4)
-                  );
+                  let result: string;
+
+                  if (
+                    afficheCoordonneesState.data?.[
+                      PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
+                    ].parametreValeur ===
+                    TYPE_AFFICHAGE_COORDONNEES.DEGRES_SEXAGESIMAUX
+                  ) {
+                    result =
+                      degreesToStringHDMS("NS", coord[1], 4) +
+                      " " +
+                      degreesToStringHDMS("EO", coord[0], 4);
+                  } else {
+                    result = coord[0] + " " + coord[1];
+                  }
+                  return result;
                 }
               : createStringXY(4),
           projection: projection.name,
