@@ -863,24 +863,30 @@ const useTooltipMap = ({
       map.on("singleclick", (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
 
-        map.forEachFeatureAtPixel(pixel, function (feature) {
-          const coordinate = event.coordinate;
-          setFeatureSelect(feature);
+        map.forEachFeatureAtPixel(
+          pixel,
+          function (feature) {
+            const coordinate = event.coordinate;
+            setFeatureSelect(feature);
 
-          const over = new Overlay({
-            element: ref.current,
-            positioning: "bottom-center",
-            position: coordinate,
-            autoPan: {
-              animation: {
-                duration: 250,
+            const over = new Overlay({
+              element: ref.current,
+              positioning: "bottom-center",
+              position: coordinate,
+              autoPan: {
+                animation: {
+                  duration: 250,
+                },
               },
-            },
-          });
+            });
 
-          map.addOverlay(over);
-          setOverlay(over);
-        });
+            map.addOverlay(over);
+            setOverlay(over);
+          },
+          {
+            hitTolerance: 15,
+          },
+        );
       });
     }
   }, [map, ref, disabled]);
