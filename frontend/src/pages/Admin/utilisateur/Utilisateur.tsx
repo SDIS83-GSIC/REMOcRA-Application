@@ -75,7 +75,8 @@ const Utilisateur = () => {
     url`/api/groupe-fonctionnalites/profils`,
   );
 
-  const { values, setValues } = useFormikContext<UtilisateurType>();
+  const { values, setValues, setFieldValue } =
+    useFormikContext<UtilisateurType>();
 
   useEffect(() => {
     setGroupeFonctionnalitesDeduit(
@@ -171,8 +172,11 @@ const Utilisateur = () => {
                 (e: IdCodeLibelleType) =>
                   e.id === values.utilisateurOrganismeId,
               )}
+              onChange={(e) => {
+                setFieldValue("utilisateurOrganismeId", e?.id);
+                setFieldValue("utilisateurProfilUtilisateurId", undefined);
+              }}
               required={true}
-              setValues={setValues}
             />
           </Col>
           <Col className="mt-3  d-flex align-items-center justify-content-center display-6">
@@ -181,7 +185,23 @@ const Utilisateur = () => {
           <Col>
             <SelectForm
               name={"utilisateurProfilUtilisateurId"}
-              listIdCodeLibelle={profilUtilisateurList}
+              listIdCodeLibelle={profilUtilisateurList?.filter(
+                (profil: { id: string | any[] }) =>
+                  groupeFonctionnalitesWithProfilsList
+                    ?.filter(
+                      (item: { profilOrganismeId: string }) =>
+                        item.profilOrganismeId ===
+                        organismeList?.find(
+                          (e: { id: string }) =>
+                            e.id === values.utilisateurOrganismeId,
+                        )?.lienId,
+                    )
+                    .map(
+                      (item: { profilUtilisateurId: any }) =>
+                        item.profilUtilisateurId,
+                    )
+                    .includes(profil.id),
+              )}
               label="Profil utilisateur"
               defaultValue={profilUtilisateurList?.find(
                 (e: IdCodeLibelleType) =>
