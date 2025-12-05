@@ -19,6 +19,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.CoucheMetadata
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
+import remocra.db.jooq.remocra.tables.CriseEvenementComplement
 import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
@@ -56,6 +57,7 @@ import remocra.db.jooq.remocra.tables.LCriseDocument
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
+import remocra.db.jooq.remocra.tables.LEvenementCriseEvenementComplement
 import remocra.db.jooq.remocra.tables.LEvenementDocument
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheMetadata
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
@@ -243,6 +245,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
     val CRISE: Crise get() = Crise.CRISE
 
     /**
+     * The table <code>remocra.crise_evenement_complement</code>.
+     */
+    val CRISE_EVENEMENT_COMPLEMENT: CriseEvenementComplement get() = CriseEvenementComplement.CRISE_EVENEMENT_COMPLEMENT
+
+    /**
      * The table <code>remocra.crise_indicateur</code>.
      */
     val CRISE_INDICATEUR: CriseIndicateur get() = CriseIndicateur.CRISE_INDICATEUR
@@ -426,6 +433,11 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>remocra.l_diametre_nature</code>.
      */
     val L_DIAMETRE_NATURE: LDiametreNature get() = LDiametreNature.L_DIAMETRE_NATURE
+
+    /**
+     * The table <code>remocra.l_evenement_crise_evenement_complement</code>.
+     */
+    val L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT: LEvenementCriseEvenementComplement get() = LEvenementCriseEvenementComplement.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT
 
     /**
      * The table <code>remocra.l_evenement_document</code>.
@@ -961,6 +973,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         CoucheMetadata.COUCHE_METADATA,
         Courrier.COURRIER,
         Crise.CRISE,
+        CriseEvenementComplement.CRISE_EVENEMENT_COMPLEMENT,
         CriseIndicateur.CRISE_INDICATEUR,
         Dashboard.DASHBOARD,
         DashboardComponent.DASHBOARD_COMPONENT,
@@ -998,6 +1011,7 @@ open class Remocra : SchemaImpl("remocra", DefaultCatalog.DEFAULT_CATALOG) {
         LDashboardProfil.L_DASHBOARD_PROFIL,
         LDebitSimultaneMesurePei.L_DEBIT_SIMULTANE_MESURE_PEI,
         LDiametreNature.L_DIAMETRE_NATURE,
+        LEvenementCriseEvenementComplement.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT,
         LEvenementDocument.L_EVENEMENT_DOCUMENT,
         LGroupeFonctionnalitesCoucheMetadata.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA,
         LGroupeFonctionnalitesDocumentHabilitable.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE,

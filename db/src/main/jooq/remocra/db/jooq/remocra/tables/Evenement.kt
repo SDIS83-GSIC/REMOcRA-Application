@@ -35,11 +35,14 @@ import remocra.db.jooq.remocra.keys.EVENEMENT_PKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_CRISE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_UTILISATEUR_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT__L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT_EVENEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_EVENEMENT_DOCUMENT__L_EVENEMENT_DOCUMENT_EVENEMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.MESSAGE_EVENEMENT__MESSAGE_EVENEMENT_EVENEMENT_ID_FKEY
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
+import remocra.db.jooq.remocra.tables.CriseEvenementComplement.CriseEvenementComplementPath
 import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.EvenementSousCategorie.EvenementSousCategoriePath
+import remocra.db.jooq.remocra.tables.LEvenementCriseEvenementComplement.LEvenementCriseEvenementComplementPath
 import remocra.db.jooq.remocra.tables.LEvenementDocument.LEvenementDocumentPath
 import remocra.db.jooq.remocra.tables.MessageEvenement.MessageEvenementPath
 import remocra.db.jooq.remocra.tables.Utilisateur.UtilisateurPath
@@ -253,6 +256,23 @@ open class Evenement(
     val utilisateur: UtilisateurPath
         get(): UtilisateurPath = utilisateur()
 
+    private lateinit var _lEvenementCriseEvenementComplement: LEvenementCriseEvenementComplementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_evenement_crise_evenement_complement</code> table
+     */
+    fun lEvenementCriseEvenementComplement(): LEvenementCriseEvenementComplementPath {
+        if (!this::_lEvenementCriseEvenementComplement.isInitialized) {
+            _lEvenementCriseEvenementComplement = LEvenementCriseEvenementComplementPath(this, null, L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT__L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT_EVENEMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lEvenementCriseEvenementComplement
+    }
+
+    val lEvenementCriseEvenementComplement: LEvenementCriseEvenementComplementPath
+        get(): LEvenementCriseEvenementComplementPath = lEvenementCriseEvenementComplement()
+
     private lateinit var _lEvenementDocument: LEvenementDocumentPath
 
     /**
@@ -286,6 +306,13 @@ open class Evenement(
 
     val messageEvenement: MessageEvenementPath
         get(): MessageEvenementPath = messageEvenement()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.crise_evenement_complement</code> table
+     */
+    val criseEvenementComplement: CriseEvenementComplementPath
+        get(): CriseEvenementComplementPath = lEvenementCriseEvenementComplement().criseEvenementComplement()
 
     /**
      * Get the implicit many-to-many join path to the

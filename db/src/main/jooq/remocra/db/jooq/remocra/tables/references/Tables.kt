@@ -15,6 +15,7 @@ import remocra.db.jooq.remocra.tables.Couche
 import remocra.db.jooq.remocra.tables.CoucheMetadata
 import remocra.db.jooq.remocra.tables.Courrier
 import remocra.db.jooq.remocra.tables.Crise
+import remocra.db.jooq.remocra.tables.CriseEvenementComplement
 import remocra.db.jooq.remocra.tables.CriseIndicateur
 import remocra.db.jooq.remocra.tables.Dashboard
 import remocra.db.jooq.remocra.tables.DashboardComponent
@@ -52,6 +53,7 @@ import remocra.db.jooq.remocra.tables.LCriseDocument
 import remocra.db.jooq.remocra.tables.LDashboardProfil
 import remocra.db.jooq.remocra.tables.LDebitSimultaneMesurePei
 import remocra.db.jooq.remocra.tables.LDiametreNature
+import remocra.db.jooq.remocra.tables.LEvenementCriseEvenementComplement
 import remocra.db.jooq.remocra.tables.LEvenementDocument
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesCoucheMetadata
 import remocra.db.jooq.remocra.tables.LGroupeFonctionnalitesDocumentHabilitable
@@ -215,6 +217,11 @@ val COURRIER: Courrier = Courrier.COURRIER
  * The table <code>remocra.crise</code>.
  */
 val CRISE: Crise = Crise.CRISE
+
+/**
+ * The table <code>remocra.crise_evenement_complement</code>.
+ */
+val CRISE_EVENEMENT_COMPLEMENT: CriseEvenementComplement = CriseEvenementComplement.CRISE_EVENEMENT_COMPLEMENT
 
 /**
  * The table <code>remocra.crise_indicateur</code>.
@@ -400,6 +407,11 @@ val L_DEBIT_SIMULTANE_MESURE_PEI: LDebitSimultaneMesurePei = LDebitSimultaneMesu
  * The table <code>remocra.l_diametre_nature</code>.
  */
 val L_DIAMETRE_NATURE: LDiametreNature = LDiametreNature.L_DIAMETRE_NATURE
+
+/**
+ * The table <code>remocra.l_evenement_crise_evenement_complement</code>.
+ */
+val L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT: LEvenementCriseEvenementComplement = LEvenementCriseEvenementComplement.L_EVENEMENT_CRISE_EVENEMENT_COMPLEMENT
 
 /**
  * The table <code>remocra.l_evenement_document</code>.

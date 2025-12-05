@@ -26,11 +26,13 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeGeometry
+import remocra.db.jooq.remocra.keys.CRISE_EVENEMENT_COMPLEMENT__CRISE_EVENEMENT_COMPLEMENT_CRISE_EVENEMENT_COMPLEMENT_EVEN_FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT_SOUS_CATEGORIE__TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CRISE_CATEGORIE__FKEY
 import remocra.db.jooq.remocra.keys.EVENEMENT__EVENEMENT_EVENEMENT_TYPE_CRISE_CATEGORIE_ID_FKEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_CATEGORIE_PKEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_CODE_KEY
 import remocra.db.jooq.remocra.keys.TYPE_CRISE_CATEGORIE_TYPE_CRISE_CATEGORIE_LIBELLE_KEY
+import remocra.db.jooq.remocra.tables.CriseEvenementComplement.CriseEvenementComplementPath
 import remocra.db.jooq.remocra.tables.Evenement.EvenementPath
 import remocra.db.jooq.remocra.tables.EvenementCategorie.EvenementCategoriePath
 import java.util.UUID
@@ -173,6 +175,23 @@ open class EvenementSousCategorie(
 
     val evenementCategorie: EvenementCategoriePath
         get(): EvenementCategoriePath = evenementCategorie()
+
+    private lateinit var _criseEvenementComplement: CriseEvenementComplementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.crise_evenement_complement</code> table
+     */
+    fun criseEvenementComplement(): CriseEvenementComplementPath {
+        if (!this::_criseEvenementComplement.isInitialized) {
+            _criseEvenementComplement = CriseEvenementComplementPath(this, null, CRISE_EVENEMENT_COMPLEMENT__CRISE_EVENEMENT_COMPLEMENT_CRISE_EVENEMENT_COMPLEMENT_EVEN_FKEY.inverseKey)
+        }
+
+        return _criseEvenementComplement
+    }
+
+    val criseEvenementComplement: CriseEvenementComplementPath
+        get(): CriseEvenementComplementPath = criseEvenementComplement()
 
     private lateinit var _evenement: EvenementPath
 
