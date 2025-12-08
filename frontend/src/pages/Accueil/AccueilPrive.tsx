@@ -51,7 +51,9 @@ const AccueilPrive = ({ user }: { user: UtilisateurEntity }) => {
             {Array.from(values).map((e) => {
               const listeLink = getLinks(e.moduleType, user);
               const aLeDroit = listeLink?.some((e) => e.aLeDroit === true);
-              const hasHtmlContent = e.moduleContenuHtml != null;
+              const hasHtmlContent =
+                e.moduleContenuHtml != null &&
+                e.moduleContenuHtml.trim() !== "";
               const isDocumentWithRight =
                 e.moduleType === TypeModuleRemocra.DOCUMENT &&
                 hasDroit(user, TYPE_DROIT.DOCUMENTS_R);
