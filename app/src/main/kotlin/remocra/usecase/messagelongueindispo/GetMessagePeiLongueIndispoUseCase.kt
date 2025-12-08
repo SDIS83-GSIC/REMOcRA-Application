@@ -76,17 +76,19 @@ class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
         val nombreJoursIndispo = parametresProvider.getParametreInt(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_JOURS.name)
             ?: return null
 
+        if (userInfo.isSuperAdmin) {
+            return null
+        }
+
         // On regarde si l'utilisateur connecté a un type organisme compris dans ceux à notifier
-        if (!userInfo.isSuperAdmin) {
-            val typeOrganismeUtilisateurConnecte = typeOrganismeRepository
-                .getUserTypeOrganisme(userInfo.organismeId!!)
+        val typeOrganismeUtilisateurConnecte = typeOrganismeRepository
+            .getUserTypeOrganisme(userInfo.organismeId!!)
 
-            val listTypeOrganisme = parametresProvider.get().mapParametres
-                .getListOfString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME.name, objectMapper) ?: listOf()
+        val listTypeOrganisme = parametresProvider.get().mapParametres
+            .getListOfString(ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME.name, objectMapper) ?: listOf()
 
-            if (!listTypeOrganisme.contains(typeOrganismeUtilisateurConnecte)) {
-                return null
-            }
+        if (!listTypeOrganisme.contains(typeOrganismeUtilisateurConnecte)) {
+            return null
         }
 
         // On va ensuite chercher les PEI qui sont indisponibles depuis X jours
