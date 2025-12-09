@@ -23,4 +23,17 @@ abstract class AbstractEndpoint {
             is AbstractUseCase.Result.Conflict -> conflict().text(this.message).build()
         }
     }
+
+    /** Comme [wrap] mais permet de rien renvoyer dans la response en cas de succès. */
+    fun AbstractUseCase.Result.wrapNoContent(): Response {
+        return when (this) {
+            is AbstractUseCase.Result.Created -> created().build()
+            is AbstractUseCase.Result.Success -> Response.ok().build()
+            is AbstractUseCase.Result.NotFound -> notFound().text(this.message).build()
+            is AbstractUseCase.Result.Forbidden -> forbidden().text(this.message).build()
+            is AbstractUseCase.Result.Error -> Response.serverError().text(this.message).build()
+            is AbstractUseCase.Result.BadRequest -> badRequest().text(this.message).build()
+            is AbstractUseCase.Result.Conflict -> conflict().text(this.message).build()
+        }
+    }
 }
