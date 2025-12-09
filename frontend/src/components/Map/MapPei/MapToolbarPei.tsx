@@ -48,7 +48,7 @@ export const useToolbarPeiContext = ({
   const { visible: visibleMove, show: showMove, close: closeMove } = useModal();
 
   const { error: errorToast } = useToastContext();
-  const [listePeiId] = useState<string[]>([]);
+  const [listePeiId, setListePeiId] = useState<string[]>([]);
   const [listePeiTourneePublic, setListePeiTourneePublic] = useState<
     { peiId: string; numeroComplet: string }[]
   >([]);
@@ -166,6 +166,18 @@ export const useToolbarPeiContext = ({
       toggleCondition: platformModifierKeyOnly,
       hitTolerance: 4,
     });
+    // Remplir listePeiId lors d'un Ctrl+clic (sélection individuelle)
+    selectCtrl.on("select", function () {
+      const newListe: string[] = [];
+      selectCtrl.getFeatures().forEach((feature) => {
+        const point = feature.getProperties();
+        if (!newListe.includes(point.elementId)) {
+          newListe.push(point.elementId);
+        }
+      });
+      setListePeiId(newListe);
+    });
+
     const dragBoxCtrl = new DragBox({
       style: new Style({
         stroke: new Stroke({
@@ -187,7 +199,7 @@ export const useToolbarPeiContext = ({
 
       selectCtrl.getFeatures().extend(boxFeatures);
 
-      listePeiId.splice(0, listePeiId.length);
+      const newListe: string[] = [];
       listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
       listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
       listePeiTourneeIcpe.splice(0, listePeiTourneeIcpe.length);
@@ -201,8 +213,8 @@ export const useToolbarPeiContext = ({
 
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
-        if (!listePeiId.includes(point.elementId)) {
-          listePeiId.push(point.elementId);
+        if (!newListe.includes(point.elementId)) {
+          newListe.push(point.elementId);
         }
 
         if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
@@ -233,6 +245,7 @@ export const useToolbarPeiContext = ({
           });
         }
       });
+      setListePeiId(newListe);
 
       const peiDebitSimultane = [
         ...peiPrivesDebitSimultane,
@@ -290,7 +303,10 @@ export const useToolbarPeiContext = ({
         listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
         listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
         listePeiTourneeIcpe.splice(0, listePeiTourneeIcpe.length);
+        listePeiId.splice(0, listePeiId.length);
+        selectCtrl.getFeatures().clear();
         map.removeInteraction(selectCtrl);
+
         map.removeInteraction(dragBoxCtrl);
       }
     }
@@ -538,9 +554,18 @@ const MapToolbarPei = ({
         <>
           <TooltipCustom
             tooltipText={
-              showFormPei || showFormVisite.show
-                ? "Un formulaire est en cours d'édition"
-                : "Créer une indisponibilité temporaire"
+              showFormPei || showFormVisite.show ? (
+                "Un formulaire est en cours d'édition"
+              ) : listePeiId?.length === 0 ? (
+                <>
+                  <b>Créer une indisponibilité temporaire</b>
+                  <br />
+                  Sélectionnez au moins un PEI pour créer une indisponibilité
+                  temporaire.
+                </>
+              ) : (
+                "Créer une indisponibilité temporaire"
+              )
             }
             tooltipId={"indispo-temp-carte"}
           >
@@ -548,7 +573,9 @@ const MapToolbarPei = ({
               variant="outline-primary"
               onClick={createIndispoTemp}
               className="rounded m-2"
-              disabled={showFormPei || showFormVisite.show}
+              disabled={
+                showFormPei || showFormVisite.show || listePeiId?.length === 0
+              }
             >
               <IconIndisponibiliteTemporaire />
             </Button>
@@ -557,6 +584,7 @@ const MapToolbarPei = ({
             handleClose={handleCloseIndispoTemp}
             show={showCreateIndispoTemp}
             className="w-auto"
+            backdrop={true}
           >
             <CreateIndisponibiliteTemporaire listePeiId={listePeiId} />
           </Volet>
