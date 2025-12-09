@@ -1,12 +1,14 @@
 package remocra.api.usecase
 
 import jakarta.inject.Inject
+import remocra.api.PeiUtils
 import remocra.auth.WrappedUserInfo
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
+import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeVisite
@@ -19,6 +21,7 @@ class ApiVisitesUseCase @Inject
 constructor(
     override val peiRepository: PeiRepository,
     private val visiteRepository: VisiteRepository,
+    private val anomalieRepository: AnomalieRepository,
     private val createVisiteUseCase: CreateVisiteUseCase,
     private val deleteVisiteUseCase: DeleteVisiteUseCase,
 ) : AbstractApiPeiUseCase(peiRepository) {
@@ -69,6 +72,31 @@ constructor(
             return Result.Error(rre.message)
         }
 
+        val typeVisite = getTypeVisiteFromString(form.typeVisite)
+
+        if (!isTypeVisiteAllowed(pei.peiServicePublicDeciId, pei.peiMaintenanceDeciId, typeVisite, userInfo)) {
+            return Result.Forbidden(ErrorType.API_TYPE_VISITE_FORBIDDEN.name)
+        }
+
+        checkAnomalies(typeVisite, pei.peiNatureId, form.anomaliesControlees, form.anomaliesConstatees)
+
+        // Conversion anomalies contrôlées et constatées Liste de code => liste d'id
+        val anomaliesControleesIds = anomalieRepository.getIdsByCodes(form.anomaliesControlees)
+        val anomaliesConstateesIds = anomalieRepository.getIdsByCodes(form.anomaliesConstatees)
+
+        // Récupération des anomalies de la visite précédente
+        val anomaliesLastVisite = visiteRepository.getLastVisite(pei.peiId)?.let {
+            visiteRepository.getAnomaliesFromVisite(it.visiteId)
+        } ?: listOf()
+
+        val anomaliesIds = mutableListOf<UUID>()
+
+        // On reprend les anomalies précédentes qui n'ont pas été contrôlées
+        anomaliesIds += anomaliesLastVisite.filterNot { it in anomaliesControleesIds }
+
+        // On ajoute les anomalies contrôlées et constatées pour obtenir la liste des anomalies de cette visite
+        anomaliesIds += anomaliesConstateesIds
+
         val isCtrlDebitPression = form.debit != null || form.pression != null || form.pressionDynamique != null
 
         val visiteData = VisiteData(
@@ -79,10 +107,9 @@ constructor(
             visiteAgent1 = form.agent1,
             visiteAgent2 = form.agent2,
             visiteObservation = form.observations,
-            listeAnomalie = listOf(), // TODO qu'est-ce qui est attendu, les anomalies contrôlées, constatées, ... ?
+            listeAnomalie = anomaliesIds,
             isCtrlDebitPression = isCtrlDebitPression,
             ctrlDebitPression = if (isCtrlDebitPression) CreationVisiteCtrl(form.debit, form.pression?.toBigDecimal(), form.pressionDynamique?.toBigDecimal()) else null,
-
         )
 
         return createVisiteUseCase.execute(userInfo, visiteData)
@@ -151,5 +178,62 @@ constructor(
     // TODO pas possible depuis l'IHM, mais possible depuis l'API. Que veut-on faire en V3 ? cf #225131
     fun updateVisite(numeroComplet: String, idVisite: String, form: ApiVisiteFormData): Result {
         TODO("pas encore implémenté $numeroComplet, $idVisite, $form")
+    }
+
+    /**
+     * Indique si l'utilisateur a les droits d'ajout/édition/suppression sur la visite d'un PEI.
+     * La règle est la suivante:
+     * - Si utilisateur est le service des eaux (seulement) du PEI => Visites NP uniquement
+     * - Si l'utilisateur est la maintenance DECI OU le service public => Visites NP, CTRL et CREA uniquement
+     *
+     * À ce stade, on considère que la vérification de l'accessibilité du PEI a déjà été faite
+     *
+     * @param peiServicePublicDeciId UUID?
+     * @param peiMaintenanceDeciId UUID?
+     * @param typeVisite TypeVisite
+     * @param userInfo WrappedUserInfo
+     * @return boolean
+     */
+    fun isTypeVisiteAllowed(peiServicePublicDeciId: UUID?, peiMaintenanceDeciId: UUID?, typeVisite: TypeVisite, userInfo: WrappedUserInfo): Boolean {
+        if (!listOf(TypeVisite.NP, TypeVisite.CTP, TypeVisite.RECEPTION).contains(typeVisite)) {
+            return false
+        }
+        if (PeiUtils.OrganismeIdType(userInfo).isApiAdmin) {
+            return true
+        }
+
+        if (listOf(TypeVisite.CTP, TypeVisite.RECEPTION).contains(typeVisite)) {
+            return PeiUtils.isServicePublicDECI(peiServicePublicDeciId, PeiUtils.OrganismeIdType(userInfo)) || PeiUtils.isMaintenanceDECI(peiMaintenanceDeciId, PeiUtils.OrganismeIdType(userInfo))
+        }
+        return true
+    }
+
+    /**
+     * Vérifie que les anomalies contrôlées et constatées sont bien compatibles avec le type de visite
+     * spécifié, ainsi que la cohérence entre les anomalies constatées et contrôlées
+     *
+     * @param peiNatureId Identifiant du type de saisie
+     * @param typeVisite Code du type de visite
+     * @param listControlees Liste de code des anomalies contrôlées
+     * @param listConstatees Liste de code des anomalies constatées
+     * @throws ResponseException
+     */
+    fun checkAnomalies(
+        typeVisite: TypeVisite,
+        peiNatureId: UUID,
+        listControlees: Collection<String>,
+        listConstatees: Collection<String>,
+    ) {
+        val nbAnomaliesChecked = anomalieRepository.getNbAnomaliesChecked(
+            peiNatureId = peiNatureId,
+            typeVisite = typeVisite,
+            listControlees = listControlees,
+        )
+        if (nbAnomaliesChecked != listControlees.size) {
+            throw RemocraResponseException(ErrorType.API_ERROR_NB_ANOMALIE_CONTROLEE)
+        }
+        if (!listControlees.containsAll(listConstatees)) {
+            throw RemocraResponseException(ErrorType.API_ANOMALIE_CONSTATEE_NOT_CONTROLEE)
+        }
     }
 }

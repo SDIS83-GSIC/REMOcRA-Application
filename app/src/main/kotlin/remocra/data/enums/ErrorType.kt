@@ -505,6 +505,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_VISITE_ANOMALIE_ERROR(20021, "Impossible d'insérer le lien entre l'anomalie et la viste dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
     API_SYNCHRO_PHOTO_EXISTE(20022, "La photo est déjà dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
     API_SYNCHRO_PHOTO_ERROR(20023, "Impossible d'insérer la photo dans le schéma incoming : $PLACEHOLDER_ERROR_TYPE"),
+    API_TYPE_VISITE_FORBIDDEN(20024, "Ce type de visite n'est pas accessible pour votre organisme sur ce PEI", Status.FORBIDDEN),
+    API_ERROR_NB_ANOMALIE_CONTROLEE(20025, "Une ou plusieurs anomalies contrôlées n'existent pas ou ne sont pas disponibles pour ce type de visite."),
+    API_ANOMALIE_CONSTATEE_NOT_CONTROLEE(20026, "Une ou plusieurs anomalies ont été marquées constatées sans avoir été contrôlées."),
 
     ADMIN_PARAMETRE_FORBIDDEN(21000, "Vous n'avez pas les droits d'administration", Status.FORBIDDEN),
     ADMIN_PARAMETRE_ISODISTANCE_FORMAT(21001, "Les isodistances n'ont pas le format attendu "),

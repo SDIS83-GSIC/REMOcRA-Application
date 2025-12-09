@@ -351,4 +351,23 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
      */
     fun getPeiIds(anomalieId: UUID): Collection<UUID> =
         dsl.select(L_PEI_ANOMALIE.PEI_ID).from(L_PEI_ANOMALIE).where(L_PEI_ANOMALIE.ANOMALIE_ID.eq(anomalieId)).fetchInto()
+
+    fun getNbAnomaliesChecked(peiNatureId: UUID, typeVisite: TypeVisite, listControlees: Collection<String>): Int =
+        dsl.selectCount()
+            .from(ANOMALIE)
+            .join(POIDS_ANOMALIE).on(ANOMALIE.ID.eq(POIDS_ANOMALIE.ANOMALIE_ID))
+            .where(
+                DSL.and(
+                    POIDS_ANOMALIE.NATURE_ID.eq(peiNatureId),
+                    POIDS_ANOMALIE.TYPE_VISITE.contains(typeVisite),
+                    ANOMALIE.CODE.`in`(listControlees),
+                ),
+            )
+            .fetchSingleInto()
+
+    fun getIdsByCodes(listeCode: Collection<String>): List<UUID> =
+        dsl.select(ANOMALIE.ID)
+            .from(ANOMALIE)
+            .where(ANOMALIE.CODE.`in`(listeCode))
+            .fetchInto()
 }

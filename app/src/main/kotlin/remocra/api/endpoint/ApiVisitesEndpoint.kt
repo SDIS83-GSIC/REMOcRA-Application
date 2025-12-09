@@ -76,7 +76,7 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Informations de la visite", required = true) form: ApiVisiteFormData,
     ): Response {
-        return apiVisitesUseCase.addVisite(numeroComplet, form, securityContext.userInfo).wrap()
+        return apiVisitesUseCase.addVisite(numeroComplet, form, securityContext.userInfo).wrapNoContent()
     }
 
     @GET
