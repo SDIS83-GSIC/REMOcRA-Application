@@ -223,6 +223,14 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
 
   const primary = "#00293E";
 
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([
+        PARAMETRE.VALEUR_HAUTE_MINIMALE_HISTOGRAMME,
+      ]),
+    }}`,
+  );
+
   return (
     data &&
     data.data.length !== 0 && (
@@ -244,7 +252,18 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="visiteDate" tickFormatter={formatDate} />
-                <YAxis />
+                <YAxis
+                  domain={[
+                    0,
+                    (dataMax: number) =>
+                      Math.max(
+                        listeParametre?.data?.[
+                          PARAMETRE.VALEUR_HAUTE_MINIMALE_HISTOGRAMME
+                        ]?.parametreValeur ?? dataMax,
+                        dataMax,
+                      ),
+                  ]}
+                />
                 <Tooltip />
                 <Legend />
                 <Bar
