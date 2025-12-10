@@ -160,11 +160,11 @@ export const prepareValues = (values: {
     formData.append(
       "visiteList",
       JSON.stringify(
-        values.visiteList.map((v) => ({
+        values.visiteList?.map((v) => ({
           ...v,
           oldebVisiteDateVisite:
             new Date(v.oldebVisiteDateVisite ?? "")?.toISOString() || null,
-          suiteList: v.suiteList.map((s) => ({
+          suiteList: v.suiteList?.map((s) => ({
             ...s,
             oldebVisiteSuiteDate:
               new Date(s.oldebVisiteSuiteDate ?? "")?.toISOString() || null,
