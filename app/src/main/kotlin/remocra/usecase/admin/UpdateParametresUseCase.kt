@@ -221,6 +221,15 @@ class UpdateParametresUseCase
                 ParametreEnum.PROFIL_UTILISATEUR_DEFAUT,
                 parametresAdminData.utilisateur.profilUtilisateurDefaut,
             )
+
+            updateParametre(
+                ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE,
+                parametresAdminData.pei.receptionRecoInitObligatoire.toString(),
+            )
+            updateParametre(
+                ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME,
+                parametresAdminData.pei.valeurMinimaleHistogramme?.toString(),
+            )
         }
         // Mobile
         if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI_MOBILE)) {

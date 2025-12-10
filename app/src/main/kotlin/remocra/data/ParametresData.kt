@@ -139,6 +139,8 @@ data class ParametresSectionPei(
     val declarationPeiObjetEmail: String?,
     val declarationPeiCorpsEmail: String?,
     val peiLibelleNonConforme: String?,
+    val receptionRecoInitObligatoire: Boolean,
+    val valeurMinimaleHistogramme: Int?,
 )
 
 data class ParametresSectionUtilisateur(

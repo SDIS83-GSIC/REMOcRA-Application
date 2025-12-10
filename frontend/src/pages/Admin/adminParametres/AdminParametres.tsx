@@ -100,6 +100,8 @@ type ParametresSectionPei = {
   declarationPeiDestinataireEmail: string;
   declarationPeiObjetEmail: string;
   declarationPeiCorpsEmail: string;
+  receptionRecoInitObligatoire: boolean;
+  valeurMinimaleHistogramme: number | undefined;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -1234,6 +1236,14 @@ const AdminPei = ({
             required={false}
           />
         </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.valeurMinimaleHistogramme"
+            label="Graduation minimale de l'histogramme de la Fiche Résumé"
+            required={false}
+            tooltipText="Saisir une valeur dans ce champ permet de garantir que l'ordonnée de l'histogramme ira au moins jusqu'à la valeur en question, mais pourra s'étendre au besoin."
+          />
+        </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextAreaInput
             name="pei.declarationPeiDestinataireEmail"
@@ -1261,6 +1271,16 @@ const AdminPei = ({
               'Libellé qui sera affiché pour le statut "Non conforme" d\'un PEI ; par défaut, la valeur est "Non conforme". Attention, une valeur trop longue pourrait dégrader certains affichages.'
             }
             required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.receptionRecoInitObligatoire"
+            label="Obliger la visite de réception et la visite de reconnaissance initiale"
+            checked={values?.receptionRecoInitObligatoire}
+            tooltipText={
+              "Si le paramètre est coché, l'absence de visite de réception et de visite de reconnaissance initiale entraîne obligatoirement une indisponibilité du PEI"
+            }
           />
         </AdminParametre>
       </>

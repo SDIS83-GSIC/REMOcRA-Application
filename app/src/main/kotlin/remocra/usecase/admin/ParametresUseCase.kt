@@ -125,6 +125,8 @@ class ParametresUseCase : AbstractUseCase() {
             declarationPeiObjetEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL.name),
             declarationPeiCorpsEmail = mapParametres.getString(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL.name),
             peiLibelleNonConforme = mapParametres.getString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name),
+            receptionRecoInitObligatoire = mapParametres.getBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name),
+            valeurMinimaleHistogramme = mapParametres.getIntOrNull(ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME.name),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(

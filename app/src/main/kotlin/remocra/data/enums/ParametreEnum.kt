@@ -78,6 +78,8 @@ enum class ParametreEnum(val section: ParametreSection) {
     CARACTERISTIQUES_PENA_TOOLTIP_WEB(ParametreSection.PEI),
     CARACTERISTIQUES_PIBI_TOOLTIP_WEB(ParametreSection.PEI),
     PEI_LIBELLE_NON_CONFORME(ParametreSection.PEI),
+    RECEPTION_RECO_INIT_OBLIGATOIRE(ParametreSection.PEI),
+    VALEUR_HAUTE_MINIMALE_HISTOGRAMME(ParametreSection.PEI),
 
     // Permis
     PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),
