@@ -3,7 +3,9 @@ package remocra.usecase.admin
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import org.owasp.html.PolicyFactory
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.ParametresAdminData
 import remocra.data.ParametresAdminDataInput
@@ -16,12 +18,15 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
 
 class UpdateParametresUseCase
 @Inject constructor(
     private var objectMapper: ObjectMapper,
     private var parametreRepository: ParametreRepository,
     private var policyFactory: PolicyFactory,
+    private val parametreProvider: Provider<ParametresProvider>,
+    private val relancerCalculDispoUseCase: RelancerCalculDispoUseCase,
 ) :
     AbstractCUDUseCase<ParametresAdminDataInput>(TypeOperation.UPDATE) {
 
@@ -222,10 +227,22 @@ class UpdateParametresUseCase
                 parametresAdminData.utilisateur.profilUtilisateurDefaut,
             )
 
-            updateParametre(
-                ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE,
-                parametresAdminData.pei.receptionRecoInitObligatoire.toString(),
-            )
+            // aller chercher l'ancienne valeur pour comparaison
+            val ancienneValeur = parametreProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name)
+
+            // Si le paramètre change, il faut recalculer la disponibilité des PEI
+            if (ancienneValeur != parametresAdminData.pei.receptionRecoInitObligatoire) {
+                relancerCalculDispoUseCase.execute(
+                    userInfo = userInfo,
+                    eventTracabilite = true,
+                    eventNexSis = true,
+                    transactionManager,
+                )
+                updateParametre(
+                    ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE,
+                    parametresAdminData.pei.receptionRecoInitObligatoire.toString(),
+                )
+            }
             updateParametre(
                 ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME,
                 parametresAdminData.pei.valeurMinimaleHistogramme?.toString(),

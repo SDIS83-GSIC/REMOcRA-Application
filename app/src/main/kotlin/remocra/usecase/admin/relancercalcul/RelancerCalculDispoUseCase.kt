@@ -2,6 +2,7 @@ package remocra.usecase.admin.relancercalcul
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.db.TransactionManager
 import remocra.log.LogManagerFactory
 import remocra.tasks.RelanceCalculDispoParameters
 import remocra.tasks.RelanceCalculDispoTask
@@ -12,7 +13,7 @@ class RelancerCalculDispoUseCase @Inject constructor(
     private val logManagerFactory: LogManagerFactory,
 ) : AbstractUseCase() {
 
-    fun execute(userInfo: WrappedUserInfo, eventTracabilite: Boolean, eventNexSis: Boolean) {
+    fun execute(userInfo: WrappedUserInfo, eventTracabilite: Boolean, eventNexSis: Boolean, transactionManager: TransactionManager? = null) {
         task.start(
             logManager = logManagerFactory.create(),
             userInfo,
@@ -20,6 +21,7 @@ class RelancerCalculDispoUseCase @Inject constructor(
                 this.eventTracabilite = eventTracabilite
                 this.eventNexSis = eventNexSis
             },
+            transactionManager,
         )
     }
 }

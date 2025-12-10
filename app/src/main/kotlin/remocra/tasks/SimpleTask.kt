@@ -94,7 +94,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
 
     abstract fun getTaskParametersClass(): Class<T>
 
-    fun start(logManager: LogManager, userInfo: WrappedUserInfo, parameters: T? = null): Boolean {
+    fun start(logManager: LogManager, userInfo: WrappedUserInfo, parameters: T? = null, transactionManagerCourant: TransactionManager? = null): Boolean {
         // Si l'environnement n'est pas compatible avec la tâche, on ne fait rien
         if (!getAuthorizedEnvironments().contains(settings.environment)) {
             return false
@@ -110,8 +110,9 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
             ?: objectMapper.readValue(parametresProvider.get().mapTasksInfo[getType()]!!.taskParametres!!.data(), getTaskParametersClass())
 
         // Insertion du job en base
+        val transactionManagerToUse = (transactionManagerCourant ?: transactionManager)
         val result =
-            transactionManager.transactionResult {
+            transactionManagerToUse.transactionResult(transactionManagerCourant == null) {
                 jobRepository.createJob(
                     logManager.idJob,
                     parametresProvider.get().mapTasksInfo[getType()]!!.taskId,
@@ -132,14 +133,14 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                     checkParameters(taskParameters)
                     notify(taskParameters, execute(taskParameters, userInfo), logManager.idJob)
                     if (latestJob != null) {
-                        transactionManager.transactionResult {
+                        transactionManagerToUse.transactionResult(transactionManagerCourant == null) {
                             jobRepository.endJobSuccess(latestJob.jobId)
                         }
                     }
                     logManager.info("Tâche terminée")
                 } catch (e: Exception) {
                     if (latestJob != null) {
-                        transactionManager.transactionResult {
+                        transactionManagerToUse.transactionResult(transactionManagerCourant == null) {
                             jobRepository.endJobError(latestJob.jobId)
                         }
                     }

@@ -1279,7 +1279,19 @@ const AdminPei = ({
             label="Obliger la visite de réception et la visite de reconnaissance initiale"
             checked={values?.receptionRecoInitObligatoire}
             tooltipText={
-              "Si le paramètre est coché, l'absence de visite de réception et de visite de reconnaissance initiale entraîne obligatoirement une indisponibilité du PEI"
+              <>
+                Si le paramètre est coché, l&apos;absence de visite de réception et de visite de
+                reconnaissance initiale entraîne obligatoirement une
+                indisponibilité du PEI.
+                <br />
+                <br />
+                Si ce paramètre change, une tâche de recalcul des disponibilités
+                sera lancée.
+                <br />
+                Notez que cette tâche peut être longue en fonction du nombre de
+                PEI à traiter Vous pouvez consulter la page{" "}
+                <b>Résultats d&apos;exécution</b> pour suivre son avancement.
+              </>
             }
           />
         </AdminParametre>

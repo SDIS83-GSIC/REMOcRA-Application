@@ -1,11 +1,14 @@
 package remocra.usecase.pei
 
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.DataCacheProvider
+import remocra.app.ParametresProvider
 import remocra.data.PeiForCalculDispoData
 import remocra.data.enums.CodeSdis
+import remocra.data.enums.ParametreEnum
 import remocra.db.AnomalieRepository
 import remocra.db.CalculDispoRepository
 import remocra.db.IndisponibiliteTemporaireRepository
@@ -24,7 +27,9 @@ import java.util.UUID
  * But du usecase (pour l'instant) : tabula rasa sur les anomalies système, recalcul des ano système, mise à jour du statut de disponibilité du PEI.
  * Doit être morcelé (morcelable) afin de s'intégrer dans l'enregistrement transactionnel d'un PEI.
  */
-class CalculDispoUseCase : AbstractUseCase() {
+class CalculDispoUseCase @Inject constructor(
+    private val parametreProvider: Provider<ParametresProvider>,
+) : AbstractUseCase() {
     @Inject
     private lateinit var appSettings: AppSettings
 
@@ -118,6 +123,13 @@ class CalculDispoUseCase : AbstractUseCase() {
 
         // Si le PEI a une IT en cours, il est indispo de toute façon
         if (hasIndispoTemporaires(pei)) {
+            return Disponibilite.INDISPONIBLE
+        }
+
+        // Si on n'a pas une visite de réception + ROI, le PEI est indispo si le paramètre l'exige
+        if (parametreProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true &&
+            !visiteRepository.hasRecepAndROI(pei.peiId)
+        ) {
             return Disponibilite.INDISPONIBLE
         }
 
