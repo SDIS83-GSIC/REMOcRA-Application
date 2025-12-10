@@ -906,6 +906,7 @@ export const TooltipMapRisque = ({
   map: Map | undefined;
   displayButtonSeeFichePei: boolean;
 }) => {
+  const { user } = useAppContext();
   const ref = useRef(null);
   const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
   const { visible, show, close } = useModal();
@@ -934,21 +935,41 @@ export const TooltipMapRisque = ({
         onClickSee={() => setShowFichePei(true)}
         labelSee={"Voir la fiche Résumé du PEI"}
       />
-
-      <TooltipCustom
-        tooltipId="risques-express-purge"
-        tooltipText="Purger la couche des risques express"
-      >
-        <Button
-          variant={"primary"}
-          className="m-2"
-          onClick={() => {
-            show();
-          }}
-        >
-          <IconClose />
-        </Button>
-      </TooltipCustom>
+      {user != null && hasDroit(user, TYPE_DROIT.RISQUE_EXPRESS_A) ? (
+        <>
+          <TooltipCustom
+            tooltipId="risques-express-purge"
+            tooltipText="Purger la couche des risques express"
+          >
+            <Button
+              variant={"primary"}
+              className="m-2"
+              onClick={() => {
+                show();
+              }}
+            >
+              <IconClose />
+            </Button>
+          </TooltipCustom>
+          <DeleteModal
+            visible={visible}
+            closeModal={close}
+            query={url`/api/risque/delete/`}
+            ref={ref}
+            header={"Risque"}
+            content={`Confirmez-vous la purge des risques express ? Liste des risques express enregistrés : ${
+              RisquesExpressData?.map(
+                (item: { risqueExpressLibelle: string }) =>
+                  item.risqueExpressLibelle,
+              ).join(", ") || "(aucun risque express trouvé)"
+            }`}
+            onDelete={() => {}}
+            successLibelle={"Tous les risques express ont été supprimés."}
+          />
+        </>
+      ) : (
+        ""
+      )}
 
       <Volet
         handleClose={handleCloseFichePei}
@@ -963,22 +984,6 @@ export const TooltipMapRisque = ({
           }
         />
       </Volet>
-
-      <DeleteModal
-        visible={visible}
-        closeModal={close}
-        query={url`/api/risque/delete/`}
-        ref={ref}
-        header={"Risque"}
-        content={`Confirmez-vous la purge des risques express ? Liste des risques express enregistrés : ${
-          RisquesExpressData?.map(
-            (item: { risqueExpressLibelle: string }) =>
-              item.risqueExpressLibelle,
-          ).join(", ") || "(aucun risque express trouvé)"
-        }`}
-        onDelete={() => {}}
-        successLibelle={"Tous les risques express ont été supprimés."}
-      />
     </div>
   );
 };
