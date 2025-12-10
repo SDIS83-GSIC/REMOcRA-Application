@@ -1,6 +1,8 @@
 import { useFormikContext } from "formik";
+import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import {
   CheckBoxInput,
   FormContainer,
@@ -39,7 +41,7 @@ export const organismeValidationSchema = object({
 
 export const getInitialOrganismeValue = (data: OrganismeType) => ({
   organismeId: data?.organismeId ?? null,
-  organismeActif: data?.organismeActif ?? null,
+  organismeActif: data?.organismeActif ?? true,
   organismeCode: data?.organismeCode ?? null,
   organismeLibelle: data?.organismeLibelle ?? null,
   organismeEmailContact: data?.organismeEmailContact ?? null,
@@ -64,6 +66,7 @@ export type TypeOrganismeType = {
   typeOrganismeCode: string;
   typeOrganismeLibelle: string;
   typeOrganismeDroitApi: TYPE_DROIT_API[];
+  typeOrganismeParentId?: string | undefined;
 };
 
 export type ZoneIntegrationType = {
@@ -88,7 +91,7 @@ export type OrganismeType = {
 };
 
 export const OrganismeForm = () => {
-  const { values, setValues }: any = useFormikContext();
+  const { values, setValues, setFieldValue }: any = useFormikContext();
   const profilOrganisme = useGet(url`/api/profil-organisme/get-active`);
   const typeOrganisme = useGet(url`/api/type-organisme/get-active`);
   const zoneIntegration = useGet(url`/api/zone-integration/get-active`);
@@ -102,69 +105,61 @@ export const OrganismeForm = () => {
     return;
   }
 
-  const profilOrganismeList: IdCodeLibelleType[] = profilOrganisme.data.map(
+  const profilOrganismeList = profilOrganisme.data.map(
     (e: ProfilOrganismeType) => {
       return {
         id: e.profilOrganismeId,
         libelle: e.profilOrganismeLibelle,
         code: e.profilOrganismeCode,
+        typeOrganismeId: e.profilOrganismeTypeOrganismeId,
       };
     },
   );
-  const typeOrganismeList: IdCodeLibelleType[] = typeOrganisme.data.map(
-    (e: TypeOrganismeType) => {
-      return {
-        id: e.typeOrganismeId,
-        libelle: e.typeOrganismeLibelle,
-        code: e.typeOrganismeCode,
-      };
-    },
-  );
+  const typeOrganismeList = typeOrganisme.data.map((e: TypeOrganismeType) => {
+    return {
+      id: e.typeOrganismeId,
+      libelle: e.typeOrganismeLibelle,
+      code: e.typeOrganismeCode,
+      typeOrganismeParentId: e.typeOrganismeParentId,
+    };
+  });
 
-  const organismeList: IdCodeLibelleType[] = organisme.data.map(
-    (e: OrganismeType) => {
-      return {
-        id: e.organismeId,
-        libelle: e.organismeLibelle,
-        code: e.organismeCode,
-      };
+  const organismeList = organisme.data.map((e: OrganismeType) => {
+    return {
+      id: e.organismeId,
+      libelle: e.organismeLibelle,
+      code: e.organismeCode,
+      typeOrganismeParentId: typeOrganismeList.find(
+        (to: IdCodeLibelleType) => to.id === e.organismeTypeOrganismeId,
+      )?.id,
+    };
+  });
+
+  const defaultProfilOrganisme = profilOrganismeList.find(
+    (e: IdCodeLibelleType) => {
+      return e.id === values.organismeProfilOrganismeId;
     },
   );
-
-  const defaultProfilOrganisme = profilOrganismeList.find((e) => {
-    return e.id === values.organismeProfilOrganismeId;
-  });
-  const defaultTypeOrganisme = typeOrganismeList.find((e) => {
-    return e.id === values.organismeTypeOrganismeId;
-  });
-  const defaultZoneIntegration = zoneIntegration.data.find((e) => {
-    return e.id === values.organismeZoneIntegrationId;
-  });
-  const defaultOrganismeParent = organismeList.find((e) => {
+  const defaultTypeOrganisme = typeOrganismeList.find(
+    (e: IdCodeLibelleType) => {
+      return e.id === values.organismeTypeOrganismeId;
+    },
+  );
+  const defaultZoneIntegration = zoneIntegration.data.find(
+    (e: IdCodeLibelleType) => {
+      return e.id === values.organismeZoneIntegrationId;
+    },
+  );
+  const defaultOrganismeParent = organismeList.find((e: IdCodeLibelleType) => {
     return e.id === values.organismeParentId;
   });
 
   return (
     <FormContainer>
+      <CheckBoxInput name="organismeActif" label="Actif" />
       <TextInput name="organismeCode" label="Code" required={true} />
       <TextInput name="organismeLibelle" label="Libellé" required={true} />
       <TextInput name="organismeEmailContact" label="Email" required={false} />
-      <SelectForm
-        name="organismeProfilOrganismeId"
-        label="Profil"
-        listIdCodeLibelle={profilOrganismeList}
-        setValues={setValues}
-        required={true}
-        defaultValue={defaultProfilOrganisme}
-      />
-      <SelectForm
-        name="organismeTypeOrganismeId"
-        label="Type"
-        listIdCodeLibelle={typeOrganismeList}
-        setValues={setValues}
-        required={true}
-        defaultValue={defaultTypeOrganisme}
-      />
       <SelectForm
         name="organismeZoneIntegrationId"
         label="Zone de compétence"
@@ -173,15 +168,49 @@ export const OrganismeForm = () => {
         required={true}
         defaultValue={defaultZoneIntegration}
       />
+      <Row className="mt-3">
+        <Col className="bg-light border p-2 rounded">
+          <IconInfo /> Le profil organisme et l&apos;organisme parent dépendent
+          du type d&apos;organisme. Sélectionner un type d&apos;organisme pour
+          que les listes s&apos;alimentent.
+        </Col>
+      </Row>
+      <SelectForm
+        name="organismeTypeOrganismeId"
+        label="Type d'organisme"
+        listIdCodeLibelle={typeOrganismeList}
+        setValues={setValues}
+        onChange={(e: IdCodeLibelleType) => {
+          setFieldValue("organismeProfilOrganismeId", null);
+          setFieldValue("organismeParentId", null);
+
+          setFieldValue("organismeTypeOrganismeId", e?.id);
+        }}
+        required={true}
+        defaultValue={defaultTypeOrganisme}
+      />
+      <SelectForm
+        name="organismeProfilOrganismeId"
+        label="Profil"
+        listIdCodeLibelle={profilOrganismeList.filter(
+          (e: (typeof profilOrganismeList)[number]) =>
+            e.typeOrganismeId === values.organismeTypeOrganismeId,
+        )}
+        setValues={setValues}
+        required={true}
+        defaultValue={defaultProfilOrganisme}
+      />
       <SelectForm
         name="organismeParentId"
         label="Organisme parent"
-        listIdCodeLibelle={organismeList}
+        listIdCodeLibelle={organismeList.filter(
+          (e: (typeof organismeList)[number]) =>
+            e.typeOrganismeParentId === values.organismeTypeOrganismeId,
+        )}
         setValues={setValues}
         required={false}
         defaultValue={defaultOrganismeParent}
       />
-      <CheckBoxInput name="organismeActif" label="Actif" />
       <SubmitFormButtons returnLink={true} />
     </FormContainer>
   );
