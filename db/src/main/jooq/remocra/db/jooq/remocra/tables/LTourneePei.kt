@@ -91,10 +91,10 @@ open class LTourneePei(
     val PEI_ID: TableField<Record, UUID?> = createField(DSL.name("pei_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.l_tournee_pei.l_tournee_pei_ordre</code>.
-     * Indique l'ordre d'apparition du pei dans la tournee
+     * The column <code>remocra.l_tournee_pei.ordre</code>. Indique l'ordre
+     * d'apparition du pei dans la tournee
      */
-    val ORDRE: TableField<Record, Int?> = createField(DSL.name("l_tournee_pei_ordre"), SQLDataType.INTEGER.nullable(false), this, "Indique l'ordre d'apparition du pei dans la tournee")
+    val ORDRE: TableField<Record, Int?> = createField(DSL.name("ordre"), SQLDataType.INTEGER.nullable(false), this, "Indique l'ordre d'apparition du pei dans la tournee")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

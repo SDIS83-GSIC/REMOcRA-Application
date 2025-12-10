@@ -482,7 +482,7 @@ class TourneeRepository
                         ),
                     ),
                     communeLibelle = record.component10()!!,
-                    lTourneePeiOrdre = null,
+                    ordre = null,
                 )
             }
     }
@@ -529,7 +529,7 @@ class TourneeRepository
                         ),
                     ),
                     communeLibelle = record.component10()!!,
-                    lTourneePeiOrdre = record.component11(),
+                    ordre = record.component11(),
                 )
             }
 
@@ -547,7 +547,7 @@ class TourneeRepository
         val natureLibelle: String,
         val adresse: String?,
         val communeLibelle: String,
-        val lTourneePeiOrdre: Int?,
+        val ordre: Int?,
     )
 
     fun getTourneeLibelleById(tourneeId: UUID): String =

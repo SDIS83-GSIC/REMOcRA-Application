@@ -208,7 +208,7 @@ class TourneeEndPoint : AbstractEndpoint() {
             DataToSendTourneePei(
                 tourneeLibelle = tourneeRepository.getTourneeLibelleById(tourneeId = tourneeId),
                 organismeLibelle = tourneeRepository.getTourneeOrganismeLibelleById(tourneeId = tourneeId),
-                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId, listePeiId).sortedBy { it.lTourneePeiOrdre },
+                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId, listePeiId).sortedBy { it.ordre },
             ),
         ).build()
 

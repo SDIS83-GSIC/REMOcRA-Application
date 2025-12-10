@@ -98,7 +98,7 @@ const TourneePei = ({
       return {
         tourneeId: e.tourneeId,
         peiId: e.id,
-        lTourneePeiOrdre: index + 1,
+        ordre: index + 1,
       };
     });
     formData.append("listTourneePei", JSON.stringify(formattedData));

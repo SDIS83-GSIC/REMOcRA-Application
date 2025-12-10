@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated
 data class LTourneePei(
     val tourneeId: UUID,
     val peiId: UUID,
-    val lTourneePeiOrdre: Int,
+    val ordre: Int,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -41,7 +41,7 @@ data class LTourneePei(
         if (this.peiId != o.peiId) {
             return false
         }
-        if (this.lTourneePeiOrdre != o.lTourneePeiOrdre) {
+        if (this.ordre != o.ordre) {
             return false
         }
         return true
@@ -52,7 +52,7 @@ data class LTourneePei(
         var result = 1
         result = prime * result + this.tourneeId.hashCode()
         result = prime * result + this.peiId.hashCode()
-        result = prime * result + this.lTourneePeiOrdre.hashCode()
+        result = prime * result + this.ordre.hashCode()
         return result
     }
 
@@ -61,7 +61,7 @@ data class LTourneePei(
 
         sb.append(tourneeId)
         sb.append(", ").append(peiId)
-        sb.append(", ").append(lTourneePeiOrdre)
+        sb.append(", ").append(ordre)
 
         sb.append(")")
         return sb.toString()
