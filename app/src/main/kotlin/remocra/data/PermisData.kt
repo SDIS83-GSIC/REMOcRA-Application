@@ -14,6 +14,6 @@ data class PermisDataToFront(
     val permis: Permis,
     val permisDocument: List<DocumentsData.DocumentPermisData>,
     val permisCadastreParcelle: List<UUID>,
-    val permisLastUpdateDate: ZonedDateTime,
+    val permisLastUpdateDate: ZonedDateTime?,
     val permisInstructeurUsername: String,
 )

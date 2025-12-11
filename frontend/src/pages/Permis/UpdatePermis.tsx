@@ -30,7 +30,7 @@ const UpdatePermis = ({
     permis: PermisEntity;
     permisDocument: Document[];
     permisCadastreParcelle: string[];
-    permisLastUpdateDate: Date;
+    permisLastUpdateDate: Date | undefined;
     permisInstructeurUsername: string;
   } = data.data;
 
@@ -81,9 +81,9 @@ const UpdatePermis = ({
           permisComplement: contextDeplacement
             ? null
             : resolvedData.permis.permisComplement,
-          permisLastUpdateDate: formatDateHeure(
-            new Date(resolvedData.permisLastUpdateDate),
-          ),
+          permisLastUpdateDate: resolvedData.permisLastUpdateDate
+            ? formatDateHeure(new Date(resolvedData.permisLastUpdateDate))
+            : null,
           permisInstructeurUsername: resolvedData.permisInstructeurUsername,
 
           documents: resolvedData.permisDocument ?? [],

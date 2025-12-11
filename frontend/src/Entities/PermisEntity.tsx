@@ -24,7 +24,7 @@ type PermisEntity = {
   permisCadastreParcelle?: string[];
 
   voieSaisieText: boolean;
-  permisLastUpdateDate: Date;
+  permisLastUpdateDate: Date | undefined;
   permisInstructeurUsername: string;
 
   documents: Document[];

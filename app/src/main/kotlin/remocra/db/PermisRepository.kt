@@ -93,7 +93,7 @@ class PermisRepository @Inject constructor(
     fun deletePermis(permisId: UUID) =
         dsl.deleteFrom(PERMIS).where(PERMIS.ID.eq(permisId)).execute()
 
-    fun getLastUpdateDate(permisId: UUID): ZonedDateTime =
+    fun getLastUpdateDate(permisId: UUID): ZonedDateTime? =
         dsl.select(max(TRACABILITE.DATE))
             .from(TRACABILITE)
             .where(TRACABILITE.OBJET_ID.eq(permisId))

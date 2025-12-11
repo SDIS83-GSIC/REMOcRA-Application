@@ -332,7 +332,10 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
         />
       </Row>
       <Row>
-        <p>Dernière modification : {values.permisLastUpdateDate}</p>
+        <p>
+          Dernière modification :{" "}
+          {values.permisLastUpdateDate ?? "aucune donnée"}
+        </p>
         <p>Instructeur : {values.permisInstructeurUsername}</p>
       </Row>
       {!readOnly && hasDroit(user, TYPE_DROIT.PERMIS_DOCUMENTS_C) ? (
