@@ -104,6 +104,7 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroMethodeA(pei)
 
             CodeSdis.SDIS_09 -> computeNumero09(pei)
+            CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_21 -> computeNumero21(pei)
             CodeSdis.SDIS_22 -> computeNumero22(pei)
             CodeSdis.SDIS_38 -> computeNumero38(pei)
@@ -117,6 +118,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> computeNumero53(pei)
             CodeSdis.SDIS_58 -> computeNumero58(pei)
             CodeSdis.SDIS_59 -> computeNumero59(pei)
+            CodeSdis.SDIS_62 -> TODO()
             CodeSdis.SDIS_66,
             -> computeNumero66(pei)
             CodeSdis.SDIS_71,
@@ -163,11 +165,13 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
             -> computeNumeroInterneMethodeB(pei)
+            CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
             CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
             CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
+            CodeSdis.SDIS_62 -> TODO()
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
@@ -980,6 +984,8 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_95,
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
+            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_62 -> TODO()
         }
     }
 }
