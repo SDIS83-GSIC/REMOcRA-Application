@@ -117,6 +117,7 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
             val newFile = File(DOSSIER_TMP_RAPPORT_PERONNALISE + "$FILE_NAME.shp")
             val params: MutableMap<String, Any?> = HashMap()
             params["url"] = newFile.toURI().toURL()
+            params["charset"] = StandardCharsets.UTF_8.name()
             val factory: DataStoreFactorySpi = ShapefileDataStoreFactory()
             val dataStore = factory.createNewDataStore(params)
             dataStore.createSchema(featureType)
