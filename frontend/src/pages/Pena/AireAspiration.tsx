@@ -140,7 +140,7 @@ const ComposantToRepeat = ({
   listeElements: AireAspirationType[];
 }) => {
   const typePenaAspirationState = useGet(url`/api/pena/type-pena-aspiration`);
-  const { setValues } = useFormikContext();
+  const { setFieldValue } = useFormikContext();
 
   return (
     <div>
@@ -161,7 +161,7 @@ const ComposantToRepeat = ({
               (e) => e.id === listeElements[index].typePenaAspirationId,
             )}
             required={false}
-            setValues={setValues}
+            setFieldValue={setFieldValue}
           />
         </Col>
         <Col>
