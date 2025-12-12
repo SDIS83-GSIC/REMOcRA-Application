@@ -46,7 +46,7 @@ const Header = ({ links }: { links?: NavToProps[] }) => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             {!links && (
-              <p className={"h3 text-light mx-auto text-center"}>
+              <p className={"h3 text-light mx-auto text-center align-self-end"}>
                 {
                   listeParametre.data?.[PARAMETRE.MESSAGE_ENTETE]
                     .parametreValeur
