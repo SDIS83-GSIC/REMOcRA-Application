@@ -91,6 +91,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             NATURE_DECI.CODE,
             PIBI.TYPE_RESEAU_ID,
             PEI.NUMERO_COMPLET,
+            PEI.TYPE_PEI,
         )
             .from(PEI)
             .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
@@ -401,6 +402,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         val natureDeciCode: String,
         val pibiTypeReseauId: UUID?,
         val peiNumeroComplet: String,
+        val peiTypePei: String,
 
         // TODO à compléter au besoin
 

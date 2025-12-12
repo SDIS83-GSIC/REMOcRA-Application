@@ -10,11 +10,13 @@ import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
+import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
 import {
+  IconAireAspiration,
   IconClose,
   IconEdit,
   IconIndisponibiliteTemporaire,
@@ -96,6 +98,9 @@ const TooltipMapPei = ({
   const [showTournee, setShowTournee] = useState(false);
   const handleCloseTournee = () => setShowTournee(false);
 
+  const [showAspiration, setShowAspiration] = useState(false);
+  const handleCloseAspiration = () => setShowAspiration(false);
+
   const [showUpdateDebitSimultane, setShowUpdateDebitSimultane] =
     useState(false);
   const handleCloseUpdateDebitSimultane = () =>
@@ -114,7 +119,6 @@ const TooltipMapPei = ({
     }}`,
     {},
   );
-
   const isFicheResumeStandalone = useMemo<boolean>(() => {
     if (!parametresState.isResolved) {
       return false;
@@ -254,6 +258,30 @@ const TooltipMapPei = ({
                     </TooltipCustom>
                   </Col>
                 )}
+              {featureSelect?.getProperties().peiTypePei === "PENA" &&
+                hasDroit(user, TYPE_DROIT.PEI_U) && (
+                  <Col className="p-1" xs={"auto"}>
+                    <TooltipCustom
+                      tooltipText={
+                        showFormPei || showFormVisite.show
+                          ? textDisable
+                          : "Voir les aires d'aspiration associées"
+                      }
+                      tooltipId={"aspiration-carte"}
+                    >
+                      <Button
+                        variant="warning"
+                        onClick={() => {
+                          setShowAspiration(true);
+                          overlay?.setPosition(undefined);
+                        }}
+                        disabled={showFormPei || showFormVisite.show}
+                      >
+                        <IconAireAspiration />
+                      </Button>
+                    </TooltipCustom>
+                  </Col>
+                )}
               {isFicheResumeStandalone && (
                 <Volet
                   handleClose={handleCloseFichePei}
@@ -307,6 +335,27 @@ const TooltipMapPei = ({
                 backdrop={true}
               >
                 <ListTournee peiId={elementId} />
+              </Volet>
+              <Volet
+                handleClose={() => {
+                  handleCloseAspiration();
+
+                  navigate(
+                    {
+                      pathname: location.pathname,
+                      search: "",
+                    },
+                    { replace: true, state: location.state },
+                  );
+                }}
+                show={showAspiration}
+                className="w-auto"
+                backdrop={true}
+              >
+                <AireAspiration
+                  peiIdCarte={elementId}
+                  onSubmit={handleCloseAspiration}
+                />
               </Volet>
             </>
           }

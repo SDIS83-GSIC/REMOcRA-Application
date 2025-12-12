@@ -60,13 +60,21 @@ export const prepareVariables = (values: {
   ),
 });
 
-const AireAspiration = () => {
-  const { penaId } = useParams();
+const AireAspiration = ({
+  peiIdCarte,
+  onSubmit,
+}: {
+  peiIdCarte?: string;
+  onSubmit?: (values: any) => void;
+}) => {
+  let { penaId } = useParams();
+  penaId = peiIdCarte ?? penaId;
 
   // TODO get initial values
   const listeAireAspirationState = useGet(
     url`/api/pena/get-aire-aspiration/` + penaId,
   );
+
   const { data } = listeAireAspirationState;
 
   return (
@@ -77,15 +85,16 @@ const AireAspiration = () => {
         isPost={false}
         submitUrl={`/api/pena/upsert-pena-aspiration/` + penaId}
         prepareVariables={(values) => prepareVariables(values)}
-        redirectUrl={URLS.PEI}
+        redirectUrl={peiIdCarte ? "" : URLS.PEI}
+        onSubmit={onSubmit ?? (() => {})}
       >
-        <FormAireAspiration />
+        <FormAireAspiration peiIdCarte={peiIdCarte} />
       </MyFormik>
     )
   );
 };
 
-const FormAireAspiration = () => {
+const FormAireAspiration = ({ peiIdCarte }: { peiIdCarte?: string }) => {
   const { values } = useFormikContext();
   const { srid } = useAppContext();
 
@@ -96,6 +105,7 @@ const FormAireAspiration = () => {
           <PageTitle
             icon={<IconAireAspiration />}
             title={"Modification des aires d'aspiration"}
+            displayReturnButton={peiIdCarte ? false : true}
           />
         </Row>
         <Row>
@@ -116,7 +126,7 @@ const FormAireAspiration = () => {
             listeElements={values.listeAireAspiration}
           />
         </Row>
-        <SubmitFormButtons returnLink={true} />
+        <SubmitFormButtons returnLink={peiIdCarte ? false : true} />
       </Container>
     </FormContainer>
   );
