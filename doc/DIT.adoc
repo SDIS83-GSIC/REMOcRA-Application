@@ -85,6 +85,11 @@ APACHE_HOP_ENABLE=true
 APACHE_HOP_URL=http://localhost:8060/hop
 APACHE_HOP_USERNAME=admin
 APACHE_HOP_PASSWORD=xxxxxxxxxxxxxxxxx
+
+# Geoserver
+GEOSERVER_URL=http://localhost:8090/geoserver
+GEOSERVER_USER=admin
+GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 ----
 
 === Explication des variables d’environnement
@@ -144,6 +149,11 @@ APACHE_HOP_PASSWORD=xxxxxxxxxxxxxxxxx
 | NEXSIS_URL | Url de nexsis | http://nexsis.gouv.fr
 | NEXSIS_USER | Utilisateur de connexion à nexsis |
 | NEXSIS_PASSWORD | Mot de passe de l'utilisateur |
+
+.3+| *Geoserver*
+| GEOSERVER_URL | Url de Geoserver | http://localhost:8090/geoserver
+| GEOSERVER_USER | Utilisateur de connexion à Geoserver |
+| GEOSERVER_PASSWORD | Mot de passe de l'utilisateur |
 
 .1+| *Autre*
 | DOCKER_REMOCRA_VERSION | Numéro de version de REMOcRA à installer |
