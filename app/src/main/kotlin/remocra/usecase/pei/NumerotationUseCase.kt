@@ -160,7 +160,6 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroInterneMethodeA(pei)
             CodeSdis.SDIS_09,
             CodeSdis.SDIS_21,
-            CodeSdis.SDIS_38,
             CodeSdis.SDIS_77,
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
@@ -174,6 +173,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_62 -> TODO()
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
+            CodeSdis.SDIS_38,
             -> computeNumeroInterne83(pei)
             CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
         }
