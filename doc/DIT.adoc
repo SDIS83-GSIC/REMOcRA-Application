@@ -48,6 +48,9 @@ DOCKER_REMOCRA_VERSION=1.0-a9
 GLOWROOT_ENABLED=false
 GLOWROOT_PORT=4000
 
+OTEL_JAVAAGENT_ENABLED=false
+OTEL_SERVICE_INSTANCE_ID=1
+
 # Postgres
 POSTGRES_DB_HOSTNAME=localhost
 POSTGRES_DB_NAME=remocra
@@ -142,6 +145,13 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | GLOWROOT_PORT | Port de glowroot pour REMOcRA | 4000
 | GEOSERVER_GLOWROOT_ENABLED | Activation de glowroot pour geoserver |
 | GEOSERVER_GLOWROOT_PORT | Port de glowroot pour geoserver | 4001
+
+.5+| *OpenTelemetry*
+| OTEL_JAVAAGENT_ENABLED | Activation d'OpenTelemetry pour REMOcRA |
+| OTEL_SERVICE_INSTANCE_ID | Identifiant de l'instance de REMOcRA (utile uniquement si vous avez plusieurs instances de REMOcRA sur le même serveur) | 1
+2+| D'autres variables d'environnement peuvent être passées, https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/[plus d'informations sur la documentation en ligne] |
+| GEOSERVER_OTEL_JAVAAGENT_ENABLED | Activation d'OpenTelemetry pour geoserver |
+| GEOSERVER_OTEL_SERVICE_INSTANCE_ID | Identifiant de l'instance de REMOcRA (utile uniquement si vous avez plusieurs instances de GeoServer sur le même serveur) | 1
 
 .5+| *Nexsis*
 | NEXSIS_ENABLED | Activation de nexsis | false

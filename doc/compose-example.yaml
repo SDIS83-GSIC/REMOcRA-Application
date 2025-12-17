@@ -31,6 +31,8 @@ services:
       - NEXSIS_USER
       - NEXSIS_PASSWORD
       - REMOCRA_ENVIRONMENT
+      - OTEL_JAVAAGENT_ENABLED
+      - OTEL_SERVICE_INSTANCE_ID
     healthcheck:
       test: curl --fail -s http://localhost:8881/ || exit 1
       interval: 1m30s
@@ -71,6 +73,8 @@ services:
     environment:
       - GEOSERVER_GLOWROOT_ENABLED
       - GEOSERVER_GLOWROOT_PORT
+      - OTEL_JAVAAGENT_ENABLED=$GEOSERVER_OTEL_JAVAAGENT_ENABLED
+      - OTEL_SERVICE_INSTANCE_ID=$GEOSERVER_OTEL_SERVICE_INSTANCE_ID
       - GEOSERVER_URL
       - GEOSERVER_USER
       - GEOSERVER_PASSWORD

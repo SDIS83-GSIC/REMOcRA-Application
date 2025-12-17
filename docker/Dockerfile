@@ -11,6 +11,19 @@ COPY --link --from=glowroot \
      --exclude=opt/glowroot/lib/*-windows.jar \
      / /
 
+COPY --from=docker-registry.priv.atolcd.com/opentelemetry-javaagent:latest / /
+# Configuration par défaut pour OpenTelemetry
+# OTEL_SERVICE_NAMESPACE, OTEL_SERVICE_INSTANCE_ID et OTEL_SERVICE_VERSION ne sont pas des variables standard OpenTelemetry
+# elles sont utilisées par l'entrypoint pour compléter OTEL_RESOURCE_ATTRIBUTES
+ENV OTEL_SERVICE_NAME="remocra"
+ENV OTEL_SERVICE_NAMESPACE="remocra"
+ENV OTEL_SERVICE_INSTANCE_ID="1"
+ENV OTEL_SERVICE_VERSION="$REMOCRA_VERSION"
+ENV OTEL_RESOURCE_ATTRIBUTES=""
+ENV OTEL_METRIC_EXPORT_INTERVAL="15000"
+# Variables pour gérer l'activation de l'agent OpenTelemetry
+ENV OTEL_JAVAAGENT_ENABLED=false
+
 # Crée un utilisateur applicatif et son groupe dédié
 RUN groupadd --system --non-unique --gid 2000 remocra \
  && useradd --no-log-init --system --no-create-home --home /opt/remocra --non-unique --uid 2000 --gid remocra remocra

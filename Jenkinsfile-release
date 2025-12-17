@@ -99,7 +99,7 @@ pipeline {
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",
             buildDir: 'keycloak'
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${REMOCRA_VERSION}",
-            buildDir: 'geoserver'
+            buildDir: 'geoserver', buildArgs: [ REMOCRA_VERSION: params.REMOCRA_VERSION ]
         dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${REMOCRA_VERSION}",
             buildDir: 'apachehop'
       }
