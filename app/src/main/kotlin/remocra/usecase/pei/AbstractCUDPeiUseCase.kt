@@ -11,6 +11,7 @@ import remocra.data.PeiData
 import remocra.data.PenaData
 import remocra.data.PibiData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.ParametreEnum
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
@@ -117,9 +118,9 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                 element.peiNumeroComplet = pair.first
             }
 
-            // Si c'est une insertion, on met directement le PEI indisponible
+            // Si c'est une insertion, on met directement le PEI indisponible si les visite reception et reco init sont obligatoires
             // (Il n'est pas encore présent en base et n'a pas de visites)
-            if (typeOperation == TypeOperation.INSERT) {
+            if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {
                 element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
             } else {
                 element.peiDisponibiliteTerrestre = getDisponibilitePeiUseCase.execute(element)
