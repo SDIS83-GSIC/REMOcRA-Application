@@ -9,6 +9,7 @@ import remocra.data.enums.TypeDataCache
 import remocra.db.CoucheRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.tables.pojos.Couche
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
 import remocra.eventbus.datacache.DataCacheModifiedEvent
@@ -69,7 +70,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                         coucheProxy = couche.coucheProxy,
                         coucheCrossOrigin = couche.coucheCrossOrigin,
                         coucheProtected = couche.coucheProtected,
-                        coucheTuilage = false, // TODO
+                        coucheTuilage = couche.coucheTuilage.takeIf { couche.coucheSource == SourceCarto.WMS } ?: false,
                     ),
                 )
 

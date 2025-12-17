@@ -41,6 +41,7 @@ type CoucheType = {
   couchePublic: boolean;
   coucheActive: boolean;
   coucheProxy: boolean;
+  coucheTuilage: boolean;
   coucheIconeUrl?: string;
   coucheLegendeUrl?: string;
   coucheIcone?: File;
@@ -111,6 +112,7 @@ export const prepareValues = (values: CoucheFormType) => {
               couchePublic: couche.couchePublic,
               coucheActive: couche.coucheActive,
               coucheProxy: couche.coucheProxy,
+              coucheTuilage: couche.coucheTuilage,
               coucheIcone: couche.coucheIcone,
               coucheLegende: couche.coucheLegende,
               coucheIconeUrl: couche.coucheIconeUrl,
@@ -415,6 +417,14 @@ const CoucheForm = () => {
                             value={couche.couchePublic}
                             label={"Publique"}
                           />
+                          {couche.coucheSource === SOURCE_CARTO.WMS && (
+                            <CheckBoxInput
+                              name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheTuilage`}
+                              value={couche.coucheTuilage}
+                              label={"Utiliser le tuilage WMS"}
+                              tooltipText="Si la case est cochée, la couche sera chargée sous forme de tuiles. Attention, Geoserver ne peut pas gérer convenablement l'affichage des attributs calculés dans une couche tuilée (un libellé affiché au centroïde, une couleur de remplissage aléatoire, ...), donc pour toute couche tuilée il conviendra de vérifier son style associé."
+                            />
+                          )}
                           <CheckBoxInput
                             name={`groupeCoucheList.${index}.coucheList.${groupIndex}.coucheProxy`}
                             value={couche.coucheProxy}
