@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1-labs
 ARG GLOWROOT_VERSION=0.14.2
 FROM docker-registry.priv.atolcd.com/glowroot:$GLOWROOT_VERSION AS glowroot
 
@@ -5,17 +6,10 @@ FROM docker-registry.priv.atolcd.com/java:21-jre
 
 ARG REMOCRA_VERSION=DEV
 
-# Version temporaire, en attendant que hadolint supporte le flag "--exclude"
-# https://github.com/hadolint/hadolint/issues/1029
-RUN --mount=type=bind,from=glowroot,target=/mnt/glowroot \
-    cp -a /mnt/glowroot/* / \
-    && rm /opt/glowroot/lib/*-osx.jar /opt/glowroot/lib/*-windows.jar
-# La syntaxe "docker/dockerfile:1.7-labs" ajoute le support du flag "--exclude"
-# mais ce n'est pas valide pour hadolint.
-#COPY --link --from=glowroot \
-#     --exclude=opt/glowroot/lib/*-osx.jar \
-#     --exclude=opt/glowroot/lib/*-windows.jar \
-#     / /
+COPY --link --from=glowroot \
+     --exclude=opt/glowroot/lib/*-osx.jar \
+     --exclude=opt/glowroot/lib/*-windows.jar \
+     / /
 
 # Crée un utilisateur applicatif et son groupe dédié
 RUN groupadd --system --non-unique --gid 2000 remocra \
