@@ -84,6 +84,7 @@ class LayersRetriever {
                                 .toString()
                         },
                         hasStyle = coucheMetadataRepository.checkCoucheMetadata(couche.coucheId),
+                        tuilage = couche.coucheTuilage,
                     )
                 },
             )
@@ -113,5 +114,6 @@ class LayersRetriever {
         val icone: String?,
         val legende: String?,
         val hasStyle: Boolean,
+        val tuilage: Boolean,
     )
 }

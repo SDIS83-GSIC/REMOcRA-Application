@@ -13,7 +13,7 @@ import { bbox } from "ol/loadingstrategy";
 import classNames from "classnames";
 import "ol/ol.css";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
-import { OSM, WMTS } from "ol/source";
+import { OSM, TileWMS, WMTS } from "ol/source";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
@@ -79,7 +79,7 @@ const tileGrid = new WMTSTileGrid({
 export function toOpenLayer(
   layer: any,
   etudeId?: string,
-): TileSource | WMTS | VectorSource | ImageWMS | undefined {
+): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
       const wmsParams: any = {
@@ -97,10 +97,23 @@ export function toOpenLayer(
         wmsParams.viewParams = `idEtude:${encodeURIComponent(etudeId)}`;
       }
 
-      return new ImageWMS({
-        url: layer.url,
-        params: wmsParams,
-      });
+      return !layer.tuilage
+        ? new ImageWMS({
+            url: layer.url,
+            params: wmsParams,
+          })
+        : new TileWMS({
+            url: layer.url,
+            params: wmsParams,
+            // Optimisations de performance
+            cacheSize: 512, // Cache plus important pour les tuiles
+            transition: 0, // Désactive les transitions pour un affichage plus rapide
+            tileLoadFunction: (tile: any, src: string) => {
+              const image = tile.getImage();
+              image.crossOrigin = layer.crossOrigin ?? "anonymous";
+              image.src = src;
+            },
+          });
     }
     case SOURCE_CARTO.WMTS:
       return new WMTS({
@@ -413,7 +426,10 @@ export const useMapComponent = ({
                 projection.getCode(),
               projection,
             );
-          } else if (layer.source === SOURCE_CARTO.WMS) {
+          } else if (
+            layer.source === SOURCE_CARTO.WMS &&
+            layer.tuilage !== true
+          ) {
             // WMS: ImageLayer avec ImageWMS
             openlayer = new ImageLayer({
               source: toOpenLayer(layer, etudeId) as ImageWMS,

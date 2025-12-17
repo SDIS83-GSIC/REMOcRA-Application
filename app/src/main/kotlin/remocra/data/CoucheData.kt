@@ -23,6 +23,7 @@ data class CoucheData(
     val groupeFonctionnalitesList: Collection<UUID> = listOf(),
     val moduleList: Collection<TypeModule> = listOf(),
     val coucheProtected: Boolean = false,
+    val coucheTuilage: Boolean,
 )
 
 data class SimplifiedCoucheData(

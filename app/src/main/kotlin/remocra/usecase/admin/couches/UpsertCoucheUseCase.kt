@@ -69,6 +69,7 @@ class UpsertCoucheUseCase : AbstractCUDUseCase<CoucheFormData>(TypeOperation.INS
                         coucheProxy = couche.coucheProxy,
                         coucheCrossOrigin = couche.coucheCrossOrigin,
                         coucheProtected = couche.coucheProtected,
+                        coucheTuilage = false, // TODO
                     ),
                 )
 

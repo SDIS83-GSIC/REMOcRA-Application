@@ -38,6 +38,7 @@ data class Couche(
     val coucheProxy: Boolean?,
     val coucheCrossOrigin: String?,
     val coucheProtected: Boolean,
+    val coucheTuilage: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -130,6 +131,9 @@ data class Couche(
         if (this.coucheProtected != o.coucheProtected) {
             return false
         }
+        if (this.coucheTuilage != o.coucheTuilage) {
+            return false
+        }
         return true
     }
 
@@ -153,6 +157,7 @@ data class Couche(
         result = prime * result + (if (this.coucheProxy == null) 0 else this.coucheProxy.hashCode())
         result = prime * result + (if (this.coucheCrossOrigin == null) 0 else this.coucheCrossOrigin.hashCode())
         result = prime * result + this.coucheProtected.hashCode()
+        result = prime * result + this.coucheTuilage.hashCode()
         return result
     }
 
@@ -176,6 +181,7 @@ data class Couche(
         sb.append(", ").append(coucheProxy)
         sb.append(", ").append(coucheCrossOrigin)
         sb.append(", ").append(coucheProtected)
+        sb.append(", ").append(coucheTuilage)
 
         sb.append(")")
         return sb.toString()

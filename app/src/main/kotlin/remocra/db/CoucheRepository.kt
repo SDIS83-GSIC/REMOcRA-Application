@@ -41,6 +41,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 groupeFonctionnalitesList = getGroupeFonctionnalitesList(couche.coucheId).map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
                 moduleList = getModuleList(couche.coucheId),
                 coucheProtected = couche.coucheProtected,
+                coucheTuilage = couche.coucheTuilage,
             )
         }.associateBy { it.coucheId }
 
@@ -113,6 +114,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.PUBLIC, couche.couchePublic)
             .set(COUCHE.ACTIVE, couche.coucheActive)
             .set(COUCHE.PROXY, couche.coucheProxy)
+            .set(COUCHE.TUILAGE, couche.coucheTuilage)
             .execute()
     }
 

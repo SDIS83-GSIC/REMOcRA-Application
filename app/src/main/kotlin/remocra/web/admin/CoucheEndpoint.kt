@@ -86,10 +86,11 @@ class CoucheEndpoint : AbstractEndpoint() {
                                     groupeFonctionnalitesList = coucheRepository.getGroupeFonctionnalitesList(couche.coucheId)
                                         .map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
                                     moduleList = coucheRepository.getModuleList(couche.coucheId),
-                                    coucheProtected = couche.coucheProtected ?: false,
+                                    coucheProtected = couche.coucheProtected,
+                                    coucheTuilage = couche.coucheTuilage,
                                 )
                             },
-                            groupeCoucheProtected = groupeCouche.groupeCoucheProtected ?: false,
+                            groupeCoucheProtected = groupeCouche.groupeCoucheProtected,
                         )
                     }
             },
