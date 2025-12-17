@@ -38,6 +38,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
         execute(
             userInfo = userInfo,
             element = peiData,
+            this.transactionManager,
         )
     }
 }
