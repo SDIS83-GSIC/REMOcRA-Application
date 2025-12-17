@@ -413,7 +413,7 @@ const Pei = ({
   // Correspond à la liste des champs obligatoires avec leur index dans l'accordion
   // Cela nous permettra d'ouvrir une section si un champ obligatoire n'est pas saisi
   const index = isNew ? 0 : 1;
-  const listValuesRequired: ValuesRequired[] = [
+  const listValuesWithConstraints: ValuesWithConstraints[] = [
     {
       name: "peiAutoriteDeciId",
       accordionIndex: index,
@@ -441,6 +441,13 @@ const Pei = ({
     {
       name: "peiDomaineId",
       accordionIndex: index + 1,
+    },
+    {
+      name: "pibiDiametreCanalisation",
+      constraint:
+        values.pibiDiametreCanalisation !== undefined &&
+        values.pibiDiametreCanalisation < 1,
+      accordionIndex: index + 2,
     },
   ];
 
@@ -615,7 +622,7 @@ const Pei = ({
                 setFieldValue("coordonneeX", coordonnees.coordonneeX);
                 setFieldValue("coordonneeY", coordonnees.coordonneeY);
                 setFieldValue("srid", srid);
-                checkValidity(values, show, listValuesRequired);
+                checkValidity(values, show, listValuesWithConstraints);
               }}
             />
           )}
@@ -629,25 +636,29 @@ const Pei = ({
  * Permet de check si le formulaire est conforme. S'il ne l'est pas on ouvre la section qui doit être modifiée
  * @param values : les values de formik
  * @param show : fonction d'ouverture d'une section
- * @param listValuesRequired : liste des valeurs requises avec l'index de l'accordion
+ * @param listValuesWithConstraints : liste des valeurs qui ont des contraintes avec l'index de l'accordion
  */
 function checkValidity(
   values: any,
   show: (e: number) => void,
-  listValuesRequired: ValuesRequired[],
+  listValuesWithConstraints: ValuesWithConstraints[],
 ) {
-  listValuesRequired.map((e: ValuesRequired) => {
+  listValuesWithConstraints.map((e: ValuesWithConstraints) => {
     if (
-      validationSchema.fields[e.name] != null &&
-      (values[e.name] === null || values[e.name] === "")
+      (validationSchema.fields[e.name] != null &&
+        (values[e.name] === null ||
+          values[e.name] === "" ||
+          values[e.name] === undefined)) ||
+      e.constraint === true
     ) {
       show(e.accordionIndex);
     }
   });
 }
 
-type ValuesRequired = {
+type ValuesWithConstraints = {
   name: string;
+  constraint?: boolean;
   accordionIndex: number;
 };
 
