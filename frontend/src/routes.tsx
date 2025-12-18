@@ -209,6 +209,7 @@ import CreateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/CreateCouc
 import UpdateCoucheMetadata from "./pages/Admin/gestionAffichageInfoI/UpdateCoucheMetadata.tsx";
 import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTasksManuelles.tsx";
 import EvenementSousCategorieList from "./pages/Admin/crise/EvenementSousCategorie/ListEvementSousCategorie.tsx";
+import ListGroupeCouche from "./pages/Admin/couche/ListGroupeCouche.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -342,6 +343,7 @@ export const URLS = {
   LIEN_TYPE_ORGANISME_DROIT_API: url`/admin/type-organisme-droits-api`,
 
   COUCHES_LIST: url`/admin/couches`,
+  LIST_GROUPE_COUCHE: url`/admin/groupe-couche`,
 
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
@@ -1768,6 +1770,15 @@ export default [
         element: (
           <Authorization
             Component={CoucheList}
+            droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
+          />
+        ),
+      },
+      {
+        path: "groupe-couche",
+        element: (
+          <Authorization
+            Component={ListGroupeCouche}
             droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
           />
         ),

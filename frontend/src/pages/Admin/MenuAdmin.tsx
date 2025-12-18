@@ -264,31 +264,6 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE) && (
-                  <>
-                    <Nav.Item>
-                      <CustomLinkButton
-                        className="text-underline text-start"
-                        pathname={URLS.COUCHES_LIST}
-                      >
-                        Couches cartographiques
-                      </CustomLinkButton>
-                    </Nav.Item>
-                  </>
-                )}
-                {hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) && (
-                  <>
-                    <Nav.Item>
-                      <CustomLinkButton
-                        className="text-underline text-start"
-                        pathname={URLS.LIST_COUCHE_METADATA}
-                      >
-                        Gestion des métadonnées des couches
-                      </CustomLinkButton>
-                    </Nav.Item>
-                    <br />
-                  </>
-                )}
                 {hasDroit(user, TYPE_DROIT.ADMIN_API) && (
                   <Nav.Item>
                     <CustomLinkButton
@@ -298,6 +273,41 @@ const MenuAdmin = () => {
                       Attribution des droits API pour les types organismes
                     </CustomLinkButton>
                   </Nav.Item>
+                )}
+
+                {(hasDroit(user, TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE) ||
+                  hasDroit(user, TYPE_DROIT.CARTO_METADATA_A)) && (
+                  <>
+                    <br />
+                    <div className="fw-bold text-center p-2 fs-5">
+                      Couches cartographiques
+                    </div>
+                    <Nav className="flex-column">
+                      {hasDroit(
+                        user,
+                        TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE,
+                      ) && (
+                        <Nav.Item>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.LIST_GROUPE_COUCHE}
+                          >
+                            Groupes de couches
+                          </CustomLinkButton>
+                        </Nav.Item>
+                      )}
+                      {hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) && (
+                        <Nav.Item>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.LIST_COUCHE_METADATA}
+                          >
+                            Gestion des métadonnées des couches
+                          </CustomLinkButton>
+                        </Nav.Item>
+                      )}
+                    </Nav>
+                  </>
                 )}
               </Nav>
             </Col>
