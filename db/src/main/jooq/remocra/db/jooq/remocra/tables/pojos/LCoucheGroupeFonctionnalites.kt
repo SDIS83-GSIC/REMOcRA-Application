@@ -21,6 +21,7 @@ import javax.annotation.processing.Generated
 data class LCoucheGroupeFonctionnalites(
     val coucheId: UUID,
     val groupeFonctionnalitesId: UUID,
+    val limiteZc: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -40,6 +41,9 @@ data class LCoucheGroupeFonctionnalites(
         if (this.groupeFonctionnalitesId != o.groupeFonctionnalitesId) {
             return false
         }
+        if (this.limiteZc != o.limiteZc) {
+            return false
+        }
         return true
     }
 
@@ -48,6 +52,7 @@ data class LCoucheGroupeFonctionnalites(
         var result = 1
         result = prime * result + this.coucheId.hashCode()
         result = prime * result + this.groupeFonctionnalitesId.hashCode()
+        result = prime * result + this.limiteZc.hashCode()
         return result
     }
 
@@ -56,6 +61,7 @@ data class LCoucheGroupeFonctionnalites(
 
         sb.append(coucheId)
         sb.append(", ").append(groupeFonctionnalitesId)
+        sb.append(", ").append(limiteZc)
 
         sb.append(")")
         return sb.toString()

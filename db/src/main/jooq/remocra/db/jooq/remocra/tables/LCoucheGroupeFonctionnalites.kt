@@ -92,6 +92,12 @@ open class LCoucheGroupeFonctionnalites(
      */
     val GROUPE_FONCTIONNALITES_ID: TableField<Record, UUID?> = createField(DSL.name("groupe_fonctionnalites_id"), SQLDataType.UUID.nullable(false), this, "")
 
+    /**
+     * The column
+     * <code>remocra.l_couche_groupe_fonctionnalites.limite_zc</code>.
+     */
+    val LIMITE_ZC: TableField<Record, Boolean?> = createField(DSL.name("limite_zc"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
