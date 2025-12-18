@@ -175,9 +175,12 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getAnomaliePoidsList(): Collection<PoidsAnomalie> =
         dsl.select(*POIDS_ANOMALIE.fields())
             .from(POIDS_ANOMALIE)
+            .innerJoin(NATURE).on(NATURE.ID.eq(POIDS_ANOMALIE.NATURE_ID))
             .innerJoin(ANOMALIE).on(POIDS_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
             .innerJoin(ANOMALIE_CATEGORIE).on(ANOMALIE.ANOMALIE_CATEGORIE_ID.eq(ANOMALIE_CATEGORIE.ID))
             .where(ANOMALIE_CATEGORIE.CODE.notEqual(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
+            .and(NATURE.ACTIF)
+            .and(ANOMALIE.ACTIF)
             .fetchInto()
 
     /**
