@@ -101,6 +101,12 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
             .execute()
     }
 
+    fun delete(groupeCoucheId: UUID) {
+        dsl.deleteFrom(GROUPE_COUCHE)
+            .where(GROUPE_COUCHE.ID.eq(groupeCoucheId))
+            .execute()
+    }
+
     fun getById(groupeCoucheId: UUID): GroupeCouche =
         dsl.selectFrom(GROUPE_COUCHE)
             .where(GROUPE_COUCHE.ID.eq(groupeCoucheId))
@@ -111,4 +117,10 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
             dsl.selectFrom(GROUPE_COUCHE)
                 .where(GROUPE_COUCHE.CODE.eq(groupeCoucheCode).and(groupeCoucheId?.let { GROUPE_COUCHE.ID.ne(groupeCoucheId) })),
         )
+
+    fun getCouchesByGroupeCoucheId(groupeCoucheId: UUID): List<UUID> =
+        dsl.selectDistinct(COUCHE.ID)
+            .from(COUCHE)
+            .where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId))
+            .fetchInto()
 }

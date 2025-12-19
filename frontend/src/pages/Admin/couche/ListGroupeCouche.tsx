@@ -30,6 +30,25 @@ const ListGroupeCouche = () => {
     type: TYPE_BUTTON.UPDATE,
     route: (data) => URLS.UPDATE_GROUPE_COUCHE(data),
   });
+
+  listeButton.push({
+    disable: (v) => {
+      return v.original.nombreCouche > 0 || v.original.groupeCoucheProtected;
+    },
+    textDisableFunction: (v) => {
+      if (v.original.groupeCoucheProtected) {
+        return "Impossible de supprimer un élément protégé";
+      } else {
+        return "Impossible de supprimer le groupe de couche car des couches y sont associées";
+      }
+    },
+    row: (row) => {
+      return row;
+    },
+    type: TYPE_BUTTON.DELETE,
+    pathname: url`/api/admin/groupe-couche/`,
+  });
+
   return (
     <Container>
       <PageTitle
