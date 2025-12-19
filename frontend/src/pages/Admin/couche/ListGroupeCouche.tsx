@@ -1,4 +1,5 @@
 import { Alert, Container } from "react-bootstrap";
+import { URLS } from "../../../routes.tsx";
 import { IconInfo, IconMapComponent } from "../../../components/Icon/Icon.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import QueryTable, {
@@ -9,12 +10,22 @@ import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { BooleanColumn } from "../../../components/Table/columns.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import filterValuesToVariable from "./FilterGroupeCouche.tsx";
 
 const ListGroupeCouche = () => {
   return (
     <Container>
-      <PageTitle title="Groupes de couches" icon={<IconMapComponent />} />
+      <PageTitle
+        title="Groupes de couches"
+        icon={<IconMapComponent />}
+        right={
+          <CreateButton
+            title={"Ajouter un groupe de couche"}
+            href={URLS.ADD_GROUPE_COUCHE}
+          />
+        }
+      />
       <Alert
         variant="info"
         className="mt-2 mb-2 text-muted d-flex align-items-center"

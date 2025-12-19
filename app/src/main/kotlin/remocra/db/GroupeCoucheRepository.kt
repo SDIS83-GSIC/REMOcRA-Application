@@ -7,8 +7,10 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.Params
 import remocra.data.groupecouche.GroupeCoucheTableData
+import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
 import remocra.db.jooq.remocra.tables.references.COUCHE
 import remocra.db.jooq.remocra.tables.references.GROUPE_COUCHE
+import java.util.UUID
 import kotlin.math.absoluteValue
 
 class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -77,4 +79,28 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
             }
         }
     }
+
+    fun getLastOrdre(): Int? =
+        dsl.select(DSL.max(GROUPE_COUCHE.ORDRE)).from(GROUPE_COUCHE).fetchOneInto()
+
+    fun insert(groupeCouche: GroupeCouche) {
+        dsl.insertInto(GROUPE_COUCHE)
+            .set(GROUPE_COUCHE.ID, groupeCouche.groupeCoucheId)
+            .set(GROUPE_COUCHE.CODE, groupeCouche.groupeCoucheCode)
+            .set(GROUPE_COUCHE.LIBELLE, groupeCouche.groupeCoucheLibelle)
+            .set(GROUPE_COUCHE.PROTECTED, groupeCouche.groupeCoucheProtected)
+            .set(GROUPE_COUCHE.ORDRE, groupeCouche.groupeCoucheOrdre)
+            .execute()
+    }
+
+    fun getById(groupeCoucheId: UUID): GroupeCouche =
+        dsl.selectFrom(GROUPE_COUCHE)
+            .where(GROUPE_COUCHE.ID.eq(groupeCoucheId))
+            .fetchSingleInto()
+
+    fun existsByCode(groupeCoucheCode: String): Boolean =
+        dsl.fetchExists(
+            dsl.selectFrom(GROUPE_COUCHE)
+                .where(GROUPE_COUCHE.CODE.eq(groupeCoucheCode)),
+        )
 }

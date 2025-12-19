@@ -9,12 +9,15 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
+import remocra.auth.userInfo
 import remocra.data.DataTableau
 import remocra.data.Params
+import remocra.data.couche.GroupeCoucheData
 import remocra.db.GroupeCoucheRepository
 import remocra.db.GroupeCoucheRepository.FilterGroupeCouche
 import remocra.db.GroupeCoucheRepository.Sort
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.admin.couches.groupecouche.CreateGroupeCoucheUseCase
 import remocra.web.AbstractEndpoint
 
 @Produces("application/json; charset=UTF-8")
@@ -25,6 +28,9 @@ class GroupeCoucheEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var groupeCoucheRepository: GroupeCoucheRepository
+
+    @Inject
+    lateinit var createGroupeCoucheUseCase: CreateGroupeCoucheUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -41,4 +47,14 @@ class GroupeCoucheEndpoint : AbstractEndpoint() {
                 groupeCoucheRepository.countForAdmin(params.filterBy),
             ),
         ).build()
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun create(groupeCoucheData: GroupeCoucheData): Response {
+        return createGroupeCoucheUseCase.execute(
+            securityContext.userInfo,
+            groupeCoucheData,
+        ).wrap()
+    }
 }
