@@ -6,8 +6,10 @@ import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -20,13 +22,16 @@ import remocra.auth.userInfo
 import remocra.data.CoucheData
 import remocra.data.CoucheFormData
 import remocra.data.CoucheImageData
+import remocra.data.DataTableau
 import remocra.data.GroupeCoucheData
+import remocra.data.Params
 import remocra.db.CoucheRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.UpsertCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import remocra.web.carto.LayersEndpoint
+import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
 @Produces("application/json; charset=UTF-8")
@@ -123,4 +128,18 @@ class CoucheEndpoint : AbstractEndpoint() {
                 },
             ),
         ).wrap()
+
+    @POST
+    @Path("/groupe-couche/{groupeCoucheId}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun list(
+        @PathParam("groupeCoucheId") groupeCoucheId: UUID,
+        params: Params<CoucheRepository.FilterCouche, CoucheRepository.Sort>,
+    ): Response =
+        Response.ok(
+            DataTableau(
+                list = coucheRepository.getAllCoucheForAdmin(groupeCoucheId, params),
+                count = coucheRepository.countAllCoucheForAdmin(groupeCoucheId, params.filterBy),
+            ),
+        ).build()
 }

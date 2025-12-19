@@ -213,6 +213,7 @@ import ListGroupeCouche from "./pages/Admin/couche/ListGroupeCouche.tsx";
 import CreateGroupeCouche from "./pages/Admin/couche/CreateGroupeCouche.tsx";
 import UpdateGroupeCouche from "./pages/Admin/couche/UpdateGroupeCouche.tsx";
 import SortGroupeCouche from "./pages/Admin/couche/SortGroupeCouche.tsx";
+import ListCouche from "./pages/Admin/couche/ListCouche.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -351,6 +352,8 @@ export const URLS = {
   SORT_GROUPE_COUCHE: url`/admin/groupe-couche/sort`,
   UPDATE_GROUPE_COUCHE: (groupeCoucheId: string) =>
     url`/admin/groupe-couche/update/` + groupeCoucheId,
+  LIST_COUCHE: (groupeCoucheId: string) =>
+    url`/admin/groupe-couche/${groupeCoucheId}/couches`,
 
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
@@ -1786,6 +1789,15 @@ export default [
         element: (
           <Authorization
             Component={ListGroupeCouche}
+            droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
+          />
+        ),
+      },
+      {
+        path: "groupe-couche/:groupeCoucheId/couches",
+        element: (
+          <Authorization
+            Component={ListCouche}
             droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
           />
         ),

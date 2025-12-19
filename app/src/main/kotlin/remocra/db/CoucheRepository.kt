@@ -1,8 +1,13 @@
 package remocra.db
 
 import jakarta.inject.Inject
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SortField
+import org.jooq.impl.DSL
 import remocra.data.CoucheData
+import remocra.data.Params
+import remocra.data.couche.GroupeFonctionnalitesWithFlagLimiteZc
 import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.Couche
@@ -14,6 +19,7 @@ import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class CoucheRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     /**
@@ -156,4 +162,154 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(COUCHE.SOURCE.notIn(listOf(SourceCarto.GEOJSON, SourceCarto.OSM)))
             .and(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId))
             .fetchInto<Couche>()
+
+    fun countAllCoucheForAdmin(
+        groupeCoucheId: UUID,
+        filter: FilterCouche?,
+    ): Int =
+        dsl.select(DSL.countDistinct(COUCHE.ID))
+            .from(COUCHE)
+            .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .on(COUCHE.ID.eq(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID))
+            .join(L_COUCHE_MODULE)
+            .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
+            .where(
+                COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId),
+            ).and(filter?.toCondition())
+            .fetchSingleInto<Int>()
+
+    fun getAllCoucheForAdmin(
+        groupeCoucheId: UUID,
+        params: Params<FilterCouche, Sort>,
+    ): List<remocra.data.couche.CoucheData> =
+        dsl.selectDistinct(
+            COUCHE.ID,
+            COUCHE.CODE,
+            COUCHE.LIBELLE,
+            COUCHE.SOURCE,
+            COUCHE.PROJECTION,
+            COUCHE.URL,
+            COUCHE.NOM,
+            COUCHE.FORMAT,
+            COUCHE.PUBLIC,
+            COUCHE.ACTIVE,
+            COUCHE.PROXY,
+            COUCHE.PROTECTED,
+            COUCHE.TUILAGE,
+            DSL.multiset(
+                dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
+                    .from(L_COUCHE_MODULE)
+                    .where(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID)),
+            ).convertFrom { r ->
+                r.map { it.value1().toString() }.joinToString()
+            }.`as`("moduleList"),
+            DSL.multiset(
+                dsl.select(GROUPE_FONCTIONNALITES.LIBELLE, L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC)
+                    .from(GROUPE_FONCTIONNALITES)
+                    .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+                    .on(GROUPE_FONCTIONNALITES.ID.eq(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
+                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID)),
+            ).`as`("groupeFonctionnalitesWithFlagLimiteZc").convertFrom { r ->
+                r.map {
+                    GroupeFonctionnalitesWithFlagLimiteZc(
+                        groupeFonctionnaliteId = it.getValue<String>(GROUPE_FONCTIONNALITES.LIBELLE),
+                        limiteZc = it.getValue<Boolean>(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC),
+                    )
+                }
+            },
+
+        )
+            .from(COUCHE)
+            .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .on(COUCHE.ID.eq(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID))
+            .join(L_COUCHE_MODULE)
+            .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
+            .where(
+                COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId),
+            ).and(params.filterBy?.toCondition())
+            .orderBy(params.sortBy?.toCondition() ?: listOf(COUCHE.ORDRE.desc()))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
+
+    data class FilterCouche(
+        val coucheCode: String?,
+        val coucheLibelle: String?,
+        val coucheSource: String?,
+        val coucheProjection: String?,
+        val coucheUrl: String?,
+        val coucheNom: String?,
+        val coucheFormat: String?,
+        val couchePublic: Boolean?,
+        val coucheActive: Boolean?,
+        val coucheProxy: Boolean?,
+        val coucheProtected: Boolean?,
+        val groupeFonctionnalitesHorsZc: List<UUID>?,
+        val groupeFonctionnalitesZc: List<UUID>?,
+        val moduleList: List<TypeModule>?,
+    ) {
+        fun toCondition(): Condition = DSL.and(
+            listOfNotNull(
+                coucheCode?.let { DSL.and(COUCHE.CODE.containsIgnoreCaseUnaccent(it)) },
+                coucheLibelle?.let { DSL.and(COUCHE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                coucheProjection?.let { DSL.and(COUCHE.PROJECTION.containsIgnoreCaseUnaccent(it)) },
+                coucheUrl?.let { DSL.and(COUCHE.URL.containsIgnoreCaseUnaccent(it)) },
+                coucheNom?.let { DSL.and(COUCHE.NOM.containsIgnoreCaseUnaccent(it)) },
+                coucheFormat?.let { DSL.and(COUCHE.FORMAT.containsIgnoreCaseUnaccent(it)) },
+                couchePublic?.let { DSL.and(COUCHE.PUBLIC.eq(it)) },
+                coucheActive?.let { DSL.and(COUCHE.ACTIVE.eq(it)) },
+                coucheProxy?.let { DSL.and(COUCHE.PROXY.eq(it)) },
+                coucheProtected?.let { DSL.and(COUCHE.PROTECTED.eq(it)) },
+                groupeFonctionnalitesZc?.let { L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it).and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isTrue) },
+                groupeFonctionnalitesHorsZc?.let { L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it).and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isFalse) },
+                moduleList?.let { L_COUCHE_MODULE.MODULE_TYPE.`in`(it) },
+            ),
+        )
+    }
+
+    data class Sort(
+        val coucheCode: Int?,
+        val coucheLibelle: Int?,
+        val coucheSource: Int?,
+        val coucheProjection: Int?,
+        val coucheUrl: Int?,
+        val coucheNom: Int?,
+        val coucheFormat: Int?,
+        val couchePublic: Int?,
+        val coucheActive: Int?,
+        val coucheProxy: Int?,
+        val coucheCrossOrigin: Int?,
+        val coucheProtected: Int?,
+    ) {
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            coucheCode?.let { "coucheCode" to it },
+            coucheLibelle?.let { "coucheLibelle" to it },
+            coucheSource?.let { "coucheSource" to it },
+            coucheProjection?.let { "coucheProjection" to it },
+            coucheUrl?.let { "coucheUrl" to it },
+            coucheNom?.let { "coucheNom" to it },
+            coucheFormat?.let { "coucheFormat" to it },
+            couchePublic?.let { "couchePublic" to it },
+            coucheActive?.let { "coucheActive" to it },
+            coucheProxy?.let { "coucheProxy" to it },
+            coucheProtected?.let { "coucheProtected" to it },
+        )
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "coucheCode" -> COUCHE.CODE.getSortField(pair.second)
+                "coucheLibelle" -> COUCHE.LIBELLE.getSortField(pair.second)
+                "coucheOrdre" -> COUCHE.ORDRE.getSortField(pair.second)
+                "coucheSource" -> COUCHE.SOURCE.getSortField(pair.second)
+                "coucheProjection" -> COUCHE.PROJECTION.getSortField(pair.second)
+                "coucheUrl" -> COUCHE.URL.getSortField(pair.second)
+                "coucheNom" -> COUCHE.NOM.getSortField(pair.second)
+                "coucheFormat" -> COUCHE.FORMAT.getSortField(pair.second)
+                "couchePublic" -> COUCHE.PUBLIC.getSortField(pair.second)
+                "coucheActive" -> COUCHE.ACTIVE.getSortField(pair.second)
+                "coucheProxy" -> COUCHE.PROXY.getSortField(pair.second)
+                "coucheProtected" -> COUCHE.PROTECTED.getSortField(pair.second)
+                else -> null
+            }
+        }
+    }
 }

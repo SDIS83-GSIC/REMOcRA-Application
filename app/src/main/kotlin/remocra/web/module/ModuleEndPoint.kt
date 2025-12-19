@@ -23,11 +23,11 @@ import remocra.data.DataTableau
 import remocra.data.ListModuleWithImage
 import remocra.data.ModuleAccueilData
 import remocra.data.Params
-import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.CourrierRepository
 import remocra.db.ModuleRepository
 import remocra.db.ThematiqueRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.CourrierUsecase
 import remocra.usecase.module.ModuleAccueilUpsertUseCase
@@ -58,6 +58,13 @@ class ModuleEndPoint : AbstractEndpoint() {
     @Context lateinit var securityContext: SecurityContext
 
     @Inject lateinit var courrierUsecase: CourrierUsecase
+
+    @GET
+    @Path("/get-all-type-module")
+    @Public("Les types de module ne sont pas liées à un droit.")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getAllTypeModule() =
+        Response.ok(TypeModule.entries.sortedBy { it.name }).build()
 
     @GET
     @Path("/")
@@ -145,9 +152,9 @@ class ModuleEndPoint : AbstractEndpoint() {
         ).build()
 
     @GET
-    @Path("/get-type-module")
+    @Path("/get-type-module-accueil")
     @Public("Les types de module ne sont pas liées à un droit.")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getTypeModule() =
-        Response.ok(TypeModuleRapportCourrier.entries.sortedBy { it.name }).build()
+    fun getTypeModuleAccueil() =
+        Response.ok(TypeModule.entries.sortedBy { it.name }).build()
 }

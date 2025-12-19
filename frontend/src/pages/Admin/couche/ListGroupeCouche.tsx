@@ -6,6 +6,7 @@ import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconInfo,
+  IconList,
   IconMapComponent,
   IconSortList,
 } from "../../../components/Icon/Icon.tsx";
@@ -27,6 +28,16 @@ import filterValuesToVariable from "./FilterGroupeCouche.tsx";
 
 const ListGroupeCouche = () => {
   const listeButton: ButtonType[] = [];
+
+  listeButton.push({
+    row: (row: any) => {
+      return row;
+    },
+    textEnable: "Voir les couches",
+    route: (data) => URLS.LIST_COUCHE(data),
+    type: TYPE_BUTTON.LINK,
+    icon: <IconList />,
+  });
 
   listeButton.push({
     row: (row) => {
