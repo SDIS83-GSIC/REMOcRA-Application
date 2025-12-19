@@ -98,4 +98,20 @@ class GroupeCoucheEndpoint : AbstractEndpoint() {
         // Implementation goes here
         return Response.ok(groupeCoucheRepository.getById(groupeCoucheId)).build()
     }
+
+    data class ListeTriInput(
+        val listeObjet: List<UUID>,
+    )
+
+    @PUT
+    @Path("/update-ordre")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun updateGroupeCoucheOrdre(liste: ListeTriInput): Response =
+        Response.ok(groupeCoucheRepository.updateGroupeCoucheOrdre(liste.listeObjet)).build()
+
+    @GET
+    @Path("/get-ordre")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun getOrdreGroupeCouche(): Response =
+        Response.ok(groupeCoucheRepository.getOrdreGroupeCouche()).build()
 }

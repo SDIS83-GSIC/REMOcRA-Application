@@ -5,6 +5,7 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.groupecouche.GroupeCoucheTableData
 import remocra.db.jooq.remocra.tables.pojos.GroupeCouche
@@ -33,7 +34,7 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
                 GROUPE_COUCHE.LIBELLE,
                 GROUPE_COUCHE.PROTECTED,
             )
-            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(GROUPE_COUCHE.ORDRE))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(GROUPE_COUCHE.ORDRE.desc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
@@ -122,5 +123,21 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
         dsl.selectDistinct(COUCHE.ID)
             .from(COUCHE)
             .where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId))
+            .fetchInto()
+
+    fun updateGroupeCoucheOrdre(listeObjet: List<UUID>): Int {
+        listeObjet.forEachIndexed { index, id ->
+            dsl.update(GROUPE_COUCHE)
+                .set(GROUPE_COUCHE.ORDRE, listeObjet.size - index + 1)
+                .where(GROUPE_COUCHE.ID.eq(id))
+                .execute()
+        }
+        return 1
+    }
+
+    fun getOrdreGroupeCouche(): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(GROUPE_COUCHE.ID.`as`("id"), GROUPE_COUCHE.CODE.`as`("code"), GROUPE_COUCHE.LIBELLE.`as`("libelle"))
+            .from(GROUPE_COUCHE)
+            .orderBy(GROUPE_COUCHE.ORDRE.desc())
             .fetchInto()
 }

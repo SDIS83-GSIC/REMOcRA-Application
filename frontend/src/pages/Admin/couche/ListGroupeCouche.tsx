@@ -1,9 +1,14 @@
 import { Alert, Container } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { IconInfo, IconMapComponent } from "../../../components/Icon/Icon.tsx";
+import {
+  IconInfo,
+  IconMapComponent,
+  IconSortList,
+} from "../../../components/Icon/Icon.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -55,10 +60,19 @@ const ListGroupeCouche = () => {
         title="Groupes de couches"
         icon={<IconMapComponent />}
         right={
-          <CreateButton
-            title={"Ajouter un groupe de couche"}
-            href={URLS.ADD_GROUPE_COUCHE}
-          />
+          <>
+            <CustomLinkButton
+              pathname={URLS.SORT_GROUPE_COUCHE}
+              variant={"primary"}
+              className="me-2"
+            >
+              <IconSortList /> Réordonner les groupes
+            </CustomLinkButton>
+            <CreateButton
+              title={"Ajouter un groupe de couche"}
+              href={URLS.ADD_GROUPE_COUCHE}
+            />
+          </>
         }
       />
       <Alert

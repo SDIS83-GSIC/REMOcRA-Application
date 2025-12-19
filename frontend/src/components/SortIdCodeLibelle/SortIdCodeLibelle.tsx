@@ -110,10 +110,12 @@ const SortIdCodeLibelle = ({
   title,
   apiAdressForGetOrder,
   apiAdressForPutUpdateOrder,
+  beforeTri,
 }: {
   title: string;
   apiAdressForGetOrder: string;
   apiAdressForPutUpdateOrder: string;
+  beforeTri?: React.ReactNode;
 }) => {
   const nomenclatureInfo = useGet(url`${apiAdressForGetOrder}`);
 
@@ -175,6 +177,7 @@ const SortIdCodeLibelle = ({
     data && (
       <Container>
         <PageTitle icon={<IconSortList />} title={title} />
+        {beforeTri}
         {/* Tableau triable */}
         {errorMessage !== null && (
           <div className="text-danger">{errorMessage}</div>
