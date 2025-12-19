@@ -15,13 +15,18 @@ import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
 import { EPSG_3857 } from "../../../../utils/constantsUtils.tsx";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
-const OSM_LAYER = new TileLayer({
-  source: new OSM(),
-});
+// ne pas partager la même instance entre plusieurs carte
+function createOSMLayer() {
+  return new TileLayer({
+    source: new OSM(),
+  });
+}
 
 const MapDashboardComponent = (data: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const baseLayerRef = useRef<TileLayer | null>(null);
   const {
     user,
     epsg: projection,
@@ -67,9 +72,11 @@ const MapDashboardComponent = (data: any) => {
       return;
     }
 
+    baseLayerRef.current = createOSMLayer();
+
     const newMap = new Map({
       target: currentRef,
-      layers: [OSM_LAYER],
+      layers: [baseLayerRef.current!],
       view: new View({
         zoom: 6,
         projection: EPSG_3857,
@@ -173,7 +180,7 @@ const MapDashboardComponent = (data: any) => {
     map
       .getLayers()
       .getArray()
-      .filter((l: any) => l !== OSM_LAYER)
+      .filter((l: any) => l !== baseLayerRef.current)
       .forEach((l: any) => {
         map.removeLayer(l);
       });
