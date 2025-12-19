@@ -1,0 +1,32 @@
+= Release Notes
+
+== 3.0.1
+
+* https://redmine.atolcd.com/issues/274625[#274625]: Rapport personnalisé - Historique d'un PEI
+* https://redmine.atolcd.com/issues/274798[#274798]: Fiche résumé - Histogramme
+* https://redmine.atolcd.com/issues/274975[#274975]: Paramétrage Visite de réception + ROI
+* https://redmine.atolcd.com/issues/275246[#275246]: Tuilage des couches WMS
+* https://redmine.atolcd.com/issues/273357[#273357]: Notification utilisateur - Vérification avant notification
+* https://redmine.atolcd.com/issues/273384[#273384]: Renommage d'un champ en BDD
+* https://redmine.atolcd.com/issues/273746[#273746]: Application mobile - droits sur les visites
+* https://redmine.atolcd.com/issues/273780[#273780]: Tolérance affichage de la Tooltip
+* https://redmine.atolcd.com/issues/273795[#273795]: Localiser un élément
+* https://redmine.atolcd.com/issues/274049[#274049]: Création d'une indisponibilité temporaire depuis la carto
+* https://redmine.atolcd.com/issues/274059[#274059]: Correction API : POST /deci/pei/{numeroComplet}/visites
+* https://redmine.atolcd.com/issues/274471[#274471]: Modification d'un permis provenant de la v2
+* https://redmine.atolcd.com/issues/274534[#274534]: Enregistrement d'une oldeb sans "suite"
+* https://redmine.atolcd.com/issues/274542[#274542]: Rapport personnalisé - Export de fichier shp
+* https://redmine.atolcd.com/issues/274812[#274812]: Genération de la carte des tournées
+* https://redmine.atolcd.com/issues/274978[#274978]: Ajout organisme - filtre listes déroulantes
+* https://redmine.atolcd.com/issues/275231[#275231]: Modification des coordonnées géographiques d'un PEI
+* https://redmine.atolcd.com/issues/275237[#275237]: Ajouter un format d'affichage des coordonnées
+* https://redmine.atolcd.com/issues/275240[#275240]: CARTE : Afficher les coordonnées géographique sur la carte
+* https://redmine.atolcd.com/issues/275255[#275255]: CARTE : Ajouter les aires d'aspirations dans l'infobulle
+* https://redmine.atolcd.com/issues/275260[#275260]: Aires d'aspirations : Sélection dans la liste déroulante
+* https://redmine.atolcd.com/issues/275263[#275263]: Page d'accueil - Bandeau et en tête
+* https://redmine.atolcd.com/issues/275264[#275264]: Erreur lien de téléchargement document
+* https://redmine.atolcd.com/issues/275267[#275267]: Création de compte utilisateur : filtre du profil utilisateur en fonction de l'organisme choisi
+* https://redmine.atolcd.com/issues/275270[#275270]: Modifier un PEI - Accordéon à déplier lors d'une erreur
+* https://redmine.atolcd.com/issues/275325[#275325]: Récupération du référentiel
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
