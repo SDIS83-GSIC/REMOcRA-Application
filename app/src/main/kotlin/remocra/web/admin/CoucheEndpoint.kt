@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
-import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -21,13 +20,13 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.CoucheData
 import remocra.data.CoucheFormData
-import remocra.data.CoucheImageData
+import remocra.data.CoucheFormDataWithImage
 import remocra.data.DataTableau
 import remocra.data.GroupeCoucheData
 import remocra.data.Params
 import remocra.db.CoucheRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecase.admin.couches.UpsertCoucheUseCase
+import remocra.usecase.admin.couches.CreateCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import remocra.web.carto.LayersEndpoint
@@ -41,7 +40,7 @@ class CoucheEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var coucheRepository: CoucheRepository
 
-    @Inject lateinit var updateCouche: UpsertCoucheUseCase
+    @Inject lateinit var createCoucheUseCase: CreateCoucheUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -101,34 +100,6 @@ class CoucheEndpoint : AbstractEndpoint() {
             },
         ).build()
 
-    @Path("/")
-    @PUT
-    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    fun put(
-        @Context httpRequest: HttpServletRequest,
-    ): Response =
-        updateCouche.execute(
-            securityContext.userInfo,
-            CoucheFormData(
-                data = objectMapper.readValue<List<GroupeCoucheData>>(httpRequest.getTextPart("data")),
-                iconeList = httpRequest.parts.filter { it.name.startsWith("icone_") }.map {
-                    val code = it.name.substringAfter("icone_")
-                    CoucheImageData(
-                        code = code,
-                        data = it,
-                    )
-                },
-                legendeList = httpRequest.parts.filter { it.name.startsWith("legende_") }.map {
-                    val code = it.name.substringAfter("legende_")
-                    CoucheImageData(
-                        code = code,
-                        data = it,
-                    )
-                },
-            ),
-        ).wrap()
-
     @POST
     @Path("/groupe-couche/{groupeCoucheId}")
     @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
@@ -142,4 +113,20 @@ class CoucheEndpoint : AbstractEndpoint() {
                 count = coucheRepository.countAllCoucheForAdmin(groupeCoucheId, params.filterBy),
             ),
         ).build()
+
+    @POST
+    @Path("/groupe-couche/{groupeCoucheId}/create")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun create(
+        @Context httpRequest: HttpServletRequest,
+    ): Response =
+        createCoucheUseCase.execute(
+            securityContext.userInfo,
+            CoucheFormDataWithImage(
+                coucheFormData = objectMapper.readValue<CoucheFormData>(httpRequest.getTextPart("couche")),
+                icone = httpRequest.getPart("icone"),
+                legende = httpRequest.getPart("legende"),
+            ),
+        ).wrap()
 }

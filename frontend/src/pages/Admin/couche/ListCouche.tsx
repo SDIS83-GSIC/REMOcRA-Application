@@ -1,5 +1,6 @@
 import { Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
@@ -17,6 +18,7 @@ import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterCouche.tsx";
 
 const ListCouche = () => {
@@ -31,6 +33,12 @@ const ListCouche = () => {
       <PageTitle
         title={`Couches du groupe ${data?.groupeCoucheCode} - ${data?.groupeCoucheLibelle}`}
         icon={<IconMapComponent />}
+        right={
+          <CreateButton
+            href={URLS.CREATE_COUCHE(groupeCoucheId!)}
+            title={"Ajouter une couche au groupe"}
+          />
+        }
       />
       <QueryTable
         query={url`/api/admin/couche/groupe-couche/${groupeCoucheId!}`}

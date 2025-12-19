@@ -145,10 +145,11 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
 
     fun clearModule(): Int = dsl.deleteFrom(L_COUCHE_MODULE).execute()
 
-    fun insertGroupeFonctionnalites(coucheId: UUID, groupeFonctionnalitesId: UUID): Int =
+    fun insertGroupeFonctionnalites(coucheId: UUID, groupeFonctionnalitesId: UUID, limiteZc: Boolean): Int =
         dsl.insertInto(L_COUCHE_GROUPE_FONCTIONNALITES)
             .set(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID, coucheId)
             .set(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID, groupeFonctionnalitesId)
+            .set(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC, limiteZc)
             .execute()
 
     fun insertModule(coucheId: UUID, moduleType: TypeModule): Int =
@@ -169,9 +170,9 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
     ): Int =
         dsl.select(DSL.countDistinct(COUCHE.ID))
             .from(COUCHE)
-            .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .leftJoin(L_COUCHE_GROUPE_FONCTIONNALITES)
             .on(COUCHE.ID.eq(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID))
-            .join(L_COUCHE_MODULE)
+            .leftJoin(L_COUCHE_MODULE)
             .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
             .where(
                 COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId),
@@ -220,9 +221,9 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
 
         )
             .from(COUCHE)
-            .join(L_COUCHE_GROUPE_FONCTIONNALITES)
+            .leftJoin(L_COUCHE_GROUPE_FONCTIONNALITES)
             .on(COUCHE.ID.eq(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID))
-            .join(L_COUCHE_MODULE)
+            .leftJoin(L_COUCHE_MODULE)
             .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
             .where(
                 COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId),
@@ -312,4 +313,14 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             }
         }
     }
+
+    fun checkCodeExists(coucheCode: String, coucheId: UUID?) = dsl.fetchExists(
+        dsl.select(COUCHE.CODE)
+            .from(COUCHE)
+            .where(COUCHE.CODE.equalIgnoreCase(coucheCode))
+            .and(COUCHE.ID.notEqual(coucheId)),
+    )
+
+    fun getLastOrdre(groupeCoucheId: UUID): Int? =
+        dsl.select(DSL.max(COUCHE.ORDRE)).from(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchOneInto()
 }
