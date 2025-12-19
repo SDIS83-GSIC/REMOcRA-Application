@@ -211,6 +211,7 @@ import ExecuteTasksManuelles from "./pages/Admin/task/TasksManuelles/ExecuteTask
 import EvenementSousCategorieList from "./pages/Admin/crise/EvenementSousCategorie/ListEvementSousCategorie.tsx";
 import ListGroupeCouche from "./pages/Admin/couche/ListGroupeCouche.tsx";
 import CreateGroupeCouche from "./pages/Admin/couche/CreateGroupeCouche.tsx";
+import UpdateGroupeCouche from "./pages/Admin/couche/UpdateGroupeCouche.tsx";
 
 export const URLS = {
   ACCUEIL: url`/`,
@@ -346,6 +347,8 @@ export const URLS = {
   COUCHES_LIST: url`/admin/couches`,
   LIST_GROUPE_COUCHE: url`/admin/groupe-couche`,
   ADD_GROUPE_COUCHE: url`/admin/groupe-couche/create`,
+  UPDATE_GROUPE_COUCHE: (groupeCoucheId: string) =>
+    url`/admin/groupe-couche/update/` + groupeCoucheId,
 
   ADD_ORGANISME: url`/admin/organisme/create/`,
   UPDATE_ORGANISME: (organismeId: string) =>
@@ -1790,6 +1793,15 @@ export default [
         element: (
           <Authorization
             Component={CreateGroupeCouche}
+            droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
+          />
+        ),
+      },
+      {
+        path: "groupe-couche/update/:groupeCoucheId",
+        element: (
+          <Authorization
+            Component={UpdateGroupeCouche}
             droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
           />
         ),

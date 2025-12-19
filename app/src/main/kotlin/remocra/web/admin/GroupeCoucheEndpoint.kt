@@ -2,8 +2,11 @@ package remocra.web.admin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.Response
@@ -18,7 +21,9 @@ import remocra.db.GroupeCoucheRepository.FilterGroupeCouche
 import remocra.db.GroupeCoucheRepository.Sort
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.groupecouche.CreateGroupeCoucheUseCase
+import remocra.usecase.admin.couches.groupecouche.UpdateGroupeCoucheUseCase
 import remocra.web.AbstractEndpoint
+import java.util.UUID
 
 @Produces("application/json; charset=UTF-8")
 @Path("/admin/groupe-couche")
@@ -31,6 +36,9 @@ class GroupeCoucheEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var createGroupeCoucheUseCase: CreateGroupeCoucheUseCase
+
+    @Inject
+    lateinit var updateGroupeCoucheUseCase: UpdateGroupeCoucheUseCase
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -56,5 +64,23 @@ class GroupeCoucheEndpoint : AbstractEndpoint() {
             securityContext.userInfo,
             groupeCoucheData,
         ).wrap()
+    }
+
+    @PUT
+    @Path("/{groupeCoucheId}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun update(groupeCoucheData: GroupeCoucheData): Response {
+        return updateGroupeCoucheUseCase.execute(
+            securityContext.userInfo,
+            groupeCoucheData,
+        ).wrap()
+    }
+
+    @GET
+    @Path("/{groupeCoucheId}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun getGroupeCoucheById(@PathParam("groupeCoucheId") groupeCoucheId: UUID): Response {
+        // Implementation goes here
+        return Response.ok(groupeCoucheRepository.getById(groupeCoucheId)).build()
     }
 }

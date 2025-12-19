@@ -556,6 +556,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GROUPE_FONCTIONNALITES_COUCHE_UNIQUE(25003, "Le profil droit est déjà associé à une couche"),
     GROUPE_FONCTIONNALITES_COUCHE_DELETE(25004, "Vous n'avez pas les droits de suppression des métadonnées de couche", Status.FORBIDDEN),
     ADMIN_COUCHES_NAME_NULL(25005, "Le nom de la couche doit être défini."),
+    ADMIN_COUCHE_IS_PROTECTED(25006, "Cette valeur est protégée"),
 
     // Paramètres API
     DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),

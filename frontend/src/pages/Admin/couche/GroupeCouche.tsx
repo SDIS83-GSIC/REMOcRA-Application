@@ -9,12 +9,14 @@ import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { requiredString } from "../../../module/validators.tsx";
 
 type GroupeCoucheType = {
+  groupeCoucheId?: string;
   groupeCoucheCode: string;
   groupeCoucheLibelle: string;
   groupeCoucheProtected: boolean;
 };
 
 export const prepareValues = (values: GroupeCoucheType) => ({
+  groupeCoucheId: values.groupeCoucheId,
   groupeCoucheCode: values.groupeCoucheCode,
   groupeCoucheLibelle: values.groupeCoucheLibelle,
   groupeCoucheProtected: values.groupeCoucheProtected ?? false,
@@ -26,6 +28,7 @@ export const groupeCoucheValidationSchema = object({
 });
 
 export const getInitialValue = (data?: GroupeCoucheType) => ({
+  groupeCoucheId: data?.groupeCoucheId,
   groupeCoucheCode: data?.groupeCoucheCode,
   groupeCoucheLibelle: data?.groupeCoucheLibelle,
   groupeCoucheProtected: data?.groupeCoucheProtected ?? false,

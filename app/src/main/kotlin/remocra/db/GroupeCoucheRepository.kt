@@ -93,14 +93,22 @@ class GroupeCoucheRepository @Inject constructor(private val dsl: DSLContext) : 
             .execute()
     }
 
+    fun update(groupeCouche: GroupeCouche) {
+        dsl.update(GROUPE_COUCHE)
+            .set(GROUPE_COUCHE.CODE, groupeCouche.groupeCoucheCode)
+            .set(GROUPE_COUCHE.LIBELLE, groupeCouche.groupeCoucheLibelle)
+            .where(GROUPE_COUCHE.ID.eq(groupeCouche.groupeCoucheId))
+            .execute()
+    }
+
     fun getById(groupeCoucheId: UUID): GroupeCouche =
         dsl.selectFrom(GROUPE_COUCHE)
             .where(GROUPE_COUCHE.ID.eq(groupeCoucheId))
             .fetchSingleInto()
 
-    fun existsByCode(groupeCoucheCode: String): Boolean =
+    fun existsByCode(groupeCoucheCode: String, groupeCoucheId: UUID?): Boolean =
         dsl.fetchExists(
             dsl.selectFrom(GROUPE_COUCHE)
-                .where(GROUPE_COUCHE.CODE.eq(groupeCoucheCode)),
+                .where(GROUPE_COUCHE.CODE.eq(groupeCoucheCode).and(groupeCoucheId?.let { GROUPE_COUCHE.ID.ne(groupeCoucheId) })),
         )
 }

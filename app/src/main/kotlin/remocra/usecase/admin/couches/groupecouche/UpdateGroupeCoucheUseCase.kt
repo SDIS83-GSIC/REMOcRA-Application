@@ -13,10 +13,10 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateGroupeCoucheUseCase @Inject constructor(
+class UpdateGroupeCoucheUseCase @Inject constructor(
     private val groupeCoucheRepository: GroupeCoucheRepository,
 ) :
-    AbstractCUDUseCase<GroupeCoucheData>(TypeOperation.INSERT) {
+    AbstractCUDUseCase<GroupeCoucheData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_COUCHE_CARTOGRAPHIQUE)) {
@@ -39,7 +39,7 @@ class CreateGroupeCoucheUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: GroupeCoucheData): GroupeCoucheData {
-        groupeCoucheRepository.insert(
+        groupeCoucheRepository.update(
             GroupeCouche(
                 groupeCoucheId = element.groupeCoucheId,
                 groupeCoucheCode = element.groupeCoucheCode,
@@ -53,8 +53,11 @@ class CreateGroupeCoucheUseCase @Inject constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: GroupeCoucheData) {
-        // On vérifie si le code du groupe de couche est unique
-        if (groupeCoucheRepository.existsByCode(element.groupeCoucheCode, null)) {
+        if (element.groupeCoucheProtected && groupeCoucheRepository.getById(element.groupeCoucheId).groupeCoucheCode != element.groupeCoucheCode) {
+            throw RemocraResponseException(ErrorType.ADMIN_COUCHE_IS_PROTECTED)
+        }
+
+        if (groupeCoucheRepository.existsByCode(element.groupeCoucheCode, element.groupeCoucheId)) {
             throw RemocraResponseException(ErrorType.ADMIN_COUCHES_CODE_UNIQUE)
         }
     }

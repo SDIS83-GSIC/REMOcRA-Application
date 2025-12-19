@@ -1,19 +1,35 @@
 import { Alert, Container } from "react-bootstrap";
-import { URLS } from "../../../routes.tsx";
-import { IconInfo, IconMapComponent } from "../../../components/Icon/Icon.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
+import { IconInfo, IconMapComponent } from "../../../components/Icon/Icon.tsx";
+import {
+  ActionColumn,
+  BooleanColumn,
+} from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
-import url from "../../../module/fetch.tsx";
-import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
-import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import { BooleanColumn } from "../../../components/Table/columns.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterGroupeCouche.tsx";
 
 const ListGroupeCouche = () => {
+  const listeButton: ButtonType[] = [];
+
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    type: TYPE_BUTTON.UPDATE,
+    route: (data) => URLS.UPDATE_GROUPE_COUCHE(data),
+  });
   return (
     <Container>
       <PageTitle
@@ -66,6 +82,11 @@ const ListGroupeCouche = () => {
                 name={"groupeCoucheProtected"}
               />
             ),
+          }),
+          ActionColumn({
+            Header: "Actions",
+            accessor: "groupeCoucheId",
+            buttons: listeButton,
           }),
         ]}
         idName={"tableGroupeCouche"}
