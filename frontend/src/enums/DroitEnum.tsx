@@ -256,6 +256,7 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.SIGNALEMENTS_C, "Créer, éditer les signalements"],
   [TYPE_DROIT.ALERTES_EXPORT_C, "Créer, exporter les alertes"],
   [TYPE_DROIT.CARTOGRAPHIES_E, "Accéder au module cartographie"],
+  [TYPE_DROIT.CARTO_METADATA_A, "Administrer les métadonnées des couches"],
   [TYPE_DROIT.COURRIER_ADMIN_R, "Consulter tous les courriers"],
   [TYPE_DROIT.COURRIER_C, "Créer, éditer des courriers"],
   [TYPE_DROIT.COURRIER_ORGANISME_R, "Consulter les courriers de son organisme"],
