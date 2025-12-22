@@ -103,10 +103,14 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 listeNumeroPei,
             )
             .orderBy(
-                params.sortBy?.toCondition(listeNumeroPei) ?: listOf(
-                    INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.asc(),
-                    INDISPONIBILITE_TEMPORAIRE.DATE_FIN.asc(),
-                ),
+                params.sortBy?.toCondition(listeNumeroPei)?.let {
+                    it.ifEmpty {
+                        listOf(
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.asc(),
+                            INDISPONIBILITE_TEMPORAIRE.DATE_FIN.asc(),
+                        )
+                    }
+                },
             )
             .fetchInto()
     }
