@@ -274,7 +274,7 @@ export const ActionButton = ({
                 confirmModal={_button.confirmModal}
                 reload={_button.reload}
                 textDisable={_button.textDisable}
-                search={_button.search?.(row.value)}
+                search={_button.search?.(row)}
               />
             );
           case TYPE_BUTTON.BUTTON:

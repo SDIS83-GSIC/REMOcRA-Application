@@ -18,7 +18,7 @@ const ListEvenementCategorie = () => {
     icon: <IconList />,
     search: (obj: any) => {
       return new URLSearchParams({
-        filterBy: JSON.stringify({ evenementCategorieId: obj }),
+        filterBy: JSON.stringify({ evenementCategorieId: obj.value }),
       }).toString();
     },
   };

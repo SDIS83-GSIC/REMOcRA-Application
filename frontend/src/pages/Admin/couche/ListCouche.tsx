@@ -9,6 +9,7 @@ import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFil
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import {
   IconInfo,
+  IconLayers,
   IconMapComponent,
   IconSortList,
 } from "../../../components/Icon/Icon.tsx";
@@ -56,6 +57,23 @@ const ListCouche = () => {
     textEnable: "Supprimer la couche",
     type: TYPE_BUTTON.DELETE,
     pathname: url`/api/admin/couche/groupe-couche/${groupeCoucheId}/delete/`,
+  });
+
+  listeButton.push({
+    row: (row: any) => {
+      return row;
+    },
+    textEnable: "Modifier les métadonnées",
+    route: () => URLS.LIST_COUCHE_METADATA,
+    type: TYPE_BUTTON.LINK,
+    icon: <IconLayers />,
+    search: (couche) => {
+      return new URLSearchParams({
+        filterBy: JSON.stringify({
+          coucheLibelle: couche.original.coucheLibelle,
+        }),
+      }).toString();
+    },
   });
 
   return (
