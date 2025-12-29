@@ -42,7 +42,6 @@ export const prepareValues = (
   values: {
     groupeCoucheId: any;
     coucheId: any;
-
     coucheMetadataActif: boolean;
     coucheMetadataPublic: boolean;
     coucheMetadataStyle: any;

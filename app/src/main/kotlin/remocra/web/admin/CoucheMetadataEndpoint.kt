@@ -83,7 +83,7 @@ class CoucheMetadataEndpoint : AbstractEndpoint() {
         @PathParam("coucheMetadataId")
         coucheMetadataId: UUID,
     ): Response {
-        return Response.ok(coucheMetadataRepository.getCoucheMetadataById(coucheMetadataId)).build()
+        return Response.ok(coucheMetadataRepository.getCoucheMetadataByIdWithLibelle(coucheMetadataId)).build()
     }
 
     @POST

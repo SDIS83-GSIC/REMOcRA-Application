@@ -2,7 +2,7 @@ package remocra.usecase.admin.couches
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
-import remocra.data.CoucheMetadata
+import remocra.data.CoucheMetadataWithLibelle
 import remocra.data.Params
 import remocra.data.ResponseCouche
 import remocra.db.CoucheMetadataRepository
@@ -15,7 +15,7 @@ class GetCoucheMetadataUseCase : AbstractUseCase() {
         return coucheMetadataRepository.getCouchesMetadataForTableau(params)
     }
 
-    fun getAllCoucheMetadata(userInfo: WrappedUserInfo): List<CoucheMetadata> {
+    fun getAllCoucheMetadata(userInfo: WrappedUserInfo): List<CoucheMetadataWithLibelle> {
         if (userInfo.userInfo == null) {
             // non connecté
             return coucheMetadataRepository.getPublicCoucheMetadata()

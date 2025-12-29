@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import remocra.data.CoucheMetadata
+import remocra.data.CoucheMetadataWithLibelle
 import remocra.data.GroupeFonctionnalite
 import remocra.data.Params
 import remocra.data.ResponseCouche
@@ -136,6 +137,31 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             .where(COUCHE_METADATA.ID.eq(coucheMetadataId))
             .fetchSingleInto<CoucheMetadata>()
 
+    fun getCoucheMetadataByIdWithLibelle(coucheMetadataId: UUID): CoucheMetadataWithLibelle =
+        dsl.select(
+            COUCHE_METADATA.PUBLIC,
+            COUCHE_METADATA.ID,
+            COUCHE_METADATA.ACTIF,
+            COUCHE_METADATA.STYLE,
+            COUCHE_METADATA.COUCHE_ID.`as`("coucheId"),
+            COUCHE.GROUPE_COUCHE_ID.`as`("groupeCoucheId"),
+            COUCHE.LIBELLE.`as`("coucheLibelle"),
+            multiset(
+                DSL.select(
+                    GROUPE_FONCTIONNALITES.ID,
+                )
+                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
+                    .join(GROUPE_FONCTIONNALITES).on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID))
+                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(coucheMetadataId)),
+            ).convertFrom { records ->
+                records.map { (id) -> id as UUID }
+            }.`as`("groupeFonctionnaliteIds"),
+        )
+            .from(COUCHE_METADATA)
+            .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
+            .where(COUCHE_METADATA.ID.eq(coucheMetadataId))
+            .fetchSingleInto<CoucheMetadataWithLibelle>()
+
     fun deleteCouchesMetadataByMetadataId(metadataId: UUID) =
         dsl.deleteFrom(COUCHE_METADATA).where(COUCHE_METADATA.ID.eq(metadataId)).execute()
 
@@ -184,24 +210,26 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
     /**
      * Retourne les metadata des couches publiques (pour les utilisateurs non connectés)
      */
-    fun getPublicCoucheMetadata(): List<CoucheMetadata> =
+    fun getPublicCoucheMetadata(): List<CoucheMetadataWithLibelle> =
         dsl.select(
             COUCHE_METADATA.ACTIF,
             COUCHE_METADATA.STYLE,
             COUCHE_METADATA.COUCHE_ID,
             COUCHE.GROUPE_COUCHE_ID,
+            COUCHE.LIBELLE.`as`("coucheLibelle"),
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
             .where(COUCHE_METADATA.PUBLIC.isTrue)
-            .fetchInto<CoucheMetadata>()
+            .fetchInto<CoucheMetadataWithLibelle>()
 
-    fun getAllCoucheMetadataByUserId(groupeFonctionnaliteId: UUID): List<CoucheMetadata> =
+    fun getAllCoucheMetadataByUserId(groupeFonctionnaliteId: UUID): List<CoucheMetadataWithLibelle> =
         dsl.select(
             COUCHE_METADATA.ACTIF,
             COUCHE_METADATA.STYLE,
             COUCHE_METADATA.COUCHE_ID.`as`("coucheId"),
             COUCHE.GROUPE_COUCHE_ID.`as`("groupeCoucheId"),
+            COUCHE.LIBELLE.`as`("coucheLibelle"),
             multiset(
                 DSL.select(
                     GROUPE_FONCTIONNALITES.ID.`as`("groupeFonctionnaliteId"),
@@ -217,7 +245,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
-            .fetchInto<CoucheMetadata>()
+            .fetchInto<CoucheMetadataWithLibelle>()
 
     data class SortCouche(
         val groupeCoucheLibelle: Int?,

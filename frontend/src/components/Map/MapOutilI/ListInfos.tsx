@@ -7,13 +7,13 @@ import { useGet } from "../../Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 
-function findStyleById(coucheMetadata: any[], typeId: string): string | null {
+function findMetadataById(coucheMetadata: any[], typeId: string) {
   for (const metadata of coucheMetadata) {
     if (metadata.coucheId === typeId) {
-      return metadata.coucheMetadataStyle;
+      return metadata;
     }
   }
-  return null; // Si aucun match trouvé
+  return null;
 }
 
 const ListInfos = ({ data }: { data: any[] }) => {
@@ -112,12 +112,16 @@ const ListInfos = ({ data }: { data: any[] }) => {
         ];
       }
 
-      const style =
-        coucheMetadata && id ? findStyleById(coucheMetadata, id) : null;
+      // Cherche le metadata correspondant à la couche
+      const metadata =
+        coucheMetadata && id ? findMetadataById(coucheMetadata, id) : null;
+      const style = metadata?.coucheMetadataStyle;
+      const libelle = metadata?.coucheLibelle || null;
 
       return features.map((feature: any) => {
         const properties = feature?.properties ?? {};
-        const header = feature?.id?.split(".")?.[0] ?? "Inconnu";
+        // Utilise le libellé comme header
+        const header = libelle || feature?.id?.split(".")?.[0] || "Inconnu";
 
         if (style) {
           return {

@@ -66,3 +66,18 @@ data class CoucheMetadata(
 
     val groupeFonctionnaliteIds: Collection<UUID>? = emptyList(),
 )
+
+data class CoucheMetadataWithLibelle(
+    val groupeCoucheId: UUID,
+
+    val coucheId: UUID,
+
+    val coucheLibelle: String,
+
+    val coucheMetadataId: UUID? = UUID.randomUUID(),
+    val coucheMetadataActif: Boolean = false,
+    val coucheMetadataPublic: Boolean = false,
+    val coucheMetadataStyle: String? = null,
+
+    val groupeFonctionnaliteIds: Collection<UUID>? = emptyList(),
+)
