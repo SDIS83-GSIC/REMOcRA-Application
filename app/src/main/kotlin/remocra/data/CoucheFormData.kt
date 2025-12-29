@@ -32,4 +32,6 @@ data class CoucheFormData(
     val moduleList: Collection<TypeModule> = listOf(),
     val coucheProtected: Boolean = false,
     val coucheTuilage: Boolean,
+    val coucheIcone: ByteArray? = null,
+    val coucheLegende: ByteArray? = null,
 )

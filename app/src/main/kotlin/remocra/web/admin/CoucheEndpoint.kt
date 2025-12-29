@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -18,15 +19,14 @@ import jakarta.ws.rs.core.UriBuilder
 import remocra.auth.AuthnConstants
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.CoucheData
 import remocra.data.CoucheFormData
 import remocra.data.CoucheFormDataWithImage
 import remocra.data.DataTableau
-import remocra.data.GroupeCoucheData
 import remocra.data.Params
 import remocra.db.CoucheRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.CreateCoucheUseCase
+import remocra.usecase.admin.couches.UpdateCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import remocra.web.carto.LayersEndpoint
@@ -42,63 +42,35 @@ class CoucheEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var createCoucheUseCase: CreateCoucheUseCase
 
+    @Inject lateinit var updateCoucheUseCase: UpdateCoucheUseCase
+
     @Inject lateinit var objectMapper: ObjectMapper
 
-    @Path("/")
+    @Path("/{coucheId}")
     @GET
     @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
-    fun list(): Response =
-        Response.ok(
-            object {
-                val groupeCoucheList = coucheRepository.getGroupeCoucheList()
-                    .map {
-                            groupeCouche ->
-                        GroupeCoucheData(
-                            groupeCoucheId = groupeCouche.groupeCoucheId,
-                            groupeCoucheCode = groupeCouche.groupeCoucheCode,
-                            groupeCoucheLibelle = groupeCouche.groupeCoucheLibelle,
-                            groupeCoucheOrdre = groupeCouche.groupeCoucheOrdre,
-                            coucheList = coucheRepository.getCoucheList(groupeCouche.groupeCoucheId).map { couche ->
-                                CoucheData(
-                                    coucheId = couche.coucheId,
-                                    coucheCode = couche.coucheCode,
-                                    coucheLibelle = couche.coucheLibelle,
-                                    coucheOrdre = couche.coucheOrdre,
-                                    coucheSource = couche.coucheSource,
-                                    coucheProjection = couche.coucheProjection,
-                                    coucheUrl = couche.coucheUrl,
-                                    coucheNom = couche.coucheNom,
-                                    coucheFormat = couche.coucheFormat,
-                                    coucheCrossOrigin = couche.coucheCrossOrigin,
-                                    couchePublic = couche.couchePublic,
-                                    coucheActive = couche.coucheActive,
-                                    coucheProxy = couche.coucheProxy ?: false,
-                                    coucheIconeUrl = couche.coucheIcone?.let {
-                                        UriBuilder.fromPath(AuthnConstants.API_PATH)
-                                            .path(LayersEndpoint::class.java)
-                                            .path(LayersEndpoint::getIcone.javaMethod)
-                                            .build(couche.coucheId)
-                                            .toString()
-                                    },
-                                    coucheLegendeUrl = couche.coucheLegende?.let {
-                                        UriBuilder.fromPath(AuthnConstants.API_PATH)
-                                            .path(LayersEndpoint::class.java)
-                                            .path(LayersEndpoint::getLegende.javaMethod)
-                                            .build(couche.coucheId)
-                                            .toString()
-                                    },
-                                    groupeFonctionnalitesList = coucheRepository.getGroupeFonctionnalitesList(couche.coucheId)
-                                        .map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
-                                    moduleList = coucheRepository.getModuleList(couche.coucheId),
-                                    coucheProtected = couche.coucheProtected,
-                                    coucheTuilage = couche.coucheTuilage,
-                                )
-                            },
-                            groupeCoucheProtected = groupeCouche.groupeCoucheProtected,
-                        )
-                    }
-            },
+    fun get(@PathParam("coucheId") coucheId: UUID): Response {
+        val coucheData = coucheRepository.getCouche(coucheId)
+        return Response.ok(
+            coucheData.copy(
+                coucheIconeUrl = coucheData.coucheIcone?.let {
+                    UriBuilder.fromPath(AuthnConstants.API_PATH)
+                        .path(LayersEndpoint::class.java)
+                        .path(LayersEndpoint::getIcone.javaMethod)
+                        .build(coucheId)
+                        .toString()
+                },
+                coucheLegendeUrl = coucheData.coucheLegende?.let {
+                    UriBuilder.fromPath(AuthnConstants.API_PATH)
+                        .path(LayersEndpoint::class.java)
+                        .path(LayersEndpoint::getLegende.javaMethod)
+                        .build(coucheId)
+                        .toString()
+                },
+            ),
+
         ).build()
+    }
 
     @POST
     @Path("/groupe-couche/{groupeCoucheId}")
@@ -125,6 +97,23 @@ class CoucheEndpoint : AbstractEndpoint() {
             securityContext.userInfo,
             CoucheFormDataWithImage(
                 coucheFormData = objectMapper.readValue<CoucheFormData>(httpRequest.getTextPart("couche")),
+                icone = httpRequest.getPart("icone"),
+                legende = httpRequest.getPart("legende"),
+            ),
+        ).wrap()
+
+    @PUT
+    @Path("/groupe-couche/{groupeCoucheId}/update/{coucheId}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun update(
+        @PathParam("coucheId") coucheId: UUID,
+        @Context httpRequest: HttpServletRequest,
+    ): Response =
+        updateCoucheUseCase.execute(
+            securityContext.userInfo,
+            CoucheFormDataWithImage(
+                coucheFormData = objectMapper.readValue<CoucheFormData>(httpRequest.getTextPart("couche")).copy(coucheId = coucheId),
                 icone = httpRequest.getPart("icone"),
                 legende = httpRequest.getPart("legende"),
             ),

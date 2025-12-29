@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.CoucheData
+import remocra.data.CoucheFormData
 import remocra.data.Params
 import remocra.data.couche.GroupeFonctionnalitesWithFlagLimiteZc
 import remocra.db.jooq.remocra.enums.SourceCarto
@@ -78,7 +79,49 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(L_COUCHE_MODULE.COUCHE_ID.eq(coucheId))
             .fetchInto<TypeModule>()
 
-    fun getCoucheList(groupeCoucheId: UUID): List<Couche> = dsl.selectFrom(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchInto<Couche>()
+    fun getCouche(coucheId: UUID): CoucheFormData =
+        dsl.select(
+            COUCHE.ID,
+            COUCHE.GROUPE_COUCHE_ID.`as`("groupeCoucheId"),
+            COUCHE.CODE,
+            COUCHE.LIBELLE,
+            COUCHE.SOURCE,
+            COUCHE.PROJECTION,
+            COUCHE.URL,
+            COUCHE.NOM,
+            COUCHE.FORMAT,
+            COUCHE.CROSS_ORIGIN,
+            COUCHE.PUBLIC,
+            COUCHE.ACTIVE,
+            COUCHE.PROXY,
+            COUCHE.PROTECTED,
+            COUCHE.TUILAGE,
+            COUCHE.ICONE,
+            COUCHE.LEGENDE,
+            // Multiset pour les groupes ZC
+            DSL.multiset(
+                dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                    .from(L_COUCHE_GROUPE_FONCTIONNALITES)
+                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
+                    .and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isTrue),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("groupeFonctionnalitesZcList"),
+            // Multiset pour les groupes hors ZC
+            DSL.multiset(
+                dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                    .from(L_COUCHE_GROUPE_FONCTIONNALITES)
+                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
+                    .and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isFalse),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("groupeFonctionnalitesHorsZcList"),
+            // Multiset pour les modules
+            DSL.multiset(
+                dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
+                    .from(L_COUCHE_MODULE)
+                    .where(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID)),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("moduleList"),
+        )
+            .from(COUCHE)
+            .where(COUCHE.ID.eq(coucheId))
+            .fetchSingleInto()
 
     fun getCoucheById(coucheId: UUID): Couche = dsl.selectFrom(COUCHE).where(COUCHE.ID.eq(coucheId)).fetchSingleInto<Couche>()
 
@@ -121,6 +164,8 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.ACTIVE, couche.coucheActive)
             .set(COUCHE.PROXY, couche.coucheProxy)
             .set(COUCHE.TUILAGE, couche.coucheTuilage)
+            .set(COUCHE.ICONE, couche.coucheIcone)
+            .set(COUCHE.LEGENDE, couche.coucheLegende)
             .execute()
     }
 
@@ -136,14 +181,11 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(COUCHE.ID.eq(coucheId))
             .execute()
 
-    fun removeOldCouche(toKeep: Collection<UUID>): Int = dsl.deleteFrom(COUCHE).where(COUCHE.ID.notIn(toKeep)).execute()
+    fun clearGroupeFonctionnalites(coucheId: UUID): Int =
+        dsl.deleteFrom(L_COUCHE_GROUPE_FONCTIONNALITES).where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(coucheId)).execute()
 
-    fun removeOldGroupeCouche(toKeep: Collection<UUID>): Int =
-        dsl.deleteFrom(GROUPE_COUCHE).where(GROUPE_COUCHE.ID.notIn(toKeep)).execute()
-
-    fun clearGroupeFonctionnalites(): Int = dsl.deleteFrom(L_COUCHE_GROUPE_FONCTIONNALITES).execute()
-
-    fun clearModule(): Int = dsl.deleteFrom(L_COUCHE_MODULE).execute()
+    fun clearModule(coucheId: UUID): Int = dsl.deleteFrom(L_COUCHE_MODULE)
+        .where(L_COUCHE_MODULE.COUCHE_ID.eq(coucheId)).execute()
 
     fun insertGroupeFonctionnalites(coucheId: UUID, groupeFonctionnalitesId: UUID, limiteZc: Boolean): Int =
         dsl.insertInto(L_COUCHE_GROUPE_FONCTIONNALITES)

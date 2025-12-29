@@ -8,12 +8,17 @@ import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFil
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconInfo, IconMapComponent } from "../../../components/Icon/Icon.tsx";
 import {
+  ActionColumn,
   BooleanColumn,
   ProtectedColumn,
 } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
+import {
+  ButtonType,
+  TYPE_BUTTON,
+} from "../../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
@@ -27,7 +32,15 @@ const ListCouche = () => {
 
   const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
   const typeModuleState = useGet(url`/api/modules/get-type-module-accueil`);
+  const listeButton: ButtonType[] = [];
 
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    type: TYPE_BUTTON.UPDATE,
+    route: (data) => URLS.UPDATE_COUCHE(groupeCoucheId!, data),
+  });
   return (
     <Container fluid>
       <PageTitle
@@ -223,6 +236,11 @@ const ListCouche = () => {
             Filter: (
               <SelectEnumOption options={VRAI_FAUX} name={"coucheProtected"} />
             ),
+          }),
+          ActionColumn({
+            Header: "Actions",
+            accessor: "coucheId",
+            buttons: listeButton,
           }),
         ]}
         idName={"tableCouche"}

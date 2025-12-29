@@ -44,8 +44,8 @@ class UpdateCoucheUseCase : AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOper
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: CoucheFormDataWithImage): CoucheFormDataWithImage {
-        coucheRepository.clearGroupeFonctionnalites()
-        coucheRepository.clearModule()
+        coucheRepository.clearGroupeFonctionnalites(element.coucheFormData.coucheId)
+        coucheRepository.clearModule(element.coucheFormData.coucheId)
 
         coucheRepository.upsertCouche(
             Couche(
@@ -70,13 +70,13 @@ class UpdateCoucheUseCase : AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOper
             ),
         )
 
-        if (element.icone != null) {
+        if (element.icone?.submittedFileName != null) {
             coucheRepository.updateIcone(
                 element.coucheFormData.coucheId,
                 element.icone.inputStream.readAllBytes(),
             )
         }
-        if (element.legende != null) {
+        if (element.legende?.submittedFileName != null) {
             coucheRepository.updateLegende(
                 element.coucheFormData.coucheId,
                 element.legende.inputStream.readAllBytes(),
