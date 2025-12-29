@@ -11,6 +11,7 @@ import {
   IconTournee,
 } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
+import Loading from "../../components/Elements/Loading/Loading.tsx";
 import CreateTournee from "./CreateTournee.tsx";
 import TourneePei from "./TourneePei.tsx";
 
@@ -143,7 +144,9 @@ const Update = ({
   const tournees = useGet(
     url`/api/tournee/actives?${{ isPrive: isPrive, isIcpe: isIcpe, listePei: JSON.stringify(listePei) }}`,
   );
-
+  if (!tournees.isResolved) {
+    return <Loading />;
+  }
   return (
     <>
       <PageTitle
