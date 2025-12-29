@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.CoucheData
 import remocra.data.CoucheFormData
+import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.couche.GroupeFonctionnalitesWithFlagLimiteZc
 import remocra.db.jooq.remocra.enums.SourceCarto
@@ -239,6 +240,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             COUCHE.PROXY,
             COUCHE.PROTECTED,
             COUCHE.TUILAGE,
+            COUCHE.ORDRE,
             DSL.multiset(
                 dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
                     .from(L_COUCHE_MODULE)
@@ -270,7 +272,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(
                 COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId),
             ).and(params.filterBy?.toCondition())
-            .orderBy(params.sortBy?.toCondition() ?: listOf(COUCHE.ORDRE.desc()))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(COUCHE.ORDRE.desc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
@@ -371,4 +373,20 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .where(COUCHE.ID.eq(coucheId))
             .execute()
     }
+
+    fun updateCoucheOrdre(listeObjet: List<UUID>) {
+        listeObjet.forEachIndexed { index, id ->
+            dsl.update(COUCHE)
+                .set(COUCHE.ORDRE, listeObjet.size - index + 1)
+                .where(COUCHE.ID.eq(id))
+                .execute()
+        }
+    }
+
+    fun getOrdreCouche(groupeCoucheId: UUID): List<GlobalData.IdCodeLibelleData> =
+        dsl.select(COUCHE.ID.`as`("id"), COUCHE.CODE.`as`("code"), COUCHE.LIBELLE.`as`("libelle"))
+            .from(COUCHE)
+            .where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId))
+            .orderBy(COUCHE.ORDRE.desc())
+            .fetchInto()
 }

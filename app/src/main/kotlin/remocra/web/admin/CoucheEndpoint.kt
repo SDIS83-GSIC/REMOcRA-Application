@@ -31,6 +31,7 @@ import remocra.usecase.admin.couches.DeleteCoucheUseCase
 import remocra.usecase.admin.couches.UpdateCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
+import remocra.web.admin.GroupeCoucheEndpoint.ListeTriInput
 import remocra.web.carto.LayersEndpoint
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
@@ -135,4 +136,20 @@ class CoucheEndpoint : AbstractEndpoint() {
                 legende = null,
             ),
         ).wrap()
+
+    @PUT
+    @Path("/update-ordre")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun updateGroupeCoucheOrdre(
+        liste: ListeTriInput,
+    ): Response =
+        Response.ok(coucheRepository.updateCoucheOrdre(liste.listeObjet)).build()
+
+    @GET
+    @Path("/groupe-couche/{groupeCoucheId}/get-ordre")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun getOrdreGroupeCouche(
+        @PathParam("groupeCoucheId") groupeCoucheId: UUID,
+    ): Response =
+        Response.ok(coucheRepository.getOrdreCouche(groupeCoucheId)).build()
 }
