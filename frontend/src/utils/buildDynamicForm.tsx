@@ -188,6 +188,7 @@ const GenererForm = ({
   reference = false,
   url,
   onGeometrySelect,
+  onParametresChange,
 }: {
   listeIdLibelleDescription: {
     id: string;
@@ -198,6 +199,7 @@ const GenererForm = ({
   reference?: boolean;
   url: string;
   onGeometrySelect?: (geometryType: string, geometryCode: string) => void;
+  onParametresChange?: (parametres: DynamicFormParametreFront[]) => void;
 }) => {
   const { setFieldValue, values } = useFormikContext();
   const [objetId, setObjetId] = useState(values.dynamicFormId);
@@ -213,6 +215,13 @@ const GenererForm = ({
       run();
     }
   }, [objetId, run]);
+
+  // Notifier le parent quand les paramètres changent
+  useEffect(() => {
+    if (listeWithParametres?.listeParametre && onParametresChange) {
+      onParametresChange(listeWithParametres.listeParametre);
+    }
+  }, [listeWithParametres, onParametresChange]);
 
   const rapportPersonnaliseCourrierCourant = listeIdLibelleDescription?.find(
     (r) => r.id === objetId,

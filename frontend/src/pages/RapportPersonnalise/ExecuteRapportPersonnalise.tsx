@@ -12,7 +12,10 @@ import PaginationFront, {
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { requiredString } from "../../module/validators.tsx";
-import { default as GenererForm } from "../../utils/buildDynamicForm.tsx";
+import {
+  default as GenererForm,
+  DynamicFormParametreFront,
+} from "../../utils/buildDynamicForm.tsx";
 import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 import "./ExecuteRapportPersonnalise.css";
 
@@ -32,6 +35,9 @@ const ExecuteRapportPersonnalise = () => {
   const [activeTab, setActiveTab] = useState<string>("data");
   const [valuesFormik, setValuesFormik] = useState<any>();
   const [isDownload, setIsDownload] = useState(false);
+  const [listeParametres, setListeParametres] = useState<
+    DynamicFormParametreFront[]
+  >([]);
   const [columnWidths, setColumnWidths] = useState<{ [key: number]: number }>(
     {},
   );
@@ -218,7 +224,7 @@ const ExecuteRapportPersonnalise = () => {
             successToastMessage="La requête a bien été exécutée"
             submitUrl={`/api/rapport-personnalise/generer`}
             prepareVariables={(values) => {
-              const value = prepareVariables(values);
+              const value = prepareVariables(values, listeParametres);
               setValuesFormik(value);
               return value;
             }}
@@ -233,6 +239,7 @@ const ExecuteRapportPersonnalise = () => {
               listeIdLibelleDescription={listeRapportPerso}
               contexteLibelle="Rapport personnalisé"
               url="/api/rapport-personnalise/parametres/"
+              onParametresChange={setListeParametres}
             />
           </MyFormik>
         </Col>
@@ -322,12 +329,25 @@ export const getInitialValues = () => ({
 export const validationSchema = object({
   dynamicFormId: requiredString,
 });
-export const prepareVariables = (values: any) => {
-  // on va récupérer que les paramètres du rapport personnalisé
-  const listeParametre = Object.entries(values).map(([key, value]) => ({
-    rapportPersonnaliseParametreCode: key,
-    value: value,
-  }));
+
+export const prepareVariables = (
+  values: any,
+  listeParametres: DynamicFormParametreFront[],
+) => {
+  // Créer la liste complète des paramètres avec toutes les valeurs (valeur par défaut si non spécifiées)
+  const listeParametre = listeParametres.map((param) => {
+    const code = param.dynamicFormParametreCode;
+    // Récupérer la valeur depuis les values, ou la valeur par défaut si non définie/vide
+    const value =
+      values[code] !== undefined && values[code] !== "" && values[code] !== null
+        ? values[code]
+        : (param.dynamicFormParametreValeurDefaut ?? null);
+
+    return {
+      rapportPersonnaliseParametreCode: code,
+      value: value,
+    };
+  });
 
   return {
     rapportPersonnaliseId: values.dynamicFormId,
