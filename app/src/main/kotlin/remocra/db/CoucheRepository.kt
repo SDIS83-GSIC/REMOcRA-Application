@@ -365,4 +365,10 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
 
     fun getLastOrdre(groupeCoucheId: UUID): Int? =
         dsl.select(DSL.max(COUCHE.ORDRE)).from(COUCHE).where(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId)).fetchOneInto()
+
+    fun deleteCouche(coucheId: UUID) {
+        dsl.deleteFrom(COUCHE)
+            .where(COUCHE.ID.eq(coucheId))
+            .execute()
+    }
 }

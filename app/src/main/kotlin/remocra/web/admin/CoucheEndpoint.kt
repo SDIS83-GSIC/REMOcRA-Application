@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
@@ -26,6 +27,7 @@ import remocra.data.Params
 import remocra.db.CoucheRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.couches.CreateCoucheUseCase
+import remocra.usecase.admin.couches.DeleteCoucheUseCase
 import remocra.usecase.admin.couches.UpdateCoucheUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
@@ -43,6 +45,8 @@ class CoucheEndpoint : AbstractEndpoint() {
     @Inject lateinit var createCoucheUseCase: CreateCoucheUseCase
 
     @Inject lateinit var updateCoucheUseCase: UpdateCoucheUseCase
+
+    @Inject lateinit var deleteCoucheUseCase: DeleteCoucheUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -116,6 +120,19 @@ class CoucheEndpoint : AbstractEndpoint() {
                 coucheFormData = objectMapper.readValue<CoucheFormData>(httpRequest.getTextPart("couche")).copy(coucheId = coucheId),
                 icone = httpRequest.getPart("icone"),
                 legende = httpRequest.getPart("legende"),
+            ),
+        ).wrap()
+
+    @DELETE
+    @Path("/groupe-couche/{groupeCoucheId}/delete/{coucheId}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    fun delete(@PathParam("coucheId") coucheId: UUID): Response =
+        deleteCoucheUseCase.execute(
+            securityContext.userInfo,
+            CoucheFormDataWithImage(
+                coucheFormData = coucheRepository.getCouche(coucheId),
+                icone = null,
+                legende = null,
             ),
         ).wrap()
 }

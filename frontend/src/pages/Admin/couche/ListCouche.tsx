@@ -41,6 +41,18 @@ const ListCouche = () => {
     type: TYPE_BUTTON.UPDATE,
     route: (data) => URLS.UPDATE_COUCHE(groupeCoucheId!, data),
   });
+
+  listeButton.push({
+    row: (row) => {
+      return row;
+    },
+    textDisable: "Cette couche est protégée et ne peut pas être supprimée",
+    disable: (row) => row.original.coucheProtected,
+    textEnable: "Supprimer la couche",
+    type: TYPE_BUTTON.DELETE,
+    pathname: url`/api/admin/couche/groupe-couche/${groupeCoucheId}/delete/`,
+  });
+
   return (
     <Container fluid>
       <PageTitle
