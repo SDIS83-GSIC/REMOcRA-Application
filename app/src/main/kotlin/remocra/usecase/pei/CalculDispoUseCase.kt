@@ -541,18 +541,11 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> (pei.debit == null || pei.debit <= 29)
             CodeSdis.SDIS_42 -> pei.debit == null
             CodeSdis.SDIS_49 -> {
-                if (isDiametre80(pei) &&
-                    isNaturePI(pei) &&
-                    (pei.debit == null || pei.debit < 15)
-                ) {
-                    return true
-                } else if (listOf(GlobalConstants.DIAMETRE_100, GlobalConstants.DIAMETRE_150).contains(ensureDiametre(pei).diametreCode) &&
-                    (pei.debit == null || pei.debit < 30)
-                ) {
+                if (pei.debit == null || pei.debit < 30) {
                     return true
                 }
 
-                return false
+                false
             }
             CodeSdis.SDIS_53 -> (pei.debit == null || pei.debit <= 15)
             CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
@@ -672,21 +665,13 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> pei.debit != null && (pei.debit in 30..59)
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_49 -> {
-                if (isDiametre80(pei) &&
-                    isNaturePI(pei) &&
-                    (pei.debit in 15..29)
-                ) {
+                if (isDiametre100(pei) && pei.debit != null && pei.debit in 30..59) {
                     return true
-                } else if (isDiametre100(pei) &&
-                    (pei.debit in 30..59)
-                ) {
-                    return true
-                } else if (isDiametre150(pei) &&
-                    (pei.debit in 30..119)
-                ) {
+                } else if (isDiametre150(pei) && pei.debit != null && pei.debit in 30..119) {
                     return true
                 }
-                return false
+
+                false
             }
             CodeSdis.SDIS_53 -> pei.debit != null && (pei.debit in 16..59)
             CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
