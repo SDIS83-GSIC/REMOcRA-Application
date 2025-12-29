@@ -125,6 +125,6 @@ class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
         if (rapportPersonnaliseRepository.checkCodeExists(element.rapportPersonnaliseCode, element.rapportPersonnaliseId)) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_CODE_UNIQUE)
         }
-        requeteSqlUtils.checkContraintes(userInfo, element)
+        requeteSqlUtils.checkContraintes(userInfo = userInfo, element = element)
     }
 }

@@ -99,6 +99,6 @@ class CreateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseD
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_CODE_UNIQUE)
         }
 
-        requeteSqlUtils.checkContraintes(userInfo, element)
+        requeteSqlUtils.checkContraintes(userInfo = userInfo, element = element)
     }
 }

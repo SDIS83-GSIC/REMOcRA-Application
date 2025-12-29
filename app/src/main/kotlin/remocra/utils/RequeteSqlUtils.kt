@@ -1,6 +1,7 @@
 package remocra.utils
 
 import jakarta.inject.Inject
+import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.ModeleCourrierData
@@ -22,6 +23,9 @@ class RequeteSqlUtils {
 
     @Inject
     private lateinit var requestUtils: RequestUtils
+
+    @Inject
+    private lateinit var appSettings: AppSettings
 
     private fun testParametreRequeteSql(userInfo: WrappedUserInfo, parametreRequete: RapportCourrierParametreData): List<IdLibelleRapportPersonnalise> {
         try {
@@ -148,11 +152,11 @@ class RequeteSqlUtils {
                 TypeParametreRapportCourrier.TEXT_INPUT ->
                     requete = requete.replace(it.rapportCourrierParametreCode, it.rapportCourrierParametreValeurDefaut ?: "")
                 TypeParametreRapportCourrier.POINT ->
-                    requete = requete.replace(it.rapportCourrierParametreCode, "POINT EMPTY")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POINT EMPTY'::geometry, ${appSettings.srid})")
                 TypeParametreRapportCourrier.POLYGON ->
-                    requete = requete.replace(it.rapportCourrierParametreCode, "POLYGON EMPTY")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POLYGON EMPTY'::geometry, ${appSettings.srid}")
                 TypeParametreRapportCourrier.LINESTRING ->
-                    requete = requete.replace(it.rapportCourrierParametreCode, "LINESTRING EMPTY")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('LINESTRING EMPTY'::geometry, ${appSettings.srid}")
             }
         }
 
