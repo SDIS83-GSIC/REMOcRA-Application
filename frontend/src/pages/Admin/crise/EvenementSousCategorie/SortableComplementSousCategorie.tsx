@@ -8,6 +8,7 @@ import {
   TextAreaInput,
   DateTimeInput,
   NumberInput,
+  CheckBoxInput,
 } from "../../../../components/Form/Form.tsx";
 import SelectForm from "../../../../components/Form/SelectForm.tsx";
 import { TYPE_PARAMETRE_COMPOSANT } from "../../../../Entities/SousTypesEvenementsEntity.tsx";
@@ -53,6 +54,10 @@ const SortableParametreSousCategory: FC<SortableComplementSousCategorie> = ({
 
       <Row className="align-items-end">
         <Col>
+          <CheckBoxInput
+            name={`evenementSousCategorieComplement[${index}].sousCategorieComplementEstRequis`}
+            label={"Requis"}
+          />
           <TextInput
             name={`evenementSousCategorieComplement[${index}].sousCategorieComplementLibelle`}
             label="Libelle du paramètre"

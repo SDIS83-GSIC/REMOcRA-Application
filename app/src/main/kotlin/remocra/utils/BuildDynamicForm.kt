@@ -66,7 +66,7 @@ class BuildDynamicForm : AbstractUseCase() {
                         dynamicFormParametreSourceSqlId = it.sousCategorieComplementSqlId,
                         dynamicFormParametreSourceSqlLibelle = it.sousCategorieComplementSqlLibelle,
                         dynamicFormParametreValeurDefaut = it.sousCategorieComplementValeurDefaut,
-                        dynamicFormParametreIsRequired = false,
+                        dynamicFormParametreIsRequired = it.sousCategorieComplementEstRequis == true,
                         dynamicFormParametreType = mapToRapportCourrier(it.sousCategorieComplementType),
                         dynamicFormParametreOrdre = 0,
                     )
