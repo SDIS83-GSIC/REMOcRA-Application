@@ -10,6 +10,7 @@ import remocra.db.TourneeRepository
 import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
 import remocra.usecase.AbstractUseCase
+import kotlin.collections.sortBy
 
 class FetchTourneeDataUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
@@ -20,7 +21,11 @@ class FetchTourneeDataUseCase @Inject constructor(
         params: Params<Filter, Sort>,
         userInfo: WrappedUserInfo,
     ): DataTableau<TourneeRepository.TourneeComplete>? {
-        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(filter = params.filterBy, userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!)
+        val listTourneeComplete = tourneeRepository.getAllTourneeComplete(
+            filter = params.filterBy,
+            userInfo.isSuperAdmin,
+            userInfo.affiliatedOrganismeIds!!,
+        )
 
         val filterTourneeDeltaDate = params.filterBy?.tourneeDeltaDate
         var filteredList = listTourneeComplete
@@ -51,7 +56,33 @@ class FetchTourneeDataUseCase @Inject constructor(
         // Calcul size pour DataTableau
         val count = filteredList.size
         // Tri en fonction de sortBy
-        val filteredSortedList = params.sortBy?.toCondition(filteredList)
+        val sortBy = params.sortBy
+        val effectiveSortBy = if (
+            sortBy == null ||
+            (
+                sortBy.tourneeLibelle == null &&
+                    sortBy.tourneeNbPei == null &&
+                    sortBy.organismeLibelle == null &&
+                    sortBy.tourneePourcentageAvancement == null &&
+                    sortBy.tourneeUtilisateurReservationLibelle == null &&
+                    sortBy.tourneeActif == null &&
+                    sortBy.tourneeNextRopDate == null
+                )
+        ) {
+            Sort(
+                tourneeLibelle = 1,
+                tourneeNbPei = null,
+                organismeLibelle = null,
+                tourneePourcentageAvancement = null,
+                tourneeUtilisateurReservationLibelle = null,
+                tourneeActif = null,
+                tourneeNextRopDate = null,
+            )
+        } else {
+            sortBy
+        }
+
+        val filteredSortedList = effectiveSortBy?.toCondition(filteredList)
         // Application de limit et offset à notre liste
         val filteredShortedList = filteredSortedList?.drop(params.offset ?: 0)?.take(params.limit ?: count)
 
