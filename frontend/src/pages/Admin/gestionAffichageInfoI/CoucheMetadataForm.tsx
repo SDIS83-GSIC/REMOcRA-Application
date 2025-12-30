@@ -97,6 +97,17 @@ const CoucheMetadataForm = ({
     ...dataLayer
   } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
 
+  const properties = useMemo(() => {
+    return (
+      describeFeatureType?.flatMap(
+        (df: { paramsCouche: any[] }) =>
+          df?.paramsCouche?.featureTypes?.flatMap(
+            (ft: { properties: any }) => ft.properties ?? [],
+          ) ?? [],
+      ) ?? []
+    );
+  }, [describeFeatureType]);
+
   const queryParam =
     values.coucheMetadataId !== null && values.coucheMetadataId !== ""
       ? { coucheMetadataId: values.coucheMetadataId }
@@ -104,10 +115,6 @@ const CoucheMetadataForm = ({
   const coucheData = useGet(
     url`/api/admin/couche-metadata/get-available-layers?${queryParam}`,
   )?.data;
-
-  const properties = useMemo(() => {
-    return describeFeatureType?.featureTypes?.[0]?.properties ?? [];
-  }, [describeFeatureType]);
 
   useEffect(() => {
     if (!coucheInitiale) {
@@ -234,6 +241,11 @@ const CoucheMetadataForm = ({
             header: "Informations générales",
             content:
               "Seules les couches requêtant Geoserver sont accessibles dans la liste déroulante ci-dessous, donc sont exclus les types GeoJSON et OSM",
+          },
+          {
+            header: "Propriétés non affichées",
+            content:
+              "Les propriétés sans métadonnées ne seront pas affichées dans les cartes",
           },
           {
             header: "Balises disponibles pour la mise en forme",

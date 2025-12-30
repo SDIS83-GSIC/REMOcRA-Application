@@ -34,11 +34,13 @@ const ListInfos = ({ data }: { data: any[] }) => {
       template: string,
       properties: Record<string, any>,
     ) => {
-      // Étape 1 — Remplacement des #clé# par la valeur
-      const tmp = template.replace(/#(.*?)#/g, (_, key) => {
-        return Object.prototype.hasOwnProperty.call(properties, key)
-          ? properties[key]
-          : "";
+      // Étape 1 — Supprime toute la ligne si la valeur est vide, null ou undefined
+      const tmp = template.replace(/^.*#(.*?)#.*$/gm, (line, key) => {
+        const value = properties[key];
+        if (value === undefined || value === "" || value === null) {
+          return ""; // supprime toute la ligne
+        }
+        return line.replace(`#${key}#`, value);
       });
 
       // Étape 2 — Découpe en crochets
@@ -49,10 +51,12 @@ const ListInfos = ({ data }: { data: any[] }) => {
       let current: (JSX.Element | string)[] = [];
 
       const flushCurrent = () => {
+        if (current.length === 0) {
+          return;
+        }
         if (stack.length === 0) {
           elements.push(...current);
         } else {
-          // Appliquer les styles
           let content = current;
           for (let i = stack.length - 1; i >= 0; i--) {
             const key = elements.length + "-" + i;
@@ -80,16 +84,18 @@ const ListInfos = ({ data }: { data: any[] }) => {
           elements.push(<br key={elements.length} />);
         } else if (style === "[b]" || style === "[i]" || style === "[u]") {
           flushCurrent();
-          stack.push(style.slice(1, -1)); // [b] => b
+          stack.push(style.slice(1, -1));
         } else if (style === "[/b]" || style === "[/i]" || style === "[/u]") {
           flushCurrent();
           stack.pop();
         } else {
-          current.push(style);
+          if (style !== "") {
+            current.push(style);
+          }
         }
       }
 
-      flushCurrent(); // flush final
+      flushCurrent();
       return elements;
     };
 
