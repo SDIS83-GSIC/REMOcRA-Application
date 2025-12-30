@@ -1,6 +1,7 @@
 package remocra.geoserver
 
 import remocra.geoserver.response.CoucheGeoserver
+import remocra.geoserver.response.LayerGroupResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -13,4 +14,10 @@ interface GeoserverApi {
         @Path("workspaceName") workspaceName: String,
         @Path("name") name: String,
     ): Call<CoucheGeoserver?>
+
+    @GET("layergroups/{name}.json")
+    @Headers("Content-Type: application/json")
+    fun getLayerGroup(
+        @Path("name") name: String,
+    ): Call<LayerGroupResponse>
 }

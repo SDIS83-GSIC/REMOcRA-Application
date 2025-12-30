@@ -22,7 +22,6 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.exception.RemocraResponseException
 import remocra.security.NoCsrf
-import remocra.usecase.AbstractUseCase
 import remocra.usecase.carto.CheckCoucheDispoGeoserverUseCase
 import remocra.usecase.carto.GetFeaturesTypeUseCase
 import remocra.utils.addQueryParameters
@@ -53,9 +52,17 @@ class GeoserverEndpoint : AbstractEndpoint() {
         @Context uriInfo: UriInfo,
     ): Response {
         return try {
-            doProxyRequest(httpClient, getFeaturesTypeUseCase.execute(coucheId, uriInfo))
+            val result = getFeaturesTypeUseCase.execute(coucheId, uriInfo)
+            Response
+                .ok(result)
+                .type(MediaType.APPLICATION_JSON)
+                .build()
         } catch (e: RemocraResponseException) {
-            AbstractUseCase.Result.BadRequest(e.message).wrap()
+            Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity(e.message)
+                .type(MediaType.TEXT_PLAIN)
+                .build()
         }
     }
 
