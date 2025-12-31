@@ -29,6 +29,7 @@ const AddRemoveComponent = ({
   readOnly,
   typeModule,
   buttonLibelle,
+  isDisabledButton = false,
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
@@ -65,6 +66,7 @@ const AddRemoveComponent = ({
                       elements.push(defaultElement);
                       scrollToBottom();
                     }}
+                    disabled={isDisabledButton}
                   >
                     <IconAdd /> {buttonLibelle ?? "Ajouter"}
                   </Button>
@@ -129,6 +131,7 @@ type AddRemoveComponentType = {
   readOnly?: boolean;
   buttonLibelle?: string;
   typeModule?: string | null;
+  isDisabledButton?: boolean;
 };
 
 export default AddRemoveComponent;

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useFormikContext } from "formik";
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
@@ -14,17 +15,22 @@ type FicheResumeElementType = {
   ficheResumeBlocLigne?: number | null;
 };
 
-export const getInitialValues = (data) => ({
+export const getInitialValues = (data: any) => ({
   listeFicheResumeElement: data,
 });
 
 export const validationSchema = object({});
-export const prepareVariables = (values) => ({
+export const prepareVariables = (values: { listeFicheResumeElement: any }) => ({
   listeFicheResumeElement: values.listeFicheResumeElement,
 });
 
 const AdminFicheResume = () => {
   const { data } = useGet(url`/api/fiche-resume/get-blocs`);
+  const [isDisabledButton, setIsDisabledButton] = useState(false);
+
+  const availableTypesModulesEmpty = (isEmpty: boolean) => {
+    setIsDisabledButton(isEmpty);
+  };
 
   return (
     data && (
@@ -38,7 +44,13 @@ const AdminFicheResume = () => {
         validationSchema={validationSchema}
         getInitialValues={getInitialValues}
         prepareVariables={prepareVariables}
-        createComponentToRepeat={createComponentToRepeat}
+        createComponentToRepeat={(index, listeElements) =>
+          createComponentToRepeat(
+            index,
+            listeElements,
+            availableTypesModulesEmpty,
+          )
+        }
         name={"listeFicheResumeElement"}
         defaultElement={{
           ficheResumeBlocTypeResumeData: null,
@@ -50,6 +62,7 @@ const AdminFicheResume = () => {
           e.ficheResumeBlocTypeResumeData == null ||
           e.ficheResumeBlocTitre == null
         }
+        isDisabledButton={isDisabledButton}
       />
     )
   );
@@ -60,9 +73,11 @@ export default AdminFicheResume;
 const ComposantToRepeat = ({
   index,
   listeElements,
+  onAvailableTypesModulesEmpty,
 }: {
   index: number;
   listeElements: FicheResumeElementType[];
+  onAvailableTypesModulesEmpty: (isEmpty: boolean) => void;
 }) => {
   const typesFicheResumeElement = Object.values(TYPE_RESUME_ELEMENT).map(
     (key) => {
@@ -73,6 +88,19 @@ const ComposantToRepeat = ({
       };
     },
   );
+
+  // Tous les modules qui ne sont pas déjà placés
+  const availableTypesModules = typesFicheResumeElement.filter(
+    (typeModule) =>
+      !listeElements
+        .map((e) => e.ficheResumeBlocTypeResumeData)
+        .includes(TYPE_RESUME_ELEMENT[typeModule.id]),
+  );
+
+  useEffect(() => {
+    onAvailableTypesModulesEmpty(availableTypesModules.length === 0);
+  }, [availableTypesModules, onAvailableTypesModulesEmpty]);
+
   const { setFieldValue } = useFormikContext();
 
   return (
@@ -82,7 +110,7 @@ const ComposantToRepeat = ({
           <SelectInput
             name={`listeFicheResumeElement[${index}].ficheResumeBlocTypeResumeData`}
             label="Type"
-            options={typesFicheResumeElement}
+            options={availableTypesModules}
             getOptionValue={(t) => t.id}
             getOptionLabel={(t) => t.libelle}
             onChange={(e) => {
@@ -110,6 +138,16 @@ const ComposantToRepeat = ({
   );
 };
 
-function createComponentToRepeat(index: number, listeElements: any[]) {
-  return <ComposantToRepeat index={index} listeElements={listeElements} />;
+function createComponentToRepeat(
+  index: number,
+  listeElements: any[],
+  onAvailableTypesModulesEmpty: (isEmpty: boolean) => void,
+) {
+  return (
+    <ComposantToRepeat
+      index={index}
+      listeElements={listeElements}
+      onAvailableTypesModulesEmpty={onAvailableTypesModulesEmpty}
+    />
+  );
 }

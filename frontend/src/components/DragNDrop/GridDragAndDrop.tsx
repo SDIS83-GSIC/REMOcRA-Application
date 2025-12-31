@@ -30,6 +30,7 @@ const GridDragAndDrop = ({
   defaultElement,
   disabledSuivant,
   isMultipartFormData = false,
+  isDisabledButton = false,
 }: {
   data: any[];
   colonneProperty: string;
@@ -46,6 +47,7 @@ const GridDragAndDrop = ({
   defaultElement: any;
   disabledSuivant: (element: any) => boolean;
   isMultipartFormData: boolean;
+  isDisabledButton?: boolean;
 }) => {
   const [items, setItems] = useState<any[]>();
 
@@ -87,6 +89,7 @@ const GridDragAndDrop = ({
             titreProperty={titreProperty}
             protectedProperty={protectedProperty}
             disabledSuivant={disabledSuivant}
+            isDisabledButton={isDisabledButton}
           />
         </MyFormik>
       </Container>
@@ -107,6 +110,7 @@ const Form = ({
   titreProperty,
   protectedProperty,
   disabledSuivant,
+  isDisabledButton = false,
 }: {
   items: any;
   setItems: (e: any) => void;
@@ -118,6 +122,7 @@ const Form = ({
   titreProperty: string;
   protectedProperty: string;
   disabledSuivant: (element: any) => boolean;
+  isDisabledButton?: boolean;
 }) => {
   const { values, setFieldValue } = useFormikContext();
   const [possibilites, setPossibilites] = useState();
@@ -135,6 +140,7 @@ const Form = ({
               defaultElement={defaultElement}
               protectedProperty={protectedProperty}
               listeElements={values[name]}
+              isDisabledButton={isDisabledButton}
             />
           </Row>
           <Row>
