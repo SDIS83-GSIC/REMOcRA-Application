@@ -31,6 +31,7 @@ import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapSignalement } from "../TooltipsMap.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
+import { setDocumentInFormData } from "../../Form/FormDocuments.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -446,6 +447,7 @@ const MapToolbarSignalement = ({
             initialValues={getInitialValues(listSignalementElement)}
             validationSchema={validationSchema}
             isPost={true}
+            isMultipartFormData={true}
             submitUrl={`/api/signalements/create`}
             prepareVariables={(values) => prepareVariables(values)}
             redirectUrl={URLS.SIGNALEMENTS}
@@ -467,21 +469,34 @@ const MapToolbarSignalement = ({
 };
 
 export const validationSchema = object({});
-export const prepareVariables = (values: {
-  listSignalementElement: SignalementElementEntity[];
-}) => {
-  return {
-    ...values,
-    listSignalementElement: values.listSignalementElement.map((element) => ({
-      geometry: `SRID=${element.srid};${element.geometryString}`,
-      anomalies: element.anomalies,
-      description: element.description,
-      sousType: element.sousType,
-    })),
-  };
-};
 
-export const getInitialValues = (listSignalementElement) => ({
+export const prepareVariables = (values: any) => {
+  const formData = new FormData();
+
+  setDocumentInFormData(values?.documents ?? [], [], formData);
+
+  formData.append("description", values.description);
+
+  formData.append(
+    "listSignalementElement",
+    JSON.stringify(
+      values.listSignalementElement.map((el) => ({
+        geometry: {
+          wkt: el.geometryString,
+          srid: el.srid,
+        },
+        anomalies: el.anomalies,
+        description: el.description,
+        sousType: el.sousType,
+      })),
+    ),
+  );
+
+  return formData;
+};
+export const getInitialValues = (
+  listSignalementElement: SignalementElementEntity[],
+) => ({
   listSignalementElement: listSignalementElement,
 });
 MapToolbarSignalement.displayName = "MapToolbarSignalement";

@@ -1,9 +1,15 @@
 import { Accordion, Col, Row } from "react-bootstrap";
+import { useFormikContext } from "formik";
 import { SignalementElementEntity } from "../../Entities/SignalementElementEntity.tsx";
-import { FormContainer, TextAreaInput } from "../../components/Form/Form.tsx";
+import {
+  FormContainer,
+  TextAreaInput,
+  TextInput,
+} from "../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import url from "../../module/fetch.tsx";
+import FormDocuments from "../../components/Form/FormDocuments.tsx";
 
 const Signalement = ({
   listeElement,
@@ -13,7 +19,11 @@ const Signalement = ({
   typeWithSousType: any;
 }) => {
   const listeAnomalie = useGet(url`/api/signalements/type-anomalie`)?.data;
-  const listeSousType = typeWithSousType.flatMap((type) => type.listSousType);
+  const listeSousType = typeWithSousType.flatMap(
+    (type: { listSousType: any }) => type.listSousType,
+  );
+  const { setFieldValue, values } =
+    useFormikContext<SignalementElementEntity>();
 
   return (
     <>
@@ -72,6 +82,25 @@ const Signalement = ({
             />
           </Col>
         </Row>
+
+        <Row>
+          <h3 className="mt-5">Document</h3>
+          <FormDocuments
+            documents={values.documents ?? []}
+            setFieldValue={setFieldValue}
+            otherFormParam={(index: number) => (
+              <TextInput
+                label="Nom"
+                name={`documents[${index}].documentLibelle`}
+                required={false}
+              />
+            )}
+            defaultOtherProperties={{
+              documentLibelle: null,
+            }}
+          />
+        </Row>
+
         <Row>
           <Col>
             <SubmitFormButtons />

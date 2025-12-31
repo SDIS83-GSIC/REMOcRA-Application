@@ -4,4 +4,7 @@ export type SignalementElementEntity = {
   description: string;
   srid: string;
   sousType: string;
+  documents: Document & {
+    documentLibelle: string;
+  };
 };
