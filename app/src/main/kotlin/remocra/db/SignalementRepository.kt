@@ -13,6 +13,7 @@ import remocra.db.jooq.remocra.enums.TypeGeometry
 import remocra.db.jooq.remocra.tables.pojos.Signalement
 import remocra.db.jooq.remocra.tables.pojos.SignalementSousTypeElement
 import remocra.db.jooq.remocra.tables.pojos.SignalementTypeAnomalie
+import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.SIGNALEMENT
 import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_ELEMENT
 import remocra.db.jooq.remocra.tables.references.SIGNALEMENT_SOUS_TYPE_ELEMENT
@@ -170,4 +171,11 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
 
     fun deleteById(signalementSousTypeElementId: UUID) =
         dsl.deleteFrom(SIGNALEMENT_SOUS_TYPE_ELEMENT).where(SIGNALEMENT_SOUS_TYPE_ELEMENT.ID.eq(signalementSousTypeElementId)).execute()
+
+    fun insertSignalementDocument(documentId: UUID, signalementId: UUID) {
+        dsl.insertInto(L_SIGNALEMENT_DOCUMENT)
+            .set(L_SIGNALEMENT_DOCUMENT.DOCUMENT_ID, documentId)
+            .set(L_SIGNALEMENT_DOCUMENT.SIGNALEMENT_ID, signalementId)
+            .execute()
+    }
 }

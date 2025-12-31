@@ -71,9 +71,10 @@ object GlobalConstants {
     val DOSSIER_APACHE_HOP_TASK = DOSSIER_APACHE_HOP.resolve("tasks")
 
     val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT.resolve("tmp")
-    val DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION = DOSSIER_DOCUMENT.resolve("signalement")
+    val DOSSIER_DOCUMENT_SIGNALEMENT = DOSSIER_DOCUMENT.resolve("signalement")
     val DOSSIER_DOCUMENT_DFCI_TRAVAUX = DOSSIER_DOCUMENT.resolve("dfci")
     val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT.resolve("courriers")
+    val DOSSIER_DOCUMENT_DELIBERATION = DOSSIER_DOCUMENT.resolve("deliberation")
 
     val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT.resolve("debits_simultanes")
 

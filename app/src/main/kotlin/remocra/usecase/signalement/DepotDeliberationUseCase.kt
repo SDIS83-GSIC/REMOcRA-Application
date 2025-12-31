@@ -40,7 +40,7 @@ class DepotDeliberationUseCase @Inject constructor(
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION.resolve(documentId.toString())
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DECLARATION.resolve("$documentId")
 
         /** Enregistrement sur le disque */
         element.inputStream.use {

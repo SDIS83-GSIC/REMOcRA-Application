@@ -6,10 +6,9 @@ import java.util.UUID
 data class SignalementData(
     val description: String?,
     val listSignalementElement: Collection<SignalementElementInput>,
-) {
-    val signalementId: UUID = UUID.randomUUID()
-}
-
+    val document: DocumentsData.DocumentsEvenement? = null,
+    val signalementId: UUID = UUID.randomUUID(),
+)
 data class SignalementElementInput(
     val geometry: Geometry,
     val anomalies: Collection<String>,

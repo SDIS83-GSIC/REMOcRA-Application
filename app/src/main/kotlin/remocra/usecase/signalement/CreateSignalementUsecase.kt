@@ -18,6 +18,7 @@ import remocra.utils.calculerCentroide
 
 class CreateSignalementUsecase @Inject constructor(
     private val createSignalementElementUsecase: CreateSignalementElementUsecase,
+    private val addSignalementDocumentUseCase: AddSignalementDocumentUseCase,
     private val signalementRepository: SignalementRepository,
 ) :
     AbstractCUDGeometrieUseCase<SignalementData>(TypeOperation.INSERT) {
@@ -51,12 +52,21 @@ class CreateSignalementUsecase @Inject constructor(
             ),
         )
 
+        // ajoute le document
+        if (element.document != null) {
+            addSignalementDocumentUseCase.execute(
+                userInfo,
+                element.document,
+                transactionManager,
+            )
+        }
+
         element.listSignalementElement.forEach { e ->
             e.apply { e.signalementElementSignalementId = element.signalementId }
             createSignalementElementUsecase.execute(userInfo, e, transactionManager)
         }
 
-        return element
+        return element.copy(document = null)
     }
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
