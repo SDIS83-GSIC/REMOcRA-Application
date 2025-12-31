@@ -241,7 +241,7 @@ const GenererForm = ({
               `dynamicFormId`,
               listeIdLibelleDescription?.find((r) => r.id === e.id)?.id,
             );
-
+            setFieldValue("courrierReference", "");
             setObjetId(e.id);
           }}
           defaultValue={listeIdLibelleDescription?.find(
