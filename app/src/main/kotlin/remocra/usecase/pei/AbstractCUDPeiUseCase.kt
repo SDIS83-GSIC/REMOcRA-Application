@@ -122,7 +122,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             // (Il n'est pas encore présent en base et n'a pas de visites)
             if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {
                 element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
-            } else {
+            } else if (typeOperation != TypeOperation.INSERT) {
                 element.peiDisponibiliteTerrestre = getDisponibilitePeiUseCase.execute(element)
             }
         }
@@ -134,6 +134,10 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         // Tout est à jour, on peut enregistrer l'élément :
         executeSpecific(userInfo, element)
 
+        if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false) {
+            element.peiDisponibiliteTerrestre = getDisponibilitePeiUseCase.execute(element)
+            peiRepository.upsert(element)
+        }
         // On rend la main au parent pour la logique d'événements
         return element
     }
