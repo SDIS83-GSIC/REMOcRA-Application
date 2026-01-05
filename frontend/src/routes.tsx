@@ -41,7 +41,6 @@ import UpdateAnomalieCategorie from "./pages/Admin/anomalieCategorie/UpdateAnoma
 import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
-import CoucheList from "./pages/Admin/couche/CoucheList.tsx";
 import CreateEvenementCategorie from "./pages/Admin/crise/criseCategorie/CreateEvenementCategorie.tsx";
 import ListEvenementCategorie from "./pages/Admin/crise/criseCategorie/ListEvenementCategorie.tsx";
 import UpdateEvenementCategorie from "./pages/Admin/crise/criseCategorie/UpdateEvenementCategorie.tsx";
@@ -1781,15 +1780,6 @@ export default [
           <Authorization
             Component={CreateThematique}
             droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
-          />
-        ),
-      },
-      {
-        path: "couches",
-        element: (
-          <Authorization
-            Component={CoucheList}
-            droits={[TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE]}
           />
         ),
       },
