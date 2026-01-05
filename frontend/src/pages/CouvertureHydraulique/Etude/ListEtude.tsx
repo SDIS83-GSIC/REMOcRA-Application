@@ -217,7 +217,7 @@ const ListEtude = () => {
             etudeNumero: undefined,
             etudeLibelle: undefined,
             etudeDescription: undefined,
-            etudeStatut: undefined,
+            etudeStatut: "EN_COURS",
             etudeDateMaj: undefined,
           })}
         />
