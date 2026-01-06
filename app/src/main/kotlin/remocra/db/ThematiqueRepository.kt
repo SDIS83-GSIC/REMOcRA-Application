@@ -72,6 +72,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
                     .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT_HABILITABLE.DATE_MAJ.desc()),
             )
             .limit(params?.limit ?: limit)
+            .offset(params?.offset ?: 0)
             .fetchInto()
 
     fun countDocumentHabilitableWithThematique(
