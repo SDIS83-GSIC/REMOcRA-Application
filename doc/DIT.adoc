@@ -98,7 +98,7 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 === Explication des variables d’environnement
 
 |===
-| | Description | Variable | Valeur par défaut
+| | Variable | Description | Valeur par défaut
 
 .4+| *Base de données*
 | POSTGRES_DB_HOSTNAME | Nom d’hôte de la base de données PostgreSQL |
@@ -120,11 +120,11 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 
 .5+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
-| SIG_HOSTNAME | |
-| SIG_SQL_DIALECT | |
-| SIG_DBNAME | |
-| SIG_USERNAME | |
-| SIG_PASSWORD | |
+| SIG_HOSTNAME | Nom de l'hôte de la base de données SIG |
+| SIG_SQL_DIALECT | Dialecte SQL utilisé par la base de données SIG (postgresql, oracle ...)  |
+| SIG_DBNAME | Nom de la base de données SIG |
+| SIG_USERNAME | Nom de l’utilisateur de la base de données SIG |
+| SIG_PASSWORD | Mot de passe de l'utilisateur de la base de données SIG |
 
 .6+| *Keycloak*
 | KC_BOOTSTRAP_ADMIN_USERNAME | Nom de l’utilisateur super-admin pour se connecter à Keycloak |
