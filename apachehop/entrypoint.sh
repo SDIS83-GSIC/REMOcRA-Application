@@ -13,6 +13,11 @@ sed -e "s|#DB_NAME|${POSTGRES_DB_NAME}|g" \
     -e "s|#DB_PASSWORD|${POSTGRES_DB_PASSWORD}|g" \
     -e "s|#DB_HOSTNAME|${POSTGRES_DB_HOSTNAME}|g" \
     -e "s|#DB_PORT|${POSTGRES_DB_PORT}|g" \
+    -e "s|#SIG_HOSTNAME|${SIG_HOSTNAME:-#SIG_HOSTNAME}|g" \
+    -e "s|#SIG_SQL_DIALECT|${SIG_SQL_DIALECT:-#SIG_SQL_DIALECT}|g" \
+    -e "s|#SIG_DBNAME|${SIG_DBNAME:-#SIG_DBNAME}|g" \
+    -e "s|#SIG_USERNAME|${SIG_USERNAME:-#SIG_USERNAME}|g" \
+    -e "s|#SIG_PASSWORD|${SIG_PASSWORD:-#SIG_PASSWORD}|g" \
     /opt/hop/variables.json \
     > /tmp/variables.json
 

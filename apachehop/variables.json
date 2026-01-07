@@ -4,6 +4,11 @@
     { "name": "POSTGRES_DB_USERNAME", "value": "#DB_USERNAME"},
     { "name": "POSTGRES_DB_PASSWORD", "value": "#DB_PASSWORD"},
     { "name": "POSTGRES_DB_HOSTNAME", "value": "#DB_HOSTNAME"},
-    { "name": "POSTGRES_DB_PORT", "value": "#DB_PORT"}
+    { "name": "POSTGRES_DB_PORT", "value": "#DB_PORT"},
+    { "name": "SIG_HOSTNAME", "value": "#SIG_HOSTNAME"},
+    { "name": "SIG_SQL_DIALECT", "value": "#SIG_SQL_DIALECT"},
+    { "name": "SIG_DBNAME", "value": "#SIG_DBNAME"},
+    { "name": "SIG_USERNAME", "value": "#SIG_USERNAME"},
+    { "name": "SIG_PASSWORD", "value": "#SIG_PASSWORD"}
   ]
 }
