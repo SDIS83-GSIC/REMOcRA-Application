@@ -1,7 +1,8 @@
 import { useFormikContext } from "formik";
+import { useEffect, useState } from "react";
 import { Button, Col, Image, Row } from "react-bootstrap";
 import { object } from "yup";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   FileInput,
@@ -11,8 +12,13 @@ import {
   TextInput,
 } from "../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { IconDelete } from "../../../components/Icon/Icon.tsx";
+import {
+  IconAccuse,
+  IconDelete,
+  IconWarning,
+} from "../../../components/Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../../components/ModuleRemocra/ModuleRemocra.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import SOURCE_CARTO from "../../../enums/SourceCartoEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredString } from "../../../module/validators.tsx";
@@ -110,6 +116,18 @@ export const validationSchema = object({
 
 const Couche = () => {
   const { values, setFieldValue }: any = useFormikContext<CoucheType>();
+  const [estInitialise, setEstInitialisee] = useState(false);
+  const { run, data: coucheDisponibleDansGeoserver } = useGetRun(
+    `/api/geoserver/check-couche-dispo/${values.coucheNom}`,
+  );
+
+  useEffect(() => {
+    if (estInitialise === false && values.coucheNom) {
+      setEstInitialisee(true);
+      run();
+    }
+  }, [estInitialise, values.coucheNom, run]);
+
   const moduleList = Object.entries(TypeModuleRemocra).map(([key, value]) => {
     return {
       id: key,
@@ -194,13 +212,42 @@ const Couche = () => {
           !values.coucheProtected && (
             <>
               <Col xs={12} lg={6}>
-                <TextInput
-                  name={`coucheNom`}
-                  value={values.coucheNom}
-                  label={"Nom"}
-                  placeholder={"Nom"}
-                  required={true}
-                />
+                <Row className="align-items-end">
+                  <Col>
+                    <TextInput
+                      name={`coucheNom`}
+                      value={values.coucheNom}
+                      label={"Nom"}
+                      placeholder={"Nom"}
+                      required={true}
+                      onBlur={() => {
+                        run();
+                      }}
+                    />
+                  </Col>
+                  <Col xs={"auto"}>
+                    {values.coucheSource === SOURCE_CARTO.WMS &&
+                      (coucheDisponibleDansGeoserver ? (
+                        <TooltipCustom
+                          tooltipId="trouvee"
+                          tooltipText="Couche trouvée dans Geoserver"
+                        >
+                          <span className="text-success">
+                            <IconAccuse />
+                          </span>
+                        </TooltipCustom>
+                      ) : (
+                        <TooltipCustom
+                          tooltipId="non-trouvee"
+                          tooltipText="Couche non trouvée dans Geoserver"
+                        >
+                          <span className="text-danger">
+                            <IconWarning />
+                          </span>
+                        </TooltipCustom>
+                      ))}
+                  </Col>
+                </Row>
               </Col>
               <Col xs={12} lg={6}>
                 <TextInput

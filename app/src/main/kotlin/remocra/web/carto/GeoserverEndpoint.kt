@@ -4,7 +4,9 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.MultivaluedHashMap
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
@@ -14,11 +16,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import remocra.app.DataCacheProvider
 import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.exception.RemocraResponseException
 import remocra.security.NoCsrf
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.carto.CheckCoucheDispoGeoserverUseCase
 import remocra.usecase.carto.GetFeaturesTypeUseCase
 import remocra.utils.addQueryParameters
 import remocra.utils.forbidden
@@ -36,6 +41,8 @@ class GeoserverEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var getFeaturesTypeUseCase: GetFeaturesTypeUseCase
 
+    @Inject lateinit var checkCoucheDispoGeoserverUseCase: CheckCoucheDispoGeoserverUseCase
+
     @Public("Les couches peuvent être accessibles publiquement")
     @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entête CSRF")
     @Path("/describe-feature-type/{coucheId}")
@@ -50,6 +57,16 @@ class GeoserverEndpoint : AbstractEndpoint() {
         } catch (e: RemocraResponseException) {
             AbstractUseCase.Result.BadRequest(e.message).wrap()
         }
+    }
+
+    @Path("/check-couche-dispo/{coucheNom}")
+    @RequireDroits([Droit.ADMIN_COUCHE_CARTOGRAPHIQUE])
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    fun getCoucheDispoGeoserver(
+        @PathParam("coucheNom") coucheNom: String,
+    ): Response {
+        return Response.ok(checkCoucheDispoGeoserverUseCase.execute(coucheNom)).build()
     }
 
     @Public("Les couches peuvent être accessibles publiquement")
