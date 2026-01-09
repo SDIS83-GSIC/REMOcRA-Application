@@ -17,6 +17,7 @@ import remocra.couverturehydraulique.CalculData
 import remocra.couverturehydraulique.ClosestPeiData
 import remocra.couverturehydraulique.usecase.CalculCouvertureUseCase
 import remocra.couverturehydraulique.usecase.ClosestPeiUseCase
+import remocra.couverturehydraulique.usecase.CreateTopologieUseCase
 import remocra.db.CouvertureHydrauliqueCalculRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.web.AbstractEndpoint
@@ -33,6 +34,9 @@ class CouvertureHydrauliqueCalculEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var couvertureHydrauliqueCalculRepository: CouvertureHydrauliqueCalculRepository
+
+    @Inject
+    lateinit var createTopologieUseCase: CreateTopologieUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -84,5 +88,16 @@ class CouvertureHydrauliqueCalculEndPoint : AbstractEndpoint() {
         closestPeiData: ClosestPeiData,
     ): Response {
         return Response.ok(closestPeiUseCase.execute(closestPeiData)).build()
+    }
+
+    @POST
+    @Path("/create-topologie/{etudeId}")
+    @RequireDroits([Droit.ETUDE_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun createTopologie(
+        @PathParam("etudeId")
+        etudeId: UUID,
+    ): Response {
+        return Response.ok(createTopologieUseCase.createTopologie(etudeId)).build()
     }
 }

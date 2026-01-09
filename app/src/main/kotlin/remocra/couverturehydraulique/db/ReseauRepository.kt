@@ -77,6 +77,7 @@ class ReseauRepository @Inject constructor(
     data class ReseauTopologie(
         val reseauId: UUID,
         val reseauGeometrie: LineString,
+        val reseauEtude: UUID?,
     )
 
     /**
@@ -86,9 +87,10 @@ class ReseauRepository @Inject constructor(
         return dsl.select(
             RESEAU.ID,
             RESEAU.GEOMETRIE,
+            RESEAU.ETUDE_ID.`as`("reseauEtude"),
         )
             .from(RESEAU)
-            .where(RESEAU.ETUDE_ID.eq(etudeId))
+            .where(RESEAU.ETUDE_ID.eq(etudeId)).or(RESEAU.ETUDE_ID.isNull)
             .fetchInto()
     }
 
@@ -277,5 +279,33 @@ class ReseauRepository @Inject constructor(
             .where(RESEAU.SOMMET_SOURCE.eq(sommetId))
             .and(RESEAU.PEI_TRONCON.isNull)
             .fetchOneInto()
+    }
+
+    /**
+     * Batch update des sommets source
+     */
+    fun batchUpdateSource(updates: List<Pair<UUID, UUID>>) {
+        if (updates.isEmpty()) return
+        dsl.batch(
+            updates.map { (reseauId, sommetId) ->
+                dsl.update(RESEAU)
+                    .set(RESEAU.SOMMET_SOURCE, sommetId)
+                    .where(RESEAU.ID.eq(reseauId))
+            },
+        ).execute()
+    }
+
+    /**
+     * Batch update des sommets destination
+     */
+    fun batchUpdateDestination(updates: List<Pair<UUID, UUID>>) {
+        if (updates.isEmpty()) return
+        dsl.batch(
+            updates.map { (reseauId, sommetId) ->
+                dsl.update(RESEAU)
+                    .set(RESEAU.SOMMET_DESTINATION, sommetId)
+                    .where(RESEAU.ID.eq(reseauId))
+            },
+        ).execute()
     }
 }

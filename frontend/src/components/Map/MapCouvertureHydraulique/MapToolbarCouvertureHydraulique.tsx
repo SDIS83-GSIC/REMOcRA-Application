@@ -7,7 +7,7 @@ import OLMap from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import { object } from "yup";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
@@ -28,6 +28,9 @@ import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPeiProjet } from "../TooltipsMap.tsx";
+
+const CREATION_TOPOLOGIE_EN_COURS =
+  "Création de la topologie en cours, veuillez patienter…";
 
 const ButtonWithTooltipIfDisabled = ({
   tooltipId,
@@ -108,6 +111,35 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 
   const [peiProjetIdMove, setPeiProjetIdMove] = useState<string | null>(null);
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
+
+  const [busy, setBusy] = useState(false);
+
+  // Base pour la future logique de création de topologie
+  const handleCreerTopologie = async () => {
+    setBusy(true);
+    (
+      await fetch(
+        url`/api/couverture-hydraulique/calcul/create-topologie/` + etudeId,
+        getFetchOptions({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+    )
+      .text()
+      .then(() => {
+        successToast("Topologie créée avec succès");
+        if (workingLayer && map) {
+          refreshLayerGeoserver(map);
+        }
+      })
+      .catch((reason: string) => {
+        errorToast(reason || "Erreur lors de la création de la topologie");
+      })
+      .finally(() => {
+        setBusy(false);
+      });
+  };
 
   /**
    * Permet de dessiner un point pour la création des PEI en projet
@@ -506,6 +538,8 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     geometrieMove,
     closeMove,
     visibleMove,
+    handleCreerTopologie,
+    busy,
   };
 };
 
@@ -530,6 +564,8 @@ const MapToolbarCouvertureHydraulique = ({
   geometrieMove,
   closeMove,
   visibleMove,
+  handleCreerTopologie,
+  busy,
 }: {
   map: OLMap;
   dataPeiProjetLayer: any;
@@ -551,6 +587,8 @@ const MapToolbarCouvertureHydraulique = ({
   geometrieMove: string | null;
   closeMove: () => void;
   visibleMove: boolean;
+  handleCreerTopologie: () => void;
+  busy: boolean;
 }) => {
   return (
     <div className="d-flex align-items-center">
@@ -558,62 +596,92 @@ const MapToolbarCouvertureHydraulique = ({
       <ToolbarButton
         toolName={"select-etude"}
         toolIcon={<IconSelect />}
-        toolLabelTooltip={"Sélectionner"}
+        toolLabelTooltip={busy ? CREATION_TOPOLOGIE_EN_COURS : "Sélectionner"}
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
+        disabled={disabledEditPeiProjet || busy}
       />
       <ToolbarButton
         toolName={"create-pei-projet"}
         toolIcon={<IconCreate />}
         toolLabelTooltip={
-          disabledEditPeiProjet
-            ? "L'étude est terminée, vous ne pouvez plus créer un PEI en projet"
-            : "Créer un PEI en projet"
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : disabledEditPeiProjet
+              ? "L'étude est terminée, vous ne pouvez plus créer un PEI en projet"
+              : "Créer un PEI en projet"
         }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
-        disabled={disabledEditPeiProjet}
+        disabled={disabledEditPeiProjet || busy}
       />
       <ToolbarButton
         toolName={"deplacer-pei-projet"}
         toolIcon={<IconMoveObjet />}
         toolLabelTooltip={
-          disabledEditPeiProjet
-            ? "L'étude est terminée, vous ne pouvez plus déplacer un PEI en projet"
-            : "Déplacer un PEI en projet"
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : disabledEditPeiProjet
+              ? "L'étude est terminée, vous ne pouvez plus déplacer un PEI en projet"
+              : "Déplacer un PEI en projet"
         }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
-        disabled={disabledEditPeiProjet}
+        disabled={disabledEditPeiProjet || busy}
       />
       <ToolbarButton
         toolName={"pei-plus-proche"}
         toolIcon={<IconPeiPlusProche />}
         toolLabelTooltip={
-          disabledEditPeiProjet
-            ? "L'étude est terminée, vous ne pouvez plus trouver le PEI le plus proche"
-            : "Trouver le PEI le plus proche"
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : disabledEditPeiProjet
+              ? "L'étude est terminée, vous ne pouvez plus trouver le PEI le plus proche"
+              : "Trouver le PEI le plus proche"
         }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
-        disabled={disabledEditPeiProjet}
+        disabled={disabledEditPeiProjet || busy}
       />
       <ButtonWithTooltipIfDisabled
-        tooltipId="lancer-simulation-disabled"
-        tooltipText="L'étude est terminée, vous ne pouvez plus lancer de simulation"
+        tooltipId="creer-topologie-disabled"
+        tooltipText={
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : "L'étude est terminée, vous ne pouvez plus créer la topologie"
+        }
         className="ms-4 me-3"
         variant="outline-primary"
+        onClick={handleCreerTopologie}
+        disabled={disabledEditPeiProjet || busy}
+      >
+        {busy && <Spinner animation="border" size="sm" className="me-2" />}
+        {busy ? "Création en cours…" : "Créer la topologie"}
+      </ButtonWithTooltipIfDisabled>
+      <ButtonWithTooltipIfDisabled
+        tooltipId="lancer-simulation-disabled"
+        tooltipText={
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : "L'étude est terminée, vous ne pouvez plus lancer de simulation"
+        }
+        className="ms-2 me-3"
+        variant="outline-primary"
         onClick={calculCouverture}
-        disabled={disabledEditPeiProjet}
+        disabled={disabledEditPeiProjet || busy}
       >
         Lancer une simulation
       </ButtonWithTooltipIfDisabled>
       <ButtonWithTooltipIfDisabled
         tooltipId="effacer-couverture-disabled"
-        tooltipText="L'étude est terminée, vous ne pouvez plus effacer la couverture"
+        tooltipText={
+          busy
+            ? CREATION_TOPOLOGIE_EN_COURS
+            : "L'étude est terminée, vous ne pouvez plus effacer la couverture"
+        }
         variant="outline-primary"
         onClick={clearCouverture}
-        disabled={disabledEditPeiProjet}
+        disabled={disabledEditPeiProjet || busy}
       >
         Effacer la couverture tracée
       </ButtonWithTooltipIfDisabled>

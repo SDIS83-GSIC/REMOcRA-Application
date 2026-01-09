@@ -43,7 +43,6 @@ class CalculCouvertureUseCase @Inject constructor(
         val distances = parametresProvider.getParametreString(ParametreEnum.DECI_ISODISTANCES.name)
             ?.let { objectMapper.readValue<List<Int>>(it) } ?: throw RemocraResponseException(ErrorType.CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT)
 
-        createTopologieUseCase.createTopologie(element.etudeId)
         // Si on utilise que le réseau importé dans l'étude en question, on utilise l'etudeId
         val etudeId = if (element.useReseauImporte || element.useReseauImporteWithReseauCourant) element.etudeId else null
         val listePeiIdWithProjets = element.listPeiId.plus(element.listPeiProjetId)
