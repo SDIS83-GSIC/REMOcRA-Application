@@ -68,7 +68,7 @@ pipeline {
           gradleInsideDocker(imageVersion: gradleImageVersion) {
             sh '''
                 gradle --stacktrace build
-                gradle --stacktrace cyclonedxBom
+                gradle --stacktrace cyclonedxDirectBom
                 # Exécute jooq *après* build pour ne pas reformater les src/main/kotlin et avoir spotlessCheck qui passe sans erreur alors qu'il ne devrait pas
                 gradle --stacktrace jooq -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
                 gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
@@ -182,7 +182,7 @@ pipeline {
       steps {
         smartDependencyTrackPublisher name: 'remocra-v3',
           version: env.BRANCH_NAME,
-          bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/bom.json'],
+          bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/cyclonedx-direct/bom.json'],
           classifier: 'APPLICATION',
           hierarchical: true
       }

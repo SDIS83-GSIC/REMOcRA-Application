@@ -101,7 +101,7 @@ xdocreport-odfdom = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocrepor
 
 [plugins]
 android-lint = "com.android.lint:8.13.1"
-cyclonedx = "org.cyclonedx.bom:1.7.4"
+cyclonedx = "org.cyclonedx.bom:3.1.0"
 flyway = "net.ltgt.flyway:0.2.0"
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
 jooq = "net.ltgt.jooq-kotlin:0.1.0"

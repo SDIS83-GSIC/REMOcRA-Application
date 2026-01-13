@@ -1,3 +1,5 @@
+import org.cyclonedx.model.Component
+
 plugins {
     id("local.kotlin-base")
     kotlin("jvm")
@@ -203,11 +205,11 @@ tasks {
         cli("serve")
     }
 
-    cyclonedxBom {
+    cyclonedxDirectBom {
         // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-        setIncludeConfigs(listOf("runtimeClasspath"))
+        includeConfigs = listOf("runtimeClasspath")
         // Specified the type of project being built. Defaults to 'library'
-        projectType = "application"
+        projectType = Component.Type.APPLICATION
     }
 }
 
