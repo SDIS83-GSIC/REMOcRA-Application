@@ -40,7 +40,7 @@ slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "2.0.17" }
 log4j-slf4j2Impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl" }
 typesafe = "com.typesafe:config:1.4.5"
 postgresql = "org.postgresql:postgresql:42.7.8"
-hikaricp = "com.zaxxer:HikariCP:6.3.3"
+hikaricp = "com.zaxxer:HikariCP:7.0.2"
 guava = "com.google.guava:guava:33.5.0-jre"
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-database-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
