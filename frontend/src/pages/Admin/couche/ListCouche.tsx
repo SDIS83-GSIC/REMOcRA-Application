@@ -37,7 +37,7 @@ const ListCouche = () => {
   const { data } = useGet(`/api/admin/groupe-couche/${groupeCoucheId}`);
 
   const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
-  const typeModuleState = useGet(url`/api/modules/get-type-module-accueil`);
+  const typeModuleState = useGet(url`/api/modules/get-all-type-module`);
   const listeButton: ButtonType[] = [];
 
   listeButton.push({

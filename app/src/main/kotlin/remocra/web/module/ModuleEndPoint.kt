@@ -23,6 +23,7 @@ import remocra.data.DataTableau
 import remocra.data.ListModuleWithImage
 import remocra.data.ModuleAccueilData
 import remocra.data.Params
+import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.CourrierRepository
 import remocra.db.ModuleRepository
 import remocra.db.ThematiqueRepository
@@ -152,9 +153,9 @@ class ModuleEndPoint : AbstractEndpoint() {
         ).build()
 
     @GET
-    @Path("/get-type-module-accueil")
+    @Path("/get-type-module")
     @Public("Les types de module ne sont pas liées à un droit.")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getTypeModuleAccueil() =
-        Response.ok(TypeModule.entries.sortedBy { it.name }).build()
+    fun getTypeModule() =
+        Response.ok(TypeModuleRapportCourrier.entries.sortedBy { it.name }).build()
 }
