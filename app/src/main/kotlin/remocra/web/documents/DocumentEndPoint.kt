@@ -24,10 +24,8 @@ import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.pei.InsertDocumentUseCase
 import remocra.utils.notFound
-import java.io.File
-import java.nio.file.Paths
 import java.util.UUID
-import kotlin.io.path.pathString
+import kotlin.io.path.Path
 
 @Path("/documents")
 @Produces(MediaType.APPLICATION_JSON)
@@ -62,7 +60,7 @@ class DocumentEndPoint {
         }
 
         val response = documentUtils.checkFile(
-            File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
+            Path(document.documentRepertoire, document.documentNomFichier),
         )
 
         val courierId: UUID? = documentRepository.getCourrierIdByDocumentId(documentId)

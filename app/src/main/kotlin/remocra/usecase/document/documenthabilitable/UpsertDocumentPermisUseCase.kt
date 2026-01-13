@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.document.AbstractUpsertDocumentUseCase
+import java.nio.file.Path
 import java.util.UUID
 
 class UpsertDocumentPermisUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsPermis>() {
@@ -41,7 +42,7 @@ class UpsertDocumentPermisUseCase : AbstractUpsertDocumentUseCase<DocumentsData.
         // Pas la possibilité d'Update, rien à spécifier ici.
     }
 
-    override fun getRepertoire(): String {
+    override fun getRepertoire(): Path {
         return GlobalConstants.DOSSIER_DOCUMENT_PERMIS
     }
 

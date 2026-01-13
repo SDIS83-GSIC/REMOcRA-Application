@@ -1,5 +1,7 @@
 package remocra
 
+import java.nio.file.Path
+
 object GlobalConstants {
     const val UTILISATEUR_SYSTEME_USERNAME = "UTILISATEUR_SYSTEME"
 
@@ -56,65 +58,63 @@ object GlobalConstants {
     const val SRID_4326 = 4326
 
     // TODO: convertir en configuration injectable (valeur par défaut dans reference.conf)
-    // TODO: convertir en java.nio.file.Path
-    val DOSSIER_DATA = System.getProperty("remocra.fs.base-dir", "/var/lib/remocra/")
+    val DOSSIER_DATA = Path.of(System.getProperty("remocra.fs.base-dir", "/var/lib/remocra/"))
 
-    val DOSSIER_IMAGES = DOSSIER_DATA + "images/"
+    private val DOSSIER_IMAGES = DOSSIER_DATA.resolve("images")
 
-    val DOSSIER_DOCUMENT_OLD = DOSSIER_DATA + "old/"
+    val DOSSIER_DOCUMENT_OLD = DOSSIER_DATA.resolve("old")
 
-    val DOSSIER_DOCUMENT = DOSSIER_DATA + "documents/"
+    val DOSSIER_DOCUMENT = DOSSIER_DATA.resolve("documents")
 
-    val DOSSIER_APACHE_HOP = DOSSIER_DATA + "apache_hop/"
-    val DOSSIER_APACHE_HOP_CONFIG = DOSSIER_APACHE_HOP + "config/"
-    val DOSSIER_APACHE_HOP_TASK = DOSSIER_APACHE_HOP + "tasks/"
+    val DOSSIER_APACHE_HOP = DOSSIER_DATA.resolve("apache_hop")
+    val DOSSIER_APACHE_HOP_CONFIG = DOSSIER_APACHE_HOP.resolve("config")
+    val DOSSIER_APACHE_HOP_TASK = DOSSIER_APACHE_HOP.resolve("tasks")
 
-    val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT + "tmp/"
-    val DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION = DOSSIER_DOCUMENT + "signalement/"
-    val DOSSIER_DOCUMENT_DFCI_TRAVAUX = DOSSIER_DOCUMENT + "dfci/"
+    val DOSSIER_DOCUMENT_TEMPORAIRE = DOSSIER_DOCUMENT.resolve("tmp")
+    val DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION = DOSSIER_DOCUMENT.resolve("signalement")
+    val DOSSIER_DOCUMENT_DFCI_TRAVAUX = DOSSIER_DOCUMENT.resolve("dfci")
+    val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT.resolve("courriers")
 
-    val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT + "courriers/"
+    val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT.resolve("debits_simultanes")
 
-    val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT + "debits_simultanes/"
+    val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT.resolve("pei")
 
-    val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT + "pei/"
+    val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT.resolve("etudes")
 
-    val DOSSIER_DOCUMENT_ETUDE = DOSSIER_DOCUMENT + "etudes/"
+    val DOSSIER_DOCUMENT_EVENEMENT = DOSSIER_DOCUMENT.resolve("evenements")
 
-    val DOSSIER_DOCUMENT_EVENEMENT = DOSSIER_DOCUMENT + "evenements/"
+    val DOSSIER_DOCUMENT_CRISE = DOSSIER_DOCUMENT.resolve("crises")
 
-    val DOSSIER_DOCUMENT_CRISE = DOSSIER_DOCUMENT + "crises/"
+    val DOSSIER_DOCUMENT_RCCI = DOSSIER_DOCUMENT.resolve("rcci")
 
-    val DOSSIER_DOCUMENT_RCCI = DOSSIER_DOCUMENT + "rcci/"
+    val DOSSIER_DOCUMENT_PERMIS = DOSSIER_DOCUMENT.resolve("permis")
 
-    val DOSSIER_DOCUMENT_PERMIS = DOSSIER_DOCUMENT + "permis/"
+    val DOSSIER_DOCUMENT_DECLARATION = DOSSIER_DOCUMENT.resolve("declaration")
 
-    val DOSSIER_DOCUMENT_DECLARATION = DOSSIER_DOCUMENT + "declaration/"
+    private val DOSSIER_MODELES = DOSSIER_DATA.resolve("modeles")
 
-    val DOSSIER_MODELES = DOSSIER_DATA + "modeles/"
+    val DOSSIER_CARTE_TOURNEE_TEMPLATE = DOSSIER_MODELES.resolve("carte_tournee")
 
-    val DOSSIER_CARTE_TOURNEE_TEMPLATE = DOSSIER_MODELES + "carte_tournee/"
+    val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES.resolve("courriers")
 
-    val DOSSIER_MODELES_COURRIERS = DOSSIER_MODELES + "courriers/"
+    val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES.resolve("export_ctp")
+    val TEMPLATE_EXPORT_CTP_FILE_NAME = "template_export_ctp.xlsx"
+    val TEMPLATE_EXPORT_CTP_FULL_PATH = DOSSIER_MODELES_EXPORT_CTP.resolve(TEMPLATE_EXPORT_CTP_FILE_NAME)
 
-    val DOSSIER_MODELES_EXPORT_CTP = DOSSIER_MODELES + "export_ctp/"
-    const val TEMPLATE_EXPORT_CTP_FILE_NAME = "template_export_ctp.xlsx"
-    val TEMPLATE_EXPORT_CTP_FULL_PATH = DOSSIER_MODELES_EXPORT_CTP + TEMPLATE_EXPORT_CTP_FILE_NAME
+    val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES.resolve("accueil")
+    val DOSSIER_DOCUMENT_HABILITABLE = DOSSIER_DOCUMENT.resolve("document-habilitable")
 
-    val DOSSIER_IMAGE_MODULE = DOSSIER_IMAGES + "accueil/"
-    val DOSSIER_DOCUMENT_HABILITABLE = DOSSIER_DOCUMENT + "document-habilitable/"
-
-    val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA + "couverture_hydraulique/tmp/"
-    val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA + "sites/tmp/"
-    val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA + "zones_integration/tmp/"
+    val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA.resolve("couverture_hydraulique").resolve("tmp")
+    val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA.resolve("sites").resolve("tmp")
+    val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA.resolve("zones_integration").resolve("tmp")
 
     // Ressources "statiques", logo, bannière & co
-    val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES + "ressources/"
-    val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "banniere"
-    val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES + "logo"
+    val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES.resolve("ressources")
+    val BANNIERE_FULL_PATH = DOSSIER_IMAGES_RESSOURCES.resolve("banniere")
+    val LOGO_FULL_PATH = DOSSIER_IMAGES_RESSOURCES.resolve("logo")
 
     // Toutes les images participant à la symbologie des PEI
-    val DOSSIER_IMAGES_SYMBOLOGIE = DOSSIER_IMAGES + "symbologie/"
+    val DOSSIER_IMAGES_SYMBOLOGIE = DOSSIER_IMAGES.resolve("symbologie")
 
     // Code catégorie anomalie systeme
     const val CATEGORIE_ANOMALIE_SYSTEME = "SYSTEME"

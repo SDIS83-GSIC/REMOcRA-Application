@@ -298,18 +298,19 @@ class SynchroEndpoint : AbstractEndpoint() {
         @Context httpServletRequest: HttpServletRequest,
     ): Response {
         val partPhoto: Part = httpServletRequest.getPart("photo")
-        val photoBytes: ByteArray = partPhoto.inputStream.readAllBytes()
 
-        return synchroPhotoPeiUseCase.execute(
-            securityContext.userInfo,
-            PhotoPeiForApiMobileData(
-                photoId = UUID.fromString(httpServletRequest.getPart("photoId").inputStream.reader().readText()),
-                peiId = UUID.fromString(httpServletRequest.getPart("peiId").inputStream.reader().readText()),
-                photoDate = httpServletRequest.getPart("photoDate").inputStream.reader().readText(),
-                photoInputStream = photoBytes,
-                photoLibelle = partPhoto.submittedFileName,
-            ),
-        ).wrap()
+        return partPhoto.inputStream.use {
+            synchroPhotoPeiUseCase.execute(
+                securityContext.userInfo,
+                PhotoPeiForApiMobileData(
+                    photoId = UUID.fromString(httpServletRequest.getPart("photoId").inputStream.reader().readText()),
+                    peiId = UUID.fromString(httpServletRequest.getPart("peiId").inputStream.reader().readText()),
+                    photoDate = httpServletRequest.getPart("photoDate").inputStream.reader().readText(),
+                    photoInputStream = it,
+                    photoLibelle = partPhoto.submittedFileName,
+                ),
+            ).wrap()
+        }
     }
 
     @Path("/incoming-to-remocra/{tourneeId}")

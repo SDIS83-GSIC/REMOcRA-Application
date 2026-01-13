@@ -13,6 +13,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
+import java.nio.file.Path
 import java.util.UUID
 
 // Utilisation de "DocumentsEvenement" pour les crises, car les documents des crises ont les mêmes caractèristiques que ceux des évènements
@@ -35,7 +36,7 @@ class UpsertDocumentCriseUseCase : AbstractUpsertDocumentUseCase<DocumentsData.D
         // Rien ici
     }
 
-    override fun getRepertoire(): String {
+    override fun getRepertoire(): Path {
         return GlobalConstants.DOSSIER_DOCUMENT_CRISE
     }
 

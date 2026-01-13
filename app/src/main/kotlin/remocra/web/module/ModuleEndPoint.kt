@@ -36,7 +36,6 @@ import remocra.usecase.module.ModuleDocumentCourrierUseCase
 import remocra.usecase.module.ModuleUseCase
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
-import java.io.File
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
@@ -89,7 +88,7 @@ class ModuleEndPoint : AbstractEndpoint() {
     fun getUriImage(@QueryParam("moduleId") moduleId: UUID): Response {
         val module = moduleRepository.getById(moduleId)
         return Response.ok(
-            module.moduleImage?.let { File(GlobalConstants.DOSSIER_IMAGE_MODULE + it) },
+            module.moduleImage?.let { GlobalConstants.DOSSIER_IMAGE_MODULE.resolve(it).toFile() },
         )
             .build()
     }

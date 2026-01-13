@@ -25,6 +25,7 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
+import kotlin.io.path.pathString
 
 class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.INSERT) {
 
@@ -95,17 +96,19 @@ class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
         element.listeDebitSimultaneMesure.forEach {
             val debitSimultaneMesureId = it.debitSimultaneMesureId ?: UUID.randomUUID()
             var documentId: UUID? = null
-            val repertoire = GlobalConstants.DOSSIER_DEBIT_SIMULTANE + "/$debitSimultaneMesureId"
+            val repertoire = GlobalConstants.DOSSIER_DEBIT_SIMULTANE.resolve(debitSimultaneMesureId.toString())
 
             // Sinon si c'est un ajout de document
             if (it.documentNomFichier != null && it.documentId == null && !element.listeDocument.isNullOrEmpty()) {
                 documentId = UUID.randomUUID()
                 val newDoc = element.listeDocument.find { t -> t.name == "document_${it.documentNomFichier}" }
-                documentUtils.saveFile(
-                    newDoc!!.inputStream.readAllBytes(),
-                    newDoc.submittedFileName,
-                    repertoire,
-                )
+                newDoc!!.inputStream.use {
+                    documentUtils.saveFile(
+                        it,
+                        newDoc.submittedFileName,
+                        repertoire,
+                    )
+                }
 
                 // création en base
                 documentRepository.insertDocument(
@@ -113,7 +116,7 @@ class CreateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
                         documentId = documentId,
                         documentDate = dateUtils.now(),
                         documentNomFichier = it.documentNomFichier,
-                        documentRepertoire = repertoire,
+                        documentRepertoire = repertoire.pathString,
                     ),
                 )
             }

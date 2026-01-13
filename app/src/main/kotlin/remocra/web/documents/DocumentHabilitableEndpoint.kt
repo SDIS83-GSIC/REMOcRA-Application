@@ -33,10 +33,8 @@ import remocra.utils.getTextPart
 import remocra.utils.getTextPartOrNull
 import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
-import java.io.File
-import java.nio.file.Paths
 import java.util.UUID
-import kotlin.io.path.pathString
+import kotlin.io.path.Path
 
 @Path("/document-habilitable")
 @Produces(MediaType.APPLICATION_JSON)
@@ -102,7 +100,7 @@ class DocumentHabilitableEndpoint : AbstractEndpoint() {
         }
 
         return documentUtils.checkFile(
-            File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
+            Path(document.documentRepertoire, document.documentNomFichier),
         )
     }
 

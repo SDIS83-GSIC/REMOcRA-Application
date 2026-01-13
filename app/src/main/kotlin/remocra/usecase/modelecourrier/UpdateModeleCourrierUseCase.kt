@@ -20,6 +20,7 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.RequeteSqlUtils
+import java.nio.file.Paths
 
 class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.UPDATE) {
 
@@ -117,13 +118,16 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         }
 
         if (element.part != null) {
+            val path = Paths.get(element.documentRepertoire!!)
             // On supprime document actuel en base et sur le disque
-            documentUtils.deleteFile(element.documentNomFichier!!, element.documentRepertoire!!)
-            documentUtils.saveFile(
-                element.part.inputStream.readAllBytes(),
-                element.part.submittedFileName,
-                GlobalConstants.DOSSIER_MODELES_COURRIERS + element.modeleCourrierId,
-            )
+            documentUtils.deleteFile(element.documentNomFichier!!, path)
+            element.part.inputStream.use {
+                documentUtils.saveFile(
+                    it,
+                    element.part.submittedFileName,
+                    GlobalConstants.DOSSIER_MODELES_COURRIERS.resolve(element.modeleCourrierId.toString()),
+                )
+            }
             documentRepository.updateDocument(element.part.submittedFileName, "${GlobalConstants.DOSSIER_MODELES_COURRIERS}${element.modeleCourrierId}", element.documentId!!)
         }
 

@@ -51,7 +51,7 @@ class DeleteOldebUseCase @Inject constructor(
             oldebRepository.deleteOldebVisiteDocument(element.oldebId)
             documentRepository.deleteDocumentByIds(it)
         }
-        documentUtils.deleteDirectory("${GlobalConstants.DOSSIER_DOCUMENT_OLD}$element.oldebId")
+        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_DOCUMENT_OLD.resolve(element.oldebId.toString()))
 
         // Suppression des visites
         oldebRepository.deleteVisite(element.oldebId)

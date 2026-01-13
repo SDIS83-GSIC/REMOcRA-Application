@@ -21,7 +21,6 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.ImportShapeUtils
-import java.io.File
 import java.io.InputStream
 import java.util.UUID
 
@@ -65,10 +64,10 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importReseau(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
+        val fileShp = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
 
-        val store = FileDataStoreFinder.getDataStore(fileShp)
+        val store = FileDataStoreFinder.getDataStore(fileShp.toFile())
         val source = store.featureSource
 
         val listReseau = mutableListOf<Reseau>()
@@ -111,9 +110,9 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importBatiment(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
+        val fileShp = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
-        val store = FileDataStoreFinder.getDataStore(fileShp)
+        val store = FileDataStoreFinder.getDataStore(fileShp.toFile())
         val source = store.featureSource
 
         val listBatiment = mutableListOf<Batiment>()
@@ -146,10 +145,10 @@ class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatiment
     }
 
     private fun importPeiProjet(inputStream: InputStream, etudeId: UUID) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
+        val fileShp = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_COUVERTURE_HYDRAULIQUE)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_SHP_INTROUVABLE)
 
-        val store = FileDataStoreFinder.getDataStore(fileShp)
+        val store = FileDataStoreFinder.getDataStore(fileShp.toFile())
         val source = store.featureSource
 
         val listPeiProjet = mutableListOf<PeiProjet>()

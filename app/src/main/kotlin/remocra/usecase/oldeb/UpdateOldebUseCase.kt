@@ -24,6 +24,8 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 class UpdateOldebUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
@@ -67,7 +69,10 @@ class UpdateOldebUseCase @Inject constructor(
 
     override fun execute(userInfo: WrappedUserInfo, element: OldebFormInput): OldebFormInput {
         // Suppression des suites absentes
-        oldebRepository.deleteMissingSuite(element.oldeb.oldebId, element.visiteList?.flatMap { it.suiteList ?: listOf() }?.map { it.oldebVisiteSuiteId })
+        oldebRepository.deleteMissingSuite(
+            element.oldeb.oldebId,
+            element.visiteList?.flatMap { it.suiteList ?: listOf() }?.map { it.oldebVisiteSuiteId },
+        )
 
         // Suppression des anomalies absentes
         // Table de liaison : tout cramer pour repartir sur des bases saines
@@ -75,12 +80,14 @@ class UpdateOldebUseCase @Inject constructor(
 
         // Suppression des document des visites absentes
         oldebRepository.selectMissingVisite(element.oldeb.oldebId, element.visiteList?.map { it.oldebVisiteId })
-            .forEach {
-                    visite ->
+            .forEach { visite ->
                 val list = oldebRepository.selectMissingVisiteDocument(visite.oldebVisiteId)
                 oldebRepository.deleteVisiteDocument(visite.oldebVisiteId)
                 documentRepository.deleteDocumentByIds(list.map { it.oldebVisiteDocumentDocumentId })
-                documentUtils.deleteDirectory("${GlobalConstants.DOSSIER_DOCUMENT_OLD}${element.oldeb.oldebId}/${visite.oldebVisiteId}")
+                documentUtils.deleteDirectory(
+                    GlobalConstants.DOSSIER_DOCUMENT_OLD.resolve(element.oldeb.oldebId.toString())
+                        .resolve(visite.oldebVisiteId.toString()),
+                )
             }
 
         // Suppression des visites absentes
@@ -245,12 +252,13 @@ class UpdateOldebUseCase @Inject constructor(
             }
 
             // Suppression des documents absents
-            oldebRepository.selectMissingVisiteDocument(visite.oldebVisiteId, visite.documentList?.map { it.documentId })
-                .map { it.oldebVisiteDocumentDocumentId }.takeIf { it.isNotEmpty() }?.let {
-                        list ->
-                    documentRepository.getDocumentByIds(list).forEach {
-                            document ->
-                        documentUtils.deleteDirectory(document.documentRepertoire) // On crame le répertoire du fichier
+            oldebRepository.selectMissingVisiteDocument(
+                visite.oldebVisiteId,
+                visite.documentList?.map { it.documentId },
+            )
+                .map { it.oldebVisiteDocumentDocumentId }.takeIf { it.isNotEmpty() }?.let { list ->
+                    documentRepository.getDocumentByIds(list).forEach { document ->
+                        documentUtils.deleteDirectory(Path(document.documentRepertoire)) // On crame le répertoire du fichier
                     }
                     oldebRepository.deleteMissingVisiteDocument(list)
                     documentRepository.deleteDocumentByIds(list)
@@ -259,15 +267,19 @@ class UpdateOldebUseCase @Inject constructor(
             // Nouveaux documents
             documentVisiteMap?.get(visite.oldebVisiteCode)?.forEach { file ->
                 val documentId = UUID.randomUUID()
-                val repertoire = "${GlobalConstants.DOSSIER_DOCUMENT_OLD}${element.oldeb.oldebId}/${visite.oldebVisiteId}/$documentId"
-                documentUtils.saveFile(file.inputStream.readAllBytes(), file.submittedFileName, repertoire)
+                val repertoire =
+                    GlobalConstants.DOSSIER_DOCUMENT_OLD.resolve(element.oldeb.oldebId.toString()).resolve(visite.oldebVisiteId.toString())
+                        .resolve(documentId.toString())
+                file.inputStream.use {
+                    documentUtils.saveFile(it, file.submittedFileName, repertoire)
+                }
 
                 documentRepository.insertDocument(
                     Document(
                         documentId = documentId,
                         documentDate = dateUtils.now(),
                         documentNomFichier = file.submittedFileName,
-                        documentRepertoire = repertoire,
+                        documentRepertoire = repertoire.absolutePathString(),
                     ),
                 )
 
@@ -279,7 +291,12 @@ class UpdateOldebUseCase @Inject constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebFormInput) {
         // On fait la vérif de contraintes d'uniticé uniquement si la parcelle est renseignée
-        if (element.oldeb.oldebCadastreParcelleId != null && oldebRepository.checkSectionAndParcelleIsUsed(element.oldeb.oldebId, element.oldeb.oldebCommuneId, element.oldeb.oldebCadastreSectionId, element.oldeb.oldebCadastreParcelleId)
+        if (element.oldeb.oldebCadastreParcelleId != null && oldebRepository.checkSectionAndParcelleIsUsed(
+                element.oldeb.oldebId,
+                element.oldeb.oldebCommuneId,
+                element.oldeb.oldebCadastreSectionId,
+                element.oldeb.oldebCadastreParcelleId,
+            )
         ) {
             throw RemocraResponseException(ErrorType.OLDEB_PARCELLE_ALREADY_USED)
         }

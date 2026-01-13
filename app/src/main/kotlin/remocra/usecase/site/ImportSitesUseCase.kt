@@ -21,8 +21,8 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.ImportShapeUtils
-import java.io.File
 import java.io.InputStream
+import java.nio.file.Path
 import java.util.UUID
 
 class ImportSitesUseCase : AbstractUseCase() {
@@ -63,10 +63,10 @@ class ImportSitesUseCase : AbstractUseCase() {
     }
 
     private fun importSites(inputStream: InputStream, userInfo: WrappedUserInfo) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
+        val fileShp: Path = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_SITES)
             ?: throw RemocraResponseException(ErrorType.IMPORT_SITES_SHP_INTROUVABLE)
 
-        val store = FileDataStoreFinder.getDataStore(fileShp)
+        val store = FileDataStoreFinder.getDataStore(fileShp.toFile())
         val source = store.featureSource
 
         source.features.let { features: SimpleFeatureCollection ->

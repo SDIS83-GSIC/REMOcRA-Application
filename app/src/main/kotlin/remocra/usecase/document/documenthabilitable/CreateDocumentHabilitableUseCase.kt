@@ -53,8 +53,10 @@ class CreateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
         val documentId = UUID.randomUUID()
 
         // On sauvegarde le document sur le disque
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_HABILITABLE + "/${element.documentHabilitableId}"
-        documentUtils.saveFile(element.document!!.inputStream.readAllBytes(), element.document.submittedFileName, repertoire)
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_HABILITABLE.resolve(element.documentHabilitableId.toString())
+        element.document!!.inputStream.use {
+            documentUtils.saveFile(it, element.document.submittedFileName, repertoire)
+        }
 
         // On récupère le document et on l'enregistre
         documentRepository.insertDocument(
@@ -62,7 +64,7 @@ class CreateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = element.document.submittedFileName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.toString(),
             ),
         )
 

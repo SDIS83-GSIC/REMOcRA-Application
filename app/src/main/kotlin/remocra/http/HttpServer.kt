@@ -46,6 +46,7 @@ import remocra.security.SecurityHeadersFilter
 import remocra.web.JaxrsApplication
 import java.nio.file.Files
 import java.util.EnumSet
+import kotlin.io.path.pathString
 
 class HttpServer
 @Inject
@@ -183,7 +184,7 @@ constructor(
         context.addServlet(
             ServletHolder(AuthnConstants.IMAGES_SERVLET_NAME, ResourceServlet::class.java).apply {
                 setInitParameter("dirAllowed", "false")
-                setInitParameter("baseResource", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+                setInitParameter("baseResource", GlobalConstants.DOSSIER_IMAGES_RESSOURCES.pathString)
                 setInitParameter("pathInfoOnly", "true")
             },
             "/images/*",

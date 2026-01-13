@@ -64,7 +64,7 @@ class ExportCriseUseCase : AbstractUseCase() {
 
         val docs = criseRepository.getAllDocumentsFromCrise(criseId = criseId, params = null)
         val files = mutableListOf(
-            File(GlobalConstants.DOSSIER_DOCUMENT_CRISE + "index.html") to "index.html",
+            GlobalConstants.DOSSIER_DOCUMENT_CRISE.resolve("index.html").toFile() to "index.html",
         )
 
         if (hasDoc) {

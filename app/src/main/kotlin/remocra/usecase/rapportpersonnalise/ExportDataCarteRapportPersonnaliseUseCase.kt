@@ -23,12 +23,12 @@ import remocra.db.RapportPersonnaliseRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileWriter
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.inputStream
+import kotlin.io.path.name
+import kotlin.io.path.writeText
 
 /**
  * Permet d'exporter les données de la requêtes en csv
@@ -45,7 +45,7 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
     private lateinit var appSettings: AppSettings
 
     companion object {
-        private val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA + "rapport_personnalise/"
+        private val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA.resolve("rapport_personnalise")
         private const val FILE_NAME = "rapport_personnalise_shapefile"
     }
 
@@ -61,7 +61,8 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
         documentUtils.ensureDirectory(DOSSIER_TMP_RAPPORT_PERONNALISE)
 
         try {
-            var requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
+            var requete =
+                rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
 
             // On remplace avec les données paramètres fournies
             genererRapportPersonnaliseData.listeParametre.forEach {
@@ -114,9 +115,9 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
             val featureType = builder.buildFeatureType()
 
             // Crée un fichier .shp
-            val newFile = File(DOSSIER_TMP_RAPPORT_PERONNALISE + "$FILE_NAME.shp")
+            val newFile = DOSSIER_TMP_RAPPORT_PERONNALISE.resolve("$FILE_NAME.shp")
             val params: MutableMap<String, Any?> = HashMap()
-            params["url"] = newFile.toURI().toURL()
+            params["url"] = newFile.toUri().toURL()
             params["charset"] = StandardCharsets.UTF_8.name()
             val factory: DataStoreFactorySpi = ShapefileDataStoreFactory()
             val dataStore = factory.createNewDataStore(params)
@@ -150,16 +151,14 @@ class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
             val wkt = crs.toWKT()
 
             // Écrire dans un fichier .prj
-            val prjFile = File("$DOSSIER_TMP_RAPPORT_PERONNALISE$FILE_NAME.prj")
-            FileWriter(prjFile, StandardCharsets.UTF_8).use { writer ->
-                writer.write(wkt)
-            }
+            val prjFile = DOSSIER_TMP_RAPPORT_PERONNALISE.resolve("$FILE_NAME.prj")
+            prjFile.writeText(wkt)
 
             val output = StreamingOutput { output ->
                 val out = ZipOutputStream(output)
                 files.forEach { fileString ->
-                    val file = File(DOSSIER_TMP_RAPPORT_PERONNALISE + fileString)
-                    FileInputStream(file).use { fis ->
+                    val file = DOSSIER_TMP_RAPPORT_PERONNALISE.resolve(fileString)
+                    file.inputStream().use { fis ->
                         val zipEntry = ZipEntry(file.name)
                         out.putNextEntry(zipEntry)
                         fis.copyTo(out)

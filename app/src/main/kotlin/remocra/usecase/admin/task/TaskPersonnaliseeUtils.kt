@@ -7,9 +7,12 @@ import remocra.data.TaskPersonnaliseeInputData
 import remocra.tasks.ApacheHopTask.ApacheHopParametre
 import remocra.usecase.admin.task.UpdateTaskPersonnaliseeUseCase.ConfigApacheHop
 import remocra.usecase.document.DocumentUtils
-import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import kotlin.io.path.extension
+import kotlin.io.path.name
+import kotlin.io.path.outputStream
+import kotlin.io.path.writeText
 
 class TaskPersonnaliseeUtils {
 
@@ -20,7 +23,7 @@ class TaskPersonnaliseeUtils {
     lateinit var objectMapper: ObjectMapper
 
     fun saveTask(element: TaskPersonnaliseeInputData) {
-        val directory = GlobalConstants.DOSSIER_APACHE_HOP_TASK + "${element.taskId}/"
+        val directory = GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve(element.taskId.toString())
         var nameHwf: String? = null
         // On supprime le contenu du répertoire
         documentUtils.deleteDirectory(directory)
@@ -31,14 +34,13 @@ class TaskPersonnaliseeUtils {
             while (zipEntry != null) {
                 documentUtils.ensureDirectory(directory)
 
-                val file = File(directory + zipEntry.name)
+                val file = directory.resolve(zipEntry.name)
 
-                zipInputStream.readBytes().inputStream().use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
+                // Copie stream à stream
+                file.outputStream().use { output ->
+                    zipInputStream.copyTo(output)
                 }
-                if (zipEntry.name.contains(".hwf")) {
+                if (file.extension == "hwf") {
                     nameHwf = file.name
                 }
                 zipInputStream.closeEntry()
@@ -53,8 +55,7 @@ class TaskPersonnaliseeUtils {
             filename = "\${PROJECT_HOME}/${element.taskId}/$nameHwf",
         )
 
-        File(GlobalConstants.DOSSIER_APACHE_HOP_CONFIG + "${parametre.taskCode}.json").printWriter().use { out ->
-            out.println(objectMapper.writeValueAsString(config))
-        }
+        val configFile = GlobalConstants.DOSSIER_APACHE_HOP_CONFIG.resolve("${parametre.taskCode}.json")
+        configFile.writeText(objectMapper.writeValueAsString(config))
     }
 }

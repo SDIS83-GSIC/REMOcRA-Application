@@ -25,6 +25,8 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
+import kotlin.io.path.Path
+import kotlin.io.path.pathString
 
 class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.UPDATE) {
 
@@ -75,7 +77,7 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
 
                 if (it.debitSimultaneMesureDocumentId != null) {
                     val doc = mapDocumentByDebitMesure[it.debitSimultaneMesureId]!!
-                    documentUtils.deleteFile(doc.documentNomFichier, doc.documentRepertoire)
+                    documentUtils.deleteFile(doc.documentNomFichier, Path(doc.documentRepertoire))
                 }
 
                 debitSimultaneRepository.deleteDebitSimultaneMesure(it.debitSimultaneMesureId)
@@ -87,7 +89,7 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
         element.listeDebitSimultaneMesure.forEach {
             val debitSimultaneMesureId = it.debitSimultaneMesureId ?: UUID.randomUUID()
             var documentId: UUID? = null
-            val repertoire = GlobalConstants.DOSSIER_DEBIT_SIMULTANE + "/$debitSimultaneMesureId"
+            val repertoire = GlobalConstants.DOSSIER_DEBIT_SIMULTANE.resolve(debitSimultaneMesureId.toString())
 
             // Si c'est une mise à jour
             if (it.debitSimultaneMesureId != null) {
@@ -95,15 +97,17 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
                 val document = mapDocumentByDebitMesure[it.debitSimultaneMesureId]
                 if (document != null && it.documentId == null && !element.listeDocument.isNullOrEmpty()) {
                     // On supprime document actuel en base et sur le disque
-                    documentUtils.deleteFile(document.documentNomFichier, document.documentRepertoire)
+                    documentUtils.deleteFile(document.documentNomFichier, Path(document.documentRepertoire))
                     val newDoc = element.listeDocument.find { t -> t.name == "document_${it.documentNomFichier}" }
-                    documentUtils.saveFile(
-                        newDoc!!.inputStream.readAllBytes(),
-                        newDoc.submittedFileName,
-                        repertoire,
-                    )
+                    newDoc!!.inputStream.use {
+                        documentUtils.saveFile(
+                            it,
+                            newDoc.submittedFileName,
+                            repertoire,
+                        )
+                    }
                     // On met à jour le nom du fichier
-                    documentRepository.updateDocument(newDoc.submittedFileName, repertoire, document.documentId)
+                    documentRepository.updateDocument(newDoc.submittedFileName, repertoire.pathString, document.documentId)
                 }
             }
 
@@ -111,11 +115,13 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
             if (it.documentNomFichier != null && it.documentId == null && !element.listeDocument.isNullOrEmpty()) {
                 documentId = UUID.randomUUID()
                 val newDoc = element.listeDocument.find { t -> t.name == "document_${it.documentNomFichier}" }
-                documentUtils.saveFile(
-                    newDoc!!.inputStream.readAllBytes(),
-                    newDoc.submittedFileName,
-                    repertoire,
-                )
+                newDoc!!.inputStream.use { inputStream ->
+                    documentUtils.saveFile(
+                        inputStream,
+                        newDoc.submittedFileName,
+                        repertoire,
+                    )
+                }
 
                 // création en base
                 documentRepository.insertDocument(
@@ -123,7 +129,7 @@ class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
                         documentId = documentId,
                         documentDate = dateUtils.now(),
                         documentNomFichier = it.documentNomFichier,
-                        documentRepertoire = repertoire,
+                        documentRepertoire = repertoire.pathString,
                     ),
                 )
             }

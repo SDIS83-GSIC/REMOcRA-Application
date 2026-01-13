@@ -12,6 +12,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import java.nio.file.Paths
 
 class DeleteDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.DELETE) {
 
@@ -46,8 +47,9 @@ class DeleteDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
             ?: throw RemocraResponseException(ErrorType.DOCUMENT_HABILITABLE_DOCUMENT_NOT_FOUND)
 
         // On supprime le document sur le disque
-        documentUtils.deleteFile(document.documentNomFichier, document.documentRepertoire)
-        documentUtils.deleteDirectory(document.documentRepertoire)
+        val path = Paths.get(document.documentRepertoire)
+        documentUtils.deleteFile(document.documentNomFichier, path)
+        documentUtils.deleteDirectory(path)
 
         // Puis on supprime les données en base
         documentHabilitableRepository.deleteThematiqueDocumentHabilitable(element.documentHabilitableId)

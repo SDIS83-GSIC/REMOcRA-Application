@@ -60,8 +60,10 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
         val documentId = UUID.randomUUID()
 
         // On sauvegarde le document sur le disque
-        val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS + "/${element.modeleCourrierId}"
-        documentUtils.saveFile(element.part!!.inputStream.readAllBytes(), element.part.submittedFileName, repertoire)
+        val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS.resolve(element.modeleCourrierId.toString())
+        element.part!!.inputStream.use {
+            documentUtils.saveFile(it, element.part.submittedFileName, repertoire)
+        }
 
         // On récupère le document et on l'enregistre
         documentRepository.insertDocument(
@@ -69,7 +71,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = element.part.submittedFileName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.toString(),
             ),
         )
 

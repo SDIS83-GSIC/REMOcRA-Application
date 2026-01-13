@@ -47,11 +47,13 @@ class CreateScreenCriseUseCase : AbstractCUDUseCase<CreateDoc>(TypeOperation.INS
     override fun execute(userInfo: WrappedUserInfo, element: CreateDoc): CreateDoc {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_CRISE + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_CRISE.resolve(documentId.toString())
         val docName = "${element.criseDocName}.png"
 
         /** Enregistrement sur le disque */
-        documentUtils.saveFile(element.criseDocument!!.inputStream.readAllBytes(), docName, repertoire)
+        element.criseDocument!!.inputStream.use {
+            documentUtils.saveFile(it, docName, repertoire)
+        }
 
         /** Enregistrement en base de données */
         val documentToInsert =
@@ -59,7 +61,7 @@ class CreateScreenCriseUseCase : AbstractCUDUseCase<CreateDoc>(TypeOperation.INS
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = docName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.toString(),
             )
         documentRepository.insertDocument(documentToInsert)
         criseRepository.insertCriseDocument(documentId, element.criseId, element.criseDocumentGeometrie)

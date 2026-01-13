@@ -22,8 +22,8 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.ImportShapeUtils
-import java.io.File
 import java.io.InputStream
+import java.nio.file.Path
 import java.util.UUID
 
 class ImportZonesIntegrationUseCase : AbstractUseCase() {
@@ -66,10 +66,10 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
     }
 
     private fun importZonesIntegration(inputStream: InputStream, userInfo: WrappedUserInfo) {
-        val fileShp: File = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_ZONES_INTEGRATION)
+        val fileShp: Path = importShapeUtils.readZipFile(inputStream, GlobalConstants.DOSSIER_TMP_IMPORT_ZONES_INTEGRATION)
             ?: throw RemocraResponseException(ErrorType.IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE)
 
-        val store = FileDataStoreFinder.getDataStore(fileShp)
+        val store = FileDataStoreFinder.getDataStore(fileShp.toFile())
         val source = store.featureSource
 
         source.features.let { features: SimpleFeatureCollection ->

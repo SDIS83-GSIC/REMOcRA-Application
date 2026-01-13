@@ -24,10 +24,8 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
-import remocra.data.DestinataireData
 import remocra.data.ModeleCourrierData
 import remocra.data.Params
-import remocra.data.courrier.form.CourrierData
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
@@ -42,11 +40,10 @@ import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
 import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
 import remocra.usecase.modelecourrier.UpdateModeleCourrierUseCase
 import remocra.utils.getTextPart
+import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
-import java.io.File
 import java.nio.file.Paths
 import java.util.UUID
-import kotlin.io.path.pathString
 import kotlin.reflect.jvm.javaMethod
 
 @Path("/courriers")
@@ -220,11 +217,13 @@ class CourrierEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.COURRIER_C])
     @NoCsrf("Téléchargement d'un fichier")
     @Produces(MediaType.MEDIA_TYPE_WILDCARD)
-    fun getUriCourrier(@QueryParam("courrierName") courrierName: String?): Response {
-        return Response.ok(
-            courrierName?.let { File(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE + it) },
-        )
-            .build()
+    fun getUriCourrier(@QueryParam("courrierPath") courrierPath: String?): Response {
+        val path = courrierPath?.let {
+            GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve(it)
+        }?.takeIf {
+            it.startsWith(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
+        }
+        return path?.let { documentUtils.checkFile(it) } ?: notFound().build()
     }
 
     /**
@@ -241,36 +240,7 @@ class CourrierEndPoint : AbstractEndpoint() {
         val document = courrierRepository.getDocumentByCourrier(courrierId)
 
         return documentUtils.checkFile(
-            File(Paths.get(document.documentRepertoire, document.documentNomFichier).pathString),
+            Paths.get(document.documentRepertoire, document.documentNomFichier),
         )
     }
-
-    @POST
-    @Path("/create")
-    @RequireDroits([Droit.COURRIER_C])
-    @Produces(MediaType.APPLICATION_JSON)
-    fun createCourrier(
-        courrierWithDestinataires: CourrierWithDestinataire,
-    ): Response {
-        return createCourrierUseCase.execute(
-            securityContext.userInfo,
-            CourrierData(
-                courrierId = UUID.randomUUID(),
-                documentId = UUID.randomUUID(),
-                modeleCourrierId = courrierWithDestinataires.modeleCourrierId,
-                nomDocumentTmp = courrierWithDestinataires.nomDocument,
-                listeDestinataire = courrierWithDestinataires.listeDestinataire,
-                courrierReference = courrierWithDestinataires.courrierReference,
-                codeThematique = courrierWithDestinataires.codeThematique,
-            ),
-        ).wrap()
-    }
-
-    data class CourrierWithDestinataire(
-        val modeleCourrierId: UUID,
-        val nomDocument: String,
-        val listeDestinataire: Set<DestinataireData>,
-        val courrierReference: String,
-        val codeThematique: String,
-    )
 }

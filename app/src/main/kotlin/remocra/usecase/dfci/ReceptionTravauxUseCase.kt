@@ -40,10 +40,12 @@ class ReceptionTravauxUseCase @Inject constructor(
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DFCI_TRAVAUX + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DFCI_TRAVAUX.resolve(documentId.toString())
 
         /** Enregistrement sur le disque */
-        documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
+        element.inputStream.use {
+            documentUtils.saveFile(it, element.submittedFileName, repertoire)
+        }
 
         /** Enregistrement en base de données */
         val documentToInsert =
@@ -51,7 +53,7 @@ class ReceptionTravauxUseCase @Inject constructor(
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = element.submittedFileName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.toString(),
             )
         documentRepository.insertDocument(documentToInsert)
         return documentToInsert

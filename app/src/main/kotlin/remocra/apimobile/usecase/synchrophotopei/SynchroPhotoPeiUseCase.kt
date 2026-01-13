@@ -12,6 +12,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import kotlin.io.path.absolutePathString
 
 class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(TypeOperation.INSERT) {
 
@@ -34,12 +35,12 @@ class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(Type
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: PhotoPeiForApiMobileData): PhotoPeiForApiMobileData {
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_PEI + "${element.peiId}/${element.photoId}"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_PEI.resolve(element.peiId.toString()).resolve(element.photoId.toString())
         val result = incomingRepository.insertPhotoPei(
             peiId = element.peiId,
             photoId = element.photoId,
             photoDate = dateUtils.getMoment(element.photoDate),
-            photoPath = repertoire,
+            photoPath = repertoire.absolutePathString(),
             photoLibelle = element.photoLibelle,
         )
 

@@ -17,6 +17,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import kotlin.io.path.Path
 
 class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.UPDATE) {
 
@@ -54,15 +55,17 @@ class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableD
         // Si l'utilisateur a changé de document
         if (element.document != null) {
             // On supprime le fichier sur le disque et on remet le bon
-            documentUtils.deleteFile(document.documentNomFichier, document.documentRepertoire)
-            val repertoire = GlobalConstants.DOSSIER_DOCUMENT_HABILITABLE + "/${element.documentHabilitableId}"
-            documentUtils.saveFile(
-                element.document.inputStream.readAllBytes(),
-                element.document.submittedFileName,
-                repertoire,
-            )
+            documentUtils.deleteFile(document.documentNomFichier, Path(document.documentRepertoire))
+            val repertoire = GlobalConstants.DOSSIER_DOCUMENT_HABILITABLE.resolve(element.documentHabilitableId.toString())
+            element.document.inputStream.use {
+                documentUtils.saveFile(
+                    it,
+                    element.document.submittedFileName,
+                    repertoire,
+                )
+            }
             // On met à jour le nom du fichier
-            documentRepository.updateDocument(element.document.submittedFileName, repertoire, document.documentId)
+            documentRepository.updateDocument(element.document.submittedFileName, repertoire.toString(), document.documentId)
         }
 
         documentHabilitableRepository.updateDocumentHabilitable(

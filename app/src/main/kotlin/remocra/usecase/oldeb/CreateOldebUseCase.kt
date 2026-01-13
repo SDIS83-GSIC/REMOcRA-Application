@@ -24,6 +24,7 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
+import kotlin.io.path.absolutePathString
 
 class CreateOldebUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
@@ -172,15 +173,17 @@ class CreateOldebUseCase @Inject constructor(
             // Nouveaux documents
             documentVisiteMap?.get(visite.oldebVisiteCode)?.forEach { file ->
                 val documentId = UUID.randomUUID()
-                val repertoire = "${GlobalConstants.DOSSIER_DOCUMENT_OLD}${element.oldeb.oldebId}/${visite.oldebVisiteId}/$documentId"
-                documentUtils.saveFile(file.inputStream.readAllBytes(), file.submittedFileName, repertoire)
+                val repertoire = GlobalConstants.DOSSIER_DOCUMENT_OLD.resolve(element.oldeb.oldebId.toString()).resolve(visite.oldebVisiteId.toString()).resolve(documentId.toString())
+                file.inputStream.use {
+                    documentUtils.saveFile(it, file.submittedFileName, repertoire)
+                }
 
                 documentRepository.insertDocument(
                     Document(
                         documentId = documentId,
                         documentDate = dateUtils.now(),
                         documentNomFichier = file.submittedFileName,
-                        documentRepertoire = repertoire,
+                        documentRepertoire = repertoire.absolutePathString(),
                     ),
                 )
 

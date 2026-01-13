@@ -59,7 +59,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
             if (it.moduleImage != null) {
                 // On supprime sur le disque
                 documentUtils.deleteFile(it.moduleImage!!, GlobalConstants.DOSSIER_IMAGE_MODULE)
-                documentUtils.deleteDirectory(GlobalConstants.DOSSIER_IMAGE_MODULE + "${it.moduleId}")
+                documentUtils.deleteDirectory(GlobalConstants.DOSSIER_IMAGE_MODULE.resolve("${it.moduleId}"))
             }
 
             moduleRepository.delete(it.moduleId)
@@ -70,19 +70,21 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
             val imageAvant = modulesAvant.firstOrNull { f -> f.moduleId == it.moduleId }?.moduleImage
             // Si on a une image
             if (it.imageName != null && element.listeImage != null) {
-                val repertoire = GlobalConstants.DOSSIER_IMAGE_MODULE + "$moduleId"
+                val repertoire = GlobalConstants.DOSSIER_IMAGE_MODULE.resolve("$moduleId")
                 if (imageAvant != null) {
                     // On supprime sur le disque
                     documentUtils.deleteFile(it.imageName, repertoire)
                 }
 
                 // On sauvegarde l'image sur le disque
-                documentUtils.saveFile(
-                    element.listeImage.first { f -> f.submittedFileName == it.imageName }
-                        .inputStream.readAllBytes(),
-                    it.imageName,
-                    repertoire,
-                )
+                element.listeImage.first { f -> f.submittedFileName == it.imageName }
+                    .inputStream.use { inputStream ->
+                        documentUtils.saveFile(
+                            inputStream,
+                            it.imageName,
+                            repertoire,
+                        )
+                    }
             }
 
             if (it.moduleId == null) {

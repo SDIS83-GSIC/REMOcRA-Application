@@ -49,7 +49,7 @@ class DeleteRcciUseCase : AbstractCUDUseCase<Rcci>(TypeOperation.DELETE) {
         val documentIdList = rcciRepository.selectDocument(element.rcciId).map { it.documentId }
         rcciRepository.deleteDocument(element.rcciId)
         documentRepository.deleteDocumentByIds(documentIdList)
-        documentUtils.deleteDirectory("${GlobalConstants.DOSSIER_DOCUMENT_RCCI}${element.rcciId}")
+        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_DOCUMENT_RCCI.resolve(element.rcciId.toString()))
 
         rcciRepository.deleteRcci(element.rcciId)
 

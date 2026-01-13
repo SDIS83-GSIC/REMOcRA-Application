@@ -12,6 +12,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import kotlin.io.path.Path
 
 class DeleteDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.DELETE) {
 
@@ -50,8 +51,9 @@ class DeleteDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeO
             // Puis les documents sur le disque
             val document = mapDocumentByDebitMesure[it.debitSimultaneMesureId]
             if (document != null) {
-                documentUtils.deleteFile(document.documentNomFichier, document.documentRepertoire)
-                documentUtils.deleteDirectory(document.documentRepertoire)
+                val path = Path(document.documentRepertoire)
+                documentUtils.deleteFile(document.documentNomFichier, path)
+                documentUtils.deleteDirectory(path)
             }
         }
 

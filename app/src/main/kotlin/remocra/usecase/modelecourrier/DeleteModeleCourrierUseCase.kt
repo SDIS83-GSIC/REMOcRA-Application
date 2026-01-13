@@ -55,7 +55,7 @@ class DeleteModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     ): ModeleCourrierData {
         modeleCourrierRepository.deleteLGroupeFonctionnalites(element.modeleCourrierId!!)
 
-        val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS + "${element.modeleCourrierId}"
+        val repertoire = GlobalConstants.DOSSIER_MODELES_COURRIERS.resolve(element.modeleCourrierId.toString())
         documentUtils.deleteDirectory(repertoire)
 
         // Puis on supprime les paramètres

@@ -40,10 +40,12 @@ class DepotDeliberationUseCase @Inject constructor(
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_SIGNALEMENT_DELIBERATION.resolve(documentId.toString())
 
         /** Enregistrement sur le disque */
-        documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
+        element.inputStream.use {
+            documentUtils.saveFile(it, element.submittedFileName, repertoire)
+        }
 
         /** Enregistrement en base de données */
         val documentToInsert =
@@ -51,7 +53,7 @@ class DepotDeliberationUseCase @Inject constructor(
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = element.submittedFileName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.toString(),
             )
         documentRepository.insertDocument(documentToInsert)
         return documentToInsert

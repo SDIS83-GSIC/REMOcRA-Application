@@ -22,6 +22,7 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
+import kotlin.io.path.pathString
 
 class InsertDocumentUseCase @Inject constructor(
     private val documentUtils: DocumentUtils,
@@ -52,10 +53,12 @@ class InsertDocumentUseCase @Inject constructor(
     private fun enregistrementDocument(element: Part): Document {
         /** Variable générale servant à l'enregistrement du document */
         val documentId = UUID.randomUUID()
-        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_DECLARATION + "$documentId"
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT.resolve("$documentId")
 
         /** Enregistrement sur le disque */
-        documentUtils.saveFile(element.inputStream.readAllBytes(), element.submittedFileName, repertoire)
+        element.inputStream.use {
+            documentUtils.saveFile(it, element.submittedFileName, repertoire)
+        }
 
         /** Enregistrement en base de données */
         val documentToInsert =
@@ -63,7 +66,7 @@ class InsertDocumentUseCase @Inject constructor(
                 documentId = documentId,
                 documentDate = dateUtils.now(),
                 documentNomFichier = element.submittedFileName,
-                documentRepertoire = repertoire,
+                documentRepertoire = repertoire.pathString,
             )
         documentRepository.insertDocument(documentToInsert)
         return documentToInsert

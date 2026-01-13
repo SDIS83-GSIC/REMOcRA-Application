@@ -17,7 +17,9 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.DocumentUtils
+import java.nio.file.Paths
 import java.util.UUID
+import kotlin.io.path.absolutePathString
 
 class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.UPDATE) {
 
@@ -113,7 +115,7 @@ class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
                     list ->
                 documentRepository.getDocumentByIds(list).forEach {
                         document ->
-                    documentUtils.deleteDirectory(document.documentRepertoire)
+                    documentUtils.deleteDirectory(Paths.get(document.documentRepertoire))
                 }
                 rcciRepository.deleteMissingDocument(list)
                 documentRepository.deleteDocumentByIds(list)
@@ -121,15 +123,17 @@ class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperati
 
         element.documentList?.forEach { file ->
             val documentId = UUID.randomUUID()
-            val repertoire = "${GlobalConstants.DOSSIER_DOCUMENT_RCCI}/${element.rcci.rcciId}/$documentId"
-            documentUtils.saveFile(file.inputStream.readAllBytes(), file.submittedFileName, repertoire)
+            val repertoire = GlobalConstants.DOSSIER_DOCUMENT_RCCI.resolve(element.rcci.rcciId.toString()).resolve(documentId.toString())
+            file.inputStream.use {
+                documentUtils.saveFile(it, file.submittedFileName, repertoire)
+            }
 
             documentRepository.insertDocument(
                 Document(
                     documentId = documentId,
                     documentDate = dateUtils.now(),
                     documentNomFichier = file.submittedFileName,
-                    documentRepertoire = repertoire,
+                    documentRepertoire = repertoire.absolutePathString(),
                 ),
             )
 

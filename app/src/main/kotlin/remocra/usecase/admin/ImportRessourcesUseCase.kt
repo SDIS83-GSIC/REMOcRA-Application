@@ -9,9 +9,11 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
-import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import kotlin.io.path.Path
+import kotlin.io.path.outputStream
+import kotlin.io.path.relativeTo
 
 /**
  * Usecase permettant de gérer les imports des différentes ressources (graphiques) via l'admin.
@@ -35,7 +37,9 @@ class ImportRessourcesUseCase : AbstractUseCase() {
     fun importBanniere(userInfo: WrappedUserInfo, bannierePart: Part) {
         checkDroits(userInfo)
 
-        documentUtils.saveFile(bannierePart.inputStream.readAllBytes(), "banniere", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+        bannierePart.inputStream.use {
+            documentUtils.saveFile(it, "banniere", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+        }
     }
 
     /**
@@ -44,7 +48,9 @@ class ImportRessourcesUseCase : AbstractUseCase() {
     fun importLogo(userInfo: WrappedUserInfo, logoPart: Part) {
         checkDroits(userInfo)
 
-        documentUtils.saveFile(logoPart.inputStream.readAllBytes(), "logo", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+        logoPart.inputStream.use {
+            documentUtils.saveFile(it, "logo", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+        }
     }
 
     fun importSymbologie(userInfo: WrappedUserInfo, symbologiePart: Part) {
@@ -56,12 +62,15 @@ class ImportRessourcesUseCase : AbstractUseCase() {
             while (zipEntry != null) {
                 documentUtils.ensureDirectory(GlobalConstants.DOSSIER_IMAGES_SYMBOLOGIE)
 
-                val file = File(GlobalConstants.DOSSIER_IMAGES_SYMBOLOGIE + zipEntry.name)
+                // il y a un risque de "sortir" du répertoire donc on "sanitize" un peu zipEntry.name
+                // FIXME: le reste du code ne supporte que des fichiers, donc on pourrait:
+                //  - skip les zipEntry.isDirectory
+                //  - s'assurer qu'on n'a pas de niveau intermédiaire
+                //  - utiliser alors Path(zipEntry.name).name
+                val file = GlobalConstants.DOSSIER_IMAGES_SYMBOLOGIE.resolve(Path(zipEntry.name).normalize().let { if (it.isAbsolute) it.relativeTo(Path("/")) else it })
 
-                zipInputStream.readBytes().inputStream().use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
+                file.outputStream().use {
+                    zipInputStream.copyTo(it)
                 }
 
                 zipInputStream.closeEntry()
@@ -77,10 +86,12 @@ class ImportRessourcesUseCase : AbstractUseCase() {
             throw RemocraResponseException(ErrorType.IMPORT_CTP_NOT_XLSX)
         }
         /** Enregistrement sur le disque */
-        documentUtils.saveFile(
-            templateExportCtpPart.inputStream.readAllBytes(),
-            GlobalConstants.TEMPLATE_EXPORT_CTP_FILE_NAME,
-            GlobalConstants.DOSSIER_MODELES_EXPORT_CTP,
-        )
+        templateExportCtpPart.inputStream.use {
+            documentUtils.saveFile(
+                it,
+                GlobalConstants.TEMPLATE_EXPORT_CTP_FILE_NAME,
+                GlobalConstants.DOSSIER_MODELES_EXPORT_CTP,
+            )
+        }
     }
 }

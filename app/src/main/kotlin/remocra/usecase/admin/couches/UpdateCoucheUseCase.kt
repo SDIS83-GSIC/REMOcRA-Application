@@ -70,16 +70,18 @@ class UpdateCoucheUseCase : AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOper
             ),
         )
 
+        // On stocke le byteArray de l'icone et de la légende en base, donc on ne passe pas par les facilitateurs de fichiers
         if (element.icone?.submittedFileName != null) {
             coucheRepository.updateIcone(
                 element.coucheFormData.coucheId,
-                element.icone.inputStream.readAllBytes(),
+                element.icone.inputStream.use { it.readBytes() },
             )
         }
+
         if (element.legende?.submittedFileName != null) {
             coucheRepository.updateLegende(
                 element.coucheFormData.coucheId,
-                element.legende.inputStream.readAllBytes(),
+                element.legende.inputStream.use { it.readBytes() },
             )
         }
 

@@ -13,6 +13,7 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
+import java.nio.file.Path
 import java.util.UUID
 
 class UpsertDocumentEvenementUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
@@ -36,7 +37,7 @@ class UpsertDocumentEvenementUseCase : AbstractUpsertDocumentUseCase<DocumentsDa
         // no-op
     }
 
-    override fun getRepertoire(): String {
+    override fun getRepertoire(): Path {
         return GlobalConstants.DOSSIER_DOCUMENT_EVENEMENT
     }
 

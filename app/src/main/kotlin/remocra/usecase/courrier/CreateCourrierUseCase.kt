@@ -25,7 +25,6 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
-import java.nio.file.Paths
 
 class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INSERT) {
     @Inject private lateinit var documentUtils: DocumentUtils
@@ -56,7 +55,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         val thematiques = thematiqueRepository.getAll()
 
-        val repertoire = Paths.get(GlobalConstants.DOSSIER_DOCUMENT_COURRIER, element.documentId.toString())
+        val repertoire = GlobalConstants.DOSSIER_DOCUMENT_COURRIER.resolve(element.documentId.toString())
         // On va créer un document
         documentRepository.insertDocument(
             Document(
@@ -68,7 +67,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
         )
 
         // on déplace le fichier
-        documentUtils.moveFile(element.nomDocumentTmp, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE, repertoire.toString())
+        documentUtils.moveFile(element.nomDocumentTmp, GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE, repertoire)
 
         // Puis on crée le courrier
         courrierRepository.insertCourrier(

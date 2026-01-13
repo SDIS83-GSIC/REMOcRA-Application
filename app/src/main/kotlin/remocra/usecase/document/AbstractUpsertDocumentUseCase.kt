@@ -9,7 +9,10 @@ import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.usecase.AbstractCUDUseCase
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.UUID
+import kotlin.io.path.absolutePathString
 
 abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCUDUseCase<T>(TypeOperation.UPDATE) {
 
@@ -35,7 +38,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
     /**
      * Retourne le répertoire où le document doit être enregistré
      */
-    abstract fun getRepertoire(): String
+    abstract fun getRepertoire(): Path
 
     override fun execute(userInfo: WrappedUserInfo, element: T): T {
         // On supprime les documents de la liste documentIdToRemove
@@ -43,7 +46,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
 
         // Sur le serveur
         listeDocsToRemove.forEach {
-            documentUtils.deleteFile(it.documentNomFichier, it.documentRepertoire)
+            documentUtils.deleteFile(it.documentNomFichier, Paths.get(it.documentRepertoire))
         }
 
         // Puis en base
@@ -55,8 +58,10 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
 
         nouveauxDocuments.forEach { newDoc ->
             val filePart = element.listDocumentParts.find { it.name == "document_${newDoc.documentNomFichier}" }
-            val repertoire = getRepertoire() + "${element.objectId}"
-            documentUtils.saveFile(filePart!!.inputStream.readAllBytes(), newDoc.documentNomFichier, repertoire)
+            val repertoire = getRepertoire().resolve(element.objectId.toString())
+            filePart!!.inputStream.use {
+                documentUtils.saveFile(it, newDoc.documentNomFichier, repertoire)
+            }
 
             val idDocument = UUID.randomUUID()
             // On sauvegarde en base
@@ -64,7 +69,7 @@ abstract class AbstractUpsertDocumentUseCase<T : AbstractDocuments> : AbstractCU
                 Document(
                     documentId = idDocument,
                     documentDate = dateUtils.now(),
-                    documentRepertoire = repertoire,
+                    documentRepertoire = repertoire.absolutePathString(),
                     documentNomFichier = newDoc.documentNomFichier,
                 ),
             )
