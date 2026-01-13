@@ -669,12 +669,12 @@ export const TooltipMapEditEvenement = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          setShowUpdateEvenement(true), setIsReadOnly(false);
+          (setShowUpdateEvenement(true), setIsReadOnly(false));
         }}
         displayButtonEdit={displayButton}
         displayButtonSee={displayButton}
         onClickSee={() => {
-          setShowUpdateEvenement(true), setIsReadOnly(true);
+          (setShowUpdateEvenement(true), setIsReadOnly(true));
         }}
       />
       <Volet
@@ -732,7 +732,7 @@ export const TooltipMapEditPeiPrescrit = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined);
+          (setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined));
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -809,7 +809,7 @@ export const TooltipMapEditPermis = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          setShowUpdatePermis(true), setShowPermisReadOnly(false);
+          (setShowUpdatePermis(true), setShowPermisReadOnly(false));
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -822,7 +822,7 @@ export const TooltipMapEditPermis = ({
         disabled={disabled}
         displayButtonSee={true}
         onClickSee={() => {
-          setShowPermisReadOnly(true), setShowUpdatePermis(false);
+          (setShowPermisReadOnly(true), setShowUpdatePermis(false));
         }}
       />
       <Volet
