@@ -516,7 +516,8 @@ class ImportCtpUseCase : AbstractUseCase() {
                 val targetCRS = CRS.decode(appSettings.epsg.name)
                 val transform = CRS.findMathTransform(sourceCRS, targetCRS)
                 val geometryProjectionTo = JTS.transform(point, transform)
-                    ?: throw IllegalArgumentException("Impossible de convertir la géometrie $point en ${appSettings.srid}")
+                    ?: throw IllegalArgumentException("Impossible de convertir la géométrie $point en ${appSettings.srid}")
+                geometryProjectionTo.srid = appSettings.srid
                 updatePeiUseCase.execute(
                     userInfo,
                     movePeiUseCase.execute(
