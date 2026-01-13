@@ -73,7 +73,8 @@ const VisiteForm = ({
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
   user: UtilisateurEntity;
 }) => {
-  const { values, setValues } = useFormikContext<VisiteCompleteEntity>();
+  const { values, setValues, submitCount } =
+    useFormikContext<VisiteCompleteEntity>();
 
   const parametreVisiteTypeCdp = PARAMETRE.TYPE_VISITE_CDP;
 
@@ -335,6 +336,7 @@ const VisiteForm = ({
       <SubmitFormButtons
         onClick={() => checkValidity(values, show)}
         returnLink={false}
+        disabledValide={submitCount >= 1}
       />
     </FormContainer>
   );
