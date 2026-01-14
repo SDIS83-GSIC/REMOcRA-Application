@@ -1,4 +1,4 @@
-import { classNames } from "@react-pdf-viewer/core";
+import classnames from "classnames";
 import { Button, Col, Image, Row, Table } from "react-bootstrap";
 import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/AccueilPrive.tsx";
@@ -88,7 +88,7 @@ const ModuleDocumentCourrier = ({
                 <td width={50} className="p-0 m-0">
                   <Button
                     variant={"link"}
-                    className={classNames(
+                    className={classnames(
                       "p-0 m-0",
                       "text-decoration-none text-primary",
                     )}

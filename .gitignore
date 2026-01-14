@@ -7,3 +7,5 @@ build/
 /local.conf
 /log4j-dev.xml
 node_modules/
+frontend/public/cmaps/
+frontend/public/standard_fonts

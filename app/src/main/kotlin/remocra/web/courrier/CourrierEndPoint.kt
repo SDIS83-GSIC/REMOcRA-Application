@@ -219,7 +219,7 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Path("/get-courrier")
     @RequireDroits([Droit.COURRIER_C])
     @NoCsrf("Téléchargement d'un fichier")
-    @Produces(MediaType.MEDIA_TYPE_WILDCARD)
+    @Produces("application/pdf")
     fun getUriCourrier(@QueryParam("courrierPath") courrierPath: String?): Response {
         val path = courrierPath?.let {
             GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve(it)
