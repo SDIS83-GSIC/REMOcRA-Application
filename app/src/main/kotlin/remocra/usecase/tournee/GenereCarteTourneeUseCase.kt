@@ -13,6 +13,7 @@ import okhttp3.Request
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
+import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ParametreEnum
 import remocra.db.TourneeRepository
 import remocra.geoserver.GeoserverModule
@@ -37,11 +38,14 @@ class GenereCarteTourneeUseCase @Inject constructor(
 
     @Inject lateinit var documentUtils: DocumentUtils
 
-    fun getCarteTournee(tourneeId: UUID): CarteTournee {
+    fun getCarteTournee(userInfo: WrappedUserInfo, tourneeId: UUID): CarteTournee {
         val bufferCarteParam = parametresProvider.getParametreInt(ParametreEnum.BUFFER_CARTE.toString()) ?: 100
 
         // Récupération de la géométrie brute de la tournée
-        val tourneeGeometrie = tourneeRepository.getGeometrieTournee(tourneeId)
+        val tourneeGeometrie = tourneeRepository.getGeometrieTournee(
+            tourneeId,
+            userInfo.zoneCompetence?.zoneIntegrationId,
+        )
 
         if (tourneeGeometrie.isEmpty()) {
             throw IllegalArgumentException("Aucun PEI associé à la tournée : $tourneeId")

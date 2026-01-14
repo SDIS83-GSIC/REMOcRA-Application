@@ -146,7 +146,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
     fun getGenereCarteTournee(@PathParam("tourneeId") tourneeId: UUID): Response {
-        val carteTournee = genereCarteTourneeUseCase.getCarteTournee(tourneeId)
+        val carteTournee = genereCarteTourneeUseCase.getCarteTournee(securityContext.userInfo, tourneeId)
         return Response.ok(carteTournee.file)
             .header("Content-Disposition", "attachment; filename=\"${carteTournee.fileName}\"")
             .build()
@@ -275,7 +275,7 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/{tourneePei}/geometrie")
     @RequireDroits([Droit.TOURNEE_R])
     fun getGeometrieById(@PathParam("tourneePei") tourneePei: UUID): Response {
-        return Response.ok(tourneeRepository.getGeometrieTournee(tourneePei)).build()
+        return Response.ok(tourneeRepository.getGeometrieTournee(tourneePei, securityContext.userInfo.zoneCompetence?.zoneIntegrationId)).build()
     }
 
     @GET
