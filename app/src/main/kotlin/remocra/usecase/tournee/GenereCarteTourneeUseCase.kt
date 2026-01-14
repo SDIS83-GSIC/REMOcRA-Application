@@ -20,7 +20,6 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.DateUtils
 import remocra.utils.addQueryParameters
-import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.UUID
@@ -135,7 +134,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
         // On s'assure que le répertoire existe, sinon on le crée
         documentUtils.ensureDirectory(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
 
-        val pdfFile = File("${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE}$nomFichier.pdf")
+        val pdfFile = GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve("$nomFichier.pdf").toFile()
 
         val options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM)
 
