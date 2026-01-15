@@ -6,6 +6,7 @@ import { IconRCCI } from "../../../components/Icon/Icon.tsx";
 import RcciForm, {
   getInitialValues,
   prepareValues,
+  RcciFormType,
   validationSchema,
 } from "./RcciForm.tsx";
 
@@ -26,7 +27,9 @@ const CreateRcci = ({
       />
       <MyFormik
         initialValues={getInitialValues(
-          creationRcciGeometrie ?? { rcci: undefined },
+          creationRcciGeometrie
+            ? { rcci: creationRcciGeometrie.rcci as RcciFormType }
+            : { rcci: undefined },
           user!.utilisateurId,
         )}
         validationSchema={validationSchema}

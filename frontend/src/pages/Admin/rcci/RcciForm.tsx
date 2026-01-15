@@ -51,7 +51,7 @@ type FormType = {
   documentList: object;
 };
 
-type RcciFormType = {
+export type RcciFormType = {
   rcciId?: string;
   rcciCommentaireConclusion?: string;
   rcciComplement?: string;
@@ -80,6 +80,7 @@ type RcciFormType = {
   rcciVoieTexte?: string;
   rcciVoieId?: string;
   rcciCommuneId?: string;
+  voieSaisieLibre?: boolean;
   rcciRcciTypePrometheeFamilleId?: string; // placeholder pour formulaire
   rcciRcciTypePrometheePartitionId?: string; // placeholder pour formulaire
   rcciRcciTypePrometheeCategorieId?: string;
@@ -288,8 +289,8 @@ export const validationSchema = object({
     rcciSuperficieSecours: numberPositif,
     rcciTemperature: number(),
     rcciVentLocal: string(),
-    rcciVoieTexte: string(),
-    rcciVoieId: string(),
+    rcciVoieTexte: string().nullable(),
+    rcciVoieId: string().nullable(),
     rcciCommuneId: string(),
     rcciRcciTypePrometheeCategorieId: string(),
     rcciRcciTypeDegreCertitudeId: string(),
@@ -305,7 +306,7 @@ export const validationSchema = object({
 });
 
 const RcciForm = () => {
-  const { user, srid } = useAppContext();
+  const { user, epsg } = useAppContext();
   const [currentTab, setCurrentTab] = useState("renseignements");
   const [sectionWarning, setSectionWarning] = useState<SectionWarning>();
   const {
@@ -322,10 +323,12 @@ const RcciForm = () => {
     };
   } = useFormikContext();
 
+  const appSrid = epsg.name.split(":").pop();
+
   const { error: errorToast } = useToastContext();
 
   const sridList = TypeSystemeSrid.filter(
-    (v) => v.actif || v.srid === Number(srid),
+    (v) => v.actif || v.srid === Number(appSrid),
   ).map((v) => ({
     id: `${v.srid}`,
     code: `${v.srid}`,
@@ -367,8 +370,23 @@ const RcciForm = () => {
       libelle: value,
     };
   });
+
   const referentielState = useGetRun(
-    url`/api/rcci/refs?${{ geometrie: `SRID=${values.typeSystemeSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})` }}`,
+    url`/api/rcci/refs?${{
+      geometrie: (() => {
+        const projectionAppSrid = geometrieState?.data?.find(
+          (e) => e.srid?.toString() === appSrid,
+        );
+        if (
+          projectionAppSrid &&
+          projectionAppSrid.coordonneeX &&
+          projectionAppSrid.coordonneeY
+        ) {
+          return `SRID=${appSrid};POINT(${projectionAppSrid.coordonneeX} ${projectionAppSrid.coordonneeY})`;
+        }
+        return `SRID=${values.typeSystemeSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})`;
+      })(),
+    }}`,
   );
 
   const { data, run } = usePost(url`/api/dfci/check`);
@@ -397,7 +415,7 @@ const RcciForm = () => {
     }
 
     const coordonnees = geometrieState?.data?.find(
-      (e: { srid: number }) => e.srid === srid,
+      (e) => e.srid === Number(appSrid),
     );
 
     if (coordonnees != null) {
@@ -415,7 +433,7 @@ const RcciForm = () => {
     geometrieState,
     runReferentielState,
     setFieldValue,
-    srid,
+    appSrid,
   ]);
 
   useEffect(() => {
@@ -450,7 +468,7 @@ const RcciForm = () => {
       values.coordonneeYToDisplay !== undefined
     ) {
       const projection = geometrieState?.data?.find(
-        (e) => Number(e.srid) === Number(srid),
+        (e) => Number(e.srid) === Number(appSrid),
       );
       if (projection) {
         setFieldValue("rcci.rcciX", projection.coordonneeX);
@@ -460,7 +478,7 @@ const RcciForm = () => {
   }, [
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
-    srid,
+    appSrid,
     setFieldValue,
     geometrieState?.data,
   ]);
@@ -571,22 +589,34 @@ const RcciForm = () => {
                   defaultValue={referentielState.data?.listVoie?.find(
                     (e) => e.id === values.rcci?.rcciVoieId,
                   )}
-                  required={!values.voieSaisieLibre} // Requis si la saisie libre n'est pas activée ; si elle l'est, TODO XOR entre les 2 types
+                  required={!values.rcci.voieSaisieLibre}
                   setFieldValue={setFieldValue}
                   disabled={
-                    values.rcci?.rcciVoieTexte != null &&
-                    values.rcci?.rcciVoieTexte?.trim() !== ""
+                    values.rcci?.voieSaisieLibre ||
+                    (values.rcci?.rcciVoieTexte != null &&
+                      values.rcci?.rcciVoieTexte.trim() !== "")
                   }
                 />
                 <CheckBoxInput
                   name="rcci.voieSaisieLibre"
                   label="Voie non trouvée"
+                  onChange={() => {
+                    const newValue = !values.rcci?.voieSaisieLibre;
+                    setFieldValue("rcci.voieSaisieLibre", newValue);
+                    if (newValue) {
+                      // on passe en saisie libre : on vide l'id de voie
+                      setFieldValue("rcci.rcciVoieId", null);
+                    } else {
+                      // on repasse sur la liste : on vide le texte libre
+                      setFieldValue("rcci.rcciVoieTexte", null);
+                    }
+                  }}
                 />
                 {values.rcci?.voieSaisieLibre && (
                   <TextInput
                     name="rcci.rcciVoieTexte"
                     label="Voie (saisie libre)"
-                    required={false}
+                    required={values.rcci.voieSaisieLibre}
                     disabled={
                       values.rcci?.rcciVoieId != null &&
                       values.rcci?.rcciVoieId?.trim() !== ""
@@ -705,7 +735,7 @@ const RcciForm = () => {
                             );
                             // Coordonnées en 2154 ou autres
                             const coordonneesToSave = geometrieState.data?.find(
-                              (e) => e.srid === srid,
+                              (e) => e.srid === appSrid,
                             );
                             setFieldValue(
                               "coordonneeX",
@@ -731,6 +761,14 @@ const RcciForm = () => {
                               "coordonneeXToDisplay",
                               v.target.value,
                             );
+                            setFieldValue("rcci.rcciX", v.target.value);
+                            setFieldValue(
+                              "rcci.rcciSrid",
+                              values.typeSystemeSrid,
+                            );
+                            runReferentielState({
+                              geometrie: `SRID=${values.typeSystemeSrid};POINT(${v.target.value} ${values.coordonneeYToDisplay})`,
+                            });
                           }}
                         />
                       </Col>
@@ -744,6 +782,14 @@ const RcciForm = () => {
                               "coordonneeYToDisplay",
                               v.target.value,
                             );
+                            setFieldValue("rcci.rcciY", v.target.value);
+                            setFieldValue(
+                              "rcci.rcciSrid",
+                              values.typeSystemeSrid,
+                            );
+                            runReferentielState({
+                              geometrie: `SRID=${values.typeSystemeSrid};POINT(${values.coordonneeXToDisplay} ${v.target.value})`,
+                            });
                           }}
                         />
                       </Col>

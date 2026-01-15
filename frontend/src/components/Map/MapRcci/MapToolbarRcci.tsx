@@ -2,6 +2,7 @@ import { Map as OLMap } from "ol";
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
+import { transform } from "ol/proj";
 import { MutableRefObject, useMemo, useReducer, useState } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
 import { hasDroit } from "../../../droits.tsx";
@@ -37,6 +38,7 @@ export const useToolbarRcciContext = ({
   const [creationRcciGeometrie, setCreationRcciGeometrie] = useState<{
     rcci: { rcciGeometrie: string };
   } | null>(null);
+  const { epsg } = useAppContext();
 
   const handleCloseCreationRcci = () => setCreationRcciGeometrie(null);
 
@@ -60,6 +62,12 @@ export const useToolbarRcciContext = ({
       type: "Point",
     });
     createCtrl.on("drawend", async (event) => {
+      const carteProjection = map.getView().getProjection();
+      const targetProjection = epsg.name;
+      let coords = event.feature.getGeometry().getCoordinates();
+      if (carteProjection.getCode() !== targetProjection) {
+        coords = transform(coords, carteProjection, targetProjection);
+      }
       (
         await fetch(
           url`/api/zone-integration/check`,
@@ -81,11 +89,11 @@ export const useToolbarRcciContext = ({
           if (text === "true") {
             const geometry =
               "SRID=" +
-              map.getView().getProjection().getCode().split(":").pop() +
+              epsg.name.split(":").pop() +
               ";POINT(" +
-              event.feature.getGeometry().getCoordinates()[0] +
+              coords[0] +
               " " +
-              event.feature.getGeometry().getCoordinates()[1] +
+              coords[1] +
               ")";
 
             setCreationRcciGeometrie({
@@ -98,12 +106,13 @@ export const useToolbarRcciContext = ({
             workingLayer.getSource().removeFeature(event.feature);
           } else {
             workingLayer.getSource().removeFeature(event.feature);
-            errorToast(text);
           }
         })
         .catch((reason) => {
           workingLayer.getSource().removeFeature(event.feature);
-          errorToast(reason);
+          errorToast(
+            reason?.message || reason?.toString?.() || "Erreur inconnue",
+          );
         });
     });
 
@@ -314,6 +323,7 @@ export const useToolbarRcciContext = ({
     map,
     dataRcciLayerRef.current,
     workingLayer,
+    epsg.name,
     deleteShow,
     successToast,
     errorToast,
