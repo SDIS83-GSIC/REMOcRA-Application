@@ -87,7 +87,14 @@ const TooltipMapPei = ({
   const ref = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { featureSelect, overlay } = useTooltipMap({ ref: ref, map: map });
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    filterFeature: (feature) =>
+      feature.getProperties().typeElementCarte === TYPE_POINT_CARTE.PEI ||
+      feature.getProperties().typeElementCarte ===
+        TYPE_POINT_CARTE.DEBIT_SIMULTANE,
+  });
 
   const [showFichePei, setShowFichePei] = useState(false);
   const handleCloseFichePei = () => setShowFichePei(false);
@@ -669,12 +676,12 @@ export const TooltipMapEditEvenement = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdateEvenement(true), setIsReadOnly(false));
+          setShowUpdateEvenement(true), setIsReadOnly(false);
         }}
         displayButtonEdit={displayButton}
         displayButtonSee={displayButton}
         onClickSee={() => {
-          (setShowUpdateEvenement(true), setIsReadOnly(true));
+          setShowUpdateEvenement(true), setIsReadOnly(true);
         }}
       />
       <Volet
@@ -732,7 +739,7 @@ export const TooltipMapEditPeiPrescrit = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined));
+          setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined);
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -809,7 +816,7 @@ export const TooltipMapEditPermis = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdatePermis(true), setShowPermisReadOnly(false));
+          setShowUpdatePermis(true), setShowPermisReadOnly(false);
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -822,7 +829,7 @@ export const TooltipMapEditPermis = ({
         disabled={disabled}
         displayButtonSee={true}
         onClickSee={() => {
-          (setShowPermisReadOnly(true), setShowUpdatePermis(false));
+          setShowPermisReadOnly(true), setShowUpdatePermis(false);
         }}
       />
       <Volet
@@ -891,13 +898,24 @@ export const TooltipMapSignalement = ({ map }: { map: Map }) => {
 /**
  * Permet d'observer quel point est cliqué par l'utilisateur
  */
+/**
+ * useTooltipMap : hook générique pour détecter le clic sur un feature et afficher une tooltip.
+ * @param ref - ref du conteneur React
+ * @param map - instance OpenLayers Map
+ * @param filterFeature - fonction optionnelle pour filtrer le feature à tooltipper
+ * @param disabled - désactive le tooltip
+ * @returns { featureSelect, overlay }
+ */
 const useTooltipMap = ({
   ref,
   map,
+  filterFeature,
   disabled = false,
 }: {
   ref: Ref<HTMLDivElement>;
   map: Map | undefined;
+  filterFeature?: (feature: Feature) => boolean;
+  disabled?: boolean;
 }) => {
   const [featureSelect, setFeatureSelect] = useState<Feature | null>(null);
   const [overlay, setOverlay] = useState<Overlay | undefined>(
@@ -912,33 +930,35 @@ const useTooltipMap = ({
       map.on("singleclick", (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
 
+        let found = false;
         map.forEachFeatureAtPixel(
           pixel,
           function (feature) {
-            const coordinate = event.coordinate;
-            setFeatureSelect(feature);
-
-            const over = new Overlay({
-              element: ref.current,
-              positioning: "bottom-center",
-              position: coordinate,
-              autoPan: {
-                animation: {
-                  duration: 250,
-                },
-              },
-            });
-
-            map.addOverlay(over);
-            setOverlay(over);
+            if (!filterFeature || filterFeature(feature)) {
+              setFeatureSelect(feature);
+              found = true;
+              // Crée et positionne l'overlay
+              const coordinate = event.coordinate;
+              const over = new Overlay({
+                element: ref.current,
+                positioning: "bottom-center",
+                position: coordinate,
+                autoPan: { animation: { duration: 250 } },
+              });
+              map.addOverlay(over);
+              setOverlay(over);
+              return true; // stop
+            }
+            return false; // continue cherche une autre feature
           },
-          {
-            hitTolerance: 15,
-          },
+          { hitTolerance: 15 },
         );
+        if (!found) {
+          setFeatureSelect(null);
+        }
       });
     }
-  }, [map, ref, disabled]);
+  }, [map, ref, disabled, filterFeature]);
 
   return { featureSelect, overlay };
 };
