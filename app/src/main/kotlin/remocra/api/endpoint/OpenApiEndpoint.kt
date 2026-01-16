@@ -30,7 +30,8 @@ import kotlin.reflect.jvm.javaMethod
 @Path("/openapi")
 class OpenApiEndpoint : BaseOpenApiResource() {
     companion object {
-        const val SWAGGER_UI_VERSION = "5.21.0"
+        // !!!!! Attention à bien maintenir la version synchronisée avec la dépendance swagger-ui-dist dans le libs.versions.tml !!!!!
+        const val SWAGGER_UI_VERSION = "5.30.2"
     }
 
     @Context
