@@ -325,7 +325,6 @@ const Pei = ({
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
   }, [listeParametre, parametreVoieSaisieLibre]);
-
   const displayTypeEngin = useMemo<boolean>(() => {
     if (!listeParametre.isResolved) {
       return false;
@@ -387,16 +386,6 @@ const Pei = ({
         values.peiCommuneId ?? selectDataState?.data?.listCommune[0].id,
       );
     }
-
-    if (
-      values.peiCommuneId != null &&
-      selectDataState?.data?.listVoie.filter(
-        (e) => e.communeId === values.peiCommuneId,
-      ).length === 0 &&
-      isSaisieVoieEnabled
-    ) {
-      setFieldValue("voieSaisieLibre", true);
-    }
   }, [
     setFieldValue,
     values.coordonneeX,
@@ -408,7 +397,6 @@ const Pei = ({
     values.peiId,
     geometrieState,
     selectDataState,
-    isSaisieVoieEnabled,
     srid,
   ]);
 
@@ -1055,8 +1043,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              setFieldValue("coordonneeXToDisplay", v.target.value),
-                VerificationReferentiel();
+              (setFieldValue("coordonneeXToDisplay", v.target.value),
+                VerificationReferentiel());
             }}
           />
         </Col>
@@ -1067,8 +1055,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              setFieldValue("coordonneeYToDisplay", v.target.value),
-                VerificationReferentiel();
+              (setFieldValue("coordonneeYToDisplay", v.target.value),
+                VerificationReferentiel());
             }}
           />
         </Col>
