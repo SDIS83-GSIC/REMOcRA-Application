@@ -5,3 +5,8 @@ declare module '*.module.css' {
     const classNames: IClassNames;
     export = classNames;
   }
+
+declare module '*.png' {
+  const src: string;
+  export default src;
+}
