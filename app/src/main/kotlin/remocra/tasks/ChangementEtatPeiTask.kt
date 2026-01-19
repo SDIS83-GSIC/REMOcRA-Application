@@ -1,5 +1,6 @@
 package remocra.tasks
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import remocra.GlobalConstants
@@ -151,17 +152,26 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
             // Récupération de l'événement précédent s'il existe
             val previousTracaEvent = tracabiliteRepository.getPreviousPeiTracaEvent(tracaObject.pojoId, tracaObject.date)
             if (previousTracaEvent != null) {
-                val previousTracaObject = TracabiliteEvent(
-                    pojo = objectMapper.readValue<PeiData>(previousTracaEvent.tracabiliteObjetData.toString()),
-                    pojoId = previousTracaEvent.tracabiliteObjetId,
-                    typeOperation = previousTracaEvent.tracabiliteTypeOperation,
-                    typeObjet = previousTracaEvent.tracabiliteTypeObjet,
-                    auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(previousTracaEvent.tracabiliteAuteurData.toString()),
-                    date = previousTracaEvent.tracabiliteDate,
-                )
-                // Comparaison de la valeur DisponibilitéTerrestre entre l'état traca actuel et le précédent
-                if (previousTracaObject.pojo.peiDisponibiliteTerrestre != tracaObject.pojo.peiDisponibiliteTerrestre) {
-                    listPei.addFirst(tracaObject)
+                val pojo = try {
+                    objectMapper.readValue<PeiData>(previousTracaEvent.tracabiliteObjetData.toString())
+                } catch (_: JsonMappingException) {
+                    // on ne fait rien, on considère que le mapping est incompatible à cause de l'évolution du modèle V2 - V3
+                    null
+                }
+
+                if (pojo != null) {
+                    val previousTracaObject = TracabiliteEvent(
+                        pojo = pojo,
+                        pojoId = previousTracaEvent.tracabiliteObjetId,
+                        typeOperation = previousTracaEvent.tracabiliteTypeOperation,
+                        typeObjet = previousTracaEvent.tracabiliteTypeObjet,
+                        auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(previousTracaEvent.tracabiliteAuteurData.toString()),
+                        date = previousTracaEvent.tracabiliteDate,
+                    )
+                    // Comparaison de la valeur DisponibilitéTerrestre entre l'état traca actuel et le précédent
+                    if (previousTracaObject.pojo.peiDisponibiliteTerrestre != tracaObject.pojo.peiDisponibiliteTerrestre) {
+                        listPei.addFirst(tracaObject)
+                    }
                 }
             }
         }
