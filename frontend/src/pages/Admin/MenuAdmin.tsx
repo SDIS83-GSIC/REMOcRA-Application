@@ -173,6 +173,20 @@ const MenuAdmin = () => {
                         </CustomLinkButton>
                       </Nav.Item>
                     )}
+
+                    {hasDroit(user, TYPE_DROIT.PEI_DEPLACEMENT_U) && (
+                      <>
+                        <br />
+                        <Nav.Item>
+                          <CustomLinkButton
+                            className="text-underline text-start"
+                            pathname={URLS.MAJ_POSITIONS_PEI}
+                          >
+                            Mettre à jour les positions des PEI
+                          </CustomLinkButton>
+                        </Nav.Item>
+                      </>
+                    )}
                   </Nav>
                 </>
               )}

@@ -41,7 +41,7 @@ export function downloadOutputFile(
   fileName: string,
   successToastMessage: string,
   successToast: (e: string) => void,
-  errorToast: (e) => void,
+  errorToast: (e: string) => void,
 ) {
   // On doit passer par un POST pour pouvoir envoyer la liste des paramètres
   fetch(
@@ -125,4 +125,40 @@ export function getThematiqueFromTypeModule(
     default:
       return THEMATIQUE_POINT_EAU;
   }
+}
+
+interface BilanVerification {
+  bilanStyle: string;
+}
+
+interface BilanStats {
+  nbValides: number;
+  nbValidesWarn: number;
+  nbRejetes: number;
+  nbRejetesNR: number;
+}
+
+/**
+ * Fonction pour calculer les statistiques de vérifications des bilans d'imports (CTP, PEI).
+ *
+ * @param {Object} values - L'objet contenant les bilans à analyser.
+ * @param {Array<{ bilanStyle: string }>} values.bilanVerifications - Tableau des bilans avec leur style.
+ * @returns {BilanStats} - Un objet contenant les statistiques calculées des bilans.
+ */
+export function calculerBilan(values: {
+  bilanVerifications: BilanVerification[];
+}): BilanStats {
+  const filterBilan = (styles: string[]) =>
+    values?.bilanVerifications?.filter((e) => styles.includes(e.bilanStyle));
+  const nbValides = filterBilan(["OK", "WARNING"])?.length;
+  const nbValidesWarn = filterBilan(["WARNING"])?.length;
+  const nbRejetes = filterBilan(["ERROR", "INFO"])?.length;
+  const nbRejetesNR = filterBilan(["INFO"])?.length;
+
+  return {
+    nbValides,
+    nbValidesWarn,
+    nbRejetes,
+    nbRejetesNR,
+  };
 }

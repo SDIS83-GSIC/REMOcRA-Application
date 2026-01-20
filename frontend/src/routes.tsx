@@ -207,10 +207,12 @@ import AccueilPei from "./pages/Pei/AccueilPei.tsx";
 import CreatePei from "./pages/Pei/CreatePei.tsx";
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
+import ImportPositionsPEI from "./pages/Pei/ImportPositionsPEI.tsx";
 import ListePeiIndisponibiliteTemporaire from "./pages/Pei/ListePeiIndisponibiliteTemporaire.tsx";
 import ListePeiTournee from "./pages/Pei/ListePeiTournee.tsx";
 import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
 import UpdatePei from "./pages/Pei/UpdatePei.tsx";
+import VerificationImportPei from "./pages/Pei/VerificationImportPei.tsx";
 import AireAspiration from "./pages/Pena/AireAspiration.tsx";
 import ExecuteRapportPersonnalise from "./pages/RapportPersonnalise/ExecuteRapportPersonnalise.tsx";
 import Rcci from "./pages/Rcci/Rcci.tsx";
@@ -595,6 +597,9 @@ export const URLS = {
 
   //Tracabilité
   TRACABILITE: url`/admin/tracabilite`,
+
+  MAJ_POSITIONS_PEI: url`/admin/maj-positions-pei`,
+  RESULTAT_VERIF_MAJ_POSITIONS_PEI: url`/admin/maj-positions-pei/verification`,
 };
 
 // On définit les routes par module pour que les enfants héritent du header ou d'autres éléments
@@ -1194,6 +1199,7 @@ export default [
               TYPE_DROIT.ADMIN_UTILISATEURS_A,
               TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
               TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
+              TYPE_DROIT.PEI_DEPLACEMENT_U,
             ]}
           />
         ),
@@ -2454,6 +2460,24 @@ export default [
           <Authorization
             Component={UpdateModeleCourrier}
             droits={[TYPE_DROIT.ADMIN_COURRIER]}
+          />
+        ),
+      },
+      {
+        path: "maj-positions-pei",
+        element: (
+          <Authorization
+            Component={ImportPositionsPEI}
+            droits={[TYPE_DROIT.PEI_DEPLACEMENT_U]}
+          />
+        ),
+      },
+      {
+        path: "maj-positions-pei/verification",
+        element: (
+          <Authorization
+            Component={VerificationImportPei}
+            droits={[TYPE_DROIT.PEI_DEPLACEMENT_U]}
           />
         ),
       },

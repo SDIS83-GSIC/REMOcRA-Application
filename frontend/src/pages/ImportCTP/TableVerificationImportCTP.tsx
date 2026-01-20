@@ -9,6 +9,7 @@ import MyFormik from "../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconExport, IconValidation } from "../../components/Icon/Icon.tsx";
 import { URLS } from "../../routes.tsx";
+import { calculerBilan } from "../../utils/fonctionsUtils.tsx";
 
 export const getInitialValues = (initialValues) => ({
   bilanVerifications: initialValues.result.bilanVerifications,
@@ -55,19 +56,7 @@ export default VerificationImportCTP;
 const ResultatsVerificationImportCTP = () => {
   const { values } = useFormikContext();
   const navigate = useNavigate();
-
-  const nbCTValides = values.bilanVerifications.filter(
-    (e) => e.bilanStyle === "OK" || e.bilanStyle === "WARNING",
-  ).length;
-  const nbCTValidesWarn = values.bilanVerifications.filter(
-    (e) => e.bilanStyle === "WARNING",
-  ).length;
-  const nbCTRejetes = values.bilanVerifications.filter(
-    (e) => e.bilanStyle === "ERREUR" || e.bilanStyle === "INFO",
-  ).length;
-  const nbCTRejetesNR = values.bilanVerifications.filter(
-    (e) => e.bilanStyle === "INFO",
-  ).length;
+  const data = calculerBilan(values);
 
   const dataCsv: DataCsvImportCTP[] = [];
   values.bilanVerifications.map((element) => {
@@ -154,10 +143,10 @@ const ResultatsVerificationImportCTP = () => {
         </Col>
       </Row>
       <Row>
-        <p>Nombre de CT valides : {nbCTValides}</p>
-        <p>Dont : {nbCTValidesWarn} CT valides avec avertissements</p>
-        <p>Nombre de CT rejetés : {nbCTRejetes}</p>
-        <p>Dont : {nbCTRejetesNR} CT rejetés car non renseignés</p>
+        <p>Nombre de CT valides : {data.nbValides}</p>
+        <p>Dont : {data.nbValidesWarn} CT valides avec avertissements</p>
+        <p>Nombre de CT rejetés : {data.nbRejetes}</p>
+        <p>Dont : {data.nbRejetesNR} CT rejetés car non renseignés</p>
       </Row>
       <Row>
         <Col>
