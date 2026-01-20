@@ -185,7 +185,7 @@ class PeiEndpoint : AbstractEndpoint() {
     fun update(
         @Context httpRequest: HttpServletRequest,
     ): Response {
-        val pei = getPeiData(httpRequest)
+        val pei = getPeiData(httpRequest, true)
 
         val result = updatePeiUseCase.execute(securityContext.userInfo, pei)
 
@@ -294,11 +294,22 @@ class PeiEndpoint : AbstractEndpoint() {
         return result.wrap()
     }
 
-    private fun getPeiData(httpRequest: HttpServletRequest) =
+    private fun getPeiData(httpRequest: HttpServletRequest, isUpdate: Boolean = false) =
         if (httpRequest.getTextPart("peiTypePei") == TypePei.PIBI.literal) {
-            objectMapper.readValue(httpRequest.getTextPart("peiData"), PibiData::class.java)
+            val pibiData = objectMapper.readValue(httpRequest.getTextPart("peiData"), PibiData::class.java)
+            // ne peut être factorisé, car types différents
+            if (isUpdate) {
+                pibiData.copy(peiDateReleveGps = peiRepository.getDateReleveGps(pibiData.peiId))
+            } else {
+                pibiData
+            }
         } else {
-            objectMapper.readValue(httpRequest.getTextPart("peiData"), PenaData::class.java)
+            val penaData = objectMapper.readValue(httpRequest.getTextPart("peiData"), PenaData::class.java)
+            if (isUpdate) {
+                penaData.copy(peiDateReleveGps = peiRepository.getDateReleveGps(penaData.peiId))
+            } else {
+                penaData
+            }
         }
 
     /**

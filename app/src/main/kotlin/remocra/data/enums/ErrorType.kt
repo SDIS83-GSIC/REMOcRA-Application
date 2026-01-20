@@ -35,6 +35,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_VOIE_XOR(1009, "Vous ne pouvez pas à la fois sélectionner une voie et saisir une valeur textuelle"),
     PEI_NUMERO_COMPLET_EXISTS(1011, "Un PEI existe déjà avec ce numéro"),
 
+    // Modification en masse des positions de PEI
+    ERR_PEI_MANQUANT(1012, "Le numéro du PEI est manquant"),
+    ERR_COORD_GPS(1013, "Les coordonnées ne sont pas dans la zone de compétence de l'utilisateur connecté"),
+    ERR_COORD_MANQUANTE(1014, "Les coordonnées du PEI doivent être renseignées"),
+    ERR_EPSG_MANQUANT(1015, "L'EPSG du PEI doit être renseigné"),
+    ERR_PEI_TYPE(1016, "Type PEI non supporté"),
+
     /*
         Erreur si on essaie de supprimer une IT en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
         des IT

@@ -99,6 +99,7 @@ class PeiRepository
             PEI.DATE_CHANGEMENT_DISPO,
             PEI.PERENNE,
             PEI.ROTATION_6_CCF,
+            PEI.DATE_RELEVE_GPS,
         )
     }
 
@@ -636,6 +637,7 @@ class PeiRepository
                 peiDateChangementDispo = pei.peiDateChangementDispo,
                 peiPerenne = pei.peiPerenne,
                 peiRotation_6Ccf = pei.peiRotation_6Ccf,
+                peiDateReleveGps = pei.peiDateReleveGps,
             ),
         )
 
@@ -1182,6 +1184,12 @@ class PeiRepository
                 .and(PEI.PERENNE.isTrue.or(PEI.ROTATION_6_CCF.isTrue))
                 .and(NATURE.ID.eq(natureId)),
         )
+
+    fun getDateReleveGps(peiId: UUID): ZonedDateTime? =
+        dsl.select(PEI.DATE_RELEVE_GPS)
+            .from(PEI)
+            .where(PEI.ID.eq(peiId))
+            .fetchSingleInto()
 }
 
 data class IdNumeroComplet(

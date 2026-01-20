@@ -226,6 +226,7 @@ class ValideIncomingTournee @Inject constructor(
                         pibiAdditive = false,
                         pibiJumeleId = null,
                         peiDateChangementDispo = null,
+                        peiDateReleveGps = null,
                     )
                 } else {
                     PenaData(
@@ -270,6 +271,7 @@ class ValideIncomingTournee @Inject constructor(
                         penaQuantiteAppoint = null,
                         penaMateriauId = null,
                         peiDateChangementDispo = null,
+                        peiDateReleveGps = null,
                     )
                 }
 

@@ -53,6 +53,7 @@ data class Pei(
     val peiDateChangementDispo: ZonedDateTime?,
     val peiPerenne: Boolean?,
     val peiRotation_6Ccf: Boolean?,
+    val peiDateReleveGps: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -236,6 +237,13 @@ data class Pei(
         } else if (this.peiRotation_6Ccf != o.peiRotation_6Ccf) {
             return false
         }
+        if (this.peiDateReleveGps == null) {
+            if (o.peiDateReleveGps != null) {
+                return false
+            }
+        } else if (this.peiDateReleveGps != o.peiDateReleveGps) {
+            return false
+        }
         return true
     }
 
@@ -272,6 +280,7 @@ data class Pei(
         result = prime * result + (if (this.peiDateChangementDispo == null) 0 else this.peiDateChangementDispo.hashCode())
         result = prime * result + (if (this.peiPerenne == null) 0 else this.peiPerenne.hashCode())
         result = prime * result + (if (this.peiRotation_6Ccf == null) 0 else this.peiRotation_6Ccf.hashCode())
+        result = prime * result + (if (this.peiDateReleveGps == null) 0 else this.peiDateReleveGps.hashCode())
         return result
     }
 
@@ -308,6 +317,7 @@ data class Pei(
         sb.append(", ").append(peiDateChangementDispo)
         sb.append(", ").append(peiPerenne)
         sb.append(", ").append(peiRotation_6Ccf)
+        sb.append(", ").append(peiDateReleveGps)
 
         sb.append(")")
         return sb.toString()

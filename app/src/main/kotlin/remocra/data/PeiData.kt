@@ -11,6 +11,7 @@ import java.util.UUID
  * ce modèle est décliné (hérité) pour chaque type (PIBI, PENA) afin de rajouter la sémantique nécessaire à ces spécificités.
  */
 open class PeiData(
+    open val peiDateReleveGps: ZonedDateTime?,
     open val peiId: UUID = UUID.randomUUID(),
     open var peiNumeroComplet: String?,
     open var peiNumeroInterne: Int?,
@@ -64,6 +65,7 @@ open class PeiData(
 }
 
 data class PibiData(
+    override val peiDateReleveGps: ZonedDateTime?,
     override val peiId: UUID = UUID.randomUUID(),
     override var peiNumeroComplet: String?,
     override var peiNumeroInterne: Int?,
@@ -122,6 +124,7 @@ data class PibiData(
 
     val pibiIdentifiantGestionnaireInitial: String? = pibiIdentifiantGestionnaire,
 ) : PeiData(
+    peiDateReleveGps,
     peiId,
     peiNumeroComplet,
     peiNumeroInterne,
@@ -160,6 +163,7 @@ data class PibiData(
 )
 
 data class PenaData(
+    override val peiDateReleveGps: ZonedDateTime?,
     override val peiId: UUID = UUID.randomUUID(),
     override var peiNumeroComplet: String?,
     override var peiNumeroInterne: Int?,
@@ -209,6 +213,7 @@ data class PenaData(
     var penaEquipeHbe: Boolean = false,
     var typeEnginIds: Collection<UUID> = emptyList(),
 ) : PeiData(
+    peiDateReleveGps,
     peiId,
     peiNumeroComplet,
     peiNumeroInterne,

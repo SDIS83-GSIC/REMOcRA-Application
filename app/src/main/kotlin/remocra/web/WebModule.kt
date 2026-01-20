@@ -42,6 +42,7 @@ import remocra.web.organisme.OrganismeModule
 import remocra.web.parametres.ParametreModule
 import remocra.web.parametres.TaskModule
 import remocra.web.pei.PeiModule
+import remocra.web.pei.import.ImportPeiModule
 import remocra.web.peiprescrits.PeiPrescritModule
 import remocra.web.permis.PermisModule
 import remocra.web.profilorganisme.ProfilOrganismeModule
@@ -104,6 +105,7 @@ object WebModule : RemocraModule() {
         install(DebitSimultaneModule)
         install(RapportPersonnaliseModule)
         install(ImportCtpModule)
+        install(ImportPeiModule)
         install(SignalementModule)
         install(DashboardModule)
         install(MessagePeiLongueIndispoModule)
