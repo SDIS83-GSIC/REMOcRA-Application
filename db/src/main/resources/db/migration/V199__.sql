@@ -1,0 +1,1 @@
+ALTER TYPE remocra.type_task ADD VALUE 'IMPORT_CADASTRE';
