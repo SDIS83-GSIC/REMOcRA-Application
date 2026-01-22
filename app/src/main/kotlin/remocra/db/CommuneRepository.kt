@@ -111,6 +111,9 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
 
     fun getById(id: UUID): Commune = dsl.selectFrom(COMMUNE).where(COMMUNE.ID.eq(id)).fetchSingleInto()
 
+    fun getByCodeInsee(codeInsee: String): Commune? =
+        dsl.selectFrom(COMMUNE).where(COMMUNE.CODE_INSEE.eq(codeInsee)).fetchOneInto()
+
     fun updateFromEntrepotSig(listeChampsAUpdate: List<String>) =
         dsl.update(COMMUNE)
             .set(COMMUNE.LIBELLE, if (listeChampsAUpdate.contains("libelle")) { V_COMMUNE_SIG.LIBELLE } else { COMMUNE.LIBELLE })

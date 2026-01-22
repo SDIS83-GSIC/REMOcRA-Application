@@ -18,6 +18,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     FORBIDDEN_ZONE_COMPETENCE(101, "L'élément n'est pas dans votre zone de compétence", Status.FORBIDDEN),
 
+    COMMUNE_NOT_FOUND(102, "Commune non trouvée"),
+    SECTION_NOT_FOUND(103, "Section non trouvée"),
+
     /**
      * Pour la gestion des PEI
      */

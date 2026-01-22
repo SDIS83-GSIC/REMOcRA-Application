@@ -91,4 +91,37 @@ class CadastreRepository @Inject constructor(private val dsl: DSLContext) : Abst
             )
             .limit(limit)
             .fetchInto()
+
+    fun insertSection(cadastreSection: CadastreSection) =
+        dsl.insertInto(
+            CADASTRE_SECTION,
+            CADASTRE_SECTION.ID,
+            CADASTRE_SECTION.GEOMETRIE,
+            CADASTRE_SECTION.NUMERO,
+            CADASTRE_SECTION.COMMUNE_ID,
+        )
+            .values(
+                cadastreSection.cadastreSectionId,
+                cadastreSection.cadastreSectionGeometrie,
+                cadastreSection.cadastreSectionNumero,
+                cadastreSection.cadastreSectionCommuneId,
+            ).onConflictDoNothing()
+            .execute()
+
+    fun insertParcelle(cadastreParcelle: CadastreParcelle) =
+        dsl.insertInto(
+            CADASTRE_PARCELLE,
+            CADASTRE_PARCELLE.ID,
+            CADASTRE_PARCELLE.GEOMETRIE,
+            CADASTRE_PARCELLE.NUMERO,
+            CADASTRE_PARCELLE.CADASTRE_SECTION_ID,
+        )
+            .values(
+                cadastreParcelle.cadastreParcelleId,
+                cadastreParcelle.cadastreParcelleGeometrie,
+                cadastreParcelle.cadastreParcelleNumero,
+                cadastreParcelle.cadastreParcelleCadastreSectionId,
+            )
+            .onConflictDoNothing()
+            .execute()
 }

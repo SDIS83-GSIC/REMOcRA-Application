@@ -5,6 +5,7 @@ import remocra.RemocraModule
 import remocra.tasks.ApacheHopTask
 import remocra.tasks.BasculeAutoIndispoTempTask
 import remocra.tasks.ChangementEtatPeiTask
+import remocra.tasks.ImportCadastreTask
 import remocra.tasks.JobResults
 import remocra.tasks.NotifAvantDebutIndispoTempTask
 import remocra.tasks.NotifAvantFinIndispoTempTask
@@ -27,6 +28,7 @@ object ScheduleModule : RemocraModule() {
             addBinding().to<RelanceCalculDispoTask>().asEagerSingleton()
             addBinding().to<RelanceNumerotationTask>().asEagerSingleton()
             addBinding().to<RelanceIntegrationTourneeTask>().asEagerSingleton()
+            addBinding().to<ImportCadastreTask>().asEagerSingleton()
         }
 
         // Binder spécifique pour se faire injecter une liste de [SchedulableTask]

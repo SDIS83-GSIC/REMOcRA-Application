@@ -104,6 +104,7 @@ object GlobalConstants {
     val DOSSIER_TMP_COUVERTURE_HYDRAULIQUE = DOSSIER_DATA.resolve("couverture_hydraulique").resolve("tmp")
     val DOSSIER_TMP_IMPORT_SITES = DOSSIER_DATA.resolve("sites").resolve("tmp")
     val DOSSIER_TMP_IMPORT_ZONES_INTEGRATION = DOSSIER_DATA.resolve("zones_integration").resolve("tmp")
+    val DOSSIER_TMP_IMPORT_CADASTRE = DOSSIER_DATA.resolve("cadastre").resolve("tmp")
 
     // Ressources "statiques", logo, bannière & co
     val DOSSIER_IMAGES_RESSOURCES = DOSSIER_IMAGES.resolve("ressources")

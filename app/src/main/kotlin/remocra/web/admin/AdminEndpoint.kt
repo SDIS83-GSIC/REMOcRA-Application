@@ -23,6 +23,7 @@ import remocra.usecase.admin.ParametresUseCase
 import remocra.usecase.admin.UpdateParametresUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculNumerotationUseCase
+import remocra.usecase.importcadastre.ImportCadastreUseCase
 import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 
@@ -47,6 +48,9 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var relancerNumerotationUseCase: RelancerCalculNumerotationUseCase
+
+    @Inject
+    private lateinit var importCadastreUseCase: ImportCadastreUseCase
 
     @GET
     @Path("/parametres")
@@ -179,6 +183,18 @@ class AdminEndpoint : AbstractEndpoint() {
     class ParametreTaskInput {
         var eventTracabilite: Boolean = true
         var eventNexSis: Boolean = true
+    }
+
+    @POST
+    @Path("/importer-cadastre")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importerCadastre(): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        importCadastreUseCase.execute(securityContext.userInfo)
+        return Response.ok().build()
     }
 }
 private data class PeiCaracteristique(
