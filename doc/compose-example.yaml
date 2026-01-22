@@ -25,6 +25,8 @@ services:
       - EPSG_NAME
       - EPSG_PROJECTION
       - GEOSERVER_URL
+      - GEOSERVER_USER
+      - GEOSERVER_PASSWORD
       - NEXSIS_ENABLED
       - CODE_STRUCTURE
       - NEXSIS_URL
