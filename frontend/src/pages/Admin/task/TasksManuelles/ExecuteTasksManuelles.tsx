@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { boolean, object } from "yup";
 import PageTitle from "../../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../../components/Form/MyFormik.tsx";
 import { IconInfo } from "../../../../components/Icon/Icon.tsx";
 import url from "../../../../module/fetch.tsx";
+import ImporterCadastre from "./ImporterCadastre.tsx";
 import RelancerCalculDispo from "./RelancerCalculDispo.tsx";
 import RelancerCalculNumerotation from "./RelancerCalculNumerotation.tsx";
 
@@ -20,6 +21,9 @@ const ExecuteTasksManuelles = () => {
           <CardTask
             title="Relancer le calcul de disponibilité"
             apiUrl={url`/api/admin/relancer-calcul-dispo`}
+            prepareVariables={prepareVariablesCalculDispoNumero}
+            initialValues={initialValuesCalculDispoNumero}
+            validationSchema={validationSchemaCalculDispoNumero}
           >
             <RelancerCalculDispo />
           </CardTask>
@@ -28,8 +32,24 @@ const ExecuteTasksManuelles = () => {
           <CardTask
             title="Relancer le calcul de la numérotation"
             apiUrl={url`/api/admin/relancer-calcul-numerotation`}
+            prepareVariables={prepareVariablesCalculDispoNumero}
+            initialValues={initialValuesCalculDispoNumero}
+            validationSchema={validationSchemaCalculDispoNumero}
           >
             <RelancerCalculNumerotation />
+          </CardTask>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CardTask
+            title="Import du cadastre"
+            apiUrl={url`/api/admin/importer-cadastre`}
+            prepareVariables={() => ({})}
+            initialValues={{}}
+            validationSchema={object({})}
+          >
+            <ImporterCadastre />
           </CardTask>
         </Col>
       </Row>
@@ -37,15 +57,40 @@ const ExecuteTasksManuelles = () => {
   );
 };
 
+const prepareVariablesCalculDispoNumero = (values: {
+  eventTracabilite: boolean;
+  eventNexSis: boolean;
+}) => {
+  return {
+    eventTracabilite: values.eventTracabilite,
+    eventNexSis: values.eventNexSis,
+  };
+};
+
+const initialValuesCalculDispoNumero = {
+  eventTracabilite: false,
+  eventNexSis: false,
+};
+
+const validationSchemaCalculDispoNumero = object({
+  eventTracabilite: boolean().required(),
+  eventNexSis: boolean().required(),
+});
+
 const CardTask = ({
   title,
   apiUrl,
+  prepareVariables,
+  initialValues,
+  validationSchema,
   children,
-}: {
+}: PropsWithChildren<{
   title: string;
   apiUrl: string;
-  children: ReactNode;
-}) => {
+  prepareVariables: (values: any) => any;
+  initialValues: any;
+  validationSchema: any;
+}>) => {
   return (
     <Card
       className="mb-4 shadow"
@@ -56,17 +101,11 @@ const CardTask = ({
         <MyFormik
           submitUrl={apiUrl}
           prepareVariables={(values) => {
-            return {
-              eventTracabilite: values.eventTracabilite,
-              eventNexSis: values.eventNexSis,
-            };
+            return prepareVariables(values);
           }}
-          validationSchema={object({
-            eventTracabilite: boolean().required(),
-            eventNexSis: boolean().required(),
-          })}
+          validationSchema={validationSchema}
           isPost
-          initialValues={{ eventTracabilite: false, eventNexSis: false }}
+          initialValues={initialValues}
           onSubmit={() => {}}
         >
           {children}
