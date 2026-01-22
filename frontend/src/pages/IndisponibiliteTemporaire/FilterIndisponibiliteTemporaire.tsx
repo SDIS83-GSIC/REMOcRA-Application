@@ -5,7 +5,7 @@ type filterIndisponibiliteTemporaire = {
   indisponibiliteTemporaireMailApresIndisponibilite?: string;
   indisponibiliteTemporaireObservation?: string;
   listePeiId?: string[];
-  communeLibelle?: string;
+  listeCommunes?: string[];
 };
 
 const filterValuesToVariable = ({
@@ -15,7 +15,7 @@ const filterValuesToVariable = ({
   indisponibiliteTemporaireMailAvantIndisponibilite,
   indisponibiliteTemporaireMailApresIndisponibilite,
   listePeiId,
-  communeLibelle,
+  listeCommunes,
 }: filterIndisponibiliteTemporaire) => {
   const filter: filterIndisponibiliteTemporaire = {};
   if (indisponibiliteTemporaireMotif?.trim().length > 0) {
@@ -43,8 +43,8 @@ const filterValuesToVariable = ({
   if (indisponibiliteTemporaireStatut?.trim().length > 0) {
     filter.indisponibiliteTemporaireStatut = indisponibiliteTemporaireStatut;
   }
-  if (communeLibelle && communeLibelle.trim().length > 0) {
-    filter.communeLibelle = communeLibelle;
+  if (listeCommunes && listeCommunes.length > 0) {
+    filter.listeCommunes = listeCommunes;
   }
 
   return filter;

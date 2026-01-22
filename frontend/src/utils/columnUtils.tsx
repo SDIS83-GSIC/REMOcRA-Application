@@ -526,6 +526,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
   fetchGeometry: (typeGeometrie: string, idInsiponibiliteTemp: string) => void;
 }): Array<columnType> {
   const listePeiState = useGet(url`/api/pei/get-id-numero`);
+  const communeListState = useGet(url`/api/commune/get-libelle-commune`);
   const column: Array<columnType> = [];
   parametres.forEach((_parametre: COLUMN_INDISPONIBILITE_TEMPORAIRE) => {
     switch (_parametre) {
@@ -661,7 +662,28 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
         column.push({
           Header: "Communes",
           accessor: "listeCommunes",
-          Filter: <FilterInput type="text" name={"communeLibelle"} />,
+          Filter: (
+            <MultiSelectFilterFromList
+              name={"listeCommunes"}
+              listIdCodeLibelle={communeListState?.data ?? []}
+            />
+          ),
+          Cell: (value) => {
+            let display = value.value;
+            if (Array.isArray(display)) {
+              display = display.join(", ");
+            }
+            return (
+              <TooltipCustom
+                tooltipText={display}
+                tooltipId={display}
+                maxWidth={167}
+              >
+                {display}
+              </TooltipCustom>
+            );
+          },
+          width: 170,
         });
         break;
 

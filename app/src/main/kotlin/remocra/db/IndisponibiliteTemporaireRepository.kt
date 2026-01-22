@@ -36,6 +36,7 @@ import remocra.utils.DateUtils
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.and
 import kotlin.collections.joinToString
 
 class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
@@ -93,9 +94,6 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
             .leftJoin(ZONE_INTEGRATION)
             .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-            // Pour les filtres, on join sur la commune
-            .join(COMMUNE)
-            .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
             .where(params.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
             .groupBy(
@@ -285,7 +283,7 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
         val indisponibiliteTemporaireMailAvantIndisponibilite: Boolean?,
         val indisponibiliteTemporaireMailApresIndisponibilite: Boolean?,
         val listePeiId: List<UUID>?,
-        val communeLibelle: String?,
+        val listeCommunes: List<UUID>?,
     ) {
 
         fun toCondition(dateUtils: DateUtils): Condition =
@@ -322,10 +320,8 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_APRES_INDISPONIBILITE) },
                     indisponibiliteTemporaireMailAvantIndisponibilite
                         ?.let { booleanFilter(it, INDISPONIBILITE_TEMPORAIRE.MAIL_AVANT_INDISPONIBILITE) },
-                    communeLibelle?.let {
-                        DSL.and(
-                            COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(it),
-                        )
+                    listeCommunes?.let {
+                        DSL.and(PEI.COMMUNE_ID.`in`(it))
                     },
                 ),
             )
