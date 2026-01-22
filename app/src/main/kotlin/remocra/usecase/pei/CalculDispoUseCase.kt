@@ -217,7 +217,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.nature!!.natureCode == GlobalConstants.NATURE_PENA_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> pei.nature!!.natureCode == GlobalConstants.NATURE_22_PENA_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> {
                 if (pei.penaCapacite != null && pei.penaCapacite < 60) {
@@ -238,13 +238,18 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
             CodeSdis.SDIS_59 ->
-                if (isNatureConcerned(pei)) {
+                if (isNatureConcerned59(pei)) {
                     pei.penaCapacite != null && pei.penaCapacite < 30
                 } else {
                     false
                 }
             CodeSdis.SDIS_61 -> pei.penaCapacite != null && pei.penaCapacite < 30
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 ->
+                if (isNatureConcerned62(pei)) {
+                    pei.penaCapacite != null && pei.penaCapacite < 30
+                } else {
+                    false
+                }
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> false
@@ -278,7 +283,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite in 16..29
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> isNatureConcerned62(pei) && pei.penaCapacite == null
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> false
@@ -299,7 +304,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pression == null || pei.pression < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> pei.pression == null || pei.pression < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
@@ -307,13 +312,13 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_58 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_59 ->
-                if (isNatureConcerned(pei)) {
+                if (isNatureConcerned59(pei)) {
                     pei.pression == null || pei.pression < 0.95
                 } else {
                     false
                 }
             CodeSdis.SDIS_61 -> isPressionInsuffisanteDefault(pei)
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> isPressionInsuffisanteDefault(pei)
@@ -351,13 +356,13 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
             CodeSdis.SDIS_59 ->
-                if (isNatureConcerned(pei)) {
+                if (isNatureConcerned59(pei)) {
                     pei.pression != null && pei.pression in 0.95..<1.0
                 } else {
                     false
                 }
             CodeSdis.SDIS_61 -> false
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> false
@@ -387,7 +392,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> pei.pression != null && pei.pression > 8
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> isPressionTropEleveeDefault(pei)
@@ -408,7 +413,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
             CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> {
@@ -426,7 +431,14 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_58 -> pei.pressionDynamique == null || pei.pressionDynamique < 1
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> {
+                if (isNatureConcerned62(pei)) {
+                    if (pei.pressionDynamique != null && pei.pressionDynamique < 0.6) {
+                        return true
+                    }
+                }
+                false
+            }
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> isPressionDynamiqueInsuffisanteDefault(pei)
             CodeSdis.SDIS_77 -> isPressionDynamiqueInsuffisanteDefault(pei)
@@ -465,7 +477,14 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> {
+                if (isNatureConcerned62(pei)) {
+                    if (pei.pressionDynamique == null || pei.pressionDynamique in 0.6..<1.0) {
+                        return true
+                    }
+                }
+                false
+            }
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique >= 1 && pei.pressionDynamique < 2
             CodeSdis.SDIS_77 -> false
@@ -498,7 +517,14 @@ class CalculDispoUseCase @Inject constructor(
                 pei.pression != null && pei.pressionDynamique != null &&
                     pei.pression >= 1 && pei.pression <= 8 &&
                     pei.pressionDynamique > 8
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> {
+                if (isNatureConcerned62(pei)) {
+                    if (pei.pressionDynamique != null && pei.pressionDynamique > 8) {
+                        return true
+                    }
+                }
+                false
+            }
             CodeSdis.SDIS_66 -> false
             // TODO choix à faire (avec le SDIS) : seuil à 10 ou à 16 ?
             CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique > 16
@@ -521,7 +547,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_22 -> {
-                return if (pei.nature!!.natureCode == GlobalConstants.NATURE_PIBI_ETUDE) { // Si PEI en étude, alors indispo
+                return if (pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE) { // Si PEI en étude, alors indispo
                     true
                 } else if (pei.diametreId == null) {
                     // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
@@ -550,7 +576,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> (pei.debit == null || pei.debit <= 15)
             CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_59 ->
-                if (isNatureConcerned(pei)) {
+                if (isNatureConcerned59(pei)) {
                     if (pei.debit == null) {
                         true
                     } else if (pei.debit < 15) {
@@ -574,7 +600,16 @@ class CalculDispoUseCase @Inject constructor(
                 }
                 return false
             }
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> {
+                if (isNatureConcerned62(pei)) {
+                    if (pei.debit != null && pei.debit < 15) {
+                        return true
+                    } else if (pei.debit != null && pei.debit in 15..<25) {
+                        return peiHasAnomalie62(pei)
+                    }
+                }
+                false
+            }
             CodeSdis.SDIS_66 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_71 -> {
                 if (pei.diametreId == null || listOf(GlobalConstants.DIAMETRE_80, GlobalConstants.DIAMETRE_100).contains(ensureDiametre(pei).diametreCode) &&
@@ -676,7 +711,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> pei.debit != null && (pei.debit in 16..59)
             CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
             CodeSdis.SDIS_59 ->
-                if (isNatureConcerned(pei)) {
+                if (isNatureConcerned59(pei)) {
                     when (pei.debit) {
                         in 15..<30 ->
                             pei.diametreId == null || isDiametre80(pei) || isDiametre100(pei)
@@ -708,7 +743,30 @@ class CalculDispoUseCase @Inject constructor(
                 }
                 return false
             }
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> {
+                if (isNatureConcerned62(pei)) {
+                    if (pei.debit != null && pei.debit in 15..<25) {
+                        !peiHasAnomalie62(pei)
+                    } else {
+                        val diametre = pei.diametreId
+                        when {
+                            diametre == null -> {
+                                if (isNatureBI(pei)) {
+                                    (pei.debit == null || pei.debit in 25..<45)
+                                } else {
+                                    (pei.debit == null)
+                                }
+                            }
+                            isDiametre100(pei) -> (pei.debit == null || pei.debit in 25..<45)
+                            isDiametre150(pei) -> (pei.debit == null || pei.debit in 25..<60)
+                            isNatureBI(pei) -> (pei.debit == null || pei.debit in 25..<45)
+                            else -> pei.debit == null
+                        }
+                    }
+                } else {
+                    false
+                }
+            }
             CodeSdis.SDIS_66 -> pei.debit != null && pei.debit in 30..59
             CodeSdis.SDIS_71 -> {
                 if (pei.diametreId == null || isDiametre100(pei) &&
@@ -794,7 +852,7 @@ class CalculDispoUseCase @Inject constructor(
                 }
                 return false
             }
-            CodeSdis.SDIS_62 -> TODO()
+            CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> isDebitTropEleveDefault(pei)
@@ -861,12 +919,43 @@ class CalculDispoUseCase @Inject constructor(
         GlobalConstants.NATURE_PI == ensureNature(pei).natureCode
 
     /**
+     * Retourne TRUE si le PEI est de nature 'BI'
+     */
+    private fun isNatureBI(pei: PeiForCalculDispoData) =
+        GlobalConstants.NATURE_BI == ensureNature(pei).natureCode
+
+    /**
      * Retourne TRUE si le PEI est d'une nature différente des suivantes (SDIS 59) :
      * 'ALI_PR', 'ALI_COND', 'REFL_COND', 'REFL_PR'
      */
-    private fun isNatureConcerned(pei: PeiForCalculDispoData): Boolean {
+    private fun isNatureConcerned59(pei: PeiForCalculDispoData): Boolean {
         // SDIS 59 -  Ces natures de PEI ne sont pas concernées par les anomalies automatiques
-        return !listOf(GlobalConstants.NATURE_ALIMENTATION_POTEAU_RELAIS, GlobalConstants.NATURE_ALIMENTATION_DE_CONDUITE, GlobalConstants.NATURE_REFOULEMENT_DE_CONDUITE, GlobalConstants.NATURE_POTEAU_RELAIS).contains(ensureNature(pei).natureCode)
+        return !listOf(GlobalConstants.NATURE_59_ALIMENTATION_POTEAU_RELAIS, GlobalConstants.NATURE_59_ALIMENTATION_DE_CONDUITE, GlobalConstants.NATURE_59_REFOULEMENT_DE_CONDUITE, GlobalConstants.NATURE_59_POTEAU_RELAIS).contains(ensureNature(pei).natureCode)
+    }
+
+    /**
+     * Retourne TRUE si le PEI est d'une nature différente des suivantes (SDIS 62) :
+     * 'BI_ASPI', 'PIA', 'PI_ASP', 'PI_RELAIS', 'PASP', 'RES_AERIENNE'
+     */
+    private fun isNatureConcerned62(pei: PeiForCalculDispoData): Boolean {
+        // SDIS 62 -  Ces natures de PEI ne sont pas concernées par les anomalies automatiques
+        return !listOf(
+            GlobalConstants.NATURE_62_BOUCHE_D_ASPIRATION,
+            GlobalConstants.NATURE_62_POTEAU_D_IRRIGATION_AGRICOLE,
+            GlobalConstants.NATURE_62_POTEAU_D_ASPIRATION,
+            GlobalConstants.NATURE_62_POTEAU_RELAIS,
+            GlobalConstants.NATURE_62_PUISARD_D_ASPIRATION,
+            GlobalConstants.NATURE_62_RESERVE_AERIENNE,
+        ).contains(ensureNature(pei).natureCode)
+    }
+
+    /**
+     * Retourne TRUE si le PEI a l'anomalie 'PENA_800' (SDIS 62) :
+     * PENA Inexistant à moins de 800 mètres
+     */
+    private fun peiHasAnomalie62(pei: PeiForCalculDispoData): Boolean {
+        // SDIS 62 - La présence de cette anomalie peut, dans certain cas, rendre indisponible
+        return anomalieRepository.isAnomalieAssigned(pei.peiId, GlobalConstants.ANOMALIE_62_CITERNE_A_PLUS_800M)
     }
 
     /**

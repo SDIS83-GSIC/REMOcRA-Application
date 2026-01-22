@@ -370,4 +370,13 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
             .from(ANOMALIE)
             .where(ANOMALIE.CODE.`in`(listeCode))
             .fetchInto()
+
+    fun isAnomalieAssigned(peiId: UUID, anomalieCode: String) =
+        dsl.fetchExists(
+            dsl.select()
+                .from(L_PEI_ANOMALIE)
+                .join(ANOMALIE).on(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+                .where(ANOMALIE.CODE.eq(anomalieCode))
+                .and(L_PEI_ANOMALIE.PEI_ID.eq(peiId)),
+        )
 }

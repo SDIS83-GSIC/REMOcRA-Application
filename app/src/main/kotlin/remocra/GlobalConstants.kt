@@ -34,15 +34,24 @@ object GlobalConstants {
     const val NATURE_PEN = "PEN"
     const val NATURE_PEA = "PEA"
 
-    // Propre au SDIS 22 - Les valeurs sont protected en base du 22
-    const val NATURE_PIBI_ETUDE = "PIBI_ETUDE"
-    const val NATURE_PENA_ETUDE = "PENA_ETUDE"
+    // Propre au SDIS 22
+    const val NATURE_22_PIBI_ETUDE = "PIBI_ETUDE"
+    const val NATURE_22_PENA_ETUDE = "PENA_ETUDE"
 
-    // Propre au SDIS 59 - Les valeurs sont protected en base du 59
-    const val NATURE_ALIMENTATION_POTEAU_RELAIS = "ALI_PR"
-    const val NATURE_ALIMENTATION_DE_CONDUITE = "ALI_COND"
-    const val NATURE_REFOULEMENT_DE_CONDUITE = "REFL_COND"
-    const val NATURE_POTEAU_RELAIS = "REFL_PR"
+    // Propre au SDIS 59
+    const val NATURE_59_ALIMENTATION_POTEAU_RELAIS = "ALI_PR"
+    const val NATURE_59_ALIMENTATION_DE_CONDUITE = "ALI_COND"
+    const val NATURE_59_REFOULEMENT_DE_CONDUITE = "REFL_COND"
+    const val NATURE_59_POTEAU_RELAIS = "REFL_PR"
+
+    // Propre au SDIS 62
+    const val NATURE_62_BOUCHE_D_ASPIRATION = "BI_ASPI"
+    const val NATURE_62_POTEAU_D_IRRIGATION_AGRICOLE = "PIA"
+    const val NATURE_62_POTEAU_D_ASPIRATION = "PI_ASP"
+    const val NATURE_62_POTEAU_RELAIS = "PI_RELAIS"
+    const val NATURE_62_PUISARD_D_ASPIRATION = "PASP"
+    const val NATURE_62_RESERVE_AERIENNE = "RES_AERIENNE"
+    const val ANOMALIE_62_CITERNE_A_PLUS_800M = "PENA_800"
 
     // Clés des paramètres
     const val PARAM_PEI_RENUMEROTATION_INTERNE_AUTO = "PEI_RENUMEROTATION_INTERNE_AUTO"
