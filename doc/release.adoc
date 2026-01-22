@@ -1,5 +1,32 @@
 = Release Notes
 
+== 3.0.2
+
+* https://redmine.atolcd.com/issues/267899[#267899]: [ADRESSES] SIGNALEMENTS - Ajouter un document au signalement
+* https://redmine.atolcd.com/issues/273218[#273218]: Refonte de la gestion des couches
+* https://redmine.atolcd.com/issues/275291[#275291]: Déplacement de PEI - Rafraichissement page
+* https://redmine.atolcd.com/issues/275666[#275666]: [POINT D'EAU] INSDISPONIBILITES TEMPORAIRES - Tri par défaut par date de début
+* https://redmine.atolcd.com/issues/275719[#275719]: Ajout libellé droit
+* https://redmine.atolcd.com/issues/276014[#276014]: [ERGONOMIE] FICHE POINT D'EAU - Configuration
+* https://redmine.atolcd.com/issues/276633[#276633]: Modification rapports protégés
+* https://redmine.atolcd.com/issues/276896[#276896]: Module document - affichage page suivante
+* https://redmine.atolcd.com/issues/276899[#276899]: Planification DECI - Liste des études
+* https://redmine.atolcd.com/issues/276913[#276913]: Erreur lors de la création d'un PIBI
+* https://redmine.atolcd.com/issues/276925[#276925]: Informations PEI- Nom de la couche
+* https://redmine.atolcd.com/issues/277125[#277125]: Affectation tournées non fonctionnelle
+* https://redmine.atolcd.com/issues/277545[#277545]: Outil i et agrégation de couche Geoserver
+* https://redmine.atolcd.com/issues/277840[#277840]: Affichage infobulle
+* https://redmine.atolcd.com/issues/277851[#277851]: Erreur import CTP
+* https://redmine.atolcd.com/issues/277852[#277852]: Gestion de l'enregistrement de la visite
+* https://redmine.atolcd.com/issues/277854[#277854]: Tournées - tri par défaut
+* https://redmine.atolcd.com/issues/277867[#277867]: Mise à jour des paramètres quand changement de courrier
+* https://redmine.atolcd.com/issues/278014[#278014]: Carte des tournées - PEI hors zone de compétence
+* https://redmine.atolcd.com/issues/278015[#278015]: Gestion de crise - Recherche et analyse
+* https://redmine.atolcd.com/issues/278018[#278018]: Page d'ajout PEI à une tournée - délais d'affichage
+* https://redmine.atolcd.com/issues/278204[#278204]: [ RESULTATS D'EXECUTION] Changement d'état des PEI en erreur
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.1
 
 * https://redmine.atolcd.com/issues/274625[#274625]: Rapport personnalisé - Historique d'un PEI
