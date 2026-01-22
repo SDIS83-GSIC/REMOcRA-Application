@@ -18,7 +18,7 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.CoucheMetadata
 import remocra.data.DataTableau
-import remocra.data.GroupeFonctionnalite
+import remocra.data.GroupeFonctionnalites
 import remocra.data.Params
 import remocra.data.SimplifiedCoucheData
 import remocra.data.StyleGroupeCoucheData
@@ -133,10 +133,10 @@ class CoucheMetadataEndpoint : AbstractEndpoint() {
                             coucheNom = couche.coucheNom,
                             groupeFonctionnaliteList = coucheMetadataRepository.getAvailableGroupeFonctionnaliteList(couche.coucheId, coucheMetadataId)
                                 .map { groupeFonctionnalite ->
-                                    GroupeFonctionnalite(
-                                        groupeFonctionnaliteId = groupeFonctionnalite.groupeFonctionnalitesId,
-                                        groupeFonctionnaliteCode = groupeFonctionnalite.groupeFonctionnalitesCode,
-                                        groupeFonctionnaliteLibelle = groupeFonctionnalite.groupeFonctionnalitesLibelle,
+                                    GroupeFonctionnalites(
+                                        groupeFonctionnalitesId = groupeFonctionnalite.groupeFonctionnalitesId,
+                                        groupeFonctionnalitesCode = groupeFonctionnalite.groupeFonctionnalitesCode,
+                                        groupeFonctionnalitesLibelle = groupeFonctionnalite.groupeFonctionnalitesLibelle,
                                     )
                                 },
                         )

@@ -8,7 +8,6 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import remocra.data.CoucheMetadata
 import remocra.data.CoucheMetadataWithLibelle
-import remocra.data.GroupeFonctionnalite
 import remocra.data.Params
 import remocra.data.ResponseCouche
 import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
@@ -168,8 +167,8 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
     fun deleteCouchesMetadataByMetadataId(metadataId: UUID) =
         dsl.deleteFrom(COUCHE_METADATA).where(COUCHE_METADATA.ID.eq(metadataId)).execute()
 
-    fun getCouchesMetadataForTableau(params: Params<FilterCoucheMetadata, SortCouche>): List<ResponseCouche> =
-        dsl.select(
+    fun getCouchesMetadata(params: Params<FilterCoucheMetadata, SortCouche>): List<ResponseCouche> {
+        return dsl.select(
             GROUPE_COUCHE.ID,
             GROUPE_COUCHE.LIBELLE,
             COUCHE.ID,
@@ -178,41 +177,41 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             COUCHE_METADATA.ID,
             COUCHE_METADATA.ACTIF,
             COUCHE_METADATA.PUBLIC,
-            multiset(
-                DSL.select(
-                    GROUPE_FONCTIONNALITES.ID,
-                    GROUPE_FONCTIONNALITES.CODE,
-                    GROUPE_FONCTIONNALITES.LIBELLE,
-                )
-                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-                    .join(GROUPE_FONCTIONNALITES).on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID))
-                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(COUCHE_METADATA.ID)),
-            ).convertFrom { records ->
-                records.map { (id, code, libelle) ->
-                    GroupeFonctionnalite(
-                        groupeFonctionnaliteId = id as UUID,
-                        groupeFonctionnaliteCode = code!!,
-                        groupeFonctionnaliteLibelle = libelle!!,
-                    )
-                }
-            }.`as`("groupeFonctionnaliteList"),
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE_METADATA.COUCHE_ID.eq(COUCHE.ID))
             .join(GROUPE_COUCHE).on(COUCHE.GROUPE_COUCHE_ID.eq(GROUPE_COUCHE.ID))
-            .whereExists(
-                DSL.selectOne()
-                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-                    .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(COUCHE_METADATA.ID)),
-            )
-            .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(
-                params.sortBy?.toCondition()?.takeIf { it.isNotEmpty() }
-                    ?: listOf(GROUPE_COUCHE.LIBELLE.asc(), COUCHE.CODE.asc(), COUCHE.LIBELLE.asc()),
-            )
+            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .orderBy(params.sortBy?.toCondition())
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto(ResponseCouche::class.java)
+    }
+
+    data class CoucheMetadataGroupeFonctionnalite(
+        val coucheMetadataId: UUID,
+        val groupeFonctionnaliteId: UUID,
+        val groupeFonctionnaliteCode: String,
+        val groupeFonctionnaliteLibelle: String,
+    )
+
+    fun enrichirCouchesWithGroup(
+        coucheIds: Collection<UUID>,
+    ): Collection<CoucheMetadataGroupeFonctionnalite> = dsl.select(
+        L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.`as`("coucheMetadataId"),
+        GROUPE_FONCTIONNALITES.ID.`as`("groupeFonctionnaliteId"),
+        GROUPE_FONCTIONNALITES.CODE.`as`("groupeFonctionnaliteCode"),
+        GROUPE_FONCTIONNALITES.LIBELLE.`as`("groupeFonctionnaliteLibelle"),
+    )
+        .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
+        .join(GROUPE_FONCTIONNALITES)
+        .on(
+            GROUPE_FONCTIONNALITES.ID.eq(
+                L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID,
+            ),
+        )
+        .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.`in`(coucheIds))
+        .fetchInto()
 
     /**
      * Retourne les metadata des couches publiques (pour les utilisateurs non connectés)
@@ -297,12 +296,10 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             .set(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID, layerId)
             .execute()
 
-    fun checkLienGroupeFonctionnalites(layerId: UUID, profilId: UUID) = dsl.fetchExists(
-        dsl.select(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID)
-            .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-            .where(
-                L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(profilId)
-                    .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(layerId)),
-            ),
-    )
+    fun findGroupFonctIdByCoucheMetadata(coucheMetadataId: UUID): List<UUID> = dsl.select(GROUPE_FONCTIONNALITES.ID)
+        .from(GROUPE_FONCTIONNALITES)
+        .join(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
+        .on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID))
+        .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(coucheMetadataId))
+        .fetchInto()
 }

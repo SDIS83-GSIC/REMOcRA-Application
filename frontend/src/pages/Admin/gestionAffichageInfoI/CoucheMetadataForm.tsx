@@ -1,7 +1,7 @@
 import { useFormikContext } from "formik";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import { object } from "yup";
+import { array, object } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
@@ -17,7 +17,7 @@ import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
-import { requiredArray, requiredString } from "../../../module/validators.tsx";
+import { requiredString } from "../../../module/validators.tsx";
 
 type PropertyType = { name: string };
 
@@ -46,17 +46,29 @@ type CoucheData = {
 };
 
 type GroupeFonctionnaliteData = {
-  groupeFonctionnaliteId: string;
-  groupeFonctionnaliteCode: string;
-  groupeFonctionnaliteLibelle: string;
+  groupeFonctionnalitesId: string;
+  groupeFonctionnalitesCode: string;
+  groupeFonctionnalitesLibelle: string;
+};
+
+type DescribeFeatureTypeSuccess = {
+  featureTypes: {
+    properties: PropertyType[];
+  }[];
+};
+
+type DescribeFeatureTypeError = {
+  version: string;
+  exceptions: {
+    code: string;
+    locator: string;
+    text: string;
+  }[];
 };
 
 type DescribeFeatureTypeResponse = {
-  paramsCouche: Array<{
-    featureTypes: Array<{
-      properties: PropertyType[];
-    }>;
-  }>;
+  nomCouche: string;
+  paramsCouche: DescribeFeatureTypeSuccess | DescribeFeatureTypeError;
 };
 
 function generateMetadataProperties(properties: PropertyType[]) {
@@ -97,10 +109,8 @@ export const prepareValues = (
 export const validationSchema = object({
   groupeCoucheId: requiredString,
   coucheId: requiredString,
-
   coucheMetadataStyle: requiredString,
-
-  groupeFonctionnaliteIds: requiredArray,
+  groupeFonctionnaliteIds: array().nullable(),
 });
 
 const CoucheMetadataForm = ({
@@ -108,12 +118,17 @@ const CoucheMetadataForm = ({
 }: {
   coucheInitiale?: string;
 }) => {
-  const [coucheId, setCoucheId] = useState<string | null>(coucheInitiale);
+  const [coucheId, setCoucheId] = useState<string | null>(
+    coucheInitiale ?? null,
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { handleShowClose, activesKeys } = useAccordionState([false, false]);
 
-  const getError = useCallback(async (errorPending: Response) => {
-    return await errorPending?.text();
+  const getError = useCallback(async (errorPending: Response | Error) => {
+    if (errorPending instanceof Response) {
+      return await errorPending?.text();
+    }
+    return errorPending?.message ?? "An error occurred";
   }, []);
 
   const { setValues, setFieldValue, values } =
@@ -124,21 +139,28 @@ const CoucheMetadataForm = ({
     ...dataLayer
   } = useGetRun(`/api/geoserver/describe-feature-type/${coucheId!}`, {});
 
-  const properties = useMemo(() => {
-    return (
-      describeFeatureType?.flatMap(
-        (df: DescribeFeatureTypeResponse) =>
-          df?.paramsCouche?.featureTypes?.flatMap(
-            (ft: { properties: PropertyType[] }) => ft.properties ?? [],
-          ) ?? [],
-      ) ?? []
-    );
+  const properties = useMemo((): PropertyType[] => {
+    if (!describeFeatureType) {
+      return [];
+    }
+
+    return describeFeatureType.flatMap((df: DescribeFeatureTypeResponse) => {
+      if ("exceptions" in df.paramsCouche) {
+        setErrorMessage(df.paramsCouche.exceptions[0].text);
+        return [];
+      }
+
+      setErrorMessage(null);
+      return df.paramsCouche.featureTypes.flatMap(
+        (featureType) => featureType.properties,
+      );
+    });
   }, [describeFeatureType]);
 
-  const queryParam =
-    values.coucheMetadataId !== null && values.coucheMetadataId !== ""
-      ? { coucheMetadataId: values.coucheMetadataId }
-      : "";
+  const queryParam = values.coucheMetadataId
+    ? { coucheMetadataId: values.coucheMetadataId }
+    : {};
+
   const coucheData = useGet(
     url`/api/admin/couche-metadata/get-available-layers?${queryParam}`,
   )?.data;
@@ -228,15 +250,16 @@ const CoucheMetadataForm = ({
   if (selectedCouche) {
     listGroupeFonctionnalites = selectedCouche.groupeFonctionnaliteList.map(
       (groupeFonctionnalite: GroupeFonctionnaliteData) => ({
-        id: groupeFonctionnalite.groupeFonctionnaliteId,
-        code: groupeFonctionnalite.groupeFonctionnaliteCode,
-        libelle: groupeFonctionnalite.groupeFonctionnaliteLibelle,
+        id: groupeFonctionnalite.groupeFonctionnalitesId,
+        code: groupeFonctionnalite.groupeFonctionnalitesCode,
+        libelle: groupeFonctionnalite.groupeFonctionnalitesLibelle,
       }),
     );
 
     // Tri de la liste des profils droits par libelle
-    listGroupeFonctionnalites = listGroupeFonctionnalites.sort((a, b) =>
-      a.libelle.localeCompare(b.libelle),
+    listGroupeFonctionnalites = listGroupeFonctionnalites.sort(
+      (a: { libelle: string }, b: { libelle: string }) =>
+        (a?.libelle || "").localeCompare(b?.libelle || ""),
     );
   }
 
@@ -258,13 +281,22 @@ const CoucheMetadataForm = ({
         list={[
           {
             header: "Informations générales",
-            content:
-              "Seules les couches requêtant Geoserver sont accessibles dans la liste déroulante ci-dessous, donc sont exclus les types GeoJSON et OSM",
-          },
-          {
-            header: "Propriétés non affichées",
-            content:
-              "Les propriétés sans métadonnées ne seront pas affichées dans les cartes",
+            content: (
+              <>
+                <p>
+                  Seules les couches requêtant Geoserver sont accessibles dans
+                  la liste déroulante ci-dessous, donc sont exclus les types
+                  GeoJSON et OSM.
+                </p>
+                <p>
+                  Une couche ne contenant pas de métadonnées ne peut pas être
+                  enregistrée.
+                </p>
+                <p>
+                  Les valeurs NULL ne seront pas affichées dans les métadonnées.
+                </p>
+              </>
+            ),
           },
           {
             header: "Balises disponibles pour la mise en forme",
@@ -358,6 +390,8 @@ const CoucheMetadataForm = ({
         }
         getOptionLabel={(t) => t.libelle}
         isClearable={true}
+        readOnly={values.coucheMetadataPublic}
+        required={!values.coucheMetadataPublic}
         onChange={(groupesFonctionnalites) => {
           setFieldValue(
             "groupeFonctionnaliteIds",
@@ -370,6 +404,12 @@ const CoucheMetadataForm = ({
       <CheckBoxInput
         name={"coucheMetadataPublic"}
         label={"Autoriser l'accès public"}
+        onChange={(v) => {
+          if (v.target.checked === true) {
+            setFieldValue("groupeFonctionnaliteIds", null);
+          }
+          setFieldValue("coucheMetadataPublic", v.target.checked);
+        }}
         tooltipText="Si la case est cochée, les métadonnées seront accessibles publiquement, y compris par un utilisateur déconnecté."
       />
 
