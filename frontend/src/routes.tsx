@@ -1860,7 +1860,10 @@ export default [
         element: (
           <Authorization
             Component={ListOrganisme}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
+            ]}
           />
         ),
       },
@@ -1869,7 +1872,10 @@ export default [
         element: (
           <Authorization
             Component={CreateOrganisme}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+            ]}
           />
         ),
       },
@@ -1879,6 +1885,7 @@ export default [
           <Authorization
             Component={UpdateOrganisme}
             droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            // TODO : Modifier pour ajouter les bons droits
           />
         ),
       },
@@ -1950,7 +1957,10 @@ export default [
         element: (
           <Authorization
             Component={CreateProfilUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR]}
+            droits={[
+              TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+            ]}
           />
         ),
       },
@@ -2229,7 +2239,12 @@ export default [
         element: (
           <Authorization
             Component={ListUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_R,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
+            ]}
           />
         ),
       },
@@ -2238,7 +2253,10 @@ export default [
         element: (
           <Authorization
             Component={CreateUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+            ]}
           />
         ),
       },
@@ -2247,7 +2265,10 @@ export default [
         element: (
           <Authorization
             Component={UpdateUtilisateur}
-            droits={[TYPE_DROIT.ADMIN_UTILISATEURS_A]}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+            ]}
           />
         ),
       },

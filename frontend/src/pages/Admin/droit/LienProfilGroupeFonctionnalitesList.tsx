@@ -157,6 +157,7 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   0,
                                                   value.lastIndexOf("_"),
                                                 );
+
                                                 if (
                                                   event.currentTarget.checked
                                                 ) {
@@ -186,6 +187,14 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                       },
                                                     );
                                                   }
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_UTILISATEURS_R"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_UTILISATEURS_ORGA_R",
+                                                    );
+                                                  }
                                                   setFieldValue(
                                                     `${idxPD}.groupeFonctionnalitesDroits`,
                                                     [
@@ -195,6 +204,22 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                     ],
                                                   );
                                                 } else {
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_UTILISATEURS_ORGA_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_UTILISATEURS_A",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_UTILISATEURS_ORGA_R"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_UTILISATEURS_R",
+                                                    );
+                                                  }
                                                   // si un droit _CRUD est décoché, on tente de retirer le droit _A s'il existe
                                                   if (
                                                     "CRUD"

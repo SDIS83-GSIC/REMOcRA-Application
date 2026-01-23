@@ -27,6 +27,7 @@ import FilterValues from "./FilterUtilisateur.tsx";
 
 const ListUtilisateur = () => {
   const { user } = useAppContext();
+
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: groupeFonctionnalitesList } = useGet(
     url`/api/groupe-fonctionnalites`,
@@ -34,13 +35,20 @@ const ListUtilisateur = () => {
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
 
   const listeButton: ButtonType[] = [];
-  if (hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A)) {
+  if (
+    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)
+  ) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       route: (utilisateurId) => URLS.UPDATE_UTILISATEUR(utilisateurId),
       type: TYPE_BUTTON.UPDATE,
+      disable: (v) => {
+        return !v.original.canAdministrate;
+      },
+      textDisable: "Vous n'avez pas de droits de mises à jour",
     });
 
     listeButton.push({
@@ -49,9 +57,9 @@ const ListUtilisateur = () => {
       },
       type: TYPE_BUTTON.DELETE,
       disable: (v) => {
-        return v.value === user.utilisateurId;
+        return v.value === user.utilisateurId || !v.original.canAdministrate;
       },
-      textDisable: "Impossible de supprimer votre propre compte.",
+      textDisable: "Vous n'avez pas de droits de suppression",
       pathname: url`/api/utilisateur/delete/`,
       textEnable:
         "Attention, si l'utilisateur vient d'un annuaire, le compte sera de nouveau présent lors de la synchronisation. Si vous souhaitez le supprimer, supprimez-le de l'annuaire, la synchronisation se chargera ensuite de la suppression dans REMOcRA",
@@ -65,7 +73,8 @@ const ListUtilisateur = () => {
           icon={<IconGererContact />}
           title={"Utilisateurs"}
           right={
-            hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) && (
+            (hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
+              hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)) && (
               <CreateButton
                 href={URLS.ADD_UTILISATEUR}
                 title={"Ajouter un utilisateur"}
