@@ -28,6 +28,7 @@ import remocra.db.jooq.incoming.keys.NEW_PEI__NEW_PEI_NEW_PEI_NATURE_ID_FKEY
 import remocra.db.jooq.incoming.tables.NewPei.NewPeiPath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.db.jooq.remocra.keys.L_DIAMETRE_NATURE__L_DIAMETRE_NATURE_NATURE_ID_FKEY
 import remocra.db.jooq.remocra.keys.NATURE_NATURE_CODE_KEY
 import remocra.db.jooq.remocra.keys.NATURE_PKEY
@@ -116,6 +117,11 @@ open class Nature(
      * The column <code>remocra.nature.nature_protected</code>.
      */
     val PROTECTED: TableField<Record, Boolean?> = createField(DSL.name("nature_protected"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "")
+
+    /**
+     * The column <code>remocra.nature.nature_type_pei_nexsis</code>.
+     */
+    val TYPE_PEI_NEXSIS: TableField<Record, TypePeiNexsis?> = createField(DSL.name("nature_type_pei_nexsis"), SQLDataType.VARCHAR.asEnumDataType(TypePeiNexsis::class.java), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

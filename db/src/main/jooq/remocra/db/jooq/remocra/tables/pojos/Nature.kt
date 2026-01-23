@@ -4,6 +4,7 @@
 package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import java.io.Serializable
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -26,6 +27,7 @@ data class Nature(
     val natureLibelle: String,
     val natureTypePei: TypePei,
     val natureProtected: Boolean?,
+    val natureTypePeiNexsis: TypePeiNexsis?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -61,6 +63,13 @@ data class Nature(
         } else if (this.natureProtected != o.natureProtected) {
             return false
         }
+        if (this.natureTypePeiNexsis == null) {
+            if (o.natureTypePeiNexsis != null) {
+                return false
+            }
+        } else if (this.natureTypePeiNexsis != o.natureTypePeiNexsis) {
+            return false
+        }
         return true
     }
 
@@ -73,6 +82,7 @@ data class Nature(
         result = prime * result + this.natureLibelle.hashCode()
         result = prime * result + this.natureTypePei.hashCode()
         result = prime * result + (if (this.natureProtected == null) 0 else this.natureProtected.hashCode())
+        result = prime * result + (if (this.natureTypePeiNexsis == null) 0 else this.natureTypePeiNexsis.hashCode())
         return result
     }
 
@@ -85,6 +95,7 @@ data class Nature(
         sb.append(", ").append(natureLibelle)
         sb.append(", ").append(natureTypePei)
         sb.append(", ").append(natureProtected)
+        sb.append(", ").append(natureTypePeiNexsis)
 
         sb.append(")")
         return sb.toString()
