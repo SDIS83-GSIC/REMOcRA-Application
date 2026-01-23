@@ -45,9 +45,9 @@ const ListZoneIntegration = () => {
   const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
-  if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
+  if (hasDroit(user, TYPE_DROIT.ADMIN_ZONE_COMPETENCE)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       route: (zoneIntegrationId) =>
@@ -56,7 +56,7 @@ const ListZoneIntegration = () => {
     });
 
     listeButton.push({
-      row: (row) => {
+      row: (row: any) => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,

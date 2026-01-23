@@ -17,7 +17,7 @@ class DeleteZonesIntegrationUseCase : AbstractCUDUseCase<ZoneIntegrationData>(Ty
     @Inject lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ZONE_COMPETENCE)) {
             throw RemocraResponseException(ErrorType.ZONE_INTEGRATION_FORBIDDEN_DELETE)
         }
     }

@@ -48,7 +48,7 @@ class ImportZonesIntegrationUseCase : AbstractUseCase() {
 
     fun checkDroits(userInfo: WrappedUserInfo) {
         // TODO quel droit pour l'administration des zones de compétence / intégration ?
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ZONE_COMPETENCE)) {
             throw RemocraResponseException(ErrorType.ZONE_INTEGRATION_FORBIDDEN_UPDATE)
         }
     }

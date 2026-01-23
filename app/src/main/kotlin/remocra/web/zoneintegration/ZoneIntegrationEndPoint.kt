@@ -75,7 +75,7 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
     @PUT
     @Path("/import/")
     // TODO droit ?
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_ZONE_COMPETENCE])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     fun importData(
@@ -87,13 +87,13 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/{zoneIntegrationId}")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_ZONE_COMPETENCE])
     fun getById(@PathParam("zoneIntegrationId") zoneIntegrationId: UUID): Response =
         Response.ok(zoneIntegrationRepository.getById(zoneIntegrationId)).build()
 
     @POST
     @Path("/")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_ZONE_COMPETENCE])
     fun getAll(params: Params<ZoneIntegrationRepository.Filter, ZoneIntegrationRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -104,7 +104,7 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{zoneIntegrationId}")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_ZONE_COMPETENCE])
     @Produces(MediaType.APPLICATION_JSON)
     fun update(@PathParam("zoneIntegrationId") zoneIntegrationId: UUID, zoneIntegrationInput: ZoneIntegrationInput): Response =
         updateZoneIntegrationUseCase.execute(
@@ -130,7 +130,7 @@ class ZoneIntegrationEndPoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/delete/{zoneIntegrationId}")
-    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @RequireDroits([Droit.ADMIN_ZONE_COMPETENCE])
     @Produces(MediaType.APPLICATION_JSON)
     fun delete(@PathParam("zoneIntegrationId") zoneIntegrationId: UUID): Response =
         deleteZonesIntegrationUseCase.execute(
