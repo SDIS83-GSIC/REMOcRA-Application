@@ -39,6 +39,7 @@ class DeleteNatureUseCase @Inject constructor(private val natureRepository: Natu
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: Nature): Nature {
+        natureRepository.deleteLienDiametreNature(element.natureId)
         natureRepository.remove(element.natureId)
         return element
     }
