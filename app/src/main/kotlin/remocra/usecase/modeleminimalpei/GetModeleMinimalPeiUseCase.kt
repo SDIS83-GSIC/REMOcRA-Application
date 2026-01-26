@@ -57,6 +57,9 @@ constructor(
     @Inject
     lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
 
+    // NexSIS attend "reseau_aep" comme source pour les PEI de type BI ou PI, sinon on laisse vide
+    private val RESEAU_AEP = "reseau_aep"
+
     /**
      * Récupère une liste de PEI au format minimal, avec accessibilité calculée
      * @param codeInsee filtre sur le code INSEE de la commune
@@ -118,7 +121,7 @@ constructor(
                     idGestion = getIdGestion(),
                     nomGest = getNomGest(it),
                     peiNumeroInterne = getPeiNumeroInterne(it),
-                    typeRD = getTypeRD(),
+                    sourcePei = getSourcePei(it),
                     diametre = getDiametre(it),
                     pibiDiametreCanalisation = getPibiDiametreCanalisation(it),
                     natureLibelle = getNatureLibelle(it),
@@ -150,7 +153,7 @@ constructor(
                     idGestion = getIdGestion(),
                     nomGest = getNomGest(it),
                     peiNumeroInterne = getPeiNumeroInterne(it),
-                    typeRD = getTypeRD(),
+                    sourcePei = getSourcePei(it),
                     diametre = getDiametre(it),
                     pibiDiametreCanalisation = getPibiDiametreCanalisation(it),
                     natureLibelle = getNatureLibelle(it),
@@ -197,7 +200,12 @@ constructor(
 
     private fun getPeiNumeroInterne(it: PeiRepository.PeiDataForApi): String = it.peiNumeroInterne
 
-    private fun getTypeRD(): String? = null
+    private fun getSourcePei(it: PeiRepository.PeiDataForApi): String? =
+        if (it.natureTypePeiNexsis == TypePeiNexsis.BI || it.natureTypePeiNexsis == TypePeiNexsis.PI) {
+            RESEAU_AEP
+        } else {
+            null
+        }
 
     private fun getDiametre(it: PeiRepository.PeiDataForApi): Int? =
         it.diametreCode?.let { diametreDecorator.decorateDiametre(it) }

@@ -19,7 +19,7 @@ open class ModeleMinimalPeiData(
     open val idGestion: String?,
     open val nomGest: String?,
     open val peiNumeroInterne: String,
-    open val typeRD: String?,
+    open val sourcePei: String?,
     open val diametre: Int?,
     open val pibiDiametreCanalisation: Int?,
     open val natureLibelle: String?,
