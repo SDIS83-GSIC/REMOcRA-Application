@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import NOMENCLATURE from "../enums/NomenclaturesEnum.tsx";
 
 export type SelectType = {
@@ -19,7 +20,7 @@ export type SelectFilterFromListType = SelectType & {
 
 export type SelectFormType = SelectType & {
   listIdCodeLibelle: IdCodeLibelleType[];
-  label?: string;
+  label?: string | ReactNode;
   required?: boolean;
   disabled?: boolean;
   optionDisabled?: string;

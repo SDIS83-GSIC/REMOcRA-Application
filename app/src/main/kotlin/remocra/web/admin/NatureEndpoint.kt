@@ -20,6 +20,7 @@ import remocra.data.Params
 import remocra.db.NatureRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.usecase.nature.CreateNatureUseCase
 import remocra.usecase.nature.DeleteNatureUseCase
 import remocra.usecase.nature.UpdateNatureUseCase
@@ -55,7 +56,10 @@ class NatureEndpoint : AbstractEndpoint() {
         lateinit var libelle: String
 
         @FormParam("typePei")
-        lateinit var typePei: String
+        lateinit var typePei: TypePei
+
+        @FormParam("typePeiNexsis")
+        var typePeiNexsis: TypePeiNexsis? = null
 
         @FormParam("protected")
         val protected: Boolean = false
@@ -89,9 +93,10 @@ class NatureEndpoint : AbstractEndpoint() {
                 natureActif = natureInput.actif,
                 natureCode = natureInput.code,
                 natureLibelle = natureInput.libelle,
-                TypePei.valueOf(natureInput.typePei),
+                natureTypePei = natureInput.typePei,
                 natureProtected = natureInput.protected,
                 diametreIds = natureInput.diametreIds,
+                natureTypePeiNexsis = natureInput.typePeiNexsis,
             ),
         ).wrap()
     }
@@ -107,9 +112,10 @@ class NatureEndpoint : AbstractEndpoint() {
                 natureActif = natureInput.actif,
                 natureCode = natureInput.code,
                 natureLibelle = natureInput.libelle,
-                TypePei.valueOf(natureInput.typePei),
+                natureTypePei = natureInput.typePei,
                 natureProtected = natureInput.protected,
                 diametreIds = natureInput.diametreIds,
+                natureTypePeiNexsis = natureInput.typePeiNexsis,
             ),
         ).wrap()
     }

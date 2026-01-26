@@ -20,6 +20,7 @@ const CreateNature = () => {
           natureLibelle: "",
           natureTypePei: "",
           natureProtected: false,
+          natureTypePeiNexsis: "",
         }}
         prepareVariables={(values) => prepareNatureValues(values)}
         validationSchema={natureValidationSchema}

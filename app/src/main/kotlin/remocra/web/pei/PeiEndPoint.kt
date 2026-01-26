@@ -32,6 +32,7 @@ import remocra.db.PeiRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.document.UpsertDocumentPeiUseCase
@@ -345,6 +346,15 @@ class PeiEndPoint : AbstractEndpoint() {
                 securityContext.userInfo,
                 listePeiId = listePeiId,
             ),
+        ).build()
+    }
+
+    @GET
+    @Path("/type-pei-nexsis")
+    @RequireDroits([Droit.PEI_R])
+    fun typePeiNexsis(): Response {
+        return Response.ok(
+            TypePeiNexsis.entries,
         ).build()
     }
 }

@@ -5,4 +5,5 @@ export type NatureType = {
   natureTypePei: string;
   natureProtected: boolean;
   diametreIds: string[];
+  natureTypePeiNexsis: string;
 };

@@ -1,6 +1,7 @@
 package remocra.data
 
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import java.util.UUID
 
 data class NatureWithDiametres(
@@ -11,4 +12,5 @@ data class NatureWithDiametres(
     val natureTypePei: TypePei,
     val natureProtected: Boolean?,
     val diametreIds: Collection<UUID>,
+    val natureTypePeiNexsis: TypePeiNexsis?,
 )

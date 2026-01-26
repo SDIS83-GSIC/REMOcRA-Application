@@ -135,7 +135,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .from(NATURE).where(NATURE.ID.eq(id)).fetchOneInto()
 
     fun add(natureData: NatureWithDiametres): Int =
-        dsl.insertInto(NATURE, NATURE.ID, NATURE.ACTIF, NATURE.CODE, NATURE.LIBELLE, NATURE.TYPE_PEI, NATURE.PROTECTED)
+        dsl.insertInto(NATURE, NATURE.ID, NATURE.ACTIF, NATURE.CODE, NATURE.LIBELLE, NATURE.TYPE_PEI, NATURE.PROTECTED, NATURE.TYPE_PEI_NEXSIS)
             .values(
                 natureData.natureId,
                 natureData.natureActif,
@@ -143,12 +143,14 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 natureData.natureLibelle,
                 natureData.natureTypePei,
                 false,
+                natureData.natureTypePeiNexsis,
             ).execute()
 
     fun editProtected(natureData: NatureWithDiametres): Int =
         dsl.update(NATURE)
             .set(NATURE.ACTIF, natureData.natureActif)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
+            .set(NATURE.TYPE_PEI_NEXSIS, natureData.natureTypePeiNexsis)
             .where(NATURE.ID.eq(natureData.natureId)).execute()
 
     fun editNonProtected(natureData: NatureWithDiametres): Int =
@@ -156,6 +158,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .set(NATURE.ACTIF, natureData.natureActif)
             .set(NATURE.CODE, natureData.natureCode)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
+            .set(NATURE.TYPE_PEI_NEXSIS, natureData.natureTypePeiNexsis)
             .where(NATURE.ID.eq(natureData.natureId)).and(NATURE.PROTECTED.isFalse).execute()
 
     fun deleteLienDiametreNature(natureId: UUID) = dsl.deleteFrom(L_DIAMETRE_NATURE).where(L_DIAMETRE_NATURE.NATURE_ID.eq(natureId)).execute()

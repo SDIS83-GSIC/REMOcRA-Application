@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { array, object } from "yup";
+import { array, object, string } from "yup";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -15,6 +15,8 @@ import {
   requiredBoolean,
   requiredString,
 } from "../../../module/validators.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import { NatureType } from "./NatureEntity.tsx";
 
 export const prepareNatureValues = (values: NatureType) => ({
@@ -24,13 +26,14 @@ export const prepareNatureValues = (values: NatureType) => ({
   typePei: values.natureTypePei,
   protected: values.natureProtected,
   diametreIds: values.diametreIds,
+  typePeiNexsis: values.natureTypePeiNexsis,
 });
 
 export const natureValidationSchema = object({
   natureActif: requiredBoolean,
   natureCode: requiredString,
   natureLibelle: requiredString,
-  natureTypePei: requiredString,
+  natureTypePei: string().nullable(),
   natureProtected: requiredBoolean,
   diametreIds: array(),
 });
@@ -42,6 +45,7 @@ export const getInitialNatureValue = (data: NatureType) => ({
   natureTypePei: data?.natureTypePei ?? null,
   natureProtected: data?.natureProtected ?? null,
   diametreIds: data?.diametreIds ?? [],
+  natureTypePeiNexsis: data?.natureTypePeiNexsis ?? null,
 });
 
 export const NatureForm = () => {
@@ -51,6 +55,12 @@ export const NatureForm = () => {
   const { values, setValues, setFieldValue }: any = useFormikContext();
 
   const diametreState = useGet(url`/api/nomenclatures/diametre`);
+
+  const listTypePeiNexsis = useGet(url`/api/pei/type-pei-nexsis`)?.data?.map(
+    (e: string) => {
+      return { id: e.toString(), code: e.toString(), libelle: e.toString() };
+    },
+  );
 
   return (
     <FormContainer>
@@ -91,6 +101,28 @@ export const NatureForm = () => {
             ? setFieldValue("diametreIds", diametreId)
             : setFieldValue("diametreIds", []);
         }}
+      />
+
+      <SelectForm
+        name={"natureTypePeiNexsis"}
+        listIdCodeLibelle={listTypePeiNexsis}
+        label={
+          <>
+            Type de PEI dans NexSIS
+            <TooltipCustom
+              tooltipId="typeNexsisPei"
+              tooltipText={
+                "Nature du PEI attendue dans NexSIS. Attention, si cette valeur n'est pas renseignée, les PEI associés à cette nature ne pourront pas être mis à jour dans NexSIS."
+              }
+            >
+              <IconInfo />
+            </TooltipCustom>
+          </>
+        }
+        defaultValue={listTypePeiNexsis?.find(
+          (e: { code: any }) => e.code === values.natureTypePeiNexsis,
+        )}
+        setValues={setValues}
       />
 
       <SubmitFormButtons returnLink={true} />
