@@ -27,6 +27,7 @@ import remocra.data.PeiData
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.Pei
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
@@ -933,6 +934,7 @@ class PeiRepository
             NATURE.LIBELLE,
             NATURE_DECI.CODE,
             NATURE_DECI.LIBELLE,
+            NATURE.TYPE_PEI_NEXSIS,
             COMMUNE.LIBELLE,
             COMMUNE.CODE_INSEE,
             ORGANISME.LIBELLE.`as`("serviceEauLibelle"),
@@ -1045,6 +1047,7 @@ class PeiRepository
         val natureCode: String,
         val natureLibelle: String,
         val natureDeciLibelle: String,
+        val natureTypePeiNexsis: TypePeiNexsis?,
         val communeLibelle: String,
         val communeCodeInsee: String,
         val serviceEauLibelle: String?,

@@ -2,6 +2,7 @@ package remocra.data
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import org.locationtech.jts.geom.Point
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.geometrie.GeometryToGeoJsonSerializer
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -9,7 +10,7 @@ import java.util.UUID
 open class ModeleMinimalPeiData(
     open val peiId: UUID,
     open val peiNumeroComplet: String,
-    open val natureCode: String,
+    open val typePeiNexSis: TypePeiNexsis?,
     open val isDisponible: Boolean,
     @param:JsonSerialize(using = GeometryToGeoJsonSerializer::class)
     open val geometrie: Point,

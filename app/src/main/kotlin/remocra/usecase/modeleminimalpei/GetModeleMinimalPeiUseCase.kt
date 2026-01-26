@@ -18,6 +18,7 @@ import remocra.db.VisiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.pojos.Voie
 import remocra.usecase.geometrie.GetCoordonneesBySrid
@@ -109,7 +110,7 @@ constructor(
                     codeStructure = appSettings.nexsis.codeStructure!!,
                     peiId = getPeiId(it),
                     peiNumeroComplet = getPeiNumeroComplet(it),
-                    natureCode = getNatureCode(it),
+                    typePeiNexSis = getTypePeiNexsis(it),
                     isDisponible = getIsDisponible(it),
                     geometrie = getGeometrie(geom!!),
                     codeInsee = getCodeInsee(it),
@@ -141,7 +142,7 @@ constructor(
                 ModeleMinimalPeiData(
                     peiId = getPeiId(it),
                     peiNumeroComplet = getPeiNumeroComplet(it),
-                    natureCode = getNatureCode(it),
+                    typePeiNexSis = getTypePeiNexsis(it),
                     isDisponible = getIsDisponible(it),
                     geometrie = getGeometrie(geom!!),
                     codeInsee = getCodeInsee(it),
@@ -176,7 +177,7 @@ constructor(
 
     private fun getPeiNumeroComplet(it: PeiRepository.PeiDataForApi): String = it.peiNumeroComplet
 
-    private fun getNatureCode(it: PeiRepository.PeiDataForApi): String = it.natureCode
+    private fun getTypePeiNexsis(it: PeiRepository.PeiDataForApi): TypePeiNexsis? = it.natureTypePeiNexsis
 
     private fun getIsDisponible(it: PeiRepository.PeiDataForApi): Boolean =
         it.peiDisponibiliteTerrestre == Disponibilite.DISPONIBLE || it.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME

@@ -1,6 +1,7 @@
 package remocra.data
 
 import org.locationtech.jts.geom.Point
+import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -11,7 +12,7 @@ data class ModeleMinimalPeiForNexsisData(
     val codeStructure: String,
     override val peiId: UUID,
     override val peiNumeroComplet: String,
-    override val natureCode: String,
+    override val typePeiNexSis: TypePeiNexsis?,
     override val isDisponible: Boolean,
     override val geometrie: Point,
     override val codeInsee: String,
@@ -41,7 +42,7 @@ data class ModeleMinimalPeiForNexsisData(
 ) : ModeleMinimalPeiData(
     peiId = peiId,
     peiNumeroComplet = peiNumeroComplet,
-    natureCode = natureCode,
+    typePeiNexSis = typePeiNexSis,
     isDisponible = isDisponible,
     geometrie = geometrie,
     codeInsee = codeInsee,
@@ -73,7 +74,7 @@ data class ModeleMinimalPeiForNexsisData(
         codeStructure = codeStructure,
         id = peiId,
         idSdis = peiNumeroComplet,
-        typePei = natureCode,
+        typePei = typePeiNexSis?.name,
         disponible = isDisponible,
         geometrie = geometrie,
         codeInsee = codeInsee,
@@ -110,7 +111,7 @@ data class ModeleMinimalPeiForNexsisJsonData(
     val codeStructure: String,
     val id: UUID,
     val idSdis: String,
-    val typePei: String,
+    val typePei: String?,
     val disponible: Boolean,
     val geometrie: Point,
     val codeInsee: String,
