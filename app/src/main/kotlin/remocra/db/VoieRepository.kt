@@ -14,6 +14,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_DWithin
+import remocra.utils.ST_Distance
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
@@ -61,7 +62,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
                     toleranceVoiesMetres.toDouble(),
                 ),
             )
-            .orderBy(VOIE.LIBELLE)
+            .orderBy(ST_Distance(geometry, VOIE.GEOMETRIE))
             .fetchInto()
 
     data class VoieWithCommune(
