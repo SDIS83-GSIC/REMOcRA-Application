@@ -70,7 +70,7 @@ const FormExportCTP = () => {
               downloadOutputFile(
                 "/api/importctp/export",
                 JSON.stringify({ communeId: values.communeId ?? null }),
-                `export-ctp${values.communeId ? `_${listeCommune.data.find((e) => e.id === values.communeId)?.code}` : ""}.xlsx`,
+                `export-ctp${values.communeId ? `_${listeCommune.data.find((e) => e.id === values.communeId)?.libelle}` : ""}.xlsx`,
                 "Export terminé",
                 successToast,
                 errorToast,
