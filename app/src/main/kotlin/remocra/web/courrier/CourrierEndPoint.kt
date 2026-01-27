@@ -24,8 +24,10 @@ import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.DataTableau
+import remocra.data.DestinataireData
 import remocra.data.ModeleCourrierData
 import remocra.data.Params
+import remocra.data.courrier.form.CourrierData
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
@@ -243,4 +245,33 @@ class CourrierEndPoint : AbstractEndpoint() {
             Paths.get(document.documentRepertoire, document.documentNomFichier),
         )
     }
+
+    @POST
+    @Path("/create")
+    @RequireDroits([Droit.COURRIER_C])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun createCourrier(
+        courrierWithDestinataires: CourrierWithDestinataire,
+    ): Response {
+        return createCourrierUseCase.execute(
+            securityContext.userInfo,
+            CourrierData(
+                courrierId = UUID.randomUUID(),
+                documentId = UUID.randomUUID(),
+                modeleCourrierId = courrierWithDestinataires.modeleCourrierId,
+                nomDocumentTmp = courrierWithDestinataires.nomDocument,
+                listeDestinataire = courrierWithDestinataires.listeDestinataire,
+                courrierReference = courrierWithDestinataires.courrierReference,
+                codeThematique = courrierWithDestinataires.codeThematique,
+            ),
+        ).wrap()
+    }
+
+    data class CourrierWithDestinataire(
+        val modeleCourrierId: UUID,
+        val nomDocument: String,
+        val listeDestinataire: Set<DestinataireData>,
+        val courrierReference: String,
+        val codeThematique: String,
+    )
 }

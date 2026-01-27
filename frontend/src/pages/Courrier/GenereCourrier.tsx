@@ -156,7 +156,7 @@ const ListDestinataire = ({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             modeleCourrierId: modeleCourrierId,
-            nomDocument: urlCourrier.split("courrierName=")[1],
+            nomDocument: urlCourrier.split("courrierPath=")[1],
             listeDestinataire: listeDestinataire,
             courrierReference: courrierReference,
             codeThematique: thematique,

@@ -9,7 +9,7 @@ import java.util.UUID
 data class DestinataireData(
     val destinataireId: UUID,
     val typeDestinataire: String,
-    val nomDestinataire: String,
+    val nomDestinataire: String?,
     val emailDestinataire: String,
     val fonctionDestinataire: String?,
 )
