@@ -1,5 +1,5 @@
 import { ReactNode, MutableRefObject } from "react";
-import { Button, Row, Col } from "react-bootstrap";
+import { Button, Row, Col, Dropdown } from "react-bootstrap";
 import classnames from "classnames";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
@@ -236,6 +236,8 @@ export const ActionButton = ({
             return <SimpleModalButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.EDIT_MODAL:
             return <EditModalButtonPrivate _button={_button} row={row} />;
+          case TYPE_BUTTON.DROPDOWN:
+            return <DropdownButtonPrivate _button={_button} row={row} />;
           case TYPE_BUTTON.UPDATE:
             return (
               <TableActionColumn
@@ -303,6 +305,7 @@ export const ActionButton = ({
 export type ButtonType = TableActionButtonType & {
   route?: (param: any) => string;
   type: TYPE_BUTTON;
+  children?: Array<ButtonType>;
 };
 
 export enum TYPE_BUTTON {
@@ -314,6 +317,7 @@ export enum TYPE_BUTTON {
   LINK,
   BUTTON,
   EDIT_MODAL,
+  DROPDOWN,
 }
 
 type DeleteButtonType = { row: any; _button: ButtonType };
@@ -401,5 +405,95 @@ const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
       textEnable={_button.textEnable ?? "Voir plus"}
       icon={_button.icon ?? <IconClose />}
     />
+  );
+};
+
+type DropdownButtonType = { row: any; _button: ButtonType };
+const DropdownButtonPrivate = ({ row, _button }: DropdownButtonType) => {
+  const isHidden = _button.hide ? _button.hide(row) : false;
+  if (isHidden) {
+    return null;
+  }
+
+  const items = (_button.children ?? []).filter((child) =>
+    child.hide ? !child.hide(row) : true,
+  );
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <Col xs={1}>
+      <Dropdown align="end">
+        <TooltipCustom
+          tooltipText={_button.textEnable}
+          tooltipId={`dropdown-${row.value}`}
+        >
+          <Dropdown.Toggle
+            variant="link"
+            className={classnames(
+              "p-0 m-0",
+              "text-decoration-none",
+              _button.classEnable
+                ? `text-${_button.classEnable}`
+                : "text-primary",
+            )}
+          >
+            {_button.icon ?? <IconSee />}
+          </Dropdown.Toggle>
+        </TooltipCustom>
+        <Dropdown.Menu>
+          {items.map((child, idx) => {
+            const disabled = child.disable ? child.disable(row) : false;
+            const key = `${row.value}-child-${idx}`;
+            const label = child.textEnable ?? "Action";
+            const icon = child.icon;
+
+            if (child.type === TYPE_BUTTON.LINK) {
+              const pathname = child.route?.(row.value);
+              return (
+                <Dropdown.Item
+                  as="span"
+                  key={key}
+                  className={classnames(disabled && "disabled")}
+                >
+                  <CustomLinkButton
+                    variant="link"
+                    className={classnames(
+                      "p-0 m-0",
+                      disabled ? "text-muted" : "",
+                    )}
+                    disabled={disabled}
+                    pathname={pathname ?? "#"}
+                    onClick={() => child.onClick?.(row.value, row.original)}
+                    state={child.state}
+                    search={child.search?.(row) ?? undefined}
+                  >
+                    {icon}&nbsp;{label}
+                  </CustomLinkButton>
+                </Dropdown.Item>
+              );
+            }
+
+            return (
+              <Dropdown.Item
+                key={key}
+                as="button"
+                className={classnames(
+                  "d-flex align-items-center",
+                  disabled && "disabled",
+                )}
+                disabled={disabled}
+                onClick={() => child.onClick?.(row.value, row.original)}
+              >
+                {icon}
+                <span className="ms-2">{label}</span>
+              </Dropdown.Item>
+            );
+          })}
+        </Dropdown.Menu>
+      </Dropdown>
+    </Col>
   );
 };
