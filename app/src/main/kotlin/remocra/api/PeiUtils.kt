@@ -21,15 +21,15 @@ object PeiUtils {
     }
 
     fun isServicePublicDECI(organisme: OrganismeIdType): Boolean {
-        return GlobalConstants.COMMUNE.equals(organisme.typeOrganisme, true) || GlobalConstants.EPCI.equals(organisme.typeOrganisme, true)
+        return GlobalConstants.TYPE_ORGANISME_COMMUNE.equals(organisme.typeOrganisme, true) || GlobalConstants.TYPE_ORGANISME_EPCI.equals(organisme.typeOrganisme, true)
     }
 
     fun isMaintenanceDECI(organisme: OrganismeIdType): Boolean {
         return Stream.of(
-            GlobalConstants.SERVICE_EAUX,
-            GlobalConstants.PRESTATAIRE_TECHNIQUE,
-            GlobalConstants.COMMUNE,
-            GlobalConstants.EPCI,
+            GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX,
+            GlobalConstants.TYPE_ORGANISME_PRESTATAIRE_TECHNIQUE,
+            GlobalConstants.TYPE_ORGANISME_COMMUNE,
+            GlobalConstants.TYPE_ORGANISME_EPCI,
         )
             .anyMatch { it.equals(organisme.typeOrganisme, true) }
     }
@@ -70,7 +70,7 @@ object PeiUtils {
      * @return boolean
      */
     fun isServiceEaux(peiServiceEauxId: UUID?, organisme: OrganismeIdType): Boolean {
-        return peiServiceEauxId != null && peiServiceEauxId == organisme.idOrganisme && GlobalConstants.SERVICE_EAUX.equals(organisme.typeOrganisme, true)
+        return peiServiceEauxId != null && peiServiceEauxId == organisme.idOrganisme && GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX.equals(organisme.typeOrganisme, true)
     }
 
     /**

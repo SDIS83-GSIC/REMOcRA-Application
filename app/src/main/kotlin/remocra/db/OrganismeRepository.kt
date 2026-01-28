@@ -43,9 +43,9 @@ import kotlin.math.absoluteValue
 class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
     companion object {
-        val conditionAutoriteDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries))
-        val conditionServiceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries))
-        val conditionMaintenanceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries))
+        val conditionAutoriteDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeAutoriteDeci.entries.map { it.valeurConstante }))
+        val conditionServiceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeServicePublicDeci.entries.map { it.valeurConstante }))
+        val conditionMaintenanceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries.map { it.valeurConstante }))
     }
 
     fun getAll(codeTypeOrganisme: String?, limit: Int?, offset: Int?): Collection<OrganismeComplet> =
@@ -94,7 +94,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getMaintenanceDeciForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(conditionMaintenanceDeci)
 
     fun getServiceEauForSelect(): List<IdCodeLibelleData> =
-        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.eq(GlobalConstants.SERVICE_EAUX)))
+        getIdLibelleByCondition(DSL.condition(TYPE_ORGANISME.CODE.eq(GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX)))
 
     private fun getIdLibelleByCondition(condition: Condition): List<IdCodeLibelleData> =
         dsl.select(ORGANISME.ID.`as`("id"), ORGANISME.CODE.`as`("code"), ORGANISME.LIBELLE.`as`("libelle"))

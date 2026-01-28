@@ -5,22 +5,18 @@ import java.nio.file.Path
 object GlobalConstants {
     const val UTILISATEUR_SYSTEME_USERNAME = "UTILISATEUR_SYSTEME"
 
-    /** Type prédéfini pour un organisme de type "service des eaux"  */
-    const val SERVICE_EAUX: String = "SERVICE_EAUX"
-
-    /** Type prédéfini pour un organisme de type "prestataire technique"  */
-    const val PRESTATAIRE_TECHNIQUE: String = "PRESTATAIRE_TECHNIQUE"
-
-    /** Type prédéfini pour un organisme de type "commune  */
-    const val COMMUNE: String = "COMMUNE"
-
-    /** Type prédéfini pour un organisme de type "EPCI"  */
-    const val EPCI: String = "EPCI"
-
+    /**
+     * Types d'organismes protégés
+     */
+    const val TYPE_ORGANISME_SERVICE_EAUX: String = "SERVICE_EAUX"
+    const val TYPE_ORGANISME_PRESTATAIRE_TECHNIQUE: String = "PRESTATAIRE_TECHNIQUE"
+    const val TYPE_ORGANISME_EPCI: String = "EPCI"
     const val TYPE_ORGANISME_COMMUNE = "COMMUNE"
     const val TYPE_ORGANISME_GROUPEMENT = "GROUPEMENT"
     const val TYPE_ORGANISME_CIS = "CIS"
     const val TYPE_ORGANISME_CASERNE = "CASERNE"
+    const val TYPE_ORGANISME_AUTRE_SERVICE_PUBLIC_DECI = "AUTRE_SERVICE_PUBLIC_DECI"
+    const val TYPE_ORGANISME_PREFECTURE: String = "PREFECTURE"
 
     // Distance maximale entre 2 BI pour qu'il puisse y avoir jumelage
     const val DISTANCE_MAXIMALE_JUMELAGE = 25
@@ -154,6 +150,7 @@ object GlobalConstants {
     const val IT_NOTIF_AVANT_DEBUT: String = "IT_NOTIF_AVANT_DEBUT"
     const val IT_NOTIF_AVANT_FIN: String = "IT_NOTIF_AVANT_FIN"
     const val IT_NOTIF_RESTE_INDISPO: String = "IT_NOTIF_RESTE_INDISPO"
+    const val CONTACT_ROLE_RAPPORT_POST_ROP = "RAPPORT_POST_ROP"
 
     const val SCHEMA_ENTREPOT_SIG: String = "ENTREPOTSIG"
 

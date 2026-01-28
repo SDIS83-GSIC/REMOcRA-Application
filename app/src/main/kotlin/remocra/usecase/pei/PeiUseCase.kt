@@ -151,9 +151,9 @@ class PeiUseCase : AbstractUseCase() {
             listAutoriteDeci = organismeRepository
                 .getAutoriteDeciPei(geom.toGeomFromText(), toleranceCommune).onEach {
                     when (it.codeTypeOrganisme.uppercase()) {
-                        TypeAutoriteDeci.COMMUNE.name.uppercase() -> it.libelle = "Maire (${it.libelle})"
-                        TypeAutoriteDeci.PREFECTURE.name.uppercase() -> it.libelle = "Préfet (${it.libelle})"
-                        TypeAutoriteDeci.EPCI.name.uppercase() -> it.libelle = "Président (${it.libelle})"
+                        TypeAutoriteDeci.COMMUNE.valeurConstante.uppercase() -> it.libelle = "Maire (${it.libelle})"
+                        TypeAutoriteDeci.PREFECTURE.valeurConstante.uppercase() -> it.libelle = "Préfet (${it.libelle})"
+                        TypeAutoriteDeci.EPCI.valeurConstante.uppercase() -> it.libelle = "Président (${it.libelle})"
                     }
                 }
 

@@ -290,7 +290,7 @@ class PeiRepository
         val autoriteDeciLibelleField = DSL
             .`when`(
                 TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.COMMUNE.name.uppercase()),
+                    .eq(TypeAutoriteDeci.COMMUNE.valeurConstante.uppercase()),
                 DSL.concat(
                     DSL.value("Maire ("),
                     autoriteDeciAlias.field(ORGANISME.LIBELLE),
@@ -299,7 +299,7 @@ class PeiRepository
             )
             .`when`(
                 TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.PREFECTURE.name.uppercase()),
+                    .eq(TypeAutoriteDeci.PREFECTURE.valeurConstante.uppercase()),
                 DSL.concat(
                     DSL.value("Préfet ("),
                     autoriteDeciAlias.field(ORGANISME.LIBELLE),
@@ -308,7 +308,7 @@ class PeiRepository
             )
             .`when`(
                 TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.EPCI.name.uppercase()),
+                    .eq(TypeAutoriteDeci.EPCI.valeurConstante.uppercase()),
                 DSL.concat(
                     DSL.value("Président ("),
                     autoriteDeciAlias.field(ORGANISME.LIBELLE),
