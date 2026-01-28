@@ -312,6 +312,8 @@ constructor(
 
     fun getTypesCanalisation() = get().mapTypeCanalisation
 
+    fun getTypesOrganisme() = get().mapTypeOrganisme
+
     fun getMateriaux() = get().mapMateriau
 
     /**

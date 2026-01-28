@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import jakarta.ws.rs.core.UriInfo
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
@@ -33,6 +34,7 @@ import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.GenereCarteTourneeUseCase
+import remocra.usecase.tournee.GenererRapportPostRopUseCase
 import remocra.usecase.tournee.RelancerIntegrationTourneeIncomingUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
 import remocra.usecase.tournee.UpdateTourneeUseCase
@@ -82,10 +84,16 @@ class TourneeEndPoint : AbstractEndpoint() {
     lateinit var relancerIntegrationTourneeIncomingUseCase: RelancerIntegrationTourneeIncomingUseCase
 
     @Inject
+    lateinit var genererRapportPostRopUseCase: GenererRapportPostRopUseCase
+
+    @Inject
     lateinit var objectMapper: ObjectMapper
 
     @Context
     lateinit var securityContext: SecurityContext
+
+    @Context
+    lateinit var uriInfo: UriInfo
 
     @GET
     @Path("/")
@@ -109,7 +117,8 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun getTourneeForAccesRapide(
         @QueryParam("motifLibelle") motifLibelle: String,
     ): Response =
-        Response.ok().entity(tourneeRepository.getTourneeIdLibelleByMotif(securityContext.userInfo, motifLibelle)).build()
+        Response.ok().entity(tourneeRepository.getTourneeIdLibelleByMotif(securityContext.userInfo, motifLibelle))
+            .build()
 
     @GET
     @Path("/actives")
@@ -175,7 +184,8 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/updateTournee")
     @RequireDroits([Droit.TOURNEE_A])
     fun updateTournee(tourneeInput: TourneeInput): Response {
-        val tourneeToUpdate = tourneeRepository.getTourneeById(tourneeInput.tourneeId!!).copy(tourneeLibelle = tourneeInput.tourneeLibelle)
+        val tourneeToUpdate = tourneeRepository.getTourneeById(tourneeInput.tourneeId!!)
+            .copy(tourneeLibelle = tourneeInput.tourneeLibelle)
         return updateTourneeUseCase.execute(userInfo = securityContext.userInfo, element = tourneeToUpdate).wrap()
     }
 
@@ -210,7 +220,8 @@ class TourneeEndPoint : AbstractEndpoint() {
             DataToSendTourneePei(
                 tourneeLibelle = tourneeRepository.getTourneeLibelleById(tourneeId = tourneeId),
                 organismeLibelle = tourneeRepository.getTourneeOrganismeLibelleById(tourneeId = tourneeId),
-                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId, listePeiId).sortedBy { it.ordre },
+                listPeiTournee = tourneeRepository.getAllPeiByTourneeIdForDnD(tourneeId = tourneeId, listePeiId)
+                    .sortedBy { it.ordre },
             ),
         ).build()
 
@@ -277,7 +288,12 @@ class TourneeEndPoint : AbstractEndpoint() {
     @Path("/{tourneePei}/geometrie")
     @RequireDroits([Droit.TOURNEE_R])
     fun getGeometrieById(@PathParam("tourneePei") tourneePei: UUID): Response {
-        return Response.ok(tourneeRepository.getGeometrieTournee(tourneePei, securityContext.userInfo.zoneCompetence?.zoneIntegrationId)).build()
+        return Response.ok(
+            tourneeRepository.getGeometrieTournee(
+                tourneePei,
+                securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
+            ),
+        ).build()
     }
 
     @GET
@@ -306,6 +322,29 @@ class TourneeEndPoint : AbstractEndpoint() {
     fun relancerIntegrationTournee(
         @PathParam("tourneeId") tourneeId: UUID,
     ): Response {
-        return Response.ok().entity(relancerIntegrationTourneeIncomingUseCase.execute(tourneeId, securityContext.userInfo)).build()
+        return Response.ok()
+            .entity(relancerIntegrationTourneeIncomingUseCase.execute(tourneeId, securityContext.userInfo)).build()
+    }
+
+    @POST
+    @Path("/raz-mes-rop")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RequireDroits([Droit.RAZ_MES_ROP_E])
+    fun razMesRop(): Response {
+        tourneeRepository.razMesRop(securityContext.userInfo.affiliatedOrganismeIds!!)
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/generer-rapport-post-rop/{tourneeId}")
+    @RequireDroits([Droit.ADMIN_ROP_A])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun genererRapportPostRop(
+        @PathParam("tourneeId") tourneeId: UUID,
+    ): Response {
+        return genererRapportPostRopUseCase.execute(
+            tourneeId,
+            userInfo = securityContext.userInfo,
+        ).wrap()
     }
 }

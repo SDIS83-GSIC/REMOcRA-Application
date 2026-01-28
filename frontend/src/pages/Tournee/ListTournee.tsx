@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
@@ -10,10 +10,12 @@ import SelectEnumOption from "../../components/Form/SelectEnumOption.tsx";
 import {
   IconCentPourcent,
   IconDesaffecter,
+  IconDocument,
   IconeGenereCarteTournee,
   IconImport,
   IconList,
   IconLocation,
+  IconRotateLeft,
   IconSortList,
   IconTournee,
   IconZeroPourcent,
@@ -31,13 +33,14 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../components/Table/TableActionColumn.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
-import url from "../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
@@ -46,7 +49,7 @@ import { filterValuesToVariable } from "./FilterTournee.tsx";
 const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
-  const { error: errorToast } = useToastContext();
+  const { success: successToast, error: errorToast } = useToastContext();
   const { data: incomingTournee } = useGet(url`/api/tournee/incoming/`, {});
 
   const parametreGenerationCarteTournee = useGet(
@@ -57,6 +60,22 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     }}`,
     {},
   )?.data?.[PARAMETRE.PEI_GENERATION_CARTE_TOURNEE].parametreValeur;
+
+  const canGenererRapportPostRop =
+    useGet(url`/api/courriers/modeles/exists-rapport-post-rop`, {})?.data ===
+      true && hasDroit(user, TYPE_DROIT.ADMIN_ROP_A);
+
+  /**
+   * Constante permettant de savoir le nombre d'actions de génération de documents activées
+   * (génération de la carte de la tournée et/ou du rapport post ROP pour l'instant)
+   * Le libellé diffère, et on n'affiche un sous-menu que s'il y a plus d'une action possible
+   */
+  const nbActionsGeneration =
+    (canGenererRapportPostRop ? 1 : 0) +
+    (parametreGenerationCarteTournee === "true" ? 1 : 0);
+
+  // Re-mount the QueryTable to trigger a fresh fetch when needed
+  const [tableKey, setTableKey] = useState(0);
 
   const column: Array<columnType> = [
     {
@@ -114,6 +133,22 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       Filter: (
         <SelectEnumOption options={DELTA_DATE} name={"tourneeDeltaDate"} />
       ),
+    },
+    {
+      Header: "Réalisée",
+      accessor: "tourneeRealisee",
+      Cell: (value) => {
+        return (
+          <div className="text-center">
+            <Form.Check
+              type="checkbox"
+              disabled
+              checked={value.value === true}
+            />
+          </div>
+        );
+      },
+      Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeRealisee"} />,
     },
   ];
 
@@ -298,60 +333,119 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     textEnable: "Localiser",
     classEnable: "primary",
   });
-  if (parametreGenerationCarteTournee === "true") {
-    listeButton.push({
-      row: (row) => {
-        return row;
-      },
-      onClick: async (tourneeId) => {
-        try {
-          const response = await fetch(
-            url`/api/tournee/genere-carte-tournee/${tourneeId}`,
-          );
-          if (!response.ok) {
-            if (response.status === 500) {
-              const errorText = await response.text();
-              errorToast(`${errorText}`);
-            }
-            return;
-          }
 
-          // Vérifie le type de contenu
-          const contentType = response.headers.get("Content-Type");
-          if (!contentType || !contentType.includes("application/pdf")) {
+  // Bouton génération de la carte de la tournée, activé sur paramétrage
+  const carteTourneeButton = {
+    row: (row) => row,
+    type: TYPE_BUTTON.BUTTON,
+    icon: <IconeGenereCarteTournee />,
+    textEnable:
+      nbActionsGeneration > 1
+        ? "Carte de la tournée"
+        : "Générer la carte de la tournée",
+    classEnable: "success",
+    onClick: async (tourneeId) => {
+      try {
+        const response = await fetch(
+          url`/api/tournee/genere-carte-tournee/${tourneeId}`,
+        );
+        if (!response.ok) {
+          if (response.status === 500) {
             const errorText = await response.text();
-            errorToast(errorText || "Le fichier retourné n'est pas un PDF.");
-            return;
+            errorToast(`${errorText}`);
           }
-
-          const blob = await response.blob();
-          // Récupère le nom du fichier depuis l'en-tête Content-Disposition
-          const disposition = response.headers.get("Content-Disposition");
-          let filename = "carte-tournee.pdf";
-          if (disposition && disposition.includes("filename=")) {
-            filename = disposition
-              .split("filename=")[1]
-              .split(";")[0]
-              .replace(/['"]/g, "")
-              .trim();
-          }
-          const urlBlob = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = urlBlob;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          window.URL.revokeObjectURL(urlBlob);
-        } catch (error) {
-          errorToast("Une erreur est survenue");
+          return;
         }
-      },
-      type: TYPE_BUTTON.BUTTON,
-      icon: <IconeGenereCarteTournee />,
-      textEnable: "Générer Carte de la tournée",
+
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType || !contentType.includes("application/pdf")) {
+          const errorText = await response.text();
+          errorToast(errorText || "Le fichier retourné n'est pas un PDF.");
+          return;
+        }
+
+        const blob = await response.blob();
+        const disposition = response.headers.get("Content-Disposition");
+        let filename = "carte-tournee.pdf";
+        if (disposition && disposition.includes("filename=")) {
+          filename = disposition
+            .split("filename=")[1]
+            .split(";")[0]
+            .replace(/["']/g, "")
+            .trim();
+        }
+        const urlBlob = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = urlBlob;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(urlBlob);
+      } catch (error) {
+        errorToast("Une erreur est survenue");
+      }
+    },
+  };
+
+  // Bouton génération du rapport post ROP, activé si le modèle de courrier correspondant existe
+  const rapportPostRopButton = {
+    row: (row) => row,
+    type: TYPE_BUTTON.BUTTON,
+    icon: <IconDocument />,
+    textEnable:
+      nbActionsGeneration > 1
+        ? "Rapport post ROP"
+        : "Générer le rapport post ROP",
+    textDisable:
+      "La ROP a été réalisée, impossible de générer le rapport post ROP.",
+    disable: (v) => {
+      return v.original.tourneePourcentageAvancement === 100;
+    },
+    classEnable: "success",
+    onClick: async (tourneeId) => {
+      try {
+        const response = await fetch(
+          url`/api/tournee/generer-rapport-post-rop/${tourneeId}`,
+          getFetchOptions({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+        if (!response.ok) {
+          if (response.status === 500) {
+            const errorText = await response.text();
+            errorToast(`${errorText}`);
+          }
+          return;
+        } else {
+          successToast(
+            "Rapport post ROP été généré avec succès, notification effectuée.",
+          );
+          // Rafraîchit le tableau en re-montant le composant
+          setTableKey((k) => k + 1);
+        }
+      } catch (error) {
+        errorToast("Une erreur est survenue");
+      }
+    },
+  };
+
+  if (canGenererRapportPostRop && parametreGenerationCarteTournee === "true") {
+    // Regroupe les actions de génération dans un sous-menu
+    listeButton.push({
+      row: (row) => row,
+      type: TYPE_BUTTON.DROPDOWN,
+      icon: <IconDocument />,
+      textEnable: "Générer un document",
       classEnable: "success",
+      children: [carteTourneeButton, rapportPostRopButton],
+      enabled: (row) => row.original.tourneeDateDerniereRealisation === null,
     });
+  } else if (parametreGenerationCarteTournee === "true") {
+    listeButton.push(carteTourneeButton);
+  } else if (canGenererRapportPostRop) {
+    listeButton.push(rapportPostRopButton);
   }
 
   if (incomingTournee && incomingTournee.length > 0) {
@@ -389,12 +483,56 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           title={"Liste des tournées"}
           displayReturnButton={peiId == null}
           right={
-            hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
-              <CreateButton
-                href={URLS.CREATE_TOURNEE}
-                title={"Ajouter une tournée"}
-              />
-            )
+            <Row>
+              {/* Le super admin n'ayant pas d'organisme, on n'affiche pas ce bouton pour lui (sinon toutes les tournées seraient concernées) */}
+              {user?.isSuperAdmin !== true &&
+                hasDroit(user, TYPE_DROIT.RAZ_MES_ROP_E) && (
+                  <Col>
+                    <TooltipCustom
+                      tooltipText={
+                        "Remettre à zéro l’avancement des mes tournées de ROP"
+                      }
+                      tooltipId={"resetTourneeProgress"}
+                    >
+                      <Button
+                        name={"tool"}
+                        disabled={false}
+                        onClick={async () => {
+                          (
+                            await fetch(
+                              url`/api/tournee/raz-mes-rop`,
+                              getFetchOptions({
+                                method: "POST",
+                              }),
+                            )
+                          )
+                            .text()
+                            .then(() => {
+                              successToast("Opération effectuée avec succès");
+                            })
+                            .catch((reason: string) => {
+                              errorToast(reason);
+                            });
+                        }}
+                        id={"resetTourneeProgress"}
+                        value={"resetTourneeProgress"}
+                        variant={"outline-primary"}
+                        className="m-0"
+                      >
+                        <IconRotateLeft />
+                      </Button>
+                    </TooltipCustom>
+                  </Col>
+                )}
+              {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
+                <Col>
+                  <CreateButton
+                    href={URLS.CREATE_TOURNEE}
+                    title={"Ajouter une tournée"}
+                  />
+                </Col>
+              )}
+            </Row>
           }
         />
       </Container>
@@ -402,6 +540,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         {
           //pas besoin de container il est dans le composant QueryTableWithListingPei
           <QueryTableWithListingPei
+            key={tableKey}
             column={column}
             query={url`/api/tournee`}
             idName={"TourneeTable"}

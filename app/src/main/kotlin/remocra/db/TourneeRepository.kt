@@ -98,6 +98,7 @@ class TourneeRepository
                 TOURNEE.ACTIF,
                 peiCounterCte.field("TOURNEE_NB_PEI"),
                 nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
+                TOURNEE.DATE_DERNIERE_REALISATION,
             )
             .from(TOURNEE)
             .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
@@ -268,6 +269,7 @@ class TourneeRepository
         val tourneeReservationUtilisateurId: UUID?,
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDateSynchronisation: ZonedDateTime?,
+        val tourneeDateDerniereRealisation: ZonedDateTime?,
         val tourneeActif: Boolean,
         val tourneeNbPei: Int,
         var tourneeNextRopDate: ZonedDateTime?,
@@ -280,6 +282,7 @@ class TourneeRepository
         val tourneeOrganismeLibelle: String?,
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDeltaDate: String?,
+        val tourneeRealisee: Boolean?,
         val peiId: UUID?,
         val tourneeActif: Boolean?,
     ) {
@@ -300,6 +303,13 @@ class TourneeRepository
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
                     tourneeActif?.let { DSL.and(TOURNEE.ACTIF.eq(it)) },
+                    tourneeRealisee?.let {
+                        DSL.and(
+                            if (tourneeRealisee) {
+                                TOURNEE.POURCENTAGE_AVANCEMENT.eq(100)
+                            } else { TOURNEE.POURCENTAGE_AVANCEMENT.lt(100).or(TOURNEE.POURCENTAGE_AVANCEMENT.isNull) },
+                        )
+                    },
                 ),
             )
     }
@@ -806,6 +816,27 @@ class TourneeRepository
             .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
             .fetchSingleInto()
+
+    /**
+     * Remet à 0 l'avancement des tournées rattachées aux organismes passés en paramètre.
+     */
+    fun razMesRop(affiliatedOrganismeIds: Set<UUID>) {
+        dsl.update(TOURNEE)
+            .set(TOURNEE.POURCENTAGE_AVANCEMENT, 0)
+            .where(TOURNEE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
+            .execute()
+    }
+
+    /**
+     * Met à jour la date de dernière réalisation et le pourcentage d'avancement d'une tournée avec l'instant actuel.
+     */
+    fun updateDateDerniereRealisationRop(tourneeId: UUID) {
+        dsl.update(TOURNEE)
+            .set(TOURNEE.DATE_DERNIERE_REALISATION, dateUtils.now())
+            .set(TOURNEE.POURCENTAGE_AVANCEMENT, 100)
+            .where(TOURNEE.ID.eq(tourneeId))
+            .execute()
+    }
 }
 
 data class TourneeShortData(

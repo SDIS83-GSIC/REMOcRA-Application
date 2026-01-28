@@ -404,10 +404,15 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                 .and(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(modeleCourrierId)),
         )
 
+    fun existsRapportPostRop(): Boolean = dsl.fetchExists(
+        dsl.select(MODELE_COURRIER.ID)
+            .from(MODELE_COURRIER)
+            .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)),
+    )
+
     /**
-     * Retourne l'ID du modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
+     * Retourne le modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
      */
-    fun getIdRapportPostRop(): UUID? = dsl.select(MODELE_COURRIER.ID)
-        .from(MODELE_COURRIER)
+    fun getRapportPostRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
         .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)).fetchOneInto()
 }

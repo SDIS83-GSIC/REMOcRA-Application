@@ -84,6 +84,7 @@ export const IconStyle = () => <i className="fi fi-br-palette" />;
 export const IconPrint = () => <i className="fi fi-br-print" />;
 
 export const IconRotate = () => <i className="fi fi-br-group-arrows-rotate" />;
+export const IconRotateLeft = () => <i className="fi fi-rr-rotate-left" />;
 
 export const IconCloseIndisponibiliteTemporaire = () => (
   <i className="fi fi-bs-hourglass-end" />
@@ -153,3 +154,5 @@ export const IconRegenereApi = () => <i className="fi fi-ss-key" />;
 export const IconeGenereCarteTournee = () => (
   <i className="fi fi-rr-map-point" />
 );
+
+export const IconPdf = () => <i className="fi fi-rr-file-pdf" />;

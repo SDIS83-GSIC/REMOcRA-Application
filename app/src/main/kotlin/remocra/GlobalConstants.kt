@@ -159,4 +159,7 @@ object GlobalConstants {
     const val DELIMITER_CSV = ';'
 
     const val COUCHE_TOURNEE = "remocra:TOURNEE"
+
+    // Code des Thématiques protégées
+    const val THEMATIQUE_POINT_EAU = "POINT_EAU"
 }

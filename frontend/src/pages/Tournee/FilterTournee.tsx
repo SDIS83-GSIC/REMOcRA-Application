@@ -5,6 +5,7 @@ type filterTournee = {
   tourneeDeltaDate?: string;
   peiId?: string;
   tourneeActif?: string;
+  tourneeRealisee?: string;
 };
 
 export const filterValuesToVariable = ({
@@ -14,6 +15,7 @@ export const filterValuesToVariable = ({
   tourneeDeltaDate,
   peiId,
   tourneeActif,
+  tourneeRealisee,
 }: filterTournee) => {
   const filter: filterTournee = {};
 
@@ -42,6 +44,9 @@ export const filterValuesToVariable = ({
 
   if (tourneeActif?.trim().length > 0) {
     filter.tourneeActif = tourneeActif;
+  }
+  if (tourneeRealisee?.trim().length > 0) {
+    filter.tourneeRealisee = tourneeRealisee;
   }
 
   return filter;

@@ -10,7 +10,6 @@ import remocra.db.TourneeRepository
 import remocra.db.TourneeRepository.Filter
 import remocra.db.TourneeRepository.Sort
 import remocra.usecase.AbstractUseCase
-import kotlin.collections.sortBy
 
 class FetchTourneeDataUseCase @Inject constructor(
     private val tourneeRepository: TourneeRepository,
@@ -50,6 +49,18 @@ class FetchTourneeDataUseCase @Inject constructor(
                     it.tourneeNextRopDate == null ||
                         it.tourneeNextRopDate!!.isAfter(today)
                 }
+            }
+        }
+        val filterTourneeRealisee = params.filterBy?.tourneeRealisee
+        filteredList = when (filterTourneeRealisee) {
+            true -> {
+                listTourneeComplete.filter { it.tourneePourcentageAvancement == 100 }
+            }
+            false -> {
+                listTourneeComplete.filter { it.tourneePourcentageAvancement != null && it.tourneePourcentageAvancement < 100 }
+            }
+            else -> {
+                listTourneeComplete
             }
         }
 

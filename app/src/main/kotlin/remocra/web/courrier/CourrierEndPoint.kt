@@ -283,4 +283,12 @@ class CourrierEndPoint : AbstractEndpoint() {
     fun getTypesCourrier(): Response {
         return Response.ok(TypeCourrier.entries).build()
     }
+
+    @GET
+    @Path("/modeles/exists-rapport-post-rop")
+    @RequireDroits([Droit.TOURNEE_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun existsRapportPostRop(): Response {
+        return Response.ok(modeleCourrierRepository.existsRapportPostRop()).build()
+    }
 }

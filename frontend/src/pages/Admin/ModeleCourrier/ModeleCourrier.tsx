@@ -286,8 +286,7 @@ const ModeleCourrier = () => {
                 }}
                 defaultValue={typesCourrier?.find(
                   (type: IdCodeLibelleType) =>
-                    type.id ===
-                    values.modeleCourrierType,
+                    type.id === values.modeleCourrierType,
                 )}
                 required={false}
                 isClearable={true}

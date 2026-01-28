@@ -24,7 +24,7 @@ import remocra.utils.DateUtils
 import remocra.utils.RequestUtils
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.UUID
 
 /**
@@ -64,11 +64,33 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         parametreCourrierInput: ParametreCourrierInput,
         userInfo: WrappedUserInfo,
         uriBuilder: UriBuilder,
-    ): UrlCourrier? {
+    ): UrlCourrier {
+        val pdfPath = executeInternal(parametreCourrierInput, userInfo)
+
+        return UrlCourrier(
+            url = uriBuilder
+                .queryParam("courrierPath", pdfPath.fileName)
+                .build()
+                .toString(),
+            modeleCourrierId = parametreCourrierInput.modeleCourrierId,
+            courrierReference = parametreCourrierInput.courrierReference,
+        )
+    }
+
+    /**
+     * Fonction interne de génération de courrier
+     * Retourne un [Path] vers le fichier PDF généré
+     *
+     * N'utiliser que pour automatiser la génération de courriers, ne pas exposer directement via une API
+     *
+     */
+    fun executeInternal(
+        parametreCourrierInput: ParametreCourrierInput,
+        userInfo: WrappedUserInfo,
+    ): Path {
         checkGroupeFonctionnalites(userInfo, parametreCourrierInput.modeleCourrierId)
 
         var mapParameters: MutableMap<String, Any?>? = mutableMapOf()
-
         val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parametreCourrierInput.modeleCourrierId)
 
         transactionManager.transactionResult {
@@ -95,7 +117,8 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         }
 
         // on ajoute la date
-        mapParameters!!["dateGeneration"] = dateUtils.format(dateUtils.now(), DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY)
+        mapParameters!!["dateGeneration"] =
+            dateUtils.format(dateUtils.now(), DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY)
 
         // et le nom de l'utilisateur connecté qui génére le courrier
         mapParameters!!["userGenerationCourrier"] = "${userInfo.prenom} ${userInfo.nom}"
@@ -111,7 +134,9 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
 
         val mapTemp = mapParameters
         mapTemp!!.forEach {
-            (it.value as? JSON)?.let { it1 -> mapTemp[it.key] = objectMapper.readValue<List<Map<String, Any>>>(it1.data()) }
+            (it.value as? JSON)?.let { it1 ->
+                mapTemp[it.key] = objectMapper.readValue<List<Map<String, Any>>>(it1.data())
+            }
         }
 
         mapParameters = mapTemp
@@ -125,22 +150,15 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         // On s'assure que le répertoire existe, sinon on le crée
         documentUtils.ensureDirectory(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
 
-        val pdfFile = GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve("$nomFichier.pdf").toFile()
+        val pdfPath = GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve("$nomFichier.pdf")
+        val pdfFile = pdfPath.toFile()
 
         val options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM)
 
         FileOutputStream(pdfFile).use {
             report.convert(context, options, it)
         }
-
-        return UrlCourrier(
-            url = uriBuilder
-                .queryParam("courrierPath", Paths.get("$nomFichier.pdf"))
-                .build()
-                .toString(),
-            modeleCourrierId = modeleCourrier.modeleCourrierId!!,
-            courrierReference = parametreCourrierInput.courrierReference,
-        )
+        return pdfPath
     }
 
     data class UrlCourrier(

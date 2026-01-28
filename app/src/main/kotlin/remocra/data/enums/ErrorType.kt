@@ -631,6 +631,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_MODELE_COURRIER_CODE_EXISTS(31001, "Le code du modèle de courrier doit être unique."),
     ADMIN_MODELE_COURRIER_DOCUMENT_MAIN_REPORT(31002, "Un seul document peut être le rapport principal."),
     ADMIN_MODELE_COURRIER_TYPE_EXISTS(31003, "Il existe déjà un modèle de courrier avec ce type"),
+
+    RAPPORT_POST_ROP_MODELE_INEXISTANT(31010, "Modèle de courrier pour rapport post ROP introuvable"),
+    RAPPORT_POST_ROP_NO_PEI(31011, "Aucun PEI dans la tournée"),
+    RAPPORT_POST_ROP_ERREUR_GENERATION(31012, "Erreur lors de la création du courrier pour le rapport post ROP de la tournée"),
+
     ;
 
     override fun toString(): String {
