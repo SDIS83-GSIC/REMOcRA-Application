@@ -12,6 +12,7 @@ import remocra.data.ModeleCourrierLight
 import remocra.data.ModeleCourrierParametreData
 import remocra.data.Params
 import remocra.data.enums.TypeModuleRapportCourrier
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.db.jooq.remocra.tables.pojos.LModeleCourrierGroupeFonctionnalites
@@ -199,6 +200,16 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .and(MODELE_COURRIER.ID.notEqual(modeleCourrierId)),
     )
 
+    /**
+     * Vérifie s'il existe déjà un élément avec ce *type*. En modification, on regarde si le type existe pour un autre élément que lui-même
+     */
+    fun checkTypeExists(modeleCourrierType: TypeCourrier, modeleCourrierId: UUID?) = dsl.fetchExists(
+        dsl.select(MODELE_COURRIER.TYPE)
+            .from(MODELE_COURRIER)
+            .where(MODELE_COURRIER.TYPE.eq(modeleCourrierType))
+            .and(MODELE_COURRIER.ID.notEqual(modeleCourrierId)),
+    )
+
     fun getModeleCourrier(modeleCourrierId: UUID): ModeleCourrierData =
         dsl.select(
             MODELE_COURRIER.ID,
@@ -210,6 +221,7 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.MODULE,
             MODELE_COURRIER.CORPS_EMAIL,
             MODELE_COURRIER.OBJET_EMAIL,
+            MODELE_COURRIER.TYPE,
             multiset(
                 selectDistinct(GROUPE_FONCTIONNALITES.ID)
                     .from(GROUPE_FONCTIONNALITES)
@@ -391,4 +403,11 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
                 .where(UTILISATEUR.ID.eq(utilisateurId))
                 .and(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID.eq(modeleCourrierId)),
         )
+
+    /**
+     * Retourne l'ID du modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
+     */
+    fun getIdRapportPostRop(): UUID? = dsl.select(MODELE_COURRIER.ID)
+        .from(MODELE_COURRIER)
+        .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)).fetchOneInto()
 }

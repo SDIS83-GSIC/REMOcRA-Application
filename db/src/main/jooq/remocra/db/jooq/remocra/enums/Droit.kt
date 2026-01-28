@@ -122,6 +122,8 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     ADMIN_COURRIER("ADMIN_COURRIER"),
     RISQUE_EXPRESS_A("RISQUE_EXPRESS_A"),
     CARTO_METADATA_A("CARTO_METADATA_A"),
+    RAZ_MES_ROP_E("RAZ_MES_ROP_E"),
+    ADMIN_ROP_A("ADMIN_ROP_A"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

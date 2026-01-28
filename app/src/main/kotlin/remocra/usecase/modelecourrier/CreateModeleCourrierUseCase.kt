@@ -89,6 +89,7 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     modeleCourrierCorpsEmail = element.modeleCourrierCorpsEmail,
                     modeleCourrierObjetEmail = element.modeleCourrierObjetEmail,
                     modeleCourrierDocumentId = documentId,
+                    modeleCourrierType = element.modeleCourrierType,
                 ),
             )
         }
@@ -129,6 +130,10 @@ class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
     override fun checkContraintes(userInfo: WrappedUserInfo, element: ModeleCourrierData) {
         if (modeleCourrierRepository.checkCodeExists(element.modeleCourrierCode, element.modeleCourrierId)) {
             throw RemocraResponseException(ErrorType.ADMIN_MODELE_COURRIER_CODE_EXISTS)
+        }
+
+        if (element.modeleCourrierType != null && modeleCourrierRepository.checkTypeExists(element.modeleCourrierType, element.modeleCourrierId)) {
+            throw RemocraResponseException(ErrorType.ADMIN_MODELE_COURRIER_TYPE_EXISTS)
         }
 
         requeteSqlUtils.checkContraintes(userInfo, element)

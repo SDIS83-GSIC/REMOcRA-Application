@@ -28,6 +28,7 @@ import {
 import url from "../../../module/fetch.tsx";
 import isEmptyOrNull from "../../../utils/fonctionsUtils.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
+import TypeCourrierEnum from "../../../enums/TypeCourrierEnum.tsx";
 import { createComponentModeleCourrierToRepeat } from "./SortableParametreModeleCourrier.tsx";
 
 type ModeleCourrierType = {
@@ -41,6 +42,7 @@ type ModeleCourrierType = {
   modeleCourrierCorpsEmail: string;
   listeGroupeFonctionnalitesId: string[];
   modeleCourrierModule: string;
+  modeleCourrierType: keyof typeof TypeCourrierEnum | null;
   listeModeleCourrierParametre: {
     modeleCourrierParametreLibelle: string;
     modeleCourrierParametreCode: string;
@@ -71,6 +73,7 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
   modeleCourrierDescription: data?.modeleCourrierDescription ?? null,
   modeleCourrierObjetEmail: data?.modeleCourrierObjetEmail ?? null,
   modeleCourrierCorpsEmail: data?.modeleCourrierCorpsEmail ?? null,
+  modeleCourrierType: data?.modeleCourrierType ?? null,
   listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? [],
   listeModeleCourrierParametre:
     data?.listeModeleCourrierParametre.map((e) => ({
@@ -121,6 +124,7 @@ export const prepareVariables = (values: ModeleCourrierType) => {
       modeleCourrierObjetEmail: values.modeleCourrierObjetEmail,
       modeleCourrierCorpsEmail: values.modeleCourrierCorpsEmail,
       listeGroupeFonctionnalitesId: values.listeGroupeFonctionnalitesId,
+      modeleCourrierType: values.modeleCourrierType,
       documentId: values.documentId,
       documentNomFichier: values.documentNomFichier,
       documentRepertoire: values.documentRepertoire,
@@ -151,6 +155,15 @@ const ModeleCourrier = () => {
   const modeleCourrierTypeModule = useGet(url`/api/modules/get-type-module`);
 
   const groupeFonctionnalitesState = useGet(url`/api/groupe-fonctionnalites`);
+
+  const typesCourrierState = useGet(
+    url`/api/courriers/modeles/get-types-courrier`,
+  );
+  const typesCourrier = typesCourrierState.data?.map((e: string) => ({
+    id: e,
+    code: e,
+    libelle: TypeCourrierEnum[e as keyof typeof TypeCourrierEnum],
+  }));
 
   const listeModule = modeleCourrierTypeModule.data?.map((e: string) => ({
     id: e,
@@ -196,7 +209,7 @@ const ModeleCourrier = () => {
                     Libellé
                     <TooltipCustom
                       tooltipText={"Libellé du modèle"}
-                      tooltipId={"libelle-mdoele-courrier"}
+                      tooltipId={"libelle-modele-courrier"}
                     >
                       <IconInfo />
                     </TooltipCustom>
@@ -257,6 +270,28 @@ const ModeleCourrier = () => {
                     type.id === values.modeleCourrierModule,
                 )}
                 required={true}
+              />
+            </Col>
+          </Row>
+          <Row className="mt-3">
+            <Col>
+              <SelectInput
+                name={`modeleCourrierType`}
+                label="Type de courrier"
+                options={typesCourrier ?? []}
+                getOptionValue={(t: IdCodeLibelleType) => t.id}
+                getOptionLabel={(t: IdCodeLibelleType) => t.libelle}
+                onChange={(e: IdCodeLibelleType) => {
+                  setFieldValue(`modeleCourrierType`, e.id);
+                }}
+                defaultValue={typesCourrier?.find(
+                  (type: IdCodeLibelleType) =>
+                    type.id ===
+                    values.modeleCourrierType,
+                )}
+                required={false}
+                isClearable={true}
+                tooltipText="Permet d'identifier des courriers particuliers (rapport post ROP par exemple) ; laisser ce champ vide sauf pour ces courriers."
               />
             </Col>
           </Row>

@@ -166,6 +166,8 @@ class TourneeEndPoint : AbstractEndpoint() {
                 tourneePourcentageAvancement = null,
                 tourneeReservationUtilisateurId = null,
                 tourneeDateSynchronisation = null,
+                // TODO commit ultérieur
+                tourneeDateDerniereRealisation = null,
             ),
         ).wrap()
 

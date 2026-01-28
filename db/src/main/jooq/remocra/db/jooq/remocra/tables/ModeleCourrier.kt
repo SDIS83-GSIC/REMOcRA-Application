@@ -25,6 +25,7 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.keys.L_MODELE_COURRIER_GROUPE_FONCTIONNALITES__L_MODELE_COURRIER_GROUPE_FONCTIONNALITES_MODELE_COURRIER_ID_FKE
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER_MODELE_COURRIER_CODE_KEY
@@ -144,6 +145,11 @@ open class ModeleCourrier(
      * <code>remocra.modele_courrier.modele_courrier_document_id</code>.
      */
     val DOCUMENT_ID: TableField<Record, UUID?> = createField(DSL.name("modele_courrier_document_id"), SQLDataType.UUID, this, "")
+
+    /**
+     * The column <code>remocra.modele_courrier.modele_courrier_type</code>.
+     */
+    val TYPE: TableField<Record, TypeCourrier?> = createField(DSL.name("modele_courrier_type"), SQLDataType.VARCHAR.asEnumDataType(TypeCourrier::class.java), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

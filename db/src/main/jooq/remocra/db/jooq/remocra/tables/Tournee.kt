@@ -125,6 +125,12 @@ open class Tournee(
      */
     val DATE_SYNCHRONISATION: TableField<Record, ZonedDateTime?> = createField(DSL.name("tournee_date_synchronisation"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "Date de synchronisation depuis l'application mobile", ZonedDateTimeBinding())
 
+    /**
+     * The column
+     * <code>remocra.tournee.tournee_date_derniere_realisation</code>.
+     */
+    val DATE_DERNIERE_REALISATION: TableField<Record, ZonedDateTime?> = createField(DSL.name("tournee_date_derniere_realisation"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables.pojos
 
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import java.io.Serializable
 import java.util.UUID
@@ -31,6 +32,7 @@ data class ModeleCourrier(
     val modeleCourrierCorpsEmail: String,
     val modeleCourrierObjetEmail: String,
     val modeleCourrierDocumentId: UUID?,
+    val modeleCourrierType: TypeCourrier?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -85,6 +87,13 @@ data class ModeleCourrier(
         } else if (this.modeleCourrierDocumentId != o.modeleCourrierDocumentId) {
             return false
         }
+        if (this.modeleCourrierType == null) {
+            if (o.modeleCourrierType != null) {
+                return false
+            }
+        } else if (this.modeleCourrierType != o.modeleCourrierType) {
+            return false
+        }
         return true
     }
 
@@ -102,6 +111,7 @@ data class ModeleCourrier(
         result = prime * result + this.modeleCourrierCorpsEmail.hashCode()
         result = prime * result + this.modeleCourrierObjetEmail.hashCode()
         result = prime * result + (if (this.modeleCourrierDocumentId == null) 0 else this.modeleCourrierDocumentId.hashCode())
+        result = prime * result + (if (this.modeleCourrierType == null) 0 else this.modeleCourrierType.hashCode())
         return result
     }
 
@@ -119,6 +129,7 @@ data class ModeleCourrier(
         sb.append(", ").append(modeleCourrierCorpsEmail)
         sb.append(", ").append(modeleCourrierObjetEmail)
         sb.append(", ").append(modeleCourrierDocumentId)
+        sb.append(", ").append(modeleCourrierType)
 
         sb.append(")")
         return sb.toString()

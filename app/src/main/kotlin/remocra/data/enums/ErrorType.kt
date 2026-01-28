@@ -630,7 +630,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_MODELE_COURRIER_FORBIDDEN(31000, "Vous n'avez pas les droits d'administration des modèles de courrier.", Status.FORBIDDEN),
     ADMIN_MODELE_COURRIER_CODE_EXISTS(31001, "Le code du modèle de courrier doit être unique."),
     ADMIN_MODELE_COURRIER_DOCUMENT_MAIN_REPORT(31002, "Un seul document peut être le rapport principal."),
-
+    ADMIN_MODELE_COURRIER_TYPE_EXISTS(31003, "Il existe déjà un modèle de courrier avec ce type"),
     ;
 
     override fun toString(): String {

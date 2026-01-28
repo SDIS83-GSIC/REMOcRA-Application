@@ -32,6 +32,7 @@ import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.CourrierRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.security.NoCsrf
 import remocra.usecase.courrier.BuildFormCourrierUseCase
@@ -274,4 +275,12 @@ class CourrierEndPoint : AbstractEndpoint() {
         val courrierReference: String,
         val codeThematique: String,
     )
+
+    @GET
+    @Path("/modeles/get-types-courrier")
+    @RequireDroits([Droit.ADMIN_COURRIER])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getTypesCourrier(): Response {
+        return Response.ok(TypeCourrier.entries).build()
+    }
 }

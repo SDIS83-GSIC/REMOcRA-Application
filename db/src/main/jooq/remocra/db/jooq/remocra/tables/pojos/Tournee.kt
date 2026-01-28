@@ -27,6 +27,7 @@ data class Tournee(
     val tourneePourcentageAvancement: Int?,
     val tourneeReservationUtilisateurId: UUID?,
     val tourneeDateSynchronisation: ZonedDateTime?,
+    val tourneeDateDerniereRealisation: ZonedDateTime?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -73,6 +74,13 @@ data class Tournee(
         } else if (this.tourneeDateSynchronisation != o.tourneeDateSynchronisation) {
             return false
         }
+        if (this.tourneeDateDerniereRealisation == null) {
+            if (o.tourneeDateDerniereRealisation != null) {
+                return false
+            }
+        } else if (this.tourneeDateDerniereRealisation != o.tourneeDateDerniereRealisation) {
+            return false
+        }
         return true
     }
 
@@ -86,6 +94,7 @@ data class Tournee(
         result = prime * result + (if (this.tourneePourcentageAvancement == null) 0 else this.tourneePourcentageAvancement.hashCode())
         result = prime * result + (if (this.tourneeReservationUtilisateurId == null) 0 else this.tourneeReservationUtilisateurId.hashCode())
         result = prime * result + (if (this.tourneeDateSynchronisation == null) 0 else this.tourneeDateSynchronisation.hashCode())
+        result = prime * result + (if (this.tourneeDateDerniereRealisation == null) 0 else this.tourneeDateDerniereRealisation.hashCode())
         return result
     }
 
@@ -99,6 +108,7 @@ data class Tournee(
         sb.append(", ").append(tourneePourcentageAvancement)
         sb.append(", ").append(tourneeReservationUtilisateurId)
         sb.append(", ").append(tourneeDateSynchronisation)
+        sb.append(", ").append(tourneeDateDerniereRealisation)
 
         sb.append(")")
         return sb.toString()
