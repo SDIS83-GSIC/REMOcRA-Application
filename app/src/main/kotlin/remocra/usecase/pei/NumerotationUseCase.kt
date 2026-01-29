@@ -118,9 +118,8 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> computeNumero53(pei)
             CodeSdis.SDIS_58 -> computeNumero58(pei)
             CodeSdis.SDIS_59 -> computeNumero59(pei)
-            CodeSdis.SDIS_62 -> TODO()
-            CodeSdis.SDIS_66,
-            -> computeNumero66(pei)
+            CodeSdis.SDIS_62 -> computeNumero62(pei)
+            CodeSdis.SDIS_66 -> computeNumero66(pei)
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
             -> computeNumeroMethodeC(pei)
@@ -153,6 +152,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_38,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
+            CodeSdis.SDIS_62,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
             CodeSdis.SDIS_971,
@@ -171,7 +171,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
             CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
             CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
-            CodeSdis.SDIS_62 -> TODO()
             CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
@@ -798,6 +797,22 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * <commune_code><numéro interne>
+     * numéro interne sur 4 chiffres
+     * ex : 620010003, 629070102
+     * Cas particulier des dispositifs d'aspiration ;
+     *  reprend le numéro du parent, auquel on ajoute une particule stockée dans le champ pibi_identifiant_gestionnaire
+     *  <commune_code><numéro interne>-<pibi_identifiant_gestionnaire>
+     * ex : 620120008-1, 620420060-9
+     */
+    private fun computeNumero62(pei: PeiForNumerotationData): String {
+        val commune = ensureCommune(pei)
+        val particule = pei.pibiIdentifiantGestionnaire?.trim()?.takeIf { it.isNotEmpty() }?.let { "-$it" } ?: ""
+
+        return commune.communeCodeInsee + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne) + particule
+    }
+
+    /**
      * <commune_code>-<numéro interne>
      * numéro interne sur 5 chiffres
      * Exemple : BMA-00443, ABY-00001
@@ -944,6 +959,23 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de l'identifiant gestionnaire. <br />
+     *
+     *
+     * @param pibiIdentifiantGestionnaire id courante
+     * @param pibiIdentifiantGestionnaireInitial id en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInternePibiIdentifiantGestionnaire(pibiIdentifiantGestionnaire: String?, pibiIdentifiantGestionnaireInitial: String?): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_62 ->
+                pibiIdentifiantGestionnaire != pibiIdentifiantGestionnaireInitial
+            else -> false
+        }
+    }
+
+    /**
      * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de nature DECI. <br />
      *
      *
@@ -985,6 +1017,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_58,
             CodeSdis.SDIS_59,
             CodeSdis.SDIS_61,
+            CodeSdis.SDIS_62,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_78,
             CodeSdis.SDIS_971,
@@ -1003,7 +1036,6 @@ class NumerotationUseCase : AbstractUseCase() {
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_16 -> TODO()
-            CodeSdis.SDIS_62 -> TODO()
         }
     }
 }

@@ -83,7 +83,12 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
             calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
             calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(element.peiGestionnaireId, element.peiGestionnaireIdInitial)
+            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(element.peiGestionnaireId, element.peiGestionnaireIdInitial) ||
+            if (element is PibiData) {
+                calculNumerotationUseCase.needComputeNumeroInternePibiIdentifiantGestionnaire(element.pibiIdentifiantGestionnaire, element.pibiIdentifiantGestionnaireInitial)
+            } else {
+                false
+            }
     }
 
     override fun getListGeometrie(element: PeiData): Collection<Geometry> {

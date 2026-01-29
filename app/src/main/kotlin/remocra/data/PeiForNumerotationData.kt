@@ -27,4 +27,5 @@ data class PeiForNumerotationData(
     var commune: Commune? = null,
     val domaine: Domaine? = null,
     var gestionnaire: Gestionnaire? = null,
+    val pibiIdentifiantGestionnaire: String? = null,
 )

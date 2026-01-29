@@ -192,6 +192,8 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiDomaineIdInitial: data?.peiDomaineId ?? null,
     peiGestionnaireIdInitial: data?.peiGestionnaireId ?? null,
     peiDisponibiliteTerrestreInitiale: data?.peiDisponibiliteTerrestre ?? null,
+    pibiIdentifiantGestionnaireInitial:
+      data?.pibiIdentifiantGestionnaire ?? null,
   };
 
   formData.append(

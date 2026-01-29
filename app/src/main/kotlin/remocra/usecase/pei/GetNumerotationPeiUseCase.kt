@@ -6,6 +6,7 @@ import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.data.PeiData
 import remocra.data.PeiForNumerotationData
+import remocra.data.PibiData
 import remocra.usecase.AbstractUseCase
 
 class GetNumerotationPeiUseCase @Inject constructor(
@@ -25,6 +26,7 @@ class GetNumerotationPeiUseCase @Inject constructor(
             domaine = dataCacheProvider.getDomaines().values.firstOrNull { it.domaineId == element.peiDomaineId },
             nature = dataCacheProvider.getNatures().values.firstOrNull { it.natureId == element.peiNatureId },
             natureDeci = dataCacheProvider.getNaturesDeci().values.firstOrNull { it.natureDeciId == element.peiNatureDeciId },
+            pibiIdentifiantGestionnaire = if (element is PibiData) element.pibiIdentifiantGestionnaire?.trim() else null,
         )
 
         // Calcul du numéro *interne*

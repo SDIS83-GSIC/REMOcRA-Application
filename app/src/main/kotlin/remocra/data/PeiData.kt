@@ -52,7 +52,6 @@ open class PeiData(
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
     open val peiGestionnaireIdInitial: UUID? = peiGestionnaireId,
     open val peiDisponibiliteTerrestreInitiale: Disponibilite? = peiDisponibiliteTerrestre,
-
 ) {
     val coordonneeX: Double
         get() = peiGeometrie.coordinate.x
@@ -116,6 +115,8 @@ data class PibiData(
     var pibiSurpresse: Boolean = false,
     var pibiAdditive: Boolean = false,
     var pibiJumeleId: UUID?,
+
+    val pibiIdentifiantGestionnaireInitial: String? = pibiIdentifiantGestionnaire,
 ) : PeiData(
     peiId,
     peiNumeroComplet,
