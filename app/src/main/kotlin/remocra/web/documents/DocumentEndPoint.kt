@@ -67,7 +67,7 @@ class DocumentEndPoint {
         // si c'est un courrier, on passe par le EndPoint "Courrier" pour gérer les accusés de la même façon partout
         if (courierId != null) {
             // Il faut être connecté pour télécharger un courrier et set l'accusé réception
-            val idUtilisateur = securityContext.userInfo?.utilisateurId ?: throw ForbiddenException()
+            val idUtilisateur = securityContext.userInfo.utilisateurId ?: throw ForbiddenException()
             if (response.status == Response.Status.OK.statusCode) {
                 courrierRepository.setAccuse(courierId, idUtilisateur)
             }

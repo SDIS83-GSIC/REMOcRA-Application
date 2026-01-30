@@ -137,7 +137,7 @@ class UpdateOldebUseCase @Inject constructor(
                 oldebProprieteId = UUID.randomUUID(),
                 oldebProprieteOldebId = element.oldeb.oldebId,
                 oldebProprieteOldebProprietaireId = element.propriete!!.oldebProprieteOldebProprietaireId,
-                oldebProprieteOldebTypeResidenceId = element.propriete!!.oldebProprieteOldebTypeResidenceId,
+                oldebProprieteOldebTypeResidenceId = element.propriete.oldebProprieteOldebTypeResidenceId,
             ),
         )
 

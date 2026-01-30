@@ -36,7 +36,7 @@ class MessagePeiLongueIndispoEndpoint : AbstractEndpoint() {
     @GET
     @Public("Est rattaché à des types d'organismes, pas à un droit")
     fun getMessageAlerte(): Response {
-        return Response.ok(getMessagePeiLongueIndispoUseCase.execute(securityContext.userInfo!!)).build()
+        return Response.ok(getMessagePeiLongueIndispoUseCase.execute(securityContext.userInfo)).build()
     }
 
     @Path("/pei")

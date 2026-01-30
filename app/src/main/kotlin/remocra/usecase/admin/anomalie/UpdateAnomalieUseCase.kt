@@ -90,7 +90,7 @@ class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPD
 
         if (typeOperation == TypeOperation.UPDATE) {
             // La modification d'une anomalie peut avoir un impact sur la disponibilité des PEI, mais seulement en modif
-            eventBus.post(AnomalieModifiedEvent(element.anomalieId, userInfo!!))
+            eventBus.post(AnomalieModifiedEvent(element.anomalieId, userInfo))
         }
 
         return element

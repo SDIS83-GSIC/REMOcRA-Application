@@ -83,7 +83,7 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
         val listPei = peiUseCase.getPeiWithFilter(params, securityContext.userInfo)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo.zoneCompetence?.zoneIntegrationId, securityContext.userInfo!!.isSuperAdmin)),
+            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo.zoneCompetence?.zoneIntegrationId, securityContext.userInfo.isSuperAdmin)),
         )
             .build()
     }
@@ -100,7 +100,7 @@ class PeiEndPoint : AbstractEndpoint() {
     fun getPeiForAccesRapide(
         @QueryParam("motifLibelle") motifLibelle: String,
     ): Response =
-        Response.ok().entity(peiRepository.getPeiIdLibelleByMotif(securityContext.userInfo!!, motifLibelle)).build()
+        Response.ok().entity(peiRepository.getPeiIdLibelleByMotif(securityContext.userInfo, motifLibelle)).build()
 
     @POST
     @Path("/get-by-indispo/{idIndisponibiliteTemporaire}")

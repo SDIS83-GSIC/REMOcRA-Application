@@ -75,7 +75,7 @@ class ImportConfRapportPersonnaliseUseCase : AbstractUseCase() {
 
             transactionManager.transactionResult {
                 try {
-                    val rapportPersonnalise = listeRapportPersonnalise!!.first()
+                    val rapportPersonnalise = listeRapportPersonnalise.first()
                     rappportPersonnaliseUtils.checkContraintes(
                         userInfo,
                         RapportPersonnaliseData(

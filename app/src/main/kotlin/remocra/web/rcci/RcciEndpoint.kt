@@ -79,7 +79,7 @@ class RcciEndpoint : AbstractEndpoint() {
         @QueryParam("bbox") bbox: String,
         @QueryParam("srid") srid: String,
     ): Response =
-        Response.ok(getPointCarteUseCase.execute(bbox, srid, null, TypeElementCarte.RCCI, securityContext.userInfo!!)).build()
+        Response.ok(getPointCarteUseCase.execute(bbox, srid, null, TypeElementCarte.RCCI, securityContext.userInfo)).build()
 
     @POST
     @Path("/create")

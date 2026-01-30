@@ -54,7 +54,7 @@ class CreateEvenementSousCategorieUseCase : AbstractCUDUseCase<EvenementSousCate
 
         // insérer les paramètres
         element.evenementSousCategorieComplement.forEach { parametre ->
-            parametre?.let {
+            parametre.let {
                 evenementSousCategorieRepository.upsertSousTypeParametre(
                     CriseEvenementComplement(
                         criseEvenementComplementId = parametre.sousCategorieComplementId,

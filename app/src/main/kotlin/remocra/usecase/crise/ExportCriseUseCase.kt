@@ -182,8 +182,8 @@ class ExportCriseUseCase : AbstractUseCase() {
                 )
                 // Filtrage des messages associés à l'évènement
                 if (data.hasMessage) {
-                    val associatedMessages = data.listeMessage?.filter { it.messageEvenementId == event.evenementId }
-                    associatedMessages?.forEach { msg ->
+                    val associatedMessages = data.listeMessage.filter { it.messageEvenementId == event.evenementId }
+                    associatedMessages.forEach { msg ->
                         append(
                             """
                     <div class="message">

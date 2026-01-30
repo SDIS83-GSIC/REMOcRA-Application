@@ -88,7 +88,7 @@ class GeoserverEndpoint : AbstractEndpoint() {
     ): Response {
         val user = securityContext.userInfo
         val couche = dataCacheProvider.get().mapCouches.values.firstOrNull {
-            it.coucheCode == code && (user!!.isSuperAdmin || it.couchePublic || it.groupeFonctionnalitesList.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId))
+            it.coucheCode == code && (user.isSuperAdmin || it.couchePublic || it.groupeFonctionnalitesList.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId))
         }
 
         if (couche == null) {

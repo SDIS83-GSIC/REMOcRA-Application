@@ -81,7 +81,7 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
                 peiPrescritDate = peiPrescritInput.peiPrescritDate,
                 peiPrescritDebit = peiPrescritInput.peiPrescritDebit,
                 peiPrescritNbPoteaux = peiPrescritInput.peiPrescritNbPoteaux,
-                peiPrescritOrganismeId = securityContext.userInfo?.organismeId,
+                peiPrescritOrganismeId = securityContext.userInfo.organismeId,
                 peiPrescritCommentaire = peiPrescritInput.peiPrescritCommentaire,
                 peiPrescritAgent = peiPrescritInput.peiPrescritAgent,
                 peiPrescritNumDossier = peiPrescritInput.peiPrescritNumDossier,
@@ -107,7 +107,7 @@ class PeiPrescritsEndPoint : AbstractEndpoint() {
                 peiPrescritCommentaire = peiPrescritInput.peiPrescritCommentaire,
                 peiPrescritAgent = peiPrescritInput.peiPrescritAgent,
                 peiPrescritNumDossier = peiPrescritInput.peiPrescritNumDossier,
-                peiPrescritOrganismeId = securityContext.userInfo?.organismeId,
+                peiPrescritOrganismeId = securityContext.userInfo.organismeId,
                 peiPrescritGeometrie = peiPrescritInput.peiPrescritGeometrie,
             ),
         ).wrap()

@@ -52,7 +52,7 @@ class CheckUrlUseCase @Inject constructor(
                         dateUtils.now().plusHours(it.toLong()),
                         DateUtils.Companion.PATTERN_MINUTE,
                     ) // Format attendu par l'appli mobile
-                }?.toString(),
+                },
                 keycloakConfig = KeycloakConfig(
                     url = keycloakUri.baseUri,
                     clientId = client.clientId,

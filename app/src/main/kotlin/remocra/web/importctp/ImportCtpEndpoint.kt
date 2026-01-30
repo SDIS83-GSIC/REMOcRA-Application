@@ -46,7 +46,7 @@ class ImportCtpEndpoint : AbstractEndpoint() {
         Response.ok().entity(
             importCtpUseCase.importCtpValidation(
                 httpRequest.getPart("file").inputStream,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
 
@@ -58,7 +58,7 @@ class ImportCtpEndpoint : AbstractEndpoint() {
         Response.ok(
             importCtpUseCase.importCtpEnregistrement(
                 importCtpData,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
 
@@ -68,7 +68,7 @@ class ImportCtpEndpoint : AbstractEndpoint() {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     fun exportData(paramExportCTPInput: ParamExportCTPInput): Response =
-        Response.ok(exportCtpUseCase.execute(paramExportCTPInput.communeId, securityContext.userInfo!!))
+        Response.ok(exportCtpUseCase.execute(paramExportCTPInput.communeId, securityContext.userInfo))
             .header("Content-Disposition", "attachment; filename=\"file.xlsx\"")
             .build()
 

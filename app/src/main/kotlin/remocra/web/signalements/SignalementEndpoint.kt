@@ -70,7 +70,7 @@ class SignalementEndpoint : AbstractEndpoint() {
                 srid,
                 null,
                 TypeElementCarte.SIGNALEMENT,
-                securityContext.userInfo!!,
+                securityContext.userInfo,
             ),
         ).build()
     }

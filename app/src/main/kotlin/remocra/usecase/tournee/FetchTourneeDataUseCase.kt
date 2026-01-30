@@ -82,23 +82,23 @@ class FetchTourneeDataUseCase @Inject constructor(
             sortBy
         }
 
-        val filteredSortedList = effectiveSortBy?.toCondition(filteredList)
+        val filteredSortedList = effectiveSortBy.toCondition(filteredList)
         // Application de limit et offset à notre liste
-        val filteredShortedList = filteredSortedList?.drop(params.offset ?: 0)?.take(params.limit ?: count)
+        val filteredShortedList = filteredSortedList.drop(params.offset ?: 0).take(params.limit ?: count)
 
-        val listeTourneeId = filteredShortedList?.map { it.tourneeId }
+        val listeTourneeId = filteredShortedList.map { it.tourneeId }
         val tourneeNonModifiable = tourneeRepository.getTourneeHorsZc(
             userInfo.isSuperAdmin,
             userInfo.zoneCompetence?.zoneIntegrationId,
-            listeTourneeId ?: listOf(),
+            listeTourneeId,
         )
 
-        val tourneeIncomingTerminee = incomingRepository.getTourneeTerminee(listeTourneeId ?: listOf())
+        val tourneeIncomingTerminee = incomingRepository.getTourneeTerminee(listeTourneeId)
 
-        filteredShortedList?.forEach {
+        filteredShortedList.forEach {
             it.isModifiable = !tourneeNonModifiable.contains(it.tourneeId)
             it.estDansIncoming = tourneeIncomingTerminee.contains(it.tourneeId)
         }
-        return filteredShortedList?.let { DataTableau(it, count) }
+        return filteredShortedList.let { DataTableau(it, count) }
     }
 }

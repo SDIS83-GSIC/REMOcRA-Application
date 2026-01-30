@@ -47,7 +47,7 @@ class DashboardRepository
             .from(DASHBOARD)
             .join(L_DASHBOARD_PROFIL)
             .on(DASHBOARD.ID.eq(L_DASHBOARD_PROFIL.DASHBOARD_ID))
-            .where(L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID.eq(userInfo?.utilisateur?.utilisateurProfilUtilisateurId))
+            .where(L_DASHBOARD_PROFIL.PROFIL_UTILISATEUR_ID.eq(userInfo.utilisateur?.utilisateurProfilUtilisateurId))
             .fetchOneInto()
 
     fun getQueryListAllComponents(): Collection<DashboardQueryInfoData> =

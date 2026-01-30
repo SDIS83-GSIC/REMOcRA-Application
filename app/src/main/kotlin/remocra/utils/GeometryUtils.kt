@@ -43,10 +43,10 @@ fun geometryFromBBox(bbox: String?, epsg: String?): Geometry? {
     return geometry
 }
 fun sridFromEpsgCode(coupleOrCode: String): Int =
-    coupleOrCode.split(":".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
+    coupleOrCode.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
 
 fun sridFromGeom(coupleOrCode: String): Int =
-    coupleOrCode.split("=".toRegex())!!.dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
+    coupleOrCode.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().last().toInt()
 
 /**
  * Calcule le centroid d'une liste de géométries.

@@ -37,7 +37,7 @@ class CommuneEndPoint {
     @Path("/")
     @Public("Les communes ne sont pas liées à un droit")
     fun getCommuneByZoneIntegrationShortData(): Response =
-        Response.ok().entity(communeRepository.getCommuneByZoneIntegrationShortData(securityContext.userInfo!!)).build()
+        Response.ok().entity(communeRepository.getCommuneByZoneIntegrationShortData(securityContext.userInfo)).build()
 
     @GET
     @Path("/acces-rapide")

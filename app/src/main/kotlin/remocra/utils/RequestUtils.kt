@@ -107,7 +107,7 @@ class RequestUtils {
                 values = null,
             )
         }
-        val fields = data[0].fields().map { it.name } as? List<String> ?: throw RemocraResponseException(ErrorType.DASHBOARD_FIELD_REQUIRE)
+        val fields = data[0].fields().map { it.name }.takeIf { it.isNotEmpty() } ?: throw RemocraResponseException(ErrorType.DASHBOARD_FIELD_REQUIRE)
 
         return FieldData(
             queryId = queryRequest.queryId,

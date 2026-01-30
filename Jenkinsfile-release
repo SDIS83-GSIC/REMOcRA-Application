@@ -6,7 +6,7 @@ library 'atolcd-jenkins'
 // La version dans les Jenkinsfiles n'est validée que lorsque leurs jobs sont exécutés,
 // il faut donc s'assurer que la version est synchro par relecture de code lors des reviews
 // (tous les Jenkinsfiles devraient être modifiés en même temps que le gradle-wrapper.properties)
-def gradleImageVersion = '8.14.3-jdk21'
+def gradleImageVersion = '8.14.4-jdk21'
 
 pipeline {
   options {

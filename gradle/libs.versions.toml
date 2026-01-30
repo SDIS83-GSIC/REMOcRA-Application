@@ -1,14 +1,14 @@
 [versions]
 flyway = "10.22.0"
 forbiddenapis = "3.10"
-jooq = "3.20.9"
+jooq = "3.20.10"
 retrofit = "2.12.0"
 geotools = "31.7"
-jetty = "12.1.3"
+jetty = "12.1.5"
 sentry= "7.22.6"
 jts = "1.20.0"
 xdocreport = "2.1.0"
-jackson = "2.20.1"
+jackson = "2.21.0"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -16,7 +16,7 @@ junit = "5.11.0"
 ktlint = "0.49.0"
 
 [libraries]
-log4j-bom = "org.apache.logging.log4j:log4j-bom:2.25.2"
+log4j-bom = "org.apache.logging.log4j:log4j-bom:2.25.3"
 log4j-core = { module = "org.apache.logging.log4j:log4j-core"}
 log4j-jul = { module = "org.apache.logging.log4j:log4j-jul" }
 guice-bom = "com.google.inject:guice-bom:7.0.0"
@@ -25,10 +25,10 @@ jetty-ee10-bom = { module = "org.eclipse.jetty.ee10:jetty-ee10-bom", version.ref
 jetty-servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet" }
 jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets" }
 forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbiddenapis" }
-oidcServlets-bom = "net.ltgt.oidc:oidc-servlets-bom:1.0.0-rc-11"
+oidcServlets-bom = "net.ltgt.oidc:oidc-servlets-bom:1.0.0-rc-12"
 oidcServlets = { module = "net.ltgt.oidc:oidc-servlets" }
 oidcServlets-rs = { module = "net.ltgt.oidc:oidc-servlets-rs" }
-oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-4"
+oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-6"
 oauthServlets-rs = { module = "net.ltgt.oauth:oauth-rs" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
@@ -39,7 +39,7 @@ disruptor = "com.lmax:disruptor:4.0.0"
 slf4j-api =  { module = "org.slf4j:slf4j-api", version = { strictly = "2.0.17" } }
 log4j-slf4j2Impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl" }
 typesafe = "com.typesafe:config:1.4.5"
-postgresql = "org.postgresql:postgresql:42.7.8"
+postgresql = "org.postgresql:postgresql:42.7.9"
 hikaricp = "com.zaxxer:HikariCP:7.0.2"
 guava = "com.google.guava:guava:33.5.0-jre"
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
@@ -65,10 +65,10 @@ json = "org.json:json:20250517"
 
 commons-email = "org.apache.commons:commons-email2-jakarta:2.0.0-M1"
 #swagger-generator = "io.swagger:swagger-generator:2.4.41"
-swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.40"
-swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.40"
+swagger-core = "io.swagger.core.v3:swagger-core-jakarta:2.2.42"
+swagger-jaxrs = "io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.42"
 # !!!!! Attention à bien maintenir la version synchronisée avec OpenApiEndpoint.SWAGGER_UI_VERSION !!!!!
-swagger-ui = "org.webjars.npm:swagger-ui-dist:5.30.2"
+swagger-ui = "org.webjars.npm:swagger-ui-dist:5.31.0"
 
 geotools-gt-shapefile = { module = "org.geotools:gt-shapefile", version.ref = "geotools" }
 geotools-gt-main = { module = "org.geotools:gt-main", version.ref = "geotools" }
@@ -80,7 +80,7 @@ locationtech-jts-io = {module = "org.locationtech.jts.io:jts-io-common", version
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
 
-apache-poi = "org.apache.poi:poi-ooxml:5.4.1"
+apache-poi = "org.apache.poi:poi-ooxml:5.5.1"
 
 sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
 sentry-servlet-jakarta = { module = "io.sentry:sentry-servlet-jakarta", version.ref = "sentry" }
@@ -101,12 +101,12 @@ xdocreport-odfdom = { module = "fr.opensagres.xdocreport:fr.opensagres.xdocrepor
 
 
 [plugins]
-android-lint = "com.android.lint:8.13.1"
+android-lint = "com.android.lint:8.13.2"
 cyclonedx = "org.cyclonedx.bom:3.1.0"
 flyway = "net.ltgt.flyway:0.2.0"
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
 jooq = "net.ltgt.jooq-kotlin:0.1.0"
-jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.4"
-kotlin = "org.jetbrains.kotlin.jvm:2.2.21"
+jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.5"
+kotlin = "org.jetbrains.kotlin.jvm:2.3.0"
 licensee = "app.cash.licensee:1.14.1"
 spotless = "com.diffplug.spotless:6.25.0"

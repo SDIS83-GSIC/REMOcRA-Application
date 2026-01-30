@@ -76,7 +76,7 @@ class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INS
                 courrierDocumentId = element.documentId,
                 courrierReference = element.courrierReference,
                 courrierObjet = modeleCourrier.modeleCourrierObjetEmail,
-                courrierExpediteur = userInfo?.organismeId,
+                courrierExpediteur = userInfo.organismeId,
             ),
         )
 

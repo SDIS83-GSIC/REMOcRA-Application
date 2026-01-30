@@ -28,7 +28,7 @@ class VoieEndPoint {
     @Path("/{communeId}")
     @Public("Les voies ne sont pas liées à un droit")
     fun getVoieByZoneIntegrationShortData(@PathParam("communeId") communeId: UUID): Response =
-        Response.ok().entity(voieRepository.getVoieByZoneIntegrationShortData(communeId, securityContext.userInfo!!)).build()
+        Response.ok().entity(voieRepository.getVoieByZoneIntegrationShortData(communeId, securityContext.userInfo)).build()
 
     @GET
     @Path("/get")

@@ -30,6 +30,6 @@ class MobileReferentielEndpoint : AbstractEndpoint() {
     @Path("/")
     @GET
     fun getReferentiel(): Response {
-        return Response.ok(buildReferentielUseCase.execute(securityContext.userInfo!!)).build()
+        return Response.ok(buildReferentielUseCase.execute(securityContext.userInfo)).build()
     }
 }

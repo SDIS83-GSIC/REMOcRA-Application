@@ -1006,7 +1006,7 @@ class PeiRepository
     ): PeiDataForApi =
         getListPeiForApiRequete()
             .where(
-                peiId?.let {
+                peiId.let {
                     PEI.ID.eq(it)
                 },
             )
