@@ -104,7 +104,7 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroMethodeA(pei)
 
             CodeSdis.SDIS_09 -> computeNumero09(pei)
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> computeNumero16(pei)
             CodeSdis.SDIS_21 -> computeNumero21(pei)
             CodeSdis.SDIS_22 -> computeNumero22(pei)
             CodeSdis.SDIS_38 -> computeNumero38(pei)
@@ -148,6 +148,7 @@ class NumerotationUseCase : AbstractUseCase() {
         }
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01,
+            CodeSdis.SDIS_16,
             CodeSdis.SDIS_22,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
@@ -165,7 +166,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
             -> computeNumeroInterneMethodeB(pei)
-            CodeSdis.SDIS_16 -> TODO()
             CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
             CodeSdis.SDIS_49 -> computeNumeroInterne49()
             CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
@@ -529,7 +529,7 @@ class NumerotationUseCase : AbstractUseCase() {
      * <code nature><code insee commune>.<numéro interne>
      * avec le numéro interne sur 5 chiffres
      * *avec le code nature égal à P, B, A ou N*
-     * avec un point (.) entre insee et num_interne
+     * avec un point (.) entre insee et num_internee
      * Exemple : P39473.00001, A39199.21547
      *
      */
@@ -666,7 +666,7 @@ class NumerotationUseCase : AbstractUseCase() {
 
     /**
      * <code insee commune><numéro interne> sans espace
-     * avec num_intern sur 4 chiffres
+     * avec num_interne sur 4 chiffres
      * Exemple : 772880012
      *
      */
@@ -678,8 +678,20 @@ class NumerotationUseCase : AbstractUseCase() {
     }
 
     /**
+     * <code insee commune><numéro interne> sans espace
+     * avec num_interne sur 3 chiffres
+     * Exemple : 16001001
+     *
+     */
+    private fun computeNumero16(pei: PeiForNumerotationData): String {
+        val commune = ensureCommune(pei)
+
+        return (commune.communeCodeInsee) + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
      * <code insee commune>_<numéro interne>
-     * avec num_intern sur 4 chiffres
+     * avec num_interne sur 4 chiffres
      * Exemple : 21231_0621
      *
      */
@@ -692,7 +704,7 @@ class NumerotationUseCase : AbstractUseCase() {
 
     /**
      * <code insee commune>-<numéro interne>
-     * avec num_intern sur 4 chiffres
+     * avec num_interne sur 4 chiffres
      * Exemple : 22243-0007
      *
      */
@@ -1010,6 +1022,7 @@ class NumerotationUseCase : AbstractUseCase() {
     fun needComputeNumeroInterneCommune(communeId: UUID, communeIdInitial: UUID?, zoneSpecialeId: UUID?, zoneSpecialeIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01,
+            CodeSdis.SDIS_16,
             CodeSdis.SDIS_22,
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
@@ -1035,7 +1048,6 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_95,
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_16 -> TODO()
         }
     }
 }
