@@ -114,7 +114,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
 
         // On crée le fichier PDF
         val report = XDocReportRegistry.getRegistry().loadReport(
-            FileInputStream("${GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE}carte-tournee-${buffer.orientation.name.lowercase()}.odt"),
+            FileInputStream(GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE.resolve("carte-tournee-${buffer.orientation.name.lowercase()}.odt").toFile()),
             TemplateEngineKind.Freemarker,
         )
         val context = report.createContext()

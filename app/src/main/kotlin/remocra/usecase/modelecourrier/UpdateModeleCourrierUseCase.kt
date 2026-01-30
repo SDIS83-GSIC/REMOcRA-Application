@@ -129,7 +129,11 @@ class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeO
                     GlobalConstants.DOSSIER_MODELES_COURRIERS.resolve(element.modeleCourrierId.toString()),
                 )
             }
-            documentRepository.updateDocument(element.part.submittedFileName, "${GlobalConstants.DOSSIER_MODELES_COURRIERS}${element.modeleCourrierId}", element.documentId!!)
+            documentRepository.updateDocument(
+                element.part.submittedFileName,
+                GlobalConstants.DOSSIER_MODELES_COURRIERS.resolve(element.modeleCourrierId.toString()).toString(),
+                element.documentId!!,
+            )
         }
 
         return element.copy(part = null)
