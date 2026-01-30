@@ -215,7 +215,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> pei.penaCapaciteIllimitee != true && (pei.penaCapacite == null || pei.penaCapacite < 30)
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.nature!!.natureCode == GlobalConstants.NATURE_22_PENA_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
@@ -272,7 +272,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
@@ -302,7 +302,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> pei.pression == null || pei.pression < 1.0
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pression == null || pei.pression < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
@@ -346,7 +346,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pression != null && pei.pression in 0.95..<1.0
             CodeSdis.SDIS_38 -> false
@@ -381,7 +381,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pression != null && pei.pression > 6
             CodeSdis.SDIS_38 -> false
@@ -411,7 +411,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
@@ -466,7 +466,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique in 0.95..<1.0
             CodeSdis.SDIS_38 -> false
@@ -503,7 +503,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique >= 8
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique > 6
             CodeSdis.SDIS_38 -> false
@@ -544,7 +544,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> pei.debit == null || pei.debit < 30
             CodeSdis.SDIS_09 -> pei.debit != null && pei.debit < 15
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_22 -> {
                 return if (pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE) { // Si PEI en étude, alors indispo
@@ -679,7 +679,7 @@ class CalculDispoUseCase @Inject constructor(
                 return false
             }
             CodeSdis.SDIS_09 -> pei.debit != null && pei.debit in 15..29
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> pei.debit != null && pei.debit in 15..29
             CodeSdis.SDIS_21 -> pei.debit != null && pei.debit in 30..59
             CodeSdis.SDIS_22 -> {
                 return if (pei.diametreId == null) {
@@ -825,7 +825,7 @@ class CalculDispoUseCase @Inject constructor(
     private fun isDebitTropEleve(pei: PeiForCalculDispoData): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
-            CodeSdis.SDIS_16 -> TODO()
+            CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> false
