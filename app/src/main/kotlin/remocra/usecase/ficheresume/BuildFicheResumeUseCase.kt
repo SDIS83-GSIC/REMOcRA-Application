@@ -175,11 +175,18 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                     )
                 }
                 TypeResumeElement.OBSERVATION -> {
+                    // Ajout de l'observation du PEI (champ global) et de la dernière visite
+                    val observationPei = peiData.peiObservation?.takeIfNotNullElseNonRenseigne()
+                    val observationVisite = ficheResumeRepository.getLastObservation(peiId)?.takeIfNotNullElseNonRenseigne()
+                    val data = """
+                        Observation du PEI : $observationPei
+                        Observation de la dernière visite : $observationVisite
+                    """.trimIndent()
                     listeResumeElement.add(
                         ResumeElement(
                             type = it.ficheResumeBlocTypeResumeData,
                             titre = it.ficheResumeBlocTitre,
-                            data = ficheResumeRepository.getLastObservation(peiId),
+                            data = data,
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
                         ),

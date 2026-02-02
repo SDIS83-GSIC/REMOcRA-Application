@@ -48,6 +48,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             PEI.TYPE_PEI,
             // On projette tous les champs composant l'adresse
             PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE, PEI.COMPLEMENT_ADRESSE,
+            PEI.OBSERVATION,
             COMMUNE.CODE_INSEE,
             COMMUNE.CODE_POSTAL,
             COMMUNE.LIBELLE,
@@ -154,6 +155,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val peiVoieTexte: String?,
         val voieLibelle: String?,
         val peiComplementAdresse: String?,
+        val peiObservation: String?,
         val communeCodeInsee: String,
         val communeCodePostal: String,
         val communeLibelle: String,
