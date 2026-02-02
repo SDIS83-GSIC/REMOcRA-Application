@@ -70,6 +70,14 @@ h3 {
   grid-area: footer;
 }
 
+/* Style petit ecran */
+@media (max-width: 991.98px) {
+  #navbar {
+    height: auto;
+    min-height: $navbar-size;
+  }
+}
+
 .copyright {
   font-size: 0.7rem;
 }
