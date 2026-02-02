@@ -16,11 +16,15 @@ import QueryTable, {
 import { TYPE_BUTTON } from "../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { INTERVALLE_DATE_PROCHE_ENUM } from "../../enums/ProchaineDateEnum.tsx";
-import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime from "../../utils/formatDateUtils.tsx";
 import SquelettePage from "../SquelettePage.tsx";
 import FilterValues from "./FilterModuleCourrier.tsx";
+
+enum OUVERT_NON_OUVERT {
+  true = "Ouvert",
+  false = "Non-ouvert",
+}
 
 const ListModuleCourrier = () => {
   const { moduleId } = useParams();
@@ -84,7 +88,9 @@ const ListModuleCourrier = () => {
             {
               Header: "Accusé",
               accessor: "emailDestinataire",
-              Filter: <SelectEnumOption options={VRAI_FAUX} name={"accuse"} />,
+              Filter: (
+                <SelectEnumOption options={OUVERT_NON_OUVERT} name={"accuse"} />
+              ),
               Cell: (value) => {
                 return value.value.map((v, key) => {
                   return (
