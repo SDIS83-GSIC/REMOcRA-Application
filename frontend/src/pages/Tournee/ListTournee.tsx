@@ -135,8 +135,8 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       ),
     },
     {
-      Header: "Réalisée",
-      accessor: "tourneeRealisee",
+      Header: "Notifiée",
+      accessor: "tourneeNotifiee",
       Cell: (value) => {
         return (
           <div className="text-center">
@@ -148,7 +148,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           </div>
         );
       },
-      Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeRealisee"} />,
+      Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeNotifiee"} />,
     },
   ];
 
@@ -398,9 +398,9 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         ? "Rapport post ROP"
         : "Générer le rapport post ROP",
     textDisable:
-      "La ROP a été réalisée, impossible de générer le rapport post ROP.",
+      "La ROP a été notifiée, impossible de générer le rapport post ROP.",
     disable: (v) => {
-      return v.original.tourneePourcentageAvancement === 100;
+      return v.original.tourneeNotifiee === true;
     },
     classEnable: "success",
     onClick: async (tourneeId) => {

@@ -131,6 +131,11 @@ open class Tournee(
      */
     val DATE_DERNIERE_REALISATION: TableField<Record, ZonedDateTime?> = createField(DSL.name("tournee_date_derniere_realisation"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
+    /**
+     * The column <code>remocra.tournee.tournee_notifiee</code>.
+     */
+    val NOTIFIEE: TableField<Record, Boolean?> = createField(DSL.name("tournee_notifiee"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

@@ -99,6 +99,7 @@ class TourneeRepository
                 peiCounterCte.field("TOURNEE_NB_PEI"),
                 nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
                 TOURNEE.DATE_DERNIERE_REALISATION,
+                TOURNEE.NOTIFIEE,
             )
             .from(TOURNEE)
             .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
@@ -275,6 +276,7 @@ class TourneeRepository
         var tourneeNextRopDate: ZonedDateTime?,
         var isModifiable: Boolean = true,
         var estDansIncoming: Boolean = false,
+        var tourneeNotifiee: Boolean = false,
     )
 
     data class Filter(
@@ -282,7 +284,7 @@ class TourneeRepository
         val tourneeOrganismeLibelle: String?,
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDeltaDate: String?,
-        val tourneeRealisee: Boolean?,
+        val tourneeNotifiee: Boolean?,
         val peiId: UUID?,
         val tourneeActif: Boolean?,
     ) {
@@ -303,11 +305,11 @@ class TourneeRepository
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
                     tourneeActif?.let { DSL.and(TOURNEE.ACTIF.eq(it)) },
-                    tourneeRealisee?.let {
+                    tourneeNotifiee?.let {
                         DSL.and(
-                            if (tourneeRealisee) {
-                                TOURNEE.POURCENTAGE_AVANCEMENT.eq(100)
-                            } else { TOURNEE.POURCENTAGE_AVANCEMENT.lt(100).or(TOURNEE.POURCENTAGE_AVANCEMENT.isNull) },
+                            if (tourneeNotifiee) {
+                                TOURNEE.NOTIFIEE.isTrue
+                            } else { TOURNEE.NOTIFIEE.isFalse.or(TOURNEE.NOTIFIEE.isNull) },
                         )
                     },
                 ),
@@ -823,17 +825,18 @@ class TourneeRepository
     fun razMesRop(affiliatedOrganismeIds: Set<UUID>) {
         dsl.update(TOURNEE)
             .set(TOURNEE.POURCENTAGE_AVANCEMENT, 0)
+            .set(TOURNEE.NOTIFIEE, false)
             .where(TOURNEE.ORGANISME_ID.`in`(affiliatedOrganismeIds))
             .execute()
     }
 
     /**
-     * Met à jour la date de dernière réalisation et le pourcentage d'avancement d'une tournée avec l'instant actuel.
+     * Met à jour la date de dernière réalisation et le flag Notifiée d'une tournée avec l'instant actuel.
      */
     fun updateDateDerniereRealisationRop(tourneeId: UUID) {
         dsl.update(TOURNEE)
             .set(TOURNEE.DATE_DERNIERE_REALISATION, dateUtils.now())
-            .set(TOURNEE.POURCENTAGE_AVANCEMENT, 100)
+            .set(TOURNEE.NOTIFIEE, true)
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
     }

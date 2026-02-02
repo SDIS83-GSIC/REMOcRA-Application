@@ -19,7 +19,7 @@ class FetchTourneeDataUseCase @Inject constructor(
     fun fetchTourneeData(
         params: Params<Filter, Sort>,
         userInfo: WrappedUserInfo,
-    ): DataTableau<TourneeRepository.TourneeComplete>? {
+    ): DataTableau<TourneeRepository.TourneeComplete> {
         val listTourneeComplete = tourneeRepository.getAllTourneeComplete(
             filter = params.filterBy,
             userInfo.isSuperAdmin,
@@ -49,18 +49,6 @@ class FetchTourneeDataUseCase @Inject constructor(
                     it.tourneeNextRopDate == null ||
                         it.tourneeNextRopDate!!.isAfter(today)
                 }
-            }
-        }
-        val filterTourneeRealisee = params.filterBy?.tourneeRealisee
-        filteredList = when (filterTourneeRealisee) {
-            true -> {
-                listTourneeComplete.filter { it.tourneePourcentageAvancement == 100 }
-            }
-            false -> {
-                listTourneeComplete.filter { it.tourneePourcentageAvancement != null && it.tourneePourcentageAvancement < 100 }
-            }
-            else -> {
-                listTourneeComplete
             }
         }
 
