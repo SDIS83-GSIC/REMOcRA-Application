@@ -35,7 +35,7 @@ class HistoriqueDebitChart : AbstractUseCase() {
             return null
         }
 
-        val historique = pibiRepository.getHistorique(pibiId, nombreHistorique, typeVisiteWithCdp)
+        val historique = pibiRepository.getHistorique(pibiId, nombreHistorique, typeVisiteWithCdp).sortedBy { it.visiteDate }
 
         // Si on a aucune mesure, pas la peine d'afficher le tableau
         if (historique.all { it.debit == null && it.pression == null && it.pressionDyn == null }) {
