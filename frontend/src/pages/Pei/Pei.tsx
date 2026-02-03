@@ -535,21 +535,42 @@ const Pei = ({
           defaultOtherProperties={{
             isPhotoPei: false,
           }}
-          otherFormParam={(index: number, listeElements: any[]) => (
-            <>
-              {
-                // Si c'est une image
-                ["png", "svg", "jpeg", "jpg", "bmp", "webp", "gif"].includes(
-                  listeElements[index].documentNomFichier.split(".").at(-1),
-                ) && (
-                  <CheckBoxInput
-                    name={`documents[${index}].isPhotoPei`}
-                    label="Est la photo du PEI"
-                  />
-                )
-              }
-            </>
-          )}
+          otherFormParam={(index: number, listeElements: any[]) => {
+            // Si c'est une image
+            const isImage = [
+              "png",
+              "svg",
+              "jpeg",
+              "jpg",
+              "bmp",
+              "webp",
+              "gif",
+            ].includes(
+              listeElements[index].documentNomFichier.split(".").at(-1),
+            );
+            if (!isImage) {
+              return null;
+            }
+            const hasChecked = listeElements.some((doc) => doc.isPhotoPei);
+            const isCurrentChecked = listeElements[index].isPhotoPei;
+
+            const isDisabledByPhotoSelected = hasChecked && !isCurrentChecked;
+            const disabledCheckbox =
+              !hasDroit(user, TYPE_DROIT.PEI_U) || isDisabledByPhotoSelected;
+
+            const tooltipText = isDisabledByPhotoSelected
+              ? "Une photo est déjà sélectionnée. Décochez-la pour en choisir une autre."
+              : undefined;
+
+            return (
+              <CheckBoxInput
+                name={`documents[${index}].isPhotoPei`}
+                label="Est la photo du PEI"
+                disabled={disabledCheckbox}
+                tooltipText={tooltipText}
+              />
+            );
+          }}
           disabled={!isNew && !hasDroit(user, TYPE_DROIT.PEI_U)}
         />
       ),

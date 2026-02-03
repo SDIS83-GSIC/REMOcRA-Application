@@ -35,7 +35,7 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
                 documentRepository.updateIsPhotoPei(documentsNonPhoto, false)
             }
 
-            val documentPhoto: UUID? = listToUpdate.firstOrNull { !(it as DocumentData).isPhotoPei }?.documentId
+            val documentPhoto: UUID? = listToUpdate.firstOrNull { (it as DocumentData).isPhotoPei }?.documentId
             if (documentPhoto != null) {
                 documentRepository.updateIsPhotoPei(listOf(documentPhoto), true)
             }
