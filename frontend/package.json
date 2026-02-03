@@ -11,6 +11,7 @@
     "lint:js": "eslint --cache --cache-location build/cache/eslint 'src/**/*.tsx' --max-warnings=21",
     "lint:css": "stylelint --cache --cache-location build/cache/stylelint 'src/**/*.{css,scss}'",
     "lint:html": "prettier --list-different 'src/**/*.html'",
+    "lint-tsc": "tsc --noemit --pretty",
     "lint": "run-p lint:*",
     "format": "prettier --write '.*rc{,.tsx}' '!.browserslistrc' '*.js' 'src/**/*.{ts,tsx,js,css,html,scss}'",
     "bom": "NODE_ENV=production npx @cyclonedx/cyclonedx-npm --output-file build/reports/bom-js.json"
