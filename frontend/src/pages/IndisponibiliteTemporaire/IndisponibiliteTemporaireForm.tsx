@@ -18,8 +18,8 @@ import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import SectionTitle from "../../components/SectionTitle/SectionTitle.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../module/validators.tsx";
-import { formatDateTimeForDateTimeInput } from "../../utils/formatDateUtils.tsx";
 import { URLS } from "../../routes.tsx";
+import { formatDateTimeForDateTimeInput } from "../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (data) => ({
   indisponibiliteTemporaireMotif: data?.indisponibiliteTemporaireMotif,

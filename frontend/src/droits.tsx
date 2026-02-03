@@ -1,10 +1,10 @@
-import { useLocation, Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAppContext } from "./components/App/AppProvider.tsx";
+import Header from "./components/Header/Header.tsx";
 import UtilisateurEntity from "./Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "./enums/DroitEnum.tsx";
-import { URLS } from "./routes.tsx";
 import SquelettePage from "./pages/SquelettePage.tsx";
-import Header from "./components/Header/Header.tsx";
+import { URLS } from "./routes.tsx";
 
 export const Authorization = (
   { Component, droits, isPublic = false }: AuthorizationEntity,

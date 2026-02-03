@@ -1,5 +1,5 @@
-import SquelettePage from "../../pages/SquelettePage.tsx";
 import Header from "../../components/Header/Header.tsx";
+import SquelettePage from "../../pages/SquelettePage.tsx";
 
 const NoMatch = () => {
   return (

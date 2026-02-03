@@ -6,8 +6,8 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconMapComponent } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import {
-  getInitialValue,
   GroupeCouche,
+  getInitialValue,
   groupeCoucheValidationSchema,
   prepareValues,
 } from "./GroupeCouche.tsx";

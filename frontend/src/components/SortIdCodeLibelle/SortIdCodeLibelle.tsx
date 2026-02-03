@@ -1,20 +1,20 @@
-import { SetStateAction, useState, FC } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import Table from "react-bootstrap/Table";
+import { FC, SetStateAction, useState } from "react";
 import { Container } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 import { useLocation, useNavigate } from "react-router-dom";
+import { NomenclatureInfoEntity } from "../../Entities/PeiEntity.tsx";
+import url from "../../module/fetch.tsx";
+import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import { URLS } from "../../routes.tsx";
+import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
 import PageTitle from "../Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../Fetch/useFetch.tsx";
 import SubmitFormButtons from "../Form/SubmitFormButtons.tsx";
 import { IconDragNDrop, IconInfo, IconSortList } from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
-import { NomenclatureInfoEntity } from "../../Entities/PeiEntity.tsx";
-import url from "../../module/fetch.tsx";
-import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
-import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
-import { URLS } from "../../routes.tsx";
 
 type IdCodeLibelleItem = {
   id: string;

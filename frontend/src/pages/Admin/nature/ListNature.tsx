@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import SelectNomenclaturesFilter from "../../../components/Filter/SelectNomenclaturesFilter.tsx";
 import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
@@ -25,7 +26,6 @@ import TypePeiEnum from "../../../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import filterValuesNature from "./FilterNature.tsx";
 
 const ListNature = () => {

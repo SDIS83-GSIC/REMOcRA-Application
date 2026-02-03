@@ -52,7 +52,7 @@ const ImportShapeEtude = () => {
         prepareVariables={(values) => prepareVariables(values)}
         // TODO redirect vers la carte
         redirectUrl={URLS.LIST_ETUDE}
-        onSubmit={() => {}}
+        onSubmit={() => null}
       >
         <FormImportShape />
       </MyFormik>

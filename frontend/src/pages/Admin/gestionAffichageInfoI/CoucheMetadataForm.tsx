@@ -1,7 +1,12 @@
-import { object } from "yup";
 import { useFormikContext } from "formik";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { object } from "yup";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
+import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
   FormContainer,
@@ -10,14 +15,9 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../../module/validators.tsx";
-import Loading from "../../../components/Elements/Loading/Loading.tsx";
-import { IconInfo } from "../../../components/Icon/Icon.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
 
 function generateMetadataProperties(properties: any) {
   return properties
@@ -77,9 +77,9 @@ const CoucheMetadataForm = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { handleShowClose, activesKeys } = useAccordionState([false, false]);
 
-  async function getError(errorPending: any) {
+  const getError = useCallback(async (errorPending: any) => {
     return await errorPending?.text();
-  }
+  }, []);
 
   const { setValues, setFieldValue, values } = useFormikContext<{
     groupeCoucheId: any;
@@ -122,7 +122,7 @@ const CoucheMetadataForm = ({
         generateMetadataProperties(properties),
       );
     }
-  }, [setFieldValue, describeFeatureType, coucheInitiale, properties]);
+  }, [setFieldValue, coucheInitiale, properties]);
 
   const handleLayerStyleChange = (event: any) => {
     if (event.target.value === "") {
@@ -143,7 +143,7 @@ const CoucheMetadataForm = ({
     } else {
       setErrorMessage(null);
     }
-  }, [dataLayer?.error]);
+  }, [getError]);
 
   useEffect(() => {
     if (coucheId) {

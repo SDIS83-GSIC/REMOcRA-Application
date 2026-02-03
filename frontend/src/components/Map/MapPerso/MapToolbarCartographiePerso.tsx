@@ -5,7 +5,7 @@ import { getCenter, getHeight, getWidth } from "ol/extent";
 import { LineString, Point, Polygon } from "ol/geom";
 import { DragBox, Draw, Modify, Select, Translate } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import Map from "ol/Map";
+import OLMap from "ol/Map";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -370,7 +370,7 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
     };
 
     return tools;
-  }, [map]);
+  }, [map, cartographiePersoLayer, featureStyle.clone]);
 
   return {
     tools,
@@ -404,7 +404,7 @@ const MapToolbarCartographiePerso = ({
   );
 
   const previewMap = useMemo(() => {
-    const initialMap = new Map({
+    const initialMap = new OLMap({
       controls: [],
       interactions: [],
       allOverlays: true,
@@ -418,7 +418,7 @@ const MapToolbarCartographiePerso = ({
       }),
     });
     return initialMap;
-  }, []);
+  }, [previewRef]);
 
   const previewLayer = useMemo(() => {
     // Alimentation des géométries de prévisualisation
@@ -451,13 +451,13 @@ const MapToolbarCartographiePerso = ({
     previewMap.addLayer(vectorLayer);
 
     return vectorLayer;
-  }, []);
+  }, [featureStyle, previewMap.addLayer]);
 
   useLayoutEffect(() => {
     if (previewRef) {
       previewMap.setTarget(previewRef);
     }
-  }, [previewRef]);
+  }, [previewRef, previewMap.setTarget]);
 
   function updatePreview() {
     if (!previewLayer.getSource()) {

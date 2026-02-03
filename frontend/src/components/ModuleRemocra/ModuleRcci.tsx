@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
+import SquelettePage from "../../pages/SquelettePage.tsx";
 import { URLS } from "../../routes.tsx";
 import Header, { NavToProps } from "../Header/Header.tsx";
-import SquelettePage from "../../pages/SquelettePage.tsx";
 
 const ModuleRcci = () => {
   const navLinks: NavToProps[] = [

@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
@@ -8,25 +8,25 @@ import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Col, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import DeleteButtonWithModal from "../../components/Button/DeleteButtonWithModal.tsx";
+import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import {
   IconCreate,
   IconEdit,
   IconOldeb,
   IconTransformGeometrie,
 } from "../../components/Icon/Icon.tsx";
+import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
+import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import ToolbarButton from "../../components/Map/ToolbarButton.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import Volet from "../../components/Volet/Volet.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
-import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
-import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
-import Volet from "../../components/Volet/Volet.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
-import DeleteButtonWithModal from "../../components/Button/DeleteButtonWithModal.tsx";
 import OldebUpdate from "./OldebUpdate.tsx";
 
 export const useToolbarOldebContext = ({
@@ -34,7 +34,7 @@ export const useToolbarOldebContext = ({
   workingLayer,
   dataOldebLayer,
 }: {
-  map: Map;
+  map: OLMap;
   workingLayer: VectorLayer;
   dataOldebLayer: VectorLayer;
 }) => {
@@ -269,7 +269,15 @@ export const useToolbarOldebContext = ({
     };
 
     return tools;
-  }, [map, dataOldebLayer]);
+  }, [
+    map,
+    dataOldebLayer,
+    successToast,
+    errorToast,
+    navigate,
+    location,
+    workingLayer.getSource,
+  ]);
 
   return {
     tools,
@@ -291,7 +299,7 @@ const OldebMapToolbar = ({
   editOldebs: string | null;
   closeEdit: () => void;
   dataOldebLayer: VectorLayer;
-  map: Map;
+  map: OLMap;
 }) => {
   const { user } = useAppContext();
 

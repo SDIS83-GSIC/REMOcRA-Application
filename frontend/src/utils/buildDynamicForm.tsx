@@ -11,8 +11,8 @@ import {
   SelectInput,
   TextInput,
 } from "../components/Form/Form.tsx";
-import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../Entities/RapportCourrierEntity.tsx";
 import { IconLine, IconPoint, IconPolygon } from "../components/Icon/Icon.tsx";
+import { TYPE_PARAMETRE_RAPPORT_COURRIER } from "../Entities/RapportCourrierEntity.tsx";
 
 export type DynamicFormWithParametre = {
   dynamicFormId: string;

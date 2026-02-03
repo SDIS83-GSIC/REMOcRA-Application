@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import MyFormik from "../../components/Form/MyFormik.tsx";
-import { URLS } from "../../routes.tsx";
-import { TourneeEntity } from "../../Entities/TourneeEntity.tsx";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
-import url from "../../module/fetch.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
+import { TourneeEntity } from "../../Entities/TourneeEntity.tsx";
+import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import TourneeForm, {
   getInitialValues,
   prepareVariables,

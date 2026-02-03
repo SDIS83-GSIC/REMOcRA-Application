@@ -1,7 +1,7 @@
+import classNames from "classnames";
 import { ReactNode } from "react";
 import type { ButtonVariant } from "react-bootstrap/types";
 import { NavLink, useLocation } from "react-router-dom";
-import classNames from "classnames";
 
 const LinkButton = ({
   pathname,

@@ -1,6 +1,12 @@
 import { default as classNames } from "classnames";
 import { useFormik } from "formik";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button, Table } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -96,7 +102,7 @@ function QueryTable({
     filterValuesToVariable(initialFilterBy ?? {}),
   );
 
-  const historyPush = () => {
+  const historyPush = useCallback(() => {
     const f = filterValuesToVariable(formik?.values);
     const filter = Object.values(f).filter(Boolean).length
       ? JSON.stringify(f)
@@ -148,17 +154,26 @@ function QueryTable({
         },
       );
     }
-  };
+  }, [
+    formik?.values,
+    sortBy,
+    location,
+    pagination.limit,
+    pagination.offset,
+    navigate,
+    setPagination,
+    filterValuesToVariable,
+  ]);
 
   const debounceSearch = useDebouncedCallback(historyPush, 500);
 
   useEffect(() => {
     debounceSearch();
-  }, [formik?.values]);
+  }, [debounceSearch]);
 
   useEffect(() => {
     historyPush();
-  }, [sortBy, pagination.offset, pagination.limit, ...watchedValues]);
+  }, [...watchedValues, historyPush]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location?.search);
@@ -194,7 +209,16 @@ function QueryTable({
     ) {
       // navigate({ offset: offsetParams, limit: limitParams }, { replace: true });
     }
-  }, [location]);
+  }, [
+    location,
+    filterValuesToVariable,
+    formik?.values,
+    pagination.limit.toString,
+    pagination.offset.toString,
+    setSortBy,
+    sortBy,
+    setValues,
+  ]);
 
   const { isRejected, isLoading, data, run } = usePost(
     queryParams ? query + "?" + url`${queryParams}` : query,
@@ -202,30 +226,29 @@ function QueryTable({
   );
   const firstMount = useRef(true);
 
-  const fetchData = () => {
-    // on ne veut pas relancer un chargement immédiatement si on passe un state parent
-    if (firstMount.current) {
-      firstMount.current = false;
-    }
-    if (
-      JSON.stringify(tableState) !==
-      JSON.stringify([filterBy, sortBy, pagination.limit, pagination.offset])
-    ) {
-      setTableState([filterBy, sortBy, pagination.limit, pagination.offset]);
-      if (pagination.limit >= 0 && pagination.offset >= 0) {
-        run({
-          limit: pagination.limit,
-          offset: pagination.offset,
-          filterBy: filterBy,
-          sortBy: sortBy,
-        });
-      }
-    }
-  };
-
   useEffect(() => {
+    const fetchData = () => {
+      // on ne veut pas relancer un chargement immédiatement si on passe un state parent
+      if (firstMount.current) {
+        firstMount.current = false;
+      }
+      if (
+        JSON.stringify(tableState) !==
+        JSON.stringify([filterBy, sortBy, pagination.limit, pagination.offset])
+      ) {
+        setTableState([filterBy, sortBy, pagination.limit, pagination.offset]);
+        if (pagination.limit >= 0 && pagination.offset >= 0) {
+          run({
+            limit: pagination.limit,
+            offset: pagination.offset,
+            filterBy: filterBy,
+            sortBy: sortBy,
+          });
+        }
+      }
+    };
     fetchData();
-  }, [filterBy, sortBy, pagination.limit, pagination.offset]);
+  }, [filterBy, sortBy, pagination.limit, pagination.offset, run, tableState]);
 
   if (isRejected) {
     return <div>Une erreur est survenue.</div>;

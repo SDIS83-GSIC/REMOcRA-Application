@@ -1,6 +1,6 @@
-import Map from "ol/Map";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import OLMap from "ol/Map";
 import { OSM, TileWMS, WMTS } from "ol/source";
 
 // Configuration des optimisations de performance pour les sources de tuiles
@@ -59,7 +59,7 @@ export function optimizeVectorLayer(layer: VectorLayer<any>): VectorLayer<any> {
 }
 
 // Fonction pour optimiser la carte globalement
-export function optimizeMap(map: Map): Map {
+export function optimizeMap(map: OLMap): OLMap {
   // Configuration du rendu
   map.setLayerGroup(map.getLayerGroup()); // Force la régénération des couches
 

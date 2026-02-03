@@ -106,7 +106,7 @@ const CardTask = ({
           validationSchema={validationSchema}
           isPost
           initialValues={initialValues}
-          onSubmit={() => {}}
+          onSubmit={() => null}
         >
           {children}
         </MyFormik>

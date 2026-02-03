@@ -1,6 +1,5 @@
+import classNames from "classnames";
 import { getUid } from "ol";
-import Map from "ol/Map";
-import View from "ol/View";
 import { MousePosition, ScaleLine } from "ol/control";
 import { defaults as defaultControls, FullScreen } from "ol/control.js";
 import { createStringXY, degreesToStringHDMS } from "ol/coordinate";
@@ -10,20 +9,22 @@ import { MouseWheelZoom } from "ol/interaction";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import { bbox } from "ol/loadingstrategy";
-import classNames from "classnames";
+import OLMap from "ol/Map";
+import View from "ol/View";
 import "ol/ol.css";
+import ImageLayer from "ol/layer/Image";
 import { get as getProjection, transform, transformExtent } from "ol/proj";
 import { OSM, TileWMS, WMTS } from "ol/source";
+import ImageWMS from "ol/source/ImageWMS";
 import TileSource from "ol/source/Tile";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import ImageLayer from "ol/layer/Image";
-import ImageWMS from "ol/source/ImageWMS";
 import {
   MutableRefObject,
   ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -192,7 +193,7 @@ const MapComponent = ({
   showOutilI,
   printable = false,
 }: {
-  map?: Map;
+  map?: OLMap;
   availableLayers: any[];
   addOrRemoveLayer: (layer: any) => void;
   layerListRef: any;
@@ -224,6 +225,7 @@ const MapComponent = ({
     };
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: on veut que ce useEffect ne se déclenche que lors de la création de la carte, pas à chaque changement d'outil actif
   useEffect(() => {
     if (!map) {
       return;
@@ -307,7 +309,7 @@ export const useMapComponent = ({
     if (!projection || !mapElement.current || !afficheCoordonneesState.data) {
       return;
     }
-    const initialMap = new Map({
+    const initialMap = new OLMap({
       controls: defaultControls().extend([
         new FullScreen({ source: "map-container" }),
         new MousePosition({
@@ -391,7 +393,14 @@ export const useMapComponent = ({
     }
 
     return initialMap;
-  }, [mapElement.current, projection, afficheCoordonneesState.data, etudeId]);
+  }, [
+    mapElement.current,
+    projection,
+    afficheCoordonneesState.data,
+    user?.zoneIntegrationExtent,
+    defaultExtent,
+    extentSRID,
+  ]);
 
   // Application des optimisations de performance après création de la carte
   useEffect(() => {
@@ -488,7 +497,7 @@ export const useMapComponent = ({
   };
 
   // Ajout de la couche de travail
-  function createWorkingLayer() {
+  const createWorkingLayer = useCallback(() => {
     const wl = new VectorLayer({
       source: new VectorSource(),
       style: () => {
@@ -515,9 +524,9 @@ export const useMapComponent = ({
     map?.addLayer(wl);
 
     return wl;
-  }
+  }, [map]);
 
-  function createDataPeiLayer() {
+  const createDataPeiLayer = useCallback(() => {
     if (!map) {
       return;
     }
@@ -530,19 +539,19 @@ export const useMapComponent = ({
         projection.getCode(),
       projection,
     );
-  }
+  }, [map, projection]);
 
   const workingLayer = useMemo(() => {
     if (map && projection) {
       return createWorkingLayer();
     }
-  }, [map, projection]);
+  }, [map, projection, createWorkingLayer]);
 
   const dataPeiLayer = useMemo(() => {
     if (map && projection && displayPei) {
       return createDataPeiLayer();
     }
-  }, [map, projection]);
+  }, [map, projection, displayPei, createDataPeiLayer]);
 
   useEffect(() => {
     if (state?.target && map) {

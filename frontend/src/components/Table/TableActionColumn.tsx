@@ -1,15 +1,15 @@
-import { ReactNode, MutableRefObject } from "react";
-import { Button, Row, Col, Dropdown } from "react-bootstrap";
 import classnames from "classnames";
-import TooltipCustom from "../Tooltip/Tooltip.tsx";
-import DeleteModal from "../Modal/DeleteModal.tsx";
-import useModal from "../Modal/ModalUtils.tsx";
-import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
-import EditModal from "../Modal/EditModal.tsx";
+import { MutableRefObject, ReactNode } from "react";
+import { Button, Col, Dropdown, Row } from "react-bootstrap";
+import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
 import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
 import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
-import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
+import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
+import DeleteModal from "../Modal/DeleteModal.tsx";
+import EditModal from "../Modal/EditModal.tsx";
+import useModal from "../Modal/ModalUtils.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 const TableActionColumn = ({
   row,
@@ -237,21 +237,32 @@ export const ActionButton = ({
 }) => {
   return (
     <Row className={"d-flex flex-row"}>
-      {buttons.map((_button) => {
+      {buttons.map((_button, key) => {
         switch (_button.type) {
           case TYPE_BUTTON.DELETE:
-            return <DeleteButtonPrivate _button={_button} row={row} />;
+            return (
+              <DeleteButtonPrivate key={key} _button={_button} row={row} />
+            );
           case TYPE_BUTTON.CONFIRM:
-            return <ConfirmButtonPrivate _button={_button} row={row} />;
+            return (
+              <ConfirmButtonPrivate key={key} _button={_button} row={row} />
+            );
           case TYPE_BUTTON.SIMPLE_MODAL:
-            return <SimpleModalButtonPrivate _button={_button} row={row} />;
+            return (
+              <SimpleModalButtonPrivate key={key} _button={_button} row={row} />
+            );
           case TYPE_BUTTON.EDIT_MODAL:
-            return <EditModalButtonPrivate _button={_button} row={row} />;
+            return (
+              <EditModalButtonPrivate key={key} _button={_button} row={row} />
+            );
           case TYPE_BUTTON.DROPDOWN:
-            return <DropdownButtonPrivate _button={_button} row={row} />;
+            return (
+              <DropdownButtonPrivate key={key} _button={_button} row={row} />
+            );
           case TYPE_BUTTON.UPDATE:
             return (
               <TableActionColumn
+                key={key}
                 row={row}
                 textEnable={"Modifier"}
                 icon={<IconEdit />}
@@ -267,6 +278,7 @@ export const ActionButton = ({
           case TYPE_BUTTON.SEE:
             return (
               <TableActionColumn
+                key={key}
                 row={row}
                 textEnable={_button.textEnable ?? "Voir plus"}
                 icon={_button.icon ?? <IconSee />}
@@ -276,6 +288,7 @@ export const ActionButton = ({
           case TYPE_BUTTON.LINK:
             return (
               <TableActionColumn
+                key={key}
                 row={row}
                 textEnable={_button.textEnable}
                 icon={_button.icon}
@@ -293,6 +306,7 @@ export const ActionButton = ({
           case TYPE_BUTTON.BUTTON:
             return (
               <TableActionColumn
+                key={key}
                 row={row}
                 textEnable={_button.textEnable}
                 icon={_button.icon}

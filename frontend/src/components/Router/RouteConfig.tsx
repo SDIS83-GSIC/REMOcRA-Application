@@ -1,5 +1,5 @@
-import { useRoutes } from "react-router-dom";
 import { ReactNode } from "react";
+import { useRoutes } from "react-router-dom";
 
 const RouteConfig = ({ routes }: RouteConfigEntity) => {
   return useRoutes(routes);

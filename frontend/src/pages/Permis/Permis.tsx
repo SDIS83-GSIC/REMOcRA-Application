@@ -1,6 +1,5 @@
 import { useFormikContext } from "formik";
 import { Button, Col, Row } from "react-bootstrap";
-import PermisEntity from "../../Entities/PermisEntity.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
@@ -17,6 +16,7 @@ import FormDocuments, {
 } from "../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import { hasDroit } from "../../droits.tsx";
+import PermisEntity from "../../Entities/PermisEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";

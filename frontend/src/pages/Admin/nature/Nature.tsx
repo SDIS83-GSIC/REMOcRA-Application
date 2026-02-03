@@ -9,14 +9,14 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import TYPE_PEI from "../../../enums/TypePeiEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import {
   requiredBoolean,
   requiredString,
 } from "../../../module/validators.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
-import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import { NatureType } from "./NatureEntity.tsx";
 
 export const prepareNatureValues = (values: NatureType) => ({

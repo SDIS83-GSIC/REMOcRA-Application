@@ -1,5 +1,5 @@
+import OLMap from "ol/Map";
 import { Container } from "react-bootstrap";
-import Map from "ol/Map";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconDocument } from "../../../components/Icon/Icon.tsx";
 import ListDocument from "./ListDocument.tsx";
@@ -24,7 +24,7 @@ const CreateListDocuments = ({
 type CreateListDocumentsType = {
   criseIdentifiant: string;
   onSubmit: any;
-  map: Map;
+  map: OLMap;
 };
 
 export default CreateListDocuments;

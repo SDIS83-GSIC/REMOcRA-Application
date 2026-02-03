@@ -3,9 +3,9 @@ import { Container } from "react-bootstrap";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 
 function findMetadataById(coucheMetadata: any[], typeId: string) {
   for (const metadata of coucheMetadata) {

@@ -1,11 +1,11 @@
 import { useMemo, useRef } from "react";
-import MapComponent, { useMapComponent } from "../Map.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
-import { useToolbarContext } from "../MapToolbar.tsx";
-import { createPointLayer, refreshLayerGeoserver } from "../MapUtils.tsx";
 import url from "../../../module/fetch.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { IconSignalement } from "../../Icon/Icon.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import MapComponent, { useMapComponent } from "../Map.tsx";
+import { useToolbarContext } from "../MapToolbar.tsx";
+import { createPointLayer, refreshLayerGeoserver } from "../MapUtils.tsx";
 import MapToolbarSignalement, {
   useToolbarSignalementContext,
 } from "./MapToolbarSignalement.tsx";
@@ -70,7 +70,6 @@ const MapSignalement = () => {
     useToolbarContext({
       availableLayers: availableLayers,
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: extraTools,
     });

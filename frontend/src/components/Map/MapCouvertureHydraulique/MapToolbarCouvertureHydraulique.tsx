@@ -3,7 +3,7 @@ import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Circle, Geometry, MultiLineString, Point } from "ol/geom";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
-import Map from "ol/Map";
+import OLMap from "ol/Map";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
@@ -88,7 +88,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
   etudeId,
   reseauImporte,
 }: {
-  map?: Map;
+  map?: OLMap;
   workingLayer: any;
   dataPeiLayer: any;
   dataPeiProjetLayer: any;
@@ -476,7 +476,20 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     };
 
     return tools;
-  }, [map]);
+  }, [
+    map,
+    listePeiProjetId.push,
+    listePeiId.push,
+    listePeiProjetId.splice,
+    listePeiId.splice,
+    dataPeiProjetLayer,
+    dataPeiLayer,
+    workingLayer,
+    errorToast,
+    listePeiProjetId.length,
+    listePeiId.length,
+    showMove,
+  ]);
 
   return {
     tools,
@@ -518,7 +531,7 @@ const MapToolbarCouvertureHydraulique = ({
   closeMove,
   visibleMove,
 }: {
-  map: Map;
+  map: OLMap;
   dataPeiProjetLayer: any;
   workingLayer: any;
   etudeId: string;

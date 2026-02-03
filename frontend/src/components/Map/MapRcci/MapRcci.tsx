@@ -1,10 +1,11 @@
+import type { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconRCCI } from "../../../components/Icon/Icon.tsx";
-import rcciBeforeIcon from "../../../img/rci-before.png";
 import rcciIcon from "../../../img/rci.png";
+import rcciBeforeIcon from "../../../img/rci-before.png";
 import { CODE_COUCHE_RCCI } from "../../../utils/constantsUtils.tsx";
 import { formatDate } from "../../../utils/formatDateUtils.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
@@ -36,7 +37,7 @@ const MapRcci = () => {
     displayPei: false,
   });
 
-  const rcciStyle = (feature): Style | undefined => {
+  const rcciStyle = useCallback((feature): Style | undefined => {
     const date = feature.get("rcciDateIncendie");
     const year = date ? new Date(date).getFullYear() : null;
     const currentYear = new Date().getFullYear();
@@ -62,7 +63,7 @@ const MapRcci = () => {
         stroke: new Stroke({ color: "#ffffff", width: 4 }),
       }),
     });
-  };
+  }, []);
 
   dataRcciLayerRef.current = useMemo(() => {
     if (!map || availableLayers.length === 0) {
@@ -73,7 +74,7 @@ const MapRcci = () => {
       .layers.find((e) => e.code === CODE_COUCHE_RCCI).openlayer;
     layer.setStyle(rcciStyle);
     return layer;
-  }, [map, availableLayers]);
+  }, [map, availableLayers, rcciStyle]);
 
   const {
     tools: extraTools,
@@ -93,7 +94,6 @@ const MapRcci = () => {
       availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 

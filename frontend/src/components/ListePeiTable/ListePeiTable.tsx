@@ -11,8 +11,8 @@ import { filterValuesToVariable } from "../../pages/Pei/FilterPei.tsx";
 import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
-import useLocalisation from "../Localisation/useLocalisation.tsx";
 import QueryTableTournee from "../ListeTourneeTable/QueryTableTournee.tsx";
+import useLocalisation from "../Localisation/useLocalisation.tsx";
 
 const ListPei = ({
   filterPage,

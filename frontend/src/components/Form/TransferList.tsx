@@ -233,7 +233,7 @@ export const useTransferList = ({
     ) {
       setSelectedOptions(listeSelectionne ? listeSelectionne : []);
     }
-  }, [listeSelectionne, selectedOptions, setSelectedOptions]);
+  }, [listeSelectionne, selectedOptions]);
 
   useEffect(() => {
     setFieldValue(nameFormik, selectedOptions);

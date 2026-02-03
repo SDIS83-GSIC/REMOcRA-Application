@@ -1,6 +1,6 @@
 import ReactSelect from "react-select";
-import { SelectType } from "../../utils/typeUtils.tsx";
 import selectStyle from "../../components/Form/SelectStyle.tsx";
+import { SelectType } from "../../utils/typeUtils.tsx";
 
 /**
  * Composant Select pour les enums.
@@ -22,7 +22,7 @@ function SelectEnumOption({
   optionsArray.push({ value: "", libelle: "Tous" });
   for (const key in options) {
     // eslint-disable-next-line no-prototype-builtins
-    if (options.hasOwnProperty(key)) {
+    if (Object.hasOwn(options, key)) {
       optionsArray.push({ value: key, libelle: options[key] });
     }
   }

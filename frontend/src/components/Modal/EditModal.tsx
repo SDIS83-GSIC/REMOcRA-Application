@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import MyFormik from "../Form/MyFormik.tsx";
-import { FormContainer } from "../Form/Form.tsx";
-import { useGet } from "../Fetch/useFetch.tsx";
 import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
+import { FormContainer } from "../Form/Form.tsx";
+import MyFormik from "../Form/MyFormik.tsx";
 
 const EditModalBody = ({
   prepareVariables,
@@ -23,13 +23,13 @@ const EditModalBody = ({
 }: EditModalBodyType) => {
   const isAdd = id == null;
   const submitUrl = query + "/" + (id ? id : "");
+
+  const editState = useGet(isAdd ? null : submitUrl, {});
+  const { isLoading, isResolved, data = {} } = editState;
+
   let initialData = {};
 
   if (!isAdd) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const editState = useGet(submitUrl, {});
-    const { isLoading, isResolved, data = {} } = editState;
-
     if (isLoading) {
       return <Loading />;
     }

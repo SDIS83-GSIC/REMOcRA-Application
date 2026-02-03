@@ -1,14 +1,14 @@
 import { useMemo, useRef, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { URLS } from "../../../routes.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
-import { SelectDateTimeInput } from "../../../components/Filter/SelectDateTimeInput.tsx";
-import CheckBoxInput from "../../../components/Filter/SelectCheckBoxInput.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import CheckBoxInput from "../../../components/Filter/SelectCheckBoxInput.tsx";
+import { SelectDateTimeInput } from "../../../components/Filter/SelectDateTimeInput.tsx";
 import { IconExport } from "../../../components/Icon/Icon.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 
 export type ExportParams = {
   dateDebExtraction: Date;
@@ -39,7 +39,7 @@ const ExportCrise = () => {
         });
       }
     }
-  }, [crise, loop, exportParams]);
+  }, [crise, exportParams]);
 
   return (
     <Container>

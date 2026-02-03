@@ -184,7 +184,7 @@ const ConfigDynamicGrid = ({
 
   useEffect(() => {
     runListComponents();
-  }, [activeDashboard.id, runListComponents]);
+  }, [runListComponents]);
 
   // On initialise la liste des composants du dashbord
   useEffect(() => {
@@ -387,7 +387,7 @@ const ListComponents = ({
                 ...component,
                 data: formattedData,
               };
-            } catch (error) {
+            } catch (_error) {
               return component; // Garder le composant sans données en cas d'erreur
             }
           }

@@ -1,21 +1,21 @@
-import { Button, Container, Table } from "react-bootstrap";
 import { useState } from "react";
+import { Button, Container, Table } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
 import {
   IconCriseRapportPersonnalise,
   IconExport,
 } from "../../../components/Icon/Icon.tsx";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
+import url from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import GenererForm from "../../../utils/buildDynamicForm.tsx";
+import { downloadOutputFile } from "../../../utils/fonctionsUtils.tsx";
 import {
   getInitialValues,
   prepareVariables,
   validationSchema,
 } from "../../RapportPersonnalise/ExecuteRapportPersonnalise.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
-import GenererForm from "../../../utils/buildDynamicForm.tsx";
-import { downloadOutputFile } from "../../../utils/fonctionsUtils.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 
 const ExecuteCriseRapportPersonnalise = ({
   onGeometrySelect,

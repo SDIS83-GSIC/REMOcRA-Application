@@ -1,9 +1,9 @@
 import { useRef } from "react";
+import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
+import { IconDFCI } from "../../Icon/Icon.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
-import { IconDFCI } from "../../Icon/Icon.tsx";
-import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import MapToolbarDFCI from "./MapToolbarDFCI.tsx";
 
 const MapDFCI = () => {
@@ -28,7 +28,6 @@ const MapDFCI = () => {
       availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: {},
     });
 

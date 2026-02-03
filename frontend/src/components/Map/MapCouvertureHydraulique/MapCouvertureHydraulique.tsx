@@ -86,7 +86,6 @@ const MapCouvertureHydraulique = ({
       availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 

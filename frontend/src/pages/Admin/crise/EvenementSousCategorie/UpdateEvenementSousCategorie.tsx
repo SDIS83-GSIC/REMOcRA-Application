@@ -7,10 +7,10 @@ import { IconEdit } from "../../../../components/Icon/Icon.tsx";
 import url from "../../../../module/fetch.tsx";
 import { URLS } from "../../../../routes.tsx";
 import {
-  getInitialEvenementSousCategorieValue,
-  prepareValues,
   EvenementSousCategorie,
   evenementSousCategorieValidationSchema,
+  getInitialEvenementSousCategorieValue,
+  prepareValues,
 } from "./EvenementSousCategorie.tsx";
 
 const UpdateEvenementSousCategorie = () => {

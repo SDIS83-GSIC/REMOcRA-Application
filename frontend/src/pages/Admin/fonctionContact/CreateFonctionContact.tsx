@@ -1,6 +1,7 @@
 import CreateNomenclature from "../../../components/NomenclatureComponent/CreateNomenclature.tsx";
 import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
 import { URLS } from "../../../routes.tsx";
+
 const CreateFonctionContact = () => {
   return (
     <CreateNomenclature

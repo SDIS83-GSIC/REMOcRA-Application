@@ -2,8 +2,6 @@ import classNames from "classnames";
 import { useFormikContext } from "formik";
 import { ReactNode } from "react";
 import { Button, Col, Row } from "react-bootstrap";
-import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
-import { VisiteTourneeEntity } from "../../Entities/VisiteEntity.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
@@ -11,9 +9,11 @@ import PositiveNumberInput, {
   CheckBoxInput,
   TextAreaInput,
 } from "../../components/Form/Form.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
+import { VisiteTourneeEntity } from "../../Entities/VisiteEntity.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 
 const SimplifiedVisiteForm = ({
   index,

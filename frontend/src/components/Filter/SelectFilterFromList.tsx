@@ -1,9 +1,10 @@
 import ReactSelect from "react-select";
+import selectStyle from "../../components/Form/SelectStyle.tsx";
 import {
   IdCodeLibelleType,
   SelectFilterFromListType,
 } from "../../utils/typeUtils.tsx";
-import selectStyle from "../../components/Form/SelectStyle.tsx";
+
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
  *     pour faire un select avec toutes ces données.

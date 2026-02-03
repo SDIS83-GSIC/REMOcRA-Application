@@ -1,11 +1,11 @@
-import { Container } from "react-bootstrap";
 import React, { ReactNode, useEffect } from "react";
+import { Container } from "react-bootstrap";
 import { useGet } from "../components/Fetch/useFetch.tsx";
-import url from "../module/fetch.tsx";
 import Footer from "../components/Footer/Footer.tsx";
-import BanniereHeader from "../components/Header/BanniereHeader.tsx";
 import GoTopButton from "../components/GoTopButton/GoTopButton.tsx";
+import BanniereHeader from "../components/Header/BanniereHeader.tsx";
 import PARAMETRE from "../enums/ParametreEnum.tsx";
+import url from "../module/fetch.tsx";
 
 type SquelettePageType = {
   children?;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card, ListGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ComponentDashboard, ICONS, DashboardParam } from "../Constants.tsx";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
+import { ComponentDashboard, DashboardParam, ICONS } from "../Constants.tsx";
 
 type QueryComponentListProps = {
   openListQuery: DashboardParam[] | undefined;

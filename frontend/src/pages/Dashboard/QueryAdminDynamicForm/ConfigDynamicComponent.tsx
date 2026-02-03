@@ -1,12 +1,12 @@
-import { Card, Nav, Button, Dropdown } from "react-bootstrap";
 import { SetStateAction, useState } from "react";
-import {
-  ComponentDashboard,
-  COMPONENTS,
-  INIT_DATA,
-  FORM_CONFIG,
-} from "../Constants.tsx";
+import { Button, Card, Dropdown, Nav } from "react-bootstrap";
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
+import {
+  COMPONENTS,
+  ComponentDashboard,
+  FORM_CONFIG,
+  INIT_DATA,
+} from "../Constants.tsx";
 
 type ConfigDynamicComponentProps = {
   data: any;

@@ -40,7 +40,7 @@ const ImportRisqueExpress = () => {
         submitUrl={`/api/risque/import/`}
         prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={URLS.RISQUE}
-        onSubmit={() => {}}
+        onSubmit={() => null}
       >
         <FormImportRisqueExpress />
       </MyFormik>

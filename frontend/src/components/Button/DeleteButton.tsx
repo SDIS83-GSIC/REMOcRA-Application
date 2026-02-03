@@ -1,5 +1,5 @@
-import { Button } from "react-bootstrap";
 import classNames from "classnames";
+import { Button } from "react-bootstrap";
 import { IconDelete } from "../Icon/Icon.tsx";
 
 const DeleteButton = ({

@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { WKT } from "ol/format";
 import { Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
@@ -310,7 +310,14 @@ export const useToolbarRcciContext = ({
     };
 
     return tools;
-  }, [map, dataRcciLayerRef.current, workingLayer]);
+  }, [
+    map,
+    dataRcciLayerRef.current,
+    workingLayer,
+    deleteShow,
+    successToast,
+    errorToast,
+  ]);
 
   return {
     tools,
@@ -341,7 +348,7 @@ const MapToolbarRcci = ({
   setRcciModifieId,
 }: {
   toggleTool: (toolId: string) => void;
-  map: Map;
+  map: OLMap;
   activeTool: string;
   dataRcciLayerRef: MutableRefObject<VectorLayer | undefined>;
   creationRcciGeometrie: { rcci: { rcciGeometrie: string } } | null;

@@ -1,8 +1,8 @@
 import { useMemo, useRef } from "react";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { addWktLayer } from "../MapUtils.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 
 const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
   const mapElement = useRef<HTMLDivElement>();
@@ -26,7 +26,6 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
     useToolbarContext({
       availableLayers: availableLayers,
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: {},
     });

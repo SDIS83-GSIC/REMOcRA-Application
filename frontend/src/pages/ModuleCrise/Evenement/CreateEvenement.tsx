@@ -1,10 +1,10 @@
 import { Container } from "react-bootstrap";
-import url from "../../../module/fetch.tsx";
-import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import { IconEvent } from "../../../components/Icon/Icon.tsx";
+import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { IconEvent } from "../../../components/Icon/Icon.tsx";
+import url from "../../../module/fetch.tsx";
 import Evenement, {
   getInitialValues,
   prepareVariables,

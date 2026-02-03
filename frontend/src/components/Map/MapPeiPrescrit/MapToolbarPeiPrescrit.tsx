@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { Point } from "ol/geom";
 import { Draw } from "ol/interaction";
 import { Circle, Fill, Stroke, Style } from "ol/style";
@@ -97,7 +97,7 @@ const MapToolbarPeiPrescrit = ({
   toggleTool: toggleToolCallback,
   activeTool,
 }: {
-  map?: Map;
+  map?: OLMap;
   dataPeiPrescritLayer: any;
   showCreatePeiPrescrit: boolean;
   handleClosePeiPrescrit: () => void;

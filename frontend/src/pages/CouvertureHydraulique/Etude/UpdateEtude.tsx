@@ -29,7 +29,7 @@ const UpdateEtude = () => {
           prepareVariables(values, etudeState?.data)
         }
         redirectUrl={URLS.LIST_ETUDE}
-        onSubmit={() => {}}
+        onSubmit={() => null}
       >
         <Etude />
       </MyFormik>

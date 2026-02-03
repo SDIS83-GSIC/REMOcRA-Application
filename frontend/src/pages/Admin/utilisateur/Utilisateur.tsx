@@ -96,7 +96,6 @@ const Utilisateur = () => {
   }, [
     groupeFonctionnalitesWithProfilsList,
     organismeList,
-    profilUtilisateurList,
     values.utilisateurProfilUtilisateurId,
     values.utilisateurOrganismeId,
   ]);

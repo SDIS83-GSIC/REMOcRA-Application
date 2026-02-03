@@ -1,5 +1,6 @@
 import { useFormikContext } from "formik";
 import { object } from "yup";
+import SortableAddRemoveComponent from "../../../../components/DragNDrop/SortableAddRemoveComponent.tsx";
 import { useGet } from "../../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -9,11 +10,10 @@ import {
 } from "../../../../components/Form/Form.tsx";
 import SelectForm from "../../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../../components/Form/SubmitFormButtons.tsx";
+import SousTypeEvenementType from "../../../../Entities/SousTypesEvenementsEntity.tsx";
 import TYPE_GEOMETRIE from "../../../../enums/TypeGeometrie.tsx";
 import url from "../../../../module/fetch.tsx";
 import { requiredString } from "../../../../module/validators.tsx";
-import SortableAddRemoveComponent from "../../../../components/DragNDrop/SortableAddRemoveComponent.tsx";
-import SousTypeEvenementType from "../../../../Entities/SousTypesEvenementsEntity.tsx";
 import { createComponentSousTypeEvenementToRepeat } from "./SortableComplementSousCategorie.tsx";
 
 export const prepareValues = (values: SousTypeEvenementType) => ({

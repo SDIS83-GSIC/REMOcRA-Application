@@ -22,7 +22,7 @@ function getCsrfToken() {
 function filterParams(obj: object) {
   return Object.entries(obj)
     .filter((e) => e[1] != null)
-    .map((v) => (typeof v[1] == "object" ? [v[0], JSON.stringify(v[1])] : v));
+    .map((v) => (typeof v[1] === "object" ? [v[0], JSON.stringify(v[1])] : v));
 }
 
 export default function url(
@@ -31,7 +31,7 @@ export default function url(
 ) {
   return strings.slice(1).reduce((res, string, i) => {
     const value = values[i];
-    if (typeof value == "object") {
+    if (typeof value === "object") {
       res += decodeURIComponent(
         (value instanceof URLSearchParams
           ? value

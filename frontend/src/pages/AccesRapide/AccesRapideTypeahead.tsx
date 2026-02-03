@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import url from "../../module/fetch.tsx";
 import { useGetRun } from "../../components/Fetch/useFetch.tsx";
+import url from "../../module/fetch.tsx";
 
 export type IdLibelleData = {
   id: string;
@@ -23,7 +23,7 @@ const AccesRapideTypeahead = ({
     {},
   );
 
-  useEffect(run, [motif, run]);
+  useEffect(run, [run]);
 
   return (
     <AsyncTypeahead

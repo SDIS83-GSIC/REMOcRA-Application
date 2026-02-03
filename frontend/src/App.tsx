@@ -1,9 +1,9 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./components/App/AppProvider.tsx";
 import "./App.css";
-import routes from "./routes.tsx";
 import RouteConfig from "./components/Router/RouteConfig.tsx";
 import { ToastProvider } from "./module/Toast/ToastProvider.tsx";
+import routes from "./routes.tsx";
 import "./style.scss";
 
 const App = () => {

@@ -1,4 +1,5 @@
-import { Map } from "ol";
+import { useFormikContext } from "formik";
+import { Map as OLMap } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
@@ -7,16 +8,21 @@ import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { object } from "yup";
-import { useFormikContext } from "formik";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
-import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { requiredString } from "../../../module/validators.tsx";
 import CreateDebitSimultane from "../../../pages/DebitSimultane/CreateDebitSimultane.tsx";
 import CreateIndisponibiliteTemporaire from "../../../pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import AffecterPeiTourneeMap from "../../../pages/Tournee/AffecterPeiTourneeMap.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
+import { CheckBoxInput, FormContainer, TextInput } from "../../Form/Form.tsx";
+import SelectForm from "../../Form/SelectForm.tsx";
 import {
   IconCreate,
   IconDebitSimultane,
@@ -25,6 +31,7 @@ import {
   IconSelect,
   IconTournee,
 } from "../../Icon/Icon.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
 import SimpleModal from "../../Modal/SimpleModal.tsx";
@@ -33,13 +40,6 @@ import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
-import PARAMETRE from "../../../enums/ParametreEnum.tsx";
-import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
-import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
-import SelectForm from "../../Form/SelectForm.tsx";
-import { CheckBoxInput, FormContainer, TextInput } from "../../Form/Form.tsx";
-import { requiredString } from "../../../module/validators.tsx";
 
 export const useToolbarPeiContext = ({
   map,
@@ -48,7 +48,7 @@ export const useToolbarPeiContext = ({
   setShowFormPei,
   setCoordonneesPeiCreate,
 }: {
-  map: Map;
+  map: OLMap;
   setShowFormPei: (v: boolean) => void;
   setCoordonneesPeiCreate: (e: any) => void;
 }) => {
@@ -378,7 +378,23 @@ export const useToolbarPeiContext = ({
     };
 
     return tools;
-  }, [map]);
+  }, [
+    map,
+    errorToast,
+    listePeiId.length,
+    dataPeiLayer,
+    listePeiTourneeIcpe.splice,
+    listePeiTourneePrive.splice,
+    listePeiTourneePublic.splice,
+    listePeiTourneePrive.length,
+    listePeiTourneePublic.length,
+    listePeiTourneeIcpe.length,
+    setShowFormPei,
+    showMove,
+    setCoordonneesPeiCreate,
+    workingLayer?.getSource,
+    listePeiId.splice,
+  ]);
 
   function createUpdateTournee() {
     setShowCreateTournee(true);
@@ -487,7 +503,7 @@ const MapToolbarPei = ({
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
-  map: Map;
+  map: OLMap;
   dataPeiLayer: any;
   showCreateIndispoTemp: boolean;
   handleCloseIndispoTemp: () => void;
@@ -552,7 +568,7 @@ const MapToolbarPei = ({
     return JSON.parse(
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
-  }, [listeParametre, parametreVoieSaisieLibre]);
+  }, [listeParametre]);
   const isVoiesListEmpty = !voiesList || voiesList.length === 0;
 
   // Pour afficher le *bon* bouton pour accéder à la fiche PEI (lecture, écriture)

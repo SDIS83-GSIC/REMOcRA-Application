@@ -1,16 +1,16 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReactSelect from "react-select";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
+import Loading from "../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
-import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
@@ -85,7 +85,7 @@ const TourneePei = ({
     true,
   );
 
-  const filterOptions = () => {
+  const filterOptions = useCallback(() => {
     let filteredList: PeiInfoEntity[] = allPeiInfoSource.data;
     if (data.length > 0) {
       if (
@@ -117,7 +117,7 @@ const TourneePei = ({
         tourneeId: tourneeIdToUse,
       };
     });
-  };
+  }, [allPeiInfoSource.data, data, tourneeIdToUse]);
 
   useEffect(() => {
     if (allPeiInfoSource.isResolved && data) {

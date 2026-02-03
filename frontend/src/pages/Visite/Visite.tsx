@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { ReactNode, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
@@ -48,7 +48,7 @@ const Visite = ({
 }: {
   peiIdCarte?: string;
   closeForm: () => void;
-  map?: Map;
+  map?: OLMap;
 }) => {
   const { peiId: paramPeiId } = useParams();
   const peiId = peiIdCarte ?? paramPeiId;

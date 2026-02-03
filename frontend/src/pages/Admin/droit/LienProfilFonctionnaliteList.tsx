@@ -8,9 +8,9 @@ import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
 import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 const LienProfilFonctionnaliteList = () => {
   return (

@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import { PeiEntity } from "../../Entities/PeiEntity.tsx";
@@ -19,7 +19,7 @@ const CreatePei = ({
     srid: number;
   };
   close: () => void;
-  map: Map;
+  map: OLMap;
 }) => {
   const initialValues = getInitialValues({
     coordonneeX: coordonneesPeiCreate.coordonneeX,

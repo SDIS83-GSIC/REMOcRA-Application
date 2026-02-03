@@ -2,6 +2,7 @@ import url from "../../module/fetch.tsx";
 import { SelectNomenclaturesType } from "../../utils/typeUtils.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import SelectFilterFromList from "./SelectFilterFromList.tsx";
+
 /**
  * Composant de sélection pour les nomenclatures.
  *

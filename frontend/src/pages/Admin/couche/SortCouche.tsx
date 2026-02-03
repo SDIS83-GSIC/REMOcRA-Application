@@ -1,7 +1,7 @@
 import { Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import SortIdCodeLibelle from "../../../components/SortIdCodeLibelle/SortIdCodeLibelle.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
+import SortIdCodeLibelle from "../../../components/SortIdCodeLibelle/SortIdCodeLibelle.tsx";
 
 const SortCouche = () => {
   const { groupeCoucheId } = useParams<{ groupeCoucheId: string }>();

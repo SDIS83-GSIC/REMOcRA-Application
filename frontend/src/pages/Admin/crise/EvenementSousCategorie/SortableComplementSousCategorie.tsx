@@ -4,15 +4,15 @@ import { useFormikContext } from "formik";
 import { FC } from "react";
 import { Col, Row } from "react-bootstrap";
 import {
-  TextInput,
-  TextAreaInput,
+  CheckBoxInput,
   DateTimeInput,
   NumberInput,
-  CheckBoxInput,
+  TextAreaInput,
+  TextInput,
 } from "../../../../components/Form/Form.tsx";
 import SelectForm from "../../../../components/Form/SelectForm.tsx";
-import { TYPE_PARAMETRE_COMPOSANT } from "../../../../Entities/SousTypesEvenementsEntity.tsx";
 import { IconDragNDrop } from "../../../../components/Icon/Icon.tsx";
+import { TYPE_PARAMETRE_COMPOSANT } from "../../../../Entities/SousTypesEvenementsEntity.tsx";
 
 type SortableComplementSousCategorie = {
   id: string;

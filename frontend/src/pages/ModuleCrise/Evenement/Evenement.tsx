@@ -1,6 +1,6 @@
 import { useFormikContext } from "formik";
-import { object } from "yup";
 import { useMemo } from "react";
+import { object } from "yup";
 import {
   CheckBoxInput,
   DateTimeInput,
@@ -17,8 +17,8 @@ import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import TagInput from "../../../components/InputTag/InputTag.tsx";
 import EvenementType from "../../../Entities/EvenementEntity.tsx";
 import { requiredDate, requiredString } from "../../../module/validators.tsx";
-import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 import { GenererComplementForm } from "../../../utils/buildDynamicForm.tsx";
+import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (
   data: EvenementType | null,

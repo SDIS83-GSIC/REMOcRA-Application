@@ -3,10 +3,10 @@ import SquelettePage from "../../../pages/SquelettePage.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import Header from "../../Header/Header.tsx";
 import { IconPrescrit } from "../../Icon/Icon.tsx";
+import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
-import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapToolbarPeiPrescrit, {
   useToolbarPeiPrescritContext,
 } from "./MapToolbarPeiPrescrit.tsx";
@@ -61,7 +61,6 @@ const MapPeiPrescrit = () => {
       availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 

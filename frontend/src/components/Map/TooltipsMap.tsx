@@ -1,20 +1,29 @@
-import { Feature, Map, Overlay } from "ol";
+import { Feature, Map as OLMap, Overlay } from "ol";
 import { WKT } from "ol/format";
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGet } from "../Fetch/useFetch.tsx";
-import url from "../../module/fetch.tsx";
+import { hasDroit } from "../../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
+import url from "../../module/fetch.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
-import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
+import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
+import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
+import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
+import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
+import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import {
   IconAireAspiration,
   IconClose,
@@ -25,19 +34,10 @@ import {
   IconTournee,
   IconVisite,
 } from "../Icon/Icon.tsx";
-import Volet from "../Volet/Volet.tsx";
-import TooltipCustom from "../Tooltip/Tooltip.tsx";
-import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
-import CustomLinkButton from "../Button/CustomLinkButton.tsx";
-import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
-import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
-import { hasDroit } from "../../droits.tsx";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
-import { useAppContext } from "../App/AppProvider.tsx";
-import PARAMETRE from "../../enums/ParametreEnum.tsx";
-import useModal from "../Modal/ModalUtils.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
-import Loading from "../Elements/Loading/Loading.tsx";
+import useModal from "../Modal/ModalUtils.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
+import Volet from "../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "./MapUtils.tsx";
 
 /**
@@ -63,7 +63,7 @@ const TooltipMapPei = ({
   showFormVisite,
   coordonneesPeiCreate,
 }: {
-  map: Map;
+  map: OLMap;
   displayButtonEdit: boolean;
   displayButtonSeeFichePei: boolean;
   displayButtonDelete: boolean;
@@ -134,7 +134,7 @@ const TooltipMapPei = ({
     return JSON.parse(
       parametresState?.data[paramPeiFicheResumeStandalone].parametreValeur,
     );
-  }, [parametresState, paramPeiFicheResumeStandalone]);
+  }, [parametresState]);
 
   useEffect(() => {
     if (peiIdUpdate === null && showFormPei && !coordonneesPeiCreate) {
@@ -588,7 +588,7 @@ export const TooltipMapEditPeiProjet = ({
   dataPeiProjetLayer,
   disabled,
 }: {
-  map: Map;
+  map: OLMap;
   etudeId: string;
   disabledEditPeiProjet: boolean;
   dataPeiProjetLayer: any;
@@ -663,7 +663,7 @@ export const TooltipMapEditEvenement = ({
   criseId,
   state,
 }: {
-  map: Map;
+  map: OLMap;
   disabled: boolean;
   criseId: string;
   state: string;
@@ -692,12 +692,12 @@ export const TooltipMapEditEvenement = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdateEvenement(true), setIsReadOnly(false));
+          setShowUpdateEvenement(true), setIsReadOnly(false);
         }}
         displayButtonEdit={displayButton}
         displayButtonSee={displayButton}
         onClickSee={() => {
-          (setShowUpdateEvenement(true), setIsReadOnly(true));
+          setShowUpdateEvenement(true), setIsReadOnly(true);
         }}
       />
       <Volet
@@ -727,7 +727,7 @@ export const TooltipMapEditPeiPrescrit = ({
   dataPeiPrescritLayer,
   disabled,
 }: {
-  map: Map;
+  map: OLMap;
   disabledEditPeiPrescrit: boolean;
   dataPeiPrescritLayer: any;
   disabled: boolean;
@@ -755,7 +755,7 @@ export const TooltipMapEditPeiPrescrit = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined));
+          setShowUpdatePeiPrescrit(true), overlay?.setPosition(undefined);
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -801,7 +801,7 @@ export const TooltipMapEditPermis = ({
   disabled,
   hasRightToInteract = false,
 }: {
-  map: Map;
+  map: OLMap;
   disabledEditPermis: boolean;
   dataPermisLayer: any;
   disabled: boolean;
@@ -832,7 +832,7 @@ export const TooltipMapEditPermis = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          (setShowUpdatePermis(true), setShowPermisReadOnly(false));
+          setShowUpdatePermis(true), setShowPermisReadOnly(false);
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -845,7 +845,7 @@ export const TooltipMapEditPermis = ({
         disabled={disabled}
         displayButtonSee={true}
         onClickSee={() => {
-          (setShowPermisReadOnly(true), setShowUpdatePermis(false));
+          setShowPermisReadOnly(true), setShowUpdatePermis(false);
         }}
       />
       <Volet
@@ -890,7 +890,7 @@ export const TooltipMapEditPermis = ({
   );
 };
 
-export const TooltipMapSignalement = ({ map }: { map: Map }) => {
+export const TooltipMapSignalement = ({ map }: { map: OLMap }) => {
   const ref = useRef(null);
 
   const { featureSelect, overlay } = useTooltipMap({
@@ -929,7 +929,7 @@ const useTooltipMap = ({
   disabled = false,
 }: {
   ref: Ref<HTMLDivElement>;
-  map: Map | undefined;
+  map: OLMap | undefined;
   filterFeature?: (feature: Feature) => boolean;
   disabled?: boolean;
 }) => {
@@ -988,7 +988,7 @@ export const TooltipMapRisque = ({
   map,
   displayButtonSeeFichePei,
 }: {
-  map: Map | undefined;
+  map: OLMap | undefined;
   displayButtonSeeFichePei: boolean;
 }) => {
   const { user } = useAppContext();
@@ -1048,7 +1048,7 @@ export const TooltipMapRisque = ({
                   item.risqueExpressLibelle,
               ).join(", ") || "(aucun risque express trouvé)"
             }`}
-            onDelete={() => {}}
+            onDelete={() => null}
             successLibelle={"Tous les risques express ont été supprimés."}
           />
         </>

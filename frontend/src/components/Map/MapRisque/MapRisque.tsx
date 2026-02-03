@@ -37,7 +37,7 @@ const MapRisque = () => {
     return JSON.parse(
       parametresState?.data[paramPeiFicheResumeStandalone].parametreValeur,
     );
-  }, [parametresState, paramPeiFicheResumeStandalone]);
+  }, [parametresState]);
 
   const {
     map,
@@ -57,7 +57,6 @@ const MapRisque = () => {
     useToolbarContext({
       availableLayers: availableLayers,
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: {},
     });

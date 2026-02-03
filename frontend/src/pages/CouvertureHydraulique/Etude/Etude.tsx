@@ -11,10 +11,10 @@ import FormDocuments, {
   setDocumentInFormData,
 } from "../../../components/Form/FormDocuments.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { EtudeType } from "../../../Entities/EtudeEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
-import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 
 export const getInitialValues = (data?: EtudeType) => ({
   typeEtudeId: data?.typeEtudeId ?? null,

@@ -1,8 +1,9 @@
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import { IconAnomalie, IconSortList } from "../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../routes.tsx";
 import ListNomenclature from "../../../components/NomenclatureComponent/ListNomenclature.tsx";
 import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
-import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
+import { URLS } from "../../../routes.tsx";
+
 const ListAnomalieCategorie = () => {
   const sortButton = (
     <CustomLinkButton

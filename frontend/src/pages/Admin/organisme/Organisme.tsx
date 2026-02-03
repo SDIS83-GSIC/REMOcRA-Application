@@ -2,7 +2,6 @@ import { useFormikContext } from "formik";
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import {
   CheckBoxInput,
   FormContainer,
@@ -10,6 +9,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import { TYPE_DROIT_API } from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import {

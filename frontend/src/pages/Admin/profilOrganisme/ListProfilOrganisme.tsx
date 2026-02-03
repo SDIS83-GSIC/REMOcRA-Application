@@ -1,11 +1,11 @@
-import { IconInfo, IconPei } from "../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../routes.tsx";
-import ListNomenclature from "../../../components/NomenclatureComponent/ListNomenclature.tsx";
-import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
-import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
+import { IconInfo, IconPei } from "../../../components/Icon/Icon.tsx";
+import ListNomenclature from "../../../components/NomenclatureComponent/ListNomenclature.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 const ListProfilOrganisme = () => {
   const { data }: { data: IdCodeLibelleType[] } = useGet(

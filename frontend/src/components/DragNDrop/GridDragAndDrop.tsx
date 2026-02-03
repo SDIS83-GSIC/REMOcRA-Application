@@ -61,7 +61,7 @@ const GridDragAndDrop = ({
         ),
       );
     }
-  }, [data, setItems, titreProperty, colonneProperty, ligneProperty]);
+  }, [data, titreProperty, colonneProperty]);
 
   return (
     items && (

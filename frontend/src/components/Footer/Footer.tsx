@@ -1,12 +1,12 @@
 import { Badge, Image } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { useGet } from "../Fetch/useFetch.tsx";
-import url from "../../module/fetch.tsx";
+import Row from "react-bootstrap/Row";
+import atolcd from "../../img/atolcd.png";
+import europe from "../../img/europe.png";
 import europesengage from "../../img/europesengage.png";
 import logo_prt3 from "../../img/logo_prt3.png";
-import europe from "../../img/europe.png";
-import atolcd from "../../img/atolcd.png";
+import url from "../../module/fetch.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 
 const Footer = ({ mentionCnil }: { mentionCnil: string }) => {
   const version = useGet(url`/api/app-settings/version`);

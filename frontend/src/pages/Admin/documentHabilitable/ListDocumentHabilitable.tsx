@@ -1,10 +1,13 @@
 import { Container } from "react-bootstrap";
+import AccordionCustom, {
+  useAccordionState,
+} from "../../../components/Accordion/Accordion.tsx";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../../../components/Filter/MultiSelectFilterFromList.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { IconExport, IconList } from "../../../components/Icon/Icon.tsx";
 import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
@@ -19,9 +22,6 @@ import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime from "../../../utils/formatDateUtils.tsx";
-import AccordionCustom, {
-  useAccordionState,
-} from "../../../components/Accordion/Accordion.tsx";
 import FilterValues from "./FilterDocumentHabilitable.tsx";
 
 const ListDocumentHabilitable = () => {

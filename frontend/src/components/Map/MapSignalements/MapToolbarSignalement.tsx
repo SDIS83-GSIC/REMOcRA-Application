@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { DragBox, Draw, Select } from "ol/interaction";
-import Map from "ol/Map";
+import OLMap from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
@@ -10,12 +10,14 @@ import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { object } from "yup";
 import { SignalementElementEntity } from "../../../Entities/SignalementElementEntity.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url from "../../../module/fetch.tsx";
-import Signalement from "../../../pages/Signalement/Signalement.tsx";
 import CreatElementSignalement from "../../../pages/Signalement/CreateElementSignalement.tsx";
+import Signalement from "../../../pages/Signalement/Signalement.tsx";
 import { URLS } from "../../../routes.tsx";
 import CreateButton from "../../Button/CreateButton.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
+import { setDocumentInFormData } from "../../Form/FormDocuments.tsx";
 import MyFormik from "../../Form/MyFormik.tsx";
 import {
   IconDelete,
@@ -24,14 +26,12 @@ import {
   IconPolygon,
   IconSelect,
 } from "../../Icon/Icon.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapSignalement } from "../TooltipsMap.tsx";
-import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
-import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
-import { setDocumentInFormData } from "../../Form/FormDocuments.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -299,7 +299,7 @@ const MapToolbarSignalement = ({
   sousTypeElement,
   close,
 }: {
-  map?: Map;
+  map?: OLMap;
   dataSignalementLayer: any;
   handleCloseElement: () => void;
   showCreateElement: boolean;

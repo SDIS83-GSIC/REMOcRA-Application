@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
-import type { Placement } from "react-bootstrap/types";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import type { Placement } from "react-bootstrap/types";
 
 const TooltipCustom = ({
   tooltipText,

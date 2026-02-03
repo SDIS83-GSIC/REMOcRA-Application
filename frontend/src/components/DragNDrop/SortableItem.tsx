@@ -1,12 +1,12 @@
 import { DndContext } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
-import { FC } from "react";
 import { CSS } from "@dnd-kit/utilities";
-import Table from "react-bootstrap/Table";
+import { FC } from "react";
 import { Button } from "react-bootstrap";
-import { IconClose, IconDragNDrop, IconInfo } from "../Icon/Icon.tsx";
-import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
+import Table from "react-bootstrap/Table";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
+import { IconClose, IconDragNDrop, IconInfo } from "../Icon/Icon.tsx";
 
 type SortableTourneePeiType = {
   id: string;

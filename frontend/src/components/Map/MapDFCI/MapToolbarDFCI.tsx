@@ -1,6 +1,6 @@
 import { ButtonGroup } from "react-bootstrap";
-import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 const MapToolbarDFCI = () => {
   return (

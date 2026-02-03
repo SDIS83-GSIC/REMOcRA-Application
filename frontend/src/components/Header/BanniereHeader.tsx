@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import { Badge, Image } from "react-bootstrap";
-import { useGet } from "../Fetch/useFetch.tsx";
-import url from "../../module/fetch.tsx";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 import TYPE_ENVIRONNEMENT from "../../enums/TypeEnvironnement.tsx";
+import url from "../../module/fetch.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 
 // Affiche les images seulement si elles existent
 const ImageIfExists = ({

@@ -1,5 +1,5 @@
-import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { SelectInput } from "../../../../components/Form/Form.tsx";
 
 const GaugeConfig = (options: any) => {

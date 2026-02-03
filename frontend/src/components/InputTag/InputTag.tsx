@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  Form,
-  InputGroup,
-  FormControl,
   Badge,
   CloseButton,
+  Form,
+  FormControl,
+  InputGroup,
 } from "react-bootstrap";
 
 type TagInputProps = {
@@ -35,7 +35,7 @@ const TagInput = ({
       return;
     }
     // Ne pas appeler "onTagsChange" ici pour éviter une boucle infinie
-  }, [defaultTags]);
+  }, []);
 
   const addTag = (tag: string) => {
     if (disabled) {

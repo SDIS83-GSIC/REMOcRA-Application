@@ -115,7 +115,7 @@ const MapCrise = ({
     );
 
     source.refresh();
-  }, [dataEvenementLayer, getLayerUrl, map, projection]);
+  }, [dataEvenementLayer, getLayerUrl, map]);
 
   const {
     tools: extraTools,
@@ -145,7 +145,6 @@ const MapCrise = ({
       availableLayers: availableLayers,
       map: map,
       workingLayer: workingLayer,
-      availableLayers: availableLayers,
       extraTools: extraTools,
     });
 

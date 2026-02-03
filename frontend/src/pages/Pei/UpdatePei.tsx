@@ -1,10 +1,10 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { useParams } from "react-router-dom";
-import { PeiEntity } from "../../Entities/PeiEntity.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
+import { PeiEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import Pei, {
@@ -20,7 +20,7 @@ const UpdatePei = ({
 }: {
   peiIdUpdate?: string;
   close?: () => void;
-  map?: Map;
+  map?: OLMap;
 }) => {
   const { peiId } = useParams();
 

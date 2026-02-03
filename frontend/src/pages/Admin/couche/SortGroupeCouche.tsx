@@ -1,6 +1,6 @@
 import { Alert } from "react-bootstrap";
-import SortIdCodeLibelle from "../../../components/SortIdCodeLibelle/SortIdCodeLibelle.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
+import SortIdCodeLibelle from "../../../components/SortIdCodeLibelle/SortIdCodeLibelle.tsx";
 
 const SortGroupeCouche = () => {
   return (

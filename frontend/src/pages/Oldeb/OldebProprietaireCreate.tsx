@@ -1,8 +1,8 @@
 import Container from "react-bootstrap/Container";
-import { URLS } from "../../routes.tsx";
-import MyFormik from "../../components/Form/MyFormik.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconProprietaire } from "../../components/Icon/Icon.tsx";
+import { URLS } from "../../routes.tsx";
 import OldebProprietaireForm, {
   getInitialValues,
   prepareValues,

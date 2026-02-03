@@ -1,9 +1,9 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
-import { URLS } from "../../routes.tsx";
-import { hasDroit, isAuthorized } from "../../droits.tsx";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
+import { hasDroit, isAuthorized } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { URLS } from "../../routes.tsx";
 
 const MenuAdmin = () => {
   const { user } = useAppContext();

@@ -1,14 +1,14 @@
 import { Overlay } from "ol";
-import Map from "ol/Map";
-import { unByKey } from "ol/Observable";
 import { LineString, Polygon } from "ol/geom";
 import { DragPan, Draw, Interaction } from "ol/interaction";
+import ImageLayer from "ol/layer/Image";
+import TileLayer from "ol/layer/Tile";
+import OLMap from "ol/Map";
+import { unByKey } from "ol/Observable";
+import { ImageWMS, TileWMS } from "ol/source";
 import { getArea, getLength } from "ol/sphere";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { ImageWMS, TileWMS } from "ol/source";
-import ImageLayer from "ol/layer/Image";
-import TileLayer from "ol/layer/Tile";
 import {
   forwardRef,
   useEffect,
@@ -18,6 +18,9 @@ import {
 } from "react";
 import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
+import { hasDroit } from "../../droits.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 import {
   IconDistance,
   IconInfo,
@@ -26,12 +29,9 @@ import {
   IconZoomOut,
 } from "../Icon/Icon.tsx";
 import Volet from "../Volet/Volet.tsx";
-import { useAppContext } from "../App/AppProvider.tsx";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
-import { hasDroit } from "../../droits.tsx";
 import AdresseTypeahead from "./AdresseTypeahead.tsx";
-import ToolbarButton from "./ToolbarButton.tsx";
 import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
+import ToolbarButton from "./ToolbarButton.tsx";
 
 const measureStyle = new Style({
   fill: new Fill({
@@ -82,7 +82,7 @@ export const useToolbarContext = ({
   availableLayers,
   extraTools = {},
 }: {
-  map?: Map;
+  map?: OLMap;
   availableLayers: any;
   workingLayer: any;
   extraTools?: any;
@@ -121,6 +121,7 @@ export const useToolbarContext = ({
     map!.addOverlay(measureTooltip);
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: on veut que les outils soient recréés uniquement si la carte ou les couches disponibles changent, pas à chaque changement d'outil actif
   const tools = useMemo(() => {
     if (!map) {
       return {};
@@ -407,7 +408,7 @@ const MapToolbar = forwardRef(
       handleCloseInfoI,
       showOutilI,
     }: {
-      map: Map;
+      map: OLMap;
       toggleTool: (toolId: string) => void;
       activeTool: string;
       variant: string;
@@ -425,7 +426,7 @@ const MapToolbar = forwardRef(
     useEffect(() => {
       // setActiveTool("move");
       setZoom(Math.floor(map.getView().getZoom() ?? 0));
-    }, [setZoom, map]);
+    }, [map]);
 
     map.getView().on("change:resolution", () => {
       if ((map.getView().getZoom() ?? 0) % 1 === 0) {

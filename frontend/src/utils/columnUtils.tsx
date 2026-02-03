@@ -1,5 +1,4 @@
 import classnames from "classnames";
-import UtilisateurEntity from "../Entities/UtilisateurEntity.tsx";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFromList.tsx";
@@ -17,14 +16,15 @@ import {
   IconVisite,
 } from "../components/Icon/Icon.tsx";
 import { GET_TYPE_GEOMETRY } from "../components/Localisation/useLocalisation.tsx";
+import { ActionColumn, BooleanColumn } from "../components/Table/columns.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
 import {
   ButtonType,
   TYPE_BUTTON,
 } from "../components/Table/TableActionColumn.tsx";
-import { ActionColumn, BooleanColumn } from "../components/Table/columns.tsx";
 import TooltipCustom from "../components/Tooltip/Tooltip.tsx";
 import { hasDroit, isAuthorized } from "../droits.tsx";
+import UtilisateurEntity from "../Entities/UtilisateurEntity.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import COLUMN_PEI from "../enums/ColumnPeiEnum.tsx";
 import DISPONIBILITE_PEI, {

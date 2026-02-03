@@ -1,5 +1,6 @@
 import { SelectFormType } from "../../utils/typeUtils.tsx";
 import { SelectInput } from "./Form.tsx";
+
 /**
  * Composant Select qui attend un Endpoint renvoyant un objet de type List<IdLibelleData>
  *     pour faire un select dans les formulaires

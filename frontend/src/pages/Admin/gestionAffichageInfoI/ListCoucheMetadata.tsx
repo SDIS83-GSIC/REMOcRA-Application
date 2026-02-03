@@ -1,7 +1,10 @@
 import { Container } from "react-bootstrap";
+import { useAppContext } from "../../../components/App/AppProvider.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import FilterInput from "../../../components/Filter/FilterInput.tsx";
+import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
 import { IconLayers } from "../../../components/Icon/Icon.tsx";
-import url from "../../../module/fetch.tsx";
 import {
   ActionColumn,
   BooleanColumn,
@@ -13,14 +16,11 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
-import { URLS } from "../../../routes.tsx";
-import { useAppContext } from "../../../components/App/AppProvider.tsx";
-import SelectEnumOption from "../../../components/Form/SelectEnumOption.tsx";
-import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
-import FilterInput from "../../../components/Filter/FilterInput.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterMetadata.tsx";
 
 type GroupeFonctionnalite = {

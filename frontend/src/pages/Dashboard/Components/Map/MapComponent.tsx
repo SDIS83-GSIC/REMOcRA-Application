@@ -1,4 +1,4 @@
-import { Map, View } from "ol";
+import { Map as OLMap, View } from "ol";
 import { GeoJSON, WKT } from "ol/format";
 import LayerGroup from "ol/layer/Group";
 import TileLayer from "ol/layer/Tile";
@@ -8,7 +8,7 @@ import { transformExtent } from "ol/proj";
 import OSM from "ol/source/OSM";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useAppContext } from "../../../../components/App/AppProvider.tsx";
 import { useToastContext } from "../../../../module/Toast/ToastProvider.tsx";
@@ -41,27 +41,30 @@ const MapDashboardComponent = (data: any) => {
   );
 
   // Fonction pour déterminer la couleur en fonction du pourcentage
-  const getColorForPercentage = (percentage: number, limits: any[]) => {
-    if (!limits || limits.length === 0) {
-      return "#000000";
-    }
-
-    // Trier les limites par valeur croissante
-    const sortedLimits = limits.sort(
-      (a, b) => parseFloat(a.value) - parseFloat(b.value),
-    );
-
-    // Trouver la couleur correspondante
-    for (const limit of sortedLimits) {
-      if (percentage <= parseFloat(limit.value)) {
-        return limit.color;
+  const getColorForPercentage = useCallback(
+    (percentage: number, limits: any[]) => {
+      if (!limits || limits.length === 0) {
+        return "#000000";
       }
-    }
 
-    // Si le pourcentage dépasse toutes les limites, utiliser la dernière couleur
-    return sortedLimits[sortedLimits.length - 1].color;
-  };
-  const [map, setMap] = useState<Map | null>(null);
+      // Trier les limites par valeur croissante
+      const sortedLimits = limits.sort(
+        (a, b) => parseFloat(a.value) - parseFloat(b.value),
+      );
+
+      // Trouver la couleur correspondante
+      for (const limit of sortedLimits) {
+        if (percentage <= parseFloat(limit.value)) {
+          return limit.color;
+        }
+      }
+
+      // Si le pourcentage dépasse toutes les limites, utiliser la dernière couleur
+      return sortedLimits[sortedLimits.length - 1].color;
+    },
+    [],
+  );
+  const [map, setMap] = useState<OLMap | null>(null);
   const [, setTooltip] = useState<Overlay | null>(null);
 
   // Initialisation de la carte
@@ -74,7 +77,7 @@ const MapDashboardComponent = (data: any) => {
 
     baseLayerRef.current = createOSMLayer();
 
-    const newMap = new Map({
+    const newMap = new OLMap({
       target: currentRef,
       layers: [baseLayerRef.current!],
       view: new View({
@@ -251,10 +254,17 @@ const MapDashboardComponent = (data: any) => {
         padding: [50, 50, 50, 50], // Marge autour des données (en pixels)
         maxZoom: 15, // Zoom maximum pour éviter un zoom trop rapproché
       });
-    } catch (e) {
+    } catch (_e) {
       warningToast("Géométrie invalide");
     }
-  }, [map, data.config, dataMapped, warningToast, data.data]);
+  }, [
+    map,
+    data.config,
+    dataMapped,
+    warningToast,
+    data.data,
+    getColorForPercentage,
+  ]);
 
   return (
     <Container fluid className="h-100">

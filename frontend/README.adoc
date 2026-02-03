@@ -6,9 +6,7 @@ On part du principe que Node et NPM sont tous deux installés dans des versions 
 
 `npm ci`::  Installe les dépendances NPM
 `npm run build` :: Build le frontend avec Parcel
-`npm run lint`:: Valide le code (ESLint, StyleLint, Prettier)
-`npm run lint:js`:: Valide le code JS (avec ESLint).
-`npm run lint:css`:: Valide le code CSS (avec StyleLint).
+`npm run lint`:: Valide le code (avec biome)
 `npm run lint-ts`:: Valide le code typescript.
 `npm run format`:: Reformatte le code (avec Prettier)
 `npm run watch`:: Lance Parcel en mode _watch_.

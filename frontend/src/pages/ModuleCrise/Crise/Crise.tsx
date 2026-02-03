@@ -1,7 +1,8 @@
 import { useFormikContext } from "formik";
-import { object } from "yup";
 import { useMemo } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
+import { object } from "yup";
+import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemoveComponent.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -12,18 +13,17 @@ import {
   TextAreaInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
+import SelectForm from "../../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
+import { CriseType } from "../../../Entities/CriseEntity.tsx";
+import url from "../../../module/fetch.tsx";
 import {
   requiredArray,
   requiredDate,
   requiredString,
 } from "../../../module/validators.tsx";
-import SelectForm from "../../../components/Form/SelectForm.tsx";
-import { CriseType } from "../../../Entities/CriseEntity.tsx";
-import url from "../../../module/fetch.tsx";
-import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../utils/formatDateUtils.tsx";
-import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemoveComponent.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 export const getInitialValues = (data?: CriseType) => ({
   typeCriseId: data?.typeCriseId ?? null,

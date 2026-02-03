@@ -1,8 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Card } from "react-bootstrap";
-import { COMPONENTS, formatData } from "../Constants.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import { COMPONENTS, formatData } from "../Constants.tsx";
 
 type DashboardItemProps = {
   component: any;

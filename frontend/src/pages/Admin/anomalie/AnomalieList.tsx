@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Badge, Button, Table } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import url from "../../../module/fetch.tsx";
+import CreateButton from "../../../components/Button/CreateButton.tsx";
+import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   IconAnomalie,
   IconDelete,
   IconEdit,
   IconSortList,
 } from "../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../routes.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import DeleteModal from "../../../components/Modal/DeleteModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
-import CreateButton from "../../../components/Button/CreateButton.tsx";
-import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import { ANOMALIE_CATEGORIE_SYSTEME } from "../../../utils/constantsUtils.tsx";
 
 const AnomalieList = () => {

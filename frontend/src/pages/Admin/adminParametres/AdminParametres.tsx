@@ -223,7 +223,7 @@ const AdminParametres = () => {
       isPost={false}
       submitUrl={`/api/admin/parametres`}
       prepareVariables={(values) => prepareVariables(values)}
-      onSubmit={() => {}}
+      onSubmit={() => null}
     >
       <AdminParametresInterne />
     </MyFormik>

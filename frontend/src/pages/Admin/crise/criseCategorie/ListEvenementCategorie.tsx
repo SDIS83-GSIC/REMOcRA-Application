@@ -1,11 +1,11 @@
 import { IconCrise, IconList } from "../../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../../routes.tsx";
 import ListNomenclature from "../../../../components/NomenclatureComponent/ListNomenclature.tsx";
-import NOMENCLATURE from "../../../../enums/NomenclaturesEnum.tsx";
 import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../../components/Table/TableActionColumn.tsx";
+import NOMENCLATURE from "../../../../enums/NomenclaturesEnum.tsx";
+import { URLS } from "../../../../routes.tsx";
 
 const ListEvenementCategorie = () => {
   const additionalActionButton: ButtonType = {

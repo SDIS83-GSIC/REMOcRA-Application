@@ -1,15 +1,15 @@
-import { useState } from "react";
-import Map from "ol/Map";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { transformExtent } from "ol/proj";
 import { WKT } from "ol/format";
+import OLMap from "ol/Map";
+import { transformExtent } from "ol/proj";
+import { useState } from "react";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 
 const ToponymieTypeBarre = ({
   map,
   criseId,
 }: {
-  map: Map;
+  map: OLMap;
   criseId: string;
 }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });

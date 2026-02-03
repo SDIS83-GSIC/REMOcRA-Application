@@ -1,5 +1,5 @@
-import { Button, Col, Image, Row, Table } from "react-bootstrap";
 import { classNames } from "@react-pdf-viewer/core";
+import { Button, Col, Image, Row, Table } from "react-bootstrap";
 import url from "../../module/fetch.tsx";
 import { LinkType } from "../../pages/Accueil/AccueilPrive.tsx";
 import { URLS } from "../../routes.tsx";

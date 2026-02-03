@@ -1,14 +1,14 @@
 import { WKT } from "ol/format";
 import { fromExtent } from "ol/geom/Polygon";
 import { Draw, Modify } from "ol/interaction";
-import Map from "ol/Map";
+import OLMap from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { forwardRef, Key, useEffect, useMemo, useState } from "react";
 import { Button, Col, Dropdown, Row } from "react-bootstrap";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
-import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import AddTitleForm, {
@@ -17,18 +17,19 @@ import AddTitleForm, {
   ValidationSchema,
 } from "../../../pages/ModuleCrise/Crise/AddTitleForm.tsx";
 import CreateListDocument from "../../../pages/ModuleCrise/Document/createListDocument.tsx";
+import ExecuteCriseRapportPersonnalise from "../../../pages/ModuleCrise/Document/ExecuteCriseRapportPersonnalise.tsx";
 import CreateEvenement from "../../../pages/ModuleCrise/Evenement/CreateEvenement.tsx";
 import CreateListEvenement from "../../../pages/ModuleCrise/Evenement/CreateListEvenement.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import {
   IconCamera,
+  IconCriseRapportPersonnalise,
   IconDocument,
   IconEvent,
   IconLine,
   IconList,
   IconMoveObjet,
-  IconCriseRapportPersonnalise,
   IconPoint,
   IconPolygon,
 } from "../../Icon/Icon.tsx";
@@ -40,7 +41,6 @@ import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
 import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
-import ExecuteCriseRapportPersonnalise from "../../../pages/ModuleCrise/Document/ExecuteCriseRapportPersonnalise.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -359,7 +359,7 @@ const MapToolbarCrise = forwardRef(
     showPersonalReports,
     variant = "primary",
   }: {
-    map?: Map;
+    map?: OLMap;
     workingLayer: any;
     criseId: string;
     state: string;

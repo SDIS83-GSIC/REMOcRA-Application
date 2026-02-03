@@ -1,10 +1,10 @@
 import {
-  string,
   array,
-  number as numberYup,
   bool as boolYup,
-  mixed as mixedYup,
   date as dateYup,
+  mixed as mixedYup,
+  number as numberYup,
+  string,
 } from "yup";
 
 function requiredIf(test: boolean, validator: object) {

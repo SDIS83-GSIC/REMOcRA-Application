@@ -8,7 +8,7 @@ const useQueryParams = () => {
     let val;
     try {
       val = JSON.parse(value);
-    } catch (e) {
+    } catch (_e) {
       val = value;
     }
     res[key] = val;

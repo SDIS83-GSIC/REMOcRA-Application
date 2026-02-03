@@ -1,11 +1,11 @@
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import ModuleRemocra, {
   TypeModuleRemocra,
 } from "../../components/ModuleRemocra/ModuleRemocra.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";

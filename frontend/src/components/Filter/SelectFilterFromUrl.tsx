@@ -1,6 +1,6 @@
-import { useGet } from "../Fetch/useFetch.tsx";
-import Loading from "../Elements/Loading/Loading.tsx";
 import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import SelectFilterFromList from "./SelectFilterFromList.tsx";
 
 /**
@@ -23,7 +23,8 @@ const SelectFilterFromUrl = ({
   const {
     isResolved: isResolvedListData,
     // eslint-disable-next-line no-empty-pattern
-    data: listData = ([] = {}),
+    data: listData = ([] =
+      {}),
   } = stateData;
 
   if (!isResolvedListData) {

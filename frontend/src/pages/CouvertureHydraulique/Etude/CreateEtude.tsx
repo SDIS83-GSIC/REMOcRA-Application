@@ -21,7 +21,7 @@ const CreateEtude = () => {
         submitUrl={`/api/couverture-hydraulique/etude/create/`}
         prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={URLS.LIST_ETUDE}
-        onSubmit={() => {}}
+        onSubmit={() => null}
       >
         <Etude />
       </MyFormik>

@@ -14,8 +14,8 @@ import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
 import {
-  ComponentDashboard,
   COMPONENTS,
+  ComponentDashboard,
   FORM_CONFIG,
   formatData,
   QueryParam,
@@ -90,7 +90,7 @@ const QueryList = forwardRef(
           );
         setOpenListQuery(queryList);
       }
-    }, [fetchData.data, fetchData.isResolved, setOpenListQuery]);
+    }, [fetchData.data, fetchData.isResolved]);
 
     // Définit les propriétés par défaut pour l'ajout d'une nouvelle requête
     const handleAddQuery = () => {
@@ -125,7 +125,7 @@ const QueryList = forwardRef(
         setOpenListComponent(null); // Réinitialise la liste des composants
         fetchQueryComponent.run();
       }
-    }, [activeQuery]);
+    }, [activeQuery, fetchQueryComponent.run, setOpenListComponent]);
 
     useEffect(() => {
       if (
@@ -216,9 +216,9 @@ const QueryList = forwardRef(
       setAvailableOptions,
       setQueryGlobalData,
       setData,
-      setSelectedComponent,
-      setOpenListComponent,
       urlApiQuery,
+      openListComponent?.length,
+      openListComponent,
     ]);
 
     // Enregistre la config pour la requête

@@ -2,17 +2,17 @@ import { Container } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconInfo, IconList } from "../../../components/Icon/Icon.tsx";
-import QueryTable, {
-  useFilterContext,
-} from "../../../components/Table/QueryTable.tsx";
-import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
-import url from "../../../module/fetch.tsx";
-import { URLS } from "../../../routes.tsx";
 import {
   ActionColumn,
   BooleanColumn,
 } from "../../../components/Table/columns.tsx";
+import QueryTable, {
+  useFilterContext,
+} from "../../../components/Table/QueryTable.tsx";
+import { TYPE_BUTTON } from "../../../components/Table/TableActionColumn.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
+import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 
 const GroupeFonctionnalitesList = () => {
   return (

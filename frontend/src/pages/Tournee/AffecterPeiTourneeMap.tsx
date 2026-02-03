@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import ReactSelect from "react-select";
+import Loading from "../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
@@ -11,7 +12,6 @@ import {
   IconTournee,
 } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
-import Loading from "../../components/Elements/Loading/Loading.tsx";
 import CreateTournee from "./CreateTournee.tsx";
 import TourneePei from "./TourneePei.tsx";
 

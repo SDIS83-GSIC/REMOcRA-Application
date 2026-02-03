@@ -1,8 +1,8 @@
 import {
   closestCorners,
-  defaultAnnouncements,
   DndContext,
   DragOverlay,
+  defaultAnnouncements,
   KeyboardSensor,
   PointerSensor,
   useSensor,

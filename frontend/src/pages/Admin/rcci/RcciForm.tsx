@@ -371,7 +371,7 @@ const RcciForm = () => {
     url`/api/rcci/refs?${{ geometrie: `SRID=${values.typeSystemeSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})` }}`,
   );
 
-  const { isLoading, data, run } = usePost(url`/api/dfci/check`);
+  const { data, run } = usePost(url`/api/dfci/check`);
 
   const { run: runReferentielState } = referentielState;
 
@@ -411,7 +411,6 @@ const RcciForm = () => {
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
     values.typeSystemeSrid,
-    values.rcci?.rcciCommuneId,
     geometrieState,
     runReferentielState,
     setFieldValue,
@@ -442,7 +441,7 @@ const RcciForm = () => {
 
   useEffect(() => {
     setFieldValue("rcci.rcciCarroyageDfci", data?.carroyageDfciCoordonneee);
-  }, [isLoading, data, setFieldValue]);
+  }, [data, setFieldValue]);
 
   useEffect(() => {
     if (

@@ -4,9 +4,9 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconCreate } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import Crise, {
+  criseValidationSchema,
   getInitialValues,
   prepareCriseValues,
-  criseValidationSchema,
 } from "./Crise.tsx";
 
 const CreateCrise = () => {

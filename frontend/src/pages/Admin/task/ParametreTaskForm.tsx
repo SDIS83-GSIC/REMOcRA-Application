@@ -5,6 +5,7 @@ import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
 import AddRemoveComponent from "../../../components/AddRemoveComponent/AddRemoveComponent.tsx";
+import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -30,7 +31,6 @@ import TaskType from "../../../enums/TaskTypeEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { TypeOrganismeType } from "../organisme/Organisme.tsx";
-import SeeMoreButton from "../../../components/Button/SeeMoreButton.tsx";
 
 export const getInitialValues = (currentTask: TaskEntity) => ({
   taskId: currentTask?.taskId,

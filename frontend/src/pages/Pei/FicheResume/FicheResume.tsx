@@ -19,12 +19,12 @@ import { hasDroit } from "../../../droits.tsx";
 import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import DISPONIBILITE_PEI from "../../../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import TYPE_RESUME_ELEMENT from "../../../enums/TypeResumeElementEnum.tsx";
+import { TYPE_ROUTE_HISTORIQUE_PEI } from "../../../enums/TypeRouteHistoriquePei.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
-import PARAMETRE from "../../../enums/ParametreEnum.tsx";
-import { TYPE_ROUTE_HISTORIQUE_PEI } from "../../../enums/TypeRouteHistoriquePei.tsx";
 
 const FicheResume = ({
   peiId,

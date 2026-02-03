@@ -25,10 +25,10 @@ import {
   TYPE_PARAMETRE_RAPPORT_COURRIER,
   userParamRapportCourrier,
 } from "../../../Entities/RapportCourrierEntity.tsx";
+import TypeCourrierEnum from "../../../enums/TypeCourrierEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import isEmptyOrNull from "../../../utils/fonctionsUtils.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
-import TypeCourrierEnum from "../../../enums/TypeCourrierEnum.tsx";
 import { createComponentModeleCourrierToRepeat } from "./SortableParametreModeleCourrier.tsx";
 
 type ModeleCourrierType = {

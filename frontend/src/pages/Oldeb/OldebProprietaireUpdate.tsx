@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import { useGet } from "../../components/Fetch/useFetch.tsx";
-import { URLS } from "../../routes.tsx";
-import url from "../../module/fetch.tsx";
-import MyFormik from "../../components/Form/MyFormik.tsx";
+import { useParams } from "react-router-dom";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconProprietaire } from "../../components/Icon/Icon.tsx";
+import url from "../../module/fetch.tsx";
+import { URLS } from "../../routes.tsx";
 import OldebProprietaireForm, {
   getInitialValues,
   prepareValues,

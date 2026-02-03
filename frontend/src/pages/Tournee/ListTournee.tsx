@@ -382,7 +382,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(urlBlob);
-      } catch (error) {
+      } catch (_error) {
         errorToast("Une erreur est survenue");
       }
     },
@@ -425,7 +425,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
           // Rafraîchit le tableau en re-montant le composant
           setTableKey((k) => k + 1);
         }
-      } catch (error) {
+      } catch (_error) {
         errorToast("Une erreur est survenue");
       }
     },

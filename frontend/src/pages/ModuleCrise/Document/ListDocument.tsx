@@ -1,11 +1,12 @@
-import Map from "ol/Map";
 import { WKT } from "ol/format";
+import OLMap from "ol/Map";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import { IconExport, IconLocation } from "../../../components/Icon/Icon.tsx";
 import EditModal from "../../../components/Modal/EditModal.tsx";
 import useModal from "../../../components/Modal/ModalUtils.tsx";
+import { ActionColumn } from "../../../components/Table/columns.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../../components/Table/QueryTable.tsx";
@@ -13,7 +14,6 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
-import { ActionColumn } from "../../../components/Table/columns.tsx";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
@@ -33,7 +33,7 @@ const ListDocument = ({
 }: {
   criseId: string;
   onSubmit: any;
-  map: Map;
+  map: OLMap;
 }) => {
   const { visible, show, close } = useModal();
   const { user } = useAppContext();

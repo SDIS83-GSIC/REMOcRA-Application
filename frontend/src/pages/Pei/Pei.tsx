@@ -5,8 +5,6 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { object } from "yup";
-import { PeiEntity } from "../../Entities/PeiEntity.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
@@ -29,6 +27,8 @@ import SelectNomenclaturesForm from "../../components/Form/SelectNomenclaturesFo
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconEdit, IconOeil } from "../../components/Icon/Icon.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
+import { PeiEntity } from "../../Entities/PeiEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
@@ -326,7 +326,7 @@ const Pei = ({
     return JSON.parse(
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
-  }, [listeParametre, parametreVoieSaisieLibre]);
+  }, [listeParametre]);
   const displayTypeEngin = useMemo<boolean>(() => {
     if (!listeParametre.isResolved) {
       return false;
@@ -335,7 +335,7 @@ const Pei = ({
     return JSON.parse(
       listeParametre?.data[parametrePeiDisplayTypeEngin].parametreValeur,
     );
-  }, [listeParametre, parametrePeiDisplayTypeEngin]);
+  }, [listeParametre]);
 
   const displayIdentifiantGestionnaire = useMemo<boolean>(() => {
     if (!listeParametre.isResolved) {
@@ -346,7 +346,7 @@ const Pei = ({
       listeParametre?.data[parametrePeiDisplayIdentifiantGestionnaire]
         .parametreValeur,
     );
-  }, [listeParametre, parametrePeiDisplayIdentifiantGestionnaire]);
+  }, [listeParametre]);
 
   useEffect(() => {
     if (
@@ -390,8 +390,6 @@ const Pei = ({
     }
   }, [
     setFieldValue,
-    values.coordonneeX,
-    values.coordonneeY,
     values.coordonneeXToDisplay,
     values.coordonneeYToDisplay,
     values.typeSystemeSrid,
@@ -1071,8 +1069,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              (setFieldValue("coordonneeXToDisplay", v.target.value),
-                VerificationReferentiel());
+              setFieldValue("coordonneeXToDisplay", v.target.value),
+                VerificationReferentiel();
             }}
           />
         </Col>
@@ -1083,8 +1081,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              (setFieldValue("coordonneeYToDisplay", v.target.value),
-                VerificationReferentiel());
+              setFieldValue("coordonneeYToDisplay", v.target.value),
+                VerificationReferentiel();
             }}
           />
         </Col>

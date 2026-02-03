@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import Header, { NavToProps } from "../Header/Header.tsx";
-import { URLS } from "../../routes.tsx";
-import SquelettePage from "../../pages/SquelettePage.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import SquelettePage from "../../pages/SquelettePage.tsx";
+import { URLS } from "../../routes.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import Header, { NavToProps } from "../Header/Header.tsx";
 
 const ModuleCrise = () => {
   const { user } = useAppContext();

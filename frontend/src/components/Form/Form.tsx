@@ -2,9 +2,9 @@ import classNames from "classnames";
 import { Field, Form as FormikForm, useField } from "formik";
 import { ReactNode } from "react";
 import { Row } from "react-bootstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
-import Form from "react-bootstrap/Form";
 import FormRange from "react-bootstrap/esm/FormRange";
+import Form from "react-bootstrap/Form";
+import { Typeahead } from "react-bootstrap-typeahead";
 import ReactSelect from "react-select";
 import { SelectFilterFromUrlType } from "../../utils/typeUtils.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
@@ -642,7 +642,8 @@ export const AsyncTypeahead = ({
   const {
     isResolved: isResolvedListData,
     // eslint-disable-next-line no-empty-pattern
-    data: listData = ([] = {}),
+    data: listData = ([] =
+      {}),
   } = stateData;
 
   if (!isResolvedListData) {

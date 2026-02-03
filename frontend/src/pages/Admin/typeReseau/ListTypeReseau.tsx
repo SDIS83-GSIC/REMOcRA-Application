@@ -1,7 +1,7 @@
 import { IconPei } from "../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../routes.tsx";
 import ListNomenclature from "../../../components/NomenclatureComponent/ListNomenclature.tsx";
 import NOMENCLATURE from "../../../enums/NomenclaturesEnum.tsx";
+import { URLS } from "../../../routes.tsx";
 
 const ListTypeReseau = () => {
   return (

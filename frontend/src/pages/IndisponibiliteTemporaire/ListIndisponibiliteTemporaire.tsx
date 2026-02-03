@@ -11,10 +11,10 @@ import { hasDroit } from "../../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
+import STATUT_INDISPONIBILITE_TEMPORAIRE from "../../enums/StatutIndisponibiliteTemporaireEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
 import { GetColumnIndisponibiliteTemporaireByStringArray } from "../../utils/columnUtils.tsx";
-import STATUT_INDISPONIBILITE_TEMPORAIRE from "../../enums/StatutIndisponibiliteTemporaireEnum.tsx";
 import { getEnumKey } from "../../utils/fonctionsUtils.tsx";
 import filterValuesToVariable from "./FilterIndisponibiliteTemporaire.tsx";
 

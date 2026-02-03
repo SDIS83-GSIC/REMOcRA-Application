@@ -7,9 +7,9 @@ import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import Crise, {
+  criseValidationSchema,
   getInitialValues,
   prepareCriseValues,
-  criseValidationSchema,
 } from "./Crise.tsx";
 
 const UpdateCrise = () => {

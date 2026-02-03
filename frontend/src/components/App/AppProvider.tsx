@@ -1,11 +1,11 @@
-import { createContext, ReactNode, useContext } from "react";
 import { get as getProjection } from "ol/proj";
-import proj4 from "proj4";
 import { register } from "ol/proj/proj4";
-import { useGet } from "../Fetch/useFetch.tsx";
+import proj4 from "proj4";
+import { createContext, ReactNode, useContext } from "react";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import url from "../../module/fetch.tsx";
 import Loading from "../Elements/Loading/Loading.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 
 type AppContextProps = {
   user: UtilisateurEntity | null | undefined;

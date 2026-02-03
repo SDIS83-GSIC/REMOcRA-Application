@@ -1,4 +1,4 @@
-import { Feature, Map } from "ol";
+import { Feature, Map as OLMap } from "ol";
 import { WKT } from "ol/format";
 import { DragPan, Interaction, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
@@ -26,7 +26,7 @@ function toggleDeplacerPoint(
   active = false,
   selectCtrl: Select,
   modifyCtrl: Modify,
-  map: Map,
+  map: OLMap,
   onMoveEnd: (feature: string, pointId: string) => void,
   conditionObjetSelectionne = (feature: Feature) => feature != null,
 ) {
@@ -87,7 +87,7 @@ function toggleDeplacerPoint(
  * @returns
  */
 export function createPointLayer(
-  map: Map,
+  map: OLMap,
   urlApi: (extent, projection) => string,
   projection: { name: string },
   style?: Style,
@@ -100,7 +100,7 @@ export function createPointLayer(
 }
 
 export function createVectorLayer(
-  map: Map,
+  map: OLMap,
   urlApi: (extent, projection) => string,
   projection: { name: string },
   style?: Style,
@@ -133,7 +133,7 @@ export function createVectorLayer(
           vectorSource.addFeatures(features);
         }
         success(features);
-      } catch (error) {
+      } catch (_error) {
         vectorSource.removeLoadedExtent(extent);
         failure();
       }
@@ -183,7 +183,7 @@ export function createVectorLayer(
 export default toggleDeplacerPoint;
 
 export function addWktLayer(
-  map: Map,
+  map: OLMap,
   wktString: string,
   workingLayer: any,
   projection: { name: string },
@@ -238,7 +238,7 @@ export function addWktLayer(
   });
 }
 
-export function refreshLayerGeoserver(map: Map) {
+export function refreshLayerGeoserver(map: OLMap) {
   map.getLayers().forEach((layer) => {
     if (layer.getSource().updateParams) {
       layer.getSource().updateParams({
@@ -249,7 +249,7 @@ export function refreshLayerGeoserver(map: Map) {
   });
 }
 
-export function desactiveMoveMap(map: Map) {
+export function desactiveMoveMap(map: OLMap) {
   map
     .getInteractions()
     .getArray()
@@ -260,7 +260,7 @@ export function desactiveMoveMap(map: Map) {
     });
 }
 
-export function centrerToExtent(extent: any, map: Map, sridFrom: string) {
+export function centrerToExtent(extent: any, map: OLMap, sridFrom: string) {
   map
     ?.getView()
     .fit(

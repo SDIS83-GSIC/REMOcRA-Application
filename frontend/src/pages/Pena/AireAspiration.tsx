@@ -1,9 +1,10 @@
 import { useFormikContext } from "formik";
+import { WKT } from "ol/format";
 import { Col, Container, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { object } from "yup";
-import { WKT } from "ol/format";
 import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
@@ -14,11 +15,10 @@ import {
 } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconAireAspiration } from "../../components/Icon/Icon.tsx";
 import url from "../../module/fetch.tsx";
 import { URLS } from "../../routes.tsx";
-import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
-import { useAppContext } from "../../components/App/AppProvider.tsx";
 
 export const getInitialValues = (
   data: any,
@@ -86,7 +86,7 @@ const AireAspiration = ({
         submitUrl={`/api/pena/upsert-pena-aspiration/` + penaId}
         prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={peiIdCarte ? "" : URLS.PEI}
-        onSubmit={onSubmit ?? (() => {})}
+        onSubmit={onSubmit ?? (() => null)}
       >
         <FormAireAspiration peiIdCarte={peiIdCarte} />
       </MyFormik>

@@ -893,7 +893,7 @@ const VisiteForm = ({
   useEffect(() => {
     // Changement de visite => reset de la partie "Suites"
     setCurrentVisiteSuite(null);
-  }, [currentVisite]);
+  }, []);
 
   return (
     <>

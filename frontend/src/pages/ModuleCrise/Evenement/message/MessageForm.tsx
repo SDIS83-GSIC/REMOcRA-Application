@@ -1,20 +1,20 @@
+import { useFormikContext } from "formik";
 import { Col, Row } from "react-bootstrap";
 import { object } from "yup";
-import { useFormikContext } from "formik";
 import {
-  FormContainer,
-  FieldSet,
   DateTimeInput,
-  TextInput,
-  TextAreaInput,
+  FieldSet,
+  FormContainer,
   RangeInput,
+  TextAreaInput,
+  TextInput,
 } from "../../../../components/Form/Form.tsx";
+import TagInput from "../../../../components/InputTag/InputTag.tsx";
 import {
   requiredDate,
   requiredString,
 } from "../../../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../../../utils/formatDateUtils.tsx";
-import TagInput from "../../../../components/InputTag/InputTag.tsx";
 
 export const messageValidationSchema = object({
   messageObjet: requiredString,

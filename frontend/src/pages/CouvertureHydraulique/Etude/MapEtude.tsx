@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import { IconEtude } from "../../../components/Icon/Icon.tsx";
 import MapCouvertureHydraulique from "../../../components/Map/MapCouvertureHydraulique/MapCouvertureHydraulique.tsx";
+import EtudeStatutEnum from "../../../Entities/EtudeEntity.tsx";
 import url from "../../../module/fetch.tsx";
 
 const MapEtude = () => {

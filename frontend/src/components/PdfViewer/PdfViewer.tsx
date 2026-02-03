@@ -1,20 +1,20 @@
-import React, { ReactElement } from "react";
-import {
-  defaultLayoutPlugin,
-  ToolbarProps,
-  ToolbarSlot,
-} from "@react-pdf-viewer/default-layout";
 import {
   LocalizationMap,
   ProgressBar,
   Viewer,
   Worker,
 } from "@react-pdf-viewer/core";
+import {
+  defaultLayoutPlugin,
+  ToolbarProps,
+  ToolbarSlot,
+} from "@react-pdf-viewer/default-layout";
+import React, { ReactElement } from "react";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import classNames from "classnames";
-import fr_FR from "./Traduction_FR.json";
 import styles from "./PdfViewer.module.css";
+import fr_FR from "./Traduction_FR.json";
 
 const renderError = () => {
   return (

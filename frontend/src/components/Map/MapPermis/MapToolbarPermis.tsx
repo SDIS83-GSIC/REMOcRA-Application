@@ -1,4 +1,4 @@
-import { Map } from "ol";
+import { Map as OLMap } from "ol";
 import { WKT } from "ol/format";
 import { Point } from "ol/geom";
 import { Draw, Modify } from "ol/interaction";
@@ -18,6 +18,7 @@ import Volet from "../../Volet/Volet.tsx";
 import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditPermis } from "../TooltipsMap.tsx";
+
 const defaultStyle = new Style({
   image: new Circle({
     radius: 5,
@@ -223,7 +224,7 @@ const MapToolbarPermis = ({
   activeTool,
   hasRightToInteract = false,
 }: {
-  map?: Map;
+  map?: OLMap;
   dataPermisLayer: any;
 
   showSearchPermis: boolean;

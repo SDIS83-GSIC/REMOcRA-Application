@@ -8,13 +8,13 @@ import { FormContainer } from "../../../components/Form/Form.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import { IconInfo, IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
+import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import {
   SECTION_DROIT,
   TypeDroitLabel,
   TypeDroitSection,
 } from "../../../enums/DroitEnum.tsx";
 import url from "../../../module/fetch.tsx";
-import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 
 const LienProfilGroupeFonctionnalitesList = () => {
   const lienGroupeFonctionnalitesListState = useGet(

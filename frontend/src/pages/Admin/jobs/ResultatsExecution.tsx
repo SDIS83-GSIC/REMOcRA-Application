@@ -21,7 +21,7 @@ const ResultatsExecution = () => {
   return (
     <>
       <PageTitle title={"Résultats d'exécution"} icon={<IconList />} />
-      <Formik initialValues={{ typeTache: "" }} onSubmit={() => {}}>
+      <Formik initialValues={{ typeTache: "" }} onSubmit={() => null}>
         <FormTable />
       </Formik>
     </>

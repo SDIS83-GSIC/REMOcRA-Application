@@ -2,10 +2,6 @@ import classNames from "classnames";
 import { useFormikContext } from "formik";
 import { ReactNode } from "react";
 import { Col, Row } from "react-bootstrap";
-import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
-import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
-import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
-import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import AccordionCustom, {
   useAccordionState,
 } from "../../components/Accordion/Accordion.tsx";
@@ -20,6 +16,10 @@ import PositiveNumberInput, {
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { hasDroit } from "../../droits.tsx";
+import { AnomalieCompleteEntity } from "../../Entities/AnomalieEntity.tsx";
+import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
+import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
+import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";

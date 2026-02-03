@@ -57,7 +57,6 @@ const OldebMap = () => {
     useToolbarContext({
       availableLayers: availableLayers,
       map: map,
-      availableLayers: availableLayers,
       workingLayer: workingLayer,
       extraTools: extraTools,
     });

@@ -1,14 +1,14 @@
 import { useFormikContext } from "formik";
-import { object } from "yup";
 import { Button, Col, Container, Row } from "react-bootstrap";
+import { object } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
-import { URLS } from "../../../routes.tsx";
-import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
+import { FileInput, FormContainer } from "../../../components/Form/Form.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconImport } from "../../../components/Icon/Icon.tsx";
+import { URLS } from "../../../routes.tsx";
 
 export const getInitialValues = () => ({
   banniere: null,

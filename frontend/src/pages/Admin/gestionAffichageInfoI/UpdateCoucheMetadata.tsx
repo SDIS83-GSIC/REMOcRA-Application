@@ -1,11 +1,11 @@
 import Container from "react-bootstrap/Container";
 import { useParams } from "react-router-dom";
-import MyFormik from "../../../components/Form/MyFormik.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
-import { IconEdit } from "../../../components/Icon/Icon.tsx";
-import { URLS } from "../../../routes.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
+import MyFormik from "../../../components/Form/MyFormik.tsx";
+import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
+import { URLS } from "../../../routes.tsx";
 import CoucheMetadataForm, {
   getInitialValues,
   prepareValues,
