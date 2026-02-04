@@ -388,6 +388,23 @@ const CreateVisite = ({
   );
 };
 
+const PointsAttentionAccordion = ({
+  listeVoletsAccordion,
+}: {
+  listeVoletsAccordion: any[];
+}) => {
+  const { handleShowClose, activesKeys } = useAccordionState(
+    Array(listeVoletsAccordion.length).fill(false),
+  );
+  return (
+    <AccordionCustom
+      list={listeVoletsAccordion}
+      handleShowClose={handleShowClose}
+      activesKeys={activesKeys}
+    />
+  );
+};
+
 const ConsulterVisite = ({
   peiIdCarte,
   activesKeys,
@@ -485,10 +502,8 @@ const ConsulterVisite = ({
               content: (
                 <div>
                   {listeVoletsAccordion.length > 0 ? (
-                    <AccordionCustom
-                      list={listeVoletsAccordion}
-                      handleShowClose={handleShowClose}
-                      activesKeys={activesKeys}
+                    <PointsAttentionAccordion
+                      listeVoletsAccordion={listeVoletsAccordion}
                     />
                   ) : (
                     <p>
@@ -498,6 +513,7 @@ const ConsulterVisite = ({
                 </div>
               ),
             },
+
             {
               header: "Observations",
               content: <p>{currentVisite.visiteObservation}</p>,
