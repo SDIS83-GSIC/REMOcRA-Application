@@ -28,7 +28,7 @@ forbiddenapis = { module = "de.thetaphi:forbiddenapis", version.ref = "forbidden
 oidcServlets-bom = "net.ltgt.oidc:oidc-servlets-bom:1.0.0-rc-12"
 oidcServlets = { module = "net.ltgt.oidc:oidc-servlets" }
 oidcServlets-rs = { module = "net.ltgt.oidc:oidc-servlets-rs" }
-oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-6"
+oauthServlets-bom = "net.ltgt.oauth:oauth-bom:1.0.0-rc-7"
 oauthServlets-rs = { module = "net.ltgt.oauth:oauth-rs" }
 
 kotlin-guice = "dev.misfitlabs.kotlinguice4:kotlin-guice:3.0.0"
