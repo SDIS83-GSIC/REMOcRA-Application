@@ -31,7 +31,11 @@ import referenceTypeVisite, {
   TYPE_VISITE,
 } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
-import formatDateTime, { formatDate } from "../../utils/formatDateUtils.tsx";
+import formatDateTime, {
+  formatDate,
+  formatSqlDateStringToFr,
+  formatSqlDateStringToFrShort,
+} from "../../utils/formatDateUtils.tsx";
 import VisiteForm, {
   getInitialValues,
   prepareVariables,
@@ -156,6 +160,15 @@ const Visite = ({
       );
     }
   };
+
+  function formatDateWithFallback(date: any) {
+    try {
+      return formatDate(date);
+    } catch {
+      return formatSqlDateStringToFrShort(date);
+    }
+  }
+
   return (
     <Container fluid className={"px-5"}>
       <PageTitle
@@ -254,7 +267,7 @@ const Visite = ({
                       }
                     >
                       <td className={"text-nowrap"}>
-                        {formatDate(element.visiteDate)}
+                        {formatDateWithFallback(element.visiteDate)}
                       </td>
                       <td>
                         {
@@ -420,6 +433,14 @@ const ConsulterVisite = ({
   typePei: any;
   listeVoletsAccordion: any[];
 }) => {
+  function formatDateTimeWithFallback(date: any) {
+    try {
+      return formatDateTime(date);
+    } catch {
+      return formatSqlDateStringToFr(date);
+    }
+  }
+
   return (
     <Col xs={peiIdCarte ? "12" : "7"}>
       <div>
@@ -434,7 +455,8 @@ const ConsulterVisite = ({
                 <>
                   <div>
                     <div>
-                      Date et Heure : {formatDateTime(currentVisite.visiteDate)}
+                      Date et Heure :{" "}
+                      {formatDateTimeWithFallback(currentVisite.visiteDate)}
                     </div>
                     <div>Type de visite : {currentVisite.visiteTypeVisite}</div>
                     {typePei === TYPE_PEI.PIBI && (

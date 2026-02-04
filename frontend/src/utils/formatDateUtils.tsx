@@ -50,4 +50,36 @@ export function formatForDateInput(dateToFormat: Date) {
   return formatDateWithPattern(dateToFormat, "yyyy-MM-dd");
 }
 
+/** Formatte une date SQL texte (ex: 0025-02-04 10:04:39.000 +0100)
+ * en "dd/MM/yyyy HH:mm" même si l'année commence par des zéros.
+ * Retourne "-" si le format n'est pas reconnu.
+ */
+export function formatSqlDateStringToFr(dateStr: string): string {
+  if (!dateStr || typeof dateStr !== "string") {
+    return "-";
+  }
+  // Ex: 0025-02-04 10:04:39.000 +0100
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if (!match) {
+    return "-";
+  }
+  const [, yyyy, MM, dd, HH, mm] = match;
+  return `${dd}/${MM}/${yyyy} ${HH}:${mm}`;
+}
+
+// Formatte une date SQL texte (ex: 0025-02-04 10:04:39.000 +0100)
+// en "dd/MM/yyyy" (sans heure), même si l'année commence par des zéros.
+// Retourne "-" si le format n'est pas reconnu.
+export function formatSqlDateStringToFrShort(dateStr: string): string {
+  if (!dateStr || typeof dateStr !== "string") {
+    return "-";
+  }
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) {
+    return "-";
+  }
+  const [, yyyy, MM, dd] = match;
+  return `${dd}/${MM}/${yyyy}`;
+}
+
 export default formatDateTime;
