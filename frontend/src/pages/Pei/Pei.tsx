@@ -1430,7 +1430,11 @@ const FormPibi = ({
           />
         </Col>
         <Col className="d-flex align-items-end mb-2">
-          <CheckBoxInput name="pibiDebitRenforce" label="Débit renforcé" />
+          <CheckBoxInput
+            name="pibiDebitRenforce"
+            label="Débit renforcé"
+            disabled={!hasDroitCaracteristique}
+          />
         </Col>
       </Row>
       <Row className="mt-3">
@@ -1561,6 +1565,7 @@ const FormPena = ({
                   ? setFieldValue("typeEnginIds", typeEnginId)
                   : setFieldValue("typeEnginIds", []);
               }}
+              disabled={!hasDroitCaracteristique}
             />
           </Col>
         </Row>
