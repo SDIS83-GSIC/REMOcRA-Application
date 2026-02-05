@@ -172,7 +172,7 @@ class NumerotationUseCase : AbstractUseCase() {
             CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
             CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
             CodeSdis.SDIS_62 -> TODO()
-            CodeSdis.SDIS_71,
+            CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
             CodeSdis.SDIS_83,
             -> computeNumeroInterne83(pei)
             CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
@@ -258,6 +258,26 @@ class NumerotationUseCase : AbstractUseCase() {
         )
 
         return if (listPeiNumeroInterne.isEmpty()) MAX_PEI_NUMERO_INTERNE else listPeiNumeroInterne.first() - 1
+    }
+
+    /**
+     * Retourne le plus grand numéro interne disponible pour le PEI, en commençant à 99999 et en allant vers 0.
+     * La méthode génère la séquence décroissante et sélectionne le premier numéro non utilisé.*/
+    private fun computeNumeroInterne71(pei: PeiForNumerotationData): Int {
+        checkNature(pei)
+
+        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
+            typePei = pei.nature!!.natureTypePei,
+            peiNatureId = null,
+            peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
+            peiZoneSpecialeId = pei.peiZoneSpecialeId,
+            peiNatureDeciId = null,
+        )
+
+        return generateSequence(MAX_PEI_NUMERO_INTERNE) { it - 1 }
+            .takeWhile { it > 0 }
+            .minus(listPeiNumeroInterne.toSet())
+            .first()
     }
 
     private fun computeNumeroInterneMethodeA(pei: PeiForNumerotationData): Int {
