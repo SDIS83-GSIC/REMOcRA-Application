@@ -10,6 +10,7 @@ import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
 import url from "../../module/fetch.tsx";
+import Loading from "../../components/Elements/Loading/Loading.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
@@ -46,7 +47,6 @@ const TourneePei = ({
   const [selectedPei, setSelectedPei] = useState<PeiInfoEntity>(null);
 
   const { success: successToast, error: errorToast } = useToastContext();
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -85,26 +85,6 @@ const TourneePei = ({
     true,
   );
 
-  useEffect(() => {
-    if (allPeiInfoSource.isResolved && data) {
-      setSelectedPei(null);
-      setSelectOptions(filterOptions());
-    }
-  }, [data]);
-
-  const submitList = () => {
-    const formData = new FormData();
-    const formattedData = data.map((e, index) => {
-      return {
-        tourneeId: e.tourneeId,
-        peiId: e.id,
-        ordre: index + 1,
-      };
-    });
-    formData.append("listTourneePei", JSON.stringify(formattedData));
-    execute.run(formData);
-  };
-
   const filterOptions = () => {
     let filteredList: PeiInfoEntity[] = allPeiInfoSource.data;
     if (data.length > 0) {
@@ -139,6 +119,26 @@ const TourneePei = ({
     });
   };
 
+  useEffect(() => {
+    if (allPeiInfoSource.isResolved && data) {
+      setSelectedPei(null);
+      setSelectOptions(filterOptions());
+    }
+  }, [data, allPeiInfoSource.isResolved, filterOptions]);
+
+  const submitList = () => {
+    const formData = new FormData();
+    const formattedData = data.map((e, index) => {
+      return {
+        tourneeId: e.tourneeId,
+        peiId: e.id,
+        ordre: index + 1,
+      };
+    });
+    formData.append("listTourneePei", JSON.stringify(formattedData));
+    execute.run(formData);
+  };
+
   const showAddPeiSection = () => {
     setSelectOptions(filterOptions());
     setDisplaySection(!displaySection);
@@ -147,6 +147,13 @@ const TourneePei = ({
   const addPei = () => {
     setData((data) => [...data, selectedPei]);
   };
+
+  const showLoading =
+    !tourneePeiInfo.isResolved || !allPeiInfoSource.isResolved;
+
+  if (showLoading) {
+    return <Loading />;
+  }
 
   return (
     data && (
