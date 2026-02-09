@@ -2,6 +2,7 @@ package remocra.api
 
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.enums.DroitApi
 import java.util.UUID
 import java.util.stream.Stream
@@ -21,7 +22,7 @@ object PeiUtils {
     }
 
     fun isServicePublicDECI(organisme: OrganismeIdType): Boolean {
-        return GlobalConstants.TYPE_ORGANISME_COMMUNE.equals(organisme.typeOrganisme, true) || GlobalConstants.TYPE_ORGANISME_EPCI.equals(organisme.typeOrganisme, true)
+        return TypeServicePublicDeci.entries.any { it.name == organisme.typeOrganisme }
     }
 
     fun isMaintenanceDECI(organisme: OrganismeIdType): Boolean {
