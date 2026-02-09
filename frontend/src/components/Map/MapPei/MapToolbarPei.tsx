@@ -588,7 +588,10 @@ const MapToolbarPei = ({
             className="w-auto"
             backdrop={true}
           >
-            <CreateIndisponibiliteTemporaire listePeiId={listePeiId} />
+            <CreateIndisponibiliteTemporaire
+              listePeiId={listePeiId}
+              onSubmit={handleCloseIndispoTemp}
+            />
           </Volet>
         </>
       )}

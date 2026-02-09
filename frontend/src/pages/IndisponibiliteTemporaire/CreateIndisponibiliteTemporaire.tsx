@@ -8,8 +8,10 @@ import IndisponibiliteTemporaireForm, {
 
 const CreateIndisponibiliteTemporaire = ({
   listePeiId,
+  onSubmit,
 }: {
   listePeiId?: string[];
+  onSubmit?: () => void;
 }) => {
   return (
     <MyFormik
@@ -20,7 +22,9 @@ const CreateIndisponibiliteTemporaire = ({
       isPost={true}
       submitUrl={`/api/indisponibilite-temporaire/create`}
       prepareVariables={(values) => prepareVariables(values)}
-      redirectUrl={URLS.LIST_INDISPONIBILITE_TEMPORAIRE}
+      {...(listePeiId
+        ? { onSubmit: onSubmit }
+        : { redirectUrl: URLS.LIST_INDISPONIBILITE_TEMPORAIRE })}
     >
       <IndisponibiliteTemporaireForm
         title={"Nouvelle indisponibilité temporaire"}
