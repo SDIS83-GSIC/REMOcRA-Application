@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import ReactSelect from "react-select";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
@@ -30,6 +30,15 @@ const AffecterPeiTourneeMap = ({
   const [update, setUpdate] = useState(false);
   const [showListePei, setShowListePei] = useState(false);
   const [tourneeId, setTourneeId] = useState<string>();
+
+  // Callback pour recevoir l'id de la tournée créée et afficher la liste
+  const handleTourneeCreated = (id: string) => {
+    setTourneeId(id);
+    setShowListePei(true);
+  };
+
+  // Ref pour contrôler la soumission du formulaire CreateTournee
+  const createTourneeRef = useRef<{ submit: () => void }>(null);
 
   return (
     <Container>
@@ -80,8 +89,9 @@ const AffecterPeiTourneeMap = ({
         </>
       ) : create ? (
         <CreateTournee
+          ref={createTourneeRef}
           isFromMap={true}
-          setTourneeId={setTourneeId}
+          setTourneeId={handleTourneeCreated}
           listePei={listePei.map((e) => e.peiId)}
         />
       ) : (
@@ -100,7 +110,7 @@ const AffecterPeiTourneeMap = ({
         <Row className="mt-3 text-center">
           <Col>
             <Button
-              type="submit"
+              type="button"
               variant="primary"
               onClick={() => {
                 setCreate(false);
@@ -112,10 +122,30 @@ const AffecterPeiTourneeMap = ({
               <IconPreviousPage /> Précédent
             </Button>
           </Col>
-          {!showListePei && (
+          {/* Si on est en création, le bouton Suivant déclenche la soumission du formulaire via la ref */}
+          {create && !showListePei && (
             <Col>
               <Button
-                type="submit"
+                type="button"
+                variant="primary"
+                onClick={() => {
+                  if (
+                    createTourneeRef.current &&
+                    createTourneeRef.current.submit
+                  ) {
+                    createTourneeRef.current.submit();
+                  }
+                }}
+              >
+                Suivant <IconNextPage />
+              </Button>
+            </Col>
+          )}
+          {/* Si on est en update, juste passer a l'étape suiavnte */}
+          {update && !showListePei && (
+            <Col>
+              <Button
+                type="button"
                 variant="primary"
                 disabled={tourneeId === undefined}
                 onClick={() => setShowListePei(true)}

@@ -25,10 +25,12 @@ const TourneeForm = ({
   isCreation = false,
   tourneeLibelle = null,
   listePei = [],
+  hideSubmit = false,
 }: {
   isCreation?: boolean;
   tourneeLibelle?: string;
   listePei?: string[];
+  hideSubmit?: boolean;
 }) => {
   const { values, setValues } = useFormikContext<TourneeFormEntity>();
 
@@ -64,7 +66,7 @@ const TourneeForm = ({
             />
           )}
         </Col>
-        <SubmitFormButtons returnLink={true} />
+        {!hideSubmit && <SubmitFormButtons returnLink={true} />}
       </Container>
     </FormContainer>
   );
