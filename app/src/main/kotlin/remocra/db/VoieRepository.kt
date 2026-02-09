@@ -89,7 +89,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             condition = condition.and(COMMUNE.CODE_INSEE.eq(codeInsee))
         }
         if (libelleVoie != null) {
-            condition = condition.and(VOIE.LIBELLE.likeIgnoreCase("%$libelleVoie%"))
+            condition = condition.and(VOIE.LIBELLE.containsIgnoreCaseUnaccent(libelleVoie))
         }
         return condition
     }

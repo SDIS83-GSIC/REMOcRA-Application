@@ -38,7 +38,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             condition = condition.and(COMMUNE.CODE_INSEE.eq(codeInsee))
         }
         if (libelle != null) {
-            condition = condition.and(COMMUNE.LIBELLE.likeIgnoreCase("%$libelle%"))
+            condition = condition.and(COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(libelle))
         }
         return condition
     }
