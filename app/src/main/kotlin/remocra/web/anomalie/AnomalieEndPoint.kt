@@ -20,7 +20,7 @@ class AnomalieEndPoint {
 
     @GET
     @Path("/getAssignablesAnomalies/{peiId}")
-    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A, Droit.VISITE_CONTROLE_TECHNIQUE_C, Droit.VISITE_NON_PROGRAMME_C, Droit.VISITE_RECEP_C, Droit.VISITE_RECO_C, Droit.VISITE_RECO_INIT_C])
+    @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A, Droit.VISITE_R, Droit.VISITE_CONTROLE_TECHNIQUE_C, Droit.VISITE_NON_PROGRAMME_C, Droit.VISITE_RECEP_C, Droit.VISITE_RECO_C, Droit.VISITE_RECO_INIT_C])
     fun getAssignableAnomalie(
         @PathParam("peiId") peiId: UUID,
     ): Response {
