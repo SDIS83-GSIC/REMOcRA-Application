@@ -28,30 +28,43 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
      * Retourne une Map<coucheId, CoucheData> pour stockage dans le dataCache
      */
     fun getMapById(): Map<UUID, CoucheData> =
-        dsl.selectFrom(COUCHE).fetchInto<Couche>().map {
-                couche ->
-            CoucheData(
-                coucheId = couche.coucheId,
-                coucheCode = couche.coucheCode,
-                coucheLibelle = couche.coucheLibelle,
-                coucheOrdre = couche.coucheOrdre,
-                coucheSource = couche.coucheSource,
-                coucheProjection = couche.coucheProjection,
-                coucheUrl = couche.coucheUrl,
-                coucheNom = couche.coucheNom,
-                coucheFormat = couche.coucheFormat,
-                couchePublic = couche.couchePublic,
-                coucheActive = couche.coucheActive,
-                coucheProxy = couche.coucheProxy ?: true,
-                coucheCrossOrigin = couche.coucheCrossOrigin,
-                coucheIconeUrl = null,
-                coucheLegendeUrl = null,
-                groupeFonctionnalitesList = getGroupeFonctionnalitesList(couche.coucheId).map { groupeFonctionnalites -> groupeFonctionnalites.groupeFonctionnalitesId },
-                moduleList = getModuleList(couche.coucheId),
-                coucheProtected = couche.coucheProtected,
-                coucheTuilage = couche.coucheTuilage,
-            )
-        }.associateBy { it.coucheId }
+        dsl.select(
+            DSL.multiset(
+                dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                    .from(L_COUCHE_GROUPE_FONCTIONNALITES)
+                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
+                    .and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isTrue),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("groupeFonctionnalitesListInZC"),
+            // Multiset pour les groupes hors ZC
+            DSL.multiset(
+                dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
+                    .from(L_COUCHE_GROUPE_FONCTIONNALITES)
+                    .where(L_COUCHE_GROUPE_FONCTIONNALITES.COUCHE_ID.eq(COUCHE.ID))
+                    .and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isFalse),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("groupeFonctionnalitesListHorsZc"),
+            COUCHE.ID,
+            COUCHE.CODE,
+            COUCHE.LIBELLE,
+            COUCHE.ORDRE,
+            COUCHE.SOURCE,
+            COUCHE.PROJECTION,
+            COUCHE.URL,
+            COUCHE.NOM,
+            COUCHE.FORMAT,
+            COUCHE.PUBLIC,
+            COUCHE.ACTIVE,
+            COUCHE.PROXY,
+            COUCHE.CROSS_ORIGIN,
+            COUCHE.GROUPE_COUCHE_ID,
+            COUCHE.PROTECTED,
+            COUCHE.TUILAGE,
+            DSL.multiset(
+                dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
+                    .from(L_COUCHE_MODULE)
+                    .where(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID)),
+            ).convertFrom { r -> r.map { it.value1() } }.`as`("moduleList"),
+        )
+            .from(COUCHE).fetchInto<CoucheData>().associateBy { it.coucheId }
 
     fun getCoucheMap(module: TypeModule, groupeFonctionnalites: GroupeFonctionnalites?, isSuperAdmin: Boolean): Map<UUID, List<Couche>> =
         dsl.selectDistinct(*COUCHE.fields())

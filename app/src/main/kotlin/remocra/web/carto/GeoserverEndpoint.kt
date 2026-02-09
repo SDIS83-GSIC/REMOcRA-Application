@@ -88,7 +88,12 @@ class GeoserverEndpoint : AbstractEndpoint() {
     ): Response {
         val user = securityContext.userInfo
         val couche = dataCacheProvider.get().mapCouches.values.firstOrNull {
-            it.coucheCode == code && (user.isSuperAdmin || it.couchePublic || it.groupeFonctionnalitesList.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId))
+            it.coucheCode == code && (
+                user.isSuperAdmin ||
+                    it.couchePublic ||
+                    it.groupeFonctionnalitesListInZC.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId) ||
+                    it.groupeFonctionnalitesListHorsZc.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId)
+                )
         }
 
         if (couche == null) {
@@ -105,11 +110,15 @@ class GeoserverEndpoint : AbstractEndpoint() {
                 if (user.zoneCompetence == null) {
                     return forbidden().build()
                 }
-                // XXX : Chaîne en dur, rajouter les noms des propriétés depuis les déclarations jOOQ ?
-                queryParameters.add(
-                    "CQL_FILTER",
-                    "WITHIN(geometrie,(querySingle('remocra:zone_integration','zone_integration_geometrie','zone_integration_id=\'\'${user.zoneCompetence!!.zoneIntegrationId}\'\'')))",
-                )
+
+                // Si le groupe de fonction de l'utilisateur est dans les groupes de fonction hors ZC, on ne filtre pas sur la zone d'intégration
+                if (couche.groupeFonctionnalitesListInZC.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId)) {
+                    // XXX : Chaîne en dur, rajouter les noms des propriétés depuis les déclarations jOOQ ?
+                    queryParameters.add(
+                        "CQL_FILTER",
+                        "WITHIN(geometrie,(querySingle('remocra:zone_integration','zone_integration_geometrie','zone_integration_id=\'\'${user.zoneCompetence!!.zoneIntegrationId}\'\'')))",
+                    )
+                }
             }
         }
 

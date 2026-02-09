@@ -46,7 +46,12 @@ class CartoEndpoint : AbstractEndpoint() {
             }
         } else {
             dataCacheProvider.get().mapCouches.values.firstOrNull {
-                it.coucheCode == code && (user.isSuperAdmin || it.couchePublic || it.groupeFonctionnalitesList.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId))
+                it.coucheCode == code && (
+                    user.isSuperAdmin ||
+                        it.couchePublic ||
+                        it.groupeFonctionnalitesListInZC.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId) ||
+                        it.groupeFonctionnalitesListHorsZc.contains(user.groupeFonctionnalites!!.groupeFonctionnalitesId)
+                    )
             }
         }
         if (couche == null) {
