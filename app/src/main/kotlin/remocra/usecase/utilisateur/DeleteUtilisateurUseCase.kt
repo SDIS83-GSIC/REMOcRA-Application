@@ -6,6 +6,7 @@ import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
 import remocra.data.UtilisateurData
 import remocra.data.enums.ErrorType
+import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -25,8 +26,12 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
 
     @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
+    @Inject lateinit var organismeRepository: OrganismeRepository
+
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
+            !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
+        ) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
         }
     }
@@ -75,6 +80,12 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         // Si l'utilisateur a réservé une tournée, on interdit la suppression
         if (utilisateurRepository.checkExistsInTournee(element.utilisateurId)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_TOURNEE_RESERVEE)
+        }
+
+        userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
+            if ((element.utilisateurOrganismeId == null) || (!it)) {
+                throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
+            }
         }
     }
 }

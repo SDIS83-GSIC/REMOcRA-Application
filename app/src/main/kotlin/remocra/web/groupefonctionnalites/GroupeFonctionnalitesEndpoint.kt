@@ -27,7 +27,7 @@ class GroupeFonctionnalitesEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/profils")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_R])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
     fun getGroupeFonctionnalitesWithProfils() =
         Response.ok(groupeFonctionnalitesRepository.getGroupeFonctionnalitesWithProfils()).build()
 }

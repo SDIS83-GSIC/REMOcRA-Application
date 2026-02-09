@@ -14,6 +14,7 @@ import org.jooq.impl.SQLDataType
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.api.data.ApiTypeOrganismeData
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.OrganismeData
@@ -21,6 +22,7 @@ import remocra.data.Params
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.db.jooq.remocra.tables.references.CONTACT
@@ -60,17 +62,30 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .and(TYPE_ORGANISME.ACTIF.isTrue).and(codeTypeOrganisme?.let { TYPE_ORGANISME.CODE.eq(codeTypeOrganisme) })
             .limit(limit).offset(offset).fetchInto()
 
-    fun getAll(): Collection<GlobalData.IdCodeLibelleLienData> =
-        dsl.select(
+    fun getAll(userInfo: WrappedUserInfo? = null): Collection<GlobalData.IdCodeLibelleLienData> {
+        val conditions = mutableListOf(ORGANISME.ACTIF.isTrue)
+        userInfo?.let { user ->
+            conditions.add(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    user.affiliatedOrganismeIds?.takeIf { it.isNotEmpty() }
+                        ?.let { ORGANISME.ID.`in`(it) }
+                        ?: DSL.falseCondition(),
+                    user.isSuperAdmin,
+                ),
+            )
+        }
+
+        return dsl.select(
             ORGANISME.ID.`as`("id"),
             ORGANISME.CODE.`as`("code"),
             ORGANISME.LIBELLE.`as`("libelle"),
             ORGANISME.PROFIL_ORGANISME_ID.`as`("lienId"),
         )
             .from(ORGANISME)
-            .where(ORGANISME.ACTIF.isTrue)
+            .where(conditions)
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
+    }
 
     fun fetchEmailExists(email: String, organismeId: UUID): Boolean =
         dsl.fetchExists(
@@ -235,8 +250,38 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         val organismeKeycloakId: String?,
     )
 
-    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<OrganismeComplet> {
+    fun existsByCode(code: String): Boolean {
+        return dsl.fetchExists(
+            DSL.selectOne()
+                .from(ORGANISME)
+                .where(ORGANISME.CODE.eq(code)),
+        )
+    }
+
+    private fun buildDroitCondition(user: WrappedUserInfo, parent: remocra.db.jooq.remocra.tables.Organisme): Condition =
+        when {
+            user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> {
+                DSL.trueCondition()
+            }
+
+            user.droits?.any { it == Droit.ADMIN_UTILISATEURS_ORGA_A || it == Droit.ADMIN_UTILISATEURS_ORGA_R } == true -> {
+                val zoneCode = user.zoneCompetence?.zoneIntegrationCode
+
+                if (zoneCode != null) {
+                    ORGANISME.CODE.eq(zoneCode).or(parent.CODE.eq(zoneCode))
+                } else {
+                    DSL.falseCondition()
+                }
+            }
+
+            else -> DSL.falseCondition() // sécurité
+        }
+
+    fun getAllForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Collection<OrganismeComplet> {
         val parent = ORGANISME.`as`("parent")
+        val conditionBase = params.filterBy?.toCondition() ?: DSL.trueCondition()
+        val conditionDroit = buildDroitCondition(user, parent)
+
         return dsl.select(
             ORGANISME.ID,
             ORGANISME.ACTIF,
@@ -251,32 +296,37 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             DSL.field(
                 DSL.exists(
                     dsl.select(L_CONTACT_ORGANISME.CONTACT_ID)
-                        .from(
-                            L_CONTACT_ORGANISME,
-                        )
+                        .from(L_CONTACT_ORGANISME)
                         .where(L_CONTACT_ORGANISME.ORGANISME_ID.eq(ORGANISME.ID)),
                 ),
             ).`as`("hasContact"),
-        ).from(ORGANISME)
+        )
+            .from(ORGANISME)
             .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .leftJoin(PROFIL_ORGANISME).on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
             .leftJoin(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .leftJoin(parent).on(ORGANISME.PARENT_ID.eq(parent.ID))
-            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .where(conditionBase.and(conditionDroit))
             .orderBy(params.sortBy?.toCondition() ?: listOf(ORGANISME.CODE))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
     }
 
-    fun getCountForAdmin(params: Params<Filter, Sort>): Int {
+    fun getCountForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Int {
         val parent = ORGANISME.`as`("parent")
-        return dsl.selectDistinct(ORGANISME.ID).from(ORGANISME)
+        val baseCondition = params.filterBy?.toCondition() ?: DSL.trueCondition()
+        val droitCondition = buildDroitCondition(user, parent)
+
+        return dsl
+            .selectDistinct(ORGANISME.ID)
+            .from(ORGANISME)
             .leftJoin(PROFIL_ORGANISME).on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
             .leftJoin(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .leftJoin(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .leftJoin(parent).on(ORGANISME.PARENT_ID.eq(parent.ID))
-            .where(params.filterBy?.toCondition() ?: DSL.trueCondition()).count()
+            .where(baseCondition.and(droitCondition))
+            .count()
     }
 
     fun add(organismeData: OrganismeData): Int {

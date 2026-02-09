@@ -5,6 +5,7 @@ import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
 import remocra.data.UtilisateurData
 import remocra.data.enums.ErrorType
+import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -25,8 +26,12 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
 
     @Inject lateinit var utilisateurRepository: UtilisateurRepository
 
+    @Inject lateinit var organismeRepository: OrganismeRepository
+
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
+            !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
+        ) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
         }
     }
@@ -85,6 +90,12 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
 
         if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername, element.utilisateurId)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
+        }
+
+        userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
+            if ((element.utilisateurOrganismeId == null) || (!it)) {
+                throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
+            }
         }
     }
 }

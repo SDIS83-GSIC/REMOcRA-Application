@@ -51,18 +51,20 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_R])
-    fun getAll(params: Params<UtilisateurRepository.Filter, UtilisateurRepository.Sort>): Response =
-        Response.ok(
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_A])
+    fun getAll(params: Params<UtilisateurRepository.Filter, UtilisateurRepository.Sort>): Response {
+        val user = securityContext.userInfo
+        return Response.ok(
             DataTableau(
-                list = utilisateurRepository.getAllForAdmin(params),
-                count = utilisateurRepository.countAllForAdmin(params.filterBy),
+                list = utilisateurRepository.getAllForAdmin(user, params),
+                count = utilisateurRepository.countAllForAdmin(user, params.filterBy),
             ),
         ).build()
+    }
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.GEST_SITE_A])
+    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun create(utilisateurInput: UtilisateurInput): Response =
         createUtilisateurUseCase.execute(
@@ -116,7 +118,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @DELETE
     @Path("/delete/{utilisateurId}")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun delete(
         @PathParam("utilisateurId")
@@ -129,7 +131,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get/{utilisateurId}")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_R])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_ORGA_A])
     fun get(@PathParam("utilisateurId") utilisateurId: UUID): Response {
         return Response.ok(utilisateurRepository.getById(utilisateurId)).build()
     }

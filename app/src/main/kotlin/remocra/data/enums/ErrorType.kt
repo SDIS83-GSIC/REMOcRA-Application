@@ -370,6 +370,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     ADMIN_IMPORT_RESSOURCE_FORBIDDEN(9010, "Vous n'avez pas les droits d'importer des ressource", Status.FORBIDDEN),
     ORGANISME_INEXISTANT(9011, "Le code spécifié ne correspond à aucun organisme"),
+    ADMIN_ORGANISME_CODE_ALREADY_EXISTS(9012, "Le code doit être unique"),
 
     //
     // ********************************************************************************

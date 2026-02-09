@@ -6,9 +6,11 @@ import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
+import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.UtilisateurData
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
@@ -173,12 +175,53 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 },
             )
 
-    fun getAllForAdmin(params: Params<Filter, Sort>): Collection<UtilisateurComplet> =
-        dsl.select(
+    private fun buildDroitCondition(user: WrappedUserInfo): Condition =
+        when {
+            user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true || user.droits?.contains(Droit.ADMIN_UTILISATEURS_R) == true -> {
+                DSL.trueCondition()
+            }
+
+            user.droits?.any { it == Droit.ADMIN_UTILISATEURS_ORGA_A || it == Droit.ADMIN_UTILISATEURS_ORGA_R } == true -> {
+                val zoneCode = user.zoneCompetence?.zoneIntegrationCode
+
+                if (zoneCode != null) {
+                    ORGANISME.CODE.eq(zoneCode)
+                } else {
+                    DSL.falseCondition()
+                }
+            }
+
+            else -> DSL.falseCondition() // sécurité
+        }
+
+    fun getAllForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Collection<UtilisateurComplet> {
+        val conditionBase = params.filterBy?.toCondition() ?: DSL.trueCondition()
+        val conditionDroit = buildDroitCondition(user)
+
+        val conditionAdmin = when {
+            user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> {
+                DSL.trueCondition()
+            }
+
+            user.droits?.contains(Droit.ADMIN_UTILISATEURS_ORGA_A) == true -> {
+                val zoneCode = user.zoneCompetence?.zoneIntegrationCode
+                if (zoneCode != null) {
+                    ORGANISME.CODE.eq(zoneCode)
+                } else {
+                    DSL.falseCondition()
+                }
+            }
+
+            else -> DSL.falseCondition() // sécurité
+        }
+
+        // On combine toutes les conditions dans la requête
+        return dsl.select(
             *UTILISATEUR.fields(),
             ORGANISME.LIBELLE,
             PROFIL_UTILISATEUR.LIBELLE,
             GROUPE_FONCTIONNALITES.LIBELLE,
+            conditionAdmin.`as`("canAdministrate"),
         )
             .from(UTILISATEUR)
             .leftJoin(ORGANISME)
@@ -192,12 +235,13 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             )
             .leftJoin(GROUPE_FONCTIONNALITES)
             .on(GROUPE_FONCTIONNALITES.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
-            .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
+            .where(conditionBase.and(conditionDroit))
             .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(UTILISATEUR.USERNAME))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
+    }
 
     data class UtilisateurComplet(
         val utilisateurId: UUID,
@@ -213,10 +257,14 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val organismeLibelle: String?,
         val profilUtilisateurLibelle: String?,
         val groupeFonctionnalitesLibelle: String?,
+        val canAdministrate: Boolean?,
     )
 
-    fun countAllForAdmin(filterBy: Filter?) =
-        dsl.select(UTILISATEUR.ID)
+    fun countAllForAdmin(user: WrappedUserInfo, filterBy: Filter?): Int {
+        val baseCondition = filterBy?.toCondition() ?: DSL.trueCondition()
+        val droitCondition = buildDroitCondition(user)
+
+        return dsl.select(UTILISATEUR.ID)
             .from(UTILISATEUR)
             .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
@@ -227,9 +275,10 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
                 L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID)
                     .and(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID.eq(ORGANISME.PROFIL_ORGANISME_ID)),
             )
-            .where(filterBy?.toCondition() ?: DSL.noCondition())
+            .where(baseCondition.and(droitCondition))
             .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .count()
+    }
 
     data class Filter(
         val utilisateurActif: Boolean?,
