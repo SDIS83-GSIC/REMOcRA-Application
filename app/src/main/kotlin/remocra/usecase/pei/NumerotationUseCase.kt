@@ -286,10 +286,8 @@ class NumerotationUseCase : AbstractUseCase() {
      *
      */
     private fun computeNumeroInterneMethodeB(pei: PeiForNumerotationData): Int {
-        checkNature(pei)
-
         val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
-            typePei = pei.nature!!.natureTypePei,
+            typePei = null,
             peiNatureId = null,
             peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
             peiZoneSpecialeId = pei.peiZoneSpecialeId,
