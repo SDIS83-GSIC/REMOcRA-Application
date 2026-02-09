@@ -74,6 +74,10 @@ object PeiUtils {
         return peiServiceEauxId != null && peiServiceEauxId == organisme.idOrganisme && GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX.equals(organisme.typeOrganisme, true)
     }
 
+    fun isServiceEaux(organisme: OrganismeIdType): Boolean {
+        return GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX.equals(organisme.typeOrganisme, true)
+    }
+
     /**
      * Classe de représentation des propriétés "utiles" d'un organisme utilisateur de l'API
      */

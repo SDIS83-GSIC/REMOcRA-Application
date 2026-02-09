@@ -3,6 +3,7 @@ package remocra.api.usecase
 import remocra.api.PeiUtils
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
+import remocra.db.ApiPeiAccessibility
 import remocra.db.PeiRepository
 import remocra.db.jooq.remocra.tables.pojos.Pei
 import remocra.exception.RemocraResponseException
@@ -88,5 +89,20 @@ abstract class AbstractApiPeiUseCase(
         val organisme = PeiUtils.OrganismeIdType(wrapperUserInfo)
 
         return peiRepository.getPeiAccessibility(listPei).map { PeiAccessibilite(it.id, it.numeroComplet, it.maintenanceDeciId, it.servicePublicDeciId, it.serviceEauxId, PeiUtils.isApiAdmin(organisme) || PeiUtils.isMaintenanceDECI(it.maintenanceDeciId, organisme) || PeiUtils.isServicePublicDECI(it.servicePublicDeciId, organisme) || PeiUtils.isServiceEaux(it.serviceEauxId, organisme)) }
+    }
+
+    fun listPeiAccessibiliteWithInfo(listPeiAccessibility: Set<ApiPeiAccessibility>, wrapperUserInfo: WrappedUserInfo): List<PeiAccessibilite> {
+        val organisme = PeiUtils.OrganismeIdType(wrapperUserInfo)
+
+        return listPeiAccessibility.map {
+            PeiAccessibilite(
+                it.id,
+                it.numeroComplet,
+                it.maintenanceDeciId,
+                it.servicePublicDeciId,
+                it.serviceEauxId,
+                PeiUtils.isApiAdmin(organisme) || PeiUtils.isMaintenanceDECI(it.maintenanceDeciId, organisme) || PeiUtils.isServicePublicDECI(it.servicePublicDeciId, organisme) || PeiUtils.isServiceEaux(it.serviceEauxId, organisme),
+            )
+        }
     }
 }

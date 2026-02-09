@@ -954,6 +954,9 @@ class PeiRepository
             V_PEI_VISITE_DATE.LAST_RECEPTION,
             V_PEI_VISITE_DATE.LAST_RECO_INIT,
             PEI.DATE_CHANGEMENT_DISPO,
+            PEI.SERVICE_PUBLIC_DECI_ID.`as`("servicePublicDeciId"),
+            PEI.MAINTENANCE_DECI_ID.`as`("maintenanceDeciId"),
+            PIBI.SERVICE_EAU_ID.`as`("serviceEauxId"),
         )
             .from(PEI)
             .leftJoin(V_PEI_VISITE_DATE)
@@ -986,6 +989,9 @@ class PeiRepository
         codeNatureDECI: String?,
         limit: Int?,
         offset: Int?,
+        servicePublicDeciId: UUID?,
+        maintenanceDeciId: UUID?,
+        serviceEauxId: UUID?,
     ): Collection<PeiDataForApi> =
         getListPeiForApiRequete()
             .where(
@@ -995,6 +1001,9 @@ class PeiRepository
                         type?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
                         codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
                         codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
+                        servicePublicDeciId?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
+                        maintenanceDeciId?.let { DSL.and(PEI.MAINTENANCE_DECI_ID.eq(it)) },
+                        serviceEauxId?.let { DSL.and(PIBI.SERVICE_EAU_ID.eq(it)) },
                     ),
 
                 ),
@@ -1067,6 +1076,9 @@ class PeiRepository
         val lastCtp: ZonedDateTime?,
         val lastRop: ZonedDateTime?,
         val peiDateChangementDispo: ZonedDateTime?,
+        val serviceEauxId: UUID?,
+        val maintenanceDeciId: UUID?,
+        val servicePublicDeciId: UUID?,
     )
 
     fun getPeiByZoneIntegrationShortData(userInfo: WrappedUserInfo): Collection<PeiShortData> {

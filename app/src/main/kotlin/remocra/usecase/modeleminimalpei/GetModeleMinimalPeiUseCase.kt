@@ -7,11 +7,13 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.GlobalConstants
+import remocra.api.PeiUtils
 import remocra.api.usecase.AbstractApiPeiUseCase
 import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.ModeleMinimalPeiData
 import remocra.data.ModeleMinimalPeiForNexsisData
+import remocra.db.ApiPeiAccessibility
 import remocra.db.PeiRepository
 import remocra.db.TracabiliteRepository
 import remocra.db.VisiteRepository
@@ -81,10 +83,27 @@ constructor(
         wrappedUserInfo: WrappedUserInfo,
         forNexsis: Boolean = false,
     ): Collection<ModeleMinimalPeiData> {
-        val listePei = peiRepository.getListPeiForApi(codeInsee, type, codeNature, codeNatureDECI, limit, offset)
+        val organismeInfo = PeiUtils.OrganismeIdType(wrappedUserInfo)
+        val listePei = peiRepository.getListPeiForApi(
+            codeInsee, type, codeNature, codeNatureDECI, limit, offset,
+            servicePublicDeciId = wrappedUserInfo.organismeId.takeIf { PeiUtils.isServicePublicDECI(organismeInfo) },
+            maintenanceDeciId = wrappedUserInfo.organismeId.takeIf { PeiUtils.isMaintenanceDECI(organismeInfo) },
+            serviceEauxId = wrappedUserInfo.organismeId.takeIf { PeiUtils.isServiceEaux(organismeInfo) },
+        )
 
         // Une seule requête pour calculer leur accessibilité, on se servira de la map<id, POJO> par la suite
-        val mapAccessibilite = listPeiAccessibilite(listePei.map { it.peiId }.toSet(), wrappedUserInfo).associateBy { it.id }
+        val mapAccessibilite = listPeiAccessibiliteWithInfo(
+            listePei.map {
+                ApiPeiAccessibility(
+                    id = it.peiId,
+                    numeroComplet = it.peiNumeroComplet,
+                    maintenanceDeciId = it.maintenanceDeciId,
+                    servicePublicDeciId = it.servicePublicDeciId,
+                    serviceEauxId = it.serviceEauxId,
+                )
+            }.toSet(),
+            wrappedUserInfo,
+        ).associateBy { it.id }
 
         return getModeleMinimalPei(listePei.filter { p -> mapAccessibilite[p.peiId] != null && mapAccessibilite[p.peiId]!!.isAccessible }, forNexsis)
     }
