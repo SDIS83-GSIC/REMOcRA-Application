@@ -475,6 +475,14 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     }),
   );
 
+  const filterValuesToVariableWithPei = (values) => {
+    const base = filterValuesToVariable(values); // logique actuelle
+    if (peiId) {
+      base.peiId = peiId; // on impose le PEI sélectionné
+    }
+    return base;
+  };
+
   return (
     <>
       <Container>
@@ -550,7 +558,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
             //on envoie les constantes au composant enfant pour qu'il mette à jour le composant parent
             setFilterId={setIdTournee}
             setShowTable={setShowTable}
-            filterValuesToVariable={filterValuesToVariable}
+            filterValuesToVariable={filterValuesToVariableWithPei}
             useFilterContext={useFilterContext({
               tourneeLibelle: undefined,
               tourneeOrganismeLibelle: undefined,
