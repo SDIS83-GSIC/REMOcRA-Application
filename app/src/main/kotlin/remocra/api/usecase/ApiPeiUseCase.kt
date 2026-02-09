@@ -72,17 +72,27 @@ constructor(
         }
 
         val events = tracabiliteRepository.getTracabilitePeiAndVisiteSince(moment!!)
-        val diffs = events.map { traca ->
+        val diffs: List<PeiDiffData?> = events.map { traca ->
             val peiId: UUID
             val numeroComplet: String
             if (TypeObjet.VISITE == traca.tracabiliteTypeObjet) {
-                val visiteData: VisiteData = objectMapper.readValue(traca.tracabiliteObjetData.data(), VisiteData::class.java)
-                peiId = visiteData.visitePeiId
-                numeroComplet = peiRepository.getInfoPei(peiId).peiNumeroComplet!!
+                try {
+                    // Si c'est de la traçabilité v2, on ignore et on passe au suivant
+                    val visiteData: VisiteData = objectMapper.readValue(traca.tracabiliteObjetData.data(), VisiteData::class.java)
+                    peiId = visiteData.visitePeiId
+                    numeroComplet = peiRepository.getInfoPeiDataNullable(peiId)?.peiNumeroComplet ?: "PEI supprimé"
+                } catch (_: Exception) {
+                    return@map null
+                }
             } else {
                 peiId = traca.tracabiliteObjetId
-                val peiData: PeiData = objectMapper.readValue(traca.tracabiliteObjetData.data(), PeiData::class.java)
-                numeroComplet = peiData.peiNumeroComplet!!
+                try {
+                    // Si c'est de la traçabilité v2, on ignore et on passe au suivant
+                    val peiData: PeiData = objectMapper.readValue(traca.tracabiliteObjetData.data(), PeiData::class.java)
+                    numeroComplet = peiData.peiNumeroComplet!!
+                } catch (_: Exception) {
+                    return@map null
+                }
             }
 
             val auteur: AuteurTracabiliteData = objectMapper.readValue(traca.tracabiliteAuteurData.data(), AuteurTracabiliteData::class.java)
@@ -99,12 +109,12 @@ constructor(
         }
 
         // On va chercher les ID de tous les PEI concernés par une modification (PEI + visite)
-        val listModifiedPei = diffs.map { it.peiId }.toSet()
+        val listModifiedPei = diffs.filterNotNull().map { it.peiId }.toSet()
 
         // Une seule requête pour calculer leur accessibilité, on se servira de la map<numero, POJO> par la suite
         val mapAccessibilite = listPeiAccessibilite(listModifiedPei, wrappedUserInfo).associateBy { it.numero }
 
-        return Result.Success(diffs.filter { p -> mapAccessibilite[p.numeroComplet] != null && mapAccessibilite[p.numeroComplet]!!.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet) })
+        return Result.Success(diffs.filterNotNull().filter { p -> mapAccessibilite[p.numeroComplet] != null && mapAccessibilite[p.numeroComplet]!!.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet) })
     }
 
     /**

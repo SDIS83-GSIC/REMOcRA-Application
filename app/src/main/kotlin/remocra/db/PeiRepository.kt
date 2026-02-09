@@ -621,6 +621,12 @@ class PeiRepository
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
 
+    fun getInfoPeiDataNullable(peiId: UUID): PeiData? =
+        dsl.select(peiData)
+            .from(PEI)
+            .where(PEI.ID.eq(peiId))
+            .fetchOneInto()
+
     fun getInfoPei(): List<PeiData> =
         dsl.select(peiData)
             .from(PEI)
