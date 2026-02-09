@@ -1,6 +1,7 @@
 package remocra.api.usecase
 
 import remocra.api.PeiUtils
+import remocra.api.data.PeiProprieteCommunePenaPibi
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.ApiPeiAccessibility
@@ -20,7 +21,7 @@ abstract class AbstractApiPeiUseCase(
      * Vérifie que l'utilisateur a bien les droits sur le PEI, sinon déclenche une [RemocraResponseException]
      */
     @Throws(RemocraResponseException::class)
-    fun checkDroits(pei: Pei?, userInfo: WrappedUserInfo) {
+    fun checkDroits(pei: PeiProprieteCommunePenaPibi?, userInfo: WrappedUserInfo) {
         if (pei == null) {
             throw RemocraResponseException(
                 ErrorType.PEI_INEXISTANT,
@@ -41,7 +42,7 @@ abstract class AbstractApiPeiUseCase(
      * @param numeroComplet: String
      * @return [Pei]
      */
-    fun getPeiSpecifique(numeroComplet: String, userInfo: WrappedUserInfo): Pei {
+    fun getPeiSpecifique(numeroComplet: String, userInfo: WrappedUserInfo): PeiProprieteCommunePenaPibi {
         val peiId = peiRepository.getPeiIdFromNumero(numeroComplet)
             ?: throw RemocraResponseException(
                 ErrorType.PEI_INEXISTANT,

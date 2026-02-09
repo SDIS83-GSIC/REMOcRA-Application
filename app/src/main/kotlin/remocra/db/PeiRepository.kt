@@ -20,11 +20,14 @@ import org.jooq.impl.SQLDataType
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
+import remocra.api.data.PeiProprieteCommunePenaPibi
 import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
 import remocra.data.enums.TypeAutoriteDeci
+import remocra.db.jooq.historique.enums.TypeObjet
+import remocra.db.jooq.historique.tables.references.TRACABILITE
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypePeiNexsis
@@ -36,6 +39,7 @@ import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
+import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
@@ -44,6 +48,7 @@ import remocra.db.jooq.remocra.tables.references.MATERIAU
 import remocra.db.jooq.remocra.tables.references.MODELE_PIBI
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
+import remocra.db.jooq.remocra.tables.references.NIVEAU
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
@@ -67,7 +72,6 @@ class PeiRepository
     private val dsl: DSLContext,
 ) : AbstractRepository() {
     companion object {
-
         // Alias de table
         val autoriteDeciAlias: Table<*> = ORGANISME.`as`("AUTORITE_DECI")
         val servicePublicDeciAlias: Table<*> = ORGANISME.`as`("SP_DECI")
@@ -695,8 +699,71 @@ class PeiRepository
     fun getPeiIdFromNumero(numero: String): UUID? =
         dsl.select(PEI.ID).from(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
 
-    fun getPeiFromNumero(numero: String): Pei? =
-        dsl.selectFrom(PEI).where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero)).fetchOneInto()
+    fun getPeiFromNumero(numero: String): PeiProprieteCommunePenaPibi? {
+        val hasIndispoTemp = DSL.exists(
+            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI).join(
+                INDISPONIBILITE_TEMPORAIRE,
+            ).on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)).and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)).and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())),
+        ).`as`("hasIndispoTemp")
+
+        return dsl.selectDistinct(
+            PEI.ID,
+            PEI.TYPE_PEI,
+            NATURE.LIBELLE,
+            PEI.NATURE_ID,
+            autoriteDeciAlias.field(ORGANISME.LIBELLE)?.`as`("autoriteDeciLibelle"),
+            servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("servicePublicDeciLibelle"),
+            PEI.SERVICE_PUBLIC_DECI_ID,
+            ORGANISME.LIBELLE.`as`("maintenanceDeciLibelle"),
+            PEI.MAINTENANCE_DECI_ID,
+            NATURE_DECI.LIBELLE,
+            COMMUNE.LIBELLE,
+            PEI.NUMERO_VOIE,
+            PEI.SUFFIXE_VOIE,
+            PEI.EN_FACE,
+            VOIE.LIBELLE,
+            PEI.VOIE_TEXTE,
+            VOIE.`as`("croisement").LIBELLE.`as`("voieCroisementLibelle"),
+            PEI.COMPLEMENT_ADRESSE,
+            LIEU_DIT.LIBELLE,
+            DOMAINE.LIBELLE,
+            NIVEAU.LIBELLE,
+            PEI.DISPONIBILITE_TERRESTRE,
+            V_PEI_VISITE_DATE.LAST_NP,
+            V_PEI_VISITE_DATE.LAST_ROP,
+            V_PEI_VISITE_DATE.LAST_CTP,
+            V_PEI_VISITE_DATE.LAST_RECEPTION,
+            V_PEI_VISITE_DATE.LAST_RECO_INIT,
+            hasIndispoTemp,
+            table("name", "tracabilite_last").field("date")?.`as`("dateDerniereModification"),
+        )
+            .from(PEI)
+            .join(COMMUNE)
+            .on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
+            .join(NATURE)
+            .on(PEI.NATURE_ID.eq(NATURE.ID))
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .join(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .leftJoin(NIVEAU).on(PEI.NIVEAU_ID.eq(NIVEAU.ID))
+            .leftJoin(autoriteDeciAlias)
+            .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
+            .leftJoin(servicePublicDeciAlias)
+            .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+            .leftJoin(ORGANISME).on(PEI.MAINTENANCE_DECI_ID.eq(ORGANISME.ID))
+            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+            .leftJoin(VOIE.`as`("croisement")).on(VOIE.`as`("croisement").ID.eq(PEI.CROISEMENT_ID))
+            .leftJoin(LIEU_DIT).on(PEI.LIEU_DIT_ID.eq(LIEU_DIT.ID))
+            .leftJoin(
+                dsl.select(TRACABILITE.OBJET_ID.`as`("objet_id"), DSL.max(TRACABILITE.DATE).`as`("date"))
+                    .from(TRACABILITE)
+                    .where(TRACABILITE.TYPE_OBJET.eq((TypeObjet.PEI)))
+                    .groupBy(TRACABILITE.OBJET_ID).asTable("tracabilite_last"),
+            ).on(table("name", "tracabilite_last").field("objet_id", UUID::class.java)?.eq(PEI.ID))
+            .leftJoin(V_PEI_VISITE_DATE).on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+            .where(PEI.NUMERO_COMPLET.equalIgnoreCase(numero))
+            .fetchOneInto()
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : ApiPeiData> getPeiCaracteristiques(numero: String): T {

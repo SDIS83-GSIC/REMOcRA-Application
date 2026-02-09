@@ -38,7 +38,6 @@ constructor(
     fun getPeiCaracteristiques(numero: String, wrappedUserInfo: WrappedUserInfo): Result {
         val peiId = peiRepository.getPeiIdFromNumero(numero)
             ?: return Result.Error(ErrorType.PEI_INEXISTANT.toString())
-//         TODO peut pas marcher sans avoir l'organisme connecté !
         if (!this.isPeiAccessible(peiId, wrappedUserInfo)) {
             return Result.Error(
                 ErrorType.FORBIDDEN.toString(),
