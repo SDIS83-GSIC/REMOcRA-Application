@@ -31,6 +31,8 @@ import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
+import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
+import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 
 export const useToolbarPeiContext = ({
   map,
@@ -615,6 +617,13 @@ const MapToolbarPei = ({
               <IconTournee />
             </Button>
           </TooltipCustom>
+
+          {/* documents */}
+          <VoletButtonListeDocumentThematique
+            codeThematique={THEMATIQUE.POINT_EAU}
+            titreVolet="Liste des documents liés aux PEI"
+          />
+
           <Volet
             handleClose={handleCloseTournee}
             show={showCreateTournee}

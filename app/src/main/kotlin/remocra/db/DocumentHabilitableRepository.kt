@@ -135,7 +135,7 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
 
     data class IdLibelleDate(
         val id: UUID,
-        val libelle: String,
+        val libelle: String?,
         val date: ZonedDateTime,
     )
 
