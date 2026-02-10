@@ -63,6 +63,13 @@ export const validationSchema = object({
   evenementDateConstat: requiredDate,
 });
 
+function formatGeometrie(geometrie?: any) {
+  let geometryString = geometrie?.replace(/ ,/g, ",");
+  geometryString = geometryString?.replace("LINESTRING Z", "LINESTRING");
+  geometryString = geometryString?.replace("LINESTRINGM", "LINESTRING");
+  return geometryString;
+}
+
 export const prepareVariables = (
   values: EvenementType,
   initialData: EvenementType | null,
@@ -86,7 +93,7 @@ export const prepareVariables = (
   );
   formData.append(
     "evenementGeometrie",
-    JSON.stringify(values.geometrieEvenement),
+    JSON.stringify(formatGeometrie(values.geometrieEvenement)),
   );
   formData.append("evenementUtilisateurId", userId);
   formData.append("evenementTags", values.evenementTags.join());

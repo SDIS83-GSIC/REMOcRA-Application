@@ -606,6 +606,11 @@ const MapToolbarCrise = forwardRef(
           dataEvenementLayer={dataCriseLayer}
           disabled={false}
           criseId={criseId}
+          onClose={() => {
+            dataCriseLayer.getSource().refresh();
+            refreshLayerGeoserver(map);
+            handleCloseEvent();
+          }}
         />
 
         <EditModal

@@ -483,7 +483,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementTags = httpRequest.getTextPart("evenementTags").split(','),
                 evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un évènement n'a pas de date de cloture lorsqu'il est créé
-                evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
+                evenementGeometrie = httpRequest.getTextPart("evenementGeometrie").takeIf { it != "undefined" }?.let { objectMapper.readValue<Geometry>(it) },
                 listeDocuments = docsEvenement,
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,
@@ -548,7 +548,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 evenementTags = if (httpRequest.getTextPart("evenementTags").isBlank()) emptyList() else objectMapper.readValue<List<String>>(httpRequest.getTextPart("evenementTags")),
                 evenementEstFerme = httpRequest.getTextPart("evenementEstFerme").toBoolean(),
                 evenementDateCloture = null, // un evenement n'a pas de date de cloture lorsqu'il est modifié
-                evenementGeometrie = objectMapper.readValue<Geometry>(httpRequest.getTextPart("evenementGeometrie")),
+                evenementGeometrie = httpRequest.getTextPart("evenementGeometrie").takeIf { it != "undefined" }?.let { objectMapper.readValue<Geometry>(it) },
                 listeDocuments = docsEvenement,
                 evenementCriseId = criseId,
                 evenementStatut = if (httpRequest.getTextPart("evenementEstFerme").toBoolean()) EvenementStatut.CLOS else EvenementStatut.EN_COURS,

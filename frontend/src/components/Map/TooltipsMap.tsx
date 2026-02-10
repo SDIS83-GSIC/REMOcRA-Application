@@ -702,11 +702,13 @@ export const TooltipMapEditEvenement = ({
   disabled,
   criseId,
   state,
+  onClose,
 }: {
   map: OLMap;
   disabled: boolean;
   criseId: string;
   state: string;
+  onClose: () => void;
 }) => {
   const ref = useRef(null);
   const [showUpdateEvenement, setShowUpdateEvenement] = useState(false);
@@ -752,6 +754,8 @@ export const TooltipMapEditEvenement = ({
           evenementId={eventId}
           geometrieEvenement={`SRID=${srid};${featureSelect && new WKT().writeFeature(featureSelect)}`}
           onSubmit={() => {
+            onClose();
+
             handleCloseUpdateEvenement();
             overlay?.setPosition(undefined);
           }}

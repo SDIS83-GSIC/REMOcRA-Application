@@ -1,3 +1,4 @@
+import classnames from "classnames";
 import { WKT } from "ol/format";
 import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
@@ -29,6 +30,11 @@ type FilterEvenement = {
   filterStatut: string;
   filterImportance: string;
 };
+
+enum EvenementStatutEnum {
+  CLOS = "Clos",
+  EN_COURS = "En cours",
+}
 
 const ListEvenement = ({
   criseId,
@@ -85,6 +91,7 @@ const ListEvenement = ({
       evenementGeometrie: string;
       evenementLibelle: string;
       evenementId: string;
+      evenementStatut: string;
     }) => {
       const eventMessages = listMessage?.data?.filter(
         (message: { messageEvenementId: string }) =>
@@ -107,16 +114,17 @@ const ListEvenement = ({
               </Button>
             )}
 
-            {e.evenementGeometrie && (
-              <Button
-                style={{ marginBottom: "10px" }}
-                onClick={() => {
-                  showEventLocation(e.evenementId);
-                }}
-              >
-                <IconLocation />
-              </Button>
-            )}
+            {e.evenementGeometrie &&
+              e.evenementStatut !== EvenementStatutEnum.CLOS && (
+                <Button
+                  className={classnames("mb-1")}
+                  onClick={() => {
+                    showEventLocation(e.evenementId);
+                  }}
+                >
+                  <IconLocation />
+                </Button>
+              )}
 
             {eventMessages?.map((message: any, index: number) => (
               <div key={index}>

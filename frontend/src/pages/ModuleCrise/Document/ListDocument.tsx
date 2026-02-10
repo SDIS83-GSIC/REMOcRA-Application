@@ -117,7 +117,9 @@ const ListDocument = ({
                   <Button
                     disabled={value.value == null}
                     style={{ backgroundColor: "transparent", border: "none" }}
-                    className={"text-warning"}
+                    className={
+                      value.value != null ? "text-warning" : "text-muted"
+                    }
                     onClick={() => {
                       showEventLocation(value.value);
                     }}
