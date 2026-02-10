@@ -97,7 +97,7 @@ pipeline {
               npm ci
               npm run lint
               npm run build -- --no-cache
-              npx @cyclonedx/cyclonedx-npm --omit dev --package-lock-only > npm-sbom.json
+              npm run bom
               '''
           }
         }
