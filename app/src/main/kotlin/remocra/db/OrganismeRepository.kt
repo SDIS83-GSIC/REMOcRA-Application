@@ -13,6 +13,7 @@ import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
+import remocra.api.data.ApiTypeOrganismeData
 import remocra.data.GlobalData
 import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.data.OrganismeData
@@ -48,8 +49,13 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         val conditionMaintenanceDeci = DSL.condition(TYPE_ORGANISME.CODE.`in`(TypeMaintenanceDeci.entries.map { it.valeurConstante }))
     }
 
-    fun getAll(codeTypeOrganisme: String?, limit: Int?, offset: Int?): Collection<OrganismeComplet> =
-        dsl.select(*ORGANISME.fields()).from(ORGANISME).innerJoin(TYPE_ORGANISME)
+    fun getAll(codeTypeOrganisme: String?, limit: Int?, offset: Int?): Collection<ApiTypeOrganismeData> =
+        dsl.select(
+            ORGANISME.CODE,
+            ORGANISME.LIBELLE,
+            TYPE_ORGANISME.CODE,
+        )
+            .from(ORGANISME).innerJoin(TYPE_ORGANISME)
             .on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID)).where(ORGANISME.ACTIF.isTrue)
             .and(TYPE_ORGANISME.ACTIF.isTrue).and(codeTypeOrganisme?.let { TYPE_ORGANISME.CODE.eq(codeTypeOrganisme) })
             .limit(limit).offset(offset).fetchInto()
@@ -252,8 +258,8 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 ),
             ).`as`("hasContact"),
         ).from(ORGANISME)
+            .join(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .leftJoin(PROFIL_ORGANISME).on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
-            .leftJoin(ZONE_INTEGRATION).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .leftJoin(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .leftJoin(parent).on(ORGANISME.PARENT_ID.eq(parent.ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
