@@ -122,6 +122,12 @@ constructor(
 
             val visiteId = UUID.fromString(visiteIdString)
             val visite: ApiVisiteSpecifiqueData = visiteRepository.getVisiteForApi(visiteId)
+
+            // On va chercher les anomalies de la visite précédente pour remplir le champ "anomaliesControlees"
+            visite.anomaliesControlees = visiteRepository.getAvantDerniereVisite(pei.peiId, visiteId)?.let {
+                visiteRepository.getCodeAnomaliesFromVisite(it)
+            } ?: listOf()
+
             return Result.Success(visite)
         } catch (rre: RemocraResponseException) {
             return Result.Error(rre.message)

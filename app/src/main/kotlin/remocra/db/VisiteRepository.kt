@@ -8,12 +8,10 @@ import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.db.jooq.remocra.enums.TypeVisite
-import remocra.db.jooq.remocra.tables.Pei
 import remocra.db.jooq.remocra.tables.pojos.Visite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
-import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_VISITE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
@@ -62,6 +60,14 @@ class VisiteRepository
     fun getAnomaliesFromVisite(visiteId: UUID): Collection<UUID> = dsl
         .select(L_VISITE_ANOMALIE.ANOMALIE_ID)
         .from(L_VISITE_ANOMALIE)
+        .where(L_VISITE_ANOMALIE.VISITE_ID.eq(visiteId))
+        .fetchInto()
+
+    fun getCodeAnomaliesFromVisite(visiteId: UUID): Collection<String> = dsl
+        .select(ANOMALIE.CODE)
+        .from(L_VISITE_ANOMALIE)
+        .join(ANOMALIE)
+        .on(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
         .where(L_VISITE_ANOMALIE.VISITE_ID.eq(visiteId))
         .fetchInto()
 
@@ -249,24 +255,34 @@ class VisiteRepository
             .fetchInto()
 
     fun getVisiteForApi(visiteId: UUID): ApiVisiteSpecifiqueData {
-        return dsl.select(VISITE.ID, VISITE.DATE.`as`("moment"), VISITE.TYPE_VISITE, VISITE.AGENT1, VISITE.AGENT2, VISITE.OBSERVATION.`as`("observations"))
-            .select(VISITE_CTRL_DEBIT_PRESSION.DEBIT, VISITE_CTRL_DEBIT_PRESSION.PRESSION, VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN)
+        return dsl.select(
+            VISITE.ID,
+            VISITE.DATE.`as`("moment"),
+            VISITE.TYPE_VISITE.`as`("typeVisite"),
+            VISITE.AGENT1.`as`("agent1"),
+            VISITE.AGENT2.`as`("agent2"),
+            VISITE.OBSERVATION.`as`("observations"),
+        )
+            .select(
+                VISITE_CTRL_DEBIT_PRESSION.DEBIT.`as`("debit"),
+                VISITE_CTRL_DEBIT_PRESSION.PRESSION.`as`("pression"),
+                VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN.`as`("pressionDyn"),
+            )
             .select(
                 DSL.multiset(
                     DSL.selectDistinct(ANOMALIE.CODE)
                         .from(L_VISITE_ANOMALIE)
                         .innerJoin(ANOMALIE).on(L_VISITE_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
-                        .where(L_PEI_ANOMALIE.PEI_ID.eq(Pei.PEI.ID)),
-                ).`as`("anomaliesConstatees"),
+                        .where(L_VISITE_ANOMALIE.VISITE_ID.eq(VISITE.ID)),
+                ).convertFrom { record ->
+                    record.map { it.get(ANOMALIE.CODE) }
+                }.`as`("anomaliesConstatees"),
             )
             .from(VISITE)
             .innerJoin(PEI).on(VISITE.PEI_ID.eq(PEI.ID))
             .leftJoin(VISITE_CTRL_DEBIT_PRESSION).on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
             .where(VISITE.ID.eq(visiteId))
             .fetchSingleInto()
-
-        // TODO  Anomalies contrôlées => Anomalies présentes à cette visite + Anomalies présentes à la
-        //       visite précédente non présentes à cette visite
     }
 
     fun getAllVisiteByIdPei(peiId: UUID): List<VisiteData> =
