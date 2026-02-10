@@ -825,7 +825,7 @@ const FormEntetePei = ({
           <Col>
             <SelectForm
               name={"peiNatureDeciId"}
-              label="Type de DECI"
+              label="Nature DECI"
               listIdCodeLibelle={listNatureDeci}
               defaultValue={listNatureDeci?.find(
                 (e) => e.id === values.peiNatureDeciId,
