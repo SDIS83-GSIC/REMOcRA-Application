@@ -119,7 +119,7 @@ pipeline {
           steps {
             dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
                 dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
-                dockerDive image: imageId
+                dockerDive image: imageId, highestUserWastedPercent: 0.15
             }
           }
         }
@@ -149,7 +149,7 @@ pipeline {
           }
           steps {
             dockerBuildAndRemove(buildDir: 'geoserver') { imageId ->
-              dockerDive image: imageId
+              dockerDive image: imageId, highestUserWastedPercent: 0.15
               withSidecarContainers([
                 geoserver: [ imageId: imageId ],
               ]) {
