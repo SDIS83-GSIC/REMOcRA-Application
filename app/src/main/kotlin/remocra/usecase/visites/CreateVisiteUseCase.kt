@@ -21,13 +21,14 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
+import java.time.Clock
 
 class CreateVisiteUseCase @Inject constructor(
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val peiRepository: PeiRepository,
-
+    private val clock: Clock,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -120,7 +121,6 @@ class CreateVisiteUseCase @Inject constructor(
         val typePei = peiRepository.getTypePei(element.visitePeiId)
 
         // Vérification de la validité du CDP
-
         if (element.isCtrlDebitPression) {
             if (typePei == TypePei.PIBI && // Si je suis un PIBI
                 (
@@ -145,6 +145,13 @@ class CreateVisiteUseCase @Inject constructor(
             ) {
                 throw RemocraResponseException(ErrorType.VISITE_CDP_PENA)
             }
+        }
+
+        // Bloquer la possibilité de saisir une visite à la même date et heure qu'une visite déjà existante
+        val localDateTimes = visiteRepository.getAllVisiteDates(element.visitePeiId).map { it?.toInstant() }
+        val visiteInstant = element.visiteDate.withZoneSameInstant(clock.zone).toInstant()
+        if (localDateTimes.contains(visiteInstant)) {
+            throw RemocraResponseException(ErrorType.VISITE_DATE_ALREADY_EXIST)
         }
     }
 

@@ -344,4 +344,11 @@ class VisiteRepository
                 .and(V_PEI_VISITE_DATE.LAST_RECO_INIT.isNotNull),
         )
     }
+
+    fun getAllVisiteDates(peiId: UUID): List<ZonedDateTime?> =
+        dsl.select(VISITE.DATE)
+            .from(VISITE)
+            .where(VISITE.PEI_ID.eq(peiId))
+            .orderBy(VISITE.DATE.desc())
+            .fetch(VISITE.DATE)
 }

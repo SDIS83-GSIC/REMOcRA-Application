@@ -73,7 +73,7 @@ const VisiteForm = ({
   listeAnomaliesAssignable: AnomalieCompleteEntity[];
   user: UtilisateurEntity;
 }) => {
-  const { values, setValues, submitCount } =
+  const { values, setValues, submitCount, resetForm } =
     useFormikContext<VisiteCompleteEntity>();
 
   const parametreVisiteTypeCdp = PARAMETRE.TYPE_VISITE_CDP;
@@ -227,6 +227,14 @@ const VisiteForm = ({
                     name={"visiteDate"}
                     label="Date et Heure : "
                     value={values.visiteDate}
+                    onChange={(e) => {
+                      resetForm({
+                        values: {
+                          ...values,
+                          visiteDate: e.target.value,
+                        },
+                      });
+                    }}
                   />
                 </div>
                 <div>
