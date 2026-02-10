@@ -837,6 +837,8 @@ class PeiRepository
             PENA.CAPACITE_ILLIMITEE.`as`("capaciteIllimite"),
             PENA.QUANTITE_APPOINT.`as`("quantiteAppoint"),
             PENA.DISPONIBILITE_HBE.`as`("disponibiliteHbe"),
+            PENA.EQUIPE_HBE.`as`("equipeHbe"),
+            PENA.CAPACITE_INCERTAINE.`as`("capaciteIncertaine"),
             MATERIAU.CODE,
         )
             .select(COMMUNE.CODE_INSEE).select(DOMAINE.CODE).select(NATURE.CODE).select(NATURE_DECI.CODE)
@@ -1269,4 +1271,6 @@ class ApiPenaData : ApiPeiData() {
     var capaciteIllimitee: Boolean? = null
     var materiauCode: String? = null
     var quantiteAppoint: Double? = null
+    var equipeHbe: Boolean? = null
+    var capaciteIncertaine: Boolean? = null
 }
