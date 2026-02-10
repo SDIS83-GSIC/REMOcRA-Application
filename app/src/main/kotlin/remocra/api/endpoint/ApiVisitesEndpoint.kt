@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.api.usecase.ApiVisitesUseCase
 import remocra.auth.RequireDroitsApi
 import remocra.auth.userInfo
+import remocra.data.ApiUpdateVisiteFormData
 import remocra.data.ApiVisiteFormData
 import remocra.db.jooq.remocra.enums.DroitApi
 import remocra.exception.RemocraResponseException
@@ -101,9 +102,9 @@ class ApiVisitesEndpoint : AbstractEndpoint() {
     fun updateVisite(
         @Parameter(description = "Numéro complet du PEI") @PathParam("numeroComplet") numeroComplet: String,
         @Parameter(description = "Identifiant de la visite") @PathParam("idVisite") idVisite: String,
-        @Parameter(description = "Informations de la visite", required = true) form: ApiVisiteFormData,
+        @Parameter(description = "Informations de la visite", required = true) form: ApiUpdateVisiteFormData,
     ): Response {
-        return apiVisitesUseCase.updateVisite(numeroComplet, idVisite, form).wrap()
+        return apiVisitesUseCase.updateVisite(numeroComplet, idVisite, form, securityContext.userInfo).wrap()
     }
 
     @DELETE

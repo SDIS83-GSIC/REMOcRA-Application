@@ -1,8 +1,6 @@
 package remocra.data
 
-class ApiVisiteFormData {
-    lateinit var date: String
-    lateinit var typeVisite: String
+class ApiUpdateVisiteFormData {
     val agent1: String? = null
     val agent2: String? = null
 

@@ -78,6 +78,12 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
     fun getAnomaliePoidsByAnomalieId(anomalieId: UUID): Collection<PoidsAnomalie> =
         dsl.selectFrom(POIDS_ANOMALIE).where(POIDS_ANOMALIE.ANOMALIE_ID.eq(anomalieId)).fetchInto()
 
+    fun deleteLVisiteAnomalie(visiteId: UUID) {
+        dsl.deleteFrom(L_VISITE_ANOMALIE)
+            .where(L_VISITE_ANOMALIE.VISITE_ID.eq(visiteId))
+            .execute()
+    }
+
     /**
      * Créer une nouvelle anomalie
      */

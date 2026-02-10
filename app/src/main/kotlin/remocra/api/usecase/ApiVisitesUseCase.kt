@@ -3,6 +3,7 @@ package remocra.api.usecase
 import jakarta.inject.Inject
 import remocra.api.PeiUtils
 import remocra.auth.WrappedUserInfo
+import remocra.data.ApiUpdateVisiteFormData
 import remocra.data.ApiVisiteFormData
 import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
@@ -15,6 +16,7 @@ import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.exception.RemocraResponseException
 import remocra.usecase.visites.CreateVisiteUseCase
 import remocra.usecase.visites.DeleteVisiteUseCase
+import remocra.usecase.visites.UpdateVisiteUseCase
 import java.util.UUID
 
 class ApiVisitesUseCase @Inject
@@ -24,6 +26,7 @@ constructor(
     private val anomalieRepository: AnomalieRepository,
     private val createVisiteUseCase: CreateVisiteUseCase,
     private val deleteVisiteUseCase: DeleteVisiteUseCase,
+    private val updateVisiteUseCase: UpdateVisiteUseCase,
 ) : AbstractApiPeiUseCase(peiRepository) {
 
     fun getAll(numeroComplet: String, typeVisiteString: String?, momentString: String?, derniereOnly: Boolean?, limit: Int?, offset: Int?): Result.Success =
@@ -181,9 +184,78 @@ constructor(
         }
     }
 
-    // TODO pas possible depuis l'IHM, mais possible depuis l'API. Que veut-on faire en V3 ? cf #225131
-    fun updateVisite(numeroComplet: String, idVisite: String, form: ApiVisiteFormData): Result {
-        TODO("pas encore implémenté $numeroComplet, $idVisite, $form")
+    fun updateVisite(
+        numeroComplet: String,
+        idVisite: String,
+        form: ApiUpdateVisiteFormData,
+        userInfo: WrappedUserInfo,
+    ): Result {
+        val pei = getPeiSpecifique(numeroComplet, userInfo)
+        try {
+            checkDroits(pei, userInfo)
+        } catch (rre: RemocraResponseException) {
+            return Result.Error(rre.message)
+        }
+
+        val visite = visiteRepository.getLastVisite(pei.peiId)
+
+        if (visite?.visiteId != UUID.fromString(idVisite)) {
+            return Result.Error(ErrorType.VISITE_UPDATE_NOT_LAST.toString())
+        }
+
+        if (!isTypeVisiteAllowed(pei.peiServicePublicDeciId, pei.peiMaintenanceDeciId, visite.visiteTypeVisite, userInfo)) {
+            return Result.Forbidden(ErrorType.API_TYPE_VISITE_FORBIDDEN.name)
+        }
+
+        // on s'occupe des anomalies
+        checkAnomalies(
+            typeVisite = visite.visiteTypeVisite,
+            peiNatureId = pei.peiNatureId,
+            listControlees = form.anomaliesControlees,
+            listConstatees = form.anomaliesConstatees,
+        )
+
+        // Conversion anomalies contrôlées et constatées Liste de code => liste d'id
+        val anomaliesControleesIds = anomalieRepository.getIdsByCodes(form.anomaliesControlees)
+        val anomaliesConstateesIds = anomalieRepository.getIdsByCodes(form.anomaliesConstatees)
+
+        // Récupération des anomalies de la visite précédente
+        val anomaliesLastVisite = visiteRepository.getAvantDerniereVisite(pei.peiId, visite.visiteId)?.let {
+            visiteRepository.getAnomaliesFromVisite(it)
+        } ?: listOf()
+
+        val anomaliesIds = mutableListOf<UUID>()
+
+        // On reprend les anomalies précédentes qui n'ont pas été contrôlées
+        anomaliesIds += anomaliesLastVisite.filterNot { it in anomaliesControleesIds }
+
+        // On ajoute les anomalies contrôlées et constatées pour obtenir la liste des anomalies de cette visite
+        anomaliesIds += anomaliesConstateesIds
+
+        val isCtrlDebitPression = form.debit != null || form.pression != null || form.pressionDynamique != null
+
+        val visiteData = VisiteData(
+            visiteId = visite.visiteId,
+            visitePeiId = pei.peiId,
+            visiteDate = visite.visiteDate,
+            visiteTypeVisite = visite.visiteTypeVisite,
+            visiteAgent1 = form.agent1,
+            visiteAgent2 = form.agent2,
+            visiteObservation = form.observations,
+            listeAnomalie = anomaliesIds,
+            isCtrlDebitPression = isCtrlDebitPression,
+            ctrlDebitPression = if (isCtrlDebitPression) {
+                CreationVisiteCtrl(
+                    form.debit,
+                    form.pression?.toBigDecimal(),
+                    form.pressionDynamique?.toBigDecimal(),
+                )
+            } else {
+                null
+            },
+        )
+
+        return updateVisiteUseCase.execute(userInfo, visiteData)
     }
 
     /**

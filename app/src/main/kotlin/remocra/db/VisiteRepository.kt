@@ -197,9 +197,30 @@ class VisiteRepository
             .set(dsl.newRecord(VISITE, visite))
             .execute()
 
+    fun updateVisite(
+        visiteId: UUID,
+        agent1: String?,
+        agent2: String?,
+        observation: String?,
+    ) =
+        dsl.update(VISITE)
+            .set(VISITE.AGENT1, agent1)
+            .set(VISITE.AGENT2, agent2)
+            .set(VISITE.OBSERVATION, observation)
+            .where(VISITE.ID.eq(visiteId))
+            .execute()
+
     fun insertCDP(ctrlDebitPression: VisiteCtrlDebitPression) =
         dsl.insertInto(VISITE_CTRL_DEBIT_PRESSION)
             .set(dsl.newRecord(VISITE_CTRL_DEBIT_PRESSION, ctrlDebitPression))
+            .execute()
+
+    fun updateCDP(ctrlDebitPression: VisiteCtrlDebitPression) =
+        dsl.update(VISITE_CTRL_DEBIT_PRESSION)
+            .set(VISITE_CTRL_DEBIT_PRESSION.DEBIT, ctrlDebitPression.visiteCtrlDebitPressionDebit)
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION, ctrlDebitPression.visiteCtrlDebitPressionPression)
+            .set(VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN, ctrlDebitPression.visiteCtrlDebitPressionPressionDyn)
+            .where(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID.eq(ctrlDebitPression.visiteCtrlDebitPressionVisiteId))
             .execute()
 
     // DeleteVisiteUseCase
