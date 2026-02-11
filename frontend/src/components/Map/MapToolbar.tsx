@@ -16,17 +16,15 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  ToggleButton,
-} from "react-bootstrap";
+import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
+import url from "../../module/fetch.tsx";
 import AccesRapideTypeahead from "../../pages/AccesRapide/AccesRapideTypeahead.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import {
   IconDistance,
   IconInfo,
@@ -431,6 +429,11 @@ const MapToolbar = forwardRef(
     const [zoom, setZoom] = useState<number>(map.getView().getZoom() ?? 0);
     const { user } = useAppContext();
 
+    const isBANSearch = useGet(
+      url`/api/parametres?${{ listeParametreCode: JSON.stringify(PARAMETRE.RECHERCHE_BAN) }}`,
+      {},
+    )?.data?.[PARAMETRE.RECHERCHE_BAN].parametreValeur;
+
     useEffect(() => {
       // setActiveTool("move");
       setZoom(map.getView().getZoom() ?? 0);
@@ -457,67 +460,11 @@ const MapToolbar = forwardRef(
     // Pour accéder aux méthodes de la bar en dehors
     useImperativeHandle(ref, () => ({}));
 
-    const optionsZoom = [
-      {
-        name: "Données BAN",
-        code: "BAN",
-      },
-      {
-        name: "Données perso",
-        code: "PERSO",
-      },
-    ];
-    const [checkBoxOptionZoom, setCheckBoxOptionZoom] = useState(
-      optionsZoom[0],
-    );
     const { fetchMapGeometry } = useCarteLocalisation();
     const [commune, setCommune] = useState<ItemSearch | undefined | null>();
 
     return (
       <Row>
-        <ButtonGroup>
-          {optionsZoom.map((opt, idx) => (
-            <ToggleButton
-              key={idx}
-              id={`optZoom-${idx}`}
-              type="radio"
-              variant={idx % 2 ? "outline-info" : "outline-primary"}
-              name="switch-ban-perso"
-              value={opt.code}
-              checked={checkBoxOptionZoom.code === opt.code}
-              onChange={() => setCheckBoxOptionZoom(optionsZoom[idx])}
-            >
-              {opt.name}
-            </ToggleButton>
-          ))}
-          {checkBoxOptionZoom.code === optionsZoom[0].code ? (
-            <AdresseTypeahead map={map} />
-          ) : (
-            <>
-              <AccesRapideTypeahead
-                label="Zoomer sur la commune"
-                queryUrl="/api/commune/get-by-name"
-                setter={(objet: ItemSearch | null) => {
-                  if (!objet) {
-                    setCommune(null);
-                  } else {
-                    fetchMapGeometry(objet, map);
-                    setCommune(objet);
-                  }
-                }}
-              />
-
-              <AccesRapideTypeahead
-                label="Zoomer sur la voie"
-                queryUrl="/api/voie/get-by-name"
-                dependentObject={commune}
-                setter={(objet: ItemSearch | null) => {
-                  fetchMapGeometry(objet, map);
-                }}
-              />
-            </>
-          )}
-        </ButtonGroup>
         <ButtonToolbar>
           <ButtonGroup>
             <Button
@@ -536,6 +483,36 @@ const MapToolbar = forwardRef(
             >
               <IconZoomOut />
             </Button>
+          </ButtonGroup>
+
+          <ButtonGroup>
+            {isBANSearch !== null && isBANSearch === "true" ? (
+              <AdresseTypeahead map={map} />
+            ) : (
+              <>
+                <AccesRapideTypeahead
+                  label="Zoomer sur la commune"
+                  queryUrl="/api/commune/get-by-name"
+                  setter={(objet: ItemSearch | null) => {
+                    if (!objet) {
+                      setCommune(null);
+                    } else {
+                      fetchMapGeometry(objet, map);
+                      setCommune(objet);
+                    }
+                  }}
+                />
+
+                <AccesRapideTypeahead
+                  label="Zoomer sur la voie"
+                  queryUrl="/api/voie/get-by-name"
+                  dependentObject={commune}
+                  setter={(objet: ItemSearch | null) => {
+                    fetchMapGeometry(objet, map);
+                  }}
+                />
+              </>
+            )}
           </ButtonGroup>
 
           <ButtonGroup>

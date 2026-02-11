@@ -68,6 +68,7 @@ class UpdateParametresUseCase
                 ParametreEnum.ACCUEIL_PUBLIC,
                 policyFactory.sanitize(parametresAdminData.general.accueilPublic),
             )
+            updateParametre(ParametreEnum.RECHERCHE_BAN, parametresAdminData.general.rechercheBan?.toString())
 
             // Signalement
             updateParametre(ParametreEnum.SIGNALEMENT_DELIBERATION_DESTINATAIRE_EMAIL, parametresAdminData.signalement.signalementDeliberationDestinataireEmail)

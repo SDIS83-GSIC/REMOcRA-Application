@@ -53,6 +53,7 @@ data class ParametresSectionGeneral(
     val titrePage: String?,
     val toleranceVoiesMetres: Int?,
     val accueilPublic: String?,
+    val rechercheBan: Boolean?,
 )
 
 data class ParametresSectionSignalement(

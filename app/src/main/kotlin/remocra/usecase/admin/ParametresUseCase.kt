@@ -45,6 +45,7 @@ constructor(
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
             accueilPublic = mapParametres.getStringOrNull(ParametreEnum.ACCUEIL_PUBLIC.name),
+            rechercheBan = mapParametres.getBooleanOrNull(ParametreEnum.RECHERCHE_BAN.name),
         )
 
         val signalement = ParametresSectionSignalement(

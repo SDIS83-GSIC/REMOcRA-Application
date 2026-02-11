@@ -439,6 +439,16 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             }
           />
         </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="general.rechercheBan"
+            checked={values?.rechercheBan}
+            label="Rechercher par BAN"
+            tooltipText={
+              "Permet de choisir entre une recherche par BAN ou une recherche parmi les voies et communes disponibles dans la base de données de l'application."
+            }
+          />
+        </AdminParametre>
       </>
     )
   );

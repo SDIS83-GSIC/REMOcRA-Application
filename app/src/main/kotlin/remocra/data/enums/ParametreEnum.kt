@@ -32,6 +32,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     TOLERANCE_VOIES_METRES(ParametreSection.GENERAL),
     VITESSE_EAU(ParametreSection.GENERAL),
     ACCUEIL_PUBLIC(ParametreSection.GENERAL),
+    RECHERCHE_BAN(ParametreSection.GENERAL),
 
     // Mobile
     AFFICHAGE_INDISPO(ParametreSection.MOBILE),
