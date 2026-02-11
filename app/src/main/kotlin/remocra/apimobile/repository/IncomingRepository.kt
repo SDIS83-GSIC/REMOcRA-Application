@@ -25,6 +25,7 @@ import remocra.db.jooq.incoming.tables.references.GESTIONNAIRE
 import remocra.db.jooq.incoming.tables.references.L_CONTACT_ROLE
 import remocra.db.jooq.incoming.tables.references.L_VISITE_ANOMALIE
 import remocra.db.jooq.incoming.tables.references.NEW_PEI
+import remocra.db.jooq.incoming.tables.references.PEI_DEPLACEMENT
 import remocra.db.jooq.incoming.tables.references.PHOTO_PEI
 import remocra.db.jooq.incoming.tables.references.TOURNEE
 import remocra.db.jooq.incoming.tables.references.VISITE
@@ -338,4 +339,26 @@ class IncomingRepository @Inject constructor(
                     .and(TOURNEE.STATUT_SYNCHRONISAITON.eq(StatutSynchronisation.TERMINEE)),
             )
             .fetchInto()
+
+    fun insertPeiDeplacement(
+        peiId: UUID,
+        peiDeplacementGeometry: Geometry,
+        srid: Int,
+        tourneeId: UUID,
+    ): Int =
+        dsl.insertInto(PEI_DEPLACEMENT)
+            .set(PEI_DEPLACEMENT.PEI_ID, peiId)
+            .set(PEI_DEPLACEMENT.TOURNEE_ID, tourneeId)
+            .set(
+                PEI_DEPLACEMENT.GEOMETRIE,
+                ST_Transform(
+                    ST_SetSrid(
+                        peiDeplacementGeometry.toGeomFromText(),
+                        GlobalConstants.SRID_4326,
+                    ),
+                    srid,
+                ),
+            )
+            .onConflictDoNothing()
+            .execute()
 }

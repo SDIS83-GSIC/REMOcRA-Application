@@ -515,6 +515,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_TYPE_VISITE_FORBIDDEN(20024, "Ce type de visite n'est pas accessible pour votre organisme sur ce PEI", Status.FORBIDDEN),
     API_ERROR_NB_ANOMALIE_CONTROLEE(20025, "Une ou plusieurs anomalies contrôlées n'existent pas ou ne sont pas disponibles pour ce type de visite."),
     API_ANOMALIE_CONSTATEE_NOT_CONTROLEE(20026, "Une ou plusieurs anomalies ont été marquées constatées sans avoir été contrôlées."),
+    API_SYNCHRO_DEPLACER_PEI_FORBIDDEN(20027, "Vous n'avez pas les droits pour déplacer un PEI depuis l'application mobile"),
 
     ADMIN_PARAMETRE_FORBIDDEN(21000, "Vous n'avez pas les droits d'administration", Status.FORBIDDEN),
     ADMIN_PARAMETRE_ISODISTANCE_FORMAT(21001, "Les isodistances n'ont pas le format attendu "),

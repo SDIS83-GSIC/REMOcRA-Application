@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.NewPeiForMobileApiData
+import remocra.apimobile.data.PeiDeplacementApiMobileData
 import remocra.apimobile.data.PhotoPeiForApiMobileData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
@@ -27,6 +28,7 @@ import remocra.apimobile.usecase.synchrofintournee.SynchroFinTourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
+import remocra.apimobile.usecase.synchropeideplacement.SynchroPeiDeplacementUseCase
 import remocra.apimobile.usecase.synchrophotopei.SynchroPhotoPeiUseCase
 import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
 import remocra.apimobile.usecase.synchrovisite.SynchroVisiteAnomalieUseCase
@@ -76,6 +78,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroFinTourneeUseCase: SynchroFinTourneeUseCase
+
+    @Inject
+    lateinit var synchroPeiDeplacementUseCase: SynchroPeiDeplacementUseCase
 
     @Inject
     lateinit var parametresProvider: ParametresProvider
@@ -218,6 +223,26 @@ class SynchroEndpoint : AbstractEndpoint() {
             roleContactId = roleId,
         ),
     ).wrap()
+
+    @Path("/synchro-pei-deplacement")
+    @POST
+    @RequireDroits([Droit.MOBILE_DEPLACER_PEI_U])
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    fun synchroPeiDeplacement(
+        @FormParam("peiId") peiId: UUID,
+        @FormParam("tourneeId") tourneeId: UUID,
+        @FormParam("lat") lat: Double,
+        @FormParam("lon") lon: Double,
+    ) =
+        synchroPeiDeplacementUseCase.execute(
+            securityContext.userInfo,
+            PeiDeplacementApiMobileData(
+                peiId = peiId,
+                tourneeId = tourneeId,
+                lat = lat,
+                lon = lon,
+            ),
+        ).wrap()
 
     @Path("/synchro-tournee")
     @Public("Tous les utilisateurs connectés peuvent synchroniser les données")
