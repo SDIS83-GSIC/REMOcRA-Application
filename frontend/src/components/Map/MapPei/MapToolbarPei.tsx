@@ -753,7 +753,11 @@ const MapToolbarPei = ({
             geometrie: geometrieMove,
           })}
         >
-          <p>Voulez-vous déplacer le PEI ?</p>
+          <p>
+            Voulez-vous déplacer le PEI ? <br />
+            Attention, le déplacement du PEI peut entraîner une modification sur
+            son adresse, veuillez la mettre à jour en cas de besoin.
+          </p>
         </EditModal>
       )}
     </ButtonGroup>
