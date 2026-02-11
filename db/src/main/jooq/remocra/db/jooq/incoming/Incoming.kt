@@ -13,6 +13,7 @@ import remocra.db.jooq.incoming.tables.Gestionnaire
 import remocra.db.jooq.incoming.tables.LContactRole
 import remocra.db.jooq.incoming.tables.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.NewPei
+import remocra.db.jooq.incoming.tables.PeiDeplacement
 import remocra.db.jooq.incoming.tables.PhotoPei
 import remocra.db.jooq.incoming.tables.Tournee
 import remocra.db.jooq.incoming.tables.Visite
@@ -66,6 +67,11 @@ open class Incoming : SchemaImpl(DSL.name("incoming"), DefaultCatalog.DEFAULT_CA
     val NEW_PEI: NewPei get() = NewPei.NEW_PEI
 
     /**
+     * The table <code>incoming.pei_deplacement</code>.
+     */
+    val PEI_DEPLACEMENT: PeiDeplacement get() = PeiDeplacement.PEI_DEPLACEMENT
+
+    /**
      * The table <code>incoming.photo_pei</code>.
      */
     val PHOTO_PEI: PhotoPei get() = PhotoPei.PHOTO_PEI
@@ -93,6 +99,7 @@ open class Incoming : SchemaImpl(DSL.name("incoming"), DefaultCatalog.DEFAULT_CA
         LContactRole.L_CONTACT_ROLE,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
         NewPei.NEW_PEI,
+        PeiDeplacement.PEI_DEPLACEMENT,
         PhotoPei.PHOTO_PEI,
         Tournee.TOURNEE,
         Visite.VISITE,

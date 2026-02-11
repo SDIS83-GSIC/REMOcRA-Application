@@ -29,9 +29,12 @@ import org.jooq.impl.TableImpl
 import org.locationtech.jts.geom.Geometry
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
+import remocra.db.jooq.incoming.keys.PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_PEI_ID_FKEY
 import remocra.db.jooq.incoming.keys.PHOTO_PEI__PHOTO_PEI_PEI_ID_FKEY
 import remocra.db.jooq.incoming.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
+import remocra.db.jooq.incoming.tables.PeiDeplacement.PeiDeplacementPath
 import remocra.db.jooq.incoming.tables.PhotoPei.PhotoPeiPath
+import remocra.db.jooq.incoming.tables.Tournee.TourneePath
 import remocra.db.jooq.incoming.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -80,7 +83,6 @@ import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pena.PenaPath
 import remocra.db.jooq.remocra.tables.Pibi.PibiPath
 import remocra.db.jooq.remocra.tables.Site.SitePath
-import remocra.db.jooq.remocra.tables.Tournee.TourneePath
 import remocra.db.jooq.remocra.tables.Voie.VoiePath
 import remocra.db.jooq.remocra.tables.ZoneIntegration.ZoneIntegrationPath
 import java.time.ZonedDateTime
@@ -412,6 +414,23 @@ open class Pei(
     fun zoneIntegration(): ZoneIntegrationPath = zoneIntegration
     val zoneIntegration: ZoneIntegrationPath by lazy { ZoneIntegrationPath(this, PEI__PEI_PEI_ZONE_SPECIALE_ID_FKEY, null) }
 
+    private lateinit var _peiDeplacement: PeiDeplacementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>incoming.pei_deplacement</code> table
+     */
+    fun peiDeplacement(): PeiDeplacementPath {
+        if (!this::_peiDeplacement.isInitialized) {
+            _peiDeplacement = PeiDeplacementPath(this, null, PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_PEI_ID_FKEY.inverseKey)
+        }
+
+        return _peiDeplacement
+    }
+
+    val peiDeplacement: PeiDeplacementPath
+        get(): PeiDeplacementPath = peiDeplacement()
+
     private lateinit var _photoPei: PhotoPeiPath
 
     /**
@@ -565,6 +584,13 @@ open class Pei(
 
     /**
      * Get the implicit many-to-many join path to the
+     * <code>incoming.tournee</code> table
+     */
+    val tournee: TourneePath
+        get(): TourneePath = peiDeplacement().tournee()
+
+    /**
+     * Get the implicit many-to-many join path to the
      * <code>remocra.debit_simultane_mesure</code> table
      */
     val debitSimultaneMesure: DebitSimultaneMesurePath
@@ -590,13 +616,6 @@ open class Pei(
      */
     val document: DocumentPath
         get(): DocumentPath = lPeiDocument().document()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.tournee</code> table
-     */
-    val tournee: TourneePath
-        get(): TourneePath = lTourneePei().tournee()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("geometrie_point_pei"), "((geometrytype(pei_geometrie) = 'POINT'::text))", true),
         Internal.createCheck(this, DSL.name("pei_voie"), "((((pei_voie_id IS NULL) AND (pei_voie_texte IS NULL)) OR ((pei_voie_id IS NULL) <> (pei_voie_texte IS NULL))))", true),

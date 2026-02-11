@@ -10,6 +10,7 @@ import remocra.db.jooq.incoming.tables.Gestionnaire
 import remocra.db.jooq.incoming.tables.LContactRole
 import remocra.db.jooq.incoming.tables.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.NewPei
+import remocra.db.jooq.incoming.tables.PeiDeplacement
 import remocra.db.jooq.incoming.tables.PhotoPei
 import remocra.db.jooq.incoming.tables.Tournee
 import remocra.db.jooq.incoming.tables.Visite
@@ -39,6 +40,11 @@ val L_VISITE_ANOMALIE: LVisiteAnomalie = LVisiteAnomalie.L_VISITE_ANOMALIE
  * The table <code>incoming.new_pei</code>.
  */
 val NEW_PEI: NewPei = NewPei.NEW_PEI
+
+/**
+ * The table <code>incoming.pei_deplacement</code>.
+ */
+val PEI_DEPLACEMENT: PeiDeplacement = PeiDeplacement.PEI_DEPLACEMENT
 
 /**
  * The table <code>incoming.photo_pei</code>.

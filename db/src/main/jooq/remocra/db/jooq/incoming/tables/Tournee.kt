@@ -26,10 +26,13 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.incoming.Incoming
+import remocra.db.jooq.incoming.keys.PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_TOURNEE_ID_FKEY
 import remocra.db.jooq.incoming.keys.TOURNEE_PKEY
 import remocra.db.jooq.incoming.keys.VISITE__VISITE_VISITE_TOURNEE_ID_FKEY
+import remocra.db.jooq.incoming.tables.PeiDeplacement.PeiDeplacementPath
 import remocra.db.jooq.incoming.tables.Visite.VisitePath
 import remocra.db.jooq.remocra.enums.StatutSynchronisation
+import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -145,6 +148,23 @@ open class Tournee(
     override fun getSchema(): Schema? = if (aliased()) null else Incoming.INCOMING
     override fun getPrimaryKey(): UniqueKey<Record> = TOURNEE_PKEY
 
+    private lateinit var _peiDeplacement: PeiDeplacementPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>incoming.pei_deplacement</code> table
+     */
+    fun peiDeplacement(): PeiDeplacementPath {
+        if (!this::_peiDeplacement.isInitialized) {
+            _peiDeplacement = PeiDeplacementPath(this, null, PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_TOURNEE_ID_FKEY.inverseKey)
+        }
+
+        return _peiDeplacement
+    }
+
+    val peiDeplacement: PeiDeplacementPath
+        get(): PeiDeplacementPath = peiDeplacement()
+
     private lateinit var _visite: VisitePath
 
     /**
@@ -161,6 +181,13 @@ open class Tournee(
 
     val visite: VisitePath
         get(): VisitePath = visite()
+
+    /**
+     * Get the implicit many-to-many join path to the <code>remocra.pei</code>
+     * table
+     */
+    val pei: PeiPath
+        get(): PeiPath = peiDeplacement().pei()
     override fun `as`(alias: String): Tournee = Tournee(DSL.name(alias), this)
     override fun `as`(alias: Name): Tournee = Tournee(alias, this)
     override fun `as`(alias: Table<*>): Tournee = Tournee(alias.qualifiedName, this)

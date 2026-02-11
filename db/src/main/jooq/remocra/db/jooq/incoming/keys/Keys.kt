@@ -16,6 +16,7 @@ import remocra.db.jooq.incoming.tables.Gestionnaire
 import remocra.db.jooq.incoming.tables.LContactRole
 import remocra.db.jooq.incoming.tables.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.NewPei
+import remocra.db.jooq.incoming.tables.PeiDeplacement
 import remocra.db.jooq.incoming.tables.PhotoPei
 import remocra.db.jooq.incoming.tables.Tournee
 import remocra.db.jooq.incoming.tables.Visite
@@ -50,6 +51,7 @@ val GESTIONNAIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Gestionnaire
 val L_CONTACT_ROLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LContactRole.L_CONTACT_ROLE, DSL.name("l_contact_role_pkey"), arrayOf(LContactRole.L_CONTACT_ROLE.ROLE_ID, LContactRole.L_CONTACT_ROLE.CONTACT_ID), true)
 val L_VISITE_ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(LVisiteAnomalie.L_VISITE_ANOMALIE, DSL.name("l_visite_anomalie_pkey"), arrayOf(LVisiteAnomalie.L_VISITE_ANOMALIE.VISITE_ID, LVisiteAnomalie.L_VISITE_ANOMALIE.ANOMALIE_ID), true)
 val NEW_PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(NewPei.NEW_PEI, DSL.name("new_pei_pkey"), arrayOf(NewPei.NEW_PEI.ID), true)
+val PEI_DEPLACEMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PeiDeplacement.PEI_DEPLACEMENT, DSL.name("pei_deplacement_pkey"), arrayOf(PeiDeplacement.PEI_DEPLACEMENT.PEI_ID, PeiDeplacement.PEI_DEPLACEMENT.TOURNEE_ID), true)
 val PHOTO_PEI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(PhotoPei.PHOTO_PEI, DSL.name("photo_pei_pkey"), arrayOf(PhotoPei.PHOTO_PEI.PHOTO_ID), true)
 val TOURNEE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Tournee.TOURNEE, DSL.name("tournee_pkey"), arrayOf(Tournee.TOURNEE.ID), true)
 val VISITE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Visite.VISITE, DSL.name("visite_pkey"), arrayOf(Visite.VISITE.ID), true)
@@ -74,6 +76,8 @@ val NEW_PEI__NEW_PEI_NEW_PEI_LIEU_DIT_ID_FKEY: ForeignKey<Record, Record> = Inte
 val NEW_PEI__NEW_PEI_NEW_PEI_NATURE_DECI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_nature_deci_id_fkey"), arrayOf(NewPei.NEW_PEI.NATURE_DECI_ID), NATURE_DECI_PKEY, arrayOf(NatureDeci.NATURE_DECI.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val NEW_PEI__NEW_PEI_NEW_PEI_NATURE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_nature_id_fkey"), arrayOf(NewPei.NEW_PEI.NATURE_ID), NATURE_PKEY, arrayOf(Nature.NATURE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val NEW_PEI__NEW_PEI_NEW_PEI_VOIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(NewPei.NEW_PEI, DSL.name("new_pei_new_pei_voie_id_fkey"), arrayOf(NewPei.NEW_PEI.VOIE_ID), VOIE_PKEY, arrayOf(Voie.VOIE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
+val PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(PeiDeplacement.PEI_DEPLACEMENT, DSL.name("pei_deplacement_pei_deplacement_pei_id_fkey"), arrayOf(PeiDeplacement.PEI_DEPLACEMENT.PEI_ID), PEI_PKEY, arrayOf(Pei.PEI.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
+val PEI_DEPLACEMENT__PEI_DEPLACEMENT_PEI_DEPLACEMENT_TOURNEE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(PeiDeplacement.PEI_DEPLACEMENT, DSL.name("pei_deplacement_pei_deplacement_tournee_id_fkey"), arrayOf(PeiDeplacement.PEI_DEPLACEMENT.TOURNEE_ID), remocra.db.jooq.incoming.keys.TOURNEE_PKEY, arrayOf(Tournee.TOURNEE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val PHOTO_PEI__PHOTO_PEI_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(PhotoPei.PHOTO_PEI, DSL.name("photo_pei_pei_id_fkey"), arrayOf(PhotoPei.PHOTO_PEI.PEI_ID), PEI_PKEY, arrayOf(Pei.PEI.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val VISITE__VISITE_VISITE_PEI_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Visite.VISITE, DSL.name("visite_visite_pei_id_fkey"), arrayOf(Visite.VISITE.PEI_ID), PEI_PKEY, arrayOf(Pei.PEI.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val VISITE__VISITE_VISITE_TOURNEE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Visite.VISITE, DSL.name("visite_visite_tournee_id_fkey"), arrayOf(Visite.VISITE.TOURNEE_ID), remocra.db.jooq.incoming.keys.TOURNEE_PKEY, arrayOf(Tournee.TOURNEE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
