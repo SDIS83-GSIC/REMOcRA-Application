@@ -107,6 +107,9 @@ class ParametresUseCase : AbstractUseCase() {
             peiRenouvellementRecoIcpeConventionne = mapParametres.getIntOrNull(ParametreEnum.PEI_RENOUVELLEMENT_RECO_ICPE_CONVENTIONNE.name),
             peiToleranceCommuneMetres = mapParametres.getIntOrNull(ParametreEnum.PEI_TOLERANCE_COMMUNE_METRES.name),
             peiHighlightDuree = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_DUREE.name),
+            peiHighlightCouleur = mapParametres.getStringOrNull(ParametreEnum.PEI_HIGHLIGHT_COULEUR.name),
+            peiHighlightRayon = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_RAYON.name),
+            peiHighlightLargeur = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_LARGEUR.name),
             peiRenumerotationInterneAuto = mapParametres.getBooleanOrNull(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO.name),
             voieSaisieLibre = mapParametres.getBooleanOrNull(ParametreEnum.VOIE_SAISIE_LIBRE.name),
             caracteristiquesPenaTooltipWeb = mapParametres.getListOfPeiCaracteristique(

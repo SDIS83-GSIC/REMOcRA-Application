@@ -38,7 +38,12 @@ const MapPei = () => {
 
   const parametres = useGet(
     url`/api/parametres?${{
-      listeParametreCode: JSON.stringify([PARAMETRE.PEI_HIGHLIGHT_DUREE]),
+      listeParametreCode: JSON.stringify([
+        PARAMETRE.PEI_HIGHLIGHT_DUREE,
+        PARAMETRE.PEI_HIGHLIGHT_COULEUR,
+        PARAMETRE.PEI_HIGHLIGHT_RAYON,
+        PARAMETRE.PEI_HIGHLIGHT_LARGEUR,
+      ]),
     }}`,
   );
 
@@ -129,17 +134,31 @@ const MapPei = () => {
 
   // On construit la couche de surbrillance optimisée
   const highlightLayer = useMemo(() => {
-    if (!map || !stateListePeiId || estSurligne) {
+    if (!map || !stateListePeiId || estSurligne || !parametres.data) {
       return;
     }
+
+    const highlightColor =
+      parametres.data[PARAMETRE.PEI_HIGHLIGHT_COULEUR]?.parametreValeur ||
+      "rgba(217, 131, 226, 0.7)";
+
+    const highlightRadius =
+      parseInt(
+        parametres.data[PARAMETRE.PEI_HIGHLIGHT_RAYON]?.parametreValeur,
+      ) ?? 16;
+
+    const highlightWidth =
+      parseInt(
+        parametres.data[PARAMETRE.PEI_HIGHLIGHT_LARGEUR]?.parametreValeur,
+      ) ?? 4;
 
     // Style optimisé avec cache
     const highlightStyle = new Style({
       image: new CircleStyle({
-        radius: 16,
+        radius: highlightRadius,
         stroke: new Stroke({
-          color: "rgba(217, 131, 226, 0.7)",
-          width: 4,
+          color: highlightColor,
+          width: highlightWidth,
         }),
       }),
     });
@@ -166,7 +185,7 @@ const MapPei = () => {
     }
 
     return layer;
-  }, [map, stateListePeiId, estSurligne, projection]);
+  }, [map, stateListePeiId, estSurligne, projection, parametres.data]);
 
   useEffect(() => {
     if (!map || !highlightLayer || !parametres.data) {

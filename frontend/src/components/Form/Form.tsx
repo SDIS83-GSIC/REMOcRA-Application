@@ -141,6 +141,38 @@ export const TextInput = ({
   );
 };
 
+export const ColorInput = ({
+  name,
+  label,
+  required = false,
+  disabled = false,
+  value,
+  tooltipText,
+  onChange,
+}: InputType) => {
+  const [field, meta] = useField(name);
+  const error = meta.touched ? meta.error : null;
+  return (
+    <DivWithError name={name} error={error}>
+      <FormLabel
+        label={label}
+        required={required}
+        tooltipText={tooltipText}
+        name={name}
+      />
+      <Form.Control
+        id={name}
+        required={required}
+        type="color"
+        disabled={disabled}
+        defaultValue={value ?? "#000000"}
+        {...field}
+        onChange={(v: string) => (onChange ? onChange(v) : field.onChange(v))}
+      />
+    </DivWithError>
+  );
+};
+
 export const TextAreaInput = ({
   name,
   label,
